@@ -1,0 +1,15 @@
+.DS_Store
+tmp/
+.venv-imagegen/
+
+# Local-only material
+.local/
+assets/generated/characters-key/
+assets/generated/**/contact_sheet.png
+
+# Local environment and generated scratch
+.env
+.env.*
+*.local
+*.log
+node_modules/

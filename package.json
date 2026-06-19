@@ -1,0 +1,10 @@
+{
+  "name": "chinese-marriage-ten-year-dream",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 5174",
+    "check": "node --check src/app.js && node --check src/state.js && node --check src/relationshipEngine.js && node --check src/profileView.js && node --check src/statusView.js && node --check src/choiceHandlers.js && node --check src/screens.js && node --check src/earlyChapters.js && node --check src/midChapters.js && node --check src/endingChapters.js && node --check src/story.js && node --check src/caseEngine.js && node --check src/random.js && node --check src/sound.js"
+  }
+}

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 720">
+  <defs>
+    <linearGradient id="cardigan" x1="96" x2="224" y1="320" y2="650" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5f7a59"/>
+      <stop offset="1" stop-color="#425b42"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="720" fill="none"/>
+  <ellipse cx="160" cy="690" rx="82" ry="16" fill="#1d2430" opacity=".18"/>
+  <path d="M92 650 L114 320 Q160 280 206 320 L228 650 Z" fill="url(#cardigan)"/>
+  <path d="M120 332 Q160 310 200 332 L196 562 Q160 588 124 562 Z" fill="#e4dfcc"/>
+  <path d="M126 334 Q160 356 194 334" stroke="#d5ceb7" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M132 360 L188 360" stroke="#4f6b4d" stroke-width="10" stroke-linecap="round" opacity=".58"/>
+  <rect x="146" y="243" width="28" height="45" rx="13" fill="#d9a98c"/>
+  <circle cx="160" cy="199" r="52" fill="#e7bd9e"/>
+  <path d="M108 195 Q124 146 161 141 Q199 146 213 195 Q185 178 160 178 Q133 178 108 195 Z" fill="#262320"/>
+  <path d="M125 158 Q151 137 187 158" stroke="#35312e" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <circle cx="142" cy="203" r="4" fill="#262320"/>
+  <circle cx="178" cy="203" r="4" fill="#262320"/>
+  <path d="M134 194 L150 194" stroke="#262320" stroke-width="4" stroke-linecap="round"/>
+  <path d="M170 194 L186 194" stroke="#262320" stroke-width="4" stroke-linecap="round"/>
+  <path d="M149 225 Q160 229 173 225" stroke="#7a433d" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <circle cx="129" cy="421" r="5" fill="#d5ceb7"/>
+  <circle cx="129" cy="455" r="5" fill="#d5ceb7"/>
+  <path d="M118 420 Q92 470 86 540" stroke="#e7bd9e" stroke-width="20" stroke-linecap="round" fill="none"/>
+  <path d="M202 420 Q228 470 234 540" stroke="#e7bd9e" stroke-width="20" stroke-linecap="round" fill="none"/>
+  <rect x="112" y="556" width="96" height="46" rx="10" fill="#425b42" opacity=".9"/>
+  <text x="160" y="590" font-size="28" text-anchor="middle" fill="#f7efe3" font-family="PingFang SC, sans-serif">陈默</text>
+</svg>

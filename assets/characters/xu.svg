@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 720">
+  <defs>
+    <linearGradient id="jacket" x1="82" x2="238" y1="310" y2="650" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#55406a"/>
+      <stop offset="1" stop-color="#352142"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="720" fill="none"/>
+  <ellipse cx="160" cy="690" rx="90" ry="16" fill="#1d2430" opacity=".18"/>
+  <path d="M78 650 L108 310 Q160 250 212 310 L242 650 Z" fill="url(#jacket)"/>
+  <path d="M116 330 L160 394 L204 330 L198 594 L122 594 Z" fill="#f4ede3"/>
+  <path d="M142 390 L160 430 L178 390 L175 650 L145 650 Z" fill="#d8a23c"/>
+  <path d="M123 330 L160 394 L197 330" stroke="#d8a23c" stroke-width="9" fill="none" opacity=".86"/>
+  <circle cx="160" cy="374" r="8" fill="#d8a23c"/>
+  <rect x="146" y="242" width="28" height="47" rx="13" fill="#e0ad8d"/>
+  <circle cx="160" cy="196" r="54" fill="#ecc2a1"/>
+  <path d="M104 207 Q109 138 162 132 Q215 135 219 205 Q184 164 155 172 Q128 179 104 207 Z" fill="#2a2022"/>
+  <path d="M121 158 Q157 124 204 154" stroke="#3b2d31" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <circle cx="140" cy="202" r="4" fill="#2a2022"/>
+  <circle cx="180" cy="202" r="4" fill="#2a2022"/>
+  <path d="M134 190 Q143 186 151 190" stroke="#2a2022" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M169 190 Q180 184 190 188" stroke="#2a2022" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M146 225 Q160 232 176 225" stroke="#87463e" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <rect x="207" y="352" width="24" height="44" rx="5" fill="#d8a23c" opacity=".72"/>
+  <path d="M113 420 Q78 460 66 535" stroke="#ecc2a1" stroke-width="21" stroke-linecap="round" fill="none"/>
+  <path d="M207 420 Q244 460 254 535" stroke="#ecc2a1" stroke-width="21" stroke-linecap="round" fill="none"/>
+  <rect x="112" y="556" width="96" height="46" rx="10" fill="#352142" opacity=".9"/>
+  <text x="160" y="590" font-size="28" text-anchor="middle" fill="#f7efe3" font-family="PingFang SC, sans-serif">许照</text>
+</svg>
