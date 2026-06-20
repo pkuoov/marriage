@@ -1,5 +1,9 @@
 let audioContext;
-let enabled = localStorage.getItem("chinese-marriage-ten-year-dream-sound") !== "off";
+const SOUND_KEY = "marriage-detective-agency-sound";
+const PITFALL_SOUND_KEY = "marriage-pitfall-guide-sound";
+const LEGACY_SOUND_KEY = "chinese-marriage-ten-year-dream-sound";
+const savedSound = localStorage.getItem(SOUND_KEY) ?? localStorage.getItem(PITFALL_SOUND_KEY) ?? localStorage.getItem(LEGACY_SOUND_KEY);
+let enabled = savedSound !== "off";
 
 function getContext() {
   if (!audioContext) {
@@ -47,7 +51,7 @@ export function playSfx(kind = "click") {
 
 export function toggleSound() {
   enabled = !enabled;
-  localStorage.setItem("chinese-marriage-ten-year-dream-sound", enabled ? "on" : "off");
+  localStorage.setItem(SOUND_KEY, enabled ? "on" : "off");
   if (enabled) playSfx("confirm");
   return enabled;
 }

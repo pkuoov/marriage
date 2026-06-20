@@ -11,23 +11,21 @@ export function publicProfileText(state, attributes) {
   const { wealth, family, looks, education, eq } = state.attrs;
   const high = attributes.filter((attr) => state.attrs[attr.id] >= 7).map((attr) => attr.short);
   const low = attributes.filter((attr) => state.attrs[attr.id] <= 3).map((attr) => attr.short);
-  const genderText = state.gender === "male" ? "男" : state.gender === "female" ? "女" : "未选择";
   return [
-    `性别：${genderText}`,
-    `财富 ${wealth} / 家庭 ${family} / 外貌 ${looks} / 学历 ${education} / 情商 ${eq}`,
-    high.length ? `优势标签：${high.join("、")}` : "优势标签：均衡型",
-    low.length ? `需包装项：${low.join("、")}` : "需包装项：无明显短板"
+    "本场身份：婚恋侦探 / 律师顾问",
+    `财务 ${wealth} / 家庭 ${family} / 形象 ${looks} / 核验 ${education} / 洞察 ${eq}`,
+    high.length ? `本场强项：${high.join("、")}` : "本场强项：均衡型",
+    low.length ? `本场盲区：${low.join("、")}` : "本场盲区：无明显短板"
   ];
 }
 
 export function compactProfileText(state, attributes) {
-  const genderText = state.gender === "male" ? "男" : state.gender === "female" ? "女" : "未选择";
   const high = attributes.filter((attr) => state.attrs[attr.id] >= 7).map((attr) => attr.short);
   const low = attributes.filter((attr) => state.attrs[attr.id] <= 3).map((attr) => attr.short);
   return [
-    genderText,
+    "侦探局",
     high.length ? `优势：${high.slice(0, 2).join("、")}` : "均衡型",
-    low.length ? `短板：${low.slice(0, 2).join("、")}` : "短板不明显"
+    low.length ? `盲区：${low.slice(0, 2).join("、")}` : "盲区不明显"
   ];
 }
 
@@ -62,6 +60,15 @@ export function relationshipStatusLines(state) {
   if ((f.householdPressure ?? 0) >= 6) lines.push("家里的疲惫越来越厚。");
   if ((f.debtPressure ?? 0) >= 6) lines.push("债务让未来变窄。");
   if ((f.childPressure ?? 0) >= 6) lines.push("孩子议题压过了你们两个人。");
+  if ((f.macroEconomyPressure ?? 0) >= 3) lines.push("外面的风向正在吹进家里。");
+  if ((f.investmentExposure ?? 0) >= 3) lines.push("投资冲动开始碰到家庭安全垫。");
+  if ((f.scamExposure ?? 0) >= 2) lines.push("有些高收益承诺需要先停下来核实。");
+  if ((f.exReentryRisk ?? 0) >= 2) lines.push("旧关系重新靠近了你们。");
+  if ((f.careDeficit ?? 0) + (f.emotionalValueDemand ?? 0) >= 4) lines.push("陪伴和索取开始不对等。");
+  if ((f.infidelityRisk ?? 0) >= 3) lines.push("情绪正在往关系外面漏。");
+  if ((f.evidenceClarity ?? 0) >= 2) lines.push("证据链开始变清楚。");
+  if ((f.audiencePressure ?? 0) >= 2) lines.push("旁听席正在替事实站队。");
+  if ((f.falseAccusationRisk ?? 0) >= 2) lines.push("恶人先告状的可能性上升。");
 
   if ((f.debtPressure ?? 0) + (f.weddingPressure ?? 0) + (f.educationPressure ?? 0) >= 10) {
     lines.push("现实已经开始替感情出题。");

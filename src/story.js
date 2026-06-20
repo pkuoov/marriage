@@ -1,9 +1,33 @@
 export const ATTRIBUTES = [
-  { id: "wealth", label: "个人财富", short: "财富" },
-  { id: "family", label: "家庭背景", short: "家庭" },
-  { id: "looks", label: "外貌", short: "外貌" },
-  { id: "education", label: "学历", short: "学历" },
-  { id: "eq", label: "情商", short: "情商" }
+  { id: "wealth", label: "财务嗅觉", short: "财务" },
+  { id: "family", label: "家庭结构", short: "家庭" },
+  { id: "looks", label: "形象观察", short: "形象" },
+  { id: "education", label: "信息核验", short: "核验" },
+  { id: "eq", label: "情绪洞察", short: "洞察" }
+];
+
+export const DETECTIVE_SPECIALTIES = [
+  {
+    id: "audit",
+    label: "财务审计型",
+    attr: "wealth",
+    boost: 3,
+    intro: "更早看见转账、负债、共同账户、房产和资源交换里的不对劲。"
+  },
+  {
+    id: "emotion",
+    label: "情绪追踪型",
+    attr: "eq",
+    boost: 3,
+    intro: "更容易听出诉苦、自欺、恶人先告状和情绪勒索里的断点。"
+  },
+  {
+    id: "verification",
+    label: "证据核查型",
+    attr: "education",
+    boost: 3,
+    intro: "更擅长重排时间线、核验证件材料、识别资料包装。"
+  }
 ];
 
 export const NPCS = [
@@ -194,44 +218,62 @@ export const MOTIVES = {
 export const QUESTIONNAIRE = [
   {
     id: "marriageCore",
-    text: "你认为结婚最重要的是？",
+    text: "第一通连线，你最先核对什么？",
     choices: [
-      ["love", "感情基础"],
-      ["money", "经济稳定"],
-      ["parents", "父母认可"],
-      ["growth", "成长同步"],
-      ["child", "生育与家庭规划"]
+      ["love", "两人真实关系阶段"],
+      ["money", "转账、债务和共同财产"],
+      ["parents", "双方父母是否介入"],
+      ["growth", "时间线和证据链"],
+      ["child", "婚育史与孩子责任"]
     ]
   },
   {
     id: "dealbreaker",
-    text: "你最不能接受伴侣哪一点？",
+    text: "你最警惕哪种隐瞒？",
     choices: [
-      ["poor", "穷"],
-      ["plain", "丑"],
-      ["lowEdu", "低学历"],
-      ["parents", "父母强势"],
-      ["emotion", "情绪不稳定"],
-      ["lie", "不坦诚"]
+      ["poor", "家境和债务"],
+      ["plain", "外貌包装和照片差异"],
+      ["lowEdu", "学历与职业履历"],
+      ["parents", "父母强势和家庭负担"],
+      ["emotion", "情绪勒索与恶人先告状"],
+      ["lie", "婚史、孩子、短择经历"]
     ]
   },
   {
     id: "uneasy",
-    text: "如果对方条件很好，但你感觉不太舒服？",
+    text: "如果来访者讲得很委屈，但细节不完整？",
     choices: [
-      ["observe", "继续观察"],
-      ["reject", "直接拒绝"],
-      ["ask", "问清楚哪里不舒服"],
-      ["realistic", "说服自己现实一点"]
+      ["observe", "继续听完整版本"],
+      ["reject", "直接指出叙事漏洞"],
+      ["ask", "要求补证据和时间线"],
+      ["realistic", "先判断利益诉求"]
     ]
+  }
+];
+
+export const CASE_CHAPTERS = [
+  {
+    id: "ch1",
+    title: "第一案：婚前 case",
+    summary: "婚前关系核验，重点判断择偶定位、承诺、彩礼房产、婚史孩子和债务是否被包装。"
+  },
+  {
+    id: "ch2",
+    title: "第二案：婚后 case",
+    summary: "婚后共同生活案，重点拆共同财务、家务育儿、出轨边界、亲子和双方家庭责任。"
+  },
+  {
+    id: "ch3",
+    title: "第三案：告解模式",
+    summary: "随机当事人自述经历，玩家站在 TA 的视角里查被坑、自欺和可能伤人的部分。"
   }
 ];
 
 export const CHAPTERS = [
   {
     id: "ch1",
-    title: "第一章：你的条件很好，只是需要包装",
-    summary: "进入良缘算法，完成资料包装、婚恋问卷和三位初见。"
+    title: "第一章：侦探局之后",
+    summary: "把三案调查结果转成婚恋候选人入口、信任度和风险标签。"
   },
   {
     id: "ch2",
@@ -283,22 +325,22 @@ export const CHAPTERS = [
 export const PACKAGING_CHOICES = [
   {
     id: "honest",
-    label: "真实一点，不想浪费彼此时间",
-    effect: "边界感 +1，真诚型 NPC 初始好感略升。"
+    label: "先让来访者完整陈述",
+    effect: "边界感 +1，容易发现叙事中的自然断点。"
   },
   {
     id: "boost",
-    label: "优势放大，先提高匹配质量",
-    effect: "婚介推荐等级 +1，私心型 NPC 注意力上升。"
+    label: "先查硬证据和时间线",
+    effect: "现实感 +1，更早触发财务、婚史、孩子和债务线索。"
   },
   {
     id: "hide",
-    label: "弱点隐藏，等熟了再说",
-    effect: "短期吸引上升，后续信任危机概率上升。"
+    label: "先顺着 TA 的说法问下去",
+    effect: "风险容忍 +1，可能诱导对方多说，也可能被带节奏。"
   },
   {
     id: "delegate",
-    label: "我也不知道，你们看着办",
-    effect: "红娘控制权上升，后续被安排高成交对象概率上升。"
+    label: "让旁听席先投票",
+    effect: "舆论压力 +1，热度上升，但判断更容易被情绪带偏。"
   }
 ];

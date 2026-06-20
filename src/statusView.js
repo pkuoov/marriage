@@ -5,16 +5,30 @@ export function renderStatusPanel({ state, currentNpc, currentSeed }) {
   const npc = currentNpc();
   const latest = state.log.find((item) => item.type !== "系统");
   return `
-    <h2>关系手账</h2>
+    <h2>侦探手账</h2>
     <div class="relationship-states">
       ${relationshipStatusLines(state).map((line) => `<p>${line}</p>`).join("")}
     </div>
+    <h3>侦探局战况</h3>
+    <p>声誉 ${state.agencyReputation ?? 0}｜舆论热度 ${state.publicHeat ?? 0}</p>
     ${renderStopLossStatus(state, npc)}
-    <h3>你的画像</h3>
+    <h3>调查画像</h3>
     <p>${compactProfileText(state, ATTRIBUTES).join("｜")}</p>
+    ${renderCaseStatus(state)}
     ${npc ? `<h3>人物印象</h3><p>${npc.name}｜${npc.archetype}</p><p class="muted">${npc.intro}</p>${patternMoodLine(state, currentSeed())}` : ""}
     ${latest ? `<h3>近况</h3><p>${latest.text}</p>` : ""}
   `;
+}
+
+function renderCaseStatus(state) {
+  if (state.caseBrief && !state.investigationComplete) {
+    return `<h3>后台案件</h3><p>${state.caseBrief.label}｜难度 ${state.caseBrief.difficulty}</p><p class="muted">${state.caseBrief.publicHook}</p>`;
+  }
+  if (state.investigationComplete) {
+    const archiveCount = state.caseArchive?.length ?? 0;
+    return `<h3>调查归档</h3><p>已归档 ${archiveCount} 起案件</p><p class="muted">候选排序受旧案牵连、声誉和舆论热度影响。</p>`;
+  }
+  return "";
 }
 
 function renderStopLossStatus(state, npc) {

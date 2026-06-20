@@ -37,17 +37,17 @@ export function createEarlyChapterRenderers(ctx) {
   } = ctx;
 
 function renderChapter1() {
+  const brief = state.caseBrief;
   if (state.scene === "intro") {
     storyFrame({
       chapter: CHAPTERS[0].title,
       text: `
-        <p>你二十九岁那年，手机里同时出现了三条消息。</p>
-        <p>妈妈：周末回家一趟，有个条件不错的。</p>
-        <p>朋友：我给你推个婚介，别笑，真有人结婚了。</p>
-        <p>公司群：本季度组织架构调整，请相关同事保持电话畅通。</p>
-        <p>你盯着屏幕，忽然意识到：人生不是没有选项，是每个选项都像在催你签字。</p>
+        <p>晚上八点，侦探局开案。标题只有五个字：婚恋侦探局。</p>
+        <p>后台已经生成今晚的共用案件：<b>${brief?.label ?? "婚恋纠纷"}</b>。</p>
+        <p>${brief?.openingComplaint ?? "第一位来访者进入连线，声音很稳，但叙事里有几处空白。"}</p>
+        <p class="hint">${brief?.publicHook ?? "你需要先听叙事，再看证据，最后判断谁在隐藏关键事实。"}</p>
       `,
-      choices: `<button class="primary" data-next="packaging" type="button">走进良缘算法</button>`
+      choices: `<button class="primary" data-next="packaging" type="button">接入第一通连线</button>`
     });
     document.querySelector("[data-next]").addEventListener("click", () => {
       state.scene = "packaging";
@@ -61,9 +61,9 @@ function renderChapter1() {
     storyFrame({
       chapter: CHAPTERS[0].title,
       text: `
-        <p><b>孟姐</b>：“先别紧张，我们不是逼你结婚。”</p>
-        <p><b>孟姐</b>：“我们只是帮你把适合结婚的人，从不适合的人里面筛出来。”</p>
-        <p>她把你的资料夹放到桌上，问你希望如何被展示。</p>
+        <p><b>孟姐</b>：“侦探局已经进人了。先提醒一句，诉苦不等于事实。”</p>
+        <p><b>律师顾问</b>：“我们今晚不急着站队，先把时间线、钱、婚育史和证据放到桌面上。”</p>
+        <p>第一位来访者开始讲述。你要决定第一轮追问方式。</p>
       `,
       choices: PACKAGING_CHOICES.map((choice) => `<button data-package="${choice.id}" type="button">${choice.label}<small>${choice.effect}</small></button>`).join("")
     });
@@ -78,7 +78,7 @@ function renderChapter1() {
     storyFrame({
       chapter: CHAPTERS[0].title,
       text: `
-        <p>婚恋问卷弹出在平板上。孟姐说：“答案没有对错，只是每个人迟早都要为自己的排序付钱。”</p>
+        <p>调查清单弹到屏幕上。孟姐说：“侦探局最怕的不是坏人，是半真半假的故事。”</p>
         <h2>${current.text}</h2>
       `,
       choices: current.choices.map(([id, label]) => `<button data-answer="${id}" type="button">${label}</button>`).join("")
@@ -95,14 +95,14 @@ function renderChapter1() {
     storyFrame({
       chapter: CHAPTERS[0].title,
       text: `
-        <p><b>孟姐</b>：“第一批给您看 ${candidates.length} 位。”</p>
-        <p><b>孟姐</b>：“都不是完美的人，但都有人愿意为他们买单。”</p>
-        <p>请选择 ${Math.min(3, candidates.length)} 位初见对象。</p>
+        <p><b>孟姐</b>：“第一轮叙事已经录下来了。”</p>
+        <p><b>孟姐</b>：“现在不是盲选对象，是看三案之后谁还值得进入关系测试。”</p>
+        <p>请选择 ${Math.min(3, candidates.length)} 位进入后续观察池。系统已经按声誉、舆论热度和旧案牵连重新排序。</p>
         <div class="npc-grid">
           ${candidates.map((npc) => npcCard(npc, selectedIds.includes(npc.id))).join("")}
         </div>
       `,
-      choices: `<button class="primary" data-start-dates ${selectedIds.length !== Math.min(3, candidates.length) ? "disabled" : ""} type="button">开始三场初见</button>`
+      choices: `<button class="primary" data-start-dates ${selectedIds.length !== Math.min(3, candidates.length) ? "disabled" : ""} type="button">开始三轮连线</button>`
     });
     document.querySelectorAll("[data-npc]").forEach((button) => {
       button.addEventListener("click", () => toggleFirstDate(button.dataset.npc));
@@ -118,7 +118,8 @@ function renderChapter1() {
     storyFrame({
       chapter: CHAPTERS[0].title,
       text: `
-        <p>三场 20 分钟初见像三次短暂面试。有人问你为什么来婚介，有人问你介不介意婚前财产协议，也有人把“父母意见”说得像天气一样自然。</p>
+        <p>三轮连线像三次交叉询问。有人诉苦，有人补充，有人急着证明自己没有错。</p>
+        <p class="hint">后台真相不会直接显示在侦探局里。你只能从话术、证据和时间线里一点点拼出来。</p>
         <div class="scene-list">
           ${state.selectedFirstDates.map((id) => {
             const npc = getNpc(id);
@@ -126,14 +127,15 @@ function renderChapter1() {
             const motive = seed.motive ? MOTIVES[seed.motive] : null;
             const visibleLine = seed.hiddenType === "sincere" ? HIDDEN_TYPES.sincere.signal : motive.light;
             const caseText = visibleCaseLine(id, "screening");
-            return `<p><b>${npc.name}</b>：${visibleLine}${caseText ? `<br><span>${caseText}</span>` : ""}</p>`;
+            const role = id === brief?.complainantId ? "来访者" : id === brief?.respondentId ? "对方当事人" : "补充线索人";
+            return `<p><b>${npc.name}</b>（${role}）：${visibleLine}${caseText ? `<br><span>${caseText}</span>` : ""}</p>`;
           }).join("")}
         </div>
       `,
       choices: `
-        <button data-first-action="continue" type="button">继续了解</button>
-        <button data-first-action="background" type="button">申请基础背调</button>
-        <button data-first-action="redLady" type="button">问孟姐真实评价</button>
+        <button data-first-action="continue" type="button">继续听双方版本</button>
+        <button data-first-action="background" type="button">申请基础核验</button>
+        <button data-first-action="redLady" type="button">问后台风控意见</button>
       `
     });
     document.querySelectorAll("[data-first-action]").forEach((button) => {
@@ -147,9 +149,9 @@ function renderChapter1() {
     storyFrame({
       chapter: CHAPTERS[0].title,
       text: `
-        <p>七分钟速配夜，候选人陆续出现。孟姐端着咖啡站在你旁边。</p>
-        <p><b>孟姐</b>：“单独聊天看的是对你怎么样。公开场合看的是 TA 对世界怎么样。”</p>
-        <p>你需要选定一个主要推进对象，也可以勾选一个继续观察对象。</p>
+        <p>旁听席开始站队，热度迅速上升。有人说男方可怜，有人说女方委屈，也有人催你直接公布答案。</p>
+        <p><b>孟姐</b>：“别急。旁听席情绪越热，越要先看证据冷不冷。”</p>
+        <p>你需要锁定一个主要追问对象，也可以勾选一个继续观察对象。</p>
         <div class="npc-grid">
           ${selectedIds.map((id) => {
             const npc = getNpc(id);
@@ -157,7 +159,7 @@ function renderChapter1() {
               <article class="npc-card">
                 <h3>${npc.name}</h3>
                 <p>${npc.intro}</p>
-                <button data-primary="${npc.id}" type="button">锁定深入</button>
+                <button data-primary="${npc.id}" type="button">锁定追问</button>
                 <button data-secondary="${npc.id}" class="${state.secondaryNpcId === npc.id ? "selected" : ""}" type="button">设为观察</button>
               </article>
             `;
@@ -176,8 +178,11 @@ function renderChapter1() {
 }
 
 function candidateNpcs() {
-  if (!state.gender) return NPCS;
-  return NPCS.filter((npc) => npc.gender !== state.gender);
+  const access = state.candidateAccess ?? {};
+  const available = NPCS
+    .filter((npc) => !access[npc.id] || access[npc.id].unlocked)
+    .sort((a, b) => (access[b.id]?.score ?? 50) - (access[a.id]?.score ?? 50));
+  return available.length >= 3 ? available : NPCS;
 }
 
 function selectedCandidateIds() {
@@ -194,12 +199,17 @@ function chapterVariant(key, variants) {
 }
 
 function npcCard(npc, selected) {
+  const access = state.candidateAccess?.[npc.id];
+  const accessLine = access
+    ? `调查匹配 ${access.score}｜${access.riskTags?.length ? access.riskTags.join(" / ") : "暂无旧案硬风险"}`
+    : npc.intro;
+  const sourceLine = access?.sources?.length ? `<small>${access.sources.join("；")}</small>` : `<small>${npc.tags.join(" / ")}</small>`;
   return `
     <button class="npc-card ${selected ? "selected" : ""}" data-npc="${npc.id}" type="button">
       <span>${npc.name}</span>
       <strong>${npc.archetype}</strong>
-      <small>${npc.tags.join(" / ")}</small>
-      <em>${npc.intro}</em>
+      ${sourceLine}
+      <em>${accessLine}</em>
     </button>
   `;
 }
