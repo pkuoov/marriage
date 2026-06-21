@@ -22,7 +22,10 @@ export function renderStatusPanel({ state, currentNpc, currentSeed }) {
 
 function renderCaseStatus(state) {
   if (state.caseBrief && !state.investigationComplete) {
-    return `<h3>后台案件</h3><p>${state.caseBrief.label}｜难度 ${state.caseBrief.difficulty}</p><p class="muted">${state.caseBrief.publicHook}</p>`;
+    const total = state.caseBriefs?.length ?? 0;
+    const mode = state.caseMode === "anchor" ? "主播模式" : "故事模式";
+    const title = state.caseBrief.storyArcTitle ?? state.caseBrief.label;
+    return `<h3>后台案件</h3><p>${mode}｜第 ${state.chapter}/${total || "?"} 案</p><p>${title}｜难度 ${state.caseBrief.difficulty}</p><p class="muted">${state.caseBrief.storyArcSummary ?? state.caseBrief.publicHook}</p>${state.caseBrief.storyClueObject ? `<p class="muted">悬念物：${state.caseBrief.storyClueObject}</p>` : ""}`;
   }
   if (state.investigationComplete) {
     const archiveCount = state.caseArchive?.length ?? 0;

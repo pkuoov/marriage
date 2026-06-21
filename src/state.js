@@ -34,8 +34,8 @@ export const baseState = {
   investigationComplete: false,
   caseArchive: [],
   candidateAccess: {},
+  caseMode: "story",
   gender: PUBLIC_PLAYER_GENDER,
-  startMode: "agency",
   specialty: null,
   attrs: { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 },
   profileDone: false,
@@ -165,7 +165,8 @@ export function migrateState(saved) {
   if (typeof next.investigationComplete !== "boolean") next.investigationComplete = false;
   if (!Array.isArray(next.caseArchive)) next.caseArchive = [];
   if (!next.candidateAccess || Array.isArray(next.candidateAccess)) next.candidateAccess = {};
-  if (next.profileDone && next.playerRole === "host-lawyer" && next.caseBriefs.length !== 3) {
+  if (!["story", "anchor"].includes(next.caseMode)) next.caseMode = "story";
+  if (next.profileDone && next.playerRole === "host-lawyer" && ![3, 4, 5, 6].includes(next.caseBriefs.length)) {
     next.profileDone = false;
     next.screen = "title";
     next.caseBrief = null;

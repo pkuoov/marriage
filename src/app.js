@@ -1,5 +1,5 @@
 import { ATTRIBUTES, CASE_CHAPTERS, CHAPTERS, DETECTIVE_SPECIALTIES, HIDDEN_TYPES, HUMAN_PATTERNS, MOTIVES, NPCS, PACKAGING_CHOICES, QUESTIONNAIRE } from "./story.js?v=0.14.0";
-import { buildCaseDeck, caseEventsFor, generateCaseSequence } from "./caseEngine.js?v=0.14.0";
+import { buildCaseDeck, caseEventsFor, generateCaseSequence, generateStoryCaseSequence } from "./caseEngine.js?v=0.14.0";
 import { shuffle } from "./random.js?v=0.14.0";
 import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.14.0";
 import { BASE_POINTS, CHARACTER_ART, MAX_META_BONUS, PUBLIC_PLAYER_GENDER, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.14.0";
@@ -79,6 +79,12 @@ function applySpecialtyBoost(attrs) {
 
 function chooseSpecialty(id) {
   state.specialty = id;
+  saveState();
+  render();
+}
+
+function chooseCaseMode(mode) {
+  state.caseMode = mode === "anchor" ? "anchor" : "story";
   saveState();
   render();
 }
@@ -164,7 +170,9 @@ function finalizeCharacter() {
   state.caseArchive = [];
   state.candidateAccess = {};
   generateNpcSeeds();
-  state.caseBriefs = generateCaseSequence(NPCS, state.attrs);
+  state.caseBriefs = state.caseMode === "anchor"
+    ? generateCaseSequence(NPCS, state.attrs, { runNumber: meta.runs ?? 0 })
+    : generateStoryCaseSequence(NPCS, state.attrs, { runNumber: meta.runs ?? 0 });
   weaveCaseThread();
   state.caseBrief = state.caseBriefs[0] ?? null;
   state.solvedCaseIds = [];
@@ -195,18 +203,30 @@ function weaveCaseThread() {
     const previous = briefs[index - 1];
     const linkedNpcId = index === 0 ? null : previous?.respondentId ?? previous?.complainantId ?? null;
     const linkedNpc = getNpc(linkedNpcId);
-    const role = index === 1 ? "上一案被指向的人作为旁证进入本案" : index === 2 ? "前两案的叙事模式成为告解镜像" : "本周目开案";
+    const role = state.caseMode === "story"
+      ? index === 0
+        ? "连环案件开端"
+        : index === briefs.length - 1
+          ? "前五案的叙事模式进入终局告解"
+          : "上一案材料进入本案"
+      : index === 1
+        ? "上一案被指向的人作为旁证进入本案"
+        : index === 2
+          ? "前两案的叙事模式成为告解镜像"
+          : index === 0
+            ? "本周目开案"
+            : `第 ${index + 1} 案：前案声誉与人物牵连延续至此`;
     if (linkedNpcId) {
       brief.threadLink = {
         linkedNpcId,
         role,
-        line: `${linkedNpc?.name ?? "上一案当事人"} 的旧案记录会影响本案旁听席对同类叙事的第一反应。`
+        line: brief.storyClue ?? `${linkedNpc?.name ?? "上一案当事人"} 的旧案记录会影响本案旁听席对同类叙事的第一反应。`
       };
     } else {
       brief.threadLink = {
         linkedNpcId: null,
         role,
-        line: "今晚的第一案会决定侦探局本周目的基础声誉。"
+        line: brief.storyClue ?? "今晚的第一案会决定侦探局本周目的基础声誉。"
       };
     }
     return {
@@ -576,7 +596,7 @@ function layout(content, options = {}) {
       <header class="topbar">
         <button class="brand" data-action="title" type="button">婚恋侦探局</button>
         <nav class="tabs" aria-label="章节">
-          ${CHAPTERS.map((chapter) => `<span class="${state.chapter === Number(chapter.id.slice(2)) ? "active" : ""}">${chapter.title.split("：")[0]}</span>`).join("")}
+          ${topbarTabs()}
         </nav>
         <button class="ghost iconish" data-action="sound" type="button">${isSoundEnabled() ? "音效 开" : "音效 关"}</button>
         <button class="ghost" data-action="reset" type="button">重开</button>
@@ -599,7 +619,7 @@ function bindCommon() {
 }
 
 function screenContext() {
-  return { state, meta, layout, setScreen, totalPoints, totalAttrs, canRemove, canAdd, saveState, render, finalizeCharacter, chooseSpecialty, app, resetGame, isSoundEnabled, toggleSound };
+  return { state, meta, layout, setScreen, totalPoints, totalAttrs, canRemove, canAdd, saveState, render, finalizeCharacter, chooseSpecialty, chooseCaseMode, app, resetGame, isSoundEnabled, toggleSound };
 }
 
 function screenRenderers() { return createScreenRenderers(screenContext()); }
@@ -618,34 +638,76 @@ function renderChapter() {
 function activeCaseBrief() {
   const index = Math.max(0, Math.min((state.chapter ?? 1) - 1, (state.caseBriefs?.length ?? 1) - 1));
   const brief = state.caseBriefs?.[index] ?? state.caseBrief;
-  state.caseBrief = brief;
+  let changed = false;
+  if (state.caseBrief !== brief) {
+    state.caseBrief = brief;
+    changed = true;
+  }
+  const hadBudget = brief ? Boolean(state.caseBudgets?.[caseNoteKey(brief)]) : true;
   ensureCaseBudget(brief);
-  if (brief?.complainantId && !state.primaryNpcId) state.primaryNpcId = brief.complainantId;
+  if (!hadBudget) changed = true;
+  if (brief?.complainantId && !state.primaryNpcId) {
+    state.primaryNpcId = brief.complainantId;
+    changed = true;
+  }
+  if (changed) saveState();
   return brief;
 }
 
 function renderCaseInvestigation() {
   const brief = activeCaseBrief();
   if (!brief) return renderTitle();
-  const chapter = CASE_CHAPTERS[state.chapter - 1]?.title ?? `第 ${state.chapter} 案`;
+  const chapter = caseChapterTitle(brief, state.chapter - 1);
   if (state.scene === "sceneReview") return renderCaseSceneReview(brief, chapter);
   if (state.scene === "testimony") return renderCaseTestimony(brief, chapter);
   if (state.scene === "evidence") return renderCaseEvidence(brief, chapter);
   if (state.scene === "accusation") return renderCaseAccusation(brief, chapter);
   if (state.scene === "caseSolved") return renderCaseSolved(brief, chapter);
   if (state.scene === "caseInterlude") return renderCaseInterlude(brief, chapter);
-  if (state.scene === "runComplete") return renderCaseRunComplete(brief, chapter);
+  if (state.scene === "runComplete") return renderCaseRunComplete(brief, "本轮复盘");
   if (state.scene === "caseAftermath") return renderCaseAftermath(brief, chapter);
   return renderCaseOpen(brief, chapter);
+}
+
+function topbarTabs() {
+  if (state.caseBriefs?.length && !state.investigationComplete) {
+    return state.caseBriefs.map((brief, index) => `<span class="${state.chapter === index + 1 ? "active" : ""}">${caseShortTitle(brief, index)}</span>`).join("");
+  }
+  return CHAPTERS.map((chapter) => `<span class="${state.chapter === Number(chapter.id.slice(2)) ? "active" : ""}">${chapter.title.split("：")[0]}</span>`).join("");
+}
+
+function caseShortTitle(brief, index) {
+  if (brief?.storyArcTitle) return brief.storyArcTitle.split("：")[0];
+  return CASE_CHAPTERS[index]?.title?.split("：")[0] ?? `第 ${index + 1} 案`;
+}
+
+function caseChapterTitle(brief, index) {
+  return brief?.storyArcTitle ?? CASE_CHAPTERS[index]?.title ?? `第 ${index + 1} 案：${brief?.modeLabel ?? "婚恋 case"}`;
+}
+
+function caseSetLabel() {
+  const count = state.caseBriefs?.length ?? 0;
+  return state.caseMode === "anchor" ? `${count} 起主播随机案` : `${count} 起连环主线案`;
+}
+
+function caseSetSummary() {
+  if (state.caseMode === "anchor") {
+    return "主播模式保留栏目式随机案卷：每一案独立生成，但上一案的声誉、舆论和人物牵连仍会影响下一案的配合度。";
+  }
+  return "故事模式由六个固定案件组成一条连环主线：从资料包装、房本安全感、彩礼酒席，到亲属债务、情绪外包和告解终局，逐步把关系里的包装、资源、账本与控制串起来。";
 }
 
 function renderCaseOpen(brief, chapter) {
   state.primaryNpcId = brief.complainantId;
   const complainant = getNpc(brief.complainantId);
   const respondent = getNpc(brief.respondentId);
+  const opening = playthroughOpening(brief);
   storyFrame({
     chapter,
     text: `
+      <p class="episode-hook"><b>${playthroughLabel()}</b>：${opening.hook}</p>
+      ${storyColdOpenLine(brief)}
+      <p class="side-signal">${opening.director}</p>
       <p><b>案由</b>：${brief.label}｜${caseDifficultyText(brief)}</p>
       <p>${brief.openingComplaint}</p>
       <p class="hint">${brief.publicHook}</p>
@@ -655,8 +717,11 @@ function renderCaseOpen(brief, chapter) {
         <p><b>另一方</b>：${respondent?.name ?? "未知"}</p>
         <p><b>本案结构</b>：${caseStructureText(brief)}</p>
         <p><b>调查资源</b>：${budgetLine(brief)}</p>
+        ${brief.storySuspense ? `<p><b>主线疑问</b>：${brief.storySuspense}</p>` : ""}
+        ${brief.storyClueObject ? `<p><b>悬念物</b>：${brief.storyClueObject}</p>` : ""}
         <p><b>本周目线索</b>：${brief.threadLink?.line ?? "本案暂无前案旁证。"}</p>
         <p><b>侦探局战况</b>：${agencyBattleLine()}</p>
+        <p><b>开场压力</b>：${opening.pressure}</p>
         ${meta.bonusPoints >= 15 ? `<p><b>提前预警</b>：${earlyWarningText(brief)}</p>` : ""}
       </div>
     `,
@@ -679,11 +744,14 @@ function renderCaseOpen(brief, chapter) {
 function renderCaseSceneReview(brief, chapter) {
   if (brief.caseMode === "confession") return renderConfessionTimeline(brief, chapter);
   const contradictions = contradictionsForCase(brief);
+  const beat = sceneDramaBeat(brief);
   storyFrame({
     chapter,
     text: `
       <p><b>现场复原：${brief.scene.name}</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      <p class="episode-hook">${beat}</p>
+      ${brief.storyMislead ? `<p class="side-signal"><b>误导方向</b>：${brief.storyMislead}</p>` : ""}
       <p>${brief.scene.description}</p>
       <p class="side-signal">${brief.scene.dialogue}</p>
       <p>注意：场景复原不是事实本身，只是当事人带着立场复述的版本。你需要比对版本，而不是相信讲得更顺的那个人。</p>
@@ -740,6 +808,7 @@ function renderConfessionTimeline(brief, chapter) {
     text: `
       <p><b>告解时间线</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      <p class="episode-hook">${confessionColdOpen(brief)}</p>
       <p>这次不是比对两个人谁说得更顺，而是把当事人的经历拆成节点。每个节点都要判断：TA 是被坑、在自欺，还是也可能伤了别人。</p>
       <div class="scene-list">
         ${(brief.confessionTimeline ?? []).map((node, index) => `
@@ -787,11 +856,13 @@ function renderCaseTestimony(brief, chapter) {
   const notes = notesForCase(brief);
   const contradictions = contradictionsForCase(brief);
   const selectedCard = selectedEvidenceCard(brief);
+  const testimonyBeat = testimonyDramaBeat(brief);
   storyFrame({
     chapter,
     text: `
       <p><b>证词交叉追问</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      <p class="episode-hook">${testimonyBeat}</p>
       <p>每一句话都可能是假话、含糊话、半真话，或者当事人不愿意说完整的真话。直播间里最有力的证据，往往是 TA 前面自己说过的话。</p>
       <p class="signal signal-yellow">当前出示卡：${selectedCard ? `${selectedCard.type}｜${selectedCard.title}` : "未选择。你可以先从下方证据卡选一张。"}</p>
       <div class="scene-list">
@@ -864,6 +935,7 @@ function renderCaseEvidence(brief, chapter) {
     text: `
       <p><b>证据卡</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      ${brief.storyClueObject ? `<p class="episode-hook">主线悬念物：${brief.storyClueObject}。它未必能直接定案，但会决定你如何理解下一案。</p>` : ""}
       <div class="scene-list">
         ${(brief.evidenceCards ?? []).map((card) => `<p><b>${card.type}｜${card.title}</b><br><span>${card.front}</span><br><span>${card.detail}</span></p>`).join("")}
       </div>
@@ -949,7 +1021,7 @@ function renderCaseSolved(brief, chapter) {
       <p><b>包装/夸大</b>：${brief.exaggerations.join("、")}</p>
       ${brief.premeditated ? `<p><b>预谋角色</b>：${actor?.name ?? "未知"}。TA 从一开始就带着非纯洁婚恋目的进入关系。</p>` : `<p><b>模式判断</b>：${brief.modeBrief ?? "本案不保证存在预谋，性格问题、家庭压力和半真半假同样可能造成伤害。"}</p>`}
     `,
-    choices: `<button class="primary" data-next-case type="button">${state.chapter < 3 ? "查看案间战况" : "查看最终战况"}</button>`
+    choices: `<button class="primary" data-next-case type="button">${state.caseBriefs?.[state.chapter] ? "查看案间战况" : "查看最终战况"}</button>`
   });
   document.querySelector("[data-next-case]")?.addEventListener("click", () => {
     state.scene = "caseInterlude";
@@ -961,20 +1033,23 @@ function renderCaseSolved(brief, chapter) {
 function renderCaseInterlude(brief, chapter) {
   const interlude = interludeForCase(brief);
   const nextBrief = state.caseBriefs?.[state.chapter] ?? null;
+  const nextHook = nextBrief ? nextPlaythroughTease(nextBrief) : finalPlaythroughTease();
   storyFrame({
     chapter: "侦探局战况",
     text: `
-      <p><b>${CASE_CHAPTERS[state.chapter - 1]?.title ?? chapter} 结案后</b></p>
+      <p><b>${caseChapterTitle(brief, state.chapter - 1)} 结案后</b></p>
       <p>${interlude.summary}</p>
+      <p class="episode-hook">${nextHook}</p>
+      ${brief.storyTransition ? `<p class="side-signal"><b>主线过场</b>：${brief.storyTransition}</p>` : ""}
       <div class="scene-list">
         <p><b>声誉变化</b>：${signed(interlude.reputationDelta)}｜当前 ${state.agencyReputation}</p>
         <p><b>舆论热度</b>：${signed(interlude.heatDelta)}｜当前 ${state.publicHeat}</p>
-        <p><b>下一案影响</b>：${nextBrief ? nextCaseCarryoverLine(nextBrief) : "三案已结束，进入本周目总复盘。"}</p>
+        <p><b>下一案影响</b>：${nextBrief ? nextCaseCarryoverLine(nextBrief) : `${caseSetLabel()}已结束，进入本轮总复盘。`}</p>
         ${nextBrief?.threadLink ? `<p><b>人物牵连</b>：${nextBrief.threadLink.line}</p>` : ""}
       </div>
     `,
     choices: nextBrief
-      ? `<button class="primary" data-enter-next-case type="button">进入${CASE_CHAPTERS[state.chapter]?.title ?? "下一案"}</button>`
+      ? `<button class="primary" data-enter-next-case type="button">进入${caseChapterTitle(nextBrief, state.chapter)}</button>`
       : `<button class="primary" data-finish-run type="button">完成本周目复盘</button>`
   });
   document.querySelector("[data-enter-next-case]")?.addEventListener("click", () => {
@@ -994,6 +1069,7 @@ function renderCaseInterlude(brief, chapter) {
 
 function renderCaseRunComplete(brief, chapter) {
   const correct = state.accusationHistory.filter((item) => item.correct).length;
+  const totalCases = state.caseBriefs?.length ?? 0;
   const interludeLines = (state.caseBriefs ?? []).map((caseBrief) => {
     const interlude = interludeForCase(caseBrief);
     return `${caseBrief.modeLabel ?? caseBrief.label}：声誉 ${signed(interlude.reputationDelta)}，热度 ${signed(interlude.heatDelta)}。${interlude.summary}`;
@@ -1001,10 +1077,11 @@ function renderCaseRunComplete(brief, chapter) {
   storyFrame({
     chapter,
     text: `
-      <p><b>本周目三案复盘</b></p>
-      <p>你完成了三起连环婚恋案件，其中 ${correct} 起抓住了关键矛盾。</p>
+      <p><b>本轮案件复盘</b></p>
+      <p>你完成了${caseSetLabel()}，其中 ${correct}/${totalCases} 起抓住了关键矛盾。</p>
+      <p class="episode-hook">${runCompleteLine(correct)}</p>
       <p><b>最终战况</b>：声誉 ${state.agencyReputation ?? 0}｜舆论热度 ${state.publicHeat ?? 0}。</p>
-      <p>第一案是婚前 case，训练你在承诺前核验包装和风险；第二案是婚后 case，训练你拆共同生活里的责任、账本和边界；第三案是告解模式，训练你站进当事人的视角，同时看见被坑、自欺和可能伤人的部分。</p>
+      <p>${caseSetSummary()}</p>
       <div class="scene-list">
         ${interludeLines.map((line) => `<p>${line}</p>`).join("")}
       </div>
@@ -1067,7 +1144,7 @@ function prepareCompressedAftermath() {
   }));
   state.candidateAccess = buildCandidateAccess();
   applyCandidateAccessToSeeds();
-  addLog("三案调查已归档，侦探局生成当事人后续片段。", "案件后续");
+  addLog(`${caseSetLabel()}已归档，侦探局生成当事人后续片段。`, "案件后续");
 }
 
 function compressedRelationLine(access, fallbackRole) {
@@ -1079,6 +1156,7 @@ function compressedRelationLine(access, fallbackRole) {
   return `进入观察期，关键要看是否继续回避旧案里的同类问题。`;
 }
 
+// Legacy romance chapters are kept as a material branch; the current main flow ends in compressed aftermath.
 function enterRomanceFromInvestigation() {
   state.caseArchive = (state.caseBriefs ?? []).map((brief) => ({
     id: brief.id,
@@ -1098,7 +1176,7 @@ function enterRomanceFromInvestigation() {
   state.selectedFirstDates = recommendedCandidateIds();
   state.primaryNpcId = null;
   state.secondaryNpcId = null;
-  addLog("三案调查已归档，良缘算法根据你的声誉、舆论热度和案卷牵连重新排序候选人。", "婚恋入口");
+  addLog(`${caseSetLabel()}已归档，良缘算法根据你的声誉、舆论热度和案卷牵连重新排序候选人。`, "婚恋入口");
   saveState();
   render();
 }
@@ -1217,6 +1295,7 @@ function expectedAccusation(brief) {
   if (brief.premeditated) return brief.premeditatedActorId;
   if (brief.stance === "selfJustifying") return brief.complainantId;
   if (brief.stance === "selfDoubt") return "both";
+  if (brief.stance === "halfTruth") return "both";
   if (brief.stance === "badActorFirst") return brief.complainantId;
   if (brief.stance === "trueVictim") return brief.respondentId;
   if (brief.stance === "personalityMismatch") return "noPremeditated";
@@ -1501,6 +1580,7 @@ function accusationLabel(brief, value) {
 function explanationForExpected(brief, expected) {
   if (brief.caseMode === "confession") {
     if (expected === brief.complainantId) return "这类告解最危险的地方，是当事人用自责或委屈包装自己的主动选择。";
+    if (expected === brief.respondentId) return "告解者在这段关系里是真正的受害方：对方的模式性行为才是核心问题，不是告解者的自欺。";
     if (expected === "both") return "告解模式的关键不是找唯一坏人，而是同时看见外部伤害和自己的选择机制。";
     return "这段经历更像关系失衡，不足以稳定指向预谋骗局。";
   }
@@ -1518,6 +1598,167 @@ function stageForCase(brief) {
   if (brief.order === 1) return "dating";
   if (brief.order === 2) return "marriageTalk";
   return "wedding";
+}
+
+function currentPlaythroughNumber() {
+  return (meta.runs ?? 0) + 1;
+}
+
+function playthroughLabel() {
+  const run = currentPlaythroughNumber();
+  if (run === 1) return "第一周目";
+  if (run === 2) return "第二周目";
+  return `第 ${run} 周目`;
+}
+
+function playthroughOpening(brief) {
+  if (brief.fixedStory) {
+    const total = state.caseBriefs?.length ?? 6;
+    return {
+      hook: `故事模式第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "固定主线案卷已经接入。"}`,
+      director: brief.order === 1
+        ? "孟姐关掉弹幕预览：“故事模式不追热点，追的是同一套话术怎么换壳出现。”"
+        : "孟姐把上一案材料贴到白板上：“别把它当新案，它是上一案留下的回声。”",
+      pressure: brief.storySuspense ?? "这条主线会持续回收前案伏笔，不能只按单案输赢判断。"
+    };
+  }
+  const run = currentPlaythroughNumber();
+  const complainant = getNpc(brief.complainantId)?.name ?? "来访者";
+  const respondent = getNpc(brief.respondentId)?.name ?? "另一方";
+  if (run === 1) {
+    const hooks = {
+      premarital: {
+        hook: "侦探局第一次正式开播，弹幕还把这当成情感调解。三分钟后，第一张转账截图被投到屏幕上，气氛变了。",
+        director: `孟姐压低声音：“记住，${complainant} 先哭，不代表 ${respondent} 就一定先错。”`,
+        pressure: "新手局没有旧案经验，旁听席最容易被第一版故事带走。"
+      },
+      married: {
+        hook: "第一案刚让直播间安静下来，第二通连线就把婚姻里的账本、父母和旧承诺一起倒了出来。",
+        director: "律师顾问提醒你：婚后案不能只查感情，要查谁把共同生活变成了单向责任。",
+        pressure: "第一案的判断会影响当事人愿意给你多少真实材料。"
+      },
+      confession: {
+        hook: "凌晨场没有双方对质，只有一个人坐在镜头前，说自己想告解。越像忏悔，越要确认 TA 有没有把自己也包装成受害者。",
+        director: "孟姐说：“别急着安慰。告解也可能是一种重新剪辑。”",
+        pressure: "第一周目的终局考验不是抓坏人，而是看见关系问题怎么被选择、利益和自尊共同放大。"
+      }
+    };
+    return hooks[brief.caseMode] ?? hooks.premarital;
+  }
+  if (run === 2) {
+    const hooks = {
+      premarital: {
+        hook: "二周目一开场，系统没有给你更简单的题。它给了一段几乎完美的诉苦：时间、眼泪、截图都很齐。",
+        director: `孟姐看着你：“上一周目你学会了怀疑。这一周目，别把怀疑误用成偏见。”`,
+        pressure: "旧经验会帮你更快抓线索，也会诱导你把相似的人判成同一种人。"
+      },
+      married: {
+        hook: "第二案像是专门反咬你的经验：每个人都承认一点错，每个人都留下一块关键空白。",
+        director: "后台提示：二周目的婚后案会更强调责任比例，而不是单一反派。",
+        pressure: "如果你只寻找“谁坏”，就会错过“谁在什么环节推动了伤害”。"
+      },
+      confession: {
+        hook: "告解者没有哭，甚至讲得很清醒。清醒不等于诚实，有时只是更会替自己写结案陈词。",
+        director: "律师顾问说：“这次你要拆的不是谎言，是一套听起来很成熟的自我辩护。”",
+        pressure: "二周目会考你能不能同时保留共情和证据标准。"
+      }
+    };
+    return hooks[brief.caseMode] ?? hooks.premarital;
+  }
+  return {
+    hook: "侦探局已经进入稳定播出，但每一组关系都在提醒你：熟练不等于看透。",
+    director: "孟姐把新案卷推过来：“按流程，但别被流程催眠。”",
+    pressure: "高周目更看重效率、矛盾命中和误伤控制。"
+  };
+}
+
+function storyColdOpenLine(brief) {
+  if (!brief.storyColdOpen) return "";
+  return `<p class="episode-hook"><b>冷开场</b>：${brief.storyColdOpen}</p>`;
+}
+
+function sceneDramaBeat(brief) {
+  if (brief.fixedStory) {
+    return brief.storySuspense ?? `${brief.scene.name} 不是孤立现场，它会把上一案的未解线索推到台前。`;
+  }
+  const complainant = getNpc(brief.complainantId)?.name ?? "来访者";
+  const respondent = getNpc(brief.respondentId)?.name ?? "另一方";
+  const run = currentPlaythroughNumber();
+  if (run === 1 && brief.order === 1) {
+    return `${complainant} 的版本听起来完整，${respondent} 的版本却只多出一个细节：那天不是第一次谈到这件事。第一个周目最容易犯的错，就是把“讲得顺”当成“讲得真”。`;
+  }
+  if (run === 2) {
+    return `场景被复原成两套几乎都合理的说法。你已经知道要找矛盾，但这次更重要的是判断：矛盾来自撒谎，还是来自两个人都在保护自己。`;
+  }
+  return `${brief.scene.name} 像一张被折过的纸，每个人摊开时都只露出对自己有利的折痕。`;
+}
+
+function confessionColdOpen(brief) {
+  const name = getNpc(brief.complainantId)?.name ?? "告解者";
+  if (brief.fixedStory) {
+    return `${brief.storySuspense ?? `${name} 的告解不是结论，而是最后一层需要核验的叙事。`} ${brief.storyMislead ?? ""}`;
+  }
+  if (currentPlaythroughNumber() === 1) {
+    return `${name} 开口第一句不是“TA 对不起我”，而是“我好像也有问题”。这句话很容易让人放松警惕，但侦探局只相信被核验过的自省。`;
+  }
+  if (currentPlaythroughNumber() === 2) {
+    return `${name} 把每个节点都讲得像复盘报告，连自己的脆弱都摆得很体面。二周目的难点是：成熟表达也可能遮住真实收益。`;
+  }
+  return `${name} 的告解需要被拆成节点，而不是被当成完整答案。`;
+}
+
+function testimonyDramaBeat(brief) {
+  const complainant = getNpc(brief.complainantId)?.name ?? "先诉苦者";
+  const respondent = getNpc(brief.respondentId)?.name ?? "另一方";
+  if (brief.fixedStory) {
+    return `主线追问：${brief.storyMislead ?? brief.storySuspense ?? "这句证词不仅属于本案，也可能在下一案被重新解释。"}`;
+  }
+  if (currentPlaythroughNumber() === 1) {
+    return `灯光切到交叉追问，${complainant} 和 ${respondent} 的台词第一次真正咬在一起。你不需要赢过他们，只需要让前后说法互相照见。`;
+  }
+  if (currentPlaythroughNumber() === 2) {
+    return `二周目的证词不会把破绽直接递给你。真正的破口藏在“我也有错”和“但 TA 更过分”之间。`;
+  }
+  return "证词越多，越要把每句话放回证据卡和时间线里。";
+}
+
+function nextPlaythroughTease(nextBrief) {
+  if (state.caseMode === "story") {
+    return nextBrief?.storyColdOpen
+      ? `下一案冷开场：${nextBrief.storyColdOpen}`
+      : `下一案会继续回收主线证据：${nextBrief?.storyArcSummary ?? "固定主线继续推进。"}`;
+  }
+  if (currentPlaythroughNumber() === 1) {
+    return `下一案不是升级版吵架，而是换一种关系阶段继续追问：如果婚前没查清，婚后会用账本和责任重新出现。`;
+  }
+  if (currentPlaythroughNumber() === 2) {
+    return `下一案会故意让熟悉的风险换一张脸。上一案的经验能用，但不能照抄。`;
+  }
+  return `${nextBrief.modeLabel ?? "下一案"} 已经接入，上一案的声誉和舆论会先你一步进入直播间。`;
+}
+
+function finalPlaythroughTease() {
+  if (state.caseMode === "story") return "六案主线已经收束。最后要复盘的不是谁最坏，而是谁最会让别人替自己的叙事付代价。";
+  if (currentPlaythroughNumber() === 1) return "第一周目的最后一题已经结束，但真正留下来的不是答案，是你第一次学会慢一点相信叙事。";
+  if (currentPlaythroughNumber() === 2) return "第二周目结束时，系统不再奖励单纯怀疑，而是奖励你能把怀疑、共情和证据同时拿稳。";
+  return "本周目已经收束，下一组案件会继续考验你的判断习惯。";
+}
+
+function runCompleteLine(correct) {
+  const total = state.caseBriefs?.length ?? 3;
+  if (state.caseMode === "story") {
+    if (correct >= Math.ceil(total * 0.7)) return "六案主线基本站住了：你没有被每一案表面的争点带跑，而是把包装、资产、债务、边界和告解串成了一条链。";
+    return "六案主线还有断点：有些案子被你当成单案处理了，下一轮要更注意悬念物和案间过场。";
+  }
+  if (currentPlaythroughNumber() === 1) {
+    if (correct >= Math.max(2, Math.ceil(total * 0.6))) return "第一次开播，你已经证明自己不会被第一版哭诉轻易带走。侦探局开始真正有了口碑。";
+    return "第一周目没有完美通关，但它把最重要的事教给你：没有证据支撑的同情，也可能误伤另一个人。";
+  }
+  if (currentPlaythroughNumber() === 2) {
+    if (correct >= total - 1) return "第二周目最难的是不被上一轮经验绑架。你把相似和相同分开了，这是侦探局真正的成长。";
+    return "第二周目提醒你：经验会提高速度，也会制造偏见。下一轮需要更谨慎地拆开责任比例。";
+  }
+  return correct >= total - 1 ? "本周目判断稳定，侦探局的流程开始形成可靠手感。" : "本周目仍有误判，后续要提高证据命中率。";
 }
 
 function renderBurstInterruption() {
@@ -1552,8 +1793,7 @@ function storyFrame({ chapter, text, choices, side = "" }) {
       <article class="vn-stage">
         <div class="visual-scene ${backdropClass()}" aria-hidden="true">
           <div class="scene-label">${sceneLabel()}</div>
-          <div class="character-shadow"></div>
-          <img class="character-standee" src="${persona.art}" alt="" />
+          ${visualPortraitLayer(persona)}
         </div>
         <div class="dialogue-card">
           <p class="eyebrow">${chapter}</p>
@@ -1568,6 +1808,7 @@ function storyFrame({ chapter, text, choices, side = "" }) {
       </article>
       <aside class="status-card">
         ${renderStatusPanel({ state, currentNpc, currentSeed })}
+        ${renderCaseCastPanel()}
         ${side}
       </aside>
     </section>
@@ -1654,6 +1895,53 @@ function renderBurstAlert() {
 
   const label = event.type === "motive" ? "动机显影" : "内在爆发";
   return `<p class="burst-alert"><b>${label}</b>：${event.line}</p>`;
+}
+
+function visualPortraitLayer(persona) {
+  if (state.caseBriefs?.length && !state.investigationComplete) {
+    const brief = activeCaseBrief();
+    const complainant = getNpc(brief?.complainantId);
+    const respondent = getNpc(brief?.respondentId);
+    const activeId = state.primaryNpcId ?? complainant?.id;
+    const people = [
+      { role: "先诉苦", npc: complainant },
+      { role: "另一方", npc: respondent }
+    ].filter((item) => item.npc);
+    return `
+      <div class="case-duel-portraits">
+        ${people.map((item) => `
+          <figure class="case-portrait ${activeId === item.npc.id ? "active" : ""}">
+            <img src="${CHARACTER_ART[item.npc.id]}" alt="" />
+            <figcaption><span>${item.role}</span><b>${item.npc.name}</b></figcaption>
+          </figure>
+        `).join("")}
+      </div>
+    `;
+  }
+  return `
+    <div class="character-shadow"></div>
+    <img class="character-standee" src="${persona.art}" alt="" />
+  `;
+}
+
+function renderCaseCastPanel() {
+  if (!state.caseBriefs?.length || state.investigationComplete) return "";
+  const brief = activeCaseBrief();
+  const complainant = getNpc(brief?.complainantId);
+  const respondent = getNpc(brief?.respondentId);
+  if (!complainant || !respondent) return "";
+  const currentId = state.primaryNpcId ?? complainant.id;
+  return `
+    <div class="case-cast-panel">
+      <h3>本案当事人</h3>
+      ${[["先诉苦者", complainant], ["另一方", respondent]].map(([role, npc]) => `
+        <div class="case-cast-row ${currentId === npc.id ? "active" : ""}">
+          <img src="${CHARACTER_ART[npc.id]}" alt="" />
+          <p><b>${npc.name}</b><span>${role}｜${npc.archetype}</span></p>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 function visualPersona() {

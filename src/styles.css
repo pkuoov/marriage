@@ -390,6 +390,79 @@ button:active:not(:disabled) {
   filter: blur(4px);
 }
 
+.case-duel-portraits {
+  position: absolute;
+  inset: 48px 24px 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(8px, 4vw, 42px);
+  pointer-events: none;
+}
+
+.case-portrait {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 0;
+  opacity: .74;
+  filter: saturate(.86);
+  transform: translateY(10px) scale(.94);
+  transition: opacity .18s ease, filter .18s ease, transform .18s ease;
+}
+
+.case-portrait.active {
+  opacity: 1;
+  filter: saturate(1.04);
+  transform: translateY(0) scale(1);
+}
+
+.case-portrait img {
+  width: auto;
+  max-width: min(38vw, 310px);
+  height: calc(100% - 8px);
+  object-fit: contain;
+  object-position: bottom center;
+  filter:
+    drop-shadow(0 0 1px rgba(255, 250, 241, .78))
+    drop-shadow(0 22px 34px rgba(20, 16, 12, .36));
+}
+
+.case-portrait figcaption {
+  position: absolute;
+  right: 50%;
+  bottom: 12px;
+  min-width: 132px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 250, 241, .36);
+  border-radius: 8px;
+  color: #fffaf1;
+  background: rgba(38, 32, 28, .68);
+  box-shadow: 0 10px 26px rgba(20, 16, 12, .2);
+  text-align: center;
+  transform: translateX(50%);
+  backdrop-filter: blur(8px);
+}
+
+.case-portrait figcaption span,
+.case-portrait figcaption b {
+  display: block;
+}
+
+.case-portrait figcaption span {
+  color: rgba(255, 250, 241, .72);
+  font-size: 12px;
+}
+
+.case-portrait figcaption b {
+  margin-top: 2px;
+  font-size: 16px;
+}
+
 @keyframes standeeIn {
   from {
     opacity: 0;
@@ -679,6 +752,7 @@ article.npc-card button.selected {
 .scene-list,
 .hint,
 .message,
+.episode-hook,
 .signal,
 .side-signal,
 .reaction,
@@ -691,6 +765,11 @@ article.npc-card button.selected {
 
 .message {
   border-color: var(--green);
+}
+
+.episode-hook {
+  border-color: var(--rose);
+  background: rgba(191, 111, 105, .16);
 }
 
 .side-signal {
@@ -728,6 +807,50 @@ article.npc-card button.selected {
   border: 1px solid rgba(255, 250, 241, .13);
   border-radius: 8px;
   background: rgba(255, 255, 255, .07);
+}
+
+.case-cast-panel {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(83, 70, 53, 0.14);
+}
+
+.case-cast-row {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .45);
+}
+
+.case-cast-row.active {
+  border-color: rgba(157, 63, 53, .42);
+  background: rgba(157, 63, 53, .08);
+}
+
+.case-cast-row img {
+  width: 54px;
+  height: 64px;
+  object-fit: contain;
+  object-position: bottom center;
+}
+
+.case-cast-row p {
+  margin: 0;
+}
+
+.case-cast-row b,
+.case-cast-row span {
+  display: block;
+}
+
+.case-cast-row span {
+  margin-top: 2px;
+  font-size: 12px;
 }
 
 .burst-mode {
@@ -819,6 +942,25 @@ article.npc-card button.selected {
     width: auto;
     max-width: min(64vw, 252px);
     height: calc(100% - 12px);
+  }
+
+  .case-duel-portraits {
+    inset: 48px 8px 0;
+    gap: 0;
+  }
+
+  .case-portrait img {
+    max-width: 50vw;
+    height: calc(100% - 18px);
+  }
+
+  .case-portrait figcaption {
+    min-width: 108px;
+    padding: 6px 8px;
+  }
+
+  .case-portrait figcaption b {
+    font-size: 14px;
   }
 
   .vn-stage .dialogue-card {

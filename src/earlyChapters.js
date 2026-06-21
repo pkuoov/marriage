@@ -96,7 +96,7 @@ function renderChapter1() {
       chapter: CHAPTERS[0].title,
       text: `
         <p><b>孟姐</b>：“第一轮叙事已经录下来了。”</p>
-        <p><b>孟姐</b>：“现在不是盲选对象，是看三案之后谁还值得进入关系测试。”</p>
+        <p><b>孟姐</b>：“现在不是盲选对象，是看案卷归档之后谁还值得进入关系测试。”</p>
         <p>请选择 ${Math.min(3, candidates.length)} 位进入后续观察池。系统已经按声誉、舆论热度和旧案牵连重新排序。</p>
         <div class="npc-grid">
           ${candidates.map((npc) => npcCard(npc, selectedIds.includes(npc.id))).join("")}

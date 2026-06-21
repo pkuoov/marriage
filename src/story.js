@@ -273,7 +273,7 @@ export const CHAPTERS = [
   {
     id: "ch1",
     title: "第一章：侦探局之后",
-    summary: "把三案调查结果转成婚恋候选人入口、信任度和风险标签。"
+    summary: "把案卷调查结果转成婚恋候选人入口、信任度和风险标签。"
   },
   {
     id: "ch2",

@@ -435,17 +435,280 @@ export const CASE_MODE_SEQUENCE = [
   }
 ];
 
-export function generateCaseSequence(npcs, attrs) {
-  const usedPlots = new Set();
-  return CASE_MODE_SEQUENCE.map((mode, index) => {
+const STORY_CASE_SEQUENCE = [
+  {
+    id: "story-01-profile-mask",
+    title: "第一案：完美资料",
+    summary: "一份过于漂亮的择偶资料，把婚史、负债和家庭托举都藏进了“只是包装”。",
+    openingComplaint: "何念带着一份近乎完美的择偶资料连线。她说自己只是被周砚误会了包装，但匿名资料包里的被删动态显示，她早在来侦探局前就准备好了另一套叙事。",
+    coldOpen: "开播前三分钟，后台收到一份匿名资料包。文件名只有四个字：她在演。资料包里没有结论，只有三张被删动态、两笔转账和一张没有露脸的订婚照。",
+    suspense: "真正的问题不是何念有没有包装资料，而是谁提前知道她会来侦探局，并把证据按顺序摆好了。",
+    mislead: "旁听席会先把注意力放在外貌、学历和收入包装上，但第一案真正埋下的是“稳定推进”这四个字。",
+    clueObject: "被删动态截图",
+    transition: "结案后，截图角落里的房产中介门店 LOGO 被技术组放大。它不是背景，而是第二案的现场。",
+    caseMode: "premarital",
+    plotId: "positioning-lie",
+    complainantId: "he",
+    respondentId: "zhou",
+    stance: "badActorFirst",
+    premeditatedActorId: "he",
+    sceneId: "late-night-chat",
+    storyClue: "被删动态里出现的“稳定推进”，会在第二案变成房本和安全感争议。"
+  },
+  {
+    id: "story-02-house-name",
+    title: "第二案：房本安全感",
+    summary: "第一案留下的稳定关系话术，转成了婚前房产加名和父母出资归属。",
+    openingComplaint: "周砚主动连线回应第一案。他没有否认何念截图里的“稳定推进”，而是把问题推到房本加名：“如果都准备结婚了，为什么安全感不能写进合同？”",
+    coldOpen: "第二天，周砚主动连线。他没有否认第一案里的截图，只说：“如果一个人真想结婚，为什么不能给安全感？”镜头外，有人轻轻敲了两下桌面。",
+    suspense: "周砚像是来反击何念，但他带来的购房材料太完整，完整到不像临时自证。",
+    mislead: "这案看起来是房本加不加名，其实要查谁在用“安全感”替父母出资、贷款资格和退出机制挡刀。",
+    clueObject: "购房合同角落的手写编号",
+    transition: "合同编号被录入系统后，弹出一条旧记录：同一位婚庆经理，三个月内经手过两场突然取消的订婚宴。",
+    caseMode: "premarital",
+    plotId: "house-name-security-test",
+    complainantId: "zhou",
+    respondentId: "he",
+    stance: "badActorFirst",
+    premeditatedActorId: "zhou",
+    sceneId: "broker-office",
+    storyClue: "房本争议没有停在两个人之间，双方父母的账本会把第三案推到婚礼桌上。"
+  },
+  {
+    id: "story-03-bride-price",
+    title: "第三案：酒席和彩礼",
+    summary: "办酒、短暂同居和礼金流水纠缠在一起，谁都说自己已经付出了足够多。",
+    openingComplaint: "婚庆经理先把尾款单传进后台，随后陈默和林鹿几乎同时申请连线。两个人都说自己被婚礼进度拖住，但尾款单上的排期显示，这不是第一次有人在临门一脚改口。",
+    coldOpen: "第三案不是当事人先来的，是婚庆经理先把一张酒席尾款单传进后台。备注栏写着：退婚原因不要写真实的。",
+    suspense: "陈默和林鹿都说自己是被拖到这一步的人，但酒席名单里出现了第一案房产合同旁同一家婚庆公司的经办人。",
+    mislead: "彩礼金额会很吵，酒席礼金会很乱，但真正的悬念是：谁在利用婚礼临近这件事制造停不下来的压力。",
+    clueObject: "婚庆尾款单",
+    transition: "尾款单背面拍到一行小字：亲属借款先过桥，婚后共同还。第四案的债务从这里开始露头。",
+    caseMode: "premarital",
+    plotId: "bride-price-short-cohabitation",
+    complainantId: "chen",
+    respondentId: "lin",
+    stance: "personalityMismatch",
+    sceneId: "wedding-prep",
+    storyClue: "礼金和彩礼只是表面，真正进入婚后的，是原生家庭债务和责任捆绑。"
+  },
+  {
+    id: "story-04-relative-debt",
+    title: "第四案：亲属债务",
+    summary: "小家庭刚开始共同生活，亲属借款、担保和父母医疗债同时进入账本。",
+    openingComplaint: "林鹿上传家庭群截图后才开麦。她不再问陈默爱不爱她，只问：为什么一笔亲属借款会先经过婚庆尾款，再进入他们的共同账户。",
+    coldOpen: "第四案开场，林鹿没有哭。她只上传了一张家庭群截图：大家都在说“先帮你哥过这一关”，唯独没人问这笔钱从哪里来。",
+    suspense: "陈默看起来像被家庭推着走，但他每次沉默都刚好避开了担保、借条和共同账户的关键日期。",
+    mislead: "这案容易被看成凤凰男或原生家庭负担，但真正要查的是：小家庭什么时候被悄悄接入了别人的债务系统。",
+    clueObject: "家庭群截图",
+    transition: "债务复盘到最后，一个深夜转账对象浮出水面。备注不是亲属名，而是“项目咨询”。第五案的同事出现了。",
+    caseMode: "married",
+    plotId: "relative-debt-bundle",
+    complainantId: "lin",
+    respondentId: "chen",
+    stance: "trueVictim",
+    premeditatedActorId: "chen",
+    sceneId: "rental-room",
+    storyClue: "债务压力让情绪外包更容易发生，下一案会从账本滑向边界。"
+  },
+  {
+    id: "story-05-emotional-affair",
+    title: "第五案：同事情绪外包",
+    summary: "一段婚后深夜聊天被说成工作倾诉，但报销、出差和删改记录对不上。",
+    openingComplaint: "沈知夏把聊天记录投到屏幕上。许照承认情绪外包，却坚持没有越界；但他删掉的那段语音，关键词不是暧昧，而是“资料夹”。",
+    coldOpen: "沈知夏把聊天记录投到屏幕上，第一句话不是暧昧，而是：“你终于懂我为什么不想回家。”弹幕安静了三秒。",
+    suspense: "许照承认自己情绪外包，却坚持没有越界。问题是，他删掉的不是暧昧称呼，而是一段关于前四案的共同资料。",
+    mislead: "这案看起来是婚内边界，其实它第一次证明：前面几案不是偶然同题，而是被同一套亲密关系话术反复利用。",
+    clueObject: "被撤回的深夜语音",
+    transition: "语音恢复后，只剩一句话：“如果他们都愿意讲自己的版本，我们就能把局做完整。”终局告解由此打开。",
+    caseMode: "married",
+    plotId: "coworker-emotional-affair",
+    complainantId: "shen",
+    respondentId: "xu",
+    stance: "halfTruth",
+    sceneId: "late-night-chat",
+    storyClue: "第五案没有给出爽快结论，因为终局要回到当事人的自我告解里。"
+  },
+  {
+    id: "story-06-confession",
+    title: "第六案：告解终局",
+    summary: "当事人回看整条关系链，必须拆开自己哪里被坑、哪里自欺、哪里也伤害了别人。",
+    openingComplaint: "许照没有带来新的控诉。他打开六案共用资料夹，承认自己曾经把别人的包装、房本、彩礼、债务和情绪外包都当成素材，想证明自己才是唯一看清关系的人。",
+    coldOpen: "终局没有新的来访者。屏幕亮起时，许照坐在黑场里，说：“前五案你们都以为在查别人，其实也在查我。”",
+    suspense: "告解者把所有线索都串得太顺了。顺到你必须反过来问：这是忏悔，还是最后一次控制叙事？",
+    mislead: "终局不再奖励你找到唯一坏人。它要求你判断：被坑、自欺、伤害别人，能不能同时发生在同一个人身上。",
+    clueObject: "六案共用资料夹",
+    transition: "资料夹最后一页没有证据，只有孟姐的一句批注：能重来的不是人生，是你下一次识别叙事的速度。",
+    caseMode: "confession",
+    plotId: "control-isolation-reporting",
+    complainantId: "xu",
+    respondentId: "shen",
+    stance: "selfDoubt",
+    sceneId: "family-dinner",
+    storyClue: "终局不再寻找唯一反派，而是把六案里的包装、资源、账本和控制全部连起来。"
+  }
+];
+
+export function generateStoryCaseSequence(npcs, attrs, options = {}) {
+  const runNumber = options.runNumber ?? 0;
+  return STORY_CASE_SEQUENCE.map((item, index) => {
+    const mode = CASE_MODE_SEQUENCE.find((caseMode) => caseMode.id === item.caseMode) ?? CASE_MODE_SEQUENCE[0];
     const brief = generateLivestreamCase(npcs, attrs, {
       order: index + 1,
       caseMode: mode,
-      usedPlots
+      runNumber,
+      plotId: item.plotId,
+      complainantId: item.complainantId,
+      respondentId: item.respondentId,
+      stance: item.stance,
+      sceneId: item.sceneId,
+      forcedPremeditated: Boolean(item.premeditatedActorId),
+      premeditatedActorId: item.premeditatedActorId
+    });
+    return {
+      ...brief,
+      id: item.id,
+      storyCaseId: item.id,
+      storyArcTitle: item.title,
+      storyArcSummary: item.summary,
+      openingComplaint: item.openingComplaint ?? brief.openingComplaint,
+      storyColdOpen: item.coldOpen,
+      storySuspense: item.suspense,
+      storyMislead: item.mislead,
+      storyClueObject: item.clueObject,
+      storyClue: item.storyClue,
+      storyTransition: item.transition,
+      evidenceCards: [...buildStoryEvidenceCards(item), ...(brief.evidenceCards ?? [])],
+      confessionTimeline: item.id === "story-06-confession" ? buildStoryConfessionTimeline(item) : brief.confessionTimeline,
+      fixedStory: true
+    };
+  });
+}
+
+function buildStoryEvidenceCards(item) {
+  const commonTargets = ["ambiguous", "reluctant", "truthWithGap", "defensive", "sceneHint", "selfDoubt", "shadowVersion", "halfLie"];
+  const base = {
+    id: `${item.id}-story-clue`,
+    type: "主线物证",
+    title: item.clueObject,
+    front: item.suspense,
+    detail: item.transition,
+    targets: commonTargets,
+    contradiction: `主线物证《${item.clueObject}》证明本案不是孤立事件：${item.storyClue}`
+  };
+  const extras = {
+    "story-03-bride-price": {
+      id: "story-03-wedding-manager",
+      type: "排期表",
+      title: "婚庆经理经办记录",
+      front: "排期表显示，同一位婚庆经办人同时出现在第二案房产合同附件和第三案酒席尾款单里。",
+      detail: "这让“临近婚礼才谈条件”不再只是两个人的临时争吵，而像一种可复制的推进方式。",
+      targets: commonTargets,
+      contradiction: "婚庆经办记录把第二案房本安全感和第三案酒席彩礼连到同一个压力节点。"
+    },
+    "story-05-emotional-affair": {
+      id: "story-05-recovered-voice",
+      type: "音频恢复",
+      title: "被撤回的深夜语音",
+      front: "恢复后的语音只剩一句：“如果他们都愿意讲自己的版本，我们就能把局做完整。”",
+      detail: "这句话让第五案从情绪外包滑向主线：有人在把前四案的当事人叙事当成同一套资料。",
+      targets: commonTargets,
+      contradiction: "被撤回语音证明许照删掉的不是暧昧称呼，而是他对前四案资料的参与。"
+    },
+    "story-06-confession": {
+      id: "story-06-shared-folder",
+      type: "资料夹",
+      title: "六案共用资料夹",
+      front: "资料夹按“包装、房本、彩礼、债务、情绪、告解”六个标签排列，时间戳早于部分当事人连线。",
+      detail: "这不是一份普通复盘，而是有人提前把关系里的常见话术整理成了可调用模板。",
+      targets: commonTargets,
+      contradiction: "六案共用资料夹证明终局告解不是突然自省，而是对前五案叙事控制欲的回收。"
+    }
+  };
+  return [base, extras[item.id]].filter(Boolean);
+}
+
+function buildStoryConfessionTimeline(item) {
+  return [
+    {
+      id: "profile-mask",
+      label: "第一案：资料包装",
+      text: "许照承认，何念的完美资料让他第一次意识到：只要把婚史、负债和家庭压力改写成“普通包装”，旁听席就会先争论她值不值得，而不是她隐瞒了什么。",
+      correctMark: "hurtOther",
+      contradiction: "终局告解：许照不是旁观第一案，他从资料包装里学会了如何让别人替叙事做情绪劳动。"
+    },
+    {
+      id: "house-name",
+      label: "第二案：安全感话术",
+      text: "周砚把房本加名说成安全感，许照说自己当时只是在记录话术。但资料夹里，“安全感”被标成了可复用关键词。",
+      correctMark: "selfBlind",
+      contradiction: "终局告解：许照把控制话术当成观察样本，却没有承认自己也被这套话术吸引。"
+    },
+    {
+      id: "wedding-pressure",
+      label: "第三案：停不下来的婚礼",
+      text: "酒席和彩礼把所有人都推到“都到这一步了”的位置。许照承认，他最早看见沉没成本如何替真相封口。",
+      correctMark: "hurtByOther",
+      contradiction: "终局告解：婚礼压力不是单案背景，而是整条主线里最稳定的逼迫装置。"
+    },
+    {
+      id: "debt-system",
+      label: "第四案：债务接入",
+      text: "亲属债务进入小家庭时，许照没有提醒当事人。他说自己只是想确认：账本是不是比承诺更能暴露关系真实结构。",
+      correctMark: "hurtOther",
+      contradiction: "终局告解：许照用“观察”包装了自己的不介入，让伤害继续扩大。"
+    },
+    {
+      id: "emotional-outsourcing",
+      label: "第五案：情绪外包",
+      text: "深夜语音里，许照终于从观察者变成参与者。他把别人的痛苦整理成资料，也把自己的孤独交给了不该接住的人。",
+      correctMark: "selfBlind",
+      contradiction: "终局告解：情绪外包不是第五案的偶发越界，而是许照一直拒绝承认自己也在索取情绪供养。"
+    },
+    {
+      id: "confession-control",
+      label: "第六案：最后一次叙事控制",
+      text: "许照坐到镜头前告解，讲得完整、清醒、有结构。你必须判断：这是自省，还是他最后一次把所有人的故事排成对自己有利的顺序。",
+      correctMark: "selfBlind",
+      contradiction: "终局告解：越完整的忏悔越需要被核验，因为自省也可能成为控制叙事的方式。"
+    }
+  ];
+}
+
+export function generateCaseSequence(npcs, attrs, options = {}) {
+  const usedPlots = new Set();
+  const runNumber = options.runNumber ?? 0;
+  const modes = options.modes ?? buildAnchorModeSequence(options.count ?? randomRangeInt(3, 5));
+  return modes.map((mode, index) => {
+    const brief = generateLivestreamCase(npcs, attrs, {
+      order: index + 1,
+      caseMode: mode,
+      usedPlots,
+      runNumber,
+      forcedPremeditated: shouldForcePremeditated(runNumber, index, mode)
     });
     usedPlots.add(brief.plotId);
     return brief;
   });
+}
+
+function buildAnchorModeSequence(count) {
+  const nonConfession = CASE_MODE_SEQUENCE.filter((mode) => mode.id !== "confession");
+  const includeConfession = Math.random() < 0.75;
+  const mainCount = includeConfession ? Math.max(1, count - 1) : count;
+  const main = Array.from({ length: mainCount }, () => randomItem(nonConfession));
+  return includeConfession ? [...main, CASE_MODE_SEQUENCE.find((mode) => mode.id === "confession")] : main;
+}
+
+function randomRangeInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shouldForcePremeditated(runNumber, index, mode) {
+  if (mode.id === "confession") return false;
+  if (runNumber === 0) return index === 0;
+  if (runNumber === 1) return index <= 1;
+  return false;
 }
 
 export function generateLivestreamCase(npcs, attrs, options = {}) {
@@ -453,23 +716,24 @@ export function generateLivestreamCase(npcs, attrs, options = {}) {
   const modePlotIds = new Set(mode.plotIds);
   const matchingPlots = LIVESTREAM_PLOT_LIBRARY.filter((item) => modePlotIds.has(item.id));
   const availablePlots = matchingPlots.filter((item) => !options.usedPlots?.has(item.id));
-  const plot = randomItem(availablePlots.length ? availablePlots : LIVESTREAM_PLOT_LIBRARY);
+  const explicitPlot = options.plotId ? LIVESTREAM_PLOT_LIBRARY.find((item) => item.id === options.plotId) : null;
+  const plot = explicitPlot ?? randomItem(availablePlots.length ? availablePlots : LIVESTREAM_PLOT_LIBRARY);
   const complainantGender = randomItem(plot.possibleComplainants);
   const complainantPool = npcs.filter((npc) => npc.gender === complainantGender);
   const respondentPool = npcs.filter((npc) => npc.gender !== complainantGender);
-  const complainant = randomItem(complainantPool) ?? randomItem(npcs);
-  const respondent = randomItem(respondentPool) ?? randomItem(npcs.filter((npc) => npc.id !== complainant?.id));
-  const forcedPremeditated = Boolean(options.forcedPremeditated);
-  const stance = mode.id === "confession"
+  const complainant = npcs.find((npc) => npc.id === options.complainantId) ?? randomItem(complainantPool) ?? randomItem(npcs);
+  const respondent = npcs.find((npc) => npc.id === options.respondentId) ?? randomItem(respondentPool) ?? randomItem(npcs.filter((npc) => npc.id !== complainant?.id));
+  const forcedPremeditated = Boolean(options.forcedPremeditated || options.premeditatedActorId);
+  const stance = options.stance ?? (mode.id === "confession"
     ? randomItem(["selfDoubt", "selfJustifying", "trueVictim", "halfTruth"])
     : forcedPremeditated
       ? randomItem(["halfTruth", "badActorFirst"])
-      : randomItem(["trueVictim", "halfTruth", "badActorFirst", "personalityMismatch"]);
+      : randomItem(["trueVictim", "halfTruth", "badActorFirst", "personalityMismatch"]));
   const hiddenFacts = shuffle(plot.hiddenFacts).slice(0, forcedPremeditated || mode.id === "confession" ? 3 : 2);
   const exaggerations = shuffle(plot.exaggerations).slice(0, forcedPremeditated || mode.id === "confession" ? 3 : 2);
   const evidence = shuffle(plot.evidence).slice(0, forcedPremeditated || mode.id === "confession" ? 4 : 3);
-  const scene = randomItem(CASE_SCENES);
-  const premeditatedActorId = forcedPremeditated ? randomItem([complainant?.id, respondent?.id].filter(Boolean)) : null;
+  const scene = CASE_SCENES.find((item) => item.id === options.sceneId) ?? randomItem(CASE_SCENES);
+  const premeditatedActorId = forcedPremeditated ? options.premeditatedActorId ?? randomItem([complainant?.id, respondent?.id].filter(Boolean)) : null;
   const order = options.order ?? 1;
   const difficultyBase = mode.id === "premarital" ? 3 : mode.id === "married" ? 5 : 6;
   const difficulty = Math.min(10, Math.max(1, difficultyBase + hiddenFacts.length + exaggerations.length - Math.floor(((attrs.eq ?? 4) + (attrs.education ?? 4)) / 7)));
@@ -500,7 +764,7 @@ export function generateLivestreamCase(npcs, attrs, options = {}) {
     testimony: buildTestimony(plot, scene, complainant, respondent, stance, hiddenFacts, exaggerations, forcedPremeditated, mode.id),
     confessionTimeline: mode.id === "confession" ? buildConfessionTimeline(scene, complainant, respondent, hiddenFacts, exaggerations, plot.truth) : [],
     difficulty,
-    openingComplaint: openingComplaintFor(plot, stance, complainant, respondent, mode.id)
+    openingComplaint: openingComplaintFor(plot, stance, complainant, respondent, mode.id, options.runNumber ?? 0, order)
   };
 }
 
@@ -612,16 +876,16 @@ function buildSceneVersions(scene, complainant, respondent, hiddenFacts, exagger
     {
       speakerId: complainant?.id ?? null,
       speaker: name,
-      version: `${name} 说，当时 ${other} 在${scene.name}突然施压，自己只是被迫回应。`,
-      doubt: `TA 把“突然”说得很重，但没有主动说明 ${gap}。`,
+      version: `${name} 说，当时 ${other} 在${scene.name}突然施压，自己只是被迫回应。TA 复述得很快，快到像背熟了一段对自己有利的开场白。`,
+      doubt: `TA 把“突然”说得很重，但没有主动说明 ${gap}，也没有解释为什么自己提前准备了材料。`,
       contradiction: `如果真是突然施压，为什么 ${packaging} 的说法在前一天已经出现在聊天里？`,
       reliability: premeditated ? "low" : "mixed"
     },
     {
       speakerId: respondent?.id ?? null,
       speaker: other,
-      version: `${other} 说，那天不是逼迫，而是双方早就约好把钱、家里和未来说清楚。`,
-      doubt: `TA 反驳得很快，但对自己能得到什么讲得很轻。`,
+      version: `${other} 说，那天不是逼迫，而是双方早就约好把钱、家里和未来说清楚。TA 一边否认施压，一边把自己塑造成唯一还愿意讲道理的人。`,
+      doubt: `TA 反驳得很快，但对自己能得到什么讲得很轻，像是把收益藏进了“沟通成本”里。`,
       contradiction: `TA 说“早就约好”，却拿不出明确约定，只能拿出几个含糊表情包。`,
       reliability: "mixed"
     },
@@ -640,15 +904,21 @@ function randomItem(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function openingComplaintFor(plot, stance, complainant, respondent, caseMode) {
+function openingComplaintFor(plot, stance, complainant, respondent, caseMode, runNumber = 0, order = 1) {
   const name = complainant?.name ?? "来访者";
   const other = respondent?.name ?? "对方";
-  if (caseMode === "premarital") return `${name} 带着一段还没真正进入婚姻的关系来咨询：TA 想知道眼前的问题是普通磨合，还是婚前就该止损的风险。`;
-  if (caseMode === "married") return `${name} 连线侦探局，说婚后矛盾已经从情绪变成账本、责任和家庭边界。`;
+  if (runNumber === 0 && order === 1) {
+    return `${name} 是今晚第一个连线者。TA 说自己只想要一个说法，镜头却拍到 TA 手边放着两份材料：一份聊天截图，一份被折过的转账记录。${other} 还没进线，旁听席已经开始替 ${name} 下判断。`;
+  }
+  if (runNumber === 1 && order === 1) {
+    return `${name} 的叙事几乎无懈可击：时间点清楚、证据齐全、连自己可能被误会的地方都提前解释过。越完整的故事，越像一间打扫过的房间，需要检查被收进抽屉里的东西。`;
+  }
+  if (caseMode === "premarital") return `${name} 带着一段还没真正进入婚姻的关系来咨询：TA 想知道眼前的问题是普通磨合，还是婚前就该止损的风险。${other} 的名字被反复提起，但每次都停在最关键的半句话前。`;
+  if (caseMode === "married") return `${name} 连线侦探局，说婚后矛盾已经从情绪变成账本、责任和家庭边界。TA 不再问“还爱不爱”，而是问“这笔账、这个孩子、这套房，到底是谁的责任”。`;
   if (caseMode === "confession") {
-    if (stance === "selfJustifying") return `${name} 选择告解自己的经历，但 TA 的讲法像是在替过去的选择寻找理由。`;
-    if (stance === "selfDoubt") return `${name} 选择告解自己的经历，想让你站在 TA 的视角里查：自己到底哪里被坑，哪里也在自欺。`;
-    return `${name} 选择告解自己的经历，TA 不急着指控 ${other}，而是想把这段婚恋里的问题重新查一遍。`;
+    if (stance === "selfJustifying") return `${name} 选择告解自己的经历，但 TA 的讲法像是在替过去的选择寻找理由。TA 说“我不是完全没错”，却总能把每个错误讲成迫不得已。`;
+    if (stance === "selfDoubt") return `${name} 选择告解自己的经历，想让你站在 TA 的视角里查：自己到底哪里被坑，哪里也在自欺。TA 最怕的不是发现 ${other} 有问题，而是发现自己当时其实看见过信号。`;
+    return `${name} 选择告解自己的经历，TA 不急着指控 ${other}，而是想把这段婚恋里的问题重新查一遍。TA 的语气很平静，平静到像已经提前排练过一遍。`;
   }
   if (stance === "trueVictim") return `${name} 连线侦探局，说自己被 ${other} 的承诺拖住太久，现在只想知道该不该止损。`;
   if (stance === "badActorFirst") return `${name} 先来诉苦，把自己说成受害者，但 TA 回避了几个关键时间点。`;
@@ -734,7 +1004,7 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
     {
       speakerId: complainant?.id ?? null,
       speaker: name,
-      line: `“当时就在${scene.name}，${other} 一直逼我表态，我只是想把事情说清楚。”`,
+      line: `“当时就在${scene.name}，${other} 一直逼我表态。我承认我语气不好，可我只是想把事情说清楚。”`,
       kind: "ambiguous",
       surface: "迷惑性含糊",
       hint: "“只是想说清楚”后面通常要追问具体诉求。",
@@ -754,7 +1024,7 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
     {
       speakerId: respondent?.id ?? null,
       speaker: other,
-      line: `“TA 没说的是，${primaryGap} 这件事从一开始就没讲完整。”`,
+      line: `“TA 没说的是，${primaryGap} 这件事从一开始就没讲完整。每次快谈到这里，TA 就会说我不够爱。”`,
       kind: "reluctant",
       surface: "不愿意说完整",
       hint: "被诉方给出的反叙事未必全真，但能暴露第一版故事的缺口。",
@@ -774,7 +1044,7 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
     {
       speakerId: complainant?.id ?? null,
       speaker: name,
-      line: `“我承认${primaryExaggeration}说得好听了一点，可这不影响 TA 对我的伤害。”`,
+      line: `“我承认${primaryExaggeration}说得好听了一点，可这不影响 TA 对我的伤害。难道我不完美，就活该被这样对待吗？”`,
       kind: "halfLie",
       surface: "小承认掩护大隐瞒",
       hint: "承认小包装时，要警惕背后是否还有更大的隐瞒。",
@@ -1715,7 +1985,10 @@ export function buildCaseDeck(npcs, npcSeeds, attrs) {
       if (attrs.looks >= 7 && item.motiveHints.includes("display")) return true;
       if (npc.id === "he" && item.id === "sibling-bride-price-buyout") return true;
       if (npc.id === "chen" && item.id === "phoenix-career-lift") return true;
-      return item.id === "house-parent-funded";
+      if (item.id === "house-parent-funded") {
+        return ["zhou", "shen", "chen"].includes(npc.id) || seed.motive === "familyResource" || attrs.family >= 6;
+      }
+      return false;
     });
     const patternCase = HUMAN_PATTERN_LIBRARY[seed.humanPattern];
     if (patternCase) candidates.push(patternCase);
