@@ -728,6 +728,7 @@ function renderCaseOpen(brief, chapter) {
     choices: `
       <button class="primary" data-case-scene="sceneReview" type="button">复盘当时场景</button>
       <button data-case-scan ${caseActionDisabled(brief, "scan:summary")} type="button">先看案卷摘要，直达证据卡</button>
+      ${inspirationChoice(brief)}
     `
   });
   document.querySelector("[data-case-scene]")?.addEventListener("click", () => moveCaseScene("sceneReview"));
@@ -766,6 +767,7 @@ function renderCaseSceneReview(brief, chapter) {
       <button data-scene-question="complainant" ${caseActionDisabled(brief, "scene:complainant")} type="button">追问先诉苦者</button>
       <button data-scene-question="respondent" ${caseActionDisabled(brief, "scene:respondent")} type="button">追问另一方</button>
       <button data-scene-question="details" ${caseActionDisabled(brief, "scene:details")} type="button">追问现场细节</button>
+      ${inspirationChoice(brief)}
       <button class="primary" data-case-scene="testimony" type="button">进入证词交叉追问</button>
     `
   });
@@ -825,6 +827,7 @@ function renderConfessionTimeline(brief, chapter) {
     `,
     choices: `
       <button data-case-scene="testimony" type="button">继续听 TA 告解</button>
+      ${inspirationChoice(brief)}
       <button class="primary" data-case-scene="evidence" type="button">整理自我核验证据</button>
     `
   });
@@ -886,6 +889,7 @@ function renderCaseTestimony(brief, chapter) {
     `,
     choices: `
       <button data-case-scene="sceneReview" type="button">回到现场复原</button>
+      ${inspirationChoice(brief)}
       <button class="primary" data-case-scene="evidence" type="button">整理证据卡</button>
     `
   });
@@ -950,6 +954,7 @@ function renderCaseEvidence(brief, chapter) {
       <button data-evidence="timeline" ${caseActionDisabled(brief, "evidence:timeline")} type="button">按时间线重排</button>
       <button data-evidence="money" ${caseActionDisabled(brief, "evidence:money")} type="button">优先查钱和资源</button>
       <button data-evidence="motive" ${caseActionDisabled(brief, "evidence:motive")} type="button">回到动机和收益</button>
+      ${inspirationChoice(brief)}
       <button class="primary" data-case-scene="accusation" type="button">进入阶段指认</button>
     `
   });
@@ -988,6 +993,7 @@ function renderCaseAccusation(brief, chapter) {
     choices: `
       <button data-case-scene="sceneReview" type="button">回现场复原</button>
       <button data-case-scene="testimony" type="button">回证词追问</button>
+      ${inspirationChoice(brief)}
       <button data-accuse="${brief.complainantId}" type="button">${brief.caseMode === "confession" ? `重点拆 ${complainant?.name ?? "告解者"} 的自述` : `重点指向 ${complainant?.name ?? "先诉苦者"}`}</button>
       <button data-accuse="${brief.respondentId}" type="button">重点指向 ${respondent?.name ?? "另一方"}</button>
       <button data-accuse="both" type="button">${brief.caseMode === "confession" ? "自我选择和对方行为都要查" : "双方都有隐瞒"}</button>
@@ -1392,7 +1398,7 @@ function presentEvidenceToTestimony(brief, testimonyIndex) {
   if (hit) {
     bumpFlag("evidenceClarity", 1);
     recordEvidenceInsight(brief, `${card.type}《${card.title}》命中 ${testimony.speaker} 的“${testimony.surface}”。`);
-    recordContradiction(brief, `出示证据：${card.contradiction}`);
+    recordContradiction(brief, card.contradiction);
     state.lastReaction = `出示成功：${card.detail}`;
   } else {
     bumpFlag("audiencePressure", 1);
@@ -1442,6 +1448,57 @@ function budgetLine(brief) {
   const budget = caseBudget(brief);
   const toolText = (meta.bonusPoints ?? 0) >= 5 ? "｜加班助理 +1" : "";
   return `剩余追问/整理次数 ${budget.remaining}/${budget.max}${toolText}`;
+}
+
+function inspirationMax(brief) {
+  const modeBase = state.caseMode === "story" ? 2 : 1;
+  const veteranBonus = (meta.bonusPoints ?? 0) >= 12 ? 1 : 0;
+  const difficultBonus = (brief?.difficulty ?? 0) >= 8 ? 1 : 0;
+  return modeBase + veteranBonus + difficultBonus;
+}
+
+function inspirationUsed(brief) {
+  return Number(state.inspirationUsage?.[caseNoteKey(brief)] ?? 0);
+}
+
+function inspirationRemaining(brief) {
+  return Math.max(0, inspirationMax(brief) - inspirationUsed(brief));
+}
+
+function nextInspirationContradiction(brief) {
+  const found = new Set(contradictionsForCase(brief));
+  return allCaseContradictions(brief).find((item) => !found.has(item) && !found.has(`出示证据：${item}`)) ?? null;
+}
+
+function inspirationChoice(brief) {
+  const remaining = inspirationRemaining(brief);
+  const next = nextInspirationContradiction(brief);
+  const disabled = remaining <= 0 || !next ? "disabled" : "";
+  return `<button data-inspiration ${disabled} type="button">启发道具：指出矛盾点（剩余 ${remaining}）</button>`;
+}
+
+function useInspirationHint(brief) {
+  const key = caseNoteKey(brief);
+  const remaining = inspirationRemaining(brief);
+  const contradiction = nextInspirationContradiction(brief);
+  if (remaining <= 0) {
+    state.lastReaction = "本案启发道具已经用完。现在只能靠已有证据继续推。";
+    return rerenderWithSave();
+  }
+  if (!contradiction) {
+    state.lastReaction = "启发道具没有发现新的矛盾点。你已经把本案可提示的证据线索抓完了。";
+    return rerenderWithSave();
+  }
+  state.inspirationUsage = {
+    ...(state.inspirationUsage ?? {}),
+    [key]: inspirationUsed(brief) + 1
+  };
+  bumpFlag("evidenceClarity", 1);
+  recordContradiction(brief, contradiction);
+  recordEvidenceInsight(brief, `启发道具指出：${contradiction}`);
+  state.lastReaction = `启发道具指出一个可作为证据使用的矛盾点：${contradiction}`;
+  saveState();
+  render();
 }
 
 function actionDone(brief, actionKey) {
@@ -1552,8 +1609,9 @@ function caseDifficultyText(brief) {
 function allCaseContradictions(brief) {
   const sceneItems = (brief.sceneVersions ?? []).map((item) => item.contradiction).filter(Boolean);
   const testimonyItems = (brief.testimony ?? []).flatMap((item) => (item.followups ?? []).map((followup) => followup.contradiction).filter(Boolean));
+  const evidenceItems = (brief.evidenceCards ?? []).map((item) => item.contradiction).filter(Boolean);
   const confessionItems = (brief.confessionTimeline ?? []).map((item) => item.contradiction).filter(Boolean);
-  return [...new Set([...sceneItems, ...testimonyItems, ...confessionItems])];
+  return [...new Set([...sceneItems, ...testimonyItems, ...evidenceItems, ...confessionItems])];
 }
 
 function solvedCaseDetails(brief, result) {
@@ -1813,6 +1871,13 @@ function storyFrame({ chapter, text, choices, side = "" }) {
       </aside>
     </section>
   `, { sceneClass: `chapter-${state.chapter}` });
+
+  document.querySelectorAll("[data-inspiration]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const brief = activeCaseBrief();
+      if (brief) useInspirationHint(brief);
+    });
+  });
 
   setTimeout(() => {
     const card = document.querySelector(".dialogue-card");

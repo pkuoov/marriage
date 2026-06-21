@@ -48,6 +48,7 @@ export const baseState = {
   caseDeck: {},
   caseBudgets: {},
   caseActionLog: {},
+  inspirationUsage: {},
   evidenceInsights: {},
   selectedEvidenceCard: {},
   confessionMarks: {},
@@ -151,6 +152,7 @@ export function migrateState(saved) {
   if (!Array.isArray(next.caseBriefs)) next.caseBriefs = [];
   if (!next.caseBudgets || Array.isArray(next.caseBudgets)) next.caseBudgets = {};
   if (!next.caseActionLog || Array.isArray(next.caseActionLog)) next.caseActionLog = {};
+  if (!next.inspirationUsage || Array.isArray(next.inspirationUsage)) next.inspirationUsage = {};
   if (!next.evidenceInsights || Array.isArray(next.evidenceInsights)) next.evidenceInsights = {};
   if (!next.selectedEvidenceCard || Array.isArray(next.selectedEvidenceCard)) next.selectedEvidenceCard = {};
   if (!next.confessionMarks || Array.isArray(next.confessionMarks)) next.confessionMarks = {};
