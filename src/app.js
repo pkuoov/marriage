@@ -204,11 +204,7 @@ function weaveCaseThread() {
     const linkedNpcId = index === 0 ? null : previous?.respondentId ?? previous?.complainantId ?? null;
     const linkedNpc = getNpc(linkedNpcId);
     const role = state.caseMode === "story"
-      ? index === 0
-        ? "连环案件开端"
-        : index === briefs.length - 1
-          ? "前五案的叙事模式进入终局告解"
-          : "上一案材料进入本案"
+      ? storyThreadRole(brief, index, briefs)
       : index === 1
         ? "上一案被指向的人作为旁证进入本案"
         : index === 2
@@ -237,6 +233,15 @@ function weaveCaseThread() {
       role
     };
   });
+}
+
+function storyThreadRole(brief, index, briefs) {
+  if (brief.tutorialChapter) return "教学模式：识别第一处矛盾";
+  if (brief.storySetIndex === 1 && brief.storyCaseInSet === 1) return "第一套正式案件开端";
+  if (brief.storySetIndex === 2 && brief.storyCaseInSet === 1) return "第二套正式案件开端：回收第一套终局";
+  if (index === briefs.length - 1) return "两套案件的模板告解终局";
+  if (brief.storySetIndex === 2) return "第二套案件回收第一套线索";
+  return "上一案材料进入本案";
 }
 
 function primePremeditatedCases() {
@@ -687,14 +692,26 @@ function caseChapterTitle(brief, index) {
 
 function caseSetLabel() {
   const count = state.caseBriefs?.length ?? 0;
-  return state.caseMode === "anchor" ? `${count} 起主播随机案` : `${count} 起连环主线案`;
+  return state.caseMode === "anchor" ? `${count} 起主播随机案` : `教学章 + 两套正式主线（共 ${count} 案）`;
 }
 
 function caseSetSummary() {
   if (state.caseMode === "anchor") {
     return "主播模式保留栏目式随机案卷：每一案独立生成，但上一案的声誉、舆论和人物牵连仍会影响下一案的配合度。";
   }
-  return "故事模式由六个固定案件组成一条连环主线：从资料包装、房本安全感、彩礼酒席，到亲属债务、情绪外包和告解终局，逐步把关系里的包装、资源、账本与控制串起来。";
+  return "故事模式现在由教学章、第一套“资料包疑云”和第二套“模板回声”组成。第一套查真实关系如何被包装成叙事，第二套回收第一套线索，追查这些痛苦如何被平台化、模板化、收费化。";
+}
+
+function tutorialGuideLine(brief, step) {
+  if (!brief?.tutorialChapter) return "";
+  const guides = {
+    open: "教学提示：开案先不要急着站队。先看案由、悬念物和本周目线索，决定第一步该复盘现场还是先看证据。",
+    scene: "教学提示：现场复原里至少有一个版本讲得顺但不完整。点击“比对这个版本”，把不自洽之处记成矛盾。",
+    testimony: "教学提示：证词追问不是为了让人认错，而是让台词和材料互相咬住。优先追问含糊话、半真话和防御话。",
+    evidence: "教学提示：证据卡只能证明局部事实。把时间线、钱和动机放在一起看，才能避免被单张截图带跑。",
+    accusation: "教学提示：阶段指认前至少抓到一处矛盾。没有证据支撑的同情，也可能误伤另一方。"
+  };
+  return `<p class="signal signal-yellow">${guides[step] ?? brief.tutorialTip ?? "教学提示：先找矛盾，再做判断。"}</p>`;
 }
 
 function renderCaseOpen(brief, chapter) {
@@ -707,18 +724,21 @@ function renderCaseOpen(brief, chapter) {
     text: `
       <p class="episode-hook"><b>${playthroughLabel()}</b>：${opening.hook}</p>
       ${storyColdOpenLine(brief)}
+      ${tutorialGuideLine(brief, "open")}
       <p class="side-signal">${opening.director}</p>
       <p><b>案由</b>：${brief.label}｜${caseDifficultyText(brief)}</p>
       <p>${brief.openingComplaint}</p>
       <p class="hint">${brief.publicHook}</p>
       <div class="scene-list">
         <p><b>栏目</b>：${brief.modeLabel ?? "婚恋 case"}</p>
+        ${brief.storySetName ? `<p><b>剧情套系</b>：${brief.storySetName}</p>` : ""}
         <p><b>先诉苦的人</b>：${complainant?.name ?? "未知"}</p>
         <p><b>另一方</b>：${respondent?.name ?? "未知"}</p>
         <p><b>本案结构</b>：${caseStructureText(brief)}</p>
         <p><b>调查资源</b>：${budgetLine(brief)}</p>
         ${brief.storySuspense ? `<p><b>主线疑问</b>：${brief.storySuspense}</p>` : ""}
         ${brief.storyClueObject ? `<p><b>悬念物</b>：${brief.storyClueObject}</p>` : ""}
+        ${brief.storyBridgeClue ? `<p><b>跨套关联</b>：${brief.storyBridgeClue}</p>` : ""}
         <p><b>本周目线索</b>：${brief.threadLink?.line ?? "本案暂无前案旁证。"}</p>
         <p><b>侦探局战况</b>：${agencyBattleLine()}</p>
         <p><b>开场压力</b>：${opening.pressure}</p>
@@ -751,6 +771,7 @@ function renderCaseSceneReview(brief, chapter) {
     text: `
       <p><b>现场复原：${brief.scene.name}</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      ${tutorialGuideLine(brief, "scene")}
       <p class="episode-hook">${beat}</p>
       ${brief.storyMislead ? `<p class="side-signal"><b>误导方向</b>：${brief.storyMislead}</p>` : ""}
       <p>${brief.scene.description}</p>
@@ -865,6 +886,7 @@ function renderCaseTestimony(brief, chapter) {
     text: `
       <p><b>证词交叉追问</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      ${tutorialGuideLine(brief, "testimony")}
       <p class="episode-hook">${testimonyBeat}</p>
       <p>每一句话都可能是假话、含糊话、半真话，或者当事人不愿意说完整的真话。直播间里最有力的证据，往往是 TA 前面自己说过的话。</p>
       <p class="signal signal-yellow">当前出示卡：${selectedCard ? `${selectedCard.type}｜${selectedCard.title}` : "未选择。你可以先从下方证据卡选一张。"}</p>
@@ -939,6 +961,7 @@ function renderCaseEvidence(brief, chapter) {
     text: `
       <p><b>证据卡</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      ${tutorialGuideLine(brief, "evidence")}
       ${brief.storyClueObject ? `<p class="episode-hook">主线悬念物：${brief.storyClueObject}。它未必能直接定案，但会决定你如何理解下一案。</p>` : ""}
       <div class="scene-list">
         ${(brief.evidenceCards ?? []).map((card) => `<p><b>${card.type}｜${card.title}</b><br><span>${card.front}</span><br><span>${card.detail}</span></p>`).join("")}
@@ -986,6 +1009,7 @@ function renderCaseAccusation(brief, chapter) {
     text: `
       <p><b>阶段指认</b></p>
       <p class="hint">${budgetLine(brief)}</p>
+      ${tutorialGuideLine(brief, "accusation")}
       <p>${brief.caseMode === "confession" ? "你不需要审判这位告解者，但必须判断 TA 的自述里哪里是被坑、哪里是自欺、哪里可能也伤害了别人。" : "你不需要一次性给出全部法律结论，但必须判断目前谁的叙事最需要被拆开。没有抓到足够矛盾点时，任何指认都可能只是被台词带着走。"}</p>
       <p><b>已发现矛盾点</b>：${contradictionsForCase(brief).length ? contradictionsForCase(brief).join(" / ") : "暂无，建议回去追问。"}</p>
       <p class="hint">${caseAccusationHint(brief)}</p>
@@ -1671,12 +1695,22 @@ function playthroughLabel() {
 
 function playthroughOpening(brief) {
   if (brief.fixedStory) {
-    const total = state.caseBriefs?.length ?? 6;
+    const total = state.caseBriefs?.length ?? 13;
+    const setLabel = brief.storySetName ? `${brief.storySetName}｜` : "";
+    if (brief.tutorialChapter) {
+      return {
+        hook: `故事模式教学章。${brief.storyArcSummary ?? "先学会从第一版叙事里抓矛盾。"}`,
+        director: "孟姐把正式案卷暂时压住：“先别急。会找第一处矛盾，后面十二个案子才有意义。”",
+        pressure: brief.tutorialTip ?? "教学章会引导你走完现场、证词、证据和指认。"
+      };
+    }
     return {
-      hook: `故事模式第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "固定主线案卷已经接入。"}`,
-      director: brief.order === 1
-        ? "孟姐关掉弹幕预览：“故事模式不追热点，追的是同一套话术怎么换壳出现。”"
-        : "孟姐把上一案材料贴到白板上：“别把它当新案，它是上一案留下的回声。”",
+      hook: `${setLabel}故事模式第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "固定主线案卷已经接入。"}`,
+      director: brief.storySetIndex === 1 && brief.storyCaseInSet === 1
+        ? "孟姐关掉弹幕预览：“正式剧情从这里开始。第一套查真实关系如何被包装成叙事。”"
+        : brief.storySetIndex === 2 && brief.storyCaseInSet === 1
+          ? "孟姐把第一套资料夹重新打开：“第二套不是新坑，是有人开始把旧坑做成产品。”"
+          : "孟姐把上一案材料贴到白板上：“别把它当新案，它是上一案留下的回声。”",
       pressure: brief.storySuspense ?? "这条主线会持续回收前案伏笔，不能只按单案输赢判断。"
     };
   }
@@ -1782,6 +1816,10 @@ function testimonyDramaBeat(brief) {
 
 function nextPlaythroughTease(nextBrief) {
   if (state.caseMode === "story") {
+    if (nextBrief?.tutorialChapter) return `下一章进入教学：${nextBrief.storyArcSummary ?? "先学会找第一处矛盾。"}`;
+    if (nextBrief?.storySetIndex === 2 && nextBrief?.storyCaseInSet === 1) {
+      return `第二套正式案件开场：${nextBrief.storyColdOpen ?? nextBrief.storyArcSummary ?? "第一套留下的资料夹开始反噬。"}`;
+    }
     return nextBrief?.storyColdOpen
       ? `下一案冷开场：${nextBrief.storyColdOpen}`
       : `下一案会继续回收主线证据：${nextBrief?.storyArcSummary ?? "固定主线继续推进。"}`;
@@ -1796,7 +1834,7 @@ function nextPlaythroughTease(nextBrief) {
 }
 
 function finalPlaythroughTease() {
-  if (state.caseMode === "story") return "六案主线已经收束。最后要复盘的不是谁最坏，而是谁最会让别人替自己的叙事付代价。";
+  if (state.caseMode === "story") return "教学章和两套正式案件已经收束。最后要复盘的不是谁最坏，而是真实痛苦如何被包装、复制、产品化。";
   if (currentPlaythroughNumber() === 1) return "第一周目的最后一题已经结束，但真正留下来的不是答案，是你第一次学会慢一点相信叙事。";
   if (currentPlaythroughNumber() === 2) return "第二周目结束时，系统不再奖励单纯怀疑，而是奖励你能把怀疑、共情和证据同时拿稳。";
   return "本周目已经收束，下一组案件会继续考验你的判断习惯。";
@@ -1805,8 +1843,8 @@ function finalPlaythroughTease() {
 function runCompleteLine(correct) {
   const total = state.caseBriefs?.length ?? 3;
   if (state.caseMode === "story") {
-    if (correct >= Math.ceil(total * 0.7)) return "六案主线基本站住了：你没有被每一案表面的争点带跑，而是把包装、资产、债务、边界和告解串成了一条链。";
-    return "六案主线还有断点：有些案子被你当成单案处理了，下一轮要更注意悬念物和案间过场。";
+    if (correct >= Math.ceil(total * 0.7)) return "两套正式主线基本站住了：你没有把每案当成孤立争吵，而是看见第一套的真实痛苦如何在第二套里被模板化。";
+    return "故事主线还有断点：有些案子被你当成单案处理了，下一轮要更注意教学章、悬念物、跨套线索和案间过场。";
   }
   if (currentPlaythroughNumber() === 1) {
     if (correct >= Math.max(2, Math.ceil(total * 0.6))) return "第一次开播，你已经证明自己不会被第一版哭诉轻易带走。侦探局开始真正有了口碑。";

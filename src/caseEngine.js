@@ -437,8 +437,30 @@ export const CASE_MODE_SEQUENCE = [
 
 const STORY_CASE_SEQUENCE = [
   {
+    id: "story-00-tutorial-first-contradiction",
+    title: "教学章：第一处矛盾",
+    setName: "教学模式",
+    summary: "孟姐用一件压缩案教你读案：先别急着相信委屈，先找时间线、钱和台词里最硬的矛盾。",
+    openingComplaint: "孟姐把一份旧案投到直播屏上。来访者说自己只是被催着结婚、被迫转账，但案卷里有三处地方同时发亮：转账时间、被删动态、以及一句反复出现的“先别问细节”。",
+    coldOpen: "开播前，孟姐没有让你直接接当事人。她只放出一段旧录屏：“一个案子最危险的时候，不是没人说话，而是每个人都说得太顺。”",
+    suspense: "这不是正式连环案，却会教你后面所有案件的基本动作：复盘场景、交叉追问、整理证据、再阶段指认。",
+    mislead: "玩家最容易被第一版哭诉带走，所以教学章会把“委屈”和“证据”故意放在同一个人身上。",
+    clueObject: "孟姐的红线笔记",
+    transition: "教学章结束后，孟姐把红线笔记收进档案袋。袋口露出第一套案件的匿名资料包：同样的红线，圈住了“稳定推进”四个字。",
+    caseMode: "premarital",
+    plotId: "romance-transfer-gift-or-loan",
+    complainantId: "lin",
+    respondentId: "zhou",
+    stance: "halfTruth",
+    sceneId: "rental-room",
+    tutorialChapter: true,
+    tutorialTip: "教学目标：至少抓到一处矛盾，再进入阶段指认。启发道具可以帮你指出尚未发现的矛盾点。",
+    storyClue: "孟姐的红线笔记会在正式剧情里反复出现：它提醒你，所有漂亮叙事都必须回到时间线和材料。"
+  },
+  {
     id: "story-01-profile-mask",
     title: "第一案：完美资料",
+    setName: "第一套：资料包疑云",
     summary: "一份过于漂亮的择偶资料，把婚史、负债和家庭托举都藏进了“只是包装”。",
     openingComplaint: "何念带着一份近乎完美的择偶资料连线。她说自己只是被周砚误会了包装，但匿名资料包里的被删动态显示，她早在来侦探局前就准备好了另一套叙事。",
     coldOpen: "开播前三分钟，后台收到一份匿名资料包。文件名只有四个字：她在演。资料包里没有结论，只有三张被删动态、两笔转账和一张没有露脸的订婚照。",
@@ -458,6 +480,7 @@ const STORY_CASE_SEQUENCE = [
   {
     id: "story-02-house-name",
     title: "第二案：房本安全感",
+    setName: "第一套：资料包疑云",
     summary: "第一案留下的稳定关系话术，转成了婚前房产加名和父母出资归属。",
     openingComplaint: "周砚主动连线回应第一案。他没有否认何念截图里的“稳定推进”，而是把问题推到房本加名：“如果都准备结婚了，为什么安全感不能写进合同？”",
     coldOpen: "第二天，周砚主动连线。他没有否认第一案里的截图，只说：“如果一个人真想结婚，为什么不能给安全感？”镜头外，有人轻轻敲了两下桌面。",
@@ -477,6 +500,7 @@ const STORY_CASE_SEQUENCE = [
   {
     id: "story-03-bride-price",
     title: "第三案：酒席和彩礼",
+    setName: "第一套：资料包疑云",
     summary: "办酒、短暂同居和礼金流水纠缠在一起，谁都说自己已经付出了足够多。",
     openingComplaint: "婚庆经理先把尾款单传进后台，随后陈默和林鹿几乎同时申请连线。两个人都说自己被婚礼进度拖住，但尾款单上的排期显示，这不是第一次有人在临门一脚改口。",
     coldOpen: "第三案不是当事人先来的，是婚庆经理先把一张酒席尾款单传进后台。备注栏写着：退婚原因不要写真实的。",
@@ -495,6 +519,7 @@ const STORY_CASE_SEQUENCE = [
   {
     id: "story-04-relative-debt",
     title: "第四案：亲属债务",
+    setName: "第一套：资料包疑云",
     summary: "小家庭刚开始共同生活，亲属借款、担保和父母医疗债同时进入账本。",
     openingComplaint: "林鹿上传家庭群截图后才开麦。她不再问陈默爱不爱她，只问：为什么一笔亲属借款会先经过婚庆尾款，再进入他们的共同账户。",
     coldOpen: "第四案开场，林鹿没有哭。她只上传了一张家庭群截图：大家都在说“先帮你哥过这一关”，唯独没人问这笔钱从哪里来。",
@@ -514,6 +539,7 @@ const STORY_CASE_SEQUENCE = [
   {
     id: "story-05-emotional-affair",
     title: "第五案：同事情绪外包",
+    setName: "第一套：资料包疑云",
     summary: "一段婚后深夜聊天被说成工作倾诉，但报销、出差和删改记录对不上。",
     openingComplaint: "沈知夏把聊天记录投到屏幕上。许照承认情绪外包，却坚持没有越界；但他删掉的那段语音，关键词不是暧昧，而是“资料夹”。",
     coldOpen: "沈知夏把聊天记录投到屏幕上，第一句话不是暧昧，而是：“你终于懂我为什么不想回家。”弹幕安静了三秒。",
@@ -532,6 +558,7 @@ const STORY_CASE_SEQUENCE = [
   {
     id: "story-06-confession",
     title: "第六案：告解终局",
+    setName: "第一套：资料包疑云",
     summary: "当事人回看整条关系链，必须拆开自己哪里被坑、哪里自欺、哪里也伤害了别人。",
     openingComplaint: "许照没有带来新的控诉。他打开六案共用资料夹，承认自己曾经把别人的包装、房本、彩礼、债务和情绪外包都当成素材，想证明自己才是唯一看清关系的人。",
     coldOpen: "终局没有新的来访者。屏幕亮起时，许照坐在黑场里，说：“前五案你们都以为在查别人，其实也在查我。”",
@@ -546,6 +573,129 @@ const STORY_CASE_SEQUENCE = [
     stance: "selfDoubt",
     sceneId: "family-dinner",
     storyClue: "终局不再寻找唯一反派，而是把六案里的包装、资源、账本和控制全部连起来。"
+  },
+  {
+    id: "story-07-platform-intake",
+    title: "第二套第一案：入会测评",
+    setName: "第二套：模板回声",
+    summary: "第一套的共用资料夹没有结束，它指向一家婚恋咨询平台：测评表把人分成可推进、可付费、可施压。",
+    openingComplaint: "沈知夏带来一份平台入会测评表。表面上它只是婚恋咨询，背后却把第一套案件里的“稳定推进、房本安全感、婚礼压力”做成了收费话术。",
+    coldOpen: "终局资料夹被封存的第三天，后台收到一封自动邮件：恭喜你完成亲密关系风险测评。附件里，第一题就是“你愿意为安全感支付多少成本”。",
+    suspense: "这套测评像是从第一套案件里长出来的，但它的时间戳早于许照告解。",
+    mislead: "这案容易被看成普通婚恋平台割韭菜，但真正的问题是：谁把真实案件改写成可复制的付费模板。",
+    clueObject: "平台入会测评表",
+    transition: "测评表最后一页要求上传征信和资产截图。第二套第二案的贷款材料，就从这里流出。",
+    caseMode: "premarital",
+    plotId: "education-income-fake-profile",
+    complainantId: "shen",
+    respondentId: "xu",
+    stance: "trueVictim",
+    sceneId: "late-night-chat",
+    premeditatedActorId: "xu",
+    bridgeClue: "它回收第一套的六案资料夹：许照不是终点，平台才是把叙事模板商品化的人。",
+    storyClue: "平台测评表把第一套里的“稳定推进”改成付费筛选项，说明两套案件共享同一套话术源头。"
+  },
+  {
+    id: "story-08-credit-mirror",
+    title: "第二套第二案：征信镜像",
+    setName: "第二套：模板回声",
+    summary: "入会测评后的征信截图被用于制造婚前焦虑，债务与房本再次被绑在一起。",
+    openingComplaint: "周砚收到一份匿名征信截图，对方说这是“婚前诚意核验”。但截图里的裁剪方式，和第一套房本案里那份购房合同附件一模一样。",
+    coldOpen: "周砚第二次坐到镜头前，这次他没有谈安全感。他把手机举近摄像头：有人把他的征信做成了付费报告，标题叫《婚前风险等级》。",
+    suspense: "征信截图可能是真的，使用它的人却不一定有正当目的。",
+    mislead: "玩家会先想判断周砚有没有债务，但本案真正要查的是：谁在用“核验”包装信息勒索。",
+    clueObject: "婚前风险等级报告",
+    transition: "报告模板底部有一个灰色水印：宴席延期保障。第三案会把这套风险评级推到婚礼现场。",
+    caseMode: "premarital",
+    plotId: "lost-job-hidden-credit",
+    complainantId: "zhou",
+    respondentId: "he",
+    stance: "halfTruth",
+    sceneId: "broker-office",
+    bridgeClue: "它回收第一套第二案的房本材料：同样的安全感话术，被平台升级成信用评级。",
+    storyClue: "征信报告把第一套房本安全感和第二套平台测评连起来，证明“核验”也可能被滥用成控制工具。"
+  },
+  {
+    id: "story-09-wedding-delay",
+    title: "第二套第三案：延期保障",
+    setName: "第二套：模板回声",
+    summary: "婚礼延期保障服务制造新的沉没成本，第一套婚庆经办人再次出现。",
+    openingComplaint: "何念上传一份“婚礼延期保障”合同。她说这是为了减少损失，陈默却发现合同推荐人正是第一套酒席案里的婚庆经办人。",
+    coldOpen: "合同第一页写着：延期不是失败，是重新谈判的机会。孟姐看完只说了一句：“这不像保险，像话术。”",
+    suspense: "婚礼延期保障把“都到这一步了”包装成服务条款，甚至能自动生成给双方父母看的解释模板。",
+    mislead: "这案不只是退不退钱，而是谁在利用延期把彩礼、房本、父母脸面重新绑在一起。",
+    clueObject: "婚礼延期保障合同",
+    transition: "合同附带的家庭沟通模板里，有一段关于“先帮亲属周转”的话。第四案的债务入口再次打开。",
+    caseMode: "premarital",
+    plotId: "wedding-sunk-cost-pressure",
+    complainantId: "he",
+    respondentId: "chen",
+    stance: "badActorFirst",
+    premeditatedActorId: "he",
+    sceneId: "wedding-prep",
+    bridgeClue: "它回收第一套第三案的婚庆经办人：同一个人把临门一脚的压力做成了合同产品。",
+    storyClue: "延期保障合同证明第一套的婚庆压力不是偶发，而是第二套平台服务的一环。"
+  },
+  {
+    id: "story-10-family-debt-app",
+    title: "第二套第四案：亲属互助",
+    setName: "第二套：模板回声",
+    summary: "家庭互助小程序把亲属债务变成情感积分，小家庭再次被接入外部账本。",
+    openingComplaint: "林鹿发现陈默家族群开始使用一款互助小程序。每笔亲属周转都有“孝顺值”和“家庭贡献榜”，而榜单模板来自第二套平台后台。",
+    coldOpen: "林鹿没有再上传聊天截图，她上传的是一张排行榜：第一名不是还钱最多的人，而是“最愿意理解家人”的人。",
+    suspense: "互助小程序看起来是家庭内部工具，却能读取婚恋平台的风险等级和婚礼延期合同。",
+    mislead: "这案容易被看成陈默家里又缺钱了，但真正要查的是：亲情如何被系统化成债务服从。",
+    clueObject: "亲属互助小程序",
+    transition: "小程序后台显示一条客服备注：高情绪依赖用户，适合转入陪伴服务。第五案的情绪外包不再只是同事关系。",
+    caseMode: "married",
+    plotId: "relative-debt-bundle",
+    complainantId: "lin",
+    respondentId: "chen",
+    stance: "trueVictim",
+    premeditatedActorId: "chen",
+    sceneId: "rental-room",
+    bridgeClue: "它回收第一套第四案的家庭群截图：亲属债务从人工劝说升级成了系统化排名。",
+    storyClue: "互助小程序把第一套的债务捆绑与第二套平台后台连上，说明亲情也被做成了可运营的压力模型。"
+  },
+  {
+    id: "story-11-companion-service",
+    title: "第二套第五案：陪伴服务",
+    setName: "第二套：模板回声",
+    summary: "平台提供的陪伴服务接管了婚内情绪外包，删改记录与第一套深夜语音形成镜像。",
+    openingComplaint: "沈知夏收到许照的账单：每月固定支付给“关系陪伴顾问”。许照说那只是咨询，但顾问话术里出现了第一套被撤回语音的原句。",
+    coldOpen: "账单金额不高，备注却很刺眼：夜间稳定陪伴。沈知夏把它念出来时，许照第一次没有立刻解释。",
+    suspense: "陪伴服务可能提供真实支持，也可能把婚内孤独变成可持续收费入口。",
+    mislead: "这案看起来像精神出轨，但它更关键的矛盾是：平台是否在主动训练用户把伴侣排除在沟通之外。",
+    clueObject: "夜间陪伴账单",
+    transition: "陪伴顾问的账号归属被查到后，终局入口出现：管理员不是陌生人，而是第一套终局资料夹里被隐藏的共编者。",
+    caseMode: "married",
+    plotId: "coworker-emotional-affair",
+    complainantId: "shen",
+    respondentId: "xu",
+    stance: "halfTruth",
+    sceneId: "late-night-chat",
+    bridgeClue: "它回收第一套第五案的深夜语音：情绪外包从私人越界变成平台服务。",
+    storyClue: "夜间陪伴账单证明第二套不是新问题，而是第一套情绪外包话术的商业化版本。"
+  },
+  {
+    id: "story-12-template-confession",
+    title: "第二套第六案：模板告解",
+    setName: "第二套：模板回声",
+    summary: "管理员用第一套所有案件训练出一套告解模板，最后一次要求玩家分辨自省、被坑和操控。",
+    openingComplaint: "管理员主动连线，自称只是把大家的痛苦整理成工具。TA 说平台没有制造伤害，只是让真实关系更快暴露问题。孟姐没有打断，只把第一套六案资料夹重新投到屏幕上。",
+    coldOpen: "终局开场没有人哭，也没有人喊冤。管理员平静地说：“你们解决了十二个案子，却还没回答一个问题：如果模板真的有效，它算伤害吗？”",
+    suspense: "管理员的告解太像产品发布会。每一句自省后面，都藏着一次责任转移。",
+    mislead: "终局会诱导玩家把平台简化成唯一反派，但更难的是判断：真实痛苦被整理成工具之后，谁被帮助，谁被收割。",
+    clueObject: "告解模板后台",
+    transition: "后台最后一条日志停在孟姐的红线笔记旁：教学章那句“先找矛盾”，现在变成了全剧的答案。",
+    caseMode: "confession",
+    plotId: "control-isolation-reporting",
+    complainantId: "xu",
+    respondentId: "shen",
+    stance: "selfJustifying",
+    sceneId: "family-dinner",
+    bridgeClue: "它回收第一套终局和教学章：同一套识别矛盾的方法，既能保护人，也可能被人拿去设计别人。",
+    storyClue: "告解模板后台把两套案件互相扣住：第一套提供真实痛苦，第二套展示痛苦如何被产品化。"
   }
 ];
 
@@ -571,18 +721,37 @@ export function generateStoryCaseSequence(npcs, attrs, options = {}) {
       storyCaseId: item.id,
       storyArcTitle: item.title,
       storyArcSummary: item.summary,
+      storySetName: item.setName ?? "故事模式",
+      storySetIndex: storySetIndexFor(item),
+      storyCaseInSet: storyCaseInSetFor(item),
       openingComplaint: item.openingComplaint ?? brief.openingComplaint,
       storyColdOpen: item.coldOpen,
       storySuspense: item.suspense,
       storyMislead: item.mislead,
       storyClueObject: item.clueObject,
       storyClue: item.storyClue,
+      storyBridgeClue: item.bridgeClue,
       storyTransition: item.transition,
+      tutorialChapter: Boolean(item.tutorialChapter),
+      tutorialTip: item.tutorialTip,
       evidenceCards: [...buildStoryEvidenceCards(item), ...(brief.evidenceCards ?? [])],
-      confessionTimeline: item.id === "story-06-confession" ? buildStoryConfessionTimeline(item) : brief.confessionTimeline,
+      confessionTimeline: item.caseMode === "confession" ? buildStoryConfessionTimeline(item, brief.confessionTimeline) : brief.confessionTimeline,
       fixedStory: true
     };
   });
+}
+
+function storySetIndexFor(item) {
+  if (item.tutorialChapter) return 0;
+  if (item.setName?.includes("第二套")) return 2;
+  return 1;
+}
+
+function storyCaseInSetFor(item) {
+  if (item.tutorialChapter) return 0;
+  const match = item.title?.match(/第([一二三四五六])案|第二套第([一二三四五六])案/);
+  const value = match?.[1] ?? match?.[2];
+  return { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6 }[value] ?? 1;
 }
 
 function buildStoryEvidenceCards(item) {
@@ -596,6 +765,15 @@ function buildStoryEvidenceCards(item) {
     targets: commonTargets,
     contradiction: `主线物证《${item.clueObject}》证明本案不是孤立事件：${item.storyClue}`
   };
+  const bridge = item.bridgeClue ? {
+    id: `${item.id}-bridge-clue`,
+    type: "跨套线索",
+    title: "第一套回收点",
+    front: item.bridgeClue,
+    detail: "这条线索说明第二套案件不是新的随机危机，而是在复用第一套已经验证过的亲密关系压力模板。",
+    targets: commonTargets,
+    contradiction: `跨套线索证明两套正式案件互相关联：${item.bridgeClue}`
+  } : null;
   const extras = {
     "story-03-bride-price": {
       id: "story-03-wedding-manager",
@@ -625,10 +803,57 @@ function buildStoryEvidenceCards(item) {
       contradiction: "六案共用资料夹证明终局告解不是突然自省，而是对前五案叙事控制欲的回收。"
     }
   };
-  return [base, extras[item.id]].filter(Boolean);
+  return [base, bridge, extras[item.id]].filter(Boolean);
 }
 
-function buildStoryConfessionTimeline(item) {
+function buildStoryConfessionTimeline(item, fallback = []) {
+  if (item.id === "story-12-template-confession") {
+    return [
+      {
+        id: "tutorial-red-line",
+        label: "教学章：红线笔记",
+        text: "管理员承认，平台最早不是从复杂案开始，而是从孟姐教学章那种“找第一处矛盾”的方法里学会了拆解用户。",
+        correctMark: "hurtOther",
+        contradiction: "模板告解：平台把教学章的识别方法反向用于筛选脆弱用户。"
+      },
+      {
+        id: "first-set-folder",
+        label: "第一套：六案资料夹",
+        text: "TA 说第一套案件只是公开素材，但后台日志显示，资料夹在部分案件开播前就已经生成标签。",
+        correctMark: "selfBlind",
+        contradiction: "模板告解：管理员把提前整理资料包装成事后复盘，回避了自己对案件推进的参与。"
+      },
+      {
+        id: "paid-intake",
+        label: "第二套：入会测评",
+        text: "测评表把“安全感、诚意、家庭责任、情绪陪伴”做成付费项。管理员说这只是帮助用户表达需求。",
+        correctMark: "hurtOther",
+        contradiction: "模板告解：平台把真实痛苦转换成付费按钮，帮助和收割之间的边界被故意模糊。"
+      },
+      {
+        id: "credit-control",
+        label: "第二套：征信镜像",
+        text: "TA 反复强调核验很重要，却没有解释为什么用户资料会被裁剪成可传播的风险报告。",
+        correctMark: "hurtByOther",
+        contradiction: "模板告解：征信核验被平台滥用成信息控制，真实风险被改写成勒索筹码。"
+      },
+      {
+        id: "family-score",
+        label: "第二套：亲属互助",
+        text: "家庭互助榜单被称作“减少沟通成本”，但它让不愿意承担外部债务的人自动变成不孝。",
+        correctMark: "hurtOther",
+        contradiction: "模板告解：亲属互助榜单把家庭压力系统化，制造新的道德债务。"
+      },
+      {
+        id: "final-product-demo",
+        label: "最终：产品式忏悔",
+        text: "管理员讲得冷静、完整、像一场产品发布。越像自省，越要检查 TA 是否把责任转移给“用户自己的选择”。",
+        correctMark: "selfBlind",
+        contradiction: "模板告解：管理员的完整忏悔仍在控制叙事，把平台设计造成的伤害推回用户选择。"
+      }
+    ];
+  }
+  if (item.id !== "story-06-confession") return fallback;
   return [
     {
       id: "profile-mask",

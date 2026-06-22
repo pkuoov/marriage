@@ -25,7 +25,9 @@ function renderCaseStatus(state) {
     const total = state.caseBriefs?.length ?? 0;
     const mode = state.caseMode === "anchor" ? "主播模式" : "故事模式";
     const title = state.caseBrief.storyArcTitle ?? state.caseBrief.label;
-    return `<h3>后台案件</h3><p>${mode}｜第 ${state.chapter}/${total || "?"} 案</p><p>${title}｜难度 ${state.caseBrief.difficulty}</p><p class="muted">${state.caseBrief.storyArcSummary ?? state.caseBrief.publicHook}</p>${state.caseBrief.storyClueObject ? `<p class="muted">悬念物：${state.caseBrief.storyClueObject}</p>` : ""}`;
+    const setLine = state.caseBrief.storySetName ? `<p class="muted">${state.caseBrief.storySetName}</p>` : "";
+    const bridgeLine = state.caseBrief.storyBridgeClue ? `<p class="muted">跨套关联：${state.caseBrief.storyBridgeClue}</p>` : "";
+    return `<h3>后台案件</h3><p>${mode}｜第 ${state.chapter}/${total || "?"} 案</p>${setLine}<p>${title}｜难度 ${state.caseBrief.difficulty}</p><p class="muted">${state.caseBrief.storyArcSummary ?? state.caseBrief.publicHook}</p>${state.caseBrief.storyClueObject ? `<p class="muted">悬念物：${state.caseBrief.storyClueObject}</p>` : ""}${bridgeLine}`;
   }
   if (state.investigationComplete) {
     const archiveCount = state.caseArchive?.length ?? 0;
