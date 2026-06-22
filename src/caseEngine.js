@@ -506,6 +506,12 @@ const STREAMER_STORY_SEQUENCE = [
     summary: "客户说自己只是想稳定下来，但领证倒计时和婚前转账的顺序对不上。",
     openingComplaint: "何念第一次连线时说：“我真的只是想稳定下来，为什么他总觉得我图钱？” 周砚随后补进直播间，拿出一笔领证前夜的转账和一张被删掉的倒计时截图。两个人都没完全撒谎，但谁都没把转账用途说完整。",
     coldOpen: "开播第十分钟，孟姐还没让任何人哭完，就先把两行字写上白板：领证时间、转账用途。她说：“第一案只练一个动作：不要听谁更委屈，先看钱在承诺前还是承诺后。”",
+    openingDialogue: [
+      { speaker: "孟姐", role: "host", text: "何念，先说钱。" },
+      { speaker: "何念", role: "caller", text: "我只是想稳定下来，他却说我骗婚。" },
+      { speaker: "周砚", role: "other", text: "她让我领证前转钱，说以后是一家人。" },
+      { speaker: "孟姐", role: "host", text: "先查顺序：承诺在前，还是转账在前？" }
+    ],
     suspense: "表面是骗婚指控，真正要先查的是：这笔钱到底是恋爱赠与、临时借款，还是被婚姻承诺推出来的风险转移。",
     mislead: "何念会把自己放在“被怀疑”的位置，周砚会把自己放在“被骗钱”的位置，但两边都在回避转账备注和领证倒计时的先后顺序。",
     clueObject: "领证前夜转账",
@@ -537,6 +543,12 @@ const STREAMER_STORY_SEQUENCE = [
     summary: "客户说自己被仙人跳，另一方说自己被越界；主播必须同时查清性同意边界和勒索节点。",
     openingComplaint: "周砚说自己被何念设局，对方准备报警告强奸捞一笔。何念随后连线，说自己确实有一段失去判断力的时间。两边都拿截图，截图却都缺少同一个半小时。",
     coldOpen: "孟姐先关掉弹幕投票：“涉及性同意，谁都不能靠一句‘仙人跳’或一句‘我受伤了’直接赢。今天只按时间线、清醒程度、威胁话术和转账要求排。”",
+    openingDialogue: [
+      { speaker: "孟姐", role: "host", text: "不贴标签。先排时间。" },
+      { speaker: "周砚", role: "caller", text: "她要八万，不给就报警、发视频。" },
+      { speaker: "何念", role: "other", text: "我中间断片了，但我说过不舒服。" },
+      { speaker: "孟姐", role: "host", text: "两份截图，都少了同半小时。" }
+    ],
     suspense: "这案的戏剧性不在站队，而在反转：可能有真实越界，也可能有人把边界争议变成索财工具；两件事可以同时成立。",
     mislead: "弹幕会被“告强奸捞钱”带走，也会被“受害者不能被质疑”带走。主播台上要做的是保留严肃性，同时追问威胁和转账节点。",
     clueObject: "缺失的三十分钟",
@@ -571,6 +583,12 @@ const STREAMER_STORY_SEQUENCE = [
     summary: "表面是托尼老师会聊天，深层是多线养鱼、骑驴找马和资源分工。",
     openingComplaint: "何念以为自己和许照在认真恋爱，直到她发现他的理发店预约表里，每个晚上都有不同的专属昵称。许照说那只是客户服务，另一位女生却发来同款“以后开店一起做”的承诺。",
     coldOpen: "客户发来的不是聊天记录，而是一张排班表。孟姐看完只问一句：“这是排客人，还是排未来？”",
+    openingDialogue: [
+      { speaker: "孟姐", role: "host", text: "你发现的是排班表？" },
+      { speaker: "何念", role: "caller", text: "我旁边写‘情绪稳定’，别人写‘能投店’。" },
+      { speaker: "许照", role: "other", text: "我是做服务的，记客户特点正常。" },
+      { speaker: "孟姐", role: "host", text: "查承诺，不查发型。" }
+    ],
     suspense: "本案初看像脚踩几只船，追下去会发现每条线负责不同资源：有人负责情绪，有人负责消费，有人负责创业人脉。",
     mislead: "许照会把一切说成服务行业的热情，何念会把问题说成“他不够爱我”。真正要查的是排他承诺和资源收益。",
     clueObject: "理发店预约表",
@@ -604,6 +622,12 @@ const STREAMER_STORY_SEQUENCE = [
     summary: "最后一通来电把公主病、巨婴、狮子大开口和现实错配放在一起，逼你区分骗局与成熟度不足。",
     openingComplaint: "林鹿说周砚像巨婴，什么都要她安排；周砚说林鹿像公主，彩礼、房子、情绪价值都要满分。两个人都不像骗子，却都把“爱我就该懂我”当成免沟通理由。",
     coldOpen: "这案没有惊天截图，只有二十几条“你为什么不能主动一点”。孟姐说：“没有坏人，不代表没有问题；不是诈骗，不代表适合结婚。”",
+    openingDialogue: [
+      { speaker: "孟姐", role: "host", text: "没有转账，也没有出轨。为什么连线？" },
+      { speaker: "林鹿", role: "caller", text: "我像在养一个成年人。" },
+      { speaker: "周砚", role: "other", text: "她什么都要满分，做不到就骂我巨婴。" },
+      { speaker: "孟姐", role: "host", text: "先查责任、预期、备用对象。" }
+    ],
     suspense: "终局要考的是区分能力：骗婚、化债、勒索、多线养鱼是风险；公主病、巨婴、狮子大开口有时是成熟度和现实能力不匹配。",
     mislead: "弹幕会急着骂谁作、谁穷、谁妈宝。主播要拆的是责任能力、现实预期、边界表达，以及有没有备用对象。",
     clueObject: "生活分工与相亲日历",
@@ -625,6 +649,7 @@ const STREAMER_STORY_SEQUENCE = [
     complainantId: "lin",
     respondentId: "zhou",
     stance: "personalityMismatch",
+    consultationMode: "mediation",
     sceneId: "family-dinner",
     referencesEvidenceIds: ["streamer-03-tony-fishing-story-clue"],
     bridgeClue: "第三案的预约表证明了多线筛选可以被管理成系统；终局要判断林鹿的高要求是现实错配，还是也带着筛选备胎的功能。",
@@ -938,6 +963,7 @@ function buildFixedStorySequence(sequence, npcs, attrs, options = {}) {
     });
     const difficultyProfile = item.difficultyProfile ?? (item.id?.startsWith("streamer-") ? storyDifficultyProfile(index) : null);
     const profiledBrief = applyDifficultyProfile(brief, difficultyProfile);
+    const overrides = storyCaseOverrides(item);
     return {
       ...profiledBrief,
       id: item.id,
@@ -959,13 +985,16 @@ function buildFixedStorySequence(sequence, npcs, attrs, options = {}) {
       storyClue: item.storyClue,
       storyBridgeClue: item.bridgeClue,
       storyTransition: item.transition,
+      consultationMode: item.consultationMode ?? "singleConsultant",
       contentWarning: item.contentWarning,
       structuralActorId: item.structuralActorId ?? null,
       referencesEvidenceIds: item.referencesEvidenceIds ?? [],
       tutorialChapter: Boolean(item.tutorialChapter),
       tutorialTip: item.tutorialTip,
       tutorialConfessionPractice: item.tutorialChapter ? buildTutorialConfessionPractice() : [],
-      evidenceCards: [...buildStoryEvidenceCards(item), ...(profiledBrief.evidenceCards ?? [])],
+      sceneVersions: overrides.sceneVersions ?? profiledBrief.sceneVersions,
+      testimony: overrides.testimony ?? profiledBrief.testimony,
+      evidenceCards: [...buildStoryEvidenceCards(item), ...(overrides.evidenceCards ?? profiledBrief.evidenceCards ?? [])],
       confessionTimeline: item.caseMode === "confession" ? buildStoryConfessionTimeline(item, profiledBrief.confessionTimeline) : profiledBrief.confessionTimeline,
       fixedStory: true
     };
@@ -1018,9 +1047,9 @@ function buildStoryEvidenceCards(item) {
   const bridge = item.bridgeClue ? {
     id: `${item.id}-bridge-clue`,
     type: "跨套线索",
-    title: "第一套回收点",
+    title: "旧案回声",
     front: item.bridgeClue,
-    detail: "这条线索说明第二套案件不是新的随机危机，而是在复用第一套已经验证过的亲密关系压力模板。",
+    detail: "旧案里的材料可以帮你判断本案是不是同一种话术在重复出现。",
     targets: commonTargets,
     contradiction: `跨案线索证明旧档材料正在本案回响：${item.bridgeClue}`
   } : null;
@@ -1054,6 +1083,448 @@ function buildStoryEvidenceCards(item) {
     }
   };
   return [base, bridge, extras[item.id]].filter(Boolean);
+}
+
+function storyCaseOverrides(item) {
+  const cards = (entries) => entries.map((card, index) => ({
+    id: `${item.id}-custom-${index + 1}`,
+    ...card
+  }));
+  const byId = {
+    "streamer-01-certificate-money": {
+      sceneVersions: [
+        {
+          speakerId: "he",
+          speaker: "何念",
+          version: "他说见完父母就领证，我只是问他能不能先把那笔周转转过来。备注是他自己写的，不是我逼的。",
+          doubt: "她把“领证”和“周转”说成同一件事，却避开谁先提出金额。",
+          contradiction: "何念说没主动要钱，但转账前一天她发过具体金额和收款卡号。",
+          reliability: "low"
+        },
+        {
+          speakerId: null,
+          speaker: "对方材料",
+          version: "周砚提交的截图里，他把转账备注写成“婚前互相扶持”，同时把“七天后领证”发进家庭群。",
+          doubt: "材料显示周砚不是单纯被动付款，他也在用领证节点推进关系。",
+          contradiction: "周砚把自己说成被动转账，但领证倒计时是他先发给双方父母的。",
+          reliability: "mixed"
+        },
+        {
+          speakerId: null,
+          speaker: "后台记事本",
+          version: "转账发生在见父母后 19 分钟，备注三次修改，最后才变成“婚前互相扶持”。",
+          doubt: "备注变化比哭诉更可靠，但它只能证明钱和承诺被绑在一起。",
+          contradiction: "转账备注被改过三次，说明双方都在事后整理一个更好听的版本。",
+          reliability: "partial"
+        }
+      ],
+      testimony: [
+        {
+          speakerId: "he",
+          speaker: "何念",
+          line: "“我没说不给钱就不领证，我只是说家里这关过不去，我也没脸办婚礼。”",
+          kind: "ambiguous",
+          surface: "把金额藏进体面",
+          hint: "她没有直接说要钱，但把领证、婚礼和家里周转绑在一起。",
+          followups: [
+            {
+              question: "你第一次说具体金额是什么时候？",
+              result: "何念停了一下，说是在见父母前一晚，“只是让他心里有数”。",
+              contradiction: "具体金额早于饭局出现，不能再说只是临时被逼到转账。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "周砚材料",
+          line: "截图里，周砚写过：“我说马上领证，是稳定，不是让你拿钱去补你家窟窿。”",
+          kind: "reluctant",
+          surface: "真相里留了压力",
+          hint: "他拿骗婚保护自己，但也用领证承诺制造了付款压力。",
+          followups: [
+            {
+              question: "你有没有把转账截图发给父母看？",
+              result: "周砚承认发过，说是想让家里相信何念会一起承担。",
+              contradiction: "周砚把转账拿去换父母认可，说明这笔钱也服务于他的领证推进。"
+            }
+          ]
+        },
+        {
+          speakerId: "he",
+          speaker: "何念",
+          line: "“我家周转是真的，我没有骗他。只是我怕他说我现实，所以没一开始讲完。”",
+          kind: "halfLie",
+          surface: "小承认遮住用途",
+          hint: "真实困难不等于可以把风险转嫁给对方。",
+          followups: [
+            {
+              question: "这笔钱原计划几天内还？",
+              result: "何念说不出日期，只说“领证后就是一家人了”。",
+              contradiction: "还款日期被领证替代，转账已经从借款滑向婚姻绑定。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "记事本",
+          line: "转账、领证倒计时、父母饭局发生在同一天。先判断谁把钱和婚姻承诺绑在了一起。",
+          kind: "sceneHint",
+          surface: "时间线提示",
+          hint: "第一案只练基础动作：拆顺序。",
+          followups: [
+            {
+              question: "如果只能锁一个矛盾，先锁哪一个？",
+              result: "先锁转账备注修改。备注是双方事后包装动机的入口。",
+              contradiction: "备注修改证明两个人都在重写转账性质。"
+            }
+          ]
+        }
+      ],
+      evidenceCards: cards([
+        {
+          type: "转账记录",
+          title: "备注三次修改",
+          front: "同一笔 8.8 万转账，备注从“临时周转”改成“婚前互相扶持”。",
+          detail: "备注变化说明双方都在事后调整这笔钱的性质。",
+          targets: ["ambiguous", "halfLie", "sceneHint"],
+          contradiction: "转账备注三次修改，证明钱和领证承诺被人为绑在一起。"
+        },
+        {
+          type: "截图",
+          title: "领证倒计时",
+          front: "周砚先把“七天后领证”的截图发进家庭群。",
+          detail: "他不是纯被动付款，也在推进婚姻节点。",
+          targets: ["reluctant", "sceneHint"],
+          contradiction: "周砚先公开领证倒计时，说明他也用婚姻承诺制造压力。"
+        }
+      ])
+    },
+    "streamer-02-boundary-extortion": {
+      sceneVersions: [
+        {
+          speakerId: "zhou",
+          speaker: "周砚",
+          version: "她第二天才说要报警，还发来八万块的数字。我第一反应就是被设局了。",
+          doubt: "他把钱放在最前面，但没先讲清那半小时里自己做过什么。",
+          contradiction: "周砚控诉勒索，却回避缺失半小时里的拒绝和清醒程度。",
+          reliability: "mixed"
+        },
+        {
+          speakerId: null,
+          speaker: "何念语音",
+          version: "语音里，何念反复说自己“中间断片”，又说“我不是为了钱才说报警”。",
+          doubt: "边界叙事需要严肃对待，但索财话术出现得太快。",
+          contradiction: "何念说先害怕后谈钱，但聊天时间显示八万要求早于报警咨询。",
+          reliability: "mixed"
+        },
+        {
+          speakerId: null,
+          speaker: "时间线",
+          version: "00:42 到 01:13 的聊天缺失。01:21 出现“你不给钱我就公开视频”。",
+          doubt: "缺失半小时不能自动证明任何一方清白。",
+          contradiction: "双方截图都剪掉同一段时间，说明关键事实被两边共同回避。",
+          reliability: "partial"
+        }
+      ],
+      testimony: [
+        {
+          speakerId: "zhou",
+          speaker: "周砚",
+          line: "“她说八万只是补偿，我听到的是：不给钱就报警。”",
+          kind: "ambiguous",
+          surface: "把边界争议压成勒索",
+          hint: "勒索要查，边界也不能被勒索二字抹掉。",
+          followups: [
+            {
+              question: "八万出现前，你们最后一句完整聊天是什么？",
+              result: "周砚只拿得出 00:41 以前的截图，后面半小时他说“记不清”。",
+              contradiction: "周砚用勒索解释全案，但最关键半小时没有交代。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "何念聊天记录",
+          line: "聊天记录里，何念写：“我朋友说这种事不能忍，她给我发了维权模板。我当时太乱，就照着发了。”",
+          kind: "halfLie",
+          surface: "真实受伤夹着模板话术",
+          hint: "真实边界问题和索财模板可以同时存在。",
+          followups: [
+            {
+              question: "模板里有没有固定金额和公开视频这句话？",
+              result: "何念承认有，但说自己只是想让对方害怕。",
+              contradiction: "索财和公开视频威胁来自模板，不能被包装成单纯求助。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "语音",
+          line: "一段 7 秒语音里，何念说“我不舒服，别这样”，背景里有人劝酒。",
+          kind: "truthWithGap",
+          surface: "关键证据但不完整",
+          hint: "它证明边界信号存在，但不能单独证明后续索财合理。",
+          followups: [
+            {
+              question: "语音是在缺失半小时前还是后？",
+              result: "后台定位显示它在缺失半小时中段。",
+              contradiction: "缺失半小时里确实出现过边界信号，周砚不能用勒索反咬抹掉它。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "记事本",
+          line: "本案不要抢标签。先分开两件事：有没有越界，是否有人借越界索财。",
+          kind: "sceneHint",
+          surface: "双线提示",
+          hint: "答案可能不是单选善恶。",
+          followups: [
+            {
+              question: "如果两件事同时成立，阶段判断怎么做？",
+              result: "不能把真实受伤洗成勒索，也不能把勒索包装成维权。",
+              contradiction: "边界信号和索财模板同时成立，本案责任不能简化成一边全错。"
+            }
+          ]
+        }
+      ],
+      evidenceCards: cards([
+        {
+          type: "时间线",
+          title: "缺失的三十分钟",
+          front: "两边提交截图都缺 00:42 到 01:13。",
+          detail: "缺失段里同时有边界语音和事后谈钱的入口。",
+          targets: ["ambiguous", "truthWithGap", "sceneHint"],
+          contradiction: "同一段时间被双方剪掉，说明本案不能只听任一方标签。"
+        },
+        {
+          type: "聊天",
+          title: "八万模板",
+          front: "朋友转发的“维权攻略”含固定金额和公开视频威胁句。",
+          detail: "这解释了勒索话术来源，但不能抹掉边界信号。",
+          targets: ["halfLie", "sceneHint"],
+          contradiction: "八万和公开视频来自模板，何念的求助里夹进了威胁工具。"
+        }
+      ])
+    },
+    "streamer-03-tony-fishing": {
+      sceneVersions: [
+        {
+          speakerId: "he",
+          speaker: "何念",
+          version: "我以为我是女朋友。后来才看到排班表，我旁边写‘情绪稳定’，别人写‘能投店’。",
+          doubt: "她抓住了排班表，但还没说明自己是否也保留相亲对象。",
+          contradiction: "何念说自己只被许照养鱼，但她的相亲日历也没有停。",
+          reliability: "mixed"
+        },
+        {
+          speakerId: null,
+          speaker: "许照聊天记录",
+          version: "许照在聊天里解释：做服务的人记客户特点很正常，“她们爱听什么，我就记什么”。",
+          doubt: "服务记录不会写“以后开店一起做”。",
+          contradiction: "许照把未来承诺说成客户维护，但同一句承诺发给了三个人。",
+          reliability: "low"
+        },
+        {
+          speakerId: null,
+          speaker: "店员",
+          version: "预约表不是给前台看的，是许照自己手机里的。备注分成陪伴、消费、资源三类。",
+          doubt: "这不是普通暧昧名单，而是功能分组。",
+          contradiction: "预约表按功能分组，说明许照在系统化管理多段关系。",
+          reliability: "partial"
+        }
+      ],
+      testimony: [
+        {
+          speakerId: null,
+          speaker: "许照聊天记录",
+          line: "许照在聊天里说：“以后开店一起做，是鼓励。做服务的人嘴甜一点，不犯法吧？”",
+          kind: "ambiguous",
+          surface: "把承诺说成嘴甜",
+          hint: "重点不是甜言蜜语，而是有没有用未来换资源。",
+          followups: [
+            {
+              question: "这句话发给过几个人？",
+              result: "许照说不清，只承认“可能不止一个”。",
+              contradiction: "同一套未来承诺发给多人，不能再说只是临场安慰。"
+            }
+          ]
+        },
+        {
+          speakerId: "he",
+          speaker: "何念",
+          line: "“我也不是没人追，但我至少没让别人给我投店。”",
+          kind: "reluctant",
+          surface: "受害叙事里留着备胎",
+          hint: "她受伤是真的，但也在保留后路。",
+          followups: [
+            {
+              question: "你发现排班表之后，还继续相亲了吗？",
+              result: "何念承认继续见了两个人，说那只是给自己留退路。",
+              contradiction: "何念也保留相亲对象，但这不等于许照的系统化养鱼消失。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "排班表",
+          line: "表格里每个昵称后面都有一列：陪伴、消费、资源。",
+          kind: "truthWithGap",
+          surface: "功能分组",
+          hint: "多线养鱼的关键是不同人承担不同功能。",
+          followups: [
+            {
+              question: "何念对应哪一列？",
+              result: "何念对应“陪伴”，另一位女生对应“资源/可能投店”。",
+              contradiction: "许照按功能分配对象，说明这不是普通花心。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "记事本",
+          line: "本案先别骂花心。查三件事：排他承诺、资源索取、多人话术是否复用。",
+          kind: "sceneHint",
+          surface: "养鱼结构",
+          hint: "多线关系要看承诺和收益。",
+          followups: [
+            {
+              question: "哪一项最能证明系统化？",
+              result: "不是聊天暧昧，是排班表里的功能列。",
+              contradiction: "功能列证明许照把不同对象当成不同资源位。"
+            }
+          ]
+        }
+      ],
+      evidenceCards: cards([
+        {
+          type: "表格",
+          title: "理发店预约表",
+          front: "昵称后面不是发型需求，而是陪伴、消费、资源。",
+          detail: "功能分组比暧昧聊天更能证明多线管理。",
+          targets: ["ambiguous", "truthWithGap", "sceneHint"],
+          contradiction: "预约表按功能分组，证明许照把关系系统化管理。"
+        },
+        {
+          type: "聊天",
+          title: "同款开店承诺",
+          front: "三个人都收到“以后开店一起做”。",
+          detail: "同一句未来被复用，就不再是唯一承诺。",
+          targets: ["ambiguous", "reluctant"],
+          contradiction: "同款开店承诺发给多人，证明许照用未来换取不同资源。"
+        }
+      ])
+    },
+    "streamer-04-reality-mismatch": {
+      sceneVersions: [
+        {
+          speakerId: "lin",
+          speaker: "林鹿",
+          version: "我不是要满分男友。我只是累了，连他妈什么时候来家里，都是我提醒他问。",
+          doubt: "她的疲惫成立，但她把标准说成底线，没有留下协商空间。",
+          contradiction: "林鹿说只想要成熟伴侣，却同时保留两个更高资源相亲对象。",
+          reliability: "mixed"
+        },
+        {
+          speakerId: "zhou",
+          speaker: "周砚",
+          version: "她说我巨婴，可她列的清单从家务到房车彩礼，每一项都要我立刻补齐。",
+          doubt: "他被高要求压住，但也承认生活事务长期由父母处理。",
+          contradiction: "周砚反感清单，却拿不出自己独立处理生活的记录。",
+          reliability: "mixed"
+        },
+        {
+          speakerId: null,
+          speaker: "后台记事本",
+          version: "生活分工表连续三周空白，相亲日历却排得很满。",
+          doubt: "这案不是典型诈骗，但不适合结婚的证据很密。",
+          contradiction: "生活分工空白和相亲日历同时存在，说明双方都没准备进入婚姻。",
+          reliability: "partial"
+        }
+      ],
+      testimony: [
+        {
+          speakerId: "lin",
+          speaker: "林鹿",
+          line: "“我不是公主病。我只是希望他不用我把每件事掰开喂到嘴边。”",
+          kind: "ambiguous",
+          surface: "需求说成默认标准",
+          hint: "需求合理不代表表达方式合理。",
+          followups: [
+            {
+              question: "哪些事你明确说过，哪些只是希望他懂？",
+              result: "林鹿承认很多要求没有说出口，她觉得“成年人应该知道”。",
+              contradiction: "林鹿把未表达的期待当成考核标准，制造了无法通过的测试。"
+            }
+          ]
+        },
+        {
+          speakerId: "zhou",
+          speaker: "周砚",
+          line: "“我不是不负责。我妈比较熟这些流程，让她帮忙更省事。”",
+          kind: "defensive",
+          surface: "把外包说成省事",
+          hint: "省事不等于承担责任。",
+          followups: [
+            {
+              question: "你自己独立处理过哪件结婚准备？",
+              result: "周砚只能说出订餐厅，还是母亲先筛好的三家。",
+              contradiction: "周砚把生活责任长期外包给父母，巨婴指控不是空穴来风。"
+            }
+          ]
+        },
+        {
+          speakerId: "lin",
+          speaker: "林鹿",
+          line: "“我还有相亲对象，是因为我不能把未来押在一个不长大的人身上。”",
+          kind: "halfLie",
+          surface: "留后路包装成自保",
+          hint: "自保可以理解，但继续加码要求就变成筛选。",
+          followups: [
+            {
+              question: "你提出房车彩礼要求时，相亲还在继续吗？",
+              result: "林鹿承认还在继续，说这只是比较现实条件。",
+              contradiction: "林鹿一边要求周砚加码，一边保留相亲对象，需求里混入了筛选功能。"
+            }
+          ]
+        },
+        {
+          speakerId: null,
+          speaker: "记事本",
+          line: "这案重点不是抓坏人。看责任能力、表达方式、是否还有备选对象。",
+          kind: "sceneHint",
+          surface: "终局提示",
+          hint: "无预谋不等于没问题。",
+          followups: [
+            {
+              question: "为什么不是典型骗婚？",
+              result: "没有稳定预谋链，但有成熟度不足、现实错配和多线筛选。",
+              contradiction: "本案没有稳定骗局链条，却足以判断两人不适合立刻进入婚姻。"
+            }
+          ]
+        }
+      ],
+      evidenceCards: cards([
+        {
+          type: "表格",
+          title: "生活分工空白",
+          front: "三周分工表里，周砚负责项几乎全由母亲备注完成。",
+          detail: "巨婴问题不是骂人，是责任能力证据。",
+          targets: ["defensive", "sceneHint"],
+          contradiction: "生活分工表证明周砚长期把责任外包给父母。"
+        },
+        {
+          type: "日历",
+          title: "相亲日历",
+          front: "林鹿提出加码要求期间，仍保留两个高资源相亲安排。",
+          detail: "高要求可能是筛选策略，不只是现实标准。",
+          targets: ["ambiguous", "halfLie", "sceneHint"],
+          contradiction: "相亲日历证明林鹿的高要求里混入骑驴找马。"
+        }
+      ])
+    }
+  };
+  return byId[item.id] ?? {};
 }
 
 function buildStoryConfessionTimeline(item, fallback = []) {
@@ -1324,15 +1795,15 @@ function buildSceneVersions(scene, complainant, respondent, hiddenFacts, exagger
       {
         speakerId: complainant?.id ?? null,
         speaker: `${name} 的自述`,
-        version: `${name} 说，自己现在回看${scene.name}，才发现当时有些不舒服被自己压下去了。`,
+        version: `我现在回看${scene.name}，才发现当时有些不舒服被我自己压下去了。`,
         doubt: `TA 把重点放在“我当时太傻”，但还没说清 ${gap}。`,
         contradiction: `如果 TA 当时已经察觉不对，为什么还继续配合 ${packaging} 这套说法？`,
         reliability: "mixed"
       },
       {
-        speakerId: respondent?.id ?? null,
-        speaker: `${other} 的影子版本`,
-        version: `${other} 没有直接在场连线，只能从聊天、账单和共同朋友口中拼出另一个版本。`,
+        speakerId: null,
+        speaker: `${other} 的材料影子`,
+        version: `TA 没有坐在这里连线，但聊天、账单和共同朋友能拼出另一个版本。`,
         doubt: "告解模式里，缺席者也可能被叙述者塑造成单纯恶人。",
         contradiction: `缺席者版本提示：${gap} 不是突然发生，而是被多次绕开。`,
         reliability: "partial"
@@ -1340,7 +1811,7 @@ function buildSceneVersions(scene, complainant, respondent, hiddenFacts, exagger
       {
         speakerId: null,
         speaker: "自我核验材料",
-        version: `材料只能证明 ${name} 确实经历过${scene.name}，不能证明 TA 对自己动机的解释完全可靠。`,
+        version: `材料只能证明 ${name} 确实经历过${scene.name}，不能证明这段自述里的动机解释完全可靠。`,
         doubt: "人在告解时也会保护自尊，把选择说成被迫，把收益说成偶然。",
         contradiction: `真正要查的是：${name} 有没有在 ${gap} 和 ${packaging} 上同时骗过别人，也骗过自己。`,
         reliability: "partial"
@@ -1351,23 +1822,23 @@ function buildSceneVersions(scene, complainant, respondent, hiddenFacts, exagger
     {
       speakerId: complainant?.id ?? null,
       speaker: name,
-      version: `${name} 说，当时 ${other} 在${scene.name}突然施压，自己只是被迫回应。TA 复述得很快，快到像背熟了一段对自己有利的开场白。`,
+      version: `那天在${scene.name}，${other} 是突然把话题压过来的。我当时只能回应，根本没有准备。`,
       doubt: `TA 把“突然”说得很重，但没有主动说明 ${gap}，也没有解释为什么自己提前准备了材料。`,
       contradiction: `如果真是突然施压，为什么 ${packaging} 的说法在前一天已经出现在聊天里？`,
       reliability: premeditated ? "low" : "mixed"
     },
     {
-      speakerId: respondent?.id ?? null,
-      speaker: other,
-      version: `${other} 说，那天不是逼迫，而是双方早就约好把钱、家里和未来说清楚。TA 一边否认施压，一边把自己塑造成唯一还愿意讲道理的人。`,
+      speakerId: null,
+      speaker: `${other} 的材料摘录`,
+      version: `截图里，${other} 的说法是：那天不是突然逼问，而是两人早就约好把关键问题说清楚。`,
       doubt: `TA 反驳得很快，但对自己能得到什么讲得很轻，像是把收益藏进了“沟通成本”里。`,
       contradiction: `TA 说“早就约好”，却拿不出明确约定，只能拿出几个含糊表情包。`,
       reliability: "mixed"
     },
     {
       speakerId: null,
-      speaker: "第三方/现场材料",
-      version: `现场材料只证明大家确实在${scene.name}出现过，不证明任何一方的完整版本就是真的。`,
+      speaker: "后台记事本",
+      version: `现场材料只能证明两个人确实在${scene.name}出现过，不能替任何一方的完整版本背书。`,
       doubt: "场景复原不是监控录像，它仍然是被选择过的叙事。",
       contradiction: `现场材料和双方叙事共同指向：${gap} 与 ${packaging} 需要被单独核验。`,
       reliability: "partial"
@@ -1444,9 +1915,9 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
         ]
       },
       {
-        speakerId: respondent?.id ?? null,
-        speaker: `${other} 的缺席版本`,
-        line: `“如果只听 TA 的告解，我永远都是那个让 TA 受伤的人。”`,
+        speakerId: null,
+        speaker: `${other} 的材料影子`,
+        line: `材料里能听见另一种说法：“如果只听 TA 的告解，我永远都是那个让 TA 受伤的人。”`,
         kind: "shadowVersion",
         surface: "缺席者反叙事",
         hint: "告解模式里，另一方可能缺席，但证据不会缺席。",
@@ -1497,9 +1968,9 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
       ]
     },
     {
-      speakerId: respondent?.id ?? null,
-      speaker: other,
-      line: `“TA 没说的是，${primaryGap} 这件事从一开始就没讲完整。每次快谈到这里，TA 就会说我不够爱。”`,
+      speakerId: null,
+      speaker: `${other} 的材料摘录`,
+      line: `对方材料里反复出现一句：“TA 没说的是，${primaryGap} 这件事从一开始就没讲完整。”`,
       kind: "reluctant",
       surface: "不愿意说完整",
       hint: "被诉方给出的反叙事未必全真，但能暴露第一版故事的缺口。",
@@ -1532,13 +2003,13 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
       ]
     },
     {
-      speakerId: respondent?.id ?? null,
-      speaker: other,
+      speakerId: null,
+      speaker: `${other} 的补充材料`,
       line: premeditated
-        ? `“如果不是我发现得早，TA 已经把下一步都安排好了。”`
+        ? `材料里还有一句被截断的话：“如果不是我发现得早，TA 已经把下一步都安排好了。”`
         : stance === "personalityMismatch"
-          ? `“我们可能都不算坏，只是每次沟通都变成互相证明谁更委屈。”`
-          : `“我也有做得不好的地方，但不是 TA 连线里说的那个版本。”`,
+          ? `补充记录里写着：“我们可能都不算坏，只是每次沟通都变成互相证明谁更委屈。”`
+          : `补充材料里承认：“我也有做得不好的地方，但不是 TA 连线里说的那个版本。”`,
       kind: premeditated ? "truthWithGap" : "defensive",
       surface: premeditated ? "真话但留白" : "防御性含糊",
       hint: premeditated ? "“下一步”是预谋案的关键词，要追钱、证据和时间线。" : "非预谋案也需要判断责任比例，而不是只选好人坏人。",

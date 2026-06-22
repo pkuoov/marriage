@@ -21,6 +21,20 @@ export function storyCallsBlock(brief) {
   `;
 }
 
+export function dialogueBlock(lines = []) {
+  if (!lines.length) return "";
+  return `
+    <div class="call-dialogue">
+      ${lines.map((line) => `
+        <div class="call-line ${line.role ?? ""}">
+          <b>${line.speaker}</b>
+          <p>${line.text}</p>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
 export function plotThreadsBlock(brief, contradictionCount = 0) {
   const threads = brief.plotThreads ?? [];
   if (!threads.length) return "";

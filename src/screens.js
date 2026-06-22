@@ -1,5 +1,4 @@
 import { ATTRIBUTES, DETECTIVE_SPECIALTIES } from "./story.js?v=0.14.0";
-import { publicProfileText } from "./profileView.js?v=0.14.0";
 import { caseModeConfig } from "./caseModes.js?v=0.14.0";
 
 export function createScreenRenderers(ctx) {
@@ -39,8 +38,12 @@ function renderTitle() {
         </div>
       </div>
       <aside class="notice">
-        <h2>直播后台</h2>
-        <p>你是婚恋侦探局的主播顾问。今晚可以接固定主线、深挖旧档，也可以打开随机来电。</p>
+        <h2>今晚接哪个栏目？</h2>
+        <div class="mode-grid title-mode-grid">
+          ${modeCard("story", state.caseMode)}
+          ${modeCard("arc", state.caseMode)}
+          ${modeCard("anchor", state.caseMode)}
+        </div>
         <p>已完成周目：${meta.runs ?? 0}｜经验点：${meta.bonusPoints ?? 0}</p>
         ${lastRun ? `<p>最近周目：压力 ${lastRun.pressureScore}｜获得 ${lastRun.gained} 点</p>` : `<p>最近周目：暂无记录</p>`}
       </aside>
@@ -54,6 +57,14 @@ function renderTitle() {
   });
   document.querySelector("[data-new]").addEventListener("click", resetGame);
   document.querySelector("[data-settings]").addEventListener("click", () => setScreen("settings"));
+  document.querySelectorAll("[data-title-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.caseMode = button.dataset.titleMode;
+      state.screen = "creator";
+      saveState();
+      render();
+    });
+  });
   document.querySelector("[data-sound-title]").addEventListener("click", () => {
     toggleSound();
     renderTitle();
@@ -63,50 +74,45 @@ function renderTitle() {
 function renderCreator() {
   if (state.gender !== "male") state.gender = "male";
   const activeSpecialty = DETECTIVE_SPECIALTIES.find((item) => item.id === state.specialty) ?? DETECTIVE_SPECIALTIES[2];
+  const activeMode = caseModeText(state.caseMode);
+  const previewAttrs = loadoutPreviewAttrs(activeSpecialty);
   app.innerHTML = `
     <section class="creator">
       <div class="panel">
-        <p class="eyebrow">侦探局开案</p>
-        <h1>选择调查模式，再开案</h1>
-        <p class="muted">开播前先选你的调查专长和接案栏目。不同栏目会改变来电顺序、旧案牵连和后台愿意交出的材料。</p>
-        <div class="scene-list">
-          <p><b>选择案件模式</b>：${caseModeText(state.caseMode).label}</p>
-          <p><button class="${state.caseMode === "story" ? "primary" : ""}" data-case-mode="story" type="button">故事模式</button><br><span>四通固定来电，从领证前转账一路查到边界勒索、多线承诺和责任错配。</span></p>
-          <p><button class="${state.caseMode === "arc" ? "primary" : ""}" data-case-mode="arc" type="button">连环剧场</button><br><span>打开资料包疑云和模板回声，追查旧案材料怎样被人整理、复用、收费。</span></p>
-          <p><button class="${state.caseMode === "anchor" ? "primary" : ""}" data-case-mode="anchor" type="button">主播模式</button><br><span>随机接入后台来电，逐案复盘、追问、指认和结案。</span></p>
+        <p class="eyebrow">本局配置</p>
+        <h1>选择本局专长</h1>
+        <p class="muted">${activeMode.label}已接入。选一个调查风格，今晚的线索提示会向它倾斜。</p>
+        <div class="title-actions creator-actions">
+          <button class="secondary" data-back-title type="button">返回主页</button>
         </div>
-        <div class="scene-list">
-          <p><b>选择本局专长</b>：${activeSpecialty.label}</p>
-          ${DETECTIVE_SPECIALTIES.map((item) => `
-            <p><button class="${state.specialty === item.id ? "primary" : ""}" data-specialty="${item.id}" type="button">${item.label}</button><br><span>${item.intro}</span></p>
-          `).join("")}
-        </div>
-        <div class="scene-list">
-          <p><b>你的身份</b>：婚恋侦探 / 律师顾问</p>
-          <p><b>案件可能</b>：骗婚、化债、外遇反咬、外情生子、接盘生子、择偶定位包装、大结果收割</p>
-          <p><b>调查方法</b>：复盘当时场景，追问含糊证词，抓迷惑点和矛盾点，再判断谁在隐瞒、夸大、恶人先告状，或在告解里自欺。</p>
-          <p><b>今晚栏目</b>：${caseModeText(state.caseMode).intro}</p>
+        <div class="loadout-grid">
+          ${DETECTIVE_SPECIALTIES.map((item) => specialtyCard(item, activeSpecialty.id)).join("")}
         </div>
         <button class="primary wide" data-finalize type="button">生成案件并开播</button>
       </div>
-      <aside class="panel profile-preview">
-        <h2>后台规则</h2>
-        <p>系统会随机生成本场调查画像，并叠加你的专长加成。画像会影响你更容易看见哪类线索。</p>
-        <p><b>${activeSpecialty.label}</b>：${activeSpecialty.intro}</p>
-        ${publicProfileText(state, ATTRIBUTES).map((line) => `<p>${line}</p>`).join("")}
-        <h2>侦探经验</h2>
-        <p>已完成周目：${meta.runs ?? 0}</p>
-        <p>经验点：${meta.bonusPoints ?? 0}</p>
-        <p>${toolUnlockText(meta.bonusPoints ?? 0).join("<br>")}</p>
+      <aside class="panel loadout-panel">
+        <p class="eyebrow">直播台</p>
+        <h2>${activeMode.label}</h2>
+        <div class="loadout-chip">${modeSubtitle(state.caseMode)}</div>
+        <div class="loadout-current">
+          <span>当前专长</span>
+          <b>${activeSpecialty.label}</b>
+        </div>
+        <div class="attr-pips">
+          ${ATTRIBUTES.map((item) => attrPip(item, previewAttrs[item.id] ?? 0, item.id === activeSpecialty.attr)).join("")}
+        </div>
+        <div class="run-badges">
+          <span>${meta.runs ?? 0} 周目</span>
+          <span>${meta.bonusPoints ?? 0} 经验</span>
+          <span>${nextUnlockText(meta.bonusPoints ?? 0)}</span>
+        </div>
       </aside>
     </section>
   `;
   document.querySelectorAll("[data-specialty]").forEach((button) => {
     button.addEventListener("click", () => chooseSpecialty(button.dataset.specialty));
   });
-  document.querySelectorAll("[data-case-mode]").forEach((button) => {
-    button.addEventListener("click", () => chooseCaseMode(button.dataset.caseMode));
-  });
+  document.querySelector("[data-back-title]")?.addEventListener("click", () => setScreen("title"));
   document.querySelector("[data-finalize]")?.addEventListener("click", finalizeCharacter);
 }
 
@@ -114,12 +120,62 @@ function caseModeText(mode) {
   return caseModeConfig(mode);
 }
 
-function toolUnlockText(points) {
-  return [
-    `${points >= 5 ? "已解锁" : "5 点解锁"}：加班助理，每案 +1 追问配额`,
-    `${points >= 10 ? "已解锁" : "10 点解锁"}：时间线追踪，证据卡自动提示时间缺口`,
-    `${points >= 15 ? "已解锁" : "15 点解锁"}：提前预警，开案显示本栏目高发风险`
-  ];
+function modeCard(mode, activeMode, dataName = "title-mode") {
+  const config = caseModeText(mode);
+  return `
+    <button class="mode-card ${activeMode === mode ? "active" : ""}" data-${dataName}="${mode}" type="button">
+      <b>${config.label}</b>
+      <span>${modeSubtitle(mode)}</span>
+    </button>
+  `;
+}
+
+function modeSubtitle(mode) {
+  return {
+    story: "固定四通来电",
+    arc: "旧档连环深挖",
+    anchor: "随机后台来电"
+  }[mode] ?? "后台来电";
+}
+
+function specialtyCard(item, activeId) {
+  const icons = {
+    audit: "账",
+    emotion: "心",
+    verification: "证"
+  };
+  return `
+    <button class="loadout-card ${activeId === item.id ? "active" : ""}" data-specialty="${item.id}" type="button">
+      <span class="loadout-icon">${icons[item.id] ?? "查"}</span>
+      <b>${item.label}</b>
+      <small>${item.intro}</small>
+    </button>
+  `;
+}
+
+function attrPip(item, value, boosted) {
+  const filled = Math.max(1, Math.min(5, Math.ceil(value / 2)));
+  return `
+    <p class="${boosted ? "boosted" : ""}">
+      <span>${item.short}${boosted ? " +3" : ""}</span>
+      <b>${"■".repeat(filled)}${"□".repeat(5 - filled)}</b>
+    </p>
+  `;
+}
+
+function loadoutPreviewAttrs(activeSpecialty) {
+  return ATTRIBUTES.reduce((attrs, item) => {
+    const base = 4;
+    attrs[item.id] = item.id === activeSpecialty.attr ? Math.min(10, base + activeSpecialty.boost) : base;
+    return attrs;
+  }, {});
+}
+
+function nextUnlockText(points) {
+  if (points < 5) return "下一解锁 5";
+  if (points < 10) return "下一解锁 10";
+  if (points < 15) return "下一解锁 15";
+  return "道具已开放";
 }
 
 

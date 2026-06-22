@@ -209,7 +209,7 @@ export const MOTIVES = {
     pressure: "TA 拿出计划：一个月见父母，三个月订婚。"
   },
   content: {
-    label: "图内容/流量",
+    label: "内容流量",
     light: "TA 总想记录你们的瞬间，哪怕你有点犹豫。",
     pressure: "TA 想发布合照或把两人的故事做成内容。"
   }

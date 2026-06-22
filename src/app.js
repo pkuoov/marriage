@@ -787,6 +787,8 @@ function renderCaseOpen(brief, chapter) {
   const complainant = getNpc(brief.complainantId);
   const respondent = getNpc(brief.respondentId);
   const opening = playthroughOpening(brief);
+  const openingDialogue = openingDialogueForCase(brief, opening, complainant?.name ?? "来访者", respondent?.name ?? "另一方");
+  const dialogueStep = currentDialogueStep(brief, "caseOpen", openingDialogue);
   const view = caseOpenView({
     chapter,
     brief,
@@ -798,13 +800,18 @@ function renderCaseOpen(brief, chapter) {
     respondentName: respondent?.name ?? "未知",
     structureText: caseStructureText(brief),
     budgetText: budgetLine(brief),
+    openingDialogue: dialogueStep.line ? [dialogueStep.line] : [],
     threadLine: brief.threadLink?.line ?? "本案暂无前案旁证。",
     agencyBattle: agencyBattleLine(),
     earlyWarning: meta.bonusPoints >= 15 ? earlyWarningText(brief) : "",
     showStreamline: Boolean(brief.contentWarning && state.settings?.streamlineMode),
     scanDisabled: caseActionDisabled(brief, "scan:summary")
   });
-  storyFrame({ ...view, choices: `${view.choices}${inspirationChoice(brief)}` });
+  const choices = dialogueStep.hasNext
+    ? `<button class="primary" data-dialogue-next="caseOpen" type="button">继续</button>`
+    : view.choices;
+  storyFrame({ ...view, choices, speakerName: dialogueStep.line?.speaker });
+  document.querySelector("[data-dialogue-next]")?.addEventListener("click", () => advanceDialogueStep(brief, "caseOpen", openingDialogue.length));
   document.querySelector("[data-case-scene]")?.addEventListener("click", () => moveCaseScene("sceneReview"));
   document.querySelector("[data-streamline-case]")?.addEventListener("click", () => {
     recordEvidenceInsight(brief, `绿色模式核查：跳过敏感证词细读，只保留 ${brief.storyClueObject ?? "关键时间线"}、转账节点和公开材料。`);
@@ -842,15 +849,23 @@ function renderCaseSceneReview(brief, chapter) {
       details: caseActionDisabled(brief, "scene:details")
     }
   });
-  storyFrame({ ...view, choices: `${view.choices}${inspirationChoice(brief)}` });
-  document.querySelectorAll("[data-version]").forEach((button) => {
+  storyFrame(view);
+  document.querySelectorAll("[data-version-question]").forEach((button) => {
     button.addEventListener("click", () => {
-      const actionKey = `version:${button.dataset.version}`;
+      const [versionIndex, optionIndex] = button.dataset.versionQuestion.split(":").map(Number);
+      const actionKey = `sceneQuestion:${versionIndex}:${optionIndex}`;
       if (!spendCaseAction(brief, actionKey)) return rerenderWithSave();
-      const item = brief.sceneVersions[Number(button.dataset.version)];
-      if (item?.speakerId) state.primaryNpcId = item.speakerId;
-      recordContradiction(brief, item?.contradiction ?? "这个现场版本有无法自洽的地方。");
-      state.lastReaction = `迷惑点：${item?.contradiction ?? "这个现场版本有无法自洽的地方。"}`;
+      const item = brief.sceneVersions[versionIndex];
+      const option = sceneQuestionOption(item, versionIndex, optionIndex);
+      if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
+      if (option.correct !== false) {
+        spendCaseAction(brief, `version:${versionIndex}`, 0);
+        recordContradiction(brief, option.contradiction ?? item?.contradiction ?? "这个现场版本有无法自洽的地方。");
+        state.lastReaction = `${item?.speaker ?? "对方"} 回答：${option.answer ?? option.contradiction ?? item?.contradiction ?? "这个现场版本有无法自洽的地方。"}`;
+      } else {
+        bumpFlag("audiencePressure", 1);
+        state.lastReaction = `${item?.speaker ?? "对方"} 回答：${option.answer ?? "TA 开始重复立场，没有补出新事实。"}`;
+      }
       saveState();
       render();
     });
@@ -860,7 +875,7 @@ function renderCaseSceneReview(brief, chapter) {
       const target = button.dataset.sceneQuestion;
       if (!spendCaseAction(brief, `scene:${target}`)) return rerenderWithSave();
       if (target === "complainant") state.primaryNpcId = brief.complainantId;
-      if (target === "respondent") state.primaryNpcId = brief.respondentId;
+      if (target === "respondent" && shouldShowRespondentLive(brief)) state.primaryNpcId = brief.respondentId;
       if (target === "details") bumpFlag("evidenceClarity", 1);
       applyCaseStage(state.primaryNpcId ?? brief.complainantId, stageForCase(brief));
       moveCaseScene("testimony");
@@ -921,11 +936,32 @@ function renderConfessionTimeline(brief, chapter) {
   });
 }
 
+function sceneQuestionOption(item, index, optionIndex) {
+  const options = Array.isArray(item?.questionOptions) && item.questionOptions.length
+    ? item.questionOptions
+    : [
+        {
+          question: index === 2 ? "这份材料只能证明哪一部分？" : "你刚才省略的是哪一段？",
+          answer: item?.contradiction ?? "这段说法里有一个事实缺口被问出来了。",
+          contradiction: item?.contradiction,
+          correct: true
+        },
+        {
+          question: index === 0 ? "所以你觉得全是对方的问题？" : "你能保证自己这版没有修剪吗？",
+          answer: `${item?.speaker ?? "对方"} 的语气明显防御起来，开始重复立场，没有补出新事实。`,
+          correct: false
+        }
+      ];
+  return options[optionIndex] ?? options[0];
+}
+
 function renderCaseTestimony(brief, chapter) {
   const notes = notesForCase(brief);
   const contradictions = contradictionsForCase(brief);
   const selectedCard = selectedEvidenceCard(brief);
   const testimonyBeat = testimonyDramaBeat(brief);
+  const testimonyIndex = currentTestimonyIndex(brief);
+  const currentTestimony = brief.testimony?.[testimonyIndex] ?? brief.testimony?.[0] ?? null;
   const followupStates = {};
   brief.testimony.forEach((item, index) => {
     (item.followups ?? []).forEach((_, followupIndex) => {
@@ -942,6 +978,8 @@ function renderCaseTestimony(brief, chapter) {
     brief,
     budgetText: budgetLine(brief),
     testimonyBeat,
+    testimonyIndex,
+    currentTestimony,
     selectedCard,
     notes,
     contradictions,
@@ -971,15 +1009,17 @@ function renderCaseTestimony(brief, chapter) {
       if (!spendCaseAction(brief, actionKey)) return rerenderWithSave();
       const item = brief.testimony[testimonyIndex];
       const followup = item?.followups?.[followupIndex];
-      if (item?.speakerId) state.primaryNpcId = item.speakerId;
+      if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
       bumpFlag("evidenceClarity", 1);
       recordInterrogation(brief, `${item?.speaker ?? "证词"}：${followup?.question ?? item?.hint}`);
       if (followup?.contradiction) recordContradiction(brief, followup.contradiction);
-      state.lastReaction = `追问结果：${followup?.result ?? item?.hint ?? "这句话需要回到时间线里看。"}`;
+      state.lastReaction = `询问结果：${followup?.result ?? item?.hint ?? "这句话需要回到时间线里看。"}`;
       saveState();
       render();
     });
   });
+  document.querySelector("[data-testimony-prev]")?.addEventListener("click", () => setTestimonyIndex(brief, testimonyIndex - 1));
+  document.querySelector("[data-testimony-next]")?.addEventListener("click", () => setTestimonyIndex(brief, testimonyIndex + 1));
   document.querySelectorAll("[data-case-scene]").forEach((button) => {
     button.addEventListener("click", () => moveCaseScene(button.dataset.caseScene));
   });
@@ -990,8 +1030,8 @@ function renderCaseEvidence(brief, chapter) {
   const contradictions = contradictionsForCase(brief);
   const insights = insightsForCase(brief);
   const hiddenHint = contradictions.length >= 2 || (state.flags.evidenceClarity ?? 0) >= 4
-    ? `<p class="signal signal-yellow">你注意到：${brief.hiddenFacts[0]} 和 ${brief.exaggerations[0]} 是本案最容易被包装的地方。</p>`
-    : `<p class="signal signal-yellow">你还不能直接看见真相。场景复原和证词里至少还有 ${Math.max(0, 2 - contradictions.length)} 个矛盾点需要追问。</p>`;
+    ? `<p class="signal signal-yellow">${brief.fixedStory && brief.storyClueObject ? `主线物证提示：${brief.storyClueObject} 已经能和当前矛盾接上。` : `你注意到：${brief.hiddenFacts[0]} 和 ${brief.exaggerations[0]} 是本案最容易被包装的地方。`}</p>`
+    : `<p class="signal signal-yellow">你还不能直接看见真相。场景复原和证词里至少还有 ${Math.max(0, 2 - contradictions.length)} 个矛盾点需要核对。</p>`;
   storyFrame(evidenceView({
     chapter,
     brief,
@@ -1082,6 +1122,7 @@ function renderCaseSolved(brief, chapter) {
   const result = state.accusationHistory.find((item) => item.caseId === brief.id);
   const actor = getNpc(brief.premeditatedActorId);
   const solved = solvedCaseDetails(brief, result);
+  const recapStep = Number(state.dialogueProgress?.[dialogueProgressKey(brief, "caseSolved")] ?? 0);
   const view = caseSolvedView({
     chapter,
     brief,
@@ -1090,9 +1131,18 @@ function renderCaseSolved(brief, chapter) {
     solved,
     contradictionCount: contradictionsForCase(brief).length,
     structuralResponsibility: structuralExpectedAccusation(brief) ? structuralResponsibilityText(brief) : "",
-    hasNextCase: Boolean(state.caseBriefs?.[state.chapter])
+    hasNextCase: Boolean(state.caseBriefs?.[state.chapter]),
+    recapStep
   });
-  storyFrame(view);
+  storyFrame({ ...view, speakerName: "孟姐" });
+  document.querySelector("[data-recap-next]")?.addEventListener("click", () => {
+    state.dialogueProgress = {
+      ...(state.dialogueProgress ?? {}),
+      [dialogueProgressKey(brief, "caseSolved")]: recapStep + 1
+    };
+    saveState();
+    render();
+  });
   document.querySelector("[data-next-case]")?.addEventListener("click", () => {
     state.scene = "caseInterlude";
     saveState();
@@ -1116,7 +1166,7 @@ function renderCaseInterlude(brief, chapter) {
     nextThreadLine: nextBrief?.threadLink?.line ?? "",
     nextTitle: nextBrief ? caseChapterTitle(nextBrief, state.chapter) : ""
   });
-  storyFrame(view);
+  storyFrame({ ...view, speakerName: "孟姐" });
   document.querySelector("[data-enter-next-case]")?.addEventListener("click", () => {
     state.chapter += 1;
     state.scene = "caseOpen";
@@ -1150,7 +1200,7 @@ function renderCaseRunComplete(brief, chapter) {
     caseSetSummary: caseSetSummary(),
     interludeLines
   });
-  storyFrame(view);
+  storyFrame({ ...view, speakerName: "孟姐" });
   document.querySelector("[data-case-aftermath]")?.addEventListener("click", () => {
     prepareCompressedAftermath();
     state.scene = "caseAftermath";
@@ -1432,20 +1482,20 @@ function storyEvidenceArchiveLine(brief) {
   const refs = referencedStoryEvidence(brief);
   if (!refs.length) {
     if (brief.storyBridgeClue && contradictionsForCase(brief).length > 0) {
-      return `<p class="side-signal"><b>跨套关联</b>：${brief.storyBridgeClue}</p>`;
+      return `<p class="side-signal"><b>跨案关联</b>：${brief.storyBridgeClue}</p>`;
     }
     return "";
   }
   return `
-    <div class="scene-list">
-      <p><b>旧案档案可调取</b></p>
+    <div class="scene-list archive-brief">
+      <p><b>旧案档案</b></p>
       ${refs.map((item) => `
         <p><b>${item.type}｜${item.title}</b><br>
-        <span>${item.caseTitle} 归档：${item.contradiction}</span><br>
+        <span>${item.caseTitle}：${item.contradiction}</span><br>
         <button data-cross-evidence="${item.id}" ${crossEvidenceUsed(brief, item.id) ? "disabled" : ""} type="button">${crossEvidenceUsed(brief, item.id) ? "已调取" : "调取这份旧案证据"}</button></p>
       `).join("")}
     </div>
-    ${brief.storyBridgeClue && contradictionsForCase(brief).length > 0 ? `<p class="side-signal"><b>跨套关联</b>：${brief.storyBridgeClue}</p>` : ""}
+    ${brief.storyBridgeClue && contradictionsForCase(brief).length > 0 ? `<p class="side-signal"><b>跨案关联</b>：${brief.storyBridgeClue}</p>` : ""}
   `;
 }
 
@@ -1628,7 +1678,7 @@ function caseBudget(brief) {
 function budgetLine(brief) {
   const budget = caseBudget(brief);
   const toolText = (meta.bonusPoints ?? 0) >= 5 ? "｜加班助理 +1" : "";
-  return `剩余追问/整理次数 ${budget.remaining}/${budget.max}${toolText}`;
+  return `剩余询问/整理次数 ${budget.remaining}/${budget.max}${toolText}`;
 }
 
 function inspirationMax(brief) {
@@ -1946,6 +1996,62 @@ function storyColdOpenLine(brief) {
   return `<p class="episode-hook"><b>冷开场</b>：${brief.storyColdOpen}</p>`;
 }
 
+function openingDialogueForCase(brief, opening, complainantName, respondentName) {
+  if (brief.openingDialogue?.length) {
+    return brief.openingDialogue.filter((line) => line.role !== "other");
+  }
+  const firstQuote = brief.openingComplaint?.match(/[“"]([^”"]{4,48})[”"]/)?.[1];
+  const complainantLine = firstQuote ?? brief.storyArcSummary ?? brief.publicHook ?? "我想把这件事说清楚。";
+  return [
+    { speaker: "孟姐", role: "host", text: "先别站队。说事实。" },
+    { speaker: complainantName, role: "caller", text: complainantLine }
+  ];
+}
+
+function dialogueProgressKey(brief, scene) {
+  return `${caseNoteKey(brief)}:${scene}`;
+}
+
+function currentDialogueStep(brief, scene, lines) {
+  const maxIndex = Math.max(0, lines.length - 1);
+  const index = Math.min(Number(state.dialogueProgress?.[dialogueProgressKey(brief, scene)] ?? 0), maxIndex);
+  return {
+    index,
+    line: lines[index] ?? null,
+    hasNext: index < maxIndex
+  };
+}
+
+function advanceDialogueStep(brief, scene, totalLines) {
+  const key = dialogueProgressKey(brief, scene);
+  const current = Number(state.dialogueProgress?.[key] ?? 0);
+  state.dialogueProgress = {
+    ...(state.dialogueProgress ?? {}),
+    [key]: Math.min(current + 1, Math.max(0, totalLines - 1))
+  };
+  saveState();
+  render();
+}
+
+function currentTestimonyIndex(brief) {
+  const total = brief.testimony?.length ?? 0;
+  const maxIndex = Math.max(0, total - 1);
+  return Math.max(0, Math.min(Number(state.dialogueProgress?.[dialogueProgressKey(brief, "testimony")] ?? 0), maxIndex));
+}
+
+function setTestimonyIndex(brief, index) {
+  const total = brief.testimony?.length ?? 0;
+  const nextIndex = Math.max(0, Math.min(index, Math.max(0, total - 1)));
+  state.dialogueProgress = {
+    ...(state.dialogueProgress ?? {}),
+    [dialogueProgressKey(brief, "testimony")]: nextIndex
+  };
+  const item = brief.testimony?.[nextIndex];
+  if (item?.speakerId) state.primaryNpcId = item.speakerId;
+  saveState();
+  render();
+}
+
 function sceneDramaBeat(brief) {
   if (brief.fixedStory) {
     return brief.storySuspense ?? `${brief.scene.name} 不是孤立现场，它会把上一案的未解线索推到台前。`;
@@ -2057,32 +2163,34 @@ function renderBurstInterruption() {
   });
 }
 
-function storyFrame({ chapter, text, choices, side = "" }) {
+function storyFrame({ chapter, text, choices, side = "", speakerName = "" }) {
   maybeApplySecondaryPressure();
   const persona = visualPersona();
+  const inCase = Boolean(state.caseBriefs?.length && !state.investigationComplete);
   layout(`
-    <section class="story-grid">
+    <section class="story-grid ${inCase ? "case-vn-grid" : ""}">
       <article class="vn-stage">
         <div class="visual-scene ${backdropClass()}" aria-hidden="true">
           <div class="scene-label">${sceneLabel()}</div>
+          ${inCase ? caseHudOverlay() : ""}
           ${visualPortraitLayer(persona)}
         </div>
         <div class="dialogue-card">
           <p class="eyebrow">${chapter}</p>
-          <div class="speaker-name">${persona.name}</div>
-          ${renderBurstAlert()}
-          ${secondaryNpcLine()}
+          <div class="speaker-name">${speakerName || persona.name}</div>
+          ${inCase ? "" : renderBurstAlert()}
+          ${inCase ? "" : secondaryNpcLine()}
           ${reactionLine()}
+          ${inCase ? caseAssistTools() : ""}
           ${text}
-          ${dangerSignalLine()}
+          ${inCase ? "" : dangerSignalLine()}
           <div class="choices">${choices}</div>
         </div>
       </article>
-      <aside class="status-card">
+      ${inCase ? "" : `<aside class="status-card">
         ${renderStatusPanel({ state, currentNpc, currentSeed })}
-        ${renderCaseCastPanel()}
         ${side}
-      </aside>
+      </aside>`}
     </section>
   `, { sceneClass: `chapter-${state.chapter}` });
 
@@ -2101,6 +2209,35 @@ function storyFrame({ chapter, text, choices, side = "" }) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, 50);
+}
+
+function caseAssistTools() {
+  const toolScenes = new Set(["caseOpen", "sceneReview", "testimony", "evidence", "accusation", "confessionTimeline"]);
+  if (!toolScenes.has(state.scene)) return "";
+  const brief = activeCaseBrief();
+  if (!brief) return "";
+  return `<div class="assist-tools">${inspirationChoice(brief)}</div>`;
+}
+
+function caseHudOverlay() {
+  const brief = activeCaseBrief();
+  if (!brief) return "";
+  const key = caseNoteKey(brief);
+  const budget = state.caseBudgets?.[key];
+  const contradictions = contradictionsForCase(brief).length;
+  const latestContradiction = contradictionsForCase(brief).slice(-1)[0];
+  const total = state.caseBriefs?.length ?? "?";
+  return `
+    <details class="case-notebook">
+      <summary>记事本</summary>
+      <div>
+        <p><b>${caseModeConfig(state.caseMode).label}</b>｜第 ${state.chapter}/${total} 案</p>
+        <p>${brief.storyClueObject ? `证物：${brief.storyClueObject}` : brief.label}</p>
+        <p>追问：${budget ? `${budget.remaining}/${budget.max}` : "--"}｜矛盾：${contradictions}</p>
+        ${latestContradiction ? `<p>最新：${latestContradiction}</p>` : `<p>先找第一处矛盾。</p>`}
+      </div>
+    </details>
+  `;
 }
 
 function maybeApplySecondaryPressure() {
@@ -2176,16 +2313,23 @@ function renderBurstAlert() {
   return `<p class="burst-alert"><b>${label}</b>：${event.line}</p>`;
 }
 
+function shouldShowRespondentLive(brief) {
+  return brief?.consultationMode === "mediation";
+}
+
 function visualPortraitLayer(persona) {
   if (state.caseBriefs?.length && !state.investigationComplete) {
     const brief = activeCaseBrief();
     const complainant = getNpc(brief?.complainantId);
     const respondent = getNpc(brief?.respondentId);
     const activeId = state.primaryNpcId ?? complainant?.id;
-    const people = [
-      { role: "先诉苦", npc: complainant },
-      { role: "另一方", npc: respondent }
-    ].filter((item) => item.npc);
+    const showRespondent = shouldShowRespondentLive(brief) && state.scene !== "caseOpen";
+    const people = !showRespondent
+      ? [{ role: "咨询者", npc: complainant }].filter((item) => item.npc)
+      : [
+          { role: "咨询者", npc: complainant },
+          { role: "另一方", npc: respondent }
+        ].filter((item) => item.npc);
     return `
       <div class="case-duel-portraits">
         ${people.map((item) => `
@@ -2205,6 +2349,7 @@ function visualPortraitLayer(persona) {
 
 function renderCaseCastPanel() {
   if (!state.caseBriefs?.length || state.investigationComplete) return "";
+  return "";
   const brief = activeCaseBrief();
   const complainant = getNpc(brief?.complainantId);
   const respondent = getNpc(brief?.respondentId);

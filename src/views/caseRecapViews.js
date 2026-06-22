@@ -6,28 +6,50 @@ export function caseSolvedView({
   solved,
   contradictionCount,
   structuralResponsibility,
-  hasNextCase
+  hasNextCase,
+  recapStep = 0
 }) {
-  return {
-    chapter,
-    text: `
+  const pages = [
+    `
       <p><b>本案复盘</b></p>
       <p>${result?.correct ? "你抓住了关键矛盾。" : "你的判断还不够稳，旁听席的情绪干扰了事实排序。"}</p>
       <p><b>你的指认</b>：${solved.accusedLabel}。<b>后台更接近</b>：${solved.expectedLabel}。</p>
       ${solved.responsibilityLayer ? `<p><b>责任层级</b>：${solved.responsibilityLayer}</p>` : ""}
-      <p><b>已抓矛盾点</b>：${result?.contradictionCount ?? contradictionCount} 个。</p>
-      <p><b>关键矛盾命中</b>：${solved.hit.length ? solved.hit.join(" / ") : "没有命中关键矛盾，只抓到外围疑点。"}</p>
+    `,
+    `
+      <p><b>关键矛盾</b></p>
+      <p>已抓矛盾点：${result?.contradictionCount ?? contradictionCount} 个。</p>
+      <p>${solved.hit.length ? solved.hit.join(" / ") : "没有命中关键矛盾，只抓到外围疑点。"}</p>
+    `,
+    `
+      <p><b>孟姐补一句</b></p>
+      <p>${solved.why}</p>
       <p><b>错过的关键点</b>：${solved.missed.length ? solved.missed.join(" / ") : "本案关键矛盾基本覆盖。"}</p>
-      <p><b>为什么指向这里</b>：${solved.why}</p>
-      ${brief.stageJudgement ? `<p><b>阶段判定</b>：${brief.stageJudgement}</p>` : ""}
-      ${brief.followupTwist ? `<p><b>后续新情况</b>：${brief.followupTwist}</p>` : ""}
-      <p><b>后台真相</b>：${brief.truth}</p>
+    `,
+    `
+      <p><b>后续回拨</b></p>
+      ${brief.stageJudgement ? `<p>${brief.stageJudgement}</p>` : ""}
+      ${brief.followupTwist ? `<p>${brief.followupTwist}</p>` : ""}
+    `,
+    `
+      <p><b>后台真相</b></p>
+      <p>${brief.truth}</p>
       <p><b>隐藏事实</b>：${brief.hiddenFacts.join("、")}</p>
       <p><b>包装/夸大</b>：${brief.exaggerations.join("、")}</p>
       ${structuralResponsibility ? `<p><b>主线结构层</b>：${structuralResponsibility}</p>` : ""}
       ${brief.premeditated ? `<p><b>本案关系层</b>：${actorName ?? "未知"} 从一开始就带着非纯洁婚恋目的进入关系。</p>` : `<p><b>本案关系层</b>：${brief.modeBrief ?? "本案不保证存在预谋，性格问题、家庭压力和半真半假同样可能造成伤害。"}</p>`}
+    `
+  ];
+  const index = Math.max(0, Math.min(recapStep, pages.length - 1));
+  return {
+    chapter,
+    text: `
+      <p class="hint">复盘 ${index + 1}/${pages.length}</p>
+      ${pages[index]}
     `,
-    choices: `<button class="primary" data-next-case type="button">${hasNextCase ? "查看案间战况" : "查看最终战况"}</button>`
+    choices: index < pages.length - 1
+      ? `<button class="primary" data-recap-next type="button">继续复盘</button>`
+      : `<button class="primary" data-next-case type="button">${hasNextCase ? "查看案间战况" : "查看最终战况"}</button>`
   };
 }
 

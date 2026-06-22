@@ -81,5 +81,5 @@ export function internalBurstLine(seed) {
 export function motiveRevealLine(seed, npc) {
   const motive = seed.motive ? MOTIVES[seed.motive] : null;
   if (!motive) return `${npc?.name ?? "TA"} 没有摊牌某种目的，只是把真实恐惧说了出来。`;
-  return `${npc?.red ?? "TA 把真正目的说出了口。"}（${motive.label}）`;
+  return npc?.red ?? motive.pressure ?? "TA 把真正目的说出了口。";
 }
