@@ -31,14 +31,14 @@ export function caseOpenView({
       ${storyCallsBlock(brief)}
       <div class="scene-list">
         <p><b>栏目</b>：${brief.modeLabel ?? "婚恋 case"}</p>
-        ${brief.storySetName ? `<p><b>剧情套系</b>：${brief.storySetName}</p>` : ""}
+        ${brief.storySetName ? `<p><b>档案组</b>：${brief.storySetName}</p>` : ""}
         <p><b>先诉苦的人</b>：${complainantName}</p>
         <p><b>另一方</b>：${respondentName}</p>
         <p><b>本案结构</b>：${structureText}</p>
         <p><b>调查资源</b>：${budgetText}</p>
         ${brief.storySuspense ? `<p><b>主线疑问</b>：${brief.storySuspense}</p>` : ""}
         ${brief.storyClueObject ? `<p><b>悬念物</b>：${brief.storyClueObject}</p>` : ""}
-        <p><b>本周目线索</b>：${threadLine}</p>
+        <p><b>旧档牵连</b>：${threadLine}</p>
         <p><b>侦探局战况</b>：${agencyBattle}</p>
         <p><b>开场压力</b>：${opening.pressure}</p>
         ${earlyWarning ? `<p><b>提前预警</b>：${earlyWarning}</p>` : ""}

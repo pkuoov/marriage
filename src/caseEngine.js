@@ -468,7 +468,7 @@ export const CASE_MODE_SEQUENCE = [
   {
     id: "confession",
     label: "告解模式",
-    brief: "随机当事人用第一人称回看自己的经历，玩家要站在 TA 的视角里查探：自己哪里被坑、哪里自欺、哪里也可能伤害了别人。",
+    brief: "当事人用第一人称回看自己的经历。你要站在 TA 的视角里查探：自己哪里被坑、哪里自欺、哪里也可能伤害了别人。",
     stage: "dating",
     plotIds: [
       "positioning-lie",
@@ -538,9 +538,9 @@ const STREAMER_STORY_SEQUENCE = [
     openingComplaint: "周砚说自己被何念设局，对方准备报警告强奸捞一笔。何念随后连线，说自己确实有一段失去判断力的时间。两边都拿截图，截图却都缺少同一个半小时。",
     coldOpen: "孟姐先关掉弹幕投票：“涉及性同意，谁都不能靠一句‘仙人跳’或一句‘我受伤了’直接赢。今天只按时间线、清醒程度、威胁话术和转账要求排。”",
     suspense: "这案的戏剧性不在站队，而在反转：可能有真实越界，也可能有人把边界争议变成索财工具；两件事可以同时成立。",
-    mislead: "弹幕会被“告强奸捞钱”带走，也会被“受害者不能被质疑”带走。玩家要做的是保留严肃性，同时追问威胁和转账节点。",
+    mislead: "弹幕会被“告强奸捞钱”带走，也会被“受害者不能被质疑”带走。主播台上要做的是保留严肃性，同时追问威胁和转账节点。",
     clueObject: "缺失的三十分钟",
-    contentWarning: "本案涉及亲密边界侵害、酒后时间线和以报警威胁索财的核验。文本会克制处理，但需要玩家按证据而不是按标签站队。",
+    contentWarning: "本案涉及亲密边界侵害、酒后时间线和以报警威胁索财的核验。文本会克制处理，但需要你按证据而不是按标签站队。",
     storyCalls: [
       "第一次连线：周砚称自己被设局，拿出对方索要 8 万元的聊天。",
       "第二次连线：何念公开酒后语音，说自己当晚确实说过“不舒服”。",
@@ -601,10 +601,10 @@ const STREAMER_STORY_SEQUENCE = [
     id: "streamer-04-reality-mismatch",
     title: "主线第四案：你应该懂我",
     setName: "主播主线：听话识坑",
-    summary: "季终案把公主病、巨婴、狮子大开口和现实错配放在一起，要求玩家区分骗局与成熟度不足。",
+    summary: "最后一通来电把公主病、巨婴、狮子大开口和现实错配放在一起，逼你区分骗局与成熟度不足。",
     openingComplaint: "林鹿说周砚像巨婴，什么都要她安排；周砚说林鹿像公主，彩礼、房子、情绪价值都要满分。两个人都不像骗子，却都把“爱我就该懂我”当成免沟通理由。",
     coldOpen: "这案没有惊天截图，只有二十几条“你为什么不能主动一点”。孟姐说：“没有坏人，不代表没有问题；不是诈骗，不代表适合结婚。”",
-    suspense: "终局考验玩家能不能区分：骗婚、化债、勒索、多线养鱼是风险；公主病、巨婴、狮子大开口有时是成熟度和现实能力不匹配。",
+    suspense: "终局要考的是区分能力：骗婚、化债、勒索、多线养鱼是风险；公主病、巨婴、狮子大开口有时是成熟度和现实能力不匹配。",
     mislead: "弹幕会急着骂谁作、谁穷、谁妈宝。主播要拆的是责任能力、现实预期、边界表达，以及有没有备用对象。",
     clueObject: "生活分工与相亲日历",
     storyCalls: [
@@ -635,15 +635,15 @@ const STREAMER_STORY_SEQUENCE = [
 const ARC_CASE_SEQUENCE = [
   {
     id: "story-00-tutorial-first-contradiction",
-    title: "教学章：第一处矛盾",
-    setName: "教学模式",
+    title: "试播训练：第一处矛盾",
+    setName: "试播训练",
     summary: "孟姐用一件压缩案教你读案：先别急着相信委屈，先找时间线、钱和台词里最硬的矛盾。",
     openingComplaint: "孟姐把一份旧案投到直播屏上。来访者说自己只是被催着结婚、被迫转账，但案卷里有三处地方同时发亮：转账时间、被删动态、以及一句反复出现的“先别问细节”。",
     coldOpen: "开播前，孟姐没有让你直接接当事人。她只放出一段旧录屏：“一个案子最危险的时候，不是没人说话，而是每个人都说得太顺。”",
-    suspense: "这不是正式连环案，却会教你后面所有案件的基本动作：复盘场景、交叉追问、整理证据、再阶段指认。",
-    mislead: "玩家最容易被第一版哭诉带走，所以教学章会把“委屈”和“证据”故意放在同一个人身上。",
+    suspense: "这不是直播间今晚最复杂的案子，却会教你后面所有案件的基本动作：复盘场景、交叉追问、整理证据、再阶段指认。",
+    mislead: "第一版哭诉最容易把人带走，所以孟姐故意把“委屈”和“证据”放在同一个人身上。",
     clueObject: "孟姐的红线笔记",
-    transition: "教学章结束后，孟姐把红线笔记收进档案袋。袋口露出第一套案件的匿名资料包：同样的红线，圈住了“稳定推进”四个字。",
+    transition: "试播训练结束后，孟姐把红线笔记收进档案袋。袋口露出一份匿名资料包：同样的红线，圈住了“稳定推进”四个字。",
     caseMode: "premarital",
     plotId: "romance-transfer-gift-or-loan",
     complainantId: "lin",
@@ -651,8 +651,8 @@ const ARC_CASE_SEQUENCE = [
     stance: "halfTruth",
     sceneId: "rental-room",
     tutorialChapter: true,
-    tutorialTip: "教学目标：至少抓到一处矛盾，再进入阶段指认。启发道具可以帮你指出尚未发现的矛盾点。",
-    storyClue: "孟姐的红线笔记会在正式剧情里反复出现：它提醒你，所有漂亮叙事都必须回到时间线和材料。"
+    tutorialTip: "训练目标：至少抓到一处矛盾，再进入阶段指认。启发道具可以帮你指出尚未发现的矛盾点。",
+    storyClue: "孟姐的红线笔记会在后面的案卷里反复出现：它提醒你，所有漂亮叙事都必须回到时间线和材料。"
   },
   {
     id: "story-01-profile-mask",
@@ -806,7 +806,7 @@ const ARC_CASE_SEQUENCE = [
     openingComplaint: "周砚收到一份匿名征信截图，对方说这是“婚前诚意核验”。但截图里的裁剪方式，和第一套房本案里那份购房合同附件一模一样。",
     coldOpen: "周砚第二次坐到镜头前，这次他没有谈安全感。他把手机举近摄像头：有人把他的征信做成了付费报告，标题叫《婚前风险等级》。",
     suspense: "征信截图可能是真的，使用它的人却不一定有正当目的。",
-    mislead: "玩家会先想判断周砚有没有债务，但本案真正要查的是：谁在用“核验”包装信息勒索。",
+    mislead: "直播间会先想判断周砚有没有债务，但本案真正要查的是：谁在用“核验”包装信息勒索。",
     clueObject: "婚前风险等级报告",
     transition: "报告模板底部有一个灰色水印：宴席延期保障。第三案会把这套风险评级推到婚礼现场。",
     caseMode: "premarital",
@@ -892,13 +892,13 @@ const ARC_CASE_SEQUENCE = [
     id: "story-12-template-confession",
     title: "第二套第六案：模板告解",
     setName: "第二套：模板回声",
-    summary: "管理员用第一套所有案件训练出一套告解模板，最后一次要求玩家分辨自省、被坑和操控。",
+    summary: "管理员用旧档材料训练出一套告解模板，最后一次要求你分辨自省、被坑和操控。",
     openingComplaint: "管理员主动连线，自称只是把大家的痛苦整理成工具。TA 说平台没有制造伤害，只是让真实关系更快暴露问题。孟姐没有打断，只把第一套六案资料夹重新投到屏幕上。",
     coldOpen: "终局开场没有人哭，也没有人喊冤。管理员平静地说：“你们解决了十二个案子，却还没回答一个问题：如果模板真的有效，它算伤害吗？”",
     suspense: "管理员的告解太像产品发布会。每一句自省后面，都藏着一次责任转移。",
-    mislead: "终局会诱导玩家把平台简化成唯一反派，但更难的是判断：真实痛苦被整理成工具之后，谁被帮助，谁被收割。",
+    mislead: "终局会诱导你把平台简化成唯一反派，但更难的是判断：真实痛苦被整理成工具之后，谁被帮助，谁被收割。",
     clueObject: "告解模板后台",
-    transition: "后台最后一条日志停在孟姐的红线笔记旁：教学章那句“先找矛盾”，现在变成了全剧的答案。",
+    transition: "后台最后一条日志停在孟姐的红线笔记旁：试播训练里那句“先找矛盾”，现在变成了全剧的答案。",
     caseMode: "confession",
     plotId: "control-isolation-reporting",
     complainantId: "xu",
@@ -907,8 +907,8 @@ const ARC_CASE_SEQUENCE = [
     sceneId: "family-dinner",
     structuralActorId: "platform",
     referencesEvidenceIds: ["story-11-companion-service-story-clue", "story-11-companion-service-bridge-clue"],
-    bridgeClue: "它回收第一套终局和教学章：同一套识别矛盾的方法，既能保护人，也可能被人拿去设计别人。",
-    storyClue: "告解模板后台把两套案件互相扣住：第一套提供真实痛苦，第二套展示痛苦如何被产品化。"
+    bridgeClue: "它回收旧档终局和红线笔记：同一套识别矛盾的方法，既能保护人，也可能被人拿去设计别人。",
+    storyClue: "告解模板后台把匿名资料包和模板回声扣住：真实痛苦先被归档，再被做成可售卖的话术。"
   }
 ];
 
@@ -1022,7 +1022,7 @@ function buildStoryEvidenceCards(item) {
     front: item.bridgeClue,
     detail: "这条线索说明第二套案件不是新的随机危机，而是在复用第一套已经验证过的亲密关系压力模板。",
     targets: commonTargets,
-    contradiction: `跨套线索证明两套正式案件互相关联：${item.bridgeClue}`
+    contradiction: `跨案线索证明旧档材料正在本案回响：${item.bridgeClue}`
   } : null;
   const extras = {
     "story-03-bride-price": {
@@ -1061,10 +1061,10 @@ function buildStoryConfessionTimeline(item, fallback = []) {
     return [
       {
         id: "tutorial-red-line",
-        label: "教学章：红线笔记",
-        text: "管理员承认，平台最早不是从复杂案开始，而是从孟姐教学章那种“找第一处矛盾”的方法里学会了拆解用户。",
+        label: "试播训练：红线笔记",
+        text: "管理员承认，平台最早不是从复杂案开始，而是从孟姐那种“找第一处矛盾”的方法里学会了拆解用户。",
         correctMark: "hurtOther",
-        contradiction: "模板告解：平台把教学章的识别方法反向用于筛选脆弱用户。"
+        contradiction: "模板告解：平台把红线笔记里的识别方法反向用于筛选脆弱用户。"
       },
       {
         id: "first-set-folder",

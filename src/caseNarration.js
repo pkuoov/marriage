@@ -5,7 +5,7 @@ export function caseStructureText(brief) {
   if (structuralExpectedAccusationForCase(brief)) return "平台结构案：除了判断双方关系责任，还要查第三方如何把痛苦、材料和焦虑做成可复制的产品。";
   if (brief.caseMode === "premarital") return "婚前关系核验：先查择偶定位、承诺、彩礼房产、婚史孩子和债务有没有被包装。";
   if (brief.caseMode === "married") return "婚后共同生活案：先查共同财务、家务育儿、出轨边界、亲子和双方家庭责任。";
-  if (brief.caseMode === "confession") return "告解模式：随机当事人自述经历，玩家站在 TA 的视角查被坑、自欺和可能伤人的部分。";
+  if (brief.caseMode === "confession") return "告解模式：当事人用第一人称回看经历，你要站在 TA 的视角查被坑、自欺和可能伤人的部分。";
   return brief.premeditated ? "预谋案：确定存在非纯洁婚恋目的。" : "普通案：可能只是性格问题，也可能有人半真半假。";
 }
 
@@ -68,8 +68,8 @@ export function timelineGapText(brief) {
 
 export function runCompleteLineFor({ correct, total, caseMode, playthroughNumber }) {
   if (caseMode === "arc") {
-    if (correct >= Math.ceil(total * 0.7)) return "两套正式主线基本站住了：你没有把每案当成孤立争吵，而是看见第一套的真实痛苦如何在第二套里被模板化。";
-    return "故事主线还有断点：有些案子被你当成单案处理了，下一轮要更注意教学章、悬念物、跨套线索和案间过场。";
+    if (correct >= Math.ceil(total * 0.7)) return "这轮深挖基本站住了：你没有把每案当成孤立争吵，而是看见旧档里的真实痛苦如何被后来的模板反复调用。";
+    return "这轮深挖还有断点：有些案子被你当成孤立来电处理了，下一轮要更注意红线笔记、悬念物、旧档证据和案间回拨。";
   }
   if (caseMode === "story") {
     if (correct >= Math.ceil(total * 0.7)) return "主播主线基本站住了：你能从客户说法里拆出骗婚、化债、边界勒索、多线养鱼和成熟度不足这些不同问题。";

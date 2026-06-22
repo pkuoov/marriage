@@ -7,7 +7,7 @@ export const STORY_DIFFICULTY_CURVE = [
     requiredContradictions: 2,
     budgetDelta: 1,
     inspirationBase: 2,
-    note: "先练习听出客户没说完整的地方，允许玩家用较宽裕的资源建立方法。"
+    note: "先练习听出客户没说完整的地方，用较宽裕的资源建立方法。"
   },
   {
     tier: 2,
@@ -27,7 +27,7 @@ export const STORY_DIFFICULTY_CURVE = [
     requiredContradictions: 3,
     budgetDelta: -1,
     inspirationBase: 1,
-    note: "多人、多承诺、多资源线并行，要求玩家把关系收益结构拆出来。"
+    note: "多人、多承诺、多资源线并行，要求你把关系收益结构拆出来。"
   },
   {
     tier: 4,

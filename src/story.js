@@ -265,7 +265,7 @@ export const CASE_CHAPTERS = [
   {
     id: "ch3",
     title: "第三案：告解模式",
-    summary: "随机当事人自述经历，玩家站在 TA 的视角里查被坑、自欺和可能伤人的部分。"
+    summary: "当事人自述经历，你站在 TA 的视角里查被坑、自欺和可能伤人的部分。"
   }
 ];
 

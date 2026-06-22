@@ -250,11 +250,11 @@ function storyThreadRole(brief, index, briefs) {
     if (index === briefs.length - 1) return "主播季终复盘：归纳婚恋风险类型";
     return `第 ${index + 1} 案：上一案的问题类型换壳出现`;
   }
-  if (brief.tutorialChapter) return "教学模式：识别第一处矛盾";
-  if (brief.storySetIndex === 1 && brief.storyCaseInSet === 1) return "第一套正式案件开端";
-  if (brief.storySetIndex === 2 && brief.storyCaseInSet === 1) return "第二套正式案件开端：回收第一套终局";
-  if (index === briefs.length - 1) return "两套案件的模板告解终局";
-  if (brief.storySetIndex === 2) return "第二套案件回收第一套线索";
+  if (brief.tutorialChapter) return "试播训练：识别第一处矛盾";
+  if (brief.storySetIndex === 1 && brief.storyCaseInSet === 1) return "匿名资料包第一次进入直播间";
+  if (brief.storySetIndex === 2 && brief.storyCaseInSet === 1) return "旧档回声：终局资料夹被重新打开";
+  if (index === briefs.length - 1) return "模板告解终局";
+  if (brief.storySetIndex === 2) return "旧案线索在本案回响";
   return "上一案材料进入本案";
 }
 
@@ -1043,7 +1043,7 @@ function renderCaseEvidence(brief, chapter) {
 
 function renderCaseAccusation(brief, chapter) {
   if (brief?.tutorialChapter && !tutorialReadyForAccusation(brief)) {
-    state.lastReaction = "教学章还不能阶段指认。先完成一次现场版本比对、一次证词追问、一次证据出示。";
+    state.lastReaction = "训练案还不能阶段指认。先完成一次现场版本比对、一次证词追问、一次证据出示。";
     state.scene = "evidence";
     saveState();
     return renderCaseEvidence(brief, chapter);
@@ -1382,7 +1382,7 @@ function requiredContradictionsForAccusation(brief) {
 function moveCaseScene(scene) {
   const brief = activeCaseBrief();
   if (scene === "accusation" && brief?.tutorialChapter && !tutorialReadyForAccusation(brief)) {
-    state.lastReaction = "教学章还不能阶段指认。先完成一次现场版本比对、一次证词追问、一次证据出示，再让孟姐放你上手。";
+    state.lastReaction = "训练案还不能阶段指认。先完成一次现场版本比对、一次证词追问、一次证据出示，再让孟姐放你上手。";
     state.scene = "evidence";
     saveState();
     render();
@@ -1655,7 +1655,7 @@ function inspirationChoice(brief) {
   const remaining = inspirationRemaining(brief);
   const next = nextInspirationContradiction(brief);
   const disabled = remaining <= 0 || !next ? "disabled" : "";
-  const remainingText = brief?.tutorialChapter ? "教学章不限" : `剩余 ${remaining}`;
+  const remainingText = brief?.tutorialChapter ? "训练案不限" : `剩余 ${remaining}`;
   return `<button data-inspiration ${disabled} type="button">启发道具：指出矛盾点（${remainingText}）</button>`;
 }
 
@@ -1867,9 +1867,9 @@ function playthroughOpening(brief) {
     const setLabel = brief.storySetName ? `${brief.storySetName}｜` : "";
     if (brief.tutorialChapter) {
       return {
-        hook: `故事模式教学章。${brief.storyArcSummary ?? "先学会从第一版叙事里抓矛盾。"}`,
-        director: "孟姐把正式案卷暂时压住：“先别急。会找第一处矛盾，后面十二个案子才有意义。”",
-        pressure: brief.tutorialTip ?? "教学章会引导你走完现场、证词、证据和指认。"
+        hook: `试播训练档。${brief.storyArcSummary ?? "先学会从第一版叙事里抓矛盾。"}`,
+        director: "孟姐把厚案卷暂时压住：“先别急。第一处矛盾找不准，后面所有漂亮话都会带偏你。”",
+        pressure: brief.tutorialTip ?? "孟姐会带你走完现场、证词、证据和指认。"
       };
     }
     if (state.caseMode === "story") {
@@ -1884,9 +1884,9 @@ function playthroughOpening(brief) {
     return {
       hook: `${setLabel}连环剧场第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "固定主线案卷已经接入。"}`,
       director: brief.storySetIndex === 1 && brief.storyCaseInSet === 1
-        ? "孟姐关掉弹幕预览：“正式剧情从这里开始。第一套查真实关系如何被包装成叙事。”"
+        ? "孟姐关掉弹幕预览：“从这份匿名资料包开始，所有讲得太顺的关系都要拆开看。”"
         : brief.storySetIndex === 2 && brief.storyCaseInSet === 1
-          ? "孟姐把第一套资料夹重新打开：“第二套不是新坑，是有人开始把旧坑做成产品。”"
+          ? "孟姐把旧资料夹重新打开：“这不是新坑，是有人开始把旧坑做成产品。”"
           : "孟姐把上一案材料贴到白板上：“别把它当新案，它是上一案留下的回声。”",
       pressure: brief.storySuspense ?? "这条主线会持续回收前案伏笔，不能只按单案输赢判断。"
     };
@@ -1993,9 +1993,9 @@ function testimonyDramaBeat(brief) {
 
 function nextPlaythroughTease(nextBrief) {
   if (state.caseMode === "arc") {
-    if (nextBrief?.tutorialChapter) return `下一章进入教学：${nextBrief.storyArcSummary ?? "先学会找第一处矛盾。"}`;
+    if (nextBrief?.tutorialChapter) return `下一份是试播训练档：${nextBrief.storyArcSummary ?? "先学会找第一处矛盾。"}`;
     if (nextBrief?.storySetIndex === 2 && nextBrief?.storyCaseInSet === 1) {
-      return `第二套正式案件开场：${nextBrief.storyColdOpen ?? nextBrief.storyArcSummary ?? "第一套留下的资料夹开始反噬。"}`;
+      return `旧资料夹开始反噬：${nextBrief.storyColdOpen ?? nextBrief.storyArcSummary ?? "被归档的材料重新咬住了新的来电。"}`;
     }
     return nextBrief?.storyColdOpen
       ? `下一案冷开场：${nextBrief.storyColdOpen}`
@@ -2016,7 +2016,7 @@ function nextPlaythroughTease(nextBrief) {
 }
 
 function finalPlaythroughTease() {
-  if (state.caseMode === "arc") return "教学章和两套正式案件已经收束。最后要复盘的不是谁最坏，而是真实痛苦如何被包装、复制、产品化。";
+  if (state.caseMode === "arc") return "红线笔记、匿名资料包和模板后台已经收束。最后要复盘的不是谁最坏，而是真实痛苦如何被包装、复制、收费。";
   if (state.caseMode === "story") return "主播主线已经收束。最后要复盘的不是谁最坏，而是你能不能从客户对话里判断问题究竟长在哪里。";
   if (currentPlaythroughNumber() === 1) return "第一周目的最后一题已经结束，但真正留下来的不是答案，是你第一次学会慢一点相信叙事。";
   if (currentPlaythroughNumber() === 2) return "第二周目结束时，系统不再奖励单纯怀疑，而是奖励你能把怀疑、共情和证据同时拿稳。";

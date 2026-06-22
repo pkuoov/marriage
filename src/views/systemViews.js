@@ -22,7 +22,7 @@ export function contentWarningView() {
 export function settingsView({ currentSlot, slots, soundEnabled, textSpeed, streamlineMode }) {
   return `
     <div class="panel">
-      <p class="eyebrow">Steam 发布准备</p>
+      <p class="eyebrow">后台设置</p>
       <h1>设置</h1>
       <div class="scene-list">
         <p><b>存档槽</b>：${slotLabel(currentSlot)}</p>

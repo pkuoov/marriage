@@ -30,7 +30,7 @@ function renderTitle() {
       <div class="title-copy">
         <p class="eyebrow">良缘算法婚恋咨询有限公司</p>
         <h1>婚恋侦探局</h1>
-        <p>故事模式改为 4 个高密度婚姻主播主线案：从多次客户连线里拆骗婚、化债、假婚、边界勒索、多线养鱼和巨婴责任；连环剧场保留更高概念的双套案件。</p>
+        <p>今晚的直播间只接一种委托：听当事人把话说完，再把没说完的地方翻出来。钱、承诺、边界、备胎和责任，都会藏在客户第一次连线没讲清的半句话里。</p>
         <div class="title-actions">
           <button class="primary" data-start type="button">${state.profileDone ? "继续调查" : "开始接案"}</button>
           <button class="secondary" data-new type="button">新案件</button>
@@ -39,8 +39,8 @@ function renderTitle() {
         </div>
       </div>
       <aside class="notice">
-        <h2>当前原型</h2>
-        <p>新模式：你是婚姻主播 / 婚恋侦探。可选择主播主线、连环剧场，或随机案件栏目。</p>
+        <h2>直播后台</h2>
+        <p>你是婚恋侦探局的主播顾问。今晚可以接固定主线、深挖旧档，也可以打开随机来电。</p>
         <p>已完成周目：${meta.runs ?? 0}｜经验点：${meta.bonusPoints ?? 0}</p>
         ${lastRun ? `<p>最近周目：压力 ${lastRun.pressureScore}｜获得 ${lastRun.gained} 点</p>` : `<p>最近周目：暂无记录</p>`}
       </aside>
@@ -68,12 +68,12 @@ function renderCreator() {
       <div class="panel">
         <p class="eyebrow">侦探局开案</p>
         <h1>选择调查模式，再开案</h1>
-        <p class="muted">你不再给“主角”自由加点，但可以选择本局侦探专长和案件模式。故事模式是 4 个高密度婚姻主播固定案；连环剧场保留双套连续案件；主播模式随机生成案卷，一个案子一个案子往下分析。</p>
+        <p class="muted">开播前先选你的调查专长和接案栏目。不同栏目会改变来电顺序、旧案牵连和后台愿意交出的材料。</p>
         <div class="scene-list">
           <p><b>选择案件模式</b>：${caseModeText(state.caseMode).label}</p>
-          <p><button class="${state.caseMode === "story" ? "primary" : ""}" data-case-mode="story" type="button">故事模式</button><br><span>4 个高密度固定案：每案多次连线、两三条混杂线索、阶段判定和后续反转。</span></p>
-          <p><button class="${state.caseMode === "arc" ? "primary" : ""}" data-case-mode="arc" type="button">连环剧场</button><br><span>保留资料包疑云与模板回声两套案件，偏连续剧和平台化阴谋线。</span></p>
-          <p><button class="${state.caseMode === "anchor" ? "primary" : ""}" data-case-mode="anchor" type="button">主播模式</button><br><span>随机生成婚恋案卷，像直播栏目一样逐案复盘、追问、指认和结案。</span></p>
+          <p><button class="${state.caseMode === "story" ? "primary" : ""}" data-case-mode="story" type="button">故事模式</button><br><span>四通固定来电，从领证前转账一路查到边界勒索、多线承诺和责任错配。</span></p>
+          <p><button class="${state.caseMode === "arc" ? "primary" : ""}" data-case-mode="arc" type="button">连环剧场</button><br><span>打开资料包疑云和模板回声，追查旧案材料怎样被人整理、复用、收费。</span></p>
+          <p><button class="${state.caseMode === "anchor" ? "primary" : ""}" data-case-mode="anchor" type="button">主播模式</button><br><span>随机接入后台来电，逐案复盘、追问、指认和结案。</span></p>
         </div>
         <div class="scene-list">
           <p><b>选择本局专长</b>：${activeSpecialty.label}</p>
@@ -84,8 +84,8 @@ function renderCreator() {
         <div class="scene-list">
           <p><b>你的身份</b>：婚恋侦探 / 律师顾问</p>
           <p><b>案件可能</b>：骗婚、化债、外遇反咬、外情生子、接盘生子、择偶定位包装、大结果收割</p>
-          <p><b>核心玩法</b>：逐案复盘当时场景，追问证词里的提示，抓迷惑点和矛盾点，判断谁在隐瞒、夸大、恶人先告状，或在告解里自欺。</p>
-          <p><b>当前结构</b>：${caseModeText(state.caseMode).intro}</p>
+          <p><b>调查方法</b>：复盘当时场景，追问含糊证词，抓迷惑点和矛盾点，再判断谁在隐瞒、夸大、恶人先告状，或在告解里自欺。</p>
+          <p><b>今晚栏目</b>：${caseModeText(state.caseMode).intro}</p>
         </div>
         <button class="primary wide" data-finalize type="button">生成案件并开播</button>
       </div>

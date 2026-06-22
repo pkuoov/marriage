@@ -99,11 +99,11 @@ export function aftermathView({ aftermathLines }) {
     chapter: "关系后续",
     text: `
       <p><b>当事人后续片段</b></p>
-      <p>侦探局不再展开十年恋爱模拟，只保留案件后的关系余波。真正重要的是：你的判断让谁更早止损，谁被误伤，谁还在重复同一套选择。</p>
+      <p>直播结束后，镜头不会继续跟拍每个人的人生。侦探局只收到几段回音：谁更早止损，谁被澄清，谁还在重复同一套选择。</p>
       <div class="scene-list">
         ${aftermathLines.join("")}
       </div>
-      <p class="hint">长线恋爱章节暂时降级为素材库，主体验回到逆转裁判式连环案件。</p>
+      <p class="hint">案子结了，关系未必结束。你能留下的只有证据、边界和一份尽量不误伤的判断。</p>
     `,
     choices: `<button class="primary" data-complete-run-title type="button">回到标题，开始下一组案件</button>`
   };
