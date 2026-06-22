@@ -1,5 +1,10 @@
+import { platformRuntime } from "./platformRuntime.js?v=0.14.0";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.14.0";
+
 export const STORAGE_KEY = "marriage-detective-agency-save-v1";
 export const META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
+export const ACTIVE_SAVE_SLOT_KEY = "marriage-detective-agency-active-slot-v1";
+export const SAVE_SLOTS = ["slot1", "slot2", "slot3"];
 const PITFALL_STORAGE_KEY = "marriage-pitfall-guide-save-v1";
 const PITFALL_META_STORAGE_KEY = "marriage-pitfall-guide-meta-v1";
 const LEGACY_STORAGE_KEY = "chinese-marriage-ten-year-dream-save-v1";
@@ -9,7 +14,7 @@ export const MAX_META_BONUS = 24;
 export const PUBLIC_PLAYER_GENDER = "male";
 
 export const CHARACTER_ART = {
-  meng: "./assets/generated/characters/meng_neutral.png?v=0.14.0",
+  meng: "./assets/generated/characters/meng_host_v2.png?v=0.15.0",
   zhou: "./assets/generated/characters/zhou_neutral.png?v=0.14.0",
   lin: "./assets/generated/characters/lin_neutral.png?v=0.14.0",
   xu: "./assets/generated/characters/xu_neutral.png?v=0.14.0",
@@ -20,6 +25,12 @@ export const CHARACTER_ART = {
 
 export const baseState = {
   screen: "title",
+  saveSlot: "slot1",
+  settings: {
+    textSpeed: "normal",
+    contentWarningAccepted: false,
+    streamlineMode: false
+  },
   playerRole: "host-lawyer",
   caseBrief: null,
   caseBriefs: [],
@@ -33,6 +44,7 @@ export const baseState = {
   caseThread: [],
   investigationComplete: false,
   caseArchive: [],
+  storyEvidenceArchive: [],
   candidateAccess: {},
   caseMode: "story",
   gender: PUBLIC_PLAYER_GENDER,
@@ -115,10 +127,26 @@ export const baseState = {
   runSettled: false
 };
 
+export function activeSaveSlot() {
+  const stored = platformRuntime.storage.get(ACTIVE_SAVE_SLOT_KEY);
+  return SAVE_SLOTS.includes(stored) ? stored : "slot1";
+}
+
+function saveSlotKey(slot = activeSaveSlot()) {
+  return `${STORAGE_KEY}:${slot}`;
+}
+
+export function setActiveSaveSlot(slot) {
+  const normalized = SAVE_SLOTS.includes(slot) ? slot : "slot1";
+  platformRuntime.storage.set(ACTIVE_SAVE_SLOT_KEY, normalized);
+  return normalized;
+}
+
 export function loadState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(PITFALL_STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
-    return raw ? migrateState(JSON.parse(raw)) : null;
+    const slot = activeSaveSlot();
+    const raw = platformRuntime.storage.get(saveSlotKey(slot)) ?? platformRuntime.storage.get(STORAGE_KEY) ?? platformRuntime.storage.get(PITFALL_STORAGE_KEY) ?? platformRuntime.storage.get(LEGACY_STORAGE_KEY);
+    return raw ? migrateState({ ...JSON.parse(raw), saveSlot: slot }) : null;
   } catch {
     return null;
   }
@@ -147,6 +175,8 @@ export function migrateState(saved) {
   if (!("lastBurstEvent" in next)) next.lastBurstEvent = null;
   if (!("interruptEvent" in next)) next.interruptEvent = null;
   if (!("playerRole" in next)) next.playerRole = "host-lawyer";
+  if (!SAVE_SLOTS.includes(next.saveSlot)) next.saveSlot = activeSaveSlot();
+  next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
   if (!("specialty" in next)) next.specialty = null;
   if (!("caseBrief" in next)) next.caseBrief = null;
   if (!Array.isArray(next.caseBriefs)) next.caseBriefs = [];
@@ -166,9 +196,10 @@ export function migrateState(saved) {
   if (!Array.isArray(next.caseThread)) next.caseThread = [];
   if (typeof next.investigationComplete !== "boolean") next.investigationComplete = false;
   if (!Array.isArray(next.caseArchive)) next.caseArchive = [];
+  if (!Array.isArray(next.storyEvidenceArchive)) next.storyEvidenceArchive = [];
   if (!next.candidateAccess || Array.isArray(next.candidateAccess)) next.candidateAccess = {};
-  if (!["story", "anchor"].includes(next.caseMode)) next.caseMode = "story";
-  if (next.profileDone && next.playerRole === "host-lawyer" && ![3, 4, 5, 6, 13].includes(next.caseBriefs.length)) {
+  next.caseMode = normalizeCaseMode(next.caseMode);
+  if (next.profileDone && next.playerRole === "host-lawyer" && !validCaseBriefCount(next.caseBriefs.length)) {
     next.profileDone = false;
     next.screen = "title";
     next.caseBrief = null;
@@ -181,7 +212,7 @@ export function migrateState(saved) {
 
 export function loadMeta() {
   try {
-    const raw = localStorage.getItem(META_STORAGE_KEY) ?? localStorage.getItem(PITFALL_META_STORAGE_KEY) ?? localStorage.getItem(LEGACY_META_STORAGE_KEY);
+    const raw = platformRuntime.storage.get(META_STORAGE_KEY) ?? platformRuntime.storage.get(PITFALL_META_STORAGE_KEY) ?? platformRuntime.storage.get(LEGACY_META_STORAGE_KEY);
     return raw ? JSON.parse(raw) : { runs: 0, bonusPoints: 0, history: [] };
   } catch {
     return { runs: 0, bonusPoints: 0, history: [] };
@@ -189,15 +220,19 @@ export function loadMeta() {
 }
 
 export function saveStateSnapshot(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const slot = SAVE_SLOTS.includes(state?.saveSlot) ? state.saveSlot : activeSaveSlot();
+  platformRuntime.storage.set(saveSlotKey(slot), JSON.stringify({ ...state, saveSlot: slot }));
 }
 
 export function saveMetaSnapshot(meta) {
-  localStorage.setItem(META_STORAGE_KEY, JSON.stringify(meta));
+  platformRuntime.storage.set(META_STORAGE_KEY, JSON.stringify(meta));
 }
 
-export function clearStateSnapshot() {
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(PITFALL_STORAGE_KEY);
-  localStorage.removeItem(LEGACY_STORAGE_KEY);
+export function clearStateSnapshot(slot = activeSaveSlot()) {
+  platformRuntime.storage.remove(saveSlotKey(slot));
+  if (slot === "slot1") {
+    platformRuntime.storage.remove(STORAGE_KEY);
+    platformRuntime.storage.remove(PITFALL_STORAGE_KEY);
+    platformRuntime.storage.remove(LEGACY_STORAGE_KEY);
+  }
 }

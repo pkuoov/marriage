@@ -1,5 +1,6 @@
 import { ATTRIBUTES, HUMAN_PATTERNS } from "./story.js?v=0.14.0";
 import { compactProfileText, relationshipStatusLines } from "./profileView.js?v=0.14.0";
+import { caseModeConfig } from "./caseModes.js?v=0.14.0";
 
 export function renderStatusPanel({ state, currentNpc, currentSeed }) {
   const npc = currentNpc();
@@ -23,11 +24,10 @@ export function renderStatusPanel({ state, currentNpc, currentSeed }) {
 function renderCaseStatus(state) {
   if (state.caseBrief && !state.investigationComplete) {
     const total = state.caseBriefs?.length ?? 0;
-    const mode = state.caseMode === "anchor" ? "主播模式" : "故事模式";
+    const mode = caseModeConfig(state.caseMode).label;
     const title = state.caseBrief.storyArcTitle ?? state.caseBrief.label;
     const setLine = state.caseBrief.storySetName ? `<p class="muted">${state.caseBrief.storySetName}</p>` : "";
-    const bridgeLine = state.caseBrief.storyBridgeClue ? `<p class="muted">跨套关联：${state.caseBrief.storyBridgeClue}</p>` : "";
-    return `<h3>后台案件</h3><p>${mode}｜第 ${state.chapter}/${total || "?"} 案</p>${setLine}<p>${title}｜难度 ${state.caseBrief.difficulty}</p><p class="muted">${state.caseBrief.storyArcSummary ?? state.caseBrief.publicHook}</p>${state.caseBrief.storyClueObject ? `<p class="muted">悬念物：${state.caseBrief.storyClueObject}</p>` : ""}${bridgeLine}`;
+    return `<h3>后台案件</h3><p>${mode}｜第 ${state.chapter}/${total || "?"} 案</p>${setLine}<p>${title}｜难度 ${state.caseBrief.difficulty}</p><p class="muted">${state.caseBrief.storyArcSummary ?? state.caseBrief.publicHook}</p>${state.caseBrief.storyClueObject ? `<p class="muted">悬念物：${state.caseBrief.storyClueObject}</p>` : ""}`;
   }
   if (state.investigationComplete) {
     const archiveCount = state.caseArchive?.length ?? 0;

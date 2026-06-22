@@ -13,3 +13,4 @@ assets/generated/**/contact_sheet.png
 *.local
 *.log
 node_modules/
+dist/

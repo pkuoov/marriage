@@ -1,4 +1,4 @@
-import { CHAPTERS } from "./story.js?v=0.14.0";
+import { CHAPTERS } from "../story.js?v=0.14.0";
 
 export function chapter9Outcome(state) {
   const midlife = state.flags.midlifePressure ?? 0;

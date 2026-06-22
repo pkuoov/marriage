@@ -5,7 +5,7 @@ import {
   NPCS,
   PACKAGING_CHOICES,
   QUESTIONNAIRE
-} from "./story.js?v=0.14.0";
+} from "../story.js?v=0.14.0";
 
 export function createEarlyChapterRenderers(ctx) {
   const {

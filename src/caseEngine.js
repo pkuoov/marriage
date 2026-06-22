@@ -1,4 +1,5 @@
 import { shuffle } from "./random.js?v=0.14.0";
+import { applyDifficultyProfile, storyDifficultyProfile } from "./difficulty.js?v=0.14.0";
 
 export const CASE_STAGES = {
   screening: "婚介初筛",
@@ -291,6 +292,56 @@ export const LIVESTREAM_PLOT_LIBRARY = [
     hiddenFacts: ["失业时间", "信用卡负债", "网贷", "消费用途"],
     exaggerations: ["工作稳定", "只是短期周转", "马上能还"],
     evidence: ["社保记录", "信用卡账单", "网贷短信", "消费记录", "求职记录"]
+  },
+  {
+    id: "fake-marriage-green-card",
+    label: "假婚绿卡/身份利益局",
+    publicHook: "一方说假结婚只是互相帮忙，但身份、地址、保证金和退出机制都没有说清。",
+    truth: "身份收益被包装成合作，风险却可能落在更难退出的一方身上。",
+    possibleComplainants: ["male", "female"],
+    hiddenFacts: ["共同地址证明", "保证金用途", "身份申请节点", "退出协议缺失"],
+    exaggerations: ["只是帮忙", "不会影响生活", "各取所需"],
+    evidence: ["共同地址证明", "保证金转账", "申请材料", "聊天承诺", "租房/账单记录"]
+  },
+  {
+    id: "extortion-intimacy-trap",
+    label: "亲密边界勒索局",
+    publicHook: "亲密接触后，一方以报警、公开视频或聊天截图威胁要钱，另一方也可能确实存在越界。",
+    truth: "性同意边界必须严肃核验，同时也要查清是否有人利用边界争议进行勒索。",
+    possibleComplainants: ["male", "female"],
+    hiddenFacts: ["清醒程度", "威胁时间", "索财金额", "偷拍视频/录音来源"],
+    exaggerations: ["完全自愿", "只是开玩笑", "不给钱就让你身败名裂"],
+    evidence: ["酒后聊天时间线", "转账要求", "报警威胁记录", "监控/定位", "朋友证言"]
+  },
+  {
+    id: "tony-multi-dating",
+    label: "托尼老师多线养鱼局",
+    publicHook: "一方以服务热情、性格会聊为借口，同时给多人制造排他暧昧。",
+    truth: "多线养鱼不是单纯花心，而是用不同版本的未来承诺换情绪、消费和机会。",
+    possibleComplainants: ["female"],
+    hiddenFacts: ["多线排班", "专属昵称", "重复承诺", "消费绑定"],
+    exaggerations: ["只是客户关系", "我对谁都这样", "还没正式确定"],
+    evidence: ["理发店预约表", "聊天昵称截图", "消费/办卡记录", "朋友圈屏蔽分组", "同事证言"]
+  },
+  {
+    id: "princess-giant-baby",
+    label: "公主病/巨婴责任局",
+    publicHook: "双方都说自己只是需要被照顾，但生活责任、情绪劳动和现实能力严重不对等。",
+    truth: "这类案未必有预谋，核心是成年人责任能力不足和需求表达失衡。",
+    possibleComplainants: ["male", "female"],
+    hiddenFacts: ["生活分工", "情绪劳动次数", "父母代办", "经济自理能力"],
+    exaggerations: ["我要求不高", "TA 应该主动懂我", "我只是不会表达"],
+    evidence: ["生活分工清单", "聊天催促记录", "父母代办记录", "消费/账单", "共同计划表"]
+  },
+  {
+    id: "high-demand-fishing",
+    label: "狮子大开口/多线养鱼局",
+    publicHook: "表面是一方要求过高、认不清现实，追问后却可能发现 TA 同时推进多名对象。",
+    truth: "高要求可能只是表层，真正风险是把不同对象当成资源池，骑驴找马、多线发展。",
+    possibleComplainants: ["male", "female"],
+    hiddenFacts: ["多线聊天", "资源分工", "见家长排期", "备选对象"],
+    exaggerations: ["只是朋友", "我值得更好", "还没确定关系"],
+    evidence: ["多线聊天日历", "礼物/转账记录", "约会定位", "朋友圈分组", "亲友证言"]
   }
 ];
 
@@ -382,7 +433,12 @@ export const CASE_MODE_SEQUENCE = [
       "influencer-relationship-content",
       "control-isolation-reporting",
       "cohabitation-renovation-cost",
-      "lost-job-hidden-credit"
+      "lost-job-hidden-credit",
+      "fake-marriage-green-card",
+      "extortion-intimacy-trap",
+      "tony-multi-dating",
+      "princess-giant-baby",
+      "high-demand-fishing"
     ]
   },
   {
@@ -404,7 +460,9 @@ export const CASE_MODE_SEQUENCE = [
       "influencer-relationship-content",
       "control-isolation-reporting",
       "violence-mutual-accusation",
-      "lost-job-hidden-credit"
+      "lost-job-hidden-credit",
+      "princess-giant-baby",
+      "high-demand-fishing"
     ]
   },
   {
@@ -430,12 +488,151 @@ export const CASE_MODE_SEQUENCE = [
       "influencer-relationship-content",
       "control-isolation-reporting",
       "cohabitation-renovation-cost",
-      "lost-job-hidden-credit"
+      "lost-job-hidden-credit",
+      "fake-marriage-green-card",
+      "extortion-intimacy-trap",
+      "tony-multi-dating",
+      "princess-giant-baby",
+      "high-demand-fishing"
     ]
   }
 ];
 
-const STORY_CASE_SEQUENCE = [
+const STREAMER_STORY_SEQUENCE = [
+  {
+    id: "streamer-01-certificate-money",
+    title: "主线第一案：领证前转账",
+    setName: "主播主线：听话识坑",
+    summary: "客户说自己只是想稳定下来，但领证倒计时和婚前转账的顺序对不上。",
+    openingComplaint: "何念第一次连线时说：“我真的只是想稳定下来，为什么他总觉得我图钱？” 周砚随后补进直播间，拿出一笔领证前夜的转账和一张被删掉的倒计时截图。两个人都没完全撒谎，但谁都没把转账用途说完整。",
+    coldOpen: "开播第十分钟，孟姐还没让任何人哭完，就先把两行字写上白板：领证时间、转账用途。她说：“第一案只练一个动作：不要听谁更委屈，先看钱在承诺前还是承诺后。”",
+    suspense: "表面是骗婚指控，真正要先查的是：这笔钱到底是恋爱赠与、临时借款，还是被婚姻承诺推出来的风险转移。",
+    mislead: "何念会把自己放在“被怀疑”的位置，周砚会把自己放在“被骗钱”的位置，但两边都在回避转账备注和领证倒计时的先后顺序。",
+    clueObject: "领证前夜转账",
+    storyCalls: [
+      "第一次连线：何念哭诉自己被当成骗婚对象，强调“我没有主动要钱”。",
+      "第二次插线：周砚公开转账备注，称那笔钱原本是“婚前互相扶持”。",
+      "第三次回拨：何念承认家里有短期周转，但坚持周砚也把这笔钱当成领证保证。"
+    ],
+    plotThreads: [
+      "承诺线：领证倒计时和转账节点太接近。",
+      "借赠线：转账备注被包装成“婚前互相扶持”。"
+    ],
+    stageJudgement: "阶段判定：第一案先不扩展成大阴谋，只锁定两个点：谁推动领证，谁推动转账。",
+    followupTwist: "后续新情况：何念承认家里有短期周转，但周砚也承认自己用“马上领证”压过她的犹豫。钱和承诺互相绑住了。",
+    transition: "第一案结束后，直播间涌入匿名投稿：如果亲密接触后，对方拿报警、偷拍视频和转账要求来威胁，这还是情感纠纷吗？",
+    caseMode: "premarital",
+    plotId: "marriage-fraud",
+    complainantId: "he",
+    respondentId: "zhou",
+    stance: "badActorFirst",
+    premeditatedActorId: "he",
+    sceneId: "family-dinner",
+    storyClue: "领证前夜转账证明：婚恋承诺和金钱节点贴得越近，越不能只听第一版诉苦。"
+  },
+  {
+    id: "streamer-02-boundary-extortion",
+    title: "主线第二案：酒后时间线",
+    setName: "主播主线：听话识坑",
+    summary: "客户说自己被仙人跳，另一方说自己被越界；主播必须同时查清性同意边界和勒索节点。",
+    openingComplaint: "周砚说自己被何念设局，对方准备报警告强奸捞一笔。何念随后连线，说自己确实有一段失去判断力的时间。两边都拿截图，截图却都缺少同一个半小时。",
+    coldOpen: "孟姐先关掉弹幕投票：“涉及性同意，谁都不能靠一句‘仙人跳’或一句‘我受伤了’直接赢。今天只按时间线、清醒程度、威胁话术和转账要求排。”",
+    suspense: "这案的戏剧性不在站队，而在反转：可能有真实越界，也可能有人把边界争议变成索财工具；两件事可以同时成立。",
+    mislead: "弹幕会被“告强奸捞钱”带走，也会被“受害者不能被质疑”带走。玩家要做的是保留严肃性，同时追问威胁和转账节点。",
+    clueObject: "缺失的三十分钟",
+    contentWarning: "本案涉及亲密边界侵害、酒后时间线和以报警威胁索财的核验。文本会克制处理，但需要玩家按证据而不是按标签站队。",
+    storyCalls: [
+      "第一次连线：周砚称自己被设局，拿出对方索要 8 万元的聊天。",
+      "第二次连线：何念公开酒后语音，说自己当晚确实说过“不舒服”。",
+      "第三次公开盘问：共同朋友补充定位，证明索财要求发生在报警威胁之前。"
+    ],
+    plotThreads: [
+      "边界线：清醒程度、拒绝表达和身体边界必须严肃核验。",
+      "勒索线：报警威胁、偷拍视频、转账金额出现了固定话术。",
+      "剪辑线：双方提交的截图都剪掉了关键半小时。"
+    ],
+    stageJudgement: "阶段判定：暂不允许用“仙人跳”三个字一笔带过，也不允许用伤害叙事跳过证据；先还原缺失三十分钟。",
+    followupTwist: "后续新情况：何念的语音证明周砚确实越界过，但索财模板来自她朋友转发的“维权攻略”。本案从单纯控诉变成边界与勒索交织。",
+    transition: "边界案之后，一张理发店预约表被投进后台。表上没有价格，只有不同女孩的昵称和同一套未来承诺。",
+    caseMode: "premarital",
+    plotId: "extortion-intimacy-trap",
+    complainantId: "zhou",
+    respondentId: "he",
+    stance: "halfTruth",
+    sceneId: "late-night-chat",
+    referencesEvidenceIds: ["streamer-01-certificate-money-story-clue"],
+    bridgeClue: "第一案的领证前夜转账说明：当事人可能先用情绪讲一个版本，再在证据压力下补出关键节点。本案也要先查缺失时间。",
+    storyClue: "缺失的三十分钟证明：真实边界问题和勒索风险可能同时存在，主播必须拆开判断。"
+  },
+  {
+    id: "streamer-03-tony-fishing",
+    title: "主线第三案：托尼老师的排班表",
+    setName: "主播主线：听话识坑",
+    summary: "表面是托尼老师会聊天，深层是多线养鱼、骑驴找马和资源分工。",
+    openingComplaint: "何念以为自己和许照在认真恋爱，直到她发现他的理发店预约表里，每个晚上都有不同的专属昵称。许照说那只是客户服务，另一位女生却发来同款“以后开店一起做”的承诺。",
+    coldOpen: "客户发来的不是聊天记录，而是一张排班表。孟姐看完只问一句：“这是排客人，还是排未来？”",
+    suspense: "本案初看像脚踩几只船，追下去会发现每条线负责不同资源：有人负责情绪，有人负责消费，有人负责创业人脉。",
+    mislead: "许照会把一切说成服务行业的热情，何念会把问题说成“他不够爱我”。真正要查的是排他承诺和资源收益。",
+    clueObject: "理发店预约表",
+    storyCalls: [
+      "第一次连线：何念公开预约表，发现自己的昵称旁边标着“情绪稳定”。",
+      "第二次插线：另一位女生发来同款承诺，称许照让她投资未来店面。",
+      "第三次公开盘问：店员透露许照把不同对象分进“陪伴、消费、资源”三组。"
+    ],
+    plotThreads: [
+      "多线养鱼线：每个人都被喂了不同版本的唯一承诺。",
+      "骑驴找马线：许照不断比较谁更能提供资源。",
+      "狮子大开口线：部分高要求不是认不清现实，而是在筛选可供给对象。"
+    ],
+    stageJudgement: "阶段判定：先不把它简化成花心。判断关键是有没有排他承诺、有没有资源分工、有没有用未来换投资。",
+    followupTwist: "后续新情况：何念并非单纯受害者，她也同时保留相亲对象；但许照的排班表证明他把多人关系系统化管理。",
+    transition: "多线案之后，直播间迎来一个看似没那么刺激的客户：没有骗钱，没有出轨，只有无穷无尽的“你应该懂我”。",
+    caseMode: "premarital",
+    plotId: "tony-multi-dating",
+    complainantId: "he",
+    respondentId: "xu",
+    stance: "trueVictim",
+    sceneId: "late-night-chat",
+    referencesEvidenceIds: ["streamer-02-boundary-extortion-story-clue"],
+    bridgeClue: "第二案的缺失三十分钟提醒你：被剪掉的不是空白，而是收益开始变化的地方。本案要查许照把不同对象排进不同功能位。",
+    storyClue: "理发店预约表证明，多线养鱼最危险的地方不是暧昧，而是把不同对象当成不同功能。"
+  },
+  {
+    id: "streamer-04-reality-mismatch",
+    title: "主线第四案：你应该懂我",
+    setName: "主播主线：听话识坑",
+    summary: "季终案把公主病、巨婴、狮子大开口和现实错配放在一起，要求玩家区分骗局与成熟度不足。",
+    openingComplaint: "林鹿说周砚像巨婴，什么都要她安排；周砚说林鹿像公主，彩礼、房子、情绪价值都要满分。两个人都不像骗子，却都把“爱我就该懂我”当成免沟通理由。",
+    coldOpen: "这案没有惊天截图，只有二十几条“你为什么不能主动一点”。孟姐说：“没有坏人，不代表没有问题；不是诈骗，不代表适合结婚。”",
+    suspense: "终局考验玩家能不能区分：骗婚、化债、勒索、多线养鱼是风险；公主病、巨婴、狮子大开口有时是成熟度和现实能力不匹配。",
+    mislead: "弹幕会急着骂谁作、谁穷、谁妈宝。主播要拆的是责任能力、现实预期、边界表达，以及有没有备用对象。",
+    clueObject: "生活分工与相亲日历",
+    storyCalls: [
+      "第一次连线：林鹿控诉周砚没有生活能力，所有家务和沟通都要她提醒。",
+      "第二次连线：周砚反控林鹿狮子大开口，要求房车彩礼和情绪价值全满。",
+      "第三次新情况：林鹿的相亲日历曝光，她一边要求周砚加码，一边保留更高资源对象。"
+    ],
+    plotThreads: [
+      "巨婴线：周砚把生活责任外包给伴侣和父母。",
+      "公主病/高要求线：林鹿把需求说成标准，却不给协商空间。",
+      "骑驴找马线：相亲日历说明高要求也可能是多线筛选策略。"
+    ],
+    stageJudgement: "阶段判定：这不是典型骗婚，但也不是普通吵架。先分清成熟度不足、现实错配和多线筛选三种问题。",
+    followupTwist: "后续新情况：周砚承认父母仍替他处理很多生活事务；林鹿承认还有两个相亲对象。两边都不算纯坏人，但都不适合立刻进入婚姻。",
+    transition: "主播主线收束：孟姐把四案写成一句话——听 TA 怎么说，看 TA 避开什么，查 TA 能得到什么。",
+    caseMode: "premarital",
+    plotId: "high-demand-fishing",
+    complainantId: "lin",
+    respondentId: "zhou",
+    stance: "personalityMismatch",
+    sceneId: "family-dinner",
+    referencesEvidenceIds: ["streamer-03-tony-fishing-story-clue"],
+    bridgeClue: "第三案的预约表证明了多线筛选可以被管理成系统；终局要判断林鹿的高要求是现实错配，还是也带着筛选备胎的功能。",
+    storyClue: "生活分工与相亲日历证明：婚恋问题不全是诈骗，也可能是责任能力、现实预期和多线筛选混在一起。"
+  }
+];
+
+const ARC_CASE_SEQUENCE = [
   {
     id: "story-00-tutorial-first-contradiction",
     title: "教学章：第一处矛盾",
@@ -504,7 +701,7 @@ const STORY_CASE_SEQUENCE = [
     summary: "办酒、短暂同居和礼金流水纠缠在一起，谁都说自己已经付出了足够多。",
     openingComplaint: "婚庆经理先把尾款单传进后台，随后陈默和林鹿几乎同时申请连线。两个人都说自己被婚礼进度拖住，但尾款单上的排期显示，这不是第一次有人在临门一脚改口。",
     coldOpen: "第三案不是当事人先来的，是婚庆经理先把一张酒席尾款单传进后台。备注栏写着：退婚原因不要写真实的。",
-    suspense: "陈默和林鹿都说自己是被拖到这一步的人，但酒席名单里出现了第一案房产合同旁同一家婚庆公司的经办人。",
+    suspense: "陈默和林鹿都说自己是被拖到这一步的人，但酒席名单里出现了第二案购房合同附件旁同一家婚庆公司的经办人。",
     mislead: "彩礼金额会很吵，酒席礼金会很乱，但真正的悬念是：谁在利用婚礼临近这件事制造停不下来的压力。",
     clueObject: "婚庆尾款单",
     transition: "尾款单背面拍到一行小字：亲属借款先过桥，婚后共同还。第四案的债务从这里开始露头。",
@@ -514,6 +711,7 @@ const STORY_CASE_SEQUENCE = [
     respondentId: "lin",
     stance: "personalityMismatch",
     sceneId: "wedding-prep",
+    referencesEvidenceIds: ["story-02-house-name-story-clue"],
     storyClue: "礼金和彩礼只是表面，真正进入婚后的，是原生家庭债务和责任捆绑。"
   },
   {
@@ -534,6 +732,7 @@ const STORY_CASE_SEQUENCE = [
     stance: "trueVictim",
     premeditatedActorId: "chen",
     sceneId: "rental-room",
+    referencesEvidenceIds: ["story-03-bride-price-story-clue", "story-03-wedding-manager"],
     storyClue: "债务压力让情绪外包更容易发生，下一案会从账本滑向边界。"
   },
   {
@@ -553,6 +752,7 @@ const STORY_CASE_SEQUENCE = [
     respondentId: "xu",
     stance: "halfTruth",
     sceneId: "late-night-chat",
+    referencesEvidenceIds: ["story-04-relative-debt-story-clue"],
     storyClue: "第五案没有给出爽快结论，因为终局要回到当事人的自我告解里。"
   },
   {
@@ -572,6 +772,7 @@ const STORY_CASE_SEQUENCE = [
     respondentId: "shen",
     stance: "selfDoubt",
     sceneId: "family-dinner",
+    referencesEvidenceIds: ["story-05-emotional-affair-story-clue", "story-05-recovered-voice"],
     storyClue: "终局不再寻找唯一反派，而是把六案里的包装、资源、账本和控制全部连起来。"
   },
   {
@@ -592,6 +793,8 @@ const STORY_CASE_SEQUENCE = [
     stance: "trueVictim",
     sceneId: "late-night-chat",
     premeditatedActorId: "xu",
+    structuralActorId: "platform",
+    referencesEvidenceIds: ["story-06-confession-story-clue", "story-06-shared-folder"],
     bridgeClue: "它回收第一套的六案资料夹：许照不是终点，平台才是把叙事模板商品化的人。",
     storyClue: "平台测评表把第一套里的“稳定推进”改成付费筛选项，说明两套案件共享同一套话术源头。"
   },
@@ -612,6 +815,8 @@ const STORY_CASE_SEQUENCE = [
     respondentId: "he",
     stance: "halfTruth",
     sceneId: "broker-office",
+    structuralActorId: "platform",
+    referencesEvidenceIds: ["story-07-platform-intake-story-clue", "story-07-platform-intake-bridge-clue"],
     bridgeClue: "它回收第一套第二案的房本材料：同样的安全感话术，被平台升级成信用评级。",
     storyClue: "征信报告把第一套房本安全感和第二套平台测评连起来，证明“核验”也可能被滥用成控制工具。"
   },
@@ -633,6 +838,8 @@ const STORY_CASE_SEQUENCE = [
     stance: "badActorFirst",
     premeditatedActorId: "he",
     sceneId: "wedding-prep",
+    structuralActorId: "platform",
+    referencesEvidenceIds: ["story-08-credit-mirror-story-clue", "story-08-credit-mirror-bridge-clue"],
     bridgeClue: "它回收第一套第三案的婚庆经办人：同一个人把临门一脚的压力做成了合同产品。",
     storyClue: "延期保障合同证明第一套的婚庆压力不是偶发，而是第二套平台服务的一环。"
   },
@@ -654,6 +861,8 @@ const STORY_CASE_SEQUENCE = [
     stance: "trueVictim",
     premeditatedActorId: "chen",
     sceneId: "rental-room",
+    structuralActorId: "platform",
+    referencesEvidenceIds: ["story-09-wedding-delay-story-clue", "story-09-wedding-delay-bridge-clue"],
     bridgeClue: "它回收第一套第四案的家庭群截图：亲属债务从人工劝说升级成了系统化排名。",
     storyClue: "互助小程序把第一套的债务捆绑与第二套平台后台连上，说明亲情也被做成了可运营的压力模型。"
   },
@@ -674,6 +883,8 @@ const STORY_CASE_SEQUENCE = [
     respondentId: "xu",
     stance: "halfTruth",
     sceneId: "late-night-chat",
+    structuralActorId: "platform",
+    referencesEvidenceIds: ["story-10-family-debt-app-story-clue", "story-10-family-debt-app-bridge-clue"],
     bridgeClue: "它回收第一套第五案的深夜语音：情绪外包从私人越界变成平台服务。",
     storyClue: "夜间陪伴账单证明第二套不是新问题，而是第一套情绪外包话术的商业化版本。"
   },
@@ -694,14 +905,24 @@ const STORY_CASE_SEQUENCE = [
     respondentId: "shen",
     stance: "selfJustifying",
     sceneId: "family-dinner",
+    structuralActorId: "platform",
+    referencesEvidenceIds: ["story-11-companion-service-story-clue", "story-11-companion-service-bridge-clue"],
     bridgeClue: "它回收第一套终局和教学章：同一套识别矛盾的方法，既能保护人，也可能被人拿去设计别人。",
     storyClue: "告解模板后台把两套案件互相扣住：第一套提供真实痛苦，第二套展示痛苦如何被产品化。"
   }
 ];
 
 export function generateStoryCaseSequence(npcs, attrs, options = {}) {
+  return buildFixedStorySequence(STREAMER_STORY_SEQUENCE, npcs, attrs, options);
+}
+
+export function generateArcCaseSequence(npcs, attrs, options = {}) {
+  return buildFixedStorySequence(ARC_CASE_SEQUENCE, npcs, attrs, options);
+}
+
+function buildFixedStorySequence(sequence, npcs, attrs, options = {}) {
   const runNumber = options.runNumber ?? 0;
-  return STORY_CASE_SEQUENCE.map((item, index) => {
+  return sequence.map((item, index) => {
     const mode = CASE_MODE_SEQUENCE.find((caseMode) => caseMode.id === item.caseMode) ?? CASE_MODE_SEQUENCE[0];
     const brief = generateLivestreamCase(npcs, attrs, {
       order: index + 1,
@@ -715,8 +936,10 @@ export function generateStoryCaseSequence(npcs, attrs, options = {}) {
       forcedPremeditated: Boolean(item.premeditatedActorId),
       premeditatedActorId: item.premeditatedActorId
     });
+    const difficultyProfile = item.difficultyProfile ?? (item.id?.startsWith("streamer-") ? storyDifficultyProfile(index) : null);
+    const profiledBrief = applyDifficultyProfile(brief, difficultyProfile);
     return {
-      ...brief,
+      ...profiledBrief,
       id: item.id,
       storyCaseId: item.id,
       storyArcTitle: item.title,
@@ -729,16 +952,43 @@ export function generateStoryCaseSequence(npcs, attrs, options = {}) {
       storySuspense: item.suspense,
       storyMislead: item.mislead,
       storyClueObject: item.clueObject,
+      storyCalls: item.storyCalls ?? [],
+      plotThreads: item.plotThreads ?? [],
+      stageJudgement: item.stageJudgement,
+      followupTwist: item.followupTwist,
       storyClue: item.storyClue,
       storyBridgeClue: item.bridgeClue,
       storyTransition: item.transition,
+      contentWarning: item.contentWarning,
+      structuralActorId: item.structuralActorId ?? null,
+      referencesEvidenceIds: item.referencesEvidenceIds ?? [],
       tutorialChapter: Boolean(item.tutorialChapter),
       tutorialTip: item.tutorialTip,
-      evidenceCards: [...buildStoryEvidenceCards(item), ...(brief.evidenceCards ?? [])],
-      confessionTimeline: item.caseMode === "confession" ? buildStoryConfessionTimeline(item, brief.confessionTimeline) : brief.confessionTimeline,
+      tutorialConfessionPractice: item.tutorialChapter ? buildTutorialConfessionPractice() : [],
+      evidenceCards: [...buildStoryEvidenceCards(item), ...(profiledBrief.evidenceCards ?? [])],
+      confessionTimeline: item.caseMode === "confession" ? buildStoryConfessionTimeline(item, profiledBrief.confessionTimeline) : profiledBrief.confessionTimeline,
       fixedStory: true
     };
   });
+}
+
+function buildTutorialConfessionPractice() {
+  return [
+    {
+      id: "tutorial-self-excuse",
+      label: "旧案录屏：先别问细节",
+      text: "来访者说：“我不是不想解释，只是你现在问细节，会显得你不信任我。”",
+      correctMark: "selfBlind",
+      contradiction: "教学告解：把核验细节说成不信任，是用情绪挡住事实核验。"
+    },
+    {
+      id: "tutorial-hurt-other",
+      label: "旧案录屏：替对方决定",
+      text: "TA 又说：“我知道 TA 压力很大，所以我先替 TA 接下那笔钱，之后再慢慢说。”",
+      correctMark: "hurtOther",
+      contradiction: "教学告解：替对方接下金钱责任，不是体贴，而是越过边界制造共同负担。"
+    }
+  ];
 }
 
 function storySetIndexFor(item) {

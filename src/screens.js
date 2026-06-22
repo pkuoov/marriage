@@ -1,5 +1,6 @@
 import { ATTRIBUTES, DETECTIVE_SPECIALTIES } from "./story.js?v=0.14.0";
 import { publicProfileText } from "./profileView.js?v=0.14.0";
+import { caseModeConfig } from "./caseModes.js?v=0.14.0";
 
 export function createScreenRenderers(ctx) {
   const {
@@ -29,16 +30,17 @@ function renderTitle() {
       <div class="title-copy">
         <p class="eyebrow">良缘算法婚恋咨询有限公司</p>
         <h1>婚恋侦探局</h1>
-        <p>故事模式包含教学章和两套互相关联的固定案件；主播模式会随机生成案卷。你要从诉苦、证词、现场复盘和证据卡里找出被包装的真相。</p>
+        <p>故事模式改为 4 个高密度婚姻主播主线案：从多次客户连线里拆骗婚、化债、假婚、边界勒索、多线养鱼和巨婴责任；连环剧场保留更高概念的双套案件。</p>
         <div class="title-actions">
           <button class="primary" data-start type="button">${state.profileDone ? "继续调查" : "开始接案"}</button>
           <button class="secondary" data-new type="button">新案件</button>
+          <button class="secondary" data-settings type="button">设置</button>
           <button class="secondary" data-sound-title type="button">${isSoundEnabled() ? "音效 开" : "音效 关"}</button>
         </div>
       </div>
       <aside class="notice">
         <h2>当前原型</h2>
-        <p>新模式：你是婚恋侦探 / 律师顾问。可选择故事模式的教学章与双主线，或主播模式的随机案件栏目。</p>
+        <p>新模式：你是婚姻主播 / 婚恋侦探。可选择主播主线、连环剧场，或随机案件栏目。</p>
         <p>已完成周目：${meta.runs ?? 0}｜经验点：${meta.bonusPoints ?? 0}</p>
         ${lastRun ? `<p>最近周目：压力 ${lastRun.pressureScore}｜获得 ${lastRun.gained} 点</p>` : `<p>最近周目：暂无记录</p>`}
       </aside>
@@ -51,6 +53,7 @@ function renderTitle() {
     render();
   });
   document.querySelector("[data-new]").addEventListener("click", resetGame);
+  document.querySelector("[data-settings]").addEventListener("click", () => setScreen("settings"));
   document.querySelector("[data-sound-title]").addEventListener("click", () => {
     toggleSound();
     renderTitle();
@@ -65,10 +68,11 @@ function renderCreator() {
       <div class="panel">
         <p class="eyebrow">侦探局开案</p>
         <h1>选择调查模式，再开案</h1>
-        <p class="muted">你不再给“主角”自由加点，但可以选择本局侦探专长和案件模式。故事模式是教学章加两套互相关联的固定案件；主播模式保留随机生成案卷，一个案子一个案子往下分析。</p>
+        <p class="muted">你不再给“主角”自由加点，但可以选择本局侦探专长和案件模式。故事模式是 4 个高密度婚姻主播固定案；连环剧场保留双套连续案件；主播模式随机生成案卷，一个案子一个案子往下分析。</p>
         <div class="scene-list">
           <p><b>选择案件模式</b>：${caseModeText(state.caseMode).label}</p>
-          <p><button class="${state.caseMode === "story" ? "primary" : ""}" data-case-mode="story" type="button">故事模式</button><br><span>教学章先教你找矛盾，再进入两套互相关联的固定案件，人物牵连、悬念物和舆论记忆会持续累积。</span></p>
+          <p><button class="${state.caseMode === "story" ? "primary" : ""}" data-case-mode="story" type="button">故事模式</button><br><span>4 个高密度固定案：每案多次连线、两三条混杂线索、阶段判定和后续反转。</span></p>
+          <p><button class="${state.caseMode === "arc" ? "primary" : ""}" data-case-mode="arc" type="button">连环剧场</button><br><span>保留资料包疑云与模板回声两套案件，偏连续剧和平台化阴谋线。</span></p>
           <p><button class="${state.caseMode === "anchor" ? "primary" : ""}" data-case-mode="anchor" type="button">主播模式</button><br><span>随机生成婚恋案卷，像直播栏目一样逐案复盘、追问、指认和结案。</span></p>
         </div>
         <div class="scene-list">
@@ -107,16 +111,7 @@ function renderCreator() {
 }
 
 function caseModeText(mode) {
-  if (mode === "anchor") {
-    return {
-      label: "主播模式",
-      intro: "随机生成案件，一个案子一个案子往下分析，保持栏目式直播节奏。"
-    };
-  }
-  return {
-    label: "故事模式",
-    intro: "教学章 + 两套正式固定案件：第一套查资料包疑云，第二套回收第一套线索，追查亲密关系话术如何被模板化。"
-  };
+  return caseModeConfig(mode);
 }
 
 function toolUnlockText(points) {
