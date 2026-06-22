@@ -56,33 +56,38 @@ export function caseSolvedView({
 export function caseInterludeView({
   currentTitle,
   interlude,
-  nextHook,
-  transition,
-  followupTwist,
+  interludeLines = [],
+  interludeStep = 0,
   reputation,
   heat,
-  nextCarryover,
-  nextThreadLine,
   nextTitle
 }) {
+  const step = Math.max(0, Math.min(interludeStep, Math.max(0, interludeLines.length - 1)));
+  const line = interludeLines[step] ?? {
+    speaker: "孟姐",
+    label: `${currentTitle} 结案后`,
+    text: interlude.summary
+  };
+  const isLast = step >= interludeLines.length - 1;
   return {
     chapter: "侦探局战况",
     text: `
-      <p><b>${currentTitle} 结案后</b></p>
-      <p>${interlude.summary}</p>
-      <p class="episode-hook">${nextHook}</p>
-      ${transition ? `<p class="side-signal"><b>主线过场</b>：${transition}</p>` : ""}
-      ${followupTwist ? `<p><b>新情况回拨</b>：${followupTwist}</p>` : ""}
-      <div class="scene-list">
-        <p><b>声誉变化</b>：${signed(interlude.reputationDelta)}｜当前 ${reputation}</p>
-        <p><b>舆论热度</b>：${signed(interlude.heatDelta)}｜当前 ${heat}</p>
-        <p><b>下一案影响</b>：${nextCarryover}</p>
-        ${nextThreadLine ? `<p><b>人物牵连</b>：${nextThreadLine}</p>` : ""}
+      <p class="hint">过场 ${step + 1}/${interludeLines.length || 1}</p>
+      <p><b>${line.label ?? `${currentTitle} 结案后`}</b></p>
+      <p class="vn-line">${line.text ?? interlude.summary}</p>
+      ${line.detail ? `<p class="side-signal">${line.detail}</p>` : ""}
+      <div class="interlude-meter">
+        <span>声誉 ${reputation}</span>
+        <span>热度 ${heat}</span>
+        <span>${signed(interlude.reputationDelta)} / ${signed(interlude.heatDelta)}</span>
       </div>
     `,
-    choices: nextTitle
-      ? `<button class="primary" data-enter-next-case type="button">进入${nextTitle}</button>`
-      : `<button class="primary" data-finish-run type="button">完成本周目复盘</button>`
+    choices: !isLast
+      ? `<button class="primary" data-interlude-next type="button">下一段</button>`
+      : nextTitle
+        ? `<button class="primary" data-enter-next-case type="button">进入${nextTitle}</button>`
+        : `<button class="primary" data-finish-run type="button">完成本周目复盘</button>`,
+    speakerName: line.speaker ?? "孟姐"
   };
 }
 

@@ -810,21 +810,26 @@ function renderCaseOpen(brief, chapter) {
   const choices = dialogueStep.hasNext
     ? `<button class="primary" data-dialogue-next="caseOpen" type="button">继续</button>`
     : view.choices;
-  storyFrame({ ...view, choices, speakerName: dialogueStep.line?.speaker });
+  storyFrame({
+    ...view,
+    choices,
+    speakerName: dialogueStep.line?.speaker,
+    portraitMood: dialogueStep.line?.mood ?? (dialogueStep.line?.role === "host" ? "listening" : "anxious")
+  });
   document.querySelector("[data-dialogue-next]")?.addEventListener("click", () => advanceDialogueStep(brief, "caseOpen", openingDialogue.length));
   document.querySelector("[data-case-scene]")?.addEventListener("click", () => moveCaseScene("sceneReview"));
   document.querySelector("[data-streamline-case]")?.addEventListener("click", () => {
-    recordEvidenceInsight(brief, `绿色模式核查：跳过敏感证词细读，只保留 ${brief.storyClueObject ?? "关键时间线"}、转账节点和公开材料。`);
+    recordEvidenceInsight(brief, `绿色模式核查：跳过敏感通话细读，只保留 ${brief.storyClueObject ?? "关键时间线"}、转账节点和公开材料。`);
     recordContradiction(brief, `绿色模式时间线：${timelineGapText(brief)}`);
-    state.lastReaction = "绿色模式已启用：本案会尽量绕开敏感证词细读，改为硬性时间线核查。";
+    state.lastReaction = "绿色模式已启用：本案会尽量绕开敏感通话细读，改为硬性时间线核查。";
     moveCaseScene("evidence");
   });
   document.querySelector("[data-case-scan]")?.addEventListener("click", () => {
     if (!spendCaseAction(brief, "scan:summary")) return rerenderWithSave();
     bumpFlag("evidenceClarity", 1);
     const cardTitles = evidenceCardTitles(brief);
-    recordEvidenceInsight(brief, `案卷摘要先把情绪压低：本案需要重点核对 ${cardTitles.slice(0, 2).join("、")}。`);
-    state.lastReaction = `案卷摘要消耗了一次追问机会，但你提前锁定了 ${cardTitles[0]}。`;
+    recordEvidenceInsight(brief, `后台资料先把情绪压低：本案需要重点核对 ${cardTitles.slice(0, 2).join("、")}。`);
+    state.lastReaction = `后台资料消耗了一次询问机会，但你提前锁定了 ${cardTitles[0]}。`;
     moveCaseScene("evidence");
   });
 }
@@ -849,7 +854,7 @@ function renderCaseSceneReview(brief, chapter) {
       details: caseActionDisabled(brief, "scene:details")
     }
   });
-  storyFrame(view);
+  storyFrame({ ...view, portraitMood: "thinking" });
   document.querySelectorAll("[data-version-question]").forEach((button) => {
     button.addEventListener("click", () => {
       const [versionIndex, optionIndex] = button.dataset.versionQuestion.split(":").map(Number);
@@ -901,7 +906,8 @@ function renderConfessionTimeline(brief, chapter) {
       };
     });
   });
-  storyFrame(confessionTimelineView({
+  storyFrame({
+    ...confessionTimelineView({
     chapter,
     brief,
     budgetText: budgetLine(brief),
@@ -911,7 +917,9 @@ function renderConfessionTimeline(brief, chapter) {
     markStates,
     contradictions,
     inspiration: inspirationChoice(brief)
-  }));
+    }),
+    portraitMood: "reflecting"
+  });
   document.querySelectorAll("[data-confession]").forEach((button) => {
     button.addEventListener("click", () => {
       const [nodeId, mark] = button.dataset.confession.split(":");
@@ -973,7 +981,8 @@ function renderCaseTestimony(brief, chapter) {
     });
   });
   const presentStates = brief.testimony.map((_, index) => (!selectedCard || caseActionDisabled(brief, `present:${index}:${selectedCard?.id ?? "none"}`) ? "disabled" : ""));
-  storyFrame(testimonyView({
+  storyFrame({
+    ...testimonyView({
     chapter,
     brief,
     budgetText: budgetLine(brief),
@@ -987,14 +996,16 @@ function renderCaseTestimony(brief, chapter) {
     presentStates,
     specialtySkill: specialtySkillChoice(brief),
     inspiration: inspirationChoice(brief)
-  }));
+    }),
+    portraitMood: testimonyMood(currentTestimony)
+  });
   document.querySelectorAll("[data-select-card]").forEach((button) => {
     button.addEventListener("click", () => {
       state.selectedEvidenceCard = {
         ...(state.selectedEvidenceCard ?? {}),
         [caseNoteKey(brief)]: button.dataset.selectCard
       };
-      state.lastReaction = "证据卡已放到直播台面上。接下来选择一句证词出示。";
+      state.lastReaction = "资料已放上分析台。接下来选一段通话核对。";
       saveState();
       render();
     });
@@ -1011,7 +1022,7 @@ function renderCaseTestimony(brief, chapter) {
       const followup = item?.followups?.[followupIndex];
       if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
       bumpFlag("evidenceClarity", 1);
-      recordInterrogation(brief, `${item?.speaker ?? "证词"}：${followup?.question ?? item?.hint}`);
+      recordInterrogation(brief, `${item?.speaker ?? "通话摘录"}：${followup?.question ?? item?.hint}`);
       if (followup?.contradiction) recordContradiction(brief, followup.contradiction);
       state.lastReaction = `询问结果：${followup?.result ?? item?.hint ?? "这句话需要回到时间线里看。"}`;
       saveState();
@@ -1030,9 +1041,10 @@ function renderCaseEvidence(brief, chapter) {
   const contradictions = contradictionsForCase(brief);
   const insights = insightsForCase(brief);
   const hiddenHint = contradictions.length >= 2 || (state.flags.evidenceClarity ?? 0) >= 4
-    ? `<p class="signal signal-yellow">${brief.fixedStory && brief.storyClueObject ? `主线物证提示：${brief.storyClueObject} 已经能和当前矛盾接上。` : `你注意到：${brief.hiddenFacts[0]} 和 ${brief.exaggerations[0]} 是本案最容易被包装的地方。`}</p>`
-    : `<p class="signal signal-yellow">你还不能直接看见真相。场景复原和证词里至少还有 ${Math.max(0, 2 - contradictions.length)} 个矛盾点需要核对。</p>`;
-  storyFrame(evidenceView({
+    ? `<p class="signal signal-yellow">${brief.fixedStory && brief.storyClueObject ? `主线资料提示：${brief.storyClueObject} 已经能和当前矛盾接上。` : `你注意到：${brief.hiddenFacts[0]} 和 ${brief.exaggerations[0]} 是本案最容易被包装的地方。`}</p>`
+    : `<p class="signal signal-yellow">你还不能直接看见真相。客户叙述和通话摘录里至少还有 ${Math.max(0, 2 - contradictions.length)} 个矛盾点需要核对。</p>`;
+  storyFrame({
+    ...evidenceView({
     chapter,
     brief,
     budgetText: budgetLine(brief),
@@ -1050,7 +1062,9 @@ function renderCaseEvidence(brief, chapter) {
     },
     specialtySkill: specialtySkillChoice(brief),
     inspiration: inspirationChoice(brief)
-  }));
+    }),
+    portraitMood: "focused"
+  });
   document.querySelectorAll("[data-evidence]").forEach((button) => {
     button.addEventListener("click", () => {
       const type = button.dataset.evidence;
@@ -1060,8 +1074,8 @@ function renderCaseEvidence(brief, chapter) {
       if (type === "motive") bumpFlag("suspicion", 1);
       const insight = evidenceInsightFor(brief, type);
       recordEvidenceInsight(brief, insight);
-      recordContradiction(brief, `证据整理：${insight}`);
-      state.lastReaction = `证据整理发现：${insight}`;
+      recordContradiction(brief, `资料整理：${insight}`);
+      state.lastReaction = `资料整理发现：${insight}`;
       saveState();
       render();
     });
@@ -1083,7 +1097,7 @@ function renderCaseEvidence(brief, chapter) {
 
 function renderCaseAccusation(brief, chapter) {
   if (brief?.tutorialChapter && !tutorialReadyForAccusation(brief)) {
-    state.lastReaction = "训练案还不能阶段指认。先完成一次现场版本比对、一次证词追问、一次证据出示。";
+    state.lastReaction = "训练案还不能阶段判断。先完成一次叙述追问、一次通话追问、一次资料核对。";
     state.scene = "evidence";
     saveState();
     return renderCaseEvidence(brief, chapter);
@@ -1093,7 +1107,8 @@ function renderCaseAccusation(brief, chapter) {
   const structuralChoice = structuralExpectedAccusation(brief)
     ? `<button data-accuse="${structuralExpectedAccusation(brief)}" type="button">${structuralAccusationButtonText(brief)}</button>`
     : "";
-  storyFrame(accusationView({
+  storyFrame({
+    ...accusationView({
     chapter,
     brief,
     budgetText: budgetLine(brief),
@@ -1103,7 +1118,9 @@ function renderCaseAccusation(brief, chapter) {
     respondentName: respondent?.name ?? "另一方",
     structuralChoice,
     inspiration: inspirationChoice(brief)
-  }));
+    }),
+    portraitMood: "tense"
+  });
   document.querySelectorAll("[data-accuse]").forEach((button) => {
     button.addEventListener("click", () => resolveAccusation(brief, button.dataset.accuse));
   });
@@ -1154,19 +1171,41 @@ function renderCaseInterlude(brief, chapter) {
   const interlude = interludeForCase(brief);
   const nextBrief = state.caseBriefs?.[state.chapter] ?? null;
   const nextHook = nextBrief ? nextPlaythroughTease(nextBrief) : finalPlaythroughTease();
-  const view = caseInterludeView({
+  const interludeLines = interludeDialogueForCase({
+    brief,
     currentTitle: caseChapterTitle(brief, state.chapter - 1),
     interlude,
     nextHook,
     transition: brief.storyTransition,
     followupTwist: brief.followupTwist,
+    nextCarryover: nextBrief ? nextCaseCarryoverLine(nextBrief) : `${caseSetLabel()}已结束，进入本轮总复盘。`,
+    nextThreadLine: nextBrief?.threadLink?.line ?? ""
+  });
+  const interludeStep = Number(state.dialogueProgress?.[dialogueProgressKey(brief, "caseInterlude")] ?? 0);
+  const view = caseInterludeView({
+    currentTitle: caseChapterTitle(brief, state.chapter - 1),
+    interlude,
+    interludeLines,
+    interludeStep,
     reputation: state.agencyReputation ?? 0,
     heat: state.publicHeat ?? 0,
-    nextCarryover: nextBrief ? nextCaseCarryoverLine(nextBrief) : `${caseSetLabel()}已结束，进入本轮总复盘。`,
-    nextThreadLine: nextBrief?.threadLink?.line ?? "",
     nextTitle: nextBrief ? caseChapterTitle(nextBrief, state.chapter) : ""
   });
-  storyFrame({ ...view, speakerName: "孟姐" });
+  storyFrame({
+    ...view,
+    speakerName: view.speakerName ?? "孟姐",
+    caseStage: false,
+    hideStatus: true,
+    personaOverride: { name: "孟姐", art: CHARACTER_ART.meng }
+  });
+  document.querySelector("[data-interlude-next]")?.addEventListener("click", () => {
+    state.dialogueProgress = {
+      ...(state.dialogueProgress ?? {}),
+      [dialogueProgressKey(brief, "caseInterlude")]: interludeStep + 1
+    };
+    saveState();
+    render();
+  });
   document.querySelector("[data-enter-next-case]")?.addEventListener("click", () => {
     state.chapter += 1;
     state.scene = "caseOpen";
@@ -1290,7 +1329,7 @@ function enterRomanceFromInvestigation() {
   state.selectedFirstDates = recommendedCandidateIds();
   state.primaryNpcId = null;
   state.secondaryNpcId = null;
-  addLog(`${caseSetLabel()}已归档，良缘算法根据你的声誉、舆论热度和案卷牵连重新排序候选人。`, "婚恋入口");
+  addLog(`${caseSetLabel()}已归档，良缘算法根据你的声誉、舆论热度和后台资料牵连重新排序候选人。`, "婚恋入口");
   saveState();
   render();
 }
@@ -1386,7 +1425,7 @@ function resolveAccusation(brief, accused) {
     state.lastReaction = "你把叙事重新压回证据链，旁听席的风向安静了一瞬。";
   } else {
     bumpFlag("audiencePressure", 1);
-    state.lastReaction = enoughContradictions ? "这个判断有点急，旁听席的情绪替事实多走了一步。" : "你还没抓到足够矛盾点，这次指认更像直觉，不像破案。";
+    state.lastReaction = enoughContradictions ? "这个判断有点急，旁听席的情绪替事实多走了一步。" : "你还没抓到足够矛盾点，这次判断更像直觉，不像分析。";
   }
   platformRuntime.cloud.syncNow();
   moveCaseScene("caseSolved");
@@ -1432,7 +1471,7 @@ function requiredContradictionsForAccusation(brief) {
 function moveCaseScene(scene) {
   const brief = activeCaseBrief();
   if (scene === "accusation" && brief?.tutorialChapter && !tutorialReadyForAccusation(brief)) {
-    state.lastReaction = "训练案还不能阶段指认。先完成一次现场版本比对、一次证词追问、一次证据出示，再让孟姐放你上手。";
+    state.lastReaction = "训练案还不能阶段判断。先完成一次叙述追问、一次通话追问、一次资料核对，再让孟姐放你上手。";
     state.scene = "evidence";
     saveState();
     render();
@@ -1540,7 +1579,7 @@ function selectedEvidenceCard(brief) {
 
 function evidenceCardTitles(brief) {
   const titles = (brief.evidenceCards ?? []).map((card) => `${card.type}《${card.title}》`);
-  return titles.length ? titles : ["一张关键证据卡"];
+  return titles.length ? titles : ["一份关键资料"];
 }
 
 function confessionMarksForCase(brief) {
@@ -1745,7 +1784,7 @@ function useSpecialtySkill(brief) {
     const insight = timelineGapText(brief);
     recordEvidenceInsight(brief, `时间线重组：${insight}`);
     recordContradiction(brief, `时间线重组：${insight}`);
-    state.lastReaction = "时间线重组已完成：系统把证词里的时间节点重新排列，并标出最可疑的缺口。";
+    state.lastReaction = "时间线重组已完成：系统把通话里的时间节点重新排列，并标出最可疑的缺口。";
   }
   bumpFlag("evidenceClarity", 1);
   saveState();
@@ -1865,7 +1904,7 @@ function caseDifficultyText(brief) {
   const needed = requiredContradictionsForAccusation(brief);
   const label = difficultyLabelForCase(brief);
   const note = brief?.difficultyProfile?.note ? `｜${brief.difficultyProfile.note}` : "";
-  return `${label}：至少找 ${needed} 处矛盾再指认${note}`;
+  return `${label}：至少找 ${needed} 处矛盾再判断${note}`;
 }
 
 function solvedCaseDetails(brief, result) {
@@ -1918,13 +1957,13 @@ function playthroughOpening(brief) {
     if (brief.tutorialChapter) {
       return {
         hook: `试播训练档。${brief.storyArcSummary ?? "先学会从第一版叙事里抓矛盾。"}`,
-        director: "孟姐把厚案卷暂时压住：“先别急。第一处矛盾找不准，后面所有漂亮话都会带偏你。”",
-        pressure: brief.tutorialTip ?? "孟姐会带你走完现场、证词、证据和指认。"
+        director: "孟姐把后台资料暂时压住：“先别急。第一处矛盾找不准，后面所有漂亮话都会带偏你。”",
+        pressure: brief.tutorialTip ?? "孟姐会带你走完叙述、通话、资料和阶段判断。"
       };
     }
     if (state.caseMode === "story") {
       return {
-        hook: `${setLabel}第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "主播主线案卷已经接入。"}`,
+        hook: `${setLabel}第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "主播主线资料已经接入。"}`,
         director: brief.order === 1
           ? "孟姐打开直播间：“我们不是替客户骂人，是从 TA 怎么说话里找问题。”"
           : "孟姐把上一案关键词贴到白板上：“换一个客户，问题可能换壳；判断方法不能丢。”",
@@ -1932,7 +1971,7 @@ function playthroughOpening(brief) {
       };
     }
     return {
-      hook: `${setLabel}连环剧场第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "固定主线案卷已经接入。"}`,
+      hook: `${setLabel}连环剧场第 ${brief.order}/${total} 案。${brief.storyArcSummary ?? "固定主线资料已经接入。"}`,
       director: brief.storySetIndex === 1 && brief.storyCaseInSet === 1
         ? "孟姐关掉弹幕预览：“从这份匿名资料包开始，所有讲得太顺的关系都要拆开看。”"
         : brief.storySetIndex === 2 && brief.storyCaseInSet === 1
@@ -1986,7 +2025,7 @@ function playthroughOpening(brief) {
   }
   return {
     hook: "侦探局已经进入稳定播出，但每一组关系都在提醒你：熟练不等于看透。",
-    director: "孟姐把新案卷推过来：“按流程，但别被流程催眠。”",
+    director: "孟姐把新资料推过来：“按流程，但别被流程催眠。”",
     pressure: "高周目更看重效率、矛盾命中和误伤控制。"
   };
 }
@@ -1994,6 +2033,35 @@ function playthroughOpening(brief) {
 function storyColdOpenLine(brief) {
   if (!brief.storyColdOpen) return "";
   return `<p class="episode-hook"><b>冷开场</b>：${brief.storyColdOpen}</p>`;
+}
+
+function interludeDialogueForCase({ brief, currentTitle, interlude, nextHook, transition, followupTwist, nextCarryover, nextThreadLine }) {
+  return [
+    {
+      speaker: "孟姐",
+      label: `${currentTitle} 结案后`,
+      text: interlude.summary,
+      detail: "直播间的弹幕还在吵，孟姐先把麦克风推远了一点。"
+    },
+    followupTwist ? {
+      speaker: "后台",
+      label: "回拨消息",
+      text: followupTwist.replace(/^后续新情况：/, ""),
+      detail: "这不是新案，只是上一案留下的回音。它会改变下一通电话里，玩家对“完整叙事”的警惕。"
+    } : null,
+    transition ? {
+      speaker: "后台",
+      label: "新资料进线",
+      text: transition,
+      detail: "资料没有替你下结论，只把下一案的第一个疑点放到了台面上。"
+    } : null,
+    {
+      speaker: "孟姐",
+      label: "下一通连线",
+      text: nextHook,
+      detail: nextThreadLine || nextCarryover
+    }
+  ].filter(Boolean);
 }
 
 function openingDialogueForCase(brief, opening, complainantName, respondentName) {
@@ -2047,9 +2115,18 @@ function setTestimonyIndex(brief, index) {
     [dialogueProgressKey(brief, "testimony")]: nextIndex
   };
   const item = brief.testimony?.[nextIndex];
-  if (item?.speakerId) state.primaryNpcId = item.speakerId;
+  if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
   saveState();
   render();
+}
+
+function testimonyMood(item) {
+  if (!item) return "listening";
+  if (item.kind === "halfLie" || item.kind === "truthWithGap") return "guarded";
+  if (item.kind === "reluctant" || item.kind === "defensive") return "tense";
+  if (item.kind === "sceneHint" || item.kind === "shadowVersion") return "focused";
+  if (item.kind === "selfDoubt") return "reflecting";
+  return "anxious";
 }
 
 function sceneDramaBeat(brief) {
@@ -2086,15 +2163,15 @@ function testimonyDramaBeat(brief) {
   const complainant = getNpc(brief.complainantId)?.name ?? "先诉苦者";
   const respondent = getNpc(brief.respondentId)?.name ?? "另一方";
   if (brief.fixedStory) {
-    return `主线追问：${brief.storyMislead ?? brief.storySuspense ?? "这句证词不仅属于本案，也可能在下一案被重新解释。"}`;
+    return `主线追问：${brief.storyMislead ?? brief.storySuspense ?? "这段通话不仅属于本案，也可能在下一案被重新解释。"}`;
   }
   if (currentPlaythroughNumber() === 1) {
     return `灯光切到交叉追问，${complainant} 和 ${respondent} 的台词第一次真正咬在一起。你不需要赢过他们，只需要让前后说法互相照见。`;
   }
   if (currentPlaythroughNumber() === 2) {
-    return `二周目的证词不会把破绽直接递给你。真正的破口藏在“我也有错”和“但 TA 更过分”之间。`;
+    return `二周目的通话不会把破绽直接递给你。真正的破口藏在“我也有错”和“但 TA 更过分”之间。`;
   }
-  return "证词越多，越要把每句话放回证据卡和时间线里。";
+  return "通话越多，越要把每句话放回后台资料和时间线里。";
 }
 
 function nextPlaythroughTease(nextBrief) {
@@ -2163,17 +2240,17 @@ function renderBurstInterruption() {
   });
 }
 
-function storyFrame({ chapter, text, choices, side = "", speakerName = "" }) {
+function storyFrame({ chapter, text, choices, side = "", speakerName = "", caseStage = true, hideStatus = false, personaOverride = null, portraitMood = "" }) {
   maybeApplySecondaryPressure();
-  const persona = visualPersona();
-  const inCase = Boolean(state.caseBriefs?.length && !state.investigationComplete);
+  const persona = personaOverride ?? visualPersona();
+  const inCase = Boolean(caseStage && state.caseBriefs?.length && !state.investigationComplete);
   layout(`
     <section class="story-grid ${inCase ? "case-vn-grid" : ""}">
       <article class="vn-stage">
         <div class="visual-scene ${backdropClass()}" aria-hidden="true">
           <div class="scene-label">${sceneLabel()}</div>
           ${inCase ? caseHudOverlay() : ""}
-          ${visualPortraitLayer(persona)}
+          ${visualPortraitLayer(persona, portraitMood)}
         </div>
         <div class="dialogue-card">
           <p class="eyebrow">${chapter}</p>
@@ -2187,7 +2264,7 @@ function storyFrame({ chapter, text, choices, side = "", speakerName = "" }) {
           <div class="choices">${choices}</div>
         </div>
       </article>
-      ${inCase ? "" : `<aside class="status-card">
+      ${inCase || hideStatus ? "" : `<aside class="status-card">
         ${renderStatusPanel({ state, currentNpc, currentSeed })}
         ${side}
       </aside>`}
@@ -2232,7 +2309,7 @@ function caseHudOverlay() {
       <summary>记事本</summary>
       <div>
         <p><b>${caseModeConfig(state.caseMode).label}</b>｜第 ${state.chapter}/${total} 案</p>
-        <p>${brief.storyClueObject ? `证物：${brief.storyClueObject}` : brief.label}</p>
+        <p>${brief.storyClueObject ? `资料：${brief.storyClueObject}` : brief.label}</p>
         <p>追问：${budget ? `${budget.remaining}/${budget.max}` : "--"}｜矛盾：${contradictions}</p>
         ${latestContradiction ? `<p>最新：${latestContradiction}</p>` : `<p>先找第一处矛盾。</p>`}
       </div>
@@ -2317,12 +2394,13 @@ function shouldShowRespondentLive(brief) {
   return brief?.consultationMode === "mediation";
 }
 
-function visualPortraitLayer(persona) {
+function visualPortraitLayer(persona, portraitMood = "") {
   if (state.caseBriefs?.length && !state.investigationComplete) {
     const brief = activeCaseBrief();
     const complainant = getNpc(brief?.complainantId);
     const respondent = getNpc(brief?.respondentId);
     const activeId = state.primaryNpcId ?? complainant?.id;
+    const mood = portraitMood || moodForScene();
     const showRespondent = shouldShowRespondentLive(brief) && state.scene !== "caseOpen";
     const people = !showRespondent
       ? [{ role: "咨询者", npc: complainant }].filter((item) => item.npc)
@@ -2333,9 +2411,9 @@ function visualPortraitLayer(persona) {
     return `
       <div class="case-duel-portraits">
         ${people.map((item) => `
-          <figure class="case-portrait ${activeId === item.npc.id ? "active" : ""}">
+          <figure class="case-portrait mood-${activeId === item.npc.id ? mood : "listening"} ${activeId === item.npc.id ? "active" : ""}">
             <img src="${CHARACTER_ART[item.npc.id]}" alt="" />
-            <figcaption><span>${item.role}</span><b>${item.npc.name}</b></figcaption>
+            <figcaption><span>${item.role}｜${moodLabel(activeId === item.npc.id ? mood : "listening")}</span><b>${item.npc.name}</b></figcaption>
           </figure>
         `).join("")}
       </div>
@@ -2345,6 +2423,29 @@ function visualPortraitLayer(persona) {
     <div class="character-shadow"></div>
     <img class="character-standee" src="${persona.art}" alt="" />
   `;
+}
+
+function moodForScene() {
+  if (state.scene === "caseOpen") return "listening";
+  if (state.scene === "sceneReview") return "thinking";
+  if (state.scene === "testimony") return "anxious";
+  if (state.scene === "evidence") return "focused";
+  if (state.scene === "accusation") return "tense";
+  if (state.scene === "confessionTimeline") return "reflecting";
+  return "listening";
+}
+
+function moodLabel(mood) {
+  const labels = {
+    anxious: "紧张",
+    focused: "盯资料",
+    guarded: "防御",
+    listening: "听线",
+    reflecting: "回想",
+    tense: "绷住",
+    thinking: "追问"
+  };
+  return labels[mood] ?? "听线";
 }
 
 function renderCaseCastPanel() {
@@ -2404,6 +2505,16 @@ function backdropClass() {
 function sceneLabel() {
   if (state.caseBriefs?.length && !state.investigationComplete) {
     const brief = activeCaseBrief();
+    if (state.scene === "caseOpen") return "直播连线";
+    if (state.scene === "sceneReview") return "客户叙述回放";
+    if (state.scene === "testimony") {
+      const index = currentTestimonyIndex(brief);
+      return `第 ${index + 1} 段通话摘录`;
+    }
+    if (state.scene === "evidence") return "后台分析台";
+    if (state.scene === "accusation") return "阶段判断";
+    if (state.scene === "caseInterlude") return "案间过场";
+    if (state.scene === "caseSolved") return "本案复盘";
     return brief?.scene?.name ?? "侦探局";
   }
   if (state.chapter === 10) {

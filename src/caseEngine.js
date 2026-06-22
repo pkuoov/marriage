@@ -1037,16 +1037,16 @@ function buildStoryEvidenceCards(item) {
   const commonTargets = ["ambiguous", "reluctant", "truthWithGap", "defensive", "sceneHint", "selfDoubt", "shadowVersion", "halfLie"];
   const base = {
     id: `${item.id}-story-clue`,
-    type: "主线物证",
+    type: "主线资料",
     title: item.clueObject,
     front: item.suspense,
     detail: item.transition,
     targets: commonTargets,
-    contradiction: `主线物证《${item.clueObject}》证明本案不是孤立事件：${item.storyClue}`
+    contradiction: `主线资料《${item.clueObject}》证明本案不是孤立事件：${item.storyClue}`
   };
   const bridge = item.bridgeClue ? {
     id: `${item.id}-bridge-clue`,
-    type: "跨套线索",
+    type: "旧案线索",
     title: "旧案回声",
     front: item.bridgeClue,
     detail: "旧案里的材料可以帮你判断本案是不是同一种话术在重复出现。",
