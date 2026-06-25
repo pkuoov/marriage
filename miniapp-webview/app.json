@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "婚恋侦探局",
+    "navigationBarBackgroundColor": "#120f12",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#120f12"
+  },
+  "sitemapLocation": "sitemap.json"
+}

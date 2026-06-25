@@ -1,8 +1,8 @@
+import { platformRuntime } from "./platformRuntime.js?v=0.19.36";
+
 let audioContext;
 const SOUND_KEY = "marriage-detective-agency-sound";
-const PITFALL_SOUND_KEY = "marriage-pitfall-guide-sound";
-const LEGACY_SOUND_KEY = "chinese-marriage-ten-year-dream-sound";
-const savedSound = localStorage.getItem(SOUND_KEY) ?? localStorage.getItem(PITFALL_SOUND_KEY) ?? localStorage.getItem(LEGACY_SOUND_KEY);
+const savedSound = platformRuntime.storage.get(SOUND_KEY);
 let enabled = savedSound !== "off";
 
 function getContext() {
@@ -51,7 +51,7 @@ export function playSfx(kind = "click") {
 
 export function toggleSound() {
   enabled = !enabled;
-  localStorage.setItem(SOUND_KEY, enabled ? "on" : "off");
+  platformRuntime.storage.set(SOUND_KEY, enabled ? "on" : "off");
   if (enabled) playSfx("confirm");
   return enabled;
 }

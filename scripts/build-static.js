@@ -12,4 +12,4 @@ await cp(resolve(root, "index.html"), resolve(dist, "index.html"));
 await cp(resolve(root, "src"), resolve(dist, "src"), { recursive: true });
 await cp(resolve(root, "assets"), resolve(dist, "assets"), { recursive: true });
 
-console.log(`Steam static build ready: ${dist}`);
+console.log(`Static H5 build ready: ${dist}`);

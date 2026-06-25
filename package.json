@@ -5,8 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "python3 -m http.server 5174",
+    "build:h5": "node scripts/build-static.js",
     "build:steam": "node scripts/build-static.js",
-    "test:logic": "node scripts/verify-logic.js",
-    "check": "node --check src/app.js && node --check src/state.js && node --check src/platformRuntime.js && node --check src/caseArchive.js && node --check src/caseModes.js && node --check src/caseNarration.js && node --check src/caseRuntime.js && node --check src/difficulty.js && node --check src/relationshipEngine.js && node --check src/profileView.js && node --check src/statusView.js && node --check src/views/caseFragments.js && node --check src/views/caseInvestigationViews.js && node --check src/views/caseRecapViews.js && node --check src/views/systemViews.js && node --check src/legacy/choiceHandlers.js && node --check src/screens.js && node --check src/legacy/earlyChapters.js && node --check src/legacy/midChapters.js && node --check src/legacy/endingChapters.js && node --check src/story.js && node --check src/caseEngine.js && node --check src/random.js && node --check src/sound.js && node --check scripts/build-static.js && node --check scripts/verify-logic.js && npm run test:logic"
+    "intel:collect": "node scripts/collect-daily-intelligence.js",
+    "intel:drafts": "node scripts/generate-daily-case-drafts.js",
+    "intel:creator-template": "node scripts/create-creator-review-template.js",
+    "test:unit": "node scripts/verify-logic.js",
+    "test:logic": "npm run test:unit",
+    "test:narrative": "node scripts/verify-narrative-flow.js",
+    "check": "node --check src/app.js && node --check src/state.js && node --check src/platformRuntime.js && node --check src/caseModes.js && node --check src/caseNarration.js && node --check src/caseRuntime.js && node --check src/difficulty.js && node --check src/screens.js && node --check src/story.js && node --check src/caseEngine.js && node --check src/random.js && node --check src/sound.js && node --check src/views/caseInvestigationViews.js && node --check src/views/caseRecapViews.js && node --check scripts/build-static.js && node --check scripts/verify-logic.js && node --check scripts/verify-narrative-flow.js && node --check scripts/collect-daily-intelligence.js && node --check scripts/generate-daily-case-drafts.js && node --check scripts/create-creator-review-template.js && npm run test:logic && npm run test:narrative"
   }
 }

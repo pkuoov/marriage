@@ -1,16 +1,5 @@
-import { shuffle } from "./random.js?v=0.14.0";
-import { applyDifficultyProfile, storyDifficultyProfile } from "./difficulty.js?v=0.14.0";
-
-export const CASE_STAGES = {
-  screening: "婚介初筛",
-  dating: "约会观察",
-  preParents: "见父母之前",
-  marriageTalk: "谈婚论嫁",
-  wedding: "婚礼战役",
-  firstYear: "婚后第一年",
-  housingDebt: "买房与债务",
-  child: "孩子上学"
-};
+import { shuffle } from "./random.js?v=0.19.36";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.19.36";
 
 export const LIVESTREAM_PLOT_LIBRARY = [
   {
@@ -247,11 +236,11 @@ export const LIVESTREAM_PLOT_LIBRARY = [
     id: "influencer-relationship-content",
     label: "情侣博主人设流量局",
     publicHook: "一方说恋爱是内容共创，另一方认为隐私、消费和分手都被当成流量素材。",
-    truth: "亲密关系被内容资产化，争点是授权、收益、隐私和舆论胁迫。",
+    truth: "亲密关系被内容资产化，争点是授权、收益、隐私和公开施压。",
     possibleComplainants: ["male", "female"],
     hiddenFacts: ["账号收益", "脚本文案", "隐私授权", "分手炒作"],
     exaggerations: ["真实记录", "粉丝祝福", "共同账号"],
-    evidence: ["账号后台", "广告合同", "拍摄脚本", "聊天授权", "公开视频时间线"]
+    evidence: ["账号收益数据", "广告合同", "拍摄脚本", "聊天授权", "公开视频时间线"]
   },
   {
     id: "control-isolation-reporting",
@@ -345,7 +334,161 @@ export const LIVESTREAM_PLOT_LIBRARY = [
   }
 ];
 
+const TASK_PROFILES = {
+  audit: {
+    id: "audit",
+    label: "钱款说不清",
+    recommendedSpecialtyId: "audit",
+    summary: "钱说得急，责任却还没落到人。"
+  },
+  emotion: {
+    id: "emotion",
+    label: "情绪卡住了",
+    recommendedSpecialtyId: "emotion",
+    summary: "情绪很满，有人一直把问题推回爱不爱。"
+  },
+  verification: {
+    id: "verification",
+    label: "资料有雾",
+    recommendedSpecialtyId: "verification",
+    summary: "标签都好看，材料却总少一块。"
+  }
+};
+
+const PLOT_TASK_PROFILE = {
+  "marriage-fraud": "audit",
+  "debt-transfer": "audit",
+  "resource-harvest": "audit",
+  "romance-transfer-gift-or-loan": "audit",
+  "bride-price-short-cohabitation": "audit",
+  "house-name-security-test": "audit",
+  "relative-debt-bundle": "audit",
+  "fake-divorce-quota": "audit",
+  "wedding-sunk-cost-pressure": "audit",
+  "couple-startup-equity": "audit",
+  "cohabitation-renovation-cost": "audit",
+  "lost-job-hidden-credit": "audit",
+  "pig-butchering-investment": "audit",
+  "dating-app-bot-vip": "audit",
+  "ex-borrow-money-reentry": "emotion",
+  "coworker-emotional-affair": "emotion",
+  "influencer-relationship-content": "emotion",
+  "control-isolation-reporting": "emotion",
+  "violence-mutual-accusation": "emotion",
+  "extortion-intimacy-trap": "emotion",
+  "tony-multi-dating": "emotion",
+  "princess-giant-baby": "emotion",
+  "high-demand-fishing": "emotion",
+  "affair-reversal": "emotion",
+  "positioning-lie": "verification",
+  "hidden-divorce-history": "verification",
+  "hidden-child-support": "verification",
+  "major-illness-disclosure": "verification",
+  "education-income-fake-profile": "verification",
+  "pregnancy-timeline-gap": "verification",
+  "paternity-doubt-after-birth": "verification",
+  "child-paternity-trap": "verification",
+  "fake-marriage-green-card": "verification"
+};
+
+function taskProfileForPlot(plotId) {
+  return TASK_PROFILES[PLOT_TASK_PROFILE[plotId]] ?? TASK_PROFILES.verification;
+}
+
+function plotIdsForSpecialty(specialtyId) {
+  return Object.entries(PLOT_TASK_PROFILE)
+    .filter(([, taskId]) => taskId === specialtyId)
+    .map(([plotId]) => plotId);
+}
+
+const DAILY_TEMPLATE_PLOT_IDS = [
+  "lost-job-hidden-credit",
+  "house-name-security-test",
+  "tony-multi-dating",
+  "education-income-fake-profile"
+];
+
+const DAILY_FEATURED_PLOTS = {
+  audit: ["lost-job-hidden-credit"],
+  emotion: ["tony-multi-dating"],
+  verification: ["education-income-fake-profile"]
+};
+
+const DAILY_ROTATION = [
+  {
+    plotId: "lost-job-hidden-credit",
+    caseMode: "premarital",
+    specialty: "audit",
+    sceneId: "rental-room",
+    complainantId: "shen",
+    respondentId: "xu"
+  },
+  {
+    plotId: "house-name-security-test",
+    caseMode: "premarital",
+    specialty: "audit",
+    sceneId: "broker-office",
+    complainantId: "zhou",
+    respondentId: "lin"
+  },
+  {
+    plotId: "tony-multi-dating",
+    caseMode: "premarital",
+    specialty: "emotion",
+    sceneId: "late-night-chat",
+    complainantId: "he",
+    respondentId: "chen"
+  },
+  {
+    plotId: "education-income-fake-profile",
+    caseMode: "premarital",
+    specialty: "verification",
+    sceneId: "live-call",
+    complainantId: "lin",
+    respondentId: "zhou"
+  },
+  {
+    plotId: "house-name-security-test",
+    caseMode: "premarital",
+    specialty: "audit",
+    sceneId: "broker-office",
+    complainantId: "he",
+    respondentId: "xu"
+  },
+  {
+    plotId: "lost-job-hidden-credit",
+    caseMode: "premarital",
+    specialty: "audit",
+    sceneId: "rental-room",
+    complainantId: "chen",
+    respondentId: "zhou"
+  },
+  {
+    plotId: "tony-multi-dating",
+    caseMode: "premarital",
+    specialty: "emotion",
+    sceneId: "late-night-chat",
+    complainantId: "lin",
+    respondentId: "shen"
+  },
+  {
+    plotId: "education-income-fake-profile",
+    caseMode: "premarital",
+    specialty: "verification",
+    sceneId: "live-call",
+    complainantId: "xu",
+    respondentId: "chen"
+  }
+];
+
 const CASE_SCENES = [
+  {
+    id: "live-call",
+    name: "直播连线",
+    description: "来访者刚接进直播间，话还没讲顺，弹幕已经开始站队。",
+    dialogue: "“主播你好，我想把这件事说清楚。”",
+    hint: "先听出对方卡在哪里，再决定要不要往下追。"
+  },
   {
     id: "family-dinner",
     name: "双方父母饭局",
@@ -406,1255 +549,556 @@ const RELUCTANT_REVEALS = [
   "TA 把问题推给父母、前任或情绪状态，却没有回答自己能得到什么。"
 ];
 
-export const CASE_MODE_SEQUENCE = [
-  {
-    id: "premarital",
-    label: "婚前 case",
-    brief: "关系尚未进入婚姻，重点查择偶定位、婚史孩子、彩礼房产、债务和承诺是否被包装。",
-    stage: "marriageTalk",
-    plotIds: [
-      "marriage-fraud",
-      "debt-transfer",
-      "resource-harvest",
-      "positioning-lie",
-      "romance-transfer-gift-or-loan",
-      "bride-price-short-cohabitation",
-      "house-name-security-test",
-      "hidden-divorce-history",
-      "hidden-child-support",
-      "major-illness-disclosure",
-      "relative-debt-bundle",
-      "education-income-fake-profile",
-      "pig-butchering-investment",
-      "dating-app-bot-vip",
-      "ex-borrow-money-reentry",
-      "wedding-sunk-cost-pressure",
-      "couple-startup-equity",
-      "influencer-relationship-content",
-      "control-isolation-reporting",
-      "cohabitation-renovation-cost",
-      "lost-job-hidden-credit",
-      "fake-marriage-green-card",
-      "extortion-intimacy-trap",
-      "tony-multi-dating",
-      "princess-giant-baby",
-      "high-demand-fishing"
-    ]
-  },
-  {
-    id: "married",
-    label: "婚后 case",
-    brief: "关系已经进入婚姻或事实共同生活，重点查共同财务、家务育儿、债务、出轨、亲子和双方家庭责任。",
-    stage: "firstYear",
-    plotIds: [
-      "debt-transfer",
-      "affair-reversal",
-      "child-paternity-trap",
-      "hidden-child-support",
-      "relative-debt-bundle",
-      "fake-divorce-quota",
-      "coworker-emotional-affair",
-      "pregnancy-timeline-gap",
-      "paternity-doubt-after-birth",
-      "couple-startup-equity",
-      "influencer-relationship-content",
-      "control-isolation-reporting",
-      "violence-mutual-accusation",
-      "lost-job-hidden-credit",
-      "princess-giant-baby",
-      "high-demand-fishing"
-    ]
-  },
-  {
-    id: "confession",
-    label: "告解模式",
-    brief: "当事人用第一人称回看自己的经历。你要站在 TA 的视角里查探：自己哪里被坑、哪里自欺、哪里也可能伤害了别人。",
-    stage: "dating",
-    plotIds: [
-      "positioning-lie",
-      "resource-harvest",
-      "romance-transfer-gift-or-loan",
-      "hidden-divorce-history",
-      "hidden-child-support",
-      "major-illness-disclosure",
-      "education-income-fake-profile",
-      "pig-butchering-investment",
-      "dating-app-bot-vip",
-      "ex-borrow-money-reentry",
-      "coworker-emotional-affair",
-      "pregnancy-timeline-gap",
-      "wedding-sunk-cost-pressure",
-      "couple-startup-equity",
-      "influencer-relationship-content",
-      "control-isolation-reporting",
-      "cohabitation-renovation-cost",
-      "lost-job-hidden-credit",
-      "fake-marriage-green-card",
-      "extortion-intimacy-trap",
-      "tony-multi-dating",
-      "princess-giant-baby",
-      "high-demand-fishing"
-    ]
+const DAILY_CASE_MODE = {
+  id: "daily-call",
+  label: "直播来电",
+  brief: "每日只接一通来电，先听当事人把情况说出来。",
+  stage: "liveCall",
+  plotIds: DAILY_TEMPLATE_PLOT_IDS
+};
+
+const CASE_MODE_SEQUENCE = [DAILY_CASE_MODE];
+
+export function generateDailyCaseSequence(npcs, attrs, options = {}) {
+  if (options.plotId && !DAILY_TEMPLATE_PLOT_IDS.includes(options.plotId)) {
+    throw new Error(`Daily case plot is not templated: ${options.plotId}`);
   }
-];
-
-const STREAMER_STORY_SEQUENCE = [
-  {
-    id: "streamer-01-certificate-money",
-    title: "主线第一案：领证前转账",
-    setName: "主播主线：听话识坑",
-    summary: "客户说自己只是想稳定下来，但领证倒计时和婚前转账的顺序对不上。",
-    openingComplaint: "何念第一次连线时说：“我真的只是想稳定下来，为什么他总觉得我图钱？” 周砚随后补进直播间，拿出一笔领证前夜的转账和一张被删掉的倒计时截图。两个人都没完全撒谎，但谁都没把转账用途说完整。",
-    coldOpen: "开播第十分钟，孟姐还没让任何人哭完，就先把两行字写上白板：领证时间、转账用途。她说：“第一案只练一个动作：不要听谁更委屈，先看钱在承诺前还是承诺后。”",
-    openingDialogue: [
-      { speaker: "孟姐", role: "host", text: "何念，先说钱。" },
-      { speaker: "何念", role: "caller", text: "我只是想稳定下来，他却说我骗婚。" },
-      { speaker: "周砚", role: "other", text: "她让我领证前转钱，说以后是一家人。" },
-      { speaker: "孟姐", role: "host", text: "先查顺序：承诺在前，还是转账在前？" }
-    ],
-    suspense: "表面是骗婚指控，真正要先查的是：这笔钱到底是恋爱赠与、临时借款，还是被婚姻承诺推出来的风险转移。",
-    mislead: "何念会把自己放在“被怀疑”的位置，周砚会把自己放在“被骗钱”的位置，但两边都在回避转账备注和领证倒计时的先后顺序。",
-    clueObject: "领证前夜转账",
-    storyCalls: [
-      "第一次连线：何念哭诉自己被当成骗婚对象，强调“我没有主动要钱”。",
-      "第二次插线：周砚公开转账备注，称那笔钱原本是“婚前互相扶持”。",
-      "第三次回拨：何念承认家里有短期周转，但坚持周砚也把这笔钱当成领证保证。"
-    ],
-    plotThreads: [
-      "承诺线：领证倒计时和转账节点太接近。",
-      "借赠线：转账备注被包装成“婚前互相扶持”。"
-    ],
-    stageJudgement: "阶段判定：第一案先不扩展成大阴谋，只锁定两个点：谁推动领证，谁推动转账。",
-    followupTwist: "后续新情况：何念承认家里有短期周转，但周砚也承认自己用“马上领证”压过她的犹豫。钱和承诺互相绑住了。",
-    transition: "第一案结束后，直播间涌入匿名投稿：如果亲密接触后，对方拿报警、偷拍视频和转账要求来威胁，这还是情感纠纷吗？",
-    caseMode: "premarital",
-    plotId: "marriage-fraud",
-    complainantId: "he",
-    respondentId: "zhou",
-    stance: "badActorFirst",
-    premeditatedActorId: "he",
-    sceneId: "family-dinner",
-    storyClue: "领证前夜转账证明：婚恋承诺和金钱节点贴得越近，越不能只听第一版诉苦。"
-  },
-  {
-    id: "streamer-02-boundary-extortion",
-    title: "主线第二案：酒后时间线",
-    setName: "主播主线：听话识坑",
-    summary: "客户说自己被仙人跳，另一方说自己被越界；主播必须同时查清性同意边界和勒索节点。",
-    openingComplaint: "周砚说自己被何念设局，对方准备报警告强奸捞一笔。何念随后连线，说自己确实有一段失去判断力的时间。两边都拿截图，截图却都缺少同一个半小时。",
-    coldOpen: "孟姐先关掉弹幕投票：“涉及性同意，谁都不能靠一句‘仙人跳’或一句‘我受伤了’直接赢。今天只按时间线、清醒程度、威胁话术和转账要求排。”",
-    openingDialogue: [
-      { speaker: "孟姐", role: "host", text: "不贴标签。先排时间。" },
-      { speaker: "周砚", role: "caller", text: "她要八万，不给就报警、发视频。" },
-      { speaker: "何念", role: "other", text: "我中间断片了，但我说过不舒服。" },
-      { speaker: "孟姐", role: "host", text: "两份截图，都少了同半小时。" }
-    ],
-    suspense: "这案的戏剧性不在站队，而在反转：可能有真实越界，也可能有人把边界争议变成索财工具；两件事可以同时成立。",
-    mislead: "弹幕会被“告强奸捞钱”带走，也会被“受害者不能被质疑”带走。主播台上要做的是保留严肃性，同时追问威胁和转账节点。",
-    clueObject: "缺失的三十分钟",
-    contentWarning: "本案涉及亲密边界侵害、酒后时间线和以报警威胁索财的核验。文本会克制处理，但需要你按证据而不是按标签站队。",
-    storyCalls: [
-      "第一次连线：周砚称自己被设局，拿出对方索要 8 万元的聊天。",
-      "第二次连线：何念公开酒后语音，说自己当晚确实说过“不舒服”。",
-      "第三次公开盘问：共同朋友补充定位，证明索财要求发生在报警威胁之前。"
-    ],
-    plotThreads: [
-      "边界线：清醒程度、拒绝表达和身体边界必须严肃核验。",
-      "勒索线：报警威胁、偷拍视频、转账金额出现了固定话术。",
-      "剪辑线：双方提交的截图都剪掉了关键半小时。"
-    ],
-    stageJudgement: "阶段判定：暂不允许用“仙人跳”三个字一笔带过，也不允许用伤害叙事跳过证据；先还原缺失三十分钟。",
-    followupTwist: "后续新情况：何念的语音证明周砚确实越界过，但索财模板来自她朋友转发的“维权攻略”。本案从单纯控诉变成边界与勒索交织。",
-    transition: "边界案之后，一张理发店预约表被投进后台。表上没有价格，只有不同女孩的昵称和同一套未来承诺。",
-    caseMode: "premarital",
-    plotId: "extortion-intimacy-trap",
-    complainantId: "zhou",
-    respondentId: "he",
-    stance: "halfTruth",
-    sceneId: "late-night-chat",
-    referencesEvidenceIds: ["streamer-01-certificate-money-story-clue"],
-    bridgeClue: "第一案的领证前夜转账说明：当事人可能先用情绪讲一个版本，再在证据压力下补出关键节点。本案也要先查缺失时间。",
-    storyClue: "缺失的三十分钟证明：真实边界问题和勒索风险可能同时存在，主播必须拆开判断。"
-  },
-  {
-    id: "streamer-03-tony-fishing",
-    title: "主线第三案：托尼老师的排班表",
-    setName: "主播主线：听话识坑",
-    summary: "表面是托尼老师会聊天，深层是多线养鱼、骑驴找马和资源分工。",
-    openingComplaint: "何念以为自己和许照在认真恋爱，直到她发现他的理发店预约表里，每个晚上都有不同的专属昵称。许照说那只是客户服务，另一位女生却发来同款“以后开店一起做”的承诺。",
-    coldOpen: "客户发来的不是聊天记录，而是一张排班表。孟姐看完只问一句：“这是排客人，还是排未来？”",
-    openingDialogue: [
-      { speaker: "孟姐", role: "host", text: "你发现的是排班表？" },
-      { speaker: "何念", role: "caller", text: "我旁边写‘情绪稳定’，别人写‘能投店’。" },
-      { speaker: "许照", role: "other", text: "我是做服务的，记客户特点正常。" },
-      { speaker: "孟姐", role: "host", text: "查承诺，不查发型。" }
-    ],
-    suspense: "本案初看像脚踩几只船，追下去会发现每条线负责不同资源：有人负责情绪，有人负责消费，有人负责创业人脉。",
-    mislead: "许照会把一切说成服务行业的热情，何念会把问题说成“他不够爱我”。真正要查的是排他承诺和资源收益。",
-    clueObject: "理发店预约表",
-    storyCalls: [
-      "第一次连线：何念公开预约表，发现自己的昵称旁边标着“情绪稳定”。",
-      "第二次插线：另一位女生发来同款承诺，称许照让她投资未来店面。",
-      "第三次公开盘问：店员透露许照把不同对象分进“陪伴、消费、资源”三组。"
-    ],
-    plotThreads: [
-      "多线养鱼线：每个人都被喂了不同版本的唯一承诺。",
-      "骑驴找马线：许照不断比较谁更能提供资源。",
-      "狮子大开口线：部分高要求不是认不清现实，而是在筛选可供给对象。"
-    ],
-    stageJudgement: "阶段判定：先不把它简化成花心。判断关键是有没有排他承诺、有没有资源分工、有没有用未来换投资。",
-    followupTwist: "后续新情况：何念并非单纯受害者，她也同时保留相亲对象；但许照的排班表证明他把多人关系系统化管理。",
-    transition: "多线案之后，直播间迎来一个看似没那么刺激的客户：没有骗钱，没有出轨，只有无穷无尽的“你应该懂我”。",
-    caseMode: "premarital",
-    plotId: "tony-multi-dating",
-    complainantId: "he",
-    respondentId: "xu",
-    stance: "trueVictim",
-    sceneId: "late-night-chat",
-    referencesEvidenceIds: ["streamer-02-boundary-extortion-story-clue"],
-    bridgeClue: "第二案的缺失三十分钟提醒你：被剪掉的不是空白，而是收益开始变化的地方。本案要查许照把不同对象排进不同功能位。",
-    storyClue: "理发店预约表证明，多线养鱼最危险的地方不是暧昧，而是把不同对象当成不同功能。"
-  },
-  {
-    id: "streamer-04-reality-mismatch",
-    title: "主线第四案：你应该懂我",
-    setName: "主播主线：听话识坑",
-    summary: "最后一通来电把公主病、巨婴、狮子大开口和现实错配放在一起，逼你区分骗局与成熟度不足。",
-    openingComplaint: "林鹿说周砚像巨婴，什么都要她安排；周砚说林鹿像公主，彩礼、房子、情绪价值都要满分。两个人都不像骗子，却都把“爱我就该懂我”当成免沟通理由。",
-    coldOpen: "这案没有惊天截图，只有二十几条“你为什么不能主动一点”。孟姐说：“没有坏人，不代表没有问题；不是诈骗，不代表适合结婚。”",
-    openingDialogue: [
-      { speaker: "孟姐", role: "host", text: "没有转账，也没有出轨。为什么连线？" },
-      { speaker: "林鹿", role: "caller", text: "我像在养一个成年人。" },
-      { speaker: "周砚", role: "other", text: "她什么都要满分，做不到就骂我巨婴。" },
-      { speaker: "孟姐", role: "host", text: "先查责任、预期、备用对象。" }
-    ],
-    suspense: "终局要考的是区分能力：骗婚、化债、勒索、多线养鱼是风险；公主病、巨婴、狮子大开口有时是成熟度和现实能力不匹配。",
-    mislead: "弹幕会急着骂谁作、谁穷、谁妈宝。主播要拆的是责任能力、现实预期、边界表达，以及有没有备用对象。",
-    clueObject: "生活分工与相亲日历",
-    storyCalls: [
-      "第一次连线：林鹿控诉周砚没有生活能力，所有家务和沟通都要她提醒。",
-      "第二次连线：周砚反控林鹿狮子大开口，要求房车彩礼和情绪价值全满。",
-      "第三次新情况：林鹿的相亲日历曝光，她一边要求周砚加码，一边保留更高资源对象。"
-    ],
-    plotThreads: [
-      "巨婴线：周砚把生活责任外包给伴侣和父母。",
-      "公主病/高要求线：林鹿把需求说成标准，却不给协商空间。",
-      "骑驴找马线：相亲日历说明高要求也可能是多线筛选策略。"
-    ],
-    stageJudgement: "阶段判定：这不是典型骗婚，但也不是普通吵架。先分清成熟度不足、现实错配和多线筛选三种问题。",
-    followupTwist: "后续新情况：周砚承认父母仍替他处理很多生活事务；林鹿承认还有两个相亲对象。两边都不算纯坏人，但都不适合立刻进入婚姻。",
-    transition: "主播主线收束：孟姐把四案写成一句话——听 TA 怎么说，看 TA 避开什么，查 TA 能得到什么。",
-    caseMode: "premarital",
-    plotId: "high-demand-fishing",
-    complainantId: "lin",
-    respondentId: "zhou",
-    stance: "personalityMismatch",
-    consultationMode: "mediation",
-    sceneId: "family-dinner",
-    referencesEvidenceIds: ["streamer-03-tony-fishing-story-clue"],
-    bridgeClue: "第三案的预约表证明了多线筛选可以被管理成系统；终局要判断林鹿的高要求是现实错配，还是也带着筛选备胎的功能。",
-    storyClue: "生活分工与相亲日历证明：婚恋问题不全是诈骗，也可能是责任能力、现实预期和多线筛选混在一起。"
-  }
-];
-
-const ARC_CASE_SEQUENCE = [
-  {
-    id: "story-00-tutorial-first-contradiction",
-    title: "试播训练：第一处矛盾",
-    setName: "试播训练",
-    summary: "孟姐用一件压缩案教你读案：先别急着相信委屈，先找时间线、钱和台词里最硬的矛盾。",
-    openingComplaint: "孟姐把一份旧案投到直播屏上。来访者说自己只是被催着结婚、被迫转账，但案卷里有三处地方同时发亮：转账时间、被删动态、以及一句反复出现的“先别问细节”。",
-    coldOpen: "开播前，孟姐没有让你直接接当事人。她只放出一段旧录屏：“一个案子最危险的时候，不是没人说话，而是每个人都说得太顺。”",
-    suspense: "这不是直播间今晚最复杂的案子，却会教你后面所有案件的基本动作：复盘场景、交叉追问、整理证据、再阶段指认。",
-    mislead: "第一版哭诉最容易把人带走，所以孟姐故意把“委屈”和“证据”放在同一个人身上。",
-    clueObject: "孟姐的红线笔记",
-    transition: "试播训练结束后，孟姐把红线笔记收进档案袋。袋口露出一份匿名资料包：同样的红线，圈住了“稳定推进”四个字。",
-    caseMode: "premarital",
-    plotId: "romance-transfer-gift-or-loan",
-    complainantId: "lin",
-    respondentId: "zhou",
-    stance: "halfTruth",
-    sceneId: "rental-room",
-    tutorialChapter: true,
-    tutorialTip: "训练目标：至少抓到一处矛盾，再进入阶段指认。启发道具可以帮你指出尚未发现的矛盾点。",
-    storyClue: "孟姐的红线笔记会在后面的案卷里反复出现：它提醒你，所有漂亮叙事都必须回到时间线和材料。"
-  },
-  {
-    id: "story-01-profile-mask",
-    title: "第一案：完美资料",
-    setName: "第一套：资料包疑云",
-    summary: "一份过于漂亮的择偶资料，把婚史、负债和家庭托举都藏进了“只是包装”。",
-    openingComplaint: "何念带着一份近乎完美的择偶资料连线。她说自己只是被周砚误会了包装，但匿名资料包里的被删动态显示，她早在来侦探局前就准备好了另一套叙事。",
-    coldOpen: "开播前三分钟，后台收到一份匿名资料包。文件名只有四个字：她在演。资料包里没有结论，只有三张被删动态、两笔转账和一张没有露脸的订婚照。",
-    suspense: "真正的问题不是何念有没有包装资料，而是谁提前知道她会来侦探局，并把证据按顺序摆好了。",
-    mislead: "旁听席会先把注意力放在外貌、学历和收入包装上，但第一案真正埋下的是“稳定推进”这四个字。",
-    clueObject: "被删动态截图",
-    transition: "结案后，截图角落里的房产中介门店 LOGO 被技术组放大。它不是背景，而是第二案的现场。",
-    caseMode: "premarital",
-    plotId: "positioning-lie",
-    complainantId: "he",
-    respondentId: "zhou",
-    stance: "badActorFirst",
-    premeditatedActorId: "he",
-    sceneId: "late-night-chat",
-    storyClue: "被删动态里出现的“稳定推进”，会在第二案变成房本和安全感争议。"
-  },
-  {
-    id: "story-02-house-name",
-    title: "第二案：房本安全感",
-    setName: "第一套：资料包疑云",
-    summary: "第一案留下的稳定关系话术，转成了婚前房产加名和父母出资归属。",
-    openingComplaint: "周砚主动连线回应第一案。他没有否认何念截图里的“稳定推进”，而是把问题推到房本加名：“如果都准备结婚了，为什么安全感不能写进合同？”",
-    coldOpen: "第二天，周砚主动连线。他没有否认第一案里的截图，只说：“如果一个人真想结婚，为什么不能给安全感？”镜头外，有人轻轻敲了两下桌面。",
-    suspense: "周砚像是来反击何念，但他带来的购房材料太完整，完整到不像临时自证。",
-    mislead: "这案看起来是房本加不加名，其实要查谁在用“安全感”替父母出资、贷款资格和退出机制挡刀。",
-    clueObject: "购房合同角落的手写编号",
-    transition: "合同编号被录入系统后，弹出一条旧记录：同一位婚庆经理，三个月内经手过两场突然取消的订婚宴。",
-    caseMode: "premarital",
-    plotId: "house-name-security-test",
-    complainantId: "zhou",
-    respondentId: "he",
-    stance: "badActorFirst",
-    premeditatedActorId: "zhou",
-    sceneId: "broker-office",
-    storyClue: "房本争议没有停在两个人之间，双方父母的账本会把第三案推到婚礼桌上。"
-  },
-  {
-    id: "story-03-bride-price",
-    title: "第三案：酒席和彩礼",
-    setName: "第一套：资料包疑云",
-    summary: "办酒、短暂同居和礼金流水纠缠在一起，谁都说自己已经付出了足够多。",
-    openingComplaint: "婚庆经理先把尾款单传进后台，随后陈默和林鹿几乎同时申请连线。两个人都说自己被婚礼进度拖住，但尾款单上的排期显示，这不是第一次有人在临门一脚改口。",
-    coldOpen: "第三案不是当事人先来的，是婚庆经理先把一张酒席尾款单传进后台。备注栏写着：退婚原因不要写真实的。",
-    suspense: "陈默和林鹿都说自己是被拖到这一步的人，但酒席名单里出现了第二案购房合同附件旁同一家婚庆公司的经办人。",
-    mislead: "彩礼金额会很吵，酒席礼金会很乱，但真正的悬念是：谁在利用婚礼临近这件事制造停不下来的压力。",
-    clueObject: "婚庆尾款单",
-    transition: "尾款单背面拍到一行小字：亲属借款先过桥，婚后共同还。第四案的债务从这里开始露头。",
-    caseMode: "premarital",
-    plotId: "bride-price-short-cohabitation",
-    complainantId: "chen",
-    respondentId: "lin",
-    stance: "personalityMismatch",
-    sceneId: "wedding-prep",
-    referencesEvidenceIds: ["story-02-house-name-story-clue"],
-    storyClue: "礼金和彩礼只是表面，真正进入婚后的，是原生家庭债务和责任捆绑。"
-  },
-  {
-    id: "story-04-relative-debt",
-    title: "第四案：亲属债务",
-    setName: "第一套：资料包疑云",
-    summary: "小家庭刚开始共同生活，亲属借款、担保和父母医疗债同时进入账本。",
-    openingComplaint: "林鹿上传家庭群截图后才开麦。她不再问陈默爱不爱她，只问：为什么一笔亲属借款会先经过婚庆尾款，再进入他们的共同账户。",
-    coldOpen: "第四案开场，林鹿没有哭。她只上传了一张家庭群截图：大家都在说“先帮你哥过这一关”，唯独没人问这笔钱从哪里来。",
-    suspense: "陈默看起来像被家庭推着走，但他每次沉默都刚好避开了担保、借条和共同账户的关键日期。",
-    mislead: "这案容易被看成凤凰男或原生家庭负担，但真正要查的是：小家庭什么时候被悄悄接入了别人的债务系统。",
-    clueObject: "家庭群截图",
-    transition: "债务复盘到最后，一个深夜转账对象浮出水面。备注不是亲属名，而是“项目咨询”。第五案的同事出现了。",
-    caseMode: "married",
-    plotId: "relative-debt-bundle",
-    complainantId: "lin",
-    respondentId: "chen",
-    stance: "trueVictim",
-    premeditatedActorId: "chen",
-    sceneId: "rental-room",
-    referencesEvidenceIds: ["story-03-bride-price-story-clue", "story-03-wedding-manager"],
-    storyClue: "债务压力让情绪外包更容易发生，下一案会从账本滑向边界。"
-  },
-  {
-    id: "story-05-emotional-affair",
-    title: "第五案：同事情绪外包",
-    setName: "第一套：资料包疑云",
-    summary: "一段婚后深夜聊天被说成工作倾诉，但报销、出差和删改记录对不上。",
-    openingComplaint: "沈知夏把聊天记录投到屏幕上。许照承认情绪外包，却坚持没有越界；但他删掉的那段语音，关键词不是暧昧，而是“资料夹”。",
-    coldOpen: "沈知夏把聊天记录投到屏幕上，第一句话不是暧昧，而是：“你终于懂我为什么不想回家。”弹幕安静了三秒。",
-    suspense: "许照承认自己情绪外包，却坚持没有越界。问题是，他删掉的不是暧昧称呼，而是一段关于前四案的共同资料。",
-    mislead: "这案看起来是婚内边界，其实它第一次证明：前面几案不是偶然同题，而是被同一套亲密关系话术反复利用。",
-    clueObject: "被撤回的深夜语音",
-    transition: "语音恢复后，只剩一句话：“如果他们都愿意讲自己的版本，我们就能把局做完整。”终局告解由此打开。",
-    caseMode: "married",
-    plotId: "coworker-emotional-affair",
-    complainantId: "shen",
-    respondentId: "xu",
-    stance: "halfTruth",
-    sceneId: "late-night-chat",
-    referencesEvidenceIds: ["story-04-relative-debt-story-clue"],
-    storyClue: "第五案没有给出爽快结论，因为终局要回到当事人的自我告解里。"
-  },
-  {
-    id: "story-06-confession",
-    title: "第六案：告解终局",
-    setName: "第一套：资料包疑云",
-    summary: "当事人回看整条关系链，必须拆开自己哪里被坑、哪里自欺、哪里也伤害了别人。",
-    openingComplaint: "许照没有带来新的控诉。他打开六案共用资料夹，承认自己曾经把别人的包装、房本、彩礼、债务和情绪外包都当成素材，想证明自己才是唯一看清关系的人。",
-    coldOpen: "终局没有新的来访者。屏幕亮起时，许照坐在黑场里，说：“前五案你们都以为在查别人，其实也在查我。”",
-    suspense: "告解者把所有线索都串得太顺了。顺到你必须反过来问：这是忏悔，还是最后一次控制叙事？",
-    mislead: "终局不再奖励你找到唯一坏人。它要求你判断：被坑、自欺、伤害别人，能不能同时发生在同一个人身上。",
-    clueObject: "六案共用资料夹",
-    transition: "资料夹最后一页没有证据，只有孟姐的一句批注：能重来的不是人生，是你下一次识别叙事的速度。",
-    caseMode: "confession",
-    plotId: "control-isolation-reporting",
-    complainantId: "xu",
-    respondentId: "shen",
-    stance: "selfDoubt",
-    sceneId: "family-dinner",
-    referencesEvidenceIds: ["story-05-emotional-affair-story-clue", "story-05-recovered-voice"],
-    storyClue: "终局不再寻找唯一反派，而是把六案里的包装、资源、账本和控制全部连起来。"
-  },
-  {
-    id: "story-07-platform-intake",
-    title: "第二套第一案：入会测评",
-    setName: "第二套：模板回声",
-    summary: "第一套的共用资料夹没有结束，它指向一家婚恋咨询平台：测评表把人分成可推进、可付费、可施压。",
-    openingComplaint: "沈知夏带来一份平台入会测评表。表面上它只是婚恋咨询，背后却把第一套案件里的“稳定推进、房本安全感、婚礼压力”做成了收费话术。",
-    coldOpen: "终局资料夹被封存的第三天，后台收到一封自动邮件：恭喜你完成亲密关系风险测评。附件里，第一题就是“你愿意为安全感支付多少成本”。",
-    suspense: "这套测评像是从第一套案件里长出来的，但它的时间戳早于许照告解。",
-    mislead: "这案容易被看成普通婚恋平台割韭菜，但真正的问题是：谁把真实案件改写成可复制的付费模板。",
-    clueObject: "平台入会测评表",
-    transition: "测评表最后一页要求上传征信和资产截图。第二套第二案的贷款材料，就从这里流出。",
-    caseMode: "premarital",
-    plotId: "education-income-fake-profile",
-    complainantId: "shen",
-    respondentId: "xu",
-    stance: "trueVictim",
-    sceneId: "late-night-chat",
-    premeditatedActorId: "xu",
-    structuralActorId: "platform",
-    referencesEvidenceIds: ["story-06-confession-story-clue", "story-06-shared-folder"],
-    bridgeClue: "它回收第一套的六案资料夹：许照不是终点，平台才是把叙事模板商品化的人。",
-    storyClue: "平台测评表把第一套里的“稳定推进”改成付费筛选项，说明两套案件共享同一套话术源头。"
-  },
-  {
-    id: "story-08-credit-mirror",
-    title: "第二套第二案：征信镜像",
-    setName: "第二套：模板回声",
-    summary: "入会测评后的征信截图被用于制造婚前焦虑，债务与房本再次被绑在一起。",
-    openingComplaint: "周砚收到一份匿名征信截图，对方说这是“婚前诚意核验”。但截图里的裁剪方式，和第一套房本案里那份购房合同附件一模一样。",
-    coldOpen: "周砚第二次坐到镜头前，这次他没有谈安全感。他把手机举近摄像头：有人把他的征信做成了付费报告，标题叫《婚前风险等级》。",
-    suspense: "征信截图可能是真的，使用它的人却不一定有正当目的。",
-    mislead: "直播间会先想判断周砚有没有债务，但本案真正要查的是：谁在用“核验”包装信息勒索。",
-    clueObject: "婚前风险等级报告",
-    transition: "报告模板底部有一个灰色水印：宴席延期保障。第三案会把这套风险评级推到婚礼现场。",
-    caseMode: "premarital",
-    plotId: "lost-job-hidden-credit",
-    complainantId: "zhou",
-    respondentId: "he",
-    stance: "halfTruth",
-    sceneId: "broker-office",
-    structuralActorId: "platform",
-    referencesEvidenceIds: ["story-07-platform-intake-story-clue", "story-07-platform-intake-bridge-clue"],
-    bridgeClue: "它回收第一套第二案的房本材料：同样的安全感话术，被平台升级成信用评级。",
-    storyClue: "征信报告把第一套房本安全感和第二套平台测评连起来，证明“核验”也可能被滥用成控制工具。"
-  },
-  {
-    id: "story-09-wedding-delay",
-    title: "第二套第三案：延期保障",
-    setName: "第二套：模板回声",
-    summary: "婚礼延期保障服务制造新的沉没成本，第一套婚庆经办人再次出现。",
-    openingComplaint: "何念上传一份“婚礼延期保障”合同。她说这是为了减少损失，陈默却发现合同推荐人正是第一套酒席案里的婚庆经办人。",
-    coldOpen: "合同第一页写着：延期不是失败，是重新谈判的机会。孟姐看完只说了一句：“这不像保险，像话术。”",
-    suspense: "婚礼延期保障把“都到这一步了”包装成服务条款，甚至能自动生成给双方父母看的解释模板。",
-    mislead: "这案不只是退不退钱，而是谁在利用延期把彩礼、房本、父母脸面重新绑在一起。",
-    clueObject: "婚礼延期保障合同",
-    transition: "合同附带的家庭沟通模板里，有一段关于“先帮亲属周转”的话。第四案的债务入口再次打开。",
-    caseMode: "premarital",
-    plotId: "wedding-sunk-cost-pressure",
-    complainantId: "he",
-    respondentId: "chen",
-    stance: "badActorFirst",
-    premeditatedActorId: "he",
-    sceneId: "wedding-prep",
-    structuralActorId: "platform",
-    referencesEvidenceIds: ["story-08-credit-mirror-story-clue", "story-08-credit-mirror-bridge-clue"],
-    bridgeClue: "它回收第一套第三案的婚庆经办人：同一个人把临门一脚的压力做成了合同产品。",
-    storyClue: "延期保障合同证明第一套的婚庆压力不是偶发，而是第二套平台服务的一环。"
-  },
-  {
-    id: "story-10-family-debt-app",
-    title: "第二套第四案：亲属互助",
-    setName: "第二套：模板回声",
-    summary: "家庭互助小程序把亲属债务变成情感积分，小家庭再次被接入外部账本。",
-    openingComplaint: "林鹿发现陈默家族群开始使用一款互助小程序。每笔亲属周转都有“孝顺值”和“家庭贡献榜”，而榜单模板来自第二套平台后台。",
-    coldOpen: "林鹿没有再上传聊天截图，她上传的是一张排行榜：第一名不是还钱最多的人，而是“最愿意理解家人”的人。",
-    suspense: "互助小程序看起来是家庭内部工具，却能读取婚恋平台的风险等级和婚礼延期合同。",
-    mislead: "这案容易被看成陈默家里又缺钱了，但真正要查的是：亲情如何被系统化成债务服从。",
-    clueObject: "亲属互助小程序",
-    transition: "小程序后台显示一条客服备注：高情绪依赖用户，适合转入陪伴服务。第五案的情绪外包不再只是同事关系。",
-    caseMode: "married",
-    plotId: "relative-debt-bundle",
-    complainantId: "lin",
-    respondentId: "chen",
-    stance: "trueVictim",
-    premeditatedActorId: "chen",
-    sceneId: "rental-room",
-    structuralActorId: "platform",
-    referencesEvidenceIds: ["story-09-wedding-delay-story-clue", "story-09-wedding-delay-bridge-clue"],
-    bridgeClue: "它回收第一套第四案的家庭群截图：亲属债务从人工劝说升级成了系统化排名。",
-    storyClue: "互助小程序把第一套的债务捆绑与第二套平台后台连上，说明亲情也被做成了可运营的压力模型。"
-  },
-  {
-    id: "story-11-companion-service",
-    title: "第二套第五案：陪伴服务",
-    setName: "第二套：模板回声",
-    summary: "平台提供的陪伴服务接管了婚内情绪外包，删改记录与第一套深夜语音形成镜像。",
-    openingComplaint: "沈知夏收到许照的账单：每月固定支付给“关系陪伴顾问”。许照说那只是咨询，但顾问话术里出现了第一套被撤回语音的原句。",
-    coldOpen: "账单金额不高，备注却很刺眼：夜间稳定陪伴。沈知夏把它念出来时，许照第一次没有立刻解释。",
-    suspense: "陪伴服务可能提供真实支持，也可能把婚内孤独变成可持续收费入口。",
-    mislead: "这案看起来像精神出轨，但它更关键的矛盾是：平台是否在主动训练用户把伴侣排除在沟通之外。",
-    clueObject: "夜间陪伴账单",
-    transition: "陪伴顾问的账号归属被查到后，终局入口出现：管理员不是陌生人，而是第一套终局资料夹里被隐藏的共编者。",
-    caseMode: "married",
-    plotId: "coworker-emotional-affair",
-    complainantId: "shen",
-    respondentId: "xu",
-    stance: "halfTruth",
-    sceneId: "late-night-chat",
-    structuralActorId: "platform",
-    referencesEvidenceIds: ["story-10-family-debt-app-story-clue", "story-10-family-debt-app-bridge-clue"],
-    bridgeClue: "它回收第一套第五案的深夜语音：情绪外包从私人越界变成平台服务。",
-    storyClue: "夜间陪伴账单证明第二套不是新问题，而是第一套情绪外包话术的商业化版本。"
-  },
-  {
-    id: "story-12-template-confession",
-    title: "第二套第六案：模板告解",
-    setName: "第二套：模板回声",
-    summary: "管理员用旧档材料训练出一套告解模板，最后一次要求你分辨自省、被坑和操控。",
-    openingComplaint: "管理员主动连线，自称只是把大家的痛苦整理成工具。TA 说平台没有制造伤害，只是让真实关系更快暴露问题。孟姐没有打断，只把第一套六案资料夹重新投到屏幕上。",
-    coldOpen: "终局开场没有人哭，也没有人喊冤。管理员平静地说：“你们解决了十二个案子，却还没回答一个问题：如果模板真的有效，它算伤害吗？”",
-    suspense: "管理员的告解太像产品发布会。每一句自省后面，都藏着一次责任转移。",
-    mislead: "终局会诱导你把平台简化成唯一反派，但更难的是判断：真实痛苦被整理成工具之后，谁被帮助，谁被收割。",
-    clueObject: "告解模板后台",
-    transition: "后台最后一条日志停在孟姐的红线笔记旁：试播训练里那句“先找矛盾”，现在变成了全剧的答案。",
-    caseMode: "confession",
-    plotId: "control-isolation-reporting",
-    complainantId: "xu",
-    respondentId: "shen",
-    stance: "selfJustifying",
-    sceneId: "family-dinner",
-    structuralActorId: "platform",
-    referencesEvidenceIds: ["story-11-companion-service-story-clue", "story-11-companion-service-bridge-clue"],
-    bridgeClue: "它回收旧档终局和红线笔记：同一套识别矛盾的方法，既能保护人，也可能被人拿去设计别人。",
-    storyClue: "告解模板后台把匿名资料包和模板回声扣住：真实痛苦先被归档，再被做成可售卖的话术。"
-  }
-];
-
-export function generateStoryCaseSequence(npcs, attrs, options = {}) {
-  return buildFixedStorySequence(STREAMER_STORY_SEQUENCE, npcs, attrs, options);
-}
-
-export function generateArcCaseSequence(npcs, attrs, options = {}) {
-  return buildFixedStorySequence(ARC_CASE_SEQUENCE, npcs, attrs, options);
-}
-
-function buildFixedStorySequence(sequence, npcs, attrs, options = {}) {
-  const runNumber = options.runNumber ?? 0;
-  return sequence.map((item, index) => {
-    const mode = CASE_MODE_SEQUENCE.find((caseMode) => caseMode.id === item.caseMode) ?? CASE_MODE_SEQUENCE[0];
-    const brief = generateLivestreamCase(npcs, attrs, {
-      order: index + 1,
-      caseMode: mode,
-      runNumber,
-      plotId: item.plotId,
-      complainantId: item.complainantId,
-      respondentId: item.respondentId,
-      stance: item.stance,
-      sceneId: item.sceneId,
-      forcedPremeditated: Boolean(item.premeditatedActorId),
-      premeditatedActorId: item.premeditatedActorId
-    });
-    const difficultyProfile = item.difficultyProfile ?? (item.id?.startsWith("streamer-") ? storyDifficultyProfile(index) : null);
-    const profiledBrief = applyDifficultyProfile(brief, difficultyProfile);
-    const overrides = storyCaseOverrides(item);
-    return {
-      ...profiledBrief,
-      id: item.id,
-      storyCaseId: item.id,
-      storyArcTitle: item.title,
-      storyArcSummary: item.summary,
-      storySetName: item.setName ?? "故事模式",
-      storySetIndex: storySetIndexFor(item),
-      storyCaseInSet: storyCaseInSetFor(item),
-      openingComplaint: item.openingComplaint ?? brief.openingComplaint,
-      storyColdOpen: item.coldOpen,
-      storySuspense: item.suspense,
-      storyMislead: item.mislead,
-      storyClueObject: item.clueObject,
-      storyCalls: item.storyCalls ?? [],
-      plotThreads: item.plotThreads ?? [],
-      stageJudgement: item.stageJudgement,
-      followupTwist: item.followupTwist,
-      storyClue: item.storyClue,
-      storyBridgeClue: item.bridgeClue,
-      storyTransition: item.transition,
-      consultationMode: item.consultationMode ?? "singleConsultant",
-      contentWarning: item.contentWarning,
-      structuralActorId: item.structuralActorId ?? null,
-      referencesEvidenceIds: item.referencesEvidenceIds ?? [],
-      tutorialChapter: Boolean(item.tutorialChapter),
-      tutorialTip: item.tutorialTip,
-      tutorialConfessionPractice: item.tutorialChapter ? buildTutorialConfessionPractice() : [],
-      sceneVersions: overrides.sceneVersions ?? profiledBrief.sceneVersions,
-      testimony: overrides.testimony ?? profiledBrief.testimony,
-      evidenceCards: [...buildStoryEvidenceCards(item), ...(overrides.evidenceCards ?? profiledBrief.evidenceCards ?? [])],
-      confessionTimeline: item.caseMode === "confession" ? buildStoryConfessionTimeline(item, profiledBrief.confessionTimeline) : profiledBrief.confessionTimeline,
-      fixedStory: true
-    };
+  const dailyKey = options.dailyKey ?? dailyCaseKey(options.now);
+  const dailySpec = options.plotId ? null : DAILY_ROTATION[dailyHash(dailyKey) % DAILY_ROTATION.length];
+  const specialty = dailySpec?.specialty ?? options.specialty;
+  const preferredPlotIds = plotIdsForSpecialty(specialty);
+  const featuredPlotIds = DAILY_FEATURED_PLOTS[specialty] ?? [];
+  const dailyPool = (featuredPlotIds.length ? featuredPlotIds : preferredPlotIds)
+    .filter((plotId) => DAILY_TEMPLATE_PLOT_IDS.includes(plotId));
+  const mode = DAILY_CASE_MODE;
+  const matchingPlotIds = mode.plotIds.filter((plotId) => dailyPool.includes(plotId));
+  const requestedPlotId = options.plotId ?? null;
+  const plotId = requestedPlotId ?? dailySpec?.plotId ?? randomItem(matchingPlotIds.length ? matchingPlotIds : dailyPool.length ? dailyPool : mode.plotIds);
+  const brief = generateLivestreamCase(npcs, attrs, {
+    ...options,
+    order: 1,
+    caseMode: mode,
+    sceneId: "live-call",
+    plotId,
+    complainantId: dailySpec?.complainantId ?? options.complainantId,
+    respondentId: dailySpec?.respondentId ?? options.respondentId,
+    forcedPremeditated: true
   });
-}
-
-function buildTutorialConfessionPractice() {
-  return [
-    {
-      id: "tutorial-self-excuse",
-      label: "旧案录屏：先别问细节",
-      text: "来访者说：“我不是不想解释，只是你现在问细节，会显得你不信任我。”",
-      correctMark: "selfBlind",
-      contradiction: "教学告解：把核验细节说成不信任，是用情绪挡住事实核验。"
-    },
-    {
-      id: "tutorial-hurt-other",
-      label: "旧案录屏：替对方决定",
-      text: "TA 又说：“我知道 TA 压力很大，所以我先替 TA 接下那笔钱，之后再慢慢说。”",
-      correctMark: "hurtOther",
-      contradiction: "教学告解：替对方接下金钱责任，不是体贴，而是越过边界制造共同负担。"
-    }
-  ];
-}
-
-function storySetIndexFor(item) {
-  if (item.tutorialChapter) return 0;
-  if (item.setName?.includes("第二套")) return 2;
-  return 1;
-}
-
-function storyCaseInSetFor(item) {
-  if (item.tutorialChapter) return 0;
-  const match = item.title?.match(/第([一二三四五六])案|第二套第([一二三四五六])案/);
-  const value = match?.[1] ?? match?.[2];
-  return { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6 }[value] ?? 1;
-}
-
-function buildStoryEvidenceCards(item) {
-  const commonTargets = ["ambiguous", "reluctant", "truthWithGap", "defensive", "sceneHint", "selfDoubt", "shadowVersion", "halfLie"];
-  const base = {
-    id: `${item.id}-story-clue`,
-    type: "主线资料",
-    title: item.clueObject,
-    front: item.suspense,
-    detail: item.transition,
-    targets: commonTargets,
-    contradiction: `主线资料《${item.clueObject}》证明本案不是孤立事件：${item.storyClue}`
+  const names = {
+    complainantName: npcs.find((npc) => npc.id === brief.complainantId)?.name ?? "咨询者",
+    respondentName: npcs.find((npc) => npc.id === brief.respondentId)?.name ?? "对方"
   };
-  const bridge = item.bridgeClue ? {
-    id: `${item.id}-bridge-clue`,
-    type: "旧案线索",
-    title: "旧案回声",
-    front: item.bridgeClue,
-    detail: "旧案里的材料可以帮你判断本案是不是同一种话术在重复出现。",
-    targets: commonTargets,
-    contradiction: `跨案线索证明旧档材料正在本案回响：${item.bridgeClue}`
-  } : null;
-  const extras = {
-    "story-03-bride-price": {
-      id: "story-03-wedding-manager",
-      type: "排期表",
-      title: "婚庆经理经办记录",
-      front: "排期表显示，同一位婚庆经办人同时出现在第二案房产合同附件和第三案酒席尾款单里。",
-      detail: "这让“临近婚礼才谈条件”不再只是两个人的临时争吵，而像一种可复制的推进方式。",
-      targets: commonTargets,
-      contradiction: "婚庆经办记录把第二案房本安全感和第三案酒席彩礼连到同一个压力节点。"
-    },
-    "story-05-emotional-affair": {
-      id: "story-05-recovered-voice",
-      type: "音频恢复",
-      title: "被撤回的深夜语音",
-      front: "恢复后的语音只剩一句：“如果他们都愿意讲自己的版本，我们就能把局做完整。”",
-      detail: "这句话让第五案从情绪外包滑向主线：有人在把前四案的当事人叙事当成同一套资料。",
-      targets: commonTargets,
-      contradiction: "被撤回语音证明许照删掉的不是暧昧称呼，而是他对前四案资料的参与。"
-    },
-    "story-06-confession": {
-      id: "story-06-shared-folder",
-      type: "资料夹",
-      title: "六案共用资料夹",
-      front: "资料夹按“包装、房本、彩礼、债务、情绪、告解”六个标签排列，时间戳早于部分当事人连线。",
-      detail: "这不是一份普通复盘，而是有人提前把关系里的常见话术整理成了可调用模板。",
-      targets: commonTargets,
-      contradiction: "六案共用资料夹证明终局告解不是突然自省，而是对前五案叙事控制欲的回收。"
-    }
-  };
-  return [base, bridge, extras[item.id]].filter(Boolean);
+  return [applyDifficultyProfile(applyDailyCaseTemplate({
+    ...brief,
+    id: `daily-${dailyKey}-${plotId}`,
+    dailyKey,
+    dailyCase: true,
+    modeLabel: "今日连线",
+    storyArcTitle: `今日连线：${brief.label}`,
+    storyArcSummary: "一通客户来电，三轮问话，一次阶段判断。适合发给朋友看 TA 会不会判错。",
+    storySuspense: "今天的关键不是读完资料，而是看你能不能在对方第一次自述里抓到真正该追问的地方。",
+    storyClueObject: brief.storyClueObject ?? "今日通话摘录",
+    storyClue: brief.storyClue ?? "今日短案只记录关键原话和时间点，判断留给主播。"
+  }, names), {
+    tier: 1,
+    label: "快玩短案",
+    targetDifficulty: Math.max(4, brief.difficulty ?? 4),
+    minDifficulty: 4,
+    requiredContradictions: 2,
+    budgetDelta: 1,
+    inspirationBase: 2,
+    note: "手机端短案只要求先抓住两处矛盾，结果卡再引导好友挑战。"
+  })];
 }
 
-function storyCaseOverrides(item) {
-  const cards = (entries) => entries.map((card, index) => ({
-    id: `${item.id}-custom-${index + 1}`,
-    ...card
-  }));
-  const byId = {
-    "streamer-01-certificate-money": {
-      sceneVersions: [
-        {
-          speakerId: "he",
-          speaker: "何念",
-          version: "他说见完父母就领证，我只是问他能不能先把那笔周转转过来。备注是他自己写的，不是我逼的。",
-          doubt: "她把“领证”和“周转”说成同一件事，却避开谁先提出金额。",
-          contradiction: "何念说没主动要钱，但转账前一天她发过具体金额和收款卡号。",
-          reliability: "low"
-        },
-        {
-          speakerId: null,
-          speaker: "对方材料",
-          version: "周砚提交的截图里，他把转账备注写成“婚前互相扶持”，同时把“七天后领证”发进家庭群。",
-          doubt: "材料显示周砚不是单纯被动付款，他也在用领证节点推进关系。",
-          contradiction: "周砚把自己说成被动转账，但领证倒计时是他先发给双方父母的。",
-          reliability: "mixed"
-        },
-        {
-          speakerId: null,
-          speaker: "后台记事本",
-          version: "转账发生在见父母后 19 分钟，备注三次修改，最后才变成“婚前互相扶持”。",
-          doubt: "备注变化比哭诉更可靠，但它只能证明钱和承诺被绑在一起。",
-          contradiction: "转账备注被改过三次，说明双方都在事后整理一个更好听的版本。",
-          reliability: "partial"
-        }
-      ],
-      testimony: [
-        {
-          speakerId: "he",
-          speaker: "何念",
-          line: "“我没说不给钱就不领证，我只是说家里这关过不去，我也没脸办婚礼。”",
-          kind: "ambiguous",
-          surface: "把金额藏进体面",
-          hint: "她没有直接说要钱，但把领证、婚礼和家里周转绑在一起。",
-          followups: [
-            {
-              question: "你第一次说具体金额是什么时候？",
-              result: "何念停了一下，说是在见父母前一晚，“只是让他心里有数”。",
-              contradiction: "具体金额早于饭局出现，不能再说只是临时被逼到转账。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "周砚材料",
-          line: "截图里，周砚写过：“我说马上领证，是稳定，不是让你拿钱去补你家窟窿。”",
-          kind: "reluctant",
-          surface: "真相里留了压力",
-          hint: "他拿骗婚保护自己，但也用领证承诺制造了付款压力。",
-          followups: [
-            {
-              question: "你有没有把转账截图发给父母看？",
-              result: "周砚承认发过，说是想让家里相信何念会一起承担。",
-              contradiction: "周砚把转账拿去换父母认可，说明这笔钱也服务于他的领证推进。"
-            }
-          ]
-        },
-        {
-          speakerId: "he",
-          speaker: "何念",
-          line: "“我家周转是真的，我没有骗他。只是我怕他说我现实，所以没一开始讲完。”",
-          kind: "halfLie",
-          surface: "小承认遮住用途",
-          hint: "真实困难不等于可以把风险转嫁给对方。",
-          followups: [
-            {
-              question: "这笔钱原计划几天内还？",
-              result: "何念说不出日期，只说“领证后就是一家人了”。",
-              contradiction: "还款日期被领证替代，转账已经从借款滑向婚姻绑定。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "记事本",
-          line: "转账、领证倒计时、父母饭局发生在同一天。先判断谁把钱和婚姻承诺绑在了一起。",
-          kind: "sceneHint",
-          surface: "时间线提示",
-          hint: "第一案只练基础动作：拆顺序。",
-          followups: [
-            {
-              question: "如果只能锁一个矛盾，先锁哪一个？",
-              result: "先锁转账备注修改。备注是双方事后包装动机的入口。",
-              contradiction: "备注修改证明两个人都在重写转账性质。"
-            }
-          ]
-        }
-      ],
-      evidenceCards: cards([
-        {
-          type: "转账记录",
-          title: "备注三次修改",
-          front: "同一笔 8.8 万转账，备注从“临时周转”改成“婚前互相扶持”。",
-          detail: "备注变化说明双方都在事后调整这笔钱的性质。",
-          targets: ["ambiguous", "halfLie", "sceneHint"],
-          contradiction: "转账备注三次修改，证明钱和领证承诺被人为绑在一起。"
-        },
-        {
-          type: "截图",
-          title: "领证倒计时",
-          front: "周砚先把“七天后领证”的截图发进家庭群。",
-          detail: "他不是纯被动付款，也在推进婚姻节点。",
-          targets: ["reluctant", "sceneHint"],
-          contradiction: "周砚先公开领证倒计时，说明他也用婚姻承诺制造压力。"
-        }
-      ])
-    },
-    "streamer-02-boundary-extortion": {
-      sceneVersions: [
-        {
-          speakerId: "zhou",
-          speaker: "周砚",
-          version: "她第二天才说要报警，还发来八万块的数字。我第一反应就是被设局了。",
-          doubt: "他把钱放在最前面，但没先讲清那半小时里自己做过什么。",
-          contradiction: "周砚控诉勒索，却回避缺失半小时里的拒绝和清醒程度。",
-          reliability: "mixed"
-        },
-        {
-          speakerId: null,
-          speaker: "何念语音",
-          version: "语音里，何念反复说自己“中间断片”，又说“我不是为了钱才说报警”。",
-          doubt: "边界叙事需要严肃对待，但索财话术出现得太快。",
-          contradiction: "何念说先害怕后谈钱，但聊天时间显示八万要求早于报警咨询。",
-          reliability: "mixed"
-        },
-        {
-          speakerId: null,
-          speaker: "时间线",
-          version: "00:42 到 01:13 的聊天缺失。01:21 出现“你不给钱我就公开视频”。",
-          doubt: "缺失半小时不能自动证明任何一方清白。",
-          contradiction: "双方截图都剪掉同一段时间，说明关键事实被两边共同回避。",
-          reliability: "partial"
-        }
-      ],
-      testimony: [
-        {
-          speakerId: "zhou",
-          speaker: "周砚",
-          line: "“她说八万只是补偿，我听到的是：不给钱就报警。”",
-          kind: "ambiguous",
-          surface: "把边界争议压成勒索",
-          hint: "勒索要查，边界也不能被勒索二字抹掉。",
-          followups: [
-            {
-              question: "八万出现前，你们最后一句完整聊天是什么？",
-              result: "周砚只拿得出 00:41 以前的截图，后面半小时他说“记不清”。",
-              contradiction: "周砚用勒索解释全案，但最关键半小时没有交代。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "何念聊天记录",
-          line: "聊天记录里，何念写：“我朋友说这种事不能忍，她给我发了维权模板。我当时太乱，就照着发了。”",
-          kind: "halfLie",
-          surface: "真实受伤夹着模板话术",
-          hint: "真实边界问题和索财模板可以同时存在。",
-          followups: [
-            {
-              question: "模板里有没有固定金额和公开视频这句话？",
-              result: "何念承认有，但说自己只是想让对方害怕。",
-              contradiction: "索财和公开视频威胁来自模板，不能被包装成单纯求助。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "语音",
-          line: "一段 7 秒语音里，何念说“我不舒服，别这样”，背景里有人劝酒。",
-          kind: "truthWithGap",
-          surface: "关键证据但不完整",
-          hint: "它证明边界信号存在，但不能单独证明后续索财合理。",
-          followups: [
-            {
-              question: "语音是在缺失半小时前还是后？",
-              result: "后台定位显示它在缺失半小时中段。",
-              contradiction: "缺失半小时里确实出现过边界信号，周砚不能用勒索反咬抹掉它。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "记事本",
-          line: "本案不要抢标签。先分开两件事：有没有越界，是否有人借越界索财。",
-          kind: "sceneHint",
-          surface: "双线提示",
-          hint: "答案可能不是单选善恶。",
-          followups: [
-            {
-              question: "如果两件事同时成立，阶段判断怎么做？",
-              result: "不能把真实受伤洗成勒索，也不能把勒索包装成维权。",
-              contradiction: "边界信号和索财模板同时成立，本案责任不能简化成一边全错。"
-            }
-          ]
-        }
-      ],
-      evidenceCards: cards([
-        {
-          type: "时间线",
-          title: "缺失的三十分钟",
-          front: "两边提交截图都缺 00:42 到 01:13。",
-          detail: "缺失段里同时有边界语音和事后谈钱的入口。",
-          targets: ["ambiguous", "truthWithGap", "sceneHint"],
-          contradiction: "同一段时间被双方剪掉，说明本案不能只听任一方标签。"
-        },
-        {
-          type: "聊天",
-          title: "八万模板",
-          front: "朋友转发的“维权攻略”含固定金额和公开视频威胁句。",
-          detail: "这解释了勒索话术来源，但不能抹掉边界信号。",
-          targets: ["halfLie", "sceneHint"],
-          contradiction: "八万和公开视频来自模板，何念的求助里夹进了威胁工具。"
-        }
-      ])
-    },
-    "streamer-03-tony-fishing": {
-      sceneVersions: [
-        {
-          speakerId: "he",
-          speaker: "何念",
-          version: "我以为我是女朋友。后来才看到排班表，我旁边写‘情绪稳定’，别人写‘能投店’。",
-          doubt: "她抓住了排班表，但还没说明自己是否也保留相亲对象。",
-          contradiction: "何念说自己只被许照养鱼，但她的相亲日历也没有停。",
-          reliability: "mixed"
-        },
-        {
-          speakerId: null,
-          speaker: "许照聊天记录",
-          version: "许照在聊天里解释：做服务的人记客户特点很正常，“她们爱听什么，我就记什么”。",
-          doubt: "服务记录不会写“以后开店一起做”。",
-          contradiction: "许照把未来承诺说成客户维护，但同一句承诺发给了三个人。",
-          reliability: "low"
-        },
-        {
-          speakerId: null,
-          speaker: "店员",
-          version: "预约表不是给前台看的，是许照自己手机里的。备注分成陪伴、消费、资源三类。",
-          doubt: "这不是普通暧昧名单，而是功能分组。",
-          contradiction: "预约表按功能分组，说明许照在系统化管理多段关系。",
-          reliability: "partial"
-        }
-      ],
-      testimony: [
-        {
-          speakerId: null,
-          speaker: "许照聊天记录",
-          line: "许照在聊天里说：“以后开店一起做，是鼓励。做服务的人嘴甜一点，不犯法吧？”",
-          kind: "ambiguous",
-          surface: "把承诺说成嘴甜",
-          hint: "重点不是甜言蜜语，而是有没有用未来换资源。",
-          followups: [
-            {
-              question: "这句话发给过几个人？",
-              result: "许照说不清，只承认“可能不止一个”。",
-              contradiction: "同一套未来承诺发给多人，不能再说只是临场安慰。"
-            }
-          ]
-        },
-        {
-          speakerId: "he",
-          speaker: "何念",
-          line: "“我也不是没人追，但我至少没让别人给我投店。”",
-          kind: "reluctant",
-          surface: "受害叙事里留着备胎",
-          hint: "她受伤是真的，但也在保留后路。",
-          followups: [
-            {
-              question: "你发现排班表之后，还继续相亲了吗？",
-              result: "何念承认继续见了两个人，说那只是给自己留退路。",
-              contradiction: "何念也保留相亲对象，但这不等于许照的系统化养鱼消失。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "排班表",
-          line: "表格里每个昵称后面都有一列：陪伴、消费、资源。",
-          kind: "truthWithGap",
-          surface: "功能分组",
-          hint: "多线养鱼的关键是不同人承担不同功能。",
-          followups: [
-            {
-              question: "何念对应哪一列？",
-              result: "何念对应“陪伴”，另一位女生对应“资源/可能投店”。",
-              contradiction: "许照按功能分配对象，说明这不是普通花心。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "记事本",
-          line: "本案先别骂花心。查三件事：排他承诺、资源索取、多人话术是否复用。",
-          kind: "sceneHint",
-          surface: "养鱼结构",
-          hint: "多线关系要看承诺和收益。",
-          followups: [
-            {
-              question: "哪一项最能证明系统化？",
-              result: "不是聊天暧昧，是排班表里的功能列。",
-              contradiction: "功能列证明许照把不同对象当成不同资源位。"
-            }
-          ]
-        }
-      ],
-      evidenceCards: cards([
-        {
-          type: "表格",
-          title: "理发店预约表",
-          front: "昵称后面不是发型需求，而是陪伴、消费、资源。",
-          detail: "功能分组比暧昧聊天更能证明多线管理。",
-          targets: ["ambiguous", "truthWithGap", "sceneHint"],
-          contradiction: "预约表按功能分组，证明许照把关系系统化管理。"
-        },
-        {
-          type: "聊天",
-          title: "同款开店承诺",
-          front: "三个人都收到“以后开店一起做”。",
-          detail: "同一句未来被复用，就不再是唯一承诺。",
-          targets: ["ambiguous", "reluctant"],
-          contradiction: "同款开店承诺发给多人，证明许照用未来换取不同资源。"
-        }
-      ])
-    },
-    "streamer-04-reality-mismatch": {
-      sceneVersions: [
-        {
-          speakerId: "lin",
-          speaker: "林鹿",
-          version: "我不是要满分男友。我只是累了，连他妈什么时候来家里，都是我提醒他问。",
-          doubt: "她的疲惫成立，但她把标准说成底线，没有留下协商空间。",
-          contradiction: "林鹿说只想要成熟伴侣，却同时保留两个更高资源相亲对象。",
-          reliability: "mixed"
-        },
-        {
-          speakerId: "zhou",
-          speaker: "周砚",
-          version: "她说我巨婴，可她列的清单从家务到房车彩礼，每一项都要我立刻补齐。",
-          doubt: "他被高要求压住，但也承认生活事务长期由父母处理。",
-          contradiction: "周砚反感清单，却拿不出自己独立处理生活的记录。",
-          reliability: "mixed"
-        },
-        {
-          speakerId: null,
-          speaker: "后台记事本",
-          version: "生活分工表连续三周空白，相亲日历却排得很满。",
-          doubt: "这案不是典型诈骗，但不适合结婚的证据很密。",
-          contradiction: "生活分工空白和相亲日历同时存在，说明双方都没准备进入婚姻。",
-          reliability: "partial"
-        }
-      ],
-      testimony: [
-        {
-          speakerId: "lin",
-          speaker: "林鹿",
-          line: "“我不是公主病。我只是希望他不用我把每件事掰开喂到嘴边。”",
-          kind: "ambiguous",
-          surface: "需求说成默认标准",
-          hint: "需求合理不代表表达方式合理。",
-          followups: [
-            {
-              question: "哪些事你明确说过，哪些只是希望他懂？",
-              result: "林鹿承认很多要求没有说出口，她觉得“成年人应该知道”。",
-              contradiction: "林鹿把未表达的期待当成考核标准，制造了无法通过的测试。"
-            }
-          ]
-        },
-        {
-          speakerId: "zhou",
-          speaker: "周砚",
-          line: "“我不是不负责。我妈比较熟这些流程，让她帮忙更省事。”",
-          kind: "defensive",
-          surface: "把外包说成省事",
-          hint: "省事不等于承担责任。",
-          followups: [
-            {
-              question: "你自己独立处理过哪件结婚准备？",
-              result: "周砚只能说出订餐厅，还是母亲先筛好的三家。",
-              contradiction: "周砚把生活责任长期外包给父母，巨婴指控不是空穴来风。"
-            }
-          ]
-        },
-        {
-          speakerId: "lin",
-          speaker: "林鹿",
-          line: "“我还有相亲对象，是因为我不能把未来押在一个不长大的人身上。”",
-          kind: "halfLie",
-          surface: "留后路包装成自保",
-          hint: "自保可以理解，但继续加码要求就变成筛选。",
-          followups: [
-            {
-              question: "你提出房车彩礼要求时，相亲还在继续吗？",
-              result: "林鹿承认还在继续，说这只是比较现实条件。",
-              contradiction: "林鹿一边要求周砚加码，一边保留相亲对象，需求里混入了筛选功能。"
-            }
-          ]
-        },
-        {
-          speakerId: null,
-          speaker: "记事本",
-          line: "这案重点不是抓坏人。看责任能力、表达方式、是否还有备选对象。",
-          kind: "sceneHint",
-          surface: "终局提示",
-          hint: "无预谋不等于没问题。",
-          followups: [
-            {
-              question: "为什么不是典型骗婚？",
-              result: "没有稳定预谋链，但有成熟度不足、现实错配和多线筛选。",
-              contradiction: "本案没有稳定骗局链条，却足以判断两人不适合立刻进入婚姻。"
-            }
-          ]
-        }
-      ],
-      evidenceCards: cards([
-        {
-          type: "表格",
-          title: "生活分工空白",
-          front: "三周分工表里，周砚负责项几乎全由母亲备注完成。",
-          detail: "巨婴问题不是骂人，是责任能力证据。",
-          targets: ["defensive", "sceneHint"],
-          contradiction: "生活分工表证明周砚长期把责任外包给父母。"
-        },
-        {
-          type: "日历",
-          title: "相亲日历",
-          front: "林鹿提出加码要求期间，仍保留两个高资源相亲安排。",
-          detail: "高要求可能是筛选策略，不只是现实标准。",
-          targets: ["ambiguous", "halfLie", "sceneHint"],
-          contradiction: "相亲日历证明林鹿的高要求里混入骑驴找马。"
-        }
-      ])
-    }
-  };
-  return byId[item.id] ?? {};
+function applyDailyCaseTemplate(brief, names) {
+  if (brief.plotId === "lost-job-hidden-credit") return dailyLostJobCreditTemplate(brief, names);
+  if (brief.plotId === "house-name-security-test") return dailyHouseBoundaryTemplate(brief, names);
+  if (brief.plotId === "tony-multi-dating") return dailyTonyMultiDatingTemplate(brief, names);
+  if (brief.plotId === "education-income-fake-profile") return dailyFakeProfileTemplate(brief, names);
+  throw new Error(`Daily case plot is not templated: ${brief.plotId}`);
 }
 
-function buildStoryConfessionTimeline(item, fallback = []) {
-  if (item.id === "story-12-template-confession") {
-    return [
+function dailyCaseKey(now = new Date()) {
+  const date = now instanceof Date ? now : new Date(now);
+  const utc8Date = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+  const year = utc8Date.getUTCFullYear();
+  const month = String(utc8Date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(utc8Date.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function dailyHash(text) {
+  return [...String(text)].reduce((hash, char) => ((hash << 5) - hash + char.charCodeAt(0)) >>> 0, 2166136261);
+}
+
+function dailyBaseBrief(brief, names, fields) {
+  const problemActorId = brief.respondentId ?? brief.complainantId;
+  return {
+    ...brief,
+    label: fields.label ?? brief.label,
+    storyArcTitle: fields.storyArcTitle ?? brief.storyArcTitle,
+    premeditated: fields.premeditated ?? true,
+    premeditatedActorId: fields.premeditatedActorId ?? problemActorId,
+    stance: fields.stance ?? "trueVictim",
+    openingComplaint: fields.openingComplaint,
+    openingDialogue: fields.openingDialogue,
+    scene: {
+      ...(brief.scene ?? {}),
+      name: fields.sceneName ?? "直播连线"
+    },
+    sceneVersions: fields.sceneVersions,
+    testimony: fields.testimony,
+    explicitClueGroups: fields.explicitClueGroups,
+    evidenceCards: fields.evidenceCards,
+    stageJudgement: fields.stageJudgement,
+    followupTwist: fields.followupTwist,
+    dailyShareTitle: fields.dailyShareTitle,
+    dailyShareBody: fields.dailyShareBody,
+    dailyShareQuestion: fields.dailyShareQuestion,
+    publicHook: fields.publicHook ?? brief.publicHook,
+    storyArcSummary: fields.storyArcSummary ?? brief.storyArcSummary,
+    storySuspense: fields.storySuspense ?? brief.storySuspense,
+    storyClueObject: fields.storyClueObject ?? brief.storyClueObject,
+    truth: fields.truth ?? brief.truth
+  };
+}
+
+function dailyLostJobCreditTemplate(brief, names) {
+  const name = "咨询者";
+  const other = "对方";
+  return dailyBaseBrief(brief, names, {
+    label: "8 万信用卡周转",
+    storyArcTitle: "今日连线：8 万信用卡周转",
+    publicHook: "TA 一直维持体面恋爱消费，突然让你先垫 8 万信用卡。是困难，还是化债？",
+    storyArcSummary: "这通先听清：钱从哪里来、花到谁身上、最后谁来扛。",
+    storySuspense: "这案最容易吵成“你嫌我穷”。真正该查的是：债务爆雷前，谁在维持体面幻觉。",
+    storyClueObject: "信用卡账单与社保断缴截图",
+    openingComplaint: `${name}连线说：“TA 说只是短期周转，让我先垫 8 万信用卡。我不是不帮，是我突然发现 TA 可能早就失业了。”`,
+    openingDialogue: [
+      { speaker: name, role: "caller", text: "主播你好，我想问下我男朋友的事。我们谈了半年，之前约会一直挺体面。可他突然让我先垫 8 万信用卡，那周我们还去了很贵的纪念日晚餐。", mood: "anxious" },
+      { speaker: "你", role: "host", text: "晚上好，这事听着不只是手头紧。TA 第一次提钱时，原话怎么说？", mood: "listening" }
+    ],
+    sceneVersions: [
       {
-        id: "tutorial-red-line",
-        label: "试播训练：红线笔记",
-        text: "管理员承认，平台最早不是从复杂案开始，而是从孟姐那种“找第一处矛盾”的方法里学会了拆解用户。",
-        correctMark: "hurtOther",
-        contradiction: "模板告解：平台把红线笔记里的识别方法反向用于筛选脆弱用户。"
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我本来以为 TA 只是手头紧。TA 之前每次约会都很体面，订餐厅、买礼物，从来不像没钱。",
+        doubt: "体面消费可能是真投入，也可能是靠信用卡维持的人设。",
+        contradiction: "TA 一边说奖金延迟，一边继续高消费，说明资金缺口不是临时才出现。",
+        reliability: "mixed",
+        questionOptions: [
+          { question: "他开口借钱之前，有没有跟你说过工作不太稳？", answer: "没有。TA 只说最近忙，社保截图却显示两个月前已经断缴。", contradiction: "社保断缴早于借钱，失业不是突然发生。", correct: true },
+          { question: "你当时是不是先安慰他，说困难可以一起扛？", answer: "我那时候确实一直在心疼他，可讲来讲去，还是没说出失业到底从什么时候开始。", correct: false }
+        ]
       },
       {
-        id: "first-set-folder",
-        label: "第一套：六案资料夹",
-        text: "TA 说第一套案件只是公开素材，但后台日志显示，资料夹在部分案件开播前就已经生成标签。",
-        correctMark: "selfBlind",
-        contradiction: "模板告解：管理员把提前整理资料包装成事后复盘，回避了自己对案件推进的参与。"
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我把那张信用卡账单翻出来了。最大几笔不是房租和医疗，是餐厅、礼物和短视频平台分期。",
+        doubt: "债务用途决定它是共同困难，还是体面人设成本。",
+        contradiction: "8 万信用卡不是基本生存债，而是长期维持体面恋爱的消费后果。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "这几笔账，哪些是在他没工作以后花的？", answer: "纪念日晚餐、礼物分期和两次酒店都在断缴之后。", contradiction: "TA 失业后仍继续制造高消费恋爱场景。", correct: true },
+          { question: "这些消费会不会是他为了维持关系硬撑出来的？", answer: "这句听起来体贴，但会把话题带去动机。账单里真正没说清的是：硬撑后的债让谁来接。", correct: false }
+        ]
       },
       {
-        id: "paid-intake",
-        label: "第二套：入会测评",
-        text: "测评表把“安全感、诚意、家庭责任、情绪陪伴”做成付费项。管理员说这只是帮助用户表达需求。",
-        correctMark: "hurtOther",
-        contradiction: "模板告解：平台把真实痛苦转换成付费按钮，帮助和收割之间的边界被故意模糊。"
-      },
-      {
-        id: "credit-control",
-        label: "第二套：征信镜像",
-        text: "TA 反复强调核验很重要，却没有解释为什么用户资料会被裁剪成可传播的风险报告。",
-        correctMark: "hurtByOther",
-        contradiction: "模板告解：征信核验被平台滥用成信息控制，真实风险被改写成勒索筹码。"
-      },
-      {
-        id: "family-score",
-        label: "第二套：亲属互助",
-        text: "家庭互助榜单被称作“减少沟通成本”，但它让不愿意承担外部债务的人自动变成不孝。",
-        correctMark: "hurtOther",
-        contradiction: "模板告解：亲属互助榜单把家庭压力系统化，制造新的道德债务。"
-      },
-      {
-        id: "final-product-demo",
-        label: "最终：产品式忏悔",
-        text: "管理员讲得冷静、完整、像一场产品发布。越像自省，越要检查 TA 是否把责任转移给“用户自己的选择”。",
-        correctMark: "selfBlind",
-        contradiction: "模板告解：管理员的完整忏悔仍在控制叙事，把平台设计造成的伤害推回用户选择。"
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "他后来发来一句：“我只是怕你知道我失业后就离开我。”但紧接着又问我能不能先把最低还款转过去。",
+        doubt: "脆弱可以是真的，化债也可以同时是真的。",
+        contradiction: "TA 承认隐瞒失业，却仍把还款压力推给关系里的另一方。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "他说怕你离开，那最低还款为什么要你先转？", answer: "不是追问 TA 可不可怜，而是问这笔钱为什么要由你来接。", contradiction: "情绪脆弱不能自动转化为债务转嫁。", correct: true },
+          { question: "你先问他下个月怎么还，别让话停在道歉上。", answer: "他开始讲下个月会有办法，但失业多久、债务怎么形成还是没接上。", correct: false }
+        ]
       }
-    ];
-  }
-  if (item.id !== "story-06-confession") return fallback;
-  return [
-    {
-      id: "profile-mask",
-      label: "第一案：资料包装",
-      text: "许照承认，何念的完美资料让他第一次意识到：只要把婚史、负债和家庭压力改写成“普通包装”，旁听席就会先争论她值不值得，而不是她隐瞒了什么。",
-      correctMark: "hurtOther",
-      contradiction: "终局告解：许照不是旁观第一案，他从资料包装里学会了如何让别人替叙事做情绪劳动。"
-    },
-    {
-      id: "house-name",
-      label: "第二案：安全感话术",
-      text: "周砚把房本加名说成安全感，许照说自己当时只是在记录话术。但资料夹里，“安全感”被标成了可复用关键词。",
-      correctMark: "selfBlind",
-      contradiction: "终局告解：许照把控制话术当成观察样本，却没有承认自己也被这套话术吸引。"
-    },
-    {
-      id: "wedding-pressure",
-      label: "第三案：停不下来的婚礼",
-      text: "酒席和彩礼把所有人都推到“都到这一步了”的位置。许照承认，他最早看见沉没成本如何替真相封口。",
-      correctMark: "hurtByOther",
-      contradiction: "终局告解：婚礼压力不是单案背景，而是整条主线里最稳定的逼迫装置。"
-    },
-    {
-      id: "debt-system",
-      label: "第四案：债务接入",
-      text: "亲属债务进入小家庭时，许照没有提醒当事人。他说自己只是想确认：账本是不是比承诺更能暴露关系真实结构。",
-      correctMark: "hurtOther",
-      contradiction: "终局告解：许照用“观察”包装了自己的不介入，让伤害继续扩大。"
-    },
-    {
-      id: "emotional-outsourcing",
-      label: "第五案：情绪外包",
-      text: "深夜语音里，许照终于从观察者变成参与者。他把别人的痛苦整理成资料，也把自己的孤独交给了不该接住的人。",
-      correctMark: "selfBlind",
-      contradiction: "终局告解：情绪外包不是第五案的偶发越界，而是许照一直拒绝承认自己也在索取情绪供养。"
-    },
-    {
-      id: "confession-control",
-      label: "第六案：最后一次叙事控制",
-      text: "许照坐到镜头前告解，讲得完整、清醒、有结构。你必须判断：这是自省，还是他最后一次把所有人的故事排成对自己有利的顺序。",
-      correctMark: "selfBlind",
-      contradiction: "终局告解：越完整的忏悔越需要被核验，因为自省也可能成为控制叙事的方式。"
-    }
-  ];
-}
-
-export function generateCaseSequence(npcs, attrs, options = {}) {
-  const usedPlots = new Set();
-  const runNumber = options.runNumber ?? 0;
-  const modes = options.modes ?? buildAnchorModeSequence(options.count ?? randomRangeInt(3, 5));
-  return modes.map((mode, index) => {
-    const brief = generateLivestreamCase(npcs, attrs, {
-      order: index + 1,
-      caseMode: mode,
-      usedPlots,
-      runNumber,
-      forcedPremeditated: shouldForcePremeditated(runNumber, index, mode)
-    });
-    usedPlots.add(brief.plotId);
-    return brief;
+    ],
+    testimony: [
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“TA 说过了这阵子就好，可我查到社保断缴不是这个月的事。”",
+        kind: "truthWithGap",
+        surface: "失业时间线",
+        hint: "先锁失业发生时间，再看借钱发生时间。",
+        followups: [
+          { question: "社保断缴和第一次借钱隔了多久？", result: "隔了 47 天。中间还发生过三次高消费约会。", contradiction: "失业隐瞒持续 47 天，且期间继续高消费。" },
+          { question: "TA 说怕你离开，你怎么想？", result: "这是情绪解释，不是债务为什么要你来接的解释。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我把短信和账单按日期排了一下，最低还款、餐厅订金和礼物分期都在同一周出现。”",
+        kind: "sceneHint",
+        surface: "体面成本",
+        hint: "债务不是凭空出现，是被体面恋爱持续堆出来的。",
+        followups: [
+          { question: "哪一笔最能说明问题？", result: "礼物分期。它证明 TA 不是单纯生存困难，而是在维持恋爱人设。", contradiction: "礼物分期把经济困难和人设包装连在一起。" }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我最怕别人说我嫌贫爱富。可我卡住的不是他没钱，是他瞒着失业以后，还让我替他还这些体面账。”",
+        kind: "sceneHint",
+        surface: "咨询者卡住的点",
+        hint: "这笔钱先把同情和谁来扛分开放。",
+        followups: [
+          { question: "所以你不是怕他穷，是怕这笔债最后让你来接？", result: "她点头：我可以理解他难，但不能因为我心软，就默认我来接这笔债。", contradiction: "同情 TA 的处境，不等于接受 TA 把债务转给你。" }
+        ]
+      }
+    ],
+    evidenceCards: [
+      { id: "daily-credit-social-security", type: "社保截图", title: "社保断缴时间", front: "断缴月份早于第一次借钱 47 天。", detail: "失业并非临时发生。", targets: ["truthWithGap", "sceneHint"], contradiction: "社保断缴早于借钱，说明失业被持续隐瞒。" },
+      { id: "daily-credit-card-bill", type: "账单", title: "信用卡账单", front: "餐厅、礼物分期和最低还款集中在同一周。", detail: "账单显示债务与体面恋爱消费有关。", targets: ["sceneHint"], contradiction: "信用卡债务包含维持恋爱体面的消费成本。" },
+      { id: "daily-credit-chat", type: "聊天", title: "最低还款请求", front: "“你先帮我挡一下，我不想这段关系因为钱毁了。”", detail: "把债务包装成关系考验。", targets: ["truthWithGap"], contradiction: "还款请求把个人债务包装成关系考验。" }
+    ],
+    stageJudgement: "听到这里：这通电话不是穷的问题，而是失业隐瞒、体面消费和债务转嫁叠在一起。",
+    followupTwist: "后续回拨：咨询者补充，对方承认失业是真，但仍希望先用她的钱撑过最低还款。你把这句记下：脆弱是真的，转嫁也可以是真的。",
+    dailyShareTitle: "8 万信用卡，到底该不该帮 TA 还？",
+    dailyShareBody: "我抓到的关键不是 TA 穷，而是失业 47 天后还在制造高消费恋爱。",
+    dailyShareQuestion: "你会先问失业时间，还是先问 TA 为什么借钱？",
+    truth: "失业隐瞒与信用卡债务转嫁同时成立。关系里的同情，不能替谁把债接过去。"
   });
 }
 
-function buildAnchorModeSequence(count) {
-  const nonConfession = CASE_MODE_SEQUENCE.filter((mode) => mode.id !== "confession");
-  const includeConfession = Math.random() < 0.75;
-  const mainCount = includeConfession ? Math.max(1, count - 1) : count;
-  const main = Array.from({ length: mainCount }, () => randomItem(nonConfession));
-  return includeConfession ? [...main, CASE_MODE_SEQUENCE.find((mode) => mode.id === "confession")] : main;
+function dailyHouseBoundaryTemplate(brief, names) {
+  const name = "咨询者";
+  const other = "对方";
+  return dailyBaseBrief(brief, names, {
+    label: "婚前房与共同还贷",
+    storyArcTitle: "今日连线：婚前房与共同还贷",
+    publicHook: "婚前房写在 TA 父母名下，却要你婚后一起还贷。你提份额协议，TA 说你太算计。",
+    storyArcSummary: "这通先稳住：房子、还贷、退路，哪一句没说清。",
+    storySuspense: "这案最容易吵成“你不信任我”。真正要查的是：反洗房边界有没有被曲解成感情测试。",
+    storyClueObject: "购房合同、父母转账与协议草稿",
+    openingComplaint: `${name}连线说：“TA 家婚前买房写父母名下，说婚后我们一起还贷。我提能不能写清份额和退出机制，TA 说我还没结婚就想着离。”`,
+    openingDialogue: [
+      { speaker: name, role: "caller", text: "主播你好，我不是非要房子。婚前房写 TA 父母名下，可婚后又说我们一起还贷才像一家人。", mood: "anxious" },
+      { speaker: "你", role: "host", text: "晚上好。合同上写谁、家里怎么说还贷，你从这两处讲。", mood: "listening" }
+    ],
+    sceneVersions: [
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我不是非要加名，我只是想知道我婚后还进去的钱算什么。可 TA 一直说，正常夫妻不会算这么细。",
+        doubt: "不加名可以是合理资产隔离，也可能配合共同还贷形成洗房风险。",
+        contradiction: "房产登记和还贷安排被拆成两套说法：权属归父母，现金流要小家庭承担。",
+        reliability: "mixed",
+        questionOptions: [
+          { question: "你慢点说，首付谁出、房本写谁、婚后谁还？", answer: "首付和登记都在对方父母名下，婚后还贷计划却要从共同账户走。", contradiction: "权属和还贷安排不匹配，存在共同还贷被弱化的风险。", correct: true },
+          { question: "你先问他，婚后还贷这件事是不是代表把你当一家人？", answer: "我顺着“是不是一家人”讲下去，委屈是被接住了，但房本和还贷还是两套话。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我手里有合同照片。买受人写的是对方父母。可贷款预案旁边另有一页“婚后家庭共同账户支出表”。",
+        doubt: "资产隔离本身不是错，关键是有没有同步说清还贷和退路。",
+        contradiction: "材料把产权留在父母名下，却把婚后还贷放入共同支出。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "这张表里，房贷和装修是怎么写进家庭开销的？", answer: "房贷和装修被列为家庭固定支出，旁边没有份额或补偿说明。", contradiction: "共同支出表缺少还贷份额和退出补偿机制。" },
+          { question: "你先退一步，不谈加名，只问每月流水能不能留着。", answer: "这像是折中，但把补偿和退出规则推迟了。流水有了，钱算什么还是没说清。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我把他后来那句也念一下：“房子放父母名下是家里安排，不影响我们过日子。不写才像一家人，你要协议，就是不信我。”",
+        doubt: "“不写才像一家人”把退出规则包装成感情测试，但不能代替权属、债务和退出规则。",
+        contradiction: "TA 把投入确认说成不信任，回避了共同还贷如何被确认的问题。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "你可以问他：不写清楚的话，我还进去的钱算什么？", answer: "追问：如果不写份额，那我婚后还贷的钱算借款、赠与，还是家庭支出？", contradiction: "对方无法说明共同还贷的钱最后怎么算。" },
+          { question: "你要不要先只谈装修钱，房贷这块晚点再说？", answer: "装修钱容易谈，但房贷才是长期流出的那笔。话题一缩小，核心现金流就滑过去了。", correct: false }
+        ]
+      }
+    ],
+    testimony: [
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我提过不加名也行，只要写清楚婚后还贷和装修怎么算。TA 说这就是不信任。”",
+        kind: "truthWithGap",
+        surface: "反洗房边界",
+        hint: "反制方式不一定是加名，也可以是确认还贷性质和退出补偿。",
+        followups: [
+          { question: "你提出的具体条款是什么？", result: "还贷留流水、装修单独记账、分开时按实际投入补偿。", contradiction: "咨询者提出的是还贷补偿，不是单方面索要产权。" },
+          { question: "你有没有先退一步，说不写协议也可以先留流水？", result: "这听起来好谈一点，但把退出补偿推迟了。流水能证明付过钱，却不能自动说明怎么算。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我草稿里没写要加名，只写婚后共同账户支付的房贷、装修、物业，按实际流水确认投入。”",
+        kind: "sceneHint",
+        surface: "协议性质",
+        hint: "先判断条款是保护投入，还是夺取对方父母资产。",
+        followups: [
+          { question: "这份草稿有没有直接要求加名？", result: "没有。它要求记录婚后投入和退出补偿。", contradiction: "协议草稿没有要求加名，重点是确认共同投入。" }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“他一直说我现实，可我其实就想问一句：如果这房子完全是他们家的，为什么婚后要从我们共同账户固定还贷？”",
+        kind: "sceneHint",
+        surface: "咨询者卡住的点",
+        hint: "合理保护和洗房风险的分界，在权属与现金流是否一致。",
+        followups: [
+          { question: "你把这句原样留住，不要换成加不加名。", result: "她慢下来：对，我问的是共同账户为什么要承担固定还贷。", contradiction: "权属归父母但还贷进家庭账户，是这通电话最拧巴的地方。" }
+        ]
+      }
+    ],
+    evidenceCards: [
+      { id: "daily-house-contract", type: "购房合同", title: "买受人页", front: "买受人为对方父母，未出现婚后双方姓名。", detail: "产权归属清晰，但和婚后还贷计划不一致。", targets: ["truthWithGap", "sceneHint"], contradiction: "产权归父母，婚后还贷却计划由小家庭承担。" },
+      { id: "daily-house-account", type: "账户表", title: "共同账户支出表", front: "房贷、装修、物业被列为婚后固定共同支出。", detail: "共同支出需要对应份额、补偿或明确赠与。", targets: ["sceneHint"], contradiction: "共同账户支出表缺少还贷份额和退出补偿机制。" },
+      { id: "daily-house-agreement", type: "协议草稿", title: "投入确认条款", front: "未要求加名，只要求还贷和装修留流水、按投入补偿。", detail: "这更像保护投入，不是直接夺取产权。", targets: ["truthWithGap", "sceneHint"], contradiction: "协议草稿没有要求加名，重点是确认共同投入。" }
+    ],
+    stageJudgement: "听到这里：这通电话不能简单吵加不加名。关键是权属、还贷、装修和退出补偿是否一致。",
+    followupTwist: "后续回拨：对方仍然坚持“不写才像一家人”。你把这句记下：越要求你别算清，越要先算清谁承担成本。",
+    dailyShareTitle: "婚前房不加名，但要你一起还贷，算不算洗房？",
+    dailyShareBody: "我抓到的关键不是加不加名，而是产权归父母、还贷进共同账户。",
+    dailyShareQuestion: "你会先问房本，首付，还是婚后还贷？",
+    truth: "合理资产隔离必须同步说明还贷和补偿。只隔离产权、不隔离现金流，会制造洗房风险。"
+  });
 }
 
-function randomRangeInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function dailyTonyMultiDatingTemplate(brief, names) {
+  const name = "咨询者";
+  const other = "对方";
+  return dailyBaseBrief(brief, names, {
+    label: "理发店排班表",
+    storyArcTitle: "今日连线：理发店排班表",
+    publicHook: "她以为自己是女朋友，直到看见理发店排班表：自己旁边写着“情绪稳定”。",
+    storyArcSummary: "这通看反应：谁被放进不同分组，谁在被哄着付出。",
+    storySuspense: "这案最适合发给朋友：到底是服务热情，还是把暧昧做成了客户管理？",
+    storyClueObject: "理发店排班表与办卡记录",
+    openingComplaint: `${name}连线说：“我以为我是女朋友。后来才看到排班表，我旁边写‘情绪稳定’，另一个女生旁边写‘能投店’。”`,
+    openingDialogue: [
+      { speaker: name, role: "caller", text: "主播你好，我想问一个相亲后暧昧了几个月的人。他在理发店上班，我昨天看到一张排班表，里面不是名字，是“情绪稳定”“能投店”这种备注。", mood: "anxious" },
+      { speaker: "你", role: "host", text: "晚上好。看到那张表之前，他平时怎么和你相处？", mood: "listening" }
+    ],
+    sceneVersions: [
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "TA 每次下班后都陪我聊天，说我是最懂 TA 的人。我以为这就是确定关系前的暧昧期。",
+        doubt: "“最懂我”可能是亲密表达，也可能是情绪功能标签。",
+        contradiction: "排班表把亲密称呼改写成了功能分组：情绪稳定、能投店、能带客。",
+        reliability: "mixed",
+        questionOptions: [
+          { question: "他有没有把这种话也发给别人？", answer: "有。另一个女生截图里也有“只有你能理解我”。", contradiction: "专属话术被复制给不同对象。", correct: true },
+          { question: "你先问她，表里有没有直接写到她自己。", answer: "我开始找自己那一栏，但“专属话术是不是被复制”这条线暂时断了。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我当时看见那张表，第一反应不是吃醋。表格里不是客户姓名，而是功能备注：情绪稳定、愿意办卡、有资源、可能投店。",
+        doubt: "问题不只是多线聊天，而是多线对象被分配了不同收益功能。",
+        contradiction: "TA 把不同暧昧对象按资源功能管理，不是普通服务热情。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "这张表除了备注，还有没有写下一步要做什么？", answer: "“下一次推进目标”。里面写着办卡、见朋友、谈入股。", contradiction: "排班表存在明确推进目标，说明暧昧被运营化。" },
+          { question: "他平时会不会把所有熟客都写成这种备注？", answer: "这句把话题带到行业习惯，但表里每个人后面还有不同推进目标，不能只按普通客户备注看。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "后来他回我：“我从来没说只有你一个。”可我翻聊天截图，他发过“以后店开起来，你就是老板娘”。",
+        doubt: "没说“唯一”，不代表没制造未来承诺。",
+        contradiction: "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "他说老板娘之后，有没有马上让你办卡或投店？", answer: "追问它之后是否接了消费、办卡或投资请求。", contradiction: "未来身份暗示后紧接着出现办卡和投店话题。" },
+          { question: "你先把“老板娘”那句出现的场合补出来。", answer: "场合补出来了：深夜聊天。可后面紧接着办卡和投店，才是这句真正带出来的东西。", correct: false }
+        ]
+      }
+    ],
+    testimony: [
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我不是因为 TA 和客户聊天生气，我是发现每个人旁边都有用途。”",
+        kind: "truthWithGap",
+        surface: "功能分组",
+        hint: "多线的关键不是人数，是每条线各自换取什么。",
+        followups: [
+          { question: "你的那一栏写的是什么？", result: "情绪稳定、可长期陪聊、已办年卡。", contradiction: "TA 对咨询者的定位包含情绪供给和消费绑定。" },
+          { question: "你们有没有正式确认？", result: "她顺着名分讲下去，话题被带走了，排班表里的备注反而没人继续问。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我后来拿到另外两段截图，三个人都收到过‘你和别人不一样’。只有后半句不同：一个接办卡，一个接入股，一个接见朋友。”",
+        kind: "halfLie",
+        surface: "复制专属话术",
+        hint: "专属感被复制，就不再只是暧昧。",
+        followups: [
+          { question: "哪句最能证明复制话术？", result: "“你和别人不一样”在三段聊天里完全一致。", contradiction: "同一句专属话术被复制给三个人。" }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我现在不是只想骂他花心。我是突然觉得，我在那张表里不是女朋友，是一个可以长期陪聊、也已经办了年卡的人。”",
+        kind: "sceneHint",
+        surface: "咨询者卡住的点",
+        hint: "边界追问要追功能，不只追称呼。",
+        followups: [
+          { question: "你最想让他回答的不是关系名分，而是那张表的用途？", result: "她说：对。你把不同人分成这些功能，是客户管理，还是恋爱关系？", contradiction: "多线对象被功能化管理，是这通电话最拧巴的地方。" }
+        ]
+      }
+    ],
+    evidenceCards: [
+      { id: "daily-tony-roster", type: "排班表", title: "理发店预约表", front: "备注列写着“情绪稳定 / 能投店 / 能带客”。", detail: "备注不是服务需求，而是关系收益。", targets: ["truthWithGap", "sceneHint"], contradiction: "排班表显示多个暧昧对象被按功能分类。" },
+      { id: "daily-tony-chat-copy", type: "聊天截图", title: "三份专属话术", front: "三个人都收到过“你和别人不一样”。", detail: "后续请求不同：办卡、投店、见朋友。", targets: ["halfLie"], contradiction: "专属话术被复制给不同对象。" },
+      { id: "daily-tony-card", type: "消费记录", title: "办卡与礼物", front: "暧昧升温后一周内出现年卡和礼物消费。", detail: "情绪承诺与消费绑定。", targets: ["sceneHint"], contradiction: "未来承诺后紧接消费绑定。" }
+    ],
+    stageJudgement: "听到这里：这通电话不是单纯花心，而是把多线暧昧按情绪、消费和资源功能运营。",
+    followupTwist: "后续回拨：另一位女生也发来私信，说她那栏写着“能投店”。直播间第一次意识到，这不是三角恋，是客户分层表。",
+    dailyShareTitle: "你会从哪一句看出 TA 在养鱼？",
+    dailyShareBody: "我抓到的不是暧昧聊天，而是排班表里的功能备注：情绪稳定、能投店、能带客。",
+    dailyShareQuestion: "你觉得“你和别人不一样”算锤吗？",
+    truth: "多线养鱼通过复制专属话术和功能分组换取情绪、消费与资源机会。"
+  });
 }
 
-function shouldForcePremeditated(runNumber, index, mode) {
-  if (mode.id === "confession") return false;
-  if (runNumber === 0) return index === 0;
-  if (runNumber === 1) return index <= 1;
-  return false;
+function dailyFakeProfileTemplate(brief, names) {
+  const name = "咨询者";
+  const other = "对方";
+  return dailyBaseBrief(brief, names, {
+    label: "存款证明",
+    storyArcTitle: "今日连线：存款证明",
+    publicHook: "见父母前，他发来学校、工作、收入截图，还补了一张存款证明。最怪的不是图，而是谁先把存款这两个字说出口。",
+    storyArcSummary: "这通先听清：证明为什么出现，又是谁借父母的嘴把话推过去。",
+    storySuspense: "标签都像真的，直播间先不急着骂人，也不急着替 TA 圆。",
+    storyClueObject: "几张资料截图和一张存款证明",
+    openingComplaint: "咨询者连线说：“我想问下我男朋友的事。我们是相亲认识的，最近聊到见父母，他发了学校、工作、收入截图，后面又补了一张存款证明。我越看越觉得，这事不像他一个人突然想出来的。”",
+    openingDialogue: [
+      { speaker: name, role: "caller", text: "主播你好，我想问下我男朋友的事。", mood: "thinking" },
+      { speaker: "你", role: "host", text: "晚上好。你们怎么认识的，现在聊到哪一步了？", mood: "listening" },
+      { speaker: name, role: "caller", text: "我们是相亲认识的，最近聊到见父母。我之前跟家里说过他条件不错，我妈就问得细了一点。", mood: "thinking" },
+      { speaker: "你", role: "host", text: "她具体问了什么？你当时怎么接的？", mood: "listening" },
+      { speaker: name, role: "caller", text: "我妈问学校、工作、收入稳不稳，还顺口问了一句有没有点积蓄。我跟他说的时候可能没那么顺口。他第二天发来几张截图，最后还补了一张存款证明。", mood: "anxious" }
+    ],
+    sceneVersions: [
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "见父母前，我手里现在是三张截图，加一张存款证明。学校、工作、收入是他先发的；但存款那张，我真说不清是他主动补，还是我把我妈的话转得太像在要。",
+        doubt: "材料不是凭空出现的，存款证明尤其卡在父母、咨询者和对方三个人的面子中间。",
+        contradiction: "存款证明的出现不是单方主动展示，咨询者转述父母问题时也把压力递了过去。",
+        reliability: "mixed",
+        questionOptions: [
+          { question: "你把你转给他的原话说一下。", answer: "我说的是：我妈可能会问收入稳不稳、有没有点存款，你别到时候被问住。说完我自己也觉得，这话不像只是提醒。", contradiction: "咨询者借父母的提问，把存款压力提前递给了对方。", correct: true },
+          { question: "存款证明这四个字是谁先说的？", answer: "我想了一下：不是我妈直接说证明，是我转述得太像在要一个能交代的东西。", correct: false },
+          { question: "你当时为什么收下那张证明？", answer: "因为我已经跟家里说他条件不错。看到那张证明，我确实松了一口气。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我刚才又看了一眼，几张图都不像 P 的。学校那张有校徽，公司那张有尾缀，收入那张有数字，存款证明上也有余额。可每一张都停在最好看的地方。",
+        doubt: "这不是当场打假，而是用真的局部制造足够体面的第一印象。",
+        contradiction: "学校、工作、收入和存款都露出好看的局部，没露出来的地方才决定含金量。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "你让他把几张图边上那一块补全了吗？", answer: "我把图往上划了：学校那张右边多出项目名称，公司那张下面露出签约主体，收入那张后面还有绩效说明。存款证明没露开户时间和是否冻结。", contradiction: "学校、工作、收入和存款都露出好看的局部，没露出来的地方才决定含金量。", correct: true },
+          { question: "他听见你问原图，第一反应是什么？", answer: "我记得他回得很快：你要这么想我也没办法。图没补全，话先变成了信不信任。", correct: false },
+          { question: "如果他愿意补全原图，你还会介意吗？", answer: "如果他愿意把学制、合同主体、完整收入和存款证明边缘都补全，我会少一点不安。可问题不是介不介意，是为什么一开始只露够我拿回家交代的那部分。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        version: "我把他后来那句回复念出来：“你家里要看稳定，我给了；你又说我像在表演。那我到底要怎么做？先把饭吃了，别一上来就把我当面试。”",
+        doubt: "这句不只是防御，也把父母的筛选、咨询者的转述和他的体面展示全搅在一起。",
+        contradiction: "对方把补全材料的问题推成被面试，但没有解释为什么每份材料都只露到够体面的地方。",
+        reliability: "partial",
+        questionOptions: [
+          { question: "他这句里最想让你接受的是什么？", answer: "他想让我承认：是我家先把问题问得像筛选，所以他发材料只是被逼出来的体面。", correct: false },
+          { question: "你再看一遍，他有没有解释存款证明缺的那几项？", answer: "没有。他只反复说证明是真的，把问题从完整信息挪到真假二选一。", contradiction: "证明真假被拿来挡住证明用途、时间和完整性的追问。", correct: true }
+        ]
+      }
+    ],
+    testimony: [
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“我不是想查他存款。我也承认，我之前跟家里说过他条件不错，所以他发来那张证明时，我其实松了一口气。”",
+        kind: "halfLie",
+        surface: "咨询者自己的面子压力",
+        hint: "她也有自己的位置要维护，这会影响她为什么一开始没有追问。",
+        followups: [
+          { question: "所以你也不想让家里觉得自己看走眼？", result: "我其实有点不敢承认：对。我已经把话说出去了，所以我也希望那张证明是真的够稳。", contradiction: "咨询者也在用存款证明维护自己先前转述过的体面印象。" },
+          { question: "你家里真正想从这些材料里确认什么？", result: "我妈嘴上说是看稳定，其实是想知道我带回去的人能不能跟我之前说的条件对上。我也怕前后说法打脸，他也怕饭局前被看低，所以那几张图才会变得这么有用。", correct: false }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“那些图都不一定假。学校标识、公司尾缀、薪资数字和存款余额都是真的一部分。只是它们刚好够我拿去跟家里交代。”",
+        kind: "truthWithGap",
+        surface: "真图没露出的地方",
+        hint: "现在要看几份材料少掉的是不是同一种信息。",
+        followups: [
+          { question: "你把没露出来的边缘按顺序说一遍。", result: "我一张张看下来：学制、合同主体、完整收入页，还有存款证明的开户时间和冻结状态，都是父母真正会追问的部分。", contradiction: "多份材料同时避开择偶定位核心。" }
+        ]
+      },
+      {
+        speakerId: brief.complainantId,
+        speaker: name,
+        line: "“后来他回我：你家不是想看稳定吗？我给了，又说我表演。那这饭还吃不吃？”",
+        kind: "sceneHint",
+        surface: "聊天原话",
+        hint: "这时候不用替谁定性，只看他有没有把话说全。",
+        followups: [
+          { question: "你把这句后面他怎么接的说完。", result: "他后面接的是：先见了面，别让一张证明把两个人都弄得难看。", contradiction: "存款证明被用来换取饭局继续，但完整信息被推到见面之后。" }
+        ]
+      }
+    ],
+    explicitClueGroups: [
+      [
+        "存款证明的出现不是单方主动展示，咨询者转述父母问题时也把压力递了过去。",
+        "存款证明是双方你推我接出来的，不是单方凭空炫耀。"
+      ],
+      [
+        "学校、工作、收入和存款都露出好看的局部，没露出来的地方才决定含金量。",
+        "对方把补材料的问题推成信任问题，避开了具体内容。"
+      ],
+      [
+        "多份材料同时避开择偶定位核心。",
+        "咨询者也在用存款证明维护自己先前转述过的体面印象。",
+        "证明真假被拿来挡住证明用途、时间和完整性的追问。",
+        "存款证明被用来换取饭局继续，但完整信息被推到见面之后。"
+      ]
+    ],
+    evidenceCards: [
+      { id: "daily-profile-crop", type: "截图", title: "裁切材料", front: "公司抬头、学制、收入栏和存款证明边缘都没露全。", detail: "留下的信息都好看，被拿掉的信息都关键。", targets: ["truthWithGap"], contradiction: "多份材料同时避开择偶定位核心。" },
+      { id: "daily-profile-program", type: "学历材料", title: "项目英文缩写", front: "学校标识真实，但项目路径未显示。", detail: "真学校不等于对方暗示的学历含金量。", targets: ["halfLie"], contradiction: "学校是真的，不等于标签含义真实。" },
+      { id: "daily-profile-job", type: "岗位材料", title: "金融服务岗位", front: "公司材料显示业务支持/外包服务。", detail: "“金融企业”需要拆成公司、岗位、合同主体。", targets: ["halfLie", "sceneHint"], contradiction: "金融企业标签遮住岗位性质。" },
+      { id: "daily-profile-deposit", type: "存款证明", title: "余额截图", front: "余额数字清楚，开户时间、冻结状态和账户用途没露出。", detail: "能证明有一笔钱，不等于证明这笔钱稳定、可用、属于长期积蓄。", targets: ["truthWithGap", "sceneHint"], contradiction: "存款证明只露余额，不露时间、冻结状态和账户用途。" }
+    ],
+    stageJudgement: "听到这里：这通电话不能直接定骗。学制、合同主体、收入和存款证明都只露好看的局部，父母真正会追问的完整信息被留在饭局后面。",
+    followupTwist: "后续回拨：对方没有否认裁切，只说“你们家不是要看稳定吗，先把饭吃了”。咨询者沉默了一下，说她也不确定那句是不是自己先递过去的。",
+    dailyShareTitle: "存款证明都发了，怎么反而更怪？",
+    dailyShareBody: "今晚最好吵的是：存款证明不是突然冒出来的，谁先想看都说不清。",
+    dailyShareQuestion: "你听完会觉得是包装，是试探，还是双方都在借父母的嘴？",
+    truth: "存款证明不一定假，但它的出现本身就是关系压力的一部分。父母的筛选、咨询者的面子和对方的体面展示一起把饭局推向了更高门槛。",
+    premeditated: false,
+    premeditatedActorId: null,
+    stance: "halfTruth"
+  });
 }
 
 export function generateLivestreamCase(npcs, attrs, options = {}) {
@@ -1692,6 +1136,7 @@ export function generateLivestreamCase(npcs, attrs, options = {}) {
     modeBrief: mode.brief,
     stage: mode.stage,
     plotId: plot.id,
+    taskProfile: taskProfileForPlot(plot.id),
     label: plot.label,
     publicHook: plot.publicHook,
     truth: plot.truth,
@@ -1708,7 +1153,6 @@ export function generateLivestreamCase(npcs, attrs, options = {}) {
     scene,
     sceneVersions: buildSceneVersions(scene, complainant, respondent, hiddenFacts, exaggerations, forcedPremeditated, mode.id),
     testimony: buildTestimony(plot, scene, complainant, respondent, stance, hiddenFacts, exaggerations, forcedPremeditated, mode.id),
-    confessionTimeline: mode.id === "confession" ? buildConfessionTimeline(scene, complainant, respondent, hiddenFacts, exaggerations, plot.truth) : [],
     difficulty,
     openingComplaint: openingComplaintFor(plot, stance, complainant, respondent, mode.id, options.runNumber ?? 0, order)
   };
@@ -1742,7 +1186,7 @@ function buildEvidenceCards(plot, scene, complainant, respondent, hiddenFacts, e
     },
     {
       id: "luxury-outfit-photo",
-      type: "图片证据",
+      type: "图片线索",
       title: "高级服装试穿照",
       front: `朋友圈照片里出现一套明显高价的通勤/宴会服装，配文是“重要场合要体面”。`,
       detail: `照片发布时间紧贴 ${packaging} 被包装的节点，消费能力和自述压力不完全匹配。`,
@@ -1773,7 +1217,7 @@ function buildEvidenceCards(plot, scene, complainant, respondent, hiddenFacts, e
     id: `material-${index}`,
     type: "材料卡",
     title: item,
-    front: `案卷材料：${item}`,
+    front: `连线里提到：${item}`,
     detail: `${item} 只能证明局部事实，需要和台词、时间线一起看。`,
     targets: ["sceneHint", "truthWithGap", "defensive", "selfDoubt"],
     contradiction: `${item} 把 ${plot.label} 的争议从情绪拉回了材料。`
@@ -1790,34 +1234,6 @@ function buildSceneVersions(scene, complainant, respondent, hiddenFacts, exagger
   const other = respondent?.name ?? "对方";
   const gap = hiddenFacts[0] ?? "关键事实";
   const packaging = exaggerations[0] ?? "自身条件";
-  if (caseMode === "confession") {
-    return [
-      {
-        speakerId: complainant?.id ?? null,
-        speaker: `${name} 的自述`,
-        version: `我现在回看${scene.name}，才发现当时有些不舒服被我自己压下去了。`,
-        doubt: `TA 把重点放在“我当时太傻”，但还没说清 ${gap}。`,
-        contradiction: `如果 TA 当时已经察觉不对，为什么还继续配合 ${packaging} 这套说法？`,
-        reliability: "mixed"
-      },
-      {
-        speakerId: null,
-        speaker: `${other} 的材料影子`,
-        version: `TA 没有坐在这里连线，但聊天、账单和共同朋友能拼出另一个版本。`,
-        doubt: "告解模式里，缺席者也可能被叙述者塑造成单纯恶人。",
-        contradiction: `缺席者版本提示：${gap} 不是突然发生，而是被多次绕开。`,
-        reliability: "partial"
-      },
-      {
-        speakerId: null,
-        speaker: "自我核验材料",
-        version: `材料只能证明 ${name} 确实经历过${scene.name}，不能证明这段自述里的动机解释完全可靠。`,
-        doubt: "人在告解时也会保护自尊，把选择说成被迫，把收益说成偶然。",
-        contradiction: `真正要查的是：${name} 有没有在 ${gap} 和 ${packaging} 上同时骗过别人，也骗过自己。`,
-        reliability: "partial"
-      }
-    ];
-  }
   return [
     {
       speakerId: complainant?.id ?? null,
@@ -1837,10 +1253,10 @@ function buildSceneVersions(scene, complainant, respondent, hiddenFacts, exagger
     },
     {
       speakerId: null,
-      speaker: "后台记事本",
+      speaker: "材料摘录",
       version: `现场材料只能证明两个人确实在${scene.name}出现过，不能替任何一方的完整版本背书。`,
       doubt: "场景复原不是监控录像，它仍然是被选择过的叙事。",
-      contradiction: `现场材料和双方叙事共同指向：${gap} 与 ${packaging} 需要被单独核验。`,
+      contradiction: `现场说法和双方叙事共同指向：${gap} 与 ${packaging} 需要单独对一对。`,
       reliability: "partial"
     }
   ];
@@ -1854,19 +1270,12 @@ function openingComplaintFor(plot, stance, complainant, respondent, caseMode, ru
   const name = complainant?.name ?? "来访者";
   const other = respondent?.name ?? "对方";
   if (runNumber === 0 && order === 1) {
-    return `${name} 是今晚第一个连线者。TA 说自己只想要一个说法，镜头却拍到 TA 手边放着两份材料：一份聊天截图，一份被折过的转账记录。${other} 还没进线，旁听席已经开始替 ${name} 下判断。`;
+    return `${name} 是今晚第一个连线者。TA 说自己只想要一个说法，镜头却拍到 TA 手边放着两份材料：一份聊天截图，一份被折过的转账记录。${other} 还没进线，弹幕已经开始替 ${name} 下判断。`;
   }
   if (runNumber === 1 && order === 1) {
-    return `${name} 的叙事几乎无懈可击：时间点清楚、证据齐全、连自己可能被误会的地方都提前解释过。越完整的故事，越像一间打扫过的房间，需要检查被收进抽屉里的东西。`;
+    return `${name} 的叙事几乎无懈可击：时间点清楚、说法齐全、连自己可能被误会的地方都提前解释过。越完整的故事，越像一间打扫过的房间，需要看看被收进抽屉里的东西。`;
   }
-  if (caseMode === "premarital") return `${name} 带着一段还没真正进入婚姻的关系来咨询：TA 想知道眼前的问题是普通磨合，还是婚前就该止损的风险。${other} 的名字被反复提起，但每次都停在最关键的半句话前。`;
-  if (caseMode === "married") return `${name} 连线侦探局，说婚后矛盾已经从情绪变成账本、责任和家庭边界。TA 不再问“还爱不爱”，而是问“这笔账、这个孩子、这套房，到底是谁的责任”。`;
-  if (caseMode === "confession") {
-    if (stance === "selfJustifying") return `${name} 选择告解自己的经历，但 TA 的讲法像是在替过去的选择寻找理由。TA 说“我不是完全没错”，却总能把每个错误讲成迫不得已。`;
-    if (stance === "selfDoubt") return `${name} 选择告解自己的经历，想让你站在 TA 的视角里查：自己到底哪里被坑，哪里也在自欺。TA 最怕的不是发现 ${other} 有问题，而是发现自己当时其实看见过信号。`;
-    return `${name} 选择告解自己的经历，TA 不急着指控 ${other}，而是想把这段婚恋里的问题重新查一遍。TA 的语气很平静，平静到像已经提前排练过一遍。`;
-  }
-  if (stance === "trueVictim") return `${name} 连线侦探局，说自己被 ${other} 的承诺拖住太久，现在只想知道该不该止损。`;
+  if (stance === "trueVictim") return `${name} 接进直播间，说自己被 ${other} 的承诺拖住太久，现在只想知道该不该止损。`;
   if (stance === "badActorFirst") return `${name} 先来诉苦，把自己说成受害者，但 TA 回避了几个关键时间点。`;
   if (stance === "personalityMismatch") return `${name} 说自己被伤得很深，但初步听起来更像性格、沟通和家庭压力叠在了一起。`;
   return `${name} 的叙事听起来有委屈，也有空白；你需要把 ${other} 的版本一起拼进来。`;
@@ -1877,75 +1286,6 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
   const other = respondent?.name ?? "对方";
   const primaryGap = hiddenFacts[0] ?? "关键事实";
   const primaryExaggeration = exaggerations[0] ?? "自身条件";
-  if (caseMode === "confession") {
-    return [
-      {
-        speakerId: complainant?.id ?? null,
-        speaker: name,
-        line: `“我现在回想起来，${scene.name} 那天我其实已经觉得不对，但我说服自己别太计较。”`,
-        kind: "selfDoubt",
-        surface: "自我告解",
-        hint: "告解不是自动可信，它只是把调查对象从“对方有没有错”扩展到“我为什么当时没有看”。",
-        followups: [
-          {
-            question: "你当时说服自己的理由是什么？",
-            result: `TA 说自己不想显得现实，追问后才承认 ${primaryGap} 当时已经出现。`,
-            contradiction: `TA 不是完全没看见 ${primaryGap}，而是主动把它压成了“小问题”。`
-          },
-          {
-            question: "这段关系里，你得到过什么好处？",
-            result: randomItem(OBFUSCATION_LINES),
-            contradiction: "只说自己受伤，不说自己收益，告解也会变成另一种包装。"
-          }
-        ]
-      },
-      {
-        speakerId: complainant?.id ?? null,
-        speaker: name,
-        line: `“我也不是完全无辜。${primaryExaggeration} 这件事，我当时确实说得比事实好看。”`,
-        kind: "halfLie",
-        surface: "小承认掩护大隐瞒",
-        hint: "自我咨询里最容易出现“我承认一点点，所以我已经很坦诚”的错觉。",
-        followups: [
-          {
-            question: `除了 ${primaryExaggeration}，你还包装过什么？`,
-            result: "TA 沉默了一下，开始把“隐瞒”改口成“没必要一开始都说”。",
-            contradiction: `TA 对 ${primaryExaggeration} 的承认，可能是在保护更大的择偶定位问题。`
-          }
-        ]
-      },
-      {
-        speakerId: null,
-        speaker: `${other} 的材料影子`,
-        line: `材料里能听见另一种说法：“如果只听 TA 的告解，我永远都是那个让 TA 受伤的人。”`,
-        kind: "shadowVersion",
-        surface: "缺席者反叙事",
-        hint: "告解模式里，另一方可能缺席，但证据不会缺席。",
-        followups: [
-          {
-            question: "如果对方也在场，TA 最可能反驳哪一句？",
-            result: `材料指向：${primaryGap} 不是单方突然制造，而是在双方默认里滚大的。`,
-            contradiction: `告解者把 ${primaryGap} 说成对方单方面造成，但时间线显示自己也参与了推进。`
-          }
-        ]
-      },
-      {
-        speakerId: null,
-        speaker: "自我核验",
-        line: `复盘到这里，${scene.hint}`,
-        kind: "sceneHint",
-        surface: "自查提示",
-        hint: plot.truth,
-        followups: [
-          {
-            question: "这段经历最该查的是对方，还是自己的选择机制？",
-            result: "两者都要查。只查对方会变成控诉，只查自己会变成自责。",
-            contradiction: "告解模式的答案不是找一个坏人，而是找出关系问题如何被双方共同放大。"
-          }
-        ]
-      }
-    ];
-  }
   return [
     {
       speakerId: complainant?.id ?? null,
@@ -1963,7 +1303,7 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
         {
           question: "你当时希望对方给你什么结果？",
           result: randomItem(OBFUSCATION_LINES),
-          contradiction: "诉求越含糊，越可能是在侦探局里争取道德高位，而不是还原事实。"
+          contradiction: "诉求越含糊，越可能是在直播间里争取道德高位，而不是把话说完整。"
         }
       ]
     },
@@ -2012,7 +1352,7 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
           : `补充材料里承认：“我也有做得不好的地方，但不是 TA 连线里说的那个版本。”`,
       kind: premeditated ? "truthWithGap" : "defensive",
       surface: premeditated ? "真话但留白" : "防御性含糊",
-      hint: premeditated ? "“下一步”是预谋案的关键词，要追钱、证据和时间线。" : "非预谋案也需要判断责任比例，而不是只选好人坏人。",
+      hint: premeditated ? "“下一步”是这类套路的关键词，要追钱、说法和时间线。" : "这类来电先别急着站队，等原话自己露出停顿。",
       followups: [
         {
           question: premeditated ? "TA 的下一步具体是什么？" : "你说自己也有做得不好的地方，具体是哪一件？",
@@ -2024,939 +1364,17 @@ function buildTestimony(plot, scene, complainant, respondent, stance, hiddenFact
     {
       speakerId: null,
       speaker: "现场细节",
-      line: `复盘到这里，${scene.hint}`,
+      line: `回看到这里，${scene.hint}`,
       kind: "sceneHint",
       surface: "场景提示",
       hint: plot.truth,
       followups: [
         {
           question: "这个场景有没有可能被双方都复原错？",
-          result: "有。场景复原依赖记忆和立场，不能替代证据卡。",
+          result: "有。场景复原依赖记忆和立场，不能替代原话。",
           contradiction: "当两个人都在讲同一个现场时，矛盾点比情绪强度更重要。"
         }
       ]
     }
   ];
-}
-
-function buildConfessionTimeline(scene, complainant, respondent, hiddenFacts, exaggerations, truth) {
-  const name = complainant?.name ?? "来访者";
-  const other = respondent?.name ?? "对方";
-  const gap = hiddenFacts[0] ?? "关键事实";
-  const secondGap = hiddenFacts[1] ?? "另一处隐瞒";
-  const packaging = exaggerations[0] ?? "自身条件";
-  const secondPackaging = exaggerations[1] ?? "关系承诺";
-  return [
-    {
-      id: "first-signal",
-      label: "最初的不舒服",
-      text: `${name} 第一次觉得不对，是在${scene.name}前后。${other} 把 ${gap} 说得很轻，${name} 选择先相信关系本身。`,
-      correctMark: "selfBlind",
-      contradiction: `告解时间线：${name} 并非完全没看见 ${gap}，而是主动把它压成了“小问题”。`
-    },
-    {
-      id: "sweet-proof",
-      label: "被关系证明感安抚",
-      text: `一次示好、陪伴或承诺让 ${name} 放下追问，甚至开始替 ${other} 解释。`,
-      correctMark: "hurtByOther",
-      contradiction: `告解时间线：关系证明感被用来绕开 ${secondGap}，这不是普通浪漫，而是风险遮蔽。`
-    },
-    {
-      id: "self-packaging",
-      label: "自己的包装",
-      text: `${name} 也承认，自己在 ${packaging} 上说得比事实好看，觉得“大家相亲都会美化”。`,
-      correctMark: "hurtOther",
-      contradiction: `告解时间线：${name} 在 ${packaging} 上也制造了信息不对称，不能只把自己放在受害者位置。`
-    },
-    {
-      id: "cost-sunk",
-      label: "沉没成本出现",
-      text: `关系推进后，钱、时间、公开关系或共同计划已经投入，${name} 开始更怕承认自己看错。`,
-      correctMark: "selfBlind",
-      contradiction: "告解时间线：继续投入不是新证据，有时只是为了证明旧选择没有错。"
-    },
-    {
-      id: "truth-gap",
-      label: "事实缺口扩大",
-      text: `${secondPackaging} 的说法越来越漂亮，但材料只能证明一部分；${truth}`,
-      correctMark: "hurtByOther",
-      contradiction: `告解时间线：${secondPackaging} 越漂亮，越需要回到材料而不是回到承诺。`
-    },
-    {
-      id: "exit-or-repeat",
-      label: "退出或重复",
-      text: `${name} 来到侦探局，不只是想知道 ${other} 有没有错，也想知道自己下次会不会重复同一套选择。`,
-      correctMark: "selfBlind",
-      contradiction: "告解时间线：如果只把这段经历讲成遇人不淑，下次仍然可能在同一类信号前停下。"
-    }
-  ];
-}
-
-export const CASE_LIBRARY = [
-  {
-    id: "bride-price-security",
-    title: "彩礼保障与返还争议",
-    motiveHints: ["money", "kpi", "familyResource"],
-    factors: [
-      {
-        stage: "screening",
-        type: "money",
-        line: "资料里写着“尊重本地礼俗”，但没有写具体金额。",
-        internalDelta: 2,
-        motiveDelta: 6
-      },
-      {
-        stage: "marriageTalk",
-        type: "money",
-        line: "彩礼数字从“态度”变成了双方父母的底线。",
-        internalDelta: 8,
-        motiveDelta: 14,
-        flags: { weddingPressure: 1, parentConflict: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "money",
-        line: "婚礼定金、酒席加桌和礼金预期开始被反复计算。",
-        internalDelta: 9,
-        motiveDelta: 14,
-        flags: { weddingPressure: 2, parentConflict: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "money",
-        line: "婚后第一个月，共同账户和工资卡归属变成了新的敏感点。",
-        internalDelta: 10,
-        motiveDelta: 16,
-        flags: { householdPressure: 1, assetProtection: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "money",
-        line: "月供、装修贷和共同账户开始连在一起，谁承担风险变得越来越具体。",
-        internalDelta: 13,
-        motiveDelta: 18,
-        flags: { debtPressure: 2, assetProtection: 1 }
-      },
-      {
-        stage: "child",
-        type: "money",
-        line: "产检、月子中心、育儿嫂和托育费用被放进同一张预算表，爱忽然有了单价。",
-        internalDelta: 10,
-        motiveDelta: 14,
-        flags: { childPressure: 2, debtPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "house-parent-funded",
-    title: "婚房父母出资与房本名字",
-    motiveHints: ["familyResource", "money", "control"],
-    factors: [
-      {
-        stage: "preParents",
-        type: "property",
-        line: "TA 的父母很早开始问房子首付、贷款和房本名字。",
-        internalDelta: 6,
-        motiveDelta: 8,
-        flags: { parentConflict: 1 }
-      },
-      {
-        stage: "marriageTalk",
-        type: "property",
-        line: "房本名字被说成安全感，也被说成不信任。",
-        internalDelta: 10,
-        motiveDelta: 12,
-        flags: { assetProtection: 1, parentConflict: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "property",
-        line: "婚礼前，房子和装修又被父母拿出来确认了一遍。",
-        internalDelta: 8,
-        motiveDelta: 10,
-        flags: { parentConflict: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "property",
-        line: "装修、房贷和谁拥有决策权，开始每天出现在生活细节里。",
-        internalDelta: 9,
-        motiveDelta: 11,
-        flags: { householdPressure: 1, parentConflict: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "property",
-        line: "房子还没真正住进去，产权、贷款和父母出资已经先住进了你们的关系。",
-        internalDelta: 12,
-        motiveDelta: 15,
-        flags: { debtPressure: 2, parentConflict: 1, assetProtection: 1 }
-      },
-      {
-        stage: "child",
-        type: "property",
-        line: "学区、户口和谁接送孩子，让房子再次变成两家人争夺话语权的入口。",
-        internalDelta: 10,
-        motiveDelta: 13,
-        flags: { childPressure: 2, parentConflict: 1 }
-      }
-    ]
-  },
-  {
-    id: "care-and-child-plan",
-    title: "生育照护与老人同住",
-    motiveHints: ["care", "control", "kpi"],
-    factors: [
-      {
-        stage: "dating",
-        type: "care",
-        line: "TA 很自然地问起你能不能接受老人同住和三年内要孩子。",
-        internalDelta: 5,
-        motiveDelta: 9
-      },
-      {
-        stage: "marriageTalk",
-        type: "care",
-        line: "孩子、老人和家务被放进同一张表，好像婚后劳动已经默认分配好了。",
-        internalDelta: 12,
-        motiveDelta: 13,
-        flags: { parentConflict: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "care",
-        line: "婚礼座次里，未来带娃和养老的期待被亲戚们提前说出口。",
-        internalDelta: 10,
-        motiveDelta: 11,
-        flags: { parentConflict: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "care",
-        line: "家务、老人探访和备孕安排被默认塞进你的日程里。",
-        internalDelta: 13,
-        motiveDelta: 14,
-        flags: { householdPressure: 2, parentConflict: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "care",
-        line: "为了省钱，老人同住和未来带娃被重新包装成“家庭互助”。",
-        internalDelta: 10,
-        motiveDelta: 12,
-        flags: { debtPressure: 1, parentConflict: 2 }
-      },
-      {
-        stage: "child",
-        type: "care",
-        line: "孩子还没出生，谁牺牲职业、谁夜醒、谁负责老人情绪，已经被默认分配了一轮。",
-        internalDelta: 16,
-        motiveDelta: 20,
-        flags: { childPressure: 3, householdPressure: 1, parentConflict: 1 }
-      }
-    ]
-  },
-  {
-    id: "debt-and-cover",
-    title: "债务遮羞与背调回避",
-    motiveHints: ["cover", "money"],
-    factors: [
-      {
-        stage: "preParents",
-        type: "concealment",
-        line: "背调里有一项记录暂时无法确认，TA 说那只是过去的小事。",
-        internalDelta: 7,
-        motiveDelta: 15,
-        flags: { suspicion: 1 }
-      },
-      {
-        stage: "marriageTalk",
-        type: "concealment",
-        line: "TA 希望先订婚，债务和资料细节以后再慢慢补。",
-        internalDelta: 9,
-        motiveDelta: 18,
-        flags: { suspicion: 2 }
-      },
-      {
-        stage: "wedding",
-        type: "concealment",
-        line: "婚礼前夕，一个陌生消息提醒你：TA 还有一件事没说清。",
-        internalDelta: 12,
-        motiveDelta: 20,
-        flags: { suspicion: 2, weddingPressure: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "concealment",
-        line: "一笔旧账单或旧消息在婚后生活里突然冒出来。",
-        internalDelta: 12,
-        motiveDelta: 18,
-        flags: { suspicion: 2, householdPressure: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "concealment",
-        line: "贷款审批前夕，TA 的征信或旧债务出现了一个解释不清的缺口。",
-        internalDelta: 15,
-        motiveDelta: 22,
-        flags: { suspicion: 2, debtPressure: 2 }
-      },
-      {
-        stage: "child",
-        type: "concealment",
-        line: "产检和育儿安排逼近时，TA 仍回避一个会影响家庭计划的旧问题。",
-        internalDelta: 13,
-        motiveDelta: 18,
-        flags: { suspicion: 2, childPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "public-display-content",
-    title: "公开展示与内容流量",
-    motiveHints: ["content", "display"],
-    factors: [
-      {
-        stage: "dating",
-        type: "reputation",
-        line: "TA 总能把约会安排到适合拍照的位置。",
-        internalDelta: 3,
-        motiveDelta: 8
-      },
-      {
-        stage: "marriageTalk",
-        type: "reputation",
-        line: "订婚宴方案里，镜头、文案和宾客反应被安排得比誓言还细。",
-        internalDelta: 7,
-        motiveDelta: 16,
-        flags: { weddingPressure: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "reputation",
-        line: "婚礼流程被拆成可发布的片段，连父母敬茶都要找角度。",
-        internalDelta: 7,
-        motiveDelta: 18,
-        flags: { weddingPressure: 2 }
-      },
-      {
-        stage: "firstYear",
-        type: "reputation",
-        line: "婚后日常也开始被挑选、修剪、发布，真实生活反而无处安放。",
-        internalDelta: 9,
-        motiveDelta: 15,
-        flags: { householdPressure: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "reputation",
-        line: "买房进度被包装成生活升级内容，但真实月供没有出现在镜头里。",
-        internalDelta: 7,
-        motiveDelta: 14,
-        flags: { debtPressure: 1 }
-      },
-      {
-        stage: "child",
-        type: "reputation",
-        line: "孕期、育儿和亲子日常开始被构想成内容选题，真实疲惫被要求保持体面。",
-        internalDelta: 8,
-        motiveDelta: 16,
-        flags: { childPressure: 1, householdPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "emotional-pressure",
-    title: "情绪供养与压力转嫁",
-    motiveHints: ["emotionalSupply", "control"],
-    factors: [
-      {
-        stage: "dating",
-        type: "emotion",
-        line: "TA 在很短时间里把许多脆弱交给你，好像你已经负责接住。",
-        internalDelta: 8,
-        motiveDelta: 8
-      },
-      {
-        stage: "preParents",
-        type: "emotion",
-        line: "每当你想谈规则，TA 都先谈自己有多累。",
-        internalDelta: 11,
-        motiveDelta: 10,
-        flags: { suspicion: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "emotion",
-        line: "婚礼压力一上来，TA 把所有焦虑都倒向你，要求你先安抚 TA。",
-        internalDelta: 14,
-        motiveDelta: 12,
-        flags: { weddingPressure: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "emotion",
-        line: "同住以后，TA 的情绪低谷不再是电话里的声音，而是每天客厅里的天气。",
-        internalDelta: 15,
-        motiveDelta: 12,
-        flags: { householdPressure: 2 }
-      },
-      {
-        stage: "housingDebt",
-        type: "emotion",
-        line: "月供压力一来，TA 把焦虑、羞耻和不安都倒向你。",
-        internalDelta: 16,
-        motiveDelta: 13,
-        flags: { debtPressure: 2, householdPressure: 1 }
-      },
-      {
-        stage: "child",
-        type: "emotion",
-        line: "育儿压力还没真正开始，TA 已经把恐惧和委屈都交给你处理。",
-        internalDelta: 17,
-        motiveDelta: 15,
-        flags: { childPressure: 2, householdPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "love-transfer-special-numbers",
-    title: "恋爱转账与特殊金额争议",
-    motiveHints: ["money", "emotionalSupply"],
-    factors: [
-      {
-        stage: "dating",
-        type: "money",
-        line: "TA 开始用“520、1314 只是表达心意”来模糊小额和大额支出的边界。",
-        internalDelta: 4,
-        motiveDelta: 10,
-        flags: { giftPressure: 1 }
-      },
-      {
-        stage: "preParents",
-        type: "money",
-        line: "你发现恋爱期间的转账和代付已经很难说清是赠与、借款还是情绪安抚。",
-        internalDelta: 8,
-        motiveDelta: 14,
-        flags: { assetProtection: 1, suspicion: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "money",
-        line: "婚后共同账户开始承担过去恋爱期形成的消费习惯。",
-        internalDelta: 10,
-        motiveDelta: 12,
-        flags: { householdPressure: 1, debtPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "pre-marriage-house-name",
-    title: "婚前房产加名与共同还贷",
-    motiveHints: ["familyResource", "money", "control"],
-    factors: [
-      {
-        stage: "marriageTalk",
-        type: "property",
-        line: "TA 把婚前房产加名说成安全感测试，却不愿同步谈出资、还贷和退出机制。",
-        internalDelta: 10,
-        motiveDelta: 16,
-        flags: { assetProtection: 1, parentConflict: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "property",
-        line: "共同还贷、装修款和父母出资混在一起，任何一句“都是一家人”都开始变得危险。",
-        internalDelta: 14,
-        motiveDelta: 18,
-        flags: { debtPressure: 2, assetProtection: 1 }
-      }
-    ]
-  },
-  {
-    id: "sibling-bride-price-buyout",
-    title: "弟弟压力与彩礼买断感",
-    motiveHints: ["money", "familyResource", "care"],
-    factors: [
-      {
-        stage: "marriageTalk",
-        type: "family",
-        line: "TA 家里把彩礼和弟弟、父母养老、家里欠账放在同一段话里。",
-        internalDelta: 12,
-        motiveDelta: 18,
-        flags: { siblingPressure: 2, parentConflict: 1, weddingPressure: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "family",
-        line: "婚礼前，原生家庭再次确认彩礼是否“到位”，仿佛婚姻是一次家庭资金结算。",
-        internalDelta: 12,
-        motiveDelta: 16,
-        flags: { siblingPressure: 1, weddingPressure: 2 }
-      },
-      {
-        stage: "firstYear",
-        type: "family",
-        line: "婚后，TA 家里仍会把小家庭收入和原生家庭需求连在一起。",
-        internalDelta: 10,
-        motiveDelta: 14,
-        flags: { siblingPressure: 1, householdPressure: 1, debtPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "wedding-hazing-boundary",
-    title: "婚闹与公开羞辱边界",
-    motiveHints: ["display", "control", "content"],
-    factors: [
-      {
-        stage: "wedding",
-        type: "boundary",
-        line: "伴郎伴娘游戏被说成热闹，但每个环节都在测试你愿意为场面让出多少尊严。",
-        internalDelta: 14,
-        motiveDelta: 10,
-        flags: { publicPressure: 2, weddingPressure: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "boundary",
-        line: "婚礼上被笑着越过的边界，婚后很容易继续以“开玩笑”的方式回来。",
-        internalDelta: 12,
-        motiveDelta: 10,
-        flags: { communicationFriction: 1, householdPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "unpaid-care-work",
-    title: "全职照护与家务劳动价值",
-    motiveHints: ["care", "kpi", "familyResource"],
-    factors: [
-      {
-        stage: "firstYear",
-        type: "labor",
-        line: "TA 说“家务不就是顺手做吗”，但顺手的人总是同一个。",
-        internalDelta: 13,
-        motiveDelta: 10,
-        flags: { householdPressure: 2, emotionalLabor: 1 }
-      },
-      {
-        stage: "child",
-        type: "labor",
-        line: "育儿和家务被默认归到一个人身上，收入表看不见的劳动却每天都在发生。",
-        internalDelta: 16,
-        motiveDelta: 16,
-        flags: { childPressure: 2, householdPressure: 2, emotionalLabor: 1 }
-      }
-    ]
-  },
-  {
-    id: "phoenix-career-lift",
-    title: "凤凰男事业起飞与全家期待",
-    motiveHints: ["classJump", "familyResource", "money"],
-    factors: [
-      {
-        stage: "dating",
-        type: "career",
-        line: "TA 说自己只是暂时起点低，但很快又问你能不能介绍更好的机会。",
-        internalDelta: 7,
-        motiveDelta: 12,
-        flags: { phoenixAmbition: 1 }
-      },
-      {
-        stage: "marriageTalk",
-        type: "career",
-        line: "TA 家里把婚姻说成“互相扶持”，实际更像希望你带着 TA 完成一次阶层跃迁。",
-        internalDelta: 12,
-        motiveDelta: 18,
-        flags: { phoenixAmbition: 2, povertyStress: 1, parentConflict: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "career",
-        line: "买房压力下，TA 更频繁提到创业、跳槽和你的人脉资源。",
-        internalDelta: 14,
-        motiveDelta: 18,
-        flags: { phoenixAmbition: 1, debtPressure: 2 }
-      }
-    ]
-  },
-  {
-    id: "macro-economy-cycle",
-    title: "经济周期与家庭承压",
-    motiveHints: ["money", "familyResource", "classJump", "kpi"],
-    factors: [
-      {
-        stage: "screening",
-        type: "macro",
-        line: "婚介资料里多了一行行业稳定性评估，经济风向开始影响每个人的婚恋报价。",
-        internalDelta: 3,
-        motiveDelta: 6,
-        flags: { macroEconomyPressure: 1 }
-      },
-      {
-        stage: "dating",
-        type: "macro",
-        line: "TA 开始频繁聊裁员、降薪和副业，好像恋爱还没开始就已经背着一张压力表。",
-        internalDelta: 6,
-        motiveDelta: 8,
-        flags: { macroEconomyPressure: 1, povertyStress: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "macro",
-        line: "经济下行把耐心变薄，账单、加班和收入不稳更容易变成吵架的入口。",
-        internalDelta: 13,
-        motiveDelta: 12,
-        flags: { macroEconomyPressure: 2, householdPressure: 1, debtPressure: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "macro",
-        line: "房贷和收入预期不再像签合同时那么稳定，家庭现金流开始要求每个人说实话。",
-        internalDelta: 16,
-        motiveDelta: 16,
-        flags: { macroEconomyPressure: 2, debtPressure: 3, assetProtection: 1 }
-      },
-      {
-        stage: "child",
-        type: "macro",
-        line: "教育、托育和老人医疗同时涨价，外部环境把小家庭的每个短板都放大了。",
-        internalDelta: 15,
-        motiveDelta: 14,
-        flags: { macroEconomyPressure: 2, childPressure: 2, educationPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "stock-market-family-investment",
-    title: "股市投资与家庭风险偏好",
-    motiveHints: ["money", "classJump", "control"],
-    factors: [
-      {
-        stage: "dating",
-        type: "investment",
-        line: "TA 对一只热门股票或基金讲得很笃定，收益率听起来比关系本身还诱人。",
-        internalDelta: 5,
-        motiveDelta: 10,
-        flags: { stockMarketHeat: 1, scamExposure: 1 }
-      },
-      {
-        stage: "marriageTalk",
-        type: "investment",
-        line: "彩礼、婚房和投资账户被放进同一张未来规划表，风险却没有被同样认真计算。",
-        internalDelta: 11,
-        motiveDelta: 16,
-        flags: { stockMarketHeat: 1, investmentExposure: 2, assetProtection: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "investment",
-        line: "股市上涨时，TA 更愿意谈加仓；股市回撤时，TA 更愿意谈你为什么没有支持。",
-        internalDelta: 15,
-        motiveDelta: 14,
-        flags: { stockMarketHeat: 2, investmentExposure: 2, householdPressure: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "investment",
-        line: "有人提出用家庭备用金搏一把，说行情好时犹豫就是错过阶层跃迁。",
-        internalDelta: 18,
-        motiveDelta: 20,
-        flags: { investmentExposure: 3, scamExposure: 1, debtPressure: 2, assetProtection: 1 }
-      }
-    ]
-  },
-  {
-    id: "ex-reentry-boundary",
-    title: "前任回流与暧昧边界",
-    motiveHints: ["cover", "emotionalSupply", "control", "display"],
-    factors: [
-      {
-        stage: "dating",
-        type: "ex",
-        line: "TA 说前任只是偶尔问候，但手机亮起时，TA 的第一反应是把屏幕扣下。",
-        internalDelta: 8,
-        motiveDelta: 12,
-        flags: { exBoundary: 1, exReentryRisk: 1, suspicion: 1 }
-      },
-      {
-        stage: "preParents",
-        type: "ex",
-        line: "旧关系在你们确认排他前后重新出现，TA 把边界问题说成你太敏感。",
-        internalDelta: 13,
-        motiveDelta: 16,
-        flags: { exBoundary: 2, exReentryRisk: 1, suspicion: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "ex",
-        line: "婚礼前的陌生消息不一定是真相，但足够说明有一段旧关系没有被彻底关上。",
-        internalDelta: 16,
-        motiveDelta: 18,
-        flags: { exBoundary: 2, exReentryRisk: 2, weddingPressure: 1, suspicion: 2 }
-      },
-      {
-        stage: "firstYear",
-        type: "ex",
-        line: "一次争吵后，TA 又去找那个“最懂 TA 的老朋友”倾诉。",
-        internalDelta: 18,
-        motiveDelta: 16,
-        flags: { exReentryRisk: 2, infidelityRisk: 2, communicationFriction: 1, householdPressure: 1 }
-      }
-    ]
-  },
-  {
-    id: "attention-gap-affair-risk",
-    title: "关心不足与情绪价值外包",
-    motiveHints: ["emotionalSupply", "control", "content"],
-    factors: [
-      {
-        stage: "dating",
-        type: "intimacy",
-        line: "TA 对回复速度和陪伴频率特别敏感，像是在用秒回确认自己是否被爱。",
-        internalDelta: 8,
-        motiveDelta: 10,
-        flags: { emotionalValueDemand: 1, communicationFriction: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "intimacy",
-        line: "你们不再认真听对方说完一天，情绪价值开始被短视频、同事和旧联系人分走。",
-        internalDelta: 14,
-        motiveDelta: 12,
-        flags: { careDeficit: 2, emotionalValueDemand: 1, infidelityRisk: 1, householdPressure: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "intimacy",
-        line: "经济压力让你们只剩下任务协作，谁都没有力气再做对方的情绪容器。",
-        internalDelta: 16,
-        motiveDelta: 14,
-        flags: { careDeficit: 2, emotionalValueDemand: 1, infidelityRisk: 1, debtPressure: 1 }
-      },
-      {
-        stage: "child",
-        type: "intimacy",
-        line: "育儿把亲密切成碎片，外面那个愿意听 TA 抱怨的人忽然显得很轻松。",
-        internalDelta: 18,
-        motiveDelta: 16,
-        flags: { careDeficit: 2, emotionalValueDemand: 2, infidelityRisk: 2, childPressure: 1 }
-      }
-    ]
-  }
-];
-
-const HUMAN_PATTERN_LIBRARY = {
-  spoiledHeir: {
-    id: "pattern-spoiled-heir",
-    title: "受宠家庭的让步测试",
-    factors: [
-      {
-        stage: "dating",
-        type: "upbringing",
-        line: "你只是没有按 TA 想要的时间回复，TA 就把这件事说成“你根本不在乎我”。",
-        internalDelta: 16,
-        motiveDelta: 4,
-        flags: { suspicion: 1 }
-      },
-      {
-        stage: "preParents",
-        type: "upbringing",
-        line: "TA 习惯让父母替自己兜底，也习惯让亲密关系继续兜底。",
-        internalDelta: 14,
-        motiveDelta: 5,
-        flags: { parentConflict: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "upbringing",
-        line: "婚礼方案稍微不合 TA 的期待，TA 就说“从小到大没人这样委屈过我”。",
-        internalDelta: 20,
-        motiveDelta: 6,
-        flags: { weddingPressure: 2, parentConflict: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "upbringing",
-        line: "共同生活里，TA 对家务和让步的理解仍像在原生家庭里当孩子。",
-        internalDelta: 18,
-        motiveDelta: 6,
-        flags: { householdPressure: 2 }
-      },
-      {
-        stage: "child",
-        type: "upbringing",
-        line: "育儿压力一来，TA 希望所有人先照顾自己的情绪，再照顾孩子和现实。",
-        internalDelta: 18,
-        motiveDelta: 8,
-        flags: { childPressure: 2, householdPressure: 1 }
-      }
-    ]
-  },
-  npdMask: {
-    id: "pattern-npd-mask",
-    title: "高伪装控制与关系围猎",
-    factors: [
-      {
-        stage: "dating",
-        type: "control",
-        line: "TA 初期几乎完美：懂你、宠你、接住你，但也开始轻轻评价你的朋友和边界。",
-        internalDelta: 18,
-        motiveDelta: 22,
-        flags: { suspicion: 1 }
-      },
-      {
-        stage: "preParents",
-        type: "control",
-        line: "当你提出核实信息，TA 立刻反问：“你是不是从一开始就没信过我？”",
-        internalDelta: 24,
-        motiveDelta: 24,
-        flags: { suspicion: 2 }
-      },
-      {
-        stage: "marriageTalk",
-        type: "control",
-        line: "TA 把协议、边界和核验都说成伤害感情，要求你用服从证明爱。",
-        internalDelta: 26,
-        motiveDelta: 26,
-        flags: { suspicion: 2, parentConflict: 1 }
-      },
-      {
-        stage: "wedding",
-        type: "control",
-        line: "婚礼临近，TA 开始要求统一口径、删掉异性联系人，并把你的迟疑说成背叛。",
-        internalDelta: 28,
-        motiveDelta: 24,
-        flags: { weddingPressure: 2, suspicion: 2 }
-      },
-      {
-        stage: "firstYear",
-        type: "control",
-        line: "婚后 TA 开始用“已婚人士自觉”要求报备、交账和站队，温柔变成制度。",
-        internalDelta: 30,
-        motiveDelta: 24,
-        flags: { householdPressure: 3, suspicion: 2 }
-      },
-      {
-        stage: "housingDebt",
-        type: "control",
-        line: "债务压力给了 TA 新理由：你的工作、社交、消费和退路都被说成家庭风险。",
-        internalDelta: 30,
-        motiveDelta: 24,
-        flags: { debtPressure: 2, householdPressure: 2, suspicion: 2 }
-      },
-      {
-        stage: "child",
-        type: "control",
-        line: "孩子成为新的控制理由。TA 要求你按 TA 的家庭秩序调整工作、父母和生活半径。",
-        internalDelta: 32,
-        motiveDelta: 24,
-        flags: { childPressure: 3, householdPressure: 2, suspicion: 2 }
-      }
-    ]
-  },
-  pragmaticClimber: {
-    id: "pattern-pragmatic-climber",
-    title: "现实上升与资源计算",
-    factors: [
-      {
-        stage: "dating",
-        type: "resource",
-        line: "TA 聊天很舒服，但总会自然地绕回你的圈子、户口、收入和未来机会。",
-        internalDelta: 8,
-        motiveDelta: 18,
-        flags: { suspicion: 1 }
-      },
-      {
-        stage: "marriageTalk",
-        type: "resource",
-        line: "谈婚论嫁时，你能提供的资源被说成“共同未来的一部分”。",
-        internalDelta: 10,
-        motiveDelta: 22,
-        flags: { parentConflict: 1 }
-      },
-      {
-        stage: "housingDebt",
-        type: "resource",
-        line: "买房和学区被包装成共同进阶，但真正承担风险的人越来越像你。",
-        internalDelta: 12,
-        motiveDelta: 24,
-        flags: { debtPressure: 2, assetProtection: 1 }
-      }
-    ]
-  },
-  avoidantPleaser: {
-    id: "pattern-avoidant-pleaser",
-    title: "讨好回避与责任转移",
-    factors: [
-      {
-        stage: "preParents",
-        type: "avoidance",
-        line: "TA 表面说都听你的，但关键时刻总让你去面对父母和规则。",
-        internalDelta: 10,
-        motiveDelta: 8,
-        flags: { householdPressure: 1 }
-      },
-      {
-        stage: "firstYear",
-        type: "avoidance",
-        line: "婚后争议一出现，TA 就沉默、装忙、让你替两个人做决定。",
-        internalDelta: 14,
-        motiveDelta: 10,
-        flags: { householdPressure: 2 }
-      },
-      {
-        stage: "child",
-        type: "avoidance",
-        line: "育儿分工需要落地时，TA 仍然说“我都可以”，但没有接走任何一件事。",
-        internalDelta: 15,
-        motiveDelta: 10,
-        flags: { childPressure: 2, householdPressure: 2 }
-      }
-    ]
-  }
-};
-
-export function buildCaseDeck(npcs, npcSeeds, attrs) {
-  const deck = {};
-
-  npcs.forEach((npc) => {
-    const seed = npcSeeds[npc.id];
-    const candidates = CASE_LIBRARY.filter((item) => {
-      if (seed.motive && item.motiveHints.includes(seed.motive)) return true;
-      if (seed.hiddenType === "controlling" && item.motiveHints.includes("control")) return true;
-      if (attrs.wealth >= 7 && item.motiveHints.includes("money")) return true;
-      if (attrs.family >= 7 && item.motiveHints.includes("familyResource")) return true;
-      if (attrs.looks >= 7 && item.motiveHints.includes("display")) return true;
-      if (npc.id === "he" && item.id === "sibling-bride-price-buyout") return true;
-      if (npc.id === "chen" && item.id === "phoenix-career-lift") return true;
-      if (item.id === "house-parent-funded") {
-        return ["zhou", "shen", "chen"].includes(npc.id) || seed.motive === "familyResource" || attrs.family >= 6;
-      }
-      return false;
-    });
-    const patternCase = HUMAN_PATTERN_LIBRARY[seed.humanPattern];
-    if (patternCase) candidates.push(patternCase);
-
-    deck[npc.id] = {};
-    shuffle(candidates).forEach((caseItem) => {
-      caseItem.factors.forEach((factor) => {
-        if (!deck[npc.id][factor.stage]) deck[npc.id][factor.stage] = [];
-        if (deck[npc.id][factor.stage].length < 2) {
-          deck[npc.id][factor.stage].push({
-            ...factor,
-            caseId: caseItem.id,
-            caseTitle: caseItem.title
-          });
-        }
-      });
-    });
-  });
-
-  return deck;
-}
-
-export function caseEventsFor(deck, npcId, stage) {
-  return deck?.[npcId]?.[stage] ?? [];
 }

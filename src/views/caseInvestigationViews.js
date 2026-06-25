@@ -1,34 +1,30 @@
-import { tutorialGuideLine } from "./caseFragments.js?v=0.14.0";
-
 export function caseOpenView({
   chapter,
   brief,
-  playthroughLabel,
-  coldOpen,
-  opening,
-  difficultyText,
-  complainantName,
-  respondentName,
-  structureText,
-  budgetText,
   openingDialogue,
-  threadLine,
-  agencyBattle,
-  earlyWarning,
-  showStreamline,
-  scanDisabled
+  hasMoreOpening = false,
+  openingTotal = 0,
+  openingStep = 0,
+  showStreamline
 }) {
   return {
     chapter,
     text: `
-      ${tutorialGuideLine(brief, "open")}
-      ${brief.contentWarning ? `<p class="signal signal-yellow"><b>内容提示</b>：${brief.contentWarning}</p>` : ""}
-      <p class="vn-line">${openingDialogue[0]?.text ?? ""}</p>
+      ${brief.contentWarning ? `<p class="signal signal-yellow"><b>连线说明</b>：${brief.contentWarning}</p>` : ""}
+      <div class="call-dialogue" data-opening-total="${openingTotal}" data-opening-step="${openingStep}" data-opening-more="${hasMoreOpening ? "true" : "false"}">
+        ${(openingDialogue ?? []).map((line) => `
+          <div class="call-line ${line.role === "host" ? "host" : "caller"}">
+            <b>${callSpeakerLabel(brief, line, line.role === "host" ? "你" : "咨询者")}</b>
+            <p>${line.text ?? ""}</p>
+          </div>
+        `).join("")}
+      </div>
     `,
     choices: `
-      <button class="primary" data-case-scene="sceneReview" type="button">回放客户叙述</button>
-      ${showStreamline ? `<button data-streamline-case type="button">绿色模式：仅核查硬性时间线</button>` : ""}
-      <button data-case-scan ${scanDisabled} type="button">先看后台资料，直达分析台</button>
+      ${hasMoreOpening
+        ? `<button class="primary" data-opening-next onclick="window.__loveOpeningNext && window.__loveOpeningNext()" type="button">听下一句</button>`
+        : `<button class="primary" data-case-scene="sceneReview" type="button">接着问她</button>`}
+      ${showStreamline ? `<button data-streamline-case type="button">跳过敏感细节</button>` : ""}
     `
   };
 }
@@ -36,258 +32,278 @@ export function caseOpenView({
 export function sceneReviewView({
   chapter,
   brief,
-  budgetText,
-  beat,
-  contradictions,
+  sceneIndex = 0,
+  currentVersion,
+  totalVersions = 0,
   versionStates,
-  questionStates
+  optionStates = [],
+  canDiscussProblem = false
 }) {
+  const item = currentVersion ?? {};
+  const index = Math.max(0, sceneIndex);
+  const version = versionStates[index] ?? {};
+  const options = sceneQuestionOptions(item, index);
+  const lineClass = callLineClass(brief, item);
+  const speakerLabel = callSpeakerLabel(brief, item, "来电");
   return {
     chapter,
     text: `
-      <p><b>客户叙述回放：${brief.scene.name}</b></p>
-      ${tutorialGuideLine(brief, "scene")}
-      <p class="side-signal">回放开始。只听台词，不急着站队。</p>
       <div class="call-dialogue">
-        ${brief.sceneVersions.map((item, index) => {
-          const version = versionStates[index] ?? {};
-          const options = sceneQuestionOptions(item, index);
-          const lineClass = item.speakerId
-            ? item.speakerId === brief.complainantId ? "caller" : "other"
-            : "host";
-          return `
-            <div class="call-line ${lineClass}">
-              <b>${item.speaker}</b>
-              <p>${item.version}</p>
-              <p class="muted">${item.doubt}</p>
-              <div class="inline-actions">
-                ${options.map((option, optionIndex) => `
-                  <button data-version-question="${index}:${optionIndex}" ${version.disabled} type="button">${version.done ? "已问到关键" : option.question}</button>
-                `).join("")}
-              </div>
-            </div>
-          `;
-        }).join("")}
+        <div class="call-line ${lineClass}">
+          <b>${speakerLabel}</b>
+          <p>${item.version ?? "暂无叙述。"}</p>
+        </div>
       </div>
-      ${contradictions.length ? `<p class="signal signal-yellow">已发现迷惑点：${contradictions.slice(-2).join(" / ")}</p>` : ""}
-      <p class="side-signal">孟姐把三段说法压到记事本上：先问咨询者，再补另一方情况，最后看后台资料能不能接住。</p>
     `,
     choices: `
-      <button data-scene-question="complainant" ${questionStates.complainant} type="button">询问咨询者</button>
-      <button data-scene-question="respondent" ${questionStates.respondent} type="button">询问另一方的情况</button>
-      <button data-scene-question="details" ${questionStates.details} type="button">核对现场细节</button>
-      <button class="primary" data-case-scene="testimony" type="button">整理成通话摘录</button>
+      ${version.done
+        ? nextDialogueChoices(index, totalVersions, canDiscussProblem)
+        : options.map((option, optionIndex) => `
+            <button class="${option.correct !== false ? "primary" : ""}" data-version-question="${index}:${optionIndex}" ${version.disabled || optionStates[index]?.[optionIndex]?.disabled || ""} type="button">${option.question}</button>
+          `).join("")}
+      <div class="nav-actions">
+        <button data-scene-version-prev ${index <= 0 ? "disabled" : ""} type="button">上一句</button>
+      </div>
     `
   };
+}
+
+function nextDialogueChoices(index, totalVersions, canDiscussProblem) {
+  if (index < totalVersions - 1) {
+    return `<button class="primary" data-scene-version-next type="button">那后来呢？</button>`;
+  }
+  return canDiscussProblem
+    ? `<button class="primary" data-case-scene="testimony" type="button">把通话继续接下去</button>`
+    : `<button class="primary" data-case-scene="evidence" type="button">把刚才几句记下</button>`;
 }
 
 function sceneQuestionOptions(item, index) {
   if (Array.isArray(item.questionOptions) && item.questionOptions.length) return item.questionOptions;
   const factual = index === 2
-    ? "这份材料只能证明哪一部分？"
-    : "你刚才省略的是哪一段？";
+    ? "这页东西你是怎么拿到的？"
+    : "你刚才那句，前后还发生了什么？";
   return [
     {
       question: factual,
-      answer: item.contradiction ?? "这段说法里有一个事实缺口被问出来了。",
+      answer: item.contradiction ? "TA 把前后话又补了一句。" : "TA 把前后话补了一句。",
       contradiction: item.contradiction,
       correct: true
     },
     {
-      question: index === 0 ? "所以你觉得全是对方的问题？" : "你能保证自己这版没有修剪吗？",
-      answer: `${item.speaker} 的语气明显防御起来，开始重复立场，没有补出新事实。`,
+      question: index === 0 ? "所以你现在最委屈的是哪一下？" : "你先别急，我们把这句放慢一点。",
+      answer: "TA 的语气明显防御起来，开始重复立场，没有补出新事实。",
       correct: false
     }
   ];
 }
 
+function callSpeakerLabel(brief, item = {}, fallback = "来电") {
+  if (!isDailyBrief(brief)) return item.speaker ?? fallback;
+  if (item.speaker === "你" || item.role === "host") return "你";
+  if (item.speakerId === brief.complainantId) return "咨询者";
+  if (item.speakerId === brief.respondentId) return "咨询者转述";
+  if (/材料|账单|截图|草稿|排班表|回拨|录音|合同|摘录|记事/.test(item.speaker ?? "")) return item.speaker;
+  return fallback === "来电" ? "咨询者" : fallback;
+}
+
+function callLineClass(brief, item = {}) {
+  if (item.role === "host" || item.speaker === "你") return "host";
+  if (isDailyBrief(brief)) return "caller";
+  if (!item.speakerId) return "host";
+  return item.speakerId === brief.complainantId ? "caller" : "other";
+}
+
+function isDailyBrief(brief) {
+  return brief?.dailyCase || brief?.caseMode === "daily";
+}
+
 export function evidenceView({
   chapter,
   brief,
-  budgetText,
-  archiveBlock,
-  tutorialPracticeBlock,
-  contradictionCount,
-  insights,
-  timelineHint,
-  contradictions,
-  hiddenHint,
   evidenceStates,
-  specialtySkill,
-  inspiration
+  canAccuse = true,
+  readinessHint = ""
 }) {
+  const evidenceLabels = evidenceChoiceLabels(brief);
+  const isDaily = isDailyBrief(brief);
   return {
     chapter,
     text: `
-      <p><b>调查记事本</b></p>
-      <p class="hint">${budgetText}</p>
-      ${tutorialGuideLine(brief, "evidence")}
-      ${brief.storyClueObject ? `<p class="episode-hook">主线资料：${brief.storyClueObject}</p>` : ""}
-      ${archiveBlock}
-      ${tutorialPracticeBlock}
-      <div class="notebook-board">
-        <section>
-          <h3>已记下的矛盾</h3>
-          ${contradictions.length
-            ? `<ul>${contradictions.slice(-5).map((line) => `<li>${line}</li>`).join("")}</ul>`
-            : `<p>还没有足够矛盾。先回叙述回放或通话摘录继续问。</p>`}
-        </section>
-        <section>
-          <h3>后台资料</h3>
-          <div class="source-board compact-record">
-            ${(brief.evidenceCards ?? []).slice(0, 6).map((card) => `<p><b>${sourceTypeLabel(card.type)}｜${card.title}</b><br><span>${card.front}</span></p>`).join("")}
-          </div>
-        </section>
+      <p><b>麦先别断</b></p>
+      <div class="call-dialogue">
+        <div class="call-line host">
+          <b>你</b>
+          <p>这几句先放在这儿。你别替他解释，也别替自己道歉，接着说原话。</p>
+        </div>
       </div>
-      ${insights.length ? `<p><b>整理发现</b>：${insights.slice(-3).join(" / ")}</p>` : ""}
-      ${timelineHint ? `<p class="signal signal-yellow">时间线追踪工具提示：${timelineHint}</p>` : ""}
-      ${hiddenHint}
     `,
     choices: `
-      <button data-case-scene="sceneReview" type="button">回放：客户叙述</button>
-      <button data-case-scene="testimony" type="button">询问：继续通话摘录</button>
-      <button data-evidence="timeline" ${evidenceStates.timeline} type="button">整理：时间线</button>
-      <button data-evidence="money" ${evidenceStates.money} type="button">整理：钱和资源</button>
-      <button data-evidence="motive" ${evidenceStates.motive} type="button">整理：动机收益</button>
-      ${specialtySkill}
-      <button class="primary" data-case-scene="accusation" type="button">给出阶段判断</button>
+      <button data-case-scene="testimony" type="button">继续听她说</button>
+      <button data-evidence="timeline" ${evidenceStates.timeline} type="button">${evidenceLabels.timeline}</button>
+      <button data-evidence="money" ${evidenceStates.money} type="button">${evidenceLabels.money}</button>
+      <button data-evidence="motive" ${evidenceStates.motive} type="button">${evidenceLabels.motive}</button>
+      ${canAccuse
+        ? `<button class="primary" data-case-scene="accusation" type="button">${isDaily ? "弹幕开盘" : "接哪边的麦"}</button>`
+        : `<p class="choice-note">${readinessHint || "这通电话还没听完整。"}</p>`}
+      <div class="nav-actions">
+        <button data-case-scene="sceneReview" type="button">回到第一版说法</button>
+      </div>
     `
+  };
+}
+
+function evidenceChoiceLabels(brief) {
+  if (brief?.plotId === "education-income-fake-profile") {
+    return {
+      timeline: "先问这些截图是什么时候发的",
+      money: "先问每张图少了哪一边",
+      motive: "先问他为什么总绕回信不信"
+    };
+  }
+  return {
+    timeline: "先问时间怎么接上",
+    money: "先问钱和资源谁承担",
+    motive: "先问谁因此获益"
   };
 }
 
 export function accusationView({
   chapter,
   brief,
-  budgetText,
-  contradictions,
   hint,
   complainantName,
   respondentName,
-  structuralChoice,
-  inspiration
+  structuralChoice
 }) {
+  const isDaily = isDailyBrief(brief);
+  if (isDaily) return dailyAccusationView({ chapter, brief });
+  const title = "接哪边的麦";
+  const intro = "直播间先不盖棺。你只决定下一句该让谁把话补全。";
+  const complainantButtonText = `先让 ${complainantName} 补话`;
+  const respondentButtonText = `先让 ${respondentName} 补话`;
+  const bothButtonText = "双方都有没说完的地方";
+  const noPremeditatedButtonText = "先当成关系失衡";
   return {
     chapter,
     text: `
-      <p><b>阶段判断</b></p>
-      <p class="hint">${budgetText}</p>
-      ${tutorialGuideLine(brief, "accusation")}
-      <p>${brief.caseMode === "confession" ? "你不需要审判这位告解者，但必须判断 TA 的自述里哪里是被坑、哪里是自欺、哪里可能也伤害了别人。" : "你不需要一次性给出全部结论，但必须判断目前谁的叙事最需要被拆开。没有抓到足够矛盾点时，任何判断都可能只是被台词带着走。"}</p>
-      <p><b>已发现矛盾点</b>：${contradictions.length ? contradictions.join(" / ") : "暂无，建议回去追问。"}</p>
+      <p><b>${title}</b></p>
+      <p>${intro}</p>
       <p class="hint">${hint}</p>
     `,
     choices: `
-      <button data-case-scene="sceneReview" type="button">回叙述回放</button>
-      <button data-case-scene="testimony" type="button">回通话摘录</button>
-      <button data-accuse="${brief.complainantId}" type="button">${brief.caseMode === "confession" ? `重点拆 ${complainantName} 的自述` : `重点指向 ${complainantName}`}</button>
-      <button data-accuse="${brief.respondentId}" type="button">重点指向 ${respondentName}</button>
+      <button data-accuse="${brief.complainantId}" type="button">${complainantButtonText}</button>
+      <button data-accuse="${brief.respondentId}" type="button">${respondentButtonText}</button>
       ${structuralChoice}
-      <button data-accuse="both" type="button">${brief.caseMode === "confession" ? "自我选择和对方行为都要查" : "双方都有隐瞒"}</button>
-      <button data-accuse="noPremeditated" type="button">${brief.caseMode === "confession" ? "暂判不是骗局，是选择机制失衡" : "暂判无预谋，只是关系失衡"}</button>
+      <button data-accuse="both" type="button">${bothButtonText}</button>
+      <button data-accuse="noPremeditated" type="button">${noPremeditatedButtonText}</button>
+      <div class="nav-actions">
+        <button data-case-scene="sceneReview" type="button">回到第一版说法</button>
+        <button data-case-scene="testimony" type="button">回到原话</button>
+      </div>
     `
   };
 }
 
-export function confessionTimelineView({
-  chapter,
-  brief,
-  budgetText,
-  coldOpen,
-  marks,
-  markLabels,
-  markStates,
-  contradictions,
-  inspiration
-}) {
+function dailyAccusationView({ chapter, brief }) {
+  const choices = dailyAccusationChoices(brief);
   return {
     chapter,
     text: `
-      <p><b>告解时间线</b></p>
-      <p class="hint">${budgetText}</p>
-      <p class="episode-hook">${coldOpen}</p>
-      <p>这次不是比对两个人谁说得更顺，而是把当事人的经历拆成节点。每个节点都要判断：TA 是被坑、在自欺，还是也可能伤了别人。</p>
-      <div class="scene-list">
-        ${(brief.confessionTimeline ?? []).map((node, index) => `
-          <p><b>${index + 1}. ${node.label}</b>：${node.text}<br>
-          <span>${marks[node.id] ? `你的标注：${markLabels[marks[node.id]]}` : "尚未标注"}</span><br>
-          ${Object.entries(markLabels).map(([mark, label]) => {
-            const state = markStates[`${node.id}:${mark}`] ?? {};
-            return `<button data-confession="${node.id}:${mark}" ${state.disabled} type="button">${label}</button>`;
-          }).join("")}
-          </p>
-        `).join("")}
-      </div>
-      ${contradictions.length ? `<p class="signal signal-yellow">已发现自述断点：${contradictions.slice(-3).join(" / ")}</p>` : ""}
+      <p><b>弹幕开盘</b></p>
+      <p>刚才那几句里，哪一下最值得停住？</p>
     `,
     choices: `
-      <button data-case-scene="testimony" type="button">继续听 TA 告解</button>
-      <button class="primary" data-case-scene="evidence" type="button">整理自我核验证据</button>
+      ${choices.map((choice) => `
+        <button data-accuse="${choice.accuse}" data-accuse-label="${choice.label}" type="button">${choice.label}</button>
+      `).join("")}
+      <div class="nav-actions">
+        <button data-case-scene="sceneReview" type="button">回到第一版说法</button>
+        <button data-case-scene="testimony" type="button">回到原话</button>
+      </div>
     `
   };
+}
+
+function dailyAccusationChoices(brief) {
+  const respondent = brief.respondentId;
+  const complainant = brief.complainantId;
+  if (brief?.plotId === "lost-job-hidden-credit") {
+    return [
+      { label: "失业是真，但体面账也是真的", accuse: respondent },
+      { label: "她怕被说现实，所以不敢拒绝", accuse: complainant },
+      { label: "借钱那一刻才开始出问题", accuse: "noPremeditated" },
+      { label: "两个人都在硬撑体面", accuse: "both" }
+    ];
+  }
+  if (brief?.plotId === "house-name-security-test") {
+    return [
+      { label: "产权归父母，还贷进共同账户", accuse: respondent },
+      { label: "她真正想要的是产权承诺", accuse: complainant },
+      { label: "只要不加名就没问题", accuse: "noPremeditated" },
+      { label: "两边都在拿安全感试探", accuse: "both" }
+    ];
+  }
+  if (brief?.plotId === "tony-multi-dating") {
+    return [
+      { label: "不是聊天多，是把人按用途分组", accuse: respondent },
+      { label: "她把服务行业热情听成了承诺", accuse: complainant },
+      { label: "核心是没有正式确认关系", accuse: "noPremeditated" },
+      { label: "几个人都在等对方先表态", accuse: "both" }
+    ];
+  }
+  if (brief?.plotId === "education-income-fake-profile") {
+    return [
+      { label: "重点是那些材料到底真假", accuse: respondent },
+      { label: "她借父母的口在要证明", accuse: complainant },
+      { label: "存款证明是谁推出来的说不清", accuse: "both" },
+      { label: "只是见父母前紧张过头", accuse: "noPremeditated" }
+    ];
+  }
+  return [
+    { label: "对方这句话没说全", accuse: respondent },
+    { label: "咨询者这句话没说全", accuse: complainant },
+    { label: "两边都有停顿", accuse: "both" },
+    { label: "先当成误会", accuse: "noPremeditated" }
+  ];
 }
 
 export function testimonyView({
   chapter,
   brief,
-  budgetText,
-  testimonyBeat,
   testimonyIndex,
   currentTestimony,
-  selectedCard,
-  notes,
-  contradictions,
-  followupStates,
-  presentStates,
-  specialtySkill,
-  inspiration
+  followupStates
 }) {
-  const total = brief.testimony?.length ?? 0;
   const item = currentTestimony ?? {};
   const currentFollowups = item.followups ?? [];
   const currentIndex = Math.max(0, testimonyIndex ?? 0);
+  const total = Math.max(1, brief.testimony?.length ?? 0);
+  const speakerLabel = callSpeakerLabel(brief, item, "来电");
   return {
     chapter,
     text: `
-      <p><b>通话摘录</b></p>
-      ${tutorialGuideLine(brief, "testimony")}
-      <p class="signal signal-yellow">第 ${currentIndex + 1}/${total} 段材料｜当前资料：${selectedCard ? `${sourceTypeLabel(selectedCard.type)}｜${selectedCard.title}` : "未选择"}</p>
+      <p><b>麦还没断</b></p>
       <div class="call-dialogue">
-        <div class="call-line ${item.speakerId ? item.speakerId === brief.complainantId ? "caller" : "other" : "host"} active-testimony">
-          <b>${item.speaker ?? "通话摘录"}<span>${item.surface ?? ""}</span></b>
+        <div class="call-line ${callLineClass(brief, item)} active-testimony">
+          <b>${speakerLabel}</b>
           <p>${item.line ?? "暂无摘录。"}</p>
           <div class="inline-actions">
             ${currentFollowups.map((followup, followupIndex) => {
               const state = followupStates[`${currentIndex}:${followupIndex}`] ?? {};
-              return `<button data-followup="${currentIndex}:${followupIndex}" ${state.disabled} type="button">${state.done ? "已询问" : followup.question}</button>`;
+              if (state.done) return "";
+              return `<button data-followup="${currentIndex}:${followupIndex}" ${state.disabled} type="button">${followup.question}</button>`;
             }).join("")}
-            <button data-present="${currentIndex}" ${presentStates[currentIndex] ?? "disabled"} type="button">拿当前资料核对</button>
           </div>
         </div>
       </div>
-      <details class="evidence-drawer">
-        <summary>后台资料</summary>
-        <div class="source-board compact-record">
-          ${(brief.evidenceCards ?? []).map((card) => `
-            <p><b>${sourceTypeLabel(card.type)}｜${card.title}</b><br><span>${card.front}</span><br><button data-select-card="${card.id}" type="button">${selectedCard?.id === card.id ? "已放上分析台" : "放上分析台"}</button></p>
-          `).join("")}
-        </div>
-      </details>
-      ${notes.length ? `<p class="reaction">已询问：${notes.slice(-2).join(" / ")}</p>` : ""}
-      ${contradictions.length ? `<p class="signal signal-yellow">已发现矛盾：${contradictions.slice(-3).join(" / ")}</p>` : ""}
     `,
     choices: `
-      <button data-case-scene="sceneReview" type="button">回到叙述回放</button>
-      <button data-testimony-prev ${currentIndex <= 0 ? "disabled" : ""} type="button">上一段</button>
-      <button data-testimony-next ${currentIndex >= total - 1 ? "disabled" : ""} type="button">下一段</button>
-      ${specialtySkill}
-      <button class="primary" data-case-scene="evidence" type="button">打开分析台</button>
+      <button class="primary" data-case-scene="evidence" type="button">把刚才几句放一起看</button>
+      <div class="nav-actions">
+        <button data-testimony-next ${currentIndex >= total - 1 ? "disabled" : ""} type="button">她后面怎么说</button>
+        <button data-testimony-prev ${currentIndex <= 0 ? "disabled" : ""} type="button">回上一句</button>
+        <button data-case-scene="sceneReview" type="button">回到第一版说法</button>
+      </div>
     `
   };
-}
-
-function sourceTypeLabel(type = "资料") {
-  return String(type)
-    .replace("主线物证", "主线资料")
-    .replace("跨套线索", "旧案线索")
-    .replace("图片证据", "图片资料");
 }
