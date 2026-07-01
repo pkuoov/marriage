@@ -11,6 +11,8 @@ Use this skill when the task is to review, debug, or improve a playable live-cal
 
 This is a game and a narrative text experience, not a tutorial, worksheet, consulting product, or pass-helper. Do not add copy or logic that actively helps the player clear the case. Let the player read, suspect, choose, miss, and replay. Guidance, route axes, scoring, and conclusions should stay off the live-call screen. A pressure meter is allowed only when it represents diegetic live-room attention, such as audience patience, and it must create risk rather than reveal answers.
 
+Before continuing broad optimization work, read `docs/unfinished-backlog.md`, `docs/roadmap.md`, and `docs/game-unit-test-cases.md`. Do not rely on chat memory for unfinished work. Promote any repeated complaint into one of those files or this skill before ending the turn.
+
 Do not review from code alone. Play the flow like a first-time player, capture what is actually on screen, then patch code only after the lived flow reveals the problem.
 
 Do not generate or repair daily-case text one field or one sentence at a time. Daily cases must be written as one integrated call first, then split into UI fields. If one line changes the motive, pressure, object purpose, or responsibility balance, regenerate the whole local chain around it: opening, scene beat, current-node options, feedback, optional full-hit deep question, final quote-pick, recap/share copy, and migration copy.
@@ -72,12 +74,16 @@ Every story collection must have:
 - hidden route-map data for every playable choice, such as caller credibility, counterparty credibility, material edge, money flow, process control, identity wording, or outer detour
 - a final story-pack recap that summarizes the player's dominant route tendency without pretending that a different route was never possible
 - a comment-wall recap that sounds like real discussion, but is generated from the player's actual route, issue reveal ratio, and story-pack theme
+- interlude screens that connect the previous case to the next through player route, case object, and story pressure, not through directory titles such as "next case" or "case 2/4"
+- no visible act labels, case directory labels, or pack structure while the player is still inside the live-call flow
 
 For material-centered cases, write a clear truth boundary before writing dialogue:
 - `true`: what the screenshot, balance, diploma, bill, chat, or proof actually establishes.
 - `edited`: which missing edge changes the social meaning: project type, contract body, income composition, money source, account freeze, timeline, sender intent.
 - `possiblyFalse`: which implied claim may be false even if the image is real.
 - `unknown`: what the current call still cannot prove and should remain arguable.
+
+Material inspection is a playable beat, not a hint panel. A correct material pick should add a contradiction and keep audience patience unchanged. A wrong material pick may consume patience, but it must not reveal the correct answer. The route map should mark material beats as material, not as a fake sixth dialogue scene.
 
 Use an "Ace Attorney-style reveal" only when the host asks a natural question the caller has already made possible. The reveal should answer a practical why:
 - Why did this person need a bank flow instead of a balance screenshot?
@@ -176,7 +182,7 @@ Avoid:
    - Do portraits feel too stiff or documentary-real while the writing is doing livestream drama? If yes, add light stylization and expression beats such as blinking, pausing, looking away, gripping the phone, or taking a breath. These are performance cues, not player hints.
    - Does a story-pack bridge, chapter thesis, or marketing-style explanation appear under live-call dialogue? If yes, move it to the title, interlude, or summary screen. The call screen should contain call content and controls only.
    - Does the title screen display a thesis, moral judgement, number of cases, or a table of case titles before the player hears the cases? If yes, replace it with a live-room hook. The theme and structure can appear after the story has been played.
-   - After the player enters the first call, do the HUD, dialogue eyebrow, interlude, or next button still expose pack structure, such as "four-case story collection", "case 1/4", named act labels, or "next case"? If yes, rewrite those as live-room language: "热线连线", "匿名来电", "下一通来电", "今晚收麦".
+   - After the player enters the first call, do the HUD, dialogue eyebrow, interlude, or next button still expose pack structure, such as "four-case story collection", "case 1/4", named act labels, or "next case"? If yes, rewrite those as live-room language: "热线连线", "匿名来电", "接入下一通", "今晚收麦". Interlude card titles should use dramatic objects, not "下一通来电".
    - Does a main-flow continue button or helper label imply replay, recap, or audio review, such as "continue listening to original audio" or "call replay"? If yes, use neutral dialogue-forward copy like "continue" and "previous dialogue".
    - Does a main-flow action area add labels or notes that only explain the UI, such as "麦上动作" or "麦还连着"? If yes, remove the label layer and let the buttons stand on their own.
    - Does a collapsed review/backlog affordance use archive labels such as "前文对话", "开场对话", or "上一轮追问后"? If yes, replace it with one plain live-call phrase such as "刚才说到".
@@ -184,6 +190,10 @@ Avoid:
    - Does a current-choice hint tell the player which hidden route axis to use, such as "first look at money flow/material edge/process control"? If yes, remove the axis hint from the play screen. Route tendencies belong in recap, not before the choice.
    - Does the deep-question screen show scoring or completion copy such as "full-hit follow-up" or "key points connected"? If yes, remove it and let the host question itself carry the moment.
    - Does the recap or conclusion page sound like a grading rubric, lesson, or best-answer comparison, with words like "sharper conclusion", "best answer", "full score", "badge", or "problem reveal rate"? If yes, rewrite it as host wrap-up and live-room aftertaste.
+   - Does the recap score label use abstract AI-flavored copy such as "the taste left in the mic"? If yes, replace it with a plain diegetic phrase like "话头收住".
+   - Does the route map show a material inspection as a numbered dialogue beat? If yes, label it as material so the player remembers it was a different action.
+   - Does the story-pack final small print explain the mechanics, such as "different hosts take different routes"? If yes, generate a line from the actual route result instead.
+   - Does the interlude summarize the previous case with generic bookkeeping text, such as "just note that call", or title the next card "next call/case"? If yes, rewrite it around the previous case object, player route, and next dramatic object.
    - Does the live-call HUD or result card actively help the player clear the case, such as showing "caught x/y", "asked x/y", "one line missing", route-axis instructions, or missing core issues? If yes, remove those from the playable route. Keep route and tendency data for aftermath only, and do not list the answers the player missed.
    - Does the route-map recap show five identical axis labels with no memory of the actual questions? If yes, add per-beat question summaries or route tones so the player can recognize their path.
    - Does the choice-group hint name the wrong route axis, such as calling a wording/identity question "money flow" only because the scene mentions income? If yes, adjust route metadata or inference priority.
@@ -219,6 +229,7 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - The first screen gives only the event hook, not the answer.
 - The story-pack title screen should sell the incoming call, not explain the thesis or show a case list. Do not reveal the number of cases, titles, act labels, or later objects on the first screen.
 - Story-pack live screens should also avoid directory language. The player can know a new call is coming, but should not see act names, case titles, "case 1/4", or package labels while still inside the live-call flow.
+- Story-pack interludes should feel like a live program cut, not a content directory. The previous card should name what changed in the last call; the next card should use a dramatic object such as "表格", "资料图", or "审批截图", not "下一案 / 下一通来电" as a title.
 - Each scene adds one new pressure or fact. If two major facts appear in the same caller statement, split or move one later.
 - The dramatic object should be layered: first the object appears, then its missing edge, then its purpose or payoff.
 - Caller self-interest belongs in the back half or the full-hit deep question unless the case is explicitly about the caller's opening confession.
@@ -233,6 +244,7 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - Portrait and expression text should make the caller feel alive: small physical tells, pauses, and mic-side reactions. Keep them short and varied; do not use them to reveal the correct question.
 - Training-script or impure-intent hooks are useful, but they must be diegetic and grounded in visible text: "话太顺了", "甜话后面接要求", "流程词说得太熟". Do not derive these hooks from hidden contradictions, unseen answers, or route metadata the player has not earned.
 - Route-map recap must preserve player memory: each beat should show at least the route axis plus a short trace of the actual question or tone.
+- Material inspection belongs in route-map memory too, but it should be marked as material. Do not number it like another dialogue statement.
 - Choice-group hints must match the player's actual question intent. Material, identity wording, money flow, process control, and caller credibility are different axes even when they appear in the same scene.
 - Current-node choices must not render as two lonely one-button groups. A small choice set should live in one panel, and the buttons should read as host questions, not as UI categories explaining the question type.
 - Button text is not a legend. Do not label choices with route categories, difficulty categories, or designer shorthand. If the player can ask it, show the question. If it only explains the design, keep it out of the live-call UI.
