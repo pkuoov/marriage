@@ -1,8 +1,9 @@
-import { platformRuntime } from "./platformRuntime.js?v=0.19.36";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.26";
 
 let audioContext;
 const SOUND_KEY = "marriage-detective-agency-sound";
-const savedSound = platformRuntime.storage.get(SOUND_KEY);
+const SOUND_KEY_V2 = "livestream-detective-sound";
+const savedSound = platformRuntime.storage.get(SOUND_KEY_V2) ?? platformRuntime.storage.get(SOUND_KEY);
 let enabled = savedSound !== "off";
 
 function getContext() {
@@ -51,7 +52,7 @@ export function playSfx(kind = "click") {
 
 export function toggleSound() {
   enabled = !enabled;
-  platformRuntime.storage.set(SOUND_KEY, enabled ? "on" : "off");
+  platformRuntime.storage.set(SOUND_KEY_V2, enabled ? "on" : "off");
   if (enabled) playSfx("confirm");
   return enabled;
 }

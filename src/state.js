@@ -1,19 +1,19 @@
-import { platformRuntime } from "./platformRuntime.js?v=0.19.36";
-import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.19.36";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.26";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.26";
 
-export const STORAGE_KEY = "marriage-detective-agency-save-v1";
-export const META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
-export const MAX_META_BONUS = 24;
-export const PUBLIC_PLAYER_GENDER = "male";
+export const STORAGE_KEY = "livestream-detective-save-v1";
+export const META_STORAGE_KEY = "livestream-detective-meta-v1";
+const LEGACY_STORAGE_KEY = "marriage-detective-agency-save-v1";
+const LEGACY_META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
 
 export const CHARACTER_ART = {
-  meng: "./assets/generated/characters/meng_host_v2.png?v=0.19.36",
-  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.19.36",
-  lin: "./assets/generated/characters/lin_neutral.png?v=0.19.36",
-  xu: "./assets/generated/characters/xu_neutral.png?v=0.19.36",
-  chen: "./assets/generated/characters/chen_neutral.png?v=0.19.36",
-  shen: "./assets/generated/characters/shen_neutral.png?v=0.19.36",
-  he: "./assets/generated/characters/he_neutral.png?v=0.19.36"
+  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.26",
+  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.26",
+  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.26",
+  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.26",
+  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.26",
+  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.26",
+  he: "./assets/generated/characters/he_neutral.png?v=0.20.26"
 };
 
 export const baseState = {
@@ -23,78 +23,25 @@ export const baseState = {
     textSpeed: "normal",
     contentWarningAccepted: false
   },
-  playerRole: "host-lawyer",
+  caseMode: "episode",
+  chapter: 1,
+  scene: "caseOpen",
+  attrs: { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 },
   caseBrief: null,
   caseBriefs: [],
-  interrogationNotes: {},
-  contradictionLog: {},
-  solvedCaseIds: [],
-  accusationHistory: [],
-  agencyReputation: 0,
-  publicHeat: 0,
-  caseInterludes: {},
-  caseThread: [],
-  investigationComplete: false,
-  caseMode: "daily",
-  gender: PUBLIC_PLAYER_GENDER,
-  specialty: null,
-  attrs: { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 },
-  profileDone: false,
-  selectedFirstDates: [],
-  primaryNpcId: null,
-  secondaryNpcId: null,
+  dialogueProgress: {},
+  sceneAnswers: {},
+  sceneQuestionPicks: {},
+  sceneDialoguePicks: {},
+  routeChoiceLog: {},
   caseBudgets: {},
   caseActionLog: {},
-  inspirationUsage: {},
-  evidenceInsights: {},
-  selectedEvidenceCard: {},
+  contradictionLog: {},
+  accusationHistory: [],
+  solvedCaseIds: [],
+  caseInterludes: {},
   lastReaction: null,
-  chapter: 1,
-  scene: "intro",
-  flags: {
-    boundary: 0,
-    reality: 0,
-    riskTolerance: 0,
-    parentDependency: 0,
-    agencyControl: 0,
-    trust: 0,
-    suspicion: 0,
-    clientTrust: 0,
-    assetProtection: 0,
-    parentConflict: 0,
-    partnerParentApproval: 0,
-    ownParentApproval: 0,
-    siblingPressure: 0,
-    phoenixAmbition: 0,
-    povertyStress: 0,
-    giftPressure: 0,
-    communicationFriction: 0,
-    timeConflict: 0,
-    exBoundary: 0,
-    intimacyBoundary: 0,
-    publicPressure: 0,
-    emotionalLabor: 0,
-    weddingPressure: 0,
-    householdPressure: 0,
-    debtPressure: 0,
-    childPressure: 0,
-    midlifePressure: 0,
-    educationPressure: 0,
-    macroEconomyPressure: 0,
-    stockMarketHeat: 0,
-    investmentExposure: 0,
-    scamExposure: 0,
-    exReentryRisk: 0,
-    careDeficit: 0,
-    emotionalValueDemand: 0,
-    infidelityRisk: 0,
-    evidenceClarity: 0,
-    audiencePressure: 0,
-    clientCredibility: 0,
-    falseAccusationRisk: 0
-  },
-  log: [],
-  runSettled: false
+  recapStep: 0
 };
 
 export function activeSaveSlot() {
@@ -103,7 +50,7 @@ export function activeSaveSlot() {
 
 export function loadState() {
   try {
-    const raw = platformRuntime.storage.get(STORAGE_KEY);
+    const raw = platformRuntime.storage.get(STORAGE_KEY) ?? platformRuntime.storage.get(LEGACY_STORAGE_KEY);
     return raw ? migrateState({ ...JSON.parse(raw), saveSlot: activeSaveSlot() }) : null;
   } catch {
     return null;
@@ -114,50 +61,151 @@ export function migrateState(saved) {
   const next = {
     ...structuredClone(baseState),
     ...saved,
-    attrs: { ...baseState.attrs, ...(saved.attrs ?? {}) },
-    flags: { ...baseState.flags, ...(saved.flags ?? {}) }
+    attrs: { ...baseState.attrs, ...(saved.attrs ?? {}) }
   };
-  if (typeof next.flags.clientTrust !== "number" && typeof saved.flags?.affection === "number") {
-    next.flags.clientTrust = saved.flags.affection;
-  }
-  delete next.flags.affection;
-  delete next.flags.romance;
-  if (!("lastReaction" in next)) next.lastReaction = null;
-  if (!("playerRole" in next)) next.playerRole = "host-lawyer";
   next.saveSlot = activeSaveSlot();
   next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
-  if (!("specialty" in next)) next.specialty = null;
   if (!("caseBrief" in next)) next.caseBrief = null;
   if (!Array.isArray(next.caseBriefs)) next.caseBriefs = [];
+  next.caseBriefs = next.caseBriefs.map(migrateCaseBrief);
+  next.caseBrief = next.caseBrief ? migrateCaseBrief(next.caseBrief) : next.caseBriefs[next.chapter - 1] ?? null;
+  if (!next.dialogueProgress || Array.isArray(next.dialogueProgress)) next.dialogueProgress = {};
+  if (!next.sceneAnswers || Array.isArray(next.sceneAnswers)) next.sceneAnswers = {};
+  if (!next.sceneQuestionPicks || Array.isArray(next.sceneQuestionPicks)) next.sceneQuestionPicks = {};
+  if (!next.sceneDialoguePicks || Array.isArray(next.sceneDialoguePicks)) next.sceneDialoguePicks = {};
+  if (!next.routeChoiceLog || Array.isArray(next.routeChoiceLog)) next.routeChoiceLog = {};
   if (!next.caseBudgets || Array.isArray(next.caseBudgets)) next.caseBudgets = {};
   if (!next.caseActionLog || Array.isArray(next.caseActionLog)) next.caseActionLog = {};
-  if (!next.inspirationUsage || Array.isArray(next.inspirationUsage)) next.inspirationUsage = {};
-  if (!next.evidenceInsights || Array.isArray(next.evidenceInsights)) next.evidenceInsights = {};
-  if (!next.selectedEvidenceCard || Array.isArray(next.selectedEvidenceCard)) next.selectedEvidenceCard = {};
-  if (!next.interrogationNotes || Array.isArray(next.interrogationNotes)) next.interrogationNotes = {};
   if (!next.contradictionLog || Array.isArray(next.contradictionLog)) next.contradictionLog = {};
   if (!Array.isArray(next.solvedCaseIds)) next.solvedCaseIds = [];
   if (!Array.isArray(next.accusationHistory)) next.accusationHistory = [];
-  if (typeof next.agencyReputation !== "number") next.agencyReputation = 0;
-  if (typeof next.publicHeat !== "number") next.publicHeat = 0;
   if (!next.caseInterludes || Array.isArray(next.caseInterludes)) next.caseInterludes = {};
-  if (!Array.isArray(next.caseThread)) next.caseThread = [];
-  if (typeof next.investigationComplete !== "boolean") next.investigationComplete = false;
+  if (!("lastReaction" in next)) next.lastReaction = null;
+  next.sceneQuestionPicks = migrateChoiceRecord(next.sceneQuestionPicks);
+  next.sceneDialoguePicks = migrateChoiceListRecord(next.sceneDialoguePicks);
+  next.routeChoiceLog = migrateChoiceListRecord(next.routeChoiceLog);
   next.caseMode = normalizeCaseMode(next.caseMode);
-  if (next.profileDone && next.playerRole === "host-lawyer" && !validCaseBriefCount(next.caseBriefs.length)) {
-    next.profileDone = false;
+  if (next.caseBriefs.length && !validCaseBriefCount(next.caseBriefs.length)) {
     next.screen = "title";
     next.caseBrief = null;
     next.caseBriefs = [];
-    next.scene = "intro";
+    next.scene = "caseOpen";
   }
-  if (typeof next.runSettled !== "boolean") next.runSettled = false;
   return next;
+}
+
+function migrateCaseBrief(brief) {
+  if (!brief || typeof brief !== "object") return brief;
+  const daily = brief.dailyCase || brief.storyPackCase || brief.weeklyCase || brief.dailyKey || brief.storyKey || brief.weeklyKey || brief.caseMode === "daily" || brief.caseMode === "episode" || brief.caseMode === "weekly" || String(brief.id ?? "").startsWith("daily-") || String(brief.id ?? "").startsWith("episode-") || String(brief.id ?? "").startsWith("weekly-");
+  if (!daily) return brief;
+  const openingDialogue = migrateOpeningDialogue(brief);
+  return {
+    ...brief,
+    openingDialogue,
+    sceneVersions: migrateSceneRouteAxes(brief),
+    deepFollowup: migrateDeepFollowup(brief),
+    dailyCase: true,
+    modeLabel: brief.storyPackCase || brief.weeklyCase || brief.caseMode === "episode" || brief.caseMode === "weekly" ? "试玩连线" : brief.modeLabel === "今日连线" ? "今日来电" : brief.modeLabel ?? "今日来电",
+    storyArcTitle: String(brief.storyArcTitle ?? "").startsWith("今日连线")
+      ? String(brief.storyArcTitle).replace("今日连线", "今日来电")
+      : brief.storyArcTitle
+  };
+}
+
+function migrateOpeningDialogue(brief) {
+  const lines = Array.isArray(brief.openingDialogue) ? brief.openingDialogue : [];
+  if (brief.plotId !== "education-income-fake-profile") return lines;
+  return lines.filter((line) => {
+    const text = String(line?.text ?? "");
+    if (text === "她问细到哪一步了？") return false;
+    if (text.startsWith("学校、工作、收入、有没有存款，后来还绕到流水。")) return false;
+    return true;
+  });
+}
+
+function migrateSceneRouteAxes(brief) {
+  const scenes = brief.sceneVersions;
+  if (!Array.isArray(scenes)) return scenes;
+  return scenes.map((scene) => ({
+    ...scene,
+    questionOptions: (scene.questionOptions ?? []).map((option) => {
+      const migrated = migrateQuestionOptionCopy(option);
+      const routeAxis = migratedRouteAxisForQuestion(migrated?.question ?? "", brief.plotId);
+      return routeAxis ? { ...migrated, routeAxis } : migrated;
+    })
+  }));
+}
+
+const QUESTION_COPY_MIGRATIONS = [
+  {
+    from: "你当时是不是先心疼他了？",
+    to: "你当时有没有起疑心？",
+    fromAnswer: "是。我第一反应是他是不是压力太大，想先把人稳住。可后来再看，失业到底从什么时候开始，他一直没讲。",
+    toAnswer: "一开始没有。我第一反应是他是不是压力太大，想先把人稳住。可后来再看，失业到底从什么时候开始，他一直没讲。"
+  },
+  { from: "你是不是也怕自己显得太现实？", to: "那你为什么一直绕着说要看账单？" },
+  { from: "她说不用你家出大头，是不是也算退让？", to: "她说不用你家出大头，你当时为什么还是不踏实？" },
+  { from: "你当时为什么没有把关系问死？", to: "话当时没说死，你当时怎么回他的？" },
+  { from: "关系一直没说死，你当时怎么接的？", to: "话当时没说死，你当时怎么回他的？" },
+  { from: "你当时帮他，是因为喜欢他还是想帮事业？", to: "他让你帮店里这些事时，你当时怎么理解你们的关系？" },
+  { from: "他让你帮店里这些事时，你有没有觉得已经算自己人了？", to: "他让你帮店里这些事时，你当时怎么理解你们的关系？" },
+  { from: "你当时有没有觉得问太细了？", to: "问到流水的时候，你有没有拦过？" },
+  { from: "你是不是也不想让家里觉得你判断错了？", to: "你后来为什么没有跟家里改口？" },
+  { from: "你当时是不是也想在老板面前表现？", to: "他说主责署名的时候，你为什么先答应垫？" },
+  { from: "你拿到主责署名后，有没有觉得这事也算值？", to: "主责写了你以后，你为什么反而更慌？" }
+];
+
+function migrateQuestionOptionCopy(option) {
+  if (!option || typeof option !== "object") return option;
+  const migration = QUESTION_COPY_MIGRATIONS.find((item) => item.from === option.question);
+  if (!migration) return option;
+  const next = { ...option, question: migration.to };
+  if (migration.toAnswer && (!next.answer || next.answer === migration.fromAnswer)) {
+    next.answer = migration.toAnswer;
+  }
+  return next;
+}
+
+function migrateChoiceRecord(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return {};
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => [key, migrateQuestionOptionCopy(value)])
+  );
+}
+
+function migrateChoiceListRecord(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return {};
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => [
+      key,
+      Array.isArray(value) ? value.map(migrateQuestionOptionCopy) : value
+    ])
+  );
+}
+
+function migratedRouteAxisForQuestion(question, plotId) {
+  const text = String(question ?? "");
+  if (!text) return "";
+  if (/你当时|你自己|你妈|你是不是|你有没有|起疑|绕着|不踏实|怎么接|怎么回|怎么理解|自己人|拦过|改口|为什么先答应|更慌/.test(text)) return "caller-credibility";
+  if (/好看的版本|名校|MBA|本科|学历|署名|主责|老板/.test(text)) return "identity-wording";
+  if (/大群|预算|流程|供应商|对接人|入口|越级/.test(text)) return "process-control";
+  if (/截图|付款状态|收款账户|少了哪|哪一边/.test(text)) return "document-edge";
+  if (plotId === "workplace-reimbursement-screenshot" && /垫钱/.test(text)) return "identity-wording";
+  return "";
+}
+
+function migrateDeepFollowup(brief) {
+  if (brief.plotId !== "education-income-fake-profile" || !brief.deepFollowup) return brief.deepFollowup;
+  if (brief.deepFollowup.note !== "这句不是替谁开脱，是把她自己最在意的钱也问出来。") return brief.deepFollowup;
+  return {
+    ...brief.deepFollowup,
+    note: "问到这里，资料真假还在桌上，她自己最在意的钱也上桌了。"
+  };
 }
 
 export function loadMeta() {
   try {
-    const raw = platformRuntime.storage.get(META_STORAGE_KEY);
+    const raw = platformRuntime.storage.get(META_STORAGE_KEY) ?? platformRuntime.storage.get(LEGACY_META_STORAGE_KEY);
     return raw ? JSON.parse(raw) : { runs: 0, bonusPoints: 0, history: [] };
   } catch {
     return { runs: 0, bonusPoints: 0, history: [] };
@@ -174,4 +222,5 @@ export function saveMetaSnapshot(meta) {
 
 export function clearStateSnapshot() {
   platformRuntime.storage.remove(STORAGE_KEY);
+  platformRuntime.storage.remove(LEGACY_STORAGE_KEY);
 }

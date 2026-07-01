@@ -5,13 +5,13 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = parseArgs(process.argv.slice(2));
 const inputPath = resolve(root, args.input ?? args.in ?? await latestIntelligencePath());
-const outPath = resolve(root, args.out ?? ".local/daily-intelligence/daily-case-drafts.json");
+const outPath = resolve(root, args.out ?? ".local/daily-intelligence/story-pack-case-drafts.json");
 
 const intelligence = JSON.parse(await readFile(inputPath, "utf8"));
-const drafts = (intelligence.cards ?? [])
+const sourceCards = (intelligence.cards ?? [])
   .filter((card) => (card.conflictTypes ?? []).length)
-  .slice(0, Number(args.limit ?? 12))
-  .map((card, index) => buildDraft(card, index));
+  .slice(0, Number(args.limit ?? 16));
+const drafts = buildCompositeDrafts(sourceCards, Number(args.cases ?? 4));
 
 const payload = {
   generatedAt: new Date().toISOString(),
@@ -22,56 +22,113 @@ const payload = {
 
 await mkdir(dirname(outPath), { recursive: true });
 await writeFile(outPath, `${JSON.stringify(payload, null, 2)}\n`);
-console.log(`Daily case drafts written: ${outPath}`);
+console.log(`Story-pack candidate case drafts written: ${outPath}`);
 
-function buildDraft(card, index) {
-  const conflict = card.abstraction?.conflict ?? card.conflictTypes?.[0] ?? "关系叙事争议";
-  const countermeasure = card.abstraction?.countermeasure ?? card.countermeasures?.[0] ?? "事实核验";
-  const talkTrack = card.abstraction?.talkTrack ?? card.talkTracks?.[0] ?? "第一版叙事";
+function buildCompositeDrafts(cards, caseCount) {
+  const used = new Set();
+  return cards.slice(0, caseCount).map((primary, index) => {
+    const supporting = pickSupportingCards(primary, cards, used, 3);
+    [primary, ...supporting].forEach((card) => used.add(card.id));
+    return buildDraft([primary, ...supporting], index);
+  });
+}
+
+function pickSupportingCards(primary, cards, used, count) {
+  const primaryConflicts = new Set(primary.conflictTypes ?? []);
+  const candidates = cards
+    .filter((card) => card.id !== primary.id && !used.has(card.id))
+    .map((card) => ({
+      card,
+      score:
+        (card.sourceLabel !== primary.sourceLabel ? 2 : 0) +
+        (card.conflictTypes ?? []).filter((item) => !primaryConflicts.has(item)).length +
+        (card.talkTracks ?? []).length +
+        (card.countermeasures ?? []).length
+    }))
+    .sort((a, b) => b.score - a.score || String(a.card.id).localeCompare(String(b.card.id)));
+  return candidates.slice(0, count).map((item) => item.card);
+}
+
+function buildDraft(cards, index) {
+  const primary = cards[0] ?? {};
+  const conflicts = unique(cards.flatMap((card) => card.conflictTypes ?? []));
+  const countermeasures = unique(cards.flatMap((card) => card.countermeasures ?? []));
+  const talkTracks = unique(cards.flatMap((card) => card.talkTracks ?? []));
+  const conflict = primary.abstraction?.conflict ?? conflicts[0] ?? "关系叙事争议";
+  const countermeasure = primary.abstraction?.countermeasure ?? countermeasures[0] ?? "事实核验";
+  const talkTrack = primary.abstraction?.talkTrack ?? talkTracks[0] ?? "第一版叙事";
   const theme = themeForConflict(conflict);
   return {
     id: `draft-${String(index + 1).padStart(2, "0")}-${slugify(conflict)}`,
     status: "needs-human-review",
-    basedOnCardId: card.id,
-    sourceLabel: card.sourceLabel,
-    sourceUrl: card.sourceUrl,
-    contentBoundary: "只使用抽象结构，不使用真实人物、完整案情或原视频原话。",
+    basedOnCardIds: cards.map((card) => card.id),
+    primarySourceLabel: primary.sourceLabel,
+    sourceLabels: unique(cards.map((card) => card.sourceLabel).filter(Boolean)),
+    sourceUrls: cards.map((card) => card.sourceUrl).filter(Boolean),
+    contentBoundary: "只使用多条热点的抽象结构，不使用真实人物、完整案情、原视频原话或可识别时间线。",
+    hotspotFusion: {
+      rule: "一个候选案至少融合 2-4 张热点卡：主冲突给案件骨架，其他卡只提供话术、材料形态、误读风险或第三方压力。",
+      primaryConflict: conflict,
+      supportingSignals: {
+        conflicts: conflicts.filter((item) => item !== conflict),
+        countermeasures,
+        talkTracks
+      },
+      originalityGuard: "合成后必须换人物、换关系阶段、换材料触发、换金额和推进顺序；不能让任何单一来源还原出原案。"
+    },
     singleCallerContract: [
-      "每日案只有主播和一个匿名咨询者在直播间。",
-      "sceneVersions/testimony 必须全部由咨询者说出。",
+      "单案只有主播和一个匿名咨询者在直播间，可作为四案故事集的一通来电。",
+      "sceneVersions 必须全部由咨询者说出，满格 deepFollowup.answer 也必须是咨询者第一人称回答。",
       "另一方只能作为咨询者转述、聊天截图、录音、账单、合同或第三方匿名留言出现。",
       "材料不能自己当说话人；不要写“后台账单”“回拨新情况”“主播记事”直接插入流程。"
     ],
-    dailyHook: card.hook,
+    storyPackHook: compositeHook(cards, conflict, countermeasure, talkTrack),
     caseTitle: titleForConflict(conflict, countermeasure),
     openingComplaint: openingForTheme(theme, countermeasure, talkTrack),
     materialTrigger: materialTriggerForTheme(theme),
     dramaticAnchor: dramaticAnchorForTheme(theme, countermeasure),
     grayZonePush: grayZonePushForTheme(theme),
+    scriptGenerationModel: scriptGenerationModelForTheme(theme, conflict),
     integratedStoryPacket: integratedStoryPacketForTheme(theme, conflict, countermeasure, talkTrack),
-    coreDispute: `${conflict}：${countermeasure}到底是在保护边界，还是被用来转移成本/控制对方。`,
-    questionRoutes: routesForTheme(theme, card.playableQuestions ?? []),
+    coreDispute: `${conflict}：${countermeasure}到底是在保护边界，还是被用来转移成本/控制对方。旁支热点只负责提供材料和话术，不抢主案。`,
+    questionRoutes: routesForTheme(theme, unique(cards.flatMap((card) => card.playableQuestions ?? []))),
+    deepFollowupPrompt: deepFollowupForTheme(theme),
     possibleResultProfiles: profilesForTheme(theme),
     evidenceCards: evidenceForTheme(theme, countermeasure),
     shareQuestion: shareQuestionForTheme(theme),
     reviewerChecklist: [
       "是否已去除真实姓名、账号、地点、机构和独特时间线？",
       "是否保持单人匿名连线，没有另一方直接上麦？",
-      "sceneVersions/testimony 是否全部由咨询者讲出，材料是否由咨询者拿出或念出？",
+      "sceneVersions 和 deepFollowup.answer 是否全部由咨询者讲出，材料是否由咨询者拿出或念出？",
       "是否保留了反制方式被正确使用、被曲解、被滥用三种可能？",
       "是否有一个具体戏剧物件/原话/动作，而不是只有抽象冲突？",
       "关键物件是谁推出来的是否存在灰区：咨询者、对方、父母、朋友、平台或双方压力？",
-      "是否先写成一通完整电话，再拆成 openingDialogue / sceneVersions / testimony？",
+      "是否先写成一通完整电话，再拆成 openingDialogue / sceneVersions / questionOptions / deepFollowup？",
       "每个选项和反馈是否都回到同一个压力系统，没有突然跳去泛情感问题？",
-      "是否能在 2-4 分钟内完成三轮追问和阶段判断？",
+      "是否能支撑至少 20 分钟玩法：5-6 个关键来电段、满格深问、最终挑句和复盘？",
       "是否避免把法律/心理建议写成确定结论？"
     ]
   };
 }
 
+function compositeHook(cards, conflict, countermeasure, talkTrack) {
+  const hooks = cards.map((card) => card.hook).filter(Boolean);
+  if (hooks.length >= 2) return `${hooks[0]} 另一条热议里也出现了${countermeasure || talkTrack || conflict}，这次把两种压力拧到同一通电话里。`;
+  return hooks[0] ?? buildHook([conflict], [countermeasure], [talkTrack]);
+}
+
+function unique(items) {
+  return [...new Set(items.filter(Boolean))];
+}
+
 function integratedStoryPacketForTheme(theme, conflict, countermeasure, talkTrack) {
   return {
-    generationRule: "先写完整通话，再拆字段；任何动机/面子/证明用途变化都要重跑本包。",
+    generationRule: "先写最终争点和完整通话，再拆字段；任何动机/面子/证明用途变化都要重跑本包。",
+    endingFirst: {
+      finalAudienceArgument: audienceArgumentForTheme(theme, conflict),
+      valueBoundary: "结论必须指向具体行为、成本和责任，不指向性别、职业、年龄或群体标签。",
+      noPreachRule: "先让玩家在选择里听出问题，再在复盘里分层说清，不能在来电中提前讲道理。"
+    },
     pressureSystem: {
       relationshipStage: relationshipStageForTheme(theme),
       pressurePoint: pressurePointForTheme(theme, talkTrack),
@@ -81,22 +138,106 @@ function integratedStoryPacketForTheme(theme, conflict, countermeasure, talkTrac
       thirdPressure: thirdPressureForTheme(theme),
       truthBoundary: truthBoundaryForTheme(theme)
     },
+    beatLadder: beatLadderForTheme(theme),
+    branchingContract: {
+      choiceShape: "每段 2-3 个主播追问；每个都像真人主播会问，但只有部分抓核心。",
+      branchReturn: "回答后必须回到下一段咨询者陈述，不允许扫同节点剩余选项。",
+      stateTracking: "每个选项必须标 routeAxis、routeTone、是否揭示 core issue。",
+      fullHitGate: "5-6 段核心都抓住，才出现一次无选择 deepFollowup。"
+    },
     stitchedTranscriptPlan: [
       "opening: 咨询者先讲关系阶段和为什么今天打来；主播只问下一句自然问题；咨询者回答材料为什么出现。",
       "scene-1: 追材料是谁推出来的，反馈必须回答谁的压力进入了对话。",
       "scene-2: 追材料真到哪一层，反馈必须说清露出的部分和没露出的部分。",
       "scene-3: 追对方如何转移问题，反馈必须落在话术、时间或完整信息缺口。",
-      "testimony: 咨询者承认自己的利益/面子/误判压力，再补对方的原话或材料边缘。",
+      "scene-4: 追来电人自己的修剪，反馈必须让咨询者承认自己也保留了有利版本。",
+      "scene-5: 追成本/责任落点，反馈必须把本案推向最终挑句。",
+      "deepFollowup: 只有满格路线出现，主播只多问一句咨询者自己的利益/面子/误判压力，咨询者第一人称回答。",
       "open: 最终选择设计成两个半答案、一个灰区真答案、一个情绪化误判。"
     ],
+    writersRoomPasses: writerRoomPassesForTheme(theme),
+    qualityScorecard: qualityScorecard(),
     splitGuard: [
-      "不要先填 sceneVersions/testimony 再倒推动机。",
+      "不要先填 sceneVersions/deepFollowup 再倒推动机。",
       "不要把一个好句子塞进不相邻的场景。",
-      "不要让 detour 跳出核心争议；detour 只能偏窄、偏情绪或偏半边责任。",
+      "不要让 outer angle 跳出核心争议；外围角度只能偏窄、偏情绪或偏半边责任。",
       "share copy 只抛争议，不公布完整结论。"
     ],
     mainAudienceArgument: audienceArgumentForTheme(theme, conflict)
   };
+}
+
+function scriptGenerationModelForTheme(theme, conflict) {
+  return {
+    methodSources: [
+      "screenplay beat outline: setup -> pressure -> reversal -> cost -> resolution",
+      "Pixar-style ending-first story spine: know the final argument before drafting middle beats",
+      "Ink/Twine-style interactive writing: choices branch briefly, then rejoin with state tracked",
+      "LLM writers-room workflow: showrunner, case writer, actor-consistency pass, continuity QA pass"
+    ],
+    showrunnerBrief: {
+      theme,
+      conflict,
+      promise: "玩家会从一句看似合理的话里，问出利益、材料缺口、责任和成本。",
+      audienceTaste: "现实、克制、评论区会吵；像是真的，不像短剧硬反转。"
+    }
+  };
+}
+
+function beatLadderForTheme(theme) {
+  const base = {
+    house: ["共同生活话术出现", "权属与现金流拆开", "共同账户转账压力出现", "咨询者承认怕显得算计", "退出补偿或投入确认被拒绝"],
+    trust: ["稳定承诺出现", "受益人/变更权缺口出现", "资金来源或控制权露出", "咨询者承认自己没看懂但怕多疑", "谁能决定钱出来成为责任落点"],
+    transfer: ["转账争议出现", "备注和聊天前后文冲突", "用途和受益人出现", "咨询者承认当时有默认或享受体面", "借赠边界落到还款/分手节点"],
+    debt: ["短期周转请求出现", "旧账或消费用途露出", "账单期限/情绪压力改变节奏", "咨询者承认怕被说冷血", "债务责任被包装成关系忠诚测试"],
+    agreement: ["协议被说成不信任", "条款真实目的出现", "上限或退出缺口出现", "咨询者承认恐惧和控制欲的边界", "保护边界还是压人落到具体条款"],
+    emotion: ["安全感话术出现", "条件跟在情绪承诺后面", "资源/消费/身份收益出现", "咨询者承认自己也被承诺打动", "谁付出谁受益落到下一步要求"],
+    verification: ["材料被提前索取或展示", "材料边缘缺失", "收入/身份/流程的利益路径出现", "咨询者承认自己也在借他人口吻筛选", "最终落到成本、工资、家庭或关系推进"]
+  };
+  const beats = base[theme] ?? base.verification;
+  return beats.map((beat, index) => ({
+    beat: index + 1,
+    purpose: beat,
+    requiredOutput: "caller statement + 2-3 host questions + caller feedback + route metadata"
+  }));
+}
+
+function writerRoomPassesForTheme(theme) {
+  return [
+    {
+      role: "Showrunner Agent",
+      pass: "检查本集主题是否能穿过四案，不靠性别对立制造热度。"
+    },
+    {
+      role: "Case Writer Agent",
+      pass: "先写 ending-first argument 和五段 beat ladder，再写 stitched transcript。"
+    },
+    {
+      role: "Actor Consistency Agent",
+      pass: "分别替咨询者、对方、第三方压力回答：这句话保护了谁的面子、钱、责任或退路？"
+    },
+    {
+      role: "Branch Designer Agent",
+      pass: "检查每段选项是否都有真人会点，是否只改变揭示程度和路线倾向，不破坏主线。"
+    },
+    {
+      role: "Continuity QA Agent",
+      pass: "串读 opening、5-6 段来电、deepFollowup、最终原话、复盘，查跳步、提前剧透和未披露事实。"
+    }
+  ];
+}
+
+function qualityScorecard() {
+  return [
+    "结构 0-2：是否有 5-6 段完整 beat ladder。",
+    "冲突 0-2：每段是否新增压力，而不是重复同一个疑点。",
+    "角色 0-2：咨询者、对方、第三方压力是否各自有利益。",
+    "互动 0-2：每个选项是否像主播会问的话，且后果不同。",
+    "回收 0-2：分支是否回到主线而不造成断裂。",
+    "现实 0-2：是否像评论区会吵的真实公共事件。",
+    "价值 0-2：是否打击具体坏行为，不制造性别或群体对立。",
+    "低于 10 分不得入库；任一项 0 分必须重写。"
+  ];
 }
 
 function themeForConflict(conflict) {
@@ -117,7 +258,7 @@ function titleForConflict(conflict, countermeasure) {
     debt: "TA 说只是短期周转，为什么账本像在转嫁债务？",
     agreement: "婚前协议被说成不信任，是保护还是控制？",
     emotion: "一句安全感后面，接的是沟通还是条件？",
-    verification: `${countermeasure}背后，第一版说法少了哪一块？`
+    verification: `${countermeasure}背后，开场那几句少了哪一块？`
   };
   return titles[themeForConflict(conflict)] ?? titles.verification;
 }
@@ -130,7 +271,7 @@ function openingForTheme(theme, countermeasure, talkTrack) {
     debt: `咨询者说：主播你好，对方突然需要短期周转，可我把账单、征信和消费记录放一起看，发现问题可能不是这个月才发生。`,
     agreement: `咨询者说：主播你好，我只是想婚前说清楚房、钱和退出机制，对方却把协议说成不信任和太算计。`,
     emotion: `咨询者说：主播你好，对方一直讲安全感、诚意和态度，但每次情绪升温后都会出现一个新的条件。`,
-    verification: `咨询者说：主播你好，第一版说法听着很完整，但我手里那份材料有一块刚好被裁掉。`
+    verification: `咨询者说：主播你好，开场听着很完整，但我手里那份材料有一块刚好被裁掉。`
   };
   return lines[theme] ?? lines.verification;
 }
@@ -304,6 +445,40 @@ function route(routeName, question, unlocks, likelyProfile) {
   return { route: routeName, question, unlocks, likelyProfile };
 }
 
+function deepFollowupForTheme(theme) {
+  const prompts = {
+    house: {
+      question: "满格后多问：如果以后分开，婚后还进去的钱准备怎么算？",
+      answerTarget: "咨询者说出自己真正怕的是现金流退出没有位置，而不只是房本加不加名。"
+    },
+    trust: {
+      question: "满格后多问：这份安排里，谁能改受益人，谁能决定钱什么时候出来？",
+      answerTarget: "咨询者承认自己一开始被“稳定”安抚，后来才意识到控制权没有在自己这边。"
+    },
+    transfer: {
+      question: "满格后多问：那笔钱第一次被说成感情表达时，你为什么没把账说开？",
+      answerTarget: "咨询者说出自己也享受过关系里的体面或承诺，所以后来才更难把账摊开。"
+    },
+    debt: {
+      question: "满格后多问：如果你今天不垫，他自己准备怎么处理？",
+      answerTarget: "咨询者分清同情对方的难和替对方接账不是同一件事。"
+    },
+    agreement: {
+      question: "满格后多问：你最怕的是协议本身，还是怕现在不问以后没法退？",
+      answerTarget: "咨询者承认自己要的是可退出边界，不只是让对方道歉。"
+    },
+    emotion: {
+      question: "满格后多问：如果不谈安全感，这个条件具体让谁付出、谁受益？",
+      answerTarget: "咨询者把情绪承诺翻译成实际资源交换。"
+    },
+    verification: {
+      question: "满格后多问：你自己或你家里真正想通过这些材料确认什么？",
+      answerTarget: "咨询者说出自己也在借家人的筛选标准推进关系，而不只是被对方欺骗。"
+    }
+  };
+  return prompts[theme] ?? prompts.verification;
+}
+
 function profilesForTheme(theme) {
   if (theme === "trust") return ["资产结构侦探", "资金流侦探", "同情心先行型", "过早站队型"];
   if (theme === "house") return ["资产边界型侦探", "资金流侦探", "话术识别型侦探", "过早站队型"];
@@ -328,11 +503,11 @@ function evidenceForTheme(theme, countermeasure) {
 }
 
 function shareQuestionForTheme(theme) {
-  if (theme === "house") return "你会先问房本、首付，还是婚后还贷？";
-  if (theme === "trust") return "你会先问受益人、资金来源，还是为什么现在要签？";
-  if (theme === "transfer") return "你会先看备注、用途，还是分手节点？";
-  if (theme === "agreement") return "你会先看条款、上限，还是对方为什么说不信任？";
-  return "你会先问时间、钱，还是情绪？";
+  if (theme === "house") return "你会问房本、首付，还是婚后还贷？";
+  if (theme === "trust") return "你会问受益人、资金来源，还是为什么现在要签？";
+  if (theme === "transfer") return "你会问备注、用途，还是分手节点？";
+  if (theme === "agreement") return "你会问条款、上限，还是对方为什么说不信任？";
+  return "你会问时间、钱，还是情绪？";
 }
 
 async function latestIntelligencePath() {

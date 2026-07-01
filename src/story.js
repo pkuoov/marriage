@@ -1,11 +1,3 @@
-export const ATTRIBUTES = [
-  { id: "wealth", label: "财务嗅觉", short: "财务" },
-  { id: "family", label: "家庭结构", short: "家庭" },
-  { id: "looks", label: "形象观察", short: "形象" },
-  { id: "education", label: "资料敏感", short: "资料" },
-  { id: "eq", label: "情绪洞察", short: "洞察" }
-];
-
 export const NPCS = [
   {
     id: "zhou",
@@ -78,76 +70,5 @@ export const NPCS = [
     motiveWeights: ["content", "display", "money", "emotionalSupply"],
     yellow: "“这个瞬间太适合拍下来。”",
     red: "“我们吵架这件事，我想做一期匿名内容。”"
-  }
-];
-
-export const CASE_CHAPTERS = [
-  {
-    id: "ch1",
-    title: "第一案：婚前 case",
-    summary: "婚前关系连线，重点听择偶定位、承诺、彩礼房产、婚史孩子和债务是否被包装。"
-  },
-  {
-    id: "ch2",
-    title: "第二案：婚后 case",
-    summary: "婚后共同生活连线，重点拆共同财务、家务育儿、出轨边界、亲子和双方家庭分工。"
-  },
-  {
-    id: "ch3",
-    title: "第三案：告解模式",
-    summary: "当事人自述经历，你站在 TA 的视角里查被坑、自欺和可能伤人的部分。"
-  }
-];
-
-export const CHAPTERS = [
-  {
-    id: "ch1",
-    title: "第一章：直播间之后",
-    summary: "把连线回看转成婚恋候选人入口、信任度和风险标签。"
-  },
-  {
-    id: "ch2",
-    title: "第二章：不是所有温柔都免费",
-    summary: "三次约会会测试消费观、家庭观，以及对方在你说“不”时的反应。"
-  },
-  {
-    id: "ch3",
-    title: "第三章：见父母之前",
-    summary: "排他谈判、深度背调、朋友局和父母第一次影子进入关系。"
-  },
-  {
-    id: "ch4",
-    title: "第四章：谈婚论嫁",
-    summary: "彩礼嫁妆、婚房房本、双方父母见面和第一次重大动机显影。"
-  },
-  {
-    id: "ch5",
-    title: "第五章：婚礼战役",
-    summary: "订婚宴、酒店档期、座次、份子钱、前任消息和婚礼前最后压力测试。"
-  },
-  {
-    id: "ch6",
-    title: "第六章：婚后第一年",
-    summary: "工资卡、共同账户、春节去哪家、家务分配、父母探访和第一次共同生活危机。"
-  },
-  {
-    id: "ch7",
-    title: "第七章：买房与债务",
-    summary: "租房、二手房、期房、月供、装修贷、父母借钱和共同债务风险。"
-  },
-  {
-    id: "ch8",
-    title: "第八章：生育与育儿",
-    summary: "备孕、产检、职业中断、月子中心、老人带娃、托育和入学前的长期分工。"
-  },
-  {
-    id: "ch9",
-    title: "第九章：七年之痒",
-    summary: "孩子出生后的长期照护、亲密消退、职业错位、老人依赖和中年危机。"
-  },
-  {
-    id: "ch10",
-    title: "第十章：孩子上学",
-    summary: "学区、接送、兴趣班、家长群、教育焦虑和十年婚姻的最终清算。"
   }
 ];

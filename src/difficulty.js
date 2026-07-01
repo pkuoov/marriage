@@ -8,17 +8,15 @@ export function applyDifficultyProfile(brief, profile) {
 }
 
 export function requiredContradictionsForCase(brief) {
+  const longCaseRequirement = Math.max(2, brief?.sceneVersions?.length ?? 0);
   if (brief?.difficultyProfile?.tier >= 4 && brief?.stance === "personalityMismatch") return 3;
-  if (brief?.difficultyProfile?.requiredContradictions) return brief.difficultyProfile.requiredContradictions;
-  if (brief?.structuralActorId) return 3;
-  return brief?.premeditated ? 3 : 2;
+  if (brief?.difficultyProfile?.requiredContradictions) {
+    return Math.max(longCaseRequirement, brief.difficultyProfile.requiredContradictions);
+  }
+  if (brief?.structuralActorId) return Math.max(3, longCaseRequirement);
+  return Math.max(brief?.premeditated ? 3 : 2, longCaseRequirement);
 }
 
 export function caseBudgetDelta(brief) {
   return Number(brief?.difficultyProfile?.budgetDelta ?? 0);
-}
-
-export function inspirationBaseForCase(brief, mode) {
-  if (brief?.difficultyProfile?.inspirationBase) return brief.difficultyProfile.inspirationBase;
-  return 1;
 }

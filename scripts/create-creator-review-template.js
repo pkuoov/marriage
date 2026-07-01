@@ -25,7 +25,7 @@ const sources = (config.sources ?? [])
 
 const payload = {
   notes: [
-    "每周人工看重点账号/律师号后填写。",
+    "每次准备新故事集时人工看重点账号/律师号后填写。",
     "只摘录新套路、新话术、新方法论，不复制原文，不写真实人物。",
     "未使用的 placeholder 可以删除；不要把待填写条目提交进正式素材。"
   ],
@@ -39,7 +39,7 @@ console.log(`Creator review template written: ${outPath}`);
 
 function emptyItem(source, index) {
   return {
-    title: `待填写 ${index}：${source.label} 的本周新套路/方法论`,
+    title: `待填写 ${index}：${source.label} 的新套路/方法论`,
     url: "",
     publishedAt: "",
     snippet: "填写 40-100 字抽象摘要：冲突结构、关键话术、反制方式、容易被误读的点。必须补一个可戏剧化物件/原话，以及谁先推动说不清的灰区。"

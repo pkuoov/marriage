@@ -1,18 +1,20 @@
 {
-  "name": "marriage-detective-agency",
+  "name": "livestream-detective",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "python3 -m http.server 5174",
+    "play:windows": "play-windows.bat",
     "build:h5": "node scripts/build-static.js",
-    "build:steam": "node scripts/build-static.js",
+    "build:playable": "node scripts/build-playable.js",
+    "build:steam": "node scripts/build-playable.js",
     "intel:collect": "node scripts/collect-daily-intelligence.js",
     "intel:drafts": "node scripts/generate-daily-case-drafts.js",
     "intel:creator-template": "node scripts/create-creator-review-template.js",
     "test:unit": "node scripts/verify-logic.js",
     "test:logic": "npm run test:unit",
     "test:narrative": "node scripts/verify-narrative-flow.js",
-    "check": "node --check src/app.js && node --check src/state.js && node --check src/platformRuntime.js && node --check src/caseModes.js && node --check src/caseNarration.js && node --check src/caseRuntime.js && node --check src/difficulty.js && node --check src/screens.js && node --check src/story.js && node --check src/caseEngine.js && node --check src/random.js && node --check src/sound.js && node --check src/views/caseInvestigationViews.js && node --check src/views/caseRecapViews.js && node --check scripts/build-static.js && node --check scripts/verify-logic.js && node --check scripts/verify-narrative-flow.js && node --check scripts/collect-daily-intelligence.js && node --check scripts/generate-daily-case-drafts.js && node --check scripts/create-creator-review-template.js && npm run test:logic && npm run test:narrative"
+    "check": "node --check src/app.js && node --check src/state.js && node --check src/platformRuntime.js && node --check src/caseModes.js && node --check src/dailyChoices.js && node --check src/caseNarration.js && node --check src/caseRuntime.js && node --check src/difficulty.js && node --check src/story.js && node --check src/caseEngine.js && node --check src/random.js && node --check src/sound.js && node --check scripts/build-static.js && node --check scripts/build-playable.js && node --check scripts/verify-logic.js && node --check scripts/verify-narrative-flow.js && node --check scripts/collect-daily-intelligence.js && node --check scripts/generate-daily-case-drafts.js && node --check scripts/create-creator-review-template.js && npm run test:logic && npm run test:narrative"
   }
 }

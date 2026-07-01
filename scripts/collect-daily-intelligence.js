@@ -131,10 +131,10 @@ function toIntelligenceCard({ source, item, observedAt }) {
 function scoreCardQuality({ source, item, conflictTypes, countermeasures, talkTracks }) {
   const text = `${item.title ?? ""} ${item.snippet ?? ""}`;
   const rejectReasons = [];
-  if (NOISE_PATTERNS.some((pattern) => pattern.test(text))) rejectReasons.push("明显非婚恋内容噪声");
+  if (NOISE_PATTERNS.some((pattern) => pattern.test(text))) rejectReasons.push("明显非公共事件内容噪声");
   if (source.kind === "creator-watch" && !creatorQueryHit(source.query, text)) rejectReasons.push("未命中账号观察关键词");
   const signalScore = conflictTypes.length * 2 + countermeasures.length * 2 + talkTracks.length;
-  if (signalScore < 2) rejectReasons.push("缺少可转写的婚恋/法律/资产信号");
+  if (signalScore < 2) rejectReasons.push("缺少可转写的公共事件/法律/资产/流程信号");
   return {
     keep: rejectReasons.length === 0,
     score: signalScore,
@@ -211,7 +211,7 @@ function buildHook(conflictTypes, countermeasures, talkTracks) {
   if (conflictTypes.includes("债务转嫁")) return "对方说只是短期困难，但账本可能已经把责任推给你。";
   if (countermeasures.length) return `TA 提到${countermeasures[0]}，这到底是保护边界，还是转移成本？`;
   if (talkTracks.length) return `一句“${talkTracks[0]}”后面，可能藏着真正的条件。`;
-  return "第一版说法越顺，越要先找被省略的事实。";
+  return "开场那几句越顺，越要先找被省略的事实。";
 }
 
 function buildAbstraction(conflictTypes, countermeasures, talkTracks) {
@@ -219,7 +219,7 @@ function buildAbstraction(conflictTypes, countermeasures, talkTracks) {
     conflict: conflictTypes[0] ?? "关系叙事争议",
     countermeasure: countermeasures[0] ?? "事实核验",
     talkTrack: talkTracks[0] ?? "第一版叙事",
-    dailyCaseUse: "转写为同题多路线短案，不保留真实人物和完整案情。"
+    storyPackUse: "转写为四案故事集候选短案，不保留真实人物和完整案情。"
   };
 }
 

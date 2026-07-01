@@ -1,1486 +1,845 @@
-import { ATTRIBUTES, CASE_CHAPTERS, CHAPTERS, NPCS } from "./story.js?v=0.19.36";
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode } from "./caseModes.js?v=0.19.36";
-import { accusationLabel, caseAccusationHint, evidenceInsightFor, explanationForExpected, runCompleteLineFor, structuralResponsibilityText } from "./caseNarration.js?v=0.19.36";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase, structuralExpectedAccusationForCase } from "./caseRuntime.js?v=0.19.36";
-import { requiredContradictionsForCase } from "./difficulty.js?v=0.19.36";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.19.36";
-import { CHARACTER_ART, MAX_META_BONUS, PUBLIC_PLAYER_GENDER, activeSaveSlot, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.19.36";
-import { platformRuntime } from "./platformRuntime.js?v=0.19.36";
-import { createScreenRenderers } from "./screens.js?v=0.19.36";
-import { accusationView, caseOpenView, evidenceView, sceneReviewView, testimonyView } from "./views/caseInvestigationViews.js?v=0.19.36";
-import { caseInterludeView, caseSolvedView, runCompleteView } from "./views/caseRecapViews.js?v=0.19.36";
-import { contentWarningView, settingsView } from "./views/systemViews.js?v=0.19.36";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.26";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.26";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.26";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.26";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.26";
+import { NPCS } from "./story.js?v=0.20.26";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.26";
 
 const app = document.querySelector("#app");
+const PRODUCT_NAME = "直播间大侦探";
+const DEFAULT_ATTRS = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 
-let state = loadState() ?? structuredClone(baseState);
+let state = normalizeDailyState(loadState() ?? structuredClone(baseState));
 let meta = loadMeta();
 
 document.addEventListener("click", (event) => {
   const button = event.target.closest("button");
-  if (!button) return;
-  if (button.disabled) {
-    playSfx("warning");
-    return;
-  }
-  if (button.dataset.nextChapter) {
-    playSfx("page");
-    return;
-  }
-  if (button.dataset.settleRun || button.classList.contains("primary")) {
-    playSfx("confirm");
-    return;
-  }
+  if (!button || button.disabled) return;
   if (button.dataset.action === "sound") return;
-  playSfx("click");
+  playSfx(button.classList.contains("primary") || button.dataset.accuse ? "confirm" : "click");
 });
 
-function randomPick(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function randomRange(min, max) {
-  return Math.floor(min + Math.random() * (max - min + 1));
-}
-
-function saveState() { saveStateSnapshot(state); }
-
-function saveMeta() { saveMetaSnapshot(meta); }
-
-function resetGame() {
-  state = structuredClone(baseState);
-  state.saveSlot = activeSaveSlot();
-  state.screen = "creator";
-  clearStateSnapshot(state.saveSlot);
-  render();
-}
-
-function randomizeInvestigationProfile() {
-  const attrs = {};
-  ATTRIBUTES.forEach((attr) => {
-    attrs[attr.id] = randomRange(2, 8);
-  });
-  const boost = randomPick(ATTRIBUTES).id;
-  attrs[boost] = Math.min(10, attrs[boost] + randomRange(1, 2));
-  return attrs;
-}
-
-function setScreen(screen) {
-  state.screen = screen;
-  saveState();
-  render();
-}
-
-function addLog(text, type = "记录") {
-  state.log.unshift({ type, text });
-  state.log = state.log.slice(0, 12);
-}
-
-function bumpFlag(name, amount = 1) {
-  state.flags[name] = Math.max(0, (state.flags[name] ?? 0) + amount);
-}
-
-function finalizeCharacter() {
-  state.gender = PUBLIC_PLAYER_GENDER;
-  if (!state.specialty) state.specialty = "verification";
-  state.attrs = randomizeInvestigationProfile();
-  state.profileDone = true;
-  state.investigationComplete = false;
-  state.caseBriefs = generateCasesForMode(state.caseMode, NPCS, state.attrs, { runNumber: meta.runs ?? 0, specialty: state.specialty, dailyKey: dailyKeyFromUrl() });
-  weaveCaseThread();
-  state.caseBrief = state.caseBriefs[0] ?? null;
-  state.solvedCaseIds = [];
-  state.accusationHistory = [];
-  state.agencyReputation = 0;
-  state.publicHeat = 0;
-  state.caseInterludes = {};
-  state.caseBudgets = {};
-  state.caseActionLog = {};
-  state.contradictionLog = {};
-  state.evidenceInsights = {};
-  state.interrogationNotes = {};
-  state.inspirationUsage = {};
-  state.selectedEvidenceCard = {};
-  state.dialogueProgress = {};
-  state.flags = structuredClone(baseState.flags);
-  state.lastReaction = null;
-  state.runSettled = false;
-  state.screen = "chapter";
-  if (state.caseBrief?.complainantId) {
-    state.primaryNpcId = state.caseBrief.complainantId;
-    state.secondaryNpcId = state.caseBrief.respondentId;
-    state.selectedFirstDates = [state.caseBrief.complainantId, state.caseBrief.respondentId].filter(Boolean);
-    addLog(`${state.caseBrief.label}：${state.caseBrief.openingComplaint}`, "直播连线");
-  } else {
-    state.selectedFirstDates = [];
-  }
-  state.chapter = 1;
-  state.scene = "caseOpen";
-  saveState();
-  render();
-}
-
-function weaveCaseThread() {
-  const briefs = state.caseBriefs ?? [];
-  state.caseThread = briefs.map((brief, index) => {
-    const role = "今日连线：好友挑战短案";
-    brief.threadLink = {
-      linkedNpcId: null,
-      role,
-      line: brief.storyClue ?? "今天只接一通匿名来电，判断都从对话里来。"
-    };
-    return {
-      caseId: brief.id,
-      plotId: brief.plotId,
-      mode: brief.caseMode,
-      linkedNpcId: null,
-      role
-    };
-  });
-}
-
-function getNpc(id) {
-  return NPCS.find((npc) => npc.id === id);
-}
-
-function currentNpc() {
-  return getNpc(state.primaryNpcId) ?? getNpc(state.selectedFirstDates[0]);
-}
-
-function settleRunExperience() {
-  if (state.runSettled) return;
-  const pressureScore =
-    (state.flags.suspicion ?? 0) +
-    (state.flags.parentConflict ?? 0) +
-    (state.flags.weddingPressure ?? 0) +
-    (state.flags.childPressure ?? 0) +
-    (state.flags.householdPressure ?? 0) +
-    (state.flags.midlifePressure ?? 0) +
-    (state.flags.educationPressure ?? 0) +
-    (state.flags.macroEconomyPressure ?? 0) +
-    (state.flags.investmentExposure ?? 0) +
-    (state.flags.scamExposure ?? 0) +
-    (state.flags.exReentryRisk ?? 0) +
-    (state.flags.infidelityRisk ?? 0) +
-    (state.flags.audiencePressure ?? 0) +
-    (state.flags.falseAccusationRisk ?? 0);
-  const previousRuns = meta.runs ?? 0;
-  const gained = previousRuns < 3 ? 5 : pressureScore >= 8 ? 3 : randomRange(2, 3);
-  const solvedCount = (state.accusationHistory ?? []).filter((item) => item.correct).length;
-  const totalCases = state.caseBriefs?.length ?? 0;
-  meta.runs = (meta.runs ?? 0) + 1;
-  meta.bonusPoints = Math.min(MAX_META_BONUS, (meta.bonusPoints ?? 0) + gained);
-  meta.history = [
-    {
-      gained,
-      pressureScore,
-      at: new Date().toISOString()
-    },
-    ...(meta.history ?? [])
-  ].slice(0, 12);
-  state.runSettled = true;
-  platformRuntime.achievements.setStat("runs_completed", meta.runs);
-  platformRuntime.achievements.setStat("cases_solved_correctly", solvedCount);
-  platformRuntime.achievements.unlock("complete_daily_case");
-  addLog(`本轮结算：记录 ${gained} 点长期经验。`, "经验记录");
-  saveMeta();
-  saveState();
-  platformRuntime.cloud.syncNow();
-  render();
-}
-
-function render() {
-  if (!state.settings?.contentWarningAccepted) return renderContentWarning();
-  if (state.screen === "title") return renderTitle();
-  if (state.screen === "settings") return renderSettings();
-  if (state.screen === "contribute") return renderContribution();
-  if (state.screen === "creator") return renderCreator();
-  if (state.screen === "chapter") return renderChapter();
-  return renderTitle();
-}
-
-function renderContentWarning() {
-  app.innerHTML = contentWarningView();
-  document.querySelector("[data-accept-content-warning]")?.addEventListener("click", () => {
-    state.settings = { ...(state.settings ?? {}), contentWarningAccepted: true };
-    saveState();
-    render();
-  });
-}
-
-function renderSettings() {
-  layout(settingsView({
-    soundEnabled: isSoundEnabled(),
-    textSpeed: state.settings?.textSpeed
-  }));
-  document.querySelector("[data-settings-sound]")?.addEventListener("click", () => {
-    toggleSound();
-    renderSettings();
-  });
-  document.querySelectorAll("[data-text-speed]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.settings = { ...(state.settings ?? {}), textSpeed: button.dataset.textSpeed };
-      saveState();
-      renderSettings();
-    });
-  });
-  document.querySelector("[data-clear-current-slot]")?.addEventListener("click", () => {
-    clearStateSnapshot();
-    state = { ...structuredClone(baseState), saveSlot: activeSaveSlot(), screen: "settings" };
-    saveState();
-    render();
-  });
-}
-
-function renderContribution() {
-  const submissions = meta.communityCaseSubmissions ?? [];
-  app.innerHTML = `
-    <section class="creator contribution-screen">
-      <div class="panel">
-        <p class="eyebrow">案例线索</p>
-        <h1>贡献一个婚恋判断题</h1>
-        <p class="muted">请只写抽象套路、冲突结构和你觉得该追问的问题。不要写真实姓名、账号、公司、学校、手机号、地址或可识别细节。</p>
-        ${state.lastReaction ? `<p class="reaction">${state.lastReaction}</p>` : ""}
-        <form class="contribution-form" data-contribution-form>
-          <label>
-            <span>冲突类型</span>
-            <select name="theme">
-              <option value="house">房产 / 洗房 / 共同还贷</option>
-              <option value="transfer">恋爱转账 / 借赠争议</option>
-              <option value="agreement">婚前协议 / 资产隔离</option>
-              <option value="trust">信托 / 保险 / 受益人</option>
-              <option value="emotion">情绪话术 / 安全感 / 多线关系</option>
-              <option value="fraud">反诈 / 平台 / 中介套路</option>
-            </select>
-          </label>
-          <label>
-            <span>第一版说法</span>
-            <textarea name="caseText" maxlength="260" required placeholder="例如：对方说婚前房写父母名下很正常，但婚后希望用共同账户还贷。"></textarea>
-          </label>
-          <label>
-            <span>你觉得该追问什么</span>
-            <textarea name="question" maxlength="180" required placeholder="例如：房本是谁、首付谁出、婚后还贷算什么、退出时怎么补偿。"></textarea>
-          </label>
-          <label>
-            <span>反套路方式或争议点</span>
-            <textarea name="countermeasure" maxlength="180" placeholder="例如：婚前协议、流水留痕、份额确认被说成不信任。"></textarea>
-          </label>
-          <label class="consent-row">
-            <input name="consent" type="checkbox" required>
-            <span>我确认已去除可识别个人信息，并同意它被抽象改写成游戏素材。</span>
-          </label>
-          <div class="title-actions creator-actions">
-            <button class="primary" type="submit">提交线索</button>
-            <button class="secondary" data-action="title" type="button">返回主页</button>
-          </div>
-        </form>
-      </div>
-      <aside class="panel loadout-panel">
-        <p class="eyebrow">审核规则</p>
-        <h2>只收结构，不收原案</h2>
-        <div class="scene-list compact-record">
-          <p>优先：新套路、新话术、新反制方式、容易被朋友判出分歧的争议。</p>
-          <p>拒收：真实姓名、偷拍视频、完整聊天记录、可识别爆料、现实求助。</p>
-          <p>入库后会改写为虚构人物、虚构金额和虚构时间线。</p>
-        </div>
-        <p class="hint">本机已保存 ${submissions.length} 条待审核线索。</p>
-      </aside>
-    </section>
-  `;
-  document.querySelector("[data-contribution-form]")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const submission = normalizeContribution({
-      theme: form.get("theme"),
-      caseText: form.get("caseText"),
-      question: form.get("question"),
-      countermeasure: form.get("countermeasure")
-    });
-    if (!submission.caseText || !submission.question) {
-      state.lastReaction = "线索还太短，至少要写清第一版说法和你想追问的问题。";
-      saveState();
-      renderContribution();
-      return;
-    }
-    meta.communityCaseSubmissions = [submission, ...(meta.communityCaseSubmissions ?? [])].slice(0, 20);
-    saveMeta();
-    platformRuntime.wechat.postMessage({ type: "case-submission", submission });
-    state.lastReaction = "线索已收下。后续会先抽象成套路卡，再决定是否进入每日案。";
-    saveState();
-    renderContribution();
-  });
-  bindCommon();
-}
-
-function normalizeContribution(input) {
+function normalizeDailyState(saved) {
+  const mode = saved?.caseMode === "daily" ? "daily" : "episode";
   return {
-    id: `user-${Date.now().toString(36)}-${Math.floor(Math.random() * 1000)}`,
-    theme: String(input.theme ?? "verification").slice(0, 32),
-    caseText: scrubContributionText(input.caseText, 260),
-    question: scrubContributionText(input.question, 180),
-    countermeasure: scrubContributionText(input.countermeasure, 180),
-    status: "local-pending-review",
-    createdAt: new Date().toISOString()
+    ...structuredClone(baseState),
+    ...saved,
+    screen: saved?.screen === "chapter" ? "chapter" : "title",
+    caseMode: mode,
+    chapter: Math.max(1, Number(saved?.chapter ?? 1)),
+    attrs: { ...DEFAULT_ATTRS, ...(saved?.attrs ?? {}) },
+    caseBriefs: Array.isArray(saved?.caseBriefs) ? saved.caseBriefs : [],
+    caseBrief: saved?.caseBrief ?? saved?.caseBriefs?.[0] ?? null,
+    scene: saved?.scene ?? "caseOpen",
+    dialogueProgress: saved?.dialogueProgress ?? {},
+    sceneAnswers: saved?.sceneAnswers ?? {},
+    sceneQuestionPicks: saved?.sceneQuestionPicks ?? {},
+    sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
+    routeChoiceLog: saved?.routeChoiceLog ?? {},
+    caseActionLog: saved?.caseActionLog ?? {},
+    caseBudgets: saved?.caseBudgets ?? {},
+    contradictionLog: saved?.contradictionLog ?? {},
+    accusationHistory: Array.isArray(saved?.accusationHistory) ? saved.accusationHistory : [],
+    solvedCaseIds: Array.isArray(saved?.solvedCaseIds) ? saved.solvedCaseIds : [],
+    caseInterludes: saved?.caseInterludes ?? {},
+    lastReaction: saved?.lastReaction ?? null,
+    settings: { ...baseState.settings, ...(saved?.settings ?? {}) }
   };
 }
 
-function scrubContributionText(value, maxLength) {
-  return String(value ?? "")
-    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[邮箱已隐藏]")
-    .replace(/1[3-9]\d{9}/g, "[手机号已隐藏]")
-    .replace(/@[^\s，。,.]{2,24}/g, "[账号已隐藏]")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, maxLength);
+function saveState() {
+  saveStateSnapshot(state);
 }
 
-function layout(content, options = {}) {
-  app.innerHTML = `
-    <section class="shell ${options.sceneClass ?? ""}">
-      <header class="topbar">
-        <button class="brand" data-action="title" type="button">婚恋侦探事务所</button>
-        <nav class="tabs" aria-label="章节">
-          ${topbarTabs()}
-        </nav>
-        <button class="ghost iconish" data-action="sound" type="button">${isSoundEnabled() ? "音效 开" : "音效 关"}</button>
-        <button class="ghost" data-action="reset" type="button">重开</button>
-      </header>
-      <div class="stage">
-        ${content}
-      </div>
-    </section>
-  `;
-  bindCommon();
+function activeCaseBrief() {
+  return state.caseBriefs?.[Math.max(0, Number(state.chapter ?? 1) - 1)] ?? state.caseBrief ?? null;
 }
 
-function bindCommon() {
-  document.querySelector('[data-action="reset"]')?.addEventListener("click", resetGame);
-  document.querySelector('[data-action="title"]')?.addEventListener("click", () => setScreen("title"));
-  document.querySelector('[data-action="sound"]')?.addEventListener("click", () => {
-    toggleSound();
-    render();
-  });
+function isStoryPackMode() {
+  return state.caseMode !== "daily";
 }
-
-function screenContext() {
-  return { state, meta, layout, setScreen, saveState, render, finalizeCharacter, app, resetGame, isSoundEnabled, toggleSound };
-}
-
-function screenRenderers() { return createScreenRenderers(screenContext()); }
-
-function renderTitle() { screenRenderers().renderTitle(); }
-
-function renderCreator() { screenRenderers().renderCreator(); }
 
 function dailyKeyFromUrl() {
   try {
-    const key = new URLSearchParams(globalThis.location?.search ?? "").get("dailyKey");
-    return /^\d{4}-\d{2}-\d{2}$/.test(key ?? "") ? key : undefined;
+    return new URLSearchParams(globalThis.location?.search ?? "").get("dailyKey") || undefined;
   } catch {
     return undefined;
   }
 }
 
-function renderChapter() {
-  if (state.caseBriefs?.length && !state.investigationComplete) return renderCaseInvestigation();
-  return renderTitle();
-}
-
-function activeCaseBrief() {
-  const index = Math.max(0, Math.min((state.chapter ?? 1) - 1, (state.caseBriefs?.length ?? 1) - 1));
-  const brief = state.caseBriefs?.[index] ?? state.caseBrief;
-  let changed = false;
-  if (state.caseBrief !== brief) {
-    state.caseBrief = brief;
-    changed = true;
+function storyKeyFromUrl() {
+  try {
+    const params = new URLSearchParams(globalThis.location?.search ?? "");
+    return params.get("storyKey") || params.get("packKey") || params.get("weeklyKey") || undefined;
+  } catch {
+    return undefined;
   }
-  if (normalizeBriefCopy(brief)) changed = true;
-  if (brief?.plotId === "education-income-fake-profile" && String(state.lastReaction ?? "").includes("我没开口要证明")) {
-    state.lastReaction = "我当时停了一下：是他主动发的。我没开口让他发这些，他自己先把标签摆出来了。";
-    changed = true;
+}
+
+function modeFromUrl() {
+  try {
+    const mode = new URLSearchParams(globalThis.location?.search ?? "").get("mode");
+    return mode === "daily" ? "daily" : "episode";
+  } catch {
+    return "episode";
   }
-  const hadBudget = brief ? Boolean(state.caseBudgets?.[caseNoteKey(brief)]) : true;
-  ensureCaseBudget(brief);
-  if (!hadBudget) changed = true;
-  if (brief?.complainantId && !state.primaryNpcId) {
-    state.primaryNpcId = brief.complainantId;
-    changed = true;
-  }
-  if (changed) saveState();
-  return brief;
 }
 
-function normalizeBriefCopy(brief) {
-  if (!brief) return false;
-  let changed = false;
-  const taskSummaries = {
-    audit: "钱说得急，谁来扛却还没落到人。",
-    emotion: "情绪很满，有人一直把问题推回爱不爱。",
-    verification: "标签都好看，截图却总少一块。"
-  };
-  if (brief.taskProfile?.id && taskSummaries[brief.taskProfile.id] && brief.taskProfile.summary !== taskSummaries[brief.taskProfile.id]) {
-    const taskLabels = {
-      audit: "钱款说不清",
-      emotion: "情绪卡住了",
-      verification: "资料有雾"
-    };
-    brief.taskProfile = {
-      ...brief.taskProfile,
-      label: taskLabels[brief.taskProfile.id] ?? brief.taskProfile.label,
-      summary: taskSummaries[brief.taskProfile.id]
-    };
-    changed = true;
-  }
-  const dailySummaries = {
-    "lost-job-hidden-credit": "这通先听清：钱从哪里来、花到谁身上、最后谁来扛。",
-    "house-name-security-test": "这通先稳住：房子、还贷、退路，哪一句没说清。",
-    "tony-multi-dating": "这通看反应：谁被放进不同分组，谁在被哄着付出。",
-    "education-income-fake-profile": "这通先听清：证明为什么出现，又是谁借父母的嘴把话推过去。"
-  };
-  if (brief.plotId && dailySummaries[brief.plotId] && brief.storyArcSummary !== dailySummaries[brief.plotId]) {
-    brief.storyArcSummary = dailySummaries[brief.plotId];
-    changed = true;
-  }
-  const dailyTitles = {
-    "lost-job-hidden-credit": "8 万信用卡周转",
-    "house-name-security-test": "婚前房与共同还贷",
-    "tony-multi-dating": "理发店排班表",
-    "education-income-fake-profile": "存款证明"
-  };
-  if (brief.plotId && dailyTitles[brief.plotId]) {
-    if (brief.label !== dailyTitles[brief.plotId]) {
-      brief.label = dailyTitles[brief.plotId];
-      changed = true;
-    }
-    const safeStoryTitle = `今日连线：${dailyTitles[brief.plotId]}`;
-    if (brief.storyArcTitle !== safeStoryTitle) {
-      brief.storyArcTitle = safeStoryTitle;
-      changed = true;
-    }
-  }
-  if (brief.dailyCase && brief.scene?.name !== "直播连线") {
-    brief.scene = { ...(brief.scene ?? {}), name: "直播连线" };
-    changed = true;
-  }
-  if (normalizeOpeningDialogueLines(brief)) changed = true;
-  if (normalizePlayableFakeProfileCase(brief)) changed = true;
-  if (normalizeHiddenClueConfig(brief)) changed = true;
-  if (normalizeDailyOpeningAtmosphere(brief)) changed = true;
-  return changed;
-}
-
-function normalizeDailyOpeningAtmosphere(brief) {
-  if (!brief) return false;
-  const opening = dailyOpeningAtmosphereLines(brief);
-  if (!opening) return false;
-  const current = Array.isArray(brief.openingDialogue) ? brief.openingDialogue : [];
-  const currentSignature = current
-    .filter((line) => line.role !== "other")
-    .map((line) => `${line.role}:${line.text}`)
-    .join("|");
-  const nextSignature = opening.map((line) => `${line.role}:${line.text}`).join("|");
-  if (currentSignature === nextSignature) return false;
-  brief.openingDialogue = opening;
-  state.dialogueProgress = {
-    ...(state.dialogueProgress ?? {}),
-    [dialogueProgressKey(brief, "caseOpen")]: 0
-  };
-  return true;
-}
-
-function dailyOpeningAtmosphereLines(brief) {
-  const name = getNpc(brief.complainantId)?.name ?? brief.openingDialogue?.find((line) => line.role === "caller")?.speaker ?? "来访者";
-  const plotId = inferDailyPlotId(brief);
-  const templates = {
-    "lost-job-hidden-credit": [
-      { speaker: name, role: "caller", text: "主播你好，我有点不敢跟朋友讲。TA 让我先垫 8 万信用卡，可那周我们还去了很贵的纪念日晚餐。", mood: "anxious" },
-      { speaker: "你", role: "host", text: "晚上好，这事听着不只是手头紧。TA 第一次提钱时，原话怎么说？", mood: "listening" }
-    ],
-    "house-name-security-test": [
-      { speaker: name, role: "caller", text: "主播你好，我不是非要房子。婚前房写 TA 父母名下，可婚后又说我们一起还贷才像一家人。", mood: "anxious" },
-      { speaker: "你", role: "host", text: "晚上好。合同上写谁、家里怎么说还贷，你从这两处讲。", mood: "listening" }
-    ],
-    "tony-multi-dating": [
-      { speaker: name, role: "caller", text: "主播你好，我现在手还是凉的。我看到一张排班表，里面不是名字，是“情绪稳定”“能投店”这种备注。", mood: "anxious" },
-      { speaker: "你", role: "host", text: "晚上好。看到那张表之前，他平时怎么和你相处？", mood: "listening" }
-    ],
-    "education-income-fake-profile": [
-      { speaker: name, role: "caller", text: "主播你好，我想问下我男朋友的事。", mood: "thinking" },
-      { speaker: "你", role: "host", text: "晚上好。你们怎么认识的，现在聊到哪一步了？", mood: "listening" },
-      { speaker: name, role: "caller", text: "我们是相亲认识的，最近聊到见父母。我之前跟家里说过他条件不错，我妈就问得细了一点。", mood: "thinking" },
-      { speaker: "你", role: "host", text: "她具体问了什么？你当时怎么接的？", mood: "listening" },
-      { speaker: name, role: "caller", text: "我妈问学校、工作、收入稳不稳，还顺口问了一句有没有点积蓄。我跟他说的时候可能没那么顺口。他第二天发来几张截图，最后还补了一张存款证明。", mood: "anxious" }
-    ]
-  };
-  return templates[plotId] ?? null;
-}
-
-function inferDailyPlotId(brief) {
-  if (brief?.plotId) return brief.plotId;
-  const text = `${brief?.label ?? ""} ${brief?.storyArcTitle ?? ""} ${brief?.publicHook ?? ""}`;
-  if (text.includes("三张截图") || text.includes("存款证明")) return "education-income-fake-profile";
-  if (text.includes("8 万信用卡") || text.includes("信用卡周转")) return "lost-job-hidden-credit";
-  if (text.includes("婚前房") || text.includes("共同还贷")) return "house-name-security-test";
-  if (text.includes("理发店排班表") || text.includes("排班表")) return "tony-multi-dating";
-  return brief?.plotId ?? null;
-}
-
-function normalizeOpeningDialogueLines(brief) {
-  if (!Array.isArray(brief?.openingDialogue)) return false;
-  let changed = false;
-  brief.openingDialogue = brief.openingDialogue.map((line) => {
-    const text = normalizedOpeningLineText(brief.plotId, line.role, line.text);
-    if (text !== line.text) {
-      changed = true;
-      return { ...line, text };
-    }
-    return line;
+function startStoryPack() {
+  const mode = modeFromUrl();
+  const caseBriefs = generateCasesForMode(mode, NPCS, DEFAULT_ATTRS, {
+    dailyKey: dailyKeyFromUrl(),
+    storyKey: storyKeyFromUrl(),
+    runNumber: meta.runs ?? 0
   });
-  return changed;
-}
-
-function normalizedHostOpeningText(plotId, fallback) {
-  const mapped = {
-    "lost-job-hidden-credit": "晚上好，这事听着不只是手头紧。TA 第一次提钱时，原话怎么说？",
-    "house-name-security-test": "晚上好。合同上写谁、家里怎么说还贷，你从这两处讲。",
-    "tony-multi-dating": "晚上好。看到那张表之前，他平时怎么和你相处？",
-    "education-income-fake-profile": "她具体问了什么？你当时怎么接的？"
-  }[plotId];
-  const text = String(fallback ?? "");
-  if (mapped && /别先问|你先说|先别|先不用|先把|被裁掉的是哪三栏|怎么认识|怎么介绍自己条件|一开始.*介绍/.test(text)) return mapped;
-  return text.replace(/^先别[^。？?]*[。？?]\s*/, "");
-}
-
-function normalizedOpeningLineText(plotId, role, fallback) {
-  if (role === "host") return normalizedHostOpeningText(plotId, fallback);
-  const text = String(fallback ?? "");
-  const callerMapped = {
-    "lost-job-hidden-credit": "主播你好，我有点不敢跟朋友讲。TA 让我先垫 8 万信用卡，可那周我们还去了很贵的纪念日晚餐。",
-    "house-name-security-test": "主播你好，我不是非要房子。婚前房写 TA 父母名下，可婚后又说我们一起还贷才像一家人。",
-    "tony-multi-dating": "主播你好，我现在手还是凉的。我看到一张排班表，里面不是名字，是“情绪稳定”“能投店”这种备注。",
-    "education-income-fake-profile": "主播你好，我想问下我男朋友的事。"
-  }[plotId];
-  if (role === "caller" && callerMapped && !text.includes("主播你好")) return callerMapped;
-  if (
-    plotId === "education-income-fake-profile" &&
-    role === "caller" &&
-    /公司抬头|硕士项目年限|收入流水|他听说以后，第二天主动发/.test(text)
-  ) {
-    return "我妈问学校、工作、收入稳不稳，还顺口问了一句有没有点积蓄。我跟他说的时候可能没那么顺口。他第二天发来几张截图，最后还补了一张存款证明。";
-  }
-  return text;
-}
-
-function normalizeHiddenClueConfig(brief) {
-  if (brief?.plotId !== "education-income-fake-profile") return false;
-  let changed = false;
-  const groups = [
-    [
-      "存款证明的出现不是单方主动展示，咨询者转述父母问题时也把压力递了过去。",
-      "存款证明是双方你推我接出来的，不是单方凭空炫耀。"
-    ],
-    [
-      "学校、工作、收入和存款都露出好看的局部，没露出来的地方才决定含金量。",
-      "对方把补材料的问题推成信任问题，避开了具体内容。"
-    ],
-    [
-      "多份材料同时避开择偶定位核心。",
-      "咨询者也在用存款证明维护自己先前转述过的体面印象。",
-      "证明真假被拿来挡住证明用途、时间和完整性的追问。",
-      "存款证明被用来换取饭局继续，但完整信息被推到见面之后。"
-    ]
-  ];
-  if (JSON.stringify(brief.explicitClueGroups ?? []) !== JSON.stringify(groups)) {
-    brief.explicitClueGroups = groups;
-    changed = true;
-  }
-  const cards = Array.isArray(brief.evidenceCards) ? brief.evidenceCards : [];
-  brief.evidenceCards = cards.map((card) => {
-    if (card.id === "daily-profile-job" && card.type === "岗位核验") {
-      changed = true;
-      return { ...card, type: "岗位材料" };
-    }
-    return card;
+  state = normalizeDailyState({
+    ...structuredClone(baseState),
+    screen: "chapter",
+    scene: "caseOpen",
+    profileDone: true,
+    caseMode: mode,
+    chapter: 1,
+    attrs: DEFAULT_ATTRS,
+    caseBriefs,
+    caseBrief: caseBriefs[0]
   });
-  if (!brief.evidenceCards.some((card) => card.id === "daily-profile-deposit")) {
-    brief.evidenceCards.push({
-      id: "daily-profile-deposit",
-      type: "存款证明",
-      title: "余额截图",
-      front: "余额数字清楚，开户时间、冻结状态和账户用途没露出。",
-      detail: "能证明有一笔钱，不等于证明这笔钱稳定、可用、属于长期积蓄。",
-      targets: ["truthWithGap", "sceneHint"],
-      contradiction: "存款证明只露余额，不露时间、冻结状态和账户用途。"
-    });
-    changed = true;
-  }
-  return changed;
-}
-
-function legacyBackendLabel() {
-  return ["后", "台"].join("");
-}
-
-function normalizePlayableFakeProfileCase(brief) {
-  if (brief?.plotId !== "education-income-fake-profile") return false;
-  let changed = false;
-  const hadDepositStory = JSON.stringify({
-    sceneVersions: brief.sceneVersions,
-    testimony: brief.testimony,
-    stageJudgement: brief.stageJudgement,
-    dailyShareBody: brief.dailyShareBody
-  }).includes("存款证明");
-  const complainant = "咨询者";
-  const respondent = "对方";
-  const sceneVersions = [
-    {
-      speakerId: brief.complainantId,
-      speaker: complainant,
-      version: "见父母前，我手里现在是三张截图，加一张存款证明。学校、工作、收入是他先发的；但存款那张，我真说不清是他主动补，还是我把我妈的话转得太像在要。",
-      doubt: "材料不是凭空出现的，存款证明尤其卡在父母、咨询者和对方三个人的面子中间。",
-      contradiction: "存款证明的出现不是单方主动展示，咨询者转述父母问题时也把压力递了过去。",
-      reliability: "mixed",
-      questionOptions: [
-        { question: "你把你转给他的原话说一下。", answer: "我说的是：我妈可能会问收入稳不稳、有没有点存款，你别到时候被问住。说完我自己也觉得，这话不像只是提醒。", contradiction: "咨询者借父母的提问，把存款压力提前递给了对方。", correct: true },
-        { question: "存款证明这四个字是谁先说的？", answer: "我想了一下：不是我妈直接说证明，是我转述得太像在要一个能交代的东西。", correct: false },
-        { question: "你当时为什么收下那张证明？", answer: "因为我已经跟家里说他条件不错。看到那张证明，我确实松了一口气。", correct: false }
-      ]
-    },
-      {
-        speakerId: brief.complainantId,
-        speaker: complainant,
-        version: "我刚才又看了一眼，几张图都不像 P 的。学校那张有校徽，公司那张有尾缀，收入那张有数字，存款证明上也有余额。可每一张都停在最好看的地方。",
-        doubt: "这不是当场打假，而是用真的局部制造足够体面的第一印象。",
-      contradiction: "学校、工作、收入和存款都露出好看的局部，没露出来的地方才决定含金量。",
-      reliability: "partial",
-      questionOptions: [
-        { question: "你让他把几张图边上那一块补全了吗？", answer: "我把图往上划了：学校那张右边多出项目名称，公司那张下面露出签约主体，收入那张后面还有绩效说明。存款证明没露开户时间和是否冻结。", contradiction: "学校、工作、收入和存款都露出好看的局部，没露出来的地方才决定含金量。", correct: true },
-        { question: "他听见你问原图，第一反应是什么？", answer: "我记得他回得很快：你要这么想我也没办法。图没补全，话先变成了信不信任。", correct: false },
-        { question: "如果他愿意补全原图，你还会介意吗？", answer: "如果他愿意把学制、合同主体、完整收入和存款证明边缘都补全，我会少一点不安。可问题不是介不介意，是为什么一开始只露够我拿回家交代的那部分。", correct: false }
-      ]
-    },
-      {
-        speakerId: brief.complainantId,
-        speaker: complainant,
-        version: "我把他后来那句回复念出来：“你家里要看稳定，我给了；你又说我像在表演。那我到底要怎么做？先把饭吃了，别一上来就把我当面试。”",
-      doubt: "这句不只是防御，也把父母的筛选、咨询者的转述和他的体面展示全搅在一起。",
-      contradiction: "对方把补全材料的问题推成被面试，但没有解释为什么每份材料都只露到够体面的地方。",
-      reliability: "partial",
-      questionOptions: [
-          { question: "他这句里最想让你接受的是什么？", answer: "他想让我承认：是我家先把问题问得像筛选，所以他发材料只是被逼出来的体面。", correct: false },
-          { question: "你再看一遍，他有没有解释存款证明缺的那几项？", answer: "没有。他只反复说证明是真的，把问题从完整信息挪到真假二选一。", contradiction: "证明真假被拿来挡住证明用途、时间和完整性的追问。", correct: true }
-      ]
-    }
-  ];
-  const hasWrongSceneQuestionShape = (brief.sceneVersions ?? []).some((item) => {
-    const options = item?.questionOptions ?? [];
-    return options.filter((option) => option.correct !== false).length !== 1;
-  });
-  if (
-    !JSON.stringify(brief.sceneVersions ?? []).includes("存款证明") ||
-    hasWrongSceneQuestionShape ||
-    brief.sceneVersions?.[0]?.version?.includes("985、硕士、金融、父母稳定") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("缺口都落在关系决策") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes(`把原图边缘发${legacyBackendLabel()}`) ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("这句解释最该怎么问") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("回拨新情况") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes(`我把三张截图发${legacyBackendLabel()}`) ||
-    JSON.stringify(brief.sceneVersions ?? []).includes(`${legacyBackendLabel()}把三张图`) ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("我没开口要证明") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("边缘一补出来") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("学制那行、合同主体和收入完整页") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("条件听着已经不错") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("三张图都是真的") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("她想了一下") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("她把图往上划") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("对方解释说") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("林鹿") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("周砚") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("我手里有三张截图。每张都挺体面") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("怕我多想") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("最想推进") ||
-    JSON.stringify(brief.sceneVersions ?? []).includes("急着推进") ||
-    brief.sceneVersions?.[0]?.questionOptions?.some((option) => option.question === "你最想先核哪一栏？")
-  ) {
-    brief.sceneVersions = sceneVersions;
-    changed = true;
-  }
-  if (
-    !JSON.stringify(brief.testimony ?? []).includes("存款证明") ||
-    brief.testimony?.[0]?.line?.includes("每一句都比实际情况听起来高半档") ||
-    brief.testimony?.[1]?.line?.includes("公司抬头、学制和收入栏被裁掉") ||
-    JSON.stringify(brief.testimony ?? []).includes("简历截图") ||
-    JSON.stringify(brief.testimony ?? []).includes(`${legacyBackendLabel()}把没露出的地方`) ||
-    JSON.stringify(brief.testimony ?? []).includes("主播记事") ||
-    JSON.stringify(brief.testimony ?? []).includes("资料核验不是势利") ||
-    JSON.stringify(brief.testimony ?? []).includes("你知道她会按更高那档理解吗") ||
-    JSON.stringify(brief.testimony ?? []).includes("你把原话复述一遍") ||
-    JSON.stringify(brief.testimony ?? []).includes("你是不是想找更有钱") ||
-    JSON.stringify(brief.testimony ?? []).includes("林鹿") ||
-    JSON.stringify(brief.testimony ?? []).includes("周砚") ||
-    JSON.stringify(brief.testimony ?? []).includes("还喜不喜欢")
-  ) {
-    brief.testimony = [
-      {
-        speakerId: brief.complainantId,
-        speaker: complainant,
-        line: "“我不是想查他存款。我也承认，我之前跟家里说过他条件不错，所以他发来那张证明时，我其实松了一口气。”",
-        kind: "halfLie",
-        surface: "咨询者自己的面子压力",
-        hint: "她也有自己的位置要维护，这会影响她为什么一开始没有追问。",
-        followups: [
-          { question: "所以你也不想让家里觉得自己看走眼？", result: "我其实有点不敢承认：对。我已经把话说出去了，所以我也希望那张证明是真的够稳。", contradiction: "咨询者也在用存款证明维护自己先前转述过的体面印象。" },
-          { question: "你家里真正想从这些材料里确认什么？", result: "我妈嘴上说是看稳定，其实是想知道我带回去的人能不能跟我之前说的条件对上。我也怕前后说法打脸，他也怕饭局前被看低，所以那几张图才会变得这么有用。", correct: false }
-        ]
-      },
-      {
-        speakerId: brief.complainantId,
-        speaker: complainant,
-        line: "“那些图都不一定假。学校标识、公司尾缀、薪资数字和存款余额都是真的一部分。只是它们刚好够我拿去跟家里交代。”",
-        kind: "truthWithGap",
-        surface: "真图没露出的地方",
-        hint: "现在要看几份材料少掉的是不是同一种信息。",
-        followups: [
-          { question: "你把没露出来的边缘按顺序说一遍。", result: "我一张张看下来：学制、合同主体、完整收入页，还有存款证明的开户时间和冻结状态，都是父母真正会追问的部分。", contradiction: "多份材料同时避开择偶定位核心。" }
-        ]
-      },
-      {
-        speakerId: brief.complainantId,
-        speaker: complainant,
-        line: "“后来他回我：你家不是想看稳定吗？我给了，又说我表演。那这饭还吃不吃？”",
-        kind: "sceneHint",
-        surface: "聊天原话",
-        hint: "这时候不用替谁定性，只看他有没有把话说全。",
-        followups: [
-          { question: "你把这句后面他怎么接的说完。", result: "他后面接的是：先见了面，别让一张证明把两个人都弄得难看。", contradiction: "存款证明被用来换取饭局继续，但完整信息被推到见面之后。" }
-        ]
-      }
-    ];
-    changed = true;
-  }
-  const dailyFields = {
-    publicHook: "见父母前，他发来学校、工作、收入截图，还补了一张存款证明。最怪的不是图，而是谁先把存款这两个字说出口。",
-    storyClueObject: "几张资料截图和一张存款证明",
-    openingComplaint: "咨询者连线说：“我想问下我男朋友的事。我们是相亲认识的，最近聊到见父母，他发了学校、工作、收入截图，后面又补了一张存款证明。我越看越觉得，这事不像他一个人突然想出来的。”",
-    stageJudgement: "听到这里：这通电话不能直接定骗。学制、合同主体、收入和存款证明都只露好看的局部，父母真正会追问的完整信息被留在饭局后面。",
-    followupTwist: "后续回拨：对方没有否认裁切，只说“你们家不是要看稳定吗，先把饭吃了”。咨询者沉默了一下，说她也不确定那句是不是自己先递过去的。",
-    dailyShareTitle: "存款证明都发了，怎么反而更怪？",
-    dailyShareBody: "今晚最好吵的是：存款证明不是突然冒出来的，谁先想看都说不清。",
-    dailyShareQuestion: "你听完会觉得是包装，是试探，还是双方都在借父母的嘴？",
-    truth: "存款证明不一定假，但它的出现本身就是关系压力的一部分。父母的筛选、咨询者的面子和对方的体面展示一起把饭局推向了更高门槛。"
-  };
-  Object.entries(dailyFields).forEach(([key, value]) => {
-    if (brief[key] !== value) {
-      brief[key] = value;
-      changed = true;
-    }
-  });
-  if (changed && !hadDepositStory) {
-    clearCaseAttemptState(brief);
-    state.scene = "caseOpen";
-    state.lastReaction = null;
-  }
-  const staleAccusation = (state.accusationHistory ?? []).some((item) =>
-    item.caseId === brief.id &&
-    item.dailyAccuseLabel &&
-    !String(item.dailyAccuseLabel).includes("存款证明")
-  );
-  if (staleAccusation) {
-    clearCaseAttemptState(brief);
-    state.scene = "caseOpen";
-    state.lastReaction = null;
-    changed = true;
-  }
-  return changed;
-}
-
-function renderCaseInvestigation() {
-  const brief = activeCaseBrief();
-  if (!brief) return renderTitle();
-  const chapter = caseChapterTitle(brief, state.chapter - 1);
-  if (state.scene === "sceneReview") return renderCaseSceneReview(brief, chapter);
-  if (state.scene === "testimony") return renderCaseTestimony(brief, chapter);
-  if (state.scene === "evidence") return renderCaseEvidence(brief, chapter);
-  if (state.scene === "accusation") return renderCaseAccusation(brief, chapter);
-  if (state.scene === "caseSolved") return renderCaseSolved(brief, chapter);
-  if (state.scene === "caseInterlude") return renderCaseInterlude(brief, chapter);
-  if (state.scene === "runComplete") return renderCaseRunComplete(brief, "今晚收麦");
-  return renderCaseOpen(brief, chapter);
-}
-
-function topbarTabs() {
-  if (state.caseBriefs?.length && !state.investigationComplete) {
-    return state.caseBriefs.map((brief, index) => `<span class="${state.chapter === index + 1 ? "active" : ""}">${caseShortTitle(brief, index)}</span>`).join("");
-  }
-  return CHAPTERS.map((chapter) => `<span class="${state.chapter === Number(chapter.id.slice(2)) ? "active" : ""}">${chapter.title.split("：")[0]}</span>`).join("");
-}
-
-function caseShortTitle(brief, index) {
-  if (brief?.storyArcTitle) return brief.storyArcTitle.split("：")[0];
-  return CASE_CHAPTERS[index]?.title?.split("：")[0] ?? `第 ${index + 1} 案`;
-}
-
-function caseChapterTitle(brief, index) {
-  return brief?.storyArcTitle ?? CASE_CHAPTERS[index]?.title ?? `第 ${index + 1} 案：${brief?.modeLabel ?? "婚恋 case"}`;
-}
-
-function caseSetLabel() {
-  const count = state.caseBriefs?.length ?? 0;
-  return `${caseModeConfig(state.caseMode).title}（共 ${count} 案）`;
-}
-
-function caseSetSummary() {
-  return caseModeConfig(state.caseMode).summary;
-}
-
-function renderCaseOpen(brief, chapter) {
-  state.primaryNpcId = brief.complainantId;
-  const complainant = getNpc(brief.complainantId);
-  const respondent = getNpc(brief.respondentId);
-  const opening = playthroughOpening(brief);
-  let openingDialogue = openingDialogueForCase(brief, opening, complainant?.name ?? "来访者", respondent?.name ?? "另一方");
-  if (openingDialogue.length < 2) {
-    const openingText = openingDialogue.map((line) => line.text ?? "").join(" ");
-    const inferredPlotId = /男朋友|相亲|截图/.test(openingText)
-      ? "education-income-fake-profile"
-      : null;
-    const inferredOpening = dailyOpeningAtmosphereLines({
-      ...brief,
-      plotId: inferredPlotId ?? brief.plotId,
-      storyArcTitle: `${brief.storyArcTitle ?? ""} ${chapter ?? ""}`
-    });
-    if (inferredOpening?.length) {
-      openingDialogue = inferredOpening
-        .filter((line) => line.role !== "other")
-        .map((line) => ({
-          ...line,
-          speaker: line.role === "host" ? "你" : "咨询者"
-        }));
-    }
-  }
-  const openingStep = Math.max(0, openingDialogue.length - 1);
-  const currentOpeningLine = openingDialogue[openingStep] ?? openingDialogue[0] ?? null;
-  const visibleOpeningDialogue = openingDialogue;
-  const hasMoreOpening = false;
-  window.__loveOpeningNext = null;
-  const view = caseOpenView({
-    chapter,
-    brief,
-    openingDialogue: visibleOpeningDialogue,
-    hasMoreOpening,
-    openingTotal: openingDialogue.length,
-    openingStep,
-    showStreamline: false,
-    scanDisabled: caseActionDisabled(brief, "scan:summary")
-  });
-  storyFrame({
-    ...view,
-    speakerName: currentOpeningLine?.speaker,
-    portraitMood: currentOpeningLine?.mood ?? (currentOpeningLine?.role === "host" ? "listening" : "anxious")
-  });
-  document.querySelector("[data-case-scene]")?.addEventListener("click", () => moveCaseScene("sceneReview"));
-  document.querySelector("[data-case-scan]")?.addEventListener("click", () => {
-    if (!spendCaseAction(brief, "scan:summary")) return rerenderWithSave();
-    bumpFlag("evidenceClarity", 1);
-    recordEvidenceInsight(brief, "先把来电里没讲完的那一句记下来。");
-    state.lastReaction = "你压低声音：先别急，听她把话说完。";
-    moveCaseScene("evidence");
-  });
-}
-
-function renderCaseSceneReview(brief, chapter) {
-  const sceneIndex = currentSceneVersionIndex(brief);
-  const currentVersion = brief.sceneVersions?.[sceneIndex] ?? brief.sceneVersions?.[0] ?? null;
-  const totalVersions = brief.sceneVersions?.length ?? 0;
-  const completedDialogueCount = (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
-  const view = sceneReviewView({
-    chapter,
-    brief,
-    sceneIndex,
-    currentVersion,
-    totalVersions,
-    versionStates: (brief.sceneVersions ?? []).map((_, index) => ({
-      disabled: caseActionDisabled(brief, `version:${index}`),
-      done: actionDone(brief, `version:${index}`)
-    })),
-    optionStates: (brief.sceneVersions ?? []).map((item, index) => {
-      const options = Array.isArray(item?.questionOptions) && item.questionOptions.length
-        ? item.questionOptions
-        : sceneQuestionOptionsForRuntime(item, index);
-      return options.map((_, optionIndex) => ({
-        disabled: caseActionDisabled(brief, `sceneQuestion:${index}:${optionIndex}`)
-      }));
-    }),
-    canDiscussProblem: completedDialogueCount >= Math.min(2, Math.max(1, totalVersions))
-  });
-  storyFrame({ ...view, portraitMood: "thinking" });
-  document.querySelectorAll("[data-version-question]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const [versionIndex, optionIndex] = button.dataset.versionQuestion.split(":").map(Number);
-      const actionKey = `sceneQuestion:${versionIndex}:${optionIndex}`;
-      if (!spendCaseAction(brief, actionKey)) return rerenderWithSave();
-      const item = brief.sceneVersions[versionIndex];
-      const option = sceneQuestionOption(item, versionIndex, optionIndex);
-      if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
-      if (option.correct !== false) {
-        spendCaseAction(brief, `version:${versionIndex}`, 0);
-        recordContradiction(brief, option.contradiction ?? item?.contradiction ?? "这个现场版本有无法自洽的地方。");
-        state.lastReaction = option.answer ?? "TA 又把前后话补了一句。";
-      } else {
-        registerLiveMisstep(brief);
-        state.lastReaction = option.answer ?? liveMisstepReply(item, "scene");
-      }
-      saveState();
-      render();
-    });
-  });
-  document.querySelector("[data-scene-version-prev]")?.addEventListener("click", () => setSceneVersionIndex(brief, sceneIndex - 1));
-  document.querySelector("[data-scene-version-next]")?.addEventListener("click", () => setSceneVersionIndex(brief, sceneIndex + 1));
-  document.querySelectorAll("[data-case-scene]").forEach((button) => {
-    button.addEventListener("click", () => moveCaseScene(button.dataset.caseScene));
-  });
-}
-
-function sceneQuestionOption(item, index, optionIndex) {
-  const options = Array.isArray(item?.questionOptions) && item.questionOptions.length
-    ? item.questionOptions
-    : sceneQuestionOptionsForRuntime(item, index);
-  return options[optionIndex] ?? options[0];
-}
-
-function sceneQuestionOptionsForRuntime(item, index) {
-  return [
-    {
-      question: index === 2 ? "这份材料只能证明哪一部分？" : "你刚才省略的是哪一段？",
-      answer: item?.contradiction ?? "这段说法里有一个事实缺口被问出来了。",
-      contradiction: item?.contradiction,
-      correct: true
-    },
-    {
-      question: index === 0 ? "你先说说，这句话当时让你最难受的是哪一段？" : "这句先放着，听下一句怎么接。",
-      answer: `${item?.speaker ?? "对方"} 顺着情绪继续讲，但关键事实暂时没有往前走。`,
-      correct: false
-    }
-  ];
-}
-
-function renderCaseTestimony(brief, chapter) {
-  const testimonyIndex = currentTestimonyIndex(brief);
-  const currentTestimony = brief.testimony?.[testimonyIndex] ?? brief.testimony?.[0] ?? null;
-  if (currentTestimony?.speakerId && (currentTestimony.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) {
-    state.primaryNpcId = currentTestimony.speakerId;
-  }
-  const followupStates = {};
-  brief.testimony.forEach((item, index) => {
-    (item.followups ?? []).forEach((_, followupIndex) => {
-      const actionKey = `followup:${index}:${followupIndex}`;
-      followupStates[`${index}:${followupIndex}`] = {
-        disabled: caseActionDisabled(brief, actionKey),
-        done: actionDone(brief, actionKey)
-      };
-    });
-  });
-  storyFrame({
-    ...testimonyView({
-      chapter,
-      brief,
-      testimonyIndex,
-      currentTestimony,
-      followupStates
-    }),
-    portraitMood: testimonyMood(currentTestimony)
-  });
-  document.querySelectorAll("[data-followup]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const [testimonyIndex, followupIndex] = button.dataset.followup.split(":").map(Number);
-      const actionKey = `followup:${testimonyIndex}:${followupIndex}`;
-      if (!spendCaseAction(brief, actionKey)) return rerenderWithSave();
-      const item = brief.testimony[testimonyIndex];
-      const followup = item?.followups?.[followupIndex];
-      if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
-      if (followup?.correct === false) {
-        registerLiveMisstep(brief);
-        state.lastReaction = followup.result ?? liveMisstepReply(item, "testimony");
-        saveState();
-        render();
-        return;
-      }
-      bumpFlag("evidenceClarity", 1);
-      recordInterrogation(brief, followup?.question ?? item?.hint);
-      if (followup?.contradiction) recordContradiction(brief, followup.contradiction);
-      state.lastReaction = followup?.result ?? "TA 把刚才没说完的地方又补了一句。";
-      saveState();
-      render();
-    });
-  });
-  document.querySelector("[data-testimony-prev]")?.addEventListener("click", () => setTestimonyIndex(brief, testimonyIndex - 1));
-  document.querySelector("[data-testimony-next]")?.addEventListener("click", () => setTestimonyIndex(brief, testimonyIndex + 1));
-  document.querySelectorAll("[data-case-scene]").forEach((button) => {
-    button.addEventListener("click", () => moveCaseScene(button.dataset.caseScene));
-  });
-}
-
-function renderCaseEvidence(brief, chapter) {
-  const readiness = dailyAccusationReadiness(brief);
-  storyFrame({
-    ...evidenceView({
-      chapter,
-      brief,
-      evidenceStates: {
-        timeline: caseActionDisabled(brief, "evidence:timeline"),
-        money: caseActionDisabled(brief, "evidence:money"),
-        motive: caseActionDisabled(brief, "evidence:motive")
-      },
-      canAccuse: readiness.ready,
-      readinessHint: readiness.message
-    }),
-    portraitMood: "focused"
-  });
-  document.querySelectorAll("[data-evidence]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const type = button.dataset.evidence;
-      if (!spendCaseAction(brief, `evidence:${type}`)) return rerenderWithSave();
-      bumpFlag("evidenceClarity", 1);
-      if (type === "money") bumpFlag("assetProtection", 1);
-      if (type === "motive") bumpFlag("suspicion", 1);
-      const insight = evidenceInsightFor(brief, type);
-      recordEvidenceInsight(brief, insight);
-      recordContradiction(brief, `追问整理：${insight}`);
-      state.lastReaction = "你把刚才那几句放慢念了一遍。";
-      saveState();
-      render();
-    });
-  });
-  document.querySelectorAll("[data-case-scene]").forEach((button) => {
-    button.addEventListener("click", () => moveCaseScene(button.dataset.caseScene));
-  });
-}
-
-function renderCaseAccusation(brief, chapter) {
-  const readiness = dailyAccusationReadiness(brief);
-  if (!readiness.ready) {
-    state.lastReaction = readiness.message;
-    state.scene = "testimony";
-    saveState();
-    return render();
-  }
-  const complainant = getNpc(brief.complainantId);
-  const respondent = getNpc(brief.respondentId);
-  const structuralChoice = structuralExpectedAccusation(brief)
-    ? `<button data-accuse="${structuralExpectedAccusation(brief)}" type="button">${structuralAccusationButtonText(brief)}</button>`
-    : "";
-  storyFrame({
-    ...accusationView({
-      chapter,
-      brief,
-      hint: caseAccusationHint(brief),
-      complainantName: brief.dailyCase ? "咨询者" : complainant?.name ?? "先诉苦者",
-      respondentName: brief.dailyCase ? "对方" : respondent?.name ?? "另一方",
-      structuralChoice
-    }),
-    portraitMood: "tense"
-  });
-  document.querySelectorAll("[data-accuse]").forEach((button) => {
-    button.addEventListener("click", () => resolveAccusation(brief, button.dataset.accuse, button.dataset.accuseLabel));
-  });
-  document.querySelectorAll("[data-case-scene]").forEach((button) => {
-    button.addEventListener("click", () => moveCaseScene(button.dataset.caseScene));
-  });
-}
-
-function structuralAccusationButtonText(brief) {
-  if (brief.structuralActorId === "platform") return "指向平台 / 第三方操盘";
-  if (brief.structuralActorId === "thirdParty") return "指向第三方操盘者";
-  return "指向结构性操盘者";
-}
-
-function renderCaseSolved(brief, chapter) {
-  const result = state.accusationHistory.find((item) => item.caseId === brief.id);
-  const actor = getNpc(brief.premeditatedActorId);
-  const solved = solvedCaseDetails(brief, result);
-  const recapStep = Number(state.dialogueProgress?.[dialogueProgressKey(brief, "caseSolved")] ?? 0);
-  const view = caseSolvedView({
-    chapter,
-    brief,
-    result,
-    actorName: actor?.name,
-    solved,
-    contradictionCount: contradictionsForCase(brief).length,
-    structuralResponsibility: structuralExpectedAccusation(brief) ? structuralResponsibilityText(brief) : "",
-    hasNextCase: Boolean(state.caseBriefs?.[state.chapter]),
-    recapStep
-  });
-  storyFrame({ ...view, speakerName: "你" });
-  document.querySelector("[data-recap-next]")?.addEventListener("click", () => {
-    state.dialogueProgress = {
-      ...(state.dialogueProgress ?? {}),
-      [dialogueProgressKey(brief, "caseSolved")]: recapStep + 1
-    };
-    saveState();
-    render();
-  });
-  document.querySelector("[data-next-case]")?.addEventListener("click", () => {
-    state.scene = "caseInterlude";
-    saveState();
-    render();
-  });
-  document.querySelectorAll("[data-retry-case]").forEach((button) => {
-    button.addEventListener("click", () => resetCaseAttempt(brief));
-  });
-}
-
-function resetCaseAttempt(brief) {
-  clearCaseAttemptState(brief);
-  state.scene = "caseOpen";
-  state.lastReaction = "直播间把麦重新接回开头。这一次可以换一种问法。";
-  ensureCaseBudget(brief);
   saveState();
   render();
 }
 
-function clearCaseAttemptState(brief) {
-  const key = caseNoteKey(brief);
-  state.caseActionLog = omitStateKey(state.caseActionLog, key);
-  state.contradictionLog = omitStateKey(state.contradictionLog, key);
-  state.evidenceInsights = omitStateKey(state.evidenceInsights, key);
-  state.interrogationNotes = omitStateKey(state.interrogationNotes, key);
-  state.caseBudgets = omitStateKey(state.caseBudgets, key);
-  state.inspirationUsage = omitStateKey(state.inspirationUsage, key);
-  state.selectedEvidenceCard = omitStateKey(state.selectedEvidenceCard, key);
-  state.caseInterludes = omitStateKey(state.caseInterludes, key);
-  state.accusationHistory = (state.accusationHistory ?? []).filter((item) => item.caseId !== brief.id);
-  state.solvedCaseIds = (state.solvedCaseIds ?? []).filter((id) => id !== brief.id);
-  state.dialogueProgress = {
-    ...(state.dialogueProgress ?? {}),
-    [dialogueProgressKey(brief, "caseOpen")]: 0,
-    [dialogueProgressKey(brief, "sceneReview")]: 0,
-    [dialogueProgressKey(brief, "testimony")]: 0,
-    [dialogueProgressKey(brief, "caseSolved")]: 0,
-    [dialogueProgressKey(brief, "caseInterlude")]: 0
-  };
+function storyPreviewBriefs() {
+  try {
+    return generateCasesForMode(modeFromUrl(), NPCS, DEFAULT_ATTRS, {
+      dailyKey: dailyKeyFromUrl(),
+      storyKey: storyKeyFromUrl(),
+      runNumber: meta.runs ?? 0
+    });
+  } catch {
+    return [];
+  }
 }
 
-function omitStateKey(source, key) {
-  const next = { ...(source ?? {}) };
-  delete next[key];
-  return next;
+function resetToTitle() {
+  clearStateSnapshot();
+  state = normalizeDailyState(structuredClone(baseState));
+  state.screen = "title";
+  saveState();
+  render();
 }
 
-function renderCaseInterlude(brief, chapter) {
-  const interlude = interludeForCase(brief);
-  const nextBrief = state.caseBriefs?.[state.chapter] ?? null;
-  const nextHook = nextBrief ? nextPlaythroughTease(nextBrief) : finalPlaythroughTease();
-  const interludeLines = interludeDialogueForCase({
-    brief,
-    currentTitle: caseChapterTitle(brief, state.chapter - 1),
-    interlude,
-    nextHook,
-    transition: brief.storyTransition,
-    followupTwist: brief.followupTwist,
-    nextCarryover: nextBrief ? nextCaseCarryoverLine(nextBrief) : `${caseSetLabel()}已结束，进入今晚回看。`,
-    nextThreadLine: nextBrief?.threadLink?.line ?? ""
-  });
-  const interludeStep = Number(state.dialogueProgress?.[dialogueProgressKey(brief, "caseInterlude")] ?? 0);
-  const view = caseInterludeView({
-    currentTitle: caseChapterTitle(brief, state.chapter - 1),
-    brief,
-    interlude,
-    interludeLines,
-    interludeStep,
-    reputation: state.agencyReputation ?? 0,
-    heat: state.publicHeat ?? 0,
-    nextTitle: nextBrief ? caseChapterTitle(nextBrief, state.chapter) : ""
-  });
-  storyFrame({
-    ...view,
-    speakerName: view.speakerName ?? "你",
-    caseStage: false,
-    hideStatus: true,
-    personaOverride: { name: "你", art: CHARACTER_ART.meng }
-  });
-  document.querySelector("[data-interlude-next]")?.addEventListener("click", () => {
+function render() {
+  if (!app) return;
+  if (state.screen === "title") return renderTitle();
+  if (!activeCaseBrief()) return renderTitle();
+  return renderDailyCase();
+}
+
+function renderTitle() {
+  const previews = storyPreviewBriefs();
+  const preview = previews[0] ?? null;
+  const storyPack = modeFromUrl() !== "daily";
+  const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
+  const hook = storyPack ? preview?.storyThemeIntro ?? preview?.weeklyThemeIntro ?? "热线已经接进来。资料在后台，先听这通。" : preview?.publicHook ?? "一通匿名来电已经接进来，关键就藏在第一句没说完的话里。";
+  const object = storyPack ? "热线已接入" : preview?.storyClueObject ?? "今日通话摘录";
+  app.innerHTML = `
+    <main>
+      <section class="title-screen">
+        <div class="title-copy">
+          <p class="eyebrow">${storyPack ? "Steam 首发试玩" : "今日匿名来电"}</p>
+          <h1>${PRODUCT_NAME}</h1>
+          <p>${escapeHtml(title)}</p>
+          <div class="quick-play-card case-file-ledger daily-hook-card">
+            <span>${escapeHtml(object)}</span>
+            <b>${escapeHtml(hook)}</b>
+            <small>${storyPack ? "麦已经亮了。" : "同一天同一通电话。你接哪句，朋友进来就能对答案。"}</small>
+          </div>
+          <div class="title-actions">
+            <button class="primary" data-start-story type="button">${storyPack ? "接通" : "我来接一句"}</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  `;
+  bind("[data-start-story]", startStoryPack);
+}
+
+function renderDailyCase() {
+  const brief = activeCaseBrief();
+  if (state.scene === "sceneReview") return renderSceneReview(brief);
+  if (state.scene === "deepFollowup") return renderDeepFollowup(brief);
+  if (state.scene === "testimony" || state.scene === "evidence") {
+    state.scene = "sceneReview";
     state.dialogueProgress = {
       ...(state.dialogueProgress ?? {}),
-      [dialogueProgressKey(brief, "caseInterlude")]: interludeStep + 1
+      [`${caseKey(brief)}:sceneReview`]: firstUnansweredSceneIndex(brief)
     };
     saveState();
-    render();
+    return renderSceneReview(brief);
+  }
+  if (state.scene === "accusation") return renderAccusation(brief);
+  if (state.scene === "patienceLost") return renderPatienceLost(brief);
+  if (state.scene === "caseSolved") return renderSolved(brief);
+  if (state.scene === "storyInterlude") return renderStoryInterlude(brief);
+  if (state.scene === "runComplete") return renderRunComplete(brief);
+  return renderCaseOpen(brief);
+}
+
+function choiceGroup(label, content, className = "", note = "") {
+  if (!content?.trim()) return "";
+  return `
+    <section class="choice-group ${className}">
+      <div class="choice-label">
+        <span>${escapeHtml(label)}</span>
+        ${note ? `<small>${escapeHtml(note)}</small>` : ""}
+      </div>
+      <div class="choice-stack">${content}</div>
+    </section>
+  `;
+}
+
+function flowGroup(content) {
+  if (!content?.trim()) return "";
+  return `
+    <section class="choice-group flow-group">
+      <div class="choice-stack">${content}</div>
+    </section>
+  `;
+}
+
+function liveChapterTitle(brief = {}) {
+  return isStoryPackMode() ? "热线连线" : brief.storyArcTitle ?? "今日来电";
+}
+
+function storyInterludeHook(brief = {}) {
+  if (!brief) return "麦还没断，新的电话已经排进来。";
+  return brief.storyBridge ?? brief.weeklyBridge ?? "麦还没断，新的电话已经排进来。";
+}
+
+function renderCaseOpen(brief) {
+  const lines = compactDialogueLines(brief.openingDialogue ?? []);
+  frame({
+    brief,
+    mood: "listening",
+    label: "直播连线",
+    chapter: liveChapterTitle(brief),
+    text: `
+      <div class="call-dialogue">
+        ${lines.map((line) => callLine(brief, line)).join("")}
+      </div>
+    `,
+    choices: flowGroup(`<button class="primary" data-scene="sceneReview" type="button">继续</button>`)
   });
-  document.querySelector("[data-enter-next-case]")?.addEventListener("click", () => {
-    state.chapter += 1;
-    state.scene = "caseOpen";
-    state.caseBrief = state.caseBriefs[state.chapter - 1];
-    state.primaryNpcId = state.caseBrief?.complainantId ?? null;
-    state.secondaryNpcId = state.caseBrief?.respondentId ?? null;
+  bindSceneButtons();
+}
+
+function renderSceneReview(brief) {
+  const scenes = brief.sceneVersions ?? [];
+  const index = currentIndex(brief, "sceneReview", scenes.length || 1);
+  const scene = scenes[index] ?? {};
+  const done = actionDone(brief, `version:${index}`);
+  const pick = selectedScenePick(brief, index);
+  const options = focusedQuestionOptions(scene.questionOptions ?? []);
+  const dialogueOptions = dialogueQuestionOptions(options);
+  const criticalOptions = criticalQuestionOptions(options);
+  const lastStage = index >= scenes.length - 1;
+  const canDeepFollow = issueCompletion(brief).badge && hasDeepFollowup(brief);
+  frame({
+    brief,
+    mood: "thinking",
+    label: "继续对话",
+    chapter: liveChapterTitle(brief),
+    text: `
+      <p><b>第 ${index + 1} 段来电</b></p>
+      <div class="call-dialogue">
+        ${done
+          ? completedSceneExchange(brief, scene, index, pick)
+          : activeSceneExchange(brief, scene, index)}
+      </div>
+      ${keyChoiceReview(brief)}
+    `,
+    choices: done
+      ? flowGroup(`
+          ${lastStage
+            ? `<button class="primary" data-scene="${canDeepFollow ? "deepFollowup" : "accusation"}" type="button">${canDeepFollow ? "再深入一句" : "选一句原话"}</button>`
+            : `<button class="primary" data-next-scene-stage type="button">继续</button>`}
+        `)
+      : sceneQuestionChoicesHtml(brief, index, dialogueOptions, criticalOptions)
+  });
+  bindSceneDialogueButtons(brief, scene, options);
+  bindSceneQuestionButtons(brief, scene, options);
+  bind("[data-next-scene-stage]", () => setIndex(brief, "sceneReview", index + 1));
+  bindSceneButtons();
+}
+
+function renderDeepFollowup(brief) {
+  const issue = issueCompletion(brief);
+  if (!issue.badge || !hasDeepFollowup(brief)) {
+    state.scene = "accusation";
     saveState();
-    render();
+    return renderAccusation(brief);
+  }
+  const followup = deepFollowupFor(brief, issue);
+  frame({
+    brief,
+    mood: "focused",
+    label: "深入一问",
+    chapter: liveChapterTitle(brief),
+    text: `
+      <div class="call-dialogue">
+        ${callLine(brief, { role: "host", text: followup.question })}
+        ${callLine(brief, { role: "caller", text: followup.answer })}
+      </div>
+      <p class="hint">${escapeHtml(followup.note)}</p>
+    `,
+    choices: flowGroup(`<button class="primary" data-scene="accusation" type="button">选一句原话</button>`)
   });
-  document.querySelector("[data-finish-run]")?.addEventListener("click", () => {
-    state.scene = "runComplete";
-    settleRunExperience();
-  });
+  bindSceneButtons();
 }
 
-function renderCaseRunComplete(brief, chapter) {
-  const correct = state.accusationHistory.filter((item) => item.correct).length;
-  const totalCases = state.caseBriefs?.length ?? 0;
-  const interludeLines = state.caseMode === "daily"
-    ? []
-    : (state.caseBriefs ?? []).map((caseBrief) => {
-      const interlude = interludeForCase(caseBrief);
-      return `${caseBrief.modeLabel ?? caseBrief.label}：${interlude.summary}`;
-    });
-  const view = runCompleteView({
-    chapter,
-    correct,
-    totalCases,
-    caseSetLabel: caseSetLabel(),
-    runLine: runCompleteLine(correct),
-    reputation: state.agencyReputation ?? 0,
-    heat: state.publicHeat ?? 0,
-    caseSetSummary: caseSetSummary(),
-    interludeLines,
-    shareCard: state.caseMode === "daily" ? dailyShareCard(correct, totalCases) : null
+function renderPatienceLost(brief) {
+  frame({
+    brief,
+    mood: "tense",
+    label: "听众散了",
+    chapter: liveChapterTitle(brief),
+    text: `
+      <div class="call-dialogue">
+        ${callLine(brief, { role: "host", text: "先收一下。弹幕已经散了，这通麦再问下去只会变成各说各的。" })}
+        ${callLine(brief, { role: "caller", text: "我也有点乱。要不这通先到这儿，我回去把材料和原话再整理一下。" })}
+      </div>
+      <p class="hint">这案没有收麦。直播间的耐心被消耗完了。</p>
+    `,
+    choices: flowGroup(`
+      <button class="primary" data-retry-case type="button">重问本案</button>
+      ${isStoryPackMode() ? `<button data-after-patience-lost type="button">${isFinalStoryPackCase() ? "查看整晚收麦" : "接入下一通"}</button>` : `<button data-action="title" type="button">回标题</button>`}
+    `)
   });
-  storyFrame({ ...view, speakerName: "你" });
-  document.querySelectorAll('[data-action="title"]').forEach((button) => {
-    button.addEventListener("click", () => setScreen("title"));
-  });
-  if (state.caseMode === "daily") postDailySharePayload(correct, totalCases);
-  document.querySelector("[data-copy-daily-result]")?.addEventListener("click", async () => {
-    const card = dailyShareCard(correct, totalCases);
-    const text = `${card.kicker}${card.routeLabel ? `｜${card.routeLabel}` : ""}\n${card.title}\n今晚瓜点：${card.finding}\n${card.footer}`;
-    try {
-      await navigator.clipboard?.writeText(text);
-      recordEvidenceInsight(brief, "今日连线挑战文案已复制。");
-    } catch {
-      recordEvidenceInsight(brief, text);
-    }
-    saveState();
-    render();
+  bind("[data-retry-case]", () => resetCaseAttempt(brief));
+  bind("[data-after-patience-lost]", () => {
+    if (isFinalStoryPackCase()) return moveScene("runComplete");
+    advanceToNextStoryPackCase("上一通没收住，直播间把话题切到新的来电。");
   });
 }
 
-function postDailySharePayload(correct, totalCases) {
-  const brief = activeCaseBrief();
-  const card = dailyShareCard(correct, totalCases);
-  platformRuntime.wechat.postMessage({
-    type: "daily-share",
-    dailyKey: brief?.dailyKey,
-    caseId: brief?.id,
-    title: card.title,
-    body: card.body,
-    footer: card.footer,
-    routeLabel: card.routeLabel,
-    path: `/pages/index/index?mode=daily&dailyKey=${encodeURIComponent(brief?.dailyKey ?? "")}`
-  });
-}
-
-function dailyShareCard(correct, totalCases) {
-  const brief = activeCaseBrief();
-  const result = state.accusationHistory.find((item) => item.caseId === brief?.id);
-  const solved = correct >= Math.max(1, totalCases);
-  let route = result?.dailyRoute ?? dailyRouteProfile(brief, result ?? { correct: solved }, solved);
-  if (brief?.plotId === "education-income-fake-profile") {
-    route = dailyRouteProfile(brief, result ?? { correct: solved }, solved);
-  }
-  const title = route?.shareTitle ?? brief?.dailyShareTitle ?? (solved ? "我识破了今日连线" : "我被今日连线带偏了");
-  const body = route?.shareBody ?? brief?.dailyShareBody ?? (solved
-    ? `《${brief?.label ?? "今日短案"}》这口瓜，表面是一句解释，里面藏着另一层关系账。`
-    : `《${brief?.label ?? "今日短案"}》这口瓜，第一版听着顺，后面越听越不对劲。`);
-  const footer = route?.shareQuestion ?? (result?.correct
-    ? (brief?.dailyShareQuestion ?? "你听完会站哪边？")
-    : (brief?.dailyShareQuestion ?? "你听完会不会也先信第一版？"));
-  return {
-    kicker: "今日连线",
-    title,
-    body,
-    finding: shareFindingText(body),
-    footer,
-    cta: "发给朋友，一起听这通电话。",
-    routeLabel: route?.label?.replace(/侦探$/, "") ?? ""
-  };
-}
-
-function shareFindingText(body = "") {
-  return String(body)
-    .replace(/^我抓到的是[：:]\s*/, "")
-    .replace(/^我抓到的关键是/, "")
-    .replace(/^我抓到的关键不是/, "不是")
-    .replace(/^今晚最好吵的是[：:]\s*/, "")
-    .trim();
-}
-
-function dailyRouteProfile(brief, result = {}, enoughContradictions = true) {
-  const key = caseNoteKey(brief);
-  const actions = Object.keys(state.caseActionLog?.[key] ?? {});
-  const contradictions = contradictionsForCase(brief).join(" ");
-  const insights = insightsForCase(brief).join(" ");
-  const text = `${contradictions} ${insights}`;
-  const scores = {
-    time: countRouteSignals(text, /时间|47 天|47天|社保|断缴|学制|公司抬头|裁切|日期|流水确认/) + countActionSignals(actions, /timeline|verification/),
-    money: countRouteSignals(text, /债|信用卡|还款|消费|账单|转账|办卡|投资|房贷|房本|首付|产权|还贷|账户|份额|补偿|协议|装修|现金流|存款|余额/) + countActionSignals(actions, /money|audit/),
-    emotion: countRouteSignals(text, /情绪|专属|理解|脆弱|安全感|不信任|防御|老板娘|话术|边界|关系测试/) + countActionSignals(actions, /motive|emotion/),
-    asset: countRouteSignals(text, /房本|产权|首付|还贷|补偿|协议|装修|共同账户|资产|洗房/),
-    profile: countRouteSignals(text, /截图|学历|学校|公司|收入|岗位|裁切|材料|标签|包装|存款证明|余额/) + countActionSignals(actions, /verification/)
-  };
-  const tooEarly = !enoughContradictions || (result.contradictionCount ?? 0) < 2;
-  if (tooEarly) {
-    return {
-      label: "过早站队型",
-      shareTitle: brief?.dailyShareTitle ?? "我被今日连线带偏了",
-      shareBody: "我还没听够原话就站队了，第一版说法比我想象中更会带节奏。",
-      shareQuestion: brief?.dailyShareQuestion ?? "你来试试：会先问时间、钱，还是情绪？"
-    };
-  }
-  if (brief?.plotId === "education-income-fake-profile" || scores.profile >= 2) {
-    return {
-      label: "资料敏感型",
-      shareTitle: "存款证明都发了，怎么反而更怪？",
-      shareBody: "今晚最好吵的是：存款证明不是突然冒出来的，谁先想看都说不清。",
-      shareQuestion: "你听完会觉得是包装，是试探，还是双方都在借父母的嘴？"
-    };
-  }
-  if (scores.asset >= 2) {
-    return {
-      label: "资产边界型",
-      shareTitle: brief?.dailyShareTitle ?? "我抓住了今日连线的资产边界",
-      shareBody: "我没有只吵爱不爱，而是先拆权属、现金流和退出补偿。",
-      shareQuestion: brief?.dailyShareQuestion ?? "你会先问房本、首付，还是婚后还贷？"
-    };
-  }
-  if (scores.money >= scores.time && scores.money >= scores.emotion) {
-    return {
-      label: "资金流敏感型",
-      shareTitle: brief?.dailyShareTitle ?? "我从钱的流向判了今日连线",
-      shareBody: brief?.dailyShareBody ?? "我先追钱和资源怎么流动，再判断这是不是普通困难。",
-      shareQuestion: brief?.dailyShareQuestion ?? "你会先问钱，还是先问 TA 的解释？"
-    };
-  }
-  if (scores.time > scores.emotion) {
-    return {
-      label: "时间线敏感型",
-      shareTitle: brief?.dailyShareTitle ?? "我从时间线拆开了今日连线",
-      shareBody: "我先把每句话放回日期里看，很多解释一遇到时间点就露出缺口。",
-      shareQuestion: brief?.dailyShareQuestion ?? "你会从哪一个时间点开始追问？"
-    };
-  }
-  if (scores.emotion >= 2 && !result.correct) {
-    return {
-      label: "同情心先行型",
-      shareTitle: "我差点被今日连线说服了",
-      shareBody: "我理解了 TA 的委屈，但漏掉了谁得好处、谁没说完。",
-      shareQuestion: brief?.dailyShareQuestion ?? "你会不会也先相信 TA 的第一版说法？"
-    };
-  }
-  if (scores.emotion >= 2) {
-    return {
-      label: "话术敏感型",
-      shareTitle: brief?.dailyShareTitle ?? "我从话术里听出今日连线的问题",
-      shareBody: "我没有只看情绪浓度，而是追问这些话术后面接了什么要求。",
-      shareQuestion: brief?.dailyShareQuestion ?? "你觉得这句话算锤，还是只算情绪？"
-    };
-  }
-  return {
-    label: result.correct ? "边界清醒型" : "直觉误判型",
-    shareTitle: brief?.dailyShareTitle ?? (result.correct ? "我识破了今日连线" : "我被今日连线带偏了"),
-    shareBody: brief?.dailyShareBody ?? (result.correct ? "我听到了最别扭那句，但朋友未必会走同一条询问路线。" : "我先站队了，但原话还没听够。"),
-    shareQuestion: brief?.dailyShareQuestion ?? "你会先问时间、钱，还是情绪？"
-  };
-}
-
-function countRouteSignals(text, pattern) {
-  return (String(text).match(new RegExp(pattern.source, "g")) ?? []).length;
-}
-
-function countActionSignals(actions, pattern) {
-  return actions.filter((action) => pattern.test(action)).length;
-}
-
-function resolveAccusation(brief, accused, accuseLabel = "") {
+function renderAccusation(brief) {
   const readiness = dailyAccusationReadiness(brief);
   if (!readiness.ready) {
     state.lastReaction = readiness.message;
-    state.scene = "testimony";
+    state.scene = "sceneReview";
+    state.dialogueProgress = {
+      ...(state.dialogueProgress ?? {}),
+      [`${caseKey(brief)}:sceneReview`]: firstUnansweredSceneIndex(brief)
+    };
     saveState();
     return render();
   }
-  const { result, enoughContradictions } = resolveAccusationForCase({
+  const choices = dailyAccusationChoices(brief);
+  frame({
     brief,
-    accused,
-    contradictionCount: contradictionsForCase(brief).length,
-    requiredContradictions: requiredContradictionsForAccusation(brief)
+    mood: "tense",
+    label: "收住话头",
+    chapter: liveChapterTitle(brief),
+    text: `
+      <p><b>选一句原话</b></p>
+      <p>聊到这儿，你会选哪句原话往下接？</p>
+      ${keyChoiceReview(brief)}
+    `,
+    choices: choiceGroup("收哪句", choices.map((choice) => `<button data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${escapeHtml(choice.label)}</button>`).join(""), "single-choice-group", "从刚才的话里挑")
   });
-  if (brief.dailyCase && accuseLabel) result.dailyAccuseLabel = accuseLabel;
-  if (brief.dailyCase) result.dailyRoute = dailyRouteProfile(brief, result, enoughContradictions);
-  state.accusationHistory = [
-    ...(state.accusationHistory ?? []).filter((item) => item.caseId !== brief.id),
-    result
+  document.querySelectorAll("[data-accuse]").forEach((button) => {
+    button.addEventListener("click", () => resolveAccusationFromButton(brief, button));
+  });
+  bindSceneButtons();
+}
+
+function renderSolved(brief) {
+  const result = normalizedDailyResult(brief);
+  const step = Number(state.recapStep ?? 0);
+  const issue = issueCompletion(brief);
+  const rank = recapRankLabel(issue);
+  const conclusion = dailyConclusion(brief, result, issue);
+  const route = routeAxisProfile(brief, result);
+  const quoteComparison = finalQuoteComparison(brief, result);
+  const finalScene = isFinalStoryPackCase();
+  const pages = [
+    `
+      <section class="recap-score-card">
+        <div class="recap-score-head"><span>这通收住</span><em>${escapeHtml(rank)}</em></div>
+        <div class="recap-score-main">
+          <b>${Number(issue.percent ?? 0)}</b>
+          <span>% 麦里留下的味道</span>
+        </div>
+        <div class="recap-score-grid">
+          <span><b>${issue.revealed.length ? "有东西" : "刚起味"}</b><small>这轮听感</small></span>
+          <span><b>${result.dailyBadge ? "收住了" : "还在吵"}</b><small>评论区</small></span>
+        </div>
+        <p>${escapeHtml(issueLine(issue, result))}</p>
+        <div class="route-map-card">
+          <span>本案路线</span>
+          <b>${escapeHtml(route.label)}</b>
+          <small>${escapeHtml(route.summary)}</small>
+          ${routeTrailHtml(brief)}
+        </div>
+        <p><strong>你接住的那句</strong>：${escapeHtml(result.dailyAccuseLabel ?? "还没选最后那句")}。</p>
+        ${result.dailyResponse ? `<p><strong>主播接法</strong>：${escapeHtml(result.dailyResponse)}</p>` : ""}
+        ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
+      </section>
+    `,
+    `
+      <p><b>刚才浮上来的</b></p>
+      <p>${issue.revealed.length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮先闻到味儿了，评论区还会继续吵。"}</p>
+    `,
+    `
+      <p><b>主播收话</b></p>
+      <p>${escapeHtml(conclusion.summary)}</p>
+      ${conclusion.deepQuestion ? `<p class="hint"><strong>多问一句</strong>：${escapeHtml(conclusion.deepQuestion)}</p>` : ""}
+    `,
+    `
+      <p><b>后续回拨</b></p>
+      <p>${escapeHtml(conclusion.followup)}</p>
+    `,
+    `
+      <p><b>连线收住</b></p>
+      <p>${escapeHtml(conclusion.truth)}</p>
+    `
   ];
-  if (!state.solvedCaseIds.includes(brief.id)) state.solvedCaseIds.push(brief.id);
-  applyCaseOutcome(brief, result);
-  if (result.correct) {
-    bumpFlag("evidenceClarity", 1);
-    platformRuntime.achievements.unlock("first_correct_accusation");
-    if (contradictionsForCase(brief).length >= Math.min(allCaseContradictions(brief).length, requiredContradictionsForAccusation(brief) + 1)) {
-      platformRuntime.achievements.unlock("perfect_case");
-    }
-    state.lastReaction = brief.dailyCase
-      ? `你停在“${accuseLabel || accusationLabel(brief, accused)}”这一句，弹幕突然静了一拍。`
-      : "你把叙事重新压回材料和时间线，弹幕安静了一瞬。";
-  } else {
-    bumpFlag("audiencePressure", 1);
-    state.lastReaction = brief.dailyCase
-      ? `你点了“${accuseLabel || accusationLabel(brief, accused)}”，弹幕吵起来了：这句有味儿，但还不是最炸的那一下。`
-      : enoughContradictions ? "这个判断有点急，弹幕的情绪替事实多走了一步。" : "你还没抓到足够矛盾点，这次判断更像直觉，不像分析。";
-  }
-  platformRuntime.cloud.syncNow();
-  moveCaseScene("caseSolved");
-}
-
-function applyCaseOutcome(brief, result) {
-  const key = caseNoteKey(brief);
-  if (state.caseInterludes?.[key]) return;
-  const contradictionCount = result.contradictionCount ?? contradictionsForCase(brief).length;
-  const outcome = calculateCaseOutcome({
+  const index = Math.max(0, Math.min(step, pages.length - 1));
+  frame({
     brief,
-    result,
-    contradictionCount,
-    budgetRemaining: caseBudget(brief).remaining ?? 0,
-    agencyReputation: state.agencyReputation ?? 0,
-    publicHeat: state.publicHeat ?? 0
+    mood: "listening",
+    label: "连线回看",
+    chapter: liveChapterTitle(brief),
+    text: `<div class="recap-page-kicker"><span>回看</span><b>${index + 1}/${pages.length}</b></div>${pages[index]}`,
+    choices: index < pages.length - 1
+      ? flowGroup(`<button class="primary" data-recap-next type="button">继续回看</button><button data-retry-case type="button">从头再问</button>`)
+      : flowGroup(`<button class="primary" data-after-recap type="button">${isStoryPackMode() ? finalScene ? "查看整晚收麦" : "接入下一通" : "查看今日结果"}</button><button data-retry-case type="button">从头再问</button>`)
   });
-  state.agencyReputation = outcome.agencyReputation;
-  state.publicHeat = outcome.publicHeat;
-  state.caseInterludes = {
-    ...(state.caseInterludes ?? {}),
-    [key]: outcome.interlude
+  bind("[data-recap-next]", () => {
+    state.recapStep = index + 1;
+    saveState();
+    render();
+  });
+  bind("[data-retry-case]", () => resetCaseAttempt(brief));
+  bind("[data-after-recap]", () => {
+    if (isStoryPackMode() && !isFinalStoryPackCase()) {
+      state.scene = "storyInterlude";
+      saveState();
+      return render();
+    }
+    moveScene("runComplete");
+  });
+  bindSceneButtons();
+}
+
+function renderStoryInterlude(brief) {
+  const nextBrief = state.caseBriefs?.[Number(state.chapter ?? 1)] ?? null;
+  const result = normalizedDailyResult(brief);
+  const route = routeAxisProfile(brief, result);
+  const interlude = state.caseInterludes?.[brief.id] ?? {};
+  frame({
+    brief,
+    mood: "focused",
+    label: "案间过渡",
+    chapter: "案间",
+    text: `
+      <section class="story-interlude-card">
+        <span>上一通收麦</span>
+        <b>${escapeHtml(route.label)}</b>
+        <p>${escapeHtml(interlude.summary ?? "刚才那通先记下。")}</p>
+      </section>
+      <section class="story-interlude-card next">
+        <span>新来电接入</span>
+        <b>下一通来电</b>
+        <p>${escapeHtml(storyInterludeHook(nextBrief))}</p>
+      </section>
+    `,
+    choices: flowGroup(`<button class="primary" data-enter-next-case type="button">接入下一通</button><button data-retry-case type="button">回头重问</button>`)
+  });
+  bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
+  bind("[data-retry-case]", () => resetCaseAttempt(brief));
+  bindSceneButtons();
+}
+
+function renderRunComplete(brief) {
+  if (isStoryPackMode()) return renderStoryPackComplete();
+  const result = normalizedDailyResult(brief);
+  const route = dailyRouteProfile(brief, result);
+  const issue = issueCompletion(brief);
+  const rank = recapRankLabel(issue);
+  const pickedQuote = result.dailyAccuseLabel ?? "还没选最后那句";
+  const quoteComparison = finalQuoteComparison(brief, result);
+  const caught = issue.revealed[0] ?? route.shareBody;
+  frame({
+    brief,
+    mood: "focused",
+    label: "今日收麦",
+    chapter: "今日收麦",
+    text: `
+      <p><b>今日收麦</b></p>
+      <p>${escapeHtml(issueResultLine(issue, result))}</p>
+      <section class="share-result-card">
+        <div class="share-card-head"><span>今日来电</span><em>${escapeHtml(route.label)}</em></div>
+        <div class="share-player-type">
+          <span>你是</span>
+          <b>${escapeHtml(route.playerType)}</b>
+        </div>
+        <p class="share-card-title">${escapeHtml(route.shareTitle)}</p>
+        <div class="issue-meter"><span style="width:${issue.percent}%"></span></div>
+        <p class="issue-score">${escapeHtml(rank)}</p>
+        ${result.dailyBadge ? `<div class="daily-badge-card compact"><span>今日收麦</span><b>这通聊开了</b></div>` : ""}
+        <p class="share-card-finding"><span>你接的那句</span>${escapeHtml(pickedQuote)}</p>
+        ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
+        <p class="share-card-finding"><span>今晚瓜点</span>${escapeHtml(caught)}</p>
+        <small>${escapeHtml(route.shareQuestion)}</small>
+      </section>
+    `,
+    choices: flowGroup(`
+      <button class="primary" data-copy-result type="button">复制吃瓜文案</button>
+      <button data-action="title" type="button">回标题</button>
+    `)
+  });
+  bind("[data-copy-result]", async () => {
+    const text = `${route.shareTitle}\n我是：${route.playerType}\n我接的那句：${pickedQuote}\n${route.shareQuestion}`;
+    try {
+      await navigator.clipboard?.writeText(text);
+      state.lastReaction = "吃瓜文案已复制。";
+    } catch {
+      state.lastReaction = "浏览器没放开复制权限，可以直接用这张结果卡分享。";
+    }
+    render();
+  });
+  bind('[data-action="title"]', resetToTitle);
+  postDailySharePayload(brief, route, result);
+}
+
+function renderStoryPackComplete() {
+  const briefs = state.caseBriefs ?? [];
+  const results = briefs.map((brief) => normalizedDailyResult(brief));
+  const solved = results.filter((result) => result.accused).length;
+  const avgPercent = Math.round(results.reduce((sum, result) => sum + Number(result.issuePercent ?? 0), 0) / Math.max(1, briefs.length));
+  const axes = summarizeStoryPackAxes(briefs, results);
+  const best = axes[0] ?? { label: "现场听感线", count: 0 };
+  const displayBest = avgPercent < 40 ? { axis: "live-instinct", count: best.count, label: "外围听感线" } : best;
+  const theme = storyThemeForBriefs(briefs);
+  const comments = storyCommentWall(briefs, results, displayBest, avgPercent, theme);
+  frame({
+    brief: briefs[Math.max(0, Number(state.chapter ?? 1) - 1)] ?? briefs[0],
+    mood: "focused",
+    label: "试玩收麦",
+    chapter: "试玩收麦",
+    showCaseHud: false,
+    text: `
+      <p><b>今晚收麦</b></p>
+      <p>几通麦都收进来了。你这一晚最常走的是：${escapeHtml(displayBest.label)}。</p>
+      <section class="share-result-card">
+        <div class="share-card-head"><span>${escapeHtml(theme.title)}</span><em>${escapeHtml(displayBest.label)}</em></div>
+        <div class="share-player-type">
+          <span>你是</span>
+          <b>${escapeHtml(storyPlayerType(avgPercent, displayBest))}</b>
+        </div>
+        <p class="share-card-title">${escapeHtml(storyShareTitle(avgPercent, displayBest))}</p>
+        <p class="weekly-theme-thesis">${escapeHtml(theme.thesis)}</p>
+        <p class="issue-score">${escapeHtml(storyPackAftertaste(avgPercent))}</p>
+        <div class="weekly-result-list">
+          ${briefs.map((item, index) => {
+            const result = results[index] ?? {};
+            const route = routeAxisProfile(item, result);
+            return `<p><span>${index + 1}. ${escapeHtml(item.label)}</span><b>${escapeHtml(route.label)}</b><small>${escapeHtml(result.dailyAccuseLabel ?? "未收麦")}</small></p>`;
+          }).join("")}
+        </div>
+        <div class="comment-wall">
+          <span>评论区审判墙</span>
+          ${comments.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
+        </div>
+        <small>同样一晚，不同主播会走出不同问法：有人先信来电人，有人先拆材料，有人一直盯钱流。</small>
+      </section>
+    `,
+    choices: flowGroup(`
+      <button class="primary" data-copy-weekly-result type="button">复制收麦文案</button>
+      <button data-action="title" type="button">回标题</button>
+    `)
+  });
+  bind("[data-copy-weekly-result]", async () => {
+    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我的主播倾向：${storyPlayerType(avgPercent, displayBest)}\n最常走：${displayBest.label}`;
+    try {
+      await navigator.clipboard?.writeText(text);
+      state.lastReaction = "收麦文案已复制。";
+    } catch {
+      state.lastReaction = "浏览器没放开复制权限，可以直接用这张结果卡分享。";
+    }
+    render();
+  });
+  bind('[data-action="title"]', resetToTitle);
+}
+
+function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true }) {
+  const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
+  const backdropClass = caseBackdropClass(brief);
+  const visualHud = showCaseHud
+    ? `${caseProgressStrip(brief)}${audiencePatienceHud(brief)}${liveCommentStrip(brief)}${portraitLayer(brief, mood)}`
+    : storyPackSummaryHud();
+  app.innerHTML = `
+    <main>
+      <header class="topbar">
+        <button data-action="title" type="button" aria-label="回到标题页">${PRODUCT_NAME}</button>
+        <nav aria-label="章节"><span class="active">${modeLabel}</span></nav>
+        <button data-action="sound" type="button">音效 ${isSoundEnabled() ? "开" : "关"}</button>
+        <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
+      </header>
+      <section class="story-grid case-vn-grid">
+        <article class="vn-stage">
+          <div class="visual-scene backdrop-office ${backdropClass}" aria-hidden="true">
+            <div class="scene-label">${escapeHtml(label)}</div>
+            ${visualHud}
+          </div>
+          <div class="dialogue-card" aria-live="polite">
+            <p class="eyebrow">${escapeHtml(chapter)}</p>
+            ${text}
+            ${reactionLine()}
+            <div class="choices">${choices}</div>
+          </div>
+        </article>
+      </section>
+    </main>
+  `;
+  const hadReaction = Boolean(state.lastReaction);
+  if (hadReaction) {
+    state.lastReaction = null;
+    saveState();
+  }
+  bind('[data-action="title"]', resetToTitle);
+  bind('[data-action="reset"]', resetToTitle);
+  bind('[data-action="sound"]', () => {
+    toggleSound();
+    render();
+  });
+}
+
+function caseBackdropClass(brief = {}) {
+  const classes = {
+    "lost-job-hidden-credit": "backdrop-credit",
+    "house-name-security-test": "backdrop-house",
+    "education-income-fake-profile": "backdrop-profile",
+    "workplace-reimbursement-screenshot": "backdrop-work",
+    "tony-multi-dating": "backdrop-tony"
   };
+  return classes[brief.plotId] ?? "backdrop-live";
 }
 
-function expectedAccusation(brief) {
-  return expectedAccusationForCase(brief);
+function callLine(brief, line = {}) {
+  const role = line.role === "host" || line.speaker === "你" ? "host" : "caller";
+  const speaker = role === "host" ? "你" : "咨询者";
+  const text = line.text ?? line.version ?? line.line ?? "";
+  return `
+    <div class="call-line ${role}">
+      <b>${speaker}</b>
+      <p>${escapeHtml(text)}</p>
+    </div>
+  `;
 }
 
-function structuralExpectedAccusation(brief) {
-  return structuralExpectedAccusationForCase(brief);
+function compactDialogueLines(lines) {
+  const normalized = (lines ?? []).filter((line) => line?.text);
+  const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
+  return normalized.slice(0, totalLength > 170 ? 2 : 4);
 }
 
-function relationshipExpectedAccusation(brief) {
-  return relationshipExpectedAccusationForCase(brief);
+function focusedQuestionOptions(options = []) {
+  const normalized = (options ?? []).filter(Boolean);
+  if (normalized.length <= 2) return normalized;
+  const core = normalized.find((option) => option.contradiction);
+  const detour = normalized.find((option) => !option.contradiction);
+  return [core, detour].filter(Boolean);
 }
 
-function requiredContradictionsForAccusation(brief) {
-  return requiredContradictionsForCase(brief);
+function dialogueQuestionOptions(options = []) {
+  return options
+    .map((option, optionIndex) => ({ option, optionIndex }))
+    .filter(({ option }) => !option.contradiction);
 }
 
-function moveCaseScene(scene) {
+function criticalQuestionOptions(options = []) {
+  return options
+    .map((option, optionIndex) => ({ option, optionIndex }))
+    .filter(({ option }) => option.contradiction);
+}
+
+function sceneQuestionChoicesHtml(brief, sceneIndex, dialogueOptions = [], criticalOptions = []) {
+  const asked = new Set(askedDialoguePicks(brief, sceneIndex).map((item) => item.optionIndex));
+  const availableDialogue = dialogueOptions.filter(({ optionIndex }) => !asked.has(optionIndex));
+  const rows = [
+    ...availableDialogue.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "dialogue")),
+    ...criticalOptions.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "key"))
+  ].join("");
+  return choiceGroup("你问", rows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group");
+}
+
+function choiceQuestionButton(sceneIndex, optionIndex, option = {}, kind = "key") {
+  const attr = kind === "dialogue" ? "data-scene-dialogue" : "data-scene-question";
+  return `
+    <button class="choice-question" ${attr}="${sceneIndex}:${optionIndex}" type="button">
+      <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
+    </button>
+  `;
+}
+
+function activeSceneExchange(brief, scene, index) {
+  return [
+    callLine(brief, { ...scene, text: scene.version, role: "caller" }),
+    ...askedDialoguePicks(brief, index).flatMap((pick) => [
+      callLine(brief, { role: "host", text: pick.question }),
+      callLine(brief, { role: "caller", text: pick.answer })
+    ])
+  ].join("");
+}
+
+function completedSceneExchange(brief, scene, index, pick = {}) {
+  return [
+    callLine(brief, { ...scene, text: scene.version, role: "caller" }),
+    ...askedDialoguePicks(brief, index).flatMap((item) => [
+      callLine(brief, { role: "host", text: item.question }),
+      callLine(brief, { role: "caller", text: item.answer })
+    ]),
+    keyChoiceExchange(brief, scene, pick)
+  ].join("");
+}
+
+function keyChoiceExchange(brief, scene, pick = {}) {
+  const question = pick.question ?? scene.questionOptions?.find((option) => option.contradiction)?.question ?? "这句我想再问清楚一点。";
+  const answer = pick.answer ?? state.sceneAnswers?.[answerKey(brief, currentIndex(brief, "sceneReview", brief.sceneVersions?.length ?? 1))] ?? "";
+  return [
+    callLine(brief, { role: "host", text: question }),
+    answer ? callLine(brief, { role: "caller", text: answer }) : ""
+  ].join("");
+}
+
+function keyChoiceReview(brief) {
+  const scenes = brief.sceneVersions ?? [];
+  const lastAnsweredIndex = scenes.reduce((last, _, index) => actionDone(brief, `version:${index}`) ? index : last, -1);
+  const lastDialogueIndex = scenes.reduce((last, _, index) => askedDialoguePicks(brief, index).length ? index : last, -1);
+  const rows = lastAnsweredIndex >= 0
+    ? [
+        { role: "caller", text: scenes[lastAnsweredIndex]?.version ?? "" },
+        { role: "host", text: selectedScenePick(brief, lastAnsweredIndex)?.question ?? "" },
+        { role: "caller", text: selectedScenePick(brief, lastAnsweredIndex)?.answer ?? "" }
+      ].filter((line) => line.text)
+    : lastDialogueIndex >= 0
+      ? [
+          { role: "caller", text: scenes[lastDialogueIndex]?.version ?? "" },
+          ...askedDialoguePicks(brief, lastDialogueIndex).flatMap((pick) => [
+            { role: "host", text: pick.question },
+            { role: "caller", text: pick.answer }
+          ])
+        ].filter((line) => line.text)
+      : compactDialogueLines(brief.openingDialogue ?? []).map((line) => ({ ...line, text: line.text }));
+  return `
+    <details class="choice-review">
+      <summary>
+        <span>刚才说到</span>
+      </summary>
+      <div class="call-dialogue review-dialogue">
+        ${rows.map((line) => callLine(brief, line)).join("")}
+      </div>
+    </details>
+  `;
+}
+
+function keyQuestionLimit(brief) {
+  return brief.sceneVersions?.length ?? 0;
+}
+
+function bind(selector, handler) {
+  document.querySelectorAll(selector).forEach((element) => {
+    element.addEventListener("click", handler);
+  });
+}
+
+function bindSceneButtons() {
+  document.querySelectorAll("[data-scene]").forEach((button) => {
+    button.addEventListener("click", () => moveScene(button.dataset.scene));
+  });
+}
+
+function bindSceneDialogueButtons(brief, scene, options) {
+  document.querySelectorAll("[data-scene-dialogue]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
+      const option = options[optionIndex] ?? options[0];
+      const key = answerKey(brief, sceneIndex);
+      const current = state.sceneDialoguePicks?.[key] ?? [];
+      if (!current.some((item) => item.optionIndex === optionIndex)) {
+        state.sceneDialoguePicks = {
+          ...(state.sceneDialoguePicks ?? {}),
+          [key]: [
+            ...current,
+            {
+              optionIndex,
+              question: option.question ?? "",
+              answer: option.answer ?? "",
+              routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
+              routeTone: option.routeTone ?? routeToneForChoice(option)
+            }
+          ]
+        };
+      }
+      markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
+      state.lastReaction = outerAngleReaction(option);
+      if (audiencePatienceLost(brief)) return;
+      saveState();
+      render();
+    });
+  });
+}
+
+function bindSceneQuestionButtons(brief, scene, options) {
+  document.querySelectorAll("[data-scene-question]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const [sceneIndex, optionIndex] = button.dataset.sceneQuestion.split(":").map(Number);
+      const option = options[optionIndex] ?? options[0];
+      markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: true });
+      markAction(brief, `version:${sceneIndex}`);
+      if (option.contradiction) {
+        recordContradiction(brief, option.contradiction);
+        recordContradiction(brief, scene.contradiction);
+      }
+      else {
+        state.lastReaction = outerAngleReaction(option);
+      }
+      state.sceneAnswers = {
+        ...(state.sceneAnswers ?? {}),
+        [answerKey(brief, sceneIndex)]: option.answer ?? ""
+      };
+      state.sceneQuestionPicks = {
+        ...(state.sceneQuestionPicks ?? {}),
+        [answerKey(brief, sceneIndex)]: {
+          question: option.question ?? "",
+          answer: option.answer ?? "",
+          contradiction: option.contradiction ?? "",
+          routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
+          routeTone: option.routeTone ?? routeToneForChoice(option),
+          correct: Boolean(option.contradiction)
+        }
+      };
+      recordRouteChoice(brief, sceneIndex, option, scene);
+      if (audiencePatienceLost(brief)) return;
+      saveState();
+      render();
+    });
+  });
+}
+
+function moveScene(scene) {
   const brief = activeCaseBrief();
   if (scene === "accusation") {
     const readiness = dailyAccusationReadiness(brief);
     if (!readiness.ready) {
       state.lastReaction = readiness.message;
-      state.scene = "testimony";
+      state.scene = "sceneReview";
+      state.dialogueProgress = {
+        ...(state.dialogueProgress ?? {}),
+        [`${caseKey(brief)}:sceneReview`]: firstUnansweredSceneIndex(brief)
+      };
       saveState();
       return render();
     }
@@ -1490,94 +849,340 @@ function moveCaseScene(scene) {
   render();
 }
 
+function setIndex(brief, area, index) {
+  const total = brief.sceneVersions?.length ?? 1;
+  state.dialogueProgress = {
+    ...(state.dialogueProgress ?? {}),
+    [`${caseKey(brief)}:${area}`]: Math.max(0, Math.min(index, total - 1))
+  };
+  saveState();
+  render();
+}
+
+function currentIndex(brief, area, total) {
+  return Math.max(0, Math.min(Number(state.dialogueProgress?.[`${caseKey(brief)}:${area}`] ?? 0), Math.max(0, total - 1)));
+}
+
+function firstUnansweredSceneIndex(brief) {
+  const scenes = brief.sceneVersions ?? [];
+  const index = scenes.findIndex((_, sceneIndex) => !actionDone(brief, `version:${sceneIndex}`));
+  return index >= 0 ? index : Math.max(0, scenes.length - 1);
+}
+
+function resolveAccusationFromButton(brief, button) {
+  const accuseLabel = button.getAttribute("data-accuse-label") ?? button.textContent?.trim() ?? "";
+  const response = button.getAttribute("data-accuse-response") ?? "";
+  const accused = button.getAttribute("data-accuse") ?? "";
+  const issue = issueCompletion(brief);
+  const resolved = resolveAccusationForCase({
+    brief,
+    accused,
+    contradictionCount: issue.revealed.length,
+    requiredContradictions: issue.total
+  });
+  const issueCleared = Boolean(issue.badge);
+  const quoteHit = accused === resolved.result.expected;
+  const result = {
+    caseId: brief.id,
+    accused,
+    expected: resolved.result.expected,
+    relationshipExpected: resolved.result.relationshipExpected,
+    structuralExpected: resolved.result.structuralExpected,
+    correct: issueCleared,
+    contradictionCount: contradictions(brief).length,
+    issuePercent: issue.percent,
+    issueRevealed: issue.revealed,
+    issueMissed: issue.missed,
+    dailyBadge: issueCleared,
+    quoteHit
+  };
+  result.dailyAccuseLabel = accuseLabel;
+  result.dailyResponse = response;
+  result.dailyRoute = dailyRouteProfile(brief, result);
+  state.accusationHistory = upsertByCaseId(state.accusationHistory, result);
+  state.solvedCaseIds = [...new Set([...(state.solvedCaseIds ?? []), brief.id])];
+  applyOutcome(brief, result);
+  recordDailyMeta(brief, result, issue);
+  state.scene = "caseSolved";
+  state.recapStep = 0;
+  saveState();
+  render();
+}
+
+function normalizedDailyResult(brief) {
+  const current = state.accusationHistory?.find((item) => item.caseId === brief.id);
+  const issue = issueCompletion(brief);
+  return {
+    ...(current ?? {}),
+    caseId: brief.id,
+    accused: current?.accused ?? null,
+    expected: expectedAccusationForCase(brief),
+    relationshipExpected: current?.relationshipExpected ?? relationshipExpectedForResult(brief),
+    correct: current?.correct ?? false,
+    dailyAccuseLabel: current?.dailyAccuseLabel ?? "还没选最后那句",
+    dailyResponse: current?.dailyResponse ?? "",
+    contradictionCount: contradictions(brief).length,
+    issuePercent: issue.percent,
+    issueRevealed: issue.revealed,
+    issueMissed: issue.missed,
+    dailyBadge: current?.dailyBadge ?? false,
+    quoteHit: current?.quoteHit ?? false
+  };
+}
+
+function issueCompletion(brief) {
+  return calculateIssueCompletion({
+    brief,
+    foundContradictions: contradictions(brief),
+    requiredLimit: keyQuestionLimit(brief)
+  });
+}
+
+function issueLine(issue, result = {}) {
+  if (issue.badge) return "几句要紧话都摆上桌了，弹幕现在可以各吵各的。";
+  if (issue.percent >= 75) return "这通聊到后面，弹幕已经不太能按开场那套吵了。";
+  if (issue.percent >= 50) return "这通听出了几处不顺耳，后面的火还没完全压住。";
+  if (issue.percent > 0) return "你闻到味儿了，麦里还有些话没浮上来。";
+  return "这轮听了个热闹，真正别扭的地方还藏在话缝里。";
+}
+
+function issueResultLine(issue, result = {}) {
+  if (issue.badge) return "这通基本聊开了，剩下就看弹幕站哪边。";
+  if (issue.percent >= 75) return "这口瓜已经咂出味了，弹幕还会抓着边角继续吵。";
+  if (issue.percent >= 50) return "这通连线听出了几处别扭，适合发给朋友一起吵。";
+  if (issue.percent > 0) return "你闻到一点味道，但麦里还有话没出来。";
+  return "今天像是听了个开头，瓜还卡在话缝里。";
+}
+
+function recapRankLabel(issue) {
+  if (issue.badge) return "聊开";
+  if (issue.percent >= 75) return "差一口";
+  if (issue.percent >= 50) return "半口瓜";
+  if (issue.percent > 0) return "闻到味";
+  return "听个热闹";
+}
+
+function relationshipExpectedForResult(brief) {
+  return relationshipExpectedAccusationForCase(brief);
+}
+
 function dailyAccusationReadiness(brief) {
-  if (!brief?.dailyCase && brief?.caseMode !== "daily") return { ready: true, message: "" };
-  const totalScenes = brief.sceneVersions?.length ?? 0;
-  const sceneCount = completedSceneVersionCount(brief);
-  const followupCount = completedFollowupCount(brief);
-  const requiredFollowups = requiredDailyFollowupCount(brief);
-  if (totalScenes && sceneCount < totalScenes) {
-    return { ready: false, message: "第一版说法还没听完，现在开盘太早。" };
-  }
-  if (followupCount < requiredFollowups) {
-    const missing = requiredFollowups - followupCount;
-    return { ready: false, message: `还缺${missing}句补充原话，瓜点还没咂出来。` };
-  }
+  const required = keyQuestionLimit(brief);
+  const sceneCount = (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
+  if (sceneCount < required) return { ready: false, message: "这通还没走到收麦点，先把当前这段问完。" };
   return { ready: true, message: "" };
 }
 
-function completedSceneVersionCount(brief) {
-  return (brief?.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
-}
-
-function requiredDailyFollowupCount(brief) {
-  const available = (brief?.testimony ?? []).reduce((sum, item) => sum + ((item.followups ?? []).length ? 1 : 0), 0);
-  if (!available) return 0;
-  return Math.min(2, available);
-}
-
-function completedFollowupCount(brief) {
-  let count = 0;
-  (brief?.testimony ?? []).forEach((item, testimonyIndex) => {
-    (item.followups ?? []).forEach((_, followupIndex) => {
-      if (actionDone(brief, `followup:${testimonyIndex}:${followupIndex}`)) count += 1;
-    });
+function applyOutcome(brief, result) {
+  if (state.caseInterludes?.[brief.id]) return;
+  const budget = ensureBudget(brief);
+  const outcome = calculateCaseOutcome({
+    result,
+    contradictionCount: contradictions(brief).length,
+    budgetRemaining: budget.remaining
   });
-  return count;
+  state.caseInterludes = { ...(state.caseInterludes ?? {}), [brief.id]: outcome.interlude };
 }
 
-function caseNoteKey(brief) {
-  return brief?.id ?? `case-${state.chapter}`;
+function recordDailyMeta(brief, result, issue) {
+  meta = {
+    ...meta,
+    runs: Number(meta.runs ?? 0) + 1,
+    history: [
+      {
+        caseId: brief.id,
+        dailyKey: brief.dailyKey,
+        plotId: brief.plotId,
+        issuePercent: issue.percent,
+        dailyBadge: Boolean(result.dailyBadge),
+        routeAxis: routeAxisProfile(brief, result).axis,
+        playerType: dailyPlayerType({
+          percent: issue.percent,
+          quoteHit: result.quoteHit,
+          accused: result.accused
+        }),
+        at: Date.now()
+      },
+      ...(Array.isArray(meta.history) ? meta.history : [])
+    ].slice(0, 30)
+  };
+  saveMetaSnapshot(meta);
 }
 
-function notesForCase(brief) {
-  return state.interrogationNotes?.[caseNoteKey(brief)] ?? [];
-}
-
-function contradictionsForCase(brief) {
-  return state.contradictionLog?.[caseNoteKey(brief)] ?? [];
-}
-
-function insightsForCase(brief) {
-  return state.evidenceInsights?.[caseNoteKey(brief)] ?? [];
-}
-
-function recordInterrogation(brief, note) {
-  const key = caseNoteKey(brief);
-  const current = state.interrogationNotes?.[key] ?? [];
-  state.interrogationNotes = {
-    ...(state.interrogationNotes ?? {}),
-    [key]: [...current, note].slice(-8)
+function dailyRouteProfile(brief, result = {}) {
+  const percent = Number(result.issuePercent ?? issueCompletion(brief).percent);
+  const quoteHit = Boolean(result.quoteHit);
+  const axisProfile = routeAxisProfile(brief, result);
+  const routeLabel = percent >= 100 && quoteHit
+    ? "收麦稳准型"
+    : percent >= 100 ? "一路问到底型" : percent >= 75 ? "瓜心摸到型" : percent >= 50 ? "半口瓜型" : "热闹开场型";
+  const playerType = dailyPlayerType({ percent, quoteHit, accused: result.accused, axis: axisProfile.axis });
+  const picked = result.dailyAccuseLabel ? `你最后接住了${result.dailyAccuseLabel}。` : "";
+  const firstReveal = result.issueRevealed?.[0] ? `你先接住的是：${result.issueRevealed[0]}。` : "";
+  if (brief.plotId === "education-income-fake-profile") {
+    return {
+      label: routeLabel,
+      playerType,
+      shareTitle: "存款证明都发了，怎么反而更怪？",
+      shareBody: firstReveal || picked || "他不是全假，她也不是只想求安心，流水后面还藏着工资怎么管。",
+      shareQuestion: "你听完会觉得是包装，是筛选，还是两边都在试探婚后的钱？"
+    };
+  }
+  return {
+    label: routeLabel,
+    playerType,
+    shareTitle: brief.dailyShareTitle ?? "今日来电有点东西",
+    shareBody: firstReveal || picked || brief.dailyShareBody || "我听到了那句没说完的话。",
+    shareQuestion: brief.dailyShareQuestion ?? "你会从哪一句开始追？"
   };
 }
 
-function recordContradiction(brief, contradiction) {
-  const key = caseNoteKey(brief);
-  const current = state.contradictionLog?.[key] ?? [];
-  if (current.includes(contradiction)) return;
-  state.contradictionLog = {
-    ...(state.contradictionLog ?? {}),
-    [key]: [...current, contradiction].slice(-8)
-  };
-  bumpFlag("suspicion", 1);
+function dailyPlayerType({ percent, quoteHit, accused, axis }) {
+  if (percent >= 100 && quoteHit) return "瓜心狙击手";
+  if (percent >= 75 && axis === "caller-credibility") return "反向追问主播";
+  if (percent >= 75 && axis === "document-edge") return "截图拆边主播";
+  if (percent >= 75 && axis === "money-flow") return "钱流雷达主播";
+  if (percent >= 100) return "会听但爱绕路";
+  if (percent >= 75) return "差一口主播";
+  if (percent >= 50 && accused === "both") return "灰区雷达";
+  if (percent >= 50) return "半口瓜侦探";
+  if (percent > 0) return "闻味型观众";
+  return "弹幕带跑型";
 }
 
-function recordEvidenceInsight(brief, insight) {
-  const key = caseNoteKey(brief);
-  const current = state.evidenceInsights?.[key] ?? [];
-  if (current.includes(insight)) return;
-  state.evidenceInsights = {
-    ...(state.evidenceInsights ?? {}),
-    [key]: [...current, insight].slice(-6)
+function finalQuoteComparison(brief, result = {}) {
+  const choices = dailyAccusationChoices(brief);
+  const expected = expectedAccusationForCase(brief);
+  const best = choices.find((choice) => choice.accuse === expected) ?? choices.find((choice) => choice.accuse === "both") ?? choices[0];
+  if (!best) return null;
+  const pickedLabel = result.dailyAccuseLabel ?? "";
+  const sameQuote = pickedLabel === best.label;
+  return {
+    pickedLabel: pickedLabel || "还没选最后那句",
+    pickedResponse: result.dailyResponse ?? "",
+    bestLabel: best.label,
+    bestResponse: best.response ?? "",
+    sameQuote
   };
 }
 
-function ensureCaseBudget(brief) {
-  if (!brief) return null;
-  const key = caseNoteKey(brief);
-  const max = caseBudgetMax(brief);
-  const current = state.caseBudgets?.[key];
-  if (current && typeof current.remaining === "number") return current;
+function finalQuoteComparisonHtml(comparison) {
+  const pickedCaption = comparison.sameQuote ? "这句能收住" : "你接的那句";
+  if (comparison.sameQuote) {
+    return `
+      <div class="quote-compare-card quote-compare-card-single">
+        <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}<em>接到这里，这通就能收麦了。</em></p>
+      </div>
+    `;
+  }
+  const bestCaption = "也可以这样收";
+  return `
+    <div class="quote-compare-card">
+      <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}</p>
+      <p><span>${escapeHtml(bestCaption)}</span><b>${escapeHtml(comparison.bestLabel)}</b>${comparison.bestResponse ? `<small>${escapeHtml(comparison.bestResponse)}</small>` : ""}</p>
+    </div>
+  `;
+}
+
+function postDailySharePayload(brief, route, result) {
+  const mode = isStoryPackMode() ? "episode" : "daily";
+  const storyKey = brief.storyKey ?? brief.weeklyKey ?? "";
+  platformRuntime.postMessage({
+    type: "daily-share",
+    dailyKey: brief.dailyKey,
+    storyKey,
+    solved: Boolean(result.dailyBadge),
+    issuePercent: Number(result.issuePercent ?? 0),
+    dailyBadge: Boolean(result.dailyBadge),
+    playerType: route.playerType,
+    title: route.shareTitle,
+    body: route.shareBody,
+    question: route.shareQuestion,
+    path: `/pages/index/index?mode=${mode}&dailyKey=${encodeURIComponent(brief.dailyKey ?? "")}&storyKey=${encodeURIComponent(storyKey)}`
+  });
+}
+
+function isFinalStoryPackCase() {
+  return Number(state.chapter ?? 1) >= (state.caseBriefs?.length ?? 1);
+}
+
+function advanceToNextStoryPackCase(message = "新的来电接进来，刚才那通先记下。") {
+  state.chapter = Math.min(Number(state.chapter ?? 1) + 1, state.caseBriefs?.length ?? 1);
+  state.caseBrief = activeCaseBrief();
+  state.scene = "caseOpen";
+  state.recapStep = 0;
+  state.lastReaction = message;
+  saveState();
+  render();
+}
+
+function resetCaseAttempt(brief) {
+  const key = caseKey(brief);
+  state.scene = "caseOpen";
+  state.dialogueProgress = removeKeyPrefix(state.dialogueProgress, `${key}:`);
+  state.sceneAnswers = removeKeyPrefix(state.sceneAnswers, `${key}:`);
+  state.sceneQuestionPicks = removeKeyPrefix(state.sceneQuestionPicks, `${key}:`);
+  state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
+  state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
+  state.caseActionLog = omitRecordKey(state.caseActionLog, key);
+  state.contradictionLog = omitRecordKey(state.contradictionLog, key);
+  state.accusationHistory = (state.accusationHistory ?? []).filter((item) => item.caseId !== key);
+  state.solvedCaseIds = (state.solvedCaseIds ?? []).filter((item) => item !== key);
+  state.caseInterludes = omitRecordKey(state.caseInterludes, key);
+  state.caseBudgets = omitRecordKey(state.caseBudgets, key);
+  state.recapStep = 0;
+  saveState();
+  render();
+}
+
+function upsertByCaseId(items = [], result) {
+  const next = (items ?? []).filter((item) => item.caseId !== result.caseId);
+  return [...next, result];
+}
+
+function removeKeyPrefix(record = {}, prefix) {
+  return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => !key.startsWith(prefix)));
+}
+
+function omitRecordKey(record = {}, keyToOmit) {
+  return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => key !== keyToOmit));
+}
+
+function markAction(brief, actionKey, { spend = false } = {}) {
+  const alreadyDone = actionDone(brief, actionKey);
+  const budget = ensureBudget(brief);
+  if (spend && !alreadyDone) {
+    budget.remaining = Math.max(0, Number(budget.remaining ?? 0) - 1);
+    budget.used = Number(budget.used ?? 0) + 1;
+  }
+  state.caseActionLog = {
+    ...(state.caseActionLog ?? {}),
+    [caseKey(brief)]: {
+      ...(state.caseActionLog?.[caseKey(brief)] ?? {}),
+      [actionKey]: true
+    }
+  };
+}
+
+function audiencePatienceLost(brief) {
+  const budget = ensureBudget(brief);
+  const allAnswered = answeredSceneCount(brief) >= keyQuestionLimit(brief);
+  if (Number(budget.remaining ?? 0) > 0 || allAnswered) return false;
+  state.scene = "patienceLost";
+  state.lastReaction = null;
+  saveState();
+  render();
+  return true;
+}
+
+function actionDone(brief, actionKey) {
+  return Boolean(state.caseActionLog?.[caseKey(brief)]?.[actionKey]);
+}
+
+function ensureBudget(brief) {
+  const key = caseKey(brief);
+  if (state.caseBudgets?.[key]) return state.caseBudgets[key];
+  const max = calculateCaseBudgetMax({ brief });
   state.caseBudgets = {
     ...(state.caseBudgets ?? {}),
     [key]: { max, remaining: max, used: 0 }
@@ -1585,464 +1190,463 @@ function ensureCaseBudget(brief) {
   return state.caseBudgets[key];
 }
 
-function caseBudgetMax(brief) {
-  return calculateCaseBudgetMax({
-    brief,
-    bonusPoints: meta.bonusPoints ?? 0,
-    agencyReputation: state.agencyReputation ?? 0,
-    publicHeat: state.publicHeat ?? 0
-  });
-}
-
-function caseBudget(brief) {
-  return ensureCaseBudget(brief) ?? { max: 0, remaining: 0, used: 0 };
-}
-
-function actionDone(brief, actionKey) {
-  return Boolean(state.caseActionLog?.[caseNoteKey(brief)]?.[actionKey]);
-}
-
-function caseActionDisabled(brief, actionKey) {
-  const budget = caseBudget(brief);
-  return actionDone(brief, actionKey) || budget.remaining <= 0 ? "disabled" : "";
-}
-
-function spendCaseAction(brief, actionKey, cost = 1) {
-  if (actionDone(brief, actionKey)) {
-    state.lastReaction = "这条线已经记录过了，重复追问只会消耗当事人的耐心。";
-    return false;
-  }
-  const budget = caseBudget(brief);
-  if (budget.remaining < cost) {
-    registerLiveMisstep(brief, 2);
-    state.publicHeat = Math.min(9, (state.publicHeat ?? 0) + 1);
-    state.lastReaction = "弹幕开始急了：别再绕了，先拿现有说法往下判断。";
-    return false;
-  }
-  const key = caseNoteKey(brief);
-  budget.remaining -= cost;
-  budget.used += cost;
-  state.caseBudgets = {
-    ...(state.caseBudgets ?? {}),
-    [key]: budget
-  };
-  state.caseActionLog = {
-    ...(state.caseActionLog ?? {}),
-    [key]: {
-      ...(state.caseActionLog?.[key] ?? {}),
-      [actionKey]: true
-    }
-  };
-  return true;
-}
-
-function rerenderWithSave() {
-  saveState();
-  render();
-}
-
-function interludeForCase(brief) {
-  const key = caseNoteKey(brief);
-  return state.caseInterludes?.[key] ?? {
-    reputationDelta: 0,
-    heatDelta: 0,
-    summary: "这通电话已经回看，但后续记录缺失。只能按中性状态进入下一通。"
+function recordContradiction(brief, contradiction) {
+  if (!contradiction) return;
+  const key = caseKey(brief);
+  const current = state.contradictionLog?.[key] ?? [];
+  if (current.includes(contradiction)) return;
+  state.contradictionLog = {
+    ...(state.contradictionLog ?? {}),
+    [key]: [...current, contradiction].slice(-32)
   };
 }
 
-function nextCaseCarryoverLine(nextBrief) {
-  const reputation = state.agencyReputation ?? 0;
-  const heat = state.publicHeat ?? 0;
-  const budget = caseBudgetMax(nextBrief);
-  if (reputation >= 4 && heat < 5) return `上一通建立了信任，下一通初始配合度更高，可追问次数调整为 ${budget}。`;
-  if (heat >= 5) return `上一通引发争议，下一通来电人更防御，可追问次数调整为 ${budget}。`;
-  if (reputation < 0) return `上一通听法被质疑，下一通需要用更具体的说法重新稳住节奏，可追问次数为 ${budget}。`;
-  return `上一通影响有限，下一通按常规节奏进入，可追问次数为 ${budget}。`;
+function recordRouteChoice(brief, sceneIndex, option = {}, scene = {}) {
+  const key = caseKey(brief);
+  const current = (state.routeChoiceLog?.[key] ?? []).filter((item) => item.sceneIndex !== sceneIndex);
+  const entry = {
+    sceneIndex,
+    axis: option.routeAxis ?? routeAxisForChoice(option, scene),
+    tone: option.routeTone ?? routeToneForChoice(option),
+    core: Boolean(option.contradiction),
+    question: option.question ?? "",
+    answer: option.answer ?? ""
+  };
+  state.routeChoiceLog = {
+    ...(state.routeChoiceLog ?? {}),
+    [key]: [...current, entry].sort((a, b) => a.sceneIndex - b.sceneIndex)
+  };
 }
 
-function solvedCaseDetails(brief, result) {
-  const found = contradictionsForCase(brief);
-  const keyItems = allCaseContradictions(brief).slice(0, 4);
-  const hit = keyItems.filter((item) => found.includes(item));
-  const missed = keyItems.filter((item) => !found.includes(item)).slice(0, 3);
-  const expected = result?.expected ?? expectedAccusation(brief);
-  const relationshipExpected = result?.relationshipExpected ?? relationshipExpectedAccusation(brief);
-  const structuralExpected = result?.structuralExpected ?? structuralExpectedAccusation(brief);
-  const daily = brief?.dailyCase || brief?.caseMode === "daily";
+function contradictions(brief) {
+  return state.contradictionLog?.[caseKey(brief)] ?? [];
+}
+
+function answeredSceneCount(brief) {
+  return (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
+}
+
+function outerAngleReaction(option = {}) {
+  if (/太细|不太好听|尴尬/.test(option.answer ?? "")) return "弹幕先吵起尺度：问得细不细，和这张资料为什么出现，是两件事。";
+  if (/本科|项目|学制|校名/.test(option.answer ?? "")) return "直播间开始扒标签：图能说明一截，但没说明完整那截。";
+  if (/花销|余额|每个月|团购|停车费/.test(option.answer ?? "")) return "弹幕顺着钱吵起来：一笔小钱不定性，但长期别扭会把问题推回流水。";
+  if (/工资|流水|小家|不舒服/.test(option.answer ?? "")) return "麦里安静了一下：拒绝流水未必心虚，但这句已经碰到婚后钱怎么管。";
+  if (/审批|财务|付款|收款|返款|垫款/.test(option.answer ?? "")) return "弹幕开始对截图：流程慢是一种可能，截图少一页就是另一种味道。";
+  if (routeToneForChoice(option) === "softening") return "弹幕有人替 TA 补了一句，麦温往下掉了一格。";
+  if (routeToneForChoice(option) === "caller-skeptical") return "这句绕回了来电人自己，弹幕短暂安静了一下。";
+  return "直播间接住了这个角度，但人声开始有点散。";
+}
+
+function selectedScenePick(brief, index) {
+  const pick = state.sceneQuestionPicks?.[answerKey(brief, index)] ?? null;
+  if (!pick) return null;
   return {
-    accusedLabel: daily ? (result?.dailyAccuseLabel ?? dailyExpectedAccuseLabel(brief, result?.accused)) : accusationLabel(brief, result?.accused),
-    expectedLabel: daily ? dailyExpectedAccuseLabel(brief, expected) : accusationLabel(brief, expected),
-    responsibilityLayer: structuralExpected
-      ? `这通电话里更像 ${accusationLabel(brief, relationshipExpected)} 没说全；背后推手更像 ${accusationLabel(brief, structuralExpected)}。`
-      : "",
-    hit,
-    missed,
-    why: explanationForExpected(brief, expected)
+    ...pick,
+    routeAxis: pick.routeAxis ?? routeAxisForChoice(pick),
+    routeTone: pick.routeTone ?? routeToneForChoice(pick)
   };
 }
 
-function dailyExpectedAccuseLabel(brief, expected) {
-  if (!brief) return "还没说清";
-  if (brief.plotId === "lost-job-hidden-credit") {
-    if (expected === brief.respondentId) return "失业是真，但体面账也是真的";
-  }
-  if (brief.plotId === "house-name-security-test") {
-    if (expected === brief.respondentId) return "产权归父母，还贷进共同账户";
-  }
-  if (brief.plotId === "tony-multi-dating") {
-    if (expected === brief.respondentId) return "不是聊天多，是把人按用途分组";
-  }
+function askedDialoguePicks(brief, index) {
+  return state.sceneDialoguePicks?.[answerKey(brief, index)] ?? [];
+}
+
+function selectedScenePicks(brief) {
+  return (brief.sceneVersions ?? []).map((_, index) => selectedScenePick(brief, index)).filter(Boolean);
+}
+
+function hasDeepFollowup(brief) {
+  return Boolean(deepFollowupFor(brief).question);
+}
+
+function deepFollowupFor(brief) {
+  if (brief.deepFollowup?.question) return brief.deepFollowup;
   if (brief.plotId === "education-income-fake-profile") {
-    if (expected === "both") return "存款证明是谁推出来的说不清";
+    return {
+      question: "那我多问一句，你自己的家庭经济状况怎么样？你自己一个月工资多少，够花吗？",
+      answer: "我自己也不是特别宽裕，所以我才更在意他收入到底落不落地。我嘴上说家里想看稳定，其实我也想知道以后这笔钱是不是能进小家。",
+      note: "这不是给男方洗白，是把女方自己的利益位置也问出来。"
+    };
   }
-  return accusationLabel(brief, expected);
-}
-
-function currentPlaythroughNumber() {
-  return (meta.runs ?? 0) + 1;
-}
-
-function playthroughOpening(brief) {
   return {
-    hook: brief.storyArcSummary ?? brief.publicHook ?? "今日只接一通匿名来电。",
-    director: "你把麦打开：“先听 TA 怎么说，别急着替任何一方下结论。”",
-    pressure: brief.storySuspense ?? "先听 TA 怎么说，别急着替任何一方接话。"
+    question: "那我多问一句，如果把情绪先放一边，这件事最后是谁要承担成本？",
+    answer: "她停了一下，说：我刚才一直在讲委屈，其实最怕的是最后又变成我来兜底。",
+    note: "问到这一步，就别只听委屈了，得问最后谁兜底。"
   };
 }
 
-function interludeDialogueForCase({ brief, currentTitle, interlude, nextHook, transition, followupTwist, nextCarryover, nextThreadLine }) {
-  if (brief?.dailyCase || brief?.caseMode === "daily") {
-    return [
-      {
-        speaker: "你",
-        label: `${currentTitle} 结案后`,
-        text: interlude.summary
-      },
-      followupTwist ? {
-        speaker: "咨询者",
-        label: "后续补充",
-        text: followupTwist.replace(/^后续回拨：/, "").replace(/^后续新情况：/, "")
-      } : null,
-      {
-        speaker: "你",
-        label: "今日结果",
-        text: "这通电话先收在这里。真正的分歧，留给看完的人继续判断。"
-      }
-    ].filter(Boolean);
-  }
-  return [
-    {
-      speaker: "你",
-      label: `${currentTitle} 结案后`,
-      text: interlude.summary,
-      detail: "先把情绪放一放，再看下一段余波。"
-    },
-    followupTwist ? {
-      speaker: "消息",
-      label: "回拨消息",
-      text: followupTwist.replace(/^后续新情况：/, ""),
-      detail: "这不是新案，只是上一案留下的回音。它会改变下一通电话里，你对“完整叙事”的警惕。"
-    } : null,
-    transition ? {
-      speaker: "资料",
-      label: "新资料进线",
-      text: transition,
-      detail: "资料没有替你下结论，只把下一案的第一个疑点放到了台面上。"
-    } : null,
-    {
-      speaker: "你",
-      label: "下一通连线",
-      text: nextHook,
-      detail: nextThreadLine || nextCarryover
+function dailyConclusion(brief, result, issue) {
+  const picked = selectedScenePicks(brief);
+  const pickedQuestions = picked.map((item) => item.question).filter(Boolean);
+  const deep = issue.badge ? deepFollowupFor(brief) : null;
+
+  if (brief.plotId === "education-income-fake-profile") {
+    if (issue.badge) {
+      return {
+        summary: "照她一开始的说法，问题像是男方资料不干净：MBA 被说成名校毕业，收入和花销也对不上。可一路问下来，她最放不下的其实是收入到底有多少、以后钱怎么管。MBA 的事她不是完全没感觉，只是借着见父母这次一起问了。",
+        deepQuestion: deep.question,
+        followup: "后续回拨里，她承认自己也想知道对方一个月到底赚多少、够不够花、愿不愿意把钱放进未来的小家。对方那句“是不是工资卡也要交出来”难听，但确实戳中了没说出口的地方。",
+        truth: "这案别只按“骗学历”判，也别只骂女方看钱。男方把局部真实说得太漂亮，女方借父母的口继续摸收入。要往下谈，就得把学历、收入、花钱习惯和婚后管钱方式摊开。"
+      };
     }
-  ].filter(Boolean);
-}
-
-function openingDialogueForCase(brief, opening, complainantName, respondentName) {
-  const dailyOpening = dailyOpeningAtmosphereLines(brief);
-  if (dailyOpening?.length) {
-    return dailyOpening
-      .filter((line) => line.role !== "other")
-      .map((line) => ({
-        ...line,
-        speaker: line.role === "host" ? "你" : "咨询者"
-      }));
+    if (pickedQuestions.some((item) => /MBA|学历|本科|介绍/.test(item))) {
+      return {
+        summary: "你这轮主要盯住了学历那句。男方没有凭空编学校，但把 MBA 放进“名校毕业”里，别人很容易听成另一回事。",
+        deepQuestion: "",
+        followup: "电话挂到这里还会吵下去。学历那句先浮上来了，后面的饭局也不会轻松。",
+        truth: "学历是入口，不是整件事。后半段吵起来的，其实是收入、花销和婚后钱归谁管。"
+      };
+    }
+    if (pickedQuestions.some((item) => /流水|工资|收入|花销|存款/.test(item))) {
+      return {
+        summary: "你这轮盯的是收入和流水。她不是只想听一句“稳定”，她想知道钱每个月到底怎么来、怎么花、以后进不进小家。",
+        deepQuestion: "",
+        followup: "电话挂到这里，饭桌上的空气已经变了。流水不是一张图的问题，学历那句也会被重新翻出来。",
+        truth: "流水不只是看真假，已经挨着婚后工资透明和共同账户那道线了。"
+      };
+    }
   }
-  if (brief.openingDialogue?.length) {
-    return brief.openingDialogue
-      .filter((line) => line.role !== "other")
-      .map((line) => ({
-        ...line,
-        speaker: line.role === "host" ? "你" : "咨询者"
-      }));
+
+  if (issue.badge) {
+    return {
+      summary: brief.stageJudgement ?? "这一轮几个别扭点都问到了。",
+      deepQuestion: deep?.question ?? "",
+      followup: brief.followupTwist ?? "后续回拨里，咨询者愿意把刚才没说出口的部分补上。",
+      truth: brief.truth ?? "这通别急着站一边，先把双方没说全的地方补齐。"
+    };
   }
-  const firstQuote = brief.openingComplaint?.match(/[“"]([^”"]{4,48})[”"]/)?.[1];
-  const complainantLine = firstQuote ?? brief.storyArcSummary ?? brief.publicHook ?? "我想把这件事说清楚。";
-  return [
-    { speaker: "咨询者", role: "caller", text: `主播你好，${complainantLine}` },
-    { speaker: "你", role: "host", text: "晚上好，先不急着下结论。你把这通电话里最别扭的地方慢慢讲。" }
-  ];
-}
 
-function dialogueProgressKey(brief, scene) {
-  return `${caseNoteKey(brief)}:${scene}`;
-}
-
-function currentSceneVersionIndex(brief) {
-  const total = brief.sceneVersions?.length ?? 0;
-  const maxIndex = Math.max(0, total - 1);
-  return Math.max(0, Math.min(Number(state.dialogueProgress?.[dialogueProgressKey(brief, "sceneReview")] ?? 0), maxIndex));
-}
-
-function setSceneVersionIndex(brief, index) {
-  const total = brief.sceneVersions?.length ?? 0;
-  const nextIndex = Math.max(0, Math.min(index, Math.max(0, total - 1)));
-  state.dialogueProgress = {
-    ...(state.dialogueProgress ?? {}),
-    [dialogueProgressKey(brief, "sceneReview")]: nextIndex
+  return {
+    summary: issue.revealed.length ? `这轮浮上来的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，真正别扭的地方还没上桌。",
+    deepQuestion: "",
+    followup: issue.revealed.length ? "后续回拨里，话还没完，评论区会继续抓着没说出口的地方吵。" : brief.followupTwist ?? "",
+    truth: brief.truth ?? "这案不能只按第一印象走，得看每个人少说了哪半截。"
   };
-  const item = brief.sceneVersions?.[nextIndex];
-  if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
-  saveState();
-  render();
 }
 
-function currentTestimonyIndex(brief) {
-  const total = brief.testimony?.length ?? 0;
-  const maxIndex = Math.max(0, total - 1);
-  return Math.max(0, Math.min(Number(state.dialogueProgress?.[dialogueProgressKey(brief, "testimony")] ?? 0), maxIndex));
+function routeChoicesForCase(brief) {
+  const key = caseKey(brief);
+  const logged = state.routeChoiceLog?.[key];
+  if (Array.isArray(logged) && logged.length) return logged;
+  return selectedScenePicks(brief).map((pick, index) => ({
+    sceneIndex: index,
+    axis: pick.routeAxis ?? routeAxisForChoice(pick),
+    tone: pick.routeTone ?? routeToneForChoice(pick),
+    core: Boolean(pick.contradiction),
+    question: pick.question ?? "",
+    answer: pick.answer ?? ""
+  }));
 }
 
-function setTestimonyIndex(brief, index) {
-  const total = brief.testimony?.length ?? 0;
-  const nextIndex = Math.max(0, Math.min(index, Math.max(0, total - 1)));
-  state.dialogueProgress = {
-    ...(state.dialogueProgress ?? {}),
-    [dialogueProgressKey(brief, "testimony")]: nextIndex
+function routeAxisProfile(brief, result = {}) {
+  const choices = routeChoicesForCase(brief);
+  const counts = routeAxisCounts(choices);
+  const [axis, count] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0] ?? ["live-instinct", 0];
+  const coreHits = choices.filter((item) => item.core).length;
+  const skeptical = choices.filter((item) => item.tone === "caller-skeptical").length;
+  const softening = choices.filter((item) => item.tone === "softening").length;
+  const label = routeAxisLabel(axis);
+  let summary = "你一路按现场听感往前接，路线还没有明显偏向。";
+  if (choices.length) {
+    if (skeptical > softening && skeptical >= 2) summary = "你不急着相信来电人的版本，会先追她自己没说全的利益和压力。";
+    else if (softening > skeptical && softening >= 2) summary = "你会先替双方留下余地，等材料和后续话头自己露出缺口。";
+    else if (coreHits === choices.length) summary = "你每段都接得很紧，这通后面就没那么容易散掉。";
+    else summary = `你主要沿着${label}推进，中间也绕去听了几句外围解释。`;
+  }
+  return { axis, label, count, summary, coreHits, total: choices.length };
+}
+
+function routeAxisCounts(choices) {
+  return choices.reduce((counts, item) => {
+    const axis = item.axis ?? "live-instinct";
+    counts[axis] = Number(counts[axis] ?? 0) + 1;
+    return counts;
+  }, {});
+}
+
+function routeAxisForChoice(option = {}, scene = {}) {
+  const text = `${option.question ?? ""} ${option.answer ?? ""} ${scene.version ?? ""}`;
+  if (/你当时|你自己|你妈|家里|心疼|怕|委屈|表现|抢署名|要不要|主动|你是不是|你有没有|起疑|绕着|不踏实|怎么接|怎么回|怎么理解|自己人|拦过|改口|为什么先答应|更慌/.test(option.question ?? "")) return "caller-credibility";
+  if (/学历|本科|MBA|名校|老板娘|身份|女朋友|唯一|主责|署名|版本|介绍人|标签|条件/.test(text)) return "identity-wording";
+  if (/流水|工资|收入|花销|存款|钱|账|还款|还贷|垫款|返款|付款|收款|费用/.test(text)) return "money-flow";
+  if (/截图|图|材料|资料|证明|合同|协议|表|账单|审批|付款状态|账户/.test(text)) return "document-edge";
+  if (/流程|财务|供应商|对接人|入口|越级|项目组/.test(text)) return "process-control";
+  if (/他|她|TA|对方/.test(option.question ?? "")) return "counterparty-credibility";
+  return option.contradiction ? "core-thread" : "outer-thread";
+}
+
+function routeToneForChoice(option = {}) {
+  const text = `${option.question ?? ""} ${option.answer ?? ""}`;
+  if (/你当时|你自己|你妈|是不是也|主动|心疼|想要|接受|表现|抢署名|先谈|起疑|绕着|不踏实|怎么接|怎么回|怎么理解|自己人|拦过|改口|为什么先答应|更慌/.test(text)) return "caller-skeptical";
+  if (/有没有可能|会不会|是不是就一定|只是|正常|先只|能不能先/.test(text)) return "softening";
+  if (option.contradiction) return "pressure-point";
+  return "detour";
+}
+
+function routeAxisLabel(axis) {
+  const labels = {
+    "money-flow": "钱流结构线",
+    "document-edge": "材料缺口线",
+    "identity-wording": "身份话术线",
+    "process-control": "入口控制线",
+    "caller-credibility": "来电人可信度线",
+    "counterparty-credibility": "对方叙事线",
+    "core-thread": "核心矛盾线",
+    "outer-thread": "外围试探线",
+    "live-instinct": "现场听感线"
   };
-  const item = brief.testimony?.[nextIndex];
-  if (item?.speakerId && (item.speakerId === brief.complainantId || shouldShowRespondentLive(brief))) state.primaryNpcId = item.speakerId;
-  saveState();
-  render();
+  return labels[axis] ?? "现场听感线";
 }
 
-function testimonyMood(item) {
-  if (!item) return "listening";
-  if (item.kind === "halfLie" || item.kind === "truthWithGap") return "guarded";
-  if (item.kind === "reluctant" || item.kind === "defensive") return "tense";
-  if (item.kind === "sceneHint" || item.kind === "shadowVersion") return "focused";
-  if (item.kind === "selfDoubt") return "reflecting";
-  return "anxious";
-}
-
-function nextPlaythroughTease(nextBrief) {
-  return nextBrief
-    ? `下一通匿名来电已经排队：${nextBrief.storyArcSummary ?? "继续从对话里找问题。"}`
-    : "明天会换一通匿名来电。";
-}
-
-function finalPlaythroughTease() {
-  return "今日连线已经结束。最适合发给朋友的不是答案，而是：你会从哪一句开始追问？";
-}
-
-function runCompleteLine(correct) {
-  const total = state.caseBriefs?.length ?? 3;
-  return runCompleteLineFor({
-    correct,
-    total,
-    caseMode: state.caseMode,
-    playthroughNumber: currentPlaythroughNumber()
-  });
-}
-
-function storyFrame({ chapter, text, choices, side = "", speakerName = "", caseStage = true, hideStatus = false, personaOverride = null, portraitMood = "" }) {
-  const persona = personaOverride ?? visualPersona();
-  const inCase = Boolean(caseStage && state.caseBriefs?.length && !state.investigationComplete);
-  const visibleSpeakerName = inCase ? anonymousCaseSpeakerName(speakerName || persona.name) : (speakerName || persona.name);
-  layout(`
-    <section class="story-grid ${inCase ? "case-vn-grid" : ""}">
-      <article class="vn-stage">
-          <div class="visual-scene ${backdropClass()}" aria-hidden="true">
-            <div class="scene-label">${sceneLabel()}</div>
-          ${inCase ? liveCommentStrip() : ""}
-          ${visualPortraitLayer(persona, portraitMood)}
-        </div>
-        <div class="dialogue-card">
-          <p class="eyebrow">${chapter}</p>
-          ${inCase ? "" : `<div class="speaker-name">${visibleSpeakerName}</div>`}
-          ${text}
-          ${reactionLine()}
-          ${inCase ? dialogueBacklogBlock() : ""}
-          <div class="choices">${choices}</div>
-        </div>
-      </article>
-    </section>
-  `, { sceneClass: `chapter-${state.chapter}` });
-
-  setTimeout(() => {
-    if (inCase && isMobileViewport()) {
-      const stage = document.querySelector(".vn-stage");
-      const topbar = document.querySelector(".topbar");
-      if (stage) {
-        const offset = (topbar?.getBoundingClientRect().height ?? 0) + 6;
-        const top = window.scrollY + stage.getBoundingClientRect().top - offset;
-        window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-      }
-      return;
-    }
-    const card = document.querySelector(".dialogue-card");
-    if (card) {
-      card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, 50);
-}
-
-function isMobileViewport() {
-  return Boolean(window.matchMedia?.("(max-width: 860px)").matches);
-}
-
-function anonymousCaseSpeakerName(name = "") {
-  if (state.caseMode !== "daily") return name;
-  if (!name || name === "你") return name || "你";
-  const brief = activeCaseBrief();
-  const complainant = getNpc(brief?.complainantId);
-  const respondent = getNpc(brief?.respondentId);
-  if (name === complainant?.name || name === "来访者") return "咨询者";
-  if (name === respondent?.name || name === "另一方") return "对方";
-  return name;
-}
-
-function liveCommentStrip() {
-  const brief = activeCaseBrief();
-  if (!brief) return "";
-  const pressure = state.flags.audiencePressure ?? 0;
-  const heat = state.publicHeat ?? 0;
-  const budget = caseBudget(brief);
-  const found = contradictionsForCase(brief).length;
-  const pool = liveCommentPool({ brief, pressure, heat, remaining: budget.remaining, found });
-  return `<div class="live-comment-strip">${pool.map((item) => `<span class="live-comment">${escapeHtml(item)}</span>`).join("")}</div>`;
-}
-
-function dialogueBacklogBlock() {
-  const brief = activeCaseBrief();
-  if (!brief) return "";
-  const lines = seenDialogueLines(brief).slice(-10);
-  if (lines.length <= 1) return "";
+function routeTrailHtml(brief) {
+  const choices = routeChoicesForCase(brief);
+  if (!choices.length) return "";
   return `
-    <details class="dialogue-backlog">
-      <summary>通话回放</summary>
-      <div>
-        ${lines.map((line) => `<p><b>${escapeHtml(line.speaker)}</b>：${escapeHtml(line.text)}</p>`).join("")}
-      </div>
-    </details>
+    <div class="route-trail">
+      ${choices.map((item) => routeTrailItemHtml(item)).join("")}
+    </div>
   `;
 }
 
-function reactionLine() {
-  const text = sanitizeReactionText(state.lastReaction);
-  if (!text) return "";
-  state.lastReaction = null;
-  saveState();
-  return `<p class="reaction">${text}</p>`;
+function routeTrailItemHtml(item) {
+  const label = routeAxisLabel(item.axis);
+  const question = compactRouteQuestion(item.question);
+  return `
+    <span>
+      <em>${Number(item.sceneIndex ?? 0) + 1}</em>
+      <b>${escapeHtml(label)}</b>
+      ${question ? `<small>${escapeHtml(question)}</small>` : ""}
+    </span>
+  `;
 }
 
-function sanitizeReactionText(text) {
-  const value = String(text ?? "");
-  if (!value) return "";
-  if (/对方主动展示体面材料|金融企业标签遮住|择偶定位|未核验/.test(value)) {
-    return "你点点头：先让 TA 继续说。";
-  }
-  return value;
+function compactRouteQuestion(question = "") {
+  const normalized = String(question).replace(/\s+/g, "");
+  if (!normalized) return "";
+  return normalized.length > 18 ? `${normalized.slice(0, 18)}...` : normalized;
 }
 
-function registerLiveMisstep(brief, amount = 1) {
-  bumpFlag("audiencePressure", amount);
-  const pressure = state.flags.audiencePressure ?? 0;
-  if (pressure >= 4) state.publicHeat = Math.min(9, (state.publicHeat ?? 0) + 1);
-  if (brief) {
-    recordEvidenceInsight(brief, "直播间对这条追问出现分歧。");
-  }
-}
-
-function liveMisstepReply(item = {}, stage = "scene") {
-  const speaker = item.speaker ?? "对方";
-  if (stage === "testimony") {
-    return `${speaker} 没顺着补事实，只把话题带回自己的委屈。弹幕开始催你换个问法。`;
-  }
-  return `${speaker} 接住了情绪，但关键事实没多出来。弹幕有人刷：这句先别追偏。`;
-}
-
-function liveCommentPool({ brief, pressure, heat, remaining, found }) {
-  if (remaining <= 0) return ["别绕了", "该判断了", "现在线索够不够"];
-  if (heat >= 5 || pressure >= 4) return ["主播别硬扣", "让 TA 说原话", "这句没接上"];
-  if (pressure >= 1) return ["这问法有点偏", "原话呢", "别替谁解释"];
-  if (found >= 2) return ["有东西了", "这句前后对不上", "继续追原话"];
-  return ["来了来了", "麦里有点东西", "弹幕别吵"];
-}
-
-function seenDialogueLines(brief) {
-  const lines = [];
-  const complainant = getNpc(brief.complainantId);
-  const respondent = getNpc(brief.respondentId);
-  const opening = openingDialogueForCase(
-    brief,
-    playthroughOpening(brief),
-    complainant?.name ?? "咨询者",
-    respondent?.name ?? "对方"
-  );
-  opening.forEach((line) => {
-    lines.push({
-      speaker: callHistorySpeaker(brief, line.speaker, line.role),
-      text: line.text ?? ""
-    });
+function summarizeStoryPackAxes(briefs, results) {
+  const counts = {};
+  briefs.forEach((brief, index) => {
+    const axis = routeAxisProfile(brief, results[index] ?? {}).axis;
+    counts[axis] = Number(counts[axis] ?? 0) + 1;
   });
-  if (sceneReached("sceneReview")) {
-    const current = currentSceneVersionIndex(brief);
-    (brief.sceneVersions ?? []).slice(0, current + 1).forEach((item) => {
-      lines.push({
-        speaker: callHistorySpeaker(brief, item.speaker, item.speakerId === brief.respondentId ? "other" : "caller"),
-        text: item.version ?? ""
-      });
-    });
-  }
-  if (sceneReached("testimony")) {
-    const current = currentTestimonyIndex(brief);
-    (brief.testimony ?? []).slice(0, current + 1).forEach((item) => {
-      lines.push({
-        speaker: callHistorySpeaker(brief, item.speaker, item.speakerId === brief.respondentId ? "other" : "caller"),
-        text: item.line ?? ""
-      });
-    });
-  }
-  notesForCase(brief).slice(-4).forEach((note) => {
-    lines.push({ speaker: "追问", text: note });
-  });
-  return lines.filter((line) => line.text);
+  return Object.entries(counts)
+    .map(([axis, count]) => ({ axis, count, label: routeAxisLabel(axis) }))
+    .sort((a, b) => b.count - a.count);
 }
 
-function sceneReached(scene) {
-  const order = {
-    caseOpen: 0,
-    sceneReview: 1,
-    evidence: 2,
-    testimony: 3,
-    accusation: 4,
-    caseSolved: 5,
-    caseInterlude: 6,
-    runComplete: 7
+function storyThemeForBriefs(briefs = []) {
+  const first = briefs.find(Boolean) ?? {};
+  return {
+    title: first.storyThemeTitle ?? first.weeklyThemeTitle ?? "今晚收麦",
+    thesis: first.storyThemeThesis ?? first.weeklyThemeThesis ?? "几通来电听完，别只听谁声音大，要看最后谁被叫去买单。",
+    commentPrompt: first.storyThemeCommentPrompt ?? first.weeklyThemeCommentPrompt ?? "评论区吵到后半夜，吵的都是每个人没说完的半句。"
   };
-  return (order[state.scene] ?? 0) >= (order[scene] ?? 0);
 }
 
-function callHistorySpeaker(brief, speaker = "来电", role = "") {
-  if (role === "host" || speaker === "你") return "你";
-  if (speaker === "消息" || speaker === "资料" || speaker === "追问") return speaker;
-  if (state.caseMode !== "daily") return speaker || "来电";
-  if (/材料|账单|截图|草稿|排班表|回拨|录音|合同|摘录|记事/.test(speaker ?? "")) return speaker;
-  if (role === "other" || speaker === "另一方" || speaker === "对方") return "咨询者转述";
-  return "咨询者";
+function storyCommentWall(briefs, results, best, avgPercent, theme) {
+  const rows = briefs.map((brief, index) => {
+    const result = results[index] ?? {};
+    const route = routeAxisProfile(brief, result);
+    return { brief, result, route };
+  });
+  const strongest = [...rows].sort((a, b) => Number(b.result.issuePercent ?? 0) - Number(a.result.issuePercent ?? 0))[0];
+  const weakest = [...rows].sort((a, b) => Number(a.result.issuePercent ?? 0) - Number(b.result.issuePercent ?? 0))[0];
+  const strongestPercent = Number(strongest?.result.issuePercent ?? 0);
+  const comments = [
+    `「${theme.commentPrompt}」`,
+    avgPercent < 40
+      ? "「这主播这一集更像在听现场热闹，几通麦都有话没完全翻出来。」"
+      : `「这主播这一集明显偏${best.label}，不是爱站队，是看哪句话能落到责任上。」`
+  ];
+  if (strongest?.brief && strongestPercent > 0) {
+    comments.push(`「${strongest.brief.label}那案问得最稳，${strongest.route.label}一出来，前面的体面话就不能按原样听了。」`);
+  } else {
+    comments.push("「这几通还停在表层，材料、钱和责任几条线都还没完全露出来。」");
+  }
+  if (avgPercent < 40) {
+    comments.push("「这不是站队问题，是今晚几通麦都留了半句话。」");
+  } else if (weakest?.brief && Number(weakest.result.issuePercent ?? 0) < 100) {
+    comments.push(`「${weakest.brief.label}还差一点，没问到的那半句才是评论区会继续吵的地方。」`);
+  } else if (avgPercent >= 90) {
+    comments.push("「这几通都问到骨头上了，这种复盘才像现实版逆转裁判，不靠吼，靠把话问实。」");
+  } else {
+    comments.push("「好看的点是它没有硬判好坏，谁修剪事实、谁转嫁成本，都得一条条摊开。」");
+  }
+  return comments.slice(0, 4);
+}
+
+function storyPlayerType(avgPercent, best) {
+  if (avgPercent >= 90 && best.axis === "caller-credibility") return "反向追问型主播";
+  if (avgPercent >= 90) return "收麦很稳的主播";
+  if (avgPercent < 40) return "外围听感主播";
+  if (avgPercent < 65) return "现场嗅觉型主播";
+  if (best.axis === "money-flow") return "钱流雷达主播";
+  if (best.axis === "document-edge") return "截图拆边主播";
+  if (best.axis === "process-control") return "入口控制型主播";
+  return "稳扎稳打型主播";
+}
+
+function storyShareTitle(avgPercent, best) {
+  if (avgPercent >= 90) return "这一晚几通来电，基本都被我问到瓜心了。";
+  if (avgPercent < 40) return "这一晚几通来电，我还停在表层热闹里。";
+  if (avgPercent < 65) return "这集闻到了一点味儿，但几句最要紧的话还没问出来。";
+  if (best.axis === "caller-credibility") return "我这一集最常回头问来电人：你自己还有哪句没说？";
+  return `我这一集最常走${best.label}，几通听下来味道不一样。`;
+}
+
+function storyPackAftertaste(avgPercent) {
+  if (avgPercent >= 90) return "四通麦都压到了后半句。";
+  if (avgPercent < 40) return "今晚更多是在听热闹。";
+  if (avgPercent < 65) return "有几句话浮上来了。";
+  return "几条线都露了头。";
+}
+
+function answerKey(brief, index) {
+  return `${caseKey(brief)}:scene:${index}`;
+}
+
+function caseKey(brief) {
+  return brief?.id ?? "daily";
+}
+
+function caseProgressStrip(brief) {
+  if (!brief) return "";
+  const total = keyQuestionLimit(brief);
+  const answered = answeredSceneCount(brief);
+  const segment = Math.max(1, Math.min(total || 1, answered + 1));
+  return `
+    <div class="case-progress-strip">
+      <span>第 ${segment}/${total || 1} 段</span>
+      <span>${escapeHtml(isStoryPackMode() ? "匿名来电" : brief.label ?? "连线中")}</span>
+    </div>
+  `;
+}
+
+function audiencePatienceHud(brief) {
+  const budget = ensureBudget(brief);
+  const max = Math.max(1, Number(budget.max ?? 1));
+  const remaining = Math.max(0, Math.min(max, Number(budget.remaining ?? max)));
+  const percent = Math.round((remaining / max) * 100);
+  const level = percent <= 28 ? "low" : percent <= 55 ? "mid" : "high";
+  return `
+    <div class="audience-patience patience-${level}" aria-label="听众忍耐度 ${remaining}/${max}">
+      <span>听众忍耐</span>
+      <b>${remaining}/${max}</b>
+      <i><em style="width:${percent}%"></em></i>
+    </div>
+  `;
+}
+
+function storyPackSummaryHud() {
+  const total = state.caseBriefs?.length || 4;
+  const solved = state.caseBriefs?.filter((brief) => state.solvedCaseIds?.includes(brief.id)).length ?? total;
+  return `
+    <div class="weekly-summary-visual">
+      <span>试玩已收麦</span>
+      <b>${solved}/${total}</b>
+      <small>麦都收进来了，评论区开始吵后半场。</small>
+    </div>
+  `;
+}
+
+function liveCommentStrip(brief) {
+  const found = contradictions(brief).length;
+  const hook = liveIntentHookFor(brief);
+  const comments = found >= 2
+    ? ["麦里有回声", hook, "话还没完"]
+    : found === 1
+      ? ["开始对上了", hook, "话没说满"]
+      : ["刚接进来", "麦还热着", hook];
+  return `<div class="live-comment-strip">${comments.map((item) => `<span class="live-comment">${item}</span>`).join("")}</div>`;
+}
+
+function liveIntentHookFor(brief) {
+  const text = currentSceneText(brief);
+  if (/老板娘|年卡|投店|带客|活动|朋友多|稳情绪|你和别人不一样|只有我能接住/.test(text)) return "甜话后面接要求";
+  if (/不写才像一家人|协议|投入确认|像一家人|不信我|房本|还贷/.test(text)) return "亲近话压着账";
+  if (/介绍人|名校|MBA|学校好|收入稳|条件不错|流水|工资卡/.test(text)) return "条件话被托了一层";
+  if (/主责|审批|预算|复盘|付款|供应商|流程|报销/.test(text)) return "流程词说得太熟";
+  if (/结婚|低我一头|怕你知道|最低还款|周转|今晚就要|挡几天/.test(text)) return "心疼话后面接钱";
+  return "话太顺了";
+}
+
+function portraitLayer(brief, mood = "listening") {
+  const expression = callerExpressionFor(brief, mood);
+  const moodLabels = {
+    anxious: "紧张",
+    focused: "盯资料",
+    listening: "听线",
+    tense: "绷住",
+    thinking: "接话"
+  };
+  const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
+  return `
+	    <div class="case-duel-portraits">
+	      <figure class="case-portrait mood-${mood} active">
+	        <img src="${CHARACTER_ART[npc.id]}" alt="" />
+	        <div class="call-expression expression-${escapeHtml(expression.kind)}"><span>${escapeHtml(expression.text)}</span></div>
+	        <figcaption><span>匿名来电｜${moodLabels[mood] ?? "听线"}</span><b>来电形象</b></figcaption>
+	      </figure>
+	    </div>
+	  `;
+}
+
+function callerExpressionFor(brief, mood = "listening") {
+  const budget = ensureBudget(brief);
+  const remaining = Number(budget.remaining ?? budget.max ?? 1);
+  const max = Math.max(1, Number(budget.max ?? 1));
+  const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  const reaction = String(state.lastReaction ?? "");
+  const sceneText = currentSceneText(brief);
+
+  if (state.scene === "patienceLost") return { kind: "pause", text: "眼神空了一下" };
+  if (remaining / max <= 0.28) return { kind: "pause", text: "停了很久才开口" };
+  if (/麦温|人声|弹幕有人替/.test(reaction)) return { kind: "blink", text: "连眨了两下" };
+  if (/来电人自己|自己身上|工资|流水/.test(reaction)) return { kind: "shift", text: "把话咽回去半秒" };
+  if (/老板娘|年卡|投店|带客|只有我能接住|你和别人不一样/.test(sceneText)) return { kind: "shift", text: "像把稿背到一半" };
+  if (/主责|审批|预算|复盘|付款|供应商|流程|报销/.test(sceneText)) return { kind: "pause", text: "流程词说得很顺" };
+  if (/介绍人|名校|MBA|条件不错|工资卡|流水/.test(sceneText)) return { kind: "blink", text: "笑了一下又停住" };
+  if (/不写才像一家人|不信我|协议|房本|还贷/.test(sceneText)) return { kind: "shift", text: "听到亲近话就低头" };
+  if (/结婚|低我一头|最低还款|周转|今晚就要/.test(sceneText)) return { kind: "pause", text: "那句说得太熟了" };
+  if (state.scene === "deepFollowup") return { kind: "pause", text: "指尖停在屏幕上" };
+  if (mood === "tense") return { kind: "shift", text: "握着手机没松手" };
+  if (mood === "focused") return { kind: "pause", text: "低头翻图，停了三秒" };
+  if (mood === "thinking") {
+    const beats = [
+      { kind: "blink", text: "连眨两下" },
+      { kind: "shift", text: "眼神往旁边躲" },
+      { kind: "pause", text: "吸了口气才接" },
+      { kind: "shift", text: "把手机攥紧了" }
+    ];
+    return beats[sceneIndex % beats.length];
+  }
+  if (mood === "anxious") return { kind: "blink", text: "睫毛抖了一下" };
+  return { kind: "blink", text: "麦里轻轻吸气" };
+}
+
+function currentSceneText(brief) {
+  const scenes = brief?.sceneVersions ?? [];
+  const index = currentIndex(brief, "sceneReview", scenes.length || 1);
+  const scene = scenes[index] ?? {};
+  const pick = selectedScenePick(brief, index) ?? {};
+  const dialogue = askedDialoguePicks(brief, index);
+  return [
+    brief?.publicHook,
+    scene.version,
+    ...(scene.questionOptions ?? []).map((option) => option.question),
+    pick.question,
+    pick.answer,
+    ...dialogue.flatMap((item) => [item.question, item.answer])
+  ].filter(Boolean).join(" ");
+}
+
+function reactionLine() {
+  const text = state.lastReaction;
+  if (!text) return "";
+  return `<p class="reaction">${escapeHtml(text)}</p>`;
 }
 
 function escapeHtml(value) {
@@ -2052,126 +1656,6 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
-}
-
-function shouldShowRespondentLive(brief) {
-  return !brief?.dailyCase && brief?.consultationMode === "mediation";
-}
-
-function visualPortraitLayer(persona, portraitMood = "") {
-  if (state.caseBriefs?.length && !state.investigationComplete) {
-    const brief = activeCaseBrief();
-    const complainant = getNpc(brief?.complainantId);
-    const respondent = getNpc(brief?.respondentId);
-    const activeId = state.primaryNpcId ?? complainant?.id;
-    const mood = portraitMood || moodForScene();
-    const showRespondent = shouldShowRespondentLive(brief) && state.scene !== "caseOpen";
-    const people = !showRespondent
-      ? [{ role: "咨询者", npc: complainant }].filter((item) => item.npc)
-      : [
-          { role: "咨询者", npc: complainant },
-          { role: "另一方", npc: respondent }
-        ].filter((item) => item.npc);
-    return `
-      <div class="case-duel-portraits">
-        ${people.map((item) => `
-          <figure class="case-portrait mood-${activeId === item.npc.id ? mood : "listening"} ${activeId === item.npc.id ? "active" : ""}">
-            <img src="${CHARACTER_ART[item.npc.id]}" alt="" />
-            <figcaption><span>${item.role}｜${moodLabel(activeId === item.npc.id ? mood : "listening")}</span><b>${state.caseMode === "daily" ? item.role : item.npc.name}</b></figcaption>
-          </figure>
-        `).join("")}
-      </div>
-    `;
-  }
-  return `
-    <div class="character-shadow"></div>
-    <img class="character-standee" src="${persona.art}" alt="" />
-  `;
-}
-
-function moodForScene() {
-  if (state.scene === "caseOpen") return "listening";
-  if (state.scene === "sceneReview") return "thinking";
-  if (state.scene === "testimony") return "anxious";
-  if (state.scene === "evidence") return "focused";
-  if (state.scene === "accusation") return "tense";
-  return "listening";
-}
-
-function moodLabel(mood) {
-  const labels = {
-    anxious: "紧张",
-    focused: "盯资料",
-    guarded: "防御",
-    listening: "听线",
-    reflecting: "回想",
-    tense: "绷住",
-    thinking: "接话"
-  };
-  return labels[mood] ?? "听线";
-}
-
-function visualPersona() {
-  const npc = currentNpc();
-  if (state.caseBriefs?.length && !state.investigationComplete && npc) {
-    return { name: npc.name, art: CHARACTER_ART[npc.id] };
-  }
-  if (npc && state.chapter > 1) {
-    return { name: npc.name, art: CHARACTER_ART[npc.id] };
-  }
-  if (npc && ["firstDates", "speedDatingNight"].includes(state.scene)) {
-    return { name: npc.name, art: CHARACTER_ART[npc.id] };
-  }
-  return { name: "你", art: CHARACTER_ART.meng };
-}
-
-function backdropClass() {
-  if (state.chapter === 10) {
-    return "backdrop-school";
-  }
-  if (state.chapter === 9) return "backdrop-home";
-
-  const map = {
-    1: "backdrop-office",
-    2: "backdrop-cafe",
-    3: "backdrop-parents",
-    4: "backdrop-banquet",
-    5: "backdrop-wedding",
-    6: "backdrop-home",
-    7: "backdrop-housing",
-    8: "backdrop-hospital"
-  };
-  return map[state.chapter] ?? "backdrop-office";
-}
-
-function sceneLabel() {
-  if (state.caseBriefs?.length && !state.investigationComplete) {
-    const brief = activeCaseBrief();
-    if (state.scene === "caseOpen") return "直播连线";
-    if (state.scene === "sceneReview") return "继续听来电";
-    if (state.scene === "testimony") return "继续听来电";
-    if (state.scene === "evidence") return "继续听来电";
-    if (state.scene === "accusation") return "收住话头";
-    if (state.scene === "caseInterlude") return brief?.dailyCase ? "今日余波" : "后续余波";
-    if (state.scene === "caseSolved") return "连线回看";
-    return brief?.scene?.name ?? "直播间";
-  }
-  if (state.chapter === 10) {
-    return "小学门口";
-  }
-  if (state.chapter === 9) return "婚后多年";
-
-  const labels = {
-    1: "婚介公司",
-    2: "咖啡约会",
-    3: "见家长前",
-    4: "谈婚论嫁",
-    5: "婚礼现场",
-    6: "婚后家中",
-    7: "售楼处",
-    8: "医院候诊"
-  };
-  return labels[state.chapter] ?? "婚姻剧场";
 }
 
 render();

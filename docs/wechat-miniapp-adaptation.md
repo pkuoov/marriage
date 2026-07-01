@@ -11,7 +11,7 @@
 适用场景：
 
 - 内测、发行展示、内容验证。
-- 先确认故事模式、主播模式、移动端 UI 是否成立。
+- 先确认四案故事集、移动端 UI、分享链路和内容合规反馈是否成立。
 - 不希望在玩法还在变时重写视图层。
 
 实现步骤：
@@ -22,13 +22,13 @@
 4. 小程序页面只承载：
 
 ```xml
-<web-view src="https://your-domain.example/marriage-detective/index.html" />
+<web-view src="https://your-domain.example/livestream-detective/index.html" />
 ```
 
 当前 H5 需要保持：
 
 - 手机端单栏布局。
-- 证据/后台资料使用底部浮层或折叠入口，不常驻占屏。
+- 通话回放和结果卡使用底部浮层或折叠入口，不常驻占屏。
 - 触控按钮高度不低于 44px。
 - 存档仍用 H5 `localStorage`，正式上线前再评估微信登录与云存档。
 
@@ -63,20 +63,19 @@ H5 页面已经通过 `platformRuntime.wechat` 暴露微信 WebView 状态：
 - `src/caseRuntime.js`
 - `src/difficulty.js`
 - `src/caseModes.js`
-- `src/caseArchive.js`
+- `src/dailyChoices.js`
 - `scripts/verify-logic.js` 中的逻辑校验思路
 
 需要重写模块：
 
 - `src/app.js` 中的 `innerHTML` 渲染和 `querySelector` 事件绑定。
-- `src/views/*` 中返回 HTML 字符串的模板。
 - `src/state.js` 的存储层，替换为响应式状态和小程序 storage API。
 
 推荐重构顺序：
 
 1. 抽出纯逻辑的 `gameController`，让“进入场景、点击选项、出示证据”返回可渲染的 view model。
 2. 用 Uni-app Vue 组件承接 view model。
-3. 先复刻故事模式，再接主播模式和连环剧场。
+3. 先复刻四案故事集主流程，再接微信分享、结果卡和评论区审判墙。
 4. 最后接微信登录、云存档、分享和成就。
 
 ## 当前不建议

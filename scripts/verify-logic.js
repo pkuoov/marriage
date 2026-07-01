@@ -1,10 +1,12 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.19.36";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.19.36";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.19.36";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.19.36";
-import { migrateState } from "../src/state.js?v=0.19.36";
-import { NPCS } from "../src/story.js?v=0.19.36";
-import { accusationView } from "../src/views/caseInvestigationViews.js?v=0.19.36";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.26";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.26";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.26";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.26";
+import { migrateState } from "../src/state.js?v=0.20.26";
+import { NPCS } from "../src/story.js?v=0.20.26";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.26";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.26";
+import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const results = [];
@@ -48,19 +50,151 @@ function dailyCase(key, options = {}) {
   return generateCasesForMode("daily", NPCS, attrs, { dailyKey: key, ...options })[0];
 }
 
-test("MODE-001", "unknown modes normalize to daily", () => {
-  assertEqual(normalizeCaseMode("unknown-mode"), "daily", "未知模式必须归一到每日案");
+test("MODE-001", "unknown modes normalize to episode while daily stays available", () => {
+  assertEqual(normalizeCaseMode("unknown-mode"), "episode", "未知模式必须归一到四案故事集");
+  assertEqual(normalizeCaseMode("weekly"), "episode", "旧 weekly 链接必须迁移到四案故事集");
+  assertEqual(caseModeConfig("episode").expectedCases, 4, "四案故事集必须包含四案");
   assertEqual(caseModeConfig("daily").expectedCases, 1, "每日案必须只有一案");
-  assertEqual(generateCasesForMode("unknown-mode", NPCS, attrs, { dailyKey: "2026-06-24" }).length, 1, "未知模式入口必须回落到每日案");
+  assertEqual(generateCasesForMode("unknown-mode", NPCS, attrs, { dailyKey: "2026-06-24" }).length, 4, "未知模式入口必须回落到四案故事集");
+});
+
+test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage bridge", () => {
+  assertEqual(typeof platformRuntime.postMessage, "function", "platformRuntime 必须提供顶层 postMessage，供收麦分享调用");
+  platformRuntime.postMessage({ type: "test-message" });
+});
+
+test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  assertIncludes(appSource, "sceneQuestionChoicesHtml", "当前节点追问必须走统一面板，避免上下两个孤立单选组");
+  assertIncludes(appSource, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
+  assert(!appSource.includes("choice-question-${kind}"), "追问按钮不能按内部问法类型暴露不同视觉样式");
+  const oldKickerClass = `${"choice"}-${"kicker"}`;
+  assert(!appSource.includes(oldKickerClass), "追问按钮不能再显示解释型小标签");
+  const oldDialogueTag = `${"顺着"}${"问"}`;
+  const oldKeyTag = `${"按住"}${"问"}`;
+  const oldFlowLabel = `${"麦上"}${"动作"}`;
+  const oldFlowNote = `${"麦还"}${"连着"}`;
+  const oldReviewTitle = `${"前文"}${"对话"}`;
+  const oldReviewContext = `${"开场"}${"对话"}`;
+  assert(!appSource.includes(oldDialogueTag), "不能用设计标签解释普通问法");
+  assert(!appSource.includes(oldKeyTag), "不能用设计标签解释推进问法");
+  assert(!appSource.includes(oldFlowLabel), "主流程动作区不能显示解释性标题");
+  assert(!appSource.includes(oldFlowNote), "主流程动作区不能显示解释性说明");
+  assert(!appSource.includes(oldReviewTitle), "回看折叠入口不能使用后台整理式标题");
+  assert(!appSource.includes(oldReviewContext), "回看折叠入口不能显示意义不明的开场分类");
+  const oldUpperGroup = `choiceGroup("${"岔开"}${"一句"}`;
+  const oldLowerGroup = `choiceGroup("${"盯住"}${"一句"}`;
+  assert(!appSource.includes(oldUpperGroup), "不能恢复成上方单独一个岔开按钮组");
+  assert(!appSource.includes(oldLowerGroup), "不能恢复成下方单独一个关键按钮组");
+  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
+  const windowsPlaySource = readFileSync(new URL("../play-windows.bat", import.meta.url), "utf8");
+  assert(!stylesSource.includes("choice-question-key"), "核心追问不能用高亮色条暗示优先级");
+  assert(!stylesSource.includes("critical-choice-group"), "当前节点追问不能恢复成关键选项高亮卡");
+  assert(!appSource.includes("dialogueOptionsHtml"), "统一选择面板后不能留下未调用的 dialogueOptionsHtml 死代码");
+  assert(!stylesSource.includes("dialogue-choice-group"), "统一选择面板后不能留下未使用的 dialogue-choice-group 样式");
+  assertIncludes(appSource, "Number(issue.percent ?? 0)", "recap 主视觉大字必须展示数值，避免四字 rank 在手机端溢出");
+  assertIncludes(packageSource, "\"build:playable\"", "发布前必须有不依赖 dev server 的可玩构建脚本");
+  assertIncludes(packageSource, "\"build:steam\": \"node scripts/build-playable.js\"", "Steam 构建不能继续指向普通静态预览脚本");
+  assertIncludes(packageSource, "\"play:windows\"", "必须保留 Windows 一键试玩入口");
+  assertIncludes(windowsPlaySource, "dist\\playable\\index.html", "Windows 一键试玩必须打开离线可玩包");
+  assert(!/http\.server|127\.0\.0\.1|localhost/i.test(windowsPlaySource), "Windows 一键试玩不能依赖本地端口或 dev server");
+});
+
+test("EPISODE-001", "story pack contains four deterministic live-call cases with one spine", () => {
+  const a = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const b = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const legacy = generateCasesForMode("weekly", NPCS, attrs, { weeklyKey: "steam-demo-01" });
+  assertEqual(a.length, 4, "四案故事集必须生成四案");
+  assert(validCaseBriefCount(a.length), "四案数量必须被存档校验接受");
+  assertEqual(a.map((brief) => brief.id).join("|"), b.map((brief) => brief.id).join("|"), "同一个 storyKey 必须生成同一组故事");
+  assertEqual(a.map((brief) => brief.plotId).join("|"), legacy.map((brief) => brief.plotId).join("|"), "旧 weeklyKey 必须兼容同一组故事");
+  assertEqual(a.map((brief) => brief.plotId).join("|"), "lost-job-hidden-credit|house-name-security-test|education-income-fake-profile|workplace-reimbursement-screenshot", "四案故事集必须按体面、一家人、条件、主责递进");
+  assertEqual(new Set(a.map((brief) => brief.plotId)).size, 4, "四案故事集不能重复题材");
+  a.forEach((brief, index) => {
+    assertEqual(brief.caseMode, "episode", `第 ${index + 1} 案必须标记 episode`);
+    assertEqual(brief.order, index + 1, `第 ${index + 1} 案顺序必须稳定`);
+    assertEqual(brief.modeLabel, "试玩连线", "故事包案内模式标签不能暴露目录包装");
+    assertEqual(brief.storyArcTitle, "热线连线", "故事包案内眉题不能显示案名或进度");
+    assertEqual(brief.storyCaseLabel, "匿名来电", "故事包通话 HUD 不能提前显示案名");
+    assert(brief.storyThemeTitle && brief.storyThemeIntro && brief.storyThemeThesis, "四案故事集必须携带主题、开场引子和主题论点");
+    const preachyOpeningBits = [`${"这些词"}${"都不坏"}`, `${"坏的是"}`, `${"四通来电"}${"放在一起看"}`, `${"四通"}${"匿名来电"}`, `${"四案"}${"故事集"}`];
+    assert(!preachyOpeningBits.some((phrase) => brief.storyThemeIntro.includes(phrase)), "故事集开场引子不能先下主题判断");
+    assert(brief.storyThemeCommentPrompt, "四案故事集必须携带评论区提示");
+    assert(brief.storyAct && brief.storyBridge, "每案必须有整集里的功能和桥接句");
+    assert(!/故事集|第[一二三四1234]\s*案|[1-4]\/4|体面|一家人|条件|主责/.test(`${brief.modeLabel} ${brief.storyArcTitle} ${brief.storyCaseLabel}`), "案内可见标题不能像目录或剧透标签");
+    assert(brief.sceneVersions.length >= 5 && brief.sceneVersions.length <= 6, `第 ${index + 1} 案必须是 5-6 段来电`);
+    assert(brief.sceneVersions.every((scene) => (scene.questionOptions ?? []).length === 2), `第 ${index + 1} 案每段必须只有两个主播追问`);
+    brief.sceneVersions.forEach((scene, sceneIndex) => {
+      const normal = (scene.questionOptions ?? []).filter((option) => !option.contradiction);
+      const critical = (scene.questionOptions ?? []).filter((option) => option.contradiction);
+      assert(normal.length >= 1, `第 ${index + 1} 案第 ${sceneIndex + 1} 段必须有可岔开的问法`);
+      assertEqual(critical.length, 1, `第 ${index + 1} 案第 ${sceneIndex + 1} 段必须只有一个盯住的问法`);
+    });
+    assertEqual(dailyAccusationChoices(brief).length, 4, `第 ${index + 1} 案最终必须给四句原话`);
+  });
+  assertIncludes(a[0].storyThemeTitle, "好听的身份", "四案故事集必须共享同一主题");
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  assertIncludes(appSource, "storyThemeIntro", "标题页必须优先使用故事集开场引子，而不是主题论点");
+  assert(!/const hook = storyPack \? preview\?\.storyThemeThesis/.test(appSource), "标题页不能直接把主题论点当开场 hook");
+  const oldPreviewListClass = `${"weekly"}-${"preview"}-${"list"}`;
+  const oldStartButton = `${"开始"}${"四案"}${"故事集"}`;
+  assert(!appSource.includes(oldPreviewListClass), "标题页不能提前列出故事目录");
+  assert(!appSource.includes(oldStartButton), "标题页按钮不能提前暴露四案结构");
+  assert(!appSource.includes('const title = storyPack ? "Steam 试玩故事集"'), "标题页不能用内容包目录式标题");
+  const runtimeSpoilerBits = [`${"四案"}${"故事集"}`, `${"Steam 试玩"}${"故事集"}`, `${"进入下一"}${"案"}`, `${"接入下一"}${"案"}`];
+  assert(!runtimeSpoilerBits.some((phrase) => appSource.includes(phrase)), "运行时玩家文案不能继续使用目录式故事包措辞");
+  const modeConfigSource = readFileSync(new URL("../src/caseModes.js", import.meta.url), "utf8");
+  const oldCallCountIntro = `${"四通"}${"匿名来电"}`;
+  assert(!modeConfigSource.includes(oldCallCountIntro), "模式入口文案不能提前暴露通话数量");
+});
+
+test("EPISODE-001B", "each demo case exposes the caller's self-serving omission", () => {
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const expectedOmissions = {
+    "lost-job-hidden-credit": ["撑不住场面", "自己其实很吃那种体面"],
+    "house-name-security-test": ["最好能有个位置", "我没有直接说出来"],
+    "education-income-fake-profile": ["我自己也不是特别宽裕", "我嘴上说家里想看稳定"],
+    "workplace-reimbursement-screenshot": ["我也确实想要这个主责", "我先跟老板说"]
+  };
+  briefs.forEach((brief) => {
+    const text = JSON.stringify({
+      openingDialogue: brief.openingDialogue,
+      sceneVersions: brief.sceneVersions,
+      deepFollowup: brief.deepFollowup,
+      stageJudgement: brief.stageJudgement,
+      truth: brief.truth,
+      dailyAccusationChoices: dailyAccusationChoices(brief)
+    });
+    expectedOmissions[brief.plotId].forEach((marker) => {
+      assertIncludes(text, marker, `${brief.plotId} 必须写出咨询者藏起的自利信息`);
+    });
+  });
+});
+
+test("EPISODE-001C", "demo story pack bridges form a four-act escalation", () => {
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const expectedBridgeMarkers = [
+    ["账单"],
+    ["房", "家里"],
+    ["资料图"],
+    ["公司", "截图"]
+  ];
+  briefs.forEach((brief, index) => {
+    const bridge = `${brief.storyAct ?? ""} ${brief.storyBridge ?? ""}`;
+    expectedBridgeMarkers[index].forEach((marker) => {
+      assertIncludes(bridge, marker, `第 ${index + 1} 案必须承担故事集四幕推进功能`);
+    });
+  });
 });
 
 test("DAILY-001", "daily case count and structural fields stay complete", () => {
   const brief = dailyCase("2026-06-24");
-  assert(validCaseBriefCount(1), "有效案卷数量只能是每日一案");
+  assert(validCaseBriefCount(1), "有效连线数量只能是每日一案");
   assert(brief.dailyCase === true, "每日案必须标记 dailyCase");
   assert(brief.sceneVersions.length >= 2, "每日案必须有可追问 sceneVersions");
-  assert(brief.testimony.length >= 2, "每日案必须有 testimony");
   assert(brief.evidenceCards.length >= 3, "每日案必须有 evidenceCards");
+  assert(brief.deepFollowup?.question, "每日案必须有满格后的深问");
   assert(requiredContradictionsForCase(brief) >= 1, "每日案必须保留可判断的矛盾门槛");
 });
 
@@ -110,6 +244,18 @@ test("DAILY-006", "daily choices avoid no-click throwaway answers", () => {
     });
 });
 
+test("DAILY-006B", "host questions avoid leading caller psychology labels", () => {
+  const forbidden = /你当时是不是|你是不是也|你当时为什么没有把关系问死|你当时帮他，是因为|有没有觉得这事也算值|关系一直没说死|怎么接的/;
+  [
+    ...generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" }),
+    ...Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
+  ]
+    .flatMap((brief) => brief.sceneVersions.flatMap((item) => item.questionOptions ?? []))
+    .forEach((option) => {
+      assert(!forbidden.test(option.question), `主播追问不能替来电人下心理判断：${option.question}`);
+    });
+});
+
 test("DAILY-007", "fake profile case keeps motive chain and half-truth structure", () => {
   const brief = generateCasesForMode("daily", NPCS, attrs, {
     dailyKey: "2026-06-24",
@@ -118,8 +264,16 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assertEqual(brief.stance, "halfTruth", "三张截图应是双向修剪事实，不是单向 trueVictim");
   assertEqual(brief.premeditated, false, "三张截图不应强行写成预谋犯罪");
   assertIncludes(brief.openingDialogue.map((line) => line.text).join(" "), "见父母", "截图出现必须有关系阶段触发");
-  assertIncludes(brief.sceneVersions[0].version, "见父母前", "第一段必须解释截图为什么出现");
-  assertIncludes(brief.sceneVersions[2].version, "先把饭吃了", "对方隐藏信息必须有目的性");
+  assertIncludes(brief.openingDialogue.map((line) => line.text).join(" "), "名校毕业", "外层说法应先是名校毕业，不应一开始就摊开 MBA");
+  assertIncludes(brief.sceneVersions[0].version, "见父母", "第一段必须指出见家长前问得过细本身不正常");
+  assertIncludes(brief.sceneVersions[1].version, "介绍人", "扩成长案后必须交代体面标签不是单人凭空出现");
+  assertIncludes(brief.sceneVersions[2].version, "细问", "MBA 必须是追问后才揭示出的具体说法");
+  assertIncludes(brief.sceneVersions[2].version, "本科", "男方资料必须明确 MBA 项目真实但本科学历有落差");
+  assertIncludes(brief.sceneVersions[3].version, "花销", "收入疑点必须来自日常观察而不只是截图缺边");
+  assertIncludes(brief.sceneVersions[4].version, "工资", "女方家关注流水必须连到婚后管钱预设");
+  assertIncludes(JSON.stringify(brief), "工资卡", "追问流水必须触发额外隐藏信息");
+  assertIncludes(brief.deepFollowup?.question, "你自己的家庭经济状况", "满格后必须能继续追问女方自己的经济位置");
+  assertIncludes(brief.deepFollowup?.answer, "我自己也不是特别宽裕", "深入一问必须揭示女方收入诉求和自身经济压力");
 });
 
 test("DAILY-008", "daily livestream stays anonymous and single-caller", () => {
@@ -127,15 +281,12 @@ test("DAILY-008", "daily livestream stays anonymous and single-caller", () => {
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
       const directRespondentScenes = (brief.sceneVersions ?? []).filter((item) => item.speakerId === brief.respondentId);
-      const directRespondentTestimony = (brief.testimony ?? []).filter((item) => item.speakerId === brief.respondentId);
       assertEqual(directRespondentScenes.length, 0, `${brief.plotId} 不能让另一方直接进入 sceneReview`);
-      assertEqual(directRespondentTestimony.length, 0, `${brief.plotId} 不能让另一方直接进入 testimony`);
       assert((brief.sceneVersions ?? []).every((item) => item.speakerId === brief.complainantId), `${brief.plotId} sceneReview 必须全部由咨询者讲出`);
-      assert((brief.testimony ?? []).every((item) => item.speakerId === brief.complainantId), `${brief.plotId} testimony 必须全部由咨询者讲出`);
       assert(!realNames.test(JSON.stringify({
         openingDialogue: brief.openingDialogue,
         sceneVersions: brief.sceneVersions,
-        testimony: brief.testimony,
+        deepFollowup: brief.deepFollowup,
         evidenceCards: brief.evidenceCards,
         stageJudgement: brief.stageJudgement,
         followupTwist: brief.followupTwist,
@@ -150,7 +301,7 @@ test("DAILY-009", "daily cases keep drama, gray zone, and unclear motivation", (
       const text = JSON.stringify({
         openingDialogue: brief.openingDialogue,
         sceneVersions: brief.sceneVersions,
-        testimony: brief.testimony,
+        deepFollowup: brief.deepFollowup,
         evidenceCards: brief.evidenceCards,
         stageJudgement: brief.stageJudgement,
         followupTwist: brief.followupTwist,
@@ -161,73 +312,285 @@ test("DAILY-009", "daily cases keep drama, gray zone, and unclear motivation", (
     });
 });
 
-test("DAILY-010", "daily scenes expose one main advancing question per beat", () => {
+test("DAILY-009B", "case copy avoids gender-war framing but allows mutual harm", () => {
+  const forbidden = /男人都|女人都|男的都|女的都|捞女|渣男|拜金女|普信男|女拳|男拳|性别对立/;
+  Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
+    .forEach((brief) => {
+      const text = JSON.stringify({
+        openingDialogue: brief.openingDialogue,
+        sceneVersions: brief.sceneVersions,
+        deepFollowup: brief.deepFollowup,
+        evidenceCards: brief.evidenceCards,
+        stageJudgement: brief.stageJudgement,
+        followupTwist: brief.followupTwist,
+        truth: brief.truth,
+        dailyShareTitle: brief.dailyShareTitle,
+        dailyShareBody: brief.dailyShareBody,
+        dailyShareQuestion: brief.dailyShareQuestion
+      });
+      assert(!forbidden.test(text), `${brief.plotId} 不允许使用性别对立或群体攻击文案；双方互害必须写成具体行为链条`);
+    });
+});
+
+test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => {
+  const awkwardShortJobPhrase = `${"工作"}${"不太"}${"稳"}`;
+  const forbidden = new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|成本归属|满格以后|这通电话|${awkwardShortJobPhrase}`);
+  Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
+    .forEach((brief) => {
+      const text = JSON.stringify({
+        publicHook: brief.publicHook,
+        storyArcSummary: brief.storyArcSummary,
+        storySuspense: brief.storySuspense,
+        openingDialogue: brief.openingDialogue,
+        sceneVersions: brief.sceneVersions,
+        deepFollowup: brief.deepFollowup,
+        evidenceCards: brief.evidenceCards,
+        stageJudgement: brief.stageJudgement,
+        followupTwist: brief.followupTwist,
+        truth: brief.truth,
+        dailyShareTitle: brief.dailyShareTitle,
+        dailyShareBody: brief.dailyShareBody,
+        dailyShareQuestion: brief.dailyShareQuestion
+      });
+      assert(!forbidden.test(text), `${brief.plotId} 仍有总结腔/AI 腔短语`);
+    });
+});
+
+test("DAILY-010", "daily scenes expose one core issue question per beat", () => {
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
       (brief.sceneVersions ?? []).forEach((scene, sceneIndex) => {
-        const advancing = (scene.questionOptions ?? []).filter((option) => option.correct !== false);
-        assertEqual(advancing.length, 1, `${brief.plotId} 第 ${sceneIndex + 1} 段只能有一个推进型追问`);
+        const issueQuestions = (scene.questionOptions ?? []).filter((option) => option.contradiction);
+        assertEqual(issueQuestions.length, 1, `${brief.plotId} 第 ${sceneIndex + 1} 段只能有一个核心问题追问`);
       });
     });
 });
 
-test("DAILY-011", "case 4 gray-zone answer is not the first accusation button", () => {
+test("DAILY-011", "case 4 line-pick has no marked wrong answers", () => {
   const brief = generateCasesForMode("daily", NPCS, attrs, {
     dailyKey: "2026-06-24",
     plotId: "education-income-fake-profile"
   })[0];
-  const view = accusationView({ chapter: null, brief });
-  const buttons = Array.from(view.choices.matchAll(/<button data-accuse="([^"]+)" data-accuse-label="([^"]+)"/g))
-    .map((match) => ({ accuse: match[1], label: match[2] }));
-  assert(buttons.length >= 4, "案 4 开盘必须有完整选项");
-  assertEqual(buttons[0].accuse, brief.respondentId, "第一个开盘选项应是诱人的单方材料真假判断");
-  const correctIndex = buttons.findIndex((button) => button.accuse === "both");
-  assert(correctIndex > 0, "案 4 正确灰区答案不能排在第一个");
-  assertIncludes(buttons[correctIndex].label, "推出来的说不清", "案 4 正确选项必须保留灰区措辞");
+  const buttons = dailyAccusationChoices(brief);
+  assert(buttons.length >= 3, "案 4 最终回应必须有至少三句可选原话");
+  assertEqual(buttons[0].accuse, brief.respondentId, "第一句应是诱人的单方材料真假判断");
+  assertIncludes(buttons[0].label, "“", "案 4 挑句按钮必须像原话而不是抽象结论");
+  const grayIndex = buttons.findIndex((button) => button.accuse === "both");
+  assert(grayIndex > 0, "案 4 灰区句不能排在第一个");
+  assertIncludes(buttons[grayIndex].label, "工资卡", "案 4 灰区原话必须落在工资卡这句");
+  assertIncludes(JSON.stringify(brief), "上交工资", "案 4 必须保留流水背后的隐藏动机");
+  assert(buttons.every((button) => !("correct" in button)), "最终回应不再标记正确/错误，只记录玩家选择的角度");
 });
 
-test("STATE-001", "legacy saves migrate into daily-compatible shape", () => {
+test("DAILY-012", "final response choices separate caller quote from host response", () => {
+  Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
+    .forEach((brief) => {
+      const disclosedText = JSON.stringify([
+        brief.openingDialogue,
+        brief.sceneVersions,
+        brief.deepFollowup,
+        brief.evidenceCards
+      ]);
+      dailyAccusationChoices(brief).forEach((button) => {
+        assertIncludes(button.label, "“", `${brief.plotId} 最终选择按钮必须像来电原话`);
+        const quote = button.label.replace(/^“|”$/g, "");
+        const quoteDisclosed = disclosedText.includes(quote) || quote.split(/[，。？！]/).filter((part) => part.length >= 4).every((part) => disclosedText.includes(part));
+        assert(quoteDisclosed, `${brief.plotId} 最终原话必须来自玩家已经听过或看过的内容：${button.label}`);
+        assert(typeof button.response === "string" && button.response.length >= 8, `${brief.plotId} 主播接法必须放在 response 字段`);
+      });
+    });
+});
+
+test("DAILY-013", "daily linear flow has one focused choice per stage", () => {
+  Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
+    .forEach((brief) => {
+      const sceneCount = brief.sceneVersions?.length ?? 0;
+      assert(sceneCount >= 5, `${brief.plotId} 精选集单案必须有足够句子支撑二十分钟玩法`);
+      brief.sceneVersions.forEach((scene, index) => {
+        assert((scene.questionOptions ?? []).length >= 2, `${brief.plotId} 第 ${index + 1} 段必须有多个追问角度`);
+        assert((scene.questionOptions ?? []).length <= 2, `${brief.plotId} 第 ${index + 1} 段不能超过两个追问，手机端会反应不过来`);
+      });
+    });
+});
+
+test("DAILY-014", "final quote choice changes the result angle", () => {
+  Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
+    .forEach((brief) => {
+      const expected = expectedAccusationForCase(brief);
+      const choices = dailyAccusationChoices(brief);
+      assert(choices.some((choice) => choice.accuse === expected), `${brief.plotId} 必须有一句能接住核心判断`);
+      assert(choices.some((choice) => choice.accuse !== expected), `${brief.plotId} 必须有外圈解读，不能选哪句都一样`);
+    });
+});
+
+test("DAILY-015", "daily engine supports non-romance public incident cases", () => {
+  const brief = generateCasesForMode("daily", NPCS, attrs, {
+    dailyKey: "2026-06-24",
+    plotId: "workplace-reimbursement-screenshot"
+  })[0];
+  assertEqual(brief.label, "职场报销截图", "每日案必须能生成非婚恋事件模板");
+  assertIncludes(brief.openingDialogue.map((line) => line.text).join(" "), "公司", "非婚恋案开场必须交代公共事件场景");
+  assertIncludes(JSON.stringify(brief.sceneVersions), "报销", "非婚恋案必须围绕非婚恋事件推进");
+  assertIncludes(brief.deepFollowup?.question, "公司", "满格深问必须能追公共事件里的风险位置");
+  assert(dailyAccusationChoices(brief).some((choice) => /返款|审批/.test(choice.label)), "最终挑句必须包含职场事件原话");
+});
+
+test("ROUTE-001", "every playable choice records a hidden route axis and tone", () => {
+  const briefs = [
+    ...Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`)),
+    ...generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
+  ];
+  briefs.flatMap((brief) => brief.sceneVersions.flatMap((scene) => scene.questionOptions ?? []))
+    .forEach((option) => {
+      assert(typeof option.routeAxis === "string" && option.routeAxis.length >= 4, `追问必须记录路线轴：${option.question}`);
+      assert(typeof option.routeTone === "string" && option.routeTone.length >= 4, `追问必须记录语气倾向：${option.question}`);
+    });
+});
+
+test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
   const migrated = migrateState({
     profileDone: true,
-    playerRole: "host-lawyer",
     caseMode: "unknown-mode",
     caseBriefs: generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-06-24" }),
     settings: { textSpeed: "fast" }
   });
-  assertEqual(migrated.caseMode, "daily", "旧存档模式必须迁移为每日案");
+  assertEqual(migrated.caseMode, "episode", "未知旧模式必须迁移为四案故事集入口");
   assertEqual(migrated.settings.textSpeed, "fast", "存档迁移必须保留文本速度设置");
   assertEqual(migrated.settings.contentWarningAccepted, false, "存档迁移必须补内容警示默认值");
   assertEqual(migrated.saveSlot, "slot1", "存档迁移必须补默认存档槽");
+
+  const dailyCallMigrated = migrateState({
+    caseMode: "daily",
+    chapter: 1,
+    caseBriefs: [{ id: "daily-old", caseMode: "daily", plotId: "education-income-fake-profile" }]
+  });
+  assertEqual(dailyCallMigrated.caseBriefs[0].dailyCase, true, "每日连线存档必须补 dailyCase 标记");
+
+  const oldOpeningMigrated = migrateState({
+    caseMode: "episode",
+    chapter: 3,
+    caseBriefs: [{
+      id: "episode-old-profile",
+      caseMode: "episode",
+      plotId: "education-income-fake-profile",
+      openingDialogue: [
+        { role: "caller", text: "主播你好，我想问下我男朋友的事。" },
+        { role: "host", speaker: "你", text: "晚上好。你们怎么认识的，现在聊到哪一步了？" },
+        { role: "caller", text: "我们是相亲认识的，最近聊到见父母。我之前跟家里说过他名校毕业、条件不错，所以我妈问得比我想象中细。" },
+        { role: "host", speaker: "你", text: "她问细到哪一步了？" },
+        { role: "caller", text: "学校、工作、收入、有没有存款，后来还绕到流水。我也知道见父母前问这么细有点过，可我当时没拦住。" }
+      ],
+      sceneVersions: [
+        {
+          questionOptions: [
+            { question: "你后来为什么没有跟家里改口？", routeAxis: "money-flow" },
+            { question: "这个好看的版本，是他一个人说出来的吗？", routeAxis: "money-flow" }
+          ]
+        }
+      ]
+    }]
+  });
+  const migratedOpeningText = JSON.stringify(oldOpeningMigrated.caseBriefs[0].openingDialogue);
+  assert(!migratedOpeningText.includes("她问细到哪一步了？"), "旧存档里悬空的主播问句必须迁移掉");
+  assert(!migratedOpeningText.includes("学校、工作、收入、有没有存款"), "旧存档里被切到首屏外的回答必须迁移掉，交给第一段原话承接");
+  assertEqual(oldOpeningMigrated.caseBriefs[0].sceneVersions[0].questionOptions[0].routeAxis, "caller-credibility", "旧存档里问来电人自己的追问必须迁移为来电人可信度线");
+  assertEqual(oldOpeningMigrated.caseBriefs[0].sceneVersions[0].questionOptions[1].routeAxis, "identity-wording", "旧存档里问好看版本来源的追问必须迁移为身份话术线");
+
+  const oldQuestionMigrated = migrateState({
+    caseMode: "episode",
+    chapter: 1,
+    caseBriefs: [{
+      id: "episode-old-credit",
+      caseMode: "episode",
+      plotId: "lost-job-hidden-credit",
+      sceneVersions: [{
+        questionOptions: [
+          {
+            question: "你当时是不是先心疼他了？",
+            answer: "是。我第一反应是他是不是压力太大，想先把人稳住。可后来再看，失业到底从什么时候开始，他一直没讲。"
+          }
+        ]
+      }]
+    }],
+    sceneQuestionPicks: {
+      "episode-old-credit:0": { question: "你当时是不是先心疼他了？" }
+    },
+    routeChoiceLog: {
+      "episode-old-credit": [{ question: "你当时是不是先心疼他了？" }]
+    }
+  });
+  const migratedOption = oldQuestionMigrated.caseBriefs[0].sceneVersions[0].questionOptions[0];
+  assertEqual(migratedOption.question, "你当时有没有起疑心？", "旧存档里的主播心理标签按钮必须迁移为事实追问");
+  assertIncludes(migratedOption.answer, "一开始没有", "旧存档里的回答也要跟着按钮语气迁移");
+  assertEqual(oldQuestionMigrated.sceneQuestionPicks["episode-old-credit:0"].question, "你当时有没有起疑心？", "旧已选追问必须同步迁移");
+  assertEqual(oldQuestionMigrated.routeChoiceLog["episode-old-credit"][0].question, "你当时有没有起疑心？", "旧路线日志必须同步迁移");
+
+  const oldRelationQuestionMigrated = migrateState({
+    caseMode: "episode",
+    chapter: 2,
+    caseBriefs: [{
+      id: "episode-old-salon",
+      caseMode: "episode",
+      plotId: "tony-multi-dating",
+      sceneVersions: [{
+        questionOptions: [{ question: "关系一直没说死，你当时怎么接的？" }]
+      }]
+    }],
+    sceneQuestionPicks: {
+      "episode-old-salon:0": { question: "关系一直没说死，你当时怎么接的？" }
+    }
+  });
+  assertEqual(oldRelationQuestionMigrated.caseBriefs[0].sceneVersions[0].questionOptions[0].question, "话当时没说死，你当时怎么回他的？", "旧理发店追问必须迁移掉整理腔");
+  assertEqual(oldRelationQuestionMigrated.sceneQuestionPicks["episode-old-salon:0"].question, "话当时没说死，你当时怎么回他的？", "旧已选理发店追问必须同步迁移");
+
+  const workplaceAxisMigrated = migrateState({
+    caseMode: "episode",
+    chapter: 4,
+    caseBriefs: [{
+      id: "episode-old-workplace",
+      caseMode: "episode",
+      plotId: "workplace-reimbursement-screenshot",
+      sceneVersions: [{
+        questionOptions: [
+          { question: "他让你垫钱时，原话有没有提署名和老板？", routeAxis: "money-flow" }
+        ]
+      }]
+    }]
+  });
+  assertEqual(workplaceAxisMigrated.caseBriefs[0].sceneVersions[0].questionOptions[0].routeAxis, "identity-wording", "旧职场存档里垫钱+署名追问必须迁移为身份话术线");
+
+  const episodeMigrated = migrateState({
+    caseMode: "weekly",
+    chapter: 2,
+    caseBriefs: generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
+  });
+  assertEqual(episodeMigrated.caseMode, "episode", "旧 weekly 存档模式必须迁移为 episode");
+  assertEqual(episodeMigrated.caseBriefs.length, 4, "四案故事集存档必须保留四案");
+  assertEqual(episodeMigrated.caseBriefs[0].modeLabel, "试玩连线", "故事包案必须迁移为不剧透的模式标签");
 });
 
-test("RUNTIME-001", "case outcome clamps internal carryover scores", () => {
+test("RUNTIME-001", "case outcome records daily recap rhythm without visible score systems", () => {
   const efficientWin = calculateCaseOutcome({
-    brief: { caseMode: "daily" },
     result: { correct: true },
     contradictionCount: 3,
     budgetRemaining: 1,
-    agencyReputation: 8,
-    publicHeat: 1,
     now: 1
   });
-  assertEqual(efficientWin.agencyReputation, 9, "正确结案内部信任值必须被上限夹到 9");
-  assertEqual(efficientWin.publicHeat, 0, "每日案正确结案应降低内部争议值并夹到 0");
+  assertEqual(efficientWin.interlude.reputationDelta, 3, "高效聊透时只记录内部复盘增量");
+  assertIncludes(efficientWin.interlude.summary, "后面那几句也补出来", "正确结案复盘必须保持直播连线语境");
 
   const failedCase = calculateCaseOutcome({
-    brief: { caseMode: "daily" },
     result: { correct: false },
     contradictionCount: 1,
     budgetRemaining: 0,
-    agencyReputation: -3,
-    publicHeat: 8,
     now: 2
   });
-  assertEqual(failedCase.agencyReputation, -3, "失败结案内部信任值必须被下限夹到 -3");
-  assertEqual(failedCase.publicHeat, 9, "失败结案内部争议值必须被上限夹到 9");
+  assertEqual(failedCase.interlude.reputationDelta, -1, "判断偏掉时只记录内部复盘扣分");
+  assertIncludes(failedCase.interlude.summary, "弹幕已经开始吵", "失败复盘必须保留直播间反馈");
 });
 
 test("RUNTIME-002", "daily budget and hint limits stay mobile-friendly", () => {
-  assert(calculateCaseBudgetMax({ brief: { caseMode: "daily" }, bonusPoints: 5, agencyReputation: 4, publicHeat: 5 }) >= 4, "每日案追问次数必须有保底");
+  assert(calculateCaseBudgetMax({ brief: { caseMode: "daily" }, bonusPoints: 5 }) >= 4, "每日案追问次数必须有保底");
   assertEqual(calculateInspirationMax({ brief: { dailyCase: true }, caseMode: "daily" }), 1, "每日案提示只能保留一次");
 });
 
@@ -248,7 +611,28 @@ test("RUNTIME-003", "accusation resolution respects stance and clue threshold", 
   });
   assert(notEnough.result.correct === false && notEnough.enoughContradictions === false, "矛盾不足时即使命中方向也不能正确");
   assertEqual(relationshipExpectedAccusationForCase({ stance: "halfTruth" }), "both", "halfTruth 关系层应指向双方修剪事实");
+  assertEqual(relationshipExpectedAccusationForCase({ stance: "halfTruth", premeditated: true, premeditatedActorId: "respondent" }), "both", "halfTruth 不能被旧预谋字段覆盖成单方责任");
   assertEqual(expectedAccusationForCase({ stance: "halfTruth", structuralActorId: "platform" }), "platform", "结构层指认应覆盖关系层");
+});
+
+test("RUNTIME-004", "explicit resolver override can bypass clue threshold when requested", () => {
+  const quotePick = resolveAccusationForCase({
+    brief: { id: "daily-a", caseMode: "daily", stance: "halfTruth" },
+    accused: "both",
+    contradictionCount: 1,
+    requiredContradictions: 3,
+    allowCorrectWithoutThreshold: true
+  });
+  assert(quotePick.result.correct === true, "显式 override 应能绕过隐藏矛盾计数");
+  assert(quotePick.result.thresholdForgiven === true, "显式 override 必须记录这是阈值豁免");
+
+  const ordinary = resolveAccusationForCase({
+    brief: { id: "case-c", stance: "halfTruth" },
+    accused: "both",
+    contradictionCount: 1,
+    requiredContradictions: 3
+  });
+  assert(ordinary.result.correct === false, "普通案件仍然必须满足线索阈值");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {
@@ -260,12 +644,34 @@ test("NARRATION-001", "case narration helpers keep critical labels stable", () =
   assertIncludes(runCompleteLineFor({ correct: 1, total: 1, caseMode: "daily", playthroughNumber: 1 }), "最热闹的地方", "每日案成功结语必须保留直播吃瓜口吻");
 });
 
-test("CLUE-001", "contradiction aggregation dedupes across sources", () => {
+test("CLUE-001", "contradiction aggregation dedupes scene and evidence sources", () => {
   assertEqual(allCaseContradictions({
     sceneVersions: [{ contradiction: "时间错位" }],
-    testimony: [{ followups: [{ contradiction: "钱款矛盾" }, { contradiction: "时间错位" }] }],
-    evidenceCards: [{ contradiction: "证据反咬" }]
-  }).join(","), "时间错位,钱款矛盾,证据反咬", "案件矛盾汇总必须跨来源去重");
+    evidenceCards: [{ contradiction: "证据反咬" }, { contradiction: "时间错位" }]
+  }).join(","), "时间错位,证据反咬", "案件矛盾汇总必须跨来源去重");
+});
+
+test("CLUE-004", "issue completion lives in runtime and scores core reveals", () => {
+  const brief = dailyCase("2026-06-24");
+  const core = (brief.sceneVersions ?? []).map((scene) => scene.contradiction).filter(Boolean);
+  const empty = calculateIssueCompletion({ brief, foundContradictions: [], requiredLimit: core.length });
+  assertEqual(empty.percent, 0, "未揭示核心问题时进度必须为 0");
+  const full = calculateIssueCompletion({ brief, foundContradictions: core, requiredLimit: core.length });
+  assertEqual(full.percent, 100, "核心问题全揭示时进度必须为 100");
+  assert(full.badge === true, "核心问题全揭示时才具备徽章基础");
+});
+
+test("CLUE-003", "daily score keeps early core issues after later material notes", () => {
+  const brief = dailyCase("2026-06-24");
+  const core = (brief.sceneVersions ?? []).map((scene) => scene.contradiction).filter(Boolean);
+  const extra = [
+    ...brief.sceneVersions.flatMap((scene) => (scene.questionOptions ?? []).map((option) => option.contradiction).filter(Boolean)),
+    ...brief.evidenceCards.map((card) => card.contradiction).filter(Boolean)
+  ];
+  const kept = [...new Set([...core, ...extra])].slice(-32);
+  core.forEach((point) => {
+    assert(kept.includes(point), `后续材料不能把早期核心问题挤出得分记录：${point}`);
+  });
 });
 
 test("CLUE-002", "inspiration skips already found contradictions", () => {

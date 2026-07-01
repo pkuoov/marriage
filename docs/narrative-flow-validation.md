@@ -1,6 +1,6 @@
 # Narrative Flow Validation
 
-This workflow checks whether daily cases read like coherent livestream calls, not just valid data objects.
+This workflow checks whether single live-call cases read like coherent livestream calls, not just valid data objects. In the current product, these cases are the units inside a weekly livestream collection.
 
 ## Command
 
@@ -24,16 +24,15 @@ docs/generated/narrative-flow-report.md
 
 ## What Gets Extracted
 
-For each daily case in the current 8-day rotation, the script extracts:
+For each single-call case in the current rotation, the script extracts:
 
 - opening dialogue
 - every `sceneVersion`
 - every scene question and feedback branch
-- every testimony line
-- every follow-up and result branch
+- the conditional `deepFollowup` question and answer
+- every final quote-pick/result branch
 - evidence cards
 - stage judgement
-- follow-up twist
 - truth and expected responsibility
 
 The report is meant to be readable by humans. It is the text packet a reviewer or LLM can inspect without clicking through the UI.
@@ -58,9 +57,9 @@ The caller may be messy, defensive, emotional, or self-serving. The host and UI 
 - use system-teaching language such as “先听”, “你要判断”, or “正确做法”
 - reveal the case conclusion before the player asks through the line
 
-Because the daily text volume is small, every generated case must be reviewed as a stitched transcript, not as isolated fields.
+Because each call is short and branch-sensitive, every generated case must be reviewed as a stitched transcript, not as isolated fields.
 
-Daily cases should also be generated as a stitched transcript first. If a reviewer changes a line that affects motive, face-saving, the purpose of a material, or who pushed the dramatic object into the call, the reviewer must re-check the full local chain rather than patching that sentence alone.
+Story-pack cases should also be generated as a stitched transcript first. If a reviewer changes a line that affects motive, face-saving, the purpose of a material, who pushed the dramatic object into the call, or how a mutual-harm chain works, the reviewer must re-check the full local chain rather than patching that sentence alone.
 
 ## Logic Chain Rules
 
@@ -83,7 +82,7 @@ The validator checks for:
 - caller speaks first
 - daily live room stays single-caller: only the host and anonymous caller are present
 - the other party appears only through caller retelling, chat logs, recordings, callbacks, or other materials
-- materials cannot interrupt as their own speaker inside scene/testimony; the caller must pull them out, read them, or explain how they got them
+- materials cannot interrupt as their own speaker inside scene/deep-question beats; the caller must pull them out, read them, or explain how they got them
 - no NPC real names appear in daily livestream text
 - opening has relationship context
 - suspicious materials do not appear from nowhere
@@ -99,12 +98,34 @@ The validator checks for:
 - choices sound like host questions
 - no no-click throwaway options
 - no early spoilers
-- testimony continues facts already surfaced
+- deep follow-up continues facts already surfaced and only appears after a full core-hit route
 - recap/Truth reuses previously surfaced motive or contradiction
 - no tutorial/debug/legalistic leftover copy
-- every scene option and testimony follow-up can be stitched into a short readable walkthrough
+- no gender-war or group-attack framing; mutual harm must be concrete behavior, not identity judgement
+- route-map fields exist for playable choices, so weekly recap can name how the player actually asked
+- story-pack title screens use a live-room hook, not thesis, moral judgement, case count, or case-title lists
+- every scene option and the full-hit deep question can be stitched into a short readable walkthrough
 - each walkthrough checks `caller line -> host option -> caller feedback` for missing bridges
 - edits preserve one integrated pressure system; options, feedback, recap, truth, and share copy must not drift into a different case question
+- current-node choice UI is one panel, not two lonely one-button groups
+- choice buttons read as the host's actual questions, not as labels that explain the design
+- current-node choice UI does not show route axes, difficulty labels, "soft/hard" tags, or other how-to-play copy
+
+## Large Playtest UI Gate
+
+Run this gate during every large manual test, especially after changing `src/app.js`, `src/styles.css`, case templates, or route metadata.
+
+1. Open a fresh cache key and start from the title screen.
+2. Confirm the title screen hook sounds like a live room opening, not a story-pack table of contents.
+3. Confirm the title screen does not reveal the number of cases, later case titles, route theme, or final thesis.
+4. Visit at least three current-node choice panels across different cases.
+5. Copy the visible DOM text for each choice panel.
+6. Confirm the panel has one short heading and the buttons are only host questions.
+7. Confirm the visual difference between outer/core choices does not become explanatory text.
+8. Search the visible text for banned helper labels: route axes, "how to play" instructions, and designer shorthand.
+9. Click one outer option and one core option. Both answers must return as caller dialogue and then move forward linearly.
+
+If any panel needs a label to explain what the buttons mean, the UI is carrying design notes instead of drama. Rewrite the buttons or remove the label.
 
 ## Using LLM Review Later
 

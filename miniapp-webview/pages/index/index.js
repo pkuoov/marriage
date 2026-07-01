@@ -1,9 +1,9 @@
-const DEFAULT_GAME_URL = "https://your-domain.example/marriage-detective/index.html";
+const DEFAULT_GAME_URL = "https://your-domain.example/livestream-detective/index.html";
 
 Page({
   data: {
     gameUrl: DEFAULT_GAME_URL,
-    shareTitle: "婚恋侦探局",
+    shareTitle: "直播间大侦探",
     sharePath: "/pages/index/index"
   },
   onLoad(options = {}) {
@@ -12,6 +12,8 @@ Page({
     const query = [];
     if (options.mode) query.push(`mode=${encodeURIComponent(options.mode)}`);
     if (options.dailyKey) query.push(`dailyKey=${encodeURIComponent(options.dailyKey)}`);
+    if (options.storyKey) query.push(`storyKey=${encodeURIComponent(options.storyKey)}`);
+    if (options.weeklyKey) query.push(`weeklyKey=${encodeURIComponent(options.weeklyKey)}`);
     this.setData({
       gameUrl: query.length ? `${baseUrl}${baseUrl.includes("?") ? "&" : "?"}${query.join("&")}` : baseUrl
     });
@@ -29,8 +31,11 @@ Page({
       });
     const latestShare = [...messages].reverse().find((item) => item?.type === "daily-share");
     if (!latestShare) return;
+    const shareTitle = latestShare.playerType
+      ? `${latestShare.playerType}｜${latestShare.title || "四案故事集"}`
+      : latestShare.title || "直播间大侦探";
     this.setData({
-      shareTitle: latestShare.title || "婚恋侦探局",
+      shareTitle,
       sharePath: latestShare.path || "/pages/index/index"
     });
   },

@@ -22,7 +22,7 @@ const browserStorage = {
   }
 };
 
-const steamBridge = globalThis.marriageDetectiveSteam ?? null;
+const steamBridge = globalThis.livestreamDetectiveSteam ?? globalThis.marriageDetectiveSteam ?? null;
 const wechatMiniProgram = globalThis.wx?.miniProgram ?? null;
 const isWechatBrowser = /MicroMessenger/i.test(globalThis.navigator?.userAgent ?? "");
 const isWechatMiniProgramWebView = Boolean(wechatMiniProgram) || globalThis.__wxjs_environment === "miniprogram";
@@ -30,6 +30,15 @@ const isWechatMiniProgramWebView = Boolean(wechatMiniProgram) || globalThis.__wx
 export const platformRuntime = {
   id: steamBridge ? "steam" : isWechatBrowser ? "wechat-webview" : "web",
   storage: steamBridge?.storage ?? browserStorage,
+  postMessage(data) {
+    if (typeof steamBridge?.postMessage === "function") {
+      steamBridge.postMessage(data);
+      return;
+    }
+    if (isWechatMiniProgramWebView) {
+      wechatMiniProgram?.postMessage?.({ data });
+    }
+  },
   achievements: steamBridge?.achievements ?? {
     unlock() {},
     setStat() {}

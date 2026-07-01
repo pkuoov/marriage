@@ -2,7 +2,7 @@
   "appid": "touristappid",
   "compileType": "miniprogram",
   "libVersion": "latest",
-  "projectname": "marriage-detective-webview",
+  "projectname": "livestream-detective-webview",
   "setting": {
     "es6": true,
     "minified": true,

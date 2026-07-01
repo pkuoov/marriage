@@ -1,21 +1,31 @@
-import { generateDailyCaseSequence } from "./caseEngine.js?v=0.19.36";
+import { generateDailyCaseSequence, generateStoryPackSequence } from "./caseEngine.js?v=0.20.26";
 
-export const CASE_MODE_IDS = ["daily"];
+export const CASE_MODE_IDS = ["episode", "daily"];
 
 export const CASE_MODE_CONFIG = {
+  episode: {
+    id: "episode",
+    label: "试玩版",
+    title: "Steam 试玩版",
+    expectedCases: 4,
+    intro: "热线已经接进来。资料在后台，先听这通。",
+    summary: "每通来电都会留下你的追问痕迹，收麦后再回看整晚的倾向。",
+    generator: generateStoryPackSequence
+  },
   daily: {
     id: "daily",
-    label: "今日连线",
-    title: "今日连线",
+    label: "今日来电",
+    title: "今日来电",
     expectedCases: 1,
     intro: "一通匿名来电，几次接话分岔，今晚就能聊完。",
-    summary: "今日连线不用读长资料，重点是从第一版说法里听出哪句话没有落地。",
+    summary: "今日来电不用读长资料，重点是从开场那几句里听出哪句话没有落地。",
     generator: generateDailyCaseSequence
   }
 };
 
 export function normalizeCaseMode(mode) {
-  return CASE_MODE_IDS.includes(mode) ? mode : "daily";
+  if (mode === "weekly") return "episode";
+  return CASE_MODE_IDS.includes(mode) ? mode : "episode";
 }
 
 export function caseModeConfig(mode) {
@@ -27,5 +37,5 @@ export function generateCasesForMode(mode, npcs, attrs, options = {}) {
 }
 
 export function validCaseBriefCount(count) {
-  return count === CASE_MODE_CONFIG.daily.expectedCases;
+  return Object.values(CASE_MODE_CONFIG).some((config) => count === config.expectedCases);
 }
