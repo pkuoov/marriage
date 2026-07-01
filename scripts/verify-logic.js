@@ -256,6 +256,20 @@ test("DAILY-006B", "host questions avoid leading caller psychology labels", () =
     });
 });
 
+test("DAILY-006C", "core question correctness metadata stays explicit", () => {
+  [
+    ...generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" }),
+    ...Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
+  ]
+    .flatMap((brief) => brief.sceneVersions.flatMap((item) => item.questionOptions ?? []))
+    .forEach((option) => {
+      assertEqual(typeof option.correct, "boolean", `追问必须显式记录 correct：${option.question}`);
+      if (option.contradiction) {
+        assertEqual(option.correct, true, `带矛盾的核心追问必须 correct=true：${option.question}`);
+      }
+    });
+});
+
 test("DAILY-007", "fake profile case keeps motive chain and half-truth structure", () => {
   const brief = generateCasesForMode("daily", NPCS, attrs, {
     dailyKey: "2026-06-24",
@@ -334,7 +348,7 @@ test("DAILY-009B", "case copy avoids gender-war framing but allows mutual harm",
 
 test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => {
   const awkwardShortJobPhrase = `${"工作"}${"不太"}${"稳"}`;
-  const forbidden = new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|成本归属|满格以后|这通电话|${awkwardShortJobPhrase}`);
+  const forbidden = new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|成本归属|满格以后|这通电话|心里咯噔一下|算借款、赠与|借款、赠与|${awkwardShortJobPhrase}`);
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
       const text = JSON.stringify({

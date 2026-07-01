@@ -339,6 +339,7 @@ function withChoiceRoutes(sceneVersions) {
     ...scene,
     questionOptions: (scene.questionOptions ?? []).map((option) => ({
       ...option,
+      correct: option.correct ?? (option.contradiction ? true : false),
       routeAxis: option.routeAxis ?? inferRouteAxis(option, scene),
       routeTone: option.routeTone ?? inferRouteTone(option, scene, sceneIndex)
     }))
@@ -388,7 +389,7 @@ function dailyLostJobCreditTemplate(brief, names) {
         contradiction: "TA 一边说奖金延迟，一边继续高消费，说明资金缺口不是临时才出现。",
         reliability: "mixed",
         questionOptions: [
-          { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。TA 只说最近忙。那张社保截图还是他让我帮忙看材料时露出来的，上面两个月前就断缴了。", contradiction: "社保断缴早于借钱，失业不是突然发生。", correct: true },
+          { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。他之前一直说最近忙、加班多。要不是那张办材料的截图，我根本不知道他已经断缴两个月了。", contradiction: "社保断缴早于借钱，失业不是突然发生。", correct: true },
           { question: "你当时有没有起疑心？", answer: "一开始没有。我第一反应是他是不是压力太大，想先把人稳住。可后来再看，失业到底从什么时候开始，他一直没讲。", correct: false }
         ]
       },
@@ -412,7 +413,7 @@ function dailyLostJobCreditTemplate(brief, names) {
         contradiction: "TA 把还款截止时间说急，制造咨询者当晚转钱的压力。",
         reliability: "partial",
         questionOptions: [
-          { question: "他为什么把三天后的期限说成今晚？", answer: "我问了，他说怕我拖着不管。但那一刻我心里咯噔一下：他更怕的可能是我把账单翻明白。", contradiction: "TA 放大还款期限，减少咨询者检查账单的时间。", correct: true },
+          { question: "他为什么把三天后的期限说成今晚？", answer: "我问过，他说怕我拖着不管。可他越催我当晚转钱，我越觉得不对：他可能更怕我把账单明细翻完。", contradiction: "TA 放大还款期限，减少咨询者检查账单的时间。", correct: true },
           { question: "有没有可能他自己也慌了，才把时间说乱？", answer: "可能。他确实慌。但慌不等于可以把时间说成今晚，让我在没看清账单时先转钱。", correct: false }
         ]
       },
@@ -424,7 +425,7 @@ function dailyLostJobCreditTemplate(brief, names) {
         contradiction: "TA 承认隐瞒失业，却仍把还款压力推给关系里的另一方。",
         reliability: "partial",
         questionOptions: [
-          { question: "他说怕你离开，那最低还款为什么要你先转？", answer: "我当时确实被那句“怕你离开”拽住了。可下一句就是让我先转最低还款，我才反应过来：他难受，我也要掏钱。", contradiction: "情绪脆弱不能自动转化为债务转嫁。", correct: true },
+          { question: "他说怕你离开，那最低还款为什么要你先转？", answer: "我当时确实被那句“怕你离开”弄心软了。可他下一句就发来最低还款金额，我才反应过来：他说难受是真的，让我补窟窿也是真的。", contradiction: "情绪脆弱不能自动转化为债务转嫁。", correct: true },
           { question: "那他下个月准备怎么还？", answer: "他开始讲下个月会有办法，可说来说去，失业多久、债务怎么形成，还是没接上。", correct: false }
         ]
       },
@@ -437,7 +438,7 @@ function dailyLostJobCreditTemplate(brief, names) {
         reliability: "partial",
         questionOptions: [
           { question: "他把你不垫钱和结婚联系起来，是怎么说的？", answer: "他说最难的时候我都不站在他这边，以后结婚他也抬不起头。我听完很难受，好像不转这笔钱，就成了我不爱他。", contradiction: "TA 把个人债务转成关系忠诚测试。", correct: true },
-          { question: "那你为什么一直绕着说要看账单？", answer: "我怕被说嫌贫爱富。我也怕别人觉得我找了个撑不住场面的人。所以我一直绕着说要看账单，不敢直接说我不想接这笔债。", correct: false }
+          { question: "那你为什么一直绕着说要看账单？", answer: "其实我是怕背这笔债，但又说不出口。我怕一拒绝就被说嫌贫爱富，我也怕别人觉得我找了个撑不住场面的人。前面我把他夸得体面，现在突然承认他失业欠账，我自己也挂不住。所以我才一直说要看账单。", correct: false }
         ]
       }
     ],
@@ -496,7 +497,7 @@ function dailyHouseBoundaryTemplate(brief, names) {
         contradiction: "材料把产权留在父母名下，却把婚后还贷放入共同支出。",
         reliability: "partial",
         questionOptions: [
-          { question: "这张表里，房贷和装修是怎么写进家庭开销的？", answer: "房贷和装修被列成每月固定支出，旁边没有写份额，也没有写以后分开怎么补。", contradiction: "共同支出表缺少还贷份额和退出补偿机制。" },
+          { question: "这张表里，房贷和装修是怎么写进家庭开销的？", answer: "他妈妈把房贷和装修都列成每月固定开销，像是婚后日常支出。但份额怎么分、以后分开怎么补，一个字都没写。", contradiction: "共同支出表缺少还贷份额和退出补偿机制。", correct: true },
           { question: "如果只留每月流水，这事能不能先谈下去？", answer: "可能能谈下去一点，但补偿和退出规则还是被推迟了。流水有了，钱算什么没说清。", correct: false }
         ]
       },
@@ -508,7 +509,7 @@ function dailyHouseBoundaryTemplate(brief, names) {
         contradiction: "装修和房贷被包装成共同生活投入，但产权与补偿仍不对应。",
         reliability: "partial",
         questionOptions: [
-          { question: "这笔每月转账有没有写用途和归属？", answer: "没有。她只说放共同账户好看点。我一问用途，她就说房贷、装修、生活都在里面，反正别分那么清。", contradiction: "共同账户转账缺少用途和归属说明。", correct: true },
+          { question: "这笔每月转账有没有写用途和归属？", answer: "没有。她只说放共同账户好看点。我一问这钱具体干什么，她就说房贷、装修、生活都在里面，夫妻过日子别分那么清。", contradiction: "共同账户转账缺少用途和归属说明。", correct: true },
           { question: "她说不用你家出大头，你当时为什么还是不踏实？", answer: "听起来像退让。但我每月固定转进去，长期下来也不是小钱，只是没有一次性说得那么刺耳。", correct: false }
         ]
       },
@@ -520,7 +521,7 @@ function dailyHouseBoundaryTemplate(brief, names) {
         contradiction: "咨询者把“最好能有个位置”的诉求包装成投入确认；TA 连不加名的投入确认也拒绝。",
         reliability: "partial",
         questionOptions: [
-          { question: "你提的是加名，还是只确认婚后投入？", answer: "嘴上是只确认投入。我还特意说不碰他父母首付和产权。可我妈那句“最好能有个位置”确实在我心里，我没有直接说出来。", contradiction: "咨询者没有直接说出“最好能有个位置”的诉求。", correct: true },
+          { question: "你提的是加名，还是只确认婚后投入？", answer: "我嘴上只说确认投入，还特意说不碰他们家的首付和产权。可我妈那句“最好能有个位置”确实在我心里，我没有直接说出来。", contradiction: "咨询者没有直接说出“最好能有个位置”的诉求。", correct: true },
           { question: "如果他愿意留流水，不签协议，你能不能接受？", answer: "只能让我没那么慌。流水能证明我出了钱，但这钱以后算什么，还是没人认。", correct: false }
         ]
       },
@@ -532,7 +533,7 @@ function dailyHouseBoundaryTemplate(brief, names) {
         contradiction: "TA 把投入确认说成不信任，回避了共同还贷如何被确认的问题。",
         reliability: "partial",
         questionOptions: [
-          { question: "不写清楚的话，你还进去的钱算什么？", answer: "我就卡在这里。如果不写份额，那我婚后还贷的钱算借款、赠与，还是家庭支出？", contradiction: "对方无法说明共同还贷的钱最后怎么算。" },
+          { question: "不写清楚的话，你还进去的钱算什么？", answer: "我就卡在这里。如果不写清楚，那我婚后还进去的贷款，以后到底算我一起买房，还是算我白替他们家供了一段？", contradiction: "对方无法说明共同还贷的钱最后怎么算。", correct: true },
           { question: "你要不要先只谈装修钱，房贷这块晚点再说？", answer: "装修钱容易谈，但房贷才是长期流出的那笔。话题一缩小，核心现金流就滑过去了。", correct: false }
         ]
       }
@@ -604,7 +605,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         contradiction: "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
         reliability: "partial",
         questionOptions: [
-          { question: "这张表是在记发型需求，还是在记你们能带来什么？", answer: "现在看是后者。发型需求一栏反而很空，备注全是人能不能安抚、能不能办卡、能不能带朋友。", contradiction: "预约表实际在记录对象可转化的资源。" },
+          { question: "这张表是在记发型需求，还是在记你们能带来什么？", answer: "现在看是在记人能带来什么。发型需求那一栏反而很空，备注全是能不能安抚、能不能办卡、能不能带朋友。", contradiction: "预约表实际在记录对象可转化的资源。", correct: true },
           { question: "你那一栏为什么会被写成稳情绪？", answer: "可能因为我总听他说店里的事，也很少当场翻脸。他知道我会先安慰他，再帮他想办法。", correct: false }
         ]
       },
@@ -616,7 +617,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         contradiction: "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
         reliability: "partial",
         questionOptions: [
-          { question: "他说老板娘之后，有没有马上让你办卡或投店？", answer: "有。那晚后面就聊到年卡，说我以后常来店里也方便。再往后又提过，如果店扩大，我可以先投一点。", contradiction: "未来身份暗示后紧接着出现办卡和投店话题。" },
+          { question: "他说老板娘之后，有没有马上让你办卡或投店？", answer: "有。那晚后面就聊到年卡，说我以后常来店里也方便。再往后又提过，如果店扩大，我可以先投一点。", contradiction: "未来身份暗示后紧接着出现办卡和投店话题。", correct: true },
           { question: "“老板娘”那句是在什么场合说的？", answer: "是深夜聊天时说的。单看挺甜，可后面接着聊年卡、投店，我就不敢只当甜话听了。", correct: false }
         ]
       },
@@ -677,7 +678,7 @@ function dailyFakeProfileTemplate(brief, names) {
         contradiction: "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。",
         reliability: "mixed",
         questionOptions: [
-          { question: "这些截图是什么时候发的，发之前你们怎么说到材料的？", answer: "我没有直接说“你发截图”。我妈说，见一面可以，但你前面把他学校和收入说得都不错，总得知道实不实在。我转述得比较含糊，只说家里可能会问细，让他别被问住。第二天他就发了几张图。", contradiction: "女方家在见面前就开始核对择偶条件。" },
+          { question: "这些截图是什么时候发的，发之前你们怎么说到材料的？", answer: "我没敢直接说“你把截图发来”。是我妈一直说见面前得摸清楚，我夹在中间，只能含糊跟他说：我妈可能会问学校和收入，让他别被问住。第二天他就把几张图发来了。", contradiction: "女方家在见面前就开始核对择偶条件。", correct: true },
           { question: "问到流水的时候，你有没有拦过？", answer: "有。我还跟我妈说，第一次见面就问存款和流水不太好听。可她说我已经把话说在前面了，现在不问，饭桌上更尴尬。", correct: false }
         ]
       },
@@ -689,7 +690,7 @@ function dailyFakeProfileTemplate(brief, names) {
         contradiction: "介绍人、男方和咨询者都参与放大了体面标签，完整信息被层层修剪。",
         reliability: "partial",
         questionOptions: [
-          { question: "这个好看的版本，是他一个人说出来的吗？", answer: "不是。介绍人先铺了一层，我又跟家里复述了一层。他自己也没有把 MBA、本科和收入构成一次讲清。", contradiction: "体面标签被介绍人、男方和咨询者共同放大。", correct: true },
+          { question: "这个好看的版本，是他一个人说出来的吗？", answer: "不全是。介绍人先夸了一层，我跟家里复述时也又好听了一层。他自己也没把 MBA、本科和收入构成一次说清。", contradiction: "体面标签被介绍人、男方和咨询者共同放大。", correct: true },
           { question: "你后来为什么没有跟家里改口？", answer: "我前面已经说他条件不错了，后面再改口，就像我自己也没看清。", correct: false }
         ]
       },
@@ -701,7 +702,7 @@ function dailyFakeProfileTemplate(brief, names) {
         contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
         reliability: "partial",
         questionOptions: [
-          { question: "那张学校图少了哪一边，少的是本科、项目还是学制？", answer: "能看到校名和项目，确实不是瞎编。但本科、项目性质、学制没有一起摆出来。他一直说名校毕业，别人很容易听成一路名校；细问才说是 MBA。", contradiction: "男方用真标签保留了别人误会的空间。" },
+          { question: "那张学校图少了哪一边，少的是本科、项目还是学制？", answer: "图上的校名和项目是真的。可他一直说名校毕业，细问才说是 MBA；别人很容易听成本科一路名校。至于本科、项目性质、学制这些，都是后来才补出来的。", contradiction: "男方用真标签保留了别人误会的空间。", correct: true },
           { question: "你知道本科之后，跟家里说了吗？", answer: "没有。我只说他学校那边确实是真的。因为我前面已经把“名校毕业”讲得很好听了，再补一句本科很普通，我怕我妈立刻变脸。", correct: false }
         ]
       },
@@ -713,7 +714,7 @@ function dailyFakeProfileTemplate(brief, names) {
         contradiction: "男方声称收入和日常花销不匹配，咨询者才把存款证明追成流水和真实收入。",
         reliability: "partial",
         questionOptions: [
-          { question: "你问流水，是想确认他到底赚多少？", answer: "是。我嘴上说家里想看稳定，其实我自己也想知道。他到底是收入没那么高，还是钱花到别处去了。", contradiction: "咨询者追流水不只是求安心，也在确认真实收入和婚后钱怎么落地。" },
+          { question: "你问流水，是想确认他到底赚多少？", answer: "是。我嘴上说家里想看稳定，其实我自己也想知道。他到底是收入没那么高，还是钱花到别处去了。", contradiction: "咨询者追流水不只是求安心，也在确认真实收入和婚后钱怎么落地。", correct: true },
           { question: "哪次花销让你觉得不对？", answer: "有次他说这个月奖金刚到，结果吃饭时又反复算团购券，还提醒我停车费能不能 AA。不是不能 AA，是和他说的收入状态放一起有点别扭。", correct: false }
         ]
       },
@@ -725,7 +726,7 @@ function dailyFakeProfileTemplate(brief, names) {
         contradiction: "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
         reliability: "partial",
         questionOptions: [
-          { question: "这句你有没有转给他？", answer: "没有。我只说我妈想确认稳定。我要是原样说“以后钱放一起管”，这顿饭可能直接不用吃了。", contradiction: "咨询者把工资管理的要求包装成了确认稳定。" },
+          { question: "这句你有没有转给他？", answer: "没有。我只说我妈想确认稳定。要是直接把“以后钱最好放一起管”这句话说出来，这顿饭大概就不用吃了。", contradiction: "咨询者把工资管理的要求包装成了确认稳定。", correct: true },
           { question: "那他拒绝流水是不是就一定心虚？", answer: "也不一定。见父母前就问到流水和工资怎么管，换谁都会不舒服。可是我确实想知道，他说的收入能不能落到以后的小家里。", correct: false }
         ]
       }
@@ -793,7 +794,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
         contradiction: "咨询者先想要主责曝光，同事再把垫付款包装成机会，资金风险被弱化。",
         reliability: "mixed",
         questionOptions: [
-          { question: "他让你垫钱时，原话有没有提署名和老板？", answer: "有。他说这次活动缺个执行负责人，如果我先顶上，复盘材料里可以写我主责。我当时没有说的是，我前面已经跟老板表过态。", contradiction: "咨询者先向老板表态想主责，同事借这个把垫款包装成机会。" },
+          { question: "他让你垫钱时，原话有没有提署名和老板？", answer: "有。他说这次答谢会缺个执行负责人，如果我先垫场地和礼品费，复盘材料里可以写我主责。我没说的是，我前面已经跟老板表过态，想接这个活。", contradiction: "咨询者先向老板表态想主责，同事借这个把垫款包装成机会。", correct: true },
           { question: "他说主责署名的时候，你为什么先答应垫？", answer: "我也确实想要这个主责，所以没有第一时间追垫款流程。可想表现不等于默认钱可以一直卡着。", correct: false }
         ]
       },
@@ -805,7 +806,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
         contradiction: "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
         reliability: "partial",
         questionOptions: [
-          { question: "他为什么不让你在大群确认预算？", answer: "他说问多了显得我不担事，老板会觉得我推活。现在想想，这句话把我想表现的心理拿住了。", contradiction: "同事借表现压力阻止公开确认预算。", correct: true },
+          { question: "他为什么不让你在大群确认预算？", answer: "他说大群里问预算，会显得我不担事，老板会觉得我推活。不如先私下办成，复盘时再补流程。现在回头看，他拿住的就是我想表现又怕露怯。", contradiction: "同事借表现压力阻止公开确认预算。", correct: true },
           { question: "你如果当时在群里问，会不会真的影响观感？", answer: "可能会显得我不够爽快。但至少钱是谁批、谁还、谁对接供应商，会留下记录。", correct: false }
         ]
       },
@@ -817,7 +818,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
         contradiction: "报销截图只显示审批通过，没有付款流水和收款账户。",
         reliability: "partial",
         questionOptions: [
-          { question: "这张审批图少了哪一边，是付款状态还是收款账户？", answer: "下面少了付款状态这一边，收款账户也没露出来。只能证明审批通过，不能证明财务已经把钱打到谁的账户。", contradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。" },
+          { question: "这张审批图少了哪一边，是付款状态还是收款账户？", answer: "图上确实写着审批通过。但下面没有付款状态，也没露收款账户。它只能证明公司同意报销，不能证明钱已经打出去，更不能证明打给了谁。", contradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。", correct: true },
           { question: "他有没有可能只是财务慢，不是故意拖？", answer: "有可能。所以我才没一上来撕破脸。但如果只是财务慢，他完全可以给我看付款状态，或者让我问财务，而不是一直拿审批截图挡。", correct: false }
         ]
       },
@@ -829,7 +830,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
         contradiction: "供应商报价单出现服务协调费，返款却可能打给同事这个对接人。",
         reliability: "partial",
         questionOptions: [
-          { question: "供应商返款打给谁，和你的垫付款是不是同一条钱路？", answer: "供应商群里写的是统一打给对接人，对接人是他。我的垫付款、公司报销、那笔返款，最后都要经过他。", contradiction: "同事同时控制报销入口和供应商返款入口。" },
+          { question: "供应商返款打给谁，和你的垫付款是不是同一条钱路？", answer: "供应商群里说返款统一打给对接人，对接人是他。也就是说，我垫出去的钱、公司报销的钱、供应商那笔返款，最后都绕到他手里。", contradiction: "同事同时控制报销入口和供应商返款入口。", correct: true },
           { question: "你问过这笔服务协调费是不是正常报价吗？", answer: "问过。他说可能就是正常报价。可他不让我问财务，也不说返款怎么处理，我就没法只按正常报价理解。", correct: false }
         ]
       },
@@ -841,7 +842,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
         contradiction: "咨询者拿到项目署名，却没有拿到付款和供应商入口。",
         reliability: "partial",
         questionOptions: [
-          { question: "主责署名和付款入口，最后在同一个人手里吗？", answer: "不在。复盘写我主责，可付款对接、供应商确认、返款入口都在他那边。", contradiction: "项目责任和资金入口被拆给不同人。", correct: true },
+          { question: "主责署名和付款入口，最后在同一个人手里吗？", answer: "不在。复盘报告写我主责，看起来是我负责；可付款对接、供应商确认、返款入口都在他那边。出事先问我，钱什么时候回却要看他。", contradiction: "项目责任和资金入口被拆给不同人。", correct: true },
           { question: "主责写了你以后，你为什么反而更慌？", answer: "一开始我觉得也算值。可钱没回来以后，主责反而像风险，出了问题大家会先问我为什么私下垫。", correct: false }
         ]
       }
