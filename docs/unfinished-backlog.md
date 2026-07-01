@@ -61,12 +61,13 @@ content/packs/steam-demo-01/
 ### 运行时拆分
 
 - `src/app.js` 仍然承担渲染、状态推进、路线图、收麦、平台桥接。
+- 路线轴和路线画像纯逻辑已拆到 `src/runtime/routeLog.js`，但 HTML 复盘渲染和状态写入仍在 `src/app.js`。
 - 短期可继续迭代，但 Steam demo 前需要拆。
 
 优先拆：
 
 - `src/runtime/sceneAdvance.js`
-- `src/runtime/routeLog.js`
+- 继续补强 `src/runtime/routeLog.js`，把路线图模型和故事集路线统计也完全纯函数化。
 - `src/runtime/recapModel.js`
 - `src/ui/renderSceneReview.js`
 - `src/ui/renderRecap.js`

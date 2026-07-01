@@ -41,6 +41,7 @@ npm run build:playable
 | DAILY-011 | Quote-pick accusation | Case 4's final beat uses quoted-line choices; the gray-zone answer is not the first button. | Players passing by position or reading abstract conclusions instead of listening to the call. |
 | DAILY-015 | Content breadth | Daily engine supports non-romance public incident cases such as workplace reimbursement screenshots. | Product scope collapsing back into marriage-only cases. |
 | ROUTE-001 | Hidden route map | Every playable choice records a route axis and tone. | 玩家选择无法生成路线图、回溯和主播倾向。 |
+| ROUTE-002 | Route-log helpers | Route axis, tone, and dominant profile are pure runtime helpers covered outside DOM rendering. | 路线图逻辑继续堆在 `app.js`，后续 UI 改文案时误伤路线画像。 |
 | STATE-001 | Save migration | Legacy saves migrate into episode-compatible shape while preserving explicit daily saves and settings. | Old saves breaking after refactors. |
 | RUNTIME-001 | Outcome math | Internal carryover scores clamp correctly for wins/failures. | Run result values drifting out of range. |
 | RUNTIME-002 | Daily pacing | Daily budget has a floor and hint count stays at one. | Mobile short-case pacing getting too long or too guided. |

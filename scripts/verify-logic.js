@@ -1,11 +1,12 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.27";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.27";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.27";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.27";
-import { migrateState } from "../src/state.js?v=0.20.27";
-import { NPCS } from "../src/story.js?v=0.20.27";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.27";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.27";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.28";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.28";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.28";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.28";
+import { migrateState } from "../src/state.js?v=0.20.28";
+import { NPCS } from "../src/story.js?v=0.20.28";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.28";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.28";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.28";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -61,6 +62,21 @@ test("MODE-001", "unknown modes normalize to episode while daily stays available
 test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage bridge", () => {
   assertEqual(typeof platformRuntime.postMessage, "function", "platformRuntime 必须提供顶层 postMessage，供收麦分享调用");
   platformRuntime.postMessage({ type: "test-message" });
+});
+
+test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outside app rendering", () => {
+  assertEqual(routeAxisForChoice({ question: "这几笔账，哪些是在他没工作以后花的？" }), "money-flow", "钱款问题必须进入钱流结构线");
+  assertEqual(routeAxisForChoice({ question: "这张表里，房贷和装修是怎么写进家庭开销的？" }), "document-edge", "材料问题必须进入材料缺口线");
+  assertEqual(routeToneForChoice({ question: "你当时有没有起疑心？" }), "caller-skeptical", "绕回来电人自己的问题必须记录为来电人怀疑语气");
+  const choices = [
+    normalizeRouteChoice(0, { routeAxis: "caller-credibility", routeTone: "caller-skeptical", question: "你当时有没有起疑心？" }),
+    normalizeRouteChoice(1, { routeAxis: "caller-credibility", routeTone: "caller-skeptical", question: "那你为什么一直绕着说要看账单？" }),
+    normalizeRouteChoice(2, { routeAxis: "money-flow", routeTone: "pressure-point", contradiction: "账单不对", question: "钱花在哪？" })
+  ];
+  const profile = routeAxisProfileFromChoices(choices);
+  assertEqual(profile.axis, "caller-credibility", "最多路线轴必须成为路线画像主轴");
+  assertEqual(profile.label, "来电人可信度线", "路线画像必须输出玩家可读标签");
+  assertIncludes(profile.summary, "不急着相信来电人的版本", "连续怀疑来电人时，summary 必须反映路线倾向");
 });
 
 test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
