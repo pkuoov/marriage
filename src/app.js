@@ -213,9 +213,42 @@ function liveChapterTitle(brief = {}) {
   return isStoryPackMode() ? "热线连线" : brief.storyArcTitle ?? "今日来电";
 }
 
-function storyInterludeHook(brief = {}) {
-  if (!brief) return "麦还没断，新的电话已经排进来。";
-  return brief.storyBridge ?? brief.weeklyBridge ?? "麦还没断，新的电话已经排进来。";
+function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude = {}) {
+  const percent = Number(result.issuePercent ?? 0);
+  if (percent < 50) return interlude.summary ?? "这通没完全收住，弹幕还停在开场那句。";
+  const routeLabel = route.label ? `你这轮一直沿着${route.label}往下压。` : "";
+  const lines = {
+    "lost-job-hidden-credit": `账单摊开以后，那句“挡几天”已经不是原来的意思。${routeLabel}`,
+    "tony-multi-dating": `那张表一露，甜话就不只是在谈感情。${routeLabel}`,
+    "education-income-fake-profile": `资料图是真的，没放出来的那几栏也是真的。${routeLabel}`,
+    "workplace-reimbursement-screenshot": `审批截图能堵住一句质问，堵不住钱去了哪里。${routeLabel}`,
+    "house-name-security-test": `房本和还贷分成两套话以后，“一家人”就没那么好用了。${routeLabel}`
+  };
+  return lines[brief.plotId] ?? interlude.summary ?? "这通先收在这里，后面的电话已经排进来了。";
+}
+
+function storyInterludeObjectLabel(brief = {}) {
+  const labels = {
+    "lost-job-hidden-credit": "账单",
+    "tony-multi-dating": "表格",
+    "education-income-fake-profile": "资料图",
+    "workplace-reimbursement-screenshot": "审批截图",
+    "house-name-security-test": "协议草稿"
+  };
+  return labels[brief.plotId] ?? "新材料";
+}
+
+function storyInterludeNextLine(brief = {}) {
+  if (!brief) return "新的电话已经排进来。";
+  const bridge = brief.storyBridge ?? brief.weeklyBridge ?? "";
+  if (bridge) return bridge;
+  const lines = {
+    "tony-multi-dating": "下一通别急着骂暧昧，先看店里那张表。",
+    "education-income-fake-profile": "下一通带来几张资料图，图是真的，话未必说全。",
+    "workplace-reimbursement-screenshot": "下一通换到公司，截图看着完整，钱却还没回来。",
+    "house-name-security-test": "下一通聊房本和还贷，亲近话后面接着现金流。"
+  };
+  return lines[brief.plotId] ?? "新的电话已经排进来。";
 }
 
 function renderCaseOpen(brief) {
@@ -497,14 +530,14 @@ function renderStoryInterlude(brief) {
     chapter: "案间",
     text: `
       <section class="story-interlude-card">
-        <span>上一通收麦</span>
+        <span>上一通留下</span>
         <b>${escapeHtml(route.label)}</b>
-        <p>${escapeHtml(interlude.summary ?? "刚才那通先记下。")}</p>
+        <p>${escapeHtml(storyInterludeRecapLine(brief, result, route, interlude))}</p>
       </section>
       <section class="story-interlude-card next">
         <span>新来电接入</span>
-        <b>下一通来电</b>
-        <p>${escapeHtml(storyInterludeHook(nextBrief))}</p>
+        <b>${escapeHtml(storyInterludeObjectLabel(nextBrief))}</b>
+        <p>${escapeHtml(storyInterludeNextLine(nextBrief))}</p>
       </section>
     `,
     choices: flowGroup(`<button class="primary" data-enter-next-case type="button">接入下一通</button><button data-retry-case type="button">回头重问</button>`)
@@ -1204,7 +1237,7 @@ function isFinalStoryPackCase() {
   return Number(state.chapter ?? 1) >= (state.caseBriefs?.length ?? 1);
 }
 
-function advanceToNextStoryPackCase(message = "新的来电接进来，刚才那通先记下。") {
+function advanceToNextStoryPackCase(message = "新的来电接进来，上一通留给弹幕吵。") {
   state.chapter = Math.min(Number(state.chapter ?? 1) + 1, state.caseBriefs?.length ?? 1);
   state.caseBrief = activeCaseBrief();
   state.scene = "caseOpen";
