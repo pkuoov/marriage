@@ -8,6 +8,7 @@ Run these before tagging or shipping a major version:
 
 ```bash
 npm run test:unit
+npm run verify:pack
 npm run check
 npm run build:h5
 npm run build:playable
@@ -20,6 +21,7 @@ npm run build:playable
 | ID | Area | Case | Guards Against |
 | --- | --- | --- | --- |
 | MODE-001 | Mode routing | Unknown modes normalize to `episode`; explicit `daily` still expects one case; legacy `weekly` links migrate. | Steam 主入口被旧 daily 默认值拉回去，或单案兼容入口丢失。 |
+| PACK-001 | Content pack contract | `content/packs/steam-demo-01/manifest.json` matches the runtime story-pack definition, and each case pressure packet has truth boundaries, stakes, object purpose, self-serving omission, and quote candidates. | 故事包目录和运行时定义脱节，或新故事包只有标题顺序、没有编剧压力系统。 |
 | UI-001 | Choice UI contract | Current-node questions render in one panel without explainer tags; buttons are host questions, not route labels, same-panel buttons have equal visual weight, and the material inspection stage remains in the runtime. | `顺着问`、`按住问`、路线轴提示、双分组单按钮、核心追问高亮等设计稿残留回到玩家界面，或玩法退回纯问答。 |
 | EPISODE-001 | Story pack contract | A `storyKey` deterministically generates four live-call cases with stable order, visible in-run progress, one shared theme, a non-spoiler title intro, per-case bridge text, and at least one material inspection node per case. | 故事集变成随机拼盘、乱序、重复题材、标题页剧透目录、开场说教、无主题、无法回放同一集，或缺少可操作材料。 |
 | EPISODE-001B | Story interlude contract | Story-pack interludes should summarize the previous call from the played route and introduce the next call through a dramatic object, not a directory title. | 案间页退回“上一通记下 / 下一案 / 下一通来电”这种模板感。 |
@@ -80,3 +82,4 @@ Automated tests do not replace one short browser replay after large narrative/UI
 - Content breadth is not solved by `EPISODE-001`: before shipping paid story packs, expand the template pool to at least nine distinct plot IDs, then tighten the pack test to enforce story-pack theme variety.
 - Any playtest complaint about strange choice labels must be promoted into either `UI-001`, the manual smoke checks above, or `project-skills/livestream-game-flow-review/SKILL.md` before the turn ends.
 - Broad "continue optimizing" work should first check `docs/unfinished-backlog.md`; if the work discovers a new repeated gap, add it there instead of leaving it only in chat.
+- Content-pack changes must update both `content/packs/<pack-id>/` and the runtime pack definition until full JSON loading replaces the temporary mirror in `src/storyPacks.js`; `npm run verify:pack` is the guardrail.

@@ -106,6 +106,7 @@ play-windows.bat
 
 - 首页直接展示四案故事集钩子，一键进入。
 - 四案故事集使用 `storyKey` 稳定生成；`dailyKey` 入口保留为单案兼容和调试。旧 `weeklyKey` 链接只做兼容。
+- 首个故事包骨架已拆到 `content/packs/steam-demo-01/`，并通过 `npm run verify:pack` 校验运行时定义、压力系统和内容包文件一致。
 - 四案故事集携带主题和主题论点，四案围绕同一个现实问题互相照应。
 - Steam 试玩主线为：8 万信用卡周转、理发店排班表、存款证明、职场报销截图。婚前房与共同还贷保留在单案轮换里。
 - 当前轮换包含 5 个模板案：8 万信用卡周转、婚前房与共同还贷、理发店排班表、存款证明、职场报销截图。
@@ -136,9 +137,14 @@ play-windows.bat
 │   ├── script-generation-agent-playbook.md
 │   ├── case-library-sources.md
 │   ├── marriage-agency-avg-design.md
-│   └── roadmap.md
+│   ├── roadmap.md
+│   └── content-pack-schema.md
+├── content/
+│   └── packs/
+│       └── steam-demo-01/
 ├── scripts/
 │   ├── build-static.js
+│   ├── verify-pack.js
 │   └── verify-logic.js
 ├── src/
 │   ├── app.js
@@ -149,6 +155,7 @@ play-windows.bat
 │   ├── caseNarration.js
 │   ├── caseRuntime.js
 │   ├── difficulty.js
+│   ├── storyPacks.js
 │   ├── caseEngine.js
 │   ├── random.js
 │   ├── sound.js

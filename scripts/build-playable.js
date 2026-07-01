@@ -12,6 +12,10 @@ await cp(resolve(root, "assets"), resolve(outDir, "assets"), {
   recursive: true,
   filter: (source) => basename(source) !== ".DS_Store"
 });
+await cp(resolve(root, "content"), resolve(outDir, "content"), {
+  recursive: true,
+  filter: (source) => basename(source) !== ".DS_Store"
+});
 
 const bundle = await bundleModule(entry);
 const css = await readFile(resolve(root, "src", "styles.css"), "utf8");

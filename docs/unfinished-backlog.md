@@ -33,7 +33,9 @@
 ### 内容包数据化
 
 - 当前四案仍写在 `src/caseEngine.js`。
-- 需要拆到 `content/packs/steam-demo-01/`，运行时代码只负责加载和校验。
+- 第一层故事包骨架已经拆到 `content/packs/steam-demo-01/`，并用 `src/storyPacks.js` 给运行时读取。
+- 当前完整台词仍写在 `src/caseEngine.js`；下一步要继续把每案完整字段迁移到内容包。
+- 长期目标是运行时代码只负责加载和校验。
 
 建议结构：
 
@@ -52,9 +54,9 @@ content/packs/steam-demo-01/
 
 验收：
 
-- 改故事集内容不改 `src/app.js`。
-- `verify:pack steam-demo-01` 能单独检查四案结构。
-- 新故事包可以新增目录接入。
+- 改故事集顺序、主题和压力系统不改 `src/app.js`。
+- `npm run verify:pack` 能单独检查四案结构和运行时定义一致性。
+- 新故事包可以新增目录接入；正式迁移后完整台词也不再写在 `src/caseEngine.js`。
 
 ### 运行时拆分
 

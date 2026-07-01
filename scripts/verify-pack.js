@@ -1,0 +1,116 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.27";
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const packId = process.argv[2] ?? "steam-demo-01";
+const results = [];
+
+function test(id, name, fn) {
+  try {
+    fn();
+    results.push({ id, name, ok: true });
+  } catch (error) {
+    results.push({ id, name, ok: false, error });
+  }
+}
+
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
+function assertEqual(actual, expected, message) {
+  if (actual !== expected) {
+    throw new Error(`${message}｜expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+  }
+}
+
+function assertDeepEqual(actual, expected, message) {
+  const actualText = JSON.stringify(actual);
+  const expectedText = JSON.stringify(expected);
+  if (actualText !== expectedText) {
+    throw new Error(`${message}｜expected ${expectedText}, got ${actualText}`);
+  }
+}
+
+async function readJson(path) {
+  return JSON.parse(await readFile(resolve(root, path), "utf8"));
+}
+
+const manifest = await readJson(`content/packs/${packId}/manifest.json`);
+const runtimePack = STORY_PACKS[packId];
+const caseFiles = await Promise.all(
+  manifest.sequence.map((item) => readJson(`content/packs/${packId}/cases/${item.caseId}.json`))
+);
+const comments = await readJson(`content/packs/${packId}/comments.json`);
+const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes.json`);
+
+test("PACK-001", "manifest matches runtime story pack definition", () => {
+  assert(runtimePack, `运行时故事包不存在: ${packId}`);
+  assertEqual(manifest.id, packId, "manifest id 必须等于包 id");
+  assertEqual(manifest.size, 4, "试玩故事包必须是四案");
+  assertDeepEqual(manifest.theme, runtimePack.theme, "manifest theme 必须和运行时定义一致");
+  assertDeepEqual(manifest.caseLabels, runtimePack.caseLabels, "manifest caseLabels 必须和运行时定义一致");
+  assertDeepEqual(manifest.sequence, runtimePack.sequence, "manifest sequence 必须和运行时定义一致");
+});
+
+test("PACK-002", "manifest keeps four distinct playable cases", () => {
+  assertEqual(manifest.sequence.length, manifest.size, "sequence 数量必须等于 size");
+  assertEqual(new Set(manifest.sequence.map((item) => item.caseId)).size, manifest.size, "caseId 不能重复");
+  assertEqual(new Set(manifest.sequence.map((item) => item.plotId)).size, manifest.size, "plotId 不能重复");
+  manifest.sequence.forEach((item, index) => {
+    ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "bridge"].forEach((field) => {
+      assert(item[field], `第 ${index + 1} 案缺少 ${field}`);
+    });
+    assert(!/下一案|第[一二三四1234]\s*案|[1-4]\/4/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);
+  });
+});
+
+test("PACK-003", "case pressure packets are complete", () => {
+  const requiredFields = [
+    "caseId",
+    "plotId",
+    "dramaticAnchor",
+    "whyTonight",
+    "objectPurpose",
+    "callerStake",
+    "otherStake",
+    "thirdPressure",
+    "selfServingOmission"
+  ];
+  caseFiles.forEach((casePacket, index) => {
+    const manifestItem = manifest.sequence[index];
+    assertEqual(casePacket.caseId, manifestItem.caseId, `${casePacket.caseId} caseId 必须和 manifest 对齐`);
+    assertEqual(casePacket.plotId, manifestItem.plotId, `${casePacket.caseId} plotId 必须和 manifest 对齐`);
+    requiredFields.forEach((field) => {
+      assert(casePacket[field], `${casePacket.caseId} 缺少 ${field}`);
+    });
+    ["true", "edited", "unknown"].forEach((field) => {
+      assert((casePacket.truthBoundary?.[field] ?? []).length > 0, `${casePacket.caseId} truthBoundary.${field} 不能为空`);
+    });
+    assert((casePacket.quotePickCandidates ?? []).length >= 3, `${casePacket.caseId} 至少需要三句原话候选`);
+  });
+});
+
+test("PACK-004", "comments and route archetypes are present", () => {
+  assertEqual(comments.themeId, manifest.theme.id, "comments themeId 必须和 manifest theme 对齐");
+  assert((comments.commentSeeds ?? []).length >= 4, "评论种子至少四条");
+  const archetypes = routeArchetypes.archetypes ?? [];
+  ["money-flow", "document-edge", "caller-credibility", "process-control", "identity-wording"].forEach((axis) => {
+    assert(archetypes.some((item) => item.id === axis), `路线原型缺少 ${axis}`);
+  });
+});
+
+const failed = results.filter((result) => !result.ok);
+for (const result of results) {
+  console.log(`${result.ok ? "PASS" : "FAIL"} ${result.id} ${result.name}`);
+  if (!result.ok) console.error(result.error?.stack ?? result.error);
+}
+
+if (failed.length) {
+  process.exitCode = 1;
+} else {
+  console.log(`Pack verification passed: ${packId}`);
+}

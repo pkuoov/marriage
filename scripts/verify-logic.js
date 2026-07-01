@@ -1,11 +1,11 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.26";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.26";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.26";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.26";
-import { migrateState } from "../src/state.js?v=0.20.26";
-import { NPCS } from "../src/story.js?v=0.20.26";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.26";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.26";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.27";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.27";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.27";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.27";
+import { migrateState } from "../src/state.js?v=0.20.27";
+import { NPCS } from "../src/story.js?v=0.20.27";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.27";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.27";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };

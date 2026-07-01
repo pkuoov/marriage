@@ -1,10 +1,10 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.26";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.26";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.26";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.26";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.26";
-import { NPCS } from "./story.js?v=0.20.26";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.26";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.27";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.27";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.27";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.27";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.27";
+import { NPCS } from "./story.js?v=0.20.27";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.27";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";

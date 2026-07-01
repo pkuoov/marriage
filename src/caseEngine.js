@@ -1,4 +1,5 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.26";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.27";
+import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.27";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -105,59 +106,6 @@ const DAILY_ROTATION = [
   }
 ];
 
-const STORY_PACK_SIZE = 4;
-const STORY_PACK_TITLES = [
-  "匿名来电",
-  "匿名来电",
-  "匿名来电",
-  "匿名来电"
-];
-
-const DEMO_STORY_SEQUENCE = [
-  {
-    plotId: "lost-job-hidden-credit",
-    sceneId: "rental-room",
-    complainantId: "shen",
-    respondentId: "xu",
-    act: "体面",
-    bridge: "电话已经接进来，先听她怎么把账单讲出来。"
-  },
-  {
-    plotId: "tony-multi-dating",
-    sceneId: "late-night-chat",
-    complainantId: "he",
-    respondentId: "chen",
-    act: "自己人",
-    bridge: "下一通先别急着骂暧昧。店里那张表，比甜话更像账本。"
-  },
-  {
-    plotId: "education-income-fake-profile",
-    sceneId: "live-call",
-    complainantId: "lin",
-    respondentId: "zhou",
-    act: "条件",
-    bridge: "这通说的是几张资料图。她开口很急，停顿也多。"
-  },
-  {
-    plotId: "workplace-reimbursement-screenshot",
-    sceneId: "office-chat",
-    complainantId: "chen",
-    respondentId: "shen",
-    act: "主责",
-    bridge: "公司那边也接来一通。截图看着完整，钱却还没回。"
-  }
-];
-
-const DEMO_STORY_THEME = {
-  id: "identity-cost-demo",
-  title: "好听的身份，最后让谁买单",
-  intro: "热线已经接进来。资料在后台，先听这通。",
-  thesis: "四通电话听完，真正吵起来的是同一件事：好听的话落到最后，钱和责任算在谁身上。",
-  commentPrompt: "别急着判谁好谁坏，看每个好听词后面接了什么要求。"
-};
-
-const DEFAULT_STORY_PACK_KEY = "steam-demo-01";
-
 const DAILY_CASE_MODE = {
   id: "daily",
   label: "直播来电",
@@ -227,8 +175,9 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
 
 export function generateStoryPackSequence(npcs, attrs, options = {}) {
   const storyKey = options.storyKey ?? options.packKey ?? options.weeklyKey ?? DEFAULT_STORY_PACK_KEY;
-  const theme = storyThemeForKey(storyKey);
-  const pickedSpecs = DEMO_STORY_SEQUENCE.slice(0, STORY_PACK_SIZE);
+  const storyPack = storyPackForKey(storyKey);
+  const theme = storyPack.theme;
+  const pickedSpecs = storyPack.sequence.slice(0, storyPack.size ?? storyPack.sequence.length);
   return pickedSpecs.map((spec, index) => {
     const brief = generateDailyCaseSequence(npcs, attrs, {
       ...options,
@@ -263,21 +212,16 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       modeLabel: "试玩连线",
       storyArcTitle: "热线连线",
       storyArcSummary: spec.bridge,
-      storyEpisodeTitle: "Steam 试玩版",
-      storyCaseLabel: STORY_PACK_TITLES[index] ?? `第 ${index + 1} 案`,
-      weeklyEpisodeTitle: "Steam 试玩版",
-      weeklyCaseLabel: STORY_PACK_TITLES[index] ?? `第 ${index + 1} 案`
+      storyEpisodeTitle: storyPack.title,
+      storyCaseLabel: storyPack.caseLabels?.[index] ?? "匿名来电",
+      weeklyEpisodeTitle: storyPack.title,
+      weeklyCaseLabel: storyPack.caseLabels?.[index] ?? "匿名来电"
     };
   });
 }
 
 export function generateWeeklyCaseSequence(npcs, attrs, options = {}) {
   return generateStoryPackSequence(npcs, attrs, options);
-}
-
-function storyThemeForKey(storyKey) {
-  void storyKey;
-  return DEMO_STORY_THEME;
 }
 
 function applyDailyCaseTemplate(brief, names) {
