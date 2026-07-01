@@ -36,6 +36,7 @@ function normalizeDailyState(saved) {
     sceneAnswers: saved?.sceneAnswers ?? {},
     sceneQuestionPicks: saved?.sceneQuestionPicks ?? {},
     sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
+    evidenceCheckPicks: saved?.evidenceCheckPicks ?? {},
     routeChoiceLog: saved?.routeChoiceLog ?? {},
     caseActionLog: saved?.caseActionLog ?? {},
     caseBudgets: saved?.caseBudgets ?? {},
@@ -167,6 +168,7 @@ function renderTitle() {
 function renderDailyCase() {
   const brief = activeCaseBrief();
   if (state.scene === "sceneReview") return renderSceneReview(brief);
+  if (state.scene === "evidenceCheck") return renderEvidenceCheck(brief);
   if (state.scene === "deepFollowup") return renderDeepFollowup(brief);
   if (state.scene === "testimony" || state.scene === "evidence") {
     state.scene = "sceneReview";
@@ -243,6 +245,7 @@ function renderSceneReview(brief) {
   const dialogueOptions = dialogueQuestionOptions(options);
   const criticalOptions = criticalQuestionOptions(options);
   const lastStage = index >= scenes.length - 1;
+  const hasEvidence = evidenceChecksFor(brief).length > 0;
   const canDeepFollow = issueCompletion(brief).badge && hasDeepFollowup(brief);
   frame({
     brief,
@@ -261,7 +264,7 @@ function renderSceneReview(brief) {
     choices: done
       ? flowGroup(`
           ${lastStage
-            ? `<button class="primary" data-scene="${canDeepFollow ? "deepFollowup" : "accusation"}" type="button">${canDeepFollow ? "再深入一句" : "选一句原话"}</button>`
+            ? `<button class="primary" data-scene="${hasEvidence ? "evidenceCheck" : canDeepFollow ? "deepFollowup" : "accusation"}" type="button">${hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句原话"}</button>`
             : `<button class="primary" data-next-scene-stage type="button">继续</button>`}
         `)
       : sceneQuestionChoicesHtml(brief, index, dialogueOptions, criticalOptions)
@@ -270,6 +273,56 @@ function renderSceneReview(brief) {
   bindSceneQuestionButtons(brief, scene, options);
   bind("[data-next-scene-stage]", () => setIndex(brief, "sceneReview", index + 1));
   bindSceneButtons();
+}
+
+function renderEvidenceCheck(brief) {
+  const checks = evidenceChecksFor(brief);
+  const index = currentIndex(brief, "evidenceCheck", checks.length || 1);
+  const check = checks[index];
+  if (!check) {
+    state.scene = afterEvidenceScene(brief);
+    saveState();
+    return render();
+  }
+  const pick = selectedEvidencePick(brief, index);
+  const lastCheck = index >= checks.length - 1;
+  const nextScene = afterEvidenceScene(brief);
+  frame({
+    brief,
+    mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
+    label: "看材料",
+    chapter: liveChapterTitle(brief),
+    text: `
+      <p><b>${escapeHtml(check.title ?? "材料检视")}</b></p>
+      <section class="evidence-check-card">
+        <span>手边材料</span>
+        <p>${escapeHtml(check.material ?? "")}</p>
+      </section>
+      <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>
+      ${pick ? evidencePickFeedbackHtml(pick) : ""}
+      ${keyChoiceReview(brief)}
+    `,
+    choices: pick
+      ? flowGroup(lastCheck
+        ? `<button class="primary" data-scene="${nextScene}" type="button">${nextScene === "deepFollowup" ? "再深入一句" : "选一句原话"}</button>`
+        : `<button class="primary" data-next-evidence-check type="button">继续看材料</button>`)
+      : choiceGroup("圈哪一处", (check.options ?? []).map((option, optionIndex) => `
+          <button data-evidence-check="${index}:${optionIndex}" type="button">${escapeHtml(option.label ?? "这块")}</button>
+        `).join(""), "evidence-choice-group")
+  });
+  bindEvidenceCheckButtons(brief, check);
+  bind("[data-next-evidence-check]", () => setIndex(brief, "evidenceCheck", index + 1));
+  bindSceneButtons();
+}
+
+function evidencePickFeedbackHtml(pick = {}) {
+  return `
+    <section class="evidence-result-card ${pick.correct ? "hit" : "miss"}">
+      <span>${pick.correct ? "圈中了" : "没咬住"}</span>
+      <b>${escapeHtml(pick.label ?? "")}</b>
+      <p>${escapeHtml(pick.feedback ?? "")}</p>
+    </section>
+  `;
 }
 
 function renderDeepFollowup(brief) {
@@ -718,6 +771,7 @@ function keyChoiceReview(brief) {
   const scenes = brief.sceneVersions ?? [];
   const lastAnsweredIndex = scenes.reduce((last, _, index) => actionDone(brief, `version:${index}`) ? index : last, -1);
   const lastDialogueIndex = scenes.reduce((last, _, index) => askedDialoguePicks(brief, index).length ? index : last, -1);
+  if (lastAnsweredIndex < 0 && lastDialogueIndex < 0) return "";
   const rows = lastAnsweredIndex >= 0
     ? [
         { role: "caller", text: scenes[lastAnsweredIndex]?.version ?? "" },
@@ -732,11 +786,11 @@ function keyChoiceReview(brief) {
             { role: "caller", text: pick.answer }
           ])
         ].filter((line) => line.text)
-      : compactDialogueLines(brief.openingDialogue ?? []).map((line) => ({ ...line, text: line.text }));
+      : [];
   return `
     <details class="choice-review">
       <summary>
-        <span>刚才说到</span>
+        <span>上一段</span>
       </summary>
       <div class="call-dialogue review-dialogue">
         ${rows.map((line) => callLine(brief, line)).join("")}
@@ -797,7 +851,7 @@ function bindSceneQuestionButtons(brief, scene, options) {
     button.addEventListener("click", () => {
       const [sceneIndex, optionIndex] = button.dataset.sceneQuestion.split(":").map(Number);
       const option = options[optionIndex] ?? options[0];
-      markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: true });
+      markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: !option.contradiction });
       markAction(brief, `version:${sceneIndex}`);
       if (option.contradiction) {
         recordContradiction(brief, option.contradiction);
@@ -823,6 +877,47 @@ function bindSceneQuestionButtons(brief, scene, options) {
       };
       recordRouteChoice(brief, sceneIndex, option, scene);
       if (audiencePatienceLost(brief)) return;
+      saveState();
+      render();
+    });
+  });
+}
+
+function bindEvidenceCheckButtons(brief, check = {}) {
+  document.querySelectorAll("[data-evidence-check]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const [checkIndex, optionIndex] = button.dataset.evidenceCheck.split(":").map(Number);
+      const option = check.options?.[optionIndex] ?? check.options?.[0] ?? {};
+      const correct = Boolean(option.correct);
+      markAction(brief, `evidenceCheck:${checkIndex}:${optionIndex}`, { spend: !correct });
+      markAction(brief, `evidenceCheck:${checkIndex}`);
+      if (correct) {
+        recordContradiction(brief, option.contradiction ?? check.contradiction);
+      }
+      state.evidenceCheckPicks = {
+        ...(state.evidenceCheckPicks ?? {}),
+        [evidenceAnswerKey(brief, checkIndex)]: {
+          optionIndex,
+          label: option.label ?? "",
+          feedback: option.feedback ?? "",
+          contradiction: option.contradiction ?? check.contradiction ?? "",
+          routeAxis: option.routeAxis ?? "document-edge",
+          correct
+        }
+      };
+      recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, {
+        question: check.prompt ?? "",
+        answer: option.label ?? "",
+        contradiction: correct ? option.contradiction ?? check.contradiction ?? "" : "",
+        routeAxis: option.routeAxis ?? "document-edge",
+        routeTone: correct ? "evidence-hit" : "evidence-miss"
+      }, { version: check.material ?? "" });
+      state.lastReaction = null;
+      if (!correct && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
+        state.scene = "patienceLost";
+        saveState();
+        return render();
+      }
       saveState();
       render();
     });
@@ -970,6 +1065,9 @@ function dailyAccusationReadiness(brief) {
   const required = keyQuestionLimit(brief);
   const sceneCount = (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
   if (sceneCount < required) return { ready: false, message: "这通还没走到收麦点，先把当前这段问完。" };
+  const evidenceRequired = evidenceChecksFor(brief).length;
+  const evidenceCount = evidenceAnsweredCount(brief);
+  if (evidenceCount < evidenceRequired) return { ready: false, message: "材料还没看完，先把缺的那一块指出来。" };
   return { ready: true, message: "" };
 }
 
@@ -1123,6 +1221,7 @@ function resetCaseAttempt(brief) {
   state.sceneAnswers = removeKeyPrefix(state.sceneAnswers, `${key}:`);
   state.sceneQuestionPicks = removeKeyPrefix(state.sceneQuestionPicks, `${key}:`);
   state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
+  state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
   state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
   state.caseActionLog = omitRecordKey(state.caseActionLog, key);
   state.contradictionLog = omitRecordKey(state.contradictionLog, key);
@@ -1166,7 +1265,7 @@ function markAction(brief, actionKey, { spend = false } = {}) {
 
 function audiencePatienceLost(brief) {
   const budget = ensureBudget(brief);
-  const allAnswered = answeredSceneCount(brief) >= keyQuestionLimit(brief);
+  const allAnswered = answeredSceneCount(brief) >= keyQuestionLimit(brief) && evidenceAnsweredCount(brief) >= evidenceChecksFor(brief).length;
   if (Number(budget.remaining ?? 0) > 0 || allAnswered) return false;
   state.scene = "patienceLost";
   state.lastReaction = null;
@@ -1245,6 +1344,22 @@ function selectedScenePick(brief, index) {
     routeAxis: pick.routeAxis ?? routeAxisForChoice(pick),
     routeTone: pick.routeTone ?? routeToneForChoice(pick)
   };
+}
+
+function selectedEvidencePick(brief, index) {
+  return state.evidenceCheckPicks?.[evidenceAnswerKey(brief, index)] ?? null;
+}
+
+function evidenceChecksFor(brief) {
+  return Array.isArray(brief?.evidenceChecks) ? brief.evidenceChecks : [];
+}
+
+function evidenceAnsweredCount(brief) {
+  return evidenceChecksFor(brief).filter((_, index) => actionDone(brief, `evidenceCheck:${index}`)).length;
+}
+
+function afterEvidenceScene(brief) {
+  return issueCompletion(brief).badge && hasDeepFollowup(brief) ? "deepFollowup" : "accusation";
 }
 
 function askedDialoguePicks(brief, index) {
@@ -1508,6 +1623,10 @@ function answerKey(brief, index) {
   return `${caseKey(brief)}:scene:${index}`;
 }
 
+function evidenceAnswerKey(brief, index) {
+  return `${caseKey(brief)}:evidence:${index}`;
+}
+
 function caseKey(brief) {
   return brief?.id ?? "daily";
 }
@@ -1556,10 +1675,10 @@ function liveCommentStrip(brief) {
   const found = contradictions(brief).length;
   const hook = liveIntentHookFor(brief);
   const comments = found >= 2
-    ? ["麦里有回声", hook, "话还没完"]
+    ? ["弹幕刷得快", hook, "话还没完"]
     : found === 1
       ? ["开始对上了", hook, "话没说满"]
-      : ["刚接进来", "麦还热着", hook];
+      : ["刚接进来", "弹幕在等", hook];
   return `<div class="live-comment-strip">${comments.map((item) => `<span class="live-comment">${item}</span>`).join("")}</div>`;
 }
 

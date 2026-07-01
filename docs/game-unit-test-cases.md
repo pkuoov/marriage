@@ -20,10 +20,10 @@ npm run build:playable
 | ID | Area | Case | Guards Against |
 | --- | --- | --- | --- |
 | MODE-001 | Mode routing | Unknown modes normalize to `episode`; explicit `daily` still expects one case; legacy `weekly` links migrate. | Steam 主入口被旧 daily 默认值拉回去，或单案兼容入口丢失。 |
-| UI-001 | Choice UI contract | Current-node questions render in one panel without explainer tags; buttons are host questions, not route labels, and same-panel buttons have equal visual weight. | `顺着问`、`按住问`、路线轴提示、双分组单按钮、核心追问高亮等设计稿残留回到玩家界面。 |
-| EPISODE-001 | Story pack contract | A `storyKey` deterministically generates four live-call cases with stable order, visible in-run progress, one shared theme, a non-spoiler title intro, and per-case bridge text. | 故事集变成随机拼盘、乱序、重复题材、标题页剧透目录、开场说教、无主题或无法回放同一集。 |
+| UI-001 | Choice UI contract | Current-node questions render in one panel without explainer tags; buttons are host questions, not route labels, same-panel buttons have equal visual weight, and the material inspection stage remains in the runtime. | `顺着问`、`按住问`、路线轴提示、双分组单按钮、核心追问高亮等设计稿残留回到玩家界面，或玩法退回纯问答。 |
+| EPISODE-001 | Story pack contract | A `storyKey` deterministically generates four live-call cases with stable order, visible in-run progress, one shared theme, a non-spoiler title intro, per-case bridge text, and at least one material inspection node per case. | 故事集变成随机拼盘、乱序、重复题材、标题页剧透目录、开场说教、无主题、无法回放同一集，或缺少可操作材料。 |
 | EPISODE-001A | In-run spoiler guard | Story-pack live screens use neutral call labels instead of act names, case titles, `1/4` package progress, or "next case" copy. | 首页刚清干净，玩家一进第一通又看到目录式剧透。 |
-| DAILY-001 | Daily contract | Generated daily case has one playable case with scene beats, question options, deep follow-up, evidence notes, and clue threshold. | Empty UI from incomplete brief data. |
+| DAILY-001 | Daily contract | Generated daily case has one playable case with scene beats, question options, deep follow-up, evidence notes, material inspection, and clue threshold. | Empty UI from incomplete brief data, or单案只有口述没有可操作证据。 |
 | DAILY-002 | Determinism | Same `dailyKey` generates the same case, plot, and opening. | Share links showing different cases to different players. |
 | DAILY-003 | Date boundary | Default daily key uses fixed UTC+8 day boundary. | Cross-timezone players getting different "today" cases. |
 | DAILY-004 | Template guard | Explicit unsupported daily plot IDs throw. | Untemplated plots falling through to broken daily cases. |
@@ -61,9 +61,12 @@ Automated tests do not replace one short browser replay after large narrative/UI
 8. Confirm the page does not show "how to play" hints, route axes, or designer shorthand inside the live-call choice area.
 9. Pick one core issue question and one tempting outer-angle question.
 10. Confirm outer-angle feedback is in-character and live comments react.
-11. Solve the first case and confirm the recap shows the hidden route map.
-12. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
-13. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
+11. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
+12. After the last scene, enter material inspection; confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
+13. Confirm material hit feedback appears once, not again as a separate reaction line.
+14. Solve the first case and confirm the recap shows the hidden route map.
+15. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
+16. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
 
 ## Maintenance Rules
 

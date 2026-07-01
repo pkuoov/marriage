@@ -123,12 +123,12 @@ const DEMO_STORY_SEQUENCE = [
     bridge: "电话已经接进来，先听她怎么把账单讲出来。"
   },
   {
-    plotId: "house-name-security-test",
-    sceneId: "broker-office",
-    complainantId: "zhou",
-    respondentId: "lin",
-    act: "一家人",
-    bridge: "新来电卡在一套房上，家里人在麦外也有话。"
+    plotId: "tony-multi-dating",
+    sceneId: "late-night-chat",
+    complainantId: "he",
+    respondentId: "chen",
+    act: "自己人",
+    bridge: "下一通先别急着骂暧昧。店里那张表，比甜话更像账本。"
   },
   {
     plotId: "education-income-fake-profile",
@@ -320,6 +320,7 @@ function dailyBaseBrief(brief, names, fields) {
     sceneVersions: withChoiceRoutes(fields.sceneVersions ?? []),
     explicitClueGroups: fields.explicitClueGroups,
     evidenceCards: fields.evidenceCards,
+    evidenceChecks: fields.evidenceChecks ?? [],
     deepFollowup: fields.deepFollowup,
     stageJudgement: fields.stageJudgement,
     followupTwist: fields.followupTwist,
@@ -447,6 +448,19 @@ function dailyLostJobCreditTemplate(brief, names) {
       { id: "daily-credit-card-bill", type: "账单", title: "信用卡账单", front: "餐厅、礼物分期和最低还款集中在同一周。", detail: "账单显示债务与体面恋爱消费有关。", targets: ["sceneHint"], contradiction: "信用卡债务包含维持恋爱体面的消费成本。" },
       { id: "daily-credit-chat", type: "聊天", title: "最低还款请求", front: "“你先帮我挡一下，我不想这段关系因为钱毁了。”", detail: "把债务包装成关系考验。", targets: ["truthWithGap"], contradiction: "还款请求把个人债务包装成关系考验。" }
     ],
+    evidenceChecks: [
+      {
+        id: "credit-after-layoff-spend",
+        title: "账单检视",
+        prompt: "这张信用卡账单里，哪一块最该先圈出来？",
+        material: "社保断缴后，同一张卡上继续出现纪念日晚餐、礼物分期、两次酒店和短视频平台分期。",
+        options: [
+          { label: "断缴后的餐厅、礼物和酒店消费", correct: true, contradiction: "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。", feedback: "这块一圈出来，“临时周转”就站不稳了。", routeAxis: "money-flow" },
+          { label: "最低还款金额本身很高", correct: false, feedback: "金额高只能说明压力大，还不能说明这笔债为什么要转给她。", routeAxis: "money-flow" },
+          { label: "他说自己怕被分手", correct: false, feedback: "这句话有用，但它是情绪入口，不是账单上的硬缺口。", routeAxis: "caller-credibility" }
+        ]
+      }
+    ],
     deepFollowup: {
       question: "那我多问一句，社保断缴和信用卡还款都摆出来以后，你最怕失去的是钱，还是这段关系原来看起来很体面的样子？",
       answer: "我最怕承认的是，我也被那个体面打动过。朋友都觉得他工作稳定、出手大方，我不垫这笔信用卡还款，就像亲手把这层撕开。可撕开归撕开，账还是不能变成我的。",
@@ -543,6 +557,19 @@ function dailyHouseBoundaryTemplate(brief, names) {
       { id: "daily-house-account", type: "账户表", title: "共同账户支出表", front: "房贷、装修、物业被列为婚后固定共同支出。", detail: "共同支出需要对应份额、补偿或明确赠与。", targets: ["sceneHint"], contradiction: "共同账户支出表缺少还贷份额和退出补偿机制。" },
       { id: "daily-house-agreement", type: "协议草稿", title: "投入确认条款", front: "未要求加名，只要求还贷和装修留流水、按投入补偿。", detail: "这更像保护投入，不是直接夺取产权。", targets: ["truthWithGap", "sceneHint"], contradiction: "协议草稿没有要求加名，重点是确认共同投入。" }
     ],
+    evidenceChecks: [
+      {
+        id: "house-account-gap",
+        title: "共同账户表",
+        prompt: "这张表最缺哪一栏？",
+        material: "共同账户支出表列了房贷、装修、物业，但没有写份额，也没有写分开时怎么补。",
+        options: [
+          { label: "还贷份额和退出补偿", correct: true, contradiction: "共同支出表缺少还贷份额和退出补偿机制。", feedback: "缺的不是感情态度，是这笔钱以后怎么算。", routeAxis: "money-flow" },
+          { label: "他父母的首付来源", correct: false, feedback: "首付来源可以另问，但这张表的问题在婚后共同支出没有落账。", routeAxis: "document-edge" },
+          { label: "婚礼预算", correct: false, feedback: "婚礼预算不在这张表里，追这里会把房贷主线岔开。", routeAxis: "outer-thread" }
+        ]
+      }
+    ],
     deepFollowup: {
       question: "那我多问一句，你自己心里最想要的是投入补偿，还是这套房里有一个能被看见的位置？",
       answer: "我想要能被看见的位置。这句话我没在直播开头讲，因为讲出来就像我要房。可如果婚后每月还贷、装修、共同账户都进去，我又不想最后只剩几张流水。",
@@ -638,6 +665,19 @@ function dailyTonyMultiDatingTemplate(brief, names) {
       { id: "daily-tony-roster", type: "排班表", title: "理发店预约表", front: "备注列写着“情绪稳定 / 能投店 / 能带客”。", detail: "这些备注不像剪发需求，更像每个人能带来的东西。", targets: ["truthWithGap", "sceneHint"], contradiction: "排班表显示多个暧昧对象被按功能分类。" },
       { id: "daily-tony-chat-copy", type: "聊天截图", title: "三份专属话术", front: "三个人都收到过“你和别人不一样”。", detail: "后续请求不同：办卡、投店、见朋友。", targets: ["halfLie"], contradiction: "专属话术被复制给不同对象。" },
       { id: "daily-tony-card", type: "消费记录", title: "办卡与礼物", front: "暧昧升温后一周内出现年卡和礼物消费。", detail: "情绪承诺与消费绑定。", targets: ["sceneHint"], contradiction: "未来承诺后紧接消费绑定。" }
+    ],
+    evidenceChecks: [
+      {
+        id: "tony-roster-column",
+        title: "排班表检视",
+        prompt: "这张表里哪一列不像预约表？",
+        material: "表头写预约，备注却写着“情绪稳定”“办卡意向强”“朋友多”，最后一列还有“下一次推进”。",
+        options: [
+          { label: "备注和下一次推进", correct: true, contradiction: "TA 把不同对象按可推进资源分层管理。", feedback: "这不是剪头需求，是把人按能带来什么往下排。", routeAxis: "process-control" },
+          { label: "预约时间", correct: false, feedback: "预约时间本身正常，真正不对的是备注里的功能标签。", routeAxis: "document-edge" },
+          { label: "店员名字", correct: false, feedback: "名字不够关键，后面那些“稳情绪”“能投店”才是这张表的味道。", routeAxis: "outer-thread" }
+        ]
+      }
     ],
     deepFollowup: {
       question: "那我多问一句，看到排班表里写投店、带客以后，你自己当时为什么还愿意接那些店里的事？",
@@ -754,6 +794,19 @@ function dailyFakeProfileTemplate(brief, names) {
       { id: "daily-profile-spending", type: "消费细节", title: "收入和花销", front: "口头收入不错，日常小钱却反复算。", detail: "抠门不等于没钱，但会让收入叙事变得别扭。", targets: ["truthWithGap", "sceneHint"], contradiction: "男方声称收入和日常花销、抠门细节不匹配。" },
       { id: "daily-profile-flow", type: "聊天原话", title: "流水和工资卡", front: "对方反问：再问下去，是不是工资卡也要交出来？", detail: "这句刺中女方家没有说出口的工资管理预设。", targets: ["sceneHint"], contradiction: "流水追问背后藏着婚后工资透明和上交工资的预设。" }
     ],
+    evidenceChecks: [
+      {
+        id: "profile-mba-gap",
+        title: "学历材料检视",
+        prompt: "学校图里最该追哪一块？",
+        material: "截图能看到校名和 MBA 项目，但本科、项目性质和学制没有放在一起。",
+        options: [
+          { label: "本科、项目性质和学制", correct: true, contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。", feedback: "图不一定假，但少的这一块会让“名校毕业”变成另一种听法。", routeAxis: "identity-wording" },
+          { label: "截图像不像修过", correct: false, feedback: "现在的问题不是修图，而是真标签只露了好听的那一面。", routeAxis: "document-edge" },
+          { label: "介绍人有没有夸张", correct: false, feedback: "介绍人是前因，这张图上要先看少了哪一边。", routeAxis: "caller-credibility" }
+        ]
+      }
+    ],
     deepFollowup: {
       question: "那我多问一句，你自己的家庭经济状况怎么样？你自己一个月工资多少，够花吗？",
       answer: "我自己也不是特别宽裕，所以我才更在意他收入到底落不落地。我嘴上说家里想看稳定，其实我也想知道以后这笔钱是不是能进小家。",
@@ -851,6 +904,19 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
       { id: "daily-work-repay-approval", type: "报销截图", title: "审批通过页", front: "截图只露出“审批通过”，没有付款状态和收款账户。", detail: "审批通过不等于钱已到账。", targets: ["truthWithGap"], contradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。" },
       { id: "daily-work-repay-chat", type: "群聊原话", title: "署名和垫款", front: "“你先顶上，复盘材料里可以写你主责。”", detail: "表现机会和资金风险被放在同一句话里。", targets: ["sceneHint"], contradiction: "垫付款被包装成项目署名机会，资金风险被弱化。" },
       { id: "daily-work-repay-vendor", type: "报价单", title: "服务协调费", front: "礼品报价里出现服务协调费，供应商群里提到返款给对接人。", detail: "返款流向决定这事是慢报销，还是有人截住入口。", targets: ["truthWithGap"], contradiction: "同事同时控制报销入口和供应商返款入口。" }
+    ],
+    evidenceChecks: [
+      {
+        id: "work-approval-missing",
+        title: "审批截图检视",
+        prompt: "这张审批图最该让对方补哪一页？",
+        material: "截图只露出“审批通过”。下面没有付款状态，也没有收款账户。",
+        options: [
+          { label: "付款状态和收款账户", correct: true, contradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。", feedback: "审批通过不是到账，缺的这一页才决定钱去了哪里。", routeAxis: "document-edge" },
+          { label: "活动现场照片", correct: false, feedback: "活动办没办不是当前缺口，钱有没有打出去才是。", routeAxis: "outer-thread" },
+          { label: "老板有没有看到复盘", correct: false, feedback: "复盘能证明署名，证明不了垫付款有没有回。", routeAxis: "identity-wording" }
+        ]
+      }
     ],
     deepFollowup: {
       question: "那我多问一句，如果今天不只是钱没回来，你最怕这件事在公司里被说成什么？",

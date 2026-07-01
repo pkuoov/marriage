@@ -33,6 +33,7 @@ export const baseState = {
   sceneAnswers: {},
   sceneQuestionPicks: {},
   sceneDialoguePicks: {},
+  evidenceCheckPicks: {},
   routeChoiceLog: {},
   caseBudgets: {},
   caseActionLog: {},
@@ -73,6 +74,7 @@ export function migrateState(saved) {
   if (!next.sceneAnswers || Array.isArray(next.sceneAnswers)) next.sceneAnswers = {};
   if (!next.sceneQuestionPicks || Array.isArray(next.sceneQuestionPicks)) next.sceneQuestionPicks = {};
   if (!next.sceneDialoguePicks || Array.isArray(next.sceneDialoguePicks)) next.sceneDialoguePicks = {};
+  if (!next.evidenceCheckPicks || Array.isArray(next.evidenceCheckPicks)) next.evidenceCheckPicks = {};
   if (!next.routeChoiceLog || Array.isArray(next.routeChoiceLog)) next.routeChoiceLog = {};
   if (!next.caseBudgets || Array.isArray(next.caseBudgets)) next.caseBudgets = {};
   if (!next.caseActionLog || Array.isArray(next.caseActionLog)) next.caseActionLog = {};
@@ -83,6 +85,7 @@ export function migrateState(saved) {
   if (!("lastReaction" in next)) next.lastReaction = null;
   next.sceneQuestionPicks = migrateChoiceRecord(next.sceneQuestionPicks);
   next.sceneDialoguePicks = migrateChoiceListRecord(next.sceneDialoguePicks);
+  next.evidenceCheckPicks = migrateChoiceRecord(next.evidenceCheckPicks);
   next.routeChoiceLog = migrateChoiceListRecord(next.routeChoiceLog);
   next.caseMode = normalizeCaseMode(next.caseMode);
   if (next.caseBriefs.length && !validCaseBriefCount(next.caseBriefs.length)) {

@@ -60,6 +60,19 @@ function extractFlow(brief, key) {
       }))
     })),
     evidenceCards: brief.evidenceCards ?? [],
+    evidenceChecks: (brief.evidenceChecks ?? []).map((check, index) => ({
+      id: `evidence-${index + 1}`,
+      title: check.title ?? "",
+      prompt: check.prompt ?? "",
+      material: check.material ?? "",
+      options: (check.options ?? []).map((option, optionIndex) => ({
+        id: `evidence-${index + 1}-q${optionIndex + 1}`,
+        label: option.label ?? "",
+        feedback: option.feedback ?? "",
+        contradiction: option.contradiction ?? "",
+        correct: Boolean(option.correct)
+      }))
+    })),
     deepFollowup: brief.deepFollowup ?? null,
     stageJudgement: brief.stageJudgement ?? "",
     followupTwist: brief.followupTwist ?? "",
@@ -114,6 +127,12 @@ function validateFlow(flow) {
       check(Boolean(option.answer), "CHOICE_FEEDBACK", `${option.id} 必须有反馈。`);
     });
   });
+  check(flow.evidenceChecks.length >= 1, "EVIDENCE_CHECK", "每案必须有材料检视节点，不能只有口述追问。");
+  flow.evidenceChecks.forEach((evidenceCheck) => {
+    check(evidenceCheck.material && evidenceCheck.prompt, "EVIDENCE_CHECK_COPY", `${evidenceCheck.id} 必须有材料文本和指出问题。`);
+    check(evidenceCheck.options.some((option) => option.correct), "EVIDENCE_CHECK_HIT", `${evidenceCheck.id} 必须有正确指出项。`);
+    check(evidenceCheck.options.some((option) => !option.correct), "EVIDENCE_CHECK_MISS", `${evidenceCheck.id} 必须有误指项，才能消耗听众忍耐。`);
+  });
   check(!revealsFinalAnswerTooEarly(openingText), "NO_EARLY_SPOILER", "开场不能直接说出最终责任或答案。");
   check(hasQuestionPathToContradiction(playerQuestions, allAnswers, sceneText), "QUESTION_TO_CLUE", "玩家追问必须能自然导向矛盾，而不是凭空揭示。");
   check(Boolean(flow.deepFollowup?.question && flow.deepFollowup?.answer), "DEEP_FOLLOWUP", "精选集单案必须有满格后的单句深入追问和咨询者回答。");
@@ -146,6 +165,12 @@ function flattenText(flow) {
       ...scene.options.flatMap((option) => [option.question, option.answer, option.contradiction])
     ]),
     ...flow.evidenceCards.flatMap((card) => [card.title, card.front, card.detail, card.contradiction]),
+    ...flow.evidenceChecks.flatMap((check) => [
+      check.title,
+      check.prompt,
+      check.material,
+      ...check.options.flatMap((option) => [option.label, option.feedback, option.contradiction])
+    ]),
     flow.deepFollowup?.question,
     flow.deepFollowup?.answer,
     flow.deepFollowup?.note,
@@ -377,6 +402,16 @@ function renderReport(entries) {
       });
       lines.push("");
     });
+    lines.push("Evidence checks:");
+    entry.flow.evidenceChecks.forEach((check) => {
+      lines.push(`- ${check.id} ${check.title}: ${check.prompt}`);
+      lines.push(`  - material: ${check.material}`);
+      check.options.forEach((option) => {
+        lines.push(`  - ${option.correct ? "hit" : "miss"}: ${option.label}`);
+        lines.push(`    - feedback: ${option.feedback}`);
+      });
+    });
+    lines.push("");
     lines.push("Deep follow-up:");
     if (entry.flow.deepFollowup) {
       lines.push(`- 你: ${entry.flow.deepFollowup.question}`);

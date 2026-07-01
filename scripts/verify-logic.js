@@ -66,6 +66,10 @@ test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage brid
 test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   assertIncludes(appSource, "sceneQuestionChoicesHtml", "当前节点追问必须走统一面板，避免上下两个孤立单选组");
+  assertIncludes(appSource, "renderEvidenceCheck", "追问结束后必须保留材料检视阶段，避免玩法退回纯问答");
+  assertIncludes(appSource, "evidenceCheckPicks", "材料检视选择必须进入存档和复盘状态");
+  assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
+  assertIncludes(appSource, "spend: !correct", "材料检视圈中不能消耗听众忍耐，误指才扣");
   assertIncludes(appSource, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
   assert(!appSource.includes("choice-question-${kind}"), "追问按钮不能按内部问法类型暴露不同视觉样式");
   const oldKickerClass = `${"choice"}-${"kicker"}`;
@@ -109,7 +113,7 @@ test("EPISODE-001", "story pack contains four deterministic live-call cases with
   assert(validCaseBriefCount(a.length), "四案数量必须被存档校验接受");
   assertEqual(a.map((brief) => brief.id).join("|"), b.map((brief) => brief.id).join("|"), "同一个 storyKey 必须生成同一组故事");
   assertEqual(a.map((brief) => brief.plotId).join("|"), legacy.map((brief) => brief.plotId).join("|"), "旧 weeklyKey 必须兼容同一组故事");
-  assertEqual(a.map((brief) => brief.plotId).join("|"), "lost-job-hidden-credit|house-name-security-test|education-income-fake-profile|workplace-reimbursement-screenshot", "四案故事集必须按体面、一家人、条件、主责递进");
+  assertEqual(a.map((brief) => brief.plotId).join("|"), "lost-job-hidden-credit|tony-multi-dating|education-income-fake-profile|workplace-reimbursement-screenshot", "四案故事集必须按体面、自己人、条件、主责递进");
   assertEqual(new Set(a.map((brief) => brief.plotId)).size, 4, "四案故事集不能重复题材");
   a.forEach((brief, index) => {
     assertEqual(brief.caseMode, "episode", `第 ${index + 1} 案必须标记 episode`);
@@ -125,6 +129,12 @@ test("EPISODE-001", "story pack contains four deterministic live-call cases with
     assert(!/故事集|第[一二三四1234]\s*案|[1-4]\/4|体面|一家人|条件|主责/.test(`${brief.modeLabel} ${brief.storyArcTitle} ${brief.storyCaseLabel}`), "案内可见标题不能像目录或剧透标签");
     assert(brief.sceneVersions.length >= 5 && brief.sceneVersions.length <= 6, `第 ${index + 1} 案必须是 5-6 段来电`);
     assert(brief.sceneVersions.every((scene) => (scene.questionOptions ?? []).length === 2), `第 ${index + 1} 案每段必须只有两个主播追问`);
+    assert((brief.evidenceChecks ?? []).length >= 1, `第 ${index + 1} 案必须有材料检视节点，不能只有口述二选一`);
+    (brief.evidenceChecks ?? []).forEach((check, checkIndex) => {
+      assert(check.material && check.prompt, `第 ${index + 1} 案第 ${checkIndex + 1} 个材料检视必须有材料文本和问题`);
+      assert((check.options ?? []).some((option) => option.correct), `第 ${index + 1} 案第 ${checkIndex + 1} 个材料检视必须有正确指出项`);
+      assert((check.options ?? []).some((option) => !option.correct), `第 ${index + 1} 案第 ${checkIndex + 1} 个材料检视必须有误指项`);
+    });
     brief.sceneVersions.forEach((scene, sceneIndex) => {
       const normal = (scene.questionOptions ?? []).filter((option) => !option.contradiction);
       const critical = (scene.questionOptions ?? []).filter((option) => option.contradiction);
@@ -153,7 +163,7 @@ test("EPISODE-001B", "each demo case exposes the caller's self-serving omission"
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const expectedOmissions = {
     "lost-job-hidden-credit": ["撑不住场面", "自己其实很吃那种体面"],
-    "house-name-security-test": ["最好能有个位置", "我没有直接说出来"],
+    "tony-multi-dating": ["自己人", "没逼他说清楚"],
     "education-income-fake-profile": ["我自己也不是特别宽裕", "我嘴上说家里想看稳定"],
     "workplace-reimbursement-screenshot": ["我也确实想要这个主责", "我先跟老板说"]
   };
@@ -176,7 +186,7 @@ test("EPISODE-001C", "demo story pack bridges form a four-act escalation", () =>
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const expectedBridgeMarkers = [
     ["账单"],
-    ["房", "家里"],
+    ["店", "表"],
     ["资料图"],
     ["公司", "截图"]
   ];
@@ -194,6 +204,7 @@ test("DAILY-001", "daily case count and structural fields stay complete", () => 
   assert(brief.dailyCase === true, "每日案必须标记 dailyCase");
   assert(brief.sceneVersions.length >= 2, "每日案必须有可追问 sceneVersions");
   assert(brief.evidenceCards.length >= 3, "每日案必须有 evidenceCards");
+  assert((brief.evidenceChecks ?? []).length >= 1, "每日案必须有可操作的材料检视节点");
   assert(brief.deepFollowup?.question, "每日案必须有满格后的深问");
   assert(requiredContradictionsForCase(brief) >= 1, "每日案必须保留可判断的矛盾门槛");
 });

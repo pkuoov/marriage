@@ -866,6 +866,53 @@ button:active:not(:disabled) {
   background: rgba(255, 255, 255, .042);
 }
 
+.evidence-check-card,
+.evidence-result-card {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 13px 14px;
+  border: 1px solid rgba(237, 241, 238, .13);
+  border-radius: 10px;
+  background: rgba(8, 15, 15, .42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .045);
+}
+
+.evidence-check-card span,
+.evidence-result-card span {
+  color: rgba(139, 228, 212, .88);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.evidence-check-card p,
+.evidence-result-card p {
+  margin: 0;
+  color: rgba(237, 241, 238, .80);
+  font-size: 15px;
+  line-height: 1.72;
+}
+
+.evidence-result-card b {
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.evidence-result-card.hit {
+  border-color: rgba(101, 214, 194, .30);
+  background: rgba(101, 214, 194, .07);
+}
+
+.evidence-result-card.miss {
+  border-color: rgba(239, 138, 117, .32);
+  background: rgba(239, 138, 117, .065);
+}
+
+.evidence-result-card.miss span {
+  color: rgba(255, 177, 157, .92);
+}
+
 .choice-review {
   margin: 14px 0;
   padding: 12px;
