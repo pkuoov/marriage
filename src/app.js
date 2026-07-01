@@ -421,7 +421,7 @@ function renderSolved(brief) {
         <div class="recap-score-head"><span>这通收住</span><em>${escapeHtml(rank)}</em></div>
         <div class="recap-score-main">
           <b>${Number(issue.percent ?? 0)}</b>
-          <span>% 麦里留下的味道</span>
+          <span>% 话头收住</span>
         </div>
         <div class="recap-score-grid">
           <span><b>${issue.revealed.length ? "有东西" : "刚起味"}</b><small>这轮听感</small></span>
@@ -440,8 +440,8 @@ function renderSolved(brief) {
       </section>
     `,
     `
-      <p><b>刚才浮上来的</b></p>
-      <p>${issue.revealed.length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮先闻到味儿了，评论区还会继续吵。"}</p>
+      <p><b>台面上的话</b></p>
+      <p>${issue.revealed.length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮只听到表层，评论区还会继续吵。"}</p>
     `,
     `
       <p><b>主播收话</b></p>
@@ -584,7 +584,7 @@ function renderStoryPackComplete() {
     showCaseHud: false,
     text: `
       <p><b>今晚收麦</b></p>
-      <p>几通麦都收进来了。你这一晚最常走的是：${escapeHtml(displayBest.label)}。</p>
+      <p>今晚四通都挂断了。你这一路最常盯的是：${escapeHtml(displayBest.label)}。</p>
       <section class="share-result-card">
         <div class="share-card-head"><span>${escapeHtml(theme.title)}</span><em>${escapeHtml(displayBest.label)}</em></div>
         <div class="share-player-type">
@@ -605,7 +605,7 @@ function renderStoryPackComplete() {
           <span>评论区审判墙</span>
           ${comments.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
         </div>
-        <small>同样一晚，不同主播会走出不同问法：有人先信来电人，有人先拆材料，有人一直盯钱流。</small>
+        <small>${escapeHtml(storyPackClosingLine(avgPercent, displayBest))}</small>
       </section>
     `,
     choices: flowGroup(`
@@ -1432,7 +1432,7 @@ function dailyConclusion(brief, result, issue) {
   }
 
   return {
-    summary: issue.revealed.length ? `这轮浮上来的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，真正别扭的地方还没上桌。",
+    summary: issue.revealed.length ? `这轮摆到台面上的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，真正别扭的地方还没上桌。",
     deepQuestion: "",
     followup: issue.revealed.length ? "后续回拨里，话还没完，评论区会继续抓着没说出口的地方吵。" : brief.followupTwist ?? "",
     truth: brief.truth ?? "这案不能只按第一印象走，得看每个人少说了哪半截。"
@@ -1518,17 +1518,18 @@ function routeTrailHtml(brief) {
   if (!choices.length) return "";
   return `
     <div class="route-trail">
-      ${choices.map((item) => routeTrailItemHtml(item)).join("")}
+      ${choices.map((item) => routeTrailItemHtml(item, brief)).join("")}
     </div>
   `;
 }
 
-function routeTrailItemHtml(item) {
+function routeTrailItemHtml(item, brief = {}) {
   const label = routeAxisLabel(item.axis);
   const question = compactRouteQuestion(item.question);
+  const mark = Number(item.sceneIndex ?? 0) >= keyQuestionLimit(brief) ? "料" : Number(item.sceneIndex ?? 0) + 1;
   return `
     <span>
-      <em>${Number(item.sceneIndex ?? 0) + 1}</em>
+      <em>${escapeHtml(mark)}</em>
       <b>${escapeHtml(label)}</b>
       ${question ? `<small>${escapeHtml(question)}</small>` : ""}
     </span>
@@ -1617,6 +1618,14 @@ function storyPackAftertaste(avgPercent) {
   if (avgPercent < 40) return "今晚更多是在听热闹。";
   if (avgPercent < 65) return "有几句话浮上来了。";
   return "几条线都露了头。";
+}
+
+function storyPackClosingLine(avgPercent, best = {}) {
+  if (avgPercent >= 90) return "这晚问得紧，四通里那些省掉的钱、边界和责任都露了面。";
+  if (avgPercent < 40) return "这晚还有不少话没翻出来，适合重开一遍换条线追。";
+  if (best.axis === "document-edge") return "你这一晚总爱回头看图，看截图里少了哪一页、哪一边。";
+  if (best.axis === "money-flow") return "你这一晚总盯钱最后落到谁身上。";
+  return "这晚有几处接住了，也有几句还卡在原话里。";
 }
 
 function answerKey(brief, index) {

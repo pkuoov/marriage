@@ -70,6 +70,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "evidenceCheckPicks", "材料检视选择必须进入存档和复盘状态");
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
   assertIncludes(appSource, "spend: !correct", "材料检视圈中不能消耗听众忍耐，误指才扣");
+  assertIncludes(appSource, "storyPackClosingLine", "故事集终局小字必须按本局表现生成，不能写成玩法说明");
+  assertIncludes(appSource, ">= keyQuestionLimit(brief) ? \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
   assertIncludes(appSource, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
   assert(!appSource.includes("choice-question-${kind}"), "追问按钮不能按内部问法类型暴露不同视觉样式");
   const oldKickerClass = `${"choice"}-${"kicker"}`;
@@ -80,12 +82,16 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const oldFlowNote = `${"麦还"}${"连着"}`;
   const oldReviewTitle = `${"前文"}${"对话"}`;
   const oldReviewContext = `${"开场"}${"对话"}`;
+  const oldScoreFlavor = `${"麦里留下"}${"的味道"}`;
+  const oldEndingExplainer = `${"不同主播"}${"会走出不同问法"}`;
   assert(!appSource.includes(oldDialogueTag), "不能用设计标签解释普通问法");
   assert(!appSource.includes(oldKeyTag), "不能用设计标签解释推进问法");
   assert(!appSource.includes(oldFlowLabel), "主流程动作区不能显示解释性标题");
   assert(!appSource.includes(oldFlowNote), "主流程动作区不能显示解释性说明");
   assert(!appSource.includes(oldReviewTitle), "回看折叠入口不能使用后台整理式标题");
   assert(!appSource.includes(oldReviewContext), "回看折叠入口不能显示意义不明的开场分类");
+  assert(!appSource.includes(oldScoreFlavor), "结算分数不能使用 AI 味的抽象味道文案");
+  assert(!appSource.includes(oldEndingExplainer), "故事集终局不能把路线差异写成玩法说明");
   const oldUpperGroup = `choiceGroup("${"岔开"}${"一句"}`;
   const oldLowerGroup = `choiceGroup("${"盯住"}${"一句"}`;
   assert(!appSource.includes(oldUpperGroup), "不能恢复成上方单独一个岔开按钮组");
