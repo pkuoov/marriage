@@ -1,6 +1,6 @@
 # 未完成项目清单
 
-这份清单记录《直播间大侦探》从当前可玩原型走到 Steam 试玩版、再到正式故事集发版还缺什么。它不是灵感池，而是每轮继续优化前要先看的工作台。
+这份清单记录《直播间大侦探》从当前可玩原型走到 Steam 试玩版、再到正式章节式案件包发版还缺什么。它不是灵感池，而是每轮继续优化前要先看的工作台。
 
 ## 当前唯一优化主线
 
@@ -22,6 +22,7 @@
 - 材料检视已改成材料板内圈点：文件行、可圈区域、命中/误指圈痕都在同一个台面里，不再是正文段落加普通按钮。
 - 账单、表格、截图、审批流已经有不同材料版式，不再共用同一种文字材料卡。
 - 案后私信回流最小版已接入：每案有固定 `investigationHooks`，触发自已听到的矛盾，复用材料操作台并在路线图标成“回”。
+- 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 
 ## P0：试玩版必须补齐
 
@@ -54,7 +55,7 @@
 ### 内容包数据化
 
 - 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 目前只是策划压力包，不是运行时台词来源。每个 case JSON 必须显式写 `runtimeContentStatus: "metadata-only"`，`npm run verify:pack` 会阻止它们伪装成已接通的内容包。
-- 当前四案仍写在 `src/caseEngine.js`。
+- 当前 demo 包四案仍写在 `src/caseEngine.js`。
 - 第一层故事包骨架已经拆到 `content/packs/steam-demo-01/`，并用 `src/storyPacks.js` 给运行时读取。
 - 当前完整台词仍写在 `src/caseEngine.js`；下一步要继续把每案完整字段迁移到内容包。
 - 新增或替换一个案子仍要同时碰 `src/caseEngine.js`、`src/dailyChoices.js`、`src/storyPacks.js`、`content/packs/...`，以及 `src/app.js` 里的若干 `plotId` 文案分支。这是内容扩量前最高优先级的架构债。
@@ -79,7 +80,7 @@ content/packs/steam-demo-01/
 
 - 改故事集顺序、主题和压力系统不改 `src/app.js`。
 - `runtimeContentStatus` 从 `metadata-only` 切到 `runtime-loaded` 以后，JSON 必须包含完整 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup`、收麦和复盘字段，并由运行时读取。
-- `npm run verify:pack` 能单独检查四案结构和运行时定义一致性。
+- `npm run verify:pack` 能单独检查当前案件包结构和运行时定义一致性。
 - 新故事包可以新增目录接入；正式迁移后完整台词也不再写在 `src/caseEngine.js`。
 
 ### 运行时拆分

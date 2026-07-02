@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.39";
+import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.40";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
@@ -50,21 +50,23 @@ const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes
 test("PACK-001", "manifest matches runtime story pack definition", () => {
   assert(runtimePack, `运行时故事包不存在: ${packId}`);
   assertEqual(manifest.id, packId, "manifest id 必须等于包 id");
-  assertEqual(manifest.size, 4, "试玩故事包必须是四案");
+  assert(Number(manifest.size) >= 1, "故事包至少要有一案");
+  assertEqual(manifest.size, runtimePack.size, "manifest size 必须和运行时定义一致");
   assertDeepEqual(manifest.theme, runtimePack.theme, "manifest theme 必须和运行时定义一致");
   assertDeepEqual(manifest.caseLabels, runtimePack.caseLabels, "manifest caseLabels 必须和运行时定义一致");
   assertDeepEqual(manifest.sequence, runtimePack.sequence, "manifest sequence 必须和运行时定义一致");
 });
 
-test("PACK-002", "manifest keeps four distinct playable cases", () => {
+test("PACK-002", "manifest keeps distinct playable cases", () => {
   assertEqual(manifest.sequence.length, manifest.size, "sequence 数量必须等于 size");
+  assertEqual((manifest.caseLabels ?? []).length, manifest.size, "caseLabels 数量必须等于 size");
   assertEqual(new Set(manifest.sequence.map((item) => item.caseId)).size, manifest.size, "caseId 不能重复");
   assertEqual(new Set(manifest.sequence.map((item) => item.plotId)).size, manifest.size, "plotId 不能重复");
   manifest.sequence.forEach((item, index) => {
     ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "bridge"].forEach((field) => {
       assert(item[field], `第 ${index + 1} 案缺少 ${field}`);
     });
-    assert(!/下一案|第[一二三四1234]\s*案|[1-4]\/4/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);
+    assert(!/下一案|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);
   });
 });
 
@@ -100,7 +102,7 @@ test("PACK-003", "case pressure packets are complete", () => {
 
 test("PACK-004", "comments and route archetypes are present", () => {
   assertEqual(comments.themeId, manifest.theme.id, "comments themeId 必须和 manifest theme 对齐");
-  assert((comments.commentSeeds ?? []).length >= 4, "评论种子至少四条");
+  assert((comments.commentSeeds ?? []).length >= Math.min(4, manifest.size), "评论种子数量要覆盖当前故事包规模");
   const archetypes = routeArchetypes.archetypes ?? [];
   ["money-flow", "document-edge", "caller-credibility", "process-control", "identity-wording"].forEach((axis) => {
     assert(archetypes.some((item) => item.id === axis), `路线原型缺少 ${axis}`);

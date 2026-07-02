@@ -219,7 +219,7 @@ function buildAbstraction(conflictTypes, countermeasures, talkTracks) {
     conflict: conflictTypes[0] ?? "关系叙事争议",
     countermeasure: countermeasures[0] ?? "事实核验",
     talkTrack: talkTracks[0] ?? "第一版叙事",
-    storyPackUse: "转写为四案故事集候选短案，不保留真实人物和完整案情。"
+    storyPackUse: "转写为案件包候选短案，不保留真实人物和完整案情。"
   };
 }
 

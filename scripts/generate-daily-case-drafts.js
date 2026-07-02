@@ -77,7 +77,7 @@ function buildDraft(cards, index) {
       originalityGuard: "合成后必须换人物、换关系阶段、换材料触发、换金额和推进顺序；不能让任何单一来源还原出原案。"
     },
     singleCallerContract: [
-      "单案只有主播和一个匿名咨询者在直播间，可作为四案故事集的一通来电。",
+      "单案只有主播和一个匿名咨询者在直播间，可作为案件包里的一通来电。",
       "sceneVersions 必须全部由咨询者说出，满格 deepFollowup.answer 也必须是咨询者第一人称回答。",
       "另一方只能作为咨询者转述、聊天截图、录音、账单、合同或第三方匿名留言出现。",
       "材料不能自己当说话人；不要写“后台账单”“回拨新情况”“主播记事”直接插入流程。"
@@ -206,7 +206,7 @@ function writerRoomPassesForTheme(theme) {
   return [
     {
       role: "Showrunner Agent",
-      pass: "检查本集主题是否能穿过四案，不靠性别对立制造热度。"
+      pass: "检查本集主题是否能穿过当前案件包，不靠性别对立制造热度。"
     },
     {
       role: "Case Writer Agent",

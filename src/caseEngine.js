@@ -1,5 +1,5 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.39";
-import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.39";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.40";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.40";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -177,7 +177,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
   const storyKey = options.storyKey ?? options.packKey ?? options.weeklyKey ?? DEFAULT_STORY_PACK_KEY;
   const storyPack = storyPackForKey(storyKey);
   const theme = storyPack.theme;
-  const pickedSpecs = storyPack.sequence.slice(0, storyPack.size ?? storyPack.sequence.length);
+  const pickedSpecs = storyPack.sequence.slice(0, storyPackCaseCount(storyPack));
   return pickedSpecs.map((spec, index) => {
     const brief = generateDailyCaseSequence(npcs, attrs, {
       ...options,

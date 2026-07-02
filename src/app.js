@@ -1,16 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.39";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.39";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.39";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.39";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.39";
-import { NPCS } from "./story.js?v=0.20.39";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.39";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.39";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.39";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.39";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.39";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.39";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.39";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.40";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.40";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.40";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.40";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.40";
+import { NPCS } from "./story.js?v=0.20.40";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.40";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.40";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.40";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.40";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.40";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.40";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.40";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -1588,7 +1588,7 @@ function audiencePatienceHud(brief) {
 }
 
 function storyPackSummaryHud() {
-  const total = state.caseBriefs?.length || 4;
+  const total = state.caseBriefs?.length || 1;
   const solved = state.caseBriefs?.filter((brief) => state.solvedCaseIds?.includes(brief.id)).length ?? total;
   return `
     <div class="weekly-summary-visual">

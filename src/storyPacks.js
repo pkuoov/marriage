@@ -68,3 +68,10 @@ export const STORY_PACKS = {
 export function storyPackForKey(storyKey) {
   return STORY_PACKS[storyKey] ?? STORY_PACKS[DEFAULT_STORY_PACK_KEY];
 }
+
+export function storyPackCaseCount(storyPack) {
+  const sequenceLength = storyPack?.sequence?.length ?? 0;
+  const requestedSize = Number(storyPack?.size ?? sequenceLength);
+  if (!Number.isFinite(requestedSize) || requestedSize <= 0) return sequenceLength;
+  return Math.min(sequenceLength, Math.max(1, Math.floor(requestedSize)));
+}

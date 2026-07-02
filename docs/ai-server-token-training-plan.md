@@ -26,7 +26,7 @@ Steam 客户端
 
 这些必须本地完成：
 
-- 四案故事集主流程。
+- 案件包主流程。
 - 按钮式询问和关键追问。
 - 回看。
 - 结算。
@@ -102,7 +102,7 @@ POST /v1/admin/eval-routing
 单次输入：600-1200 tokens
 单次输出：80-180 tokens
 单案自由追问上限：10-20 次
-四案故事集自由追问上限：40-60 次
+当前四案 demo 自由追问上限：40-60 次；正式案件包按案数线性调整
 首发默认体验目标：本地 matcher 解决 60%-80% 请求
 远程 AI 实际调用目标：每个完整故事集 10-25 次
 ```
@@ -116,7 +116,7 @@ POST /v1/admin/eval-routing
 ```text
 per-scene: 每个 scene 最多 2 次远程 AI
 per-case: 每案最多 8-12 次远程 AI
-per-run: 四案故事集最多 25-30 次远程 AI
+per-run: 当前四案 demo 最多 25-30 次远程 AI；正式案件包按案数设上限
 ```
 
 超过后：
@@ -284,7 +284,7 @@ OpenAI fine-tuning 是可选能力，不应作为第一阶段依赖。官方 fin
   blocked 3 条
 ```
 
-四案故事集通常 20-24 个 scene，测试集约 600-800 条。
+当前四案 demo 通常 20-24 个 scene，测试集约 600-800 条；正式案件包按 scene 数扩缩。
 
 验收线：
 
@@ -337,4 +337,3 @@ advanceScene 是否符合 kind
 - OpenAI API key 安全建议要求不要把 key 暴露在客户端环境：https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety
 - OpenAI pricing 需要按上线日期重新核算：https://platform.openai.com/docs/pricing
 - OpenAI fine-tuning 可以作为后期选择，但不是第一版必需：https://platform.openai.com/docs/guides/fine-tuning
-

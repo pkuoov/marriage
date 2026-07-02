@@ -33,11 +33,11 @@ AI 可以接，但不能让 AI 直接生成事实和分支。Steam demo 的核�
 
 ## 当前工程优点
 
-- `episode` 已经成为默认主模式，四案故事集方向清楚。
-- `caseModes.js` 把故事集和单案兼容入口分开，后续能继续收敛。
+- `episode` 已经成为默认主模式，方向是章节式案件包；当前 demo 是四案，但架构不应依赖四案。
+- `caseModes.js` 把案件包和单案兼容入口分开，后续能继续收敛。
 - `platformRuntime.js` 已经开始抽象 Steam / 微信 / Web 的平台差异。
 - `verify-logic.js` 和 `verify-narrative-flow.js` 已经覆盖剧情结构、匿名规则、无废选项、路线轴、事实链等关键规则。
-- `docs/weekly-livestream-design-bible.md` 已经把四案故事集、价值观、玩法循环、内容生产管线写清楚。
+- `docs/weekly-livestream-design-bible.md` 已经把案件包、价值观、玩法循环、内容生产管线写清楚。
 - 现在的静态构建可以离线跑，符合 Steam demo 需要稳定可复现的基本方向。
 
 ## Steam 标准下的主要缺口
@@ -48,7 +48,7 @@ AI 可以接，但不能让 AI 直接生成事实和分支。Steam demo 的核�
 
 - `src/caseEngine.js` 仍然承担大量内容模板和生成逻辑。
 - 内容包还没有落到 `content/packs/<pack-id>/`。
-- 未来每次发四案故事集时，改内容会碰运行时代码，风险太高。
+- 未来每次发章节式案件包时，改内容会碰运行时代码，风险太高。
 
 建议结构：
 
@@ -222,7 +222,7 @@ npm run verify:pack steam-demo-01
 - 每案有 caller hidden stake。
 - 每案有 dramatic object。
 - 最终原话来自前文。
-- 四案故事集有起承转合桥接。
+- 案件包有起承转合或等价的章节递进桥接，不限定必须四案。
 
 ## 官方资料约束
 
@@ -243,7 +243,7 @@ npm run verify:pack steam-demo-01
 ### 阶段 B：内容包落地
 
 - 新建 `content/packs/steam-demo-01/manifest.json`。
-- 把四案从 `caseEngine.js` 抽成 JSON。
+- 把当前 demo 包案件从 `caseEngine.js` 抽成 JSON；loader 必须支持非四案包。
 - `caseEngine.js` 只负责兼容旧 daily 和加载 pack。
 - 给 pack 加独立校验脚本。
 

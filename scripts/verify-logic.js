@@ -1,17 +1,18 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.39";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.39";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.39";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.39";
-import { migrateState } from "../src/state.js?v=0.20.39";
-import { NPCS } from "../src/story.js?v=0.20.39";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.39";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.39";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.39";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.39";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.39";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.39";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.39";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.39";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.40";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.40";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.40";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.40";
+import { migrateState } from "../src/state.js?v=0.20.40";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.40";
+import { NPCS } from "../src/story.js?v=0.20.40";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.40";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.40";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.40";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.40";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.40";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.40";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.40";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.40";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -57,11 +58,14 @@ function dailyCase(key, options = {}) {
 }
 
 test("MODE-001", "unknown modes normalize to episode while daily stays available", () => {
-  assertEqual(normalizeCaseMode("unknown-mode"), "episode", "未知模式必须归一到四案故事集");
-  assertEqual(normalizeCaseMode("weekly"), "episode", "旧 weekly 链接必须迁移到四案故事集");
-  assertEqual(caseModeConfig("episode").expectedCases, 4, "四案故事集必须包含四案");
+  const demoCaseCount = storyPackCaseCount(storyPackForKey(DEFAULT_STORY_PACK_KEY));
+  assertEqual(normalizeCaseMode("unknown-mode"), "episode", "未知模式必须归一到案件包");
+  assertEqual(normalizeCaseMode("weekly"), "episode", "旧 weekly 链接必须迁移到案件包");
+  assertEqual(caseModeConfig("episode").minCases, 1, "案件包模式必须允许章节包长度由内容决定");
+  assert(validCaseBriefCount(3, "episode"), "案件包模式不能把三案章节误判为坏存档");
+  assert(!validCaseBriefCount(3, "daily"), "单案兼容入口仍然只能保留一案");
   assertEqual(caseModeConfig("daily").expectedCases, 1, "每日案必须只有一案");
-  assertEqual(generateCasesForMode("unknown-mode", NPCS, attrs, { dailyKey: "2026-06-24" }).length, 4, "未知模式入口必须回落到四案故事集");
+  assertEqual(generateCasesForMode("unknown-mode", NPCS, attrs, { dailyKey: "2026-06-24" }).length, demoCaseCount, "未知模式入口必须回落到当前默认案件包");
 });
 
 test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage bridge", () => {
@@ -251,28 +255,30 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(stylesSource, ".title-console-strip", "标题页必须有直播状态条样式");
 });
 
-test("EPISODE-001", "story pack contains four deterministic live-call cases with one spine", () => {
+test("EPISODE-001", "story pack contains deterministic live-call cases with one spine", () => {
+  const demoPack = storyPackForKey("steam-demo-01");
+  const demoCaseCount = storyPackCaseCount(demoPack);
   const a = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const b = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const legacy = generateCasesForMode("weekly", NPCS, attrs, { weeklyKey: "steam-demo-01" });
-  assertEqual(a.length, 4, "四案故事集必须生成四案");
-  assert(validCaseBriefCount(a.length), "四案数量必须被存档校验接受");
+  assertEqual(a.length, demoCaseCount, "故事包必须按 manifest size 生成案件");
+  assert(validCaseBriefCount(a.length, "episode"), "故事包案件数量必须被 episode 存档校验接受");
   assertEqual(a.map((brief) => brief.id).join("|"), b.map((brief) => brief.id).join("|"), "同一个 storyKey 必须生成同一组故事");
   assertEqual(a.map((brief) => brief.plotId).join("|"), legacy.map((brief) => brief.plotId).join("|"), "旧 weeklyKey 必须兼容同一组故事");
-  assertEqual(a.map((brief) => brief.plotId).join("|"), "lost-job-hidden-credit|tony-multi-dating|education-income-fake-profile|workplace-reimbursement-screenshot", "四案故事集必须按体面、自己人、条件、主责递进");
-  assertEqual(new Set(a.map((brief) => brief.plotId)).size, 4, "四案故事集不能重复题材");
+  assertEqual(a.map((brief) => brief.plotId).join("|"), "lost-job-hidden-credit|tony-multi-dating|education-income-fake-profile|workplace-reimbursement-screenshot", "当前 demo 包必须按体面、自己人、条件、主责递进");
+  assertEqual(new Set(a.map((brief) => brief.plotId)).size, demoCaseCount, "当前 demo 包不能重复题材");
   a.forEach((brief, index) => {
     assertEqual(brief.caseMode, "episode", `第 ${index + 1} 案必须标记 episode`);
     assertEqual(brief.order, index + 1, `第 ${index + 1} 案顺序必须稳定`);
     assertEqual(brief.modeLabel, "试玩连线", "故事包案内模式标签不能暴露目录包装");
     assertEqual(brief.storyArcTitle, "热线连线", "故事包案内眉题不能显示案名或进度");
     assertEqual(brief.storyCaseLabel, "匿名来电", "故事包通话 HUD 不能提前显示案名");
-    assert(brief.storyThemeTitle && brief.storyThemeIntro && brief.storyThemeThesis, "四案故事集必须携带主题、开场引子和主题论点");
+    assert(brief.storyThemeTitle && brief.storyThemeIntro && brief.storyThemeThesis, "故事包必须携带主题、开场引子和主题论点");
     const preachyOpeningBits = [`${"这些词"}${"都不坏"}`, `${"坏的是"}`, `${"四通来电"}${"放在一起看"}`, `${"四通"}${"匿名来电"}`, `${"四案"}${"故事集"}`];
     assert(!preachyOpeningBits.some((phrase) => brief.storyThemeIntro.includes(phrase)), "故事集开场引子不能先下主题判断");
-    assert(brief.storyThemeCommentPrompt, "四案故事集必须携带评论区提示");
+    assert(brief.storyThemeCommentPrompt, "故事包必须携带评论区提示");
     assert(brief.storyAct && brief.storyBridge, "每案必须有整集里的功能和桥接句");
-    assert(!/故事集|第[一二三四1234]\s*案|[1-4]\/4|体面|一家人|条件|主责/.test(`${brief.modeLabel} ${brief.storyArcTitle} ${brief.storyCaseLabel}`), "案内可见标题不能像目录或剧透标签");
+    assert(!/故事集|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+|体面|一家人|条件|主责/.test(`${brief.modeLabel} ${brief.storyArcTitle} ${brief.storyCaseLabel}`), "案内可见标题不能像目录或剧透标签");
     assert(brief.sceneVersions.length >= 5 && brief.sceneVersions.length <= 6, `第 ${index + 1} 案必须是 5-6 段来电`);
     assert(brief.sceneVersions.every((scene) => (scene.questionOptions ?? []).length === 2), `第 ${index + 1} 案每段必须只有两个主播追问`);
     assert((brief.evidenceChecks ?? []).length >= 1, `第 ${index + 1} 案必须有材料检视节点，不能只有口述二选一`);
@@ -289,7 +295,7 @@ test("EPISODE-001", "story pack contains four deterministic live-call cases with
     });
     assertEqual(dailyAccusationChoices(brief).length, 4, `第 ${index + 1} 案最终必须给四句原话`);
   });
-  assertIncludes(a[0].storyThemeTitle, "好听的身份", "四案故事集必须共享同一主题");
+  assertIncludes(a[0].storyThemeTitle, "好听的身份", "当前 demo 包必须共享同一主题");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   assertIncludes(appSource, "storyThemeIntro", "标题页必须优先使用故事集开场引子，而不是主题论点");
   assert(!/const hook = storyPack \? preview\?\.storyThemeThesis/.test(appSource), "标题页不能直接把主题论点当开场 hook");
@@ -366,7 +372,7 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
 
 test("DAILY-001", "daily case count and structural fields stay complete", () => {
   const brief = dailyCase("2026-06-24");
-  assert(validCaseBriefCount(1), "有效连线数量只能是每日一案");
+  assert(validCaseBriefCount(1, "daily"), "每日入口有效连线数量只能是一案");
   assert(brief.dailyCase === true, "每日案必须标记 dailyCase");
   assert(brief.sceneVersions.length >= 2, "每日案必须有可追问 sceneVersions");
   assert(brief.evidenceCards.length >= 3, "每日案必须有 evidenceCards");
@@ -645,7 +651,7 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
     caseBriefs: generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-06-24" }),
     settings: { textSpeed: "fast" }
   });
-  assertEqual(migrated.caseMode, "episode", "未知旧模式必须迁移为四案故事集入口");
+  assertEqual(migrated.caseMode, "episode", "未知旧模式必须迁移为案件包入口");
   assertEqual(migrated.settings.textSpeed, "fast", "存档迁移必须保留文本速度设置");
   assertEqual(migrated.settings.contentWarningAccepted, false, "存档迁移必须补内容警示默认值");
   assertEqual(migrated.saveSlot, "slot1", "存档迁移必须补默认存档槽");
@@ -756,8 +762,15 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
     caseBriefs: generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
   });
   assertEqual(episodeMigrated.caseMode, "episode", "旧 weekly 存档模式必须迁移为 episode");
-  assertEqual(episodeMigrated.caseBriefs.length, 4, "四案故事集存档必须保留四案");
+  assertEqual(episodeMigrated.caseBriefs.length, storyPackCaseCount(storyPackForKey("steam-demo-01")), "当前 demo 包存档必须保留 manifest 指定的案件数");
   assertEqual(episodeMigrated.caseBriefs[0].modeLabel, "试玩连线", "故事包案必须迁移为不剧透的模式标签");
+
+  const variableEpisodeMigrated = migrateState({
+    caseMode: "episode",
+    chapter: 2,
+    caseBriefs: generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" }).slice(0, 3)
+  });
+  assertEqual(variableEpisodeMigrated.caseBriefs.length, 3, "episode 存档不能再把三案章节包当成坏存档清掉");
 });
 
 test("RUNTIME-001", "case outcome records daily recap rhythm without visible score systems", () => {

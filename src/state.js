@@ -1,5 +1,5 @@
-import { platformRuntime } from "./platformRuntime.js?v=0.20.39";
-import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.39";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.40";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.40";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
@@ -7,13 +7,13 @@ const LEGACY_STORAGE_KEY = "marriage-detective-agency-save-v1";
 const LEGACY_META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
 
 export const CHARACTER_ART = {
-  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.39",
-  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.39",
-  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.39",
-  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.39",
-  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.39",
-  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.39",
-  he: "./assets/generated/characters/he_neutral.png?v=0.20.39"
+  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.40",
+  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.40",
+  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.40",
+  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.40",
+  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.40",
+  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.40",
+  he: "./assets/generated/characters/he_neutral.png?v=0.20.40"
 };
 
 export const baseState = {
@@ -91,7 +91,7 @@ export function migrateState(saved) {
   next.investigationPicks = migrateChoiceRecord(next.investigationPicks);
   next.routeChoiceLog = migrateChoiceListRecord(next.routeChoiceLog);
   next.caseMode = normalizeCaseMode(next.caseMode);
-  if (next.caseBriefs.length && !validCaseBriefCount(next.caseBriefs.length)) {
+  if (next.caseBriefs.length && !validCaseBriefCount(next.caseBriefs.length, next.caseMode)) {
     next.screen = "title";
     next.caseBrief = null;
     next.caseBriefs = [];
