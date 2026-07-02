@@ -22,29 +22,32 @@ const browserStorage = {
   }
 };
 
+const desktopBridge = globalThis.livestreamDetectiveDesktop ?? null;
 const steamBridge = globalThis.livestreamDetectiveSteam ?? globalThis.marriageDetectiveSteam ?? null;
+const nativeBridge = steamBridge ?? desktopBridge;
 const wechatMiniProgram = globalThis.wx?.miniProgram ?? null;
 const isWechatBrowser = /MicroMessenger/i.test(globalThis.navigator?.userAgent ?? "");
 const isWechatMiniProgramWebView = Boolean(wechatMiniProgram) || globalThis.__wxjs_environment === "miniprogram";
 
 export const platformRuntime = {
-  id: steamBridge ? "steam" : isWechatBrowser ? "wechat-webview" : "web",
-  storage: steamBridge?.storage ?? browserStorage,
+  id: steamBridge ? "steam" : desktopBridge ? "desktop" : isWechatBrowser ? "wechat-webview" : "web",
+  storage: nativeBridge?.storage ?? browserStorage,
+  saveFiles: nativeBridge?.saveFiles ?? null,
   postMessage(data) {
-    if (typeof steamBridge?.postMessage === "function") {
-      steamBridge.postMessage(data);
+    if (typeof nativeBridge?.postMessage === "function") {
+      nativeBridge.postMessage(data);
       return;
     }
     if (isWechatMiniProgramWebView) {
       wechatMiniProgram?.postMessage?.({ data });
     }
   },
-  achievements: steamBridge?.achievements ?? {
+  achievements: nativeBridge?.achievements ?? {
     unlock() {},
     setStat() {}
   },
-  cloud: steamBridge?.cloud ?? {
-    enabled: Boolean(steamBridge),
+  cloud: nativeBridge?.cloud ?? {
+    enabled: Boolean(nativeBridge),
     syncNow() {}
   },
   wechat: {

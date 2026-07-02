@@ -23,7 +23,7 @@
 - `episode` 已开始支持可变案数：当前 demo 包是四案，但存档迁移、包校验和生成器不再把 4 当成引擎规则。
 - 内容包 manifest 元数据已生成到 `src/generated/contentPackIndex.js` 并由运行时读取；`src/storyPacks.js` 不再手写 demo 包镜像。
 - 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`；试玩包四案已切到 `runtime-loaded` 并由内容包覆盖模板字段。
-- Web 存档已拆出 `src/platform/saveStore.js`，当前保持单槽 localStorage 行为，后续桌面壳可替换成文件存档和 Steam Cloud 导出。
+- 存档已拆出 `src/platform/saveStore.js`：Web 保持单槽 localStorage，桌面壳可通过 `platformRuntime.saveFiles` 接文件存档和 Steam Cloud 导出。
 - 路线轴、路线语气和路线画像已拆到 `src/runtime/routeLog.js`，`caseEngine` 不再维护第二套路线推断。
 - 每案加入材料检视节点，玩家要指出账单、截图、表格或审批图里的具体缺口；关键追问和材料命中不扣听众忍耐，外围绕问或误指材料才扣。
 - 材料检视已升级为材料板内圈点：玩家在文件行、候选圈点和命中/误指圈痕之间完成动作，不再只是读文字后点普通选项。
@@ -48,6 +48,6 @@
 下一步优先级：
 
 - 只推进一条玩法主线：继续打磨资料操作模型，让圈点反馈、证据回流、回看记录更像直播间后台动作。
-- 资料操作、现场压力和收麦回看第一层已稳定；下一步按技术债支撑顺序推进：接桌面文件版 `saveStore`，再做 Steam Input / 手柄和桌面壳；残余内容特判继续数据化。
+- 资料操作、现场压力和收麦回看第一层已稳定；下一步按技术债支撑顺序推进：做真实桌面壳和 preload 文件实现，再做 Steam Input / 手柄；残余内容特判继续数据化。
 - 内容包管线仍是 P0 架构债：manifest 和 loader 入口已接运行时生成索引，试玩包四案已从 JSON 读取完整内容，事实边界已进入回看交互并影响最终收话。下一步把弹幕种子、故事集余味和残余 `plotId` 文案特判继续数据化。
 - AI 只保留为后期受控 intent router，不进入当前实现队列。

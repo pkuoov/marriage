@@ -132,11 +132,12 @@ Steam 版建议：
 
 平台层需要提供：
 
-- `saveStore.read(slotId)`
-- `saveStore.write(slotId, payload)`
-- `saveStore.list()`
-- `saveStore.delete(slotId)`
-- `saveStore.exportForCloud()`
+- `platformRuntime.saveFiles.read(key)`
+- `platformRuntime.saveFiles.write(key, payload)`
+- `platformRuntime.saveFiles.remove(key)`
+- `platformRuntime.saveFiles.list()`
+- `platformRuntime.saveFiles.exportForCloud(keys)`
+- 游戏运行时继续通过 `saveStore.read/write/removeMany/list/exportForCloud` 调用，不直接碰文件系统。
 
 Web 可以继续用 `localStorage`，Steam 桌面壳应该写文件，以便接 Steam Cloud。
 
@@ -250,8 +251,8 @@ npm run verify:pack steam-demo-01
 ### 阶段 C：Steam 桌面壳
 
 - 选择 Electron 或 Tauri。当前静态 H5 结构更适合先用 Electron 快速验证。
-- `platformRuntime` 接桌面 preload bridge。
-- 存档改为文件存储，Web 继续用 `localStorage` fallback。
+- `platformRuntime` 接桌面 preload bridge，并暴露 `saveFiles`。
+- 存档通过 `saveFiles` 写文件，Web 继续用 `localStorage` fallback。
 - 建立 Steam demo 构建目录。
 
 ### 阶段 D：输入和 QA

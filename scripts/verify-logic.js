@@ -1,21 +1,21 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.62";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.62";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.62";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.62";
-import { migrateState } from "../src/state.js?v=0.20.62";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.62";
-import { NPCS } from "../src/story.js?v=0.20.62";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.62";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.62";
-import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.62";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.62";
-import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.62";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.62";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.62";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.62";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.62";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.62";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.62";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.63";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.63";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.63";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.63";
+import { migrateState } from "../src/state.js?v=0.20.63";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.63";
+import { NPCS } from "../src/story.js?v=0.20.63";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.63";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.63";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.63";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.63";
+import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.63";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.63";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.63";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.63";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.63";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.63";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.63";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -73,6 +73,7 @@ test("MODE-001", "unknown modes normalize to episode while daily stays available
 
 test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage bridge", () => {
   assertEqual(typeof platformRuntime.postMessage, "function", "platformRuntime 必须提供顶层 postMessage，供收麦分享调用");
+  assert("saveFiles" in platformRuntime, "platformRuntime 必须暴露桌面文件存档桥入口");
   platformRuntime.postMessage({ type: "test-message" });
 });
 
@@ -95,6 +96,33 @@ test("PLATFORM-002", "save store wraps storage for future desktop saves", () => 
   assertEqual(cloud.missing, null, "cloud export 对缺失 key 必须保持 null，便于桌面壳判断");
   store.removeMany(["new-save", "legacy-save"]);
   assertEqual(store.read("new-save", ["legacy-save"]), null, "removeMany 必须同时清理当前和旧存档 key");
+  const fileMemory = new Map([["desktop-save", "file-old"]]);
+  const touchedStorage = [];
+  const fileStore = createSaveStore({
+    storage: {
+      get: (key) => {
+        touchedStorage.push(key);
+        return null;
+      },
+      set: (key) => touchedStorage.push(`set:${key}`),
+      remove: (key) => touchedStorage.push(`remove:${key}`)
+    },
+    saveFiles: {
+      read: (key) => fileMemory.has(key) ? fileMemory.get(key) : undefined,
+      write: (key, value) => fileMemory.set(key, value),
+      remove: (key) => fileMemory.delete(key),
+      list: () => [{ slotId: "slot1", backend: "file" }],
+      exportForCloud: (keys) => Object.fromEntries(keys.map((key) => [key, fileMemory.get(key) ?? null]))
+    }
+  });
+  assertEqual(fileStore.read("desktop-save"), "file-old", "桌面文件桥存在时必须优先读取文件存档");
+  fileStore.write("desktop-save", "file-new");
+  assertEqual(fileMemory.get("desktop-save"), "file-new", "桌面文件桥存在时必须写入文件存档");
+  assertEqual(fileStore.list()[0].backend, "file", "存档列表必须能来自桌面文件桥");
+  assertEqual(fileStore.exportForCloud(["desktop-save"])["desktop-save"], "file-new", "Steam Cloud 导出必须能委托给桌面文件桥");
+  fileStore.remove("desktop-save");
+  assertEqual(fileStore.read("desktop-save"), null, "桌面文件桥缺失值必须归一成 null");
+  assertEqual(touchedStorage.length, 0, "桌面文件桥存在时不能再落回 localStorage");
 });
 
 test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outside app rendering", () => {
