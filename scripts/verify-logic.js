@@ -318,6 +318,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "sceneIndex >= keyQuestionLimit(brief) ? \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
   assertIncludes(appSource, "sceneIndex >= investigationRouteIndexBase(brief) ? \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
   assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
+  assert(!appSource.includes("\"lost-job-hidden-credit\": `账单摊开以后"), "案间收束句必须来自内容包 storyInterludeRecap，不能留 app.js plotId 映射");
   assertIncludes(appSource, "storyInterludeObjectLabel", "案间过渡必须用物件钩子接下一通，减少目录感");
   assert(!appSource.includes("\"tony-multi-dating\": \"表格\""), "案间物件名必须来自内容包 sequence.objectLabel，不能留 app.js plotId 映射");
   assert(!appSource.includes("\"workplace-reimbursement-screenshot\": \"公司那边也来了截图"), "案间桥接句必须来自内容包 sequence.bridge，不能留 app.js plotId 映射");
@@ -475,7 +476,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
     const preachyOpeningBits = [`${"这些词"}${"都不坏"}`, `${"坏的是"}`, `${"四通来电"}${"放在一起看"}`, `${"四通"}${"匿名来电"}`, `${"四案"}${"故事集"}`];
     assert(!preachyOpeningBits.some((phrase) => brief.storyThemeIntro.includes(phrase)), "故事集开场引子不能先下主题判断");
     assert(brief.storyThemeCommentPrompt, "故事包必须携带评论区提示");
-    assert(brief.storyAct && brief.storyBridge && brief.storyObjectLabel, "每案必须有整集里的功能、物件名和桥接句");
+    assert(brief.storyAct && brief.storyBridge && brief.storyObjectLabel && brief.storyInterludeRecap, "每案必须有整集里的功能、物件名、桥接句和案间收束句");
     assert(!/故事集|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+|体面|一家人|条件|主责/.test(`${brief.modeLabel} ${brief.storyArcTitle} ${brief.storyCaseLabel}`), "案内可见标题不能像目录或剧透标签");
     assert(brief.sceneVersions.length >= 5 && brief.sceneVersions.length <= 6, `第 ${index + 1} 案必须是 5-6 段来电`);
     assert(brief.sceneVersions.every((scene) => (scene.questionOptions ?? []).length === 2), `第 ${index + 1} 案每段必须只有两个主播追问`);

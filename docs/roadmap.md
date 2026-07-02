@@ -24,6 +24,7 @@
 - 内容包 manifest 元数据已生成到 `src/generated/contentPackIndex.js` 并由运行时读取；`src/storyPacks.js` 不再手写 demo 包镜像。
 - 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`；试玩包四案已切到 `runtime-loaded` 并由内容包覆盖模板字段。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，减少 `app.js` 的 `plotId` 文案映射。
+- 案间上一通收束句已迁入每案 JSON 的 `storyInterludeRecap`，`app.js` 不再按 `plotId` 维护这组文案。
 - 存档已拆出 `src/platform/saveStore.js`：Web 保持单槽 localStorage，桌面壳可通过 `platformRuntime.saveFiles` 接文件存档和 Steam Cloud 导出。
 - 路线轴、路线语气和路线画像已拆到 `src/runtime/routeLog.js`，`caseEngine` 不再维护第二套路线推断。
 - 每案加入材料检视节点，玩家要指出账单、截图、表格或审批图里的具体缺口；关键追问和材料命中不扣听众忍耐，外围绕问或误指材料才扣。

@@ -269,14 +269,8 @@ function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude 
   const backflowLine = backflow.line ? backflow.line : "";
   if (percent < 50) return `${interlude.summary ?? "刚才那通挂得早，弹幕还在翻开场那句。"}${backflowLine}`;
   const routeLabel = route.label ? `你刚才一直压着${route.label}问。` : "";
-  const lines = {
-    "lost-job-hidden-credit": `账单摊开以后，那句“挡几天”已经不是原来的意思。${routeLabel}${backflowLine}`,
-    "tony-multi-dating": `那张表一露，甜话就不只是在谈感情。${routeLabel}${backflowLine}`,
-    "education-income-fake-profile": `资料图是真的，没放出来的那几栏也是真的。${routeLabel}${backflowLine}`,
-    "workplace-reimbursement-screenshot": `审批截图能堵住一句质问，堵不住钱去了哪里。${routeLabel}${backflowLine}`,
-    "house-name-security-test": `房本和还贷分成两套话以后，“一家人”就没那么好用了。${routeLabel}${backflowLine}`
-  };
-  return lines[brief.plotId] ?? interlude.summary ?? (backflowLine || "这边刚挂，后台又亮了。");
+  const recap = brief.storyInterludeRecap ?? brief.weeklyInterludeRecap ?? interlude.summary;
+  return recap ? `${recap}${routeLabel}${backflowLine}` : (backflowLine || "这边刚挂，后台又亮了。");
 }
 
 function storyInterludeObjectLabel(brief = {}) {
