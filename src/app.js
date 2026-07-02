@@ -1,16 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.41";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.41";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.41";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.41";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.41";
-import { NPCS } from "./story.js?v=0.20.41";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.41";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.41";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.41";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.41";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.41";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.41";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.41";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.42";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.42";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.42";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.42";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.42";
+import { NPCS } from "./story.js?v=0.20.42";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.42";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.42";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.42";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.42";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.42";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.42";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.42";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -24,6 +24,34 @@ document.addEventListener("click", (event) => {
   if (!button || button.disabled) return;
   if (button.dataset.action === "sound") return;
   playSfx(button.classList.contains("primary") || button.dataset.accuse ? "confirm" : "click");
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.defaultPrevented || keyEventInTextInput(event)) return;
+  const key = event.key;
+  if (key === "Enter" || key === " ") {
+    const button = document.activeElement?.matches?.("button") ? document.activeElement : preferredDefaultButton();
+    if (!button) return;
+    event.preventDefault();
+    activateButton(button);
+    return;
+  }
+  if (["ArrowDown", "ArrowRight", "s", "S", "d", "D"].includes(key)) {
+    event.preventDefault();
+    moveButtonFocus(1);
+    return;
+  }
+  if (["ArrowUp", "ArrowLeft", "w", "W", "a", "A"].includes(key)) {
+    event.preventDefault();
+    moveButtonFocus(-1);
+    return;
+  }
+  if (key === "Escape") {
+    const backButton = preferredBackButton();
+    if (!backButton) return;
+    event.preventDefault();
+    activateButton(backButton);
+  }
 });
 
 function normalizeDailyState(saved) {
@@ -175,6 +203,7 @@ function renderTitle() {
     </main>
   `;
   bind("[data-start-story]", startStoryPack);
+  queueDefaultFocus();
 }
 
 function renderDailyCase() {
@@ -764,6 +793,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
     toggleSound();
     render();
   });
+  queueDefaultFocus();
 }
 
 function caseBackdropClass(brief = {}) {
@@ -875,6 +905,63 @@ function bindChoiceActivation(selector, handler) {
       handler(element);
     });
   });
+}
+
+function queueDefaultFocus() {
+  requestAnimationFrame(() => setupDefaultFocus());
+}
+
+function setupDefaultFocus() {
+  focusButton(preferredDefaultButton());
+}
+
+function preferredDefaultButton() {
+  return app?.querySelector(
+    ".choices button.primary:not(:disabled), .choices button[data-primary='true']:not(:disabled), .choices button:not(:disabled), .title-actions button:not(:disabled), .topbar button:not(:disabled)"
+  ) ?? null;
+}
+
+function preferredBackButton() {
+  return app?.querySelector('[data-action="title"]:not(:disabled), [data-retry-case]:not(:disabled)') ?? null;
+}
+
+function moveButtonFocus(direction) {
+  const buttons = focusableButtons();
+  if (!buttons.length) return;
+  const currentIndex = buttons.indexOf(document.activeElement);
+  const nextIndex = currentIndex >= 0
+    ? (currentIndex + direction + buttons.length) % buttons.length
+    : direction > 0 ? 0 : buttons.length - 1;
+  focusButton(buttons[nextIndex]);
+}
+
+function focusableButtons() {
+  return Array.from(app?.querySelectorAll("button:not(:disabled)") ?? []).filter(isVisibleElement);
+}
+
+function isVisibleElement(element) {
+  const rect = element.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0;
+}
+
+function focusButton(button) {
+  if (!button) return;
+  try {
+    button.focus({ preventScroll: true });
+  } catch {
+    button.focus();
+  }
+}
+
+function activateButton(button) {
+  if (!button || button.disabled) return;
+  button.click();
+}
+
+function keyEventInTextInput(event) {
+  const target = event.target;
+  const tagName = target?.tagName;
+  return target?.isContentEditable || tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT";
 }
 
 function bindSceneButtons() {
