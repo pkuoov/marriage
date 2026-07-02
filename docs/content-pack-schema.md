@@ -1,6 +1,6 @@
 # 内容包 Schema
 
-内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前已经接通 manifest 运行时索引和单案 JSON loader；`steam-demo-01` 前两案已切到 `runtime-loaded`，其余案件仍保留在 `src/caseEngine.js`，按案逐步迁移。
+内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前已经接通 manifest 运行时索引和单案 JSON loader；`steam-demo-01` 前三案已切到 `runtime-loaded`，其余案件仍保留在 `src/caseEngine.js`，按案逐步迁移。
 
 ## 目录
 

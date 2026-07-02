@@ -605,7 +605,304 @@ export const CONTENT_CASES = {
     "03-profile": {
       "caseId": "03-profile",
       "plotId": "education-income-fake-profile",
-      "runtimeContentStatus": "metadata-only"
+      "runtimeContentStatus": "runtime-loaded",
+      "label": "存款证明",
+      "storyArcTitle": "今日来电：存款证明",
+      "publicHook": "见父母前，他发来学校、工作、收入截图，还补了一张存款证明。图不一定假，但这顿饭还没吃，流水已经被问出来了。",
+      "storyArcSummary": "材料会越要越细，男方有话没说全，女方也有话没跟家里说。",
+      "storySuspense": "几张图都挺像真的，问题是它们刚好少了最容易吵起来的部分。",
+      "storyClueObject": "几张资料截图和一张存款证明",
+      "openingComplaint": "咨询者连线说：“我想问下我男朋友的事。我们是相亲认识的，最近聊到见父母，他发了学校、工作、收入截图，后面又补了一张存款证明。我越看越觉得，这事不是一张图的问题。”",
+      "openingDialogue": [
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "主播你好，我想问下我男朋友的事。",
+          "mood": "thinking"
+        },
+        {
+          "speaker": "你",
+          "role": "host",
+          "text": "晚上好。你们怎么认识的，现在聊到哪一步了？",
+          "mood": "listening"
+        },
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "我们是相亲认识的，最近聊到见父母。我之前跟家里说过他名校毕业、条件不错，所以我妈问得比我想象中细。",
+          "mood": "thinking"
+        }
+      ],
+      "scene": {
+        "name": "直播连线"
+      },
+      "sceneVersions": [
+        {
+          "speakerId": "lin",
+          "speaker": "咨询者",
+          "version": "我一开始也觉得，我妈只是怕我吃亏。可还没正式见父母，就问到学校、收入、存款，后来又问流水，我自己都觉得这个尺度不太像普通见家长。",
+          "doubt": "见面前问到流水，这个尺度已经不太像普通寒暄。",
+          "contradiction": "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。",
+          "reliability": "mixed",
+          "questionOptions": [
+            {
+              "question": "这些截图是什么时候发的，发之前你们怎么说到材料的？",
+              "answer": "我没敢直接说“你把截图发来”。是我妈一直说见面前得摸清楚，我夹在中间，只能含糊跟他说：我妈可能会问学校和收入，让他别被问住。第二天他就把几张图发来了。",
+              "contradiction": "女方家在见面前就开始核对择偶条件。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "trust-but-verify"
+            },
+            {
+              "question": "问到流水的时候，你有没有拦过？",
+              "answer": "有。我还跟我妈说，第一次见面就问存款和流水不太好听。可她说我已经把话说在前面了，现在不问，饭桌上更尴尬。",
+              "correct": false,
+              "routeAxis": "caller-credibility",
+              "routeTone": "caller-skeptical"
+            }
+          ]
+        },
+        {
+          "speakerId": "lin",
+          "speaker": "咨询者",
+          "version": "还有个细节我前面没说。介绍人一开始就把他讲得挺好，说“学校好、收入稳、家里也省心”。我后来跟家里说的时候，也顺着这个版本说下去了。",
+          "doubt": "这个好看版本不是男方一个人说出来的。",
+          "contradiction": "介绍人、男方和咨询者都参与放大了体面标签，完整信息被层层修剪。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "这个好看的版本，是他一个人说出来的吗？",
+              "answer": "不全是。介绍人先夸了一层，我跟家里复述时也又好听了一层。他自己也没把 MBA、本科和收入构成一次说清。",
+              "contradiction": "体面标签被介绍人、男方和咨询者共同放大。",
+              "correct": true,
+              "routeAxis": "identity-wording",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "你后来为什么没有跟家里改口？",
+              "answer": "我前面已经说他条件不错了，后面再改口，就像我自己也没看清。",
+              "correct": false,
+              "routeAxis": "caller-credibility",
+              "routeTone": "caller-skeptical"
+            }
+          ]
+        },
+        {
+          "speakerId": "lin",
+          "speaker": "咨询者",
+          "version": "后来我细问才发现，他说的名校毕业不是全假，但具体是读过一个名校 MBA 项目。他之前本科很普通，这段他一开始没主动说。",
+          "doubt": "名校这句有真东西，但别人听到的可能是另一层意思。",
+          "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "那张学校图少了哪一边，少的是本科、项目还是学制？",
+              "answer": "图上的校名和项目是真的。可他一直说名校毕业，细问才说是 MBA；别人很容易听成本科一路名校。至于本科、项目性质、学制这些，都是后来才补出来的。",
+              "contradiction": "男方用真标签保留了别人误会的空间。",
+              "correct": true,
+              "routeAxis": "identity-wording",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "你知道本科之后，跟家里说了吗？",
+              "answer": "没有。我只说他学校那边确实是真的。因为我前面已经把“名校毕业”讲得很好听了，再补一句本科很普通，我怕我妈立刻变脸。",
+              "correct": false,
+              "routeAxis": "caller-credibility",
+              "routeTone": "detour"
+            }
+          ]
+        },
+        {
+          "speakerId": "lin",
+          "speaker": "咨询者",
+          "version": "我开始不踏实，是因为他口头收入说得不错，可平时花销看起来对不上。他不是没钱那种，但特别会算，约会也经常把便宜说成会过日子。",
+          "doubt": "收入截图是一回事，平时钱怎么花又是另一回事。",
+          "contradiction": "男方声称收入和日常花销不匹配，咨询者才把存款证明追成流水和真实收入。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "你问流水，是想确认他到底赚多少？",
+              "answer": "是。我嘴上说家里想看稳定，其实我自己也想知道。他到底是收入没那么高，还是钱花到别处去了。",
+              "contradiction": "咨询者追流水不只是求安心，也在确认真实收入和婚后钱怎么落地。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "哪次花销让你觉得不对？",
+              "answer": "有次他说这个月奖金刚到，结果吃饭时又反复算团购券，还提醒我停车费能不能 AA。不是不能 AA，是和他说的收入状态放一起有点别扭。",
+              "correct": false,
+              "routeAxis": "money-flow",
+              "routeTone": "detour"
+            }
+          ]
+        },
+        {
+          "speakerId": "lin",
+          "speaker": "咨询者",
+          "version": "他后来反问我：“再问下去，是不是工资卡也要交出来？”我当时没接住。可我妈确实说过一句：结婚以后钱最好放一起管。她的意思是，如果他收入真不错，婚后至少工资要透明，甚至要上交一部分。",
+          "doubt": "问流水这件事，已经快碰到婚后钱怎么管了。",
+          "contradiction": "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "这句你有没有转给他？",
+              "answer": "没有。我只说我妈想确认稳定。要是直接把“以后钱最好放一起管”这句话说出来，这顿饭大概就不用吃了。",
+              "contradiction": "咨询者把工资管理的要求包装成了确认稳定。",
+              "correct": true,
+              "routeAxis": "caller-credibility",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "那他拒绝流水是不是就一定心虚？",
+              "answer": "也不一定。见父母前就问到流水和工资怎么管，换谁都会不舒服。可是我确实想知道，他说的收入能不能落到以后的小家里。",
+              "correct": false,
+              "routeAxis": "money-flow",
+              "routeTone": "softening"
+            }
+          ]
+        }
+      ],
+      "explicitClueGroups": [
+        [
+          "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。",
+          "咨询者也知道材料尺度过细，但被自己先前的高预期绑住。"
+        ],
+        [
+          "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
+          "咨询者知道学历标签有落差后，也没有把完整信息告诉家里。",
+          "多份材料同时避开择偶定位核心。"
+        ],
+        [
+          "男方声称收入和日常花销、抠门细节不匹配。",
+          "咨询者借父母的口，想摸清男方真实收入和钱流向。",
+          "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
+          "咨询者把工资管理的要求包装成了确认稳定。"
+        ]
+      ],
+      "evidenceCards": [
+        {
+          "id": "daily-profile-scale",
+          "type": "聊天原话",
+          "title": "见面前的问题",
+          "front": "学校、工作、收入、存款、流水都被提前问到。",
+          "detail": "饭还没吃，条件已经先筛了一轮。",
+          "targets": [
+            "truthWithGap"
+          ],
+          "contradiction": "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。"
+        },
+        {
+          "id": "daily-profile-mba",
+          "type": "学历材料",
+          "title": "名校毕业",
+          "front": "细问才知道是 MBA 项目，本科学历没有一起说。",
+          "detail": "真标签也能制造过度想象。",
+          "targets": [
+            "halfLie"
+          ],
+          "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。"
+        },
+        {
+          "id": "daily-profile-spending",
+          "type": "消费细节",
+          "title": "收入和花销",
+          "front": "口头收入不错，日常小钱却反复算。",
+          "detail": "抠门不等于没钱，但会让收入叙事变得别扭。",
+          "targets": [
+            "truthWithGap",
+            "sceneHint"
+          ],
+          "contradiction": "男方声称收入和日常花销、抠门细节不匹配。"
+        },
+        {
+          "id": "daily-profile-flow",
+          "type": "聊天原话",
+          "title": "流水和工资卡",
+          "front": "对方反问：再问下去，是不是工资卡也要交出来？",
+          "detail": "这句刺中女方家没有说出口的工资管理预设。",
+          "targets": [
+            "sceneHint"
+          ],
+          "contradiction": "流水追问背后藏着婚后工资透明和上交工资的预设。"
+        }
+      ],
+      "evidenceChecks": [
+        {
+          "id": "profile-mba-gap",
+          "title": "学历材料检视",
+          "prompt": "学校图里最该追哪一块？",
+          "material": "截图能看到校名和 MBA 项目，但本科、项目性质和学制没有放在一起。",
+          "options": [
+            {
+              "label": "本科、项目性质和学制",
+              "correct": true,
+              "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
+              "feedback": "图不一定假，但少的这一块会让“名校毕业”变成另一种听法。",
+              "routeAxis": "identity-wording"
+            },
+            {
+              "label": "截图像不像修过",
+              "correct": false,
+              "feedback": "现在的问题不是修图，而是真标签只露了好听的那一面。",
+              "routeAxis": "document-edge"
+            },
+            {
+              "label": "介绍人有没有夸张",
+              "correct": false,
+              "feedback": "介绍人是前因，这张图上要先看少了哪一边。",
+              "routeAxis": "caller-credibility"
+            }
+          ]
+        }
+      ],
+      "investigationHooks": [
+        {
+          "id": "profile-family-chat-backflow",
+          "source": "dm",
+          "surface": "有人补了一张图",
+          "title": "家里群截图",
+          "triggerContradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
+          "appearsNowBecause": "收麦后，咨询者补了一页家里群截图，说这页她刚才没敢念。",
+          "prompt": "这页家里群里，哪一句最该留下？",
+          "material": "她妈妈发的是：“学历先这样说，后面主要看收入流水。要是真稳定，婚后工资最好放一起管。”",
+          "proves": "学历只是入口，家里真正追的是收入和婚后工资管理。",
+          "stillCannotProve": "不能证明男方资料全假，也不能证明女方只是拜金。",
+          "routeAxis": "external-corroboration",
+          "options": [
+            {
+              "label": "后面主要看收入流水",
+              "correct": true,
+              "contradiction": "学历追问只是入口，家里真正盯的是收入流水和婚后工资管理。",
+              "feedback": "这页把女方家没说出口的筛选目的补出来了。",
+              "routeAxis": "external-corroboration"
+            },
+            {
+              "label": "学历先这样说",
+              "correct": false,
+              "feedback": "这句有用，但它只是过门，后面那句才接到真实诉求。",
+              "routeAxis": "identity-wording"
+            },
+            {
+              "label": "工资最好放一起管",
+              "correct": false,
+              "feedback": "这句很刺耳，但单圈它会跳过前面为什么一路追流水。",
+              "routeAxis": "money-flow"
+            }
+          ]
+        }
+      ],
+      "deepFollowup": {
+        "question": "那我多问一句，你自己的家庭经济状况怎么样？你自己一个月工资多少，够花吗？",
+        "answer": "我自己也不是特别宽裕，所以我才更在意他收入到底落不落地。我嘴上说家里想看稳定，其实我也想知道以后这笔钱是不是能进小家。",
+        "note": "问到这里，资料真假还在桌上，她自己最在意的钱也上桌了。"
+      },
+      "stageJudgement": "男方不是整套假资料，MBA、收入、存款都有真东西；女方也不只是求个安心，她想看的其实是以后这笔收入能不能进小家。",
+      "followupTwist": "后续回拨里，咨询者补了一句，她妈原话其实是“以后钱最好放一起管”。这下流水就不只是证明题了。",
+      "dailyShareTitle": "存款证明都发了，怎么反而更怪？",
+      "dailyShareBody": "今晚最该吵的是：他不是全假，她也不只是求安心，流水后面已经碰到工资怎么管。",
+      "dailyShareQuestion": "你听完会觉得是包装，是筛选，还是两边都在试探婚后的钱？",
+      "truth": "男方给的不是白纸黑字的假图，但他说法留了很大的想象空间。女方发现学历和收入都有落差后，也没有跟家里讲全，还借家里的口继续问流水。两边都把难听的话包起来了。"
     },
     "04-workplace": {
       "caseId": "04-workplace",

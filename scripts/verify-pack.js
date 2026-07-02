@@ -2,8 +2,8 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.48";
-import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.48";
+import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.49";
+import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.49";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
