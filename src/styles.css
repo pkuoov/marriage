@@ -504,31 +504,31 @@ button:active:not(:disabled) {
 .backdrop-credit {
   background:
     linear-gradient(180deg, rgba(24, 42, 54, .14), rgba(7, 11, 16, .56)),
-    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.43") center / cover;
+    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.44") center / cover;
 }
 
 .backdrop-house {
   background:
     linear-gradient(180deg, rgba(38, 38, 25, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.43") center / cover;
+    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.44") center / cover;
 }
 
 .backdrop-profile {
   background:
     linear-gradient(180deg, rgba(39, 28, 34, .15), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.43") center / cover;
+    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.44") center / cover;
 }
 
 .backdrop-work {
   background:
     linear-gradient(180deg, rgba(22, 38, 36, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/agency_office.png?v=0.20.43") center / cover;
+    url("../assets/generated/backgrounds/agency_office.png?v=0.20.44") center / cover;
 }
 
 .backdrop-tony {
   background:
     linear-gradient(180deg, rgba(32, 32, 42, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.43") center / cover;
+    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.44") center / cover;
 }
 
 .scene-label {

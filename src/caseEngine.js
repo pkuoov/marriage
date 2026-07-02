@@ -1,5 +1,6 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.43";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.43";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.44";
+import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.44";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.44";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -179,13 +180,20 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
   const theme = storyPack.theme;
   const pickedSpecs = storyPack.sequence.slice(0, storyPackCaseCount(storyPack));
   return pickedSpecs.map((spec, index) => {
-    const brief = generateDailyCaseSequence(npcs, attrs, {
+    const templateBrief = generateDailyCaseSequence(npcs, attrs, {
       ...options,
       dailyKey: `${storyKey}-${index + 1}`,
       plotId: spec.plotId,
       complainantId: spec.complainantId,
       respondentId: spec.respondentId
     })[0];
+    const runtimeContent = storyPackCaseContentFor(storyKey, spec.caseId);
+    const brief = applyRuntimeCaseContent(templateBrief, runtimeContent
+      ? {
+          ...runtimeContent,
+          sceneVersions: withChoiceRoutes(runtimeContent.sceneVersions ?? [])
+        }
+      : null);
     return {
       ...brief,
       id: `episode-${storyKey}-${index + 1}-${brief.plotId}`,

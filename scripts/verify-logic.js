@@ -1,19 +1,20 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.43";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.43";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.43";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.43";
-import { migrateState } from "../src/state.js?v=0.20.43";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.43";
-import { NPCS } from "../src/story.js?v=0.20.43";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.43";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.43";
-import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.43";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.43";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.43";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.43";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.43";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.43";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.43";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.44";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.44";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.44";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.44";
+import { migrateState } from "../src/state.js?v=0.20.44";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.44";
+import { NPCS } from "../src/story.js?v=0.20.44";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.44";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.44";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.44";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.44";
+import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.44";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.44";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.44";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.44";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.44";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.44";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -286,6 +287,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
 
 test("EPISODE-001", "story pack contains deterministic live-call cases with one spine", () => {
   const storyPacksSource = readFileSync(new URL("../src/storyPacks.js", import.meta.url), "utf8");
+  const contentIndexSource = readFileSync(new URL("../src/generated/contentPackIndex.js", import.meta.url), "utf8");
   const demoPack = storyPackForKey("steam-demo-01");
   const demoCaseCount = storyPackCaseCount(demoPack);
   const a = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
@@ -293,6 +295,8 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   const legacy = generateCasesForMode("weekly", NPCS, attrs, { weeklyKey: "steam-demo-01" });
   assertIncludes(storyPacksSource, "./generated/contentPackIndex.js", "故事包运行时必须读取 content 生成索引，不能再手写 manifest 镜像");
   assert(!storyPacksSource.includes("ANONYMOUS_CALL_LABELS"), "故事包标签不能在 storyPacks.js 里手写双份");
+  assertIncludes(contentIndexSource, "CONTENT_CASES", "内容索引必须包含案件运行时状态，为后续 JSON loader 留入口");
+  assertIncludes(contentIndexSource, '"runtimeContentStatus": "metadata-only"', "当前 demo 案件必须明确标记尚未接管完整台词");
   assertEqual(a.length, demoCaseCount, "故事包必须按 manifest size 生成案件");
   assert(validCaseBriefCount(a.length, "episode"), "故事包案件数量必须被 episode 存档校验接受");
   assertEqual(a.map((brief) => brief.id).join("|"), b.map((brief) => brief.id).join("|"), "同一个 storyKey 必须生成同一组故事");
@@ -341,6 +345,34 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   const modeConfigSource = readFileSync(new URL("../src/caseModes.js", import.meta.url), "utf8");
   const oldCallCountIntro = `${"四通"}${"匿名来电"}`;
   assert(!modeConfigSource.includes(oldCallCountIntro), "模式入口文案不能提前暴露通话数量");
+});
+
+test("EPISODE-003", "runtime-loaded case content can replace template fields without touching metadata-only cases", () => {
+  const templateBrief = {
+    label: "模板案",
+    openingComplaint: "模板开场",
+    sceneVersions: [{ version: "模板说法" }],
+    evidenceChecks: []
+  };
+  const metadataOnly = applyRuntimeCaseContent(templateBrief, {
+    caseId: "case-a",
+    runtimeContentStatus: RUNTIME_CASE_CONTENT_STATUS.metadataOnly,
+    openingComplaint: "不该覆盖"
+  });
+  const runtimeLoaded = applyRuntimeCaseContent(templateBrief, {
+    caseId: "case-b",
+    runtimeContentStatus: RUNTIME_CASE_CONTENT_STATUS.runtimeLoaded,
+    label: "JSON 案",
+    openingComplaint: "JSON 开场",
+    sceneVersions: [{ version: "JSON 说法" }],
+    evidenceChecks: [{ id: "json-evidence" }]
+  });
+  assertEqual(metadataOnly.openingComplaint, "模板开场", "metadata-only 案件不能覆盖模板台词");
+  assert(isRuntimeLoadedCaseContent({ runtimeContentStatus: RUNTIME_CASE_CONTENT_STATUS.runtimeLoaded }), "runtime-loaded 状态必须能被识别");
+  assertEqual(runtimeLoaded.label, "JSON 案", "runtime-loaded 案件可以覆盖标题");
+  assertEqual(runtimeLoaded.openingComplaint, "JSON 开场", "runtime-loaded 案件可以覆盖开场");
+  assertEqual(runtimeLoaded.sceneVersions[0].version, "JSON 说法", "runtime-loaded 案件可以覆盖逐段说法");
+  assertEqual(runtimeLoaded.runtimeContentSource, "content-pack-json", "runtime-loaded 覆盖后必须标记内容来源");
 });
 
 test("EPISODE-001B", "each demo case exposes the caller's self-serving omission", () => {

@@ -63,3 +63,28 @@ export const CONTENT_PACKS = {
     ]
   }
 };
+
+export const CONTENT_CASES = {
+  "steam-demo-01": {
+    "01-credit": {
+      "caseId": "01-credit",
+      "plotId": "lost-job-hidden-credit",
+      "runtimeContentStatus": "metadata-only"
+    },
+    "02-tony": {
+      "caseId": "02-tony",
+      "plotId": "tony-multi-dating",
+      "runtimeContentStatus": "metadata-only"
+    },
+    "03-profile": {
+      "caseId": "03-profile",
+      "plotId": "education-income-fake-profile",
+      "runtimeContentStatus": "metadata-only"
+    },
+    "04-workplace": {
+      "caseId": "04-workplace",
+      "plotId": "workplace-reimbursement-screenshot",
+      "runtimeContentStatus": "metadata-only"
+    }
+  }
+};
