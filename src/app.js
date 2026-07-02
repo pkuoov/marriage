@@ -19,6 +19,9 @@ const DEFAULT_ATTRS = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 
 let state = normalizeDailyState(loadState() ?? structuredClone(baseState));
 let meta = loadMeta();
+let gamepadPollingStarted = false;
+let gamepadPreviousButtons = {};
+let lastGamepadMoveAt = 0;
 
 document.addEventListener("click", (event) => {
   const button = event.target.closest("button");
@@ -54,6 +57,9 @@ document.addEventListener("keydown", (event) => {
     activateButton(backButton);
   }
 });
+
+globalThis.addEventListener?.("gamepadconnected", () => startGamepadPolling());
+startGamepadPolling();
 
 function normalizeDailyState(saved) {
   const mode = saved?.caseMode === "daily" ? "daily" : "episode";
@@ -1003,6 +1009,10 @@ function preferredBackButton() {
   return app?.querySelector('[data-action="title"]:not(:disabled), [data-retry-case]:not(:disabled)') ?? null;
 }
 
+function preferredReviewButton() {
+  return app?.querySelector('[data-recap-next]:not(:disabled), [data-after-recap]:not(:disabled)') ?? null;
+}
+
 function moveButtonFocus(direction) {
   const buttons = focusableButtons();
   if (!buttons.length) return;
@@ -1034,6 +1044,56 @@ function focusButton(button) {
 function activateButton(button) {
   if (!button || button.disabled) return;
   button.click();
+}
+
+function startGamepadPolling() {
+  if (gamepadPollingStarted) return;
+  if (typeof requestAnimationFrame !== "function") return;
+  if (typeof globalThis.navigator?.getGamepads !== "function") return;
+  gamepadPollingStarted = true;
+  requestAnimationFrame(pollGamepads);
+}
+
+function pollGamepads() {
+  const gamepad = firstActiveGamepad();
+  if (gamepad) handleGamepadInput(gamepad);
+  requestAnimationFrame(pollGamepads);
+}
+
+function firstActiveGamepad() {
+  return Array.from(globalThis.navigator?.getGamepads?.() ?? []).find((item) => item?.connected) ?? null;
+}
+
+function handleGamepadInput(gamepad) {
+  handleGamepadButton(gamepad, 0, () => {
+    const button = document.activeElement?.matches?.("button") ? document.activeElement : preferredDefaultButton();
+    activateButton(button);
+  });
+  handleGamepadButton(gamepad, 1, () => activateButton(preferredBackButton()));
+  handleGamepadButton(gamepad, 3, () => activateButton(preferredReviewButton()));
+  handleGamepadButton(gamepad, 12, () => moveButtonFocus(-1));
+  handleGamepadButton(gamepad, 13, () => moveButtonFocus(1));
+  handleGamepadButton(gamepad, 14, () => moveButtonFocus(-1));
+  handleGamepadButton(gamepad, 15, () => moveButtonFocus(1));
+  handleGamepadAxis(gamepad);
+}
+
+function handleGamepadButton(gamepad, buttonIndex, handler) {
+  const key = `${gamepad.index}:${buttonIndex}`;
+  const pressed = Boolean(gamepad.buttons?.[buttonIndex]?.pressed);
+  if (pressed && !gamepadPreviousButtons[key]) handler();
+  gamepadPreviousButtons[key] = pressed;
+}
+
+function handleGamepadAxis(gamepad) {
+  const horizontal = Number(gamepad.axes?.[0] ?? 0);
+  const vertical = Number(gamepad.axes?.[1] ?? 0);
+  const strongest = Math.abs(horizontal) > Math.abs(vertical) ? horizontal : vertical;
+  if (Math.abs(strongest) < 0.55) return;
+  const now = Date.now();
+  if (now - lastGamepadMoveAt < 220) return;
+  moveButtonFocus(strongest > 0 ? 1 : -1);
+  lastGamepadMoveAt = now;
 }
 
 function keyEventInTextInput(event) {

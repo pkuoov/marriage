@@ -30,6 +30,7 @@
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 - 存档已抽到 `src/platform/saveStore.js`：Web 仍是单槽 localStorage；桌面壳可通过 `platformRuntime.saveFiles` 提供 `read/write/remove/list/exportForCloud` 文件存档接口，后续接 Steam Cloud。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
+- 基础手柄输入已接入：标准 Gamepad API 轮询支持十字键/左摇杆移动焦点、A 确认、B 返回、Y 回看/复盘入口；下一步需要真实 Steam Deck/控制器设备 QA。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，`app.js` 不再用 `plotId` 表维护这一组文案。
@@ -57,14 +58,14 @@
 
 - 基础键盘操作已接入：方向键 / WASD 切换选项，Enter / Space 确认，Esc 返回标题或重试入口。
 - 已有默认焦点和焦点环，大 test 会校验全局键盘入口、焦点移动和渲染后默认落焦。
-- 仍需补 Steam Input / 手柄映射，以及 Tab / Y 回看这类平台快捷键。
+- 基础手柄映射已接：十字键 / 左摇杆切换选项，A 确认，B 返回，Y 回看/复盘入口。仍需补 Tab 回看，以及 Steam Deck/控制器实机手感验证。
 
 验收：
 
 - 不用鼠标也能从标题页打完第一案。
 - 每个页面只有一个清楚的默认焦点。
 - 选项、回看、重开、继续都能键盘操作。
-- 手柄 B/Y 或 Steam Input 映射完成后，再把该项从 P0 移出。
+- Steam Deck/控制器实机验证完成后，再把该项从 P0 移出。
 
 ### 内容包数据化
 
@@ -316,6 +317,6 @@ AI 问答值得做，但不能让 AI 生成事实。
 1. 资料操作模型：把材料检视从文字三选一升级为可视化圈点数据结构。
 2. 现场压力模型：第一层已接入，追问语气、材料误指和回流结果已开始共同影响听众耐心、连线人防备、弹幕跑偏。
 3. 收麦回看模型：第一层已接入，结果页已回收材料圈点、原话选择和路线画像。
-4. 再继续 P0 技术债：Electron 依赖/打包器、残余内容特判数据化、Steam Input / 手柄输入。
+4. 再继续 P0 技术债：Electron 依赖/打包器、残余内容特判数据化、Steam Deck/控制器实机 QA。
 5. 然后做桌面壳打包验收、键盘/手柄输入和内容包完整迁移。
 6. 最后再做受控自由追问和 AI router。
