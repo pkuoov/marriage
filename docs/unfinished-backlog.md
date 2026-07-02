@@ -41,17 +41,17 @@
 
 ### 桌面可玩形态
 
-- 现在已经有 `build:playable`、Windows 双击脚本、`saveStore` 抽象和桌面文件存档桥接口，但还没有真正桌面壳。
-- 需要确定 Electron / Tauri / 其他 runtime。
-- 需要文件存档、窗口/全屏、缩放、离线启动、崩溃日志。
-- Steam 试玩不能依赖本地端口，也不能最终只靠浏览器 localStorage；下一步需要实现桌面壳 preload，把 `platformRuntime.saveFiles` 接到真实文件系统。
+- 现在已经有 `build:playable`、Windows 双击脚本、`saveStore` 抽象、桌面文件存档桥接口，以及 `desktop/electron/` 桌面壳源码。
+- 已先选 Electron 骨架验证静态 H5 结构：`build:desktop` 会生成 `dist/desktop-electron`，包含 `main.cjs`、`preload.cjs`、桌面壳 `package.json` 和离线 playable。
+- 已有 preload 文件存档 IPC，运行时通过 `platformRuntime.saveFiles` 写入用户数据目录。
+- 仍需补 Electron 依赖安装、exe 打包、窗口设置细化、崩溃日志、Steam overlay/Cloud 接入和安装器。
 
 验收：
 
 - Windows 双击启动进入离线包。
 - 无网络也能进入完整试玩。
-- 存档写入本地文件，能重启恢复。
-- 构建产物里没有开发服务器依赖。
+- 存档写入本地文件，能重启恢复。当前源码和 IPC 已具备，待 Electron 运行时/打包验证。
+- 构建产物里没有开发服务器依赖。`build:desktop` 已生成离线桌面目录，待打包成 exe。
 
 ### 输入和焦点
 
@@ -113,7 +113,7 @@ content/packs/steam-demo-01/
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - `src/ui/renderSceneReview.js`
 - `src/ui/renderRecap.js`
-- `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；下一步接真实桌面 preload 文件实现。
+- `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；`desktop/electron/preload.cjs` 已接同步文件存档 IPC，下一步接 Electron 依赖和打包器。
 
 验收：
 
@@ -316,6 +316,6 @@ AI 问答值得做，但不能让 AI 生成事实。
 1. 资料操作模型：把材料检视从文字三选一升级为可视化圈点数据结构。
 2. 现场压力模型：第一层已接入，追问语气、材料误指和回流结果已开始共同影响听众耐心、连线人防备、弹幕跑偏。
 3. 收麦回看模型：第一层已接入，结果页已回收材料圈点、原话选择和路线画像。
-4. 再继续 P0 技术债：真实桌面壳/preload 文件实现、残余内容特判数据化、Steam Input / 手柄输入。
-5. 然后做桌面壳、键盘/手柄输入和内容包完整迁移。
+4. 再继续 P0 技术债：Electron 依赖/打包器、残余内容特判数据化、Steam Input / 手柄输入。
+5. 然后做桌面壳打包验收、键盘/手柄输入和内容包完整迁移。
 6. 最后再做受控自由追问和 AI router。

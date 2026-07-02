@@ -141,31 +141,40 @@ Steam 版建议：
 
 Web 可以继续用 `localStorage`，Steam 桌面壳应该写文件，以便接 Steam Cloud。
 
-### 4. Steam 壳还没有真正建立
+### 4. Steam 壳已有源码骨架，但还没打包成发行物
 
-`package.json` 目前的 `build:steam` 只是复用 `build-static.js`。这对 H5 预览够用，但 Steam 发售不够。
+`package.json` 里的 `build:steam` 现在指向 `build:desktop`。`build:desktop` 会先生成离线 playable，再生成 `dist/desktop-electron`，其中包含 Electron 主进程、preload 和桌面壳 `package.json`。
 
-建议新增桌面壳：
+当前桌面壳结构：
 
 ```text
 desktop/
   electron/
-    main.js
-    preload.js
-    steamBridge.js
-  steam_appid.txt
+    main.cjs
+    preload.cjs
+dist/
+  desktop-electron/
+    main.cjs
+    preload.cjs
+    package.json
+    playable/
 ```
 
-桌面壳至少要解决：
+已经具备：
+
+- 窗口启动离线 playable。
+- preload 暴露 `livestreamDetectiveDesktop.saveFiles`。
+- 主进程把存档写入 `app.getPath("userData")/saves`。
+
+仍需补齐：
 
 - 全屏/窗口模式。
 - 分辨率和缩放。
-- 文件存档。
 - Steam overlay 兼容。
 - 成就和统计。
 - 崩溃日志。
 - 手柄/键盘输入。
-- 离线启动。
+- Electron 依赖安装、Windows exe 打包和安装器。
 
 ### 5. 输入标准还没有按 Steam Deck / 手柄设计
 
@@ -212,7 +221,7 @@ npm run smoke:desktop
 npm run verify:pack steam-demo-01
 ```
 
-`build:playable` 生成 `dist/playable/index.html`，用于不依赖本地端口的试玩验证；`build:steam` 当前指向同一离线可玩构建。真正的 `build:desktop` 仍应在桌面壳阶段接入 Electron、Tauri 或其他 Steam runtime。
+`build:playable` 生成 `dist/playable/index.html`，用于不依赖本地端口的试玩验证；`build:desktop` 生成 `dist/desktop-electron`；`build:steam` 当前指向桌面壳构建。下一步是接 Electron 依赖和 Windows 打包器。
 
 `verify:pack` 应检查：
 
@@ -250,10 +259,10 @@ npm run verify:pack steam-demo-01
 
 ### 阶段 C：Steam 桌面壳
 
-- 选择 Electron 或 Tauri。当前静态 H5 结构更适合先用 Electron 快速验证。
-- `platformRuntime` 接桌面 preload bridge，并暴露 `saveFiles`。
+- Electron 壳源码已经建立，当前静态 H5 结构先用 Electron 快速验证。
+- `platformRuntime` 已接桌面 preload bridge，并暴露 `saveFiles`。
 - 存档通过 `saveFiles` 写文件，Web 继续用 `localStorage` fallback。
-- 建立 Steam demo 构建目录。
+- `build:desktop` 已建立 Steam demo 桌面构建目录；下一步接 Electron 依赖和打包器。
 
 ### 阶段 D：输入和 QA
 
