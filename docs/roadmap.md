@@ -24,7 +24,7 @@
 - 内容包 manifest 元数据已生成到 `src/generated/contentPackIndex.js` 并由运行时读取；`src/storyPacks.js` 不再手写 demo 包镜像。
 - 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`，将来单案切到 `runtime-loaded` 时可覆盖模板字段。
 - Web 存档已拆出 `src/platform/saveStore.js`，当前保持单槽 localStorage 行为，后续桌面壳可替换成文件存档和 Steam Cloud 导出。
-- 路线轴、路线语气和路线画像已拆到 `src/runtime/routeLog.js`，减少 `app.js` 继续膨胀。
+- 路线轴、路线语气和路线画像已拆到 `src/runtime/routeLog.js`，`caseEngine` 不再维护第二套路线推断。
 - 每案加入材料检视节点，玩家要指出账单、截图、表格或审批图里的具体缺口；关键追问和材料命中不扣听众忍耐，外围绕问或误指材料才扣。
 - 材料检视已升级为材料板内圈点：玩家在文件行、候选圈点和命中/误指圈痕之间完成动作，不再只是读文字后点普通选项。
 - 材料板已按账单、表格、截图、审批流切换不同版式，让资料操作更像直播间后台动作。

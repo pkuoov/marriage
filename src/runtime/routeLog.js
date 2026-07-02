@@ -2,7 +2,7 @@ export function normalizeRouteChoice(sceneIndex, option = {}, scene = {}) {
   return {
     sceneIndex,
     axis: option.routeAxis ?? routeAxisForChoice(option, scene),
-    tone: option.routeTone ?? routeToneForChoice(option),
+    tone: option.routeTone ?? routeToneForChoice(option, scene, sceneIndex),
     core: Boolean(option.contradiction),
     question: option.question ?? "",
     answer: option.answer ?? ""
@@ -13,7 +13,7 @@ export function routeChoicesFromPicks(picks = []) {
   return picks.map((pick, index) => normalizeRouteChoice(index, {
     ...pick,
     routeAxis: pick.routeAxis ?? routeAxisForChoice(pick),
-    routeTone: pick.routeTone ?? routeToneForChoice(pick)
+    routeTone: pick.routeTone ?? routeToneForChoice(pick, {}, index)
   }));
 }
 
@@ -53,11 +53,11 @@ export function routeAxisForChoice(option = {}, scene = {}) {
   return option.contradiction ? "core-thread" : "outer-thread";
 }
 
-export function routeToneForChoice(option = {}) {
+export function routeToneForChoice(option = {}, scene = {}, sceneIndex = null) {
   const text = `${option.question ?? ""} ${option.answer ?? ""}`;
   if (/你当时|你自己|你妈|是不是也|主动|心疼|想要|接受|表现|抢署名|先谈|起疑|绕着|不踏实|怎么接|怎么回|怎么理解|自己人|拦过|改口|为什么先答应|更慌/.test(text)) return "caller-skeptical";
   if (/有没有可能|会不会|是不是就一定|只是|正常|先只|能不能先/.test(text)) return "softening";
-  if (option.contradiction) return "pressure-point";
+  if (option.contradiction) return sceneIndex === 0 ? "trust-but-verify" : "pressure-point";
   return "detour";
 }
 

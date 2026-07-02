@@ -27,6 +27,7 @@
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案仍保持 `metadata-only`。
+- 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。
 
 ## P0：试玩版必须补齐
 
@@ -94,7 +95,7 @@ content/packs/steam-demo-01/
 
 - `src/app.js` 仍然承担渲染、状态推进、路线图、收麦、平台桥接。
 - 路线轴和路线画像纯逻辑已拆到 `src/runtime/routeLog.js`，但 HTML 复盘渲染和状态写入仍在 `src/app.js`。
-- 路由/语气推断规则仍在 `routeLog.js`、模板显式 `routeAxis`、旧存档迁移规则之间靠人工同步；下一轮拆分要把迁移和模板校验改为复用同一套 route schema。
+- 路由/语气推断规则已从 `caseEngine` 收口到 `routeLog.js`；剩余债务是旧存档迁移规则和模板校验还要继续复用同一套 route schema。
 - 短期可继续迭代，但 Steam demo 前需要拆。
 
 优先拆：
