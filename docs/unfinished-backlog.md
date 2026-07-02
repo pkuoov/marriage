@@ -53,6 +53,7 @@
 - 已有 preload 文件存档 IPC，运行时通过 `platformRuntime.saveFiles` 写入用户数据目录。
 - 已补 Electron / electron-builder devDependencies 和 `package:win` Windows portable 打包入口；Electron 43 打包环境需要 Node 22.12 或更高版本，当前仍需在有依赖和目标平台的环境里实际跑一次打包验收。
 - 已补桌面窗口状态保存、全屏/缩放快捷键、单实例锁和 crash log 文件输出。
+- 桌面 staging 构建已改成同脚本生成 playable + desktop，并使用临时目录和锁目录，避免 `build:steam` / `smoke:desktop` 并发时互相踩 `dist/playable` 或 `dist/desktop-electron/playable`。
 - 仍需补 Steam overlay/Cloud 接入、安装器、签名和真实 Windows/Steam Deck 验包。
 
 验收：

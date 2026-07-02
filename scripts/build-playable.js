@@ -1,20 +1,23 @@
-import { copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
-import { basename, dirname, resolve } from "node:path";
+import { copyFile, mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = resolve(root, "dist", "playable");
+const tempRoot = resolve(root, "dist", ".playable-");
 const entry = resolve(root, "src", "app.js");
 
-await rm(outDir, { recursive: true, force: true });
-await mkdir(outDir, { recursive: true });
-await copyTree(resolve(root, "assets"), resolve(outDir, "assets"));
-await copyTree(resolve(root, "content"), resolve(outDir, "content"));
+export async function buildPlayable() {
+  await mkdir(resolve(root, "dist"), { recursive: true });
+  const tempDir = await mkdtemp(tempRoot);
+  try {
+    await copyTree(resolve(root, "assets"), resolve(tempDir, "assets"));
+    await copyTree(resolve(root, "content"), resolve(tempDir, "content"));
 
-const bundle = await bundleModule(entry);
-const css = await readFile(resolve(root, "src", "styles.css"), "utf8");
-const playableCss = css.replaceAll("../assets/", "./assets/");
-const html = `<!doctype html>
+    const bundle = await bundleModule(entry);
+    const css = await readFile(resolve(root, "src", "styles.css"), "utf8");
+    const playableCss = css.replaceAll("../assets/", "./assets/");
+    const html = `<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -39,9 +42,20 @@ ${bundle}
 </html>
 `;
 
-assertPlayableHtml(html);
-await writeFile(resolve(outDir, "index.html"), html);
-console.log(`Playable offline build ready: ${outDir}`);
+    assertPlayableHtml(html);
+    await writeFile(resolve(tempDir, "index.html"), html);
+    await rm(outDir, { recursive: true, force: true });
+    await rename(tempDir, outDir);
+    console.log(`Playable offline build ready: ${outDir}`);
+  } catch (error) {
+    await rm(tempDir, { recursive: true, force: true });
+    throw error;
+  }
+}
+
+if (fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? "")) {
+  await buildPlayable();
+}
 
 async function bundleModule(filePath, seen = new Set(), ordered = []) {
   const resolved = resolve(filePath);

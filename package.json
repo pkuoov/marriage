@@ -10,7 +10,7 @@
     "content:index:check": "node scripts/build-content-index.js --check",
     "build:h5": "npm run content:index && node scripts/build-static.js",
     "build:playable": "npm run content:index && node scripts/build-playable.js",
-    "build:desktop": "npm run build:playable && node scripts/build-desktop.js",
+    "build:desktop": "node scripts/build-desktop.js",
     "build:steam": "npm run build:desktop",
     "package:win": "npm run build:desktop && electron-builder --win portable --config desktop/electron-builder.json",
     "smoke:desktop": "npm run build:desktop && node scripts/smoke-desktop.js",
