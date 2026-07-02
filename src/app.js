@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.66";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.66";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.66";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.66";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.66";
-import { NPCS } from "./story.js?v=0.20.66";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.66";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.66";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.66";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.66";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.66";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.66";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.66";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.66";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.67";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.67";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.67";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.67";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.67";
+import { NPCS } from "./story.js?v=0.20.67";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.67";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.67";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.67";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.67";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.67";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.67";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.67";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.67";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -48,6 +48,11 @@ document.addEventListener("keydown", (event) => {
   if (["ArrowUp", "ArrowLeft", "w", "W", "a", "A"].includes(key)) {
     event.preventDefault();
     moveButtonFocus(-1);
+    return;
+  }
+  if (key === "Tab") {
+    if (!toggleReviewPanel()) return;
+    event.preventDefault();
     return;
   }
   if (key === "Escape") {
@@ -1000,6 +1005,13 @@ function preferredReviewButton() {
   return app?.querySelector('[data-recap-next]:not(:disabled), [data-after-recap]:not(:disabled)') ?? null;
 }
 
+function toggleReviewPanel() {
+  const panel = app?.querySelector(".choice-review");
+  if (!panel) return false;
+  panel.open = !panel.open;
+  return true;
+}
+
 function moveButtonFocus(direction) {
   const buttons = focusableButtons();
   if (!buttons.length) return;
@@ -1057,7 +1069,9 @@ function handleGamepadInput(gamepad) {
     activateButton(button);
   });
   handleGamepadButton(gamepad, 1, () => activateButton(preferredBackButton()));
-  handleGamepadButton(gamepad, 3, () => activateButton(preferredReviewButton()));
+  handleGamepadButton(gamepad, 3, () => {
+    if (!toggleReviewPanel()) activateButton(preferredReviewButton());
+  });
   handleGamepadButton(gamepad, 12, () => moveButtonFocus(-1));
   handleGamepadButton(gamepad, 13, () => moveButtonFocus(1));
   handleGamepadButton(gamepad, 14, () => moveButtonFocus(-1));

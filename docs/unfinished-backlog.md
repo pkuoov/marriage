@@ -30,7 +30,7 @@
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 - 存档已抽到 `src/platform/saveStore.js`：Web 仍是单槽 localStorage；桌面壳可通过 `platformRuntime.saveFiles` 提供 `read/write/remove/list/exportForCloud` 文件存档接口，后续接 Steam Cloud。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
-- 基础手柄输入已接入：标准 Gamepad API 轮询支持十字键/左摇杆移动焦点、A 确认、B 返回、Y 回看/复盘入口；下一步需要真实 Steam Deck/控制器设备 QA。
+- 基础手柄和回看快捷键已接入：Tab 切换当前回看面板；标准 Gamepad API 轮询支持十字键/左摇杆移动焦点、A 确认、B 返回、Y 回看/复盘入口；下一步需要真实 Steam Deck/控制器设备 QA。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，`app.js` 不再用 `plotId` 表维护这一组文案。
@@ -60,7 +60,7 @@
 
 - 基础键盘操作已接入：方向键 / WASD 切换选项，Enter / Space 确认，Esc 返回标题或重试入口。
 - 已有默认焦点和焦点环，大 test 会校验全局键盘入口、焦点移动和渲染后默认落焦。
-- 基础手柄映射已接：十字键 / 左摇杆切换选项，A 确认，B 返回，Y 回看/复盘入口。仍需补 Tab 回看，以及 Steam Deck/控制器实机手感验证。
+- 基础手柄映射已接：十字键 / 左摇杆切换选项，A 确认，B 返回，Y 回看/复盘入口；Tab 已能切换当前回看面板。仍需 Steam Deck/控制器实机手感验证。
 
 验收：
 
