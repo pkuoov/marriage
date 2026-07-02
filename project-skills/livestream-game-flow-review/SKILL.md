@@ -1,11 +1,11 @@
 ---
 name: livestream-game-flow-review
-description: Use when reviewing or improving a dialogue-driven livestream mystery game flow, especially to find preachy copy, broken conversation logic, premature spoilers, speaker/portrait mismatch, generic UI leftovers, weak weekly-pack pacing, or anything that blocks a satisfying live-call playthrough.
+description: Use when reviewing or improving a dialogue-driven livestream mystery game flow, especially to find preachy copy, broken conversation logic, premature spoilers, speaker/portrait mismatch, generic UI leftovers, weak story-pack pacing, or anything that blocks a satisfying live-call playthrough.
 ---
 
 # Livestream Game Flow Review
 
-Use this skill when the task is to review, debug, or improve a playable live-call flow for a dialogue mystery game. The current main product shape is a Steam-first four-case story collection: four anonymous call-in cases, each still using the short single-caller daily-case contract as its playable unit. The goal is not just correctness. The goal is a replayable, shareable flow that feels like a live emotional-host call-in room: tense, natural, and satisfying.
+Use this skill when the task is to review, debug, or improve a playable live-call flow for a dialogue mystery game. The current main product shape is a Steam-first story-pack collection: the demo pack currently has four anonymous call-in cases, but future packs can have any count that fits the theme. Each case still uses the single-caller daily-case contract as its playable unit. The goal is not just correctness. The goal is a replayable, shareable flow that feels like a live emotional-host call-in room: tense, natural, and satisfying.
 
 ## Core Principle
 
@@ -23,7 +23,7 @@ Do not generate or repair daily-case text one field or one sentence at a time. D
 
 ## Screenwriter Contract
 
-Before writing UI fields, write the case as a small pressure system, not as a mystery answer. The player should feel they are listening to someone slowly reveal a messy relationship, while the live room argues over which sentence is off.
+Before writing UI fields, write the case as a small pressure system, not as a mystery answer. The player should feel they are listening to someone slowly reveal a messy relationship or public-life conflict, while the live room argues over which sentence is off.
 
 ## Network-Informed Script Generation Model
 
@@ -32,11 +32,11 @@ Use online screenwriting and interactive-fiction methods as process inspiration,
 Borrow these principles:
 - From screenplay beat outlines: a case needs setup, pressure, reversal, cost, and resolution, but each beat must stay inside a live call.
 - From Pixar-style story-spine thinking: know the final audience argument before drafting the middle. The case is not ready until the writer can say what the comment section will fight about.
-- From Ink/Twine-style interactive writing: choices can branch briefly, but they must rejoin the linear call with state tracked. Do not create an uncontrolled branch tree for a weekly case.
+- From Ink/Twine-style interactive writing: choices can branch briefly, but they must rejoin the linear call with state tracked. Do not create an uncontrolled branch tree for a story-pack case.
 - From LLM writers-room research: split generation into roles. A single pass that writes fields directly is not acceptable.
 
 Required writers-room passes:
-1. Showrunner pass: define weekly theme, value boundary, and why these three cases belong together.
+1. Showrunner pass: define the story-pack theme, value boundary, case count, and why these cases belong together.
 2. Ending-first pass: write the final audience argument and the behavior chain before writing dialogue.
 3. Pressure-system pass: define why tonight, dramatic anchor, object purpose, caller stake, other stake, third pressure, and truth boundary.
 4. Beat-ladder pass: draft 5-6 caller statements that each add a new pressure, not a restatement.
@@ -51,7 +51,7 @@ Five-beat minimum for a 20-minute case:
 4. Caller edit: the caller admits, softens, or exposes their own self-serving version.
 5. Responsibility point: the cost or boundary lands, enabling the final quote-pick.
 
-If a generated case cannot fill these five beats without repetition, it is not a 20-minute weekly case. Combine it with another material, add a third-pressure source, or reject it.
+If a generated case cannot fill these five beats without repetition, it is not a 20-minute story-pack case. Combine it with another material, add a third-pressure source, or reject it.
 
 Value baseline:
 - Do not harvest gender conflict. A case may involve dating, marriage, family, work, money, or identity, but the conclusion must not imply "men are like this" or "women are like this".
@@ -71,8 +71,8 @@ Every daily case must have:
 - `audienceArgument`: what viewers will argue about after sharing, not what lesson they learned.
 
 Every story collection must have:
-- four cases with distinct dramatic anchors or pressure systems
-- one clear story-pack theme and thesis that all four cases echo
+- a deliberate case count with distinct dramatic anchors or pressure systems; the demo has four, but the rule is theme-fit, not fixed quantity
+- one clear story-pack theme and thesis that every case echoes
 - a stable `storyKey` so players can replay or share the same set
 - each case preserving the single-caller linear loop
 - hidden route-map data for every playable choice, such as caller credibility, counterparty credibility, material edge, money flow, process control, identity wording, or outer detour
@@ -152,7 +152,7 @@ Avoid:
    - Open the exact local URL with a fresh cache key, for example `?ui=01852&dailyKey=YYYY-MM-DD`.
    - Use "重开" if local state is mid-flow.
    - Walk through homepage, entry page, opening call, every current-node question set, every feedback line, conditional deep question, quote-pick page, recap/share pages, retry/failure if present.
-   - For a weekly-collection single case with 5-6 scene beats, do not stop at the happy path. Reopen/retry enough times to click every scene option and verify each answer advances forward. Also run one perfect core-hit route to verify the single non-choice deep question appears, and one outer route to verify it is skipped.
+   - For a story-pack single case with 5-6 scene beats, do not stop at the happy path. Reopen/retry enough times to click every scene option and verify each answer advances forward. Also run one perfect core-hit route to verify the single non-choice deep question appears, and one outer route to verify it is skipped.
    - In every large playtest pass, inspect at least three current-node choice panels across different cases. Confirm they are one panel, contain only host questions as buttons, use equal visual weight for all current-node choices, and do not contain explainer tags, route-axis hints, or "how to play" copy.
 
 2. Capture raw screen text.
@@ -436,7 +436,7 @@ Hidden clue pacing:
 - Early lines should expose observable oddness, not the final category.
 - Middle lines can reveal concrete missing pieces.
 - Final lines can expose intent or responsibility, but still through what someone says or refuses to say.
-- A weekly-collection single case's main scene should usually be 5-6 caller statements advanced one at a time, enough to support at least 20 minutes with recap and route comparison. Each statement gets one current-node choice before the call moves forward, so the player is reading the live call rather than managing a menu.
+- A story-pack single case's main scene should usually be 5-6 caller statements advanced one at a time, enough to support at least 20 minutes with recap and route comparison. Each statement gets one current-node choice before the call moves forward, so the player is reading the live call rather than managing a menu.
 
 UI copy:
 - Buttons should feel like a linear call: "继续", "选一句原话", and short case-specific questions for the current point.
