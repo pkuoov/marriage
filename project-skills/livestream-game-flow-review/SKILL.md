@@ -89,6 +89,8 @@ For material-centered cases, write a clear truth boundary before writing dialogu
 
 Material inspection is a playable beat, not a hint panel. A correct material pick should add a contradiction and keep audience patience unchanged. A wrong material pick may consume patience, but it must not reveal the correct answer. The route map should mark material beats as material, not as a fake sixth dialogue scene.
 
+Host investigation and evidence backflow may expand the reasoning range, but only after the player has already heard the relevant contradiction. Treat these as a controlled extension of the material system: backstage verification, post-call direct messages, or limited off-mic inquiries can add fixed materials, not freeform facts. They must never turn into open-world investigation, AI-generated evidence, or a second-party live debate. Every backflow item must state why it appears now, which heard contradiction it relates to, what it proves, and what it still cannot prove.
+
 Use an "Ace Attorney-style reveal" only when the host asks a natural question the caller has already made possible. The reveal should answer a practical why:
 - Why did this person need a bank flow instead of a balance screenshot?
 - Why did this proof appear before the meal, meeting, transfer, cohabitation, or family talk?
@@ -309,6 +311,15 @@ Hard rule: a daily case is not assembled from interchangeable good-sounding line
   "callerStake": "",
   "otherStake": "",
   "thirdPressure": "",
+  "investigationBackflow": [
+    {
+      "source": "dm|backstage|off-mic-inquiry",
+      "triggeredBy": "",
+      "appearsNowBecause": "",
+      "proves": "",
+      "stillCannotProve": ""
+    }
+  ],
   "truthBoundary": {
     "true": [],
     "edited": [],
@@ -337,7 +348,7 @@ Hard rule: a daily case is not assembled from interchangeable good-sounding line
   "fieldSplitNotes": {
     "openingDialogue": "which transcript lines map here",
     "sceneVersions": "which caller beats map here",
-	    "deepFollowup": "which full-hit host question and caller answer map here",
+    "deepFollowup": "which full-hit host question and caller answer map here",
     "accusationChoices": "which disclosed quotes become line-pick choices",
     "shareCopy": "which argument is safe to share without spoiling"
   }
@@ -355,6 +366,7 @@ Daily case contract:
 - Match the action to the material. A screenshot, balance image, chat log, or proof image is seen, opened, forwarded, cropped, saved, or followed up on; it is not "received/accepted" like a paper document. Do not ask "why did you accept the proof" when the object is just an image. Ask why they did not keep asking, why they forwarded it, why they treated it as enough, or what the image helped them avoid.
 - The game is not a courtroom confrontation. The host discovers truth by slowing down one person's account, not by making two parties debate.
 - Final judgement can point to "对方" or "这段关系里都有隐瞒", but the gameplay path still comes from the caller's disclosures.
+- Backstage verification, post-call private messages, and off-mic inquiries are allowed only as material backflow. They can introduce screenshots, quoted messages, platform records, call notes, or third-party descriptions, but the other party still does not join the live room.
 
 Narrator reliability:
 - Assume every person protects their own interest, image, and emotional position.
@@ -431,6 +443,7 @@ UI copy:
 - During every big test, read the choice panel aloud. If it sounds like a UI explaining itself instead of a host deciding what to ask next, rewrite it.
 - In daily cases, avoid "接哪边的麦", "让另一方补话", or any copy implying two-sided mediation.
 - Case-specific summary buttons should reflect the case: screenshot source, missing edge, evasive wording, timing, party switch.
+- Investigation copy should sound like live-room backflow, not task UI. Prefer "后台进来一条私信", "有人补了一张图", "这页刚翻出来", or "对方没上麦，只留了这句". Avoid "new clue unlocked", "verification succeeded", "evidence chain complete", "correct route", or any copy that tells the player the system has found the answer.
 
 ## Common Bugs From This Project
 
