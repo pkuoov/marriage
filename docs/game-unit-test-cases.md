@@ -42,6 +42,7 @@ npm run build:playable
 | DAILY-015 | Content breadth | Daily engine supports non-romance public incident cases such as workplace reimbursement screenshots. | Product scope collapsing back into marriage-only cases. |
 | ROUTE-001 | Hidden route map | Every playable choice records a route axis and tone. | 玩家选择无法生成路线图、回溯和主播倾向。 |
 | ROUTE-002 | Route-log helpers | Route axis, tone, and dominant profile are pure runtime helpers covered outside DOM rendering. | 路线图逻辑继续堆在 `app.js`，后续 UI 改文案时误伤路线画像。 |
+| MATERIAL-001 | Material operation model | Material hit/miss produces a reusable operation outcome: hit records contradiction without patience loss, miss spends patience without revealing the answer. | 资料操作继续散在 UI 事件里，后续做圈点时重复实现并误泄露正确答案。 |
 | STATE-001 | Save migration | Legacy saves migrate into episode-compatible shape while preserving explicit daily saves and settings. | Old saves breaking after refactors. |
 | RUNTIME-001 | Outcome math | Internal carryover scores clamp correctly for wins/failures. | Run result values drifting out of range. |
 | RUNTIME-002 | Daily pacing | Daily budget has a floor and hint count stays at one. | Mobile short-case pacing getting too long or too guided. |

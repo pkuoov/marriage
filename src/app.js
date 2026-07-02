@@ -1,11 +1,12 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.28";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.28";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.28";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.28";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.28";
-import { NPCS } from "./story.js?v=0.20.28";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.28";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.28";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.29";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.29";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.29";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.29";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.29";
+import { NPCS } from "./story.js?v=0.20.29";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.29";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.29";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.29";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -921,33 +922,19 @@ function bindEvidenceCheckButtons(brief, check = {}) {
   document.querySelectorAll("[data-evidence-check]").forEach((button) => {
     button.addEventListener("click", () => {
       const [checkIndex, optionIndex] = button.dataset.evidenceCheck.split(":").map(Number);
-      const option = check.options?.[optionIndex] ?? check.options?.[0] ?? {};
-      const correct = Boolean(option.correct);
-      markAction(brief, `evidenceCheck:${checkIndex}:${optionIndex}`, { spend: !correct });
+      const outcome = materialOperationOutcome(check, checkIndex, optionIndex);
+      markAction(brief, `evidenceCheck:${checkIndex}:${optionIndex}`, { spend: outcome.spend });
       markAction(brief, `evidenceCheck:${checkIndex}`);
-      if (correct) {
-        recordContradiction(brief, option.contradiction ?? check.contradiction);
+      if (outcome.contradiction) {
+        recordContradiction(brief, outcome.contradiction);
       }
       state.evidenceCheckPicks = {
         ...(state.evidenceCheckPicks ?? {}),
-        [evidenceAnswerKey(brief, checkIndex)]: {
-          optionIndex,
-          label: option.label ?? "",
-          feedback: option.feedback ?? "",
-          contradiction: option.contradiction ?? check.contradiction ?? "",
-          routeAxis: option.routeAxis ?? "document-edge",
-          correct
-        }
+        [evidenceAnswerKey(brief, checkIndex)]: outcome.pick
       };
-      recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, {
-        question: check.prompt ?? "",
-        answer: option.label ?? "",
-        contradiction: correct ? option.contradiction ?? check.contradiction ?? "" : "",
-        routeAxis: option.routeAxis ?? "document-edge",
-        routeTone: correct ? "evidence-hit" : "evidence-miss"
-      }, { version: check.material ?? "" });
+      recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
       state.lastReaction = null;
-      if (!correct && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
+      if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
         state.scene = "patienceLost";
         saveState();
         return render();

@@ -1,12 +1,13 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.28";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.28";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.28";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.28";
-import { migrateState } from "../src/state.js?v=0.20.28";
-import { NPCS } from "../src/story.js?v=0.20.28";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.28";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.28";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.28";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.29";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.29";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.29";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.29";
+import { migrateState } from "../src/state.js?v=0.20.29";
+import { NPCS } from "../src/story.js?v=0.20.29";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.29";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.29";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.29";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.29";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -79,13 +80,35 @@ test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outs
   assertIncludes(profile.summary, "不急着相信来电人的版本", "连续怀疑来电人时，summary 必须反映路线倾向");
 });
 
+test("MATERIAL-001", "material operation model records hit and miss without UI coupling", () => {
+  const check = {
+    prompt: "这张审批图少了哪一边？",
+    material: "截图只露出审批通过，没有付款状态。",
+    options: [
+      { label: "付款状态和收款账户", correct: true, contradiction: "审批截图缺少付款状态和收款账户。", feedback: "缺的这一页才决定钱去了哪里。", routeAxis: "document-edge" },
+      { label: "活动现场照片", correct: false, feedback: "活动办没办不是当前缺口。", routeAxis: "outer-thread" }
+    ]
+  };
+  const hit = materialOperationOutcome(check, 0, 0);
+  assertEqual(hit.correct, true, "材料命中必须标记 correct");
+  assertEqual(hit.spend, false, "材料命中不能消耗听众耐心");
+  assertEqual(hit.routeChoice.routeTone, "evidence-hit", "材料命中必须进入 evidence-hit 路线语气");
+  assertEqual(hit.routeChoice.contradiction, "审批截图缺少付款状态和收款账户。", "材料命中必须记录矛盾");
+  const miss = materialOperationOutcome(check, 0, 1);
+  assertEqual(miss.correct, false, "材料误指必须标记 miss");
+  assertEqual(miss.spend, true, "材料误指要消耗听众耐心");
+  assertEqual(miss.routeChoice.routeTone, "evidence-miss", "材料误指必须进入 evidence-miss 路线语气");
+  assertEqual(miss.routeChoice.contradiction, "", "材料误指不能泄露正确矛盾");
+});
+
 test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
   assertIncludes(appSource, "sceneQuestionChoicesHtml", "当前节点追问必须走统一面板，避免上下两个孤立单选组");
   assertIncludes(appSource, "renderEvidenceCheck", "追问结束后必须保留材料检视阶段，避免玩法退回纯问答");
   assertIncludes(appSource, "evidenceCheckPicks", "材料检视选择必须进入存档和复盘状态");
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
-  assertIncludes(appSource, "spend: !correct", "材料检视圈中不能消耗听众忍耐，误指才扣");
+  assertIncludes(materialSource, "spend: !correct", "材料检视圈中不能消耗听众忍耐，误指才扣");
   assertIncludes(appSource, "storyPackClosingLine", "故事集终局小字必须按本局表现生成，不能写成玩法说明");
   assertIncludes(appSource, ">= keyQuestionLimit(brief) ? \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
   assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
