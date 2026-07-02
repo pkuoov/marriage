@@ -47,7 +47,7 @@
 - 评论区审判墙已接入故事集总结，会根据玩家路线、揭示率和本集主题生成复盘评论。
 - 桌面键盘底座已接入：默认焦点、方向键 / WASD、Enter / Space 和 Esc 能支撑无鼠标游玩。
 - 基础手柄和回看快捷键已接入：Tab 切换当前回看面板，十字键/左摇杆移动焦点，A 确认，B 返回，Y 切换回看/复盘入口；后续还要上 Steam Deck/控制器实测手感。
-- Electron 桌面壳源码已落到 `desktop/electron/`，`build:desktop` 会生成 `dist/desktop-electron`，并通过 preload 暴露文件存档桥；还未加入 Electron 依赖安装、exe 打包和安装器。
+- Electron 桌面壳源码已落到 `desktop/electron/`，`build:desktop` 会生成 `dist/desktop-electron`，并通过 preload 暴露文件存档桥；已补 `package:win` 和 electron-builder portable 配置，安装器/签名和实机验包仍未完成。
 - 手机端主流程保留视觉人物层，并显示核心问题/追问进度。
 - 增加 unit test 和 narrative flow 验证，覆盖当前 demo 包、日案兼容、UTC+8、匿名来电、单人来电、戏剧灰区、无废选项、存款证明逻辑链、路线图字段和非婚恋公共事件模板。
 

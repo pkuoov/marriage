@@ -48,14 +48,15 @@
 - 现在已经有 `build:playable`、Windows 双击脚本、`saveStore` 抽象、桌面文件存档桥接口，以及 `desktop/electron/` 桌面壳源码。
 - 已先选 Electron 骨架验证静态 H5 结构：`build:desktop` 会生成 `dist/desktop-electron`，包含 `main.cjs`、`preload.cjs`、桌面壳 `package.json` 和离线 playable。
 - 已有 preload 文件存档 IPC，运行时通过 `platformRuntime.saveFiles` 写入用户数据目录。
-- 仍需补 Electron 依赖安装、exe 打包、窗口设置细化、崩溃日志、Steam overlay/Cloud 接入和安装器。
+- 已补 Electron / electron-builder devDependencies 和 `package:win` Windows portable 打包入口；Electron 43 打包环境需要 Node 22.12 或更高版本，当前仍需在有依赖和目标平台的环境里实际跑一次打包验收。
+- 仍需补窗口设置细化、崩溃日志、Steam overlay/Cloud 接入、安装器和签名。
 
 验收：
 
 - Windows 双击启动进入离线包。
 - 无网络也能进入完整试玩。
 - 存档写入本地文件，能重启恢复。当前源码和 IPC 已具备，待 Electron 运行时/打包验证。
-- 构建产物里没有开发服务器依赖。`build:desktop` 已生成离线桌面目录，待打包成 exe。
+- 构建产物里没有开发服务器依赖。`build:desktop` 已生成离线桌面目录，`package:win` 会把它打到 `dist/steam`，待实机验包。
 
 ### 输入和焦点
 

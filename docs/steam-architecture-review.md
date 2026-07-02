@@ -141,14 +141,17 @@ Steam 版建议：
 
 Web 可以继续用 `localStorage`，Steam 桌面壳应该写文件，以便接 Steam Cloud。
 
-### 4. Steam 壳已有源码骨架，但还没打包成发行物
+### 4. Steam 壳已有源码骨架，并已有 Windows portable 打包入口
 
 `package.json` 里的 `build:steam` 现在指向 `build:desktop`。`build:desktop` 会先生成离线 playable，再生成 `dist/desktop-electron`，其中包含 Electron 主进程、preload 和桌面壳 `package.json`。
+
+`package:win` 会在安装 devDependencies 后调用 `electron-builder --win portable --config desktop/electron-builder.json`，把 `dist/desktop-electron` 打成 Windows portable，输出到 `dist/steam`。当前锁定 Electron 43，打包环境需要 Node 22.12 或更高版本。没有把这个步骤并入 `build:steam`，是为了让离线 staging 构建不依赖网络安装和本机打包环境。
 
 当前桌面壳结构：
 
 ```text
 desktop/
+  electron-builder.json
   electron/
     main.cjs
     preload.cjs
@@ -165,6 +168,8 @@ dist/
 - 窗口启动离线 playable。
 - preload 暴露 `livestreamDetectiveDesktop.saveFiles`。
 - 主进程把存档写入 `app.getPath("userData")/saves`。
+- 根 `package.json` 声明 Electron / electron-builder devDependencies。
+- Windows portable 打包配置，输入 `dist/desktop-electron`，输出 `dist/steam`。
 
 仍需补齐：
 
@@ -174,7 +179,7 @@ dist/
 - 成就和统计。
 - 崩溃日志。
 - 手柄/键盘输入。
-- Electron 依赖安装、Windows exe 打包和安装器。
+- Windows 打包实机验收、安装器和签名。
 
 ### 5. 输入标准还没有按 Steam Deck / 手柄设计
 
@@ -221,7 +226,7 @@ npm run smoke:desktop
 npm run verify:pack steam-demo-01
 ```
 
-`build:playable` 生成 `dist/playable/index.html`，用于不依赖本地端口的试玩验证；`build:desktop` 生成 `dist/desktop-electron`；`build:steam` 当前指向桌面壳构建。下一步是接 Electron 依赖和 Windows 打包器。
+`build:playable` 生成 `dist/playable/index.html`，用于不依赖本地端口的试玩验证；`build:desktop` 生成 `dist/desktop-electron`；`build:steam` 当前指向桌面壳构建；`package:win` 在 Node 22.12+ 和 devDependencies 就绪后生成 Windows portable。下一步是补 `smoke:desktop`、实机验包和 Steam Cloud/overlay 检查。
 
 `verify:pack` 应检查：
 

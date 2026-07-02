@@ -12,9 +12,14 @@ await cp(resolve(root, "dist", "playable"), resolve(outDir, "playable"), { recur
 await copyFile(resolve(shellDir, "main.cjs"), resolve(outDir, "main.cjs"));
 await copyFile(resolve(shellDir, "preload.cjs"), resolve(outDir, "preload.cjs"));
 await writeFile(resolve(outDir, "package.json"), `${JSON.stringify({
-  name: "livestream-detective-desktop-shell",
+  name: "livestream-detective-demo",
+  version: "0.1.0",
+  productName: "Livestream Detective Demo",
   private: true,
-  main: "main.cjs"
+  main: "main.cjs",
+  scripts: {
+    start: "electron ."
+  }
 }, null, 2)}\n`);
 
 console.log(`Desktop shell build ready: ${outDir}`);

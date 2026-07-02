@@ -90,6 +90,26 @@ play-windows.bat
 
 脚本会优先打开 `dist/playable/index.html`。如果离线包还没生成，它会自动执行 `npm run build:playable`，再打开默认浏览器。这个脚本不启动本地端口，也不依赖 dev server。
 
+Steam/桌面壳 staging：
+
+```bash
+npm run build:steam
+```
+
+构建结果会输出到 `dist/desktop-electron/`，包含 Electron 主进程、preload、文件存档桥和离线 playable。安装 devDependencies 后，可以生成 Windows portable 验包。当前锁定 Electron 43，打包环境需要 Node 22.12 或更高版本：
+
+```bash
+npm run package:win
+```
+
+Windows portable 产物输出到 `dist/steam/`。正式上 Steam 前仍需要补商店 App ID、Steam Cloud 映射、overlay/崩溃日志和实机手柄 QA。
+
+不启动 Electron 的桌面 staging 烟测：
+
+```bash
+npm run smoke:desktop
+```
+
 ### 开始一局
 
 1. 进入标题页后点击开始。
