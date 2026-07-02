@@ -26,7 +26,7 @@
 - Web 存档已抽到 `src/platform/saveStore.js`：当前仍是单槽 localStorage，但已有 `read/write/removeMany/list/exportForCloud` 接口，后续桌面壳可替换为文件存档。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
-- 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案仍保持 `metadata-only`。
+- 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 第一案已切到 `runtime-loaded`，其余三案仍保持 `metadata-only`。
 - 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。
 - H5 构建和离线 playable 构建已隔离输出目录：`build:h5` 不再删除整个 `dist`，避免并行构建时踩掉 `dist/playable`。
 
@@ -61,10 +61,10 @@
 
 ### 内容包数据化
 
-- 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 目前只是策划压力包，不是运行时台词来源。每个 case JSON 必须显式写 `runtimeContentStatus: "metadata-only"`，`npm run verify:pack` 会阻止它们伪装成已接通的内容包。
+- 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 不能再做影子资产。第一案已是运行时台词来源；其余 `metadata-only` 案件仍只能写策划压力包，`npm run verify:pack` 会阻止它们夹带运行时字段。
 - 第一层故事包 manifest 已经由 `content/packs/steam-demo-01/` 生成运行时索引，构建和校验会检查索引是否过期。
 - 第二层 loader 入口已经存在：如果某个 case JSON 标成 `runtime-loaded`，构建索引会校验完整字段并嵌入运行时，`caseEngine` 会用它覆盖模板字段。
-- 当前 demo 包完整台词、追问、材料判定和结算仍写在 `src/caseEngine.js`；下一步要继续把每案完整字段迁移到内容包。
+- 当前 demo 包第一案完整台词、追问、材料判定和结算已迁入内容包；其余三案仍写在 `src/caseEngine.js`，下一步继续逐案迁移。
 - 新增或替换一个案子仍要同时碰 `src/caseEngine.js`、`src/dailyChoices.js`、`content/packs/...`，以及 `src/app.js` 里的若干 `plotId` 文案分支。这是内容扩量前最高优先级的架构债。
 - 长期目标是运行时代码只负责加载和校验。
 

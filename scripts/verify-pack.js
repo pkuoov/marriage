@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.46";
+import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.47";
+import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.47";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
@@ -86,13 +87,19 @@ test("PACK-003", "case pressure packets are complete", () => {
     const manifestItem = manifest.sequence[index];
     assertEqual(casePacket.caseId, manifestItem.caseId, `${casePacket.caseId} caseId 必须和 manifest 对齐`);
     assertEqual(casePacket.plotId, manifestItem.plotId, `${casePacket.caseId} plotId 必须和 manifest 对齐`);
-    assertEqual(casePacket.runtimeContentStatus, "metadata-only", `${casePacket.caseId} 当前 JSON 只能明确标记为策划元数据，不能伪装成运行时内容源`);
+    assert([RUNTIME_CASE_CONTENT_STATUS.metadataOnly, RUNTIME_CASE_CONTENT_STATUS.runtimeLoaded].includes(casePacket.runtimeContentStatus), `${casePacket.caseId} runtimeContentStatus 必须是已知状态`);
     requiredFields.forEach((field) => {
       assert(casePacket[field], `${casePacket.caseId} 缺少 ${field}`);
     });
-    ["openingDialogue", "sceneVersions", "evidenceChecks", "investigationHooks", "deepFollowup"].forEach((runtimeField) => {
-      assert(!(runtimeField in casePacket), `${casePacket.caseId} 若写入 ${runtimeField}，必须先接通运行时 JSON loader，不能继续做影子字段`);
-    });
+    if (casePacket.runtimeContentStatus === RUNTIME_CASE_CONTENT_STATUS.metadataOnly) {
+      RUNTIME_CASE_REQUIRED_FIELDS.forEach((runtimeField) => {
+        assert(!(runtimeField in casePacket), `${casePacket.caseId} 若写入 ${runtimeField}，必须先切到 runtime-loaded，不能继续做影子字段`);
+      });
+    } else {
+      RUNTIME_CASE_REQUIRED_FIELDS.forEach((runtimeField) => {
+        assert(casePacket[runtimeField] !== undefined, `${casePacket.caseId} runtime-loaded 缺少 ${runtimeField}`);
+      });
+    }
     ["true", "edited", "unknown"].forEach((field) => {
       assert((casePacket.truthBoundary?.[field] ?? []).length > 0, `${casePacket.caseId} truthBoundary.${field} 不能为空`);
     });

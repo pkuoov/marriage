@@ -1,6 +1,6 @@
 # 内容包 Schema
 
-内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前第一步只要求故事包骨架、每案压力系统、评论种子和路线原型可校验；完整台词仍暂时保留在 `src/caseEngine.js`，后续再迁移到 case JSON。
+内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前已经接通 manifest 运行时索引和单案 JSON loader；`steam-demo-01` 第一案已切到 `runtime-loaded`，其余案件仍保留在 `src/caseEngine.js`，按案逐步迁移。
 
 ## 目录
 
@@ -32,12 +32,12 @@ content/packs/<pack-id>/
 
 ## cases/*.json
 
-当前每案 JSON 是策划压力系统，不是最终台词文件。完整台词、追问、材料判定、满格深问和复盘文案仍在 `src/caseEngine.js`。
+每案 JSON 分两种状态：`metadata-only` 只记录策划压力系统；`runtime-loaded` 会接管该案完整台词、追问、材料判定、满格深问和复盘文案。
 
 必填字段：
 
 - `caseId`、`plotId`
-- `runtimeContentStatus`：当前必须是 `metadata-only`。只有运行时 JSON loader 接管完整内容以后，才能改成 `runtime-loaded`。
+- `runtimeContentStatus`：`metadata-only` 或 `runtime-loaded`。只有完整字段通过校验并进入运行时索引以后，才能改成 `runtime-loaded`。
 - `dramaticAnchor`
 - `whyTonight`
 - `objectPurpose`
@@ -52,7 +52,7 @@ content/packs/<pack-id>/
 
 每案至少要有三个 `quotePickCandidates`。`truthBoundary` 三层都不能为空。
 
-当前 `metadata-only` 阶段，`cases/*.json` 不能写 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup` 这类运行时字段。写了这些字段却不接入运行时，会变成影子资产。
+`metadata-only` 案件不能写 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup` 这类运行时字段。写了这些字段却不切到 `runtime-loaded`，会变成影子资产。`runtime-loaded` 案件必须包含完整运行时必填字段。
 
 ## 校验
 
@@ -72,5 +72,5 @@ node scripts/verify-pack.js steam-demo-01
 - `manifest.json` 与 `src/storyPacks.js` 的运行时故事包定义一致。
 - 案件顺序、plotId、人物、物件和桥接句完整，`sequence.length` 必须等于 `size`。
 - 每案压力系统字段完整。
-- 每案显式标记 `runtimeContentStatus: "metadata-only"`，并且不夹带未接入运行时的台词字段。
+- 每案显式标记 `runtimeContentStatus`。`metadata-only` 不得夹带运行时台词字段，`runtime-loaded` 必须包含完整运行时必填字段。
 - 不把“下一案 / 下一通来电 / 1/4”这类目录话术写进案间标题字段。

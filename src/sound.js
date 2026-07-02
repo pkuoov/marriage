@@ -1,4 +1,4 @@
-import { platformRuntime } from "./platformRuntime.js?v=0.20.46";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.47";
 
 let audioContext;
 const SOUND_KEY = "marriage-detective-agency-sound";

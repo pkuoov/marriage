@@ -69,7 +69,270 @@ export const CONTENT_CASES = {
     "01-credit": {
       "caseId": "01-credit",
       "plotId": "lost-job-hidden-credit",
-      "runtimeContentStatus": "metadata-only"
+      "runtimeContentStatus": "runtime-loaded",
+      "label": "8 万信用卡周转",
+      "storyArcTitle": "今日来电：8 万信用卡周转",
+      "publicHook": "TA 一直维持体面恋爱消费，突然让你先垫 8 万信用卡。是困难，还是化债？",
+      "storyArcSummary": "账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
+      "storySuspense": "这案一不小心就吵成“你嫌我穷”。账单日期比委屈更诚实。",
+      "storyClueObject": "信用卡账单与社保断缴截图",
+      "openingComplaint": "咨询者连线说：“TA 说信用卡只是短期周转，让我先帮一下。我不是不帮，是后来发现这个洞可能早就有了。”",
+      "openingDialogue": [
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "主播你好，我想问下我男朋友的事。我们谈了半年，之前约会一直挺体面。前几天他突然说信用卡要周转，让我先帮他顶一下。",
+          "mood": "anxious"
+        },
+        {
+          "speaker": "你",
+          "role": "host",
+          "text": "晚上好。先说第一次提钱，他原话怎么讲？",
+          "mood": "listening"
+        }
+      ],
+      "scene": {
+        "name": "直播连线"
+      },
+      "sceneVersions": [
+        {
+          "speakerId": "shen",
+          "speaker": "咨询者",
+          "version": "他一开始说的是“奖金晚发，帮我挡几天”。我本来以为只是手头紧。后来他让我帮他看一张办材料用的社保截图，我才看到上面已经断缴两个月了。",
+          "doubt": "说是奖金晚发，可社保已经断缴两个月。",
+          "contradiction": "TA 一边说奖金延迟，一边继续高消费，说明资金缺口不是临时才出现。",
+          "reliability": "mixed",
+          "questionOptions": [
+            {
+              "question": "他开口借钱之前，有没有跟你说过工作最近不稳定？",
+              "answer": "没有。他之前一直说最近忙、加班多。要不是那张办材料的截图，我根本不知道他已经断缴两个月了。",
+              "contradiction": "社保断缴早于借钱，失业不是突然发生。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "trust-but-verify"
+            },
+            {
+              "question": "你当时有没有起疑心？",
+              "answer": "一开始没有。我第一反应是他是不是压力太大，想先把人稳住。可后来再看，失业到底从什么时候开始，他一直没讲。",
+              "correct": false,
+              "routeAxis": "caller-credibility",
+              "routeTone": "caller-skeptical"
+            }
+          ]
+        },
+        {
+          "speakerId": "shen",
+          "speaker": "咨询者",
+          "version": "我把那张信用卡账单翻出来才知道，不是小几千，是 8 万出头。最大几笔不是房租和医疗，是餐厅、礼物、酒店和短视频平台分期。",
+          "doubt": "金额和用途都比“挡几天”重得多。",
+          "contradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "这几笔账，哪些是在他没工作以后花的？",
+              "answer": "纪念日晚餐、礼物分期和两次酒店都在断缴之后。",
+              "contradiction": "TA 失业后仍继续制造高消费恋爱场景。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "有没有可能这些消费是他在硬撑？",
+              "answer": "可能。可我卡住的是，硬撑出来的账单，最后为什么变成我要先帮他补上。",
+              "correct": false,
+              "routeAxis": "money-flow",
+              "routeTone": "softening"
+            }
+          ]
+        },
+        {
+          "speakerId": "shen",
+          "speaker": "咨询者",
+          "version": "我后来又对了一遍日期。他第一次说周转那天，账单其实还有三天才到期。他先催我“今晚就要”，后面又改成“这几天都行”。",
+          "doubt": "时间被说急了，咨询者更容易先转钱。",
+          "contradiction": "TA 把还款截止时间说急，制造咨询者当晚转钱的压力。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "他为什么把三天后的期限说成今晚？",
+              "answer": "我问过，他说怕我拖着不管。可他越催我当晚转钱，我越觉得不对：他可能更怕我把账单明细翻完。",
+              "contradiction": "TA 放大还款期限，减少咨询者检查账单的时间。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "有没有可能他自己也慌了，才把时间说乱？",
+              "answer": "可能。他确实慌。但慌不等于可以把时间说成今晚，让我在没看清账单时先转钱。",
+              "correct": false,
+              "routeAxis": "money-flow",
+              "routeTone": "softening"
+            }
+          ]
+        },
+        {
+          "speakerId": "shen",
+          "speaker": "咨询者",
+          "version": "他后来发来一句：“我只是怕你知道我失业后就离开我。”但紧接着又问我能不能先把最低还款转过去。",
+          "doubt": "难过是真的，账递过来也是真的。",
+          "contradiction": "TA 承认隐瞒失业，却仍把还款压力推给关系里的另一方。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "他说怕你离开，那最低还款为什么要你先转？",
+              "answer": "我当时确实被那句“怕你离开”弄心软了。可他下一句就发来最低还款金额，我才反应过来：他说难受是真的，让我补窟窿也是真的。",
+              "contradiction": "情绪脆弱不能自动转化为债务转嫁。",
+              "correct": true,
+              "routeAxis": "caller-credibility",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "那他下个月准备怎么还？",
+              "answer": "他开始讲下个月会有办法，可说来说去，失业多久、债务怎么形成，还是没接上。",
+              "correct": false,
+              "routeAxis": "money-flow",
+              "routeTone": "detour"
+            }
+          ]
+        },
+        {
+          "speakerId": "shen",
+          "speaker": "咨询者",
+          "version": "还有一句我没好意思说：他提过如果我这次不帮，以后他可能就不敢跟我谈结婚了，说自己会一直觉得低我一头。我前面也没说全，那周我们刚吃过很贵的纪念日晚餐，我还发了朋友圈。我跟朋友一直把他讲得挺体面，也没想承认自己其实很吃那种体面，怕突然承认他失业欠账，像是我自己看走眼。",
+          "doubt": "借钱这件事开始被说成尊严和结婚态度。",
+          "contradiction": "TA 把个人债务转成关系忠诚测试，咨询者也不愿承认自己被体面吸引。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "他把你不垫钱和结婚联系起来，是怎么说的？",
+              "answer": "他说最难的时候我都不站在他这边，以后结婚他也抬不起头。我听完很难受，好像不转这笔钱，就成了我不爱他。",
+              "contradiction": "TA 把个人债务转成关系忠诚测试。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "那你为什么一直绕着说要看账单？",
+              "answer": "其实我是怕背这笔债，但又说不出口。我怕一拒绝就被说嫌贫爱富，我也怕别人觉得我找了个撑不住场面的人。前面我把他夸得体面，现在突然承认他失业欠账，我自己也挂不住。所以我才一直说要看账单。",
+              "correct": false,
+              "routeAxis": "caller-credibility",
+              "routeTone": "caller-skeptical"
+            }
+          ]
+        }
+      ],
+      "evidenceCards": [
+        {
+          "id": "daily-credit-social-security",
+          "type": "社保截图",
+          "title": "社保断缴时间",
+          "front": "断缴月份早于第一次借钱 47 天。",
+          "detail": "失业并非临时发生。",
+          "targets": [
+            "truthWithGap",
+            "sceneHint"
+          ],
+          "contradiction": "社保断缴早于借钱，说明失业被持续隐瞒。"
+        },
+        {
+          "id": "daily-credit-card-bill",
+          "type": "账单",
+          "title": "信用卡账单",
+          "front": "餐厅、礼物分期和最低还款集中在同一周。",
+          "detail": "账单显示债务与体面恋爱消费有关。",
+          "targets": [
+            "sceneHint"
+          ],
+          "contradiction": "信用卡债务包含维持恋爱体面的消费成本。"
+        },
+        {
+          "id": "daily-credit-chat",
+          "type": "聊天",
+          "title": "最低还款请求",
+          "front": "“你先帮我挡一下，我不想这段关系因为钱毁了。”",
+          "detail": "把债务包装成关系考验。",
+          "targets": [
+            "truthWithGap"
+          ],
+          "contradiction": "还款请求把个人债务包装成关系考验。"
+        }
+      ],
+      "evidenceChecks": [
+        {
+          "id": "credit-after-layoff-spend",
+          "title": "账单检视",
+          "prompt": "这张信用卡账单里，哪一块最该先圈出来？",
+          "material": "社保断缴后，同一张卡上继续出现纪念日晚餐、礼物分期、两次酒店和短视频平台分期。",
+          "options": [
+            {
+              "label": "断缴后的餐厅、礼物和酒店消费",
+              "correct": true,
+              "contradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。",
+              "feedback": "这块一圈出来，“临时周转”就站不稳了。",
+              "routeAxis": "money-flow"
+            },
+            {
+              "label": "最低还款金额本身很高",
+              "correct": false,
+              "feedback": "金额高只能说明压力大，还不能说明这笔债为什么要转给她。",
+              "routeAxis": "money-flow"
+            },
+            {
+              "label": "他说自己怕被分手",
+              "correct": false,
+              "feedback": "这句话有用，但它是情绪入口，不是账单上的硬缺口。",
+              "routeAxis": "caller-credibility"
+            }
+          ]
+        }
+      ],
+      "investigationHooks": [
+        {
+          "id": "credit-friend-dm",
+          "source": "dm",
+          "surface": "后台进来一条私信",
+          "title": "朋友圈补图",
+          "triggerContradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。",
+          "appearsNowBecause": "收麦后，咨询者的朋友补了一张当晚朋友圈截图。",
+          "prompt": "这张补图里，哪一处最该留下？",
+          "material": "朋友圈照片发在纪念日晚餐那晚。配文写“终于有人把日子过得体面一点”。同一周账单里，还有礼物分期和两次酒店。",
+          "proves": "咨询者也参与过体面叙事。",
+          "stillCannotProve": "不能证明她应该替对方还信用卡。",
+          "routeAxis": "external-corroboration",
+          "options": [
+            {
+              "label": "朋友圈配文和账单同周",
+              "correct": true,
+              "contradiction": "咨询者也参与维持体面叙事，但这不能把信用卡债务转给她。",
+              "feedback": "这张图补的是她为什么迟迟不愿撕开体面，不是替对方接账的理由。",
+              "routeAxis": "external-corroboration"
+            },
+            {
+              "label": "朋友语气很替她生气",
+              "correct": false,
+              "feedback": "朋友站队能解释情绪，解释不了这笔账为什么该由谁还。",
+              "routeAxis": "outer-thread"
+            },
+            {
+              "label": "照片看起来很贵",
+              "correct": false,
+              "feedback": "贵不贵只是感觉，和账单同周出现才有咬合。",
+              "routeAxis": "document-edge"
+            }
+          ]
+        }
+      ],
+      "deepFollowup": {
+        "question": "那我多问一句，社保断缴和信用卡还款都摆出来以后，你最怕失去的是钱，还是这段关系原来看起来很体面的样子？",
+        "answer": "我最怕承认的是，我也被那个体面打动过。朋友都觉得他工作稳定、出手大方，我不垫这笔信用卡还款，就像亲手把这层撕开。可撕开归撕开，账还是不能变成我的。",
+        "note": "聊到这一步，心疼归心疼，面子归面子，账单不能自动换人。"
+      },
+      "stageJudgement": "这案别只问穷不穷。社保断缴没说，信用卡花销没停；她也被那层体面吸引过，所以才迟迟不敢把账单和面子分开。",
+      "followupTwist": "后续回拨里，对方承认失业和信用卡债务都是真的，也承认现在最急的是先撑过最低还款。脆弱是真的，让别人接账也是真的。",
+      "dailyShareTitle": "8 万信用卡，到底该不该帮 TA 还？",
+      "dailyShareBody": "我卡住的不是 TA 穷，是社保断了快两个月，约会账单还在往上堆。",
+      "dailyShareQuestion": "你会先问失业时间，还是先问 TA 为什么借钱？",
+      "truth": "失业可以让人慌，恋爱里也可以互相帮一把。但社保断缴先瞒着、信用卡消费照旧、还款再让别人顶，不能靠一句怕分手盖过去。她也要承认，自己吃过那层体面，才会在转不转钱前先怕丢人。"
     },
     "02-tony": {
       "caseId": "02-tony",
