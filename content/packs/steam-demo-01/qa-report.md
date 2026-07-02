@@ -11,7 +11,7 @@
 - 案间页标题使用物件钩子，不使用“下一案 / 下一通来电”当标题。
 - 结果页不能写成教程、评分表或最佳答案解析。
 - 当前试玩包的 manifest 已经通过 `npm run content:index` 生成运行时索引，`src/storyPacks.js` 不再手写一份包定义。
-- 生成索引同时输出 `CONTENT_CASES`；前三案已切到 `runtime-loaded`，其余一案仍只暴露 `metadata-only` 摘要。
-- 未迁移案件仍复用 `src/caseEngine.js` 完整台词模板；`metadata-only` JSON 只记录故事压力、物件和评论种子，不能写成看似已接入的台词字段。
-- 新增案件时，运行时内容和 `content/packs/steam-demo-01/` 仍要同步更新，直到对应 case JSON 切到 `runtime-loaded` 接管完整台词、追问、材料判定和复盘文案。
+- 生成索引同时输出 `CONTENT_CASES`；四案均已切到 `runtime-loaded`，完整台词、追问、材料判定和复盘文案由内容包接管。
+- `truthBoundary` 已随运行时内容进入 brief，后续结案对照和“今晚定不了”的收麦句可以直接读取。
+- 新增案件时，运行时内容和 `content/packs/steam-demo-01/` 必须同步更新；如果 case JSON 没切到 `runtime-loaded`，只能保留策划压力包，不能夹带运行时台词字段。
 - 结算、满格深问和剧本文档要按当前 caller/respondent 指派检查代词；角色可能换人时，用“咨询者 / 同事 / 对方”。

@@ -76,6 +76,21 @@ export const CONTENT_CASES = {
       "storyArcSummary": "账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
       "storySuspense": "这案一不小心就吵成“你嫌我穷”。账单日期比委屈更诚实。",
       "storyClueObject": "信用卡账单与社保断缴截图",
+      "truthBoundary": {
+        "true": [
+          "失业和债务压力都存在",
+          "社保断缴早于第一次借钱",
+          "信用卡消费包含约会体面开支"
+        ],
+        "edited": [
+          "对方把长期资金缺口说成奖金晚发",
+          "咨询者把怕丢面子包装成只想看账单"
+        ],
+        "unknown": [
+          "对方后续能否真正还款",
+          "双方如果摊开账单后是否还能继续关系"
+        ]
+      },
       "openingComplaint": "咨询者连线说：“TA 说信用卡只是短期周转，让我先帮一下。我不是不帮，是后来发现这个洞可能早就有了。”",
       "openingDialogue": [
         {
@@ -344,6 +359,21 @@ export const CONTENT_CASES = {
       "storyArcSummary": "看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
       "storySuspense": "他会聊天不稀奇，稀奇的是每句亲近后面都接了店里的事。",
       "storyClueObject": "理发店排班表与办卡记录",
+      "truthBoundary": {
+        "true": [
+          "对方对多名顾客使用相似亲密称呼",
+          "亲密话术后面接着办卡、带客或投店请求",
+          "排班表能显示他把同样窗口留给多人"
+        ],
+        "edited": [
+          "咨询者把自己说成被动受害，却没有逼他说清楚关系",
+          "对方把销售话术说成性格会聊"
+        ],
+        "unknown": [
+          "对方是否对每个人都有真实好感",
+          "其他顾客是否把这段关系理解成排他暧昧"
+        ]
+      },
       "openingComplaint": "咨询者连线说：“我以为快确定关系了。后来他发错了一张预约表，我才发现那张表好像不是在排剪头。”",
       "openingDialogue": [
         {
@@ -612,6 +642,21 @@ export const CONTENT_CASES = {
       "storyArcSummary": "材料会越要越细，男方有话没说全，女方也有话没跟家里说。",
       "storySuspense": "几张图都挺像真的，问题是它们刚好少了最容易吵起来的部分。",
       "storyClueObject": "几张资料截图和一张存款证明",
+      "truthBoundary": {
+        "true": [
+          "MBA 经历可能是真的",
+          "存款证明本身不能证明长期收入",
+          "资料里的学历和正式学历不是同一个口径"
+        ],
+        "edited": [
+          "对方把 MBA 包装成更好听的学历标签",
+          "咨询者把收入诉求说成只是家里想看稳定"
+        ],
+        "unknown": [
+          "对方是否有持续真实收入",
+          "双方如果坦白条件后是否还愿意继续"
+        ]
+      },
       "openingComplaint": "咨询者连线说：“我想问下我男朋友的事。我们是相亲认识的，最近聊到见父母，他发了学校、工作、收入截图，后面又补了一张存款证明。我越看越觉得，这事不是一张图的问题。”",
       "openingDialogue": [
         {
@@ -907,7 +952,284 @@ export const CONTENT_CASES = {
     "04-workplace": {
       "caseId": "04-workplace",
       "plotId": "workplace-reimbursement-screenshot",
-      "runtimeContentStatus": "metadata-only"
+      "runtimeContentStatus": "runtime-loaded",
+      "label": "职场报销截图",
+      "storyArcTitle": "今日来电：职场报销截图",
+      "publicHook": "同事说报销已经批了，却一直不把垫付款转回。那张截图看着没问题，偏偏少了付款那一截。",
+      "storyArcSummary": "先问三件事：谁让垫、谁拿署名、截图到底停在哪一步。",
+      "storySuspense": "这案很容易骂成同事骗钱。审批通过和钱到账不是一回事。",
+      "storyClueObject": "报销审批截图、活动群聊和供应商报价单",
+      "truthBoundary": {
+        "true": [
+          "审批流程可能已经走到某一步",
+          "咨询者确实垫了款",
+          "截图没有显示付款完成"
+        ],
+        "edited": [
+          "对方把审批通过说成钱已经能返",
+          "咨询者没说自己也想要这个项目主责"
+        ],
+        "unknown": [
+          "款项最终进入谁的账户",
+          "老板是否知道真实垫款和对接过程"
+        ]
+      },
+      "openingComplaint": "咨询者连线说：“我想问公司同事欠我一笔垫付款。他发了报销审批截图，说财务已经批了，可钱一直没转给我。我越看越觉得那张图少了一块。”",
+      "openingDialogue": [
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "主播你好，我想问一件公司里的事。上个月部门做客户答谢会，同事让我先垫了场地和礼品钱。后来他发了一张报销截图，可钱一直没回我。",
+          "mood": "thinking"
+        },
+        {
+          "speaker": "你",
+          "role": "host",
+          "text": "晚上好。为什么一开始是你垫？",
+          "mood": "listening"
+        }
+      ],
+      "scene": {
+        "name": "直播连线"
+      },
+      "sceneVersions": [
+        {
+          "speakerId": "chen",
+          "speaker": "咨询者",
+          "version": "我一开始也不是完全被迫。我刚进项目组，确实想借这次客户答谢会让老板看到我。更难听一点，我先跟老板说过这次我可以主责，所以听到“署名写你负责”，就先垫了。",
+          "doubt": "咨询者不是完全被逼，也确实想拿这个表现机会。",
+          "contradiction": "咨询者先想要主责曝光，同事再把垫付款包装成机会，资金风险被弱化。",
+          "reliability": "mixed",
+          "questionOptions": [
+            {
+              "question": "他让你垫钱时，原话有没有提署名和老板？",
+              "answer": "有。他说这次答谢会缺个执行负责人，如果我先垫场地和礼品费，复盘材料里可以写我主责。我没说的是，我前面已经跟老板表过态，想接这个活。",
+              "contradiction": "咨询者先向老板表态想主责，同事借这个把垫款包装成机会。",
+              "correct": true,
+              "routeAxis": "identity-wording",
+              "routeTone": "trust-but-verify"
+            },
+            {
+              "question": "他说主责署名的时候，你为什么先答应垫？",
+              "answer": "我也确实想要这个主责，所以没有第一时间追垫款流程。可想表现不等于默认钱可以一直卡着。",
+              "correct": false,
+              "routeAxis": "caller-credibility",
+              "routeTone": "caller-skeptical"
+            }
+          ]
+        },
+        {
+          "speakerId": "chen",
+          "speaker": "咨询者",
+          "version": "我后来才想起来，活动前他让我别在大群里问预算，说客户答谢会临时调整太多，先私下把事办成，复盘再补流程。我也怕在大群问预算，会显得我前面说能主责是嘴硬。",
+          "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
+          "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "他为什么不让你在大群确认预算？",
+              "answer": "他说大群里问预算，会显得我不担事，老板会觉得我推活。不如先私下办成，复盘时再补流程。现在回头看，他拿住的就是我想表现又怕露怯。",
+              "contradiction": "同事借表现压力阻止公开确认预算。",
+              "correct": true,
+              "routeAxis": "identity-wording",
+              "routeTone": "caller-skeptical"
+            },
+            {
+              "question": "你如果当时在群里问，会不会真的影响观感？",
+              "answer": "可能会显得我不够爽快。但至少钱是谁批、谁还、谁对接供应商，会留下记录。",
+              "correct": false,
+              "routeAxis": "identity-wording",
+              "routeTone": "softening"
+            }
+          ]
+        },
+        {
+          "speakerId": "chen",
+          "speaker": "咨询者",
+          "version": "他后来发给我的那张图，抬头是“报销审批通过”。我当时以为等于钱已经到了，可仔细看下面没有付款流水，也没有收款账户。",
+          "doubt": "审批通过看着像结束了，其实还差付款那一步。",
+          "contradiction": "报销截图只显示审批通过，没有付款流水和收款账户。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "这张审批图少了哪一边，是付款状态还是收款账户？",
+              "answer": "图上确实写着审批通过。但下面没有付款状态，也没露收款账户。它只能证明公司同意报销，不能证明钱已经打出去，更不能证明打给了谁。",
+              "contradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "他有没有可能只是财务慢，不是故意拖？",
+              "answer": "有可能。所以我才没一上来撕破脸。但如果只是财务慢，他完全可以给我看付款状态，或者让我问财务，而不是一直拿审批截图挡。",
+              "correct": false,
+              "routeAxis": "money-flow",
+              "routeTone": "softening"
+            }
+          ]
+        },
+        {
+          "speakerId": "chen",
+          "speaker": "咨询者",
+          "version": "我后来又翻供应商报价单，发现礼品那项有一个“服务协调费”。同事说这是正常费用，可供应商群里又提到会把返款统一打给对接人。",
+          "doubt": "钱卡着不动，可能还牵着供应商那边的返款。",
+          "contradiction": "供应商报价单出现服务协调费，返款却可能打给同事这个对接人。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "供应商返款打给谁，和你的垫付款是不是同一条钱路？",
+              "answer": "供应商群里说返款统一打给对接人，对接人是他。也就是说，我垫出去的钱、公司报销的钱、供应商那笔返款，最后都绕到他手里。",
+              "contradiction": "同事同时控制报销入口和供应商返款入口。",
+              "correct": true,
+              "routeAxis": "money-flow",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "你问过这笔服务协调费是不是正常报价吗？",
+              "answer": "问过。他说可能就是正常报价。可他不让我问财务，也不说返款怎么处理，我就没法只按正常报价理解。",
+              "correct": false,
+              "routeAxis": "money-flow",
+              "routeTone": "softening"
+            }
+          ]
+        },
+        {
+          "speakerId": "chen",
+          "speaker": "咨询者",
+          "version": "复盘材料出来以后，主责那栏确实写了我，但付款对接人和供应商确认人都还是他。也就是说，出问题时我像负责人，拿钱时入口还在他手里。",
+          "doubt": "署名给了表面责任，关键入口仍在同事手里。",
+          "contradiction": "咨询者拿到项目署名，却没有拿到付款和供应商入口。",
+          "reliability": "partial",
+          "questionOptions": [
+            {
+              "question": "主责署名和付款入口，最后在同一个人手里吗？",
+              "answer": "不在。复盘报告写我主责，看起来是我负责；可付款对接、供应商确认、返款入口都在他那边。出事先问我，钱什么时候回却要看他。",
+              "contradiction": "项目责任和资金入口被拆给不同人。",
+              "correct": true,
+              "routeAxis": "identity-wording",
+              "routeTone": "pressure-point"
+            },
+            {
+              "question": "主责写了你以后，你为什么反而更慌？",
+              "answer": "一开始我觉得也算值。可钱没回来以后，主责反而像风险，出了问题大家会先问我为什么私下垫。",
+              "correct": false,
+              "routeAxis": "caller-credibility",
+              "routeTone": "caller-skeptical"
+            }
+          ]
+        }
+      ],
+      "evidenceCards": [
+        {
+          "id": "daily-work-repay-approval",
+          "type": "报销截图",
+          "title": "审批通过页",
+          "front": "截图只露出“审批通过”，没有付款状态和收款账户。",
+          "detail": "审批通过不等于钱已到账。",
+          "targets": [
+            "truthWithGap"
+          ],
+          "contradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。"
+        },
+        {
+          "id": "daily-work-repay-chat",
+          "type": "群聊原话",
+          "title": "署名和垫款",
+          "front": "“你先顶上，复盘材料里可以写你主责。”",
+          "detail": "表现机会和资金风险被放在同一句话里。",
+          "targets": [
+            "sceneHint"
+          ],
+          "contradiction": "垫付款被包装成项目署名机会，资金风险被弱化。"
+        },
+        {
+          "id": "daily-work-repay-vendor",
+          "type": "报价单",
+          "title": "服务协调费",
+          "front": "礼品报价里出现服务协调费，供应商群里提到返款给对接人。",
+          "detail": "返款流向决定这事是慢报销，还是有人截住入口。",
+          "targets": [
+            "truthWithGap"
+          ],
+          "contradiction": "同事同时控制报销入口和供应商返款入口。"
+        }
+      ],
+      "evidenceChecks": [
+        {
+          "id": "work-approval-missing",
+          "title": "审批截图检视",
+          "prompt": "这张审批图最该让对方补哪一页？",
+          "material": "截图只露出“审批通过”。下面没有付款状态，也没有收款账户。",
+          "options": [
+            {
+              "label": "付款状态和收款账户",
+              "correct": true,
+              "contradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
+              "feedback": "审批通过不是到账，缺的这一页才决定钱去了哪里。",
+              "routeAxis": "document-edge"
+            },
+            {
+              "label": "活动现场照片",
+              "correct": false,
+              "feedback": "活动办没办不是当前缺口，钱有没有打出去才是。",
+              "routeAxis": "outer-thread"
+            },
+            {
+              "label": "老板有没有看到复盘",
+              "correct": false,
+              "feedback": "复盘能证明署名，证明不了垫付款有没有回。",
+              "routeAxis": "identity-wording"
+            }
+          ]
+        }
+      ],
+      "investigationHooks": [
+        {
+          "id": "work-supplier-dm",
+          "source": "dm",
+          "surface": "后台进来一条私信",
+          "title": "供应商补话",
+          "triggerContradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
+          "appearsNowBecause": "收麦后，供应商群里有人匿名补了一句。",
+          "prompt": "这条补话里，哪处最该圈出来？",
+          "material": "供应商说“服务协调费按老规矩返给对接人”。同一张表里，对接人还是那位同事，付款确认页没有发给咨询者。",
+          "proves": "报销入口和供应商返款入口都在同事手里。",
+          "stillCannotProve": "不能证明公司审批是假，但能证明截图停在最容易挡人的一页。",
+          "routeAxis": "external-corroboration",
+          "options": [
+            {
+              "label": "返给对接人",
+              "correct": true,
+              "contradiction": "供应商返款按老规矩返给对接人，资金入口仍在同事手里。",
+              "feedback": "这句把审批截图和供应商那条钱路接上了。",
+              "routeAxis": "external-corroboration"
+            },
+            {
+              "label": "按老规矩",
+              "correct": false,
+              "feedback": "老规矩很可疑，但要先圈出钱最后返给谁。",
+              "routeAxis": "process-control"
+            },
+            {
+              "label": "付款确认页没发",
+              "correct": false,
+              "feedback": "这点前面已经咬过，补话新增的是返款落点。",
+              "routeAxis": "document-edge"
+            }
+          ]
+        }
+      ],
+      "deepFollowup": {
+        "question": "那我多问一句，如果今天不只是钱没回来，你最怕这件事在公司里被说成什么？",
+        "answer": "我最怕他们说我是为了抢署名才私下垫款，流程不规范。我先跟老板说能主责，我也确实想要这个主责；但他用这个让我先刷卡、又拿审批截图挡我，也是真的。",
+        "note": "问到这里，咨询者想表现是真的，被人拿这个点压着先垫钱也是真的。"
+      },
+      "stageJudgement": "这不只是同事欠钱。审批图、主责署名、垫付款、供应商返款全挤在同一个人手里，对方就有办法一直拖。",
+      "followupTwist": "后续回拨里，财务说审批通过后还要二次付款确认，收款账户填的是同事账户。截图不是假，只是刚好截到最能让人闭嘴的地方。",
+      "dailyShareTitle": "报销截图都发了，钱为什么还没回来？",
+      "dailyShareBody": "我卡住的不是审批过没过，是付款状态、收款账户和供应商返款都没露出来。",
+      "dailyShareQuestion": "你会先问审批截图，还是先问谁拿了项目署名？",
+      "truth": "职场截图也会只截好看的半张。咨询者想拿表现，所以先垫了；同事拿着审批图和供应商入口不放，所以钱一直回不来。两件事要分开说。"
     }
   }
 };
