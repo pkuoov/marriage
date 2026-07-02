@@ -1,5 +1,5 @@
-import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.52";
-import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.52";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.53";
+import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.53";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
@@ -7,13 +7,13 @@ const LEGACY_STORAGE_KEY = "marriage-detective-agency-save-v1";
 const LEGACY_META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
 
 export const CHARACTER_ART = {
-  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.52",
-  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.52",
-  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.52",
-  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.52",
-  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.52",
-  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.52",
-  he: "./assets/generated/characters/he_neutral.png?v=0.20.52"
+  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.53",
+  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.53",
+  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.53",
+  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.53",
+  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.53",
+  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.53",
+  he: "./assets/generated/characters/he_neutral.png?v=0.20.53"
 };
 
 export const baseState = {
@@ -36,6 +36,7 @@ export const baseState = {
   evidenceCheckPicks: {},
   investigationPicks: {},
   truthBoundaryPicks: {},
+  truthBoundaryMisses: {},
   routeChoiceLog: {},
   caseBudgets: {},
   caseActionLog: {},
@@ -75,6 +76,7 @@ export function migrateState(saved) {
   if (!next.evidenceCheckPicks || Array.isArray(next.evidenceCheckPicks)) next.evidenceCheckPicks = {};
   if (!next.investigationPicks || Array.isArray(next.investigationPicks)) next.investigationPicks = {};
   if (!next.truthBoundaryPicks || Array.isArray(next.truthBoundaryPicks)) next.truthBoundaryPicks = {};
+  if (!next.truthBoundaryMisses || Array.isArray(next.truthBoundaryMisses)) next.truthBoundaryMisses = {};
   if (!next.routeChoiceLog || Array.isArray(next.routeChoiceLog)) next.routeChoiceLog = {};
   if (!next.caseBudgets || Array.isArray(next.caseBudgets)) next.caseBudgets = {};
   if (!next.caseActionLog || Array.isArray(next.caseActionLog)) next.caseActionLog = {};

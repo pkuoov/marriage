@@ -1,5 +1,5 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.52";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.52";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.53";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.53";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
@@ -105,6 +105,15 @@ export function truthBoundaryReview(brief = {}) {
     prompts,
     choices: columns.map(({ key, label }) => ({ key, label }))
   };
+}
+
+export function truthBoundaryAftertaste(review = {}, picks = {}, misses = {}) {
+  if (!(review.prompts ?? []).length) return "";
+  const totalMisses = (review.prompts ?? []).reduce((sum, prompt) => sum + Number(misses[prompt.id] ?? 0), 0);
+  const settled = (review.prompts ?? []).every((prompt) => picks[prompt.id] === prompt.expected);
+  if (!settled) return "这几句还没放稳，收话先压一压。";
+  if (totalMisses > 0) return "刚才有句差点放早了，收回来以后，这通才没变成替人判案。";
+  return "这几句边界放稳了：能确认的钉住，定不了的不替人补。";
 }
 
 function cleanBoundaryItems(items = []) {
