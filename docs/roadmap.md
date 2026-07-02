@@ -22,7 +22,7 @@
 - 首个内容包骨架已拆到 `content/packs/steam-demo-01/`，并新增 `npm run verify:pack` 校验内容包与运行时故事包定义一致。
 - `episode` 已开始支持可变案数：当前 demo 包是四案，但存档迁移、包校验和生成器不再把 4 当成引擎规则。
 - 内容包 manifest 元数据已生成到 `src/generated/contentPackIndex.js` 并由运行时读取；`src/storyPacks.js` 不再手写 demo 包镜像。
-- 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`；第一案已切到 `runtime-loaded` 并由内容包覆盖模板字段。
+- 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`；前两案已切到 `runtime-loaded` 并由内容包覆盖模板字段。
 - Web 存档已拆出 `src/platform/saveStore.js`，当前保持单槽 localStorage 行为，后续桌面壳可替换成文件存档和 Steam Cloud 导出。
 - 路线轴、路线语气和路线画像已拆到 `src/runtime/routeLog.js`，`caseEngine` 不再维护第二套路线推断。
 - 每案加入材料检视节点，玩家要指出账单、截图、表格或审批图里的具体缺口；关键追问和材料命中不扣听众忍耐，外围绕问或误指材料才扣。
@@ -44,5 +44,5 @@
 - 资料操作的基础版式与回流稳定后，再把听众耐心、连线人防备和弹幕跑偏统一成现场压力模型。
 - 现场压力稳定后，再重做收麦回看，让结果页回收材料圈点、原话选择和路线画像。
 - 技术债按支撑顺序推进：继续拆 `recapModel` / `sceneAdvance` 周边 UI，接桌面文件版 `saveStore`，再做 Steam Input / 手柄和桌面壳。
-- 内容包管线仍是 P0 架构债：manifest 和 loader 入口已接运行时生成索引，第一案已从 JSON 读取完整内容；其余案件仍是 `metadata-only` 压力包，完整台词仍来自 `src/caseEngine.js`。下一步继续逐案切到 `runtime-loaded`。
+- 内容包管线仍是 P0 架构债：manifest 和 loader 入口已接运行时生成索引，前两案已从 JSON 读取完整内容；其余案件仍是 `metadata-only` 压力包，完整台词仍来自 `src/caseEngine.js`。下一步继续逐案切到 `runtime-loaded`。
 - AI 只保留为后期受控 intent router，不进入当前实现队列。

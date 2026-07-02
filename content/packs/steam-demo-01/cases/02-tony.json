@@ -1,7 +1,7 @@
 {
   "caseId": "02-tony",
   "plotId": "tony-multi-dating",
-  "runtimeContentStatus": "metadata-only",
+  "runtimeContentStatus": "runtime-loaded",
   "dramaticAnchor": "理发店排班表与办卡记录",
   "whyTonight": "咨询者发现自己以为的专属暧昧，和多名顾客的办卡节奏重合。",
   "objectPurpose": "排班表和办卡记录用来确认甜话后面是否接着稳定转化。",
@@ -28,5 +28,268 @@
     "你跟别人不一样",
     "自己人我才这么跟你说",
     "你带朋友来，我肯定给你安排最好的"
-  ]
+  ],
+  "label": "理发店排班表",
+  "storyArcTitle": "今日来电：理发店排班表",
+  "publicHook": "她以为自己快要确定关系，直到对方发错一张店里预约表，备注不像剪头，倒像在给人分类。",
+  "storyArcSummary": "看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
+  "storySuspense": "他会聊天不稀奇，稀奇的是每句亲近后面都接了店里的事。",
+  "storyClueObject": "理发店排班表与办卡记录",
+  "openingComplaint": "咨询者连线说：“我以为快确定关系了。后来他发错了一张预约表，我才发现那张表好像不是在排剪头。”",
+  "openingDialogue": [
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "主播你好，我想问一个相亲后暧昧了几个月的人。他在理发店上班，昨天本来要发预约时间给我，结果发错了一张店里表格。我第一眼以为是预约表，越看越不对。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "你",
+      "role": "host",
+      "text": "晚上好。表先放一下，看到表之前，他平时怎么和你相处？",
+      "mood": "listening"
+    }
+  ],
+  "scene": {
+    "name": "直播连线"
+  },
+  "sceneVersions": [
+    {
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "version": "TA 每次下班后都陪我聊天，说只有我能接住 TA 的情绪，还说别人都不懂。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。",
+      "doubt": "没有确认关系，但对方一直给排他式的亲近感。",
+      "contradiction": "TA 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
+      "reliability": "mixed",
+      "questionOptions": [
+        {
+          "question": "他有没有说过你们现在到底算什么关系？",
+          "answer": "没有。他会说“你跟别人不一样”，但真问到关系，他就说慢慢来。",
+          "contradiction": "亲密感很满，关系承诺却一直悬着。",
+          "correct": true,
+          "routeAxis": "identity-wording",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "话当时没说死，你当时怎么回他的？",
+          "answer": "我也怕一问就尴尬。他说我像店里自己人，我听着其实挺受用，就想着再等等。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ]
+    },
+    {
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "version": "后来我翻聊天，发现一个节奏特别明显。他先说“店里压力大”“今晚又被店长说了”，我一心软，他就接让我帮忙发活动、带朋友去剪头，或者问我下次要不要直接办年卡。",
+      "doubt": "情绪求助后面开始接店里的经营目标。",
+      "contradiction": "TA 把亲密聊天接到办卡、带客和朋友圈推广上。",
+      "reliability": "partial",
+      "questionOptions": [
+        {
+          "question": "他说压力大之后，最常接什么请求？",
+          "answer": "不是只求安慰。聊着聊着就会说，能不能帮他转个活动，或者问我朋友最近要不要剪头。",
+          "contradiction": "情绪求助后接商业转化请求。",
+          "correct": true,
+          "routeAxis": "counterparty-credibility",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "他让你帮店里这些事时，你当时怎么理解你们的关系？",
+          "answer": "我以为我们是在一起往前走，也有点享受他把我当自己人，所以帮店里做点事就没细算。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ]
+    },
+    {
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "version": "昨天他发错那张表，我才把前面的事串起来。表头写的是预约，可备注没写“烫发”“修刘海”，写的是“情绪稳定”“办卡意向强”“朋友多”。我那一行后面写着“稳情绪”。",
+      "doubt": "那张表不像普通客户备注，更像在写每个人能带来什么。",
+      "contradiction": "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
+      "reliability": "partial",
+      "questionOptions": [
+        {
+          "question": "这张表是在记发型需求，还是在记你们能带来什么？",
+          "answer": "现在看是在记人能带来什么。发型需求那一栏反而很空，备注全是能不能安抚、能不能办卡、能不能带朋友。",
+          "contradiction": "预约表实际在记录对象可转化的资源。",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你那一栏为什么会被写成稳情绪？",
+          "answer": "可能因为我总听他说店里的事，也很少当场翻脸。他知道我会先安慰他，再帮他想办法。",
+          "correct": false,
+          "routeAxis": "document-edge",
+          "routeTone": "detour"
+        }
+      ]
+    },
+    {
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "version": "我拿表问他，他回我：“我从来没说只有你一个。”可我翻聊天，他发过“以后店开起来，你就是老板娘”。这句话不是求婚，可听完以后，他再说办年卡、以后投一点，我就没那么防备。",
+      "doubt": "没说“只有你”，不代表没有让人往那个方向想。",
+      "contradiction": "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
+      "reliability": "partial",
+      "questionOptions": [
+        {
+          "question": "他说老板娘之后，有没有马上让你办卡或投店？",
+          "answer": "有。那晚后面就聊到年卡，说我以后常来店里也方便。再往后又提过，如果店扩大，我可以先投一点。",
+          "contradiction": "未来身份暗示后紧接着出现办卡和投店话题。",
+          "correct": true,
+          "routeAxis": "identity-wording",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "“老板娘”那句是在什么场合说的？",
+          "answer": "是深夜聊天时说的。单看挺甜，可后面接着聊年卡、投店，我就不敢只当甜话听了。",
+          "correct": false,
+          "routeAxis": "identity-wording",
+          "routeTone": "detour"
+        }
+      ]
+    },
+    {
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "version": "最让我清醒的是后面那列“下一次推进”。我那行写“年卡已聊，可稳情绪”；另一个女生写“能投店，约饭再谈”；还有一个写“朋友多，带客”。这就不是我一个人的误会了。",
+      "doubt": "表格不只是备注，还写了下一步怎么把人往店里推进。",
+      "contradiction": "TA 把不同暧昧对象按可推进资源分层管理。",
+      "reliability": "partial",
+      "questionOptions": [
+        {
+          "question": "这张表是在排员工，还是在排你们这些人下一步怎么推进？",
+          "answer": "现在看更像后者。我不是班次，我是“年卡已聊、稳情绪”。另一个也不是班次，是“能投店”“能带客”。",
+          "contradiction": "排班表实为暧昧对象资源分层表。",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "有没有可能只是店里玩笑备注？",
+          "answer": "如果只有我一个名字，我还能骗自己是玩笑。但每个人后面都接一个功能，还写下一次怎么推进，我就没法只当玩笑了。",
+          "correct": false,
+          "routeAxis": "outer-thread",
+          "routeTone": "softening"
+        }
+      ]
+    }
+  ],
+  "evidenceCards": [
+    {
+      "id": "daily-tony-roster",
+      "type": "排班表",
+      "title": "理发店预约表",
+      "front": "备注列写着“情绪稳定 / 能投店 / 能带客”。",
+      "detail": "这些备注不像剪发需求，更像每个人能带来的东西。",
+      "targets": [
+        "truthWithGap",
+        "sceneHint"
+      ],
+      "contradiction": "排班表显示多个暧昧对象被按功能分类。"
+    },
+    {
+      "id": "daily-tony-chat-copy",
+      "type": "聊天截图",
+      "title": "三份专属话术",
+      "front": "三个人都收到过“你和别人不一样”。",
+      "detail": "后续请求不同：办卡、投店、见朋友。",
+      "targets": [
+        "halfLie"
+      ],
+      "contradiction": "专属话术被复制给不同对象。"
+    },
+    {
+      "id": "daily-tony-card",
+      "type": "消费记录",
+      "title": "办卡与礼物",
+      "front": "暧昧升温后一周内出现年卡和礼物消费。",
+      "detail": "情绪承诺与消费绑定。",
+      "targets": [
+        "sceneHint"
+      ],
+      "contradiction": "未来承诺后紧接消费绑定。"
+    }
+  ],
+  "evidenceChecks": [
+    {
+      "id": "tony-roster-column",
+      "title": "排班表检视",
+      "prompt": "这张表里哪一列不像预约表？",
+      "material": "表头写预约，备注却写着“情绪稳定”“办卡意向强”“朋友多”，最后一列还有“下一次推进”。",
+      "options": [
+        {
+          "label": "备注和下一次推进",
+          "correct": true,
+          "contradiction": "TA 把不同对象按可推进资源分层管理。",
+          "feedback": "这不是剪头需求，是把人按能带来什么往下排。",
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "预约时间",
+          "correct": false,
+          "feedback": "预约时间本身正常，真正不对的是备注里的功能标签。",
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "店员名字",
+          "correct": false,
+          "feedback": "名字不够要紧，后面那些“稳情绪”“能投店”才让这张表变了性质。",
+          "routeAxis": "outer-thread"
+        }
+      ]
+    }
+  ],
+  "investigationHooks": [
+    {
+      "id": "tony-other-caller-dm",
+      "source": "dm",
+      "surface": "后台进来一条私信",
+      "title": "另一份同款表",
+      "triggerContradiction": "TA 把不同对象按可推进资源分层管理。",
+      "appearsNowBecause": "收麦后，另一个女生把她收到的那张表也发了过来。",
+      "prompt": "这张同款表里，哪处最该圈？",
+      "material": "她那栏写着“能投店”，后面跟着“约见朋友、聊分红”。另一栏写“情绪稳住，年卡下次推”。",
+      "proves": "同一套亲密话术后面接的是不同商业目标。",
+      "stillCannotProve": "不能证明所有暧昧都假，但能证明他把人按用途往下排。",
+      "routeAxis": "external-corroboration",
+      "options": [
+        {
+          "label": "能投店和聊分红",
+          "correct": true,
+          "contradiction": "另一个对象也被写进投店推进表，亲密关系被接到商业转化上。",
+          "feedback": "这不是只对一个人嘴甜，是每个人后面都接着下一步用途。",
+          "routeAxis": "external-corroboration"
+        },
+        {
+          "label": "她也说被他哄过",
+          "correct": false,
+          "feedback": "被哄过能说明情绪相似，但这张表真正咬住的是用途分栏。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "年卡下次推",
+          "correct": false,
+          "feedback": "年卡是旧线，新私信更重的是投店和分红已经进表。",
+          "routeAxis": "money-flow"
+        }
+      ]
+    }
+  ],
+  "deepFollowup": {
+    "question": "那我多问一句，看到排班表里写投店、带客以后，你自己当时为什么还愿意接那些店里的事？",
+    "answer": "因为我也吃了那个“自己人”的感觉。他说以后店里有我一个位置，我就觉得办卡、转活动、带朋友过去都像在帮我们。现在看，他不承认关系，我也没逼他说清楚，投店、带客这些难听话就被我们一起往后拖了。",
+    "note": "问到这里，别只问他花不花心，要问他到底把她当谁。"
+  },
+  "stageJudgement": "这不像普通多聊几个人。那张表把“稳情绪”“年卡已聊”“能投店”“带客”写得明明白白。",
+  "followupTwist": "后续回拨里，另一位女生也发来私信，说她那栏写着“能投店”。直播间这才反应过来，表里排的不是班，是人。",
+  "dailyShareTitle": "你会从哪一句看出 TA 在养鱼？",
+  "dailyShareBody": "我卡住的不是暧昧聊天，是排班表里那几栏：情绪稳定、能投店、能带客。",
+  "dailyShareQuestion": "你觉得“你和别人不一样”算锤吗？",
+  "truth": "一个人会聊天不等于有问题。但如果同一套“你最懂我”分别发给几个人，后面还接办卡、带客、投店，那就不是普通暧昧了。"
 }
