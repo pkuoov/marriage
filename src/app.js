@@ -1,16 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.55";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.55";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.55";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.55";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.55";
-import { NPCS } from "./story.js?v=0.20.55";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.55";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.55";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.55";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.55";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.55";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.55";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.55";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.56";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.56";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.56";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.56";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.56";
+import { NPCS } from "./story.js?v=0.20.56";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.56";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.56";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.56";
+import { livePressureProfile } from "./runtime/livePressure.js?v=0.20.56";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.56";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.56";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.56";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.56";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -765,14 +766,11 @@ function renderStoryPackComplete() {
 }
 
 function liveControlDeck(brief = {}, label = "") {
-  const budget = ensureBudget(brief);
-  const max = Math.max(1, Number(budget.max ?? 1));
-  const remaining = Math.max(0, Math.min(max, Number(budget.remaining ?? max)));
+  const pressure = currentLivePressure(brief);
   const total = Math.max(1, keyQuestionLimit(brief));
   const segment = Math.max(1, Math.min(total, answeredSceneCount(brief) + 1));
   const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
   const material = brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录";
-  const pressure = remaining <= Math.ceil(max * 0.28) ? "快压不住" : remaining <= Math.ceil(max * 0.55) ? "开始起噪" : "还在听";
   return `
     <aside class="control-deck" aria-label="直播控场台">
       <section class="deck-card deck-card-live">
@@ -787,8 +785,8 @@ function liveControlDeck(brief = {}, label = "") {
       </section>
       <section class="deck-card deck-card-pressure">
         <span>听众耐心</span>
-        <b>${remaining}/${max}</b>
-        <small>${pressure}</small>
+        <b>${pressure.remaining}/${pressure.max}</b>
+        <small>${escapeHtml(pressure.patienceLabel)}</small>
       </section>
       <section class="deck-card deck-card-material">
         <span>后台材料</span>
@@ -1697,6 +1695,18 @@ function routeTrailItemHtml(item, brief = {}) {
   `;
 }
 
+function currentLivePressure(brief, mood = "listening") {
+  return livePressureProfile({
+    budget: ensureBudget(brief),
+    foundCount: contradictions(brief).length,
+    intentHook: liveIntentHookFor(brief),
+    reaction: state.lastReaction ?? "",
+    scene: state.scene,
+    sceneText: currentSceneText(brief),
+    mood
+  });
+}
+
 function summarizeStoryPackAxes(briefs, results) {
   const counts = {};
   briefs.forEach((brief, index) => {
@@ -1817,15 +1827,12 @@ function caseProgressStrip(brief) {
 }
 
 function audiencePatienceHud(brief) {
-  const budget = ensureBudget(brief);
-  const max = Math.max(1, Number(budget.max ?? 1));
-  const remaining = Math.max(0, Math.min(max, Number(budget.remaining ?? max)));
-  const percent = Math.round((remaining / max) * 100);
-  const level = percent <= 28 ? "low" : percent <= 55 ? "mid" : "high";
+  const pressure = currentLivePressure(brief);
+  const percent = Math.round(pressure.ratio * 100);
   return `
-    <div class="audience-patience patience-${level}" aria-label="听众忍耐度 ${remaining}/${max}">
+    <div class="audience-patience patience-${pressure.level}" aria-label="听众忍耐度 ${pressure.remaining}/${pressure.max}">
       <span>听众忍耐</span>
-      <b>${remaining}/${max}</b>
+      <b>${pressure.remaining}/${pressure.max}</b>
       <i><em style="width:${percent}%"></em></i>
     </div>
   `;
@@ -1844,14 +1851,8 @@ function storyPackSummaryHud() {
 }
 
 function liveCommentStrip(brief) {
-  const found = contradictions(brief).length;
-  const hook = liveIntentHookFor(brief);
-  const comments = found >= 2
-    ? ["弹幕刷得快", hook, "话还没完"]
-    : found === 1
-      ? ["开始对上了", hook, "话没说满"]
-      : ["刚接进来", "弹幕在等", hook];
-  return `<div class="live-comment-strip">${comments.map((item) => `<span class="live-comment">${item}</span>`).join("")}</div>`;
+  const pressure = currentLivePressure(brief);
+  return `<div class="live-comment-strip">${pressure.comments.map((item) => `<span class="live-comment">${escapeHtml(item)}</span>`).join("")}</div>`;
 }
 
 function liveIntentHookFor(brief) {
@@ -1886,6 +1887,8 @@ function portraitLayer(brief, mood = "listening") {
 }
 
 function callerExpressionFor(brief, mood = "listening") {
+  const pressure = currentLivePressure(brief, mood);
+  if (pressure.expression) return pressure.expression;
   const budget = ensureBudget(brief);
   const remaining = Number(budget.remaining ?? budget.max ?? 1);
   const max = Math.max(1, Number(budget.max ?? 1));

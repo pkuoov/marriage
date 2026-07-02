@@ -1,5 +1,5 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.55";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.55";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.56";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.56";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
