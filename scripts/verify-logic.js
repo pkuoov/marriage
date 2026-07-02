@@ -224,11 +224,16 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
     routes: [{ label: "钱流结构线" }, { label: "材料缺口线" }],
     best: bestAxis,
     avgPercent: 55,
-    theme,
+    theme: {
+      ...theme,
+      commentSeeds: ["我站主播问账单，心疼可以，转账得慢一点。"],
+      highRevealTone: "你没有急着判人，几张图和几句话都被你接住了。"
+    },
     materialProfile,
     quoteProfile
   });
   assertEqual(wall.length, 4, "故事集评论墙必须稳定输出 4 条以内");
+  assertIncludes(wall.join(""), "心疼可以", "故事集评论墙必须能读取内容包评论种子");
   assertIncludes(wall.join(""), "收得准", "故事集评论墙必须能回收原话选择余味");
 });
 
@@ -461,6 +466,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assertIncludes(storyPacksSource, "./generated/contentPackIndex.js", "故事包运行时必须读取 content 生成索引，不能再手写 manifest 镜像");
   assert(!storyPacksSource.includes("ANONYMOUS_CALL_LABELS"), "故事包标签不能在 storyPacks.js 里手写双份");
   assertIncludes(contentIndexSource, "CONTENT_CASES", "内容索引必须包含案件运行时状态，为后续 JSON loader 留入口");
+  assertIncludes(contentIndexSource, "commentSeeds", "内容索引必须包含 comments.json，不能让弹幕种子停在影子资产");
   assertIncludes(contentIndexSource, '"runtimeContentStatus": "runtime-loaded"', "至少一案必须已接通 runtime-loaded 内容，证明 JSON loader 真实生效");
   assert(!contentIndexSource.includes('"runtimeContentStatus": "metadata-only"'), "当前试玩包四案都必须由 content JSON 接管完整台词");
   assertIncludes(contentIndexSource, "accusationChoices", "最终收麦原话必须进入内容索引，不能停在 dailyChoices.js 分支");
@@ -492,6 +498,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
     assertEqual(brief.storyArcTitle, "热线连线", "故事包案内眉题不能显示案名或进度");
     assertEqual(brief.storyCaseLabel, "匿名来电", "故事包通话 HUD 不能提前显示案名");
     assert(brief.storyThemeTitle && brief.storyThemeIntro && brief.storyThemeThesis, "故事包必须携带主题、开场引子和主题论点");
+    assert((brief.storyCommentSeeds ?? []).length >= 4, "故事包必须把评论种子带进运行时 brief");
     const preachyOpeningBits = [`${"这些词"}${"都不坏"}`, `${"坏的是"}`, `${"四通来电"}${"放在一起看"}`, `${"四通"}${"匿名来电"}`, `${"四案"}${"故事集"}`];
     assert(!preachyOpeningBits.some((phrase) => brief.storyThemeIntro.includes(phrase)), "故事集开场引子不能先下主题判断");
     assert(brief.storyThemeCommentPrompt, "故事包必须携带评论区提示");

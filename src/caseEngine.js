@@ -216,6 +216,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
   const storyKey = options.storyKey ?? options.packKey ?? options.weeklyKey ?? DEFAULT_STORY_PACK_KEY;
   const storyPack = storyPackForKey(storyKey);
   const theme = storyPack.theme;
+  const comments = storyPack.comments ?? {};
   const pickedSpecs = storyPack.sequence.slice(0, storyPackCaseCount(storyPack));
   return pickedSpecs.map((spec, index) => {
     const templateBrief = generateDailyCaseSequence(npcs, attrs, {
@@ -244,6 +245,9 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       storyThemeIntro: theme.intro,
       storyThemeThesis: theme.thesis,
       storyThemeCommentPrompt: theme.commentPrompt,
+      storyCommentSeeds: comments.commentSeeds ?? [],
+      storyLowRevealTone: comments.lowRevealTone ?? "",
+      storyHighRevealTone: comments.highRevealTone ?? "",
       storyAct: spec.act,
       storyBridge: spec.bridge,
       storyObjectLabel: spec.objectLabel,

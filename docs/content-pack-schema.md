@@ -1,6 +1,6 @@
 # 内容包 Schema
 
-内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前已经接通 manifest 运行时索引和单案 JSON loader；`steam-demo-01` 四案已切到 `runtime-loaded`，完整台词、追问、材料判定、复盘文案和事实边界都由内容包进入运行时。
+内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前已经接通 manifest 运行时索引和单案 JSON loader；`steam-demo-01` 四案已切到 `runtime-loaded`，完整台词、追问、材料判定、最终收麦、复盘文案、事实边界和评论种子都由内容包进入运行时。
 
 ## 目录
 
@@ -29,6 +29,14 @@ content/packs/<pack-id>/
 - `sequence`：案件顺序，每项包含 `caseId`、`plotId`、`sceneId`、`complainantId`、`respondentId`、`act`、`objectLabel`、`backdropClass`、`bridge`。
 
 通话流程内不能直接显示 `act`、`title` 或 `1/4` 这类目录结构。案间页可以使用 `objectLabel` 做下一通钩子。
+
+## comments.json
+
+- `themeId`：必须和 manifest 的 `theme.id` 一致。
+- `commentSeeds`：本集评论区底色，生成案件时会进入 `storyCommentSeeds`。
+- `lowRevealTone` / `highRevealTone`：低揭示率和高揭示率时的评论区口吻。
+
+评论墙仍会根据玩家路线、现场压力、材料圈点、事实边界和原话选择替换局部评论；`comments.json` 负责让同一包的弹幕/评论像同一晚直播，而不是运行时模板的通用总结。
 
 ## cases/*.json
 

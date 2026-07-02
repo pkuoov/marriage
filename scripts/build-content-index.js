@@ -32,12 +32,15 @@ async function loadContentPacks() {
   const cases = {};
   for (const packId of packIds) {
     const manifest = await readJson(resolve(packsDir, packId, "manifest.json"));
+    const comments = await readJson(resolve(packsDir, packId, "comments.json"));
     assert(manifest.id === packId, `${packId} manifest id must match folder name`);
+    assert(comments.themeId === manifest.theme?.id, `${packId} comments themeId must match manifest theme`);
     packs[manifest.id] = {
       id: manifest.id,
       title: manifest.title,
       size: manifest.size,
       theme: manifest.theme,
+      comments,
       caseLabels: manifest.caseLabels,
       sequence: manifest.sequence
     };

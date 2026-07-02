@@ -38,6 +38,7 @@
 - 案件背景 class 已迁入日案定义和 manifest `sequence.backdropClass`，案内视觉背景不再由 `app.js` 的 `plotId` 表决定。
 - 存款证明案的特殊结算分支已迁入内容 JSON 的 `conclusionWhenCleared/conclusionBranches`，分享卡也改回读取 `dailyShare*` 字段，减少 runtime `plotId` 文案特判。
 - 事实边界已进入收麦回看和故事集终局：每案 `truthBoundary` 会要求玩家把三句话归位；四案归位是否放稳、是否放早再收回，会影响终局边界标签、分享卡和评论区审判墙。
+- `comments.json` 已进入内容索引和终局评论墙：内容包可以控制本集评论区底色，高低揭示率、压力、材料和原话选择仍由运行时模型替换局部评论。
 - 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。
 - H5 构建和离线 playable 构建已隔离输出目录：`build:h5` 不再删除整个 `dist`，避免并行构建时踩掉 `dist/playable`。
 

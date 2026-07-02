@@ -177,7 +177,10 @@ export function storyThemeProfile(briefs = []) {
   return {
     title: first.storyThemeTitle ?? first.weeklyThemeTitle ?? "今晚收麦",
     thesis: first.storyThemeThesis ?? first.weeklyThemeThesis ?? "几通来电听完，别只听谁声音大，要看最后谁被叫去买单。",
-    commentPrompt: first.storyThemeCommentPrompt ?? first.weeklyThemeCommentPrompt ?? "评论区吵到后半夜，吵的都是每个人没说完的半句。"
+    commentPrompt: first.storyThemeCommentPrompt ?? first.weeklyThemeCommentPrompt ?? "评论区吵到后半夜，吵的都是每个人没说完的半句。",
+    commentSeeds: Array.isArray(first.storyCommentSeeds) ? first.storyCommentSeeds : [],
+    lowRevealTone: first.storyLowRevealTone ?? "",
+    highRevealTone: first.storyHighRevealTone ?? ""
   };
 }
 
@@ -252,24 +255,29 @@ export function storyCommentWall({
   const strongest = [...rows].sort((a, b) => Number(b.result.issuePercent ?? 0) - Number(a.result.issuePercent ?? 0))[0];
   const weakest = [...rows].sort((a, b) => Number(a.result.issuePercent ?? 0) - Number(b.result.issuePercent ?? 0))[0];
   const strongestPercent = Number(strongest?.result.issuePercent ?? 0);
+  const seededComments = cleanCommentSeeds(theme.commentSeeds);
   const comments = [
-    `「${theme.commentPrompt}」`,
-    avgPercent < 40
-      ? "「主播今晚接得有点松，几路麦都有话没翻完。」"
-      : `「主播今晚老往${best.label}上拽，不是站队，是看谁最后接了成本。」`
+    `「${theme.commentPrompt}」`
   ];
-  if (strongest?.brief && strongestPercent > 0) {
+  if (seededComments[0]) comments.push(wrapComment(seededComments[0]));
+  comments.push(avgPercent < 40
+    ? wrapComment(theme.lowRevealTone || "主播今晚接得有点松，几路麦都有话没翻完。")
+    : wrapComment(theme.highRevealTone || `主播今晚老往${best.label}上拽，不是站队，是看谁最后接了成本。`));
+  if (seededComments.length) {
+    comments.push(...seededComments.slice(1).map(wrapComment));
+  }
+  if (comments.length < 4 && strongest?.brief && strongestPercent > 0) {
     comments.push(`「${strongest.brief.label}那路问得最稳，${strongest.route.label}一出来，前面那些好听话就变味了。」`);
-  } else {
+  } else if (comments.length < 4) {
     comments.push("「今晚还停在表层，材料、钱和责任几条线都没完全露出来。」");
   }
-  if (avgPercent < 40) {
+  if (comments.length < 4 && avgPercent < 40) {
     comments.push("「这不是站队，今晚几路麦都留了半句话。」");
-  } else if (weakest?.brief && Number(weakest.result.issuePercent ?? 0) < 100) {
+  } else if (comments.length < 4 && weakest?.brief && Number(weakest.result.issuePercent ?? 0) < 100) {
     comments.push(`「${weakest.brief.label}还差一点，没问到的那半句才是评论区会继续吵的地方。」`);
-  } else if (avgPercent >= 90) {
+  } else if (comments.length < 4 && avgPercent >= 90) {
     comments.push(boundaryProfile.comment || "「这几路都问到硬处了，不靠吼，靠把原话顶回去。」");
-  } else {
+  } else if (comments.length < 4) {
     comments.push(boundaryProfile.comment || "「好看在它没急着判好坏，谁少说了话、谁转了成本，都得一条条摊开。」");
   }
   replaceOrAppendComment(comments, boundaryProfile.comment, 3);
@@ -278,6 +286,19 @@ export function storyCommentWall({
     replaceOrAppendComment(comments, comment, Math.min(3, index + 2));
   });
   return comments.slice(0, 4);
+}
+
+function cleanCommentSeeds(seeds = []) {
+  return (Array.isArray(seeds) ? seeds : [])
+    .map((seed) => String(seed ?? "").trim())
+    .filter(Boolean);
+}
+
+function wrapComment(text = "") {
+  const trimmed = String(text ?? "").trim();
+  if (!trimmed) return "";
+  if (/^「.*」$/.test(trimmed)) return trimmed;
+  return `「${trimmed}」`;
 }
 
 export function investigationBackflowProfile(picks = []) {
