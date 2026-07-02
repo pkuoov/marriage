@@ -36,6 +36,33 @@ function assertDeepEqual(actual, expected, message) {
   }
 }
 
+function assertNonEmptyString(value, message) {
+  assert(typeof value === "string" && value.trim().length > 0, message);
+}
+
+function assertArrayMin(value, minLength, message) {
+  assert(Array.isArray(value) && value.length >= minLength, message);
+}
+
+function assertOneCorrect(options, message) {
+  assertEqual((options ?? []).filter((option) => option.correct === true).length, 1, message);
+}
+
+function assertEvidenceOperation(operation, label) {
+  assertNonEmptyString(operation.id, `${label} 缺少 id`);
+  assertNonEmptyString(operation.title, `${label} 缺少 title`);
+  assertNonEmptyString(operation.prompt, `${label} 缺少 prompt`);
+  assertNonEmptyString(operation.material, `${label} 缺少 material`);
+  assertArrayMin(operation.options, 3, `${label} 至少需要三个材料圈点选项`);
+  assertOneCorrect(operation.options, `${label} 必须且只能有一个正确圈点`);
+  operation.options.forEach((option, optionIndex) => {
+    assertNonEmptyString(option.label, `${label}.options[${optionIndex}] 缺少 label`);
+    assertNonEmptyString(option.feedback, `${label}.options[${optionIndex}] 缺少 feedback`);
+    assertNonEmptyString(option.routeAxis, `${label}.options[${optionIndex}] 缺少 routeAxis`);
+    if (option.correct) assertNonEmptyString(option.contradiction, `${label}.options[${optionIndex}] 正确圈点缺少 contradiction`);
+  });
+}
+
 async function readJson(path) {
   return JSON.parse(await readFile(resolve(root, path), "utf8"));
 }
@@ -120,6 +147,59 @@ test("PACK-004", "comments and route archetypes are present", () => {
   ["money-flow", "document-edge", "caller-credibility", "process-control", "identity-wording"].forEach((axis) => {
     assert(archetypes.some((item) => item.id === axis), `路线原型缺少 ${axis}`);
   });
+});
+
+test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
+  caseFiles
+    .filter((casePacket) => casePacket.runtimeContentStatus === RUNTIME_CASE_CONTENT_STATUS.runtimeLoaded)
+    .forEach((casePacket) => {
+      assertNonEmptyString(casePacket.label, `${casePacket.caseId} label 不能为空`);
+      assertNonEmptyString(casePacket.openingComplaint, `${casePacket.caseId} openingComplaint 不能为空`);
+      assertArrayMin(casePacket.openingDialogue, 2, `${casePacket.caseId} openingDialogue 至少要有来回两句`);
+      casePacket.openingDialogue.forEach((line, lineIndex) => {
+        assertNonEmptyString(line.role, `${casePacket.caseId} openingDialogue[${lineIndex}] 缺少 role`);
+        assertNonEmptyString(line.text, `${casePacket.caseId} openingDialogue[${lineIndex}] 缺少 text`);
+      });
+
+      assertArrayMin(casePacket.sceneVersions, 3, `${casePacket.caseId} sceneVersions 至少要有三段可追问内容`);
+      casePacket.sceneVersions.forEach((scene, sceneIndex) => {
+        assertNonEmptyString(scene.speakerId, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 speakerId`);
+        assertNonEmptyString(scene.version, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 version`);
+        assertNonEmptyString(scene.doubt, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 doubt`);
+        assertNonEmptyString(scene.contradiction, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 contradiction`);
+        assert(["mixed", "partial", "guarded", "clear"].includes(scene.reliability), `${casePacket.caseId} sceneVersions[${sceneIndex}] reliability 不合法`);
+        assertArrayMin(scene.questionOptions, 2, `${casePacket.caseId} sceneVersions[${sceneIndex}] 至少需要两个追问选项`);
+        assertOneCorrect(scene.questionOptions, `${casePacket.caseId} sceneVersions[${sceneIndex}] 必须且只能有一个核心追问`);
+        scene.questionOptions.forEach((option, optionIndex) => {
+          assertNonEmptyString(option.question, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 question`);
+          assertNonEmptyString(option.answer, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 answer`);
+          assertNonEmptyString(option.routeAxis, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeAxis`);
+          assertNonEmptyString(option.routeTone, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeTone`);
+          if (option.correct) assertNonEmptyString(option.contradiction, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 核心追问缺少 contradiction`);
+        });
+      });
+
+      assertArrayMin(casePacket.evidenceChecks, 1, `${casePacket.caseId} 至少需要一个材料检视`);
+      casePacket.evidenceChecks.forEach((check, checkIndex) => {
+        assertEvidenceOperation(check, `${casePacket.caseId} evidenceChecks[${checkIndex}]`);
+      });
+
+      assertArrayMin(casePacket.investigationHooks, 1, `${casePacket.caseId} 至少需要一个后台回流`);
+      casePacket.investigationHooks.forEach((hook, hookIndex) => {
+        assertNonEmptyString(hook.source, `${casePacket.caseId} investigationHooks[${hookIndex}] 缺少 source`);
+        assertNonEmptyString(hook.triggerContradiction, `${casePacket.caseId} investigationHooks[${hookIndex}] 缺少 triggerContradiction`);
+        assertNonEmptyString(hook.proves, `${casePacket.caseId} investigationHooks[${hookIndex}] 缺少 proves`);
+        assertNonEmptyString(hook.stillCannotProve, `${casePacket.caseId} investigationHooks[${hookIndex}] 缺少 stillCannotProve`);
+        assertEvidenceOperation(hook, `${casePacket.caseId} investigationHooks[${hookIndex}]`);
+      });
+
+      assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
+      assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);
+      assertNonEmptyString(casePacket.deepFollowup?.note, `${casePacket.caseId} deepFollowup.note 不能为空`);
+      ["stageJudgement", "storyInterludeRecap", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"].forEach((field) => {
+        assertNonEmptyString(casePacket[field], `${casePacket.caseId} ${field} 不能为空`);
+      });
+    });
 });
 
 const failed = results.filter((result) => !result.ok);

@@ -34,6 +34,7 @@
 - 输入导航规则已拆到 `src/runtime/inputNavigation.js`：键盘意图、焦点循环和摇杆方向/冷却都有纯函数测试，`app.js` 只负责把意图落到按钮。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
+- `verify:pack` 已支持指定 pack id，并新增运行时内容 schema 检查：开场、追问、材料、回流、深入追问、收束和分享字段都必须是可玩的嵌套结构。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，`app.js` 不再用 `plotId` 表维护这一组文案。
 - 案间上一通收束句已迁入每案 JSON 的 `storyInterludeRecap`，并纳入 runtime-loaded 必填字段，避免 `app.js` 继续按 `plotId` 写剧本文案。
 - 案件背景 class 已迁入日案定义和 manifest `sequence.backdropClass`，案内视觉背景不再由 `app.js` 的 `plotId` 表决定。
@@ -318,7 +319,6 @@ AI 问答值得做，但不能让 AI 生成事实。
 - 浏览器自动回放：至少一条 perfect route、一条 outer route、一条材料错选 route。
 - 真实浏览器键盘/手柄流程测试：当前已有纯函数和源码守卫，还缺 Playwright 级回放。
 - 结果页/案间页截图对比。
-- 内容字段 schema 校验。
 
 ## 当前建议顺序
 

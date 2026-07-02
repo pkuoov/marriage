@@ -73,6 +73,7 @@ npm run verify:pack
 
 ```bash
 node scripts/verify-pack.js steam-demo-01
+npm run verify:pack -- steam-demo-01
 ```
 
 校验内容：
@@ -82,4 +83,5 @@ node scripts/verify-pack.js steam-demo-01
 - 案件顺序、plotId、人物、物件和桥接句完整，`sequence.length` 必须等于 `size`。
 - 每案压力系统字段完整。
 - 每案显式标记 `runtimeContentStatus`。`metadata-only` 不得夹带运行时台词字段，`runtime-loaded` 必须包含完整运行时必填字段。
+- `runtime-loaded` 案件会继续校验嵌套结构：开场对话、追问段落、双选项且只有一个核心追问、材料圈点、后台回流、深入追问、结算和分享文案都必须可被运行时消费。
 - 不把“下一案 / 下一通来电 / 1/4”这类目录话术写进案间标题字段。
