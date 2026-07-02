@@ -49,6 +49,72 @@ export function materialPressureReaction(outcome = {}, check = {}) {
   return "这一下没咬住，评论区开始翻另一边。";
 }
 
+export function pressureRecapProfile({ budget = {}, choices = [], foundCount = 0 } = {}) {
+  const max = Math.max(1, Number(budget.max ?? 1));
+  const remaining = Math.max(0, Math.min(max, Number(budget.remaining ?? max)));
+  const used = Math.max(0, Number(budget.used ?? max - remaining));
+  const missCount = choices.filter((item) => /miss|detour|softening/.test(item.tone ?? "") && !item.core).length;
+  const heldCount = choices.filter((item) => /hit|pressure-point|trust-but-verify|backflow-hit/.test(item.tone ?? "") || item.core).length;
+  const guardCount = choices.filter((item) => item.tone === "caller-skeptical").length;
+  const label = pressureRecapLabel({ remaining, max, missCount, heldCount, foundCount });
+  return {
+    label,
+    line: pressureRecapLine({ label, used, missCount, heldCount, guardCount, foundCount }),
+    remaining,
+    max,
+    used,
+    missCount,
+    heldCount,
+    guardCount
+  };
+}
+
+export function pressurePackProfile(rows = []) {
+  const items = rows.map((row) => row.profile).filter(Boolean);
+  const total = items.length;
+  const lowCount = items.filter((item) => item.label === "差点断麦").length;
+  const driftCount = items.filter((item) => item.label === "跑偏过").length;
+  const heldCount = items.filter((item) => item.label === "压住了").length;
+  const label = lowCount > 0 ? "有麦差点断" : driftCount > heldCount ? "弹幕跑过" : heldCount > 0 ? "现场压住" : "还在听";
+  return {
+    total,
+    label,
+    line: pressurePackLine({ label, lowCount, driftCount, heldCount }),
+    comment: pressurePackComment({ label, lowCount, driftCount, heldCount })
+  };
+}
+
+function pressureRecapLabel({ remaining, max, missCount, heldCount, foundCount }) {
+  if (remaining <= Math.ceil(max * 0.2)) return "差点断麦";
+  if (missCount > heldCount && missCount > 0) return "跑偏过";
+  if (heldCount >= 2 || foundCount >= 2) return "压住了";
+  return "还在听";
+}
+
+function pressureRecapLine({ label, used, missCount, heldCount, guardCount, foundCount }) {
+  if (label === "差点断麦") return "这通麦几次快散掉，最后能收回来靠的是后面几块咬住的材料。";
+  if (label === "跑偏过") return "中间有几次被外围话带走，弹幕吵起来以后才又拉回主线。";
+  if (label === "压住了") {
+    if (guardCount > 0) return "你不只追对方，也把来电人自己没说满的地方压回了麦上。";
+    return foundCount >= 2 ? "关键几句和材料都压上来了，弹幕没能把话题带散。" : "这通麦没有靠吼，靠把能咬住的地方压住。";
+  }
+  return used > 0 || missCount > 0 ? "现场有点起噪，但还没散到断麦。" : "这通麦还在听，真正的压力没有完全顶上来。";
+}
+
+function pressurePackLine({ label, lowCount, driftCount, heldCount }) {
+  if (label === "有麦差点断") return `${lowCount} 通麦差点散掉，整晚的压力不是只来自案情，也来自控场。`;
+  if (label === "弹幕跑过") return `${driftCount} 通麦被外围话带偏过，后面能不能收住，靠材料和原话往回拉。`;
+  if (label === "现场压住") return `${heldCount} 通麦被压住了，今晚不是靠站队，是靠把话留在证据能撑住的位置。`;
+  return "整晚多数时候还在听，真正顶住现场的回合还不够多。";
+}
+
+function pressurePackComment({ label }) {
+  if (label === "有麦差点断") return "「有几通差点炸麦，主播还是把话从弹幕里捞回来了。」";
+  if (label === "弹幕跑过") return "「今晚不是没问到，是中间被带跑过，重开能换个压法。」";
+  if (label === "现场压住") return "「这集最好看的地方是控场，没靠骂，靠一块块压住。」";
+  return "「这晚还像刚接热线，听到了热闹，没完全压住现场。」";
+}
+
 function patienceLabelFor(level) {
   if (level === "low") return "快压不住";
   if (level === "mid") return "开始起噪";

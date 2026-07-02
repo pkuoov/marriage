@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.57";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.57";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.57";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.57";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.57";
-import { NPCS } from "./story.js?v=0.20.57";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.57";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.57";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.57";
-import { livePressureProfile, materialPressureReaction, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.57";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.57";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.57";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.57";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.57";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.58";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.58";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.58";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.58";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.58";
+import { NPCS } from "./story.js?v=0.20.58";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.58";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.58";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.58";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.58";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.58";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.58";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.58";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.58";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -507,6 +507,7 @@ function renderSolved(brief) {
   const rank = recapRankLabel(issue);
   const conclusion = dailyConclusion(brief, result, issue);
   const route = routeAxisProfile(brief, result);
+  const pressure = casePressureRecap(brief);
   const quoteComparison = finalQuoteComparison(brief, result);
   const boundary = truthBoundaryReview(brief);
   const boundaryPicks = truthBoundaryPicksFor(brief);
@@ -531,6 +532,11 @@ function renderSolved(brief) {
           <b>${escapeHtml(route.label)}</b>
           <small>${escapeHtml(route.summary)}</small>
           ${routeTrailHtml(brief)}
+        </div>
+        <div class="pressure-recap-card">
+          <span>现场压力</span>
+          <b>${escapeHtml(pressure.label)}</b>
+          <small>${escapeHtml(pressure.line)}</small>
         </div>
         <p><strong>你接住的那句</strong>：${escapeHtml(result.dailyAccuseLabel ?? "还没选最后那句")}。</p>
         ${result.dailyResponse ? `<p><strong>主播接法</strong>：${escapeHtml(result.dailyResponse)}</p>` : ""}
@@ -707,7 +713,8 @@ function renderStoryPackComplete() {
   const displayBest = avgPercent < 40 ? { axis: "live-instinct", count: best.count, label: "外围听感线" } : best;
   const theme = storyThemeForBriefs(briefs);
   const boundaryProfile = storyBoundaryProfile(briefs);
-  const comments = storyCommentWall(briefs, results, displayBest, avgPercent, theme, boundaryProfile);
+  const pressureProfile = storyPressureProfile(briefs);
+  const comments = storyCommentWall(briefs, results, displayBest, avgPercent, theme, boundaryProfile, pressureProfile);
   frame({
     brief: briefs[Math.max(0, Number(state.chapter ?? 1) - 1)] ?? briefs[0],
     mood: "focused",
@@ -733,6 +740,13 @@ function renderStoryPackComplete() {
             <p>${escapeHtml(boundaryProfile.line)}</p>
           </div>
         ` : ""}
+        ${pressureProfile.total ? `
+          <div class="weekly-boundary-line">
+            <span>现场压力</span>
+            <b>${escapeHtml(pressureProfile.label)}</b>
+            <p>${escapeHtml(pressureProfile.line)}</p>
+          </div>
+        ` : ""}
         <div class="weekly-result-list">
           ${briefs.map((item, index) => {
             const result = results[index] ?? {};
@@ -753,7 +767,7 @@ function renderStoryPackComplete() {
     `)
   });
   bind("[data-copy-weekly-result]", async () => {
-    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我今晚常看的线：${displayBest.label}\n事实边界：${boundaryProfile.label}\n${storyPlayerType(avgPercent, displayBest)}`;
+    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我今晚常看的线：${displayBest.label}\n现场压力：${pressureProfile.label}\n事实边界：${boundaryProfile.label}\n${storyPlayerType(avgPercent, displayBest)}`;
     try {
       await navigator.clipboard?.writeText(text);
       state.lastReaction = "收麦文案已复制。";
@@ -1696,6 +1710,14 @@ function currentLivePressure(brief, mood = "listening") {
   });
 }
 
+function casePressureRecap(brief) {
+  return pressureRecapProfile({
+    budget: ensureBudget(brief),
+    choices: routeChoicesForCase(brief),
+    foundCount: contradictions(brief).length
+  });
+}
+
 function summarizeStoryPackAxes(briefs, results) {
   const counts = {};
   briefs.forEach((brief, index) => {
@@ -1729,7 +1751,14 @@ function storyInterludeBackflowProfile(brief = {}) {
   return investigationBackflowProfile(selectedInvestigationPicksFor(brief));
 }
 
-function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProfile = {}) {
+function storyPressureProfile(briefs = []) {
+  return pressurePackProfile(briefs.map((brief) => ({
+    label: brief.label,
+    profile: casePressureRecap(brief)
+  })));
+}
+
+function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProfile = {}, pressureProfile = {}) {
   const rows = briefs.map((brief, index) => {
     const result = results[index] ?? {};
     const route = routeAxisProfile(brief, result);
@@ -1763,6 +1792,13 @@ function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProf
       comments[3] = boundaryProfile.comment;
     } else {
       comments.push(boundaryProfile.comment);
+    }
+  }
+  if (pressureProfile.comment && !comments.includes(pressureProfile.comment)) {
+    if (comments.length >= 4) {
+      comments[2] = pressureProfile.comment;
+    } else {
+      comments.push(pressureProfile.comment);
     }
   }
   return comments.slice(0, 4);

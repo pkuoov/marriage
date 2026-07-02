@@ -1,4 +1,4 @@
-import { platformRuntime } from "../platformRuntime.js?v=0.20.57";
+import { platformRuntime } from "../platformRuntime.js?v=0.20.58";
 
 export const DEFAULT_SAVE_SLOT = "slot1";
 

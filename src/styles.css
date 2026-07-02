@@ -2075,6 +2075,32 @@ button.evidence-target {
   margin: 0;
 }
 
+.pressure-recap-card {
+  display: grid;
+  gap: 5px;
+  margin: 12px 0;
+  padding: 13px 14px;
+  border: 1px solid rgba(101, 214, 194, .24);
+  border-radius: 8px;
+  background: rgba(101, 214, 194, .07);
+}
+
+.pressure-recap-card span {
+  color: rgba(139, 228, 212, .76);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.pressure-recap-card b {
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.pressure-recap-card small {
+  color: rgba(237, 241, 238, .68);
+  line-height: 1.55;
+}
+
 .share-card-finding {
   margin: 0;
   padding: 12px 13px;

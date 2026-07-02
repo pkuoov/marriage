@@ -1,21 +1,21 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.57";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.57";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.57";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.57";
-import { migrateState } from "../src/state.js?v=0.20.57";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.57";
-import { NPCS } from "../src/story.js?v=0.20.57";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.57";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.57";
-import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.57";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.57";
-import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.57";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.57";
-import { livePressureProfile, materialPressureReaction, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.57";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.57";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.57";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.57";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.57";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.58";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.58";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.58";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.58";
+import { migrateState } from "../src/state.js?v=0.20.58";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.58";
+import { NPCS } from "../src/story.js?v=0.20.58";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.58";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.58";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.58";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.58";
+import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.58";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.58";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.58";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.58";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.58";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.58";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.58";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -163,6 +163,15 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertIncludes(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "麦温", "追问语气必须能生成现场压力反应");
   assertIncludes(materialPressureReaction({ correct: true, pick: { label: "付款状态" } }, { title: "审批图", material: "付款和收款账户没露出来。" }), "钱路", "材料命中必须能生成现场压力反应");
   assertIncludes(materialPressureReaction({ correct: false, pick: { label: "截图边角" } }, { title: "截图" }), "带跑", "材料误指必须让弹幕跑偏");
+  const recap = pressureRecapProfile({
+    budget: { max: 8, remaining: 1, used: 7 },
+    choices: [{ tone: "evidence-miss" }, { tone: "detour" }],
+    foundCount: 1
+  });
+  assertEqual(recap.label, "差点断麦", "低忍耐必须影响单案结算压力画像");
+  const pack = pressurePackProfile([{ profile: recap }, { profile: pressureRecapProfile({ budget: { max: 8, remaining: 7 }, choices: [{ tone: "pressure-point", core: true }], foundCount: 2 }) }]);
+  assertEqual(pack.label, "有麦差点断", "故事集终局必须汇总单案压力画像");
+  assertIncludes(pack.comment, "差点", "故事集评论必须能回收控场压力");
 });
 
 test("MATERIAL-002", "material inspection renders as an in-document markable board", () => {
@@ -259,6 +268,9 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "questionPressureReaction", "追问语气反应必须由现场压力模型生成，不能散在 app.js");
   assertIncludes(appSource, "materialPressureReaction", "材料命中/误指反应必须由现场压力模型生成，不能只扣忍耐");
   assert(!appSource.includes("function outerAngleReaction"), "旧的 UI 本地压力反应函数必须删除，避免两套规则并存");
+  assertIncludes(appSource, "casePressureRecap", "单案结算必须回收现场压力画像");
+  assertIncludes(appSource, "storyPressureProfile", "故事集终局必须汇总现场压力画像");
+  assertIncludes(appSource, "pressure-recap-card", "收麦回看必须显示现场压力余味");
   assertIncludes(appSource, "truthBoundaryReviewHtml", "收麦回看必须把事实边界显示出来，不能让 truthBoundary 只停在 JSON 元数据");
   assertIncludes(appSource, "data-truth-boundary-pick", "事实边界必须可交互归位，不能只做静态说明页");
   assertIncludes(appSource, "picks[prompt.id] === prompt.expected", "事实边界归位必须放对才能继续，不能只点过就放行");
