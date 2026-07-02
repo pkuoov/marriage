@@ -13,7 +13,7 @@
 - 内容包骨架：`content/packs/steam-demo-01/`、`src/storyPacks.js`、`npm run verify:pack`。
 - 路线运行时拆分：`src/runtime/routeLog.js`，路线轴、语气和画像已能纯函数测试。
 
-当前下一步只做：**现场压力模型**。资料操作模型已经有材料圈点、案后回流和案间余味；接下来把听众耐心、连线人防备和弹幕跑偏收进同一套控场反馈，不和 AI 问答、桌面壳、新故事扩写同时推进。
+当前下一步只做：**Steam 试玩版底座收口**。现场压力、材料圈点、案后回流、事实边界、内容包和桌面壳都已接入第一版；接下来优先补可验证的工程底座，不和 AI 问答、新故事扩写同时推进。
 
 2026-07-02 已完成的支撑项：
 
@@ -31,6 +31,7 @@
 - 存档已抽到 `src/platform/saveStore.js`：Web 仍是单槽 localStorage；桌面壳可通过 `platformRuntime.saveFiles` 提供 `read/write/remove/list/exportForCloud` 文件存档接口，后续接 Steam Cloud。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
 - 基础手柄和回看快捷键已接入：Tab 切换当前回看面板；标准 Gamepad API 轮询支持十字键/左摇杆移动焦点、A 确认、B 返回、Y 回看/复盘入口；下一步需要真实 Steam Deck/控制器设备 QA。
+- 输入导航规则已拆到 `src/runtime/inputNavigation.js`：键盘意图、焦点循环和摇杆方向/冷却都有纯函数测试，`app.js` 只负责把意图落到按钮。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，`app.js` 不再用 `plotId` 表维护这一组文案。
@@ -64,7 +65,7 @@
 ### 输入和焦点
 
 - 基础键盘操作已接入：方向键 / WASD 切换选项，Enter / Space 确认，Esc 返回标题或重试入口。
-- 已有默认焦点和焦点环，大 test 会校验全局键盘入口、焦点移动和渲染后默认落焦。
+- 已有默认焦点和焦点环，大 test 会校验全局键盘入口、焦点移动、渲染后默认落焦和输入意图纯函数。
 - 基础手柄映射已接：十字键 / 左摇杆切换选项，A 确认，B 返回，Y 回看/复盘入口；Tab 已能切换当前回看面板。仍需 Steam Deck/控制器实机手感验证。
 
 验收：
@@ -315,7 +316,7 @@ AI 问答值得做，但不能让 AI 生成事实。
 
 - `verify:pack <pack-id>`：独立校验内容包。
 - 浏览器自动回放：至少一条 perfect route、一条 outer route、一条材料错选 route。
-- 键盘导航测试。
+- 真实浏览器键盘/手柄流程测试：当前已有纯函数和源码守卫，还缺 Playwright 级回放。
 - 结果页/案间页截图对比。
 - 内容字段 schema 校验。
 
@@ -325,5 +326,5 @@ AI 问答值得做，但不能让 AI 生成事实。
 2. 现场压力模型：第一层已接入，追问语气、材料误指和回流结果已开始共同影响听众耐心、连线人防备、弹幕跑偏。
 3. 收麦回看模型：第一层已接入，结果页已回收材料圈点、原话选择和路线画像。
 4. 再继续 P0 技术债：Electron 依赖/打包器、残余内容特判数据化、Steam Deck/控制器实机 QA。
-5. 然后做桌面壳打包验收、键盘/手柄输入和内容包完整迁移。
+5. 然后做桌面壳打包验收、真实浏览器键盘/手柄回放和内容包完整迁移。
 6. 最后再做受控自由追问和 AI router。

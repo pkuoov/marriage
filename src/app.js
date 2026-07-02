@@ -5,6 +5,7 @@ import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, save
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
+import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
 import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.68";
@@ -32,30 +33,30 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.defaultPrevented || keyEventInTextInput(event)) return;
-  const key = event.key;
-  if (key === "Enter" || key === " ") {
+  const intent = keyboardNavigationIntent(event.key);
+  if (intent === "confirm") {
     const button = document.activeElement?.matches?.("button") ? document.activeElement : preferredDefaultButton();
     if (!button) return;
     event.preventDefault();
     activateButton(button);
     return;
   }
-  if (["ArrowDown", "ArrowRight", "s", "S", "d", "D"].includes(key)) {
+  if (intent === "next") {
     event.preventDefault();
     moveButtonFocus(1);
     return;
   }
-  if (["ArrowUp", "ArrowLeft", "w", "W", "a", "A"].includes(key)) {
+  if (intent === "previous") {
     event.preventDefault();
     moveButtonFocus(-1);
     return;
   }
-  if (key === "Tab") {
+  if (intent === "review") {
     if (!toggleReviewPanel()) return;
     event.preventDefault();
     return;
   }
-  if (key === "Escape") {
+  if (intent === "back") {
     const backButton = preferredBackButton();
     if (!backButton) return;
     event.preventDefault();
@@ -1023,9 +1024,7 @@ function moveButtonFocus(direction) {
   const buttons = focusableButtons();
   if (!buttons.length) return;
   const currentIndex = buttons.indexOf(document.activeElement);
-  const nextIndex = currentIndex >= 0
-    ? (currentIndex + direction + buttons.length) % buttons.length
-    : direction > 0 ? 0 : buttons.length - 1;
+  const nextIndex = nextFocusIndex({ currentIndex, total: buttons.length, direction });
   focusButton(buttons[nextIndex]);
 }
 
@@ -1094,13 +1093,10 @@ function handleGamepadButton(gamepad, buttonIndex, handler) {
 }
 
 function handleGamepadAxis(gamepad) {
-  const horizontal = Number(gamepad.axes?.[0] ?? 0);
-  const vertical = Number(gamepad.axes?.[1] ?? 0);
-  const strongest = Math.abs(horizontal) > Math.abs(vertical) ? horizontal : vertical;
-  if (Math.abs(strongest) < 0.55) return;
   const now = Date.now();
-  if (now - lastGamepadMoveAt < 220) return;
-  moveButtonFocus(strongest > 0 ? 1 : -1);
+  const direction = gamepadAxisDirection({ axes: gamepad.axes, lastMoveAt: lastGamepadMoveAt, now });
+  if (!direction) return;
+  moveButtonFocus(direction);
   lastGamepadMoveAt = now;
 }
 
