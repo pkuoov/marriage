@@ -1,5 +1,5 @@
-import { NPCS } from "./story.js?v=0.20.50";
-import { structuralExpectedAccusationForCase } from "./caseRuntime.js?v=0.20.50";
+import { NPCS } from "./story.js?v=0.20.51";
+import { structuralExpectedAccusationForCase } from "./caseRuntime.js?v=0.20.51";
 
 export function caseAccusationHint(brief) {
   if (structuralExpectedAccusationForCase(brief)) return "别只盯着两个人吵架。有人把他们的焦虑做成了模板，聊够了再把那只手指出来。";

@@ -1,16 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.50";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.50";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.50";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.50";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.50";
-import { NPCS } from "./story.js?v=0.20.50";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.50";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.50";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.50";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.50";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.50";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.50";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.50";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.51";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.51";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.51";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.51";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.51";
+import { NPCS } from "./story.js?v=0.20.51";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.51";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.51";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.51";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.51";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.51";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.51";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.51";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -504,6 +504,7 @@ function renderSolved(brief) {
   const conclusion = dailyConclusion(brief, result, issue);
   const route = routeAxisProfile(brief, result);
   const quoteComparison = finalQuoteComparison(brief, result);
+  const boundary = truthBoundaryReview(brief);
   const finalScene = isFinalStoryPackCase();
   const pages = [
     `
@@ -542,6 +543,7 @@ function renderSolved(brief) {
       <p><b>后续回拨</b></p>
       <p>${escapeHtml(conclusion.followup)}</p>
     `,
+    truthBoundaryReviewHtml(boundary),
     `
       <p><b>连线收住</b></p>
       <p>${escapeHtml(conclusion.truth)}</p>
@@ -1281,6 +1283,31 @@ function finalQuoteComparisonHtml(comparison) {
       <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}</p>
       <p><span>${escapeHtml(bestCaption)}</span><b>${escapeHtml(comparison.bestLabel)}</b>${comparison.bestResponse ? `<small>${escapeHtml(comparison.bestResponse)}</small>` : ""}</p>
     </div>
+  `;
+}
+
+function truthBoundaryReviewHtml(review) {
+  if (!review?.columns?.length) {
+    return `
+      <p><b>事实边界</b></p>
+      <p>这通还没留下足够边界。</p>
+    `;
+  }
+  return `
+    <section class="truth-boundary-card">
+      <p><b>${escapeHtml(review.title)}</b></p>
+      <p>${escapeHtml(review.line)}</p>
+      <div class="truth-boundary-grid">
+        ${review.columns.map((column) => `
+          <div class="truth-boundary-column truth-boundary-${escapeHtml(column.key)}">
+            <span>${escapeHtml(column.label)}</span>
+            <ul>
+              ${column.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+            </ul>
+          </div>
+        `).join("")}
+      </div>
+    </section>
   `;
 }
 

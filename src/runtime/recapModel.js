@@ -1,5 +1,5 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.50";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.50";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.51";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.51";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
@@ -79,4 +79,27 @@ export function finalQuoteComparison(brief = {}, result = {}) {
     bestResponse: best.response ?? "",
     sameQuote
   };
+}
+
+export function truthBoundaryReview(brief = {}) {
+  const boundary = brief.truthBoundary ?? {};
+  const columns = [
+    { key: "true", label: "能确认", items: cleanBoundaryItems(boundary.true) },
+    { key: "edited", label: "被修剪", items: cleanBoundaryItems(boundary.edited) },
+    { key: "unknown", label: "今晚定不了", items: cleanBoundaryItems(boundary.unknown) }
+  ].filter((column) => column.items.length);
+  return {
+    title: "事实边界",
+    line: columns.length
+      ? "能摊开的先摊开，没证据的别替任何人补完。"
+      : "这通还没留下足够边界。",
+    columns
+  };
+}
+
+function cleanBoundaryItems(items = []) {
+  return (Array.isArray(items) ? items : [])
+    .map((item) => String(item ?? "").trim())
+    .filter(Boolean)
+    .slice(0, 3);
 }

@@ -504,31 +504,31 @@ button:active:not(:disabled) {
 .backdrop-credit {
   background:
     linear-gradient(180deg, rgba(24, 42, 54, .14), rgba(7, 11, 16, .56)),
-    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.50") center / cover;
+    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.51") center / cover;
 }
 
 .backdrop-house {
   background:
     linear-gradient(180deg, rgba(38, 38, 25, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.50") center / cover;
+    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.51") center / cover;
 }
 
 .backdrop-profile {
   background:
     linear-gradient(180deg, rgba(39, 28, 34, .15), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.50") center / cover;
+    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.51") center / cover;
 }
 
 .backdrop-work {
   background:
     linear-gradient(180deg, rgba(22, 38, 36, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/agency_office.png?v=0.20.50") center / cover;
+    url("../assets/generated/backgrounds/agency_office.png?v=0.20.51") center / cover;
 }
 
 .backdrop-tony {
   background:
     linear-gradient(180deg, rgba(32, 32, 42, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.50") center / cover;
+    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.51") center / cover;
 }
 
 .scene-label {
@@ -1883,6 +1883,60 @@ button.evidence-target {
   font-size: 12px;
 }
 
+.truth-boundary-card {
+  display: grid;
+  gap: 12px;
+}
+
+.truth-boundary-card p {
+  margin: 0;
+}
+
+.truth-boundary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.truth-boundary-column {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(237, 241, 238, .10);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, .16);
+}
+
+.truth-boundary-column span {
+  color: rgba(139, 228, 212, .88);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.truth-boundary-edited span {
+  color: rgba(212, 180, 106, .90);
+}
+
+.truth-boundary-unknown span {
+  color: rgba(237, 241, 238, .58);
+}
+
+.truth-boundary-column ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.truth-boundary-column li {
+  color: rgba(247, 244, 233, .82);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .share-card-head {
   display: flex;
   align-items: center;
@@ -2469,6 +2523,14 @@ button.evidence-target {
 
   .quote-compare-card {
     grid-template-columns: 1fr;
+  }
+
+  .truth-boundary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .truth-boundary-column {
+    padding: 10px;
   }
 
   .call-line > p {
