@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.56";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.56";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.56";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.56";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.56";
-import { NPCS } from "./story.js?v=0.20.56";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.56";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.56";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.56";
-import { livePressureProfile } from "./runtime/livePressure.js?v=0.20.56";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.56";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.56";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.56";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.56";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.57";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.57";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.57";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.57";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.57";
+import { NPCS } from "./story.js?v=0.20.57";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.57";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.57";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.57";
+import { livePressureProfile, materialPressureReaction, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.57";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.57";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.57";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.57";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.57";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -1039,7 +1039,7 @@ function handleSceneDialogueButton(button) {
     };
   }
   markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
-  state.lastReaction = outerAngleReaction(option);
+  state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
   if (audiencePatienceLost(brief)) return;
   saveState();
   render();
@@ -1057,7 +1057,7 @@ function handleSceneQuestionButton(button) {
     recordContradiction(brief, scene.contradiction);
   }
   else {
-    state.lastReaction = outerAngleReaction(option);
+    state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
   }
   state.sceneAnswers = {
     ...(state.sceneAnswers ?? {}),
@@ -1105,7 +1105,7 @@ function bindEvidenceCheckButtons(brief, check = {}) {
         [evidenceAnswerKey(brief, checkIndex)]: outcome.pick
       };
       recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
-      state.lastReaction = null;
+      state.lastReaction = materialPressureReaction(outcome, check);
       if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
         state.scene = "patienceLost";
         saveState();
@@ -1518,17 +1518,6 @@ function contradictions(brief) {
 
 function answeredSceneCount(brief) {
   return (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
-}
-
-function outerAngleReaction(option = {}) {
-  if (/太细|不太好听|尴尬/.test(option.answer ?? "")) return "弹幕先吵起尺度：问得细不细，和这张资料为什么出现，是两件事。";
-  if (/本科|项目|学制|校名/.test(option.answer ?? "")) return "直播间开始扒标签：图能说明一截，但没说明完整那截。";
-  if (/花销|余额|每个月|团购|停车费/.test(option.answer ?? "")) return "弹幕顺着钱吵起来：一笔小钱不定性，但长期别扭会把问题推回流水。";
-  if (/工资|流水|小家|不舒服/.test(option.answer ?? "")) return "麦里安静了一下：拒绝流水未必心虚，但这句已经碰到婚后钱怎么管。";
-  if (/审批|财务|付款|收款|返款|垫款/.test(option.answer ?? "")) return "弹幕开始对截图：可能是流程慢，也可能是最要紧那页没发。";
-  if (routeToneForChoice(option) === "softening") return "弹幕有人替 TA 补了一句，麦温往下掉了一格。";
-  if (routeToneForChoice(option) === "caller-skeptical") return "这句绕回了来电人自己，弹幕短暂安静了一下。";
-  return "直播间接住了这个角度，但人声开始有点散。";
 }
 
 function selectedScenePick(brief, index) {
