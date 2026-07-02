@@ -1,4 +1,4 @@
-import { caseBudgetDelta } from "./difficulty.js?v=0.20.30";
+import { caseBudgetDelta } from "./difficulty.js?v=0.20.31";
 
 export function calculateCaseOutcome({ result, contradictionCount, budgetRemaining, now = Date.now() }) {
   const efficient = contradictionCount >= 3 && budgetRemaining >= 1;

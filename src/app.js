@@ -1,12 +1,12 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.30";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.30";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.30";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.30";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.30";
-import { NPCS } from "./story.js?v=0.20.30";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.30";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.30";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.30";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.31";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.31";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.31";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.31";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.31";
+import { NPCS } from "./story.js?v=0.20.31";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.31";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.31";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.31";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -334,10 +334,7 @@ function renderEvidenceCheck(brief) {
     chapter: liveChapterTitle(brief),
     text: `
       <p><b>${escapeHtml(check.title ?? "材料检视")}</b></p>
-      <section class="evidence-check-card">
-        <span>手边材料</span>
-        <p>${escapeHtml(check.material ?? "")}</p>
-      </section>
+      ${evidenceOperationHtml(check, pick, index)}
       <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>
       ${pick ? evidencePickFeedbackHtml(pick) : ""}
       ${keyChoiceReview(brief)}
@@ -346,13 +343,72 @@ function renderEvidenceCheck(brief) {
       ? flowGroup(lastCheck
         ? `<button class="primary" data-scene="${nextScene}" type="button">${nextScene === "deepFollowup" ? "再深入一句" : "选一句原话"}</button>`
         : `<button class="primary" data-next-evidence-check type="button">继续看材料</button>`)
-      : choiceGroup("圈哪一处", (check.options ?? []).map((option, optionIndex) => `
-          <button data-evidence-check="${index}:${optionIndex}" type="button">${escapeHtml(option.label ?? "这块")}</button>
-        `).join(""), "evidence-choice-group")
+      : ""
   });
   bindEvidenceCheckButtons(brief, check);
   bind("[data-next-evidence-check]", () => setIndex(brief, "evidenceCheck", index + 1));
   bindSceneButtons();
+}
+
+function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
+  const options = check.options ?? [];
+  return `
+    <section class="evidence-workbench ${pick ? pick.correct ? "marked hit" : "marked miss" : ""}">
+      <div class="evidence-document">
+        <header>
+          <span>${escapeHtml(evidenceMaterialType(check))}</span>
+          <b>${escapeHtml(check.title ?? "台面材料")}</b>
+        </header>
+        <div class="evidence-document-lines">
+          ${evidenceMaterialLinesHtml(check.material ?? "")}
+        </div>
+        ${pick ? evidenceAnnotationHtml(pick) : ""}
+      </div>
+      <div class="evidence-target-board" aria-label="圈点区域">
+        <span>荧光笔</span>
+        ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function evidenceMaterialType(check = {}) {
+  const text = `${check.title ?? ""} ${check.material ?? ""}`;
+  if (/账单|信用卡|支出|账户/.test(text)) return "BILL";
+  if (/审批|付款|报销|收款/.test(text)) return "FLOW";
+  if (/表|排班|预约/.test(text)) return "TABLE";
+  if (/截图|学校|学历|项目|MBA/.test(text)) return "SHOT";
+  return "FILE";
+}
+
+function evidenceMaterialLinesHtml(material = "") {
+  const lines = String(material)
+    .replace(/([。；])/g, "$1|")
+    .replace(/([，、])/g, "$1|")
+    .split("|")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const safeLines = lines.length ? lines : [material];
+  return safeLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("");
+}
+
+function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick = null) {
+  const selected = pick && Number(pick.optionIndex) === optionIndex;
+  const className = `evidence-target ${selected ? pick.correct ? "selected hit" : "selected miss" : pick ? "dimmed" : ""}`;
+  const content = `<i></i><b>${escapeHtml(option.label ?? "这块")}</b>`;
+  if (pick) {
+    return `<span class="${className}">${content}</span>`;
+  }
+  return `<button class="${className}" data-evidence-check="${checkIndex}:${optionIndex}" type="button">${content}</button>`;
+}
+
+function evidenceAnnotationHtml(pick = {}) {
+  return `
+    <div class="evidence-annotation ${pick.correct ? "hit" : "miss"}">
+      <span>${pick.correct ? "圈住" : "圈偏"}</span>
+      <b>${escapeHtml(pick.label ?? "")}</b>
+    </div>
+  `;
 }
 
 function evidencePickFeedbackHtml(pick = {}) {

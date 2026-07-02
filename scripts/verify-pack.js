@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.30";
+import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.31";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";

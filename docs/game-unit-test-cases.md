@@ -44,6 +44,7 @@ npm run build:playable
 | ROUTE-001 | Hidden route map | Every playable choice records a route axis and tone. | 玩家选择无法生成路线图、回溯和主播倾向。 |
 | ROUTE-002 | Route-log helpers | Route axis, tone, and dominant profile are pure runtime helpers covered outside DOM rendering. | 路线图逻辑继续堆在 `app.js`，后续 UI 改文案时误伤路线画像。 |
 | MATERIAL-001 | Material operation model | Material hit/miss produces a reusable operation outcome: hit records contradiction without patience loss, miss spends patience without revealing the answer. | 资料操作继续散在 UI 事件里，后续做圈点时重复实现并误泄露正确答案。 |
+| MATERIAL-002 | Material board UI | Material inspection renders as a markable document board with file lines, in-board targets, and hit/miss annotations. | 材料检视退回纯段落、普通按钮列表，或点击后没有“圈出来”的游戏反馈。 |
 | STATE-001 | Save migration | Legacy saves migrate into episode-compatible shape while preserving explicit daily saves and settings. | Old saves breaking after refactors. |
 | RUNTIME-001 | Outcome math | Internal carryover scores clamp correctly for wins/failures. | Run result values drifting out of range. |
 | RUNTIME-002 | Daily pacing | Daily budget has a floor and hint count stays at one. | Mobile short-case pacing getting too long or too guided. |
@@ -69,13 +70,15 @@ Automated tests do not replace one short browser replay after large narrative/UI
 10. Pick one core issue question and one tempting outer-angle question.
 11. Confirm outer-angle feedback is in-character and live comments react.
 12. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
-13. After the last scene, enter material inspection; confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
-14. Confirm material hit feedback appears once, not again as a separate reaction line.
-15. Solve the first case and confirm the recap shows the hidden route map.
-16. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
-17. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
-18. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
-19. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
+13. After the last scene, enter material inspection; confirm the material appears as a document/table/screenshot board, not a paragraph above ordinary choice buttons.
+14. Pick one material target and confirm the selected area gets a visible circle/annotation inside the board.
+15. Confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
+16. Confirm material hit feedback appears once, not again as a separate reaction line.
+17. Solve the first case and confirm the recap shows the hidden route map.
+18. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
+19. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
+20. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
+21. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
 
 ## Maintenance Rules
 
