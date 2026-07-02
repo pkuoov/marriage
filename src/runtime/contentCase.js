@@ -22,6 +22,8 @@ export const RUNTIME_CASE_CONTENT_FIELDS = [
   "deepFollowup",
   "stageJudgement",
   "storyInterludeRecap",
+  "conclusionWhenCleared",
+  "conclusionBranches",
   "followupTwist",
   "dailyShareTitle",
   "dailyShareBody",

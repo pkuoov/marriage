@@ -1,6 +1,6 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.67";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.67";
-import { routeAxisLabel } from "./routeLog.js?v=0.20.67";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.68";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.68";
+import { routeAxisLabel } from "./routeLog.js?v=0.20.68";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
@@ -35,15 +35,6 @@ export function dailyRouteProfile(brief = {}, result = {}, { issue = {}, axisPro
   const playerType = dailyPlayerType({ percent, quoteHit, accused: result.accused, axis: axisProfile.axis });
   const picked = result.dailyAccuseLabel ? `你最后接住了${result.dailyAccuseLabel}。` : "";
   const firstReveal = result.issueRevealed?.[0] ? `你先接住的是：${result.issueRevealed[0]}。` : "";
-  if (brief.plotId === "education-income-fake-profile") {
-    return {
-      label: routeLabel,
-      playerType,
-      shareTitle: "存款证明都发了，怎么反而更怪？",
-      shareBody: firstReveal || picked || "他不是全假，她也不是只想求安心，流水后面还藏着工资怎么管。",
-      shareQuestion: "你听完会觉得是包装，是筛选，还是两边都在试探婚后的钱？"
-    };
-  }
   return {
     label: routeLabel,
     playerType,

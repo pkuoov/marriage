@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.67";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.67";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.67";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.67";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.67";
-import { NPCS } from "./story.js?v=0.20.67";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.67";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.67";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.67";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.67";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.67";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.67";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.67";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.67";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.68";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.68";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.68";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
+import { NPCS } from "./story.js?v=0.20.68";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.68";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -1684,13 +1684,6 @@ function hasDeepFollowup(brief) {
 
 function deepFollowupFor(brief) {
   if (brief.deepFollowup?.question) return brief.deepFollowup;
-  if (brief.plotId === "education-income-fake-profile") {
-    return {
-      question: "那我多问一句，你自己的家庭经济状况怎么样？你自己一个月工资多少，够花吗？",
-      answer: "我自己也不是特别宽裕，所以我才更在意他收入到底落不落地。我嘴上说家里想看稳定，其实我也想知道以后这笔钱是不是能进小家。",
-      note: "这不是给男方洗白，是把女方自己的利益位置也问出来。"
-    };
-  }
   return {
     question: "那我多问一句，如果把情绪先放一边，这件事最后是谁要承担成本？",
     answer: "她停了一下，说：我刚才一直在讲委屈，其实最怕的是最后又变成我来兜底。",
@@ -1703,31 +1696,21 @@ function dailyConclusion(brief, result, issue) {
   const pickedQuestions = picked.map((item) => item.question).filter(Boolean);
   const deep = issue.badge ? deepFollowupFor(brief) : null;
 
-  if (brief.plotId === "education-income-fake-profile") {
-    if (issue.badge) {
-      return {
-        summary: "照她一开始的说法，问题像是男方资料不干净：MBA 被说成名校毕业，收入和花销也对不上。可一路问下来，她最放不下的其实是收入到底有多少、以后钱怎么管。MBA 的事她不是完全没感觉，只是借着见父母这次一起问了。",
-        deepQuestion: deep.question,
-        followup: "后续回拨里，她承认自己也想知道对方一个月到底赚多少、够不够花、愿不愿意把钱放进未来的小家。对方那句“是不是工资卡也要交出来”难听，但确实戳中了没说出口的地方。",
-        truth: "这案别只按“骗学历”判，也别只骂女方看钱。男方把局部真实说得太漂亮，女方借父母的口继续摸收入。要往下谈，就得把学历、收入、花钱习惯和婚后管钱方式摊开。"
-      };
-    }
-    if (pickedQuestions.some((item) => /MBA|学历|本科|介绍/.test(item))) {
-      return {
-        summary: "你这轮主要盯住了学历那句。男方没有凭空编学校，但把 MBA 放进“名校毕业”里，别人很容易听成另一回事。",
-        deepQuestion: "",
-        followup: "电话挂到这里还会吵下去。学历那句先浮上来了，后面的饭局也不会轻松。",
-        truth: "学历是入口，不是整件事。后半段吵起来的，其实是收入、花销和婚后钱归谁管。"
-      };
-    }
-    if (pickedQuestions.some((item) => /流水|工资|收入|花销|存款/.test(item))) {
-      return {
-        summary: "你这轮盯的是收入和流水。她不是只想听一句“稳定”，她想知道钱每个月到底怎么来、怎么花、以后进不进小家。",
-        deepQuestion: "",
-        followup: "电话挂到这里，饭桌上的空气已经变了。流水不是一张图的问题，学历那句也会被重新翻出来。",
-        truth: "流水不只是看真假，已经挨着婚后工资透明和共同账户那道线了。"
-      };
-    }
+  if (issue.badge && brief.conclusionWhenCleared) {
+    return {
+      ...brief.conclusionWhenCleared,
+      deepQuestion: deep?.question ?? brief.conclusionWhenCleared.deepQuestion ?? ""
+    };
+  }
+
+  const branch = conclusionBranchFor(brief, pickedQuestions);
+  if (branch) {
+    return {
+      summary: branch.summary ?? "",
+      deepQuestion: branch.deepQuestion ?? "",
+      followup: branch.followup ?? "",
+      truth: branch.truth ?? brief.truth ?? ""
+    };
   }
 
   if (issue.badge) {
@@ -1745,6 +1728,19 @@ function dailyConclusion(brief, result, issue) {
     followup: issue.revealed.length ? "后续回拨里，话还没完，评论区会继续抓着没说出口的地方吵。" : brief.followupTwist ?? "",
     truth: brief.truth ?? "这案不能只按第一印象走，得看每个人少说了哪半截。"
   };
+}
+
+function conclusionBranchFor(brief = {}, pickedQuestions = []) {
+  const text = pickedQuestions.join(" ");
+  return (brief.conclusionBranches ?? []).find((branch) => {
+    const pattern = branch.match ?? branch.pattern ?? "";
+    if (!pattern) return false;
+    try {
+      return new RegExp(pattern).test(text);
+    } catch {
+      return text.includes(pattern);
+    }
+  }) ?? null;
 }
 
 function routeChoicesForCase(brief) {
