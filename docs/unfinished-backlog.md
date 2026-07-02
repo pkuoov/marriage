@@ -316,7 +316,6 @@ AI 问答值得做，但不能让 AI 生成事实。
 
 ### 自动测试还缺
 
-- `verify:pack <pack-id>`：独立校验内容包。
 - 浏览器自动回放：至少一条 perfect route、一条 outer route、一条材料错选 route。
 - 真实浏览器键盘/手柄流程测试：当前已有纯函数和源码守卫，还缺 Playwright 级回放。
 - 结果页/案间页截图对比。
