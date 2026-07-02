@@ -1,5 +1,5 @@
-import { platformRuntime } from "./platformRuntime.js?v=0.20.40";
-import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.40";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.41";
+import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.41";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
@@ -7,13 +7,13 @@ const LEGACY_STORAGE_KEY = "marriage-detective-agency-save-v1";
 const LEGACY_META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
 
 export const CHARACTER_ART = {
-  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.40",
-  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.40",
-  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.40",
-  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.40",
-  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.40",
-  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.40",
-  he: "./assets/generated/characters/he_neutral.png?v=0.20.40"
+  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.41",
+  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.41",
+  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.41",
+  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.41",
+  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.41",
+  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.41",
+  he: "./assets/generated/characters/he_neutral.png?v=0.20.41"
 };
 
 export const baseState = {
@@ -46,13 +46,9 @@ export const baseState = {
   recapStep: 0
 };
 
-export function activeSaveSlot() {
-  return "slot1";
-}
-
 export function loadState() {
   try {
-    const raw = platformRuntime.storage.get(STORAGE_KEY) ?? platformRuntime.storage.get(LEGACY_STORAGE_KEY);
+    const raw = saveStore.read(STORAGE_KEY, [LEGACY_STORAGE_KEY]);
     return raw ? migrateState({ ...JSON.parse(raw), saveSlot: activeSaveSlot() }) : null;
   } catch {
     return null;
@@ -211,7 +207,7 @@ function migrateDeepFollowup(brief) {
 
 export function loadMeta() {
   try {
-    const raw = platformRuntime.storage.get(META_STORAGE_KEY) ?? platformRuntime.storage.get(LEGACY_META_STORAGE_KEY);
+    const raw = saveStore.read(META_STORAGE_KEY, [LEGACY_META_STORAGE_KEY]);
     return raw ? JSON.parse(raw) : { runs: 0, bonusPoints: 0, history: [] };
   } catch {
     return { runs: 0, bonusPoints: 0, history: [] };
@@ -219,14 +215,13 @@ export function loadMeta() {
 }
 
 export function saveStateSnapshot(state) {
-  platformRuntime.storage.set(STORAGE_KEY, JSON.stringify({ ...state, saveSlot: activeSaveSlot() }));
+  saveStore.write(STORAGE_KEY, JSON.stringify({ ...state, saveSlot: activeSaveSlot() }));
 }
 
 export function saveMetaSnapshot(meta) {
-  platformRuntime.storage.set(META_STORAGE_KEY, JSON.stringify(meta));
+  saveStore.write(META_STORAGE_KEY, JSON.stringify(meta));
 }
 
 export function clearStateSnapshot() {
-  platformRuntime.storage.remove(STORAGE_KEY);
-  platformRuntime.storage.remove(LEGACY_STORAGE_KEY);
+  saveStore.removeMany([STORAGE_KEY, LEGACY_STORAGE_KEY]);
 }

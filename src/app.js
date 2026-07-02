@@ -1,16 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.40";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.40";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.40";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.40";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.40";
-import { NPCS } from "./story.js?v=0.20.40";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.40";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.40";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.40";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.40";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.40";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.40";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.40";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.41";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.41";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.41";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.41";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.41";
+import { NPCS } from "./story.js?v=0.20.41";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.41";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.41";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.41";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.41";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.41";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.41";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.41";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -313,8 +313,8 @@ function renderSceneReview(brief) {
         `)
       : sceneQuestionChoicesHtml(index, options, askedDialoguePicks(brief, index))
   });
-  bindSceneDialogueButtons(brief, scene, options);
-  bindSceneQuestionButtons(brief, scene, options);
+  bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
+  bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
   bind("[data-next-scene-stage]", () => setIndex(brief, "sceneReview", index + 1));
   bindSceneButtons();
 }
@@ -863,78 +863,98 @@ function bind(selector, handler) {
   });
 }
 
+function bindChoiceActivation(selector, handler) {
+  document.querySelectorAll(selector).forEach((element) => {
+    let lastPointerAt = 0;
+    element.addEventListener("pointerup", () => {
+      lastPointerAt = Date.now();
+      handler(element);
+    });
+    element.addEventListener("click", () => {
+      if (Date.now() - lastPointerAt < 350) return;
+      handler(element);
+    });
+  });
+}
+
 function bindSceneButtons() {
   document.querySelectorAll("[data-scene]").forEach((button) => {
     button.addEventListener("click", () => moveScene(button.dataset.scene));
   });
 }
 
-function bindSceneDialogueButtons(brief, scene, options) {
-  document.querySelectorAll("[data-scene-dialogue]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
-      const option = options[optionIndex] ?? options[0];
-      const key = answerKey(brief, sceneIndex);
-      const current = state.sceneDialoguePicks?.[key] ?? [];
-      if (!current.some((item) => item.optionIndex === optionIndex)) {
-        state.sceneDialoguePicks = {
-          ...(state.sceneDialoguePicks ?? {}),
-          [key]: [
-            ...current,
-            {
-              optionIndex,
-              question: option.question ?? "",
-              answer: option.answer ?? "",
-              routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
-              routeTone: option.routeTone ?? routeToneForChoice(option)
-            }
-          ]
-        };
-      }
-      markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
-      state.lastReaction = outerAngleReaction(option);
-      if (audiencePatienceLost(brief)) return;
-      saveState();
-      render();
-    });
-  });
-}
-
-function bindSceneQuestionButtons(brief, scene, options) {
-  document.querySelectorAll("[data-scene-question]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const [sceneIndex, optionIndex] = button.dataset.sceneQuestion.split(":").map(Number);
-      const option = options[optionIndex] ?? options[0];
-      markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: !option.contradiction });
-      markAction(brief, `version:${sceneIndex}`);
-      if (option.contradiction) {
-        recordContradiction(brief, option.contradiction);
-        recordContradiction(brief, scene.contradiction);
-      }
-      else {
-        state.lastReaction = outerAngleReaction(option);
-      }
-      state.sceneAnswers = {
-        ...(state.sceneAnswers ?? {}),
-        [answerKey(brief, sceneIndex)]: option.answer ?? ""
-      };
-      state.sceneQuestionPicks = {
-        ...(state.sceneQuestionPicks ?? {}),
-        [answerKey(brief, sceneIndex)]: {
+function handleSceneDialogueButton(button) {
+  const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
+  const { brief, scene, options } = sceneChoiceContext(sceneIndex);
+  const option = options[optionIndex] ?? options[0];
+  if (!brief || !option) return;
+  const key = answerKey(brief, sceneIndex);
+  const current = state.sceneDialoguePicks?.[key] ?? [];
+  if (!current.some((item) => item.optionIndex === optionIndex)) {
+    state.sceneDialoguePicks = {
+      ...(state.sceneDialoguePicks ?? {}),
+      [key]: [
+        ...current,
+        {
+          optionIndex,
           question: option.question ?? "",
           answer: option.answer ?? "",
-          contradiction: option.contradiction ?? "",
           routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
-          routeTone: option.routeTone ?? routeToneForChoice(option),
-          correct: Boolean(option.contradiction)
+          routeTone: option.routeTone ?? routeToneForChoice(option)
         }
-      };
-      recordRouteChoice(brief, sceneIndex, option, scene);
-      if (audiencePatienceLost(brief)) return;
-      saveState();
-      render();
-    });
-  });
+      ]
+    };
+  }
+  markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
+  state.lastReaction = outerAngleReaction(option);
+  if (audiencePatienceLost(brief)) return;
+  saveState();
+  render();
+}
+
+function handleSceneQuestionButton(button) {
+  const [sceneIndex, optionIndex] = button.dataset.sceneQuestion.split(":").map(Number);
+  const { brief, scene, options } = sceneChoiceContext(sceneIndex);
+  const option = options[optionIndex] ?? options[0];
+  if (!brief || !option) return;
+  markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: !option.contradiction });
+  markAction(brief, `version:${sceneIndex}`);
+  if (option.contradiction) {
+    recordContradiction(brief, option.contradiction);
+    recordContradiction(brief, scene.contradiction);
+  }
+  else {
+    state.lastReaction = outerAngleReaction(option);
+  }
+  state.sceneAnswers = {
+    ...(state.sceneAnswers ?? {}),
+    [answerKey(brief, sceneIndex)]: option.answer ?? ""
+  };
+  state.sceneQuestionPicks = {
+    ...(state.sceneQuestionPicks ?? {}),
+    [answerKey(brief, sceneIndex)]: {
+      question: option.question ?? "",
+      answer: option.answer ?? "",
+      contradiction: option.contradiction ?? "",
+      routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
+      routeTone: option.routeTone ?? routeToneForChoice(option),
+      correct: Boolean(option.contradiction)
+    }
+  };
+  recordRouteChoice(brief, sceneIndex, option, scene);
+  if (audiencePatienceLost(brief)) return;
+  saveState();
+  render();
+}
+
+function sceneChoiceContext(sceneIndex) {
+  const brief = activeCaseBrief();
+  const scene = brief?.sceneVersions?.[sceneIndex] ?? {};
+  return {
+    brief,
+    scene,
+    options: focusedQuestionOptions(scene.questionOptions ?? [])
+  };
 }
 
 function bindEvidenceCheckButtons(brief, check = {}) {

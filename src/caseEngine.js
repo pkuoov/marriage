@@ -1,5 +1,5 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.40";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.40";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.41";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.41";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {

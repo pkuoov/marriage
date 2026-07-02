@@ -1,18 +1,19 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.40";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.40";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.40";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.40";
-import { migrateState } from "../src/state.js?v=0.20.40";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.40";
-import { NPCS } from "../src/story.js?v=0.20.40";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.40";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.40";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.40";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.40";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.40";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.40";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.40";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.40";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.41";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.41";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.41";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.41";
+import { migrateState } from "../src/state.js?v=0.20.41";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.41";
+import { NPCS } from "../src/story.js?v=0.20.41";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.41";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.41";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.41";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.41";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.41";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.41";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.41";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.41";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.41";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -71,6 +72,27 @@ test("MODE-001", "unknown modes normalize to episode while daily stays available
 test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage bridge", () => {
   assertEqual(typeof platformRuntime.postMessage, "function", "platformRuntime 必须提供顶层 postMessage，供收麦分享调用");
   platformRuntime.postMessage({ type: "test-message" });
+});
+
+test("PLATFORM-002", "save store wraps storage for future desktop saves", () => {
+  const memory = new Map();
+  const store = createSaveStore({
+    storage: {
+      get: (key) => memory.has(key) ? memory.get(key) : null,
+      set: (key, value) => memory.set(key, value),
+      remove: (key) => memory.delete(key)
+    }
+  });
+  memory.set("legacy-save", "old");
+  assertEqual(store.read("new-save", ["legacy-save"]), "old", "新存档不存在时必须能读取 legacy fallback");
+  store.write("new-save", "fresh");
+  assertEqual(store.read("new-save", ["legacy-save"]), "fresh", "新存档必须优先于 legacy fallback");
+  assertEqual(store.list()[0].slotId, "slot1", "当前 Web 版仍保持单槽存档接口");
+  const cloud = store.exportForCloud(["new-save", "missing"]);
+  assertEqual(cloud["new-save"], "fresh", "cloud export 必须导出指定 key 的原始内容");
+  assertEqual(cloud.missing, null, "cloud export 对缺失 key 必须保持 null，便于桌面壳判断");
+  store.removeMany(["new-save", "legacy-save"]);
+  assertEqual(store.read("new-save", ["legacy-save"]), null, "removeMany 必须同时清理当前和旧存档 key");
 });
 
 test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outside app rendering", () => {
@@ -368,6 +390,50 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
   });
   assertIncludes(text, "咨询者想拿表现", "职场报销案应使用角色称谓承接来电人，避免头像和代词冲突");
   assertIncludes(text, "对方就有办法一直拖", "职场报销案应使用对方/同事承接缺席方，避免性别绑定");
+});
+
+test("EPISODE-002", "demo story pack can be played through with core reveals", () => {
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const outcomes = briefs.map((brief) => {
+    const sceneContradictions = (brief.sceneVersions ?? []).map((scene) => scene.contradiction).filter(Boolean);
+    const evidenceContradictions = (brief.evidenceChecks ?? [])
+      .map((check, index) => {
+        const correctIndex = (check.options ?? []).findIndex((option) => option.correct);
+        assert(correctIndex >= 0, `${brief.plotId} 第 ${index + 1} 个材料必须有正确项`);
+        return materialOperationOutcome(check, index, correctIndex).contradiction;
+      })
+      .filter(Boolean);
+    const investigationContradictions = (brief.investigationHooks ?? [])
+      .map((hook, index) => {
+        const correctIndex = (hook.options ?? []).findIndex((option) => option.correct);
+        assert(correctIndex >= 0, `${brief.plotId} 第 ${index + 1} 个回流材料必须有正确项`);
+        return materialOperationOutcome(hook, index, correctIndex).contradiction;
+      })
+      .filter(Boolean);
+    const found = [...new Set([...sceneContradictions, ...evidenceContradictions, ...investigationContradictions])];
+    const issue = calculateIssueCompletion({
+      brief,
+      foundContradictions: found,
+      requiredLimit: requiredContradictionsForCase(brief)
+    });
+    const resolved = resolveAccusationForCase({
+      brief,
+      accused: expectedAccusationForCase(brief),
+      contradictionCount: found.length,
+      requiredContradictions: requiredContradictionsForCase(brief)
+    });
+    const outcome = calculateCaseOutcome({
+      result: resolved,
+      contradictionCount: found.length,
+      budgetRemaining: calculateCaseBudgetMax({ brief })
+    });
+    assert(issue.badge, `${brief.plotId} 核心路线必须能揭示足够问题`);
+    assert(resolved.result.correct, `${brief.plotId} 核心路线最终指认必须可通过`);
+    assert(resolved.result.enoughContradictions, `${brief.plotId} 核心路线必须达到矛盾门槛`);
+    return { ...outcome, correct: resolved.result.correct };
+  });
+  assertEqual(outcomes.length, storyPackCaseCount(storyPackForKey("steam-demo-01")), "自动回放必须覆盖当前 demo 包全部案件");
+  assert(outcomes.every((outcome) => outcome.correct), "自动回放每案都必须可结算成功");
 });
 
 test("DAILY-001", "daily case count and structural fields stay complete", () => {

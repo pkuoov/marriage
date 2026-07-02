@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,14 +8,8 @@ const entry = resolve(root, "src", "app.js");
 
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
-await cp(resolve(root, "assets"), resolve(outDir, "assets"), {
-  recursive: true,
-  filter: (source) => basename(source) !== ".DS_Store"
-});
-await cp(resolve(root, "content"), resolve(outDir, "content"), {
-  recursive: true,
-  filter: (source) => basename(source) !== ".DS_Store"
-});
+await copyTree(resolve(root, "assets"), resolve(outDir, "assets"));
+await copyTree(resolve(root, "content"), resolve(outDir, "content"));
 
 const bundle = await bundleModule(entry);
 const css = await readFile(resolve(root, "src", "styles.css"), "utf8");
@@ -88,4 +82,21 @@ function assertPlayableHtml(html) {
   }
   const script = html.match(/<script>([\s\S]+)<\/script>/)?.[1] ?? "";
   new Function(script);
+}
+
+async function copyTree(sourceDir, targetDir) {
+  await mkdir(targetDir, { recursive: true });
+  const entries = await readdir(sourceDir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.name === ".DS_Store") continue;
+    const source = resolve(sourceDir, entry.name);
+    const target = resolve(targetDir, entry.name);
+    if (entry.isDirectory()) {
+      await copyTree(source, target);
+      continue;
+    }
+    if (entry.isFile()) {
+      await copyFile(source, target);
+    }
+  }
 }

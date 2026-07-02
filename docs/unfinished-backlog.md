@@ -23,15 +23,16 @@
 - 账单、表格、截图、审批流已经有不同材料版式，不再共用同一种文字材料卡。
 - 案后私信回流最小版已接入：每案有固定 `investigationHooks`，触发自已听到的矛盾，复用材料操作台并在路线图标成“回”。
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
+- Web 存档已抽到 `src/platform/saveStore.js`：当前仍是单槽 localStorage，但已有 `read/write/removeMany/list/exportForCloud` 接口，后续桌面壳可替换为文件存档。
 
 ## P0：试玩版必须补齐
 
 ### 桌面可玩形态
 
-- 现在已经有 `build:playable` 和 Windows 双击脚本，但还没有真正桌面壳。
+- 现在已经有 `build:playable`、Windows 双击脚本和 Web `saveStore` 抽象，但还没有真正桌面壳。
 - 需要确定 Electron / Tauri / 其他 runtime。
 - 需要文件存档、窗口/全屏、缩放、离线启动、崩溃日志。
-- Steam 试玩不能依赖本地端口，也不能只靠浏览器 localStorage。
+- Steam 试玩不能依赖本地端口，也不能最终只靠浏览器 localStorage；下一步需要让桌面壳把 `saveStore` 接到文件系统。
 
 验收：
 
@@ -97,7 +98,7 @@ content/packs/steam-demo-01/
 - `src/runtime/recapModel.js`
 - `src/ui/renderSceneReview.js`
 - `src/ui/renderRecap.js`
-- `src/platform/saveStore.js`
+- `src/platform/saveStore.js` 已有 Web 抽象；下一步接桌面文件实现。
 
 验收：
 
@@ -299,6 +300,6 @@ AI 问答值得做，但不能让 AI 生成事实。
 1. 资料操作模型：把材料检视从文字三选一升级为可视化圈点数据结构。
 2. 现场压力模型：把听众耐心、连线人防备、弹幕跑偏归到同一套控场反馈里。
 3. 收麦回看模型：结果页回收材料圈点、原话选择和路线画像。
-4. 再继续 P0 技术债：`recapModel`、`sceneAdvance`、`saveStore`。
+4. 再继续 P0 技术债：`recapModel`、`sceneAdvance`、桌面文件版 `saveStore`。
 5. 然后做桌面壳、键盘/手柄输入和内容包完整迁移。
 6. 最后再做受控自由追问和 AI router。
