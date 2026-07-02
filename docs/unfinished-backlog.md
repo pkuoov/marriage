@@ -75,8 +75,8 @@
 - 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 不能再做影子资产。试玩包四案已是运行时台词来源；未来新增 `metadata-only` 案件仍只能写策划压力包，`npm run verify:pack` 会阻止它们夹带运行时字段。
 - 第一层故事包 manifest 已经由 `content/packs/steam-demo-01/` 生成运行时索引，构建和校验会检查索引是否过期。
 - 第二层 loader 入口已经存在：如果某个 case JSON 标成 `runtime-loaded`，构建索引会校验完整字段并嵌入运行时，`caseEngine` 会用它覆盖模板字段。
-- 当前 demo 包四案完整台词、追问、材料判定和结算已迁入内容包；`truthBoundary` 也随运行时 brief 输出，并已接到收麦回看的归位交互。
-- 新增或替换一个案子仍会碰到 `src/dailyChoices.js`、`content/packs/...`，以及 `src/app.js` 里的若干 `plotId` 文案分支。`src/caseEngine.js` 里的模板仍支撑 daily 轮换，后续要继续把日案和文案特判拆到数据层。
+- 当前 demo 包四案完整台词、追问、材料判定、最终收麦原话和结算已迁入内容包；`truthBoundary` 也随运行时 brief 输出，并已接到收麦回看的归位交互。
+- 新增或替换一个故事包案子主要改 `content/packs/...`；`src/dailyChoices.js` 已只负责角色指向解析和通用兜底。`src/caseEngine.js` 里的日案模板仍支撑 daily 轮换，`src/app.js` 仍有少量渲染侧文案分支，后续要继续把日案和文案特判拆到数据层。
 - 长期目标是运行时代码只负责加载和校验。
 
 建议结构：

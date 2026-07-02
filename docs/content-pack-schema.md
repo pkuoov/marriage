@@ -49,8 +49,9 @@ content/packs/<pack-id>/
 - `truthBoundary.unknown`
 - `selfServingOmission`
 - `quotePickCandidates`
+- `accusationChoices`
 
-每案至少要有三个 `quotePickCandidates`。`truthBoundary` 三层都不能为空。
+每案至少要有三个 `quotePickCandidates` 和三句 `accusationChoices`。`quotePickCandidates` 是素材池，`accusationChoices` 是最终收麦按钮，必须包含 `label`、`accuse` 或 `accuseRole`、`response`。`truthBoundary` 三层都不能为空。
 
 `metadata-only` 案件不能写 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup` 这类运行时字段。写了这些字段却不切到 `runtime-loaded`，会变成影子资产。`runtime-loaded` 案件必须包含完整运行时必填字段。
 

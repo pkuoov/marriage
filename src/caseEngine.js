@@ -9,35 +9,65 @@ const DAILY_PLOT_DEFINITIONS = {
     backdropClass: "backdrop-credit",
     label: "失业信用卡隐瞒局",
     publicHook: "一方失业后继续维持体面恋爱消费，直到信用卡和网贷爆雷。",
-    truth: "失业没先说，账单又递到另一方手里，这事不能只靠心疼往下接。"
+    truth: "失业没先说，账单又递到另一方手里，这事不能只靠心疼往下接。",
+    accusationChoices: [
+      { label: "“我只是怕你知道我失业后就离开我。”", accuseRole: "respondent", response: "怕你离开可以是真的，但最低还款为什么马上转到你这里？" },
+      { label: "“我也怕别人觉得我找了个撑不住场面的人。”", accuseRole: "complainant", response: "这句把她自己的面子也放进来了。她不是只被催债，也不想承认自己被体面吸引过。" },
+      { label: "“账单其实还有三天才到期。”", accuse: "noPremeditated", response: "这句要停一下。说急了可能是慌，也可能是怕你有时间把账单看清楚。" },
+      { label: "“以后他可能就不敢跟我谈结婚了。”", accuse: "both", response: "这句听着像怕丢脸，但一落到转钱，就不能只按感情话听了。" }
+    ]
   },
   "house-name-security-test": {
     taskProfile: { id: "audit", label: "钱款说不清", recommendedSpecialtyId: "audit", summary: "钱说得急，责任却还没落到人。" },
     backdropClass: "backdrop-house",
     label: "婚前房产加名安全感局",
     publicHook: "一方说加名是安全感，另一方说这是以结婚为名拿资产。",
-    truth: "房本归谁、婚后谁还、分开钱怎么算，这几句没人能靠“像一家人”带过去。"
+    truth: "房本归谁、婚后谁还、分开钱怎么算，这几句没人能靠“像一家人”带过去。",
+    accusationChoices: [
+      { label: "“买受人写的是对方父母。”", accuseRole: "respondent", response: "这句单独没问题，但旁边那张共同账户支出表要一起看。" },
+      { label: "“最好能有个位置。”", accuseRole: "complainant", response: "这句才是她开头没说出的愿望。说出来不等于抢房，藏起来会让投入确认听着像绕话。" },
+      { label: "“正常夫妻不会算这么细。”", accuse: "noPremeditated", response: "夫妻可以不天天算小账，但房贷和装修不是小账。" },
+      { label: "“不写才像一家人。”", accuse: "both", response: "越说像一家人，越别让一个人把钱打进去以后没名分。" }
+    ]
   },
   "tony-multi-dating": {
     taskProfile: { id: "emotion", label: "情绪卡住了", recommendedSpecialtyId: "emotion", summary: "情绪很满，有人一直把问题推回爱不爱。" },
     backdropClass: "backdrop-tony",
     label: "托尼老师多线养鱼局",
     publicHook: "一方以服务热情、性格会聊为借口，同时给多人制造排他暧昧。",
-    truth: "几句专属话术如果后面都接办卡、带客、投店，那就不只是会聊天。"
+    truth: "几句专属话术如果后面都接办卡、带客、投店，那就不只是会聊天。",
+    accusationChoices: [
+      { label: "“只有我能接住 TA 的情绪。”", accuseRole: "respondent", response: "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。" },
+      { label: "“他说我像店里自己人。”", accuseRole: "complainant", response: "这句要承认。她不是错在帮忙，是她也不想太早拆穿那个位置到底算不算关系。" },
+      { label: "“我从来没说只有你一个。”", accuse: "noPremeditated", response: "他确实留了口子，但“老板娘”这种话也不是随便听听就算了。" },
+      { label: "“以后店开起来，你就是老板娘。”", accuse: "both", response: "这句甜不甜先放一边，后面有没有接办卡、投店，才是关键。" }
+    ]
   },
   "education-income-fake-profile": {
     taskProfile: { id: "verification", label: "资料有雾", recommendedSpecialtyId: "verification", summary: "标签都好看，材料却总少一块。" },
     backdropClass: "backdrop-profile",
     label: "学历收入资料造假局",
     publicHook: "当事人来咨询择偶定位，却把学历、职业、收入和家庭资产说得很漂亮。",
-    truth: "条件可以说得好听，但学历、收入、流水这些字一旦被拿来定关系，就得说全。"
+    truth: "条件可以说得好听，但学历、收入、流水这些字一旦被拿来定关系，就得说全。",
+    accusationChoices: [
+      { label: "“他一直说名校毕业，细问才说是 MBA。”", accuseRole: "respondent", response: "学校不是假的，但这句话让别人往更好听的方向理解了。" },
+      { label: "“我只说他学校那边确实是真的。”", accuseRole: "complainant", response: "你这句也没说全。前面话说满了，后面就很难自己拆台。" },
+      { label: "“再问下去，是不是工资卡也要交出来？”", accuse: "both", response: "这句刺耳，但它碰到的不是学历，是婚后钱怎么管。" },
+      { label: "“结婚以后钱最好放一起管。”", accuseRole: "complainant", response: "这句才是流水后面那半句话。不是只验真假，是在试婚后钱归谁管。" }
+    ]
   },
   "workplace-reimbursement-screenshot": {
     taskProfile: { id: "audit", label: "款项卡住了", recommendedSpecialtyId: "audit", summary: "截图看着完整，钱却没落到该落的位置。" },
     backdropClass: "backdrop-work",
     label: "职场报销截图",
     publicHook: "同事说报销已经批了，却一直不把垫付款转回。截图看着过了，偏偏少了付款那一页。",
-    truth: "审批截图看着像过了，但付款状态、收款账户、返款入口没露出来，钱就还没说清。"
+    truth: "审批截图看着像过了，但付款状态、收款账户、返款入口没露出来，钱就还没说清。",
+    accusationChoices: [
+      { label: "“报销审批通过了。”", accuseRole: "respondent", response: "这句只能证明审批到过那一步，不能证明钱已经打给谁。" },
+      { label: "“我也确实想要这个主责。”", accuseRole: "complainant", response: "这句要承认。她想要机会是真的，同事拿这个机会让她先刷卡也是真的。" },
+      { label: "“返款统一打给对接人。”", accuse: "both", response: "这句和审批截图放一起看，钱为什么一直回不来就有方向了。" },
+      { label: "“先私下把事办成，复盘再补流程。”", accuseRole: "respondent", response: "这句是入口。流程先被挪到私下，后面截图再漂亮，也补不了垫款风险。" }
+    ]
   }
 };
 
@@ -143,6 +173,7 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
     publicHook: plot.publicHook,
     truth: plot.truth,
     backdropClass: plot.backdropClass,
+    accusationChoices: plot.accusationChoices,
     complainantId,
     respondentId,
     dailyKey,

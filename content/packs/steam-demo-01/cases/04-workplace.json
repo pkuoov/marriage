@@ -29,6 +29,28 @@
     "供应商那边我来对接",
     "这个主责你先别抢"
   ],
+  "accusationChoices": [
+    {
+      "label": "“报销审批通过了。”",
+      "accuseRole": "respondent",
+      "response": "这句只能证明审批到过那一步，不能证明钱已经打给谁。"
+    },
+    {
+      "label": "“我也确实想要这个主责。”",
+      "accuseRole": "complainant",
+      "response": "这句要承认。她想要机会是真的，同事拿这个机会让她先刷卡也是真的。"
+    },
+    {
+      "label": "“返款统一打给对接人。”",
+      "accuse": "both",
+      "response": "这句和审批截图放一起看，钱为什么一直回不来就有方向了。"
+    },
+    {
+      "label": "“先私下把事办成，复盘再补流程。”",
+      "accuseRole": "respondent",
+      "response": "这句是入口。流程先被挪到私下，后面截图再漂亮，也补不了垫款风险。"
+    }
+  ],
   "label": "职场报销截图",
   "storyArcTitle": "今日来电：职场报销截图",
   "publicHook": "同事说报销已经批了，却一直不把垫付款转回。那张截图看着没问题，偏偏少了付款那一截。",

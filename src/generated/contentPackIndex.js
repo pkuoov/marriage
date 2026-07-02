@@ -95,6 +95,28 @@ export const CONTENT_CASES = {
           "双方如果摊开账单后是否还能继续关系"
         ]
       },
+      "accusationChoices": [
+        {
+          "label": "“我只是怕你知道我失业后就离开我。”",
+          "accuseRole": "respondent",
+          "response": "怕你离开可以是真的，但最低还款为什么马上转到你这里？"
+        },
+        {
+          "label": "“我也怕别人觉得我找了个撑不住场面的人。”",
+          "accuseRole": "complainant",
+          "response": "这句把她自己的面子也放进来了。她不是只被催债，也不想承认自己被体面吸引过。"
+        },
+        {
+          "label": "“账单其实还有三天才到期。”",
+          "accuse": "noPremeditated",
+          "response": "这句要停一下。说急了可能是慌，也可能是怕你有时间把账单看清楚。"
+        },
+        {
+          "label": "“以后他可能就不敢跟我谈结婚了。”",
+          "accuse": "both",
+          "response": "这句听着像怕丢脸，但一落到转钱，就不能只按感情话听了。"
+        }
+      ],
       "openingComplaint": "咨询者连线说：“TA 说信用卡只是短期周转，让我先帮一下。我不是不帮，是后来发现这个洞可能早就有了。”",
       "openingDialogue": [
         {
@@ -379,6 +401,28 @@ export const CONTENT_CASES = {
           "其他顾客是否把这段关系理解成排他暧昧"
         ]
       },
+      "accusationChoices": [
+        {
+          "label": "“只有我能接住 TA 的情绪。”",
+          "accuseRole": "respondent",
+          "response": "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。"
+        },
+        {
+          "label": "“他说我像店里自己人。”",
+          "accuseRole": "complainant",
+          "response": "这句要承认。她不是错在帮忙，是她也不想太早拆穿那个位置到底算不算关系。"
+        },
+        {
+          "label": "“我从来没说只有你一个。”",
+          "accuse": "noPremeditated",
+          "response": "他确实留了口子，但“老板娘”这种话也不是随便听听就算了。"
+        },
+        {
+          "label": "“以后店开起来，你就是老板娘。”",
+          "accuse": "both",
+          "response": "这句甜不甜先放一边，后面有没有接办卡、投店，才是关键。"
+        }
+      ],
       "openingComplaint": "咨询者连线说：“我以为快确定关系了。后来他发错了一张预约表，我才发现那张表好像不是在排剪头。”",
       "openingDialogue": [
         {
@@ -663,6 +707,28 @@ export const CONTENT_CASES = {
           "双方如果坦白条件后是否还愿意继续"
         ]
       },
+      "accusationChoices": [
+        {
+          "label": "“他一直说名校毕业，细问才说是 MBA。”",
+          "accuseRole": "respondent",
+          "response": "学校不是假的，但这句话让别人往更好听的方向理解了。"
+        },
+        {
+          "label": "“我只说他学校那边确实是真的。”",
+          "accuseRole": "complainant",
+          "response": "你这句也没说全。前面话说满了，后面就很难自己拆台。"
+        },
+        {
+          "label": "“再问下去，是不是工资卡也要交出来？”",
+          "accuse": "both",
+          "response": "这句刺耳，但它碰到的不是学历，是婚后钱怎么管。"
+        },
+        {
+          "label": "“结婚以后钱最好放一起管。”",
+          "accuseRole": "complainant",
+          "response": "这句才是流水后面那半句话。不是只验真假，是在试婚后钱归谁管。"
+        }
+      ],
       "openingComplaint": "咨询者连线说：“我想问下我男朋友的事。我们是相亲认识的，最近聊到见父母，他发了学校、工作、收入截图，后面又补了一张存款证明。我越看越觉得，这事不是一张图的问题。”",
       "openingDialogue": [
         {
@@ -1000,6 +1066,28 @@ export const CONTENT_CASES = {
           "老板是否知道真实垫款和对接过程"
         ]
       },
+      "accusationChoices": [
+        {
+          "label": "“报销审批通过了。”",
+          "accuseRole": "respondent",
+          "response": "这句只能证明审批到过那一步，不能证明钱已经打给谁。"
+        },
+        {
+          "label": "“我也确实想要这个主责。”",
+          "accuseRole": "complainant",
+          "response": "这句要承认。她想要机会是真的，同事拿这个机会让她先刷卡也是真的。"
+        },
+        {
+          "label": "“返款统一打给对接人。”",
+          "accuse": "both",
+          "response": "这句和审批截图放一起看，钱为什么一直回不来就有方向了。"
+        },
+        {
+          "label": "“先私下把事办成，复盘再补流程。”",
+          "accuseRole": "respondent",
+          "response": "这句是入口。流程先被挪到私下，后面截图再漂亮，也补不了垫款风险。"
+        }
+      ],
       "openingComplaint": "咨询者连线说：“我想问公司同事欠我一笔垫付款。他发了报销审批截图，说财务已经批了，可钱一直没转给我。我越看越觉得那张图少了一块。”",
       "openingDialogue": [
         {
