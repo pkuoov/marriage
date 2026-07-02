@@ -1,13 +1,13 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.29";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.29";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.29";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.29";
-import { migrateState } from "../src/state.js?v=0.20.29";
-import { NPCS } from "../src/story.js?v=0.20.29";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.29";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.29";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.29";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.29";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.30";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.30";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.30";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.30";
+import { migrateState } from "../src/state.js?v=0.20.30";
+import { NPCS } from "../src/story.js?v=0.20.30";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.30";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.30";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.30";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.30";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -154,6 +154,20 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(packageSource, "\"play:windows\"", "必须保留 Windows 一键试玩入口");
   assertIncludes(windowsPlaySource, "dist\\playable\\index.html", "Windows 一键试玩必须打开离线可玩包");
   assert(!/http\.server|127\.0\.0\.1|localhost/i.test(windowsPlaySource), "Windows 一键试玩不能依赖本地端口或 dev server");
+});
+
+test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assertIncludes(appSource, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
+  assertIncludes(appSource, "liveControlDeck", "案内 UI 必须由直播控场台统一生成");
+  assertIncludes(appSource, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
+  assertIncludes(appSource, "live-console-shell", "案内主画面必须使用控场台布局骨架");
+  assertIncludes(appSource, "后台材料", "控场台必须把材料作为直播间后台对象呈现");
+  assertIncludes(stylesSource, ".story-grid.case-vn-grid.live-console-shell", "控场台布局必须覆盖普通 VN 单栏布局");
+  assertIncludes(stylesSource, ".deck-card-live", "控场台必须有直播信号视觉模块");
+  assertIncludes(stylesSource, ".deck-card-material", "控场台必须有后台材料视觉模块");
+  assertIncludes(stylesSource, ".title-console-strip", "标题页必须有直播状态条样式");
 });
 
 test("EPISODE-001", "story pack contains four deterministic live-call cases with one spine", () => {

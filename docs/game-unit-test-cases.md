@@ -23,6 +23,7 @@ npm run build:playable
 | MODE-001 | Mode routing | Unknown modes normalize to `episode`; explicit `daily` still expects one case; legacy `weekly` links migrate. | Steam 主入口被旧 daily 默认值拉回去，或单案兼容入口丢失。 |
 | PACK-001 | Content pack contract | `content/packs/steam-demo-01/manifest.json` matches the runtime story-pack definition, and each case pressure packet has truth boundaries, stakes, object purpose, self-serving omission, and quote candidates. | 故事包目录和运行时定义脱节，或新故事包只有标题顺序、没有编剧压力系统。 |
 | UI-001 | Choice UI contract | Current-node questions render in one panel without explainer tags; buttons are host questions, not route labels, same-panel buttons have equal visual weight, and the material inspection stage remains in the runtime. | `顺着问`、`按住问`、路线轴提示、双分组单按钮、核心追问高亮等设计稿残留回到玩家界面，或玩法退回纯问答。 |
+| UI-002 | Broadcast identity | Title and live-call screens preserve a livestream control-desk shell: signal strip, ON AIR state, audience patience, current call segment, and background material panel. | UI 退回普通文字剧情游戏：一张背景图、一块对话卡、没有直播间控场职业感。 |
 | EPISODE-001 | Story pack contract | A `storyKey` deterministically generates four live-call cases with stable order, visible in-run progress, one shared theme, a non-spoiler title intro, per-case bridge text, and at least one material inspection node per case. | 故事集变成随机拼盘、乱序、重复题材、标题页剧透目录、开场说教、无主题、无法回放同一集，或缺少可操作材料。 |
 | EPISODE-001B | Story interlude contract | Story-pack interludes should summarize the previous call from the played route and introduce the next call through a dramatic object, not a directory title. | 案间页退回“上一通记下 / 下一案 / 下一通来电”这种模板感。 |
 | EPISODE-001A | In-run spoiler guard | Story-pack live screens use neutral call labels instead of act names, case titles, `1/4` package progress, or "next case" copy. | 首页刚清干净，玩家一进第一通又看到目录式剧透。 |
@@ -64,16 +65,17 @@ Automated tests do not replace one short browser replay after large narrative/UI
 6. On at least three current-node choice panels, confirm there is one panel and every button is a host question, not a route label or UI explainer.
 7. Confirm same-panel current-node buttons have equal color, border, card treatment, and emphasis; no button should look recommended by UI priority.
 8. Confirm the page does not show "how to play" hints, route axes, or designer shorthand inside the live-call choice area.
-9. Pick one core issue question and one tempting outer-angle question.
-10. Confirm outer-angle feedback is in-character and live comments react.
-11. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
-12. After the last scene, enter material inspection; confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
-13. Confirm material hit feedback appears once, not again as a separate reaction line.
-14. Solve the first case and confirm the recap shows the hidden route map.
-15. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
-16. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
-17. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
-18. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
+9. Confirm the first live-call screen reads as a livestream control desk: visible ON AIR state, current segment, audience patience, and backend material panel before it reads as a generic visual-novel text box.
+10. Pick one core issue question and one tempting outer-angle question.
+11. Confirm outer-angle feedback is in-character and live comments react.
+12. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
+13. After the last scene, enter material inspection; confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
+14. Confirm material hit feedback appears once, not again as a separate reaction line.
+15. Solve the first case and confirm the recap shows the hidden route map.
+16. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
+17. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
+18. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
+19. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
 
 ## Maintenance Rules
 

@@ -96,6 +96,43 @@ button:active:not(:disabled) {
   line-height: 1.75;
 }
 
+.title-console-strip {
+  width: min(520px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 18px 0 0;
+}
+
+.title-console-strip span {
+  display: grid;
+  gap: 3px;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid rgba(237, 241, 238, .13);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(13, 16, 13, .72), rgba(13, 16, 13, .48)),
+    rgba(101, 214, 194, .05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .06),
+    0 10px 24px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(12px);
+}
+
+.title-console-strip b {
+  color: var(--accent);
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.title-console-strip small {
+  color: rgba(237, 241, 238, .58);
+  font-size: 12px;
+  font-weight: 760;
+  line-height: 1.25;
+}
+
 .quick-play-card {
   width: min(380px, 100%);
   display: grid;
@@ -217,10 +254,43 @@ button:active:not(:disabled) {
   box-shadow: 0 10px 28px rgba(0, 0, 0, .24);
 }
 
+.topbar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(101, 214, 194, .46), rgba(212, 180, 106, .28), transparent);
+}
+
 .topbar nav {
   display: flex;
   justify-content: center;
   min-width: 0;
+}
+
+.topbar nav span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid rgba(101, 214, 194, .18);
+  border-radius: 999px;
+  color: rgba(237, 241, 238, .76);
+  background: rgba(101, 214, 194, .055);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.topbar nav i,
+.deck-card-live i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #f26f5b;
+  box-shadow: 0 0 16px rgba(242, 111, 91, .72);
 }
 
 .story-grid {
@@ -236,6 +306,84 @@ button:active:not(:disabled) {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.story-grid.case-vn-grid.live-console-shell {
+  width: min(1280px, 100%);
+  grid-template-columns: minmax(238px, 280px) minmax(0, 1fr);
+  align-items: start;
+  padding: 18px;
+}
+
+.control-deck {
+  position: sticky;
+  top: 82px;
+  display: grid;
+  gap: 10px;
+}
+
+.deck-card {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  min-height: 112px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(237, 241, 238, .12);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(237, 241, 238, .055), rgba(237, 241, 238, .018)),
+    rgba(13, 16, 13, .72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .055),
+    0 16px 38px rgba(0, 0, 0, .24);
+}
+
+.deck-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(101, 214, 194, .0), rgba(101, 214, 194, .58), rgba(212, 180, 106, .32), rgba(101, 214, 194, .0));
+}
+
+.deck-card span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: rgba(237, 241, 238, .56);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.deck-card b {
+  min-width: 0;
+  color: #f7f4e9;
+  font-size: 22px;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
+.deck-card small {
+  color: rgba(237, 241, 238, .60);
+  font-size: 13px;
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+.deck-card-live {
+  border-color: rgba(242, 111, 91, .22);
+  background:
+    linear-gradient(180deg, rgba(242, 111, 91, .09), rgba(237, 241, 238, .02)),
+    rgba(13, 16, 13, .78);
+}
+
+.deck-card-pressure b {
+  color: var(--gold);
+}
+
+.deck-card-material {
+  border-color: rgba(121, 184, 204, .22);
+}
+
 .case-vn-grid .case-progress-strip {
   left: auto;
   right: 18px;
@@ -249,7 +397,7 @@ button:active:not(:disabled) {
 .vn-stage {
   min-height: 680px;
   display: grid;
-  grid-template-rows: minmax(390px, 1fr) auto;
+  grid-template-rows: 28px minmax(390px, 1fr) auto;
   overflow: hidden;
   border: 1px solid rgba(237, 241, 238, 0.10);
   border-radius: 12px;
@@ -259,6 +407,15 @@ button:active:not(:disabled) {
   box-shadow:
     var(--shadow),
     inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.vn-stage::before {
+  content: "";
+  height: 28px;
+  border-bottom: 1px solid rgba(237, 241, 238, .08);
+  background:
+    linear-gradient(90deg, rgba(101, 214, 194, .18), transparent 24%),
+    rgba(9, 12, 10, .78);
 }
 
 .visual-scene {
@@ -291,6 +448,7 @@ button:active:not(:disabled) {
   z-index: 1;
   background:
     linear-gradient(90deg, rgba(4, 6, 5, .62), transparent 26%, transparent 74%, rgba(4, 6, 5, .70)),
+    repeating-linear-gradient(180deg, rgba(237, 241, 238, .035) 0, rgba(237, 241, 238, .035) 1px, transparent 1px, transparent 5px),
     linear-gradient(180deg, rgba(3, 6, 5, .12), transparent 38%, rgba(4, 6, 5, .74));
   opacity: .92;
   pointer-events: none;
@@ -345,31 +503,31 @@ button:active:not(:disabled) {
 .backdrop-credit {
   background:
     linear-gradient(180deg, rgba(24, 42, 54, .14), rgba(7, 11, 16, .56)),
-    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.29") center / cover;
+    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.30") center / cover;
 }
 
 .backdrop-house {
   background:
     linear-gradient(180deg, rgba(38, 38, 25, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.29") center / cover;
+    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.30") center / cover;
 }
 
 .backdrop-profile {
   background:
     linear-gradient(180deg, rgba(39, 28, 34, .15), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.29") center / cover;
+    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.30") center / cover;
 }
 
 .backdrop-work {
   background:
     linear-gradient(180deg, rgba(22, 38, 36, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/agency_office.png?v=0.20.29") center / cover;
+    url("../assets/generated/backgrounds/agency_office.png?v=0.20.30") center / cover;
 }
 
 .backdrop-tony {
   background:
     linear-gradient(180deg, rgba(32, 32, 42, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.29") center / cover;
+    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.30") center / cover;
 }
 
 .scene-label {
@@ -868,6 +1026,7 @@ button:active:not(:disabled) {
 
 .evidence-check-card,
 .evidence-result-card {
+  position: relative;
   display: grid;
   gap: 8px;
   margin: 12px 0;
@@ -876,6 +1035,31 @@ button:active:not(:disabled) {
   border-radius: 10px;
   background: rgba(8, 15, 15, .42);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .045);
+}
+
+.evidence-check-card {
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(121, 184, 204, .12), transparent 38%),
+    rgba(8, 15, 15, .48);
+}
+
+.evidence-check-card::before {
+  content: "FILE";
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  color: rgba(121, 184, 204, .78);
+  border-right: 1px solid rgba(237, 241, 238, .10);
+  background:
+    repeating-linear-gradient(180deg, rgba(237, 241, 238, .06) 0, rgba(237, 241, 238, .06) 1px, transparent 1px, transparent 8px),
+    rgba(0, 0, 0, .18);
+  font-size: 12px;
+  font-weight: 950;
 }
 
 .evidence-check-card span,
@@ -891,6 +1075,18 @@ button:active:not(:disabled) {
   color: rgba(237, 241, 238, .80);
   font-size: 15px;
   line-height: 1.72;
+}
+
+.evidence-check-card span {
+  grid-column: 2;
+  align-self: end;
+  padding: 13px 14px 0 0;
+}
+
+.evidence-check-card p {
+  grid-column: 2;
+  padding: 0 14px 13px 0;
+  color: rgba(247, 244, 233, .90);
 }
 
 .evidence-result-card b {
@@ -1651,6 +1847,17 @@ button:active:not(:disabled) {
     background-position: center;
   }
 
+  .title-console-strip {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .title-console-strip span {
+    min-height: 42px;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto auto;
     gap: 8px;
@@ -1672,9 +1879,38 @@ button:active:not(:disabled) {
     width: 100%;
   }
 
+  .story-grid.case-vn-grid.live-console-shell {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
+  }
+
+  .control-deck {
+    position: static;
+    order: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 0 8px calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .deck-card {
+    min-height: 88px;
+    padding: 11px;
+    border-radius: 8px;
+  }
+
+  .deck-card b {
+    font-size: 16px;
+  }
+
+  .deck-card small {
+    font-size: 11px;
+  }
+
   .vn-stage {
+    order: 1;
     min-height: auto;
-    grid-template-rows: minmax(190px, 27svh) auto;
+    grid-template-rows: 22px minmax(190px, 27svh) auto;
     border-radius: 0;
   }
 
@@ -1792,6 +2028,23 @@ button:active:not(:disabled) {
 
   .choice-group {
     padding: 9px;
+  }
+
+  .evidence-check-card {
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-check-card::before {
+    grid-row: auto;
+    min-height: 30px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(237, 241, 238, .10);
+  }
+
+  .evidence-check-card span,
+  .evidence-check-card p {
+    grid-column: 1;
+    padding-left: 12px;
   }
 
   .flow-group .choice-stack {

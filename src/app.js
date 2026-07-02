@@ -1,12 +1,12 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.29";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.29";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.29";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.29";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.29";
-import { NPCS } from "./story.js?v=0.20.29";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.29";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.29";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.29";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.30";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.30";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.30";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.30";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.30";
+import { NPCS } from "./story.js?v=0.20.30";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.30";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.30";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.30";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -152,6 +152,11 @@ function renderTitle() {
           <p class="eyebrow">${storyPack ? "Steam 首发试玩" : "今日匿名来电"}</p>
           <h1>${PRODUCT_NAME}</h1>
           <p>${escapeHtml(title)}</p>
+          <div class="title-console-strip" aria-hidden="true">
+            <span><b>ON AIR</b><small>热线待接</small></span>
+            <span><b>REC</b><small>后台留档</small></span>
+            <span><b>LIVE</b><small>弹幕入场</small></span>
+          </div>
           <div class="quick-play-card case-file-ledger daily-hook-card">
             <span>${escapeHtml(object)}</span>
             <b>${escapeHtml(hook)}</b>
@@ -661,6 +666,41 @@ function renderStoryPackComplete() {
   bind('[data-action="title"]', resetToTitle);
 }
 
+function liveControlDeck(brief = {}, label = "") {
+  const budget = ensureBudget(brief);
+  const max = Math.max(1, Number(budget.max ?? 1));
+  const remaining = Math.max(0, Math.min(max, Number(budget.remaining ?? max)));
+  const total = Math.max(1, keyQuestionLimit(brief));
+  const segment = Math.max(1, Math.min(total, answeredSceneCount(brief) + 1));
+  const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
+  const material = brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录";
+  const pressure = remaining <= Math.ceil(max * 0.28) ? "快压不住" : remaining <= Math.ceil(max * 0.55) ? "开始起噪" : "还在听";
+  return `
+    <aside class="control-deck" aria-label="直播控场台">
+      <section class="deck-card deck-card-live">
+        <span><i></i>ON AIR</span>
+        <b>${escapeHtml(isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中")}</b>
+        <small>${escapeHtml(label || "连线中")}</small>
+      </section>
+      <section class="deck-card">
+        <span>连线段落</span>
+        <b>${segment}/${total}</b>
+        <small>麦没断，话还在往下走。</small>
+      </section>
+      <section class="deck-card deck-card-pressure">
+        <span>听众耐心</span>
+        <b>${remaining}/${max}</b>
+        <small>${pressure}</small>
+      </section>
+      <section class="deck-card deck-card-material">
+        <span>后台材料</span>
+        <b>${escapeHtml(material)}</b>
+        <small>先放在台面边上。</small>
+      </section>
+    </aside>
+  `;
+}
+
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true }) {
   const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
   const backdropClass = caseBackdropClass(brief);
@@ -671,11 +711,12 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
     <main>
       <header class="topbar">
         <button data-action="title" type="button" aria-label="回到标题页">${PRODUCT_NAME}</button>
-        <nav aria-label="章节"><span class="active">${modeLabel}</span></nav>
+        <nav aria-label="章节"><span class="active"><i></i>${modeLabel}</span></nav>
         <button data-action="sound" type="button">音效 ${isSoundEnabled() ? "开" : "关"}</button>
         <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
       </header>
-      <section class="story-grid case-vn-grid">
+      <section class="story-grid case-vn-grid live-console-shell">
+        ${showCaseHud ? liveControlDeck(brief, label) : ""}
         <article class="vn-stage">
           <div class="visual-scene backdrop-office ${backdropClass}" aria-hidden="true">
             <div class="scene-label">${escapeHtml(label)}</div>

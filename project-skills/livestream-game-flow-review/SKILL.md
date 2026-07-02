@@ -15,6 +15,8 @@ Before continuing broad optimization work, read `docs/unfinished-backlog.md`, `d
 
 For broad "continue optimizing" requests, choose exactly one active direction before editing. Current active direction is the livestream control system: material operation first, live-room pressure second, recap payoff third. Do not mix this with AI free questioning, desktop shell work, new story expansion, or unrelated UI polish in the same pass unless the user explicitly asks for that combination.
 
+UI identity is part of the livestream control system, not decorative polish. The first live-call screen must read as a broadcast control desk before it reads as a visual novel: ON AIR signal, current call segment, audience patience, backend material, and the call monitor should be visible as diegetic live-room surfaces. Do not solve UI weakness by adding tutorials, route hints, case-file exposition, or "how to play" text.
+
 Do not review from code alone. Play the flow like a first-time player, capture what is actually on screen, then patch code only after the lived flow reveals the problem.
 
 Do not generate or repair daily-case text one field or one sentence at a time. Daily cases must be written as one integrated call first, then split into UI fields. If one line changes the motive, pressure, object purpose, or responsibility balance, regenerate the whole local chain around it: opening, scene beat, current-node options, feedback, optional full-hit deep question, final quote-pick, recap/share copy, and migration copy.
