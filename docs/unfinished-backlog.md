@@ -26,6 +26,7 @@
 - 故事集终局已回收路线画像、现场压力、事实边界、材料圈点和收麦原话，不再只看揭示率。
 - 故事集终局评价模型已拆到 `src/runtime/recapModel.js`：主题、路线画像、评论墙、分享标题和收麦余味有纯函数测试，`app.js` 只负责收集当前存档和渲染。
 - 对话段落推进已拆出 `sceneReviewModel`：当前段落、完成态、最后一段后的材料/深入追问/原话选择分支都在 `src/runtime/sceneAdvance.js` 里纯函数测试。
+- 材料检视和后台私信回流推进已拆出 `evidenceCheckModel` / `investigationBackflowModel`：当前材料、未处理回流、缺省态和下一步按钮都可纯函数测试。
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 - Web 存档已抽到 `src/platform/saveStore.js`：当前仍是单槽 localStorage，但已有 `read/write/removeMany/list/exportForCloud` 接口，后续桌面壳可替换为文件存档。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
@@ -106,7 +107,7 @@ content/packs/steam-demo-01/
 
 优先拆：
 
-- `src/runtime/sceneAdvance.js` 已接管动作扣耐心、当前对话段落推进、收麦前守门和回流解锁；下一步拆材料检视和回流阶段的页面推进模型。
+- `src/runtime/sceneAdvance.js` 已接管动作扣耐心、当前对话段落推进、材料检视推进、回流页面推进、收麦前守门和回流解锁；下一步只补缺口，不再把页面推进判断写回 `app.js`。
 - 继续补强 `src/runtime/routeLog.js`，把路线图模型和故事集路线统计也完全纯函数化。
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - `src/ui/renderSceneReview.js`
@@ -314,6 +315,6 @@ AI 问答值得做，但不能让 AI 生成事实。
 1. 资料操作模型：把材料检视从文字三选一升级为可视化圈点数据结构。
 2. 现场压力模型：第一层已接入，追问语气、材料误指和回流结果已开始共同影响听众耐心、连线人防备、弹幕跑偏。
 3. 收麦回看模型：第一层已接入，结果页已回收材料圈点、原话选择和路线画像。
-4. 再继续 P0 技术债：材料/回流阶段推进模型、桌面文件版 `saveStore`、残余内容特判数据化。
+4. 再继续 P0 技术债：桌面文件版 `saveStore`、残余内容特判数据化、Steam Input / 手柄输入。
 5. 然后做桌面壳、键盘/手柄输入和内容包完整迁移。
 6. 最后再做受控自由追问和 AI router。

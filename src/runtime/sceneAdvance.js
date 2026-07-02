@@ -102,6 +102,41 @@ export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => fal
   };
 }
 
+export function evidenceCheckModel({ brief = {}, index = 0, pick = null, issueBadge = false, hasDeepFollowup = false } = {}) {
+  const checks = evidenceChecksFor(brief);
+  const total = checks.length || 1;
+  const safeIndex = Math.max(0, Math.min(Number(index ?? 0), total - 1));
+  const check = checks[safeIndex] ?? null;
+  const lastCheck = safeIndex >= checks.length - 1;
+  const nextStage = afterEvidenceScene({ issueBadge, hasDeepFollowup });
+  return {
+    checks,
+    index: safeIndex,
+    check,
+    pick,
+    missing: !check,
+    lastCheck,
+    nextStage,
+    nextLabel: nextStage === "deepFollowup" ? "再深入一句" : "选一句原话"
+  };
+}
+
+export function investigationBackflowModel({ entries = [], selectedPick = () => null } = {}) {
+  const normalized = Array.isArray(entries) ? entries : [];
+  const entry = normalized.find((item) => !selectedPick(item.index)) ?? normalized[normalized.length - 1] ?? null;
+  const pick = entry ? selectedPick(entry.index) : null;
+  return {
+    entries: normalized,
+    entry,
+    hook: entry?.hook ?? null,
+    index: entry?.index ?? -1,
+    pick,
+    missing: !entry,
+    nextStage: "caseSolved",
+    nextLabel: "继续回看"
+  };
+}
+
 export function dailyAccusationReadiness(brief = {}, actionDone = () => false) {
   const required = keyQuestionLimit(brief);
   const sceneCount = answeredSceneCount(brief, actionDone);
