@@ -1,5 +1,6 @@
 import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.68";
 import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.68";
+import { routeAxisForChoice } from "./runtime/routeLog.js?v=0.20.68";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
@@ -120,7 +121,6 @@ function migrateCaseBrief(brief) {
 
 function migrateOpeningDialogue(brief) {
   const lines = Array.isArray(brief.openingDialogue) ? brief.openingDialogue : [];
-  if (brief.plotId !== "education-income-fake-profile") return lines;
   return lines.filter((line) => {
     const text = String(line?.text ?? "");
     if (text === "她问细到哪一步了？") return false;
@@ -136,7 +136,7 @@ function migrateSceneRouteAxes(brief) {
     ...scene,
     questionOptions: (scene.questionOptions ?? []).map((option) => {
       const migrated = migrateQuestionOptionCopy(option);
-      const routeAxis = migratedRouteAxisForQuestion(migrated?.question ?? "", brief.plotId);
+      const routeAxis = routeAxisForChoice(migrated, scene);
       return routeAxis ? { ...migrated, routeAxis } : migrated;
     })
   }));
@@ -189,19 +189,8 @@ function migrateChoiceListRecord(record) {
   );
 }
 
-function migratedRouteAxisForQuestion(question, plotId) {
-  const text = String(question ?? "");
-  if (!text) return "";
-  if (/你当时|你自己|你妈|你是不是|你有没有|起疑|绕着|不踏实|怎么接|怎么回|怎么理解|自己人|拦过|改口|为什么先答应|更慌/.test(text)) return "caller-credibility";
-  if (/好看的版本|名校|MBA|本科|学历|署名|主责|老板/.test(text)) return "identity-wording";
-  if (/大群|预算|流程|供应商|对接人|入口|越级/.test(text)) return "process-control";
-  if (/截图|付款状态|收款账户|少了哪|哪一边/.test(text)) return "document-edge";
-  if (plotId === "workplace-reimbursement-screenshot" && /垫钱/.test(text)) return "identity-wording";
-  return "";
-}
-
 function migrateDeepFollowup(brief) {
-  if (brief.plotId !== "education-income-fake-profile" || !brief.deepFollowup) return brief.deepFollowup;
+  if (!brief.deepFollowup) return brief.deepFollowup;
   if (brief.deepFollowup.note !== "这句不是替谁开脱，是把她自己最在意的钱也问出来。") return brief.deepFollowup;
   return {
     ...brief.deepFollowup,

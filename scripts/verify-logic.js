@@ -929,6 +929,8 @@ test("ROUTE-001", "every playable choice records a hidden route axis and tone", 
 });
 
 test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
+  const stateSource = readFileSync(new URL("../src/state.js", import.meta.url), "utf8");
+  assert(!/plotId/.test(stateSource), "旧存档迁移不能继续按具体 plotId 写分支；应按旧文本或统一 route schema 迁移");
   const migrated = migrateState({
     profileDone: true,
     caseMode: "unknown-mode",
