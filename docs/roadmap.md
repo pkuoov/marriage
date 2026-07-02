@@ -21,6 +21,7 @@
 - 试玩主线已调整为 8 万信用卡周转、理发店排班表、存款证明、职场报销截图，降低婚恋题材占比。
 - 首个内容包骨架已拆到 `content/packs/steam-demo-01/`，并新增 `npm run verify:pack` 校验内容包与运行时故事包定义一致。
 - `episode` 已开始支持可变案数：当前 demo 包是四案，但存档迁移、包校验和生成器不再把 4 当成引擎规则。
+- 内容包 manifest 元数据已生成到 `src/generated/contentPackIndex.js` 并由运行时读取；`src/storyPacks.js` 不再手写 demo 包镜像。
 - Web 存档已拆出 `src/platform/saveStore.js`，当前保持单槽 localStorage 行为，后续桌面壳可替换成文件存档和 Steam Cloud 导出。
 - 路线轴、路线语气和路线画像已拆到 `src/runtime/routeLog.js`，减少 `app.js` 继续膨胀。
 - 每案加入材料检视节点，玩家要指出账单、截图、表格或审批图里的具体缺口；关键追问和材料命中不扣听众忍耐，外围绕问或误指材料才扣。
@@ -42,5 +43,5 @@
 - 资料操作的基础版式与回流稳定后，再把听众耐心、连线人防备和弹幕跑偏统一成现场压力模型。
 - 现场压力稳定后，再重做收麦回看，让结果页回收材料圈点、原话选择和路线画像。
 - 技术债按支撑顺序推进：继续拆 `recapModel` / `sceneAdvance` 周边 UI，接桌面文件版 `saveStore`，再做 Steam Input / 手柄和桌面壳。
-- 内容包管线是 P0 架构债：当前 `content/packs/.../cases/*.json` 明确只是 `metadata-only` 压力包，完整台词仍来自 `src/caseEngine.js`。迁移完成前不能把它当作已数据驱动。
+- 内容包管线仍是 P0 架构债：manifest 已接运行时生成索引，但 `content/packs/.../cases/*.json` 仍只是 `metadata-only` 压力包，完整台词仍来自 `src/caseEngine.js`。迁移完成前不能把案件台词当作已数据驱动。
 - AI 只保留为后期受控 intent router，不进入当前实现队列。

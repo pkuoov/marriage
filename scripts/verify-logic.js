@@ -1,19 +1,19 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.42";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.42";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.42";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.42";
-import { migrateState } from "../src/state.js?v=0.20.42";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.42";
-import { NPCS } from "../src/story.js?v=0.20.42";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.42";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.42";
-import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.42";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.42";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.42";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.42";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.42";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.42";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.42";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.43";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.43";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.43";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.43";
+import { migrateState } from "../src/state.js?v=0.20.43";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.43";
+import { NPCS } from "../src/story.js?v=0.20.43";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.43";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.43";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.43";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.43";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.43";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.43";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.43";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.43";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.43";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -257,7 +257,9 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!stylesSource.includes("dialogue-choice-group"), "统一选择面板后不能留下未使用的 dialogue-choice-group 样式");
   assertIncludes(appSource, "Number(issue.percent ?? 0)", "recap 主视觉大字必须展示数值，避免四字 rank 在手机端溢出");
   assertIncludes(packageSource, "\"build:playable\"", "发布前必须有不依赖 dev server 的可玩构建脚本");
-  assertIncludes(packageSource, "\"build:steam\": \"node scripts/build-playable.js\"", "Steam 构建不能继续指向普通静态预览脚本");
+  assertIncludes(packageSource, "\"build:steam\"", "必须保留 Steam 构建入口");
+  assertIncludes(packageSource, "scripts/build-playable.js", "Steam 构建不能继续指向普通静态预览脚本");
+  assertIncludes(packageSource, "\"content:index\"", "构建前必须生成 content 运行时索引");
   assertIncludes(packageSource, "\"play:windows\"", "必须保留 Windows 一键试玩入口");
   assertIncludes(windowsPlaySource, "dist\\playable\\index.html", "Windows 一键试玩必须打开离线可玩包");
   assert(!/http\.server|127\.0\.0\.1|localhost/i.test(windowsPlaySource), "Windows 一键试玩不能依赖本地端口或 dev server");
@@ -283,11 +285,14 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
 });
 
 test("EPISODE-001", "story pack contains deterministic live-call cases with one spine", () => {
+  const storyPacksSource = readFileSync(new URL("../src/storyPacks.js", import.meta.url), "utf8");
   const demoPack = storyPackForKey("steam-demo-01");
   const demoCaseCount = storyPackCaseCount(demoPack);
   const a = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const b = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const legacy = generateCasesForMode("weekly", NPCS, attrs, { weeklyKey: "steam-demo-01" });
+  assertIncludes(storyPacksSource, "./generated/contentPackIndex.js", "故事包运行时必须读取 content 生成索引，不能再手写 manifest 镜像");
+  assert(!storyPacksSource.includes("ANONYMOUS_CALL_LABELS"), "故事包标签不能在 storyPacks.js 里手写双份");
   assertEqual(a.length, demoCaseCount, "故事包必须按 manifest size 生成案件");
   assert(validCaseBriefCount(a.length, "episode"), "故事包案件数量必须被 episode 存档校验接受");
   assertEqual(a.map((brief) => brief.id).join("|"), b.map((brief) => brief.id).join("|"), "同一个 storyKey 必须生成同一组故事");

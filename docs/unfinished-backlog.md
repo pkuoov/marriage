@@ -25,6 +25,7 @@
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 - Web 存档已抽到 `src/platform/saveStore.js`：当前仍是单槽 localStorage，但已有 `read/write/removeMany/list/exportForCloud` 接口，后续桌面壳可替换为文件存档。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
+- 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 
 ## P0：试玩版必须补齐
 
@@ -58,10 +59,9 @@
 ### 内容包数据化
 
 - 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 目前只是策划压力包，不是运行时台词来源。每个 case JSON 必须显式写 `runtimeContentStatus: "metadata-only"`，`npm run verify:pack` 会阻止它们伪装成已接通的内容包。
-- 当前 demo 包四案仍写在 `src/caseEngine.js`。
-- 第一层故事包骨架已经拆到 `content/packs/steam-demo-01/`，并用 `src/storyPacks.js` 给运行时读取。
-- 当前完整台词仍写在 `src/caseEngine.js`；下一步要继续把每案完整字段迁移到内容包。
-- 新增或替换一个案子仍要同时碰 `src/caseEngine.js`、`src/dailyChoices.js`、`src/storyPacks.js`、`content/packs/...`，以及 `src/app.js` 里的若干 `plotId` 文案分支。这是内容扩量前最高优先级的架构债。
+- 第一层故事包 manifest 已经由 `content/packs/steam-demo-01/` 生成运行时索引，构建和校验会检查索引是否过期。
+- 当前 demo 包完整台词、追问、材料判定和结算仍写在 `src/caseEngine.js`；下一步要继续把每案完整字段迁移到内容包。
+- 新增或替换一个案子仍要同时碰 `src/caseEngine.js`、`src/dailyChoices.js`、`content/packs/...`，以及 `src/app.js` 里的若干 `plotId` 文案分支。这是内容扩量前最高优先级的架构债。
 - 长期目标是运行时代码只负责加载和校验。
 
 建议结构：
@@ -82,6 +82,7 @@ content/packs/steam-demo-01/
 验收：
 
 - 改故事集顺序、主题和压力系统不改 `src/app.js`。
+- 改故事集顺序、主题、案数只改 `content/packs/*/manifest.json` 并运行 `npm run content:index`；`npm run check` 会拦截过期索引。
 - `runtimeContentStatus` 从 `metadata-only` 切到 `runtime-loaded` 以后，JSON 必须包含完整 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup`、收麦和复盘字段，并由运行时读取。
 - `npm run verify:pack` 能单独检查当前案件包结构和运行时定义一致性。
 - 新故事包可以新增目录接入；正式迁移后完整台词也不再写在 `src/caseEngine.js`。
@@ -302,6 +303,6 @@ AI 问答值得做，但不能让 AI 生成事实。
 1. 资料操作模型：把材料检视从文字三选一升级为可视化圈点数据结构。
 2. 现场压力模型：把听众耐心、连线人防备、弹幕跑偏归到同一套控场反馈里。
 3. 收麦回看模型：结果页回收材料圈点、原话选择和路线画像。
-4. 再继续 P0 技术债：`recapModel`、`sceneAdvance`、桌面文件版 `saveStore`。
+4. 再继续 P0 技术债：完整案件内容 JSON loader、`recapModel`、`sceneAdvance`、桌面文件版 `saveStore`。
 5. 然后做桌面壳、键盘/手柄输入和内容包完整迁移。
 6. 最后再做受控自由追问和 AI router。

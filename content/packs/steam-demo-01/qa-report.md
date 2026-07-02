@@ -10,6 +10,7 @@
 - 每案必须写出来电人自己的不利信息，不能只写对方有问题。
 - 案间页标题使用物件钩子，不使用“下一案 / 下一通来电”当标题。
 - 结果页不能写成教程、评分表或最佳答案解析。
-- 当前试玩包仍复用 `src/caseEngine.js` 内的完整台词模板；`cases/*.json` 必须标记 `runtimeContentStatus: "metadata-only"`。这些 JSON 只记录故事压力、物件和评论种子，不能写成看似已接入的台词字段。
+- 当前试玩包的 manifest 已经通过 `npm run content:index` 生成运行时索引，`src/storyPacks.js` 不再手写一份包定义。
+- 完整台词模板仍复用 `src/caseEngine.js`；`cases/*.json` 必须标记 `runtimeContentStatus: "metadata-only"`。这些 JSON 只记录故事压力、物件和评论种子，不能写成看似已接入的台词字段。
 - 新增案件时，运行时内容和 `content/packs/steam-demo-01/` 仍要同步更新，直到 JSON loader 接管完整台词、追问、材料判定和复盘文案。
 - 结算、满格深问和剧本文档要按当前 caller/respondent 指派检查代词；角色可能换人时，用“咨询者 / 同事 / 对方”。
