@@ -1,16 +1,17 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.37";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.37";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.37";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.37";
-import { migrateState } from "../src/state.js?v=0.20.37";
-import { NPCS } from "../src/story.js?v=0.20.37";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.37";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.37";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.37";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.37";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.37";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.37";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.37";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.38";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.38";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.38";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.38";
+import { migrateState } from "../src/state.js?v=0.20.38";
+import { NPCS } from "../src/story.js?v=0.20.38";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.38";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.38";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.38";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.38";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.38";
+import { answerKey, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.38";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.38";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.38";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -842,6 +843,26 @@ test("RUNTIME-005", "recap model stays pure and reusable outside app rendering",
   const comparison = finalQuoteComparison(brief, result);
   assert(comparison?.pickedLabel, "最终原话比较必须能脱离 DOM 生成");
   assert(comparison.bestLabel, "最终原话比较必须给出可回看的收束口子");
+});
+
+test("RUNTIME-006", "scene advance helpers stay pure outside app state", () => {
+  const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const done = new Set(["version:0", "version:1", "evidenceCheck:0"]);
+  const actionDone = (key) => done.has(key);
+  const notReady = accusationReadinessForCase(brief, actionDone);
+  assertEqual(notReady.ready, false, "未问完场景时不能进入收麦");
+  assertIncludes(notReady.message, "当前这段", "未问完场景时要回到当前段");
+  brief.sceneVersions.forEach((_, index) => done.add(`version:${index}`));
+  const ready = accusationReadinessForCase(brief, actionDone);
+  assertEqual(ready.ready, true, "场景和材料都完成后可以收麦");
+  assertEqual(evidenceAnsweredCount(brief, actionDone), (brief.evidenceChecks ?? []).length, "材料完成数必须由纯函数计算");
+  assertEqual(investigationRouteIndexBase(brief), (brief.sceneVersions ?? []).length + (brief.evidenceChecks ?? []).length, "回流路线下标必须接在材料节点之后");
+  assertEqual(answerKey(brief, 2), `${brief.id}:scene:2`, "场景答案 key 必须稳定");
+  const unlocked = unlockedInvestigationEntries(brief, {
+    foundContradictions: [brief.investigationHooks?.[0]?.triggerContradiction].filter(Boolean),
+    actionDone
+  });
+  assert(unlocked.length >= 1, "回流材料必须能由已发现矛盾纯函数解锁");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {

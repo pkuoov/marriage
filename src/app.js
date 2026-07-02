@@ -1,15 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.37";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.37";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.37";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.37";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.37";
-import { NPCS } from "./story.js?v=0.20.37";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.37";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.37";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.37";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.37";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.37";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.37";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.38";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.38";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.38";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.38";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.38";
+import { NPCS } from "./story.js?v=0.20.38";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.38";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.38";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.38";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.38";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, caseKey, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.38";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.38";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.38";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -856,10 +857,6 @@ function keyChoiceReview(brief) {
   `;
 }
 
-function keyQuestionLimit(brief) {
-  return brief.sceneVersions?.length ?? 0;
-}
-
 function bind(selector, handler) {
   document.querySelectorAll(selector).forEach((element) => {
     element.addEventListener("click", handler);
@@ -1039,9 +1036,7 @@ function currentIndex(brief, area, total) {
 }
 
 function firstUnansweredSceneIndex(brief) {
-  const scenes = brief.sceneVersions ?? [];
-  const index = scenes.findIndex((_, sceneIndex) => !actionDone(brief, `version:${sceneIndex}`));
-  return index >= 0 ? index : Math.max(0, scenes.length - 1);
+  return firstOpenSceneIndex(brief, (actionKey) => actionDone(brief, actionKey));
 }
 
 function resolveAccusationFromButton(brief, button) {
@@ -1118,13 +1113,7 @@ function relationshipExpectedForResult(brief) {
 }
 
 function dailyAccusationReadiness(brief) {
-  const required = keyQuestionLimit(brief);
-  const sceneCount = (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
-  if (sceneCount < required) return { ready: false, message: "麦还没到能挂的时候，先把当前这段问完。" };
-  const evidenceRequired = evidenceChecksFor(brief).length;
-  const evidenceCount = evidenceAnsweredCount(brief);
-  if (evidenceCount < evidenceRequired) return { ready: false, message: "材料还摆在台面上，先把少的那块圈出来。" };
-  return { ready: true, message: "" };
+  return accusationReadinessForCase(brief, (actionKey) => actionDone(brief, actionKey));
 }
 
 function applyOutcome(brief, result) {
@@ -1354,35 +1343,19 @@ function selectedInvestigationPick(brief, index) {
   return state.investigationPicks?.[investigationAnswerKey(brief, index)] ?? null;
 }
 
-function evidenceChecksFor(brief) {
-  return Array.isArray(brief?.evidenceChecks) ? brief.evidenceChecks : [];
-}
-
-function investigationHooksFor(brief) {
-  return Array.isArray(brief?.investigationHooks) ? brief.investigationHooks : [];
-}
-
 function unlockedInvestigationEntriesFor(brief) {
-  const found = new Set(contradictions(brief));
-  return investigationHooksFor(brief)
-    .map((hook, index) => ({ hook, index }))
-    .filter(({ hook }) => {
-      if (hook.triggerAction && actionDone(brief, hook.triggerAction)) return true;
-      if (hook.triggerContradiction && found.has(hook.triggerContradiction)) return true;
-      return false;
-    });
+  return unlockedInvestigationEntries(brief, {
+    foundContradictions: contradictions(brief),
+    actionDone: (actionKey) => actionDone(brief, actionKey)
+  });
 }
 
 function evidenceAnsweredCount(brief) {
-  return evidenceChecksFor(brief).filter((_, index) => actionDone(brief, `evidenceCheck:${index}`)).length;
-}
-
-function investigationRouteIndexBase(brief) {
-  return keyQuestionLimit(brief) + evidenceChecksFor(brief).length;
+  return countAnsweredEvidence(brief, (actionKey) => actionDone(brief, actionKey));
 }
 
 function afterEvidenceScene(brief) {
-  return issueCompletion(brief).badge && hasDeepFollowup(brief) ? "deepFollowup" : "accusation";
+  return nextSceneAfterEvidence({ issueBadge: issueCompletion(brief).badge, hasDeepFollowup: hasDeepFollowup(brief) });
 }
 
 function askedDialoguePicks(brief, index) {
@@ -1582,22 +1555,6 @@ function storyPackClosingLine(avgPercent, best = {}) {
   if (best.axis === "document-edge") return "你这一晚总爱回头看图，看截图里少了哪一页、哪一边。";
   if (best.axis === "money-flow") return "你这一晚总盯钱最后落到谁身上。";
   return "这晚有几处接住了，也有几句还卡在原话里。";
-}
-
-function answerKey(brief, index) {
-  return `${caseKey(brief)}:scene:${index}`;
-}
-
-function evidenceAnswerKey(brief, index) {
-  return `${caseKey(brief)}:evidence:${index}`;
-}
-
-function investigationAnswerKey(brief, index) {
-  return `${caseKey(brief)}:investigation:${index}`;
-}
-
-function caseKey(brief) {
-  return brief?.id ?? "daily";
 }
 
 function caseProgressStrip(brief) {
