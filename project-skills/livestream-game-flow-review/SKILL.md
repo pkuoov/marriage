@@ -214,6 +214,9 @@ Avoid:
 5. Validate mechanically.
    - Run `npm run check`.
    - Run `npm run build:h5`.
+   - Run `npm run build:steam` and `npm run smoke:desktop` after any build, desktop, save, input, or packaging-adjacent change.
+   - For content-pack edits, run `npm run verify:pack -- <pack-id>` and confirm `PACK-005` passes. Runtime-loaded cases must have playable nested content, not only top-level metadata.
+   - For keyboard or controller changes, keep the pure input model covered by `INPUT-001`; browser/device replay is still required before calling Steam Deck support done.
    - Search for removed phrases with `rg`.
    - Treat old phrases found only inside migration triggers as acceptable; anything user-visible must be removed.
 
@@ -471,8 +474,15 @@ UI copy:
 ```bash
 npm run check
 npm run build:h5
+npm run build:steam
+npm run smoke:desktop
+npm run verify:pack -- steam-demo-01
 rg -n "old phrase 1|old phrase 2|old phrase 3" index.html src scripts/verify-logic.js
 ```
+
+Build notes:
+- `build:desktop` owns playable generation and desktop staging in one locked script. Do not split it back into chained npm commands; concurrent `build:steam` and `smoke:desktop` must not trample `dist/playable` or `dist/desktop-electron`.
+- `package:win` still needs a Node 22.12+ Windows-capable environment for real packaging validation.
 
 ## Final Response Pattern
 
