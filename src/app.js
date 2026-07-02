@@ -732,7 +732,7 @@ function renderStoryPackComplete() {
     showCaseHud: false,
     text: `
       <p><b>今晚收麦</b></p>
-      <p>今晚四路麦都挂了。你最常回头看的，是：${escapeHtml(displayBest.label)}。</p>
+      <p>${escapeHtml(storyPackCallLine(briefs.length))}你最常回头看的，是：${escapeHtml(displayBest.label)}。</p>
       <section class="share-result-card">
         <div class="share-card-head"><span>${escapeHtml(theme.title)}</span><em>${escapeHtml(displayBest.label)}</em></div>
         <div class="share-player-type">
@@ -741,7 +741,7 @@ function renderStoryPackComplete() {
         </div>
         <p class="share-card-title">${escapeHtml(storyShareTitle(avgPercent, displayBest))}</p>
         <p class="weekly-theme-thesis">${escapeHtml(theme.thesis)}</p>
-        <p class="issue-score">${escapeHtml(storyPackAftertaste(avgPercent))}</p>
+        <p class="issue-score">${escapeHtml(storyPackAftertaste(avgPercent, briefs.length))}</p>
         ${boundaryProfile.total ? `
           <div class="weekly-boundary-line">
             <span>事实边界</span>
@@ -781,7 +781,7 @@ function renderStoryPackComplete() {
           <span>评论区审判墙</span>
           ${comments.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
         </div>
-        <small>${escapeHtml(storyPackClosingLine(avgPercent, displayBest))}</small>
+        <small>${escapeHtml(storyPackClosingLine(avgPercent, displayBest, briefs.length))}</small>
       </section>
     `,
     choices: flowGroup(`
@@ -800,6 +800,13 @@ function renderStoryPackComplete() {
     render();
   });
   bind('[data-action="title"]', resetToTitle);
+}
+
+function storyPackCallLine(caseCount = 0) {
+  const count = Math.max(0, Math.floor(Number(caseCount) || 0));
+  if (count === 1) return "今晚这一路麦挂了。";
+  if (count > 1) return `今晚这 ${count} 路麦都挂了。`;
+  return "今晚这几路麦都挂了。";
 }
 
 function liveControlDeck(brief = {}, label = "") {

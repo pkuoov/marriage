@@ -10,7 +10,7 @@ import { platformRuntime } from "../src/platformRuntime.js?v=0.20.68";
 import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.68";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.68";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.68";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
@@ -218,6 +218,9 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertEqual(storyPlayerType(80, bestAxis), "钱流雷达主播", "故事集主播类型必须由纯模型生成");
   assertIncludes(storyShareTitle(80, bestAxis), "钱流结构线", "故事集分享标题必须回收主路线");
   assertIncludes(storyPackAftertaste(55), "浮上", "故事集余味必须由纯模型生成");
+  assertEqual(storyCallCountText(3), "这 3 路麦", "故事集终局必须按实际案数生成称呼，不能写死四通");
+  assert(!storyPackAftertaste(95, 3).includes("四通"), "故事集余味不能写死四通");
+  assertIncludes(storyPackClosingLine(95, bestAxis, 3), "这 3 路麦", "故事集收束小字必须使用实际案数");
   const wall = storyCommentWall({
     briefs: [{ label: "第一通" }, { label: "第二通" }],
     results: [{ issuePercent: 80 }, { issuePercent: 30 }],
@@ -320,6 +323,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
   assertIncludes(materialSource, "spend: !correct", "材料检视圈中不能消耗听众忍耐，误指才扣");
   assertIncludes(appSource, "storyPackClosingLine", "故事集终局小字必须按本局表现生成，不能写成玩法说明");
+  assertIncludes(appSource, "storyPackCallLine(briefs.length)", "故事集终局正文必须按实际案数生成，不能写死四路麦");
+  assert(!appSource.includes("今晚四路麦都挂了"), "故事集终局不能写死四路麦");
   assertIncludes(appSource, "sceneIndex >= keyQuestionLimit(brief) ? \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
   assertIncludes(appSource, "sceneIndex >= investigationRouteIndexBase(brief) ? \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
   assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");

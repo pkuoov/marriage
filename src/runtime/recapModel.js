@@ -220,19 +220,28 @@ export function storyShareTitle(avgPercent, best = {}) {
   return `我这一集最常盯${best.label}，几路麦越听越不一样。`;
 }
 
-export function storyPackAftertaste(avgPercent) {
-  if (avgPercent >= 90) return "四通麦都压到了后半句。";
+export function storyPackAftertaste(avgPercent, caseCount = 0) {
+  const callText = storyCallCountText(caseCount);
+  if (avgPercent >= 90) return `${callText}都压到了后半句。`;
   if (avgPercent < 40) return "今晚更多是在听热闹。";
   if (avgPercent < 65) return "有几句话浮上来了。";
   return "几条线都露了头。";
 }
 
-export function storyPackClosingLine(avgPercent, best = {}) {
-  if (avgPercent >= 90) return "这晚问得紧，四通里那些省掉的钱、边界和责任都露了面。";
+export function storyPackClosingLine(avgPercent, best = {}, caseCount = 0) {
+  const callText = storyCallCountText(caseCount);
+  if (avgPercent >= 90) return `这晚问得紧，${callText}里那些省掉的钱、边界和责任都露了面。`;
   if (avgPercent < 40) return "这晚还有不少话没翻出来，适合重开一遍换条线追。";
   if (best.axis === "document-edge") return "你这一晚总爱回头看图，看截图里少了哪一页、哪一边。";
   if (best.axis === "money-flow") return "你这一晚总盯钱最后落到谁身上。";
   return "这晚有几处接住了，也有几句还卡在原话里。";
+}
+
+export function storyCallCountText(caseCount = 0) {
+  const count = Math.max(0, Math.floor(Number(caseCount) || 0));
+  if (count <= 0) return "这几路麦";
+  if (count === 1) return "这一路麦";
+  return `这 ${count} 路麦`;
 }
 
 export function storyCommentWall({
