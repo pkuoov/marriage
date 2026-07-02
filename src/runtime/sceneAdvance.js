@@ -74,6 +74,34 @@ export function firstUnansweredSceneIndex(brief = {}, actionDone = () => false) 
   return index >= 0 ? index : Math.max(0, scenes.length - 1);
 }
 
+export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => false, issueBadge = false, hasDeepFollowup = false } = {}) {
+  const scenes = brief.sceneVersions ?? [];
+  const total = scenes.length || 1;
+  const safeIndex = Math.max(0, Math.min(Number(index ?? 0), total - 1));
+  const scene = scenes[safeIndex] ?? {};
+  const done = actionDone(`version:${safeIndex}`);
+  const lastStage = safeIndex >= scenes.length - 1;
+  const hasEvidence = evidenceChecksFor(brief).length > 0;
+  const canDeepFollow = Boolean(issueBadge && hasDeepFollowup);
+  const nextStage = lastStage
+    ? hasEvidence ? "evidenceCheck" : canDeepFollow ? "deepFollowup" : "accusation"
+    : "sceneReview";
+  const nextLabel = lastStage
+    ? hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句原话"
+    : "继续";
+  return {
+    scenes,
+    index: safeIndex,
+    scene,
+    done,
+    lastStage,
+    hasEvidence,
+    canDeepFollow,
+    nextStage,
+    nextLabel
+  };
+}
+
 export function dailyAccusationReadiness(brief = {}, actionDone = () => false) {
   const required = keyQuestionLimit(brief);
   const sceneCount = answeredSceneCount(brief, actionDone);

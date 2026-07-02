@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.60";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.60";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.60";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.60";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.60";
-import { NPCS } from "./story.js?v=0.20.60";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.60";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.60";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.60";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.60";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.60";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.60";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.60";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.60";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.61";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.61";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.61";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.61";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.61";
+import { NPCS } from "./story.js?v=0.20.61";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.61";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.61";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.61";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.61";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.61";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.61";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.61";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.61";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -315,15 +315,16 @@ function renderCaseOpen(brief) {
 }
 
 function renderSceneReview(brief) {
-  const scenes = brief.sceneVersions ?? [];
-  const index = currentIndex(brief, "sceneReview", scenes.length || 1);
-  const scene = scenes[index] ?? {};
-  const done = actionDone(brief, `version:${index}`);
+  const review = sceneReviewModel({
+    brief,
+    index: currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1),
+    actionDone: (key) => actionDone(brief, key),
+    issueBadge: issueCompletion(brief).badge,
+    hasDeepFollowup: hasDeepFollowup(brief)
+  });
+  const { index, scene, done, lastStage, nextStage, nextLabel } = review;
   const pick = selectedScenePick(brief, index);
   const options = focusedQuestionOptions(scene.questionOptions ?? []);
-  const lastStage = index >= scenes.length - 1;
-  const hasEvidence = evidenceChecksFor(brief).length > 0;
-  const canDeepFollow = issueCompletion(brief).badge && hasDeepFollowup(brief);
   frame({
     brief,
     mood: "thinking",
@@ -341,7 +342,7 @@ function renderSceneReview(brief) {
     choices: done
       ? flowGroup(`
           ${lastStage
-            ? `<button class="primary" data-scene="${hasEvidence ? "evidenceCheck" : canDeepFollow ? "deepFollowup" : "accusation"}" type="button">${hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句原话"}</button>`
+            ? `<button class="primary" data-scene="${nextStage}" type="button">${nextLabel}</button>`
             : `<button class="primary" data-next-scene-stage type="button">继续</button>`}
         `)
       : sceneQuestionChoicesHtml(index, options, askedDialoguePicks(brief, index))
