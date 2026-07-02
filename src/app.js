@@ -1,12 +1,14 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.35";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.35";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.35";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.35";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.35";
-import { NPCS } from "./story.js?v=0.20.35";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.35";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.35";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.35";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.36";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.36";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.36";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.36";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.36";
+import { NPCS } from "./story.js?v=0.20.36";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.36";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.36";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.36";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.36";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.36";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -284,8 +286,6 @@ function renderSceneReview(brief) {
   const done = actionDone(brief, `version:${index}`);
   const pick = selectedScenePick(brief, index);
   const options = focusedQuestionOptions(scene.questionOptions ?? []);
-  const dialogueOptions = dialogueQuestionOptions(options);
-  const criticalOptions = criticalQuestionOptions(options);
   const lastStage = index >= scenes.length - 1;
   const hasEvidence = evidenceChecksFor(brief).length > 0;
   const canDeepFollow = issueCompletion(brief).badge && hasDeepFollowup(brief);
@@ -309,7 +309,7 @@ function renderSceneReview(brief) {
             ? `<button class="primary" data-scene="${hasEvidence ? "evidenceCheck" : canDeepFollow ? "deepFollowup" : "accusation"}" type="button">${hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句原话"}</button>`
             : `<button class="primary" data-next-scene-stage type="button">继续</button>`}
         `)
-      : sceneQuestionChoicesHtml(brief, index, dialogueOptions, criticalOptions)
+      : sceneQuestionChoicesHtml(index, options, askedDialoguePicks(brief, index))
   });
   bindSceneDialogueButtons(brief, scene, options);
   bindSceneQuestionButtons(brief, scene, options);
@@ -382,115 +382,6 @@ function renderInvestigationBackflow(brief) {
   bindInvestigationButtons(brief, hook, entry.index);
   bind("[data-after-investigation]", () => moveScene("caseSolved"));
   bindSceneButtons();
-}
-
-function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
-  const options = check.options ?? [];
-  const kind = evidenceMaterialKind(check);
-  return `
-    <section class="evidence-workbench material-${kind} ${pick ? pick.correct ? "marked hit" : "marked miss" : ""}">
-      <div class="evidence-document material-${kind}">
-        <header>
-          <span>${escapeHtml(evidenceMaterialType(check))}</span>
-          <b>${escapeHtml(check.title ?? "台面材料")}</b>
-        </header>
-        <div class="evidence-document-body">${evidenceMaterialBodyHtml(check, kind)}</div>
-        ${pick ? evidenceAnnotationHtml(pick) : ""}
-      </div>
-      <div class="evidence-target-board" aria-label="圈点区域">
-        <span>荧光笔</span>
-        ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick)).join("")}
-      </div>
-    </section>
-  `;
-}
-
-function evidenceMaterialKind(check = {}) {
-  const text = `${check.title ?? ""} ${check.material ?? ""}`;
-  if (/审批|付款|报销|收款|流程|通过/.test(text)) return "flow";
-  if (/表|排班|预约|列/.test(text)) return "table";
-  if (/账单|信用卡|消费|分期|还款/.test(text)) return "bill";
-  if (/截图|学校|学历|项目|MBA|图片|图里/.test(text)) return "shot";
-  return "file";
-}
-
-function evidenceMaterialType(check = {}) {
-  const kind = evidenceMaterialKind(check);
-  return {
-    bill: "BILL",
-    flow: "FLOW",
-    table: "TABLE",
-    shot: "SHOT",
-    file: "FILE"
-  }[kind] ?? "FILE";
-}
-
-function evidenceMaterialLines(material = "") {
-  const lines = String(material ?? "")
-    .replace(/([。；])/g, "$1|")
-    .replace(/([，、])/g, "$1|")
-    .split("|")
-    .map((line) => line.trim())
-    .filter(Boolean);
-  return lines.length ? lines : [String(material ?? "")].filter(Boolean);
-}
-
-function evidenceMaterialBodyHtml(check = {}, kind = "file") {
-  const lines = evidenceMaterialLines(check.material ?? "");
-  if (kind === "bill") {
-    return `<div class="evidence-ledger">${lines.map((line, index) => `
-      <span class="evidence-ledger-row"><i>${String(index + 1).padStart(2, "0")}</i><b>${escapeHtml(line)}</b></span>
-    `).join("")}</div>`;
-  }
-  if (kind === "table") {
-    return `<div class="evidence-table-grid">${lines.map((line, index) => `
-      <span class="${index === 0 ? "head" : ""}"><i>${index === 0 ? "表头" : `行 ${index}`}</i><b>${escapeHtml(line)}</b></span>
-    `).join("")}</div>`;
-  }
-  if (kind === "shot") {
-    return `<div class="evidence-shot-frame">${lines.map((line, index) => `
-      <span class="${index % 2 ? "alt" : ""}"><b>${escapeHtml(line)}</b></span>
-    `).join("")}</div>`;
-  }
-  if (kind === "flow") {
-    return `<div class="evidence-flow-track">${lines.map((line, index) => `
-      <span><i>${index + 1}</i><b>${escapeHtml(line)}</b></span>
-    `).join("")}</div>`;
-  }
-  return `<div class="evidence-document-lines">${evidenceMaterialLinesHtml(check.material ?? "")}</div>`;
-}
-
-function evidenceMaterialLinesHtml(material = "") {
-  return evidenceMaterialLines(material).map((line) => `<span>${escapeHtml(line)}</span>`).join("");
-}
-
-function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick = null) {
-  const selected = pick && Number(pick.optionIndex) === optionIndex;
-  const className = `evidence-target ${selected ? pick.correct ? "selected hit" : "selected miss" : pick ? "dimmed" : ""}`;
-  const content = `<i></i><b>${escapeHtml(option.label ?? "这块")}</b>`;
-  if (pick) {
-    return `<span class="${className}">${content}</span>`;
-  }
-  return `<button class="${className}" data-evidence-check="${checkIndex}:${optionIndex}" type="button">${content}</button>`;
-}
-
-function evidenceAnnotationHtml(pick = {}) {
-  return `
-    <div class="evidence-annotation ${pick.correct ? "hit" : "miss"}">
-      <span>${pick.correct ? "圈住" : "圈偏"}</span>
-      <b>${escapeHtml(pick.label ?? "")}</b>
-    </div>
-  `;
-}
-
-function evidencePickFeedbackHtml(pick = {}) {
-  return `
-    <section class="evidence-result-card ${pick.correct ? "hit" : "miss"}">
-      <span>${pick.correct ? "圈中了" : "没咬住"}</span>
-      <b>${escapeHtml(pick.label ?? "")}</b>
-      <p>${escapeHtml(pick.feedback ?? "")}</p>
-    </section>
-  `;
 }
 
 function renderDeepFollowup(brief) {
@@ -900,45 +791,6 @@ function compactDialogueLines(lines) {
   const normalized = (lines ?? []).filter((line) => line?.text);
   const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
   return normalized.slice(0, totalLength > 170 ? 2 : 4);
-}
-
-function focusedQuestionOptions(options = []) {
-  const normalized = (options ?? []).filter(Boolean);
-  if (normalized.length <= 2) return normalized;
-  const core = normalized.find((option) => option.contradiction);
-  const detour = normalized.find((option) => !option.contradiction);
-  return [core, detour].filter(Boolean);
-}
-
-function dialogueQuestionOptions(options = []) {
-  return options
-    .map((option, optionIndex) => ({ option, optionIndex }))
-    .filter(({ option }) => !option.contradiction);
-}
-
-function criticalQuestionOptions(options = []) {
-  return options
-    .map((option, optionIndex) => ({ option, optionIndex }))
-    .filter(({ option }) => option.contradiction);
-}
-
-function sceneQuestionChoicesHtml(brief, sceneIndex, dialogueOptions = [], criticalOptions = []) {
-  const asked = new Set(askedDialoguePicks(brief, sceneIndex).map((item) => item.optionIndex));
-  const availableDialogue = dialogueOptions.filter(({ optionIndex }) => !asked.has(optionIndex));
-  const rows = [
-    ...availableDialogue.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "dialogue")),
-    ...criticalOptions.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "key"))
-  ].join("");
-  return choiceGroup("你问", rows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group");
-}
-
-function choiceQuestionButton(sceneIndex, optionIndex, option = {}, kind = "key") {
-  const attr = kind === "dialogue" ? "data-scene-dialogue" : "data-scene-question";
-  return `
-    <button class="choice-question" ${attr}="${sceneIndex}:${optionIndex}" type="button">
-      <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
-    </button>
-  `;
 }
 
 function activeSceneExchange(brief, scene, index) {

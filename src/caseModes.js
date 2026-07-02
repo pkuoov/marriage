@@ -1,4 +1,4 @@
-import { generateDailyCaseSequence, generateStoryPackSequence } from "./caseEngine.js?v=0.20.35";
+import { generateDailyCaseSequence, generateStoryPackSequence } from "./caseEngine.js?v=0.20.36";
 
 export const CASE_MODE_IDS = ["episode", "daily"];
 

@@ -1,9 +1,9 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { generateCasesForMode } from "../src/caseModes.js?v=0.20.35";
-import { explanationForExpected } from "../src/caseNarration.js?v=0.20.35";
-import { expectedAccusationForCase } from "../src/caseRuntime.js?v=0.20.35";
-import { NPCS } from "../src/story.js?v=0.20.35";
+import { generateCasesForMode } from "../src/caseModes.js?v=0.20.36";
+import { explanationForExpected } from "../src/caseNarration.js?v=0.20.36";
+import { expectedAccusationForCase } from "../src/caseRuntime.js?v=0.20.36";
+import { NPCS } from "../src/story.js?v=0.20.36";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const defaultKeys = [

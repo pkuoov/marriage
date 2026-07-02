@@ -1,13 +1,15 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.35";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.35";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.35";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.35";
-import { migrateState } from "../src/state.js?v=0.20.35";
-import { NPCS } from "../src/story.js?v=0.20.35";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.35";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.35";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.35";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.35";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.36";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.36";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.36";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.36";
+import { migrateState } from "../src/state.js?v=0.20.36";
+import { NPCS } from "../src/story.js?v=0.20.36";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.36";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.36";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.36";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.36";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.36";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.36";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -102,29 +104,40 @@ test("MATERIAL-001", "material operation model records hit and miss without UI c
 });
 
 test("MATERIAL-002", "material inspection renders as an in-document markable board", () => {
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
-  assertIncludes(appSource, "evidenceOperationHtml", "材料检视必须通过材料操作台渲染，不能退回普通段落卡");
-  assertIncludes(appSource, "evidence-document-body", "材料对象必须有独立正文区域，便于按类型换版式");
-  assertIncludes(appSource, "evidence-document-lines", "材料文本必须拆成文件行，形成可看的材料对象");
-  assertIncludes(appSource, "class=\"evidence-target", "材料选项必须在材料板内部作为可圈点区域出现");
-  assertIncludes(appSource, "evidenceAnnotationHtml", "材料选择后必须在文件上显示圈点结果");
+  const html = evidenceOperationHtml({
+    title: "后台补充",
+    material: "上一句只说已经转交，下一句没有说明谁接手。",
+    options: [{ label: "付款状态", correct: true }]
+  });
+  assertIncludes(html, "evidence-workbench", "材料检视必须通过材料操作台渲染，不能退回普通段落卡");
+  assertIncludes(html, "evidence-document-body", "材料对象必须有独立正文区域，便于按类型换版式");
+  assertIncludes(html, "evidence-document-lines", "材料文本必须拆成文件行，形成可看的材料对象");
+  assertIncludes(html, "class=\"evidence-target", "材料选项必须在材料板内部作为可圈点区域出现");
+  const markedHtml = evidenceOperationHtml(
+    { title: "聊天截图", material: "截图缺下半边。", options: [{ label: "下半边", correct: true }] },
+    { optionIndex: 0, label: "下半边", correct: true, feedback: "圈住了缺口。" },
+    0
+  );
+  assertIncludes(markedHtml, "evidence-annotation hit", "材料选择后必须在文件上显示圈点结果");
   assertIncludes(stylesSource, ".evidence-target.selected", "被圈位置必须有视觉反馈");
   assertIncludes(stylesSource, ".evidence-annotation.miss", "误指材料必须只标出玩家圈偏的位置");
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   assert(!appSource.includes("choiceGroup(\"圈哪一处\""), "材料检视不能退回下方普通按钮组选项");
   assert(!stylesSource.includes("evidence-check-card"), "材料操作台上线后不能留下旧材料段落卡样式");
 });
 
 test("MATERIAL-003", "material board uses distinct visual layouts by material type", () => {
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
-  assertIncludes(appSource, "function evidenceMaterialKind", "材料检视必须先识别材料类型，不能所有材料共用一个视觉壳");
-  assertIncludes(appSource, "material-${kind}", "材料类型必须落到 DOM class，供 CSS 区分版式");
-  assert(!appSource.includes("账单|信用卡|支出|账户|消费"), "账单识别不能吃掉“共同账户表”这类表格材料");
-  assertIncludes(appSource, "evidence-ledger", "账单材料必须渲染成账单行，而不是普通段落");
-  assertIncludes(appSource, "evidence-table-grid", "表格材料必须渲染成表格感区域");
-  assertIncludes(appSource, "evidence-shot-frame", "截图材料必须渲染成截图/手机框区域");
-  assertIncludes(appSource, "evidence-flow-track", "审批流材料必须渲染成流程节点区域");
+  assertEqual(evidenceMaterialKind({ title: "信用卡账单", material: "餐厅消费，礼物分期。" }), "bill", "账单材料必须识别为 bill");
+  assertEqual(evidenceMaterialKind({ title: "排班表", material: "预约表列了能办卡。" }), "table", "表格材料必须识别为 table");
+  assertEqual(evidenceMaterialKind({ title: "学校截图", material: "图里只有 MBA 项目。" }), "shot", "截图材料必须识别为 shot");
+  assertEqual(evidenceMaterialKind({ title: "报销审批", material: "审批通过但没有付款状态。" }), "flow", "审批材料必须识别为 flow");
+  assertIncludes(evidenceOperationHtml({ title: "信用卡账单", material: "餐厅消费。", options: [] }), "material-bill", "材料类型必须落到 DOM class，供 CSS 区分版式");
+  assertIncludes(evidenceOperationHtml({ title: "信用卡账单", material: "餐厅消费。", options: [] }), "evidence-ledger", "账单材料必须渲染成账单行，而不是普通段落");
+  assertIncludes(evidenceOperationHtml({ title: "排班表", material: "顾客｜备注。", options: [] }), "evidence-table-grid", "表格材料必须渲染成表格感区域");
+  assertIncludes(evidenceOperationHtml({ title: "截图", material: "学校图里只有项目。", options: [] }), "evidence-shot-frame", "截图材料必须渲染成截图/手机框区域");
+  assertIncludes(evidenceOperationHtml({ title: "审批流", material: "审批通过。没有付款状态。", options: [] }), "evidence-flow-track", "审批流材料必须渲染成流程节点区域");
   assertIncludes(stylesSource, ".evidence-document.material-bill", "账单材料必须有独立视觉皮肤");
   assertIncludes(stylesSource, ".evidence-table-grid", "表格材料必须有独立视觉皮肤");
   assertIncludes(stylesSource, ".evidence-shot-frame", "截图材料必须有独立视觉皮肤");
@@ -157,7 +170,16 @@ test("INVESTIGATION-001", "host investigation backflow is fixed material, not fr
 test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
-  assertIncludes(appSource, "sceneQuestionChoicesHtml", "当前节点追问必须走统一面板，避免上下两个孤立单选组");
+  const questionOptions = focusedQuestionOptions([
+    { question: "你当时有没有起疑心？", answer: "有一点。" },
+    { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
+    { question: "你朋友怎么说？", answer: "朋友劝我看账单。" }
+  ]);
+  const questionHtml = sceneQuestionChoicesHtml(2, questionOptions, []);
+  assertIncludes(questionHtml, "scene-question-group", "当前节点追问必须走统一面板，避免上下两个孤立单选组");
+  assertIncludes(questionHtml, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
+  assertIncludes(questionHtml, "data-scene-dialogue=\"2:1\"", "外围追问仍要保留可点击数据，不显示成独立解释区");
+  assertIncludes(questionHtml, "data-scene-question=\"2:0\"", "关键追问仍要保留可点击数据，不显示成独立解释区");
   assertIncludes(appSource, "renderEvidenceCheck", "追问结束后必须保留材料检视阶段，避免玩法退回纯问答");
   assertIncludes(appSource, "evidenceCheckPicks", "材料检视选择必须进入存档和复盘状态");
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
@@ -167,8 +189,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "sceneIndex >= investigationRouteIndexBase(brief) ? \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
   assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
   assertIncludes(appSource, "storyInterludeObjectLabel", "案间过渡必须用物件钩子接下一通，减少目录感");
-  assertIncludes(appSource, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
-  assert(!appSource.includes("choice-question-${kind}"), "追问按钮不能按内部问法类型暴露不同视觉样式");
+  assert(!questionHtml.includes("choice-question-${kind}"), "追问按钮不能按内部问法类型暴露不同视觉样式");
   const oldKickerClass = `${"choice"}-${"kicker"}`;
   assert(!appSource.includes(oldKickerClass), "追问按钮不能再显示解释型小标签");
   const oldDialogueTag = `${"顺着"}${"问"}`;
