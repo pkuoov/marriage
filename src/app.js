@@ -1,16 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.54";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.54";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.54";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.54";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.54";
-import { NPCS } from "./story.js?v=0.20.54";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.54";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.54";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.54";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.54";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.54";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.54";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.54";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.55";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.55";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.55";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.55";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.55";
+import { NPCS } from "./story.js?v=0.20.55";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.55";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.55";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.55";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.55";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.55";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.55";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.55";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -257,18 +257,19 @@ function liveChapterTitle(brief = {}) {
   return isStoryPackMode() ? "热线连线" : brief.storyArcTitle ?? "今日来电";
 }
 
-function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude = {}) {
+function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude = {}, backflow = {}) {
   const percent = Number(result.issuePercent ?? 0);
-  if (percent < 50) return interlude.summary ?? "刚才那通挂得早，弹幕还在翻开场那句。";
+  const backflowLine = backflow.line ? backflow.line : "";
+  if (percent < 50) return `${interlude.summary ?? "刚才那通挂得早，弹幕还在翻开场那句。"}${backflowLine}`;
   const routeLabel = route.label ? `你刚才一直压着${route.label}问。` : "";
   const lines = {
-    "lost-job-hidden-credit": `账单摊开以后，那句“挡几天”已经不是原来的意思。${routeLabel}`,
-    "tony-multi-dating": `那张表一露，甜话就不只是在谈感情。${routeLabel}`,
-    "education-income-fake-profile": `资料图是真的，没放出来的那几栏也是真的。${routeLabel}`,
-    "workplace-reimbursement-screenshot": `审批截图能堵住一句质问，堵不住钱去了哪里。${routeLabel}`,
-    "house-name-security-test": `房本和还贷分成两套话以后，“一家人”就没那么好用了。${routeLabel}`
+    "lost-job-hidden-credit": `账单摊开以后，那句“挡几天”已经不是原来的意思。${routeLabel}${backflowLine}`,
+    "tony-multi-dating": `那张表一露，甜话就不只是在谈感情。${routeLabel}${backflowLine}`,
+    "education-income-fake-profile": `资料图是真的，没放出来的那几栏也是真的。${routeLabel}${backflowLine}`,
+    "workplace-reimbursement-screenshot": `审批截图能堵住一句质问，堵不住钱去了哪里。${routeLabel}${backflowLine}`,
+    "house-name-security-test": `房本和还贷分成两套话以后，“一家人”就没那么好用了。${routeLabel}${backflowLine}`
   };
-  return lines[brief.plotId] ?? interlude.summary ?? "这边刚挂，后台又亮了。";
+  return lines[brief.plotId] ?? interlude.summary ?? (backflowLine || "这边刚挂，后台又亮了。");
 }
 
 function storyInterludeObjectLabel(brief = {}) {
@@ -618,6 +619,7 @@ function renderStoryInterlude(brief) {
   const result = normalizedDailyResult(brief);
   const route = routeAxisProfile(brief, result);
   const interlude = state.caseInterludes?.[brief.id] ?? {};
+  const backflow = storyInterludeBackflowProfile(brief);
   frame({
     brief,
     mood: "focused",
@@ -627,7 +629,7 @@ function renderStoryInterlude(brief) {
       <section class="story-interlude-card">
         <span>上一通留下</span>
         <b>${escapeHtml(route.label)}</b>
-        <p>${escapeHtml(storyInterludeRecapLine(brief, result, route, interlude))}</p>
+        <p>${escapeHtml(storyInterludeRecapLine(brief, result, route, interlude, backflow))}</p>
       </section>
       <section class="story-interlude-card next">
         <span>新来电接入</span>
@@ -1142,7 +1144,7 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
         },
         { version: hook.material ?? "" }
       );
-      state.lastReaction = null;
+      state.lastReaction = investigationPickReaction(outcome, hook);
       if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
         state.scene = "patienceLost";
         saveState();
@@ -1549,6 +1551,12 @@ function selectedInvestigationPick(brief, index) {
   return state.investigationPicks?.[investigationAnswerKey(brief, index)] ?? null;
 }
 
+function selectedInvestigationPicksFor(brief) {
+  return (brief.investigationHooks ?? [])
+    .map((_, index) => selectedInvestigationPick(brief, index))
+    .filter(Boolean);
+}
+
 function truthBoundaryPicksFor(brief) {
   return state.truthBoundaryPicks?.[caseKey(brief)] ?? {};
 }
@@ -1716,6 +1724,10 @@ function storyBoundaryProfile(briefs = []) {
     picks: truthBoundaryPicksFor(brief),
     misses: truthBoundaryMissesFor(brief)
   })));
+}
+
+function storyInterludeBackflowProfile(brief = {}) {
+  return investigationBackflowProfile(selectedInvestigationPicksFor(brief));
 }
 
 function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProfile = {}) {

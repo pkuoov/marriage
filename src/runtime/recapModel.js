@@ -1,5 +1,5 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.54";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.54";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.55";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.55";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
@@ -143,6 +143,51 @@ export function truthBoundaryPackProfile(rows = []) {
     line: boundaryPackLine({ total, settledCount, missCount, unsettledLabel: unsettled[0]?.label ?? "" }),
     comment: boundaryPackComment({ total, settledCount, missCount, unsettledLabel: unsettled[0]?.label ?? "" })
   };
+}
+
+export function investigationBackflowProfile(picks = []) {
+  const items = (Array.isArray(picks) ? picks : []).filter(Boolean);
+  const total = items.length;
+  const hits = items.filter((pick) => pick.correct).length;
+  const misses = items.filter((pick) => pick.correct === false).length;
+  return {
+    total,
+    hits,
+    misses,
+    label: backflowLabel({ total, hits, misses }),
+    line: backflowLine({ total, hits, misses }),
+    reaction: backflowReaction({ total, hits, misses })
+  };
+}
+
+export function investigationPickReaction(outcome = {}, hook = {}) {
+  if (outcome.correct) {
+    if (/私信|后台|补/.test(hook.surface ?? "")) return "后台这页咬住了，弹幕短暂安静。";
+    return "这块圈住了，麦里的话往回收了一点。";
+  }
+  if (/截图|图|表|账/.test(outcome.pick?.label ?? "")) return "弹幕被这块带跑，麦温往下掉了一格。";
+  return "这一下没咬住，评论区开始翻另一边。";
+}
+
+function backflowLabel({ total, hits, misses }) {
+  if (!total) return "未回流";
+  if (hits > 0 && misses === 0) return "私信咬住";
+  if (hits > 0) return "补回来了";
+  return "被带偏";
+}
+
+function backflowLine({ total, hits, misses }) {
+  if (!total) return "";
+  if (hits > 0 && misses === 0) return "后台补来的那页，把刚才麦里的缺口又钉了一下。";
+  if (hits > 0) return "私信里有噪音，也有一块真正咬住了前面的矛盾。";
+  return "后台那页没圈到要害，弹幕又把话题带回了表面。";
+}
+
+function backflowReaction({ total, hits, misses }) {
+  if (!total) return "";
+  if (hits > 0 && misses === 0) return "弹幕有人把前面那句重新翻出来。";
+  if (hits > 0) return "弹幕先跑偏了一下，又被那块缺口拉回来。";
+  return "弹幕吵得更散，刚才那通麦没完全落地。";
 }
 
 function boundaryPackLabel({ total, settledCount, missCount }) {
