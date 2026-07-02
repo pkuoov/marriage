@@ -1,6 +1,7 @@
 {
   "caseId": "04-workplace",
   "plotId": "workplace-reimbursement-screenshot",
+  "runtimeContentStatus": "metadata-only",
   "dramaticAnchor": "报销审批截图、活动群聊和供应商报价单",
   "whyTonight": "同事说审批已过却迟迟不返垫付款，咨询者需要决定要不要继续替项目收尾。",
   "objectPurpose": "审批截图被用来证明钱马上会回来，但付款状态、收款账户和返款入口都没露出来。",

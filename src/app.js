@@ -1,12 +1,12 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.34";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.34";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.34";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.34";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.34";
-import { NPCS } from "./story.js?v=0.20.34";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.34";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.34";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.34";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.35";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.35";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.35";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.35";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.35";
+import { NPCS } from "./story.js?v=0.20.35";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.35";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.35";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.35";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";

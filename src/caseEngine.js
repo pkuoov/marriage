@@ -1,5 +1,5 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.34";
-import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.34";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.35";
+import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.35";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -868,7 +868,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
         speakerId: brief.complainantId,
         speaker: name,
         version: "我一开始也不是完全被迫。我刚进项目组，确实想借这次客户答谢会让老板看到我。更难听一点，我先跟老板说过这次我可以主责，所以听到“署名写你负责”，就先垫了。",
-        doubt: "她不是完全被逼，也确实想拿这个表现机会。",
+        doubt: "咨询者不是完全被逼，也确实想拿这个表现机会。",
         contradiction: "咨询者先想要主责曝光，同事再把垫付款包装成机会，资金风险被弱化。",
         reliability: "mixed",
         questionOptions: [
@@ -966,14 +966,14 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
     deepFollowup: {
       question: "那我多问一句，如果今天不只是钱没回来，你最怕这件事在公司里被说成什么？",
       answer: "我最怕他们说我是为了抢署名才私下垫款，流程不规范。我先跟老板说能主责，我也确实想要这个主责；但他用这个让我先刷卡、又拿审批截图挡我，也是真的。",
-      note: "问到这里，她想表现是真的，被人拿这个点压着先垫钱也是真的。"
+      note: "问到这里，咨询者想表现是真的，被人拿这个点压着先垫钱也是真的。"
     },
-    stageJudgement: "这不只是同事欠钱。审批图、主责署名、垫付款、供应商返款全挤在同一个人手里，他就有办法一直拖。",
+    stageJudgement: "这不只是同事欠钱。审批图、主责署名、垫付款、供应商返款全挤在同一个人手里，对方就有办法一直拖。",
     followupTwist: "后续回拨里，财务说审批通过后还要二次付款确认，收款账户填的是同事账户。截图不是假，只是刚好截到最能让人闭嘴的地方。",
     dailyShareTitle: "报销截图都发了，钱为什么还没回来？",
     dailyShareBody: "我卡住的不是审批过没过，是付款状态、收款账户和供应商返款都没露出来。",
     dailyShareQuestion: "你会先问审批截图，还是先问谁拿了项目署名？",
-    truth: "职场截图也会只截好看的半张。她想拿表现，所以先垫了；同事拿着审批图和供应商入口不放，所以钱一直回不来。两件事要分开说。",
+    truth: "职场截图也会只截好看的半张。咨询者想拿表现，所以先垫了；同事拿着审批图和供应商入口不放，所以钱一直回不来。两件事要分开说。",
     premeditated: false,
     premeditatedActorId: null,
     stance: "halfTruth"

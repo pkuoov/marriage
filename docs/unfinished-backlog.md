@@ -53,9 +53,11 @@
 
 ### 内容包数据化
 
+- 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 目前只是策划压力包，不是运行时台词来源。每个 case JSON 必须显式写 `runtimeContentStatus: "metadata-only"`，`npm run verify:pack` 会阻止它们伪装成已接通的内容包。
 - 当前四案仍写在 `src/caseEngine.js`。
 - 第一层故事包骨架已经拆到 `content/packs/steam-demo-01/`，并用 `src/storyPacks.js` 给运行时读取。
 - 当前完整台词仍写在 `src/caseEngine.js`；下一步要继续把每案完整字段迁移到内容包。
+- 新增或替换一个案子仍要同时碰 `src/caseEngine.js`、`src/dailyChoices.js`、`src/storyPacks.js`、`content/packs/...`，以及 `src/app.js` 里的若干 `plotId` 文案分支。这是内容扩量前最高优先级的架构债。
 - 长期目标是运行时代码只负责加载和校验。
 
 建议结构：
@@ -76,6 +78,7 @@ content/packs/steam-demo-01/
 验收：
 
 - 改故事集顺序、主题和压力系统不改 `src/app.js`。
+- `runtimeContentStatus` 从 `metadata-only` 切到 `runtime-loaded` 以后，JSON 必须包含完整 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup`、收麦和复盘字段，并由运行时读取。
 - `npm run verify:pack` 能单独检查四案结构和运行时定义一致性。
 - 新故事包可以新增目录接入；正式迁移后完整台词也不再写在 `src/caseEngine.js`。
 
@@ -83,6 +86,7 @@ content/packs/steam-demo-01/
 
 - `src/app.js` 仍然承担渲染、状态推进、路线图、收麦、平台桥接。
 - 路线轴和路线画像纯逻辑已拆到 `src/runtime/routeLog.js`，但 HTML 复盘渲染和状态写入仍在 `src/app.js`。
+- 路由/语气推断规则仍在 `routeLog.js`、模板显式 `routeAxis`、旧存档迁移规则之间靠人工同步；下一轮拆分要把迁移和模板校验改为复用同一套 route schema。
 - 短期可继续迭代，但 Steam demo 前需要拆。
 
 优先拆：

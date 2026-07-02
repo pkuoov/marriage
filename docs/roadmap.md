@@ -39,4 +39,5 @@
 - 资料操作的基础版式与回流稳定后，再把听众耐心、连线人防备和弹幕跑偏统一成现场压力模型。
 - 现场压力稳定后，再重做收麦回看，让结果页回收材料圈点、原话选择和路线画像。
 - 技术债按支撑顺序推进：`recapModel`、`sceneAdvance`、`saveStore`、键盘/手柄、桌面壳。
+- 内容包管线是 P0 架构债：当前 `content/packs/.../cases/*.json` 明确只是 `metadata-only` 压力包，完整台词仍来自 `src/caseEngine.js`。迁移完成前不能把它当作已数据驱动。
 - AI 只保留为后期受控 intent router，不进入当前实现队列。

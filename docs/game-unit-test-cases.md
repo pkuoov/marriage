@@ -27,6 +27,7 @@ npm run build:playable
 | EPISODE-001 | Story pack contract | A `storyKey` deterministically generates four live-call cases with stable order, visible in-run progress, one shared theme, a non-spoiler title intro, per-case bridge text, and at least one material inspection node per case. | 故事集变成随机拼盘、乱序、重复题材、标题页剧透目录、开场说教、无主题、无法回放同一集，或缺少可操作材料。 |
 | EPISODE-001B | Story interlude contract | Story-pack interludes should summarize the previous call from the played route and introduce the next call through a dramatic object, not a directory title. | 案间页退回“上一通记下 / 下一案 / 下一通来电”这种模板感。 |
 | EPISODE-001A | In-run spoiler guard | Story-pack live screens use neutral call labels instead of act names, case titles, `1/4` package progress, or "next case" copy. | 首页刚清干净，玩家一进第一通又看到目录式剧透。 |
+| EPISODE-001D | Role/pronoun consistency | The workplace case checks assigned caller/respondent ids against recap and deep-followup wording. | 男性来电人用男性头像上麦，结算却写成“她想拿表现”；女性缺席同事被写成“他就有办法一直拖”。 |
 | DAILY-001 | Daily contract | Generated daily case has one playable case with scene beats, question options, deep follow-up, evidence notes, material inspection, and clue threshold. | Empty UI from incomplete brief data, or单案只有口述没有可操作证据。 |
 | DAILY-002 | Determinism | Same `dailyKey` generates the same case, plot, and opening. | Share links showing different cases to different players. |
 | DAILY-003 | Date boundary | Default daily key uses fixed UTC+8 day boundary. | Cross-timezone players getting different "today" cases. |
@@ -65,23 +66,24 @@ Automated tests do not replace one short browser replay after large narrative/UI
 3. Start a fresh run and confirm in-run progress appears only after the first call is entered, and that the live screen does not show case names, act labels, `1/4`, or "下一案".
 4. Confirm the opening explains why suspicious materials exist.
 5. Confirm only "你" and "咨询者" are present in the live room; no real NPC names or second-party portrait/mic appears.
-6. On at least three current-node choice panels, confirm there is one panel and every button is a host question, not a route label or UI explainer.
-7. Confirm same-panel current-node buttons have equal color, border, card treatment, and emphasis; no button should look recommended by UI priority.
-8. Confirm the page does not show "how to play" hints, route axes, or designer shorthand inside the live-call choice area.
-9. Confirm the first live-call screen reads as a livestream control desk: visible ON AIR state, current segment, audience patience, and backend material panel before it reads as a generic visual-novel text box.
-10. Pick one core issue question and one tempting outer-angle question.
-11. Confirm outer-angle feedback is in-character and live comments react.
-12. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
-13. After the last scene, enter material inspection; confirm the material appears as a document/table/screenshot board, not a paragraph above ordinary choice buttons.
-14. Pick one material target and confirm the selected area gets a visible circle/annotation inside the board.
-15. Confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
-16. Confirm material hit feedback appears once, not again as a separate reaction line.
-17. Solve the first case and confirm the recap shows the hidden route map.
-18. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
-19. Confirm the recap does not use scoring slang such as "半口瓜", "闻到味", "瓜心", "主播倾向", "最佳答案", or "结论更锋利".
-20. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
-21. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
-22. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
+6. Confirm recap/deep-followup wording matches the assigned caller and respondent, or uses role terms such as "咨询者 / 同事 / 对方" instead of fragile gender pronouns.
+7. On at least three current-node choice panels, confirm there is one panel and every button is a host question, not a route label or UI explainer.
+8. Confirm same-panel current-node buttons have equal color, border, card treatment, and emphasis; no button should look recommended by UI priority.
+9. Confirm the page does not show "how to play" hints, route axes, or designer shorthand inside the live-call choice area.
+10. Confirm the first live-call screen reads as a livestream control desk: visible ON AIR state, current segment, audience patience, and backend material panel before it reads as a generic visual-novel text box.
+11. Pick one core issue question and one tempting outer-angle question.
+12. Confirm outer-angle feedback is in-character and live comments react.
+13. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
+14. After the last scene, enter material inspection; confirm the material appears as a document/table/screenshot board, not a paragraph above ordinary choice buttons.
+15. Pick one material target and confirm the selected area gets a visible circle/annotation inside the board.
+16. Confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
+17. Confirm material hit feedback appears once, not again as a separate reaction line.
+18. Solve the first case and confirm the recap shows the hidden route map.
+19. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
+20. Confirm the recap does not use scoring slang such as "半口瓜", "闻到味", "瓜心", "主播倾向", "最佳答案", or "结论更锋利".
+21. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
+22. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
+23. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
 
 ## Maintenance Rules
 

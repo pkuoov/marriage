@@ -1,6 +1,7 @@
 {
   "caseId": "03-profile",
   "plotId": "education-income-fake-profile",
+  "runtimeContentStatus": "metadata-only",
   "dramaticAnchor": "几张资料截图和一张存款证明",
   "whyTonight": "双方准备继续谈婚恋条件，咨询者拿到资料后发现学历、收入和流水口径不一致。",
   "objectPurpose": "资料图被用来证明条件稳定，但缺口刚好落在学历性质、收入构成和现金流上。",

@@ -1,6 +1,7 @@
 {
   "caseId": "01-credit",
   "plotId": "lost-job-hidden-credit",
+  "runtimeContentStatus": "metadata-only",
   "dramaticAnchor": "信用卡账单与社保断缴截图",
   "whyTonight": "对方要求咨询者先垫最低还款，钱马上要从咨询者账户出去。",
   "objectPurpose": "账单被说成短期周转证明，社保截图意外暴露失业时间早于借钱。",

@@ -1,13 +1,13 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.34";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.34";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.34";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.34";
-import { migrateState } from "../src/state.js?v=0.20.34";
-import { NPCS } from "../src/story.js?v=0.20.34";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.34";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.34";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.34";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.34";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.35";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.35";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.35";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.35";
+import { migrateState } from "../src/state.js?v=0.20.35";
+import { NPCS } from "../src/story.js?v=0.20.35";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.35";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.35";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.35";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.35";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -319,6 +319,26 @@ test("EPISODE-001C", "demo story pack bridges form a four-act escalation", () =>
       assertIncludes(bridge, marker, `第 ${index + 1} 案必须承担故事集四幕推进功能`);
     });
   });
+});
+
+test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned caller", () => {
+  const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
+    .filter((item) => item.plotId === "workplace-reimbursement-screenshot");
+  assert(brief, "试玩包必须包含职场报销案");
+  assertEqual(brief.complainantId, "chen", "职场报销案当前来电人必须是 chen");
+  assertEqual(brief.respondentId, "shen", "职场报销案当前同事必须是 shen");
+  const text = JSON.stringify({
+    sceneVersions: brief.sceneVersions,
+    deepFollowup: brief.deepFollowup,
+    stageJudgement: brief.stageJudgement,
+    followupTwist: brief.followupTwist,
+    truth: brief.truth
+  });
+  ["她不是完全被逼", "她想表现", "她想拿表现", "他就有办法一直拖"].forEach((badPhrase) => {
+    assert(!text.includes(badPhrase), `职场报销案不能用错性别代词或旧硬编码：${badPhrase}`);
+  });
+  assertIncludes(text, "咨询者想拿表现", "职场报销案应使用角色称谓承接来电人，避免头像和代词冲突");
+  assertIncludes(text, "对方就有办法一直拖", "职场报销案应使用对方/同事承接缺席方，避免性别绑定");
 });
 
 test("DAILY-001", "daily case count and structural fields stay complete", () => {

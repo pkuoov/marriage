@@ -159,6 +159,7 @@ Avoid:
    - Use browser DOM text, not memory.
    - Save or mentally group each screen as: opening, choice set, answer feedback, next beat, summary.
    - If the page has portraits or speaker labels, check the active speaker against the current line.
+   - If a case assigns a caller/respondent id with known gender, check recap, deep-followup, and treatment docs for pronouns that contradict the visible portrait. Prefer role terms such as "咨询者 / 同事 / 对方" when the text should survive role swaps.
 
 3. Audit each screen with the fixed checklist.
    - Does the speaker know the thing they are responding to? If not, reorder the line.
@@ -248,6 +249,7 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - Live-room status text should help the player read progress. It should not look like unexplained system judgement, and repeated helper notes should change by route tone, material type, or progress.
 - Live-room status text must not help the player pass. Avoid real-time hit counts, missing-answer hints, route-axis names, and "look at money/material/process first" instructions during play.
 - Portrait and expression text should make the caller feel alive: small physical tells, pauses, and mic-side reactions. Keep them short and varied; do not use them to reveal the correct question.
+- Recap and deep-followup wording must match the visible caller/respondent assignment. If a case may swap roles, avoid hard-coded "他/她" and use "咨询者 / 同事 / 对方" instead.
 - Training-script or impure-intent hooks are useful, but they must be diegetic and grounded in visible text: "话太顺了", "甜话后面接要求", "流程词说得太熟". Do not derive these hooks from hidden contradictions, unseen answers, or route metadata the player has not earned.
 - Route-map recap must preserve player memory: each beat should show at least the route axis plus a short trace of the actual question or tone.
 - Material inspection belongs in route-map memory too, but it should be marked as material. Do not number it like another dialogue statement.
