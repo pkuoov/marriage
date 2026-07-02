@@ -27,7 +27,7 @@
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
-- 事实边界已进入收麦回看：每案 `truthBoundary` 会显示成“能确认 / 被修剪 / 今晚定不了”，并要求玩家先把三句话归位再继续收话。
+- 事实边界已进入收麦回看和故事集终局：每案 `truthBoundary` 会要求玩家把三句话归位；四案归位是否放稳、是否放早再收回，会影响终局边界标签、分享卡和评论区审判墙。
 - 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。
 - H5 构建和离线 playable 构建已隔离输出目录：`build:h5` 不再删除整个 `dist`，避免并行构建时踩掉 `dist/playable`。
 
@@ -187,7 +187,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 最强原话选择后，主播回应要短、准、像直播间接话。
 - 选择非最强原话时，不判死错，但要生成不同余味。
 - 结果页不能给“最佳答案教程”，只能做对照和余波。
-- 事实边界归位已影响最终收话余味：放稳和放早再收回，会得到不同的边界收束句。下一步把这层余味接进弹幕和故事集总结。
+- 事实边界归位已影响最终收话余味和故事集终局：放稳、放早再收回、仍未归位，会得到不同边界标签和评论区反应。下一步回到资料操作主线，把回流材料的命中/误指接进案间余味和弹幕压力。
 
 验收：
 

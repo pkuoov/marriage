@@ -1,20 +1,20 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.53";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.53";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.53";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.53";
-import { migrateState } from "../src/state.js?v=0.20.53";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.53";
-import { NPCS } from "../src/story.js?v=0.20.53";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.53";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.53";
-import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.53";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.53";
-import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.53";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.53";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.53";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.53";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.53";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.53";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.54";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.54";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.54";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.54";
+import { migrateState } from "../src/state.js?v=0.20.54";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.54";
+import { NPCS } from "../src/story.js?v=0.20.54";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.54";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.54";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.54";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.54";
+import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.54";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.54";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.54";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.54";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.54";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.54";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -226,6 +226,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "data-truth-boundary-pick", "事实边界必须可交互归位，不能只做静态说明页");
   assertIncludes(appSource, "picks[prompt.id] === prompt.expected", "事实边界归位必须放对才能继续，不能只点过就放行");
   assertIncludes(appSource, "truthBoundaryMisses", "事实边界归位放早过必须影响收话余味，不能只看最终放对");
+  assertIncludes(appSource, "storyBoundaryProfile", "故事集终局必须汇总四案事实边界，而不是只看路线轴");
+  assertIncludes(appSource, "comments[3] = boundaryProfile.comment", "评论区审判墙必须保留事实边界评论");
   assert(!questionHtml.includes("choice-question-${kind}"), "追问按钮不能按内部问法类型暴露不同视觉样式");
   const oldKickerClass = `${"choice"}-${"kicker"}`;
   assert(!appSource.includes(oldKickerClass), "追问按钮不能再显示解释型小标签");
@@ -1000,6 +1002,12 @@ test("RUNTIME-005", "recap model stays pure and reusable outside app rendering",
   const perfectPicks = Object.fromEntries(boundary.prompts.map((prompt) => [prompt.id, prompt.expected]));
   assertIncludes(truthBoundaryAftertaste(boundary, perfectPicks, {}), "边界放稳", "事实边界全放对要影响最终收话余味");
   assertIncludes(truthBoundaryAftertaste(boundary, perfectPicks, { [boundary.prompts[0].id]: 1 }), "放早", "事实边界放早再改回也要留下不同余味");
+  const packProfile = truthBoundaryPackProfile([{ label: brief.label, review: boundary, picks: perfectPicks, misses: {} }]);
+  assertEqual(packProfile.label, "挂得住", "故事集终局必须能汇总事实边界归位结果");
+  assertIncludes(packProfile.comment, "挂得住", "事实边界全放稳要进入故事集评论区");
+  const recoveredProfile = truthBoundaryPackProfile([{ label: brief.label, review: boundary, picks: perfectPicks, misses: { [boundary.prompts[0].id]: 1 } }]);
+  assertEqual(recoveredProfile.label, "收回来了", "事实边界放早再收回要改变故事集终局标签");
+  assertIncludes(recoveredProfile.line, "差点放早", "故事集终局必须回收边界误放痕迹");
 });
 
 test("RUNTIME-006", "scene advance helpers stay pure outside app state", () => {

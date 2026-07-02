@@ -1,5 +1,5 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.53";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.53";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.54";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.54";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
@@ -114,6 +114,56 @@ export function truthBoundaryAftertaste(review = {}, picks = {}, misses = {}) {
   if (!settled) return "这几句还没放稳，收话先压一压。";
   if (totalMisses > 0) return "刚才有句差点放早了，收回来以后，这通才没变成替人判案。";
   return "这几句边界放稳了：能确认的钉住，定不了的不替人补。";
+}
+
+export function truthBoundaryPackProfile(rows = []) {
+  const items = rows
+    .map((row) => {
+      const prompts = row.review?.prompts ?? [];
+      const settled = prompts.length > 0 && prompts.every((prompt) => row.picks?.[prompt.id] === prompt.expected);
+      const misses = prompts.reduce((sum, prompt) => sum + Number(row.misses?.[prompt.id] ?? 0), 0);
+      return {
+        label: row.label ?? "",
+        promptCount: prompts.length,
+        settled,
+        misses
+      };
+    })
+    .filter((item) => item.promptCount > 0);
+  const total = items.length;
+  const settledCount = items.filter((item) => item.settled).length;
+  const missCount = items.reduce((sum, item) => sum + item.misses, 0);
+  const unsettled = items.filter((item) => !item.settled);
+  return {
+    total,
+    settledCount,
+    missCount,
+    unsettledLabel: unsettled[0]?.label ?? "",
+    label: boundaryPackLabel({ total, settledCount, missCount }),
+    line: boundaryPackLine({ total, settledCount, missCount, unsettledLabel: unsettled[0]?.label ?? "" }),
+    comment: boundaryPackComment({ total, settledCount, missCount, unsettledLabel: unsettled[0]?.label ?? "" })
+  };
+}
+
+function boundaryPackLabel({ total, settledCount, missCount }) {
+  if (!total) return "边界未开";
+  if (settledCount < total) return "还压着";
+  if (missCount > 0) return "收回来了";
+  return "挂得住";
+}
+
+function boundaryPackLine({ total, settledCount, missCount, unsettledLabel }) {
+  if (!total) return "今晚没有留下可回看的事实边界。";
+  if (settledCount < total) return `${unsettledLabel || "有一通"}还有几句没归位，评论区会咬着不放。`;
+  if (missCount > 0) return "有几句差点放早，最后还是收回到了证据能撑住的位置。";
+  return "该钉的钉了，定不了的没替人补完。";
+}
+
+function boundaryPackComment({ total, settledCount, missCount, unsettledLabel }) {
+  if (!total) return "「今晚没留下几句能复盘的边界，像听了个热闹。」";
+  if (settledCount < total) return `「${unsettledLabel || "有一通"}那几句话还没摆平，现在替谁下句号都早。」`;
+  if (missCount > 0) return "「刚才有几句差点说满了，收回来那一下才像主播。」";
+  return "「该钉的钉了，钉不住的没硬钉，这集才挂得住。」";
 }
 
 function cleanBoundaryItems(items = []) {

@@ -2107,6 +2107,36 @@ button.evidence-target {
   line-height: 1.65;
 }
 
+.weekly-boundary-line {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  margin: 0;
+  padding: 12px 13px;
+  border: 1px solid rgba(101, 214, 194, .18);
+  border-radius: 8px;
+  background: rgba(101, 214, 194, .07);
+}
+
+.weekly-boundary-line span {
+  color: rgba(139, 228, 212, .72);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.weekly-boundary-line b {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.weekly-boundary-line p {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: rgba(237, 241, 238, .72);
+  font-size: 13px;
+  line-height: 1.58;
+}
+
 .weekly-result-list {
   display: grid;
   gap: 8px;
