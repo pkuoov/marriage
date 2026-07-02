@@ -1,15 +1,16 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.36";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.36";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.36";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.36";
-import { migrateState } from "../src/state.js?v=0.20.36";
-import { NPCS } from "../src/story.js?v=0.20.36";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.36";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.36";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.36";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.36";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.36";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.36";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.37";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.37";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.37";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.37";
+import { migrateState } from "../src/state.js?v=0.20.37";
+import { NPCS } from "../src/story.js?v=0.20.37";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.37";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.37";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.37";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.37";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.37";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.37";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.37";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -822,6 +823,25 @@ test("RUNTIME-004", "explicit resolver override can bypass clue threshold when r
     requiredContradictions: 3
   });
   assert(ordinary.result.correct === false, "普通案件仍然必须满足线索阈值");
+});
+
+test("RUNTIME-005", "recap model stays pure and reusable outside app rendering", () => {
+  const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const result = {
+    accused: "both",
+    issuePercent: 100,
+    quoteHit: true,
+    dailyAccuseLabel: "“我只是怕你知道我失业后就离开我。”",
+    issueRevealed: ["社保断缴早于借钱。"]
+  };
+  const route = buildDailyRouteProfile(brief, result, { axisProfile: { axis: "money-flow" }, issue: { percent: 100 } });
+  assertEqual(recapRankLabel({ badge: true, percent: 100 }), "能挂麦", "复盘等级必须由纯模型生成");
+  assertEqual(dailyPlayerType({ percent: 75, quoteHit: false, axis: "document-edge" }), "截图拆边主播", "玩家类型必须由纯模型生成");
+  assertEqual(route.label, "收得住", "收麦路线标签必须由纯模型生成");
+  assertIncludes(route.shareBody, "社保断缴早于借钱", "分享文案必须优先回收已揭示矛盾");
+  const comparison = finalQuoteComparison(brief, result);
+  assert(comparison?.pickedLabel, "最终原话比较必须能脱离 DOM 生成");
+  assert(comparison.bestLabel, "最终原话比较必须给出可回看的收束口子");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {
