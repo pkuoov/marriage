@@ -2,8 +2,8 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.65";
-import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.65";
+import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.66";
+import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.66";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
@@ -64,7 +64,7 @@ test("PACK-002", "manifest keeps distinct playable cases", () => {
   assertEqual(new Set(manifest.sequence.map((item) => item.caseId)).size, manifest.size, "caseId 不能重复");
   assertEqual(new Set(manifest.sequence.map((item) => item.plotId)).size, manifest.size, "plotId 不能重复");
   manifest.sequence.forEach((item, index) => {
-    ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "bridge"].forEach((field) => {
+    ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "backdropClass", "bridge"].forEach((field) => {
       assert(item[field], `第 ${index + 1} 案缺少 ${field}`);
     });
     assert(!/下一案|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);

@@ -26,7 +26,7 @@ content/packs/<pack-id>/
 - `size`：当前内容包包含的案件数。当前 `steam-demo-01` 是 `4`，但运行时不应把 4 当成固定规则。
 - `theme`：`id`、`title`、`intro`、`thesis`、`commentPrompt`。
 - `caseLabels`：案内可见称呼，当前统一为 `匿名来电`。
-- `sequence`：案件顺序，每项包含 `caseId`、`plotId`、`sceneId`、`complainantId`、`respondentId`、`act`、`objectLabel`、`bridge`。
+- `sequence`：案件顺序，每项包含 `caseId`、`plotId`、`sceneId`、`complainantId`、`respondentId`、`act`、`objectLabel`、`backdropClass`、`bridge`。
 
 通话流程内不能直接显示 `act`、`title` 或 `1/4` 这类目录结构。案间页可以使用 `objectLabel` 做下一通钩子。
 

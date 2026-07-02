@@ -28,6 +28,7 @@ export const CONTENT_PACKS = {
         "respondentId": "xu",
         "act": "体面",
         "objectLabel": "账单",
+        "backdropClass": "backdrop-credit",
         "bridge": "电话已经接进来，她先把账单递到麦前。"
       },
       {
@@ -38,6 +39,7 @@ export const CONTENT_PACKS = {
         "respondentId": "chen",
         "act": "自己人",
         "objectLabel": "店表",
+        "backdropClass": "backdrop-tony",
         "bridge": "先别急着骂暧昧。店里那张表，比甜话更像账本。"
       },
       {
@@ -48,6 +50,7 @@ export const CONTENT_PACKS = {
         "respondentId": "zhou",
         "act": "条件",
         "objectLabel": "资料图",
+        "backdropClass": "backdrop-profile",
         "bridge": "几张资料图被她一口气发过来，话说得急，停顿也多。"
       },
       {
@@ -58,6 +61,7 @@ export const CONTENT_PACKS = {
         "respondentId": "shen",
         "act": "主责",
         "objectLabel": "审批截图",
+        "backdropClass": "backdrop-work",
         "bridge": "公司那边也亮了麦。截图看着完整，钱却还没回。"
       }
     ]

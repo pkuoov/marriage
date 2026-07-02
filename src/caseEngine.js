@@ -1,35 +1,40 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.65";
-import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.65";
-import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.65";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.65";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.66";
+import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.66";
+import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.66";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.66";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
     taskProfile: { id: "audit", label: "钱款说不清", recommendedSpecialtyId: "audit", summary: "钱说得急，责任却还没落到人。" },
+    backdropClass: "backdrop-credit",
     label: "失业信用卡隐瞒局",
     publicHook: "一方失业后继续维持体面恋爱消费，直到信用卡和网贷爆雷。",
     truth: "失业没先说，账单又递到另一方手里，这事不能只靠心疼往下接。"
   },
   "house-name-security-test": {
     taskProfile: { id: "audit", label: "钱款说不清", recommendedSpecialtyId: "audit", summary: "钱说得急，责任却还没落到人。" },
+    backdropClass: "backdrop-house",
     label: "婚前房产加名安全感局",
     publicHook: "一方说加名是安全感，另一方说这是以结婚为名拿资产。",
     truth: "房本归谁、婚后谁还、分开钱怎么算，这几句没人能靠“像一家人”带过去。"
   },
   "tony-multi-dating": {
     taskProfile: { id: "emotion", label: "情绪卡住了", recommendedSpecialtyId: "emotion", summary: "情绪很满，有人一直把问题推回爱不爱。" },
+    backdropClass: "backdrop-tony",
     label: "托尼老师多线养鱼局",
     publicHook: "一方以服务热情、性格会聊为借口，同时给多人制造排他暧昧。",
     truth: "几句专属话术如果后面都接办卡、带客、投店，那就不只是会聊天。"
   },
   "education-income-fake-profile": {
     taskProfile: { id: "verification", label: "资料有雾", recommendedSpecialtyId: "verification", summary: "标签都好看，材料却总少一块。" },
+    backdropClass: "backdrop-profile",
     label: "学历收入资料造假局",
     publicHook: "当事人来咨询择偶定位，却把学历、职业、收入和家庭资产说得很漂亮。",
     truth: "条件可以说得好听，但学历、收入、流水这些字一旦被拿来定关系，就得说全。"
   },
   "workplace-reimbursement-screenshot": {
     taskProfile: { id: "audit", label: "款项卡住了", recommendedSpecialtyId: "audit", summary: "截图看着完整，钱却没落到该落的位置。" },
+    backdropClass: "backdrop-work",
     label: "职场报销截图",
     publicHook: "同事说报销已经批了，却一直不把垫付款转回。截图看着过了，偏偏少了付款那一页。",
     truth: "审批截图看着像过了，但付款状态、收款账户、返款入口没露出来，钱就还没说清。"
@@ -137,6 +142,7 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
     label: plot.label,
     publicHook: plot.publicHook,
     truth: plot.truth,
+    backdropClass: plot.backdropClass,
     complainantId,
     respondentId,
     dailyKey,
@@ -210,6 +216,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       storyAct: spec.act,
       storyBridge: spec.bridge,
       storyObjectLabel: spec.objectLabel,
+      backdropClass: spec.backdropClass ?? brief.backdropClass,
       weeklyCase: true,
       weeklyKey: storyKey,
       weeklyThemeId: theme.id,
