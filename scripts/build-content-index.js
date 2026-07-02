@@ -1,7 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { RUNTIME_CASE_CONTENT_FIELDS, RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS, runtimeCaseContentSummary } from "../src/runtime/contentCase.js?v=0.20.45";
+import { RUNTIME_CASE_CONTENT_FIELDS, RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS, runtimeCaseContentSummary } from "../src/runtime/contentCase.js?v=0.20.46";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packsDir = resolve(root, "content", "packs");

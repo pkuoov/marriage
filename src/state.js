@@ -1,5 +1,5 @@
-import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.45";
-import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.45";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.46";
+import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.46";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
@@ -7,13 +7,13 @@ const LEGACY_STORAGE_KEY = "marriage-detective-agency-save-v1";
 const LEGACY_META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
 
 export const CHARACTER_ART = {
-  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.45",
-  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.45",
-  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.45",
-  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.45",
-  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.45",
-  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.45",
-  he: "./assets/generated/characters/he_neutral.png?v=0.20.45"
+  meng: "./assets/generated/characters/meng_host_v2.png?v=0.20.46",
+  zhou: "./assets/generated/characters/zhou_neutral.png?v=0.20.46",
+  lin: "./assets/generated/characters/lin_neutral.png?v=0.20.46",
+  xu: "./assets/generated/characters/xu_neutral.png?v=0.20.46",
+  chen: "./assets/generated/characters/chen_neutral.png?v=0.20.46",
+  shen: "./assets/generated/characters/shen_neutral.png?v=0.20.46",
+  he: "./assets/generated/characters/he_neutral.png?v=0.20.46"
 };
 
 export const baseState = {

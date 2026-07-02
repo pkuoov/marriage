@@ -1,20 +1,20 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.45";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.45";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.45";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.45";
-import { migrateState } from "../src/state.js?v=0.20.45";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.45";
-import { NPCS } from "../src/story.js?v=0.20.45";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.45";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.45";
-import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.45";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.45";
-import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.45";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.45";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.45";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.45";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.45";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.45";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.46";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.46";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.46";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.46";
+import { migrateState } from "../src/state.js?v=0.20.46";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.46";
+import { NPCS } from "../src/story.js?v=0.20.46";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.46";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.46";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.46";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.46";
+import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.46";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.46";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.46";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.46";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.46";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.46";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -256,6 +256,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
   const windowsPlaySource = readFileSync(new URL("../play-windows.bat", import.meta.url), "utf8");
+  const buildStaticSource = readFileSync(new URL("../scripts/build-static.js", import.meta.url), "utf8");
   assert(!stylesSource.includes("choice-question-key"), "核心追问不能用高亮色条暗示优先级");
   assert(!stylesSource.includes("critical-choice-group"), "当前节点追问不能恢复成关键选项高亮卡");
   assert(!appSource.includes("dialogueOptionsHtml"), "统一选择面板后不能留下未调用的 dialogueOptionsHtml 死代码");
@@ -268,6 +269,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(packageSource, "\"play:windows\"", "必须保留 Windows 一键试玩入口");
   assertIncludes(windowsPlaySource, "dist\\playable\\index.html", "Windows 一键试玩必须打开离线可玩包");
   assert(!/http\.server|127\.0\.0\.1|localhost/i.test(windowsPlaySource), "Windows 一键试玩不能依赖本地端口或 dev server");
+  assert(!buildStaticSource.includes("rm(dist"), "H5 构建不能删除整个 dist，否则会和 dist/playable 构建互相踩目录");
+  assertIncludes(buildStaticSource, "cleanStaticBuildTargets", "H5 构建必须只清理自己的静态目标");
 });
 
 test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {
