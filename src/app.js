@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.63";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.63";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.63";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.63";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.63";
-import { NPCS } from "./story.js?v=0.20.63";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.63";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.63";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.63";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.63";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.63";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.63";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.63";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.63";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.64";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.64";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.64";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.64";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.64";
+import { NPCS } from "./story.js?v=0.20.64";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.64";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.64";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.64";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.64";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.64";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.64";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.64";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.64";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -274,27 +274,14 @@ function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude 
 }
 
 function storyInterludeObjectLabel(brief = {}) {
-  const labels = {
-    "lost-job-hidden-credit": "账单",
-    "tony-multi-dating": "表格",
-    "education-income-fake-profile": "资料图",
-    "workplace-reimbursement-screenshot": "审批截图",
-    "house-name-security-test": "协议草稿"
-  };
-  return labels[brief.plotId] ?? "新材料";
+  return brief.storyObjectLabel ?? brief.weeklyObjectLabel ?? brief.storyClueObject ?? brief.clueObject ?? "新材料";
 }
 
 function storyInterludeNextLine(brief = {}) {
   if (!brief) return "后台又亮了一路麦。";
   const bridge = brief.storyBridge ?? brief.weeklyBridge ?? "";
   if (bridge) return bridge;
-  const lines = {
-    "tony-multi-dating": "别急着骂暧昧，先看店里那张表。",
-    "education-income-fake-profile": "几张资料图摆上来，图是真的，话未必说全。",
-    "workplace-reimbursement-screenshot": "公司那边也来了截图。图看着完整，钱还没回来。",
-    "house-name-security-test": "房本和还贷摆在一起，亲近话后面接着现金流。"
-  };
-  return lines[brief.plotId] ?? "后台又亮了一路麦。";
+  return "后台又亮了一路麦。";
 }
 
 function renderCaseOpen(brief) {

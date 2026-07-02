@@ -1,6 +1,6 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.63";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.63";
-import { routeAxisLabel } from "./routeLog.js?v=0.20.63";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.64";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.64";
+import { routeAxisLabel } from "./routeLog.js?v=0.20.64";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";

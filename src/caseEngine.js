@@ -1,7 +1,7 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.63";
-import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.63";
-import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.63";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.63";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.64";
+import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.64";
+import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.64";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.64";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -209,6 +209,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       storyThemeCommentPrompt: theme.commentPrompt,
       storyAct: spec.act,
       storyBridge: spec.bridge,
+      storyObjectLabel: spec.objectLabel,
       weeklyCase: true,
       weeklyKey: storyKey,
       weeklyThemeId: theme.id,
@@ -218,6 +219,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       weeklyThemeCommentPrompt: theme.commentPrompt,
       weeklyAct: spec.act,
       weeklyBridge: spec.bridge,
+      weeklyObjectLabel: spec.objectLabel,
       modeLabel: "试玩连线",
       storyArcTitle: "热线连线",
       storyArcSummary: spec.bridge,
