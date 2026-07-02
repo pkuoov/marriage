@@ -37,6 +37,13 @@ const preloadSource = await readFile(resolve(desktopDir, "preload.cjs"), "utf8")
 assert(packageJson.main === "main.cjs", "Desktop package main must point to Electron main.cjs");
 assert(packageJson.scripts?.start === "electron .", "Desktop package must expose an Electron start script");
 assert(mainSource.includes("loadFile"), "Electron main must load the offline playable file");
+assert(mainSource.includes("desktop-settings.json"), "Electron main must persist desktop window settings");
+assert(mainSource.includes("before-input-event"), "Electron main must register fullscreen and zoom shortcuts");
+assert(mainSource.includes("setFullScreen"), "Electron main must support fullscreen toggling");
+assert(mainSource.includes("setZoomFactor"), "Electron main must support zoom factor changes");
+assert(mainSource.includes("crash-logs"), "Electron main must write crash logs under userData");
+assert(mainSource.includes("render-process-gone"), "Electron main must capture renderer crashes");
+assert(mainSource.includes("requestSingleInstanceLock"), "Electron main must keep a single desktop instance");
 assert(preloadSource.includes("livestreamDetectiveDesktop"), "Preload must expose the desktop bridge");
 assert(!/localhost|127\.0\.0\.1|http\.server/i.test(`${indexHtml}\n${mainSource}`), "Desktop smoke found dev-server dependency");
 

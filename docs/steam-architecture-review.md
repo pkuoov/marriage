@@ -170,15 +170,16 @@ dist/
 - 主进程把存档写入 `app.getPath("userData")/saves`。
 - 根 `package.json` 声明 Electron / electron-builder devDependencies。
 - Windows portable 打包配置，输入 `dist/desktop-electron`，输出 `dist/steam`。
+- 桌面窗口状态保存到 `desktop-settings.json`，支持 F11 / Alt+Enter 全屏、Ctrl+0/加减号缩放。
+- 主进程和渲染进程异常写入 `app.getPath("userData")/crash-logs`。
+- 单实例锁，避免多个桌面实例同时抢同一份存档。
 
 仍需补齐：
 
-- 全屏/窗口模式。
-- 分辨率和缩放。
 - Steam overlay 兼容。
 - 成就和统计。
-- 崩溃日志。
-- 手柄/键盘输入。
+- Steam Cloud 文件映射。
+- Steam Deck/手柄实机输入 QA。
 - Windows 打包实机验收、安装器和签名。
 
 ### 5. 输入标准还没有按 Steam Deck / 手柄设计
