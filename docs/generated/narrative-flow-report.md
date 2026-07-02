@@ -1,6 +1,6 @@
 # Narrative Flow Validation Report
 
-Generated at: 2026-07-02T04:35:53.577Z
+Generated at: 2026-07-02T04:43:26.090Z
 Cases checked: 8
 Issues: 0
 
@@ -376,7 +376,7 @@ Evidence checks:
   - miss: 预约时间
     - feedback: 预约时间本身正常，真正不对的是备注里的功能标签。
   - miss: 店员名字
-    - feedback: 名字不够关键，后面那些“稳情绪”“能投店”才是这张表的味道。
+    - feedback: 名字不够要紧，后面那些“稳情绪”“能投店”才让这张表变了性质。
 
 Deep follow-up:
 - 你: 那我多问一句，看到排班表里写投店、带客以后，你自己当时为什么还愿意接那些店里的事？

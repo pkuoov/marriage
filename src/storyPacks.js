@@ -16,7 +16,7 @@ export const STORY_PACKS = {
     theme: {
       id: "identity-cost-demo",
       title: "好听的身份，最后让谁买单",
-      intro: "热线已经接进来。资料在后台，先听这通。",
+      intro: "热线已经接进来。资料在后台，她已经开口了。",
       thesis: "四通电话听完，真正吵起来的是同一件事：好听的话落到最后，钱和责任算在谁身上。",
       commentPrompt: "别急着判谁好谁坏，看每个好听词后面接了什么要求。"
     },
@@ -29,7 +29,7 @@ export const STORY_PACKS = {
         respondentId: "xu",
         act: "体面",
         objectLabel: "账单",
-        bridge: "电话已经接进来，先听她怎么把账单讲出来。"
+        bridge: "电话已经接进来，她先把账单递到麦前。"
       },
       {
         caseId: "02-tony",
@@ -39,7 +39,7 @@ export const STORY_PACKS = {
         respondentId: "chen",
         act: "自己人",
         objectLabel: "店表",
-        bridge: "下一通先别急着骂暧昧。店里那张表，比甜话更像账本。"
+        bridge: "先别急着骂暧昧。店里那张表，比甜话更像账本。"
       },
       {
         caseId: "03-profile",
@@ -49,7 +49,7 @@ export const STORY_PACKS = {
         respondentId: "zhou",
         act: "条件",
         objectLabel: "资料图",
-        bridge: "这通说的是几张资料图。她开口很急，停顿也多。"
+        bridge: "几张资料图被她一口气发过来，话说得急，停顿也多。"
       },
       {
         caseId: "04-workplace",
@@ -59,7 +59,7 @@ export const STORY_PACKS = {
         respondentId: "shen",
         act: "主责",
         objectLabel: "审批截图",
-        bridge: "公司那边也接来一通。截图看着完整，钱却还没回。"
+        bridge: "公司那边也亮了麦。截图看着完整，钱却还没回。"
       }
     ]
   }

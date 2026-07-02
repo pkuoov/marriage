@@ -1,13 +1,13 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.33";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.33";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.33";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.33";
-import { migrateState } from "../src/state.js?v=0.20.33";
-import { NPCS } from "../src/story.js?v=0.20.33";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.33";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.33";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.33";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.33";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.34";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.34";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.34";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.34";
+import { migrateState } from "../src/state.js?v=0.20.34";
+import { NPCS } from "../src/story.js?v=0.20.34";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.34";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.34";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.34";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.34";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -181,6 +181,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const oldEndingExplainer = `${"不同主播"}${"会走出不同问法"}`;
   const oldInterludeSummary = `${"刚才那通"}${"先记下"}`;
   const oldNextCallTitle = `${"下一通"}${"来电</b>"}`;
+  const recapSlopPhrases = ["半口瓜", "闻到味", "闻味", "差一口", "瓜心", "刚起味", "这轮听感", "这句能收住", "接到这里，这通就能收麦了", "主播倾向", "接入下一通"];
   assert(!appSource.includes(oldDialogueTag), "不能用设计标签解释普通问法");
   assert(!appSource.includes(oldKeyTag), "不能用设计标签解释推进问法");
   assert(!appSource.includes(oldFlowLabel), "主流程动作区不能显示解释性标题");
@@ -191,6 +192,9 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!appSource.includes(oldEndingExplainer), "故事集终局不能把路线差异写成玩法说明");
   assert(!appSource.includes(oldInterludeSummary), "案间过渡不能使用通用记录式文案");
   assert(!appSource.includes(oldNextCallTitle), "案间过渡标题不能退回目录式下一通来电");
+  recapSlopPhrases.forEach((phrase) => {
+    assert(!appSource.includes(phrase), `结算和案间文案不能退回评分腔或 AI 味标签：${phrase}`);
+  });
   const oldUpperGroup = `choiceGroup("${"岔开"}${"一句"}`;
   const oldLowerGroup = `choiceGroup("${"盯住"}${"一句"}`;
   assert(!appSource.includes(oldUpperGroup), "不能恢复成上方单独一个岔开按钮组");

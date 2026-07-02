@@ -1,12 +1,12 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.33";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.33";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.33";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.33";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.33";
-import { NPCS } from "./story.js?v=0.20.33";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.33";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.33";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.33";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.34";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.34";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.34";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.34";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.34";
+import { NPCS } from "./story.js?v=0.20.34";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.34";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.34";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.34";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -144,7 +144,7 @@ function renderTitle() {
   const preview = previews[0] ?? null;
   const storyPack = modeFromUrl() !== "daily";
   const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
-  const hook = storyPack ? preview?.storyThemeIntro ?? preview?.weeklyThemeIntro ?? "热线已经接进来。资料在后台，先听这通。" : preview?.publicHook ?? "一通匿名来电已经接进来，关键就藏在第一句没说完的话里。";
+  const hook = storyPack ? preview?.storyThemeIntro ?? preview?.weeklyThemeIntro ?? "热线已经接进来。资料在后台，她已经开口了。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
   const object = storyPack ? "热线已接入" : preview?.storyClueObject ?? "今日通话摘录";
   app.innerHTML = `
     <main>
@@ -224,8 +224,8 @@ function liveChapterTitle(brief = {}) {
 
 function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude = {}) {
   const percent = Number(result.issuePercent ?? 0);
-  if (percent < 50) return interlude.summary ?? "这通没完全收住，弹幕还停在开场那句。";
-  const routeLabel = route.label ? `你这轮一直沿着${route.label}往下压。` : "";
+  if (percent < 50) return interlude.summary ?? "刚才那通挂得早，弹幕还在翻开场那句。";
+  const routeLabel = route.label ? `你刚才一直压着${route.label}问。` : "";
   const lines = {
     "lost-job-hidden-credit": `账单摊开以后，那句“挡几天”已经不是原来的意思。${routeLabel}`,
     "tony-multi-dating": `那张表一露，甜话就不只是在谈感情。${routeLabel}`,
@@ -233,7 +233,7 @@ function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude 
     "workplace-reimbursement-screenshot": `审批截图能堵住一句质问，堵不住钱去了哪里。${routeLabel}`,
     "house-name-security-test": `房本和还贷分成两套话以后，“一家人”就没那么好用了。${routeLabel}`
   };
-  return lines[brief.plotId] ?? interlude.summary ?? "这通先收在这里，后面的电话已经排进来了。";
+  return lines[brief.plotId] ?? interlude.summary ?? "这边刚挂，后台又亮了。";
 }
 
 function storyInterludeObjectLabel(brief = {}) {
@@ -248,16 +248,16 @@ function storyInterludeObjectLabel(brief = {}) {
 }
 
 function storyInterludeNextLine(brief = {}) {
-  if (!brief) return "新的电话已经排进来。";
+  if (!brief) return "后台又亮了一路麦。";
   const bridge = brief.storyBridge ?? brief.weeklyBridge ?? "";
   if (bridge) return bridge;
   const lines = {
-    "tony-multi-dating": "下一通别急着骂暧昧，先看店里那张表。",
-    "education-income-fake-profile": "下一通带来几张资料图，图是真的，话未必说全。",
-    "workplace-reimbursement-screenshot": "下一通换到公司，截图看着完整，钱却还没回来。",
-    "house-name-security-test": "下一通聊房本和还贷，亲近话后面接着现金流。"
+    "tony-multi-dating": "别急着骂暧昧，先看店里那张表。",
+    "education-income-fake-profile": "几张资料图摆上来，图是真的，话未必说全。",
+    "workplace-reimbursement-screenshot": "公司那边也来了截图。图看着完整，钱还没回来。",
+    "house-name-security-test": "房本和还贷摆在一起，亲近话后面接着现金流。"
   };
-  return lines[brief.plotId] ?? "新的电话已经排进来。";
+  return lines[brief.plotId] ?? "后台又亮了一路麦。";
 }
 
 function renderCaseOpen(brief) {
@@ -533,13 +533,13 @@ function renderPatienceLost(brief) {
     `,
     choices: flowGroup(`
       <button class="primary" data-retry-case type="button">重问本案</button>
-      ${isStoryPackMode() ? `<button data-after-patience-lost type="button">${isFinalStoryPackCase() ? "查看整晚收麦" : "接入下一通"}</button>` : `<button data-action="title" type="button">回标题</button>`}
+      ${isStoryPackMode() ? `<button data-after-patience-lost type="button">${isFinalStoryPackCase() ? "查看整晚收麦" : "接下一路麦"}</button>` : `<button data-action="title" type="button">回标题</button>`}
     `)
   });
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
   bind("[data-after-patience-lost]", () => {
     if (isFinalStoryPackCase()) return moveScene("runComplete");
-    advanceToNextStoryPackCase("上一通没收住，直播间把话题切到新的来电。");
+    advanceToNextStoryPackCase("刚才那路麦散了，后台又亮起一路。");
   });
 }
 
@@ -586,14 +586,14 @@ function renderSolved(brief) {
   const pages = [
     `
       <section class="recap-score-card">
-        <div class="recap-score-head"><span>这通收住</span><em>${escapeHtml(rank)}</em></div>
+        <div class="recap-score-head"><span>收麦回看</span><em>${escapeHtml(rank)}</em></div>
         <div class="recap-score-main">
           <b>${Number(issue.percent ?? 0)}</b>
-          <span>% 话头收住</span>
+          <span>% 已问到</span>
         </div>
         <div class="recap-score-grid">
-          <span><b>${issue.revealed.length ? "有东西" : "刚起味"}</b><small>这轮听感</small></span>
-          <span><b>${result.dailyBadge ? "收住了" : "还在吵"}</b><small>评论区</small></span>
+          <span><b>${issue.revealed.length ? "有抓手" : "刚开口"}</b><small>麦上记录</small></span>
+          <span><b>${result.dailyBadge ? "能挂麦" : "还会吵"}</b><small>弹幕</small></span>
         </div>
         <p>${escapeHtml(issueLine(issue, result))}</p>
         <div class="route-map-card">
@@ -634,7 +634,7 @@ function renderSolved(brief) {
     text: `<div class="recap-page-kicker"><span>回看</span><b>${index + 1}/${pages.length}</b></div>${pages[index]}`,
     choices: index < pages.length - 1
       ? flowGroup(`<button class="primary" data-recap-next type="button">继续回看</button><button data-retry-case type="button">从头再问</button>`)
-      : flowGroup(`<button class="primary" data-after-recap type="button">${isStoryPackMode() ? finalScene ? "查看整晚收麦" : "接入下一通" : "查看今日结果"}</button><button data-retry-case type="button">从头再问</button>`)
+      : flowGroup(`<button class="primary" data-after-recap type="button">${isStoryPackMode() ? finalScene ? "查看整晚收麦" : "接下一路麦" : "查看今日结果"}</button><button data-retry-case type="button">从头再问</button>`)
   });
   bind("[data-recap-next]", () => {
     state.recapStep = index + 1;
@@ -675,7 +675,7 @@ function renderStoryInterlude(brief) {
         <p>${escapeHtml(storyInterludeNextLine(nextBrief))}</p>
       </section>
     `,
-    choices: flowGroup(`<button class="primary" data-enter-next-case type="button">接入下一通</button><button data-retry-case type="button">回头重问</button>`)
+    choices: flowGroup(`<button class="primary" data-enter-next-case type="button">接下一路麦</button><button data-retry-case type="button">回头重问</button>`)
   });
   bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
@@ -708,7 +708,7 @@ function renderRunComplete(brief) {
         <p class="share-card-title">${escapeHtml(route.shareTitle)}</p>
         <div class="issue-meter"><span style="width:${issue.percent}%"></span></div>
         <p class="issue-score">${escapeHtml(rank)}</p>
-        ${result.dailyBadge ? `<div class="daily-badge-card compact"><span>今日收麦</span><b>这通聊开了</b></div>` : ""}
+        ${result.dailyBadge ? `<div class="daily-badge-card compact"><span>今日收麦</span><b>能挂麦了</b></div>` : ""}
         <p class="share-card-finding"><span>你接的那句</span>${escapeHtml(pickedQuote)}</p>
         ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
         <p class="share-card-finding"><span>今晚瓜点</span>${escapeHtml(caught)}</p>
@@ -752,7 +752,7 @@ function renderStoryPackComplete() {
     showCaseHud: false,
     text: `
       <p><b>今晚收麦</b></p>
-      <p>今晚四通都挂断了。你这一路最常盯的是：${escapeHtml(displayBest.label)}。</p>
+      <p>今晚四路麦都挂了。你最常回头看的，是：${escapeHtml(displayBest.label)}。</p>
       <section class="share-result-card">
         <div class="share-card-head"><span>${escapeHtml(theme.title)}</span><em>${escapeHtml(displayBest.label)}</em></div>
         <div class="share-player-type">
@@ -782,7 +782,7 @@ function renderStoryPackComplete() {
     `)
   });
   bind("[data-copy-weekly-result]", async () => {
-    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我的主播倾向：${storyPlayerType(avgPercent, displayBest)}\n最常走：${displayBest.label}`;
+    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我今晚常看的线：${displayBest.label}\n${storyPlayerType(avgPercent, displayBest)}`;
     try {
       await navigator.clipboard?.writeText(text);
       state.lastReaction = "收麦文案已复制。";
@@ -1261,27 +1261,27 @@ function issueCompletion(brief) {
 }
 
 function issueLine(issue, result = {}) {
-  if (issue.badge) return "几句要紧话都摆上桌了，弹幕现在可以各吵各的。";
-  if (issue.percent >= 75) return "这通聊到后面，弹幕已经不太能按开场那套吵了。";
-  if (issue.percent >= 50) return "这通听出了几处不顺耳，后面的火还没完全压住。";
-  if (issue.percent > 0) return "你闻到味儿了，麦里还有些话没浮上来。";
-  return "这轮听了个热闹，真正别扭的地方还藏在话缝里。";
+  if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
+  if (issue.percent >= 75) return "开场那套说法已经站不稳了，还差一两句没问穿。";
+  if (issue.percent >= 50) return "有几处不对劲已经露出来了，后半截还压着。";
+  if (issue.percent > 0) return "你抓到了一处别扭，麦里还有话没出来。";
+  return "这轮还停在表层，真正别扭的地方没露头。";
 }
 
 function issueResultLine(issue, result = {}) {
-  if (issue.badge) return "这通基本聊开了，剩下就看弹幕站哪边。";
-  if (issue.percent >= 75) return "这口瓜已经咂出味了，弹幕还会抓着边角继续吵。";
-  if (issue.percent >= 50) return "这通连线听出了几处别扭，适合发给朋友一起吵。";
-  if (issue.percent > 0) return "你闻到一点味道，但麦里还有话没出来。";
-  return "今天像是听了个开头，瓜还卡在话缝里。";
+  if (issue.badge) return "这边可以挂麦，剩下的交给弹幕吵。";
+  if (issue.percent >= 75) return "主要几句已经翻出来了，边角还会被继续追。";
+  if (issue.percent >= 50) return "这段有几处别扭浮上来了，适合发给朋友一起吵。";
+  if (issue.percent > 0) return "你听出了一处不对，麦里还有话没出来。";
+  return "像是只听了个开头，后面的东西还压着。";
 }
 
 function recapRankLabel(issue) {
-  if (issue.badge) return "聊开";
-  if (issue.percent >= 75) return "差一口";
-  if (issue.percent >= 50) return "半口瓜";
-  if (issue.percent > 0) return "闻到味";
-  return "听个热闹";
+  if (issue.badge) return "能挂麦";
+  if (issue.percent >= 75) return "差一句";
+  if (issue.percent >= 50) return "问到一半";
+  if (issue.percent > 0) return "抓到一处";
+  return "刚开口";
 }
 
 function relationshipExpectedForResult(brief) {
@@ -1291,10 +1291,10 @@ function relationshipExpectedForResult(brief) {
 function dailyAccusationReadiness(brief) {
   const required = keyQuestionLimit(brief);
   const sceneCount = (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
-  if (sceneCount < required) return { ready: false, message: "这通还没走到收麦点，先把当前这段问完。" };
+  if (sceneCount < required) return { ready: false, message: "麦还没到能挂的时候，先把当前这段问完。" };
   const evidenceRequired = evidenceChecksFor(brief).length;
   const evidenceCount = evidenceAnsweredCount(brief);
-  if (evidenceCount < evidenceRequired) return { ready: false, message: "材料还没看完，先把缺的那一块指出来。" };
+  if (evidenceCount < evidenceRequired) return { ready: false, message: "材料还摆在台面上，先把少的那块圈出来。" };
   return { ready: true, message: "" };
 }
 
@@ -1339,8 +1339,8 @@ function dailyRouteProfile(brief, result = {}) {
   const quoteHit = Boolean(result.quoteHit);
   const axisProfile = routeAxisProfile(brief, result);
   const routeLabel = percent >= 100 && quoteHit
-    ? "收麦稳准型"
-    : percent >= 100 ? "一路问到底型" : percent >= 75 ? "瓜心摸到型" : percent >= 50 ? "半口瓜型" : "热闹开场型";
+    ? "收得住"
+    : percent >= 100 ? "问到底" : percent >= 75 ? "差一句" : percent >= 50 ? "问到一半" : "刚开口";
   const playerType = dailyPlayerType({ percent, quoteHit, accused: result.accused, axis: axisProfile.axis });
   const picked = result.dailyAccuseLabel ? `你最后接住了${result.dailyAccuseLabel}。` : "";
   const firstReveal = result.issueRevealed?.[0] ? `你先接住的是：${result.issueRevealed[0]}。` : "";
@@ -1363,15 +1363,15 @@ function dailyRouteProfile(brief, result = {}) {
 }
 
 function dailyPlayerType({ percent, quoteHit, accused, axis }) {
-  if (percent >= 100 && quoteHit) return "瓜心狙击手";
+  if (percent >= 100 && quoteHit) return "收麦很准";
   if (percent >= 75 && axis === "caller-credibility") return "反向追问主播";
   if (percent >= 75 && axis === "document-edge") return "截图拆边主播";
   if (percent >= 75 && axis === "money-flow") return "钱流雷达主播";
-  if (percent >= 100) return "会听但爱绕路";
-  if (percent >= 75) return "差一口主播";
+  if (percent >= 100) return "会听但爱绕";
+  if (percent >= 75) return "差一句主播";
   if (percent >= 50 && accused === "both") return "灰区雷达";
-  if (percent >= 50) return "半口瓜侦探";
-  if (percent > 0) return "闻味型观众";
+  if (percent >= 50) return "听到一半";
+  if (percent > 0) return "抓到一处";
   return "弹幕带跑型";
 }
 
@@ -1392,15 +1392,15 @@ function finalQuoteComparison(brief, result = {}) {
 }
 
 function finalQuoteComparisonHtml(comparison) {
-  const pickedCaption = comparison.sameQuote ? "这句能收住" : "你接的那句";
+  const pickedCaption = comparison.sameQuote ? "就接这句" : "你接的那句";
   if (comparison.sameQuote) {
     return `
       <div class="quote-compare-card quote-compare-card-single">
-        <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}<em>接到这里，这通就能收麦了。</em></p>
+        <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}<em>这句够了。</em></p>
       </div>
     `;
   }
-  const bestCaption = "也可以这样收";
+  const bestCaption = "换个口子";
   return `
     <div class="quote-compare-card">
       <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}</p>
@@ -1551,7 +1551,7 @@ function outerAngleReaction(option = {}) {
   if (/本科|项目|学制|校名/.test(option.answer ?? "")) return "直播间开始扒标签：图能说明一截，但没说明完整那截。";
   if (/花销|余额|每个月|团购|停车费/.test(option.answer ?? "")) return "弹幕顺着钱吵起来：一笔小钱不定性，但长期别扭会把问题推回流水。";
   if (/工资|流水|小家|不舒服/.test(option.answer ?? "")) return "麦里安静了一下：拒绝流水未必心虚，但这句已经碰到婚后钱怎么管。";
-  if (/审批|财务|付款|收款|返款|垫款/.test(option.answer ?? "")) return "弹幕开始对截图：流程慢是一种可能，截图少一页就是另一种味道。";
+  if (/审批|财务|付款|收款|返款|垫款/.test(option.answer ?? "")) return "弹幕开始对截图：可能是流程慢，也可能是最要紧那页没发。";
   if (routeToneForChoice(option) === "softening") return "弹幕有人替 TA 补了一句，麦温往下掉了一格。";
   if (routeToneForChoice(option) === "caller-skeptical") return "这句绕回了来电人自己，弹幕短暂安静了一下。";
   return "直播间接住了这个角度，但人声开始有点散。";
@@ -1671,7 +1671,7 @@ function dailyConclusion(brief, result, issue) {
       summary: brief.stageJudgement ?? "这一轮几个别扭点都问到了。",
       deepQuestion: deep?.question ?? "",
       followup: brief.followupTwist ?? "后续回拨里，咨询者愿意把刚才没说出口的部分补上。",
-      truth: brief.truth ?? "这通别急着站一边，先把双方没说全的地方补齐。"
+      truth: brief.truth ?? "别急着站一边，先把双方没说全的地方补齐。"
     };
   }
 
@@ -1751,22 +1751,22 @@ function storyCommentWall(briefs, results, best, avgPercent, theme) {
   const comments = [
     `「${theme.commentPrompt}」`,
     avgPercent < 40
-      ? "「这主播这一集更像在听现场热闹，几通麦都有话没完全翻出来。」"
-      : `「这主播这一集明显偏${best.label}，不是爱站队，是看哪句话能落到责任上。」`
+      ? "「主播今晚接得有点松，几路麦都有话没翻完。」"
+      : `「主播今晚老往${best.label}上拽，不是站队，是看谁最后接了成本。」`
   ];
   if (strongest?.brief && strongestPercent > 0) {
-    comments.push(`「${strongest.brief.label}那案问得最稳，${strongest.route.label}一出来，前面的体面话就不能按原样听了。」`);
+    comments.push(`「${strongest.brief.label}那路问得最稳，${strongest.route.label}一出来，前面那些好听话就变味了。」`);
   } else {
-    comments.push("「这几通还停在表层，材料、钱和责任几条线都还没完全露出来。」");
+    comments.push("「今晚还停在表层，材料、钱和责任几条线都没完全露出来。」");
   }
   if (avgPercent < 40) {
-    comments.push("「这不是站队问题，是今晚几通麦都留了半句话。」");
+    comments.push("「这不是站队，今晚几路麦都留了半句话。」");
   } else if (weakest?.brief && Number(weakest.result.issuePercent ?? 0) < 100) {
     comments.push(`「${weakest.brief.label}还差一点，没问到的那半句才是评论区会继续吵的地方。」`);
   } else if (avgPercent >= 90) {
-    comments.push("「这几通都问到骨头上了，这种复盘才像现实版逆转裁判，不靠吼，靠把话问实。」");
+    comments.push("「这几路都问到硬处了，不靠吼，靠把原话顶回去。」");
   } else {
-    comments.push("「好看的点是它没有硬判好坏，谁修剪事实、谁转嫁成本，都得一条条摊开。」");
+    comments.push("「好看在它没急着判好坏，谁少说了话、谁转了成本，都得一条条摊开。」");
   }
   return comments.slice(0, 4);
 }
@@ -1775,7 +1775,7 @@ function storyPlayerType(avgPercent, best) {
   if (avgPercent >= 90 && best.axis === "caller-credibility") return "反向追问型主播";
   if (avgPercent >= 90) return "收麦很稳的主播";
   if (avgPercent < 40) return "外围听感主播";
-  if (avgPercent < 65) return "现场嗅觉型主播";
+  if (avgPercent < 65) return "现场反应型主播";
   if (best.axis === "money-flow") return "钱流雷达主播";
   if (best.axis === "document-edge") return "截图拆边主播";
   if (best.axis === "process-control") return "入口控制型主播";
@@ -1783,11 +1783,11 @@ function storyPlayerType(avgPercent, best) {
 }
 
 function storyShareTitle(avgPercent, best) {
-  if (avgPercent >= 90) return "这一晚几通来电，基本都被我问到瓜心了。";
-  if (avgPercent < 40) return "这一晚几通来电，我还停在表层热闹里。";
-  if (avgPercent < 65) return "这集闻到了一点味儿，但几句最要紧的话还没问出来。";
+  if (avgPercent >= 90) return "今晚几路麦，基本都被我问到硬处了。";
+  if (avgPercent < 40) return "今晚几路麦，我还停在表层热闹里。";
+  if (avgPercent < 65) return "这集问出几处别扭，但最要紧的话还没出来。";
   if (best.axis === "caller-credibility") return "我这一集最常回头问来电人：你自己还有哪句没说？";
-  return `我这一集最常走${best.label}，几通听下来味道不一样。`;
+  return `我这一集最常盯${best.label}，几路麦越听越不一样。`;
 }
 
 function storyPackAftertaste(avgPercent) {

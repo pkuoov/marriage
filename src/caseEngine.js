@@ -1,5 +1,5 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.33";
-import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.33";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.34";
+import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.34";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -142,7 +142,7 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
     modeLabel: "今日来电",
     storyArcTitle: `今日来电：${plot.label}`,
     storyArcSummary: "一通匿名来电，几次接话分岔，今晚就能聊完。",
-    storySuspense: "今晚这通来电，第一轮说法里漏了半拍。",
+    storySuspense: "今晚这路麦，第一轮说法里漏了半拍。",
     storyClueObject: "今日通话摘录",
     storyClue: "今日短案只记录关键原话和时间点，判断留给主播。",
     hiddenFacts: [],
@@ -318,7 +318,7 @@ function dailyLostJobCreditTemplate(brief, names) {
     label: "8 万信用卡周转",
     storyArcTitle: "今日来电：8 万信用卡周转",
     publicHook: "TA 一直维持体面恋爱消费，突然让你先垫 8 万信用卡。是困难，还是化债？",
-    storyArcSummary: "先把账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
+    storyArcSummary: "账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
     storySuspense: "这案一不小心就吵成“你嫌我穷”。账单日期比委屈更诚实。",
     storyClueObject: "信用卡账单与社保断缴截图",
     openingComplaint: `${name}连线说：“TA 说信用卡只是短期周转，让我先帮一下。我不是不帮，是后来发现这个洞可能早就有了。”`,
@@ -447,7 +447,7 @@ function dailyHouseBoundaryTemplate(brief, names) {
     label: "婚前房与共同还贷",
     storyArcTitle: "今日来电：婚前房与共同还贷",
     publicHook: "婚前房写在 TA 父母名下，却要你婚后一起还贷。你提份额协议，TA 说你太算计。",
-    storyArcSummary: "这通别先吵加名，先问房本、还贷、分开以后钱怎么认。",
+    storyArcSummary: "别先吵加名，先问房本、还贷、分开以后钱怎么认。",
     storySuspense: "“你不信任我”这句话很好用，但它不能替共同还贷签字。",
     storyClueObject: "购房合同、父母转账与协议草稿",
     openingComplaint: `${name}连线说：“TA 家婚前买房写父母名下，说婚后我们一起还贷。我提能不能写清份额和退出机制，TA 说我还没结婚就想着离。”`,
@@ -576,7 +576,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
     label: "理发店排班表",
     storyArcTitle: "今日来电：理发店排班表",
     publicHook: "她以为自己快要确定关系，直到对方发错一张店里预约表，备注不像剪头，倒像在给人分类。",
-    storyArcSummary: "这通看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
+    storyArcSummary: "看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
     storySuspense: "他会聊天不稀奇，稀奇的是每句亲近后面都接了店里的事。",
     storyClueObject: "理发店排班表与办卡记录",
     openingComplaint: `${name}连线说：“我以为快确定关系了。后来他发错了一张预约表，我才发现那张表好像不是在排剪头。”`,
@@ -660,7 +660,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         options: [
           { label: "备注和下一次推进", correct: true, contradiction: "TA 把不同对象按可推进资源分层管理。", feedback: "这不是剪头需求，是把人按能带来什么往下排。", routeAxis: "process-control" },
           { label: "预约时间", correct: false, feedback: "预约时间本身正常，真正不对的是备注里的功能标签。", routeAxis: "document-edge" },
-          { label: "店员名字", correct: false, feedback: "名字不够关键，后面那些“稳情绪”“能投店”才是这张表的味道。", routeAxis: "outer-thread" }
+          { label: "店员名字", correct: false, feedback: "名字不够要紧，后面那些“稳情绪”“能投店”才让这张表变了性质。", routeAxis: "outer-thread" }
         ]
       }
     ],
@@ -705,7 +705,7 @@ function dailyFakeProfileTemplate(brief, names) {
     label: "存款证明",
     storyArcTitle: "今日来电：存款证明",
     publicHook: "见父母前，他发来学校、工作、收入截图，还补了一张存款证明。图不一定假，但这顿饭还没吃，流水已经被问出来了。",
-    storyArcSummary: "这通会听到：材料怎么越要越细，男方哪句没说全，女方又哪句没跟家里说。",
+    storyArcSummary: "材料会越要越细，男方有话没说全，女方也有话没跟家里说。",
     storySuspense: "几张图都挺像真的，问题是它们刚好少了最容易吵起来的部分。",
     storyClueObject: "几张资料截图和一张存款证明",
     openingComplaint: "咨询者连线说：“我想问下我男朋友的事。我们是相亲认识的，最近聊到见父母，他发了学校、工作、收入截图，后面又补了一张存款证明。我越看越觉得，这事不是一张图的问题。”",
@@ -827,7 +827,7 @@ function dailyFakeProfileTemplate(brief, names) {
         routeAxis: "external-corroboration",
         options: [
           { label: "后面主要看收入流水", correct: true, contradiction: "学历追问只是入口，家里真正盯的是收入流水和婚后工资管理。", feedback: "这页把女方家没说出口的筛选目的补出来了。", routeAxis: "external-corroboration" },
-          { label: "学历先这样说", correct: false, feedback: "这句有味道，但它只是过门，后面那句才接到真实诉求。", routeAxis: "identity-wording" },
+          { label: "学历先这样说", correct: false, feedback: "这句有用，但它只是过门，后面那句才接到真实诉求。", routeAxis: "identity-wording" },
           { label: "工资最好放一起管", correct: false, feedback: "这句很刺耳，但单圈它会跳过前面为什么一路追流水。", routeAxis: "money-flow" }
         ]
       }
@@ -855,7 +855,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
     label: "职场报销截图",
     storyArcTitle: "今日来电：职场报销截图",
     publicHook: "同事说报销已经批了，却一直不把垫付款转回。那张截图看着没问题，偏偏少了付款那一截。",
-    storyArcSummary: "这通先问三件事：谁让垫、谁拿署名、截图到底停在哪一步。",
+    storyArcSummary: "先问三件事：谁让垫、谁拿署名、截图到底停在哪一步。",
     storySuspense: "这案很容易骂成同事骗钱。审批通过和钱到账不是一回事。",
     storyClueObject: "报销审批截图、活动群聊和供应商报价单",
     openingComplaint: "咨询者连线说：“我想问公司同事欠我一笔垫付款。他发了报销审批截图，说财务已经批了，可钱一直没转给我。我越看越觉得那张图少了一块。”",

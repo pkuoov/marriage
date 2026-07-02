@@ -24,12 +24,12 @@ export function routeAxisProfileFromChoices(choices = []) {
   const skeptical = choices.filter((item) => item.tone === "caller-skeptical").length;
   const softening = choices.filter((item) => item.tone === "softening").length;
   const label = routeAxisLabel(axis);
-  let summary = "你一路按现场听感往前接，路线还没有明显偏向。";
+  let summary = "你一路按现场反应往前接，还看不出固定习惯。";
   if (choices.length) {
     if (skeptical > softening && skeptical >= 2) summary = "你不急着相信来电人的版本，会先追她自己没说全的利益和压力。";
-    else if (softening > skeptical && softening >= 2) summary = "你会先替双方留下余地，等材料和后续话头自己露出缺口。";
-    else if (coreHits === choices.length) summary = "你每段都接得很紧，这通后面就没那么容易散掉。";
-    else summary = `你主要沿着${label}推进，中间也绕去听了几句外围解释。`;
+    else if (softening > skeptical && softening >= 2) summary = "你会先给双方留余地，再等材料和后面的话补上。";
+    else if (coreHits === choices.length) summary = "你每段都咬住了，后面的话就没那么容易散。";
+    else summary = `你主要盯着${label}问，中间也听了几句外围解释。`;
   }
   return { axis, label, count, summary, coreHits, total: choices.length };
 }

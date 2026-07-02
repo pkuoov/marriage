@@ -1,4 +1,4 @@
-import { generateDailyCaseSequence, generateStoryPackSequence } from "./caseEngine.js?v=0.20.33";
+import { generateDailyCaseSequence, generateStoryPackSequence } from "./caseEngine.js?v=0.20.34";
 
 export const CASE_MODE_IDS = ["episode", "daily"];
 
@@ -8,8 +8,8 @@ export const CASE_MODE_CONFIG = {
     label: "试玩版",
     title: "Steam 试玩版",
     expectedCases: 4,
-    intro: "热线已经接进来。资料在后台，先听这通。",
-    summary: "每通来电都会留下你的追问痕迹，收麦后再回看整晚的倾向。",
+    intro: "热线已经接进来。资料在后台，她已经开口了。",
+    summary: "每路麦都会留下你的追问痕迹，收麦后再看整晚怎么走偏、怎么拉回。",
     generator: generateStoryPackSequence
   },
   daily: {
