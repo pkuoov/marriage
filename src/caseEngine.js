@@ -1,7 +1,7 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.59";
-import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.59";
-import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.59";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.59";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.60";
+import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.60";
+import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.60";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.60";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {

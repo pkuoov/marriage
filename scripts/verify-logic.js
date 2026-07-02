@@ -1,21 +1,21 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.59";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.59";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.59";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.59";
-import { migrateState } from "../src/state.js?v=0.20.59";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.59";
-import { NPCS } from "../src/story.js?v=0.20.59";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.59";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.59";
-import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.59";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.59";
-import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.59";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyMaterialProfile, storyQuoteProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.59";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.59";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.59";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.59";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.59";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.59";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.60";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.60";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.60";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.60";
+import { migrateState } from "../src/state.js?v=0.20.60";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.60";
+import { NPCS } from "../src/story.js?v=0.20.60";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.60";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.60";
+import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.60";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.60";
+import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.60";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.60";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.60";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.60";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.60";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.60";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.60";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -181,6 +181,27 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   const quoteProfile = storyQuoteProfile([{ quoteHit: true, dailyAccuseLabel: "原话 A" }, { quoteHit: false, dailyAccuseLabel: "原话 B" }]);
   assertEqual(quoteProfile.label, "接住几句", "故事集终局必须汇总最终原话选择");
   assertIncludes(quoteProfile.comment, "收得准", "原话汇总必须进入评论区余味");
+  const theme = storyThemeProfile([{ storyThemeTitle: "今晚四通麦", storyThemeThesis: "别替人补完。", storyThemeCommentPrompt: "弹幕还在吵。" }]);
+  const axes = storyPackAxes([{ axis: "money-flow" }, { axis: "money-flow" }, { axis: "document-edge" }]);
+  const bestAxis = storyPackBestAxis(65, axes);
+  assertEqual(theme.title, "今晚四通麦", "故事集主题必须由纯模型读取，不能散在 app 渲染里");
+  assertEqual(bestAxis.axis, "money-flow", "故事集主路线必须由纯模型统计");
+  assertEqual(storyPackBestAxis(20, axes).label, "外围听感线", "低揭示率路线画像必须降级成外围听感");
+  assertEqual(storyPlayerType(80, bestAxis), "钱流雷达主播", "故事集主播类型必须由纯模型生成");
+  assertIncludes(storyShareTitle(80, bestAxis), "钱流结构线", "故事集分享标题必须回收主路线");
+  assertIncludes(storyPackAftertaste(55), "浮上", "故事集余味必须由纯模型生成");
+  const wall = storyCommentWall({
+    briefs: [{ label: "第一通" }, { label: "第二通" }],
+    results: [{ issuePercent: 80 }, { issuePercent: 30 }],
+    routes: [{ label: "钱流结构线" }, { label: "材料缺口线" }],
+    best: bestAxis,
+    avgPercent: 55,
+    theme,
+    materialProfile,
+    quoteProfile
+  });
+  assertEqual(wall.length, 4, "故事集评论墙必须稳定输出 4 条以内");
+  assertIncludes(wall.join(""), "收得准", "故事集评论墙必须能回收原话选择余味");
 });
 
 test("MATERIAL-002", "material inspection renders as an in-document markable board", () => {
@@ -250,6 +271,7 @@ test("INVESTIGATION-001", "host investigation backflow is fixed material, not fr
 test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
+  const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -279,6 +301,9 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!appSource.includes("function outerAngleReaction"), "旧的 UI 本地压力反应函数必须删除，避免两套规则并存");
   assertIncludes(appSource, "casePressureRecap", "单案结算必须回收现场压力画像");
   assertIncludes(appSource, "storyPressureProfile", "故事集终局必须汇总现场压力画像");
+  assert(!appSource.includes("function storyCommentWall"), "故事集评论墙模型不能继续留在 app.js god file");
+  assertIncludes(recapModelSource, "export function storyCommentWall", "故事集评论墙模型必须留在 recapModel 纯函数里");
+  assertIncludes(appSource, "storyPackBestAxis", "故事集终局 UI 必须调用纯模型生成主路线");
   assertIncludes(appSource, "pressure-recap-card", "收麦回看必须显示现场压力余味");
   assertIncludes(appSource, "storyPackMaterialProfile", "故事集终局必须回收材料圈点结果");
   assertIncludes(appSource, "storyQuoteProfile", "故事集终局必须回收最终原话选择");
@@ -289,7 +314,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "picks[prompt.id] === prompt.expected", "事实边界归位必须放对才能继续，不能只点过就放行");
   assertIncludes(appSource, "truthBoundaryMisses", "事实边界归位放早过必须影响收话余味，不能只看最终放对");
   assertIncludes(appSource, "storyBoundaryProfile", "故事集终局必须汇总四案事实边界，而不是只看路线轴");
-  assertIncludes(appSource, "comments[3] = boundaryProfile.comment", "评论区审判墙必须保留事实边界评论");
+  assertIncludes(recapModelSource, "replaceOrAppendComment(comments, boundaryProfile.comment, 3)", "评论区审判墙必须保留事实边界评论");
   assert(!questionHtml.includes("choice-question-${kind}"), "追问按钮不能按内部问法类型暴露不同视觉样式");
   const oldKickerClass = `${"choice"}-${"kicker"}`;
   assert(!appSource.includes(oldKickerClass), "追问按钮不能再显示解释型小标签");

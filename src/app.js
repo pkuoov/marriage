@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.59";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.59";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.59";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.59";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.59";
-import { NPCS } from "./story.js?v=0.20.59";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.59";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.59";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyMaterialProfile, storyQuoteProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.59";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.59";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.59";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.59";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.59";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.59";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.60";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.60";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.60";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.60";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.60";
+import { NPCS } from "./story.js?v=0.20.60";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.60";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.60";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.60";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.60";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.60";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.60";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.60";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.60";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -708,15 +708,25 @@ function renderStoryPackComplete() {
   const results = briefs.map((brief) => normalizedDailyResult(brief));
   const solved = results.filter((result) => result.accused).length;
   const avgPercent = Math.round(results.reduce((sum, result) => sum + Number(result.issuePercent ?? 0), 0) / Math.max(1, briefs.length));
-  const axes = summarizeStoryPackAxes(briefs, results);
-  const best = axes[0] ?? { label: "现场听感线", count: 0 };
-  const displayBest = avgPercent < 40 ? { axis: "live-instinct", count: best.count, label: "外围听感线" } : best;
-  const theme = storyThemeForBriefs(briefs);
+  const routeProfiles = briefs.map((brief, index) => routeAxisProfile(brief, results[index] ?? {}));
+  const displayBest = storyPackBestAxis(avgPercent, storyPackAxes(routeProfiles));
+  const theme = storyThemeProfile(briefs);
   const boundaryProfile = storyBoundaryProfile(briefs);
   const pressureProfile = storyPressureProfile(briefs);
   const materialProfile = storyPackMaterialProfile(briefs);
   const quoteProfile = storyQuoteProfile(results);
-  const comments = storyCommentWall(briefs, results, displayBest, avgPercent, theme, boundaryProfile, pressureProfile, materialProfile, quoteProfile);
+  const comments = storyCommentWall({
+    briefs,
+    results,
+    routes: routeProfiles,
+    best: displayBest,
+    avgPercent,
+    theme,
+    boundaryProfile,
+    pressureProfile,
+    materialProfile,
+    quoteProfile
+  });
   frame({
     brief: briefs[Math.max(0, Number(state.chapter ?? 1) - 1)] ?? briefs[0],
     mood: "focused",
@@ -766,7 +776,7 @@ function renderStoryPackComplete() {
         <div class="weekly-result-list">
           ${briefs.map((item, index) => {
             const result = results[index] ?? {};
-            const route = routeAxisProfile(item, result);
+            const route = routeProfiles[index] ?? routeAxisProfile(item, result);
             return `<p><span>${index + 1}. ${escapeHtml(item.label)}</span><b>${escapeHtml(route.label)}</b><small>${escapeHtml(result.dailyAccuseLabel ?? "未收麦")}</small></p>`;
           }).join("")}
         </div>
@@ -1740,26 +1750,6 @@ function casePressureRecap(brief) {
   });
 }
 
-function summarizeStoryPackAxes(briefs, results) {
-  const counts = {};
-  briefs.forEach((brief, index) => {
-    const axis = routeAxisProfile(brief, results[index] ?? {}).axis;
-    counts[axis] = Number(counts[axis] ?? 0) + 1;
-  });
-  return Object.entries(counts)
-    .map(([axis, count]) => ({ axis, count, label: routeAxisLabel(axis) }))
-    .sort((a, b) => b.count - a.count);
-}
-
-function storyThemeForBriefs(briefs = []) {
-  const first = briefs.find(Boolean) ?? {};
-  return {
-    title: first.storyThemeTitle ?? first.weeklyThemeTitle ?? "今晚收麦",
-    thesis: first.storyThemeThesis ?? first.weeklyThemeThesis ?? "几通来电听完，别只听谁声音大，要看最后谁被叫去买单。",
-    commentPrompt: first.storyThemeCommentPrompt ?? first.weeklyThemeCommentPrompt ?? "评论区吵到后半夜，吵的都是每个人没说完的半句。"
-  };
-}
-
 function storyBoundaryProfile(briefs = []) {
   return truthBoundaryPackProfile(briefs.map((brief) => ({
     label: brief.label,
@@ -1788,95 +1778,6 @@ function storyPackMaterialProfile(briefs = []) {
       ...selectedInvestigationPicksFor(brief)
     ]
   })));
-}
-
-function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProfile = {}, pressureProfile = {}, materialProfile = {}, quoteProfile = {}) {
-  const rows = briefs.map((brief, index) => {
-    const result = results[index] ?? {};
-    const route = routeAxisProfile(brief, result);
-    return { brief, result, route };
-  });
-  const strongest = [...rows].sort((a, b) => Number(b.result.issuePercent ?? 0) - Number(a.result.issuePercent ?? 0))[0];
-  const weakest = [...rows].sort((a, b) => Number(a.result.issuePercent ?? 0) - Number(b.result.issuePercent ?? 0))[0];
-  const strongestPercent = Number(strongest?.result.issuePercent ?? 0);
-  const comments = [
-    `「${theme.commentPrompt}」`,
-    avgPercent < 40
-      ? "「主播今晚接得有点松，几路麦都有话没翻完。」"
-      : `「主播今晚老往${best.label}上拽，不是站队，是看谁最后接了成本。」`
-  ];
-  if (strongest?.brief && strongestPercent > 0) {
-    comments.push(`「${strongest.brief.label}那路问得最稳，${strongest.route.label}一出来，前面那些好听话就变味了。」`);
-  } else {
-    comments.push("「今晚还停在表层，材料、钱和责任几条线都没完全露出来。」");
-  }
-  if (avgPercent < 40) {
-    comments.push("「这不是站队，今晚几路麦都留了半句话。」");
-  } else if (weakest?.brief && Number(weakest.result.issuePercent ?? 0) < 100) {
-    comments.push(`「${weakest.brief.label}还差一点，没问到的那半句才是评论区会继续吵的地方。」`);
-  } else if (avgPercent >= 90) {
-    comments.push(boundaryProfile.comment || "「这几路都问到硬处了，不靠吼，靠把原话顶回去。」");
-  } else {
-    comments.push(boundaryProfile.comment || "「好看在它没急着判好坏，谁少说了话、谁转了成本，都得一条条摊开。」");
-  }
-  if (boundaryProfile.comment && !comments.includes(boundaryProfile.comment)) {
-    if (comments.length >= 4) {
-      comments[3] = boundaryProfile.comment;
-    } else {
-      comments.push(boundaryProfile.comment);
-    }
-  }
-  if (pressureProfile.comment && !comments.includes(pressureProfile.comment)) {
-    if (comments.length >= 4) {
-      comments[2] = pressureProfile.comment;
-    } else {
-      comments.push(pressureProfile.comment);
-    }
-  }
-  const extraComments = [materialProfile.comment, quoteProfile.comment].filter(Boolean);
-  extraComments.forEach((comment, index) => {
-    if (comments.includes(comment)) return;
-    if (comments.length >= 4) {
-      comments[Math.min(3, index + 2)] = comment;
-    } else {
-      comments.push(comment);
-    }
-  });
-  return comments.slice(0, 4);
-}
-
-function storyPlayerType(avgPercent, best) {
-  if (avgPercent >= 90 && best.axis === "caller-credibility") return "反向追问型主播";
-  if (avgPercent >= 90) return "收麦很稳的主播";
-  if (avgPercent < 40) return "外围听感主播";
-  if (avgPercent < 65) return "现场反应型主播";
-  if (best.axis === "money-flow") return "钱流雷达主播";
-  if (best.axis === "document-edge") return "截图拆边主播";
-  if (best.axis === "process-control") return "入口控制型主播";
-  return "稳扎稳打型主播";
-}
-
-function storyShareTitle(avgPercent, best) {
-  if (avgPercent >= 90) return "今晚几路麦，基本都被我问到硬处了。";
-  if (avgPercent < 40) return "今晚几路麦，我还停在表层热闹里。";
-  if (avgPercent < 65) return "这集问出几处别扭，但最要紧的话还没出来。";
-  if (best.axis === "caller-credibility") return "我这一集最常回头问来电人：你自己还有哪句没说？";
-  return `我这一集最常盯${best.label}，几路麦越听越不一样。`;
-}
-
-function storyPackAftertaste(avgPercent) {
-  if (avgPercent >= 90) return "四通麦都压到了后半句。";
-  if (avgPercent < 40) return "今晚更多是在听热闹。";
-  if (avgPercent < 65) return "有几句话浮上来了。";
-  return "几条线都露了头。";
-}
-
-function storyPackClosingLine(avgPercent, best = {}) {
-  if (avgPercent >= 90) return "这晚问得紧，四通里那些省掉的钱、边界和责任都露了面。";
-  if (avgPercent < 40) return "这晚还有不少话没翻出来，适合重开一遍换条线追。";
-  if (best.axis === "document-edge") return "你这一晚总爱回头看图，看截图里少了哪一页、哪一边。";
-  if (best.axis === "money-flow") return "你这一晚总盯钱最后落到谁身上。";
-  return "这晚有几处接住了，也有几句还卡在原话里。";
 }
 
 function caseProgressStrip(brief) {
