@@ -1,5 +1,5 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.58";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.58";
+import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.59";
+import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.59";
 
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
@@ -145,6 +145,41 @@ export function truthBoundaryPackProfile(rows = []) {
   };
 }
 
+export function storyMaterialProfile(rows = []) {
+  const items = rows.map((row) => ({
+    label: row.label ?? "",
+    picks: Array.isArray(row.picks) ? row.picks.filter(Boolean) : []
+  }));
+  const picks = items.flatMap((item) => item.picks.map((pick) => ({ ...pick, caseLabel: item.label })));
+  const total = picks.length;
+  const hits = picks.filter((pick) => pick.correct).length;
+  const misses = picks.filter((pick) => pick.correct === false).length;
+  const firstMiss = picks.find((pick) => pick.correct === false);
+  return {
+    total,
+    hits,
+    misses,
+    label: materialPackLabel({ total, hits, misses }),
+    line: materialPackLine({ total, hits, misses, firstMiss }),
+    comment: materialPackComment({ total, hits, misses })
+  };
+}
+
+export function storyQuoteProfile(results = []) {
+  const items = (Array.isArray(results) ? results : []).filter(Boolean);
+  const total = items.length;
+  const hits = items.filter((item) => item.quoteHit).length;
+  const picked = items.filter((item) => item.dailyAccuseLabel && item.dailyAccuseLabel !== "还没选最后那句").length;
+  return {
+    total,
+    hits,
+    picked,
+    label: quotePackLabel({ total, hits, picked }),
+    line: quotePackLine({ total, hits, picked }),
+    comment: quotePackComment({ total, hits, picked })
+  };
+}
+
 export function investigationBackflowProfile(picks = []) {
   const items = (Array.isArray(picks) ? picks : []).filter(Boolean);
   const total = items.length;
@@ -167,6 +202,50 @@ export function investigationPickReaction(outcome = {}, hook = {}) {
   }
   if (/截图|图|表|账/.test(outcome.pick?.label ?? "")) return "弹幕被这块带跑，麦温往下掉了一格。";
   return "这一下没咬住，评论区开始翻另一边。";
+}
+
+function materialPackLabel({ total, hits, misses }) {
+  if (!total) return "没看材料";
+  if (hits > 0 && misses === 0) return "圈得准";
+  if (hits >= misses && hits > 0) return "圈回来了";
+  if (misses > 0) return "圈偏过";
+  return "材料没落地";
+}
+
+function materialPackLine({ total, hits, misses, firstMiss }) {
+  if (!total) return "今晚没有留下能被圈住的材料动作。";
+  if (hits > 0 && misses === 0) return `${hits} 处材料都圈在要害上，几通麦没有只靠听感往前冲。`;
+  if (hits >= misses && hits > 0) return `${hits} 处圈住了，${misses} 处跑偏过，材料最后还是把话拉回台面。`;
+  if (misses > 0) return `${firstMiss?.caseLabel || "有一通"}那块材料圈偏过，弹幕会抓着这一下继续吵。`;
+  return "材料看过了，但还没真正咬住本案缺口。";
+}
+
+function materialPackComment({ total, hits, misses }) {
+  if (!total) return "「今晚像是只听电话，后台材料没真用起来。」";
+  if (hits > 0 && misses === 0) return "「材料圈得准，比空口判断有劲。」";
+  if (hits >= misses && hits > 0) return "「有几下圈偏了，但后面还是靠材料拉回来了。」";
+  return "「材料没完全咬住，重开我会先看图少了哪一块。」";
+}
+
+function quotePackLabel({ total, hits, picked }) {
+  if (!picked) return "没收住";
+  if (hits === total && total > 0) return "原话收住";
+  if (hits > 0) return "接住几句";
+  return "口子偏了";
+}
+
+function quotePackLine({ total, hits, picked }) {
+  if (!picked) return "今晚还没留下能被观众记住的收麦原话。";
+  if (hits === total && total > 0) return "几通麦最后都接在原话上，收麦没有变成立场宣告。";
+  if (hits > 0) return `${hits} 句原话接准了，剩下几句更像换了个角度收尾。`;
+  return "原话都接了，但没有完全接到最能压住现场的那一句。";
+}
+
+function quotePackComment({ total, hits, picked }) {
+  if (!picked) return "「没选原话就挂麦，总觉得少了一口气。」";
+  if (hits === total && total > 0) return "「最后都接原话，这比直接讲道理好看。」";
+  if (hits > 0) return "「有几句收得准，有几句还能再换个口子。」";
+  return "「话都听到了，但最后接哪句还差点意思。」";
 }
 
 function backflowLabel({ total, hits, misses }) {

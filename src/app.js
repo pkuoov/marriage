@@ -1,17 +1,17 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.58";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.58";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.58";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.58";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.58";
-import { NPCS } from "./story.js?v=0.20.58";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.58";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.58";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.58";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.58";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.58";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.58";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.58";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.58";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.59";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.59";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.59";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.59";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.59";
+import { NPCS } from "./story.js?v=0.20.59";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.59";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.59";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyMaterialProfile, storyQuoteProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.59";
+import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.59";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.59";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.59";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.59";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.59";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -714,7 +714,9 @@ function renderStoryPackComplete() {
   const theme = storyThemeForBriefs(briefs);
   const boundaryProfile = storyBoundaryProfile(briefs);
   const pressureProfile = storyPressureProfile(briefs);
-  const comments = storyCommentWall(briefs, results, displayBest, avgPercent, theme, boundaryProfile, pressureProfile);
+  const materialProfile = storyPackMaterialProfile(briefs);
+  const quoteProfile = storyQuoteProfile(results);
+  const comments = storyCommentWall(briefs, results, displayBest, avgPercent, theme, boundaryProfile, pressureProfile, materialProfile, quoteProfile);
   frame({
     brief: briefs[Math.max(0, Number(state.chapter ?? 1) - 1)] ?? briefs[0],
     mood: "focused",
@@ -747,6 +749,20 @@ function renderStoryPackComplete() {
             <p>${escapeHtml(pressureProfile.line)}</p>
           </div>
         ` : ""}
+        ${materialProfile.total ? `
+          <div class="weekly-boundary-line">
+            <span>材料圈点</span>
+            <b>${escapeHtml(materialProfile.label)}</b>
+            <p>${escapeHtml(materialProfile.line)}</p>
+          </div>
+        ` : ""}
+        ${quoteProfile.total ? `
+          <div class="weekly-boundary-line">
+            <span>收麦原话</span>
+            <b>${escapeHtml(quoteProfile.label)}</b>
+            <p>${escapeHtml(quoteProfile.line)}</p>
+          </div>
+        ` : ""}
         <div class="weekly-result-list">
           ${briefs.map((item, index) => {
             const result = results[index] ?? {};
@@ -767,7 +783,7 @@ function renderStoryPackComplete() {
     `)
   });
   bind("[data-copy-weekly-result]", async () => {
-    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我今晚常看的线：${displayBest.label}\n现场压力：${pressureProfile.label}\n事实边界：${boundaryProfile.label}\n${storyPlayerType(avgPercent, displayBest)}`;
+    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我今晚常看的线：${displayBest.label}\n现场压力：${pressureProfile.label}\n材料圈点：${materialProfile.label}\n收麦原话：${quoteProfile.label}\n${storyPlayerType(avgPercent, displayBest)}`;
     try {
       await navigator.clipboard?.writeText(text);
       state.lastReaction = "收麦文案已复制。";
@@ -1548,6 +1564,12 @@ function selectedEvidencePick(brief, index) {
   return state.evidenceCheckPicks?.[evidenceAnswerKey(brief, index)] ?? null;
 }
 
+function selectedEvidencePicksFor(brief) {
+  return evidenceChecksFor(brief)
+    .map((_, index) => selectedEvidencePick(brief, index))
+    .filter(Boolean);
+}
+
 function selectedInvestigationPick(brief, index) {
   return state.investigationPicks?.[investigationAnswerKey(brief, index)] ?? null;
 }
@@ -1758,7 +1780,17 @@ function storyPressureProfile(briefs = []) {
   })));
 }
 
-function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProfile = {}, pressureProfile = {}) {
+function storyPackMaterialProfile(briefs = []) {
+  return storyMaterialProfile(briefs.map((brief) => ({
+    label: brief.label,
+    picks: [
+      ...selectedEvidencePicksFor(brief),
+      ...selectedInvestigationPicksFor(brief)
+    ]
+  })));
+}
+
+function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProfile = {}, pressureProfile = {}, materialProfile = {}, quoteProfile = {}) {
   const rows = briefs.map((brief, index) => {
     const result = results[index] ?? {};
     const route = routeAxisProfile(brief, result);
@@ -1801,6 +1833,15 @@ function storyCommentWall(briefs, results, best, avgPercent, theme, boundaryProf
       comments.push(pressureProfile.comment);
     }
   }
+  const extraComments = [materialProfile.comment, quoteProfile.comment].filter(Boolean);
+  extraComments.forEach((comment, index) => {
+    if (comments.includes(comment)) return;
+    if (comments.length >= 4) {
+      comments[Math.min(3, index + 2)] = comment;
+    } else {
+      comments.push(comment);
+    }
+  });
   return comments.slice(0, 4);
 }
 
