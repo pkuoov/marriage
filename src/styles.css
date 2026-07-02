@@ -504,31 +504,31 @@ button:active:not(:disabled) {
 .backdrop-credit {
   background:
     linear-gradient(180deg, rgba(24, 42, 54, .14), rgba(7, 11, 16, .56)),
-    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.51") center / cover;
+    url("../assets/generated/backgrounds/cafe_date.png?v=0.20.52") center / cover;
 }
 
 .backdrop-house {
   background:
     linear-gradient(180deg, rgba(38, 38, 25, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.51") center / cover;
+    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.52") center / cover;
 }
 
 .backdrop-profile {
   background:
     linear-gradient(180deg, rgba(39, 28, 34, .15), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.51") center / cover;
+    url("../assets/generated/backgrounds/family_banquet.png?v=0.20.52") center / cover;
 }
 
 .backdrop-work {
   background:
     linear-gradient(180deg, rgba(22, 38, 36, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/agency_office.png?v=0.20.51") center / cover;
+    url("../assets/generated/backgrounds/agency_office.png?v=0.20.52") center / cover;
 }
 
 .backdrop-tony {
   background:
     linear-gradient(180deg, rgba(32, 32, 42, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.51") center / cover;
+    url("../assets/generated/backgrounds/lounge_date.png?v=0.20.52") center / cover;
 }
 
 .scene-label {
@@ -1937,6 +1937,61 @@ button.evidence-target {
   line-height: 1.5;
 }
 
+.truth-boundary-challenge {
+  display: grid;
+  gap: 8px;
+}
+
+.truth-boundary-prompt {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(237, 241, 238, .10);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .032);
+}
+
+.truth-boundary-prompt.settled {
+  border-color: rgba(101, 214, 194, .28);
+  background: rgba(101, 214, 194, .065);
+}
+
+.truth-boundary-prompt.unsettled {
+  border-color: rgba(212, 180, 106, .24);
+}
+
+.truth-boundary-prompt p,
+.truth-boundary-prompt small {
+  margin: 0;
+}
+
+.truth-boundary-prompt small {
+  color: rgba(237, 241, 238, .62);
+  font-size: 12px;
+}
+
+.truth-boundary-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.truth-boundary-options button {
+  min-height: 36px;
+  padding: 8px;
+  border-color: rgba(237, 241, 238, .12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, .18);
+  color: rgba(237, 241, 238, .78);
+  font-size: 12px;
+}
+
+.truth-boundary-options button.selected {
+  border-color: rgba(139, 228, 212, .36);
+  color: var(--accent);
+  background: rgba(101, 214, 194, .09);
+}
+
 .share-card-head {
   display: flex;
   align-items: center;
@@ -2531,6 +2586,10 @@ button.evidence-target {
 
   .truth-boundary-column {
     padding: 10px;
+  }
+
+  .truth-boundary-options {
+    grid-template-columns: 1fr;
   }
 
   .call-line > p {

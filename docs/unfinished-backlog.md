@@ -27,7 +27,7 @@
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
-- 事实边界已进入收麦回看：每案 `truthBoundary` 会显示成“能确认 / 被修剪 / 今晚定不了”，不再只停留在内容包元数据里。
+- 事实边界已进入收麦回看：每案 `truthBoundary` 会显示成“能确认 / 被修剪 / 今晚定不了”，并要求玩家先把三句话归位再继续收话。
 - 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。
 - H5 构建和离线 playable 构建已隔离输出目录：`build:h5` 不再删除整个 `dist`，避免并行构建时踩掉 `dist/playable`。
 
@@ -65,7 +65,7 @@
 - 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 不能再做影子资产。试玩包四案已是运行时台词来源；未来新增 `metadata-only` 案件仍只能写策划压力包，`npm run verify:pack` 会阻止它们夹带运行时字段。
 - 第一层故事包 manifest 已经由 `content/packs/steam-demo-01/` 生成运行时索引，构建和校验会检查索引是否过期。
 - 第二层 loader 入口已经存在：如果某个 case JSON 标成 `runtime-loaded`，构建索引会校验完整字段并嵌入运行时，`caseEngine` 会用它覆盖模板字段。
-- 当前 demo 包四案完整台词、追问、材料判定和结算已迁入内容包；`truthBoundary` 也随运行时 brief 输出，并已接到收麦回看。
+- 当前 demo 包四案完整台词、追问、材料判定和结算已迁入内容包；`truthBoundary` 也随运行时 brief 输出，并已接到收麦回看的归位交互。
 - 新增或替换一个案子仍会碰到 `src/dailyChoices.js`、`content/packs/...`，以及 `src/app.js` 里的若干 `plotId` 文案分支。`src/caseEngine.js` 里的模板仍支撑 daily 轮换，后续要继续把日案和文案特判拆到数据层。
 - 长期目标是运行时代码只负责加载和校验。
 
@@ -187,7 +187,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 最强原话选择后，主播回应要短、准、像直播间接话。
 - 选择非最强原话时，不判死错，但要生成不同余味。
 - 结果页不能给“最佳答案教程”，只能做对照和余波。
-- 下一步把事实边界从静态回看升级为可交互分拣：玩家先把几句陈述放进“能确认 / 被修剪 / 今晚定不了”，再看主播收话。
+- 下一步让事实边界归位影响余味：放错边界时，弹幕和最终收话要表现出“太早下判”或“该钉住的没钉住”。
 
 验收：
 

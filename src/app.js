@@ -1,16 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.51";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.51";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.51";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.51";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.51";
-import { NPCS } from "./story.js?v=0.20.51";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.51";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.51";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.51";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.51";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.51";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.51";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.51";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.52";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.52";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.52";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.52";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.52";
+import { NPCS } from "./story.js?v=0.20.52";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.52";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.52";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.52";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.52";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.52";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.52";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.52";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -72,6 +72,7 @@ function normalizeDailyState(saved) {
     sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
     evidenceCheckPicks: saved?.evidenceCheckPicks ?? {},
     investigationPicks: saved?.investigationPicks ?? {},
+    truthBoundaryPicks: saved?.truthBoundaryPicks ?? {},
     routeChoiceLog: saved?.routeChoiceLog ?? {},
     caseActionLog: saved?.caseActionLog ?? {},
     caseBudgets: saved?.caseBudgets ?? {},
@@ -505,6 +506,7 @@ function renderSolved(brief) {
   const route = routeAxisProfile(brief, result);
   const quoteComparison = finalQuoteComparison(brief, result);
   const boundary = truthBoundaryReview(brief);
+  const boundaryPicks = truthBoundaryPicksFor(brief);
   const finalScene = isFinalStoryPackCase();
   const pages = [
     `
@@ -543,13 +545,15 @@ function renderSolved(brief) {
       <p><b>后续回拨</b></p>
       <p>${escapeHtml(conclusion.followup)}</p>
     `,
-    truthBoundaryReviewHtml(boundary),
+    truthBoundaryReviewHtml(boundary, boundaryPicks),
     `
       <p><b>连线收住</b></p>
       <p>${escapeHtml(conclusion.truth)}</p>
     `
   ];
   const index = Math.max(0, Math.min(step, pages.length - 1));
+  const isBoundaryPage = pages[index]?.includes("truth-boundary-card");
+  const canLeaveBoundary = !isBoundaryPage || truthBoundaryComplete(boundary, boundaryPicks);
   frame({
     brief,
     mood: "listening",
@@ -557,8 +561,25 @@ function renderSolved(brief) {
     chapter: liveChapterTitle(brief),
     text: `<div class="recap-page-kicker"><span>回看</span><b>${index + 1}/${pages.length}</b></div>${pages[index]}`,
     choices: index < pages.length - 1
-      ? flowGroup(`<button class="primary" data-recap-next type="button">继续回看</button><button data-retry-case type="button">从头再问</button>`)
+      ? flowGroup(`${canLeaveBoundary ? `<button class="primary" data-recap-next type="button">继续回看</button>` : `<button class="primary" disabled type="button">先把这几句放完</button>`}<button data-retry-case type="button">从头再问</button>`)
       : flowGroup(`<button class="primary" data-after-recap type="button">${isStoryPackMode() ? finalScene ? "查看整晚收麦" : "接下一路麦" : "查看今日结果"}</button><button data-retry-case type="button">从头再问</button>`)
+  });
+  document.querySelectorAll("[data-truth-boundary-pick]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const promptId = button.getAttribute("data-truth-boundary-prompt");
+      const answer = button.getAttribute("data-truth-boundary-pick");
+      if (!promptId || !answer) return;
+      const key = caseKey(brief);
+      state.truthBoundaryPicks = {
+        ...(state.truthBoundaryPicks ?? {}),
+        [key]: {
+          ...(state.truthBoundaryPicks?.[key] ?? {}),
+          [promptId]: answer
+        }
+      };
+      saveState();
+      render();
+    });
   });
   bind("[data-recap-next]", () => {
     state.recapStep = index + 1;
@@ -1286,7 +1307,7 @@ function finalQuoteComparisonHtml(comparison) {
   `;
 }
 
-function truthBoundaryReviewHtml(review) {
+function truthBoundaryReviewHtml(review, picks = {}) {
   if (!review?.columns?.length) {
     return `
       <p><b>事实边界</b></p>
@@ -1297,6 +1318,7 @@ function truthBoundaryReviewHtml(review) {
     <section class="truth-boundary-card">
       <p><b>${escapeHtml(review.title)}</b></p>
       <p>${escapeHtml(review.line)}</p>
+      ${truthBoundaryChallengeHtml(review, picks)}
       <div class="truth-boundary-grid">
         ${review.columns.map((column) => `
           <div class="truth-boundary-column truth-boundary-${escapeHtml(column.key)}">
@@ -1308,6 +1330,29 @@ function truthBoundaryReviewHtml(review) {
         `).join("")}
       </div>
     </section>
+  `;
+}
+
+function truthBoundaryChallengeHtml(review, picks = {}) {
+  if (!review?.prompts?.length) return "";
+  return `
+    <div class="truth-boundary-challenge">
+      ${review.prompts.map((prompt) => {
+        const picked = picks[prompt.id] ?? "";
+        const settled = picked && picked === prompt.expected;
+        return `
+          <div class="truth-boundary-prompt ${picked ? settled ? "settled" : "unsettled" : ""}">
+            <p>${escapeHtml(prompt.text)}</p>
+            <div class="truth-boundary-options">
+              ${review.choices.map((choice) => `
+                <button class="${picked === choice.key ? "selected" : ""}" data-truth-boundary-prompt="${escapeHtml(prompt.id)}" data-truth-boundary-pick="${escapeHtml(choice.key)}" type="button">${escapeHtml(choice.label)}</button>
+              `).join("")}
+            </div>
+            ${picked ? `<small>${settled ? "这句放得住。" : "这句还不能这么放。"}</small>` : ""}
+          </div>
+        `;
+      }).join("")}
+    </div>
   `;
 }
 
@@ -1352,6 +1397,7 @@ function resetCaseAttempt(brief) {
   state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
   state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
   state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);
+  state.truthBoundaryPicks = omitRecordKey(state.truthBoundaryPicks, key);
   state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
   state.caseActionLog = omitRecordKey(state.caseActionLog, key);
   state.contradictionLog = omitRecordKey(state.contradictionLog, key);
@@ -1477,6 +1523,14 @@ function selectedEvidencePick(brief, index) {
 
 function selectedInvestigationPick(brief, index) {
   return state.investigationPicks?.[investigationAnswerKey(brief, index)] ?? null;
+}
+
+function truthBoundaryPicksFor(brief) {
+  return state.truthBoundaryPicks?.[caseKey(brief)] ?? {};
+}
+
+function truthBoundaryComplete(review, picks = {}) {
+  return (review?.prompts ?? []).every((prompt) => picks[prompt.id] === prompt.expected);
 }
 
 function unlockedInvestigationEntriesFor(brief) {
