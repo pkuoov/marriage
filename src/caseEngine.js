@@ -1,5 +1,5 @@
-import { applyDifficultyProfile } from "./difficulty.js?v=0.20.32";
-import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.32";
+import { applyDifficultyProfile } from "./difficulty.js?v=0.20.33";
+import { DEFAULT_STORY_PACK_KEY, storyPackForKey } from "./storyPacks.js?v=0.20.33";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -265,6 +265,7 @@ function dailyBaseBrief(brief, names, fields) {
     explicitClueGroups: fields.explicitClueGroups,
     evidenceCards: fields.evidenceCards,
     evidenceChecks: fields.evidenceChecks ?? [],
+    investigationHooks: fields.investigationHooks ?? [],
     deepFollowup: fields.deepFollowup,
     stageJudgement: fields.stageJudgement,
     followupTwist: fields.followupTwist,
@@ -405,6 +406,26 @@ function dailyLostJobCreditTemplate(brief, names) {
         ]
       }
     ],
+    investigationHooks: [
+      {
+        id: "credit-friend-dm",
+        source: "dm",
+        surface: "后台进来一条私信",
+        title: "朋友圈补图",
+        triggerContradiction: "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。",
+        appearsNowBecause: "收麦后，咨询者的朋友补了一张当晚朋友圈截图。",
+        prompt: "这张补图里，哪一处最该留下？",
+        material: "朋友圈照片发在纪念日晚餐那晚。配文写“终于有人把日子过得体面一点”。同一周账单里，还有礼物分期和两次酒店。",
+        proves: "咨询者也参与过体面叙事。",
+        stillCannotProve: "不能证明她应该替对方还信用卡。",
+        routeAxis: "external-corroboration",
+        options: [
+          { label: "朋友圈配文和账单同周", correct: true, contradiction: "咨询者也参与维持体面叙事，但这不能把信用卡债务转给她。", feedback: "这张图补的是她为什么迟迟不愿撕开体面，不是替对方接账的理由。", routeAxis: "external-corroboration" },
+          { label: "朋友语气很替她生气", correct: false, feedback: "朋友站队能解释情绪，解释不了这笔账为什么该由谁还。", routeAxis: "outer-thread" },
+          { label: "照片看起来很贵", correct: false, feedback: "贵不贵只是感觉，和账单同周出现才有咬合。", routeAxis: "document-edge" }
+        ]
+      }
+    ],
     deepFollowup: {
       question: "那我多问一句，社保断缴和信用卡还款都摆出来以后，你最怕失去的是钱，还是这段关系原来看起来很体面的样子？",
       answer: "我最怕承认的是，我也被那个体面打动过。朋友都觉得他工作稳定、出手大方，我不垫这笔信用卡还款，就像亲手把这层撕开。可撕开归撕开，账还是不能变成我的。",
@@ -514,6 +535,26 @@ function dailyHouseBoundaryTemplate(brief, names) {
         ]
       }
     ],
+    investigationHooks: [
+      {
+        id: "house-family-chat-backflow",
+        source: "dm",
+        surface: "有人补了一张图",
+        title: "家庭群补图",
+        triggerContradiction: "共同支出表缺少还贷份额和退出补偿机制。",
+        appearsNowBecause: "收麦后，咨询者把家庭小群里被截掉的一页补了过来。",
+        prompt: "这页补图里，哪句最该圈出来？",
+        material: "群里上一句是“先别写分开怎么补，写了不吉利”。下一句才是“房贷、装修、物业以后都从共同账户走”。",
+        proves: "退出补偿不是没想到，而是被有意避开。",
+        stillCannotProve: "不能证明对方家一定想占便宜，但能证明共同账户规则被故意留空。",
+        routeAxis: "external-corroboration",
+        options: [
+          { label: "先别写分开怎么补", correct: true, contradiction: "退出补偿不是没想到，而是被有意避开。", feedback: "这句一出来，表格缺栏就不是疏忽了。", routeAxis: "external-corroboration" },
+          { label: "不吉利这三个字", correct: false, feedback: "这三个字好听也好用，但真正要圈的是它挡掉了哪一栏。", routeAxis: "identity-wording" },
+          { label: "共同账户走房贷装修", correct: false, feedback: "这句前面已经听过了，补图新露出来的是为什么不写退出。", routeAxis: "money-flow" }
+        ]
+      }
+    ],
     deepFollowup: {
       question: "那我多问一句，你自己心里最想要的是投入补偿，还是这套房里有一个能被看见的位置？",
       answer: "我想要能被看见的位置。这句话我没在直播开头讲，因为讲出来就像我要房。可如果婚后每月还贷、装修、共同账户都进去，我又不想最后只剩几张流水。",
@@ -620,6 +661,26 @@ function dailyTonyMultiDatingTemplate(brief, names) {
           { label: "备注和下一次推进", correct: true, contradiction: "TA 把不同对象按可推进资源分层管理。", feedback: "这不是剪头需求，是把人按能带来什么往下排。", routeAxis: "process-control" },
           { label: "预约时间", correct: false, feedback: "预约时间本身正常，真正不对的是备注里的功能标签。", routeAxis: "document-edge" },
           { label: "店员名字", correct: false, feedback: "名字不够关键，后面那些“稳情绪”“能投店”才是这张表的味道。", routeAxis: "outer-thread" }
+        ]
+      }
+    ],
+    investigationHooks: [
+      {
+        id: "tony-other-caller-dm",
+        source: "dm",
+        surface: "后台进来一条私信",
+        title: "另一份同款表",
+        triggerContradiction: "TA 把不同对象按可推进资源分层管理。",
+        appearsNowBecause: "收麦后，另一个女生把她收到的那张表也发了过来。",
+        prompt: "这张同款表里，哪处最该圈？",
+        material: "她那栏写着“能投店”，后面跟着“约见朋友、聊分红”。另一栏写“情绪稳住，年卡下次推”。",
+        proves: "同一套亲密话术后面接的是不同商业目标。",
+        stillCannotProve: "不能证明所有暧昧都假，但能证明他把人按用途往下排。",
+        routeAxis: "external-corroboration",
+        options: [
+          { label: "能投店和聊分红", correct: true, contradiction: "另一个对象也被写进投店推进表，亲密关系被接到商业转化上。", feedback: "这不是只对一个人嘴甜，是每个人后面都接着下一步用途。", routeAxis: "external-corroboration" },
+          { label: "她也说被他哄过", correct: false, feedback: "被哄过能说明情绪相似，但这张表真正咬住的是用途分栏。", routeAxis: "caller-credibility" },
+          { label: "年卡下次推", correct: false, feedback: "年卡是旧线，新私信更重的是投店和分红已经进表。", routeAxis: "money-flow" }
         ]
       }
     ],
@@ -751,6 +812,26 @@ function dailyFakeProfileTemplate(brief, names) {
         ]
       }
     ],
+    investigationHooks: [
+      {
+        id: "profile-family-chat-backflow",
+        source: "dm",
+        surface: "有人补了一张图",
+        title: "家里群截图",
+        triggerContradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
+        appearsNowBecause: "收麦后，咨询者补了一页家里群截图，说这页她刚才没敢念。",
+        prompt: "这页家里群里，哪一句最该留下？",
+        material: "她妈妈发的是：“学历先这样说，后面主要看收入流水。要是真稳定，婚后工资最好放一起管。”",
+        proves: "学历只是入口，家里真正追的是收入和婚后工资管理。",
+        stillCannotProve: "不能证明男方资料全假，也不能证明女方只是拜金。",
+        routeAxis: "external-corroboration",
+        options: [
+          { label: "后面主要看收入流水", correct: true, contradiction: "学历追问只是入口，家里真正盯的是收入流水和婚后工资管理。", feedback: "这页把女方家没说出口的筛选目的补出来了。", routeAxis: "external-corroboration" },
+          { label: "学历先这样说", correct: false, feedback: "这句有味道，但它只是过门，后面那句才接到真实诉求。", routeAxis: "identity-wording" },
+          { label: "工资最好放一起管", correct: false, feedback: "这句很刺耳，但单圈它会跳过前面为什么一路追流水。", routeAxis: "money-flow" }
+        ]
+      }
+    ],
     deepFollowup: {
       question: "那我多问一句，你自己的家庭经济状况怎么样？你自己一个月工资多少，够花吗？",
       answer: "我自己也不是特别宽裕，所以我才更在意他收入到底落不落地。我嘴上说家里想看稳定，其实我也想知道以后这笔钱是不是能进小家。",
@@ -859,6 +940,26 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
           { label: "付款状态和收款账户", correct: true, contradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。", feedback: "审批通过不是到账，缺的这一页才决定钱去了哪里。", routeAxis: "document-edge" },
           { label: "活动现场照片", correct: false, feedback: "活动办没办不是当前缺口，钱有没有打出去才是。", routeAxis: "outer-thread" },
           { label: "老板有没有看到复盘", correct: false, feedback: "复盘能证明署名，证明不了垫付款有没有回。", routeAxis: "identity-wording" }
+        ]
+      }
+    ],
+    investigationHooks: [
+      {
+        id: "work-supplier-dm",
+        source: "dm",
+        surface: "后台进来一条私信",
+        title: "供应商补话",
+        triggerContradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
+        appearsNowBecause: "收麦后，供应商群里有人匿名补了一句。",
+        prompt: "这条补话里，哪处最该圈出来？",
+        material: "供应商说“服务协调费按老规矩返给对接人”。同一张表里，对接人还是那位同事，付款确认页没有发给咨询者。",
+        proves: "报销入口和供应商返款入口都在同事手里。",
+        stillCannotProve: "不能证明公司审批是假，但能证明截图停在最容易挡人的一页。",
+        routeAxis: "external-corroboration",
+        options: [
+          { label: "返给对接人", correct: true, contradiction: "供应商返款按老规矩返给对接人，资金入口仍在同事手里。", feedback: "这句把审批截图和供应商那条钱路接上了。", routeAxis: "external-corroboration" },
+          { label: "按老规矩", correct: false, feedback: "老规矩很可疑，但要先圈出钱最后返给谁。", routeAxis: "process-control" },
+          { label: "付款确认页没发", correct: false, feedback: "这点前面已经咬过，补话新增的是返款落点。", routeAxis: "document-edge" }
         ]
       }
     ],

@@ -1,9 +1,9 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { generateCasesForMode } from "../src/caseModes.js?v=0.20.32";
-import { explanationForExpected } from "../src/caseNarration.js?v=0.20.32";
-import { expectedAccusationForCase } from "../src/caseRuntime.js?v=0.20.32";
-import { NPCS } from "../src/story.js?v=0.20.32";
+import { generateCasesForMode } from "../src/caseModes.js?v=0.20.33";
+import { explanationForExpected } from "../src/caseNarration.js?v=0.20.33";
+import { expectedAccusationForCase } from "../src/caseRuntime.js?v=0.20.33";
+import { NPCS } from "../src/story.js?v=0.20.33";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const defaultKeys = [
@@ -73,7 +73,27 @@ function extractFlow(brief, key) {
         correct: Boolean(option.correct)
       }))
     })),
-    deepFollowup: brief.deepFollowup ?? null,
+    investigationHooks: (brief.investigationHooks ?? []).map((hook, index) => ({
+      id: `investigation-${index + 1}`,
+      title: hook.title ?? "",
+      source: hook.source ?? "",
+      surface: hook.surface ?? "",
+      triggerContradiction: hook.triggerContradiction ?? "",
+      triggerAction: hook.triggerAction ?? "",
+      appearsNowBecause: hook.appearsNowBecause ?? "",
+      prompt: hook.prompt ?? "",
+      material: hook.material ?? "",
+      proves: hook.proves ?? "",
+      stillCannotProve: hook.stillCannotProve ?? "",
+      options: (hook.options ?? []).map((option, optionIndex) => ({
+        id: `investigation-${index + 1}-q${optionIndex + 1}`,
+        label: option.label ?? "",
+	        feedback: option.feedback ?? "",
+	        contradiction: option.contradiction ?? "",
+	        correct: Boolean(option.correct)
+	      }))
+	    })),
+	    deepFollowup: brief.deepFollowup ?? null,
     stageJudgement: brief.stageJudgement ?? "",
     followupTwist: brief.followupTwist ?? "",
     truth: brief.truth ?? "",
@@ -133,6 +153,14 @@ function validateFlow(flow) {
     check(evidenceCheck.options.some((option) => option.correct), "EVIDENCE_CHECK_HIT", `${evidenceCheck.id} 必须有正确指出项。`);
     check(evidenceCheck.options.some((option) => !option.correct), "EVIDENCE_CHECK_MISS", `${evidenceCheck.id} 必须有误指项，才能消耗听众忍耐。`);
   });
+  check(flow.investigationHooks.length >= 1, "INVESTIGATION_BACKFLOW", "每案必须有案后私信或后台补图，扩大证据来源。");
+  flow.investigationHooks.forEach((hook) => {
+    check(Boolean(hook.triggerContradiction || hook.triggerAction), "INVESTIGATION_TRIGGER", `${hook.id} 必须由已听到的矛盾或动作触发。`);
+    check(Boolean(hook.material && hook.prompt), "INVESTIGATION_FIXED_MATERIAL", `${hook.id} 必须是固定材料，不能让 AI 自由生成事实。`);
+    check(Boolean(hook.appearsNowBecause && hook.proves && hook.stillCannotProve), "INVESTIGATION_BOUNDARY", `${hook.id} 必须写清为什么现在出现、能证明什么、仍不能证明什么。`);
+    check(hook.options.some((option) => option.correct), "INVESTIGATION_HIT", `${hook.id} 必须有可圈中的回流材料点。`);
+    check(hook.options.some((option) => !option.correct), "INVESTIGATION_NOISE", `${hook.id} 必须保留噪音或误导点。`);
+  });
   check(!revealsFinalAnswerTooEarly(openingText), "NO_EARLY_SPOILER", "开场不能直接说出最终责任或答案。");
   check(hasQuestionPathToContradiction(playerQuestions, allAnswers, sceneText), "QUESTION_TO_CLUE", "玩家追问必须能自然导向矛盾，而不是凭空揭示。");
   check(Boolean(flow.deepFollowup?.question && flow.deepFollowup?.answer), "DEEP_FOLLOWUP", "精选集单案必须有满格后的单句深入追问和咨询者回答。");
@@ -170,6 +198,16 @@ function flattenText(flow) {
       check.prompt,
       check.material,
       ...check.options.flatMap((option) => [option.label, option.feedback, option.contradiction])
+    ]),
+    ...flow.investigationHooks.flatMap((hook) => [
+      hook.title,
+      hook.surface,
+      hook.appearsNowBecause,
+      hook.prompt,
+      hook.material,
+      hook.proves,
+      hook.stillCannotProve,
+      ...hook.options.flatMap((option) => [option.label, option.feedback, option.contradiction])
     ]),
     flow.deepFollowup?.question,
     flow.deepFollowup?.answer,

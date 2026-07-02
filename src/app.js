@@ -1,12 +1,12 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.32";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.32";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.32";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.32";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.32";
-import { NPCS } from "./story.js?v=0.20.32";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.32";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.32";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.32";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.33";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.33";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.33";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.33";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.33";
+import { NPCS } from "./story.js?v=0.20.33";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.33";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.33";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.33";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -39,6 +39,7 @@ function normalizeDailyState(saved) {
     sceneQuestionPicks: saved?.sceneQuestionPicks ?? {},
     sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
     evidenceCheckPicks: saved?.evidenceCheckPicks ?? {},
+    investigationPicks: saved?.investigationPicks ?? {},
     routeChoiceLog: saved?.routeChoiceLog ?? {},
     caseActionLog: saved?.caseActionLog ?? {},
     caseBudgets: saved?.caseBudgets ?? {},
@@ -176,6 +177,7 @@ function renderDailyCase() {
   const brief = activeCaseBrief();
   if (state.scene === "sceneReview") return renderSceneReview(brief);
   if (state.scene === "evidenceCheck") return renderEvidenceCheck(brief);
+  if (state.scene === "investigationBackflow") return renderInvestigationBackflow(brief);
   if (state.scene === "deepFollowup") return renderDeepFollowup(brief);
   if (state.scene === "testimony" || state.scene === "evidence") {
     state.scene = "sceneReview";
@@ -347,6 +349,38 @@ function renderEvidenceCheck(brief) {
   });
   bindEvidenceCheckButtons(brief, check);
   bind("[data-next-evidence-check]", () => setIndex(brief, "evidenceCheck", index + 1));
+  bindSceneButtons();
+}
+
+function renderInvestigationBackflow(brief) {
+  const entries = unlockedInvestigationEntriesFor(brief);
+  const entry = entries.find((item) => !selectedInvestigationPick(brief, item.index)) ?? entries[entries.length - 1];
+  if (!entry) {
+    state.scene = "caseSolved";
+    saveState();
+    return render();
+  }
+  const hook = entry.hook;
+  const pick = selectedInvestigationPick(brief, entry.index);
+  frame({
+    brief,
+    mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
+    label: "后台私信",
+    chapter: liveChapterTitle(brief),
+    text: `
+      <p><b>${escapeHtml(hook.surface ?? "后台进来一条私信")}</b></p>
+      <p>${escapeHtml(hook.appearsNowBecause ?? "收麦后，有人补了一张图。")}</p>
+      ${evidenceOperationHtml(hook, pick, entry.index)}
+      <p>${escapeHtml(hook.prompt ?? "这条回流里，哪一句最该圈出来？")}</p>
+      ${pick ? evidencePickFeedbackHtml(pick) : ""}
+      ${keyChoiceReview(brief)}
+    `,
+    choices: pick
+      ? flowGroup(`<button class="primary" data-after-investigation type="button">继续回看</button>`)
+      : ""
+  });
+  bindInvestigationButtons(brief, hook, entry.index);
+  bind("[data-after-investigation]", () => moveScene("caseSolved"));
   bindSceneButtons();
 }
 
@@ -1080,6 +1114,43 @@ function bindEvidenceCheckButtons(brief, check = {}) {
   });
 }
 
+function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
+  document.querySelectorAll("[data-evidence-check]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const optionIndex = Number(button.dataset.evidenceCheck.split(":")[1] ?? 0);
+      const outcome = materialOperationOutcome(hook, hookIndex, optionIndex);
+      const spend = hook.spendOnMiss === true && outcome.spend;
+      markAction(brief, `investigation:${hookIndex}:${optionIndex}`, { spend });
+      markAction(brief, `investigation:${hookIndex}`);
+      if (outcome.contradiction) {
+        recordContradiction(brief, outcome.contradiction);
+      }
+      state.investigationPicks = {
+        ...(state.investigationPicks ?? {}),
+        [investigationAnswerKey(brief, hookIndex)]: outcome.pick
+      };
+      recordRouteChoice(
+        brief,
+        investigationRouteIndexBase(brief) + hookIndex,
+        {
+          ...outcome.routeChoice,
+          routeAxis: hook.routeAxis ?? outcome.routeChoice.routeAxis,
+          routeTone: outcome.correct ? "backflow-hit" : "backflow-miss"
+        },
+        { version: hook.material ?? "" }
+      );
+      state.lastReaction = null;
+      if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
+        state.scene = "patienceLost";
+        saveState();
+        return render();
+      }
+      saveState();
+      render();
+    });
+  });
+}
+
 function moveScene(scene) {
   const brief = activeCaseBrief();
   if (scene === "accusation") {
@@ -1154,7 +1225,7 @@ function resolveAccusationFromButton(brief, button) {
   state.solvedCaseIds = [...new Set([...(state.solvedCaseIds ?? []), brief.id])];
   applyOutcome(brief, result);
   recordDailyMeta(brief, result, issue);
-  state.scene = "caseSolved";
+  state.scene = unlockedInvestigationEntriesFor(brief).some((entry) => !selectedInvestigationPick(brief, entry.index)) ? "investigationBackflow" : "caseSolved";
   state.recapStep = 0;
   saveState();
   render();
@@ -1378,6 +1449,7 @@ function resetCaseAttempt(brief) {
   state.sceneQuestionPicks = removeKeyPrefix(state.sceneQuestionPicks, `${key}:`);
   state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
   state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
+  state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);
   state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
   state.caseActionLog = omitRecordKey(state.caseActionLog, key);
   state.contradictionLog = omitRecordKey(state.contradictionLog, key);
@@ -1499,12 +1571,35 @@ function selectedEvidencePick(brief, index) {
   return state.evidenceCheckPicks?.[evidenceAnswerKey(brief, index)] ?? null;
 }
 
+function selectedInvestigationPick(brief, index) {
+  return state.investigationPicks?.[investigationAnswerKey(brief, index)] ?? null;
+}
+
 function evidenceChecksFor(brief) {
   return Array.isArray(brief?.evidenceChecks) ? brief.evidenceChecks : [];
 }
 
+function investigationHooksFor(brief) {
+  return Array.isArray(brief?.investigationHooks) ? brief.investigationHooks : [];
+}
+
+function unlockedInvestigationEntriesFor(brief) {
+  const found = new Set(contradictions(brief));
+  return investigationHooksFor(brief)
+    .map((hook, index) => ({ hook, index }))
+    .filter(({ hook }) => {
+      if (hook.triggerAction && actionDone(brief, hook.triggerAction)) return true;
+      if (hook.triggerContradiction && found.has(hook.triggerContradiction)) return true;
+      return false;
+    });
+}
+
 function evidenceAnsweredCount(brief) {
   return evidenceChecksFor(brief).filter((_, index) => actionDone(brief, `evidenceCheck:${index}`)).length;
+}
+
+function investigationRouteIndexBase(brief) {
+  return keyQuestionLimit(brief) + evidenceChecksFor(brief).length;
 }
 
 function afterEvidenceScene(brief) {
@@ -1613,7 +1708,8 @@ function routeTrailHtml(brief) {
 function routeTrailItemHtml(item, brief = {}) {
   const label = routeAxisLabel(item.axis);
   const question = compactRouteQuestion(item.question);
-  const mark = Number(item.sceneIndex ?? 0) >= keyQuestionLimit(brief) ? "料" : Number(item.sceneIndex ?? 0) + 1;
+  const sceneIndex = Number(item.sceneIndex ?? 0);
+  const mark = sceneIndex >= investigationRouteIndexBase(brief) ? "回" : sceneIndex >= keyQuestionLimit(brief) ? "料" : sceneIndex + 1;
   return `
     <span>
       <em>${escapeHtml(mark)}</em>
@@ -1715,6 +1811,10 @@ function answerKey(brief, index) {
 
 function evidenceAnswerKey(brief, index) {
   return `${caseKey(brief)}:evidence:${index}`;
+}
+
+function investigationAnswerKey(brief, index) {
+  return `${caseKey(brief)}:investigation:${index}`;
 }
 
 function caseKey(brief) {

@@ -69,6 +69,7 @@ export function routeAxisLabel(axis) {
     "process-control": "入口控制线",
     "caller-credibility": "来电人可信度线",
     "counterparty-credibility": "对方叙事线",
+    "external-corroboration": "回流佐证线",
     "core-thread": "核心矛盾线",
     "outer-thread": "外围试探线",
     "live-instinct": "现场听感线"

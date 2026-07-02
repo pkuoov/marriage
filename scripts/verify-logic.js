@@ -1,13 +1,13 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.32";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.32";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.32";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.32";
-import { migrateState } from "../src/state.js?v=0.20.32";
-import { NPCS } from "../src/story.js?v=0.20.32";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.32";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.32";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.32";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.32";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.33";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.33";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.33";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.33";
+import { migrateState } from "../src/state.js?v=0.20.33";
+import { NPCS } from "../src/story.js?v=0.20.33";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.33";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.33";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.33";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.33";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -131,6 +131,29 @@ test("MATERIAL-003", "material board uses distinct visual layouts by material ty
   assertIncludes(stylesSource, ".evidence-flow-track", "流程材料必须有独立视觉皮肤");
 });
 
+test("INVESTIGATION-001", "host investigation backflow is fixed material, not freeform facts", () => {
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const stateSource = readFileSync(new URL("../src/state.js", import.meta.url), "utf8");
+  const cases = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  assertIncludes(appSource, "renderInvestigationBackflow", "案后私信回流必须有独立场景，不能塞进普通结果页文字");
+  assertIncludes(appSource, "unlockedInvestigationEntriesFor", "回流材料必须由已听到的矛盾触发，不能开局直接发答案");
+  assertIncludes(appSource, "investigationPicks", "回流材料选择必须可存档、可回放、可测试");
+  assertIncludes(appSource, "investigationRouteIndexBase", "路线图必须把回流节点标出来，不能伪装成第六段对话");
+  assertIncludes(stateSource, "investigationPicks", "旧存档迁移必须补回流材料选择容器");
+  cases.forEach((brief, index) => {
+    assert((brief.investigationHooks ?? []).length >= 1, `第 ${index + 1} 案必须有至少一个案后回流材料`);
+    (brief.investigationHooks ?? []).forEach((hook, hookIndex) => {
+      assert(hook.triggerContradiction || hook.triggerAction, `第 ${index + 1} 案第 ${hookIndex + 1} 个回流必须由已听到的矛盾或动作触发`);
+      assert(hook.material && hook.prompt, `第 ${index + 1} 案第 ${hookIndex + 1} 个回流必须是固定材料，不是自由生成事实`);
+      assert(hook.proves && hook.stillCannotProve, `第 ${index + 1} 案第 ${hookIndex + 1} 个回流必须同时写清能证明和不能证明什么`);
+      assert((hook.options ?? []).some((option) => option.correct), `第 ${index + 1} 案第 ${hookIndex + 1} 个回流必须有可圈中的材料点`);
+      assert((hook.options ?? []).some((option) => !option.correct), `第 ${index + 1} 案第 ${hookIndex + 1} 个回流必须保留噪音或误导点`);
+    });
+  });
+  assert(!appSource.includes("新线索解锁"), "回流不能写成任务系统提示");
+  assert(!appSource.includes("核验成功"), "回流不能写成通关提示");
+});
+
 test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
@@ -140,7 +163,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
   assertIncludes(materialSource, "spend: !correct", "材料检视圈中不能消耗听众忍耐，误指才扣");
   assertIncludes(appSource, "storyPackClosingLine", "故事集终局小字必须按本局表现生成，不能写成玩法说明");
-  assertIncludes(appSource, ">= keyQuestionLimit(brief) ? \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
+  assertIncludes(appSource, "sceneIndex >= keyQuestionLimit(brief) ? \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
+  assertIncludes(appSource, "sceneIndex >= investigationRouteIndexBase(brief) ? \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
   assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
   assertIncludes(appSource, "storyInterludeObjectLabel", "案间过渡必须用物件钩子接下一通，减少目录感");
   assertIncludes(appSource, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
