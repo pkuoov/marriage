@@ -2,6 +2,36 @@ export function caseKey(brief) {
   return brief?.id ?? "daily";
 }
 
+export function initialCaseBudget(max = 0) {
+  return { max, remaining: max, used: 0 };
+}
+
+export function applyActionMark({ caseActionLog = {}, caseId = "daily", actionKey = "", budget = null, spend = false } = {}) {
+  const caseLog = caseActionLog?.[caseId] ?? {};
+  const alreadyDone = Boolean(caseLog[actionKey]);
+  const nextBudget = budget ? { ...budget } : null;
+  if (nextBudget && spend && !alreadyDone) {
+    nextBudget.remaining = Math.max(0, Number(nextBudget.remaining ?? 0) - 1);
+    nextBudget.used = Number(nextBudget.used ?? 0) + 1;
+  }
+  return {
+    alreadyDone,
+    budget: nextBudget,
+    caseActionLog: {
+      ...(caseActionLog ?? {}),
+      [caseId]: {
+        ...caseLog,
+        [actionKey]: true
+      }
+    }
+  };
+}
+
+export function casePatienceLost({ budget = {}, answeredScenes = 0, requiredScenes = 0, answeredEvidence = 0, requiredEvidence = 0 } = {}) {
+  const allAnswered = answeredScenes >= requiredScenes && answeredEvidence >= requiredEvidence;
+  return Number(budget.remaining ?? 0) <= 0 && !allAnswered;
+}
+
 export function answerKey(brief, index) {
   return `${caseKey(brief)}:scene:${index}`;
 }

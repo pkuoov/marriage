@@ -1,17 +1,17 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.38";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.38";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.38";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.38";
-import { migrateState } from "../src/state.js?v=0.20.38";
-import { NPCS } from "../src/story.js?v=0.20.38";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.38";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.38";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.38";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.38";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.38";
-import { answerKey, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.38";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.38";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.38";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.39";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.39";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.39";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.39";
+import { migrateState } from "../src/state.js?v=0.20.39";
+import { NPCS } from "../src/story.js?v=0.20.39";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.39";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.39";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.39";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, recapRankLabel } from "../src/runtime/recapModel.js?v=0.20.39";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.39";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, initialCaseBudget, investigationRouteIndexBase, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.39";
+import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.39";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.39";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -863,6 +863,32 @@ test("RUNTIME-006", "scene advance helpers stay pure outside app state", () => {
     actionDone
   });
   assert(unlocked.length >= 1, "回流材料必须能由已发现矛盾纯函数解锁");
+});
+
+test("RUNTIME-007", "action mark patches spend budget without mutating old state", () => {
+  const originalBudget = initialCaseBudget(3);
+  const first = applyActionMark({
+    caseActionLog: {},
+    caseId: "case-a",
+    actionKey: "version:0",
+    budget: originalBudget,
+    spend: true
+  });
+  assertEqual(originalBudget.remaining, 3, "旧预算对象不能被直接改写");
+  assertEqual(first.budget.remaining, 2, "第一次消耗动作必须扣 1 点耐心");
+  assertEqual(first.budget.used, 1, "第一次消耗动作必须记录 used");
+  assertEqual(first.caseActionLog["case-a"]["version:0"], true, "动作记录必须写入对应案件");
+  const second = applyActionMark({
+    caseActionLog: first.caseActionLog,
+    caseId: "case-a",
+    actionKey: "version:0",
+    budget: first.budget,
+    spend: true
+  });
+  assertEqual(second.alreadyDone, true, "重复动作必须识别为已完成");
+  assertEqual(second.budget.remaining, 2, "重复动作不能重复扣耐心");
+  assert(casePatienceLost({ budget: { remaining: 0 }, answeredScenes: 1, requiredScenes: 2 }), "耐心耗尽且未问完时必须失败");
+  assert(!casePatienceLost({ budget: { remaining: 0 }, answeredScenes: 2, requiredScenes: 2, answeredEvidence: 1, requiredEvidence: 1 }), "已经问完时不能因为刚好归零误判失败");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {

@@ -1,16 +1,16 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.38";
-import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.38";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.38";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.38";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.38";
-import { NPCS } from "./story.js?v=0.20.38";
-import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.38";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.38";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.38";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.38";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, caseKey, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.38";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.38";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.38";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.39";
+import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.39";
+import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.39";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.39";
+import { platformRuntime } from "./platformRuntime.js?v=0.20.39";
+import { NPCS } from "./story.js?v=0.20.39";
+import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.39";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.39";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, issueLine, issueResultLine, recapRankLabel } from "./runtime/recapModel.js?v=0.20.39";
+import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.39";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationRouteIndexBase, keyQuestionLimit, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.39";
+import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.39";
+import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.39";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -1244,25 +1244,27 @@ function omitRecordKey(record = {}, keyToOmit) {
 }
 
 function markAction(brief, actionKey, { spend = false } = {}) {
-  const alreadyDone = actionDone(brief, actionKey);
-  const budget = ensureBudget(brief);
-  if (spend && !alreadyDone) {
-    budget.remaining = Math.max(0, Number(budget.remaining ?? 0) - 1);
-    budget.used = Number(budget.used ?? 0) + 1;
-  }
-  state.caseActionLog = {
-    ...(state.caseActionLog ?? {}),
-    [caseKey(brief)]: {
-      ...(state.caseActionLog?.[caseKey(brief)] ?? {}),
-      [actionKey]: true
-    }
-  };
+  const key = caseKey(brief);
+  const patch = applyActionMark({
+    caseActionLog: state.caseActionLog,
+    caseId: key,
+    actionKey,
+    budget: ensureBudget(brief),
+    spend
+  });
+  state.caseBudgets = { ...(state.caseBudgets ?? {}), [key]: patch.budget };
+  state.caseActionLog = patch.caseActionLog;
 }
 
 function audiencePatienceLost(brief) {
   const budget = ensureBudget(brief);
-  const allAnswered = answeredSceneCount(brief) >= keyQuestionLimit(brief) && evidenceAnsweredCount(brief) >= evidenceChecksFor(brief).length;
-  if (Number(budget.remaining ?? 0) > 0 || allAnswered) return false;
+  if (!casePatienceLost({
+    budget,
+    answeredScenes: answeredSceneCount(brief),
+    requiredScenes: keyQuestionLimit(brief),
+    answeredEvidence: evidenceAnsweredCount(brief),
+    requiredEvidence: evidenceChecksFor(brief).length
+  })) return false;
   state.scene = "patienceLost";
   state.lastReaction = null;
   saveState();
@@ -1280,7 +1282,7 @@ function ensureBudget(brief) {
   const max = calculateCaseBudgetMax({ brief });
   state.caseBudgets = {
     ...(state.caseBudgets ?? {}),
-    [key]: { max, remaining: max, used: 0 }
+    [key]: initialCaseBudget(max)
   };
   return state.caseBudgets[key];
 }
