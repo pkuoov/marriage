@@ -1,13 +1,13 @@
-import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.31";
-import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.31";
-import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.31";
-import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.31";
-import { migrateState } from "../src/state.js?v=0.20.31";
-import { NPCS } from "../src/story.js?v=0.20.31";
-import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.31";
-import { platformRuntime } from "../src/platformRuntime.js?v=0.20.31";
-import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.31";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.31";
+import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js?v=0.20.32";
+import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js?v=0.20.32";
+import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.32";
+import { requiredContradictionsForCase } from "../src/difficulty.js?v=0.20.32";
+import { migrateState } from "../src/state.js?v=0.20.32";
+import { NPCS } from "../src/story.js?v=0.20.32";
+import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.32";
+import { platformRuntime } from "../src/platformRuntime.js?v=0.20.32";
+import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.32";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.32";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -105,6 +105,7 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   assertIncludes(appSource, "evidenceOperationHtml", "材料检视必须通过材料操作台渲染，不能退回普通段落卡");
+  assertIncludes(appSource, "evidence-document-body", "材料对象必须有独立正文区域，便于按类型换版式");
   assertIncludes(appSource, "evidence-document-lines", "材料文本必须拆成文件行，形成可看的材料对象");
   assertIncludes(appSource, "class=\"evidence-target", "材料选项必须在材料板内部作为可圈点区域出现");
   assertIncludes(appSource, "evidenceAnnotationHtml", "材料选择后必须在文件上显示圈点结果");
@@ -112,6 +113,22 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   assertIncludes(stylesSource, ".evidence-annotation.miss", "误指材料必须只标出玩家圈偏的位置");
   assert(!appSource.includes("choiceGroup(\"圈哪一处\""), "材料检视不能退回下方普通按钮组选项");
   assert(!stylesSource.includes("evidence-check-card"), "材料操作台上线后不能留下旧材料段落卡样式");
+});
+
+test("MATERIAL-003", "material board uses distinct visual layouts by material type", () => {
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assertIncludes(appSource, "function evidenceMaterialKind", "材料检视必须先识别材料类型，不能所有材料共用一个视觉壳");
+  assertIncludes(appSource, "material-${kind}", "材料类型必须落到 DOM class，供 CSS 区分版式");
+  assert(!appSource.includes("账单|信用卡|支出|账户|消费"), "账单识别不能吃掉“共同账户表”这类表格材料");
+  assertIncludes(appSource, "evidence-ledger", "账单材料必须渲染成账单行，而不是普通段落");
+  assertIncludes(appSource, "evidence-table-grid", "表格材料必须渲染成表格感区域");
+  assertIncludes(appSource, "evidence-shot-frame", "截图材料必须渲染成截图/手机框区域");
+  assertIncludes(appSource, "evidence-flow-track", "审批流材料必须渲染成流程节点区域");
+  assertIncludes(stylesSource, ".evidence-document.material-bill", "账单材料必须有独立视觉皮肤");
+  assertIncludes(stylesSource, ".evidence-table-grid", "表格材料必须有独立视觉皮肤");
+  assertIncludes(stylesSource, ".evidence-shot-frame", "截图材料必须有独立视觉皮肤");
+  assertIncludes(stylesSource, ".evidence-flow-track", "流程材料必须有独立视觉皮肤");
 });
 
 test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
