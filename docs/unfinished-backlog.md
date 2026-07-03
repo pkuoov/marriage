@@ -34,6 +34,7 @@
 - 材料检视和后台私信回流推进已拆出 `evidenceCheckModel` / `investigationBackflowModel`：当前材料、未处理回流、缺省态和下一步按钮都可纯函数测试。
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`：`app.js` 只收集现场压力、进度、立绘资源和表情状态，UI 细节可单独测试。
 - 直播主舞台和控场台外壳已拆到 `src/ui/liveFrameView.js`：topbar、`live-console-shell` 和 control deck DOM 可脱离 `app.js` 测试，`app.js` 只负责传入当前模式、HUD、材料名、压力和事件绑定。
+- 通用通话气泡、流程按钮组和“上一段”回看 HTML 已拆到 `src/ui/callFlowView.js`：`app.js` 只负责决定当前要展示哪些行，不再维护这些通用 DOM 模板。
 - 收麦回看 HTML 已拆到 `src/ui/recapView.js`：事实边界归位、最终原话对比、单案回看页面组、分页 kicker 和继续/重问/出口按钮都可以脱离 `app.js` 测试，`app.js` 只处理归位点击和流程推进。
 - 今日单案结果卡已拆到 `src/ui/dailyCompleteView.js`：结果卡 HTML、复制按钮和复制文案可脱离 `app.js` 测试，`app.js` 只负责算路线/问题结果、绑定复制和发分享 payload。
 - 故事集终局 HTML 已拆到 `src/ui/storyPackCompleteView.js`：结果卡、评论区审判墙和复制文案都能脱离 `app.js` 测试，`app.js` 只收集故事集模型和绑定按钮。
@@ -144,6 +145,7 @@ content/packs/steam-demo-01/
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；下一步继续拆 `renderSceneReview` / `renderRecap`。
 - `src/ui/liveFrameView.js` 已接管案内 topbar、直播控场台和主舞台骨架 HTML，`app.js` 只保留状态清理、按钮绑定和默认焦点。
+- `src/ui/callFlowView.js` 已接管通用选择组、流程按钮组、通话气泡和上一段回看 details。
 - `src/ui/recapView.js` 已接管单案收麦回看页面组、事实边界归位/揭示和最终原话对比卡；下一步只补单案回看新增缺口，不再把收麦页面写回 `app.js`。
 - `src/runtime/storyPackSummaryModel.js` 已接管故事集终局 profile 收集：`app.js` 只提供当前存档选择器，不再拼边界/压力/材料/物件 profile。
 - `src/ui/storyPackCompleteView.js` 已接管故事集终局结果卡、profile 行、评论区审判墙和复制文案。

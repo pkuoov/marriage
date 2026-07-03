@@ -12,6 +12,7 @@ import { livePressureProfile, materialPressureReaction, materialPressureSignal, 
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
+import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
@@ -233,28 +234,6 @@ function renderDailyCase() {
   return renderCaseOpen(brief);
 }
 
-function choiceGroup(label, content, className = "", note = "") {
-  if (!content?.trim()) return "";
-  return `
-    <section class="choice-group ${className}">
-      <div class="choice-label">
-        <span>${escapeHtml(label)}</span>
-        ${note ? `<small>${escapeHtml(note)}</small>` : ""}
-      </div>
-      <div class="choice-stack">${content}</div>
-    </section>
-  `;
-}
-
-function flowGroup(content) {
-  if (!content?.trim()) return "";
-  return `
-    <section class="choice-group flow-group">
-      <div class="choice-stack">${content}</div>
-    </section>
-  `;
-}
-
 function liveChapterTitle(brief = {}) {
   return isStoryPackMode() ? "热线连线" : brief.storyArcTitle ?? "今日来电";
 }
@@ -286,12 +265,8 @@ function renderCaseOpen(brief) {
     mood: "listening",
     label: "直播连线",
     chapter: liveChapterTitle(brief),
-    text: `
-      <div class="call-dialogue">
-        ${lines.map((line) => callLine(brief, line)).join("")}
-      </div>
-    `,
-    choices: flowGroup(`<button class="primary" data-scene="sceneReview" type="button">继续</button>`)
+    text: callDialogueHtml(lines),
+    choices: flowGroupHtml(`<button class="primary" data-scene="sceneReview" type="button">继续</button>`)
   });
   bindSceneButtons();
 }
@@ -357,7 +332,7 @@ function renderEvidenceCheck(brief) {
       ${keyChoiceReview(brief)}
     `,
     choices: pick
-      ? flowGroup(lastCheck
+      ? flowGroupHtml(lastCheck
         ? `<button class="primary" data-scene="${nextStage}" type="button">${nextLabel}</button>`
         : `<button class="primary" data-next-evidence-check type="button">继续看材料</button>`)
       : ""
@@ -392,7 +367,7 @@ function renderInvestigationBackflow(brief) {
       ${keyChoiceReview(brief)}
     `,
     choices: pick
-      ? flowGroup(`<button class="primary" data-after-investigation type="button">${nextLabel}</button>`)
+      ? flowGroupHtml(`<button class="primary" data-after-investigation type="button">${nextLabel}</button>`)
       : ""
   });
   bindInvestigationButtons(brief, hook, index);
@@ -414,13 +389,13 @@ function renderDeepFollowup(brief) {
     label: "深入一问",
     chapter: liveChapterTitle(brief),
     text: `
-      <div class="call-dialogue">
-        ${callLine(brief, { role: "host", text: followup.question })}
-        ${callLine(brief, { role: "caller", text: followup.answer })}
-      </div>
+      ${callDialogueHtml([
+        { role: "host", text: followup.question },
+        { role: "caller", text: followup.answer }
+      ])}
       <p class="hint">${escapeHtml(followup.note)}</p>
     `,
-    choices: flowGroup(`<button class="primary" data-scene="accusation" type="button">选一句原话</button>`)
+    choices: flowGroupHtml(`<button class="primary" data-scene="accusation" type="button">选一句原话</button>`)
   });
   bindSceneButtons();
 }
@@ -432,13 +407,13 @@ function renderPatienceLost(brief) {
     label: "听众散了",
     chapter: liveChapterTitle(brief),
     text: `
-      <div class="call-dialogue">
-        ${callLine(brief, { role: "host", text: "先收一下。弹幕已经散了，这通麦再问下去只会变成各说各的。" })}
-        ${callLine(brief, { role: "caller", text: "我也有点乱。要不这通先到这儿，我回去把材料和原话再整理一下。" })}
-      </div>
+      ${callDialogueHtml([
+        { role: "host", text: "先收一下。弹幕已经散了，这通麦再问下去只会变成各说各的。" },
+        { role: "caller", text: "我也有点乱。要不这通先到这儿，我回去把材料和原话再整理一下。" }
+      ])}
       <p class="hint">这案没有收麦。直播间的耐心被消耗完了。</p>
     `,
-    choices: flowGroup(`
+    choices: flowGroupHtml(`
       <button class="primary" data-retry-case type="button">重问本案</button>
       ${isStoryPackMode() ? `<button data-after-patience-lost type="button">${isFinalStoryPackCase() ? "查看整晚收麦" : "接下一路麦"}</button>` : `<button data-action="title" type="button">回标题</button>`}
     `)
@@ -473,7 +448,7 @@ function renderAccusation(brief) {
       <p>聊到这儿，你会选哪句原话往下接？</p>
       ${keyChoiceReview(brief)}
     `,
-    choices: choiceGroup("收哪句", choices.map((choice) => `<button data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${escapeHtml(choice.label)}</button>`).join(""), "single-choice-group", "从刚才的话里挑")
+    choices: choiceGroupHtml("收哪句", choices.map((choice) => `<button data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${escapeHtml(choice.label)}</button>`).join(""), "single-choice-group", "从刚才的话里挑")
   });
   document.querySelectorAll("[data-accuse]").forEach((button) => {
     button.addEventListener("click", () => resolveAccusationFromButton(brief, button));
@@ -595,7 +570,7 @@ function renderStoryInterlude(brief) {
       nextObjectLabel: storyInterludeObjectLabel(nextBrief),
       nextLine: storyInterludeNextLine(nextBrief)
     }),
-    choices: flowGroup(storyInterludeChoicesHtml())
+    choices: flowGroupHtml(storyInterludeChoicesHtml())
   });
   bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
@@ -678,7 +653,7 @@ function renderStoryPackComplete() {
       routeProfiles,
       ...summary
     }),
-    choices: flowGroup(`
+    choices: flowGroupHtml(`
       <button class="primary" data-copy-weekly-result type="button">复制收麦文案</button>
       <button data-action="title" type="button">回标题</button>
     `)
@@ -753,18 +728,6 @@ function caseBackdropClass(brief = {}) {
   return brief.backdropClass ?? "backdrop-live";
 }
 
-function callLine(brief, line = {}) {
-  const role = line.role === "host" || line.speaker === "你" ? "host" : "caller";
-  const speaker = role === "host" ? "你" : "咨询者";
-  const text = line.text ?? line.version ?? line.line ?? "";
-  return `
-    <div class="call-line ${role}">
-      <b>${speaker}</b>
-      <p>${escapeHtml(text)}</p>
-    </div>
-  `;
-}
-
 function compactDialogueLines(lines) {
   const normalized = (lines ?? []).filter((line) => line?.text);
   const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
@@ -800,16 +763,7 @@ function keyChoiceReview(brief) {
           ])
         ].filter((line) => line.text)
       : [];
-  return `
-    <details class="choice-review">
-      <summary>
-        <span>上一段</span>
-      </summary>
-      <div class="call-dialogue review-dialogue">
-        ${rows.map((line) => callLine(brief, line)).join("")}
-      </div>
-    </details>
-  `;
+  return choiceReviewHtml(rows);
 }
 
 function bind(selector, handler) {

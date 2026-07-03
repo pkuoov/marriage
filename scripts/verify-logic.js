@@ -17,6 +17,7 @@ import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, 
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
 import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
+import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
@@ -575,7 +576,17 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
 test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const callFlowViewSource = readFileSync(new URL("../src/ui/callFlowView.js", import.meta.url), "utf8");
   const liveFrameViewSource = readFileSync(new URL("../src/ui/liveFrameView.js", import.meta.url), "utf8");
+  assertIncludes(appSource, "./ui/callFlowView.js", "通用通话气泡和按钮组 HTML 必须从 app.js 拆到 ui/callFlowView");
+  assertIncludes(callFlowViewSource, "choiceReviewHtml", "上一段回看必须由纯 UI 模块渲染");
+  assert(!appSource.includes("function choiceGroup"), "通用选择组 HTML 不能继续留在 app.js");
+  assert(!appSource.includes("function flowGroup"), "流程按钮组 HTML 不能继续留在 app.js");
+  assert(!appSource.includes("function callLine"), "通话气泡 HTML 不能继续留在 app.js");
+  assertIncludes(choiceGroupHtml("收哪句", "<button>原话</button>", "single-choice-group", "从刚才的话里挑"), "choice-label", "通用选择组必须可由纯 UI 模块渲染");
+  assertIncludes(flowGroupHtml("<button>继续</button>"), "flow-group", "流程按钮组必须可由纯 UI 模块渲染");
+  assertIncludes(callDialogueHtml([{ role: "host", text: "你当时怎么回的？" }, { role: "caller", text: "我说先看账单。" }]), "你当时怎么回的？", "通话气泡必须可由纯 UI 模块渲染");
+  assertIncludes(choiceReviewHtml([{ role: "caller", text: "账单只有消费页。" }]), "上一段", "上一段回看必须可由纯 UI 模块渲染");
   assertIncludes(appSource, "./ui/liveCallView.js", "直播 HUD/立绘 HTML 必须从 app.js 拆到 ui/liveCallView");
   assertIncludes(appSource, "./ui/liveFrameView.js", "案内主舞台 HTML 必须从 app.js 拆到 ui/liveFrameView");
   assertIncludes(audiencePatienceHudHtml({ level: "mid", ratio: 0.5, remaining: 4, max: 8 }), "听众忍耐", "听众忍耐 HUD 必须可由纯 UI 模块渲染");
