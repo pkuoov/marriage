@@ -96,6 +96,9 @@ async function runRoute(route) {
     await completePostAccusation(page, route);
     await page.locator(".recap-score-head").waitFor({ state: "visible" });
     await assertVisibleText(page, "收麦回看", `${route.name} route should reach recap`);
+    if (route.name === "perfect") {
+      await exerciseTruthBoundary(page, route);
+    }
     await assertNoPageText(page, "undefined", `${route.name} route rendered undefined text`);
     await assertNoPageText(page, "NaN", `${route.name} route rendered NaN text`);
   } catch (error) {
@@ -131,6 +134,30 @@ async function completePostAccusation(page, route) {
     }
     await page.waitForTimeout(80);
   }
+}
+
+async function exerciseTruthBoundary(page, route) {
+  for (let step = 0; step < 6; step += 1) {
+    if (await page.locator(".truth-boundary-card").count()) break;
+    await activate(page, route, "[data-recap-next]");
+  }
+  await page.locator(".truth-boundary-card").waitFor({ state: "visible" });
+  const promptCount = await page.locator(".truth-boundary-prompt").count();
+  if (promptCount < 5) {
+    throw new Error(`Truth boundary should use at least five prompts, got ${promptCount}`);
+  }
+  if (await page.locator("[data-recap-next]").count()) {
+    throw new Error("Truth boundary allowed continuing before every prompt was placed");
+  }
+  for (let index = 0; index < promptCount; index += 1) {
+    const prompt = page.locator(".truth-boundary-prompt").nth(index);
+    await prompt.locator("[data-truth-boundary-pick]").first().evaluate((element) => element.click());
+  }
+  await assertNoPageText(page, "这句还不能这么放", "Truth boundary must not reveal correctness on the choice page");
+  await page.locator("[data-recap-next]").first().waitFor({ state: "visible" });
+  await activate(page, route, "[data-recap-next]");
+  await page.locator(".truth-boundary-reveal").waitFor({ state: "visible" });
+  await assertVisibleText(page, "你放到", "Truth boundary reveal should show where an early placement landed");
 }
 
 async function advanceSceneBeat(page, route) {

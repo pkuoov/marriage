@@ -2,6 +2,8 @@ import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.68";
 import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.68";
 import { routeAxisLabel } from "./routeLog.js?v=0.20.68";
 
+const TRUTH_BOUNDARY_PROMPT_LIMIT = 5;
+
 export function issueLine(issue = {}) {
   if (issue.badge) return "该问的几句都问到了，弹幕要吵也只能换个吵法。";
   if (issue.percent >= 75) return "开场那套说法已经站不稳了，还差一两句没问穿。";
@@ -80,14 +82,7 @@ export function truthBoundaryReview(brief = {}) {
     { key: "edited", label: "被修剪", items: cleanBoundaryItems(boundary.edited) },
     { key: "unknown", label: "今晚定不了", items: cleanBoundaryItems(boundary.unknown) }
   ].filter((column) => column.items.length);
-  const prompts = columns
-    .map((column) => ({
-      id: `${column.key}:0`,
-      expected: column.key,
-      label: column.label,
-      text: column.items[0] ?? ""
-    }))
-    .filter((prompt) => prompt.text);
+  const prompts = boundaryPrompts(columns, TRUTH_BOUNDARY_PROMPT_LIMIT);
   return {
     title: "事实边界",
     line: columns.length
@@ -99,12 +94,34 @@ export function truthBoundaryReview(brief = {}) {
   };
 }
 
+function boundaryPrompts(columns = [], limit = TRUTH_BOUNDARY_PROMPT_LIMIT) {
+  const prompts = [];
+  const maxItems = Math.max(0, ...columns.map((column) => column.items.length));
+  for (let itemIndex = 0; itemIndex < maxItems && prompts.length < limit; itemIndex += 1) {
+    for (const column of columns) {
+      const text = column.items[itemIndex];
+      if (!text) continue;
+      prompts.push({
+        id: `${column.key}:${itemIndex}`,
+        expected: column.key,
+        label: column.label,
+        text
+      });
+      if (prompts.length >= limit) break;
+    }
+  }
+  return prompts;
+}
+
 export function truthBoundaryAftertaste(review = {}, picks = {}, misses = {}) {
   if (!(review.prompts ?? []).length) return "";
-  const totalMisses = (review.prompts ?? []).reduce((sum, prompt) => sum + Number(misses[prompt.id] ?? 0), 0);
-  const settled = (review.prompts ?? []).every((prompt) => picks[prompt.id] === prompt.expected);
-  if (!settled) return "这几句还没放稳，收话先压一压。";
-  if (totalMisses > 0) return "刚才有句差点放早了，收回来以后，这通才没变成替人判案。";
+  const prompts = review.prompts ?? [];
+  const placed = prompts.filter((prompt) => picks[prompt.id]);
+  const wrong = prompts.filter((prompt) => picks[prompt.id] && picks[prompt.id] !== prompt.expected).length;
+  const totalMisses = Math.max(wrong, prompts.reduce((sum, prompt) => sum + Number(misses[prompt.id] ?? 0), 0));
+  const settled = prompts.every((prompt) => picks[prompt.id] === prompt.expected);
+  if (placed.length < prompts.length) return "这几句还没放完，收话先压一压。";
+  if (!settled) return totalMisses > 1 ? "有几句放早了，今晚能钉住的东西比你刚才少。" : "有句放早了，今晚不能替任何一边把话补完。";
   return "这几句边界放稳了：能确认的钉住，定不了的不替人补。";
 }
 
@@ -112,11 +129,14 @@ export function truthBoundaryPackProfile(rows = []) {
   const items = rows
     .map((row) => {
       const prompts = row.review?.prompts ?? [];
+      const placedCount = prompts.filter((prompt) => row.picks?.[prompt.id]).length;
+      const wrongCount = prompts.filter((prompt) => row.picks?.[prompt.id] && row.picks[prompt.id] !== prompt.expected).length;
       const settled = prompts.length > 0 && prompts.every((prompt) => row.picks?.[prompt.id] === prompt.expected);
-      const misses = prompts.reduce((sum, prompt) => sum + Number(row.misses?.[prompt.id] ?? 0), 0);
+      const misses = Math.max(wrongCount, prompts.reduce((sum, prompt) => sum + Number(row.misses?.[prompt.id] ?? 0), 0));
       return {
         label: row.label ?? "",
         promptCount: prompts.length,
+        placedCount,
         settled,
         misses
       };
@@ -437,6 +457,7 @@ function backflowReaction({ total, hits, misses }) {
 
 function boundaryPackLabel({ total, settledCount, missCount }) {
   if (!total) return "边界未开";
+  if (missCount > 0 && settledCount < total) return "放早了";
   if (settledCount < total) return "还压着";
   if (missCount > 0) return "收回来了";
   return "挂得住";
@@ -444,6 +465,7 @@ function boundaryPackLabel({ total, settledCount, missCount }) {
 
 function boundaryPackLine({ total, settledCount, missCount, unsettledLabel }) {
   if (!total) return "今晚没有留下可回看的事实边界。";
+  if (missCount > 0 && settledCount < total) return `${unsettledLabel || "有一通"}有几句放早了，证据撑不到那里。`;
   if (settledCount < total) return `${unsettledLabel || "有一通"}还有几句没归位，评论区会咬着不放。`;
   if (missCount > 0) return "有几句差点放早，最后还是收回到了证据能撑住的位置。";
   return "该钉的钉了，定不了的没替人补完。";
@@ -451,6 +473,7 @@ function boundaryPackLine({ total, settledCount, missCount, unsettledLabel }) {
 
 function boundaryPackComment({ total, settledCount, missCount, unsettledLabel }) {
   if (!total) return "「今晚没留下几句能复盘的边界，像听了个热闹。」";
+  if (missCount > 0 && settledCount < total) return `「${unsettledLabel || "有一通"}那几句说满了，问题不是不敢判，是证据没到。」`;
   if (settledCount < total) return `「${unsettledLabel || "有一通"}那几句话还没摆平，现在替谁下句号都早。」`;
   if (missCount > 0) return "「刚才有几句差点说满了，收回来那一下才像主播。」";
   return "「该钉的钉了，钉不住的没硬钉，这集才挂得住。」";

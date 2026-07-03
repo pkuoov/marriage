@@ -1951,13 +1951,9 @@ button.evidence-target {
   background: rgba(255, 255, 255, .032);
 }
 
-.truth-boundary-prompt.settled {
+.truth-boundary-prompt.placed {
   border-color: rgba(101, 214, 194, .28);
   background: rgba(101, 214, 194, .065);
-}
-
-.truth-boundary-prompt.unsettled {
-  border-color: rgba(212, 180, 106, .24);
 }
 
 .truth-boundary-prompt p,
@@ -1990,6 +1986,17 @@ button.evidence-target {
   border-color: rgba(139, 228, 212, .36);
   color: var(--accent);
   background: rgba(101, 214, 194, .09);
+}
+
+.truth-boundary-column li small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(237, 241, 238, .48);
+  font-size: 11px;
+}
+
+.truth-boundary-reveal {
+  margin: 12px 0;
 }
 
 .share-card-head {

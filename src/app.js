@@ -558,13 +558,14 @@ function renderSolved(brief) {
     truthBoundaryReviewHtml(boundary, boundaryPicks),
     `
       <p><b>连线收住</b></p>
+      ${truthBoundaryRevealHtml(boundary, boundaryPicks)}
       ${boundaryLine ? `<p class="hint">${escapeHtml(boundaryLine)}</p>` : ""}
       <p>${escapeHtml(conclusion.truth)}</p>
     `
   ];
   const index = Math.max(0, Math.min(step, pages.length - 1));
   const isBoundaryPage = pages[index]?.includes("truth-boundary-card");
-  const canLeaveBoundary = !isBoundaryPage || truthBoundaryComplete(boundary, boundaryPicks);
+  const canLeaveBoundary = !isBoundaryPage || truthBoundaryPlaced(boundary, boundaryPicks);
   frame({
     brief,
     mood: "listening",
@@ -581,6 +582,7 @@ function renderSolved(brief) {
       const answer = button.getAttribute("data-truth-boundary-pick");
       if (!promptId || !answer) return;
       const key = caseKey(brief);
+      if (state.truthBoundaryPicks?.[key]?.[promptId]) return;
       const prompt = (boundary.prompts ?? []).find((item) => item.id === promptId);
       const miss = prompt && answer !== prompt.expected;
       state.truthBoundaryPicks = {
@@ -1448,16 +1450,6 @@ function truthBoundaryReviewHtml(review, picks = {}) {
       <p><b>${escapeHtml(review.title)}</b></p>
       <p>${escapeHtml(review.line)}</p>
       ${truthBoundaryChallengeHtml(review, picks)}
-      <div class="truth-boundary-grid">
-        ${review.columns.map((column) => `
-          <div class="truth-boundary-column truth-boundary-${escapeHtml(column.key)}">
-            <span>${escapeHtml(column.label)}</span>
-            <ul>
-              ${column.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-            </ul>
-          </div>
-        `).join("")}
-      </div>
     </section>
   `;
 }
@@ -1468,21 +1460,47 @@ function truthBoundaryChallengeHtml(review, picks = {}) {
     <div class="truth-boundary-challenge">
       ${review.prompts.map((prompt) => {
         const picked = picks[prompt.id] ?? "";
-        const settled = picked && picked === prompt.expected;
+        const pickedLabel = review.choices.find((choice) => choice.key === picked)?.label ?? "";
         return `
-          <div class="truth-boundary-prompt ${picked ? settled ? "settled" : "unsettled" : ""}">
+          <div class="truth-boundary-prompt ${picked ? "placed" : ""}">
             <p>${escapeHtml(prompt.text)}</p>
             <div class="truth-boundary-options">
               ${review.choices.map((choice) => `
-                <button class="${picked === choice.key ? "selected" : ""}" data-truth-boundary-prompt="${escapeHtml(prompt.id)}" data-truth-boundary-pick="${escapeHtml(choice.key)}" type="button">${escapeHtml(choice.label)}</button>
+                <button class="${picked === choice.key ? "selected" : ""}" ${picked ? "disabled" : `data-truth-boundary-prompt="${escapeHtml(prompt.id)}" data-truth-boundary-pick="${escapeHtml(choice.key)}"`} type="button">${escapeHtml(choice.label)}</button>
               `).join("")}
             </div>
-            ${picked ? `<small>${settled ? "这句放得住。" : "这句还不能这么放。"}</small>` : ""}
+            ${picked ? `<small>你把这句放进了：${escapeHtml(pickedLabel)}。</small>` : ""}
           </div>
         `;
       }).join("")}
     </div>
   `;
+}
+
+function truthBoundaryRevealHtml(review, picks = {}) {
+  if (!review?.columns?.length) return "";
+  return `
+    <div class="truth-boundary-grid truth-boundary-reveal">
+      ${review.columns.map((column) => `
+        <div class="truth-boundary-column truth-boundary-${escapeHtml(column.key)}">
+          <span>${escapeHtml(column.label)}</span>
+          <ul>
+            ${column.items.map((item, index) => {
+              const promptId = `${column.key}:${index}`;
+              const wasPrompted = (review.prompts ?? []).some((prompt) => prompt.id === promptId);
+              const picked = picks[promptId] ?? "";
+              const mark = picked ? picked === column.key ? "你放准了" : `你放到了${truthBoundaryChoiceLabel(review, picked)}` : wasPrompted ? "未放" : "主播补充";
+              return `<li>${escapeHtml(item)}<small>${escapeHtml(mark)}</small></li>`;
+            }).join("")}
+          </ul>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function truthBoundaryChoiceLabel(review, key) {
+  return review.choices?.find((choice) => choice.key === key)?.label ?? "别处";
 }
 
 function postDailySharePayload(brief, route, result) {
@@ -1664,8 +1682,8 @@ function truthBoundaryMissesFor(brief) {
   return state.truthBoundaryMisses?.[caseKey(brief)] ?? {};
 }
 
-function truthBoundaryComplete(review, picks = {}) {
-  return (review?.prompts ?? []).every((prompt) => picks[prompt.id] === prompt.expected);
+function truthBoundaryPlaced(review, picks = {}) {
+  return (review?.prompts ?? []).every((prompt) => Boolean(picks[prompt.id]));
 }
 
 function unlockedInvestigationEntriesFor(brief) {
