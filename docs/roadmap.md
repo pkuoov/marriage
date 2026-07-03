@@ -22,7 +22,7 @@
 - 首个内容包骨架已拆到 `content/packs/steam-demo-01/`，并新增 `npm run verify:pack` 校验内容包与运行时故事包定义一致。
 - `episode` 已开始支持可变案数：当前 demo 包是四案，但存档迁移、包校验和生成器不再把 4 当成引擎规则。
 - 内容包 manifest 元数据已生成到 `src/generated/contentPackIndex.js` 并由运行时读取；`src/storyPacks.js` 不再手写 demo 包镜像。
-- 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`；试玩包四案已切到 `runtime-loaded` 并由内容包覆盖模板字段。
+- 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`；试玩包四案已切到 `runtime-loaded`，生成时直接读取内容包，不再先走长模板再覆盖。
 - 任务画像已进入 runtime-loaded 内容包：四案的 `taskProfile` 会随 JSON 覆盖 brief，减少 `caseEngine.js` 的 `plotId` 文案表职责。
 - daily 模式已接入同一内容源：已迁移的试玩案按 `plotId` 复用 runtime-loaded JSON；自动 daily 轮换只出已迁移 JSON 内容，旧模板只作为显式兼容入口兜底。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，减少 `app.js` 的 `plotId` 文案映射。
@@ -41,7 +41,7 @@
 - 现场压力表演数据已进入内容包：`sceneVersions[].pressureHint` 控制弹幕短钩子、来电人防备和微表情，运行时不再用案件台词正则判断这些状态。
 - 现场防备已开始影响回答：如果上一拍把麦带散，下一拍可以切到内容包写好的 `guardedAnswer`，压力不再只是弹幕/表情表现。
 - 中途弹幕开始按路线轴反应：内容包 `routeAxisComments` 会根据玩家最近一次追问/材料轴插入短弹幕，避免直播现场只剩通用短语。
-- 职场案已用两份材料检视拉开机制形状：审批图之后还要看供应商报价和返款入口，流程案不再完全照前三案的一材料节奏。
+- 第二、三、四案已用两份材料检视拉开机制形状：理发店案看老板娘话术后的办卡顺序，存款证明案看收入/流水缺口，职场案看审批图和供应商报价。
 - 事实边界已进入收麦回看：每案会要求玩家把多句话一次性归到“能确认 / 被修剪 / 今晚定不了”，放完即可继续，错放不当场纠正。
 - 事实边界已进入故事集终局：四案归位是否放稳、是否定急了，会影响终局边界标签、分享卡和评论区审判墙。
 - 故事包难度曲线已接入 manifest：每案 `difficultyProfile` 可调整听众耐心预算和事实边界题量，后段案件能更紧而不用在运行时代码写案名分支。
@@ -81,6 +81,6 @@
 
 - 只推进一条玩法主线：直播控场系统。资料操作、现场压力和收麦回看源码侧已到大测试收口阶段。
 - P0/P1 源码侧下一步是跑完整大测试；真实 Windows、Steam Cloud/overlay、签名和 Steam Deck/控制器手感放到发行验收门。
-- 内容包管线已经支撑当前试玩包；下一轮源码优化优先继续减小 `app.js`、清理旧 daily 兜底模板和残余内容特判。
+- 内容包管线已经支撑当前试玩包；下一轮源码优化优先继续减小 `app.js`，旧 daily 兜底模板只保留未迁移案兼容入口，残余内容特判继续拆到数据层。
 - 下一个剧情大改先按侦探结构账本补 `sceneVersions[].id / clueRole / falseFrame / payoffFor` 这类作者字段，再改台词和串案暗线。
 - AI 只保留为后期受控 intent router，不进入当前实现队列。

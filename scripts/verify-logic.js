@@ -878,13 +878,15 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assertEqual(a[1].taskProfile.id, "emotion", "理发店案任务画像必须来自 content JSON，而不是运行时 plotId 特判");
   assertEqual(a[2].taskProfile.id, "verification", "存款证明案任务画像必须来自 content JSON");
   assertEqual(a[3].taskProfile.summary, "截图看着完整，钱却没落到该落的位置。", "职场案任务画像必须保留内容包里的案内操作摘要");
-  assertEqual(a[0].storyHiddenThread?.label, "同一套省成本的话术", "故事包暗线必须从 manifest theme 进入每案 brief");
+  assertEqual(a[0].storyHiddenThread?.label, demoPack.theme.hiddenThread.label, "故事包暗线必须从 manifest theme 进入每案 brief");
   assertEqual(a[0].difficultyProfile.tier, 1, "第一案必须从 manifest 接到开场难度 profile");
   assertEqual(a[3].difficultyProfile.tier, 4, "第四案必须从 manifest 接到收束难度 profile");
   assert(calculateCaseBudgetMax({ brief: a[0] }) > calculateCaseBudgetMax({ brief: a[3] }), "故事包后段必须能通过 manifest 降低听众耐心预算");
   assertEqual(truthBoundaryPromptLimitForCase(a[2]), 6, "故事包中后段必须能通过 manifest 提高事实边界题量");
   assertEqual(truthBoundaryReview(a[3]).prompts.length, 6, "事实边界回看必须读取 per-case truthBoundaryPromptLimit，而不是全包固定 5 条");
-  assert((a[3].evidenceChecks ?? []).length >= 2, "职场案必须至少两份材料检视，和前三案形成流程压力差异");
+  assert((a[1].evidenceChecks ?? []).length >= 2, "第二案必须至少两份材料检视，把老板娘话术后的消费顺序做成玩法");
+  assert((a[2].evidenceChecks ?? []).length >= 2, "第三案必须至少两份材料检视，把收入和流水缺口做成玩法");
+  assert((a[3].evidenceChecks ?? []).length >= 2, "职场案必须至少两份材料检视，形成流程压力");
   a.forEach((brief, index) => {
     assert(Object.values(brief.routeAxisComments ?? {}).flat().length >= 4, `第 ${index + 1} 案必须有按路线轴反应的弹幕池`);
     assert((brief.sceneVersions ?? []).some((scene) => (scene.questionOptions ?? []).some((option) => option.guardedAnswer)), `第 ${index + 1} 案必须至少有一条收紧版回答，让现场防备进入玩法而不只停在表情`);

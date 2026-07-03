@@ -14,22 +14,24 @@ export const CONTENT_PACKS = {
       "commentPrompt": "别急着判谁好谁坏，看每个好听词后面接了什么要求。",
       "hiddenThread": {
         "title": "今晚暗线",
-        "label": "同一套省成本的话术",
-        "reveal": "四通麦不是同一个人作恶，像是同一套话术在不同场景里换壳：先给身份、关系或流程一个好听词，再把钱、资源和责任推到别人手里。",
-        "lowReveal": "这条暗线还没完全露出来。它不靠一个反派串场，而靠几句好听话反复换壳。",
+        "label": "同一种把成本往外推的说法",
+        "reveal": "四通麦背后没有同一个反派，但它们像同一套城市生存话术：先把身份、关系或流程说得好听，再让别人先垫钱、出资源、背责任。",
+        "lowReveal": "这条暗线还没完全露出来。它不靠一个反派串场，而靠几句好听话在不同地方反复出现。",
         "beats": [
           "体面后面接最低还款。",
           "自己人后面接办卡、带客和投店。",
           "名校和稳定后面接流水、工资卡和婚后管钱。",
           "主责和审批后面接垫款、返款入口和责任落点。"
         ],
-        "comment": "「这集最吓人的不是谁坏得离谱，是好听词后面都接了成本。」"
+        "comment": "「这集最吓人的不是谁坏得离谱，是每句好听话后面都有人先买单。」"
       }
     },
     "comments": {
       "themeId": "identity-cost-demo",
       "commentSeeds": [
         "这几通最吓人的不是词好听，是每个词后面都有人要你先掏一点。",
+        "体面、自己人、稳定、主责，换了四个词，落下来的都是账。",
+        "没有幕后黑手也够难受了，大家都知道哪些话好听、哪些话能让别人先让一步。",
         "我站主播问账单，心疼可以，转账得慢一点。",
         "有些人不是没困难，是把困难包装成你不帮就是你不好。",
         "也不能把来电人写成全白，有人自己也有面子、条件和主责的算盘。"
@@ -78,7 +80,7 @@ export const CONTENT_PACKS = {
           "budgetDelta": 0,
           "truthBoundaryPromptLimit": 5
         },
-        "bridge": "先别急着骂暧昧。店里那张表，比甜话更像账本。"
+        "bridge": "第一通账单还没翻完，店里那张表又递上来。它比甜话更像账本。"
       },
       {
         "caseId": "03-profile",
@@ -96,7 +98,7 @@ export const CONTENT_PACKS = {
           "budgetDelta": 0,
           "truthBoundaryPromptLimit": 6
         },
-        "bridge": "几张资料图被她一口气发过来，话说得急，停顿也多。"
+        "bridge": "店表刚收下，资料图又发过来。几张图都好看，停顿也多。"
       },
       {
         "caseId": "04-workplace",
@@ -114,7 +116,7 @@ export const CONTENT_PACKS = {
           "budgetDelta": -1,
           "truthBoundaryPromptLimit": 6
         },
-        "bridge": "公司那边也亮了麦。截图看着完整，钱却还没回。"
+        "bridge": "前面几路都在说身份和关系，公司这通换成流程词。截图看着完整，钱却还没回。"
       }
     ]
   }
@@ -813,6 +815,33 @@ export const CONTENT_CASES = {
               "routeAxis": "outer-thread"
             }
           ]
+        },
+        {
+          "id": "tony-card-timing",
+          "title": "办卡记录检视",
+          "prompt": "办卡记录旁边，哪一处最该追？",
+          "material": "记录里写着：“老板娘玩笑后 22:48 聊年卡，次日推护理套卡；备注：先别催，稳住。”",
+          "options": [
+            {
+              "label": "老板娘之后接年卡",
+              "correct": true,
+              "contradiction": "亲密身份话后立刻接年卡和投店试探。",
+              "feedback": "甜话可以是玩笑，可它后面马上接了消费。",
+              "routeAxis": "money-flow"
+            },
+            {
+              "label": "22:48 这个时间",
+              "correct": false,
+              "feedback": "深夜聊天容易暧昧，但时间本身不是这条记录最扎眼的地方。",
+              "routeAxis": "identity-wording"
+            },
+            {
+              "label": "先别催，稳住",
+              "correct": false,
+              "feedback": "这句很冷，但它说明的是推进手法；前面那句先把关系位置垫起来了。",
+              "routeAxis": "process-control"
+            }
+          ]
         }
       ],
       "investigationHooks": [
@@ -1140,6 +1169,7 @@ export const CONTENT_CASES = {
         [
           "男方声称收入和日常花销、抠门细节不匹配。",
           "咨询者借父母的口，想摸清男方真实收入和钱流向。",
+          "单张存款证明和当日收入截图撑不起长期收入判断。",
           "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
           "咨询者把工资管理的要求包装成了确认稳定。"
         ]
@@ -1216,6 +1246,33 @@ export const CONTENT_CASES = {
               "correct": false,
               "feedback": "介绍人是前因，这张图缺的是另一半。",
               "routeAxis": "caller-credibility"
+            }
+          ]
+        },
+        {
+          "id": "profile-income-flow-gap",
+          "title": "收入材料检视",
+          "prompt": "存款证明和收入截图里，还缺哪一块？",
+          "material": "资料里有一张当日存款证明，也有一张收入截图。看不到连续流水、收入构成，也看不到这笔存款是不是长期留在账户里。",
+          "options": [
+            {
+              "label": "连续流水和收入构成",
+              "correct": true,
+              "contradiction": "单张存款证明和当日收入截图撑不起长期收入判断。",
+              "feedback": "这一块不补，稳定两个字还是悬着。",
+              "routeAxis": "money-flow"
+            },
+            {
+              "label": "存款当天的余额数字",
+              "correct": false,
+              "feedback": "余额数字好看，但它只站在那一天。",
+              "routeAxis": "money-flow"
+            },
+            {
+              "label": "截图是不是原图",
+              "correct": false,
+              "feedback": "原图也可能只截到最好看的那一页。",
+              "routeAxis": "document-edge"
             }
           ]
         }

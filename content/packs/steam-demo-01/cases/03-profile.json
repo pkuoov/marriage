@@ -274,6 +274,7 @@
     [
       "男方声称收入和日常花销、抠门细节不匹配。",
       "咨询者借父母的口，想摸清男方真实收入和钱流向。",
+      "单张存款证明和当日收入截图撑不起长期收入判断。",
       "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
       "咨询者把工资管理的要求包装成了确认稳定。"
     ]
@@ -350,6 +351,33 @@
           "correct": false,
           "feedback": "介绍人是前因，这张图缺的是另一半。",
           "routeAxis": "caller-credibility"
+        }
+      ]
+    },
+    {
+      "id": "profile-income-flow-gap",
+      "title": "收入材料检视",
+      "prompt": "存款证明和收入截图里，还缺哪一块？",
+      "material": "资料里有一张当日存款证明，也有一张收入截图。看不到连续流水、收入构成，也看不到这笔存款是不是长期留在账户里。",
+      "options": [
+        {
+          "label": "连续流水和收入构成",
+          "correct": true,
+          "contradiction": "单张存款证明和当日收入截图撑不起长期收入判断。",
+          "feedback": "这一块不补，稳定两个字还是悬着。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "存款当天的余额数字",
+          "correct": false,
+          "feedback": "余额数字好看，但它只站在那一天。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "截图是不是原图",
+          "correct": false,
+          "feedback": "原图也可能只截到最好看的那一页。",
+          "routeAxis": "document-edge"
         }
       ]
     }

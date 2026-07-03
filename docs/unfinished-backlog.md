@@ -55,7 +55,7 @@
 - 基础手柄和回看快捷键已接入：Tab 切换当前回看面板；标准 Gamepad API 轮询支持十字键/左摇杆移动焦点、A 确认、B 返回、Y 回看/复盘入口；下一步需要真实 Steam Deck/控制器设备 QA。
 - 输入导航规则已拆到 `src/runtime/inputNavigation.js`：键盘意图、焦点循环和摇杆方向/冷却都有纯函数测试，`app.js` 只负责把意图落到按钮。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
-- 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
+- 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 进入运行时；当前 demo 四案均已切到 `runtime-loaded`，生成时不再先走长模板再覆盖。
 - 任务画像 `taskProfile` 已随 runtime-loaded 案件进入内容包：四案的操作类型、推荐专业和摘要不再只靠 `caseEngine.js` 的 `plotId` 表。
 - daily 模式已优先加载 runtime-loaded JSON：同一 `plotId` 的试玩案不再在故事集和今日来电里维护两套台词。自动 daily 轮换只出已迁移 JSON 内容，旧模板仅保留给显式兼容入口兜底。
 - 故事集终局 profile 收集已拆到 `src/runtime/storyPackSummaryModel.js`：事实边界、现场压力、材料圈点、原话、物件、评论墙和分享文案模型能脱离 `app.js` 测试。
@@ -111,10 +111,10 @@
 
 - 2026-07-02 复查结论：`content/packs/steam-demo-01/cases/*.json` 不能再做影子资产。试玩包四案已是运行时台词来源；未来新增 `metadata-only` 案件仍只能写策划压力包，`npm run verify:pack` 会阻止它们夹带运行时字段。
 - 第一层故事包 manifest 已经由 `content/packs/steam-demo-01/` 生成运行时索引，构建和校验会检查索引是否过期。
-- 第二层 loader 入口已经存在：如果某个 case JSON 标成 `runtime-loaded`，构建索引会校验完整字段并嵌入运行时，`caseEngine` 会用它覆盖模板字段。
+- 第二层 loader 入口已经存在：如果某个 case JSON 标成 `runtime-loaded`，构建索引会校验完整字段并嵌入运行时，`caseEngine` 会优先直接读取它；旧模板只给未迁移案或显式兼容入口兜底。
 - 当前 demo 包四案完整台词、追问、材料判定、最终收麦原话和结算已迁入内容包；`truthBoundary` 也随运行时 brief 输出，并已接到收麦回看的归位交互。
 - 内容包可为关键追问写 `guardedAnswer`，让现场防备改变来电人的实际回答；`verify:pack` 会阻止试玩案完全缺少这类防备后果。
-- 新增或替换一个故事包案子主要改 `content/packs/...`；`src/dailyChoices.js` 已只负责角色指向解析和通用兜底。`src/caseEngine.js` 里的日案模板仍支撑 daily 轮换，`src/app.js` 仍有少量渲染侧文案分支，后续要继续把日案和文案特判拆到数据层。
+- 新增或替换一个故事包案子主要改 `content/packs/...`；`src/dailyChoices.js` 已只负责角色指向解析和通用兜底。`src/caseEngine.js` 里的日案模板只支撑未迁移案和显式兼容入口，`src/app.js` 仍有少量渲染侧文案分支，后续继续把文案特判拆到数据层。
 - 长期目标是运行时代码只负责加载和校验。
 
 建议结构：
@@ -209,12 +209,12 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 
 当前每案已经有 5 段来电、材料检视、深问、原话收麦，但实际体量还偏精简。
 
-2026-07-03 按 `project-skills/case-scriptwriting/SKILL.md` 复审后确认：短感不是来电段数不足，而是前三案的可玩材料密度不足。四案均有 5 段来电、1 个案后回流、7 条事实边界；第 4 案有 2 个材料板，前三案只有 1 个材料板。
+2026-07-03 按 `project-skills/case-scriptwriting/SKILL.md` 复审后确认：短感不是来电段数不足，而是前三案的可玩材料密度不足。四案均有 5 段来电、1 个案后回流、7 条事实边界；第 2/3/4 案已各有 2 个材料板，第 1 案暂保留 1 个材料板，等 playtest 判断是否需要加重开场案。
 
 需要补：
 
-- 优先给 `03-profile` 增加第二材料板：收入/流水/存款证明的缺口，不再让大部分冲突落到 recap/backflow。
-- 其次给 `02-tony` 增加第二材料板：`老板娘` 后面接年卡/投店的聊天顺序，把好台词变成可玩推理点。
+- 已给 `03-profile` 增加第二材料板：收入/流水/存款证明的缺口，不再让大部分冲突落到 recap/backflow。
+- 已给 `02-tony` 增加第二材料板：`老板娘` 后面接年卡/投店的聊天顺序，把好台词变成可玩推理点。
 - 视 playtest 再给 `01-credit` 增加第二材料板：最低还款截图里的截止日和“今晚就要”之间的错位。
 - 每案至少 2 份可读材料，其中 1 份进入“圈哪一处”玩法，另 1 份进入回看/复盘。
 - 每案至少 1 个“来电人藏着自己的不利信息”的后半程揭示。

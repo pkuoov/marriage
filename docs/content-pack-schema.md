@@ -1,6 +1,6 @@
 # 内容包 Schema
 
-内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前已经接通 manifest 运行时索引和单案 JSON loader；`steam-demo-01` 四案已切到 `runtime-loaded`，完整台词、追问、材料判定、最终收麦、复盘文案、事实边界和评论种子都由内容包进入运行时。daily 模式会按 `plotId` 优先复用已迁移的 runtime-loaded JSON；自动 daily 轮换只出已迁移 JSON 内容，旧模板只作为显式兼容入口兜底。
+内容包用于把《直播间大侦探》的章节式案件包从运行时代码里拆出来。当前已经接通 manifest 运行时索引和单案 JSON loader；`steam-demo-01` 四案已切到 `runtime-loaded`，完整台词、追问、材料判定、最终收麦、复盘文案、事实边界和评论种子都由内容包直接进入运行时，不再先走长模板再覆盖。daily 模式会按 `plotId` 优先复用已迁移的 runtime-loaded JSON；自动 daily 轮换只出已迁移 JSON 内容，旧模板只作为显式兼容入口兜底。
 
 ## 目录
 

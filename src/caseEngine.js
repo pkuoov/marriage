@@ -10,6 +10,9 @@ const DAILY_PLOT_DEFINITIONS = {
     label: "失业信用卡隐瞒局",
     publicHook: "一方失业后继续维持体面恋爱消费，直到信用卡和网贷爆雷。",
     truth: "失业没先说，账单又递到另一方手里，这事不能只靠心疼往下接。",
+    stance: "trueVictim",
+    premeditated: true,
+    premeditatedActorRole: "respondent",
     accusationChoices: [
       { label: "“我只是怕你知道我失业后就离开我。”", accuseRole: "respondent", response: "怕你离开可以是真的，但最低还款为什么马上转到你这里？" },
       { label: "“我也怕别人觉得我找了个撑不住场面的人。”", accuseRole: "complainant", response: "这句把她自己的面子也放进来了。她不是只被催债，也不想承认自己被体面吸引过。" },
@@ -23,6 +26,9 @@ const DAILY_PLOT_DEFINITIONS = {
     label: "婚前房产加名安全感局",
     publicHook: "一方说加名是安全感，另一方说这是以结婚为名拿资产。",
     truth: "房本归谁、婚后谁还、分开钱怎么算，这几句没人能靠“像一家人”带过去。",
+    stance: "trueVictim",
+    premeditated: true,
+    premeditatedActorRole: "respondent",
     accusationChoices: [
       { label: "“买受人写的是对方父母。”", accuseRole: "respondent", response: "这句单独没问题，但旁边那张共同账户支出表要一起看。" },
       { label: "“最好能有个位置。”", accuseRole: "complainant", response: "这句才是她开头没说出的愿望。说出来不等于抢房，藏起来会让投入确认听着像绕话。" },
@@ -36,6 +42,9 @@ const DAILY_PLOT_DEFINITIONS = {
     label: "托尼老师多线养鱼局",
     publicHook: "一方以服务热情、性格会聊为借口，同时给多人制造排他暧昧。",
     truth: "几句专属话术如果后面都接办卡、带客、投店，那就不只是会聊天。",
+    stance: "trueVictim",
+    premeditated: true,
+    premeditatedActorRole: "respondent",
     accusationChoices: [
       { label: "“只有我能接住 TA 的情绪。”", accuseRole: "respondent", response: "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。" },
       { label: "“他说我像店里自己人。”", accuseRole: "complainant", response: "这句要承认。她不是错在帮忙，是她也不想太早拆穿那个位置到底算不算关系。" },
@@ -49,6 +58,9 @@ const DAILY_PLOT_DEFINITIONS = {
     label: "学历收入资料造假局",
     publicHook: "当事人来咨询择偶定位，却把学历、职业、收入和家庭资产说得很漂亮。",
     truth: "条件可以说得好听，但学历、收入、流水这些字一旦被拿来定关系，就得说全。",
+    stance: "halfTruth",
+    premeditated: false,
+    premeditatedActorRole: null,
     accusationChoices: [
       { label: "“他一直说名校毕业，细问才说是 MBA。”", accuseRole: "respondent", response: "学校不是假的，但这句话让别人往更好听的方向理解了。" },
       { label: "“我只说他学校那边确实是真的。”", accuseRole: "complainant", response: "你这句也没说全。前面话说满了，后面就很难自己拆台。" },
@@ -62,6 +74,9 @@ const DAILY_PLOT_DEFINITIONS = {
     label: "职场报销截图",
     publicHook: "同事说报销已经批了，却一直不把垫付款转回。截图看着过了，偏偏少了付款那一页。",
     truth: "审批截图看着像过了，但付款状态、收款账户、返款入口没露出来，钱就还没说清。",
+    stance: "halfTruth",
+    premeditated: false,
+    premeditatedActorRole: null,
     accusationChoices: [
       { label: "“报销审批通过了。”", accuseRole: "respondent", response: "审批走到哪一步是一回事，钱打给谁是另一回事。" },
       { label: "“我也确实想要这个主责。”", accuseRole: "complainant", response: "这句要承认。她想要机会是真的，同事拿这个机会让她先刷卡也是真的。" },
@@ -75,6 +90,18 @@ const DAILY_TEMPLATE_PLOT_IDS = Object.keys(DAILY_PLOT_DEFINITIONS);
 
 function taskProfileForPlot(plotId) {
   return DAILY_PLOT_DEFINITIONS[plotId]?.taskProfile ?? DAILY_PLOT_DEFINITIONS["education-income-fake-profile"].taskProfile;
+}
+
+function actorIdForRole(role, ids) {
+  if (role === "complainant") return ids.complainantId ?? null;
+  if (role === "respondent") return ids.respondentId ?? null;
+  return null;
+}
+
+function runtimeContentForDailyCase(options, plotId) {
+  const storyKey = options.storyKey ?? options.packKey ?? DEFAULT_STORY_PACK_KEY;
+  if (options.runtimeCaseId) return storyPackCaseContentFor(storyKey, options.runtimeCaseId);
+  return storyPackCaseContentForPlot(storyKey, plotId);
 }
 
 const DAILY_ROTATION = [
@@ -148,6 +175,7 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
   if (!plot) throw new Error(`Daily case plot not found: ${plotId}`);
   const complainantId = dailySpec?.complainantId ?? options.complainantId ?? npcs[0]?.id ?? null;
   const respondentId = dailySpec?.respondentId ?? options.respondentId ?? npcs.find((npc) => npc.id !== complainantId)?.id ?? null;
+  const premeditatedActorId = actorIdForRole(plot.premeditatedActorRole, { complainantId, respondentId });
   const brief = {
     id: `daily-${dailyKey}-${plotId}`,
     order: 1,
@@ -176,22 +204,20 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
     evidenceCards: [],
     sceneVersions: [],
     difficulty: 4,
-    stance: "halfTruth",
-    premeditated: false,
-    premeditatedActorId: null
+    stance: plot.stance ?? "halfTruth",
+    premeditated: plot.premeditated ?? false,
+    premeditatedActorId
   };
   const names = {
     complainantName: npcs.find((npc) => npc.id === brief.complainantId)?.name ?? "咨询者",
     respondentName: npcs.find((npc) => npc.id === brief.respondentId)?.name ?? "对方"
   };
-  const templateBrief = applyDailyCaseTemplate({
-    ...brief
-  }, names);
-  const runtimeBrief = options.skipRuntimeContent
-    ? templateBrief
-    : applyRuntimeContentForBrief(templateBrief, storyPackCaseContentForPlot(options.storyKey ?? options.packKey ?? DEFAULT_STORY_PACK_KEY, plotId), {
-        speakerId: complainantId
-      });
+  const runtimeContent = options.skipRuntimeContent
+    ? null
+    : runtimeContentForDailyCase(options, plotId);
+  const runtimeBrief = runtimeContent
+    ? applyRuntimeContentForBrief(brief, runtimeContent, { speakerId: complainantId })
+    : applyDailyCaseTemplate({ ...brief }, names);
   return [applyDifficultyProfile(runtimeBrief, {
     tier: 1,
     label: "快玩短案",
@@ -211,16 +237,14 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
   const comments = storyPack.comments ?? {};
   const pickedSpecs = storyPack.sequence.slice(0, storyPackCaseCount(storyPack));
   return pickedSpecs.map((spec, index) => {
-    const templateBrief = generateDailyCaseSequence(npcs, attrs, {
+    const brief = generateDailyCaseSequence(npcs, attrs, {
       ...options,
       dailyKey: `${storyKey}-${index + 1}`,
       plotId: spec.plotId,
+      runtimeCaseId: spec.caseId,
       complainantId: spec.complainantId,
-      respondentId: spec.respondentId,
-      skipRuntimeContent: true
+      respondentId: spec.respondentId
     })[0];
-    const runtimeContent = storyPackCaseContentFor(storyKey, spec.caseId);
-    const brief = applyRuntimeContentForBrief(templateBrief, runtimeContent);
     const episodeBrief = {
       ...brief,
       id: `episode-${storyKey}-${index + 1}-${brief.plotId}`,
@@ -705,6 +729,17 @@ function dailyTonyMultiDatingTemplate(brief, names) {
           { label: "预约时间", correct: false, feedback: "预约时间本身没问题，刺眼的是备注里的功能标签。", routeAxis: "document-edge" },
           { label: "店员名字", correct: false, feedback: "名字不够要紧，后面那些“稳情绪”“能投店”才让这张表变了性质。", routeAxis: "outer-thread" }
         ]
+      },
+      {
+        id: "tony-card-timing",
+        title: "办卡记录检视",
+        prompt: "办卡记录旁边，哪一处最该追？",
+        material: "记录里写着：“老板娘玩笑后 22:48 聊年卡，次日推护理套卡；备注：先别催，稳住。”",
+        options: [
+          { label: "老板娘之后接年卡", correct: true, contradiction: "亲密身份话后立刻接年卡和投店试探。", feedback: "甜话可以是玩笑，可它后面马上接了消费。", routeAxis: "money-flow" },
+          { label: "22:48 这个时间", correct: false, feedback: "深夜聊天容易暧昧，但时间本身不是这条记录最扎眼的地方。", routeAxis: "identity-wording" },
+          { label: "先别催，稳住", correct: false, feedback: "这句很冷，但它说明的是推进手法；前面那句先把关系位置垫起来了。", routeAxis: "process-control" }
+        ]
       }
     ],
     investigationHooks: [
@@ -832,6 +867,7 @@ function dailyFakeProfileTemplate(brief, names) {
       [
         "男方声称收入和日常花销、抠门细节不匹配。",
         "咨询者借父母的口，想摸清男方真实收入和钱流向。",
+        "单张存款证明和当日收入截图撑不起长期收入判断。",
         "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
         "咨询者把工资管理的要求包装成了确认稳定。"
       ]
@@ -852,6 +888,17 @@ function dailyFakeProfileTemplate(brief, names) {
           { label: "本科、项目性质和学制", correct: true, contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。", feedback: "图不一定假，但少的这一块会让“名校毕业”变成另一种听法。", routeAxis: "identity-wording" },
           { label: "截图像不像修过", correct: false, feedback: "修没修先放下，这张图缺的是后半截。", routeAxis: "document-edge" },
           { label: "介绍人有没有夸张", correct: false, feedback: "介绍人是前因，这张图缺的是另一半。", routeAxis: "caller-credibility" }
+        ]
+      },
+      {
+        id: "profile-income-flow-gap",
+        title: "收入材料检视",
+        prompt: "存款证明和收入截图里，还缺哪一块？",
+        material: "资料里有一张当日存款证明，也有一张收入截图。看不到连续流水、收入构成，也看不到这笔存款是不是长期留在账户里。",
+        options: [
+          { label: "连续流水和收入构成", correct: true, contradiction: "单张存款证明和当日收入截图撑不起长期收入判断。", feedback: "这一块不补，稳定两个字还是悬着。", routeAxis: "money-flow" },
+          { label: "存款当天的余额数字", correct: false, feedback: "余额数字好看，但它只站在那一天。", routeAxis: "money-flow" },
+          { label: "截图是不是原图", correct: false, feedback: "原图也可能只截到最好看的那一页。", routeAxis: "document-edge" }
         ]
       }
     ],

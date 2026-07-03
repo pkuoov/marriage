@@ -318,6 +318,33 @@
           "routeAxis": "outer-thread"
         }
       ]
+    },
+    {
+      "id": "tony-card-timing",
+      "title": "办卡记录检视",
+      "prompt": "办卡记录旁边，哪一处最该追？",
+      "material": "记录里写着：“老板娘玩笑后 22:48 聊年卡，次日推护理套卡；备注：先别催，稳住。”",
+      "options": [
+        {
+          "label": "老板娘之后接年卡",
+          "correct": true,
+          "contradiction": "亲密身份话后立刻接年卡和投店试探。",
+          "feedback": "甜话可以是玩笑，可它后面马上接了消费。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "22:48 这个时间",
+          "correct": false,
+          "feedback": "深夜聊天容易暧昧，但时间本身不是这条记录最扎眼的地方。",
+          "routeAxis": "identity-wording"
+        },
+        {
+          "label": "先别催，稳住",
+          "correct": false,
+          "feedback": "这句很冷，但它说明的是推进手法；前面那句先把关系位置垫起来了。",
+          "routeAxis": "process-control"
+        }
+      ]
     }
   ],
   "investigationHooks": [
