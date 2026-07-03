@@ -13,6 +13,7 @@ import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, 
 import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
+import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
@@ -605,37 +606,26 @@ function renderRunComplete(brief) {
   const pickedQuote = result.dailyAccuseLabel ?? "还没选最后那句";
   const quoteComparison = finalQuoteComparison(brief, result);
   const caught = issue.revealed[0] ?? route.shareBody;
+  const quoteComparisonHtml = quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : "";
   frame({
     brief,
     mood: "focused",
     label: "今日收麦",
     chapter: "今日收麦",
-    text: `
-      <p><b>今日收麦</b></p>
-      <p>${escapeHtml(issueResultLine(issue, result))}</p>
-      <section class="share-result-card">
-        <div class="share-card-head"><span>今日来电</span><em>${escapeHtml(route.label)}</em></div>
-        <div class="share-player-type">
-          <span>你是</span>
-          <b>${escapeHtml(route.playerType)}</b>
-        </div>
-        <p class="share-card-title">${escapeHtml(route.shareTitle)}</p>
-        <div class="issue-meter"><span style="width:${issue.percent}%"></span></div>
-        <p class="issue-score">${escapeHtml(rank)}</p>
-        ${result.dailyBadge ? `<div class="daily-badge-card compact"><span>今日收麦</span><b>能挂麦了</b></div>` : ""}
-        <p class="share-card-finding"><span>你接的那句</span>${escapeHtml(pickedQuote)}</p>
-        ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
-        <p class="share-card-finding"><span>今晚瓜点</span>${escapeHtml(caught)}</p>
-        <small>${escapeHtml(route.shareQuestion)}</small>
-      </section>
-    `,
-    choices: flowGroup(`
-      <button class="primary" data-copy-result type="button">复制吃瓜文案</button>
-      <button data-action="title" type="button">回标题</button>
-    `)
+    text: dailyCompleteHtml({
+      issueLineText: issueResultLine(issue, result),
+      route,
+      issue,
+      rank,
+      result,
+      pickedQuote,
+      quoteComparisonHtml,
+      caught
+    }),
+    choices: dailyCompleteChoicesHtml()
   });
   bind("[data-copy-result]", async () => {
-    const text = `${route.shareTitle}\n我是：${route.playerType}\n我接的那句：${pickedQuote}\n${route.shareQuestion}`;
+    const text = dailyCompleteShareText({ route, pickedQuote });
     try {
       await navigator.clipboard?.writeText(text);
       state.lastReaction = "吃瓜文案已复制。";
