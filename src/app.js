@@ -17,7 +17,7 @@ import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceVi
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced } from "./ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
-import { sceneReviewDoneChoicesHtml, sceneReviewHtml } from "./ui/sceneReviewView.js?v=0.20.68";
+import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "./ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
@@ -313,8 +313,8 @@ function renderSceneReview(brief) {
     text: sceneReviewHtml({
       index,
       done,
-      completedExchangeHtml: done ? completedSceneExchange(brief, scene, index, pick) : "",
-      activeExchangeHtml: done ? "" : activeSceneExchange(brief, scene, index),
+      completedExchangeHtml: done ? completedSceneExchangeForReview(brief, scene, index, pick) : "",
+      activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene, dialoguePicks: askedDialoguePicks(brief, index) }),
       reviewHtml: keyChoiceReview(brief)
     }),
     choices: done
@@ -807,36 +807,13 @@ function compactDialogueLines(lines) {
   return normalized.slice(0, totalLength > 170 ? 2 : 4);
 }
 
-function activeSceneExchange(brief, scene, index) {
-  return [
-    callLine(brief, { ...scene, text: scene.version, role: "caller" }),
-    ...askedDialoguePicks(brief, index).flatMap((pick) => [
-      callLine(brief, { role: "host", text: pick.question }),
-      callLine(brief, { role: "caller", text: pick.answer })
-    ])
-  ].join("");
-}
-
-function completedSceneExchange(brief, scene, index, pick = {}) {
-  const safePick = pick ?? {};
-  return [
-    callLine(brief, { ...scene, text: scene.version, role: "caller" }),
-    ...askedDialoguePicks(brief, index).flatMap((item) => [
-      callLine(brief, { role: "host", text: item.question }),
-      callLine(brief, { role: "caller", text: item.answer })
-    ]),
-    keyChoiceExchange(brief, scene, safePick)
-  ].join("");
-}
-
-function keyChoiceExchange(brief, scene, pick = {}) {
-  const safePick = pick ?? {};
-  const question = safePick.question ?? scene.questionOptions?.find((option) => option.contradiction)?.question ?? "这句我想再问清楚一点。";
-  const answer = safePick.answer ?? state.sceneAnswers?.[answerKey(brief, currentIndex(brief, "sceneReview", brief.sceneVersions?.length ?? 1))] ?? "";
-  return [
-    callLine(brief, { role: "host", text: question }),
-    answer ? callLine(brief, { role: "caller", text: answer }) : ""
-  ].join("");
+function completedSceneExchangeForReview(brief, scene, index, pick = {}) {
+  return completedSceneExchangeHtml({
+    scene,
+    dialoguePicks: askedDialoguePicks(brief, index),
+    pick,
+    fallbackAnswer: state.sceneAnswers?.[answerKey(brief, currentIndex(brief, "sceneReview", brief.sceneVersions?.length ?? 1))] ?? ""
+  });
 }
 
 function keyChoiceReview(brief) {
