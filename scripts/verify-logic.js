@@ -20,6 +20,7 @@ import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceV
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
+import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
 import { readFileSync } from "node:fs";
 
@@ -362,6 +363,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const livePressureSource = readFileSync(new URL("../src/runtime/livePressure.js", import.meta.url), "utf8");
   const liveCallViewSource = readFileSync(new URL("../src/ui/liveCallView.js", import.meta.url), "utf8");
   const recapViewSource = readFileSync(new URL("../src/ui/recapView.js", import.meta.url), "utf8");
+  const storyInterludeViewSource = readFileSync(new URL("../src/ui/storyInterludeView.js", import.meta.url), "utf8");
   const storyPackCompleteViewSource = readFileSync(new URL("../src/ui/storyPackCompleteView.js", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
@@ -389,6 +391,9 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!appSource.includes("brief.plotId === \"education-income-fake-profile\""), "存款证明结算特判必须来自内容 JSON 字段，不能留在 app.js");
   assertIncludes(appSource, "conclusionBranchFor", "案后分支结论必须走内容字段匹配，而不是 plotId 特判");
   assertIncludes(appSource, "storyInterludeObjectLabel", "案间过渡必须用物件钩子接下一通，减少目录感");
+  assertIncludes(storyInterludeViewSource, "上一通留下", "案间过渡上一张卡必须从上一通余味进入，不是目录页");
+  assertIncludes(storyInterludeViewSource, "新来电接入", "案间过渡下一张卡必须是直播接入语，不是下一案目录");
+  assert(!storyInterludeViewSource.includes("下一案") && !storyInterludeViewSource.includes("下一通来电"), "案间过渡 UI 不能退回目录式标题");
   assert(!appSource.includes("\"tony-multi-dating\": \"表格\""), "案间物件名必须来自内容包 sequence.objectLabel，不能留 app.js plotId 映射");
   assert(!appSource.includes("\"workplace-reimbursement-screenshot\": \"公司那边也来了截图"), "案间桥接句必须来自内容包 sequence.bridge，不能留 app.js plotId 映射");
   assertIncludes(appSource, "storyInterludeBackflowProfile", "案间过渡必须回收私信回流命中/误指，不能只看追问路线");
@@ -547,6 +552,9 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(truthBoundaryReviewHtml({ title: "边界", line: "先放句子", choices: [{ key: "true", label: "能确认" }], columns: [{ key: "true", label: "能确认", items: ["A"] }], prompts: [{ id: "true:0", text: "A", expected: "true" }] }, {}), "data-truth-boundary-pick", "事实边界归位按钮必须可由纯 UI 模块渲染");
   assert(truthBoundaryPlaced({ prompts: [{ id: "a" }] }, { a: "true" }), "事实边界一次放置完成判断必须可由纯 UI 模块测试");
   assertIncludes(solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "压住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" })[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
+  assertIncludes(appSource, "./ui/storyInterludeView.js", "案间过渡 HTML 必须从 app.js 拆到 ui/storyInterludeView");
+  assertIncludes(storyInterludeHtml({ previousLabel: "钱流线", previousLine: "账单摊开了", nextObjectLabel: "表格", nextLine: "后台又亮了一路麦" }), "表格", "案间过渡必须可由纯 UI 模块渲染下一通 dramatic object");
+  assertIncludes(storyInterludeChoicesHtml(), "接下一路麦", "案间过渡按钮必须保持直播语言，不退回目录式下一案");
   assertIncludes(appSource, "./ui/storyPackCompleteView.js", "故事集终局 HTML 必须从 app.js 拆到 ui/storyPackCompleteView");
   assertIncludes(storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料咬住" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" }), "评论区审判墙", "故事集终局结果卡必须可由纯 UI 模块渲染");
   assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "压住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, playerType: "收麦主播" }), "材料圈点：圈准", "故事集终局复制文案必须可由纯 UI 模块生成");

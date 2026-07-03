@@ -16,6 +16,7 @@ import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceVi
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced } from "./ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
+import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 
 const app = document.querySelector("#app");
@@ -602,19 +603,13 @@ function renderStoryInterlude(brief) {
     mood: "focused",
     label: "案间过渡",
     chapter: "案间",
-    text: `
-      <section class="story-interlude-card">
-        <span>上一通留下</span>
-        <b>${escapeHtml(route.label)}</b>
-        <p>${escapeHtml(storyInterludeRecapLine(brief, result, route, interlude, backflow))}</p>
-      </section>
-      <section class="story-interlude-card next">
-        <span>新来电接入</span>
-        <b>${escapeHtml(storyInterludeObjectLabel(nextBrief))}</b>
-        <p>${escapeHtml(storyInterludeNextLine(nextBrief))}</p>
-      </section>
-    `,
-    choices: flowGroup(`<button class="primary" data-enter-next-case type="button">接下一路麦</button><button data-retry-case type="button">回头重问</button>`)
+    text: storyInterludeHtml({
+      previousLabel: route.label,
+      previousLine: storyInterludeRecapLine(brief, result, route, interlude, backflow),
+      nextObjectLabel: storyInterludeObjectLabel(nextBrief),
+      nextLine: storyInterludeNextLine(nextBrief)
+    }),
+    choices: flowGroup(storyInterludeChoicesHtml())
   });
   bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
