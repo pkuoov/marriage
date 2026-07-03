@@ -7,11 +7,12 @@ import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCallCountText, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
-import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
+import { livePressureProfile, materialPressureReaction, materialPressureSignal, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
+import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced } from "./ui/recapView.js?v=0.20.68";
@@ -490,7 +491,11 @@ function renderSolved(brief) {
   const rank = recapRankLabel(issue);
   const conclusion = dailyConclusion(brief, result, issue);
   const route = routeAxisProfile(brief, result);
-  const pressure = casePressureRecap(brief);
+  const pressure = storyPressureRows([brief], {
+    budgetFor: ensureBudget,
+    choicesFor: routeChoicesForCase,
+    foundCountFor: (item) => contradictions(item).length
+  })[0]?.profile ?? {};
   const quoteComparison = finalQuoteComparison(brief, result);
   const boundary = truthBoundaryReview(brief);
   const boundaryPicks = truthBoundaryPicksFor(brief);
@@ -650,32 +655,24 @@ function renderStoryPackComplete() {
   const briefs = state.caseBriefs ?? [];
   const results = briefs.map((brief) => normalizedDailyResult(brief));
   const solved = results.filter((result) => result.accused).length;
-  const avgPercent = Math.round(results.reduce((sum, result) => sum + Number(result.issuePercent ?? 0), 0) / Math.max(1, briefs.length));
   const routeProfiles = briefs.map((brief, index) => routeAxisProfile(brief, results[index] ?? {}));
-  const displayBest = storyPackBestAxis(avgPercent, storyPackAxes(routeProfiles));
-  const theme = storyThemeProfile(briefs);
-  const boundaryProfile = storyBoundaryProfile(briefs);
-  const pressureProfile = storyPressureProfile(briefs);
-  const materialProfile = storyPackMaterialProfile(briefs);
-  const quoteProfile = storyQuoteProfile(results);
-  const objectProfile = storyObjectProfile(briefs);
-  const playerType = storyPlayerType(avgPercent, displayBest);
-  const shareTitle = storyShareTitle(avgPercent, displayBest);
-  const aftertaste = storyPackAftertaste(avgPercent, briefs.length);
-  const closingLine = storyPackClosingLine(avgPercent, displayBest, briefs.length);
-  const callCountText = storyCallCountText(briefs.length);
-  const comments = storyCommentWall({
+  const summary = storyPackSummaryModel({
     briefs,
     results,
-    routes: routeProfiles,
-    best: displayBest,
-    avgPercent,
-    theme,
-    boundaryProfile,
-    pressureProfile,
-    materialProfile,
-    quoteProfile,
-    objectProfile
+    routeProfiles,
+    boundaryRows: storyBoundaryRows(briefs, {
+      picksFor: truthBoundaryPicksFor,
+      missesFor: truthBoundaryMissesFor
+    }),
+    pressureRows: storyPressureRows(briefs, {
+      budgetFor: ensureBudget,
+      choicesFor: routeChoicesForCase,
+      foundCountFor: (item) => contradictions(item).length
+    }),
+    materialRows: storyMaterialRows(briefs, {
+      evidencePicksFor: selectedEvidencePicksFor,
+      investigationPicksFor: selectedInvestigationPicksFor
+    })
   });
   frame({
     brief: briefs[Math.max(0, Number(state.chapter ?? 1) - 1)] ?? briefs[0],
@@ -684,22 +681,10 @@ function renderStoryPackComplete() {
     chapter: "试玩收麦",
     showCaseHud: false,
     text: storyPackCompleteHtml({
-      displayBest,
-      theme,
-      boundaryProfile,
-      pressureProfile,
-      materialProfile,
-      quoteProfile,
-      objectProfile,
       briefs,
       results,
       routeProfiles,
-      comments,
-      playerType,
-      shareTitle,
-      aftertaste,
-      closingLine,
-      callCountText
+      ...summary
     }),
     choices: flowGroup(`
       <button class="primary" data-copy-weekly-result type="button">复制收麦文案</button>
@@ -708,12 +693,12 @@ function renderStoryPackComplete() {
   });
   bind("[data-copy-weekly-result]", async () => {
     const text = storyPackShareText({
-      theme,
-      displayBest,
-      pressureProfile,
-      materialProfile,
-      quoteProfile,
-      playerType
+      theme: summary.theme,
+      displayBest: summary.displayBest,
+      pressureProfile: summary.pressureProfile,
+      materialProfile: summary.materialProfile,
+      quoteProfile: summary.quoteProfile,
+      playerType: summary.playerType
     });
     try {
       await navigator.clipboard?.writeText(text);
@@ -1654,42 +1639,8 @@ function currentLivePressure(brief, mood = "listening") {
   });
 }
 
-function casePressureRecap(brief) {
-  return pressureRecapProfile({
-    budget: ensureBudget(brief),
-    choices: routeChoicesForCase(brief),
-    foundCount: contradictions(brief).length
-  });
-}
-
-function storyBoundaryProfile(briefs = []) {
-  return truthBoundaryPackProfile(briefs.map((brief) => ({
-    label: brief.label,
-    review: truthBoundaryReview(brief),
-    picks: truthBoundaryPicksFor(brief),
-    misses: truthBoundaryMissesFor(brief)
-  })));
-}
-
 function storyInterludeBackflowProfile(brief = {}) {
   return investigationBackflowProfile(selectedInvestigationPicksFor(brief));
-}
-
-function storyPressureProfile(briefs = []) {
-  return pressurePackProfile(briefs.map((brief) => ({
-    label: brief.label,
-    profile: casePressureRecap(brief)
-  })));
-}
-
-function storyPackMaterialProfile(briefs = []) {
-  return storyMaterialProfile(briefs.map((brief) => ({
-    label: brief.label,
-    picks: [
-      ...selectedEvidencePicksFor(brief),
-      ...selectedInvestigationPicksFor(brief)
-    ]
-  })));
 }
 
 function caseProgressStrip(brief) {

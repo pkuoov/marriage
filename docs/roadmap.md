@@ -45,6 +45,7 @@
 - 案件包完成后生成试玩总结，汇总每案路线、平均揭示率和主播倾向。
 - 故事集终局已回收路线画像、现场压力、事实边界、材料圈点和收麦原话，不再只看揭示率。
 - 故事集终局评价模型已从 `app.js` 拆到 `src/runtime/recapModel.js`：主题、路线画像、评论墙、分享标题和收麦余味都能纯函数测试。
+- 故事集终局 profile 收集已拆到 `src/runtime/storyPackSummaryModel.js`：事实边界、现场压力、材料圈点、原话、物件和评论墙由纯模型汇总，`app.js` 只提供存档选择器。
 - 对话段落推进已从 `renderSceneReview` 抽成 `src/runtime/sceneAdvance.js` 的 `sceneReviewModel`，最后一段去材料、深入追问还是原话选择都能纯函数测试。
 - 材料检视和后台私信回流推进也已拆到 `src/runtime/sceneAdvance.js`，当前材料、未处理回流和下一步按钮不再由 `app.js` 临时判断。
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`，并有单元断言覆盖；`app.js` 继续收状态，UI 细节开始脱离 god file。

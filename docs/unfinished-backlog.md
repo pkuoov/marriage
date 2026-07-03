@@ -45,6 +45,7 @@
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
 - daily 模式已优先加载 runtime-loaded JSON：同一 `plotId` 的试玩案不再在故事集和今日来电里维护两套台词，未迁移的轮换案继续走模板兜底。
+- 故事集终局 profile 收集已拆到 `src/runtime/storyPackSummaryModel.js`：事实边界、现场压力、材料圈点、原话、物件、评论墙和分享文案模型能脱离 `app.js` 测试。
 - `verify:pack` 已支持指定 pack id，并新增运行时内容 schema 检查：开场、追问、材料、回流、深入追问、收束和分享字段都必须是可玩的嵌套结构。
 - 已新增 Playwright 浏览器回放 smoke：`npm run smoke:browser` 会打开离线 playable，覆盖 perfect route、外围追问后继续主线、材料误圈、纯键盘 perfect 和模拟 Gamepad API perfect 五条单案路线，并走到收麦回看。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，`app.js` 不再用 `plotId` 表维护这一组文案。
@@ -139,9 +140,10 @@ content/packs/steam-demo-01/
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；下一步继续拆 `renderSceneReview` / `renderRecap`。
 - `src/ui/recapView.js` 已接管单案收麦回看页面组、事实边界归位/揭示和最终原话对比卡；下一步只补单案回看新增缺口，不再把收麦页面写回 `app.js`。
-- `src/ui/storyPackCompleteView.js` 已接管故事集终局结果卡、profile 行、评论区审判墙和复制文案；下一步把 story pack profile 收集再模型化。
-- `src/ui/storyInterludeView.js` 已接管案间过渡卡片和接麦按钮文案；下一步把 story pack profile 收集再模型化。
-- `src/ui/titleView.js` 已接管标题页直播信号、热线 hook 和入口按钮；下一步把 story pack profile 收集再模型化。
+- `src/runtime/storyPackSummaryModel.js` 已接管故事集终局 profile 收集：`app.js` 只提供当前存档选择器，不再拼边界/压力/材料/物件 profile。
+- `src/ui/storyPackCompleteView.js` 已接管故事集终局结果卡、profile 行、评论区审判墙和复制文案。
+- `src/ui/storyInterludeView.js` 已接管案间过渡卡片和接麦按钮文案。
+- `src/ui/titleView.js` 已接管标题页直播信号、热线 hook 和入口按钮。
 - `src/ui/renderSceneReview.js`
 - `src/ui/renderRecap.js`
 - `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；`desktop/electron/preload.cjs` 已接同步文件存档 IPC，下一步接 Electron 依赖和打包器。
