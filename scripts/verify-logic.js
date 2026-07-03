@@ -17,6 +17,7 @@ import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, 
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
 import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
 import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
+import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
 import { readFileSync } from "node:fs";
 
@@ -357,6 +358,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
   const routeMapSource = readFileSync(new URL("../src/runtime/routeMapModel.js", import.meta.url), "utf8");
   const livePressureSource = readFileSync(new URL("../src/runtime/livePressure.js", import.meta.url), "utf8");
+  const liveCallViewSource = readFileSync(new URL("../src/ui/liveCallView.js", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -387,8 +389,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "storyInterludeBackflowProfile", "案间过渡必须回收私信回流命中/误指，不能只看追问路线");
   assertIncludes(appSource, "state.lastReaction = investigationPickReaction", "私信回流圈选必须牵动现场弹幕反应");
   assertIncludes(appSource, "currentLivePressure", "听众忍耐、弹幕跑偏和连线人防备必须收束到现场压力画像");
-  assertIncludes(appSource, "pressure.comments", "弹幕条必须由现场压力画像生成，不能散落多套规则");
-  assertIncludes(appSource, "pressure.expression", "来电人表情必须能读取现场压力画像");
+  assertIncludes(liveCallViewSource, "pressure.comments", "弹幕条必须由现场压力画像生成，不能散落多套规则");
+  assertIncludes(liveCallViewSource, "pressure.expression", "来电人表情必须能读取现场压力画像");
   assertIncludes(appSource, "lastPressureSignal", "现场压力状态必须有结构化 signal，不能只靠反应文案推断");
   assertIncludes(appSource, "lastPressureAxis", "现场压力弹幕必须记录最近一次路线轴，不能只吐通用短句");
   assertIncludes(appSource, "routeAxisComments", "案内弹幕必须能读取内容包路线轴种子");
@@ -527,6 +529,13 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
 test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assertIncludes(appSource, "./ui/liveCallView.js", "直播 HUD/立绘 HTML 必须从 app.js 拆到 ui/liveCallView");
+  assertIncludes(audiencePatienceHudHtml({ level: "mid", ratio: 0.5, remaining: 4, max: 8 }), "听众忍耐", "听众忍耐 HUD 必须可由纯 UI 模块渲染");
+  assertIncludes(liveCommentStripHtml({ comments: ["弹幕安静", "账单边上有时间"] }), "账单边上有时间", "直播弹幕条必须可由纯 UI 模块渲染");
+  assertIncludes(caseProgressStripHtml({ total: 5, answered: 2, label: "匿名来电" }), "第 3/5 段", "通话进度条必须可由纯 UI 模块渲染");
+  assertIncludes(storyPackSummaryHudHtml({ total: 4, solved: 2 }), "2/4", "故事包收麦 HUD 必须可由纯 UI 模块渲染");
+  assertEqual(callerExpressionForView({ mood: "thinking", sceneIndex: 1 }).kind, "shift", "来电人表情 fallback 必须可脱离 app 状态测试");
+  assertIncludes(portraitLayerHtml({ artSrc: "./caller.png", mood: "tense", expression: { kind: "pause", text: "停了一下" } }), "停了一下", "来电人立绘层必须可由纯 UI 模块渲染");
   assertIncludes(appSource, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
   assertIncludes(appSource, "liveControlDeck", "案内 UI 必须由直播控场台统一生成");
   assertIncludes(appSource, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");

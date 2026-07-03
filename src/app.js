@@ -13,6 +13,7 @@ import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, 
 import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
+import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
 
 const app = document.querySelector("#app");
@@ -1879,44 +1880,25 @@ function storyPackMaterialProfile(briefs = []) {
 
 function caseProgressStrip(brief) {
   if (!brief) return "";
-  const total = keyQuestionLimit(brief);
-  const answered = answeredSceneCount(brief);
-  const segment = Math.max(1, Math.min(total || 1, answered + 1));
-  return `
-    <div class="case-progress-strip">
-      <span>第 ${segment}/${total || 1} 段</span>
-      <span>${escapeHtml(isStoryPackMode() ? "匿名来电" : brief.label ?? "连线中")}</span>
-    </div>
-  `;
+  return caseProgressStripHtml({
+    total: keyQuestionLimit(brief),
+    answered: answeredSceneCount(brief),
+    label: isStoryPackMode() ? "匿名来电" : brief.label ?? "连线中"
+  });
 }
 
 function audiencePatienceHud(brief) {
-  const pressure = currentLivePressure(brief);
-  const percent = Math.round(pressure.ratio * 100);
-  return `
-    <div class="audience-patience patience-${pressure.level}" aria-label="听众忍耐度 ${pressure.remaining}/${pressure.max}">
-      <span>听众忍耐</span>
-      <b>${pressure.remaining}/${pressure.max}</b>
-      <i><em style="width:${percent}%"></em></i>
-    </div>
-  `;
+  return audiencePatienceHudHtml(currentLivePressure(brief));
 }
 
 function storyPackSummaryHud() {
   const total = state.caseBriefs?.length || 1;
   const solved = state.caseBriefs?.filter((brief) => state.solvedCaseIds?.includes(brief.id)).length ?? total;
-  return `
-    <div class="weekly-summary-visual">
-      <span>试玩已收麦</span>
-      <b>${solved}/${total}</b>
-      <small>麦都收进来了，评论区开始吵后半场。</small>
-    </div>
-  `;
+  return storyPackSummaryHudHtml({ total, solved });
 }
 
 function liveCommentStrip(brief) {
-  const pressure = currentLivePressure(brief);
-  return `<div class="live-comment-strip">${pressure.comments.map((item) => `<span class="live-comment">${escapeHtml(item)}</span>`).join("")}</div>`;
+  return liveCommentStripHtml(currentLivePressure(brief));
 }
 
 function liveIntentHookFor(brief) {
@@ -1924,25 +1906,9 @@ function liveIntentHookFor(brief) {
 }
 
 function portraitLayer(brief, mood = "listening") {
-  const expression = callerExpressionFor(brief, mood);
-  const moodLabels = {
-    anxious: "紧张",
-    focused: "盯资料",
-    listening: "听线",
-    tense: "绷住",
-    thinking: "接话"
-  };
   const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
   const artSrc = casePortraitArt(brief, npc);
-  return `
-	    <div class="case-duel-portraits">
-	      <figure class="case-portrait mood-${mood} active">
-	        <img src="${escapeHtml(artSrc)}" alt="" />
-	        <div class="call-expression expression-${escapeHtml(expression.kind)}"><span>${escapeHtml(expression.text)}</span></div>
-	        <figcaption><span>匿名来电｜${moodLabels[mood] ?? "听线"}</span><b>来电形象</b></figcaption>
-	      </figure>
-	    </div>
-	  `;
+  return portraitLayerHtml({ artSrc, mood, expression: callerExpressionFor(brief, mood) });
 }
 
 function casePortraitArt(brief, npc) {
@@ -1951,28 +1917,9 @@ function casePortraitArt(brief, npc) {
 
 function callerExpressionFor(brief, mood = "listening") {
   const pressure = currentLivePressure(brief, mood);
-  if (pressure.expression) return pressure.expression;
   const budget = ensureBudget(brief);
-  const remaining = Number(budget.remaining ?? budget.max ?? 1);
-  const max = Math.max(1, Number(budget.max ?? 1));
   const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
-
-  if (state.scene === "patienceLost") return { kind: "pause", text: "眼神空了一下" };
-  if (remaining / max <= 0.28) return { kind: "pause", text: "停了很久才开口" };
-  if (state.scene === "deepFollowup") return { kind: "pause", text: "指尖停在屏幕上" };
-  if (mood === "tense") return { kind: "shift", text: "握着手机没松手" };
-  if (mood === "focused") return { kind: "pause", text: "低头翻图，停了三秒" };
-  if (mood === "thinking") {
-    const beats = [
-      { kind: "blink", text: "连眨两下" },
-      { kind: "shift", text: "眼神往旁边躲" },
-      { kind: "pause", text: "吸了口气才接" },
-      { kind: "shift", text: "把手机攥紧了" }
-    ];
-    return beats[sceneIndex % beats.length];
-  }
-  if (mood === "anxious") return { kind: "blink", text: "睫毛抖了一下" };
-  return { kind: "blink", text: "麦里轻轻吸气" };
+  return callerExpressionForView({ pressure, budget, scene: state.scene, sceneIndex, mood });
 }
 
 function currentScenePressureHint(brief) {

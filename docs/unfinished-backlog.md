@@ -32,6 +32,7 @@
 - 路线图节点模型已拆到 `src/runtime/routeMapModel.js`：普通追问、材料圈点和后台回流的节点标记由纯函数输出，`app.js` 只渲染 HTML。
 - 对话段落推进已拆出 `sceneReviewModel`：当前段落、完成态、最后一段后的材料/深入追问/原话选择分支都在 `src/runtime/sceneAdvance.js` 里纯函数测试。
 - 材料检视和后台私信回流推进已拆出 `evidenceCheckModel` / `investigationBackflowModel`：当前材料、未处理回流、缺省态和下一步按钮都可纯函数测试。
+- 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`：`app.js` 只收集现场压力、进度、立绘资源和表情状态，UI 细节可单独测试。
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 - 存档已抽到 `src/platform/saveStore.js`：Web 仍是单槽 localStorage；桌面壳可通过 `platformRuntime.saveFiles` 提供 `read/write/remove/list/exportForCloud` 文件存档接口，后续接 Steam Cloud。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
@@ -132,6 +133,7 @@ content/packs/steam-demo-01/
 - `src/runtime/sceneAdvance.js` 已接管动作扣耐心、当前对话段落推进、材料检视推进、回流页面推进、收麦前守门和回流解锁；下一步只补缺口，不再把页面推进判断写回 `app.js`。
 - 继续补强 `src/runtime/routeLog.js` / `src/runtime/routeMapModel.js`，故事集路线统计已走纯函数，后续只补新增路线轴。
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
+- `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；下一步继续拆 `renderSceneReview` / `renderRecap`。
 - `src/ui/renderSceneReview.js`
 - `src/ui/renderRecap.js`
 - `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；`desktop/electron/preload.cjs` 已接同步文件存档 IPC，下一步接 Electron 依赖和打包器。

@@ -47,6 +47,7 @@
 - 故事集终局评价模型已从 `app.js` 拆到 `src/runtime/recapModel.js`：主题、路线画像、评论墙、分享标题和收麦余味都能纯函数测试。
 - 对话段落推进已从 `renderSceneReview` 抽成 `src/runtime/sceneAdvance.js` 的 `sceneReviewModel`，最后一段去材料、深入追问还是原话选择都能纯函数测试。
 - 材料检视和后台私信回流推进也已拆到 `src/runtime/sceneAdvance.js`，当前材料、未处理回流和下一步按钮不再由 `app.js` 临时判断。
+- 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`，并有单元断言覆盖；`app.js` 继续收状态，UI 细节开始脱离 god file。
 - 本集主题已接入生成数据和 UI，总结页会展示主题论点。
 - 评论区审判墙已接入故事集总结，会根据玩家路线、揭示率和本集主题生成复盘评论。
 - 桌面键盘底座已接入：默认焦点、方向键 / WASD、Enter / Space 和 Esc 能支撑无鼠标游玩。
