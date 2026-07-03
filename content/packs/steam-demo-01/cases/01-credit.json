@@ -99,7 +99,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "心疼话后面接钱",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "pause",
+          "text": "那句说得太熟了"
+        }
+      }
     },
     {
       "speakerId": "shen",
@@ -124,7 +132,15 @@
           "routeAxis": "money-flow",
           "routeTone": "softening"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "体面账单压上来",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "把文件夹抱紧了一点"
+        }
+      }
     },
     {
       "speakerId": "shen",
@@ -149,7 +165,15 @@
           "routeAxis": "money-flow",
           "routeTone": "softening"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "心疼话后面接钱",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "把话咽回去半秒"
+        }
+      }
     },
     {
       "speakerId": "shen",
@@ -174,7 +198,15 @@
           "routeAxis": "money-flow",
           "routeTone": "detour"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "账单里藏着时间",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "blink",
+          "text": "看了眼账单又抬头"
+        }
+      }
     },
     {
       "speakerId": "shen",
@@ -199,7 +231,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "体面话开始露底",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "pause",
+          "text": "指尖停在屏幕上"
+        }
+      }
     }
   ],
   "evidenceCards": [

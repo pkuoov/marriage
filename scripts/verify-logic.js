@@ -11,7 +11,7 @@ import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.68";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.68";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.68";
 import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.68";
+import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "../src/runtime/livePressure.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
@@ -191,19 +191,28 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertIncludes(low.comments.join("/"), "弹幕散了", "低忍耐弹幕必须跑散");
   const miss = livePressureProfile({
     budget: { max: 8, remaining: 6 },
-    reaction: "弹幕被这块带跑，麦温往下掉了一格。",
+    pressureSignal: "drift",
     intentHook: "截图少了一边"
   });
   assertEqual(miss.crowd, "跑偏", "误指材料必须推动弹幕跑偏");
   assertEqual(miss.callerGuard, "防备", "弹幕跑偏必须提高连线人防备");
   const hit = livePressureProfile({
     budget: { max: 8, remaining: 6 },
-    reaction: "后台这页咬住了，弹幕短暂安静。",
+    pressureSignal: "held",
     intentHook: "返钱入口对上了"
   });
   assertEqual(hit.crowd, "压住", "命中材料必须能压住弹幕");
   assertEqual(hit.callerGuard, "松动", "命中材料后连线人防备应松动");
-  assert(hit.expression?.text, "现场压力画像必须能给人物表情层提供钩子");
+  const hinted = livePressureProfile({
+    budget: { max: 8, remaining: 6 },
+    sceneHint: { callerGuard: "tense", expression: { kind: "pause", text: "流程词说得很顺" } },
+    intentHook: "流程词说得太熟"
+  });
+  assertEqual(hinted.callerGuard, "绷住", "场景压力提示必须能驱动连线人防备状态");
+  assertEqual(hinted.expression.text, "流程词说得很顺", "现场压力画像必须从 JSON hint 给人物表情层提供钩子");
+  assertEqual(questionPressureSignal({ routeTone: "softening" }), "drift", "追问压力状态必须由 routeTone 结构化生成");
+  assertEqual(questionPressureSignal({ routeTone: "pressure-point" }), "held", "核心追问语气必须能压住现场");
+  assertEqual(materialPressureSignal({ correct: false }), "drift", "材料误指必须生成结构化跑偏状态");
   assertIncludes(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "麦温", "追问语气必须能生成现场压力反应");
   assertIncludes(materialPressureReaction({ correct: true, pick: { label: "付款状态" } }, { title: "审批图", material: "付款和收款账户没露出来。" }), "钱路", "材料命中必须能生成现场压力反应");
   assertIncludes(materialPressureReaction({ correct: false, pick: { label: "截图边角" } }, { title: "截图" }), "带跑", "材料误指必须让弹幕跑偏");
@@ -344,6 +353,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
   const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
   const routeMapSource = readFileSync(new URL("../src/runtime/routeMapModel.js", import.meta.url), "utf8");
+  const livePressureSource = readFileSync(new URL("../src/runtime/livePressure.js", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -376,6 +386,10 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "currentLivePressure", "听众忍耐、弹幕跑偏和连线人防备必须收束到现场压力画像");
   assertIncludes(appSource, "pressure.comments", "弹幕条必须由现场压力画像生成，不能散落多套规则");
   assertIncludes(appSource, "pressure.expression", "来电人表情必须能读取现场压力画像");
+  assertIncludes(appSource, "lastPressureSignal", "现场压力状态必须有结构化 signal，不能只靠反应文案推断");
+  assertIncludes(appSource, "currentScenePressureHint", "场景表情和弹幕钩子必须从内容数据读取，不能在 app.js 扫台词");
+  assert(!livePressureSource.includes("sceneText"), "livePressure 不能扫描案件台词决定表情或防备，场景钩子必须进 JSON");
+  assert(!livePressureSource.includes("reaction = \"\"") && !livePressureSource.includes("reaction,"), "livePressure 不能扫描自己生成的反应文案决定 crowdState");
   assertIncludes(appSource, "questionPressureReaction", "追问语气反应必须由现场压力模型生成，不能散在 app.js");
   assertIncludes(appSource, "materialPressureReaction", "材料命中/误指反应必须由现场压力模型生成，不能只扣忍耐");
   assert(!appSource.includes("function outerAngleReaction"), "旧的 UI 本地压力反应函数必须删除，避免两套规则并存");
@@ -1042,6 +1056,7 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
   assertEqual(migrated.saveSlot, "slot1", "存档迁移必须补默认存档槽");
   assertEqual(typeof migrated.truthBoundaryPicks, "object", "旧存档必须补 truthBoundaryPicks 记录");
   assertEqual(typeof migrated.truthBoundaryMisses, "object", "旧存档必须补 truthBoundaryMisses 记录");
+  assertEqual(migrated.lastPressureSignal, null, "旧存档必须补结构化现场压力状态");
 
   const dailyCallMigrated = migrateState({
     caseMode: "daily",

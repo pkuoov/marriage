@@ -174,7 +174,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "心疼话后面接钱",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "pause",
+              "text": "那句说得太熟了"
+            }
+          }
         },
         {
           "speakerId": "shen",
@@ -199,7 +207,15 @@ export const CONTENT_CASES = {
               "routeAxis": "money-flow",
               "routeTone": "softening"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "体面账单压上来",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "pause",
+              "text": "把文件夹抱紧了一点"
+            }
+          }
         },
         {
           "speakerId": "shen",
@@ -224,7 +240,15 @@ export const CONTENT_CASES = {
               "routeAxis": "money-flow",
               "routeTone": "softening"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "心疼话后面接钱",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "shift",
+              "text": "把话咽回去半秒"
+            }
+          }
         },
         {
           "speakerId": "shen",
@@ -249,7 +273,15 @@ export const CONTENT_CASES = {
               "routeAxis": "money-flow",
               "routeTone": "detour"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "账单里藏着时间",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "blink",
+              "text": "看了眼账单又抬头"
+            }
+          }
         },
         {
           "speakerId": "shen",
@@ -274,7 +306,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "体面话开始露底",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "pause",
+              "text": "指尖停在屏幕上"
+            }
+          }
         }
       ],
       "evidenceCards": [
@@ -480,7 +520,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "亲近话后面接要求",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "shift",
+              "text": "像把稿背到一半"
+            }
+          }
         },
         {
           "speakerId": "he",
@@ -505,7 +553,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "甜话后面接要求",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "shift",
+              "text": "捏着会员卡套没松"
+            }
+          }
         },
         {
           "speakerId": "he",
@@ -530,7 +586,15 @@ export const CONTENT_CASES = {
               "routeAxis": "document-edge",
               "routeTone": "detour"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "店表比甜话更像账本",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "pause",
+              "text": "低头翻图，停了三秒"
+            }
+          }
         },
         {
           "speakerId": "he",
@@ -555,7 +619,15 @@ export const CONTENT_CASES = {
               "routeAxis": "identity-wording",
               "routeTone": "detour"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "自己人话压着账",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "blink",
+              "text": "笑了一下又停住"
+            }
+          }
         },
         {
           "speakerId": "he",
@@ -580,7 +652,15 @@ export const CONTENT_CASES = {
               "routeAxis": "outer-thread",
               "routeTone": "softening"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "话术和业绩贴太近",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "shift",
+              "text": "眼神往旁边躲"
+            }
+          }
         }
       ],
       "evidenceCards": [
@@ -792,7 +872,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "条件话被托了一层",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "blink",
+              "text": "笑了一下又停住"
+            }
+          }
         },
         {
           "speakerId": "lin",
@@ -817,7 +905,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "资料缺口压上来",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "pause",
+              "text": "把资料夹往怀里收"
+            }
+          }
         },
         {
           "speakerId": "lin",
@@ -842,7 +938,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "detour"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "条件话被托了一层",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "shift",
+              "text": "把话咽回去半秒"
+            }
+          }
         },
         {
           "speakerId": "lin",
@@ -867,7 +971,15 @@ export const CONTENT_CASES = {
               "routeAxis": "money-flow",
               "routeTone": "detour"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "流水把关系问实了",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "pause",
+              "text": "指尖停在屏幕上"
+            }
+          }
         },
         {
           "speakerId": "lin",
@@ -892,7 +1004,15 @@ export const CONTENT_CASES = {
               "routeAxis": "money-flow",
               "routeTone": "softening"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "条件表面开始松动",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "blink",
+              "text": "连眨了两下"
+            }
+          }
         }
       ],
       "explicitClueGroups": [
@@ -1145,7 +1265,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "流程词说得太熟",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "pause",
+              "text": "流程词说得很顺"
+            }
+          }
         },
         {
           "speakerId": "chen",
@@ -1170,7 +1298,15 @@ export const CONTENT_CASES = {
               "routeAxis": "identity-wording",
               "routeTone": "softening"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "审批图少了入口",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "pause",
+              "text": "低头翻图，停了三秒"
+            }
+          }
         },
         {
           "speakerId": "chen",
@@ -1195,7 +1331,15 @@ export const CONTENT_CASES = {
               "routeAxis": "money-flow",
               "routeTone": "softening"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "主责话压着风险",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "shift",
+              "text": "握着手机没松手"
+            }
+          }
         },
         {
           "speakerId": "chen",
@@ -1220,7 +1364,15 @@ export const CONTENT_CASES = {
               "routeAxis": "money-flow",
               "routeTone": "softening"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "流程把责任推开",
+            "callerGuard": "tense",
+            "expression": {
+              "kind": "blink",
+              "text": "连眨了两下"
+            }
+          }
         },
         {
           "speakerId": "chen",
@@ -1245,7 +1397,15 @@ export const CONTENT_CASES = {
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
             }
-          ]
+          ],
+          "pressureHint": {
+            "intentHook": "入口攥在别人手里",
+            "callerGuard": "guarded",
+            "expression": {
+              "kind": "pause",
+              "text": "吸了口气才接"
+            }
+          }
         }
       ],
       "evidenceCards": [

@@ -8,7 +8,7 @@ import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
 import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
-import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.68";
+import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
@@ -96,6 +96,7 @@ function normalizeDailyState(saved) {
     solvedCaseIds: Array.isArray(saved?.solvedCaseIds) ? saved.solvedCaseIds : [],
     caseInterludes: saved?.caseInterludes ?? {},
     lastReaction: saved?.lastReaction ?? null,
+    lastPressureSignal: saved?.lastPressureSignal ?? null,
     settings: { ...baseState.settings, ...(saved?.settings ?? {}) }
   };
 }
@@ -885,9 +886,10 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
       </section>
     </main>
   `;
-  const hadReaction = Boolean(state.lastReaction);
-  if (hadReaction) {
+  const hadPressureCue = Boolean(state.lastReaction || state.lastPressureSignal);
+  if (hadPressureCue) {
     state.lastReaction = null;
+    state.lastPressureSignal = null;
     saveState();
   }
   bind('[data-action="title"]', resetToTitle);
@@ -1148,6 +1150,7 @@ function handleSceneDialogueButton(button) {
   }
   markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
   state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
+  state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
   if (audiencePatienceLost(brief)) return;
   saveState();
   render();
@@ -1166,6 +1169,7 @@ function handleSceneQuestionButton(button) {
   }
   else {
     state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
+    state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
   }
   state.sceneAnswers = {
     ...(state.sceneAnswers ?? {}),
@@ -1214,6 +1218,7 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       };
       recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
       state.lastReaction = materialPressureReaction(outcome, check);
+      state.lastPressureSignal = materialPressureSignal(outcome);
       if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
         state.scene = "patienceLost";
         saveState();
@@ -1251,6 +1256,7 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
         { version: hook.material ?? "" }
       );
       state.lastReaction = investigationPickReaction(outcome, hook);
+      state.lastPressureSignal = materialPressureSignal(outcome);
       if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
         state.scene = "patienceLost";
         saveState();
@@ -1811,13 +1817,14 @@ function routeTrailItemHtml(item) {
 }
 
 function currentLivePressure(brief, mood = "listening") {
+  const sceneHint = currentScenePressureHint(brief);
   return livePressureProfile({
     budget: ensureBudget(brief),
     foundCount: contradictions(brief).length,
     intentHook: liveIntentHookFor(brief),
-    reaction: state.lastReaction ?? "",
+    pressureSignal: state.lastPressureSignal ?? "",
     scene: state.scene,
-    sceneText: currentSceneText(brief),
+    sceneHint,
     mood
   });
 }
@@ -1903,13 +1910,7 @@ function liveCommentStrip(brief) {
 }
 
 function liveIntentHookFor(brief) {
-  const text = currentSceneText(brief);
-  if (/老板娘|年卡|投店|带客|活动|朋友多|稳情绪|你和别人不一样|只有我能接住/.test(text)) return "甜话后面接要求";
-  if (/不写才像一家人|协议|投入确认|像一家人|不信我|房本|还贷/.test(text)) return "亲近话压着账";
-  if (/介绍人|名校|MBA|学校好|收入稳|条件不错|流水|工资卡/.test(text)) return "条件话被托了一层";
-  if (/主责|审批|预算|复盘|付款|供应商|流程|报销/.test(text)) return "流程词说得太熟";
-  if (/结婚|低我一头|怕你知道|最低还款|周转|今晚就要|挡几天/.test(text)) return "心疼话后面接钱";
-  return "话太顺了";
+  return currentScenePressureHint(brief).intentHook ?? "话太顺了";
 }
 
 function portraitLayer(brief, mood = "listening") {
@@ -1945,18 +1946,9 @@ function callerExpressionFor(brief, mood = "listening") {
   const remaining = Number(budget.remaining ?? budget.max ?? 1);
   const max = Math.max(1, Number(budget.max ?? 1));
   const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
-  const reaction = String(state.lastReaction ?? "");
-  const sceneText = currentSceneText(brief);
 
   if (state.scene === "patienceLost") return { kind: "pause", text: "眼神空了一下" };
   if (remaining / max <= 0.28) return { kind: "pause", text: "停了很久才开口" };
-  if (/麦温|人声|弹幕有人替/.test(reaction)) return { kind: "blink", text: "连眨了两下" };
-  if (/来电人自己|自己身上|工资|流水/.test(reaction)) return { kind: "shift", text: "把话咽回去半秒" };
-  if (/老板娘|年卡|投店|带客|只有我能接住|你和别人不一样/.test(sceneText)) return { kind: "shift", text: "像把稿背到一半" };
-  if (/主责|审批|预算|复盘|付款|供应商|流程|报销/.test(sceneText)) return { kind: "pause", text: "流程词说得很顺" };
-  if (/介绍人|名校|MBA|条件不错|工资卡|流水/.test(sceneText)) return { kind: "blink", text: "笑了一下又停住" };
-  if (/不写才像一家人|不信我|协议|房本|还贷/.test(sceneText)) return { kind: "shift", text: "听到亲近话就低头" };
-  if (/结婚|低我一头|最低还款|周转|今晚就要/.test(sceneText)) return { kind: "pause", text: "那句说得太熟了" };
   if (state.scene === "deepFollowup") return { kind: "pause", text: "指尖停在屏幕上" };
   if (mood === "tense") return { kind: "shift", text: "握着手机没松手" };
   if (mood === "focused") return { kind: "pause", text: "低头翻图，停了三秒" };
@@ -1973,20 +1965,11 @@ function callerExpressionFor(brief, mood = "listening") {
   return { kind: "blink", text: "麦里轻轻吸气" };
 }
 
-function currentSceneText(brief) {
+function currentScenePressureHint(brief) {
+  if (state.scene !== "sceneReview") return {};
   const scenes = brief?.sceneVersions ?? [];
   const index = currentIndex(brief, "sceneReview", scenes.length || 1);
-  const scene = scenes[index] ?? {};
-  const pick = selectedScenePick(brief, index) ?? {};
-  const dialogue = askedDialoguePicks(brief, index);
-  return [
-    brief?.publicHook,
-    scene.version,
-    ...(scene.questionOptions ?? []).map((option) => option.question),
-    pick.question,
-    pick.answer,
-    ...dialogue.flatMap((item) => [item.question, item.answer])
-  ].filter(Boolean).join(" ");
+  return scenes[index]?.pressureHint ?? {};
 }
 
 function reactionLine() {

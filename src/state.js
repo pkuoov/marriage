@@ -46,6 +46,7 @@ export const baseState = {
   solvedCaseIds: [],
   caseInterludes: {},
   lastReaction: null,
+  lastPressureSignal: null,
   recapStep: 0
 };
 
@@ -86,6 +87,7 @@ export function migrateState(saved) {
   if (!Array.isArray(next.accusationHistory)) next.accusationHistory = [];
   if (!next.caseInterludes || Array.isArray(next.caseInterludes)) next.caseInterludes = {};
   if (!("lastReaction" in next)) next.lastReaction = null;
+  if (!("lastPressureSignal" in next)) next.lastPressureSignal = null;
   next.sceneQuestionPicks = migrateChoiceRecord(next.sceneQuestionPicks);
   next.sceneDialoguePicks = migrateChoiceListRecord(next.sceneDialoguePicks);
   next.evidenceCheckPicks = migrateChoiceRecord(next.evidenceCheckPicks);

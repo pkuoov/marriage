@@ -105,7 +105,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "条件话被托了一层",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "blink",
+          "text": "笑了一下又停住"
+        }
+      }
     },
     {
       "speakerId": "lin",
@@ -130,7 +138,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "资料缺口压上来",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "把资料夹往怀里收"
+        }
+      }
     },
     {
       "speakerId": "lin",
@@ -155,7 +171,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "detour"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "条件话被托了一层",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "把话咽回去半秒"
+        }
+      }
     },
     {
       "speakerId": "lin",
@@ -180,7 +204,15 @@
           "routeAxis": "money-flow",
           "routeTone": "detour"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "流水把关系问实了",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "pause",
+          "text": "指尖停在屏幕上"
+        }
+      }
     },
     {
       "speakerId": "lin",
@@ -205,7 +237,15 @@
           "routeAxis": "money-flow",
           "routeTone": "softening"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "条件表面开始松动",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "blink",
+          "text": "连眨了两下"
+        }
+      }
     }
   ],
   "explicitClueGroups": [

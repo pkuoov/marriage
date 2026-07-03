@@ -99,7 +99,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "流程词说得太熟",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "流程词说得很顺"
+        }
+      }
     },
     {
       "speakerId": "chen",
@@ -124,7 +132,15 @@
           "routeAxis": "identity-wording",
           "routeTone": "softening"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "审批图少了入口",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "低头翻图，停了三秒"
+        }
+      }
     },
     {
       "speakerId": "chen",
@@ -149,7 +165,15 @@
           "routeAxis": "money-flow",
           "routeTone": "softening"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "主责话压着风险",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "握着手机没松手"
+        }
+      }
     },
     {
       "speakerId": "chen",
@@ -174,7 +198,15 @@
           "routeAxis": "money-flow",
           "routeTone": "softening"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "流程把责任推开",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "blink",
+          "text": "连眨了两下"
+        }
+      }
     },
     {
       "speakerId": "chen",
@@ -199,7 +231,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "入口攥在别人手里",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "pause",
+          "text": "吸了口气才接"
+        }
+      }
     }
   ],
   "evidenceCards": [

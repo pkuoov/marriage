@@ -2,17 +2,17 @@ export function livePressureProfile({
   budget = {},
   foundCount = 0,
   intentHook = "",
-  reaction = "",
+  pressureSignal = "",
   scene = "",
-  sceneText = "",
+  sceneHint = {},
   mood = "listening"
 } = {}) {
   const max = Math.max(1, Number(budget.max ?? 1));
   const remaining = Math.max(0, Math.min(max, Number(budget.remaining ?? max)));
   const ratio = remaining / max;
   const level = scene === "patienceLost" || ratio <= 0.28 ? "low" : ratio <= 0.55 ? "mid" : "high";
-  const crowd = crowdState({ reaction, foundCount, level, scene });
-  const callerGuard = callerGuardState({ reaction, crowd, mood, sceneText });
+  const crowd = crowdState({ pressureSignal, foundCount, level, scene });
+  const callerGuard = callerGuardState({ pressureSignal, crowd, mood, sceneHint });
   return {
     max,
     remaining,
@@ -22,8 +22,16 @@ export function livePressureProfile({
     callerGuard,
     patienceLabel: patienceLabelFor(level),
     comments: liveCommentsFor({ crowd, foundCount, intentHook, level, scene }),
-    expression: expressionFor({ reaction, callerGuard, crowd, level, mood, scene, sceneText })
+    expression: expressionFor({ callerGuard, crowd, level, mood, scene, sceneHint })
   };
+}
+
+export function questionPressureSignal(option = {}, routeTone = "") {
+  const tone = routeTone || option.routeTone || "";
+  if (tone === "softening" || tone === "detour") return "drift";
+  if (tone === "caller-skeptical") return "guarded";
+  if (tone === "pressure-point" || tone === "trust-but-verify") return "held";
+  return option.contradiction ? "held" : "drift";
 }
 
 export function questionPressureReaction(option = {}, routeTone = "") {
@@ -37,6 +45,10 @@ export function questionPressureReaction(option = {}, routeTone = "") {
   if (tone === "caller-skeptical") return "这句绕回了来电人自己，弹幕短暂安静了一下。";
   if (tone === "pressure-point" || tone === "trust-but-verify") return "这句咬住了，直播间的人声压低了一点。";
   return "直播间接住了这个角度，但人声开始有点散。";
+}
+
+export function materialPressureSignal(outcome = {}) {
+  return outcome.correct ? "held" : "drift";
 }
 
 export function materialPressureReaction(outcome = {}, check = {}) {
@@ -121,21 +133,21 @@ function patienceLabelFor(level) {
   return "还在听";
 }
 
-function crowdState({ reaction = "", foundCount = 0, level = "high", scene = "" }) {
+function crowdState({ pressureSignal = "", foundCount = 0, level = "high", scene = "" }) {
   if (scene === "patienceLost" || level === "low") return "散了";
-  if (/带跑|没咬住|跑偏|吵得更散|麦温往下/.test(reaction)) return "跑偏";
-  if (/咬住|圈住|短暂安静|重新翻出来|拉回来/.test(reaction)) return "压住";
+  if (pressureSignal === "drift") return "跑偏";
+  if (pressureSignal === "held") return "压住";
   if (foundCount >= 2) return "追上";
   if (foundCount === 1) return "起疑";
   return "观望";
 }
 
-function callerGuardState({ reaction = "", crowd = "", mood = "", sceneText = "" }) {
-  if (/来电人自己|自己身上|工资|流水|为什么/.test(reaction)) return "防备";
+function callerGuardState({ pressureSignal = "", crowd = "", mood = "", sceneHint = {} }) {
+  if (pressureSignal === "guarded" || sceneHint.callerGuard === "guarded") return "防备";
   if (crowd === "跑偏") return "防备";
   if (crowd === "压住") return "松动";
   if (mood === "tense") return "绷住";
-  if (/流程|审批|供应商|工资卡|流水|协议/.test(sceneText)) return "绷住";
+  if (sceneHint.callerGuard === "tense") return "绷住";
   return "听着";
 }
 
@@ -149,17 +161,12 @@ function liveCommentsFor({ crowd = "", foundCount = 0, intentHook = "", level = 
   return ["刚接进来", "弹幕在等", hook];
 }
 
-function expressionFor({ reaction = "", callerGuard = "", crowd = "", level = "high", mood = "", scene = "", sceneText = "" }) {
+function expressionFor({ callerGuard = "", crowd = "", level = "high", mood = "", scene = "", sceneHint = {} }) {
   if (level === "low") return { kind: "pause", text: "停了很久才开口" };
+  if (sceneHint.expression?.kind && sceneHint.expression?.text) return sceneHint.expression;
   if (callerGuard === "防备") return { kind: "shift", text: "把话咽回去半秒" };
   if (callerGuard === "松动") return { kind: "pause", text: "低头翻图，停了三秒" };
   if (crowd === "跑偏") return { kind: "blink", text: "连眨了两下" };
-  if (/麦温|人声|弹幕有人替/.test(reaction)) return { kind: "blink", text: "连眨了两下" };
-  if (/老板娘|年卡|投店|带客|只有我能接住|你和别人不一样/.test(sceneText)) return { kind: "shift", text: "像把稿背到一半" };
-  if (/主责|审批|预算|复盘|付款|供应商|流程|报销/.test(sceneText)) return { kind: "pause", text: "流程词说得很顺" };
-  if (/介绍人|名校|MBA|条件不错|工资卡|流水/.test(sceneText)) return { kind: "blink", text: "笑了一下又停住" };
-  if (/不写才像一家人|不信我|协议|房本|还贷/.test(sceneText)) return { kind: "shift", text: "听到亲近话就低头" };
-  if (/结婚|低我一头|最低还款|周转|今晚就要/.test(sceneText)) return { kind: "pause", text: "那句说得太熟了" };
   if (scene === "deepFollowup") return { kind: "pause", text: "指尖停在屏幕上" };
   return null;
 }

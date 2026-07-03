@@ -99,7 +99,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "亲近话后面接要求",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "像把稿背到一半"
+        }
+      }
     },
     {
       "speakerId": "he",
@@ -124,7 +132,15 @@
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "甜话后面接要求",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "捏着会员卡套没松"
+        }
+      }
     },
     {
       "speakerId": "he",
@@ -149,7 +165,15 @@
           "routeAxis": "document-edge",
           "routeTone": "detour"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "店表比甜话更像账本",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "低头翻图，停了三秒"
+        }
+      }
     },
     {
       "speakerId": "he",
@@ -174,7 +198,15 @@
           "routeAxis": "identity-wording",
           "routeTone": "detour"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "自己人话压着账",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "blink",
+          "text": "笑了一下又停住"
+        }
+      }
     },
     {
       "speakerId": "he",
@@ -199,7 +231,15 @@
           "routeAxis": "outer-thread",
           "routeTone": "softening"
         }
-      ]
+      ],
+      "pressureHint": {
+        "intentHook": "话术和业绩贴太近",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "shift",
+          "text": "眼神往旁边躲"
+        }
+      }
     }
   ],
   "evidenceCards": [
