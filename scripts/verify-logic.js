@@ -10,17 +10,18 @@ import { platformRuntime } from "../src/platformRuntime.js?v=0.20.68";
 import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.68";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.68";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.68";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
+import { actionDoneForState, answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedEvidencePicksForState, selectedInvestigationPicksForState, selectedScenePickForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "../src/runtime/caseStateSelectors.js?v=0.20.68";
+import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyHiddenThreadProfile, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "../src/runtime/livePressure.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
-import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
+import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
@@ -172,6 +173,67 @@ test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outs
   assertEqual(trail[2].mark, "回", "路线图回流节点必须标成回");
 });
 
+test("STATE-SELECTOR-001", "case state selectors read picks and route profile outside app rendering", () => {
+  const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const key = brief.id;
+  const firstQuestion = brief.sceneVersions?.[0]?.questionOptions?.[0] ?? {};
+  const firstEvidencePick = { correct: true, label: "账单缺口" };
+  const firstInvestigationPick = { correct: false, label: "朋友圈截图" };
+  const selectorState = {
+    caseActionLog: {
+      [key]: {
+        "version:0": true,
+        "evidenceCheck:0": true
+      }
+    },
+    contradictionLog: {
+      [key]: [
+        brief.sceneVersions?.[0]?.contradiction,
+        brief.investigationHooks?.[0]?.triggerContradiction
+      ].filter(Boolean)
+    },
+    sceneQuestionPicks: {
+      [answerKey(brief, 0)]: {
+        question: firstQuestion.question ?? "这句怎么问？",
+        answer: "我当时确实停了一下。",
+        routeAxis: "money-flow",
+        routeTone: "pressure-point"
+      }
+    },
+    sceneDialoguePicks: {
+      [answerKey(brief, 0)]: [{ optionIndex: 1, question: "先问外围？", answer: "我绕了一句。" }]
+    },
+    evidenceCheckPicks: {
+      [evidenceAnswerKey(brief, 0)]: firstEvidencePick
+    },
+    investigationPicks: {
+      [investigationAnswerKey(brief, 0)]: firstInvestigationPick
+    },
+    truthBoundaryPicks: {
+      [key]: { "true:0": "true" }
+    },
+    routeChoiceLog: {}
+  };
+  assert(actionDoneForState(selectorState, brief, "version:0"), "状态 selector 必须能读取动作完成状态");
+  assertEqual(answeredSceneCountForState(selectorState, brief), 1, "已问段落数量必须脱离 app.js 计算");
+  assertEqual(answeredEvidenceCountForState(selectorState, brief), 1, "已处理材料数量必须脱离 app.js 计算");
+  assertEqual(selectedScenePickForState(selectorState, brief, 0).routeAxis, "money-flow", "场景选择必须能补齐路线轴");
+  assertEqual(askedDialoguePicksForState(selectorState, brief, 0).length, 1, "外围对话选择必须能脱离 app.js 读取");
+  assertEqual(completedSceneExchangeForState(selectorState, brief, brief.sceneVersions[0], 0, selectedScenePickForState(selectorState, brief, 0)).fallbackAnswer, "", "已完成问答模型必须脱离 app.js 组装");
+  assertEqual(latestChoiceReviewRowsForState(selectorState, brief)[1].role, "host", "上一问回看 rows 必须脱离 app.js 组装");
+  assertEqual(selectedEvidencePicksForState(selectorState, brief)[0].label, "账单缺口", "材料选择必须能脱离 app.js 读取");
+  assertEqual(selectedInvestigationPicksForState(selectorState, brief)[0].label, "朋友圈截图", "回流选择必须能脱离 app.js 读取");
+  assertEqual(truthBoundaryPicksForState(selectorState, brief)["true:0"], "true", "事实边界选择必须能脱离 app.js 读取");
+  assert(unlockedInvestigationEntriesForState(selectorState, brief).length >= 1, "回流解锁必须能脱离 app.js 计算");
+  assertEqual(routeChoicesForState(selectorState, brief)[0].axis, "money-flow", "路线 choices 必须能从已选问题回退生成");
+  assertEqual(routeAxisProfileForState(selectorState, brief).axis, "money-flow", "路线画像必须能脱离 app.js 生成");
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  assertIncludes(appSource, "./runtime/caseStateSelectors.js", "app.js 必须通过 runtime caseStateSelectors 读取案件状态");
+  assert(!appSource.includes("function selectedScenePick("), "app.js 不能重新维护场景选择 selector");
+  assert(!appSource.includes("function selectedEvidencePicksFor("), "app.js 不能重新维护材料选择 selector");
+  assert(!appSource.includes("function keyChoiceReview("), "app.js 不能重新维护上一问回看 selector");
+});
+
 test("MATERIAL-001", "material operation model records hit and miss without UI coupling", () => {
   const check = {
     prompt: "这张审批图少了哪一边？",
@@ -235,9 +297,9 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertEqual(guardedVariant.guarded, true, "收紧版回答必须留下 guarded 标记，供路线回看和结算继续使用");
   assertEqual(pressuredAnswerVariant({ answer: "原回答", guardedAnswer: "收紧回答" }, { pressureSignal: "held" }).answer, "原回答", "压住现场时不能无故改写来电人回答");
   assertEqual(materialPressureSignal({ correct: false }), "drift", "材料误指必须生成结构化跑偏状态");
-  assertIncludes(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "问题被带远", "追问语气必须能生成现场压力反应，但不能写成抽象氛围值");
-  assertIncludes(materialPressureReaction({ correct: true, pick: { label: "付款状态" } }, { title: "审批图", material: "付款和收款账户没露出来。" }), "钱路", "材料命中必须能生成现场压力反应");
-  assertIncludes(materialPressureReaction({ correct: false, pick: { label: "截图边角" } }, { title: "截图" }), "圈偏", "材料误指必须说清玩家圈偏了，不能只写抽象氛围");
+  assertIncludes(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "给了对方台阶", "追问语气必须能生成现场压力反应，但不能写成抽象氛围值");
+  assertIncludes(materialPressureReaction({ correct: true, pick: { label: "付款状态", feedback: "缺的这一页才决定钱去了哪里。" } }, { title: "审批图", material: "付款和收款账户没露出来。" }), "缺的这一页", "材料命中必须优先使用内容包写好的反馈");
+  assertIncludes(materialPressureReaction({ correct: false, pick: { label: "截图边角" } }, { title: "截图" }), "撑不住", "材料误指必须说清这一处撑不住，不能只写抽象氛围");
   const recap = pressureRecapProfile({
     budget: { max: 8, remaining: 1, used: 7 },
     choices: [{ tone: "evidence-miss" }, { tone: "detour" }],
@@ -259,11 +321,15 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   const objectProfile = storyObjectProfile([{ storyObjectLabel: "账单" }, { storyObjectLabel: "表格" }, { storyObjectLabel: "账单" }]);
   assertEqual(objectProfile.total, 2, "故事集物件汇总必须去重");
   assertIncludes(objectProfile.line, "账单、表格", "故事集终局必须回收每案物件，而不是只看路线轴");
-  const theme = storyThemeProfile([{ storyThemeTitle: "今晚四通麦", storyThemeThesis: "别替人补完。", storyThemeCommentPrompt: "弹幕还在吵。" }]);
+  const theme = storyThemeProfile([{ storyThemeTitle: "今晚四通麦", storyThemeThesis: "别替人补完。", storyThemeCommentPrompt: "弹幕还在吵。", storyHiddenThread: { title: "今晚暗线", label: "同款话术", reveal: "好听话后面接成本。", lowReveal: "还没完全露头。", beats: ["体面接钱", "自己人接资源"], comment: "「暗线露出来了。」" } }]);
   const axes = storyPackAxes([{ axis: "money-flow" }, { axis: "money-flow" }, { axis: "document-edge" }]);
   const bestAxis = storyPackBestAxis(65, axes);
   assertEqual(theme.title, "今晚四通麦", "故事集主题必须由纯模型读取，不能散在 app 渲染里");
   assertEqual(bestAxis.axis, "money-flow", "故事集主路线必须由纯模型统计");
+  assertEqual(theme.hiddenThread.label, "同款话术", "故事包暗线必须由主题数据进入纯模型");
+  const hiddenThread = storyHiddenThreadProfile({ theme, avgPercent: 80, objectProfile });
+  assertEqual(hiddenThread.label, "同款话术", "故事包暗线高揭示时必须露出主题标签");
+  assertIncludes(hiddenThread.line, "成本", "故事包暗线必须输出散场后才看的串案结构");
   assertEqual(storyPackBestAxis(20, axes).label, "外围听感线", "低揭示率路线画像必须降级成外围听感");
   assertEqual(storyPlayerType(80, bestAxis), "钱流雷达主播", "故事集主播类型必须由纯模型生成");
   assertIncludes(storyShareTitle(80, bestAxis), "钱流结构线", "故事集分享标题必须回收主路线");
@@ -271,6 +337,11 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertEqual(storyCallCountText(3), "这 3 路麦", "故事集终局必须按实际案数生成称呼，不能写死四通");
   assert(!storyPackAftertaste(95, 3).includes("四通"), "故事集余味不能写死四通");
   assertIncludes(storyPackClosingLine(95, bestAxis, 3), "这 3 路麦", "故事集收束小字必须使用实际案数");
+  const lowClosing = storyPackClosingLine(20, bestAxis, 3);
+  assertIncludes(lowClosing, "现场情绪", "低揭示路线也要有完整余味，不写成失败补课");
+  assert(!/重开|换条线|补考|再来/.test(lowClosing), "低揭示终局不能主动提示玩家重开补路线");
+  const missOnlyMaterial = storyMaterialProfile([{ label: "第一通", picks: [{ correct: false, label: "截图边角" }] }]);
+  assert(!/重开|我会先/.test(missOnlyMaterial.comment), "材料误圈评论不能像教程一样替玩家决定下一次怎么问");
   const wall = storyCommentWall({
     briefs: [{ label: "第一通" }, { label: "第二通" }],
     results: [{ issuePercent: 80 }, { issuePercent: 30 }],
@@ -284,7 +355,8 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
     },
     materialProfile,
     quoteProfile,
-    objectProfile
+    objectProfile,
+    hiddenThreadProfile: hiddenThread
   });
   assertEqual(wall.length, 4, "故事集评论墙必须稳定输出 4 条以内");
   assertIncludes(wall.join(""), "心疼可以", "故事集评论墙必须能读取内容包评论种子");
@@ -345,6 +417,8 @@ test("MATERIAL-003", "material board uses distinct visual layouts by material ty
   assertEqual(evidenceMaterialKind({ title: "学校截图", material: "图里只有 MBA 项目。" }), "shot", "截图材料必须识别为 shot");
   assertEqual(evidenceMaterialKind({ title: "报销审批", material: "审批通过但没有付款状态。" }), "flow", "审批材料必须识别为 flow");
   assertIncludes(evidenceOperationHtml({ title: "信用卡账单", material: "餐厅消费。", options: [] }), "material-bill", "材料类型必须落到 DOM class，供 CSS 区分版式");
+  assertIncludes(evidenceOperationHtml({ title: "信用卡账单", material: "餐厅消费。", options: [] }), "evidence-thumb-bill", "材料板必须有可见缩略图，不能只是一块文字板");
+  assertIncludes(evidenceMaterialThumbHtml({ title: "报销审批", material: "审批通过。" }), "evidence-thumb-flow", "材料缩略图必须跟随材料类型变化");
   assertIncludes(evidenceOperationHtml({ title: "信用卡账单", material: "餐厅消费。", options: [] }), "evidence-ledger", "账单材料必须渲染成账单行，而不是普通段落");
   assertIncludes(evidenceOperationHtml({ title: "排班表", material: "顾客｜备注。", options: [] }), "evidence-table-grid", "表格材料必须渲染成表格感区域");
   assertIncludes(evidenceOperationHtml({ title: "截图", material: "学校图里只有项目。", options: [] }), "evidence-shot-frame", "截图材料必须渲染成截图/手机框区域");
@@ -353,6 +427,7 @@ test("MATERIAL-003", "material board uses distinct visual layouts by material ty
   assertIncludes(stylesSource, ".evidence-table-grid", "表格材料必须有独立视觉皮肤");
   assertIncludes(stylesSource, ".evidence-shot-frame", "截图材料必须有独立视觉皮肤");
   assertIncludes(stylesSource, ".evidence-flow-track", "流程材料必须有独立视觉皮肤");
+  assertIncludes(stylesSource, ".evidence-thumb", "材料检视必须有缩略图样式，补直播后台资产感");
 });
 
 test("INVESTIGATION-001", "host investigation backflow is fixed material, not freeform facts", () => {
@@ -408,8 +483,10 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const questionHtml = sceneQuestionChoicesHtml(2, questionOptions, []);
   assertIncludes(questionHtml, "scene-question-group", "当前节点追问必须走统一面板，避免上下两个孤立单选组");
   assertIncludes(questionHtml, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
-  assertIncludes(questionHtml, "data-scene-dialogue=\"2:1\"", "外围追问仍要保留可点击数据，不显示成独立解释区");
   assertIncludes(questionHtml, "data-scene-question=\"2:0\"", "关键追问仍要保留可点击数据，不显示成独立解释区");
+  assertIncludes(questionHtml, "data-scene-question=\"2:1\"", "外围追问必须也是一次性当前节点选择，不能点完再扫核心追问");
+  assert(!questionHtml.includes("data-scene-dialogue"), "当前节点不能再提供可扫选的外围对话按钮");
+  assert(!appSource.includes("handleSceneDialogueButton"), "新流程不能保留外围追问后再点核心的事件入口");
   assertIncludes(appSource, "renderEvidenceCheck", "追问结束后必须保留材料检视阶段，避免玩法退回纯问答");
   assertIncludes(appSource, "evidenceCheckPicks", "材料检视选择必须进入存档和复盘状态");
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
@@ -444,7 +521,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!appSource.includes("\"lost-job-hidden-credit\": `账单摊开以后"), "案间收束句必须来自内容包 storyInterludeRecap，不能留 app.js plotId 映射");
   assert(!appSource.includes("\"lost-job-hidden-credit\": \"backdrop-credit\""), "案件背景 class 必须来自 brief.backdropClass，不能留 app.js plotId 映射");
   assert(!appSource.includes("brief.plotId === \"education-income-fake-profile\""), "存款证明结算特判必须来自内容 JSON 字段，不能留在 app.js");
-  assertIncludes(appSource, "conclusionBranchFor", "案后分支结论必须走内容字段匹配，而不是 plotId 特判");
+  assert(!appSource.includes("function conclusionBranchFor"), "案后分支匹配不能继续定义在 app.js");
+  assertIncludes(recapModelSource, "conclusionBranchFor", "案后分支结论必须走 recapModel 的内容字段匹配，而不是 plotId 特判");
   assertIncludes(storyInterludeObjectLabel({ storyObjectLabel: "表格" }), "表格", "案间过渡必须用物件钩子接下一通，减少目录感");
   assertIncludes(storyInterludeNextLine({ storyBridge: "后台又亮了一张审批图。" }), "审批图", "案间桥接句必须来自内容包 bridge");
   assert(!appSource.includes("function storyInterludeObjectLabel"), "案间物件名模型不能继续定义在 app.js");
@@ -465,6 +543,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "currentScenePressureHint", "场景表情和弹幕钩子必须从内容数据读取，不能在 app.js 扫台词");
   assert(!livePressureSource.includes("sceneText"), "livePressure 不能扫描案件台词决定表情或防备，场景钩子必须进 JSON");
   assert(!livePressureSource.includes("reaction = \"\"") && !livePressureSource.includes("reaction,"), "livePressure 不能扫描自己生成的反应文案决定 crowdState");
+  assert(!/\.test\(option\.answer/.test(livePressureSource), "livePressure 不能扫描来电人回答关键词生成现场反应");
+  assert(!livePressureSource.includes("check.title") && !livePressureSource.includes("check.material"), "材料压力反应不能扫描材料标题/正文关键词，优先使用结构化命中和内容反馈");
   assertIncludes(appSource, "questionPressureReaction", "追问语气反应必须由现场压力模型生成，不能散在 app.js");
   assertIncludes(appSource, "materialPressureReaction", "材料命中/误指反应必须由现场压力模型生成，不能只扣忍耐");
   assert(!appSource.includes("function outerAngleReaction"), "旧的 UI 本地压力反应函数必须删除，避免两套规则并存");
@@ -495,7 +575,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(recapViewSource, "truthBoundaryPlaced", "事实边界必须改成一次放置后继续，不能强制玩家改到标准答案");
   assertIncludes(recapViewSource, "solvedRecapFlowView", "单案收麦回看分页和按钮必须由纯 UI 模块生成");
   assertIncludes(appSource, "solvedRecapFlowView", "renderSolved 必须调用纯 UI flow helper，不能继续本地拼分页按钮");
-  assert(!appSource.includes("先把这几句放完"), "事实边界阻止继续的按钮文案不能继续写在 app.js");
+  assert(!appSource.includes("先把这几句放完") && !recapViewSource.includes("先把这几句放完"), "事实边界阻止继续的按钮文案不能继续写回运行时代码或 UI 模块");
   assert(!appSource.includes("这句还不能这么放"), "事实边界不能当场提示对错，错放应留到回看/终局揭晓");
   assertIncludes(appSource, "truthBoundaryMisses", "事实边界一次放错必须影响收话余味，不能只看最终放对");
   assertIncludes(storyPackSummarySource, "truthBoundaryPackProfile", "故事集终局必须汇总四案事实边界，而不是只看路线轴");
@@ -589,7 +669,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(buildPlayableSource, "rename(tempDir, outDir)", "离线 playable 构建必须以临时目录替换目标目录");
   assertIncludes(buildPlayableSource, "importAliasDeclarations", "离线 playable bundler 必须保留 import alias，避免 app 运行时 undefined");
   assertIncludes(browserSmokeSource, "name: \"perfect\"", "浏览器回放必须覆盖 perfect route");
-  assertIncludes(browserSmokeSource, "outer-then-core", "浏览器回放必须覆盖外围追问后继续主线");
+  assertIncludes(browserSmokeSource, "sceneMode: \"outer\"", "浏览器回放必须覆盖只点外围追问也能继续主线");
+  assert(!browserSmokeSource.includes("data-scene-dialogue"), "浏览器回放不能再扫外围后继续点核心追问");
   assertIncludes(browserSmokeSource, "material-miss", "浏览器回放必须覆盖材料误圈路线");
   assertIncludes(browserSmokeSource, "keyboard-perfect", "浏览器回放必须覆盖真实键盘焦点路线");
   assertIncludes(browserSmokeSource, "page.keyboard.press(\"Enter\")", "键盘回放必须用真实键盘确认，而不是只用 DOM click");
@@ -619,6 +700,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(flowGroupHtml("<button>继续</button>"), "flow-group", "流程按钮组必须可由纯 UI 模块渲染");
   assertIncludes(callDialogueHtml([{ role: "host", text: "你当时怎么回的？" }, { role: "caller", text: "我说先看账单。" }]), "你当时怎么回的？", "通话气泡必须可由纯 UI 模块渲染");
   assertIncludes(choiceReviewHtml([{ role: "caller", text: "账单只有消费页。" }]), "上一问", "上一问回看必须可由纯 UI 模块渲染");
+  assertIncludes(choiceReviewHtml([{ role: "caller", text: "账单只有消费页。" }]), "call-log-drawer", "上一问回看必须升级为通话记录抽屉，而不是普通说明折叠块");
   assertIncludes(appSource, "./ui/liveCallView.js", "直播 HUD/立绘 HTML 必须从 app.js 拆到 ui/liveCallView");
   assertIncludes(appSource, "./ui/liveFrameView.js", "案内主舞台 HTML 必须从 app.js 拆到 ui/liveFrameView");
   assertIncludes(audiencePatienceHudHtml({ level: "mid", ratio: 0.5, remaining: 4, max: 8 }), "听众忍耐", "听众忍耐 HUD 必须可由纯 UI 模块渲染");
@@ -640,7 +722,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
     boundary: { prompts: [{ id: "true:0" }] },
     boundaryPicks: {}
   });
-  assertIncludes(blockedBoundaryFlow.choices, "先把这几句放完", "事实边界未放完时必须由纯 UI flow helper 阻止继续");
+  assertIncludes(blockedBoundaryFlow.choices, "还有话没落位", "事实边界未放完时必须由纯 UI flow helper 阻止继续");
   const finalRecapFlow = solvedRecapFlowView({ pages: ["第一页", "末页"], step: 1, afterLabel: "接下一路麦" });
   assertIncludes(finalRecapFlow.choices, "data-after-recap", "收麦回看末页出口必须由纯 UI flow helper 生成");
   assertIncludes(finalRecapFlow.choices, "接下一路麦", "收麦回看末页出口文案必须可由 app 传入但由 UI helper 渲染");
@@ -683,9 +765,12 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(storyInterludeHtml({ previousLabel: "钱流线", previousLine: "账单摊开了", nextObjectLabel: "表格", nextLine: "后台又亮了一路麦" }), "表格", "案间过渡必须可由纯 UI 模块渲染下一通 dramatic object");
   assertIncludes(storyInterludeChoicesHtml(), "接下一路麦", "案间过渡按钮必须保持直播语言，不退回目录式下一案");
   assertIncludes(appSource, "./ui/storyPackCompleteView.js", "故事集终局 HTML 必须从 app.js 拆到 ui/storyPackCompleteView");
-  assertIncludes(storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料咬住" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" }), "评论区审判墙", "故事集终局结果卡必须可由纯 UI 模块渲染");
-  assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "压住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, playerType: "收麦主播" }), "材料圈点：圈准", "故事集终局复制文案必须可由纯 UI 模块生成");
-  const summaryBriefs = [{ label: "第一案", truthBoundary: { true: ["账单是真的"], edited: ["少了来源"], unknown: ["动机定不了"] }, storyClueObject: "账单" }];
+  const hiddenThreadProfile = { total: 4, title: "今晚暗线", label: "同款话术", line: "好听话后面接成本。", beats: ["体面接钱", "自己人接资源"] };
+  const storyCompleteCard = storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料咬住" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, hiddenThreadProfile, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" });
+  assertIncludes(storyCompleteCard, "评论区审判墙", "故事集终局结果卡必须可由纯 UI 模块渲染");
+  assertIncludes(storyCompleteCard, "hidden-thread-card", "故事集终局必须能渲染串案暗线卡");
+  assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "压住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, hiddenThreadProfile, playerType: "收麦主播" }), "散场暗线：同款话术", "故事集终局复制文案必须带出散场暗线");
+  const summaryBriefs = [{ label: "第一案", truthBoundary: { true: ["账单是真的"], edited: ["少了来源"], unknown: ["动机定不了"] }, storyClueObject: "账单", storyHiddenThread: { title: "今晚暗线", label: "同款话术", reveal: "好听词后面接成本。", beats: ["账单", "表格"] } }];
   const summary = storyPackSummaryModel({
     briefs: summaryBriefs,
     results: [{ issuePercent: 100, dailyAccuseLabel: "“账单”", quoteHit: true }],
@@ -697,6 +782,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(summary.materialProfile.label, "圈", "故事集材料 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(summary.boundaryProfile.label, "挂", "故事集事实边界 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(summary.objectProfile.line, "账单", "故事集物件 profile 必须可由纯 runtime summary 模型生成");
+  assertIncludes(summary.hiddenThreadProfile.line, "成本", "故事集暗线 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(appSource, "./ui/titleView.js", "标题页 HTML 必须从 app.js 拆到 ui/titleView");
   const titleHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, title: "Steam 试玩版", hook: "热线已经接进来。资料在后台。", object: "热线已接入" });
   assertIncludes(titleHtml, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
@@ -708,14 +794,28 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assert(!appSource.includes("live-console-shell"), "案内主舞台骨架 DOM 不能继续写在 app.js");
   const deckHtml = liveControlDeckHtml({ onAirLabel: "匿名热线", label: "看材料", segment: 2, total: 5, pressure: { remaining: 6, max: 8, patienceLabel: "压得住" }, material: "审批图" });
   assertIncludes(deckHtml, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
+  assertIncludes(deckHtml, "deck-live-metrics", "控场台必须有 LIVE 时间和观众数氛围指标");
+  assertIncludes(deckHtml, "deck-host-monitor", "控场台必须保留主播监看层，强化玩家在主播台控场");
+  assertIncludes(deckHtml, "Viewers", "控场台直播指标必须像直播间状态，不写成玩法分数");
+  assertIncludes(deckHtml, "deck-monitor-strip", "控场台必须有麦克风/监听状态，不能只是普通信息卡");
   assertIncludes(deckHtml, "后台材料", "控场台必须把材料作为直播间后台对象呈现");
+  assertIncludes(deckHtml, "deck-material-preview", "控场台材料卡必须有缩略图，提升直播后台操作感");
   assertIncludes(deckHtml, "审批图", "控场台必须展示当前后台材料");
-  const frameHtml = liveFrameHtml({ productName: "直播间大侦探", modeLabel: "试玩连线", soundEnabled: true, label: "继续对话", chapter: "匿名来电", text: "<p>正文</p>", choices: "<button>继续</button>", visualHud: "<div>HUD</div>", controlDeckHtml: deckHtml });
+  const frameHtml = liveFrameHtml({ productName: "直播间大侦探", modeLabel: "试玩连线", soundEnabled: true, label: "继续对话", chapter: "匿名来电", text: "<p>正文</p>", choices: "<button>继续</button>", visualHud: "<div>HUD</div>", controlDeckHtml: deckHtml, backdropClass: "backdrop-credit", material: "信用卡账单" });
   assertIncludes(frameHtml, "live-console-shell", "案内主画面必须使用控场台布局骨架");
   assertIncludes(frameHtml, "音效 开", "案内主画面 topbar 必须可由纯 UI 模块渲染");
+  assertIncludes(frameHtml, "scene-evidence-props", "主舞台必须有案件物件前景层，不能只有背景图和立绘");
+  assertIncludes(frameHtml, "scene-props-credit", "案件物件前景层必须跟随场景背景切换");
+  assertIncludes(frameHtml, "props-bill", "案件物件前景层必须跟随材料类型切换");
   assertIncludes(stylesSource, ".story-grid.case-vn-grid.live-console-shell", "控场台布局必须覆盖普通 VN 单栏布局");
   assertIncludes(stylesSource, ".deck-card-live", "控场台必须有直播信号视觉模块");
+  assertIncludes(stylesSource, ".scene-evidence-props", "主舞台案件物件前景层必须有样式");
+  assertIncludes(stylesSource, ".scene-evidence-props.props-bill", "账单类前景物件必须有区别于普通文件的样式");
+  assertIncludes(stylesSource, ".scene-evidence-props.props-flow", "审批/流程类前景物件必须有区别于普通文件的样式");
+  assertIncludes(stylesSource, ".deck-live-metrics", "控场台 LIVE 指标必须有独立样式");
   assertIncludes(stylesSource, ".deck-card-material", "控场台必须有后台材料视觉模块");
+  assertIncludes(stylesSource, ".deck-monitor-strip", "控场台必须有麦控监看条样式");
+  assertIncludes(stylesSource, ".deck-material-preview", "控场台必须有材料缩略图样式");
   assertIncludes(stylesSource, ".title-console-strip", "标题页必须有直播状态条样式");
   assertIncludes(appSource, 'document.addEventListener("keydown"', "Steam/桌面输入必须有全局键盘入口");
   assertIncludes(appSource, "moveButtonFocus", "方向键/WASD 必须能切换可用按钮焦点");
@@ -733,6 +833,12 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(appSource, "handleGamepadAxis", "左摇杆必须能移动焦点");
   assertIncludes(appSource, "gamepadAxisDirection", "摇杆方向和冷却必须走可测试纯函数");
   assertIncludes(stylesSource, "button:focus-visible", "键盘和手柄焦点必须有可见焦点环");
+  assertIncludes(stylesSource, "focusCurrent", "键盘和手柄焦点必须有呼吸灯动画，便于小屏和大屏识别");
+  assertIncludes(stylesSource, ".call-log-drawer-body", "上一问回看必须有抽屉式通话记录样式");
+  assertIncludes(stylesSource, ".case-portrait::after", "立绘层必须有直播流扫描线/压缩感滤镜");
+  assertIncludes(stylesSource, "portraitCrossFade", "立绘表情/状态切换必须有淡入过渡样式");
+  assertIncludes(stylesSource, "expressionShiftFloat", "立绘表情气泡必须有分状态微动效，避免所有反应都像同一个贴片");
+  assertIncludes(stylesSource, "expressionPauseFloat", "停顿类表情必须和普通眨眼气泡有不同节奏");
 });
 
 test("EPISODE-001", "story pack contains deterministic live-call cases with one spine", () => {
@@ -749,6 +855,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assert(!storyPacksSource.includes("ANONYMOUS_CALL_LABELS"), "故事包标签不能在 storyPacks.js 里手写双份");
   assertIncludes(contentIndexSource, "CONTENT_CASES", "内容索引必须包含案件运行时状态，为后续 JSON loader 留入口");
   assertIncludes(contentIndexSource, "commentSeeds", "内容索引必须包含 comments.json，不能让弹幕种子停在影子资产");
+  assertIncludes(contentIndexSource, "hiddenThread", "内容索引必须包含故事包暗线，不能把串案结构写死在终局 UI");
   assertIncludes(contentIndexSource, '"runtimeContentStatus": "runtime-loaded"', "至少一案必须已接通 runtime-loaded 内容，证明 JSON loader 真实生效");
   assert(!contentIndexSource.includes('"runtimeContentStatus": "metadata-only"'), "当前试玩包四案都必须由 content JSON 接管完整台词");
   assertIncludes(contentIndexSource, "accusationChoices", "最终收麦原话必须进入内容索引，不能停在 dailyChoices.js 分支");
@@ -771,6 +878,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assertEqual(a[1].taskProfile.id, "emotion", "理发店案任务画像必须来自 content JSON，而不是运行时 plotId 特判");
   assertEqual(a[2].taskProfile.id, "verification", "存款证明案任务画像必须来自 content JSON");
   assertEqual(a[3].taskProfile.summary, "截图看着完整，钱却没落到该落的位置。", "职场案任务画像必须保留内容包里的案内操作摘要");
+  assertEqual(a[0].storyHiddenThread?.label, "同一套省成本的话术", "故事包暗线必须从 manifest theme 进入每案 brief");
   assertEqual(a[0].difficultyProfile.tier, 1, "第一案必须从 manifest 接到开场难度 profile");
   assertEqual(a[3].difficultyProfile.tier, 4, "第四案必须从 manifest 接到收束难度 profile");
   assert(calculateCaseBudgetMax({ brief: a[0] }) > calculateCaseBudgetMax({ brief: a[3] }), "故事包后段必须能通过 manifest 降低听众耐心预算");
@@ -939,7 +1047,8 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
     assert(!text.includes(badPhrase), `职场报销案不能用错性别代词或旧硬编码：${badPhrase}`);
   });
   assertIncludes(text, "咨询者想拿表现", "职场报销案应使用角色称谓承接来电人，避免头像和代词冲突");
-  assertIncludes(text, "对方就有办法一直拖", "职场报销案应使用对方/同事承接缺席方，避免性别绑定");
+  assertIncludes(text, "对方手里", "职场报销案应使用对方/同事承接缺席方，避免性别绑定");
+  assertIncludes(text, "付款入口", "职场报销案应把缺席方问题落到流程入口，不回到性别代词判断");
 });
 
 test("EPISODE-002", "demo story pack can be played through with core reveals", () => {
@@ -1148,6 +1257,7 @@ test("DAILY-009B", "case copy avoids gender-war framing but allows mutual harm",
 test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => {
   const awkwardShortJobPhrase = `${"工作"}${"不太"}${"稳"}`;
   const forbidden = new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|成本归属|满格以后|这通电话|心里咯噔一下|算借款、赠与|借款、赠与|${awkwardShortJobPhrase}`);
+  const frozenShareFrame = /^让我.*(?:的是|不是)/;
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
       const text = JSON.stringify({
@@ -1166,6 +1276,7 @@ test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => 
         dailyShareQuestion: brief.dailyShareQuestion
       });
       assert(!forbidden.test(text), `${brief.plotId} 仍有总结腔/AI 腔短语`);
+      assert(!frozenShareFrame.test(brief.dailyShareBody ?? ""), `${brief.plotId} 结果卡不能用“让我……的是/不是……”作文式开头`);
     });
 });
 
@@ -1482,6 +1593,12 @@ test("RUNTIME-005", "recap model stays pure and reusable outside app rendering",
   const comparison = finalQuoteComparison(brief, result);
   assert(comparison?.pickedLabel, "最终原话比较必须能脱离 DOM 生成");
   assert(comparison.bestLabel, "最终原话比较必须给出可回看的收束口子");
+  const branchConclusion = dailyConclusionModel({
+    conclusionBranches: [{ match: "流水", summary: "先看流水这条线。", followup: "后台补了流水截图。", truth: "只能确认钱的入口。" }],
+    truth: "默认收束。"
+  }, {}, { badge: false, revealed: ["收入说法不稳"] }, { pickedQuestions: ["那流水后来给你看了吗？"] });
+  assertEqual(branchConclusion.summary, "先看流水这条线。", "结算分支必须由内容字段和玩家问题匹配生成");
+  assertEqual(branchConclusion.truth, "只能确认钱的入口。", "结算分支必须能覆盖默认 truth");
   const boundary = truthBoundaryReview(brief);
   assertEqual(boundary.columns.length, 3, "事实边界必须分成能确认、被修剪、今晚定不了三栏");
   assertEqual(boundary.columns[0].label, "能确认", "事实边界第一栏不能写成判题提示");
@@ -1575,9 +1692,48 @@ test("RUNTIME-007", "action mark patches spend budget without mutating old state
   assertEqual(second.budget.remaining, 2, "重复动作不能重复扣耐心");
   assert(casePatienceLost({ budget: { remaining: 0 }, answeredScenes: 1, requiredScenes: 2 }), "耐心耗尽且未问完时必须失败");
   assert(!casePatienceLost({ budget: { remaining: 0 }, answeredScenes: 2, requiredScenes: 2, answeredEvidence: 1, requiredEvidence: 1 }), "已经问完时不能因为刚好归零误判失败");
+  const lost = recordPatienceLostState({
+    state: { scene: "sceneReview", lastReaction: "吵起来了", lastPressureSignal: "miss" },
+    brief: { id: "case-a" },
+    context: {
+      area: "sceneReview",
+      index: 1,
+      answerKey: "case-a:scene:1",
+      actionKeys: ["sceneQuestion:1:0", "version:1"],
+      routeIndex: 1,
+      removeQuestionPick: true,
+      spent: true
+    }
+  });
+  assertEqual(lost.scene, "patienceLost", "耐心耗尽必须进入当前案失败态");
+  assertEqual(lost.patienceLostContext.index, 1, "耐心耗尽必须记录失败发生在哪一步");
+  assertEqual(lost.lastPressureSignal, null, "进入失败态时必须清掉上一条压力反应");
+  const retried = retryPatienceLostState({
+    state: {
+      scene: "patienceLost",
+      patienceLostContext: lost.patienceLostContext,
+      sceneQuestionPicks: { "case-a:scene:1": { question: "刚才怎么回的？" } },
+      sceneAnswers: { "case-a:scene:1": "我没想那么多。" },
+      caseActionLog: { "case-a": { "sceneQuestion:1:0": true, "version:1": true, "version:0": true } },
+      routeChoiceLog: { "case-a": [{ sceneIndex: 0 }, { sceneIndex: 1 }] },
+      caseBudgets: { "case-a": { max: 3, remaining: 0, used: 3 } },
+      dialogueProgress: {}
+    },
+    brief: { id: "case-a" },
+    budget: { max: 3, remaining: 0, used: 3 },
+    areaTotal: 5
+  });
+  assertEqual(retried.scene, "sceneReview", "重试必须回到断掉的当前流程，不进下一通");
+  assertEqual(retried.dialogueProgress["case-a:sceneReview"], 1, "重试必须回到失败的那一句");
+  assertEqual(retried.caseBudgets["case-a"].remaining, 1, "重试必须退回这一次消耗的耐心");
+  assertEqual(retried.caseBudgets["case-a"].used, 2, "重试必须撤销这一次 used 计数");
+  assert(!retried.sceneQuestionPicks["case-a:scene:1"], "重试必须撤销这一次失败追问");
+  assert(!retried.sceneAnswers["case-a:scene:1"], "重试必须撤销这一次失败回答");
+  assert(!retried.caseActionLog["case-a"]["sceneQuestion:1:0"], "重试必须撤销失败动作");
+  assert(!retried.caseActionLog["case-a"]["version:1"], "重试必须让当前句重新可问");
+  assertEqual(retried.routeChoiceLog["case-a"].length, 1, "重试必须移除这一步路线记录");
+  assertEqual(retried.patienceLostContext, null, "重试后不能保留失败上下文");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
-  assertIncludes(appSource, "retryPatienceLostStep", "耐心耗尽后必须能从当前失败点重来，不能只清整案");
-  assertIncludes(appSource, "patienceLostContext", "耐心耗尽必须记录失败发生在哪一步");
   assert(!appSource.includes("data-after-patience-lost"), "耐心耗尽页不能跳下一通或进故事集总结");
 });
 
@@ -1588,6 +1744,40 @@ test("NARRATION-001", "case narration helpers keep critical labels stable", () =
   }, "money"), "转账记录《婚前转账》", "钱款启发必须优先指出金额/资源证据卡");
   assertIncludes(timelineGapText({ hiddenFacts: ["领证前两天才第一次提借钱"] }), "领证前两天", "时间线启发必须优先指出时间缺口");
   assertIncludes(runCompleteLineFor({ correct: 1, total: 1, caseMode: "daily", playthroughNumber: 1 }), "最热闹的地方", "每日案成功结语必须保留直播吃瓜口吻");
+});
+
+test("DOCS-001", "AI intent and large playtest templates stay explicit", () => {
+  const aiIntentDoc = readFileSync(new URL("../docs/controlled-ai-intent-schema.md", import.meta.url), "utf8");
+  const playtestTemplate = readFileSync(new URL("../docs/playtest-report-template.md", import.meta.url), "utf8");
+  const skillSource = readFileSync(new URL("../project-skills/livestream-game-flow-review/SKILL.md", import.meta.url), "utf8");
+  assertIncludes(aiIntentDoc, "AI 不新增事实", "受控自由追问文档必须明确 AI 不新增事实");
+  assertIncludes(aiIntentDoc, "allowedIntents", "受控自由追问文档必须定义 allowedIntents");
+  assertIncludes(aiIntentDoc, "blockedTopics", "受控自由追问文档必须定义 blockedTopics");
+  assertIncludes(aiIntentDoc, "离线试玩版必须能不依赖 AI 服务运行", "AI 问答实验不能让试玩版依赖服务端");
+  assertIncludes(playtestTemplate, "AI 味", "大测试模板必须记录 AI 味文本问题");
+  assertIncludes(playtestTemplate, "早剧透", "大测试模板必须记录早剧透问题");
+  assertIncludes(playtestTemplate, "忍耐耗尽进入本案失败", "大测试模板必须覆盖耗尽失败不能接下一路麦");
+  assertIncludes(playtestTemplate, "主体内容、匿名来电区、按钮和上一问抽屉不能互相遮挡", "大测试模板必须覆盖 UI 遮挡问题");
+  assertIncludes(skillSource, "docs/playtest-report-template.md", "大测试 skill 必须引用统一记录模板");
+});
+
+test("DETECTIVE-001", "detective plot coupling method stays explicit", () => {
+  const detectiveSkill = readFileSync(new URL("../project-skills/detective-plot-coupling-review/SKILL.md", import.meta.url), "utf8");
+  const patternReference = readFileSync(new URL("../project-skills/detective-plot-coupling-review/references/detective-patterns.md", import.meta.url), "utf8");
+  const improvementPlan = readFileSync(new URL("../docs/detective-coupling-improvement-plan.md", import.meta.url), "utf8");
+  const flowSkill = readFileSync(new URL("../project-skills/livestream-game-flow-review/SKILL.md", import.meta.url), "utf8");
+  assertIncludes(detectiveSkill, "False solution", "侦探结构 skill 必须要求误导答案");
+  assertIncludes(detectiveSkill, "Missing edge", "侦探结构 skill 必须要求缺口");
+  assertIncludes(detectiveSkill, "Quote payoff", "侦探结构 skill 必须要求原话回收");
+  assertIncludes(detectiveSkill, "No reveal may depend on a fact the player could not have noticed", "侦探结构 skill 必须守住公平揭示");
+  assertIncludes(patternReference, "Sherlock Holmes", "侦探模式参考必须包含经典可见线索模型");
+  assertIncludes(patternReference, "Agatha Christie", "侦探模式参考必须包含群像隐瞒模型");
+  assertIncludes(patternReference, "Columbo", "侦探模式参考必须包含压力访谈模型");
+  assertIncludes(patternReference, "Ace Attorney", "侦探模式参考必须包含逐句证言/证据回收模型");
+  assertIncludes(improvementPlan, "Case 1: Credit Card", "四案改造计划必须覆盖第一案");
+  assertIncludes(improvementPlan, "Case 4: Workplace", "四案改造计划必须覆盖第四案");
+  assertIncludes(improvementPlan, "sceneVersions[].clueRole", "四案改造计划必须提出内容包线索角色字段");
+  assertIncludes(flowSkill, "detective-plot-coupling-review", "直播流程 skill 必须指向侦探结构 skill");
 });
 
 test("CLUE-001", "contradiction aggregation dedupes scene and evidence sources", () => {

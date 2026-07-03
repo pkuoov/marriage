@@ -14,6 +14,7 @@ Reviewed:
 
 - The title screen has a strong broadcast desk signal. `livestream_studio_v2.png` works better than the older dating/marriage backgrounds because it immediately says live room, mic, files, screens, and investigation.
 - The in-call UI now reads more like a control desk than a plain visual novel: ON AIR, patience, segment, backend material, floating comments, and material board are all visible.
+- The live-call stage now has a lightweight foreground evidence-prop layer. Bills, tables, screenshots, and approval-flow materials read as objects on the desk instead of only as background texture or text in the material board.
 - The material board is visually distinct from dialogue. The bill/table layout communicates "circle a material point" without needing tutorial text.
 - The current SVG portraits are lightweight and stylized enough to avoid raw photo-realism, and expression chips add some performance.
 
@@ -68,6 +69,8 @@ Upgrade target:
 - Backgrounds: `1920x1080` or `2048x1152`, no readable text, no people, center/right negative space for portrait, bottom clear enough for dialogue.
 - Portraits: transparent PNG, at least `1024x2048`, semi-cartoon with strong edge readability, 3/4 front angle, multiple expression variants.
 
+2026-07-03 update: without adding new image files, the runtime now gives anonymous portraits a stronger stage integration pass: contact shadow, broadcast scan overlay, expression-specific micro-motion, and mobile-safe expression placement. Dedicated PNG expression variants remain a later art-production pass.
+
 ### P1: Missing Host-Side Visual Identity
 
 The title background shows a studio, but in the live call the visible portrait is only the caller. The player is the host, yet the host has no persistent visual presence except UI text.
@@ -84,6 +87,8 @@ Suggested assets:
 - `assets/generated/host/host_monitor_thinking.png`
 - `assets/generated/host/host_monitor_pressed.png`
 
+2026-07-03 update: the first host-side layer is implemented as a diegetic CSS monitor inside `src/ui/liveFrameView.js`, with mic-light, small face silhouette, and waveform states. It deliberately avoids a second full portrait or another live speaker. Dedicated PNG host monitor variants can still be generated later if the final art pass needs higher fidelity.
+
 ### P1: Material Assets Are Still Text-Only
 
 The material board works mechanically, but the "documents" are still text lines styled as bills/tables. For Steam, the materials should feel like real objects without becoming unreadable screenshots.
@@ -96,6 +101,8 @@ Add fixed material thumbnails:
 - Reimbursement approval / payment status page for case 4.
 
 These should remain stylized UI assets, not real screenshots. No personal data, no readable real platform names.
+
+2026-07-03 update: first foreground prop layer is implemented in CSS through `scene-evidence-props`. It changes shape by material type and scene class, stays under the portrait, and avoids readable text or answer hints. This does not replace final material art, but it gives every live-call screen a concrete case object before the player opens the material board.
 
 ### P1: Background Set Still Carries Old Marriage-AVG DNA
 
@@ -110,8 +117,8 @@ Action:
 
 1. Replace the four case backgrounds with object-specific public-incident backgrounds.
 2. Upgrade anonymous caller portraits with expression variants.
-3. Add material thumbnails for each case.
-4. Add a small host monitor layer to strengthen "player as broadcaster".
+3. Add material thumbnails / foreground evidence props for each case. CSS foreground prop pass complete; final bespoke image thumbnails remain optional polish.
+4. Add a small host monitor layer to strengthen "player as broadcaster". First CSS pass complete; future PNG monitor variants are optional polish.
 5. Archive or de-emphasize old marriage-route backgrounds.
 
 ## Prompt Direction

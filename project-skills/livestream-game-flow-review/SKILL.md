@@ -11,7 +11,9 @@ Use this skill when the task is to review, debug, or improve a playable live-cal
 
 This is a game and a narrative text experience, not a tutorial, worksheet, consulting product, or pass-helper. Do not add copy or logic that actively helps the player clear the case. Let the player read, suspect, choose, miss, and replay. Guidance, route axes, scoring, and conclusions should stay off the live-call screen. A pressure meter is allowed only when it represents diegetic live-room attention, such as audience patience, and it must create risk rather than reveal answers.
 
-Before continuing broad optimization work, read `docs/unfinished-backlog.md`, `docs/roadmap.md`, and `docs/game-unit-test-cases.md`. Do not rely on chat memory for unfinished work. Promote any repeated complaint into one of those files or this skill before ending the turn.
+Before continuing broad optimization work, read `docs/unfinished-backlog.md`, `docs/roadmap.md`, and `docs/game-unit-test-cases.md`. For a large playtest pass, also use `docs/playtest-report-template.md` so actual screen text, route, AI-flavored lines, UI overlap, and retry/failure behavior are captured in the same format. Do not rely on chat memory for unfinished work. Promote any repeated complaint into one of those files or this skill before ending the turn.
+
+For large story-coupling work, hidden-thread design, or detective-plot rewrites, also use `project-skills/detective-plot-coupling-review/SKILL.md`. This flow skill catches live-call/UI problems; the detective skill checks false solutions, missing edges, clue payoffs, fair-play reveals, and story-pack coupling.
 
 For broad "continue optimizing" requests, choose exactly one active direction before editing. Current active direction is the livestream control system: material operation first, live-room pressure second, recap payoff third. Do not mix this with AI free questioning, desktop shell work, new story expansion, or unrelated UI polish in the same pass unless the user explicitly asks for that combination.
 
@@ -19,132 +21,7 @@ UI identity is part of the livestream control system, not decorative polish. The
 
 Do not review from code alone. Play the flow like a first-time player, capture what is actually on screen, then patch code only after the lived flow reveals the problem.
 
-Do not generate or repair daily-case text one field or one sentence at a time. Daily cases must be written as one integrated call first, then split into UI fields. If one line changes the motive, pressure, object purpose, or responsibility balance, regenerate the whole local chain around it: opening, scene beat, current-node options, feedback, optional full-hit deep question, final quote-pick, recap/share copy, and migration copy.
-
-## Screenwriter Contract
-
-Before writing UI fields, write the case as a small pressure system, not as a mystery answer. The player should feel they are listening to someone slowly reveal a messy relationship or public-life conflict, while the live room argues over which sentence is off.
-
-## Network-Informed Script Generation Model
-
-Use online screenwriting and interactive-fiction methods as process inspiration, not as formulas to copy.
-
-Borrow these principles:
-- From screenplay beat outlines: a case needs setup, pressure, reversal, cost, and resolution, but each beat must stay inside a live call.
-- From Pixar-style story-spine thinking: know the final audience argument before drafting the middle. The case is not ready until the writer can say what the comment section will fight about.
-- From Ink/Twine-style interactive writing: choices can branch briefly, but they must rejoin the linear call with state tracked. Do not create an uncontrolled branch tree for a story-pack case.
-- From LLM writers-room research: split generation into roles. A single pass that writes fields directly is not acceptable.
-
-Required writers-room passes:
-1. Showrunner pass: define the story-pack theme, value boundary, case count, and why these cases belong together.
-2. Ending-first pass: write the final audience argument and the behavior chain before writing dialogue.
-3. Pressure-system pass: define why tonight, dramatic anchor, object purpose, caller stake, other stake, third pressure, and truth boundary.
-4. Beat-ladder pass: draft 5-6 caller statements that each add a new pressure, not a restatement.
-5. Branch-design pass: for each beat, write 2-3 plausible host questions with different route axes and reveal depth.
-6. Actor-consistency pass: separately ask what the caller, the other party, and the third-pressure source each gain by saying less than the full truth.
-7. Continuity QA pass: read the whole call aloud and check that every reveal follows from what is already on screen.
-
-Five-beat minimum for a 20-minute case:
-1. Surface oddness: material, quote, bill, screenshot, or action first appears.
-2. Missing edge: the object proves something, but not what someone wants it to prove.
-3. Interest path: money, status, face, opportunity, process control, or emotional leverage appears.
-4. Caller edit: the caller admits, softens, or exposes their own self-serving version.
-5. Responsibility point: the cost or boundary lands, enabling the final quote-pick.
-
-If a generated case cannot fill these five beats without repetition, it is not a 20-minute story-pack case. Combine it with another material, add a third-pressure source, or reject it.
-
-Value baseline:
-- Do not harvest gender conflict. A case may involve dating, marriage, family, work, money, or identity, but the conclusion must not imply "men are like this" or "women are like this".
-- Unite decent people: people who communicate honestly, respect boundaries, take responsibility, and correct themselves when facts become clear.
-- Hit harmful behavior: lying, manipulation, exploiting goodwill, shifting costs, borrowing family/status/platform pressure, using affection or opportunity as leverage, and refusing accountability.
-- Gray-zone writing is allowed only to separate sincerity, weakness, self-protection, avoidance, mutual harm, and harmful conduct more accurately. It is not permission to excuse bad behavior or flatten different levels of responsibility.
-- Mutual-harm cases are allowed and often desirable. If both sides harm each other, name the concrete behavior chain on each side, who started or escalated the imbalance, who carried the actual cost, and which boundary would stop the harm from continuing.
-- Point criticism at choices, incentives, responsibility, and concrete behavior, not at gender, class, job, age, region, or other identity labels.
-
-Every daily case must have:
-- `whyTonight`: why the caller phones in today, not last week or next month.
-- `objectPurpose`: why the screenshot, proof, bill, contract, voice note, table, or chat log exists in the relationship.
-- `callerBenefit`: what the caller gains by telling the story this way.
-- `otherBenefit`: what the other party gains by showing, cropping, delaying, wording, or hiding something.
-- `thirdPressure`: whose mouth or expectation is being borrowed: parents, friends, platform, ex, matchmaker, boss, money deadline, public image.
-- `truthGradient`: at least three layers: true, edited, and still unknowable.
-- `audienceArgument`: what viewers will argue about after sharing, not what lesson they learned.
-
-Every story collection must have:
-- a deliberate case count with distinct dramatic anchors or pressure systems; the demo has four, but the rule is theme-fit, not fixed quantity
-- one clear story-pack theme and thesis that every case echoes
-- a stable `storyKey` so players can replay or share the same set
-- each case preserving the single-caller linear loop
-- hidden route-map data for every playable choice, such as caller credibility, counterparty credibility, material edge, money flow, process control, identity wording, or outer detour
-- a final story-pack recap that summarizes the player's dominant route tendency without pretending that a different route was never possible
-- a comment-wall recap that sounds like real discussion, but is generated from the player's actual route, issue reveal ratio, and story-pack theme
-- interlude screens that connect the previous case to the next through player route, case object, and story pressure, not through directory titles such as "next case" or "case 2/4"
-- no visible act labels, case directory labels, or pack structure while the player is still inside the live-call flow
-
-For material-centered cases, write a clear truth boundary before writing dialogue:
-- `true`: what the screenshot, balance, diploma, bill, chat, or proof actually establishes.
-- `edited`: which missing edge changes the social meaning: project type, contract body, income composition, money source, account freeze, timeline, sender intent.
-- `possiblyFalse`: which implied claim may be false even if the image is real.
-- `unknown`: what the current call still cannot prove and should remain arguable.
-
-Material inspection is a playable beat, not a hint panel. A correct material pick should add a contradiction and keep audience patience unchanged. A wrong material pick may consume patience, but it must not reveal the correct answer. The route map should mark material beats as material, not as a fake sixth dialogue scene.
-
-Host investigation and evidence backflow may expand the reasoning range, but only after the player has already heard the relevant contradiction. Treat these as a controlled extension of the material system: backstage verification, post-call direct messages, or limited off-mic inquiries can add fixed materials, not freeform facts. They must never turn into open-world investigation, AI-generated evidence, or a second-party live debate. Every backflow item must state why it appears now, which heard contradiction it relates to, what it proves, and what it still cannot prove.
-
-Use an "Ace Attorney-style reveal" only when the host asks a natural question the caller has already made possible. The reveal should answer a practical why:
-- Why did this person need a bank flow instead of a balance screenshot?
-- Why did this proof appear before the meal, meeting, transfer, cohabitation, or family talk?
-- What later arrangement, money ask, face-saving need, or deadline was hiding behind the innocent wording?
-
-The reveal must add a new disclosed fact, not a narrator lesson. After the reveal, update the final quote-pick and share copy around that fact.
-
-For the main playable beat, use a linear Ace Attorney-style call loop:
-- Let the caller advance one statement at a time.
-- At each statement, ask only about this current point, using copy like "这个点最该深入问什么".
-- Offer 2-3 plausible host angles for that statement.
-- None of the angles should be completely wrong. They should differ by how close they get to the core issue.
-- The caller answer should reveal a new detail, a softened responsibility, or a pressure shift. It should not tell the player the lesson.
-- The player may choose exactly one angle per statement. After that answer, the route moves forward; do not allow sweeping the remaining options on the same node.
-- Each on-screen exchange should be at most two back-and-forth turns. If the text is long, collapse it to one host question and one caller answer.
-- After answering, move forward to the next statement. Do not let the player return to the first choice menu and sweep old statements.
-- If every core node is hit, insert exactly one non-choice "深入一问" before the final "选一句原话" moment. This question should surface the caller's own stake, cost, family pressure, money position, or hidden ask.
-- If the player misses one or more core nodes, skip the deep question and move to the final quote-pick after all statements have received one choice.
-- Avoid "上一句", "后来呢", and player-like transport controls in the main route. The flow should feel like a call progressing, not a menu being managed.
-
-The host's logic must be cleaner than the caller's logic. Caller speech can jump, defend, omit, and self-justify. Host questions must follow only from what has already been said on screen. If the host asks a question that assumes a later reveal, rewrite the preceding caller line or move the question later.
-
-Do not use "motive" as a vague label. Name the concrete payoff:
-- protect face with family
-- pass a parent screening
-- reduce follow-up questions
-- push a meal, meeting, transfer, cohabitation, wedding step, or apology to happen
-- delay a hard disclosure
-- keep an already-defended relationship from making the caller look foolish
-- turn a mutual negotiation into a one-sided grievance
-
-Prefer:
-- conversation over instruction
-- live-room tension over case-file analysis
-- delayed disclosure over early explanation
-- plausible choices over obvious right/wrong answers; current daily flow has no wrong answers, only core issue hits and outer-angle misses
-- a short main path with one conditional deepening beat; after each scene statement receives exactly one choice, the player proceeds to the final live-room response without being forced through follow-up menus or material questions
-- in-character feedback over narrator diagnosis
-- single-caller daily cases over two-sided confrontation
-- every speaker having self-interest, omissions, or face-saving edits
-- conclusions that protect sincere people and identify harmful conduct clearly
-- mutual-harm conclusions that separate both sides' behavior, severity, cost, and next boundary instead of using a vague "both are wrong"
-
-Avoid:
-- gender-war framing, rage-bait labels, or copy that invites players to attack men/women as a group
-- making gender, class, job, age, region, or appearance the causal answer to a case
-- teaching words such as "核验", "证据链", "阶段判断", "正确", "错误", "必须", unless the current screen truly needs them
-- buttons that describe mechanics instead of dialogue intent
-- giving away the hidden issue before the player earns it
-- one obviously bad choice that turns the game into a reading-comprehension quiz
-- generic case buttons bleeding into a specific daily case
-- writing the relative victim as a perfectly reliable narrator unless the case is intentionally about a pure scammer
-- letting the other party enter the daily live room as a direct speaker
-- inserting "后台账单", "回拨新情况", "主播记事", or other system/material speakers inside daily scene/deep-question beats
+For all case creation and any dialogue change larger than typo polish — story packet, stitched transcript, field split, dialogue rewrite rules, de-AI language rules, clue insertion, guarded answers, and comment-hint gating — use `project-skills/case-scriptwriting/SKILL.md`. Its integrated writing loop is mandatory for any change that touches motive, pressure, object purpose, or responsibility balance: never generate or repair case text one field or one sentence at a time. This flow skill owns the played-through review: playtest loop, UI regressions, and continuity checks.
 
 ## Review Loop
 
@@ -202,13 +79,16 @@ Avoid:
    - Does the deep-question screen show scoring or completion copy such as "full-hit follow-up" or "key points connected"? If yes, remove it and let the host question itself carry the moment.
    - Does the recap or conclusion page sound like a grading rubric, lesson, or best-answer comparison, with words like "sharper conclusion", "best answer", "full score", "badge", or "problem reveal rate"? If yes, rewrite it as host wrap-up and live-room aftertaste.
    - Does the recap score label use abstract AI-flavored copy such as "the taste left in the mic"? If yes, replace it with a plain diegetic phrase like "话头收住".
+   - Does a result card or share line use essay-like psychology framing such as "what stopped me was..." or "what made me uneasy was not..."? If yes, remove the self-report frame and state the live fact directly: "审批图过了，可付款状态和收款账户都没露。"
    - Does the route map show a material inspection as a numbered dialogue beat? If yes, label it as material so the player remembers it was a different action.
-   - Does the story-pack final small print explain the mechanics, such as "different hosts take different routes"? If yes, generate a line from the actual route result instead.
-   - Does the interlude summarize the previous case with generic bookkeeping text, such as "just note that call", or title the next card "next call/case"? If yes, rewrite it around the previous case object, player route, and next dramatic object.
-   - Does the live-call HUD or result card actively help the player clear the case, such as showing "caught x/y", "asked x/y", "one line missing", route-axis instructions, or missing core issues? If yes, remove those from the playable route. Keep route and tendency data for aftermath only, and do not list the answers the player missed.
-   - Does the route-map recap show five identical axis labels with no memory of the actual questions? If yes, add per-beat question summaries or route tones so the player can recognize their path.
-   - Does the choice-group hint name the wrong route axis, such as calling a wording/identity question "money flow" only because the scene mentions income? If yes, adjust route metadata or inference priority.
-   - If the player picked the strongest final quote, does the recap duplicate the same quote/response as both "picked" and "better"? If yes, collapse it into one confirmation card.
+- Does the story-pack final small print explain the mechanics, such as "different hosts take different routes"? If yes, generate a line from the actual route result instead.
+- Does the interlude summarize the previous case with generic bookkeeping text, such as "just note that call", or title the next card "next call/case"? If yes, rewrite it around the previous case object, player route, and next dramatic object.
+- Does the live-call HUD or result card actively help the player clear the case, such as showing "caught x/y", "asked x/y", "one line missing", route-axis instructions, or missing core issues? If yes, remove those from the playable route. Keep route and tendency data for aftermath only, and do not list the answers the player missed.
+- Does the route-map recap show five identical axis labels with no memory of the actual questions? If yes, add per-beat question summaries or route tones so the player can recognize their path.
+- Does the choice-group hint name the wrong route axis, such as calling a wording/identity question "money flow" only because the scene mentions income? If yes, adjust route metadata or inference priority.
+- If the player picked the strongest final quote, does the recap duplicate the same quote/response as both "picked" and "better"? If yes, collapse it into one confirmation card.
+- Does a story-pack hidden thread appear before the player finishes the pack? If yes, move it to the final recap. The hidden thread should connect repeated pressure patterns after play, not spoil the cases up front.
+- Are dynamic barrage waterfalls or a full phone simulator being added as quick polish? If yes, stop and design them separately first; both can easily occlude text, harm performance, or make the live-call UI feel like a phone shell instead of a host control desk.
 
 4. Patch narrowly.
    - Edit the source template and any normalization/migration copy that can overwrite old saves.
@@ -218,7 +98,7 @@ Avoid:
 5. Validate mechanically.
    - Run `npm run check`.
    - Run `npm run build:h5`.
-   - Run `npm run smoke:browser` after playable flow, bundler, route, material, recap, input focus, or content-pack runtime changes. It must cover perfect, outer-then-core, material-miss, keyboard-perfect, and gamepad-perfect routes.
+   - Run `npm run smoke:browser` after playable flow, bundler, route, material, recap, input focus, or content-pack runtime changes. It must cover perfect, outer-only, material-miss, keyboard-perfect, and gamepad-perfect routes.
    - Run `npm run build:steam` and `npm run smoke:desktop` after any build, desktop, save, input, or packaging-adjacent change.
    - For content-pack edits, run `npm run verify:pack -- <pack-id>` and confirm `PACK-005` passes. Runtime-loaded cases must have playable nested content, not only top-level metadata.
    - For keyboard or controller changes, keep the pure input model covered by `INPUT-001`; browser/device replay is still required before calling Steam Deck support done.
@@ -251,6 +131,7 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - Host questions can only use facts already visible on screen. If a host question assumes a later reveal, move the question later or seed the fact earlier.
 - Multi-turn opening dialogue must not end on an unanswered host question. A two-line hook can end with the host asking the caller to continue, but once the opening has already included a caller answer, the next visible break should land on caller speech.
 - Outer options must still be plausible host questions. They can reveal less, but should not feel like intentionally bad answers.
+- Guarded answers are not bonus confessions. If pressure made the caller defensive, the answer should withhold, hedge, or give fewer specifics. It must not reuse the deep-followup confession, recap conclusion, or final quote payoff.
 - The deep question must refer to at least two facts already heard in the call and should expose the caller's own stake, cost, face-saving edit, money position, or hidden ask.
 - The final quote-pick must be a line the player already heard or a tight compression of heard lines.
 - The recap may name the pattern, but only after the route has disclosed the facts that support it.
@@ -272,190 +153,9 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - Live-room reaction copy must name a concrete thing that happened. Avoid abstract atmosphere meters unless the line also tells the player what was actually pulled off course.
 - Audience patience depletion is a failed attempt for the current call. Do not jump to the next call or the story-pack summary from that screen; let the player retry from the step that broke the call.
 
-## Integrated Writing Loop
+## Writing Work
 
-Use this loop when creating a new daily case or making any narrative change larger than typo polish.
-
-1. Write the unified story packet before touching UI fields.
-   - `whyTonight`: why the call happens now.
-   - `relationshipStage`: why this call happens today.
-   - `pressurePoint`: what family, money, status, timing, platform, or relationship pressure creates the call.
-   - `dramaticAnchor`: the concrete object, quote, screenshot, proof, bill, agreement, table, or transfer record that makes the live room argue.
-   - `objectPurpose`: what the object is trying to prove, soften, excuse, delay, or force.
-   - `callerStake`: what the caller gains by telling it this way and what they are hiding, softening, or afraid to admit.
-   - `otherStake`: what the other party gains by showing/hiding/wording things this way and what they would lose if fully exposed.
-   - `thirdPressure`: parent, friend, platform, ex, family role, or public image pressure if it exists.
-   - `truthBoundary`: which parts are real, which are edited, and which remain unknown.
-   - `quotePickCandidates`: 3 short lines the player could later press and argue about.
-   - `finalQuestion`: what the audience should argue about after the case, not a lesson.
-
-2. Write the stitched transcript.
-   - Opening must be a caller line, host bridge, caller answer.
-   - Opening should be stair-stepped, not bundled. The caller's first line should only give the call reason. The host then asks for relationship source and current stage. The caller then gives "how they met" and "where the relationship has progressed." The host only asks about the suspicious trigger after that trigger is named.
-   - Then write each scene beat as `caller statement -> one host option chosen -> caller feedback -> next caller statement`.
-   - Then write the full-hit deep question as `host deep question -> caller answer`. This is not a choice set and only appears when every core node was hit.
-   - Place the best quote-pick line late enough that it feels earned. Early dialogue may contain bait lines, but it should not state the full answer.
-   - Read it aloud as one phone call before splitting it into `openingDialogue`, `sceneVersions`, `questionOptions`, `deepFollowup`, and final quote-pick choices.
-
-3. Only then split into data fields.
-   - Each UI field must be traceable back to the story packet.
-   - No field may introduce a motive, fact, object, or conclusion that did not appear in the stitched transcript.
-   - An outer branch can reveal less, but it must still point at the same case core. Do not use generic emotional outer angles such as "do you still like them" unless the case core is actually emotional attachment.
-   - Quote-pick choices must be copied from disclosed lines or compressed from disclosed lines. They are not labels for hidden conclusions.
-
-4. After any line edit, rerun local coherence.
-   - Ask: whose face, money, status, safety, or convenience does this sentence protect?
-   - Ask: did this sentence change who pushed the dramatic object into the call?
-   - Ask: did this sentence make an earlier option or later conclusion incoherent?
-   - If yes, update the whole affected chain, not just the sentence.
-
-Hard rule: a daily case is not assembled from interchangeable good-sounding lines. It is a small pressure system. Every question, answer, option, and recap must preserve the same pressure system.
-
-### Integrated Story Packet Template
-
-```json
-{
-  "whyTonight": "",
-  "relationshipStage": "",
-  "pressurePoint": "",
-  "dramaticAnchor": "",
-  "objectPurpose": "",
-  "callerStake": "",
-  "otherStake": "",
-  "thirdPressure": "",
-  "investigationBackflow": [
-    {
-      "source": "dm|backstage|off-mic-inquiry",
-      "triggeredBy": "",
-      "appearsNowBecause": "",
-      "proves": "",
-      "stillCannotProve": ""
-    }
-  ],
-  "truthBoundary": {
-    "true": [],
-    "edited": [],
-    "unknown": []
-  },
-  "mainAudienceArgument": "",
-  "quotePickCandidates": [
-    { "quote": "", "surfaceRead": "", "hiddenPressure": "", "responsibility": "respondent|caller|both|none" }
-  ],
-  "stitchedTranscript": [
-    {
-      "beat": "opening",
-      "caller": "",
-      "host": "",
-      "callerReply": ""
-    },
-    {
-      "beat": "scene-1",
-      "caller": "",
-      "options": [
-        { "question": "", "role": "main", "callerFeedback": "" },
-        { "question": "", "role": "detour", "callerFeedback": "" }
-      ]
-    }
-  ],
-  "fieldSplitNotes": {
-    "openingDialogue": "which transcript lines map here",
-    "sceneVersions": "which caller beats map here",
-    "deepFollowup": "which full-hit host question and caller answer map here",
-    "accusationChoices": "which disclosed quotes become line-pick choices",
-    "shareCopy": "which argument is safe to share without spoiling"
-  }
-}
-```
-
-## Dialogue Rewrite Rules
-
-Daily case contract:
-- Daily mode is one live call: host + one anonymous caller.
-- No real NPC names are shown in the live room. Use "咨询者", "对方", or role-neutral descriptions.
-- The other party never directly joins the daily live room. They can only exist as quoted chat text, voice recording, screenshot, forwarded message, receipt, contract, callback relayed by the caller, or another anonymous submission reported by the caller.
-- `sceneVersions` must all be in the caller's mouth. `deepFollowup.answer` must also be first-person caller speech. Do not use "后台账单", "购房材料", "回拨新情况", "主播记事", "聊天截图", or similar labels as speakers inside the flow.
-- If a material is important, write the caller action: "我把账单翻出来", "我手里有合同照片", "我把他后来那句回复念一下", "我后来拿到另外两段截图".
-- Match the action to the material. A screenshot, balance image, chat log, or proof image is seen, opened, forwarded, cropped, saved, or followed up on; it is not "received/accepted" like a paper document. Do not ask "why did you accept the proof" when the object is just an image. Ask why they did not keep asking, why they forwarded it, why they treated it as enough, or what the image helped them avoid.
-- The game is not a courtroom confrontation. The host discovers truth by slowing down one person's account, not by making two parties debate.
-- Final judgement can point to "对方" or "这段关系里都有隐瞒", but the gameplay path still comes from the caller's disclosures.
-- Backstage verification, post-call private messages, and off-mic inquiries are allowed only as material backflow. They can introduce screenshots, quoted messages, platform records, call notes, or third-party descriptions, but the other party still does not join the live room.
-
-Narrator reliability:
-- Assume every person protects their own interest, image, and emotional position.
-- A relative victim can still omit inconvenient details, soften their own responsibility, exaggerate injury, or frame a mutual conflict as one-sided.
-- Most lines should be "true but edited", not simply true or false.
-- Pure scammers can lie more cleanly, but ordinary relationship cases should contain mixed motives and self-serving narration on both sides.
-- The host should not instantly believe the first caller. The host can soothe them while still keeping room for what they did not say.
-
-Motive chain:
-- Every suspicious material or omission needs a complete logic chain: relationship stage -> pressure point -> hidden action -> intended gain -> risk if exposed.
-- A screenshot should not appear because the plot needs evidence. It should appear because someone wants to manage an impression, pass a parent/friend screen, reduce follow-up questions, push a meeting, secure money, protect face, or delay a difficult explanation.
-- The other party's hidden information must also have a purpose. Ask what they gain by hiding it now and what they would lose if they said it fully.
-- The caller can also have a purpose: protecting face, avoiding "I misjudged them", keeping parents/friends from questioning them, or preserving a relationship they already defended.
-- If behavior has no obvious strategic gain, classify it deliberately as a different case type: spoiled entitlement, conflict avoidance, low responsibility, pretending not to understand, genuine incompetence, or malicious but impulsive harm. Do not force every messy behavior into premeditated fraud.
-
-Opening:
-- Caller speaks first and gives relationship context.
-- Host asks a neutral continuation question.
-- Do not pack relationship source, relationship stage, family reaction, suspicious material, and caller doubt into the first caller line. Split them into beats:
-  - caller: call reason only
-  - host: how did you meet / where has it progressed
-  - caller: relationship source + current stage
-  - host: what exactly happened at that stage
-  - caller: trigger material / quote / pressure point
-- The trigger for suspicious material appears naturally, for example: "聊到见父母/以后安排时，对方主动发截图".
-- The material's purpose appears naturally too, for example: "对方想先把饭局定下来", "怕父母第一眼把 TA 筛掉", or "想让你先替 TA 向家里解释".
-- Caller only names unease after the preceding line gives a reason.
-
-Choice sets:
-- Write options as possible host questions or conversation directions.
-- Do not use meta options like "找问题点", "分析细节", "开始回放".
-- Avoid joke-weak options. A non-core route should sound emotionally tempting or socially common.
-- Do not include "please believe / since it is true, accept it" options. No one clicks these. An outer angle should offer comfort, compromise, social face-saving, or a narrower question.
-- When possible, make two routes revealing in different ways and one route an outer angle.
-
-Live-room response beats:
-- A limited "select the line to respond to" beat can replace abstract final judgement after enough dialogue has been heard.
-- Keep it as livestream behavior, not courtroom behavior. The player is choosing how the host/live room responds, not "presenting evidence" or cross-examining another speaker.
-- Quote choices should be actual caller lines or very close paraphrases of lines already shown. Do not introduce a new conclusion inside the button.
-- Do not mix caller quotes and host conclusions in the same final choice set. The visible choice is the caller quote; the host's response belongs in a separate response/result field after selection.
-- Internally the chosen quote can map to respondent, caller, both, or no-premeditated responsibility, but the visible button should feel like selecting line 1 / line 2 / line 3.
-- The correct quote should not always be first. Partial-but-tempting quotes should be plausible enough that players argue about them.
-- A quote can be suspicious for different reasons: what it assumes, what it skips, who it borrows authority from, what it treats as already settled, or how it shifts the question.
-- Do not let the winning quote appear too early in complete form. If the first scene already says the whole answer, rewrite it as a smaller unease and let the decisive wording surface later.
-- After selection, explain why that line matters through live-room reaction or caller follow-up, not as a moral lesson.
-
-Feedback:
-- If displayed under "咨询者", write as first-person or direct caller speech.
-- In daily cases, do not display feedback under "对方". Convert direct defensive speech into something the caller reads or quotes.
-- Do not summarize the lesson in the feedback line. Let the response expose attitude, evasion, timing, or missing context.
-- Do not render branch feedback as an unlabelled paragraph. On a dialogue screen, clicked branch feedback should become a caller bubble so the player feels the call continued.
-
-- The full-hit deep question should not accuse from nowhere. It should ask the next natural thing after the player has already exposed the core nodes, usually the caller's own financial position, benefit, hidden ask, family pressure, or cost if the truth is fully named.
-
-Replay and recap:
-- Backlog/replay must be strictly chronological and state-aware. Before the first key choice, replay may only return to the opening. After a key choice, replay may only show the most recent key choice exchange. It must not expose future nodes, deep follow-up, or final facts.
-- The first recap page is aftermath, not a grading sheet. Show the selected final line, route flavor, and live-room aftertaste. Do not show issue percentage, found/total core issues, or missing answers as pass-help.
-- The judgement recap must adapt to the player's chosen nodes. A perfect route can name the deeper relationship structure; a partial route should summarize the angle the player actually pursued and the core points still missed.
-- Route-map recap must reflect the actual choices made. If the player mostly trusted the caller, questioned the caller, chased money flow, or拆 a screenshot edge, the recap should name that tendency and list the per-beat route trail.
-- Weekly comment-wall recap should be sharp but grounded. It may say a route was biased, incomplete, or unusually clear, but it must not attack gender or identity groups, and it must not invent facts the player did not reveal.
-- Avoid duplicate recap headings such as "回看 1/5 连线回看"; use a small page counter plus one clear section title.
-- If an audience-patience or health-like meter exists, verify it can actually run out and end a case. A health bar that never threatens failure will feel ornamental.
-
-Hidden clue pacing:
-- Early lines should expose observable oddness, not the final category.
-- Middle lines can reveal concrete missing pieces.
-- Final lines can expose intent or responsibility, but still through what someone says or refuses to say.
-- A story-pack single case's main scene should usually be 5-6 caller statements advanced one at a time, enough to support at least 20 minutes with recap and route comparison. Each statement gets one current-node choice before the call moves forward, so the player is reading the live call rather than managing a menu.
-
-UI copy:
-- Buttons should feel like a linear call: "继续", "选一句原话", and short case-specific questions for the current point.
-- Avoid mechanical labels: "阶段判断", "资料核验", "通话回放", "内容提示".
-- Avoid product-design labels in choice groups. Prefer one current-question panel with buttons that are just the host's next questions.
-- During every big test, read the choice panel aloud. If it sounds like a UI explaining itself instead of a host deciding what to ask next, rewrite it.
-- In daily cases, avoid "接哪边的麦", "让另一方补话", or any copy implying two-sided mediation.
-- Case-specific summary buttons should reflect the case: screenshot source, missing edge, evasive wording, timing, party switch.
-- Investigation copy should sound like live-room backflow, not task UI. Prefer "后台进来一条私信", "有人补了一张图", "这页刚翻出来", or "对方没上麦，只留了这句". Avoid "new clue unlocked", "verification succeeded", "evidence chain complete", "correct route", or any copy that tells the player the system has found the answer.
+The screenwriter contract, writers-room passes, integrated writing loop, story packet template, and dialogue rewrite rules now live in `project-skills/case-scriptwriting/SKILL.md`. Use that skill to write or rewrite content, then return here to review the played flow.
 
 ## Common Bugs From This Project
 

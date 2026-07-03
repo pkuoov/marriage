@@ -139,7 +139,7 @@ export function truthBoundaryRevealHtml(review, picks = {}) {
               const promptId = `${column.key}:${index}`;
               const wasPrompted = (review.prompts ?? []).some((prompt) => prompt.id === promptId);
               const picked = picks[promptId] ?? "";
-              const mark = picked ? picked === column.key ? "放在这儿说得通" : `你刚才放在${truthBoundaryChoiceLabel(review, picked)}` : wasPrompted ? "没放" : "回看补上";
+              const mark = picked ? picked === column.key ? "放在这儿说得通" : `归到了${truthBoundaryChoiceLabel(review, picked)}` : wasPrompted ? "没放" : "回看补上";
               return `<li>${escapeHtml(item)}<small>${escapeHtml(mark)}</small></li>`;
             }).join("")}
           </ul>
@@ -168,7 +168,7 @@ function truthBoundaryChallengeHtml(review, picks = {}) {
                 <button class="${picked === choice.key ? "selected" : ""}" ${picked ? "disabled" : `data-truth-boundary-prompt="${escapeHtml(prompt.id)}" data-truth-boundary-pick="${escapeHtml(choice.key)}"`} type="button">${escapeHtml(choice.label)}</button>
               `).join("")}
             </div>
-            ${picked ? `<small>你把这句放进了：${escapeHtml(pickedLabel)}。</small>` : ""}
+            ${picked ? `<small>放在：${escapeHtml(pickedLabel)}。</small>` : ""}
           </div>
         `;
       }).join("")}
@@ -182,7 +182,7 @@ function recapFlowChoicesHtml({ index = 0, pageCount = 1, canLeaveBoundary = tru
     return flowGroup(`
       ${canLeaveBoundary
         ? `<button class="primary" data-recap-next type="button">继续回看</button>`
-        : `<button class="primary" disabled type="button">先把这几句放完</button>`}
+        : `<button class="primary" disabled type="button">还有话没落位</button>`}
       <button data-retry-case type="button">${escapeHtml(retryLabel)}</button>
     `);
   }
@@ -197,7 +197,7 @@ function flowGroup(content) {
 }
 
 function truthBoundaryChoiceLabel(review, key) {
-  return review.choices?.find((choice) => choice.key === key)?.label ?? "别处";
+  return review.choices?.find((choice) => choice.key === key)?.label ?? "另一栏";
 }
 
 function escapeHtml(value) {

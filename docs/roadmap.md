@@ -47,12 +47,14 @@
 - 故事包难度曲线已接入 manifest：每案 `difficultyProfile` 可调整听众耐心预算和事实边界题量，后段案件能更紧而不用在运行时代码写案名分支。
 - 案件包完成后生成试玩总结，汇总每案路线、平均揭示率和主播倾向。
 - 故事集终局已回收路线画像、现场压力、事实边界、材料圈点和收麦原话，不再只看揭示率。
+- 故事集终局已加入 `theme.hiddenThread` 串案暗线：只在整晚收麦后出现，把各案好听词后面接出的成本入口拼起来，避免案内提前剧透。
+- 侦探结构审查已形成项目 skill：`project-skills/detective-plot-coupling-review/` 把经典侦探叙事压缩为线索账本、误导答案、缺口、反转和原话回收规则，当前四案的改造方向记录在 `docs/detective-coupling-improvement-plan.md`。
 - 故事集终局评价模型已从 `app.js` 拆到 `src/runtime/recapModel.js`：主题、路线画像、评论墙、分享标题和收麦余味都能纯函数测试。
 - 故事集终局 profile 收集已拆到 `src/runtime/storyPackSummaryModel.js`：事实边界、现场压力、材料圈点、原话、物件和评论墙由纯模型汇总，`app.js` 只提供存档选择器。
 - 对话段落推进已从 `renderSceneReview` 抽成 `src/runtime/sceneAdvance.js` 的 `sceneReviewModel`，最后一段去材料、深入追问还是原话选择都能纯函数测试。
 - 材料检视和后台私信回流推进也已拆到 `src/runtime/sceneAdvance.js`，当前材料、未处理回流和下一步按钮不再由 `app.js` 临时判断。
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`，并有单元断言覆盖；`app.js` 继续收状态，UI 细节开始脱离 god file。
-- 直播主舞台和控场台外壳已拆到 `src/ui/liveFrameView.js`，topbar、control deck 和 `live-console-shell` 可由纯 UI 模块测试。
+- 直播主舞台和控场台外壳已拆到 `src/ui/liveFrameView.js`，topbar、control deck、主播监看和 `live-console-shell` 可由纯 UI 模块测试。
 - 通用通话气泡、流程按钮组和上一问回看已拆到 `src/ui/callFlowView.js`，直播文本通用 DOM 不再散在 `app.js`。
 - 材料检视和后台私信回流整页 HTML 已拆到 `src/ui/evidenceView.js`，材料操作台外壳、圈点反馈和回看接入不再散在 `app.js`。
 - 案间过渡文案模型已拆到 `src/runtime/storyInterludeModel.js`，上一通收束、下一通物件名和桥接句不再作为纯文本判断留在 `app.js`。
@@ -66,9 +68,9 @@
 - 本集主题已接入生成数据和 UI，总结页会展示主题论点。
 - 评论区审判墙已接入故事集总结，会根据玩家路线、揭示率和本集主题生成复盘评论。
 - 桌面键盘底座已接入：默认焦点、方向键 / WASD、Enter / Space 和 Esc 能支撑无鼠标游玩。
-- 基础手柄和回看快捷键已接入：Tab 切换当前回看面板，十字键/左摇杆移动焦点，A 确认，B 返回，Y 切换回看/复盘入口；后续还要上 Steam Deck/控制器实测手感。
+- 基础手柄和回看快捷键已接入：Tab 切换当前回看面板，十字键/左摇杆移动焦点，A 确认，B 返回，Y 切换回看/复盘入口；源码侧由模拟 Gamepad 回放覆盖，Steam Deck/控制器实测进入发行验收门。
 - 输入导航规则已拆到 `src/runtime/inputNavigation.js`：键盘意图、焦点循环和摇杆方向/冷却都有纯函数测试。
-- Electron 桌面壳源码已落到 `desktop/electron/`，`build:desktop` 会生成 `dist/desktop-electron`，并通过 preload 暴露文件存档桥；已补 `package:win`、electron-builder portable 配置、窗口状态、全屏/缩放快捷键、崩溃日志和单实例锁，安装器/签名和实机验包仍未完成。
+- Electron 桌面壳源码已落到 `desktop/electron/`，`build:desktop` 会生成 `dist/desktop-electron`，并通过 preload 暴露文件存档桥；已补 `package:win`、electron-builder portable 配置、窗口状态、全屏/缩放快捷键、崩溃日志和单实例锁。安装器/签名、Steam Cloud/overlay 和实机验包归入发行验收门。
 - 桌面 staging 构建已收口到同一个带锁脚本：`build:desktop` 会生成 playable 和 desktop staging，临时目录替换避免并发构建互踩。
 - `verify:pack -- <pack-id>` 已支持指定内容包，并新增 `PACK-005` 运行时嵌套结构校验。
 - Playwright 浏览器回放 smoke 已接入：`smoke:browser` 用离线 playable 跑 perfect、outer、material-miss、keyboard-perfect 和 gamepad-perfect 五条单案路线，并能捕获离线 bundler alias、后台回流页、键盘/手柄焦点这类运行时错误。
@@ -77,7 +79,8 @@
 
 下一步优先级：
 
-- 只推进一条玩法主线：继续打磨资料操作模型，让圈点反馈、证据回流、回看记录更像直播间后台动作。
-- 资料操作、现场压力和收麦回看第一层已稳定；下一步按技术债支撑顺序推进：补桌面依赖/打包和真实手柄设备 QA；残余内容特判继续数据化。
-- 内容包管线仍是 P0 架构债：manifest 和 loader 入口已接运行时生成索引，试玩包四案已从 JSON 读取完整内容，事实边界、最终收麦原话、评论种子和运行时 schema 校验已进入内容包。下一步把故事集余味和残余 `plotId` 文案特判继续数据化。
+- 只推进一条玩法主线：直播控场系统。资料操作、现场压力和收麦回看源码侧已到大测试收口阶段。
+- P0/P1 源码侧下一步是跑完整大测试；真实 Windows、Steam Cloud/overlay、签名和 Steam Deck/控制器手感放到发行验收门。
+- 内容包管线已经支撑当前试玩包；下一轮源码优化优先继续减小 `app.js`、清理旧 daily 兜底模板和残余内容特判。
+- 下一个剧情大改先按侦探结构账本补 `sceneVersions[].id / clueRole / falseFrame / payoffFor` 这类作者字段，再改台词和串案暗线。
 - AI 只保留为后期受控 intent router，不进入当前实现队列。

@@ -27,12 +27,16 @@
 - 现场防备开始进入玩法：上一拍把麦带散时，下一拍可切到内容包写好的 `guardedAnswer` 收紧版回答，运行时不生成新事实。
 - 中途弹幕已接入内容包 `routeAxisComments`：玩家最近一次路线轴会影响三条直播短弹幕中的一条，但不写成过关提示。
 - 第四案职场报销已增加第二份材料检视：审批图只证明流程到过一站，供应商报价继续追返款入口，让职场案有流程压力差异。
+- 当前节点追问已改成一次性选择：外围角度也会直接推进到下一句并记录路线/消耗忍耐，不再允许先点外围再回同一节点扫核心追问。
 - 故事集终局已回收路线画像、现场压力、事实边界、材料圈点和收麦原话，不再只看揭示率。
 - 故事集终局评价模型已拆到 `src/runtime/recapModel.js`：主题、路线画像、评论墙、分享标题和收麦余味有纯函数测试，`app.js` 只负责收集当前存档和渲染。
+- 单案结算分支已收进 `src/runtime/recapModel.js`：`conclusionWhenCleared/conclusionBranches` 由内容字段和玩家问过的问题匹配，`app.js` 不再维护这段内容分支判断。
 - 故事集终局已新增物件回收：`storyObjectProfile` 会把每案的账单、表格、资料图、审批图等物件串起来，评论墙也能围绕物件发声。
 - 路线图节点模型已拆到 `src/runtime/routeMapModel.js`：普通追问、材料圈点和后台回流的节点标记由纯函数输出，`app.js` 只渲染 HTML。
+- 案件存档 selector 已拆到 `src/runtime/caseStateSelectors.js`：场景选择、外围对话、材料/回流选择、事实边界、回流解锁和路线画像都能脱离 `app.js` 测试。
 - 对话段落推进已拆出 `sceneReviewModel`：当前段落、完成态、最后一段后的材料/深入追问/原话选择分支都在 `src/runtime/sceneAdvance.js` 里纯函数测试。
 - 材料检视和后台私信回流推进已拆出 `evidenceCheckModel` / `investigationBackflowModel`：当前材料、未处理回流、缺省态和下一步按钮都可纯函数测试。
+- 耐心耗尽的断线/重试状态已拆进 `src/runtime/sceneAdvance.js`：失败上下文记录、撤销本次误选、退回当前句和退回一格耐心都有纯函数测试，`app.js` 不再手写这段回滚。
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`：`app.js` 只收集现场压力、进度、立绘资源和表情状态，UI 细节可单独测试。
 - 直播主舞台和控场台外壳已拆到 `src/ui/liveFrameView.js`：topbar、`live-console-shell` 和 control deck DOM 可脱离 `app.js` 测试，`app.js` 只负责传入当前模式、HUD、材料名、压力和事件绑定。
 - 通用通话气泡、流程按钮组和“上一问”回看 HTML 已拆到 `src/ui/callFlowView.js`：`app.js` 只负责决定当前要展示哪些行，不再维护这些通用 DOM 模板。
@@ -80,15 +84,15 @@
 - 已补桌面窗口状态保存、全屏/缩放快捷键、单实例锁和 crash log 文件输出。
 - 桌面 staging 构建已改成同脚本生成 playable + desktop，并使用临时目录和锁目录，避免 `build:steam` / `smoke:desktop` 并发时互相踩 `dist/playable` 或 `dist/desktop-electron/playable`。
 - 已补 `docs/desktop-steam-build-plan.md` 和 `npm run steam:preflight`：本地可检查 package 入口、electron-builder 输出目录、portable x64、desktop staging、文件存档桥、crash log 和 Node/Electron 打包版本要求。
-- 仍需补 Steam overlay/Cloud 接入、安装器、签名和真实 Windows/Steam Deck 验包。
+- 源码侧 P0 已收口到可构建/可预检形态；Steam Cloud 配置、overlay、签名、真实 Windows 和 Steam Deck 验包属于发行外部验收门，记录在 `docs/desktop-steam-build-plan.md`，不再当作当前代码 backlog。
 
 验收：
 
-- Windows 双击启动进入离线包。
-- 无网络也能进入完整试玩。
+- Windows 双击启动进入离线包。源码侧已提供 portable 打包入口，待 Node 22.12+ Windows 机执行 `npm run package:win` 实机确认。
+- 无网络也能进入完整试玩。`smoke:desktop` / `smoke:browser` 覆盖离线 staging，实机仍按 release checklist 复验。
 - 存档写入本地文件，能重启恢复。当前源码和 IPC 已具备，待 Electron 运行时/打包验证。
-- 窗口状态、缩放和崩溃日志有桌面 smoke/源码校验；还需要真实桌面运行确认。
-- 构建产物里没有开发服务器依赖。`build:desktop` 已生成离线桌面目录，`package:win` 会把它打到 `dist/steam`，待实机验包。
+- 窗口状态、缩放和崩溃日志有桌面 smoke/源码校验；真实桌面运行确认进入发行验收门。
+- 构建产物里没有开发服务器依赖。`build:desktop` 已生成离线桌面目录，`package:win` 会把它打到 `dist/steam`，实机验包按 `docs/desktop-steam-build-plan.md` 执行。
 
 ### 输入和焦点
 
@@ -101,7 +105,7 @@
 - 不用鼠标也能从标题页打完第一案。
 - 每个页面只有一个清楚的默认焦点。
 - 选项、回看、重开、继续都能键盘操作。
-- Steam Deck/控制器实机验证完成后，再把该项从 P0 移出。
+- Steam Deck/控制器实机验证属于发行验收门；源码侧由 `INPUT-001` 和 `smoke:browser` 的模拟 Gamepad 路线守住。
 
 ### 内容包数据化
 
@@ -143,14 +147,17 @@ content/packs/steam-demo-01/
 
 - `src/app.js` 仍然承担渲染、状态推进、路线图、收麦、平台桥接。
 - 路线轴和路线画像纯逻辑已拆到 `src/runtime/routeLog.js`，但 HTML 复盘渲染和状态写入仍在 `src/app.js`。
-- 路由/语气推断规则已从 `caseEngine` 和旧存档迁移收口到 `routeLog.js`；剩余债务是模板校验和内容 QA 要继续复用同一套 route schema。
+- 路由/语气推断规则已从 `caseEngine` 和旧存档迁移收口到 `routeLog.js`；案件存档读取已收口到 `caseStateSelectors.js`。剩余债务是模板校验和内容 QA 要继续复用同一套 route schema。
 - 短期可继续迭代，但 Steam demo 前需要拆。
 
 优先拆：
 
 - `src/runtime/sceneAdvance.js` 已接管动作扣耐心、当前对话段落推进、材料检视推进、回流页面推进、收麦前守门和回流解锁；下一步只补缺口，不再把页面推进判断写回 `app.js`。
+- 耐心耗尽失败态和“从这句重来”回滚已接入 `src/runtime/sceneAdvance.js`；后续不要把具体状态撤销逻辑重新写回 `app.js`。
 - 继续补强 `src/runtime/routeLog.js` / `src/runtime/routeMapModel.js`，故事集路线统计已走纯函数，后续只补新增路线轴。
+- `src/runtime/caseStateSelectors.js` 已接管案件存档读取、已完成问答模型和上一问回看 rows；后续不要在 `app.js` 重新写 selectedScenePick / selectedEvidencePicks / routeAxisProfile / keyChoiceReview 这类 selector。
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
+- 内容分支结算已归入 `src/runtime/recapModel.js`；新增案子的分支收束优先写 JSON 字段，不回到 `app.js` 写案名或问题正则。
 - `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；下一步继续拆 `renderSceneReview` / `renderRecap`。
 - `src/ui/liveFrameView.js` 已接管案内 topbar、直播控场台和主舞台骨架 HTML，`app.js` 只保留状态清理、按钮绑定和默认焦点。
 - `src/ui/callFlowView.js` 已接管通用选择组、流程按钮组、通话气泡和上一问回看 details。
@@ -161,7 +168,7 @@ content/packs/steam-demo-01/
 - `src/ui/storyPackCompleteView.js` 已接管故事集终局结果卡、profile 行、评论区审判墙和复制文案。
 - `src/ui/storyInterludeView.js` 已接管案间过渡卡片和接麦按钮文案。
 - `src/ui/titleView.js` 已接管标题页直播信号、热线 hook 和入口按钮。
-- `src/ui/sceneReviewView.js` 已接管对话回合正文、active/completed exchange 组装和继续按钮，`app.js` 只保留一个从存档取 fallback answer 的薄适配。
+- `src/ui/sceneReviewView.js` 已接管对话回合正文、active/completed exchange 组装和继续按钮，`app.js` 只负责把 runtime selector 的模型交给 UI。
 - `src/ui/recapView.js` 已接管单案回看页面组和 flow 外壳；后续只在新增回看状态时补 helper，不再把分页/按钮文案写回 `app.js`。
 - `src/ui/routeTrailView.js` 已接管路线图 HTML，`app.js` 只准备 route choices、关键追问数和回流起始下标。
 - `src/ui/dailyCompleteView.js` 已接管 daily 单案结果卡和复制文案。
@@ -189,20 +196,32 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 已替换四案背景：信用卡/社保账单、理发表格/会员卡、资料核验桌、财务报销办公室。后续只做质量升级，不再回退到咖啡馆/酒廊/家宴旧方向。
 - 已增加四个匿名来电人半卡通立绘，并通过内容包 `sequence.callerArt` 接入，不再只复用命名 NPC 约会/职场 archetype。
 - 继续补紧张、停顿、防备、松动等表情差分，让连线动作不只靠文字气泡表现。
-- 给每案补材料缩略图，让材料检视不只是一块文字板。
-- 增加小型主播监看/麦控视觉，不做第二人上麦。
+- 已给材料板和控场台补材料缩略图，材料检视不再只是一块文字板。
+- 已给主舞台补 `scene-evidence-props` 前景物件层：账单、表格、截图和审批流在进入材料检视前就以台面物件出现，不写教程文字、不提示答案。
+- 已增加小型主播监看/麦控视觉，不做第二人上麦；监看状态随现场压力切换“听线 / 拉回 / 收住 / 压麦”。
+- 已给控场台补 LIVE 时间/观众数氛围指标，并给立绘层加直播流扫描线和淡入过渡样式；它们只做直播质感，不参与过关提示。
+- 已给来电人立绘补接触阴影和 expression-specific 微动效，让眨眼、停顿、闪躲不再像同一张贴片。
+- 已把“上一问”回看改成通话记录抽屉感，仍保留线性主流程，不新增随时翻完整档案的自由线索夹。
+- 动态弹幕瀑布和完整手机模拟器先暂缓，必须先单独做交互/性能/遮挡设计，不能混进当前 P1 收口。
+- Gemini 建议复核见 `docs/gemini-suggestions-review.md`：热度/观众数只作为现有压力模型的视觉反馈，不新增第二套失败经济；随身线索夹进入 P2 设计，不做成提示面板；虚拟手机检视和弹幕瀑布继续暂缓。
 
 ### 每案 20 分钟体量
 
 当前每案已经有 5 段来电、材料检视、深问、原话收麦，但实际体量还偏精简。
 
+2026-07-03 按 `project-skills/case-scriptwriting/SKILL.md` 复审后确认：短感不是来电段数不足，而是前三案的可玩材料密度不足。四案均有 5 段来电、1 个案后回流、7 条事实边界；第 4 案有 2 个材料板，前三案只有 1 个材料板。
+
 需要补：
 
+- 优先给 `03-profile` 增加第二材料板：收入/流水/存款证明的缺口，不再让大部分冲突落到 recap/backflow。
+- 其次给 `02-tony` 增加第二材料板：`老板娘` 后面接年卡/投店的聊天顺序，把好台词变成可玩推理点。
+- 视 playtest 再给 `01-credit` 增加第二材料板：最低还款截图里的截止日和“今晚就要”之间的错位。
 - 每案至少 2 份可读材料，其中 1 份进入“圈哪一处”玩法，另 1 份进入回看/复盘。
 - 每案至少 1 个“来电人藏着自己的不利信息”的后半程揭示。
 - 每案至少 1 个第三压力源：父母、朋友、老板、平台、介绍人、供应商、期限。
 - 外围选项要有真实诱惑，不能只是弱答案。
 - 这些要求已进入 `verify:pack` 的 `PACK-005`：runtime-loaded 案件至少 5 段来电、2 份可读材料、2600 字以上文本体量、来电人自我修剪和第三压力源。
+- 本轮详细 review 见 `docs/case-scriptwriting-review-2026-07-03.md`。
 
 验收：
 
@@ -274,14 +293,16 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 
 - 每案收麦后带出下一案问题，但不能剧透目录。
 - 故事包总结已回收每案物件，而不只是路线轴。
+- 故事包终局已接入 `theme.hiddenThread` 暗线卡：散场后把几路麦的好听词和成本入口串起来，不在案内提前剧透。
+- 已新增 `project-skills/detective-plot-coupling-review/` 和 `docs/detective-coupling-improvement-plan.md`：后续大改剧情必须先过侦探结构账本，确认每案有误导答案、缺口、反转、事实边界和原话回收。
 - 评论区审判墙要更像真实评论，不像功能说明。
-- 失败/低揭示路线也要有完整余味，不要只像没通关。
+- 失败/低揭示路线已有完整余味，不主动提示重开或替玩家决定下一步。
 
 验收：
 
 - 第一案后能自然想进第二案。
 - 终局能看出本包所有案件共享一个主题。
-- 低分路线也能产出可分享的结果卡。
+- 低分路线也能产出可分享的结果卡，终局文案保留现场余味而不是补考提示。
 
 ## P2：内容扩展
 
@@ -309,6 +330,8 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 网络热点只能做素材，不直接搬真实案。
 - 每个热点要抽象成压力系统：物件、目的、缺口、成本、边界。
 - 每个故事包先写主题，再按节奏选择案数和题材。
+- 每个案件包进入剧本重写前，先用 `detective-plot-coupling-review` 写清 surface claim、false solution、missing edge、reversal、quote payoff；不要先写台词再硬塞反转。
+- 串案交叉人物或隐藏阴谋不能先写在开场。先让每案独立成立，再用晚段回流材料、终局暗线和重复压力机制串起来。
 
 需要补：
 
@@ -356,8 +379,9 @@ AI 问答值得做，但不能让 AI 生成事实。
 - `docs/story-pack-development-pipeline.md`：已新增，故事包从热点采风到上线的流程。
 - `docs/content-pack-schema.md`：已补内容包 JSON 字段、runtime-loaded 嵌套结构、路线字段、校验规则和改包流程；后续随 schema 演进继续更新示例。
 - `docs/desktop-steam-build-plan.md`：已新增，覆盖桌面壳、Windows portable、Steam Cloud、Steam Deck/Steam Input、签名和实机验包。
-- `docs/controlled-ai-intent-schema.md`：受控自由追问 intent / alias / answerId 结构。
-- `docs/playtest-report-template.md`：每次大测试的记录模板。
+- `docs/controlled-ai-intent-schema.md`：已新增，受控自由追问 intent / alias / answerId 结构，明确 AI 不新增事实、不依赖服务。
+- `docs/playtest-report-template.md`：已新增，每次大测试记录实际屏幕文本、流程、AI 味、玩法和 UI 问题。
+- `docs/detective-coupling-improvement-plan.md`：已新增，把经典侦探结构转成当前四案的误导、缺口、反转和原话回收改造计划。
 
 ### `project-skills/livestream-game-flow-review/SKILL.md` 需要持续补的规则
 
@@ -367,17 +391,17 @@ AI 问答值得做，但不能让 AI 生成事实。
 - 材料节点要有可视化目标，正确不扣忍耐，误指才扣。
 - 受控 AI 只做 intent 映射，不写事实。
 - 新增剧情前必须先写压力系统，再拆字段。
+- 大型剧情耦合或串案暗线改造必须同时使用 `project-skills/detective-plot-coupling-review/SKILL.md`，先检查线索账本，再动台词。
 
 ### 自动测试还缺
 
-- 真实手柄流程测试：键盘和模拟 Gamepad API 已补 Playwright 级回放；仍缺 Steam Deck/控制器实机回放。
-- 结果页/案间页截图对比。
+- 真实手柄流程测试：键盘和模拟 Gamepad API 已补 Playwright 级回放；仍缺 Steam Deck/控制器实机回放，属于发行验收门。
+- 结果页/案间页截图对比：当前先用 `docs/playtest-report-template.md` 手工记录，自动视觉基线放到单独设计项。
 
 ## 当前建议顺序
 
-1. 资料操作模型：把材料检视从文字三选一升级为可视化圈点数据结构。
-2. 现场压力模型：第一层已接入，追问语气、材料误指和回流结果已开始共同影响听众耐心、连线人防备、弹幕跑偏。
-3. 收麦回看模型：第一层已接入，结果页已回收材料圈点、原话选择和路线画像。
-4. 再继续 P0 技术债：Electron 依赖/打包器、残余内容特判数据化、Steam Deck/控制器实机 QA。
-5. 然后做桌面壳打包验收、真实浏览器键盘/手柄回放和内容包完整迁移。
-6. 最后再做受控自由追问和 AI router。
+1. P0/P1 源码侧进入大测试收口：继续跑完整流程，发现的共性问题进入 skill 和自动检查。
+2. 源码优化继续减小 `app.js`，但只拆稳定边界；不要为了行数硬拆状态推进。
+3. 旧 daily 兜底模板只保留未迁移案兼容入口，新增内容必须走内容包。
+4. 结果页/案间页自动截图对比、动态弹幕瀑布、完整手机模拟器单独设计，不混进当前收口。
+5. 受控自由追问和 AI router 仍排在 P3；先按 `docs/controlled-ai-intent-schema.md` 做本地 matcher 设计，不接自由生成事实。

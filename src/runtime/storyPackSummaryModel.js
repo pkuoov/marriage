@@ -7,6 +7,7 @@ import {
   storyPackAxes,
   storyPackBestAxis,
   storyPackClosingLine,
+  storyHiddenThreadProfile,
   storyPlayerType,
   storyQuoteProfile,
   storyShareTitle,
@@ -32,6 +33,7 @@ export function storyPackSummaryModel({
   const materialProfile = storyMaterialProfile(materialRows);
   const quoteProfile = storyQuoteProfile(results);
   const objectProfile = storyObjectProfile(briefs);
+  const hiddenThreadProfile = storyHiddenThreadProfile({ theme, avgPercent, objectProfile });
   const playerType = storyPlayerType(avgPercent, displayBest);
   const shareTitle = storyShareTitle(avgPercent, displayBest);
   const aftertaste = storyPackAftertaste(avgPercent, briefs.length);
@@ -48,7 +50,8 @@ export function storyPackSummaryModel({
     pressureProfile,
     materialProfile,
     quoteProfile,
-    objectProfile
+    objectProfile,
+    hiddenThreadProfile
   });
   return {
     avgPercent,
@@ -59,6 +62,7 @@ export function storyPackSummaryModel({
     materialProfile,
     quoteProfile,
     objectProfile,
+    hiddenThreadProfile,
     playerType,
     shareTitle,
     aftertaste,

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(grep -n \"liveCommentsFor\\\\|commentSeeds\" -A6 src/runtime/livePressure.js | sed -n '1,30p'; echo \"===boundary prompts build===\"; sed -n '/export function truthBoundaryReview/,/^}/p' src/runtime/recapModel.js | head -40)",
+      "Bash(sed -n '/function boundaryPrompts/,/^}/p' src/runtime/recapModel.js)",
+      "Bash(python3 -c \"import json; print\\(list\\(json.load\\(open\\('package.json'\\)\\)['scripts'].keys\\(\\)\\)\\)\")",
+      "Bash(git check-ignore *)",
+      "Bash(python3 -)",
+      "Bash(npm run *)"
+    ],
+    "additionalDirectories": [
+      "/Users/pkuiloveoov/code/love/src/runtime"
+    ]
+  }
+}

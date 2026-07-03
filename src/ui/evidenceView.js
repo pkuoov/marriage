@@ -5,6 +5,7 @@ export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
     <section class="evidence-workbench material-${kind} ${pick ? pick.correct ? "marked hit" : "marked miss" : ""}">
       <div class="evidence-document material-${kind}">
         <header>
+          ${evidenceMaterialThumbHtml(check, kind)}
           <span>${escapeHtml(evidenceMaterialType(check))}</span>
           <b>${escapeHtml(check.title ?? "台面材料")}</b>
         </header>
@@ -37,6 +38,18 @@ export function evidenceMaterialType(check = {}) {
     shot: "SHOT",
     file: "FILE"
   }[kind] ?? "FILE";
+}
+
+export function evidenceMaterialThumbHtml(check = {}, kind = evidenceMaterialKind(check)) {
+  const title = check.title ?? "材料";
+  const glyph = {
+    bill: "¥",
+    flow: "→",
+    table: "▦",
+    shot: "▣",
+    file: "≡"
+  }[kind] ?? "≡";
+  return `<i class="evidence-thumb evidence-thumb-${escapeHtml(kind)}" aria-hidden="true"><b>${escapeHtml(glyph)}</b><em>${escapeHtml(shortMaterialLabel(title))}</em></i>`;
 }
 
 export function evidenceMaterialLines(material = "") {
@@ -136,6 +149,11 @@ function evidenceAnnotationHtml(pick = {}) {
       <b>${escapeHtml(pick.label ?? "")}</b>
     </div>
   `;
+}
+
+function shortMaterialLabel(title = "") {
+  const cleaned = String(title ?? "").replace(/\s+/g, "");
+  return cleaned.slice(0, 4) || "材料";
 }
 
 function escapeHtml(value) {

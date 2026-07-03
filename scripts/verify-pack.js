@@ -87,6 +87,29 @@ function collectTextLength(value) {
   return 0;
 }
 
+function normalizeOverlapText(value) {
+  return String(value ?? "").replace(/[^\p{L}\p{N}]/gu, "");
+}
+
+function longestCommonSubstringLength(left, right) {
+  const a = normalizeOverlapText(left);
+  const b = normalizeOverlapText(right);
+  if (!a || !b) return 0;
+  let best = 0;
+  let previous = new Array(b.length + 1).fill(0);
+  for (let i = 1; i <= a.length; i += 1) {
+    const current = new Array(b.length + 1).fill(0);
+    for (let j = 1; j <= b.length; j += 1) {
+      if (a[i - 1] === b[j - 1]) {
+        current[j] = previous[j - 1] + 1;
+        best = Math.max(best, current[j]);
+      }
+    }
+    previous = current;
+  }
+  return best;
+}
+
 async function readJson(path) {
   return JSON.parse(await readFile(resolve(root, path), "utf8"));
 }
@@ -220,7 +243,13 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         scene.questionOptions.forEach((option, optionIndex) => {
           assertNonEmptyString(option.question, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 question`);
           assertNonEmptyString(option.answer, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 answer`);
-          if (option.guardedAnswer) assertNonEmptyString(option.guardedAnswer, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] guardedAnswer 不能为空`);
+          if (option.guardedAnswer) {
+            assertNonEmptyString(option.guardedAnswer, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] guardedAnswer 不能为空`);
+            assert(
+              longestCommonSubstringLength(option.guardedAnswer, casePacket.deepFollowup?.answer) < 14,
+              `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] guardedAnswer 不能提前复用 deepFollowup 的自白金句`
+            );
+          }
           assertNonEmptyString(option.routeAxis, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeAxis`);
           assertNonEmptyString(option.routeTone, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeTone`);
           if (option.correct) assertNonEmptyString(option.contradiction, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 核心追问缺少 contradiction`);

@@ -46,11 +46,13 @@ export function choiceReviewHtml(rows = []) {
   const content = callDialogueHtml(rows, "review-dialogue");
   if (!content) return "";
   return `
-    <details class="choice-review">
+    <details class="choice-review call-log-drawer">
       <summary>
         <span>上一问</span>
       </summary>
-      ${content}
+      <div class="call-log-drawer-body">
+        ${content}
+      </div>
     </details>
   `;
 }

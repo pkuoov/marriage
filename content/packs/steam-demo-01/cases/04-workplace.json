@@ -45,7 +45,7 @@
     {
       "label": "“报销审批通过。”",
       "accuseRole": "respondent",
-      "response": "这句只能证明审批到过那一步，不能证明钱已经打给谁。"
+      "response": "审批走到哪一步是一回事，钱打给谁是另一回事。"
     },
     {
       "label": "“我也确实想要这个主责。”",
@@ -132,7 +132,7 @@
       "questionOptions": [
         {
           "question": "他为什么不让你在大群确认预算？",
-          "answer": "他说大群里问预算，会显得我不担事，老板会觉得我推活。不如先私下办成，复盘时再补流程。现在回头看，他拿住的就是我想表现又怕露怯。",
+          "answer": "他说大群里问预算，会显得我不担事，老板会觉得我推活。不如先私下办成，复盘时再补流程。我当时最怕老板觉得我不扛事，就没再问。现在想想，他就是卡着我这个脸面。",
           "contradiction": "同事借表现压力阻止公开确认预算。",
           "correct": true,
           "routeAxis": "identity-wording",
@@ -140,7 +140,7 @@
         },
         {
           "question": "你如果当时在群里问，会不会真的影响观感？",
-          "answer": "可能会显得我不够爽快。但至少钱是谁批、谁还、谁对接供应商，会留下记录。",
+          "answer": "会，肯定不那么好看。但至少群里会留下话，谁批钱、谁还钱、谁跟供应商对接，都跑不掉。",
           "correct": false,
           "routeAxis": "identity-wording",
           "routeTone": "softening"
@@ -165,7 +165,7 @@
       "questionOptions": [
         {
           "question": "这张审批图少了哪一边，是付款状态还是收款账户？",
-          "answer": "图上确实写着审批通过。但下面没有付款状态，也没露收款账户。它只能证明公司同意报销，不能证明钱已经打出去，更不能证明打给了谁。",
+          "answer": "图上确实是审批通过。可下面没有付款状态，也没收款账户。我看不见钱打没打出去，也看不见打给谁。",
           "contradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
           "correct": true,
           "routeAxis": "money-flow",
@@ -198,7 +198,7 @@
       "questionOptions": [
         {
           "question": "供应商返款打给谁，和你的垫付款是不是同一条钱路？",
-          "answer": "供应商群里说返款统一打给对接人，对接人是他。也就是说，我垫出去的钱、公司报销的钱、供应商那笔返款，最后都绕到他手里。",
+          "answer": "群里说返款统一给对接人，对接人还是他。等于我先刷卡，公司报销他卡着，供应商返款也往他那边走。",
           "contradiction": "同事同时控制报销入口和供应商返款入口。",
           "correct": true,
           "routeAxis": "money-flow",
@@ -206,7 +206,7 @@
         },
         {
           "question": "你问过这笔服务协调费是不是正常报价吗？",
-          "answer": "问过。他说可能就是正常报价。可他不让我问财务，也不说返款怎么处理，我就没法只按正常报价理解。",
+          "answer": "问过。他说这行可能就是正常报价。可他不让我问财务，也不把返款说清楚，我心里怎么可能不犯嘀咕。",
           "correct": false,
           "routeAxis": "money-flow",
           "routeTone": "softening"
@@ -231,7 +231,7 @@
       "questionOptions": [
         {
           "question": "主责署名和付款入口，最后在同一个人手里吗？",
-          "answer": "不在。复盘报告写我主责，看起来是我负责；可付款对接、供应商确认、返款入口都在他那边。出事先问我，钱什么时候回却要看他。",
+          "answer": "不在。报告上写我主责，出了事先找我；可付款、供应商确认、返款都在他那边。钱什么时候回来，我还得等他一句话。",
           "contradiction": "项目责任和资金入口被拆给不同人。",
           "correct": true,
           "routeAxis": "identity-wording",
@@ -239,7 +239,7 @@
         },
         {
           "question": "主责写了你以后，你为什么反而更慌？",
-          "answer": "一开始我觉得也算值。可钱没回来以后，主责反而像风险，出了问题大家会先问我为什么私下垫。",
+          "answer": "一开始我觉得值，署名到手就算多干点。可钱没回来以后，主责两个字越看越像坑，别人会先问我为什么私下垫。",
           "correct": false,
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
@@ -301,19 +301,19 @@
           "label": "付款状态和收款账户",
           "correct": true,
           "contradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
-          "feedback": "审批通过不是到账，缺的这一页才决定钱去了哪里。",
+          "feedback": "审批过不等于钱到账，少的就是这一页。",
           "routeAxis": "document-edge"
         },
         {
           "label": "活动现场照片",
           "correct": false,
-          "feedback": "活动办没办不是当前缺口，钱有没有打出去才是。",
+          "feedback": "活动办了也不代表钱回来了。",
           "routeAxis": "outer-thread"
         },
         {
           "label": "老板有没有看到复盘",
           "correct": false,
-          "feedback": "复盘能证明署名，证明不了垫付款有没有回。",
+          "feedback": "复盘写了谁主责，没写他什么时候把垫款还回来。",
           "routeAxis": "identity-wording"
         }
       ]
@@ -328,19 +328,19 @@
           "label": "返给对接人",
           "correct": true,
           "contradiction": "供应商返款入口仍在同事手里，垫付款可能被卡在对接流程里。",
-          "feedback": "审批图证明不了返款落点，这一行才把钱路接到同事手上。",
+          "feedback": "审批图挡不住这一行：返款往谁手里走。",
           "routeAxis": "process-control"
         },
         {
           "label": "服务协调费",
           "correct": false,
-          "feedback": "费用名目可疑，但真正危险的是这笔钱最后返给谁。",
+          "feedback": "这名目是可疑，但先看钱最后回到谁那儿。",
           "routeAxis": "money-flow"
         },
         {
           "label": "报价单最下面",
           "correct": false,
-          "feedback": "位置能说明它容易被忽略，不能说明钱落到谁手里。",
+          "feedback": "在最下面容易漏看，但问题不是位置，是收款的人。",
           "routeAxis": "document-edge"
         }
       ]
@@ -364,19 +364,19 @@
           "label": "返给对接人",
           "correct": true,
           "contradiction": "供应商返款按老规矩返给对接人，资金入口仍在同事手里。",
-          "feedback": "这句把审批截图和供应商那条钱路接上了。",
+          "feedback": "这一句把那张审批图没露出来的钱路补上了。",
           "routeAxis": "external-corroboration"
         },
         {
           "label": "按老规矩",
           "correct": false,
-          "feedback": "老规矩很可疑，但要先圈出钱最后返给谁。",
+          "feedback": "老规矩听着就别扭，但要先看钱返给谁。",
           "routeAxis": "process-control"
         },
         {
           "label": "付款确认页没发",
           "correct": false,
-          "feedback": "这点前面已经咬过，补话新增的是返款落点。",
+          "feedback": "付款确认前面已经问过，这条新东西是返款给谁。",
           "routeAxis": "document-edge"
         }
       ]
@@ -387,11 +387,11 @@
     "answer": "我最怕他们说我是为了抢署名才私下垫款，流程不规范。我先跟老板说能主责，我也确实想要这个主责；但他用这个让我先刷卡、又拿审批截图挡我，也是真的。",
     "note": "问到这里，咨询者想表现是真的，被人拿这个点压着先垫钱也是真的。"
   },
-  "stageJudgement": "这不只是同事欠钱。审批图、主责署名、垫付款、供应商返款全挤在同一个人手里，对方就有办法一直拖。",
-  "storyInterludeRecap": "审批截图能堵住一句质问，堵不住钱去了哪里。",
+  "stageJudgement": "这不只是同事欠钱。主责写在报告上，垫款划在咨询者卡里；审批图、付款入口和供应商返款还都攥在对方手里。",
+  "storyInterludeRecap": "主责挂在报告上，垫款却实打实从自己卡里划走了。",
   "followupTwist": "后续回拨里，财务说审批通过后还要二次付款确认，收款账户填的是同事账户。截图不是假，只是刚好截到最能让人闭嘴的地方。",
   "dailyShareTitle": "报销截图都发了，钱为什么还没回来？",
-  "dailyShareBody": "我卡住的不是审批过没过，是付款状态、收款账户和供应商返款都没露出来。",
+  "dailyShareBody": "审批图是过了，可付款状态、收款账户、供应商返款，一项都没露。",
   "dailyShareQuestion": "你会先问审批截图，还是先问谁拿了项目署名？",
-  "truth": "职场截图也会只截好看的半张。咨询者想拿表现，所以先垫了；同事拿着审批图和供应商入口不放，所以钱一直回不来。两件事要分开说。"
+  "truth": "办公室里，有些机会听着很好听，先刷出去的却是自己的卡。咨询者想拿表现，所以没把流程问死；对方把主责署名递过来，付款入口和供应商返款却还攥着。名声好不好听是一回事，垫出去的钱是真出去了。"
 }

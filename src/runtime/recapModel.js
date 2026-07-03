@@ -76,6 +76,57 @@ export function finalQuoteComparison(brief = {}, result = {}) {
   };
 }
 
+export function dailyConclusionModel(brief = {}, result = {}, issue = {}, { pickedQuestions = [], deepFollowup = null } = {}) {
+  void result;
+  const deep = issue.badge ? deepFollowup : null;
+
+  if (issue.badge && brief.conclusionWhenCleared) {
+    return {
+      ...brief.conclusionWhenCleared,
+      deepQuestion: deep?.question ?? brief.conclusionWhenCleared.deepQuestion ?? ""
+    };
+  }
+
+  const branch = conclusionBranchFor(brief, pickedQuestions);
+  if (branch) {
+    return {
+      summary: branch.summary ?? "",
+      deepQuestion: branch.deepQuestion ?? "",
+      followup: branch.followup ?? "",
+      truth: branch.truth ?? brief.truth ?? ""
+    };
+  }
+
+  if (issue.badge) {
+    return {
+      summary: brief.stageJudgement ?? "这一轮几个别扭点都问到了。",
+      deepQuestion: deep?.question ?? "",
+      followup: brief.followupTwist ?? "后续回拨里，咨询者愿意把刚才没说出口的部分补上。",
+      truth: brief.truth ?? "别急着站一边，先把双方没说全的地方补齐。"
+    };
+  }
+
+  return {
+    summary: issue.revealed?.length ? `这轮摆到台面上的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，真正别扭的地方还没上桌。",
+    deepQuestion: "",
+    followup: issue.revealed?.length ? "后续回拨里，话还没完，评论区会继续抓着没说出口的地方吵。" : brief.followupTwist ?? "",
+    truth: brief.truth ?? "这案不能只按第一印象走，得看每个人少说了哪半截。"
+  };
+}
+
+export function conclusionBranchFor(brief = {}, pickedQuestions = []) {
+  const text = pickedQuestions.join(" ");
+  return (brief.conclusionBranches ?? []).find((branch) => {
+    const pattern = branch.match ?? branch.pattern ?? "";
+    if (!pattern) return false;
+    try {
+      return new RegExp(pattern).test(text);
+    } catch {
+      return text.includes(pattern);
+    }
+  }) ?? null;
+}
+
 export function truthBoundaryReview(brief = {}) {
   const boundary = brief.truthBoundary ?? {};
   const columns = [
@@ -87,7 +138,7 @@ export function truthBoundaryReview(brief = {}) {
   return {
     title: "事实边界",
     line: columns.length
-      ? "能摊开的先摊开，没证据的别替任何人补完。"
+      ? "这几句话，哪句能落，哪句还缺半边。"
       : "这通还没留下足够边界。",
     columns,
     prompts,
@@ -219,9 +270,29 @@ export function storyThemeProfile(briefs = []) {
     title: first.storyThemeTitle ?? first.weeklyThemeTitle ?? "今晚收麦",
     thesis: first.storyThemeThesis ?? first.weeklyThemeThesis ?? "几通来电听完，别只听谁声音大，要看最后谁被叫去买单。",
     commentPrompt: first.storyThemeCommentPrompt ?? first.weeklyThemeCommentPrompt ?? "评论区吵到后半夜，吵的都是每个人没说完的半句。",
+    hiddenThread: first.storyHiddenThread ?? first.weeklyHiddenThread ?? null,
     commentSeeds: Array.isArray(first.storyCommentSeeds) ? first.storyCommentSeeds : [],
     lowRevealTone: first.storyLowRevealTone ?? "",
     highRevealTone: first.storyHighRevealTone ?? ""
+  };
+}
+
+export function storyHiddenThreadProfile({ theme = {}, avgPercent = 0, objectProfile = {} } = {}) {
+  const thread = theme.hiddenThread;
+  const beats = (Array.isArray(thread?.beats) ? thread.beats : [])
+    .map((item) => String(item ?? "").trim())
+    .filter(Boolean);
+  if (!thread?.title && !thread?.reveal && beats.length === 0) {
+    return { total: 0, label: "", title: "", line: "", beats: [], comment: "" };
+  }
+  const revealed = Number(avgPercent ?? 0) >= 65 || Number(objectProfile.total ?? 0) >= 4;
+  return {
+    total: beats.length || 1,
+    title: thread.title ?? "今晚暗线",
+    label: revealed ? thread.label ?? "暗线露头" : "暗线没收全",
+    line: revealed ? thread.reveal ?? "" : thread.lowReveal ?? thread.reveal ?? "",
+    beats,
+    comment: thread.comment ?? ""
   };
 }
 
@@ -255,7 +326,7 @@ export function storyPlayerType(avgPercent, best = {}) {
 
 export function storyShareTitle(avgPercent, best = {}) {
   if (avgPercent >= 90) return "今晚几路麦，基本都被我问到硬处了。";
-  if (avgPercent < 40) return "今晚几路麦，我还停在表层热闹里。";
+  if (avgPercent < 40) return "今晚几路麦，我听到的是表层那阵吵。";
   if (avgPercent < 65) return "这集问出几处别扭，但最要紧的话还没出来。";
   if (best.axis === "caller-credibility") return "我这一集最常回头问来电人：你自己还有哪句没说？";
   return `我这一集最常盯${best.label}，几路麦越听越不一样。`;
@@ -264,7 +335,7 @@ export function storyShareTitle(avgPercent, best = {}) {
 export function storyPackAftertaste(avgPercent, caseCount = 0) {
   const callText = storyCallCountText(caseCount);
   if (avgPercent >= 90) return `${callText}都压到了后半句。`;
-  if (avgPercent < 40) return "今晚更多是在听热闹。";
+  if (avgPercent < 40) return "今晚麦里热，话却没完全落地。";
   if (avgPercent < 65) return "有几句话浮上来了。";
   return "几条线都露了头。";
 }
@@ -272,7 +343,7 @@ export function storyPackAftertaste(avgPercent, caseCount = 0) {
 export function storyPackClosingLine(avgPercent, best = {}, caseCount = 0) {
   const callText = storyCallCountText(caseCount);
   if (avgPercent >= 90) return `这晚问得紧，${callText}里那些省掉的钱、边界和责任都露了面。`;
-  if (avgPercent < 40) return "这晚还有不少话没翻出来，适合重开一遍换条线追。";
+  if (avgPercent < 40) return "这晚你更多接住的是现场情绪，几路麦真正省掉的那半句还压在里面。";
   if (best.axis === "document-edge") return "你这一晚总爱回头看图，看截图里少了哪一页、哪一边。";
   if (best.axis === "money-flow") return "你这一晚总盯钱最后落到谁身上。";
   return "这晚有几处接住了，也有几句还卡在原话里。";
@@ -296,7 +367,8 @@ export function storyCommentWall({
   pressureProfile = {},
   materialProfile = {},
   quoteProfile = {},
-  objectProfile = storyObjectProfile(briefs)
+  objectProfile = storyObjectProfile(briefs),
+  hiddenThreadProfile = storyHiddenThreadProfile({ theme, avgPercent, objectProfile })
 } = {}) {
   const rows = briefs.map((brief, index) => {
     const result = results[index] ?? {};
@@ -312,7 +384,7 @@ export function storyCommentWall({
   ];
   if (seededComments[0]) comments.push(wrapComment(seededComments[0]));
   comments.push(avgPercent < 40
-    ? wrapComment(theme.lowRevealTone || "主播今晚接得有点松，几路麦都有话没翻完。")
+    ? wrapComment(theme.lowRevealTone || "主播今晚更像在压场，几路麦都还没露到底。")
     : wrapComment(theme.highRevealTone || `主播今晚老往${best.label}上拽，不是站队，是看谁最后接了成本。`));
   if (seededComments.length) {
     comments.push(...seededComments.slice(1).map(wrapComment));
@@ -320,7 +392,7 @@ export function storyCommentWall({
   if (comments.length < 4 && strongest?.brief && strongestPercent > 0) {
     comments.push(`「${strongest.brief.label}那路问得最稳，${strongest.route.label}一出来，前面那些好听话就变味了。」`);
   } else if (comments.length < 4) {
-    comments.push("「今晚还停在表层，材料、钱和责任几条线都没完全露出来。」");
+    comments.push("「今晚热闹是真的，材料、钱和责任那几条线还压着。」");
   }
   if (comments.length < 4 && avgPercent < 40) {
     comments.push("「这不是站队，今晚几路麦都留了半句话。」");
@@ -337,6 +409,7 @@ export function storyCommentWall({
     replaceOrAppendComment(comments, comment, Math.min(3, index + 2));
   });
   appendCommentIfRoom(comments, objectProfile.comment);
+  appendCommentIfRoom(comments, hiddenThreadProfile.comment);
   return comments.slice(0, 4);
 }
 
@@ -397,7 +470,7 @@ function materialPackComment({ total, hits, misses }) {
   if (!total) return "「今晚像是只听电话，后台材料没真用起来。」";
   if (hits > 0 && misses === 0) return "「材料圈得准，比空口判断有劲。」";
   if (hits >= misses && hits > 0) return "「有几下圈偏了，但后面还是靠材料拉回来了。」";
-  return "「材料没完全咬住，重开我会先看图少了哪一块。」";
+  return "「材料没完全咬住，现场那股热闹压过了图上的缺口。」";
 }
 
 function quotePackLabel({ total, hits, picked }) {

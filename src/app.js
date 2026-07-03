@@ -7,10 +7,11 @@ import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
+import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js?v=0.20.68";
+import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
-import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
+import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, recordPatienceLostState, retryPatienceLostState, sceneReviewModel } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "./runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
@@ -262,7 +263,8 @@ function renderSceneReview(brief) {
     hasDeepFollowup: hasDeepFollowup(brief)
   });
   const { index, scene, done, lastStage, nextStage, nextLabel } = review;
-  const pick = selectedScenePick(brief, index);
+  const pick = selectedScenePickForState(state, brief, index);
+  const dialoguePicks = askedDialoguePicksForState(state, brief, index);
   const options = focusedQuestionOptions(scene.questionOptions ?? []);
   frame({
     brief,
@@ -272,15 +274,14 @@ function renderSceneReview(brief) {
     text: sceneReviewHtml({
       index,
       done,
-      completedExchangeHtml: done ? completedSceneExchangeForReview(brief, scene, index, pick) : "",
-      activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene, dialoguePicks: askedDialoguePicks(brief, index) }),
-      reviewHtml: keyChoiceReview(brief, { excludeIndex: index })
+      completedExchangeHtml: done ? completedSceneExchangeHtml(completedSceneExchangeForState(state, brief, scene, index, pick)) : "",
+      activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene, dialoguePicks }),
+      reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief, { excludeIndex: index }))
     }),
     choices: done
       ? sceneReviewDoneChoicesHtml({ lastStage, nextStage, nextLabel })
-      : sceneQuestionChoicesHtml(index, options, askedDialoguePicks(brief, index))
+      : sceneQuestionChoicesHtml(index, options, dialoguePicks)
   });
-  bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
   bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
   bind("[data-next-scene-stage]", () => setIndex(brief, "sceneReview", index + 1));
   bindSceneButtons();
@@ -291,7 +292,7 @@ function renderEvidenceCheck(brief) {
   const model = evidenceCheckModel({
     brief,
     index,
-    pick: selectedEvidencePick(brief, index),
+    pick: selectedEvidencePickForState(state, brief, index),
     issueBadge: issueCompletion(brief).badge,
     hasDeepFollowup: hasDeepFollowup(brief)
   });
@@ -310,7 +311,7 @@ function renderEvidenceCheck(brief) {
       check,
       pick,
       index,
-      reviewHtml: keyChoiceReview(brief)
+      reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
     }),
     choices: pick
       ? flowGroupHtml(lastCheck
@@ -325,8 +326,8 @@ function renderEvidenceCheck(brief) {
 
 function renderInvestigationBackflow(brief) {
   const model = investigationBackflowModel({
-    entries: unlockedInvestigationEntriesFor(brief),
-    selectedPick: (index) => selectedInvestigationPick(brief, index)
+    entries: unlockedInvestigationEntriesForState(state, brief),
+    selectedPick: (index) => selectedInvestigationPickForState(state, brief, index)
   });
   const { hook, pick, index, nextLabel } = model;
   if (model.missing) {
@@ -343,7 +344,7 @@ function renderInvestigationBackflow(brief) {
       hook,
       pick,
       index,
-      reviewHtml: keyChoiceReview(brief)
+      reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
     }),
     choices: pick
       ? flowGroupHtml(`<button class="primary" data-after-investigation type="button">${nextLabel}</button>`)
@@ -422,7 +423,7 @@ function renderAccusation(brief) {
     text: `
       <p><b>选一句原话</b></p>
       <p>聊到这儿，你会选哪句原话往下接？</p>
-      ${keyChoiceReview(brief)}
+      ${choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))}
     `,
     choices: choiceGroupHtml("收哪句", choices.map((choice) => `<button data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${escapeHtml(choice.label)}</button>`).join(""), "single-choice-group", "从刚才的话里挑")
   });
@@ -438,16 +439,16 @@ function renderSolved(brief) {
   const issue = issueCompletion(brief);
   const rank = recapRankLabel(issue);
   const conclusion = dailyConclusion(brief, result, issue);
-  const route = routeAxisProfile(brief, result);
+  const route = routeAxisProfileForState(state, brief, result);
   const pressure = storyPressureRows([brief], {
     budgetFor: ensureBudget,
-    choicesFor: routeChoicesForCase,
-    foundCountFor: (item) => contradictions(item).length
+    choicesFor: (item) => routeChoicesForState(state, item),
+    foundCountFor: (item) => contradictionsForState(state, item).length
   })[0]?.profile ?? {};
   const quoteComparison = finalQuoteComparison(brief, result);
   const boundary = truthBoundaryReview(brief);
-  const boundaryPicks = truthBoundaryPicksFor(brief);
-  const boundaryMisses = truthBoundaryMissesFor(brief);
+  const boundaryPicks = truthBoundaryPicksForState(state, brief);
+  const boundaryMisses = truthBoundaryMissesForState(state, brief);
   const boundaryLine = truthBoundaryAftertaste(boundary, boundaryPicks, boundaryMisses);
   const finalScene = isFinalStoryPackCase();
   const pages = solvedRecapPagesHtml({
@@ -456,7 +457,7 @@ function renderSolved(brief) {
     result,
     route,
     routeTrail: routeTrailHtml({
-      choices: routeChoicesForCase(brief),
+      choices: routeChoicesForState(state, brief),
       keyQuestionCount: keyQuestionLimit(brief),
       investigationIndexBase: investigationRouteIndexBase(brief)
     }),
@@ -532,7 +533,7 @@ function renderSolved(brief) {
 function renderStoryInterlude(brief) {
   const nextBrief = state.caseBriefs?.[Number(state.chapter ?? 1)] ?? null;
   const result = normalizedDailyResult(brief);
-  const route = routeAxisProfile(brief, result);
+  const route = routeAxisProfileForState(state, brief, result);
   const interlude = state.caseInterludes?.[brief.id] ?? {};
   const backflow = storyInterludeBackflowProfile(brief);
   frame({
@@ -598,23 +599,23 @@ function renderStoryPackComplete() {
   const briefs = state.caseBriefs ?? [];
   const results = briefs.map((brief) => normalizedDailyResult(brief));
   const solved = results.filter((result) => result.accused).length;
-  const routeProfiles = briefs.map((brief, index) => routeAxisProfile(brief, results[index] ?? {}));
+  const routeProfiles = briefs.map((brief, index) => routeAxisProfileForState(state, brief, results[index] ?? {}));
   const summary = storyPackSummaryModel({
     briefs,
     results,
     routeProfiles,
     boundaryRows: storyBoundaryRows(briefs, {
-      picksFor: truthBoundaryPicksFor,
-      missesFor: truthBoundaryMissesFor
+      picksFor: (brief) => truthBoundaryPicksForState(state, brief),
+      missesFor: (brief) => truthBoundaryMissesForState(state, brief)
     }),
     pressureRows: storyPressureRows(briefs, {
       budgetFor: ensureBudget,
-      choicesFor: routeChoicesForCase,
-      foundCountFor: (item) => contradictions(item).length
+      choicesFor: (brief) => routeChoicesForState(state, brief),
+      foundCountFor: (item) => contradictionsForState(state, item).length
     }),
     materialRows: storyMaterialRows(briefs, {
-      evidencePicksFor: selectedEvidencePicksFor,
-      investigationPicksFor: selectedInvestigationPicksFor
+      evidencePicksFor: (brief) => selectedEvidencePicksForState(state, brief),
+      investigationPicksFor: (brief) => selectedInvestigationPicksForState(state, brief)
     })
   });
   frame({
@@ -641,6 +642,7 @@ function renderStoryPackComplete() {
       pressureProfile: summary.pressureProfile,
       materialProfile: summary.materialProfile,
       quoteProfile: summary.quoteProfile,
+      hiddenThreadProfile: summary.hiddenThreadProfile,
       playerType: summary.playerType
     });
     try {
@@ -662,6 +664,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
     : storyPackSummaryHud();
   const total = Math.max(1, keyQuestionLimit(brief));
   const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
+  const currentMaterial = brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录";
   app.innerHTML = liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel,
@@ -673,14 +676,15 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
     reactionHtml: reactionLine(),
     choices,
     visualHud,
+    material: currentMaterial,
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
           onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
           label,
-          segment: answeredSceneCount(brief) + 1,
+          segment: answeredSceneCountForState(state, brief) + 1,
           total,
           pressure: currentLivePressure(brief),
-          material: brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录"
+          material: currentMaterial
         })
       : ""
   });
@@ -708,39 +712,6 @@ function compactDialogueLines(lines) {
   const normalized = (lines ?? []).filter((line) => line?.text);
   const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
   return normalized.slice(0, totalLength > 170 ? 2 : 4);
-}
-
-function completedSceneExchangeForReview(brief, scene, index, pick = {}) {
-  return completedSceneExchangeHtml({
-    scene,
-    dialoguePicks: askedDialoguePicks(brief, index),
-    pick,
-    fallbackAnswer: state.sceneAnswers?.[answerKey(brief, currentIndex(brief, "sceneReview", brief.sceneVersions?.length ?? 1))] ?? ""
-  });
-}
-
-function keyChoiceReview(brief, { excludeIndex = null } = {}) {
-  const scenes = brief.sceneVersions ?? [];
-  const lastAnsweredIndex = scenes.reduce((last, _, index) => actionDone(brief, `version:${index}`) ? index : last, -1);
-  const lastDialogueIndex = scenes.reduce((last, _, index) => askedDialoguePicks(brief, index).length ? index : last, -1);
-  if (lastAnsweredIndex === excludeIndex || lastDialogueIndex === excludeIndex) return "";
-  if (lastAnsweredIndex < 0 && lastDialogueIndex < 0) return "";
-  const rows = lastAnsweredIndex >= 0
-    ? [
-        { role: "caller", text: scenes[lastAnsweredIndex]?.version ?? "" },
-        { role: "host", text: selectedScenePick(brief, lastAnsweredIndex)?.question ?? "" },
-        { role: "caller", text: selectedScenePick(brief, lastAnsweredIndex)?.answer ?? "" }
-      ].filter((line) => line.text)
-    : lastDialogueIndex >= 0
-      ? [
-          { role: "caller", text: scenes[lastDialogueIndex]?.version ?? "" },
-          ...askedDialoguePicks(brief, lastDialogueIndex).flatMap((pick) => [
-            { role: "host", text: pick.question },
-            { role: "caller", text: pick.answer }
-          ])
-        ].filter((line) => line.text)
-      : [];
-  return choiceReviewHtml(rows);
 }
 
 function bind(selector, handler) {
@@ -882,47 +853,6 @@ function bindSceneButtons() {
   document.querySelectorAll("[data-scene]").forEach((button) => {
     button.addEventListener("click", () => moveScene(button.dataset.scene));
   });
-}
-
-function handleSceneDialogueButton(button) {
-  const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
-  const { brief, scene, options } = sceneChoiceContext(sceneIndex);
-  const option = options[optionIndex] ?? options[0];
-  if (!brief || !option) return;
-  const key = answerKey(brief, sceneIndex);
-  const current = state.sceneDialoguePicks?.[key] ?? [];
-  const answerVariant = pressuredAnswerVariant(option, { pressureSignal: state.lastPressureSignal ?? "" });
-  const answer = answerVariant.answer;
-  if (!current.some((item) => item.optionIndex === optionIndex)) {
-    state.sceneDialoguePicks = {
-      ...(state.sceneDialoguePicks ?? {}),
-      [key]: [
-        ...current,
-        {
-          optionIndex,
-          question: option.question ?? "",
-          answer,
-          guarded: answerVariant.guarded,
-          routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
-          routeTone: option.routeTone ?? routeToneForChoice(option)
-        }
-      ]
-    };
-  }
-  markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
-  state.lastReaction = questionPressureReaction({ ...option, answer }, option.routeTone ?? routeToneForChoice(option));
-  state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
-  state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
-  if (audiencePatienceLost(brief, {
-    area: "sceneReview",
-    index: sceneIndex,
-    actionKeys: [`dialogue:${sceneIndex}:${optionIndex}`],
-    answerKey: key,
-    dialogueOptionIndex: optionIndex,
-    spent: true
-  })) return;
-  saveState();
-  render();
 }
 
 function handleSceneQuestionButton(button) {
@@ -1086,11 +1016,18 @@ function setIndex(brief, area, index) {
 }
 
 function setIndexValue(brief, area, index) {
-  const total = area === "sceneReview" ? brief.sceneVersions?.length ?? 1 : area === "evidenceCheck" ? evidenceChecksFor(brief).length || 1 : unlockedInvestigationEntriesFor(brief).length || 1;
+  const total = area === "sceneReview" ? brief.sceneVersions?.length ?? 1 : area === "evidenceCheck" ? evidenceChecksFor(brief).length || 1 : unlockedInvestigationEntriesForState(state, brief).length || 1;
   state.dialogueProgress = {
     ...(state.dialogueProgress ?? {}),
     [`${caseKey(brief)}:${area}`]: Math.max(0, Math.min(index, total - 1))
   };
+}
+
+function areaTotalForRetry(brief, area) {
+  if (area === "sceneReview") return brief.sceneVersions?.length ?? 1;
+  if (area === "evidenceCheck") return evidenceChecksFor(brief).length || 1;
+  if (area === "investigationBackflow") return unlockedInvestigationEntriesForState(state, brief).length || 1;
+  return 1;
 }
 
 function currentIndex(brief, area, total) {
@@ -1121,7 +1058,7 @@ function resolveAccusationFromButton(brief, button) {
     relationshipExpected: resolved.result.relationshipExpected,
     structuralExpected: resolved.result.structuralExpected,
     correct: issueCleared,
-    contradictionCount: contradictions(brief).length,
+    contradictionCount: contradictionsForState(state, brief).length,
     issuePercent: issue.percent,
     issueRevealed: issue.revealed,
     issueMissed: issue.missed,
@@ -1135,7 +1072,7 @@ function resolveAccusationFromButton(brief, button) {
   state.solvedCaseIds = [...new Set([...(state.solvedCaseIds ?? []), brief.id])];
   applyOutcome(brief, result);
   recordDailyMeta(brief, result, issue);
-  state.scene = unlockedInvestigationEntriesFor(brief).some((entry) => !selectedInvestigationPick(brief, entry.index)) ? "investigationBackflow" : "caseSolved";
+  state.scene = unlockedInvestigationEntriesForState(state, brief).some((entry) => !selectedInvestigationPickForState(state, brief, entry.index)) ? "investigationBackflow" : "caseSolved";
   state.recapStep = 0;
   saveState();
   render();
@@ -1153,7 +1090,7 @@ function normalizedDailyResult(brief) {
     correct: current?.correct ?? false,
     dailyAccuseLabel: current?.dailyAccuseLabel ?? "还没选最后那句",
     dailyResponse: current?.dailyResponse ?? "",
-    contradictionCount: contradictions(brief).length,
+    contradictionCount: contradictionsForState(state, brief).length,
     issuePercent: issue.percent,
     issueRevealed: issue.revealed,
     issueMissed: issue.missed,
@@ -1165,7 +1102,7 @@ function normalizedDailyResult(brief) {
 function issueCompletion(brief) {
   return calculateIssueCompletion({
     brief,
-    foundContradictions: contradictions(brief),
+    foundContradictions: contradictionsForState(state, brief),
     requiredLimit: keyQuestionLimit(brief)
   });
 }
@@ -1183,7 +1120,7 @@ function applyOutcome(brief, result) {
   const budget = ensureBudget(brief);
   const outcome = calculateCaseOutcome({
     result,
-    contradictionCount: contradictions(brief).length,
+    contradictionCount: contradictionsForState(state, brief).length,
     budgetRemaining: budget.remaining
   });
   state.caseInterludes = { ...(state.caseInterludes ?? {}), [brief.id]: outcome.interlude };
@@ -1200,7 +1137,7 @@ function recordDailyMeta(brief, result, issue) {
         plotId: brief.plotId,
         issuePercent: issue.percent,
         dailyBadge: Boolean(result.dailyBadge),
-        routeAxis: routeAxisProfile(brief, result).axis,
+        routeAxis: routeAxisProfileForState(state, brief, result).axis,
         playerType: dailyPlayerType({
           percent: issue.percent,
           quoteHit: result.quoteHit,
@@ -1217,7 +1154,7 @@ function recordDailyMeta(brief, result, issue) {
 function routeProfileForBrief(brief, result = {}) {
   return buildDailyRouteProfile(brief, result, {
     issue: issueCompletion(brief),
-    axisProfile: routeAxisProfile(brief, result)
+    axisProfile: routeAxisProfileForState(state, brief, result)
   });
 }
 
@@ -1256,47 +1193,13 @@ function advanceToNextStoryPackCase(message = "新的来电接进来，上一通
 
 function retryPatienceLostStep(brief) {
   const context = state.patienceLostContext ?? {};
-  const key = caseKey(brief);
-  const answerId = context.answerKey;
-  if (answerId && context.removeQuestionPick) {
-    state.sceneQuestionPicks = omitRecordKey(state.sceneQuestionPicks, answerId);
-    state.sceneAnswers = omitRecordKey(state.sceneAnswers, answerId);
-  }
-  if (answerId && context.dialogueOptionIndex !== undefined) {
-    const current = state.sceneDialoguePicks?.[answerId] ?? [];
-    state.sceneDialoguePicks = {
-      ...(state.sceneDialoguePicks ?? {}),
-      [answerId]: current.filter((item) => Number(item.optionIndex) !== Number(context.dialogueOptionIndex))
-    };
-  }
-  if (answerId && context.removeEvidencePick) {
-    state.evidenceCheckPicks = omitRecordKey(state.evidenceCheckPicks, answerId);
-  }
-  if (answerId && context.removeInvestigationPick) {
-    state.investigationPicks = omitRecordKey(state.investigationPicks, answerId);
-  }
-  if (Number.isInteger(context.routeIndex)) {
-    state.routeChoiceLog = {
-      ...(state.routeChoiceLog ?? {}),
-      [key]: (state.routeChoiceLog?.[key] ?? []).filter((item) => Number(item.sceneIndex) !== Number(context.routeIndex))
-    };
-  }
-  state.caseActionLog = {
-    ...(state.caseActionLog ?? {}),
-    [key]: omitRecordKeys(state.caseActionLog?.[key] ?? {}, context.actionKeys ?? [])
-  };
-  if (context.spent) {
-    state.caseBudgets = {
-      ...(state.caseBudgets ?? {}),
-      [key]: refundOneBudgetPoint(ensureBudget(brief))
-    };
-  }
-  state.scene = context.area ?? "sceneReview";
-  if (Number.isInteger(context.index)) setIndexValue(brief, context.area ?? "sceneReview", context.index);
-  state.lastReaction = null;
-  state.lastPressureSignal = null;
-  state.lastPressureAxis = null;
-  state.patienceLostContext = null;
+  state = retryPatienceLostState({
+    state,
+    brief,
+    context,
+    budget: ensureBudget(brief),
+    areaTotal: areaTotalForRetry(brief, context.area ?? "sceneReview")
+  });
   saveState();
   render();
 }
@@ -1338,18 +1241,6 @@ function omitRecordKey(record = {}, keyToOmit) {
   return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => key !== keyToOmit));
 }
 
-function omitRecordKeys(record = {}, keysToOmit = []) {
-  const remove = new Set(keysToOmit ?? []);
-  return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => !remove.has(key)));
-}
-
-function refundOneBudgetPoint(budget = {}) {
-  const max = Math.max(0, Number(budget.max ?? 0));
-  const remaining = Math.min(max, Number(budget.remaining ?? 0) + 1);
-  const used = Math.max(0, Number(budget.used ?? 0) - 1);
-  return { ...budget, max, remaining, used };
-}
-
 function markAction(brief, actionKey, { spend = false } = {}) {
   const key = caseKey(brief);
   const patch = applyActionMark({
@@ -1367,9 +1258,9 @@ function audiencePatienceLost(brief, context = {}) {
   const budget = ensureBudget(brief);
   if (!casePatienceLost({
     budget,
-    answeredScenes: answeredSceneCount(brief),
+    answeredScenes: answeredSceneCountForState(state, brief),
     requiredScenes: keyQuestionLimit(brief),
-    answeredEvidence: answeredEvidenceCountFor(brief),
+    answeredEvidence: answeredEvidenceCountForState(state, brief),
     requiredEvidence: evidenceChecksFor(brief).length
   })) return false;
   recordPatienceLost(brief, context);
@@ -1377,14 +1268,7 @@ function audiencePatienceLost(brief, context = {}) {
 }
 
 function recordPatienceLost(brief, context = {}) {
-  state.scene = "patienceLost";
-  state.patienceLostContext = {
-    caseId: caseKey(brief),
-    ...context
-  };
-  state.lastReaction = null;
-  state.lastPressureSignal = null;
-  state.lastPressureAxis = null;
+  state = recordPatienceLostState({ state, brief, context });
   saveState();
   render();
   return true;
@@ -1426,73 +1310,8 @@ function recordRouteChoice(brief, sceneIndex, option = {}, scene = {}) {
   };
 }
 
-function contradictions(brief) {
-  return state.contradictionLog?.[caseKey(brief)] ?? [];
-}
-
-function answeredSceneCount(brief) {
-  return (brief.sceneVersions ?? []).filter((_, index) => actionDone(brief, `version:${index}`)).length;
-}
-
-function selectedScenePick(brief, index) {
-  const pick = state.sceneQuestionPicks?.[answerKey(brief, index)] ?? null;
-  if (!pick) return null;
-  return {
-    ...pick,
-    routeAxis: pick.routeAxis ?? routeAxisForChoice(pick),
-    routeTone: pick.routeTone ?? routeToneForChoice(pick)
-  };
-}
-
-function selectedEvidencePick(brief, index) {
-  return state.evidenceCheckPicks?.[evidenceAnswerKey(brief, index)] ?? null;
-}
-
-function selectedEvidencePicksFor(brief) {
-  return evidenceChecksFor(brief)
-    .map((_, index) => selectedEvidencePick(brief, index))
-    .filter(Boolean);
-}
-
-function selectedInvestigationPick(brief, index) {
-  return state.investigationPicks?.[investigationAnswerKey(brief, index)] ?? null;
-}
-
-function selectedInvestigationPicksFor(brief) {
-  return (brief.investigationHooks ?? [])
-    .map((_, index) => selectedInvestigationPick(brief, index))
-    .filter(Boolean);
-}
-
-function truthBoundaryPicksFor(brief) {
-  return state.truthBoundaryPicks?.[caseKey(brief)] ?? {};
-}
-
-function truthBoundaryMissesFor(brief) {
-  return state.truthBoundaryMisses?.[caseKey(brief)] ?? {};
-}
-
-function unlockedInvestigationEntriesFor(brief) {
-  return unlockedInvestigationEntries(brief, {
-    foundContradictions: contradictions(brief),
-    actionDone: (actionKey) => actionDone(brief, actionKey)
-  });
-}
-
-function answeredEvidenceCountFor(brief) {
-  return countAnsweredEvidence(brief, (actionKey) => actionDone(brief, actionKey));
-}
-
 function sceneAfterEvidenceFor(brief) {
   return nextSceneAfterEvidence({ issueBadge: issueCompletion(brief).badge, hasDeepFollowup: hasDeepFollowup(brief) });
-}
-
-function askedDialoguePicks(brief, index) {
-  return state.sceneDialoguePicks?.[answerKey(brief, index)] ?? [];
-}
-
-function selectedScenePicks(brief) {
-  return (brief.sceneVersions ?? []).map((_, index) => selectedScenePick(brief, index)).filter(Boolean);
 }
 
 function hasDeepFollowup(brief) {
@@ -1509,74 +1328,17 @@ function deepFollowupFor(brief) {
 }
 
 function dailyConclusion(brief, result, issue) {
-  const picked = selectedScenePicks(brief);
+  const picked = selectedScenePicksForState(state, brief);
   const pickedQuestions = picked.map((item) => item.question).filter(Boolean);
   const deep = issue.badge ? deepFollowupFor(brief) : null;
-
-  if (issue.badge && brief.conclusionWhenCleared) {
-    return {
-      ...brief.conclusionWhenCleared,
-      deepQuestion: deep?.question ?? brief.conclusionWhenCleared.deepQuestion ?? ""
-    };
-  }
-
-  const branch = conclusionBranchFor(brief, pickedQuestions);
-  if (branch) {
-    return {
-      summary: branch.summary ?? "",
-      deepQuestion: branch.deepQuestion ?? "",
-      followup: branch.followup ?? "",
-      truth: branch.truth ?? brief.truth ?? ""
-    };
-  }
-
-  if (issue.badge) {
-    return {
-      summary: brief.stageJudgement ?? "这一轮几个别扭点都问到了。",
-      deepQuestion: deep?.question ?? "",
-      followup: brief.followupTwist ?? "后续回拨里，咨询者愿意把刚才没说出口的部分补上。",
-      truth: brief.truth ?? "别急着站一边，先把双方没说全的地方补齐。"
-    };
-  }
-
-  return {
-    summary: issue.revealed.length ? `这轮摆到台面上的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，真正别扭的地方还没上桌。",
-    deepQuestion: "",
-    followup: issue.revealed.length ? "后续回拨里，话还没完，评论区会继续抓着没说出口的地方吵。" : brief.followupTwist ?? "",
-    truth: brief.truth ?? "这案不能只按第一印象走，得看每个人少说了哪半截。"
-  };
-}
-
-function conclusionBranchFor(brief = {}, pickedQuestions = []) {
-  const text = pickedQuestions.join(" ");
-  return (brief.conclusionBranches ?? []).find((branch) => {
-    const pattern = branch.match ?? branch.pattern ?? "";
-    if (!pattern) return false;
-    try {
-      return new RegExp(pattern).test(text);
-    } catch {
-      return text.includes(pattern);
-    }
-  }) ?? null;
-}
-
-function routeChoicesForCase(brief) {
-  const key = caseKey(brief);
-  const logged = state.routeChoiceLog?.[key];
-  if (Array.isArray(logged) && logged.length) return logged;
-  return routeChoicesFromPicks(selectedScenePicks(brief));
-}
-
-function routeAxisProfile(brief, result = {}) {
-  void result;
-  return routeAxisProfileFromChoices(routeChoicesForCase(brief));
+  return dailyConclusionModel(brief, result, issue, { pickedQuestions, deepFollowup: deep });
 }
 
 function currentLivePressure(brief, mood = "listening") {
   const sceneHint = currentScenePressureHint(brief);
   return livePressureProfile({
     budget: ensureBudget(brief),
-    foundCount: contradictions(brief).length,
+    foundCount: contradictionsForState(state, brief).length,
     intentHook: liveIntentHookFor(brief),
     pressureSignal: state.lastPressureSignal ?? "",
     routeAxis: state.lastPressureAxis ?? "",
@@ -1588,14 +1350,14 @@ function currentLivePressure(brief, mood = "listening") {
 }
 
 function storyInterludeBackflowProfile(brief = {}) {
-  return investigationBackflowProfile(selectedInvestigationPicksFor(brief));
+  return investigationBackflowProfile(selectedInvestigationPicksForState(state, brief));
 }
 
 function caseProgressStrip(brief) {
   if (!brief) return "";
   return caseProgressStripHtml({
     total: keyQuestionLimit(brief),
-    answered: answeredSceneCount(brief),
+    answered: answeredSceneCountForState(state, brief),
     label: isStoryPackMode() ? "匿名来电" : brief.label ?? "连线中"
   });
 }

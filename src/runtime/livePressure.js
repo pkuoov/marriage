@@ -46,15 +46,11 @@ export function pressuredAnswerVariant(option = {}, { pressureSignal = "" } = {}
 
 export function questionPressureReaction(option = {}, routeTone = "") {
   const tone = routeTone || option.routeTone || "";
-  if (/太细|不太好听|尴尬/.test(option.answer ?? "")) return "弹幕先吵起尺度：问得细不细，和这张资料为什么出现，是两件事。";
-  if (/本科|项目|学制|校名/.test(option.answer ?? "")) return "直播间开始扒标签：图能说明一截，但没说明完整那截。";
-  if (/花销|余额|每个月|团购|停车费/.test(option.answer ?? "")) return "弹幕顺着钱吵起来：一笔小钱不定性，但长期别扭会把问题推回流水。";
-  if (/工资|流水|小家|不舒服/.test(option.answer ?? "")) return "麦里安静了一下：拒绝流水未必心虚，但这句已经碰到婚后钱怎么管。";
-  if (/审批|财务|付款|收款|返款|垫款/.test(option.answer ?? "")) return "弹幕开始对截图：可能是流程慢，也可能是最要紧那页没发。";
-  if (tone === "softening") return "弹幕开始替对方找理由，问题被带远了一点。";
-  if (tone === "caller-skeptical") return "你把问题问回她自己身上，现场先停了一下。";
-  if (tone === "pressure-point" || tone === "trust-but-verify") return "这句咬住了，直播间的人声压低了一点。";
-  return "直播间接住了这个角度，但人声开始有点散。";
+  if (option.pressureReaction) return option.pressureReaction;
+  if (tone === "softening" || tone === "detour") return "这一问给了对方台阶，现场声音又起来了。";
+  if (tone === "caller-skeptical") return "你把话问回咨询者这边，她停了一下。";
+  if (tone === "pressure-point" || tone === "trust-but-verify") return "这个问法把话口压住了。";
+  return option.contradiction ? "这句问到了口子上。" : "直播间接了这个角度，话还得往下听。";
 }
 
 export function materialPressureSignal(outcome = {}) {
@@ -62,13 +58,12 @@ export function materialPressureSignal(outcome = {}) {
 }
 
 export function materialPressureReaction(outcome = {}, check = {}) {
+  void check;
+  if (outcome.pick?.feedback) return outcome.pick.feedback;
   if (outcome.correct) {
-    if (/审批|付款|收款|返款|垫款|供应商/.test(`${check.title ?? ""}${check.material ?? ""}`)) return "这块圈住了，钱路终于有了落点。";
-    if (/表|排班|名单|备注/.test(`${check.title ?? ""}${check.material ?? ""}`)) return "表里这一格被圈出来，弹幕突然不刷了。";
     return "这块圈住了，前面那句开始变味。";
   }
-  if (/截图|图|表|账|审批|流水/.test(outcome.pick?.label ?? "")) return "这一块圈偏了，弹幕又吵到旁边去了。";
-  return "这一下没咬住，评论区开始翻另一边。";
+  return "这一处还撑不住，现场又吵开了。";
 }
 
 export function pressureRecapProfile({ budget = {}, choices = [], foundCount = 0 } = {}) {

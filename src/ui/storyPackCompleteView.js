@@ -6,6 +6,7 @@ export function storyPackCompleteHtml({
   materialProfile = {},
   quoteProfile = {},
   objectProfile = {},
+  hiddenThreadProfile = {},
   briefs = [],
   results = [],
   routeProfiles = [],
@@ -33,6 +34,7 @@ export function storyPackCompleteHtml({
       ${weeklyProfileLine("材料圈点", materialProfile)}
       ${weeklyProfileLine("收麦原话", quoteProfile)}
       ${weeklyProfileLine("这晚翻过", objectProfile)}
+      ${hiddenThreadCardHtml(hiddenThreadProfile)}
       <div class="weekly-result-list">
         ${briefs.map((item, index) => {
           const result = results[index] ?? {};
@@ -55,6 +57,7 @@ export function storyPackShareText({
   pressureProfile = {},
   materialProfile = {},
   quoteProfile = {},
+  hiddenThreadProfile = {},
   playerType = ""
 } = {}) {
   return [
@@ -64,8 +67,9 @@ export function storyPackShareText({
     `现场压力：${pressureProfile.label ?? ""}`,
     `材料圈点：${materialProfile.label ?? ""}`,
     `收麦原话：${quoteProfile.label ?? ""}`,
+    hiddenThreadProfile?.label ? `散场暗线：${hiddenThreadProfile.label}` : "",
     playerType
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 }
 
 function weeklyProfileLine(label, profile = {}) {
@@ -75,6 +79,18 @@ function weeklyProfileLine(label, profile = {}) {
       <span>${escapeHtml(label)}</span>
       <b>${escapeHtml(profile.label)}</b>
       <p>${escapeHtml(profile.line)}</p>
+    </div>
+  `;
+}
+
+function hiddenThreadCardHtml(profile = {}) {
+  if (!profile.total) return "";
+  return `
+    <div class="hidden-thread-card">
+      <span>${escapeHtml(profile.title ?? "今晚暗线")}</span>
+      <b>${escapeHtml(profile.label ?? "")}</b>
+      <p>${escapeHtml(profile.line ?? "")}</p>
+      ${Array.isArray(profile.beats) && profile.beats.length ? `<ol>${profile.beats.map((beat) => `<li>${escapeHtml(beat)}</li>`).join("")}</ol>` : ""}
     </div>
   `;
 }

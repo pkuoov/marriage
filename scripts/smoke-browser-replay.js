@@ -7,7 +7,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
 const routes = [
   { name: "perfect", sceneMode: "core", materialMode: "hit" },
-  { name: "outer", sceneMode: "outer-then-core", materialMode: "hit" },
+  { name: "outer", sceneMode: "outer", materialMode: "hit" },
   { name: "material-miss", sceneMode: "core", materialMode: "miss" },
   { name: "keyboard-perfect", sceneMode: "core", materialMode: "hit", inputMode: "keyboard" },
   { name: "gamepad-perfect", sceneMode: "core", materialMode: "hit", inputMode: "gamepad" }
@@ -70,6 +70,13 @@ async function runRoute(route) {
     });
   });
   const page = await context.newPage();
+  const browserMessages = [];
+  page.on("pageerror", (error) => browserMessages.push(`pageerror: ${error.message}`));
+  page.on("console", (message) => {
+    if (["error", "warning"].includes(message.type())) {
+      browserMessages.push(`${message.type()}: ${message.text()}`);
+    }
+  });
   page.setDefaultTimeout(8000);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-${route.name}-${Date.now()}&storyKey=steam-demo-01`);
@@ -79,10 +86,8 @@ async function runRoute(route) {
 
     for (let beat = 0; beat < 5; beat += 1) {
       await page.locator(".scene-question-group").waitFor({ state: "visible" });
-      if (route.sceneMode === "outer-then-core" && await page.locator("[data-scene-dialogue]").count()) {
-        await activate(page, route, "[data-scene-dialogue]");
-      }
-      await activate(page, route, "[data-scene-question]");
+      const questionIndex = route.sceneMode === "outer" && await page.locator("[data-scene-question]").count() > 1 ? 1 : 0;
+      await activate(page, route, "[data-scene-question]", questionIndex);
       await advanceSceneBeat(page, route);
     }
 
@@ -105,6 +110,7 @@ async function runRoute(route) {
     const text = await page.locator("body").innerText().catch(() => "");
     console.error(`${route.name} route failed.`);
     console.error(text.slice(0, 1200));
+    if (browserMessages.length) console.error(browserMessages.join("\n"));
     throw error;
   } finally {
     await context.close();
@@ -122,18 +128,34 @@ async function advanceToAccusation(page, route) {
 }
 
 async function completePostAccusation(page, route) {
-  for (let step = 0; step < 6; step += 1) {
+  const deadline = Date.now() + 8000;
+  while (Date.now() < deadline) {
     if (await page.locator(".recap-score-head").count()) return;
-    if (await page.locator("[data-evidence-check]").count()) {
-      await activate(page, route, "[data-evidence-check]");
-      continue;
-    }
     if (await page.locator("[data-after-investigation]").count()) {
       await activate(page, route, "[data-after-investigation]");
+      await page.waitForTimeout(80);
+      continue;
+    }
+    if (await page.locator("button[data-scene]").count()) {
+      await activate(page, route, "button[data-scene]");
+      await page.waitForTimeout(80);
+      continue;
+    }
+    if (await page.locator("[data-evidence-check]").count()) {
+      await activate(page, route, "[data-evidence-check]");
+      await page.waitForTimeout(80);
       continue;
     }
     await page.waitForTimeout(80);
   }
+  const controls = await page.evaluate(() => ({
+    recap: document.querySelectorAll(".recap-score-head").length,
+    afterInvestigation: document.querySelectorAll("[data-after-investigation]").length,
+    sceneButtons: document.querySelectorAll("button[data-scene]").length,
+    evidenceButtons: document.querySelectorAll("[data-evidence-check]").length,
+    buttons: Array.from(document.querySelectorAll("button")).map((button) => button.outerHTML.slice(0, 160))
+  }));
+  throw new Error(`Post-accusation flow did not reach recap: ${JSON.stringify(controls)}`);
 }
 
 async function exerciseTruthBoundary(page, route) {
@@ -157,7 +179,7 @@ async function exerciseTruthBoundary(page, route) {
   await page.locator("[data-recap-next]").first().waitFor({ state: "visible" });
   await activate(page, route, "[data-recap-next]");
   await page.locator(".truth-boundary-reveal").waitFor({ state: "visible" });
-  await assertVisibleText(page, "你刚才放在", "Truth boundary reveal should show where an early placement landed");
+  await assertVisibleText(page, "归到了", "Truth boundary reveal should show where an early placement landed");
 }
 
 async function advanceSceneBeat(page, route) {

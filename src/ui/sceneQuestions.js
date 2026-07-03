@@ -7,27 +7,16 @@ export function focusedQuestionOptions(options = []) {
 }
 
 export function sceneQuestionChoicesHtml(sceneIndex, options = [], askedDialoguePicks = []) {
-  const asked = new Set((askedDialoguePicks ?? []).map((item) => item.optionIndex));
-  const dialogueOptions = questionOptionsByKind(options, "dialogue").filter(({ optionIndex }) => !asked.has(optionIndex));
-  const criticalOptions = questionOptionsByKind(options, "key");
-  const rows = [
-    ...dialogueOptions.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "dialogue")),
-    ...criticalOptions.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "key"))
-  ].join("");
+  void askedDialoguePicks;
+  const rows = options
+    .map((option, optionIndex) => choiceQuestionButton(sceneIndex, optionIndex, option))
+    .join("");
   return choiceGroup("这句怎么问", rows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group");
 }
 
-function questionOptionsByKind(options = [], kind = "key") {
-  const wantCritical = kind === "key";
-  return options
-    .map((option, optionIndex) => ({ option, optionIndex }))
-    .filter(({ option }) => Boolean(option.contradiction) === wantCritical);
-}
-
-function choiceQuestionButton(sceneIndex, optionIndex, option = {}, kind = "key") {
-  const attr = kind === "dialogue" ? "data-scene-dialogue" : "data-scene-question";
+function choiceQuestionButton(sceneIndex, optionIndex, option = {}) {
   return `
-    <button class="choice-question" ${attr}="${sceneIndex}:${optionIndex}" type="button">
+    <button class="choice-question" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
       <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
     </button>
   `;
