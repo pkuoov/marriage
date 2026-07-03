@@ -278,13 +278,18 @@ export function generateWeeklyCaseSequence(npcs, attrs, options = {}) {
 }
 
 function applyDailyCaseTemplate(brief, names) {
-  if (brief.plotId === "lost-job-hidden-credit") return dailyLostJobCreditTemplate(brief, names);
-  if (brief.plotId === "house-name-security-test") return dailyHouseBoundaryTemplate(brief, names);
-  if (brief.plotId === "tony-multi-dating") return dailyTonyMultiDatingTemplate(brief, names);
-  if (brief.plotId === "education-income-fake-profile") return dailyFakeProfileTemplate(brief, names);
-  if (brief.plotId === "workplace-reimbursement-screenshot") return dailyWorkplaceReimbursementTemplate(brief, names);
+  const builder = DAILY_TEMPLATE_BUILDERS[brief.plotId];
+  if (builder) return builder(brief, names);
   throw new Error(`Daily case plot is not templated: ${brief.plotId}`);
 }
+
+const DAILY_TEMPLATE_BUILDERS = {
+  "lost-job-hidden-credit": dailyLostJobCreditTemplate,
+  "house-name-security-test": dailyHouseBoundaryTemplate,
+  "tony-multi-dating": dailyTonyMultiDatingTemplate,
+  "education-income-fake-profile": dailyFakeProfileTemplate,
+  "workplace-reimbursement-screenshot": dailyWorkplaceReimbursementTemplate
+};
 
 function dailyCaseKey(now = new Date()) {
   const date = now instanceof Date ? now : new Date(now);

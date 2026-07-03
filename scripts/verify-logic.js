@@ -143,6 +143,8 @@ test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outs
   assertEqual(profile.axis, "caller-credibility", "最多路线轴必须成为路线画像主轴");
   assertEqual(profile.label, "来电人可信度线", "路线画像必须输出玩家可读标签");
   assertIncludes(profile.summary, "不急着相信来电人的版本", "连续怀疑来电人时，summary 必须反映路线倾向");
+  assertIncludes(caseEngineSource, "DAILY_TEMPLATE_BUILDERS", "日案模板分发必须走 registry，减少新增 plot 的硬编码入口");
+  assert(!caseEngineSource.includes("if (brief.plotId ==="), "日案模板分发不能退回 plotId if 链");
 });
 
 test("MATERIAL-001", "material operation model records hit and miss without UI coupling", () => {
