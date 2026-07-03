@@ -10,13 +10,13 @@ import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.
 import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
+import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "./ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
@@ -503,7 +503,11 @@ function renderSolved(brief) {
     issue,
     result,
     route,
-    routeTrail: routeTrailHtml(brief),
+    routeTrail: routeTrailHtml({
+      choices: routeChoicesForCase(brief),
+      keyQuestionCount: keyQuestionLimit(brief),
+      investigationIndexBase: investigationRouteIndexBase(brief)
+    }),
     pressure,
     quoteComparison,
     conclusion,
@@ -1564,30 +1568,6 @@ function routeChoicesForCase(brief) {
 function routeAxisProfile(brief, result = {}) {
   void result;
   return routeAxisProfileFromChoices(routeChoicesForCase(brief));
-}
-
-function routeTrailHtml(brief) {
-  const nodes = routeTrailModel({
-    choices: routeChoicesForCase(brief),
-    keyQuestionCount: keyQuestionLimit(brief),
-    investigationIndexBase: investigationRouteIndexBase(brief)
-  });
-  if (!nodes.length) return "";
-  return `
-    <div class="route-trail">
-      ${nodes.map((item) => routeTrailItemHtml(item)).join("")}
-    </div>
-  `;
-}
-
-function routeTrailItemHtml(item) {
-  return `
-    <span>
-      <em>${escapeHtml(item.mark)}</em>
-      <b>${escapeHtml(item.label)}</b>
-      ${item.question ? `<small>${escapeHtml(item.question)}</small>` : ""}
-    </span>
-  `;
 }
 
 function currentLivePressure(brief, mood = "listening") {

@@ -21,6 +21,7 @@ import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } f
 import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
+import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
@@ -368,6 +369,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const storyPackSummarySource = readFileSync(new URL("../src/runtime/storyPackSummaryModel.js", import.meta.url), "utf8");
   const liveCallViewSource = readFileSync(new URL("../src/ui/liveCallView.js", import.meta.url), "utf8");
   const recapViewSource = readFileSync(new URL("../src/ui/recapView.js", import.meta.url), "utf8");
+  const routeTrailViewSource = readFileSync(new URL("../src/ui/routeTrailView.js", import.meta.url), "utf8");
   const sceneReviewViewSource = readFileSync(new URL("../src/ui/sceneReviewView.js", import.meta.url), "utf8");
   const storyInterludeViewSource = readFileSync(new URL("../src/ui/storyInterludeView.js", import.meta.url), "utf8");
   const storyPackCompleteViewSource = readFileSync(new URL("../src/ui/storyPackCompleteView.js", import.meta.url), "utf8");
@@ -391,6 +393,22 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!appSource.includes("今晚四路麦都挂了"), "故事集终局不能写死四路麦");
   assertIncludes(routeMapSource, "return \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
   assertIncludes(routeMapSource, "return \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
+  assertIncludes(appSource, "./ui/routeTrailView.js", "路线图 HTML 必须从 app.js 拆到 ui/routeTrailView");
+  assertIncludes(routeTrailViewSource, "routeTrailModel", "路线图 UI 必须复用 runtime routeTrailModel，不能自己重新判断节点类型");
+  assert(!appSource.includes("function routeTrailHtml"), "路线图 HTML 不能继续留在 app.js");
+  const routeTrailUi = routeTrailHtml({
+    choices: [
+      { sceneIndex: 0, axis: "caller-credibility", question: "你当时有没有起疑心？" },
+      { sceneIndex: 5, axis: "document-edge", question: "这份材料少了哪一边？" },
+      { sceneIndex: 10, axis: "external-corroboration", question: "后台回流里哪句最该圈？" }
+    ],
+    keyQuestionCount: 5,
+    investigationIndexBase: 10
+  });
+  assertIncludes(routeTrailUi, "route-trail", "路线图 HTML 必须可由纯 UI 模块渲染");
+  assertIncludes(routeTrailUi, ">料<", "路线图 UI 必须把材料节点显示为料");
+  assertIncludes(routeTrailUi, ">回<", "路线图 UI 必须把回流节点显示为回");
+  assertIncludes(routeTrailUi, "你当时有没有起疑心？", "路线图 UI 必须保留玩家实际问题痕迹");
   assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
   assert(!appSource.includes("\"lost-job-hidden-credit\": `账单摊开以后"), "案间收束句必须来自内容包 storyInterludeRecap，不能留 app.js plotId 映射");
   assert(!appSource.includes("\"lost-job-hidden-credit\": \"backdrop-credit\""), "案件背景 class 必须来自 brief.backdropClass，不能留 app.js plotId 映射");

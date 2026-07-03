@@ -39,6 +39,7 @@
 - 案间过渡 HTML 已拆到 `src/ui/storyInterludeView.js`：上一通余味、下一通 dramatic object 和接麦按钮文案都有纯 UI 断言，避免退回“下一案/下一通来电”目录页。
 - 标题页 HTML 已拆到 `src/ui/titleView.js`：直播信号条、热线接入 hook 和入口按钮都有纯 UI 断言，防止首页重新剧透案数、目录或主题论点。
 - 对话回合 HTML 已拆到 `src/ui/sceneReviewView.js`：第几段来电、当前/已完成对话正文、追问气泡组装和继续按钮可脱离 `app.js` 测试；`app.js` 只负责拿 `sceneReviewModel`、选择问题组、读取存档答案和绑定点击。
+- 路线图 HTML 已拆到 `src/ui/routeTrailView.js`：普通追问、材料圈点和私信回流节点继续由 `src/runtime/routeMapModel.js` 产出，`app.js` 只传入当前案的路线记录。
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 - 存档已抽到 `src/platform/saveStore.js`：Web 仍是单槽 localStorage；桌面壳可通过 `platformRuntime.saveFiles` 提供 `read/write/remove/list/exportForCloud` 文件存档接口，后续接 Steam Cloud。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
@@ -148,6 +149,7 @@ content/packs/steam-demo-01/
 - `src/ui/titleView.js` 已接管标题页直播信号、热线 hook 和入口按钮。
 - `src/ui/sceneReviewView.js` 已接管对话回合正文、active/completed exchange 组装和继续按钮，`app.js` 只保留一个从存档取 fallback answer 的薄适配。
 - `src/ui/recapView.js` 已接管单案回看页面组和 flow 外壳；后续只在新增回看状态时补 helper，不再把分页/按钮文案写回 `app.js`。
+- `src/ui/routeTrailView.js` 已接管路线图 HTML，`app.js` 只准备 route choices、关键追问数和回流起始下标。
 - `src/ui/dailyCompleteView.js` 已接管 daily 单案结果卡和复制文案。
 - `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；`desktop/electron/preload.cjs` 已接同步文件存档 IPC，下一步接 Electron 依赖和打包器。
 
