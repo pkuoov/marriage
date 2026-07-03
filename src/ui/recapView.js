@@ -139,7 +139,7 @@ export function truthBoundaryRevealHtml(review, picks = {}) {
               const promptId = `${column.key}:${index}`;
               const wasPrompted = (review.prompts ?? []).some((prompt) => prompt.id === promptId);
               const picked = picks[promptId] ?? "";
-              const mark = picked ? picked === column.key ? "你放准了" : `你放到了${truthBoundaryChoiceLabel(review, picked)}` : wasPrompted ? "未放" : "主播补充";
+              const mark = picked ? picked === column.key ? "放在这儿说得通" : `你刚才放在${truthBoundaryChoiceLabel(review, picked)}` : wasPrompted ? "没放" : "回看补上";
               return `<li>${escapeHtml(item)}<small>${escapeHtml(mark)}</small></li>`;
             }).join("")}
           </ul>

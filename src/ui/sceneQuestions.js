@@ -14,7 +14,7 @@ export function sceneQuestionChoicesHtml(sceneIndex, options = [], askedDialogue
     ...dialogueOptions.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "dialogue")),
     ...criticalOptions.map(({ option, optionIndex }) => choiceQuestionButton(sceneIndex, optionIndex, option, "key"))
   ].join("");
-  return choiceGroup("你问", rows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group");
+  return choiceGroup("这句怎么问", rows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group");
 }
 
 function questionOptionsByKind(options = [], kind = "key") {

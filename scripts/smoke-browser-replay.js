@@ -157,7 +157,7 @@ async function exerciseTruthBoundary(page, route) {
   await page.locator("[data-recap-next]").first().waitFor({ state: "visible" });
   await activate(page, route, "[data-recap-next]");
   await page.locator(".truth-boundary-reveal").waitFor({ state: "visible" });
-  await assertVisibleText(page, "你放到", "Truth boundary reveal should show where an early placement landed");
+  await assertVisibleText(page, "你刚才放在", "Truth boundary reveal should show where an early placement landed");
 }
 
 async function advanceSceneBeat(page, route) {

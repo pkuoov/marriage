@@ -48,6 +48,7 @@ export const baseState = {
   lastReaction: null,
   lastPressureSignal: null,
   lastPressureAxis: null,
+  patienceLostContext: null,
   recapStep: 0
 };
 
@@ -89,6 +90,7 @@ export function migrateState(saved) {
   if (!next.caseInterludes || Array.isArray(next.caseInterludes)) next.caseInterludes = {};
   if (!("lastReaction" in next)) next.lastReaction = null;
   if (!("lastPressureSignal" in next)) next.lastPressureSignal = null;
+  if (!("patienceLostContext" in next)) next.patienceLostContext = null;
   if (!("lastPressureAxis" in next)) next.lastPressureAxis = null;
   next.sceneQuestionPicks = migrateChoiceRecord(next.sceneQuestionPicks);
   next.sceneDialoguePicks = migrateChoiceListRecord(next.sceneDialoguePicks);

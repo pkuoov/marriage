@@ -48,7 +48,7 @@ export function choiceReviewHtml(rows = []) {
   return `
     <details class="choice-review">
       <summary>
-        <span>上一段</span>
+        <span>上一问</span>
       </summary>
       ${content}
     </details>

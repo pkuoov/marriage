@@ -386,8 +386,8 @@ button:active:not(:disabled) {
 }
 
 .case-vn-grid .case-progress-strip {
-  left: auto;
-  right: 18px;
+  left: 18px;
+  right: auto;
   top: 18px;
 }
 

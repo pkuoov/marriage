@@ -109,6 +109,7 @@ function normalizeDailyState(saved) {
     lastReaction: saved?.lastReaction ?? null,
     lastPressureSignal: saved?.lastPressureSignal ?? null,
     lastPressureAxis: saved?.lastPressureAxis ?? null,
+    patienceLostContext: saved?.patienceLostContext ?? null,
     settings: { ...baseState.settings, ...(saved?.settings ?? {}) }
   };
 }
@@ -273,7 +274,7 @@ function renderSceneReview(brief) {
       done,
       completedExchangeHtml: done ? completedSceneExchangeForReview(brief, scene, index, pick) : "",
       activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene, dialoguePicks: askedDialoguePicks(brief, index) }),
-      reviewHtml: keyChoiceReview(brief)
+      reviewHtml: keyChoiceReview(brief, { excludeIndex: index })
     }),
     choices: done
       ? sceneReviewDoneChoicesHtml({ lastStage, nextStage, nextLabel })
@@ -382,25 +383,22 @@ function renderPatienceLost(brief) {
   frame({
     brief,
     mood: "tense",
-    label: "听众散了",
+    label: "这通断了",
     chapter: liveChapterTitle(brief),
     text: `
       ${callDialogueHtml([
-        { role: "host", text: "先收一下。弹幕已经散了，这通麦再问下去只会变成各说各的。" },
-        { role: "caller", text: "我也有点乱。要不这通先到这儿，我回去把材料和原话再整理一下。" }
+        { role: "host", text: "停一下，这里接乱了。" },
+        { role: "caller", text: "嗯，我刚才也乱了。我们从前面那句重新说吧。" }
       ])}
-      <p class="hint">这案没有收麦。直播间的耐心被消耗完了。</p>
+      <p class="hint">这案还没收住。回到刚才那一步重新接。</p>
     `,
     choices: flowGroupHtml(`
-      <button class="primary" data-retry-case type="button">重问本案</button>
-      ${isStoryPackMode() ? `<button data-after-patience-lost type="button">${isFinalStoryPackCase() ? "查看整晚收麦" : "接下一路麦"}</button>` : `<button data-action="title" type="button">回标题</button>`}
+      <button class="primary" data-retry-lost-step type="button">从这句重来</button>
+      <button data-action="title" type="button">回标题</button>
     `)
   });
-  bind("[data-retry-case]", () => resetCaseAttempt(brief));
-  bind("[data-after-patience-lost]", () => {
-    if (isFinalStoryPackCase()) return moveScene("runComplete");
-    advanceToNextStoryPackCase("刚才那路麦散了，后台又亮起一路。");
-  });
+  bind("[data-retry-lost-step]", () => retryPatienceLostStep(brief));
+  bindSceneButtons();
 }
 
 function renderAccusation(brief) {
@@ -721,10 +719,11 @@ function completedSceneExchangeForReview(brief, scene, index, pick = {}) {
   });
 }
 
-function keyChoiceReview(brief) {
+function keyChoiceReview(brief, { excludeIndex = null } = {}) {
   const scenes = brief.sceneVersions ?? [];
   const lastAnsweredIndex = scenes.reduce((last, _, index) => actionDone(brief, `version:${index}`) ? index : last, -1);
   const lastDialogueIndex = scenes.reduce((last, _, index) => askedDialoguePicks(brief, index).length ? index : last, -1);
+  if (lastAnsweredIndex === excludeIndex || lastDialogueIndex === excludeIndex) return "";
   if (lastAnsweredIndex < 0 && lastDialogueIndex < 0) return "";
   const rows = lastAnsweredIndex >= 0
     ? [
@@ -914,7 +913,14 @@ function handleSceneDialogueButton(button) {
   state.lastReaction = questionPressureReaction({ ...option, answer }, option.routeTone ?? routeToneForChoice(option));
   state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
   state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
-  if (audiencePatienceLost(brief)) return;
+  if (audiencePatienceLost(brief, {
+    area: "sceneReview",
+    index: sceneIndex,
+    actionKeys: [`dialogue:${sceneIndex}:${optionIndex}`],
+    answerKey: key,
+    dialogueOptionIndex: optionIndex,
+    spent: true
+  })) return;
   saveState();
   render();
 }
@@ -954,7 +960,15 @@ function handleSceneQuestionButton(button) {
     }
   };
   recordRouteChoice(brief, sceneIndex, option, scene);
-  if (audiencePatienceLost(brief)) return;
+  if (audiencePatienceLost(brief, {
+    area: "sceneReview",
+    index: sceneIndex,
+    actionKeys: [`sceneQuestion:${sceneIndex}:${optionIndex}`, `version:${sceneIndex}`],
+    answerKey: answerKey(brief, sceneIndex),
+    routeIndex: sceneIndex,
+    spent: !option.contradiction,
+    removeQuestionPick: true
+  })) return;
   saveState();
   render();
 }
@@ -987,11 +1001,15 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       state.lastReaction = materialPressureReaction(outcome, check);
       state.lastPressureSignal = materialPressureSignal(outcome);
       state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
-      if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
-        state.scene = "patienceLost";
-        saveState();
-        return render();
-      }
+      if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
+        area: "evidenceCheck",
+        index: checkIndex,
+        actionKeys: [`evidenceCheck:${checkIndex}:${optionIndex}`, `evidenceCheck:${checkIndex}`],
+        answerKey: evidenceAnswerKey(brief, checkIndex),
+        routeIndex: keyQuestionLimit(brief) + checkIndex,
+        spent: true,
+        removeEvidencePick: true
+      });
       saveState();
       render();
     });
@@ -1026,11 +1044,15 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
       state.lastReaction = investigationPickReaction(outcome, hook);
       state.lastPressureSignal = materialPressureSignal(outcome);
       state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
-      if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
-        state.scene = "patienceLost";
-        saveState();
-        return render();
-      }
+      if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
+        area: "investigationBackflow",
+        index: hookIndex,
+        actionKeys: [`investigation:${hookIndex}:${optionIndex}`, `investigation:${hookIndex}`],
+        answerKey: investigationAnswerKey(brief, hookIndex),
+        routeIndex: investigationRouteIndexBase(brief) + hookIndex,
+        spent: true,
+        removeInvestigationPick: true
+      });
       saveState();
       render();
     });
@@ -1058,13 +1080,17 @@ function moveScene(scene) {
 }
 
 function setIndex(brief, area, index) {
-  const total = brief.sceneVersions?.length ?? 1;
+  setIndexValue(brief, area, index);
+  saveState();
+  render();
+}
+
+function setIndexValue(brief, area, index) {
+  const total = area === "sceneReview" ? brief.sceneVersions?.length ?? 1 : area === "evidenceCheck" ? evidenceChecksFor(brief).length || 1 : unlockedInvestigationEntriesFor(brief).length || 1;
   state.dialogueProgress = {
     ...(state.dialogueProgress ?? {}),
     [`${caseKey(brief)}:${area}`]: Math.max(0, Math.min(index, total - 1))
   };
-  saveState();
-  render();
 }
 
 function currentIndex(brief, area, total) {
@@ -1222,7 +1248,55 @@ function advanceToNextStoryPackCase(message = "新的来电接进来，上一通
   state.caseBrief = activeCaseBrief();
   state.scene = "caseOpen";
   state.recapStep = 0;
+  state.patienceLostContext = null;
   state.lastReaction = message;
+  saveState();
+  render();
+}
+
+function retryPatienceLostStep(brief) {
+  const context = state.patienceLostContext ?? {};
+  const key = caseKey(brief);
+  const answerId = context.answerKey;
+  if (answerId && context.removeQuestionPick) {
+    state.sceneQuestionPicks = omitRecordKey(state.sceneQuestionPicks, answerId);
+    state.sceneAnswers = omitRecordKey(state.sceneAnswers, answerId);
+  }
+  if (answerId && context.dialogueOptionIndex !== undefined) {
+    const current = state.sceneDialoguePicks?.[answerId] ?? [];
+    state.sceneDialoguePicks = {
+      ...(state.sceneDialoguePicks ?? {}),
+      [answerId]: current.filter((item) => Number(item.optionIndex) !== Number(context.dialogueOptionIndex))
+    };
+  }
+  if (answerId && context.removeEvidencePick) {
+    state.evidenceCheckPicks = omitRecordKey(state.evidenceCheckPicks, answerId);
+  }
+  if (answerId && context.removeInvestigationPick) {
+    state.investigationPicks = omitRecordKey(state.investigationPicks, answerId);
+  }
+  if (Number.isInteger(context.routeIndex)) {
+    state.routeChoiceLog = {
+      ...(state.routeChoiceLog ?? {}),
+      [key]: (state.routeChoiceLog?.[key] ?? []).filter((item) => Number(item.sceneIndex) !== Number(context.routeIndex))
+    };
+  }
+  state.caseActionLog = {
+    ...(state.caseActionLog ?? {}),
+    [key]: omitRecordKeys(state.caseActionLog?.[key] ?? {}, context.actionKeys ?? [])
+  };
+  if (context.spent) {
+    state.caseBudgets = {
+      ...(state.caseBudgets ?? {}),
+      [key]: refundOneBudgetPoint(ensureBudget(brief))
+    };
+  }
+  state.scene = context.area ?? "sceneReview";
+  if (Number.isInteger(context.index)) setIndexValue(brief, context.area ?? "sceneReview", context.index);
+  state.lastReaction = null;
+  state.lastPressureSignal = null;
+  state.lastPressureAxis = null;
+  state.patienceLostContext = null;
   saveState();
   render();
 }
@@ -1246,6 +1320,7 @@ function resetCaseAttempt(brief) {
   state.caseInterludes = omitRecordKey(state.caseInterludes, key);
   state.caseBudgets = omitRecordKey(state.caseBudgets, key);
   state.recapStep = 0;
+  state.patienceLostContext = null;
   saveState();
   render();
 }
@@ -1263,6 +1338,18 @@ function omitRecordKey(record = {}, keyToOmit) {
   return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => key !== keyToOmit));
 }
 
+function omitRecordKeys(record = {}, keysToOmit = []) {
+  const remove = new Set(keysToOmit ?? []);
+  return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => !remove.has(key)));
+}
+
+function refundOneBudgetPoint(budget = {}) {
+  const max = Math.max(0, Number(budget.max ?? 0));
+  const remaining = Math.min(max, Number(budget.remaining ?? 0) + 1);
+  const used = Math.max(0, Number(budget.used ?? 0) - 1);
+  return { ...budget, max, remaining, used };
+}
+
 function markAction(brief, actionKey, { spend = false } = {}) {
   const key = caseKey(brief);
   const patch = applyActionMark({
@@ -1276,7 +1363,7 @@ function markAction(brief, actionKey, { spend = false } = {}) {
   state.caseActionLog = patch.caseActionLog;
 }
 
-function audiencePatienceLost(brief) {
+function audiencePatienceLost(brief, context = {}) {
   const budget = ensureBudget(brief);
   if (!casePatienceLost({
     budget,
@@ -1285,7 +1372,16 @@ function audiencePatienceLost(brief) {
     answeredEvidence: answeredEvidenceCountFor(brief),
     requiredEvidence: evidenceChecksFor(brief).length
   })) return false;
+  recordPatienceLost(brief, context);
+  return true;
+}
+
+function recordPatienceLost(brief, context = {}) {
   state.scene = "patienceLost";
+  state.patienceLostContext = {
+    caseId: caseKey(brief),
+    ...context
+  };
   state.lastReaction = null;
   state.lastPressureSignal = null;
   state.lastPressureAxis = null;

@@ -196,7 +196,7 @@ Avoid:
    - After the player enters the first call, do the HUD, dialogue eyebrow, interlude, or next button still expose pack structure, such as "four-case story collection", "case 1/4", named act labels, or "next case"? If yes, rewrite those as live-room language: "热线连线", "匿名来电", "接入下一通", "今晚收麦". Interlude card titles should use dramatic objects, not "下一通来电".
    - Does a main-flow continue button or helper label imply replay, recap, or audio review, such as "continue listening to original audio" or "call replay"? If yes, use neutral dialogue-forward copy like "continue" and "previous dialogue".
    - Does a main-flow action area add labels or notes that only explain the UI, such as "麦上动作" or "麦还连着"? If yes, remove the label layer and let the buttons stand on their own.
-   - Does a collapsed review/backlog affordance use archive labels such as "前文对话", "开场对话", or "上一轮追问后"? If yes, replace it with one plain live-call phrase such as "刚才说到".
+   - Does a collapsed review/backlog affordance use archive labels such as "前文对话", "开场对话", or "上一轮追问后"? If yes, replace it with one plain live-call phrase such as "上一问".
    - Do background live-room chips sound like AI workflow instructions, such as "continue chasing the original quote", "listen to the next original line", or "key original quote"? If yes, rewrite them as natural audience/host atmosphere: "麦里有回声", "话没说满", "弹幕压一压".
    - Does a current-choice hint tell the player which hidden route axis to use, such as "first look at money flow/material edge/process control"? If yes, remove the axis hint from the play screen. Route tendencies belong in recap, not before the choice.
    - Does the deep-question screen show scoring or completion copy such as "full-hit follow-up" or "key points connected"? If yes, remove it and let the host question itself carry the moment.
@@ -266,9 +266,11 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - Button text is not a legend. Do not label choices with route categories, difficulty categories, or designer shorthand. If the player can ask it, show the question. If it only explains the design, keep it out of the live-call UI.
 - Current-node buttons should have equal visual weight. Hidden core/outer route data must not leak through color, border, card style, placement labels, or "recommended" emphasis.
 - Main-flow button groups do not need a heading. Avoid filler labels such as "麦上动作" and "麦还连着"; they make the screen sound like a prototype.
-- Backlog/review affordances should not sound like document categories. Prefer "刚才说到" over "前文对话 / 开场对话 / 上一轮追问后".
+- Backlog/review affordances should not sound like document categories. Prefer "上一问" over "前文对话 / 开场对话 / 上一轮追问后".
 - Host options should not sound like psychological labels or edited outline copy. Prefer "你当时有没有起疑心", "你为什么没继续问", "这句话后面接了什么", or "话当时没说死，你当时怎么回他的" over "你是不是先心疼/你是不是也怕/关系一直没说死，你当时怎么接的".
 - If a user points out a bad feeling during playtest, immediately classify it as: early spoiler, repeated beat, unsupported host leap, caller too clean, weak outer option, recap overreach, UI confusion, route-map blur, template prompt repetition, or platform/control friction.
+- Live-room reaction copy must name a concrete thing that happened. Avoid abstract atmosphere meters unless the line also tells the player what was actually pulled off course.
+- Audience patience depletion is a failed attempt for the current call. Do not jump to the next call or the story-pack summary from that screen; let the player retry from the step that broke the call.
 
 ## Integrated Writing Loop
 

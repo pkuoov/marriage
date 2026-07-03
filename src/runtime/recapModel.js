@@ -121,9 +121,9 @@ export function truthBoundaryAftertaste(review = {}, picks = {}, misses = {}) {
   const wrong = prompts.filter((prompt) => picks[prompt.id] && picks[prompt.id] !== prompt.expected).length;
   const totalMisses = Math.max(wrong, prompts.reduce((sum, prompt) => sum + Number(misses[prompt.id] ?? 0), 0));
   const settled = prompts.every((prompt) => picks[prompt.id] === prompt.expected);
-  if (placed.length < prompts.length) return "这几句还没放完，收话先压一压。";
-  if (!settled) return totalMisses > 1 ? "有几句放早了，今晚能钉住的东西比你刚才少。" : "有句放早了，今晚不能替任何一边把话补完。";
-  return "这几句边界放稳了：能确认的钉住，定不了的不替人补。";
+  if (placed.length < prompts.length) return "还有话没归位，先别急着收。";
+  if (!settled) return totalMisses > 1 ? "有几句还撑不住，今晚不能这么定。" : "有句还悬着，先别替人把话补上。";
+  return "这几句能说清：有证据的放住，没证据的先空着。";
 }
 
 export function truthBoundaryPackProfile(rows = []) {
@@ -373,7 +373,7 @@ export function investigationPickReaction(outcome = {}, hook = {}) {
     if (/私信|后台|补/.test(hook.surface ?? "")) return "后台这页咬住了，弹幕短暂安静。";
     return "这块圈住了，麦里的话往回收了一点。";
   }
-  if (/截图|图|表|账/.test(outcome.pick?.label ?? "")) return "弹幕被这块带跑，麦温往下掉了一格。";
+  if (/截图|图|表|账/.test(outcome.pick?.label ?? "")) return "这一块圈偏了，弹幕又吵到旁边去了。";
   return "这一下没咬住，评论区开始翻另一边。";
 }
 
@@ -458,7 +458,7 @@ function backflowReaction({ total, hits, misses }) {
 
 function boundaryPackLabel({ total, settledCount, missCount }) {
   if (!total) return "边界未开";
-  if (missCount > 0 && settledCount < total) return "放早了";
+  if (missCount > 0 && settledCount < total) return "定急了";
   if (settledCount < total) return "还压着";
   if (missCount > 0) return "收回来了";
   return "挂得住";
@@ -466,9 +466,9 @@ function boundaryPackLabel({ total, settledCount, missCount }) {
 
 function boundaryPackLine({ total, settledCount, missCount, unsettledLabel }) {
   if (!total) return "今晚没有留下可回看的事实边界。";
-  if (missCount > 0 && settledCount < total) return `${unsettledLabel || "有一通"}有几句放早了，证据撑不到那里。`;
+  if (missCount > 0 && settledCount < total) return `${unsettledLabel || "有一通"}有几句还撑不住，证据到不了那里。`;
   if (settledCount < total) return `${unsettledLabel || "有一通"}还有几句没归位，评论区会咬着不放。`;
-  if (missCount > 0) return "有几句差点放早，最后还是收回到了证据能撑住的位置。";
+  if (missCount > 0) return "有几句一开始放偏了，最后还是收回到证据能撑住的位置。";
   return "该钉的钉了，定不了的没替人补完。";
 }
 

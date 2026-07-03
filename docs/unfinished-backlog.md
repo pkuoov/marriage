@@ -35,8 +35,8 @@
 - 材料检视和后台私信回流推进已拆出 `evidenceCheckModel` / `investigationBackflowModel`：当前材料、未处理回流、缺省态和下一步按钮都可纯函数测试。
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`：`app.js` 只收集现场压力、进度、立绘资源和表情状态，UI 细节可单独测试。
 - 直播主舞台和控场台外壳已拆到 `src/ui/liveFrameView.js`：topbar、`live-console-shell` 和 control deck DOM 可脱离 `app.js` 测试，`app.js` 只负责传入当前模式、HUD、材料名、压力和事件绑定。
-- 通用通话气泡、流程按钮组和“上一段”回看 HTML 已拆到 `src/ui/callFlowView.js`：`app.js` 只负责决定当前要展示哪些行，不再维护这些通用 DOM 模板。
-- 材料检视和后台私信回流整页 HTML 已拆到 `src/ui/evidenceView.js`：材料标题、材料操作台、圈点反馈和上一段回看接入都能脱离 `app.js` 测试。
+- 通用通话气泡、流程按钮组和“上一问”回看 HTML 已拆到 `src/ui/callFlowView.js`：`app.js` 只负责决定当前要展示哪些行，不再维护这些通用 DOM 模板。
+- 材料检视和后台私信回流整页 HTML 已拆到 `src/ui/evidenceView.js`：材料标题、材料操作台、圈点反馈和上一问回看接入都能脱离 `app.js` 测试。
 - 案间过渡文案模型已拆到 `src/runtime/storyInterludeModel.js`：上一通收束、下一通物件名和桥接句不再作为纯文案判断留在 `app.js`。
 - 收麦回看 HTML 已拆到 `src/ui/recapView.js`：事实边界归位、最终原话对比、单案回看页面组、分页 kicker 和继续/重问/出口按钮都可以脱离 `app.js` 测试，`app.js` 只处理归位点击和流程推进。
 - 今日单案结果卡已拆到 `src/ui/dailyCompleteView.js`：结果卡 HTML、复制按钮和复制文案可脱离 `app.js` 测试，`app.js` 只负责算路线/问题结果、绑定复制和发分享 payload。
@@ -153,8 +153,8 @@ content/packs/steam-demo-01/
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；下一步继续拆 `renderSceneReview` / `renderRecap`。
 - `src/ui/liveFrameView.js` 已接管案内 topbar、直播控场台和主舞台骨架 HTML，`app.js` 只保留状态清理、按钮绑定和默认焦点。
-- `src/ui/callFlowView.js` 已接管通用选择组、流程按钮组、通话气泡和上一段回看 details。
-- `src/ui/evidenceView.js` 已接管材料检视和后台私信回流的页面 HTML；`app.js` 只传入当前材料模型、上一段回看和绑定点击。
+- `src/ui/callFlowView.js` 已接管通用选择组、流程按钮组、通话气泡和上一问回看 details。
+- `src/ui/evidenceView.js` 已接管材料检视和后台私信回流的页面 HTML；`app.js` 只传入当前材料模型、上一问回看和绑定点击。
 - `src/runtime/storyInterludeModel.js` 已接管案间上一通收束、下一通物件名和桥接句模型。
 - `src/ui/recapView.js` 已接管单案收麦回看页面组、事实边界归位/揭示和最终原话对比卡；下一步只补单案回看新增缺口，不再把收麦页面写回 `app.js`。
 - `src/runtime/storyPackSummaryModel.js` 已接管故事集终局 profile 收集：`app.js` 只提供当前存档选择器，不再拼边界/压力/材料/物件 profile。
@@ -258,7 +258,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 最强原话选择后，主播回应要短、准、像直播间接话。
 - 选择非最强原话时，不判死错，但要生成不同余味。
 - 结果页不能给“最佳答案教程”，只能做对照和余波。
-- 事实边界归位已影响最终收话余味和故事集终局：放稳、放早、仍未归位，会得到不同边界标签和评论区反应。回流材料的命中/误指也已接进案间余味和弹幕压力，压力画像、材料圈点和原话选择已进入结算和终局路线画像。
+- 事实边界归位已影响最终收话余味和故事集终局：放稳、定急、仍未归位，会得到不同边界标签和评论区反应。回流材料的命中/误指也已接进案间余味和弹幕压力，压力画像、材料圈点和原话选择已进入结算和终局路线画像。
 
 验收：
 

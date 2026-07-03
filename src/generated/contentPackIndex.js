@@ -251,7 +251,7 @@ export const CONTENT_CASES = {
             },
             {
               "question": "有没有可能这些消费是他在硬撑？",
-              "answer": "可能。可我卡住的是，硬撑出来的账单，最后为什么变成我要先帮他补上。",
+              "answer": "可能。我纳闷的是，这些钱是他自己硬撑出来的，怎么到最后变成我先替他补。",
               "correct": false,
               "routeAxis": "money-flow",
               "routeTone": "softening"
@@ -276,7 +276,7 @@ export const CONTENT_CASES = {
           "questionOptions": [
             {
               "question": "他为什么把三天后的期限说成今晚？",
-              "answer": "我问过，他说怕我拖着不管。可他越催我当晚转钱，我越觉得不对：他可能更怕我把账单明细翻完。",
+              "answer": "我问过，他说怕我拖着不管。可账单还有三天，他非要我当晚转，我就开始不踏实了。",
               "contradiction": "TA 放大还款期限，减少咨询者检查账单的时间。",
               "correct": true,
               "routeAxis": "money-flow",
@@ -284,7 +284,7 @@ export const CONTENT_CASES = {
             },
             {
               "question": "有没有可能他自己也慌了，才把时间说乱？",
-              "answer": "可能。他确实慌。但慌不等于可以把时间说成今晚，让我在没看清账单时先转钱。",
+              "answer": "可能。他确实慌。可还有三天，他一直催我当晚转，我就觉得这事不太对。",
               "correct": false,
               "routeAxis": "money-flow",
               "routeTone": "softening"

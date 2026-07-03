@@ -16,7 +16,7 @@ export function liveControlDeckHtml({
         <small>${escapeHtml(label || "连线中")}</small>
       </section>
       <section class="deck-card">
-        <span>连线段落</span>
+        <span>连线句子</span>
         <b>${safeSegment}/${safeTotal}</b>
         <small>麦没断，话还在往下走。</small>
       </section>

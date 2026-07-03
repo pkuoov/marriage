@@ -6,7 +6,7 @@ export function sceneReviewHtml({
   reviewHtml = ""
 } = {}) {
   return `
-    <p><b>第 ${Number(index ?? 0) + 1} 段来电</b></p>
+    <p><b>第 ${Number(index ?? 0) + 1} 句</b></p>
     <div class="call-dialogue">
       ${done ? completedExchangeHtml : activeExchangeHtml}
     </div>

@@ -3,7 +3,7 @@ export function caseProgressStripHtml({ total = 1, answered = 0, label = "连线
   const segment = Math.max(1, Math.min(safeTotal, Number(answered ?? 0) + 1));
   return `
     <div class="case-progress-strip">
-      <span>第 ${segment}/${safeTotal} 段</span>
+      <span>第 ${segment}/${safeTotal} 句</span>
       <span>${escapeHtml(label)}</span>
     </div>
   `;

@@ -51,8 +51,8 @@ export function questionPressureReaction(option = {}, routeTone = "") {
   if (/花销|余额|每个月|团购|停车费/.test(option.answer ?? "")) return "弹幕顺着钱吵起来：一笔小钱不定性，但长期别扭会把问题推回流水。";
   if (/工资|流水|小家|不舒服/.test(option.answer ?? "")) return "麦里安静了一下：拒绝流水未必心虚，但这句已经碰到婚后钱怎么管。";
   if (/审批|财务|付款|收款|返款|垫款/.test(option.answer ?? "")) return "弹幕开始对截图：可能是流程慢，也可能是最要紧那页没发。";
-  if (tone === "softening") return "弹幕有人替 TA 补了一句，麦温往下掉了一格。";
-  if (tone === "caller-skeptical") return "这句绕回了来电人自己，弹幕短暂安静了一下。";
+  if (tone === "softening") return "弹幕开始替对方找理由，问题被带远了一点。";
+  if (tone === "caller-skeptical") return "你把问题问回她自己身上，现场先停了一下。";
   if (tone === "pressure-point" || tone === "trust-but-verify") return "这句咬住了，直播间的人声压低了一点。";
   return "直播间接住了这个角度，但人声开始有点散。";
 }
@@ -67,7 +67,7 @@ export function materialPressureReaction(outcome = {}, check = {}) {
     if (/表|排班|名单|备注/.test(`${check.title ?? ""}${check.material ?? ""}`)) return "表里这一格被圈出来，弹幕突然不刷了。";
     return "这块圈住了，前面那句开始变味。";
   }
-  if (/截图|图|表|账|审批|流水/.test(outcome.pick?.label ?? "")) return "弹幕被这块带跑，麦温往下掉了一格。";
+  if (/截图|图|表|账|审批|流水/.test(outcome.pick?.label ?? "")) return "这一块圈偏了，弹幕又吵到旁边去了。";
   return "这一下没咬住，评论区开始翻另一边。";
 }
 
