@@ -19,7 +19,7 @@ import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness 
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
-import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
+import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
@@ -440,6 +440,9 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(recapViewSource, "truthBoundaryReviewHtml", "收麦回看必须把事实边界显示出来，不能让 truthBoundary 只停在 JSON 元数据");
   assertIncludes(appSource, "data-truth-boundary-pick", "事实边界必须可交互归位，不能只做静态说明页");
   assertIncludes(recapViewSource, "truthBoundaryPlaced", "事实边界必须改成一次放置后继续，不能强制玩家改到标准答案");
+  assertIncludes(recapViewSource, "solvedRecapFlowView", "单案收麦回看分页和按钮必须由纯 UI 模块生成");
+  assertIncludes(appSource, "solvedRecapFlowView", "renderSolved 必须调用纯 UI flow helper，不能继续本地拼分页按钮");
+  assert(!appSource.includes("先把这几句放完"), "事实边界阻止继续的按钮文案不能继续写在 app.js");
   assert(!appSource.includes("这句还不能这么放"), "事实边界不能当场提示对错，错放应留到回看/终局揭晓");
   assertIncludes(appSource, "truthBoundaryMisses", "事实边界归位放早过必须影响收话余味，不能只看最终放对");
   assertIncludes(storyPackSummarySource, "truthBoundaryPackProfile", "故事集终局必须汇总四案事实边界，而不是只看路线轴");
@@ -564,6 +567,18 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(truthBoundaryReviewHtml({ title: "边界", line: "先放句子", choices: [{ key: "true", label: "能确认" }], columns: [{ key: "true", label: "能确认", items: ["A"] }], prompts: [{ id: "true:0", text: "A", expected: "true" }] }, {}), "data-truth-boundary-pick", "事实边界归位按钮必须可由纯 UI 模块渲染");
   assert(truthBoundaryPlaced({ prompts: [{ id: "a" }] }, { a: "true" }), "事实边界一次放置完成判断必须可由纯 UI 模块测试");
   assertIncludes(solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "压住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" })[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
+  const recapFlow = solvedRecapFlowView({ pages: ["第一页", "第二页"], step: 0 });
+  assertIncludes(recapFlow.text, "1/2", "收麦回看分页 kicker 必须由纯 UI flow helper 生成");
+  assertIncludes(recapFlow.choices, "data-recap-next", "收麦回看非末页继续按钮必须由纯 UI flow helper 生成");
+  const blockedBoundaryFlow = solvedRecapFlowView({
+    pages: ['<section class="truth-boundary-card">边界</section>', "收住"],
+    boundary: { prompts: [{ id: "true:0" }] },
+    boundaryPicks: {}
+  });
+  assertIncludes(blockedBoundaryFlow.choices, "先把这几句放完", "事实边界未放完时必须由纯 UI flow helper 阻止继续");
+  const finalRecapFlow = solvedRecapFlowView({ pages: ["第一页", "末页"], step: 1, afterLabel: "接下一路麦" });
+  assertIncludes(finalRecapFlow.choices, "data-after-recap", "收麦回看末页出口必须由纯 UI flow helper 生成");
+  assertIncludes(finalRecapFlow.choices, "接下一路麦", "收麦回看末页出口文案必须可由 app 传入但由 UI helper 渲染");
   assertIncludes(appSource, "./ui/sceneReviewView.js", "对话回合 HTML 必须从 app.js 拆到 ui/sceneReviewView");
   const activeSceneHtml = sceneReviewHtml({ index: 1, activeExchangeHtml: "<p>咨询者：账单我发过来了。</p>", reviewHtml: "<aside>刚才说到</aside>" });
   assertIncludes(activeSceneHtml, "第 2 段来电", "当前对话回合正文必须可由纯 UI 模块渲染");

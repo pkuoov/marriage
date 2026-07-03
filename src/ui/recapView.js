@@ -64,6 +64,35 @@ export function solvedRecapPagesHtml({
   ];
 }
 
+export function solvedRecapFlowView({
+  pages = [],
+  step = 0,
+  boundary = {},
+  boundaryPicks = {},
+  afterLabel = "继续",
+  retryLabel = "从头再问"
+} = {}) {
+  const safePages = Array.isArray(pages) && pages.length ? pages : [""];
+  const index = Math.max(0, Math.min(Number(step ?? 0), safePages.length - 1));
+  const pageHtml = safePages[index] ?? "";
+  const isBoundaryPage = pageHtml.includes("truth-boundary-card");
+  const canLeaveBoundary = !isBoundaryPage || truthBoundaryPlaced(boundary, boundaryPicks);
+  return {
+    index,
+    pageCount: safePages.length,
+    isBoundaryPage,
+    canLeaveBoundary,
+    text: `<div class="recap-page-kicker"><span>回看</span><b>${index + 1}/${safePages.length}</b></div>${pageHtml}`,
+    choices: recapFlowChoicesHtml({
+      index,
+      pageCount: safePages.length,
+      canLeaveBoundary,
+      afterLabel,
+      retryLabel
+    })
+  };
+}
+
 export function finalQuoteComparisonHtml(comparison) {
   const pickedCaption = comparison.sameQuote ? "就接这句" : "你接的那句";
   if (comparison.sameQuote) {
@@ -145,6 +174,26 @@ function truthBoundaryChallengeHtml(review, picks = {}) {
       }).join("")}
     </div>
   `;
+}
+
+function recapFlowChoicesHtml({ index = 0, pageCount = 1, canLeaveBoundary = true, afterLabel = "继续", retryLabel = "从头再问" } = {}) {
+  const hasNext = Number(index ?? 0) < Number(pageCount ?? 1) - 1;
+  if (hasNext) {
+    return flowGroup(`
+      ${canLeaveBoundary
+        ? `<button class="primary" data-recap-next type="button">继续回看</button>`
+        : `<button class="primary" disabled type="button">先把这几句放完</button>`}
+      <button data-retry-case type="button">${escapeHtml(retryLabel)}</button>
+    `);
+  }
+  return flowGroup(`
+    <button class="primary" data-after-recap type="button">${escapeHtml(afterLabel)}</button>
+    <button data-retry-case type="button">${escapeHtml(retryLabel)}</button>
+  `);
+}
+
+function flowGroup(content) {
+  return `<div class="choice-flow">${content}</div>`;
 }
 
 function truthBoundaryChoiceLabel(review, key) {

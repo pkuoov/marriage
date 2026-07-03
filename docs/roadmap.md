@@ -51,7 +51,7 @@
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`，并有单元断言覆盖；`app.js` 继续收状态，UI 细节开始脱离 god file。
 - 标题页 HTML 已拆到 `src/ui/titleView.js`，直播信号、热线 hook 和不剧透目录都有纯 UI 断言。
 - 对话回合 HTML 已拆到 `src/ui/sceneReviewView.js`，当前/已完成对话正文、追问气泡组装和继续按钮都有纯 UI 断言。
-- 单案收麦回看 HTML 已拆到 `src/ui/recapView.js`，事实边界归位、最终原话对比和回看页面组都有纯 UI 断言。
+- 单案收麦回看 HTML 已拆到 `src/ui/recapView.js`，事实边界归位、最终原话对比、回看页面组和分页/按钮 flow 都有纯 UI 断言。
 - 案间过渡 HTML 已拆到 `src/ui/storyInterludeView.js`，上一通余味、下一通物件和接麦按钮都有纯 UI 断言。
 - 故事集终局 HTML 已拆到 `src/ui/storyPackCompleteView.js`，结果卡、评论区审判墙和复制文案都有纯 UI 断言。
 - 本集主题已接入生成数据和 UI，总结页会展示主题论点。

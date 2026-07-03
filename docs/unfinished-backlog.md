@@ -33,7 +33,7 @@
 - 对话段落推进已拆出 `sceneReviewModel`：当前段落、完成态、最后一段后的材料/深入追问/原话选择分支都在 `src/runtime/sceneAdvance.js` 里纯函数测试。
 - 材料检视和后台私信回流推进已拆出 `evidenceCheckModel` / `investigationBackflowModel`：当前材料、未处理回流、缺省态和下一步按钮都可纯函数测试。
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`：`app.js` 只收集现场压力、进度、立绘资源和表情状态，UI 细节可单独测试。
-- 收麦回看 HTML 已拆到 `src/ui/recapView.js`：事实边界归位、最终原话对比和单案回看页面组可以脱离 `app.js` 测试，`app.js` 只处理归位点击和流程推进。
+- 收麦回看 HTML 已拆到 `src/ui/recapView.js`：事实边界归位、最终原话对比、单案回看页面组、分页 kicker 和继续/重问/出口按钮都可以脱离 `app.js` 测试，`app.js` 只处理归位点击和流程推进。
 - 故事集终局 HTML 已拆到 `src/ui/storyPackCompleteView.js`：结果卡、评论区审判墙和复制文案都能脱离 `app.js` 测试，`app.js` 只收集故事集模型和绑定按钮。
 - 案间过渡 HTML 已拆到 `src/ui/storyInterludeView.js`：上一通余味、下一通 dramatic object 和接麦按钮文案都有纯 UI 断言，避免退回“下一案/下一通来电”目录页。
 - 标题页 HTML 已拆到 `src/ui/titleView.js`：直播信号条、热线接入 hook 和入口按钮都有纯 UI 断言，防止首页重新剧透案数、目录或主题论点。
@@ -146,7 +146,7 @@ content/packs/steam-demo-01/
 - `src/ui/storyInterludeView.js` 已接管案间过渡卡片和接麦按钮文案。
 - `src/ui/titleView.js` 已接管标题页直播信号、热线 hook 和入口按钮。
 - `src/ui/sceneReviewView.js` 已接管对话回合正文、active/completed exchange 组装和继续按钮，`app.js` 只保留一个从存档取 fallback answer 的薄适配。
-- `src/ui/renderRecap.js`
+- `src/ui/recapView.js` 已接管单案回看页面组和 flow 外壳；后续只在新增回看状态时补 helper，不再把分页/按钮文案写回 `app.js`。
 - `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；`desktop/electron/preload.cjs` 已接同步文件存档 IPC，下一步接 Electron 依赖和打包器。
 
 验收：

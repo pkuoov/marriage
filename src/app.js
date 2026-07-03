@@ -15,7 +15,7 @@ import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMar
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
-import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced } from "./ui/recapView.js?v=0.20.68";
+import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "./ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
@@ -511,18 +511,20 @@ function renderSolved(brief) {
     boundaryLine,
     issueLineText: issueLine(issue, result)
   });
-  const index = Math.max(0, Math.min(step, pages.length - 1));
-  const isBoundaryPage = pages[index]?.includes("truth-boundary-card");
-  const canLeaveBoundary = !isBoundaryPage || truthBoundaryPlaced(boundary, boundaryPicks);
+  const recap = solvedRecapFlowView({
+    pages,
+    step,
+    boundary,
+    boundaryPicks,
+    afterLabel: isStoryPackMode() ? finalScene ? "查看整晚收麦" : "接下一路麦" : "查看今日结果"
+  });
   frame({
     brief,
     mood: "listening",
     label: "连线回看",
     chapter: liveChapterTitle(brief),
-    text: `<div class="recap-page-kicker"><span>回看</span><b>${index + 1}/${pages.length}</b></div>${pages[index]}`,
-    choices: index < pages.length - 1
-      ? flowGroup(`${canLeaveBoundary ? `<button class="primary" data-recap-next type="button">继续回看</button>` : `<button class="primary" disabled type="button">先把这几句放完</button>`}<button data-retry-case type="button">从头再问</button>`)
-      : flowGroup(`<button class="primary" data-after-recap type="button">${isStoryPackMode() ? finalScene ? "查看整晚收麦" : "接下一路麦" : "查看今日结果"}</button><button data-retry-case type="button">从头再问</button>`)
+    text: recap.text,
+    choices: recap.choices
   });
   document.querySelectorAll("[data-truth-boundary-pick]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -554,7 +556,7 @@ function renderSolved(brief) {
     });
   });
   bind("[data-recap-next]", () => {
-    state.recapStep = index + 1;
+    state.recapStep = recap.index + 1;
     saveState();
     render();
   });
