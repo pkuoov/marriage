@@ -52,7 +52,7 @@
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
 - 任务画像 `taskProfile` 已随 runtime-loaded 案件进入内容包：四案的操作类型、推荐专业和摘要不再只靠 `caseEngine.js` 的 `plotId` 表。
-- daily 模式已优先加载 runtime-loaded JSON：同一 `plotId` 的试玩案不再在故事集和今日来电里维护两套台词，未迁移的轮换案继续走模板兜底。
+- daily 模式已优先加载 runtime-loaded JSON：同一 `plotId` 的试玩案不再在故事集和今日来电里维护两套台词。自动 daily 轮换只出已迁移 JSON 内容，旧模板仅保留给显式兼容入口兜底。
 - 故事集终局 profile 收集已拆到 `src/runtime/storyPackSummaryModel.js`：事实边界、现场压力、材料圈点、原话、物件、评论墙和分享文案模型能脱离 `app.js` 测试。
 - `verify:pack` 已支持指定 pack id，并新增运行时内容 schema 检查：开场、追问、材料、回流、深入追问、收束和分享字段都必须是可玩的嵌套结构。
 - 已新增 Playwright 浏览器回放 smoke：`npm run smoke:browser` 会打开离线 playable，覆盖 perfect route、外围追问后继续主线、材料误圈、纯键盘 perfect 和模拟 Gamepad API perfect 五条单案路线，并走到收麦回看。
@@ -60,7 +60,7 @@
 - 案间上一通收束句已迁入每案 JSON 的 `storyInterludeRecap`，并纳入 runtime-loaded 必填字段，避免 `app.js` 继续按 `plotId` 写剧本文案。
 - 案件背景 class 已迁入日案定义和 manifest `sequence.backdropClass`，案内视觉背景不再由 `app.js` 的 `plotId` 表决定。
 - 存款证明案的特殊结算分支已迁入内容 JSON 的 `conclusionWhenCleared/conclusionBranches`，分享卡也改回读取 `dailyShare*` 字段，减少 runtime `plotId` 文案特判。
-- 事实边界已进入收麦回看和故事集终局：每案 `truthBoundary` 会要求玩家一次性归位多句话；放完即可继续，错放不当场纠正，会在下一页回看和终局标签、分享卡、评论区审判墙里体现。
+- 事实边界已进入收麦回看和故事集终局：每案 `truthBoundary` 会要求玩家一次性归位多句话；放完即可继续，错放不当场纠正，会在下一页回看和终局标签、分享卡、评论区审判墙里体现。`verify:pack` 会挡住三栏各一的薄题池。
 - 故事包难度曲线已开始数据化：manifest `sequence[].difficultyProfile` 可以调每案听众耐心预算和事实边界题量，后段案件不再和开场案完全同一压力。
 - `comments.json` 已进入内容索引和终局评论墙：内容包可以控制本集评论区底色，高低揭示率、压力、材料和原话选择仍由运行时模型替换局部评论。
 - 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。

@@ -86,13 +86,6 @@ const DAILY_ROTATION = [
     respondentId: "xu"
   },
   {
-    plotId: "house-name-security-test",
-    caseMode: "daily",
-    sceneId: "broker-office",
-    complainantId: "zhou",
-    respondentId: "lin"
-  },
-  {
     plotId: "tony-multi-dating",
     caseMode: "daily",
     sceneId: "late-night-chat",
@@ -105,13 +98,6 @@ const DAILY_ROTATION = [
     sceneId: "live-call",
     complainantId: "lin",
     respondentId: "zhou"
-  },
-  {
-    plotId: "house-name-security-test",
-    caseMode: "daily",
-    sceneId: "broker-office",
-    complainantId: "he",
-    respondentId: "xu"
   },
   {
     plotId: "lost-job-hidden-credit",

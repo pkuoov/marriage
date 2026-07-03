@@ -1326,7 +1326,7 @@ export const CONTENT_CASES = {
       },
       "accusationChoices": [
         {
-          "label": "“报销审批通过了。”",
+          "label": "“报销审批通过。”",
           "accuseRole": "respondent",
           "response": "这句只能证明审批到过那一步，不能证明钱已经打给谁。"
         },

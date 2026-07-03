@@ -165,6 +165,9 @@ test("PACK-003", "case pressure packets are complete", () => {
     ["true", "edited", "unknown"].forEach((field) => {
       assert((casePacket.truthBoundary?.[field] ?? []).length > 0, `${casePacket.caseId} truthBoundary.${field} 不能为空`);
     });
+    const boundaryItems = ["true", "edited", "unknown"].flatMap((field) => casePacket.truthBoundary?.[field] ?? []);
+    assert(boundaryItems.length >= 6, `${casePacket.caseId} truthBoundary 至少需要 6 条，不能退回三栏各一的小测验`);
+    assert((casePacket.truthBoundary?.true ?? []).length >= 2, `${casePacket.caseId} truthBoundary.true 至少需要 2 条，避免固定成三栏各一`);
     assert((casePacket.quotePickCandidates ?? []).length >= 3, `${casePacket.caseId} 至少需要三句原话候选`);
     assert((casePacket.accusationChoices ?? []).length >= 3, `${casePacket.caseId} 至少需要三句最终收麦原话`);
     (casePacket.accusationChoices ?? []).forEach((choice, choiceIndex) => {
