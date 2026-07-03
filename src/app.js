@@ -17,6 +17,7 @@ import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceVi
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced } from "./ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
+import { sceneReviewDoneChoicesHtml, sceneReviewHtml } from "./ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
@@ -309,21 +310,15 @@ function renderSceneReview(brief) {
     mood: "thinking",
     label: "继续对话",
     chapter: liveChapterTitle(brief),
-    text: `
-      <p><b>第 ${index + 1} 段来电</b></p>
-      <div class="call-dialogue">
-        ${done
-          ? completedSceneExchange(brief, scene, index, pick)
-          : activeSceneExchange(brief, scene, index)}
-      </div>
-      ${keyChoiceReview(brief)}
-    `,
+    text: sceneReviewHtml({
+      index,
+      done,
+      completedExchangeHtml: done ? completedSceneExchange(brief, scene, index, pick) : "",
+      activeExchangeHtml: done ? "" : activeSceneExchange(brief, scene, index),
+      reviewHtml: keyChoiceReview(brief)
+    }),
     choices: done
-      ? flowGroup(`
-          ${lastStage
-            ? `<button class="primary" data-scene="${nextStage}" type="button">${nextLabel}</button>`
-            : `<button class="primary" data-next-scene-stage type="button">继续</button>`}
-        `)
+      ? sceneReviewDoneChoicesHtml({ lastStage, nextStage, nextLabel })
       : sceneQuestionChoicesHtml(index, options, askedDialoguePicks(brief, index))
   });
   bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
@@ -823,19 +818,21 @@ function activeSceneExchange(brief, scene, index) {
 }
 
 function completedSceneExchange(brief, scene, index, pick = {}) {
+  const safePick = pick ?? {};
   return [
     callLine(brief, { ...scene, text: scene.version, role: "caller" }),
     ...askedDialoguePicks(brief, index).flatMap((item) => [
       callLine(brief, { role: "host", text: item.question }),
       callLine(brief, { role: "caller", text: item.answer })
     ]),
-    keyChoiceExchange(brief, scene, pick)
+    keyChoiceExchange(brief, scene, safePick)
   ].join("");
 }
 
 function keyChoiceExchange(brief, scene, pick = {}) {
-  const question = pick.question ?? scene.questionOptions?.find((option) => option.contradiction)?.question ?? "这句我想再问清楚一点。";
-  const answer = pick.answer ?? state.sceneAnswers?.[answerKey(brief, currentIndex(brief, "sceneReview", brief.sceneVersions?.length ?? 1))] ?? "";
+  const safePick = pick ?? {};
+  const question = safePick.question ?? scene.questionOptions?.find((option) => option.contradiction)?.question ?? "这句我想再问清楚一点。";
+  const answer = safePick.answer ?? state.sceneAnswers?.[answerKey(brief, currentIndex(brief, "sceneReview", brief.sceneVersions?.length ?? 1))] ?? "";
   return [
     callLine(brief, { role: "host", text: question }),
     answer ? callLine(brief, { role: "caller", text: answer }) : ""
