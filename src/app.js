@@ -357,7 +357,7 @@ function renderEvidenceCheck(brief) {
   });
   const { check, pick, lastCheck, nextStage, nextLabel } = model;
   if (model.missing) {
-    state.scene = afterEvidenceScene(brief);
+    state.scene = sceneAfterEvidenceFor(brief);
     saveState();
     return render();
   }
@@ -403,7 +403,7 @@ function renderInvestigationBackflow(brief) {
     text: `
       <p><b>${escapeHtml(hook.surface ?? "后台进来一条私信")}</b></p>
       <p>${escapeHtml(hook.appearsNowBecause ?? "收麦后，有人补了一张图。")}</p>
-      ${evidenceOperationHtml(hook, pick, entry.index)}
+      ${evidenceOperationHtml(hook, pick, index)}
       <p>${escapeHtml(hook.prompt ?? "这条回流里，哪一句最该圈出来？")}</p>
       ${pick ? evidencePickFeedbackHtml(pick) : ""}
       ${keyChoiceReview(brief)}
@@ -468,7 +468,7 @@ function renderPatienceLost(brief) {
 }
 
 function renderAccusation(brief) {
-  const readiness = dailyAccusationReadiness(brief);
+  const readiness = accusationReadinessForBrief(brief);
   if (!readiness.ready) {
     state.lastReaction = readiness.message;
     state.scene = "sceneReview";
@@ -652,7 +652,7 @@ function renderStoryInterlude(brief) {
 function renderRunComplete(brief) {
   if (isStoryPackMode()) return renderStoryPackComplete();
   const result = normalizedDailyResult(brief);
-  const route = dailyRouteProfile(brief, result);
+  const route = routeProfileForBrief(brief, result);
   const issue = issueCompletion(brief);
   const rank = recapRankLabel(issue);
   const pickedQuote = result.dailyAccuseLabel ?? "还没选最后那句";
@@ -1253,7 +1253,7 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
 function moveScene(scene) {
   const brief = activeCaseBrief();
   if (scene === "accusation") {
-    const readiness = dailyAccusationReadiness(brief);
+    const readiness = accusationReadinessForBrief(brief);
     if (!readiness.ready) {
       state.lastReaction = readiness.message;
       state.scene = "sceneReview";
@@ -1317,7 +1317,7 @@ function resolveAccusationFromButton(brief, button) {
   };
   result.dailyAccuseLabel = accuseLabel;
   result.dailyResponse = response;
-  result.dailyRoute = dailyRouteProfile(brief, result);
+  result.dailyRoute = routeProfileForBrief(brief, result);
   state.accusationHistory = upsertByCaseId(state.accusationHistory, result);
   state.solvedCaseIds = [...new Set([...(state.solvedCaseIds ?? []), brief.id])];
   applyOutcome(brief, result);
@@ -1361,7 +1361,7 @@ function relationshipExpectedForResult(brief) {
   return relationshipExpectedAccusationForCase(brief);
 }
 
-function dailyAccusationReadiness(brief) {
+function accusationReadinessForBrief(brief) {
   return accusationReadinessForCase(brief, (actionKey) => actionDone(brief, actionKey));
 }
 
@@ -1401,7 +1401,7 @@ function recordDailyMeta(brief, result, issue) {
   saveMetaSnapshot(meta);
 }
 
-function dailyRouteProfile(brief, result = {}) {
+function routeProfileForBrief(brief, result = {}) {
   return buildDailyRouteProfile(brief, result, {
     issue: issueCompletion(brief),
     axisProfile: routeAxisProfile(brief, result)
@@ -1562,7 +1562,7 @@ function audiencePatienceLost(brief) {
     budget,
     answeredScenes: answeredSceneCount(brief),
     requiredScenes: keyQuestionLimit(brief),
-    answeredEvidence: evidenceAnsweredCount(brief),
+    answeredEvidence: answeredEvidenceCountFor(brief),
     requiredEvidence: evidenceChecksFor(brief).length
   })) return false;
   state.scene = "patienceLost";
@@ -1665,11 +1665,11 @@ function unlockedInvestigationEntriesFor(brief) {
   });
 }
 
-function evidenceAnsweredCount(brief) {
+function answeredEvidenceCountFor(brief) {
   return countAnsweredEvidence(brief, (actionKey) => actionDone(brief, actionKey));
 }
 
-function afterEvidenceScene(brief) {
+function sceneAfterEvidenceFor(brief) {
   return nextSceneAfterEvidence({ issueBadge: issueCompletion(brief).badge, hasDeepFollowup: hasDeepFollowup(brief) });
 }
 

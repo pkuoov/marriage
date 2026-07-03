@@ -214,6 +214,7 @@ Avoid:
 5. Validate mechanically.
    - Run `npm run check`.
    - Run `npm run build:h5`.
+   - Run `npm run smoke:browser` after playable flow, bundler, route, material, recap, or content-pack runtime changes. It must cover perfect, outer-then-core, and material-miss routes.
    - Run `npm run build:steam` and `npm run smoke:desktop` after any build, desktop, save, input, or packaging-adjacent change.
    - For content-pack edits, run `npm run verify:pack -- <pack-id>` and confirm `PACK-005` passes. Runtime-loaded cases must have playable nested content, not only top-level metadata.
    - For keyboard or controller changes, keep the pure input model covered by `INPUT-001`; browser/device replay is still required before calling Steam Deck support done.
@@ -474,6 +475,7 @@ UI copy:
 ```bash
 npm run check
 npm run build:h5
+npm run smoke:browser
 npm run build:steam
 npm run smoke:desktop
 npm run verify:pack -- steam-demo-01

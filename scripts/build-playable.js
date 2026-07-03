@@ -79,9 +79,20 @@ async function bundleModule(filePath, seen = new Set(), ordered = []) {
 
 function stripModuleSyntax(source) {
   return source
+    .replace(/^\s*import\s+\{([^}]+)\}\s+from\s+["'][^"']+["'];?\s*$/gm, (_, imports) => importAliasDeclarations(imports))
     .replace(/^\s*import\s+[^"']+["'][^"']+["'];?\s*$/gm, "")
     .replace(/^\s*export\s+(const|let|var|function|class)\s+/gm, "$1 ")
     .replace(/^\s*export\s*\{[^}]+\};?\s*$/gm, "");
+}
+
+function importAliasDeclarations(imports) {
+  return imports
+    .split(",")
+    .map((item) => item.trim())
+    .map((item) => item.match(/^([A-Za-z_$][\w$]*)\s+as\s+([A-Za-z_$][\w$]*)$/))
+    .filter(Boolean)
+    .map((match) => `const ${match[2]} = ${match[1]};`)
+    .join("\n");
 }
 
 function assertPlayableHtml(html) {
