@@ -14,6 +14,7 @@ import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
+import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced } from "./ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
 
 const app = document.querySelector("#app");
@@ -516,56 +517,20 @@ function renderSolved(brief) {
   const boundaryMisses = truthBoundaryMissesFor(brief);
   const boundaryLine = truthBoundaryAftertaste(boundary, boundaryPicks, boundaryMisses);
   const finalScene = isFinalStoryPackCase();
-  const pages = [
-    `
-      <section class="recap-score-card">
-        <div class="recap-score-head"><span>收麦回看</span><em>${escapeHtml(rank)}</em></div>
-        <div class="recap-score-main">
-          <b>${Number(issue.percent ?? 0)}</b>
-          <span>% 已问到</span>
-        </div>
-        <div class="recap-score-grid">
-          <span><b>${issue.revealed.length ? "有抓手" : "刚开口"}</b><small>麦上记录</small></span>
-          <span><b>${result.dailyBadge ? "能挂麦" : "还会吵"}</b><small>弹幕</small></span>
-        </div>
-        <p>${escapeHtml(issueLine(issue, result))}</p>
-        <div class="route-map-card">
-          <span>本案路线</span>
-          <b>${escapeHtml(route.label)}</b>
-          <small>${escapeHtml(route.summary)}</small>
-          ${routeTrailHtml(brief)}
-        </div>
-        <div class="pressure-recap-card">
-          <span>现场压力</span>
-          <b>${escapeHtml(pressure.label)}</b>
-          <small>${escapeHtml(pressure.line)}</small>
-        </div>
-        <p><strong>你接住的那句</strong>：${escapeHtml(result.dailyAccuseLabel ?? "还没选最后那句")}。</p>
-        ${result.dailyResponse ? `<p><strong>主播接法</strong>：${escapeHtml(result.dailyResponse)}</p>` : ""}
-        ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
-      </section>
-    `,
-    `
-      <p><b>台面上的话</b></p>
-      <p>${issue.revealed.length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮只听到表层，评论区还会继续吵。"}</p>
-    `,
-    `
-      <p><b>主播收话</b></p>
-      <p>${escapeHtml(conclusion.summary)}</p>
-      ${conclusion.deepQuestion ? `<p class="hint"><strong>多问一句</strong>：${escapeHtml(conclusion.deepQuestion)}</p>` : ""}
-    `,
-    `
-      <p><b>后续回拨</b></p>
-      <p>${escapeHtml(conclusion.followup)}</p>
-    `,
-    truthBoundaryReviewHtml(boundary, boundaryPicks),
-    `
-      <p><b>连线收住</b></p>
-      ${truthBoundaryRevealHtml(boundary, boundaryPicks)}
-      ${boundaryLine ? `<p class="hint">${escapeHtml(boundaryLine)}</p>` : ""}
-      <p>${escapeHtml(conclusion.truth)}</p>
-    `
-  ];
+  const pages = solvedRecapPagesHtml({
+    rank,
+    issue,
+    result,
+    route,
+    routeTrail: routeTrailHtml(brief),
+    pressure,
+    quoteComparison,
+    conclusion,
+    boundary,
+    boundaryPicks,
+    boundaryLine,
+    issueLineText: issueLine(issue, result)
+  });
   const index = Math.max(0, Math.min(step, pages.length - 1));
   const isBoundaryPage = pages[index]?.includes("truth-boundary-card");
   const canLeaveBoundary = !isBoundaryPage || truthBoundaryPlaced(boundary, boundaryPicks);
@@ -1433,89 +1398,6 @@ function routeProfileForBrief(brief, result = {}) {
   });
 }
 
-function finalQuoteComparisonHtml(comparison) {
-  const pickedCaption = comparison.sameQuote ? "就接这句" : "你接的那句";
-  if (comparison.sameQuote) {
-    return `
-      <div class="quote-compare-card quote-compare-card-single">
-        <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}<em>这句够了。</em></p>
-      </div>
-    `;
-  }
-  const bestCaption = "换个口子";
-  return `
-    <div class="quote-compare-card">
-      <p><span>${escapeHtml(pickedCaption)}</span><b>${escapeHtml(comparison.pickedLabel)}</b>${comparison.pickedResponse ? `<small>${escapeHtml(comparison.pickedResponse)}</small>` : ""}</p>
-      <p><span>${escapeHtml(bestCaption)}</span><b>${escapeHtml(comparison.bestLabel)}</b>${comparison.bestResponse ? `<small>${escapeHtml(comparison.bestResponse)}</small>` : ""}</p>
-    </div>
-  `;
-}
-
-function truthBoundaryReviewHtml(review, picks = {}) {
-  if (!review?.columns?.length) {
-    return `
-      <p><b>事实边界</b></p>
-      <p>这通还没留下足够边界。</p>
-    `;
-  }
-  return `
-    <section class="truth-boundary-card">
-      <p><b>${escapeHtml(review.title)}</b></p>
-      <p>${escapeHtml(review.line)}</p>
-      ${truthBoundaryChallengeHtml(review, picks)}
-    </section>
-  `;
-}
-
-function truthBoundaryChallengeHtml(review, picks = {}) {
-  if (!review?.prompts?.length) return "";
-  return `
-    <div class="truth-boundary-challenge">
-      ${review.prompts.map((prompt) => {
-        const picked = picks[prompt.id] ?? "";
-        const pickedLabel = review.choices.find((choice) => choice.key === picked)?.label ?? "";
-        return `
-          <div class="truth-boundary-prompt ${picked ? "placed" : ""}">
-            <p>${escapeHtml(prompt.text)}</p>
-            <div class="truth-boundary-options">
-              ${review.choices.map((choice) => `
-                <button class="${picked === choice.key ? "selected" : ""}" ${picked ? "disabled" : `data-truth-boundary-prompt="${escapeHtml(prompt.id)}" data-truth-boundary-pick="${escapeHtml(choice.key)}"`} type="button">${escapeHtml(choice.label)}</button>
-              `).join("")}
-            </div>
-            ${picked ? `<small>你把这句放进了：${escapeHtml(pickedLabel)}。</small>` : ""}
-          </div>
-        `;
-      }).join("")}
-    </div>
-  `;
-}
-
-function truthBoundaryRevealHtml(review, picks = {}) {
-  if (!review?.columns?.length) return "";
-  return `
-    <div class="truth-boundary-grid truth-boundary-reveal">
-      ${review.columns.map((column) => `
-        <div class="truth-boundary-column truth-boundary-${escapeHtml(column.key)}">
-          <span>${escapeHtml(column.label)}</span>
-          <ul>
-            ${column.items.map((item, index) => {
-              const promptId = `${column.key}:${index}`;
-              const wasPrompted = (review.prompts ?? []).some((prompt) => prompt.id === promptId);
-              const picked = picks[promptId] ?? "";
-              const mark = picked ? picked === column.key ? "你放准了" : `你放到了${truthBoundaryChoiceLabel(review, picked)}` : wasPrompted ? "未放" : "主播补充";
-              return `<li>${escapeHtml(item)}<small>${escapeHtml(mark)}</small></li>`;
-            }).join("")}
-          </ul>
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
-
-function truthBoundaryChoiceLabel(review, key) {
-  return review.choices?.find((choice) => choice.key === key)?.label ?? "别处";
-}
-
 function postDailySharePayload(brief, route, result) {
   const mode = isStoryPackMode() ? "episode" : "daily";
   const storyKey = brief.storyKey ?? brief.weeklyKey ?? "";
@@ -1695,10 +1577,6 @@ function truthBoundaryPicksFor(brief) {
 
 function truthBoundaryMissesFor(brief) {
   return state.truthBoundaryMisses?.[caseKey(brief)] ?? {};
-}
-
-function truthBoundaryPlaced(review, picks = {}) {
-  return (review?.prompts ?? []).every((prompt) => Boolean(picks[prompt.id]));
 }
 
 function unlockedInvestigationEntriesFor(brief) {

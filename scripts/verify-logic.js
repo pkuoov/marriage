@@ -18,6 +18,7 @@ import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
 import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
 import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
+import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
 import { readFileSync } from "node:fs";
 
@@ -359,6 +360,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const routeMapSource = readFileSync(new URL("../src/runtime/routeMapModel.js", import.meta.url), "utf8");
   const livePressureSource = readFileSync(new URL("../src/runtime/livePressure.js", import.meta.url), "utf8");
   const liveCallViewSource = readFileSync(new URL("../src/ui/liveCallView.js", import.meta.url), "utf8");
+  const recapViewSource = readFileSync(new URL("../src/ui/recapView.js", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -407,16 +409,16 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!appSource.includes("function storyCommentWall"), "故事集评论墙模型不能继续留在 app.js god file");
   assertIncludes(recapModelSource, "export function storyCommentWall", "故事集评论墙模型必须留在 recapModel 纯函数里");
   assertIncludes(appSource, "storyPackBestAxis", "故事集终局 UI 必须调用纯模型生成主路线");
-  assertIncludes(appSource, "pressure-recap-card", "收麦回看必须显示现场压力余味");
+  assertIncludes(recapViewSource, "pressure-recap-card", "收麦回看必须显示现场压力余味");
   assertIncludes(appSource, "storyPackMaterialProfile", "故事集终局必须回收材料圈点结果");
   assertIncludes(appSource, "storyQuoteProfile", "故事集终局必须回收最终原话选择");
   assertIncludes(appSource, "storyObjectProfile", "故事集终局必须回收每案物件");
   assertIncludes(appSource, "材料圈点", "终局 UI 必须展示材料圈点余味");
   assertIncludes(appSource, "收麦原话", "终局 UI 必须展示原话选择余味");
   assertIncludes(appSource, "这晚翻过", "终局 UI 必须展示故事包物件余味");
-  assertIncludes(appSource, "truthBoundaryReviewHtml", "收麦回看必须把事实边界显示出来，不能让 truthBoundary 只停在 JSON 元数据");
+  assertIncludes(recapViewSource, "truthBoundaryReviewHtml", "收麦回看必须把事实边界显示出来，不能让 truthBoundary 只停在 JSON 元数据");
   assertIncludes(appSource, "data-truth-boundary-pick", "事实边界必须可交互归位，不能只做静态说明页");
-  assertIncludes(appSource, "truthBoundaryPlaced", "事实边界必须改成一次放置后继续，不能强制玩家改到标准答案");
+  assertIncludes(recapViewSource, "truthBoundaryPlaced", "事实边界必须改成一次放置后继续，不能强制玩家改到标准答案");
   assert(!appSource.includes("这句还不能这么放"), "事实边界不能当场提示对错，错放应留到回看/终局揭晓");
   assertIncludes(appSource, "truthBoundaryMisses", "事实边界归位放早过必须影响收话余味，不能只看最终放对");
   assertIncludes(appSource, "storyBoundaryProfile", "故事集终局必须汇总四案事实边界，而不是只看路线轴");
@@ -460,7 +462,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assert(!stylesSource.includes("critical-choice-group"), "当前节点追问不能恢复成关键选项高亮卡");
   assert(!appSource.includes("dialogueOptionsHtml"), "统一选择面板后不能留下未调用的 dialogueOptionsHtml 死代码");
   assert(!stylesSource.includes("dialogue-choice-group"), "统一选择面板后不能留下未使用的 dialogue-choice-group 样式");
-  assertIncludes(appSource, "Number(issue.percent ?? 0)", "recap 主视觉大字必须展示数值，避免四字 rank 在手机端溢出");
+  assertIncludes(recapViewSource, "Number(issue.percent ?? 0)", "recap 主视觉大字必须展示数值，避免四字 rank 在手机端溢出");
   assertIncludes(packageSource, "\"build:playable\"", "发布前必须有不依赖 dev server 的可玩构建脚本");
   assertIncludes(packageSource, "\"build:desktop\"", "必须保留桌面壳构建入口");
   assertIncludes(packageSource, "\"build:steam\"", "必须保留 Steam 构建入口");
@@ -536,6 +538,11 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(storyPackSummaryHudHtml({ total: 4, solved: 2 }), "2/4", "故事包收麦 HUD 必须可由纯 UI 模块渲染");
   assertEqual(callerExpressionForView({ mood: "thinking", sceneIndex: 1 }).kind, "shift", "来电人表情 fallback 必须可脱离 app 状态测试");
   assertIncludes(portraitLayerHtml({ artSrc: "./caller.png", mood: "tense", expression: { kind: "pause", text: "停了一下" } }), "停了一下", "来电人立绘层必须可由纯 UI 模块渲染");
+  assertIncludes(appSource, "./ui/recapView.js", "收麦回看 HTML 必须从 app.js 拆到 ui/recapView");
+  assertIncludes(finalQuoteComparisonHtml({ sameQuote: true, pickedLabel: "“原话”", pickedResponse: "接住了" }), "这句够了", "最终原话对比卡必须可由纯 UI 模块渲染");
+  assertIncludes(truthBoundaryReviewHtml({ title: "边界", line: "先放句子", choices: [{ key: "true", label: "能确认" }], columns: [{ key: "true", label: "能确认", items: ["A"] }], prompts: [{ id: "true:0", text: "A", expected: "true" }] }, {}), "data-truth-boundary-pick", "事实边界归位按钮必须可由纯 UI 模块渲染");
+  assert(truthBoundaryPlaced({ prompts: [{ id: "a" }] }, { a: "true" }), "事实边界一次放置完成判断必须可由纯 UI 模块测试");
+  assertIncludes(solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "压住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" })[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
   assertIncludes(appSource, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
   assertIncludes(appSource, "liveControlDeck", "案内 UI 必须由直播控场台统一生成");
   assertIncludes(appSource, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
