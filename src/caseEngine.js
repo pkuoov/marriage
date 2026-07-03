@@ -1,7 +1,7 @@
 import { applyDifficultyProfile } from "./difficulty.js?v=0.20.68";
 import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.68";
 import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.68";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseContentForPlot, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.68";
 
 const DAILY_PLOT_DEFINITIONS = {
   "lost-job-hidden-credit": {
@@ -198,9 +198,15 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
     complainantName: npcs.find((npc) => npc.id === brief.complainantId)?.name ?? "咨询者",
     respondentName: npcs.find((npc) => npc.id === brief.respondentId)?.name ?? "对方"
   };
-  return [applyDifficultyProfile(applyDailyCaseTemplate({
+  const templateBrief = applyDailyCaseTemplate({
     ...brief
-  }, names), {
+  }, names);
+  const runtimeBrief = options.skipRuntimeContent
+    ? templateBrief
+    : applyRuntimeContentForBrief(templateBrief, storyPackCaseContentForPlot(options.storyKey ?? options.packKey ?? DEFAULT_STORY_PACK_KEY, plotId), {
+        speakerId: complainantId
+      });
+  return [applyDifficultyProfile(runtimeBrief, {
     tier: 1,
     label: "快玩短案",
     targetDifficulty: Math.max(4, brief.difficulty ?? 4),
@@ -224,15 +230,11 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       dailyKey: `${storyKey}-${index + 1}`,
       plotId: spec.plotId,
       complainantId: spec.complainantId,
-      respondentId: spec.respondentId
+      respondentId: spec.respondentId,
+      skipRuntimeContent: true
     })[0];
     const runtimeContent = storyPackCaseContentFor(storyKey, spec.caseId);
-    const brief = applyRuntimeCaseContent(templateBrief, runtimeContent
-      ? {
-          ...runtimeContent,
-          sceneVersions: withChoiceRoutes(runtimeContent.sceneVersions ?? [])
-        }
-      : null);
+    const brief = applyRuntimeContentForBrief(templateBrief, runtimeContent);
     return {
       ...brief,
       id: `episode-${storyKey}-${index + 1}-${brief.plotId}`,
@@ -337,6 +339,18 @@ function dailyBaseBrief(brief, names, fields) {
     storyClueObject: fields.storyClueObject ?? brief.storyClueObject,
     truth: fields.truth ?? brief.truth
   };
+}
+
+function applyRuntimeContentForBrief(brief, runtimeContent, options = {}) {
+  if (!runtimeContent) return brief;
+  const speakerId = options.speakerId ?? null;
+  return applyRuntimeCaseContent(brief, {
+    ...runtimeContent,
+    sceneVersions: withChoiceRoutes((runtimeContent.sceneVersions ?? []).map((scene) => ({
+      ...scene,
+      ...(speakerId ? { speakerId } : {})
+    })))
+  });
 }
 
 function withChoiceRoutes(sceneVersions) {

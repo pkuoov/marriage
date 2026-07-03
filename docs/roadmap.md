@@ -23,6 +23,7 @@
 - `episode` 已开始支持可变案数：当前 demo 包是四案，但存档迁移、包校验和生成器不再把 4 当成引擎规则。
 - 内容包 manifest 元数据已生成到 `src/generated/contentPackIndex.js` 并由运行时读取；`src/storyPacks.js` 不再手写 demo 包镜像。
 - 完整案件 JSON loader 入口已接入：`CONTENT_CASES` 会记录每案 `runtimeContentStatus`；试玩包四案已切到 `runtime-loaded` 并由内容包覆盖模板字段。
+- daily 模式已接入同一内容源：已迁移的试玩案按 `plotId` 复用 runtime-loaded JSON，旧模板只作为未迁移轮换案兜底。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，减少 `app.js` 的 `plotId` 文案映射。
 - 案间上一通收束句已迁入每案 JSON 的 `storyInterludeRecap`，`app.js` 不再按 `plotId` 维护这组文案。
 - 案件背景 class 已从 `app.js` 的 `plotId` 映射迁入日案定义和 manifest `sequence.backdropClass`。

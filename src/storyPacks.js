@@ -20,6 +20,13 @@ export function storyPackCaseContentFor(storyKey, caseId) {
   return isRuntimeLoadedCaseContent(packet) ? packet : null;
 }
 
+export function storyPackCaseContentForPlot(storyKey, plotId) {
+  const pack = storyPackForKey(storyKey);
+  const spec = (pack.sequence ?? []).find((item) => item.plotId === plotId);
+  if (!spec?.caseId) return null;
+  return storyPackCaseContentFor(storyKey, spec.caseId);
+}
+
 export function storyPackCaseContentStatus(storyKey, caseId) {
   return CONTENT_CASES[storyKey]?.[caseId]?.runtimeContentStatus ?? CONTENT_CASES[DEFAULT_STORY_PACK_KEY]?.[caseId]?.runtimeContentStatus ?? "metadata-only";
 }

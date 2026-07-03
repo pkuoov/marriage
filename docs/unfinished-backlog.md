@@ -37,6 +37,7 @@
 - 输入导航规则已拆到 `src/runtime/inputNavigation.js`：键盘意图、焦点循环和摇杆方向/冷却都有纯函数测试，`app.js` 只负责把意图落到按钮。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
+- daily 模式已优先加载 runtime-loaded JSON：同一 `plotId` 的试玩案不再在故事集和今日来电里维护两套台词，未迁移的轮换案继续走模板兜底。
 - `verify:pack` 已支持指定 pack id，并新增运行时内容 schema 检查：开场、追问、材料、回流、深入追问、收束和分享字段都必须是可玩的嵌套结构。
 - 已新增 Playwright 浏览器回放 smoke：`npm run smoke:browser` 会打开离线 playable，覆盖 perfect route、外围追问后继续主线、材料误圈、纯键盘 perfect 和模拟 Gamepad API perfect 五条单案路线，并走到收麦回看。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，`app.js` 不再用 `plotId` 表维护这一组文案。

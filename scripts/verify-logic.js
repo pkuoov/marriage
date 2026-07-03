@@ -662,6 +662,22 @@ test("EPISODE-003", "runtime-loaded case content can replace template fields wit
   assertEqual(runtimeLoaded.runtimeContentSource, "content-pack-json", "runtime-loaded 覆盖后必须标记内容来源");
 });
 
+test("EPISODE-004", "daily mode reuses runtime-loaded JSON content before template fallback", () => {
+  const credit = generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-06-24" })[0];
+  const tony = generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-06-26" })[0];
+  const profile = generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-06-27" })[0];
+  const workplace = generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-07-01" })[0];
+  const house = generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-06-25" })[0];
+  assertEqual(credit.runtimeContentCaseId, "01-credit", "daily 信用卡案必须复用内容包 JSON，避免模板和故事集双源");
+  assertEqual(tony.runtimeContentCaseId, "02-tony", "daily 理发店案必须复用内容包 JSON");
+  assertEqual(profile.runtimeContentCaseId, "03-profile", "daily 存款证明案必须复用内容包 JSON");
+  assertEqual(workplace.runtimeContentCaseId, "04-workplace", "daily 职场报销案必须复用内容包 JSON");
+  assertEqual(house.runtimeContentSource, undefined, "尚未迁移的房产案必须继续走模板兜底");
+  const variant = generateCasesForMode("daily", NPCS, attrs, { dailyKey: "2026-06-29" })[0];
+  assertEqual(variant.runtimeContentCaseId, "01-credit", "daily 轮换变体也应复用同一份 JSON 台词");
+  assert((variant.sceneVersions ?? []).every((scene) => scene.speakerId === variant.complainantId), "daily 套 JSON 后仍必须保持单来电人讲述");
+});
+
 test("EPISODE-001B", "each demo case exposes the caller's self-serving omission", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const expectedOmissions = {
