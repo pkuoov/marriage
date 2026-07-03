@@ -8,6 +8,12 @@
   "callerStake": "咨询者想证明自己不是误会，也不想承认自己享受过被当成自己人的感觉。",
   "otherStake": "对方需要维持服务热情和私人暧昧之间的模糊边界。",
   "thirdPressure": "店内业绩、同事起哄和熟客维护话术。",
+  "routeAxisComments": {
+    "identity-wording": ["自己人这词又来了", "甜话先别急着信"],
+    "money-flow": ["后面接消费就变味", "办卡那一下太快了"],
+    "document-edge": ["表格比情话冷", "备注栏有点硬"],
+    "caller-credibility": ["她也顺着这个位置走了", "关系没说死才难听"]
+  },
   "truthBoundary": {
     "true": [
       "对方对多名顾客使用相似亲密称呼",

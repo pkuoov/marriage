@@ -10,6 +10,7 @@ export const RUNTIME_CASE_CONTENT_FIELDS = [
   "storyArcSummary",
   "storySuspense",
   "storyClueObject",
+  "routeAxisComments",
   "truthBoundary",
   "accusationChoices",
   "openingComplaint",
@@ -35,6 +36,7 @@ export const RUNTIME_CASE_CONTENT_FIELDS = [
 export const RUNTIME_CASE_REQUIRED_FIELDS = [
   "openingComplaint",
   "openingDialogue",
+  "routeAxisComments",
   "truthBoundary",
   "accusationChoices",
   "sceneVersions",

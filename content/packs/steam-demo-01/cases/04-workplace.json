@@ -8,6 +8,12 @@
   "callerStake": "咨询者想拿主责和表现，也想把垫款风险推回同事。",
   "otherStake": "对方需要借审批截图安抚垫款人，同时继续控制供应商和财务入口。",
   "thirdPressure": "老板临时指派、项目署名、供应商催款和财务流程。",
+  "routeAxisComments": {
+    "process-control": ["入口在谁手里", "流程词太熟了"],
+    "document-edge": ["审批图少的是钱", "截图卡在最会挡人的页"],
+    "money-flow": ["钱还没落地", "返款口子要看清"],
+    "caller-credibility": ["他也想要主责", "表现机会不是免费午餐"]
+  },
   "truthBoundary": {
     "true": [
       "审批流程可能已经走到某一步",
@@ -302,6 +308,33 @@
           "correct": false,
           "feedback": "复盘能证明署名，证明不了垫付款有没有回。",
           "routeAxis": "identity-wording"
+        }
+      ]
+    },
+    {
+      "id": "work-vendor-rebate",
+      "title": "供应商报价检视",
+      "prompt": "报价单里，哪一处会让返款入口变得危险？",
+      "material": "报价单最下面多出一行“服务协调费”，备注写着“按老规矩返给对接人”。对接人仍是那位同事。",
+      "options": [
+        {
+          "label": "返给对接人",
+          "correct": true,
+          "contradiction": "供应商返款入口仍在同事手里，垫付款可能被卡在对接流程里。",
+          "feedback": "审批图证明不了返款落点，这一行才把钱路接到同事手上。",
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "服务协调费",
+          "correct": false,
+          "feedback": "费用名目可疑，但真正危险的是这笔钱最后返给谁。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "报价单最下面",
+          "correct": false,
+          "feedback": "位置能说明它容易被忽略，不能说明钱落到谁手里。",
+          "routeAxis": "document-edge"
         }
       ]
     }

@@ -3,6 +3,8 @@ export function livePressureProfile({
   foundCount = 0,
   intentHook = "",
   pressureSignal = "",
+  routeAxis = "",
+  routeAxisComments = {},
   scene = "",
   sceneHint = {},
   mood = "listening"
@@ -21,7 +23,7 @@ export function livePressureProfile({
     crowd,
     callerGuard,
     patienceLabel: patienceLabelFor(level),
-    comments: liveCommentsFor({ crowd, foundCount, intentHook, level, scene }),
+    comments: liveCommentsFor({ crowd, foundCount, intentHook, level, routeAxis, routeAxisComments, scene }),
     expression: expressionFor({ callerGuard, crowd, level, mood, scene, sceneHint })
   };
 }
@@ -151,14 +153,26 @@ function callerGuardState({ pressureSignal = "", crowd = "", mood = "", sceneHin
   return "听着";
 }
 
-function liveCommentsFor({ crowd = "", foundCount = 0, intentHook = "", level = "high", scene = "" }) {
+function liveCommentsFor({ crowd = "", foundCount = 0, intentHook = "", level = "high", routeAxis = "", routeAxisComments = {}, scene = "" }) {
   const hook = intentHook || "话太顺了";
-  if (scene === "patienceLost" || level === "low") return ["弹幕散了", "麦要断了", hook];
-  if (crowd === "跑偏") return ["弹幕跑散", hook, "人声压不住"];
-  if (crowd === "压住") return ["弹幕安静", hook, "那句对上了"];
-  if (foundCount >= 2) return ["弹幕刷得快", hook, "话还没完"];
-  if (foundCount === 1) return ["开始对上了", hook, "话没说满"];
-  return ["刚接进来", "弹幕在等", hook];
+  const axisComment = routeAxisCommentFor(routeAxis, routeAxisComments);
+  if (scene === "patienceLost" || level === "low") return withAxisComment(["弹幕散了", "麦要断了", hook], axisComment);
+  if (crowd === "跑偏") return withAxisComment(["弹幕跑散", hook, "人声压不住"], axisComment);
+  if (crowd === "压住") return withAxisComment(["弹幕安静", hook, "那句对上了"], axisComment);
+  if (foundCount >= 2) return withAxisComment(["弹幕刷得快", hook, "话还没完"], axisComment);
+  if (foundCount === 1) return withAxisComment(["开始对上了", hook, "话没说满"], axisComment);
+  return withAxisComment(["刚接进来", "弹幕在等", hook], axisComment);
+}
+
+function routeAxisCommentFor(routeAxis = "", routeAxisComments = {}) {
+  const comments = routeAxisComments?.[routeAxis];
+  if (!Array.isArray(comments) || comments.length === 0) return "";
+  return comments[0] ?? "";
+}
+
+function withAxisComment(comments = [], axisComment = "") {
+  if (!axisComment) return comments;
+  return [comments[0], axisComment, comments[2] ?? comments[1]].filter(Boolean).slice(0, 3);
 }
 
 function expressionFor({ callerGuard = "", crowd = "", level = "high", mood = "", scene = "", sceneHint = {} }) {

@@ -134,6 +134,11 @@ test("PACK-003", "case pressure packets are complete", () => {
       RUNTIME_CASE_REQUIRED_FIELDS.forEach((runtimeField) => {
         assert(casePacket[runtimeField] !== undefined, `${casePacket.caseId} runtime-loaded 缺少 ${runtimeField}`);
       });
+      const axisCommentValues = Object.values(casePacket.routeAxisComments ?? {}).flat();
+      assert(axisCommentValues.length >= 4, `${casePacket.caseId} 至少需要 4 条路线轴弹幕`);
+      axisCommentValues.forEach((comment, commentIndex) => {
+        assertNonEmptyString(comment, `${casePacket.caseId} routeAxisComments[${commentIndex}] 不能为空`);
+      });
     }
     ["true", "edited", "unknown"].forEach((field) => {
       assert((casePacket.truthBoundary?.[field] ?? []).length > 0, `${casePacket.caseId} truthBoundary.${field} 不能为空`);
@@ -193,6 +198,9 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       });
 
       assertArrayMin(casePacket.evidenceChecks, 1, `${casePacket.caseId} 至少需要一个材料检视`);
+      if (casePacket.caseId === "04-workplace") {
+        assertArrayMin(casePacket.evidenceChecks, 2, "04-workplace 必须有两份材料检视，体现职场流程压力");
+      }
       casePacket.evidenceChecks.forEach((check, checkIndex) => {
         assertEvidenceOperation(check, `${casePacket.caseId} evidenceChecks[${checkIndex}]`);
       });

@@ -97,6 +97,7 @@ function normalizeDailyState(saved) {
     caseInterludes: saved?.caseInterludes ?? {},
     lastReaction: saved?.lastReaction ?? null,
     lastPressureSignal: saved?.lastPressureSignal ?? null,
+    lastPressureAxis: saved?.lastPressureAxis ?? null,
     settings: { ...baseState.settings, ...(saved?.settings ?? {}) }
   };
 }
@@ -890,6 +891,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
   if (hadPressureCue) {
     state.lastReaction = null;
     state.lastPressureSignal = null;
+    state.lastPressureAxis = null;
     saveState();
   }
   bind('[data-action="title"]', resetToTitle);
@@ -1151,6 +1153,7 @@ function handleSceneDialogueButton(button) {
   markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
   state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
   state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
+  state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
   if (audiencePatienceLost(brief)) return;
   saveState();
   render();
@@ -1171,6 +1174,7 @@ function handleSceneQuestionButton(button) {
     state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
     state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
   }
+  state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
   state.sceneAnswers = {
     ...(state.sceneAnswers ?? {}),
     [answerKey(brief, sceneIndex)]: option.answer ?? ""
@@ -1219,6 +1223,7 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
       state.lastReaction = materialPressureReaction(outcome, check);
       state.lastPressureSignal = materialPressureSignal(outcome);
+      state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
       if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
         state.scene = "patienceLost";
         saveState();
@@ -1257,6 +1262,7 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
       );
       state.lastReaction = investigationPickReaction(outcome, hook);
       state.lastPressureSignal = materialPressureSignal(outcome);
+      state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
       if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) {
         state.scene = "patienceLost";
         saveState();
@@ -1601,6 +1607,8 @@ function audiencePatienceLost(brief) {
   })) return false;
   state.scene = "patienceLost";
   state.lastReaction = null;
+  state.lastPressureSignal = null;
+  state.lastPressureAxis = null;
   saveState();
   render();
   return true;
@@ -1823,6 +1831,8 @@ function currentLivePressure(brief, mood = "listening") {
     foundCount: contradictions(brief).length,
     intentHook: liveIntentHookFor(brief),
     pressureSignal: state.lastPressureSignal ?? "",
+    routeAxis: state.lastPressureAxis ?? "",
+    routeAxisComments: brief.routeAxisComments ?? {},
     scene: state.scene,
     sceneHint,
     mood

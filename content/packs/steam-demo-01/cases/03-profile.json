@@ -8,6 +8,12 @@
   "callerStake": "咨询者想说自己在意诚信，其实最在意收入是否足够稳定。",
   "otherStake": "对方需要用好看的标签降低追问成本，避免正式学历和实际收入被拆开看。",
   "thirdPressure": "父母筛选、介绍人面子和婚恋市场上的条件标签。",
+  "routeAxisComments": {
+    "identity-wording": ["名校两个字太省事", "标签好听也得拆开"],
+    "money-flow": ["流水才是后半句", "工资卡这句扎到了"],
+    "document-edge": ["资料图又少一截", "这跟前面账单少页一个味"],
+    "caller-credibility": ["她问诚信，也问钱", "来电人没把收入诉求说满"]
+  },
   "truthBoundary": {
     "true": [
       "MBA 经历可能是真的",

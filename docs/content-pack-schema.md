@@ -73,8 +73,9 @@ content/packs/<pack-id>/
 - `openingDialogue`：开场麦上来回，至少两句；每句包含 `role`、`text`。日案仍是单来电人结构，另一方只能通过转述、截图、语音摘录或回流材料出现。
 - `sceneVersions`：主追问段落，试玩包标准是 5 段；每段包含 `speakerId`、`version`、`doubt`、`contradiction`、`reliability`、`pressureHint`、`questionOptions`。
 - `sceneVersions[].pressureHint`：直播现场表演数据，不给玩家当提示。包含 `intentHook`、`callerGuard`（`guarded` / `tense` / `listening`）和 `expression.kind/text`（`blink` / `pause` / `shift`）。不要在运行时代码里用案件台词正则判断表情。
+- `routeAxisComments`：按玩家最近一次路线轴显示的直播弹幕短句池，只用于现场表演反馈，不写成过关提示。至少覆盖本案主要路线轴。
 - `questionOptions`：每段至少两个 host 问法；每项包含 `question`、`answer`、`routeAxis`、`routeTone`。必须且只能有一个核心追问，核心追问用 `correct: true` 和 `contradiction` 标出。其他选项也要像主播会问的话，不能写成故意错选。
-- `evidenceChecks`：材料圈点，至少一个；每项包含 `id`、`title`、`prompt`、`material`、`options`。`options` 至少三个，必须且只能一个 `correct: true`，正确项要写 `contradiction`。
+- `evidenceChecks`：材料圈点，至少一个；每项包含 `id`、`title`、`prompt`、`material`、`options`。`options` 至少三个，必须且只能一个 `correct: true`，正确项要写 `contradiction`。职场/流程案可以用两份材料制造流程压力，例如先看审批图，再看供应商返款入口。
 - `investigationHooks`：案后回流，至少一个；字段和材料圈点一致，并额外包含 `source`、`triggerContradiction`、`proves`、`stillCannotProve`。回流必须关联玩家已经听到的矛盾，不能凭空爆答案。
 - `deepFollowup`：全核心命中后自动出现的一问，包含 `question`、`answer`、`note`。它不是奖励提示，要像主播顺着已经听到的事实多问了一句。
 - `stageJudgement`、`storyInterludeRecap`、`followupTwist`、`truth`：收麦、案间和后续余味文案。

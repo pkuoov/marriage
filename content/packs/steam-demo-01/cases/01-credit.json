@@ -8,6 +8,12 @@
   "callerStake": "咨询者不想背债，也不想承认自己被体面消费打动过。",
   "otherStake": "对方需要把个人债务说成关系里的共同难关。",
   "thirdPressure": "朋友圈里的体面伴侣形象和结婚态度测试。",
+  "routeAxisComments": {
+    "money-flow": ["弹幕开始算账了", "钱路比委屈快"],
+    "document-edge": ["账单边上有时间", "截图不是白发的"],
+    "caller-credibility": ["有人问她也图体面", "来电人这句也没全白"],
+    "identity-wording": ["体面这词开始扎人", "身份话压到钱上了"]
+  },
   "truthBoundary": {
     "true": [
       "失业和债务压力都存在",

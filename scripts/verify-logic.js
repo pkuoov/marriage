@@ -192,10 +192,13 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   const miss = livePressureProfile({
     budget: { max: 8, remaining: 6 },
     pressureSignal: "drift",
+    routeAxis: "document-edge",
+    routeAxisComments: { "document-edge": ["截图少的那页开始吵"] },
     intentHook: "截图少了一边"
   });
   assertEqual(miss.crowd, "跑偏", "误指材料必须推动弹幕跑偏");
   assertEqual(miss.callerGuard, "防备", "弹幕跑偏必须提高连线人防备");
+  assertIncludes(miss.comments.join("/"), "截图少的那页开始吵", "现场弹幕必须能按玩家路线轴读取内容包种子");
   const hit = livePressureProfile({
     budget: { max: 8, remaining: 6 },
     pressureSignal: "held",
@@ -387,6 +390,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "pressure.comments", "弹幕条必须由现场压力画像生成，不能散落多套规则");
   assertIncludes(appSource, "pressure.expression", "来电人表情必须能读取现场压力画像");
   assertIncludes(appSource, "lastPressureSignal", "现场压力状态必须有结构化 signal，不能只靠反应文案推断");
+  assertIncludes(appSource, "lastPressureAxis", "现场压力弹幕必须记录最近一次路线轴，不能只吐通用短句");
+  assertIncludes(appSource, "routeAxisComments", "案内弹幕必须能读取内容包路线轴种子");
   assertIncludes(appSource, "currentScenePressureHint", "场景表情和弹幕钩子必须从内容数据读取，不能在 app.js 扫台词");
   assert(!livePressureSource.includes("sceneText"), "livePressure 不能扫描案件台词决定表情或防备，场景钩子必须进 JSON");
   assert(!livePressureSource.includes("reaction = \"\"") && !livePressureSource.includes("reaction,"), "livePressure 不能扫描自己生成的反应文案决定 crowdState");
@@ -581,7 +586,9 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assertEqual(a[2].runtimeContentCaseId, "03-profile", "第三案必须记录接管它的内容包 caseId");
   assertEqual(a[3].runtimeContentSource, "content-pack-json", "第四案必须从 content JSON 接管完整运行时内容");
   assertEqual(a[3].runtimeContentCaseId, "04-workplace", "第四案必须记录接管它的内容包 caseId");
+  assert((a[3].evidenceChecks ?? []).length >= 2, "职场案必须至少两份材料检视，和前三案形成流程压力差异");
   a.forEach((brief, index) => {
+    assert(Object.values(brief.routeAxisComments ?? {}).flat().length >= 4, `第 ${index + 1} 案必须有按路线轴反应的弹幕池`);
     assert((brief.truthBoundary?.true ?? []).length > 0, `第 ${index + 1} 案必须把实锤边界带进运行时`);
     assert((brief.truthBoundary?.edited ?? []).length > 0, `第 ${index + 1} 案必须把修剪边界带进运行时`);
     assert((brief.truthBoundary?.unknown ?? []).length > 0, `第 ${index + 1} 案必须把未知边界带进运行时`);
@@ -1073,6 +1080,7 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
   assertEqual(typeof migrated.truthBoundaryPicks, "object", "旧存档必须补 truthBoundaryPicks 记录");
   assertEqual(typeof migrated.truthBoundaryMisses, "object", "旧存档必须补 truthBoundaryMisses 记录");
   assertEqual(migrated.lastPressureSignal, null, "旧存档必须补结构化现场压力状态");
+  assertEqual(migrated.lastPressureAxis, null, "旧存档必须补路线轴现场压力状态");
 
   const dailyCallMigrated = migrateState({
     caseMode: "daily",

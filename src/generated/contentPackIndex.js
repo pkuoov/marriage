@@ -95,6 +95,24 @@ export const CONTENT_CASES = {
       "storyArcSummary": "账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
       "storySuspense": "这案一不小心就吵成“你嫌我穷”。账单日期比委屈更诚实。",
       "storyClueObject": "信用卡账单与社保断缴截图",
+      "routeAxisComments": {
+        "money-flow": [
+          "弹幕开始算账了",
+          "钱路比委屈快"
+        ],
+        "document-edge": [
+          "账单边上有时间",
+          "截图不是白发的"
+        ],
+        "caller-credibility": [
+          "有人问她也图体面",
+          "来电人这句也没全白"
+        ],
+        "identity-wording": [
+          "体面这词开始扎人",
+          "身份话压到钱上了"
+        ]
+      },
       "truthBoundary": {
         "true": [
           "失业和债务压力都存在",
@@ -441,6 +459,24 @@ export const CONTENT_CASES = {
       "storyArcSummary": "看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
       "storySuspense": "他会聊天不稀奇，稀奇的是每句亲近后面都接了店里的事。",
       "storyClueObject": "理发店排班表与办卡记录",
+      "routeAxisComments": {
+        "identity-wording": [
+          "自己人这词又来了",
+          "甜话先别急着信"
+        ],
+        "money-flow": [
+          "后面接消费就变味",
+          "办卡那一下太快了"
+        ],
+        "document-edge": [
+          "表格比情话冷",
+          "备注栏有点硬"
+        ],
+        "caller-credibility": [
+          "她也顺着这个位置走了",
+          "关系没说死才难听"
+        ]
+      },
       "truthBoundary": {
         "true": [
           "对方对多名顾客使用相似亲密称呼",
@@ -787,6 +823,24 @@ export const CONTENT_CASES = {
       "storyArcSummary": "材料会越要越细，男方有话没说全，女方也有话没跟家里说。",
       "storySuspense": "几张图都挺像真的，问题是它们刚好少了最容易吵起来的部分。",
       "storyClueObject": "几张资料截图和一张存款证明",
+      "routeAxisComments": {
+        "identity-wording": [
+          "名校两个字太省事",
+          "标签好听也得拆开"
+        ],
+        "money-flow": [
+          "流水才是后半句",
+          "工资卡这句扎到了"
+        ],
+        "document-edge": [
+          "资料图又少一截",
+          "这跟前面账单少页一个味"
+        ],
+        "caller-credibility": [
+          "她问诚信，也问钱",
+          "来电人没把收入诉求说满"
+        ]
+      },
       "truthBoundary": {
         "true": [
           "MBA 经历可能是真的",
@@ -1186,6 +1240,24 @@ export const CONTENT_CASES = {
       "storyArcSummary": "先问三件事：谁让垫、谁拿署名、截图到底停在哪一步。",
       "storySuspense": "这案很容易骂成同事骗钱。审批通过和钱到账不是一回事。",
       "storyClueObject": "报销审批截图、活动群聊和供应商报价单",
+      "routeAxisComments": {
+        "process-control": [
+          "入口在谁手里",
+          "流程词太熟了"
+        ],
+        "document-edge": [
+          "审批图少的是钱",
+          "截图卡在最会挡人的页"
+        ],
+        "money-flow": [
+          "钱还没落地",
+          "返款口子要看清"
+        ],
+        "caller-credibility": [
+          "他也想要主责",
+          "表现机会不是免费午餐"
+        ]
+      },
       "truthBoundary": {
         "true": [
           "审批流程可能已经走到某一步",
@@ -1468,6 +1540,33 @@ export const CONTENT_CASES = {
               "correct": false,
               "feedback": "复盘能证明署名，证明不了垫付款有没有回。",
               "routeAxis": "identity-wording"
+            }
+          ]
+        },
+        {
+          "id": "work-vendor-rebate",
+          "title": "供应商报价检视",
+          "prompt": "报价单里，哪一处会让返款入口变得危险？",
+          "material": "报价单最下面多出一行“服务协调费”，备注写着“按老规矩返给对接人”。对接人仍是那位同事。",
+          "options": [
+            {
+              "label": "返给对接人",
+              "correct": true,
+              "contradiction": "供应商返款入口仍在同事手里，垫付款可能被卡在对接流程里。",
+              "feedback": "审批图证明不了返款落点，这一行才把钱路接到同事手上。",
+              "routeAxis": "process-control"
+            },
+            {
+              "label": "服务协调费",
+              "correct": false,
+              "feedback": "费用名目可疑，但真正危险的是这笔钱最后返给谁。",
+              "routeAxis": "money-flow"
+            },
+            {
+              "label": "报价单最下面",
+              "correct": false,
+              "feedback": "位置能说明它容易被忽略，不能说明钱落到谁手里。",
+              "routeAxis": "document-edge"
             }
           ]
         }
