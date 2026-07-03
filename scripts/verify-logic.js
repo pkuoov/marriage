@@ -22,6 +22,7 @@ import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced, tr
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
+import { titleScreenHtml } from "../src/ui/titleView.js?v=0.20.68";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -558,7 +559,11 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(appSource, "./ui/storyPackCompleteView.js", "故事集终局 HTML 必须从 app.js 拆到 ui/storyPackCompleteView");
   assertIncludes(storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料咬住" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" }), "评论区审判墙", "故事集终局结果卡必须可由纯 UI 模块渲染");
   assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "压住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, playerType: "收麦主播" }), "材料圈点：圈准", "故事集终局复制文案必须可由纯 UI 模块生成");
-  assertIncludes(appSource, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
+  assertIncludes(appSource, "./ui/titleView.js", "标题页 HTML 必须从 app.js 拆到 ui/titleView");
+  const titleHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, title: "Steam 试玩版", hook: "热线已经接进来。资料在后台。", object: "热线已接入" });
+  assertIncludes(titleHtml, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
+  assertIncludes(titleHtml, "热线已接入", "标题页必须像热线接入，不提前列目录");
+  assert(!/四案|4\s*案|故事集目录|第一案|第二案|第三案|第四案|主题论点/.test(titleHtml), "标题页不能提前暴露案数、目录或主题论点");
   assertIncludes(appSource, "liveControlDeck", "案内 UI 必须由直播控场台统一生成");
   assertIncludes(appSource, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
   assertIncludes(appSource, "live-console-shell", "案内主画面必须使用控场台布局骨架");

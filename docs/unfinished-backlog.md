@@ -36,6 +36,7 @@
 - 收麦回看 HTML 已拆到 `src/ui/recapView.js`：事实边界归位、最终原话对比和单案回看页面组可以脱离 `app.js` 测试，`app.js` 只处理归位点击和流程推进。
 - 故事集终局 HTML 已拆到 `src/ui/storyPackCompleteView.js`：结果卡、评论区审判墙和复制文案都能脱离 `app.js` 测试，`app.js` 只收集故事集模型和绑定按钮。
 - 案间过渡 HTML 已拆到 `src/ui/storyInterludeView.js`：上一通余味、下一通 dramatic object 和接麦按钮文案都有纯 UI 断言，避免退回“下一案/下一通来电”目录页。
+- 标题页 HTML 已拆到 `src/ui/titleView.js`：直播信号条、热线接入 hook 和入口按钮都有纯 UI 断言，防止首页重新剧透案数、目录或主题论点。
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
 - 存档已抽到 `src/platform/saveStore.js`：Web 仍是单槽 localStorage；桌面壳可通过 `platformRuntime.saveFiles` 提供 `read/write/remove/list/exportForCloud` 文件存档接口，后续接 Steam Cloud。
 - 键盘焦点底座已接入：渲染后自动落到主操作，方向键 / WASD 切换按钮，Enter / Space 确认，Esc 返回标题或重试入口。
@@ -138,8 +139,9 @@ content/packs/steam-demo-01/
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；下一步继续拆 `renderSceneReview` / `renderRecap`。
 - `src/ui/recapView.js` 已接管单案收麦回看页面组、事实边界归位/揭示和最终原话对比卡；下一步只补单案回看新增缺口，不再把收麦页面写回 `app.js`。
-- `src/ui/storyPackCompleteView.js` 已接管故事集终局结果卡、profile 行、评论区审判墙和复制文案；下一步继续拆标题页或把 story pack profile 收集再模型化。
-- `src/ui/storyInterludeView.js` 已接管案间过渡卡片和接麦按钮文案；下一步继续拆标题页或把 story pack profile 收集再模型化。
+- `src/ui/storyPackCompleteView.js` 已接管故事集终局结果卡、profile 行、评论区审判墙和复制文案；下一步把 story pack profile 收集再模型化。
+- `src/ui/storyInterludeView.js` 已接管案间过渡卡片和接麦按钮文案；下一步把 story pack profile 收集再模型化。
+- `src/ui/titleView.js` 已接管标题页直播信号、热线 hook 和入口按钮；下一步把 story pack profile 收集再模型化。
 - `src/ui/renderSceneReview.js`
 - `src/ui/renderRecap.js`
 - `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；`desktop/electron/preload.cjs` 已接同步文件存档 IPC，下一步接 Electron 依赖和打包器。
