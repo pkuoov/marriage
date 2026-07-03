@@ -37,6 +37,8 @@ Needed replacements:
 - `assets/generated/backgrounds/profile_verification_desk.png`
 - `assets/generated/backgrounds/office_finance_reimbursement.png`
 
+2026-07-03 update: these four backgrounds have been generated and connected in `src/styles.css`. The old cafe/lounge/banquet/agency assets remain in the repo as archive candidates, but no longer drive the Steam demo case backdrops.
+
 Keep `livestream_studio_v2.png` as title/default broadcast shell.
 
 ### P0: Runtime Portraits Are Too Generic For Anonymous Callers
@@ -119,4 +121,3 @@ Use the existing `docs/background-prompts.txt` and `docs/character-prompts.txt`,
 - Less fashion full-body character sheet, more anonymous caller pressure state.
 - More object-specific case staging: bill, schedule, profile stack, approval/payment page.
 - Keep realism grounded, but use stronger 2D-game shapes and cleaner color blocking.
-
