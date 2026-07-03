@@ -15,7 +15,7 @@ import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapL
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
-import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
+import { evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
@@ -305,13 +305,12 @@ function renderEvidenceCheck(brief) {
     mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
     label: "看材料",
     chapter: liveChapterTitle(brief),
-    text: `
-      <p><b>${escapeHtml(check.title ?? "材料检视")}</b></p>
-      ${evidenceOperationHtml(check, pick, index)}
-      <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>
-      ${pick ? evidencePickFeedbackHtml(pick) : ""}
-      ${keyChoiceReview(brief)}
-    `,
+    text: evidenceCheckScreenHtml({
+      check,
+      pick,
+      index,
+      reviewHtml: keyChoiceReview(brief)
+    }),
     choices: pick
       ? flowGroupHtml(lastCheck
         ? `<button class="primary" data-scene="${nextStage}" type="button">${nextLabel}</button>`
@@ -339,14 +338,12 @@ function renderInvestigationBackflow(brief) {
     mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
     label: "后台私信",
     chapter: liveChapterTitle(brief),
-    text: `
-      <p><b>${escapeHtml(hook.surface ?? "后台进来一条私信")}</b></p>
-      <p>${escapeHtml(hook.appearsNowBecause ?? "收麦后，有人补了一张图。")}</p>
-      ${evidenceOperationHtml(hook, pick, index)}
-      <p>${escapeHtml(hook.prompt ?? "这条回流里，哪一句最该圈出来？")}</p>
-      ${pick ? evidencePickFeedbackHtml(pick) : ""}
-      ${keyChoiceReview(brief)}
-    `,
+    text: investigationBackflowScreenHtml({
+      hook,
+      pick,
+      index,
+      reviewHtml: keyChoiceReview(brief)
+    }),
     choices: pick
       ? flowGroupHtml(`<button class="primary" data-after-investigation type="button">${nextLabel}</button>`)
       : ""

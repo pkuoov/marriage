@@ -59,6 +59,37 @@ export function evidencePickFeedbackHtml(pick = {}) {
   `;
 }
 
+export function evidenceCheckScreenHtml({
+  check = {},
+  pick = null,
+  index = 0,
+  reviewHtml = ""
+} = {}) {
+  return `
+    <p><b>${escapeHtml(check.title ?? "材料检视")}</b></p>
+    ${evidenceOperationHtml(check, pick, index)}
+    <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>
+    ${pick ? evidencePickFeedbackHtml(pick) : ""}
+    ${reviewHtml}
+  `;
+}
+
+export function investigationBackflowScreenHtml({
+  hook = {},
+  pick = null,
+  index = 0,
+  reviewHtml = ""
+} = {}) {
+  return `
+    <p><b>${escapeHtml(hook.surface ?? "后台进来一条私信")}</b></p>
+    <p>${escapeHtml(hook.appearsNowBecause ?? "收麦后，有人补了一张图。")}</p>
+    ${evidenceOperationHtml(hook, pick, index)}
+    <p>${escapeHtml(hook.prompt ?? "这条回流里，哪一句最该圈出来？")}</p>
+    ${pick ? evidencePickFeedbackHtml(pick) : ""}
+    ${reviewHtml}
+  `;
+}
+
 function evidenceMaterialBodyHtml(check = {}, kind = "file") {
   const lines = evidenceMaterialLines(check.material ?? "");
   if (kind === "bill") {

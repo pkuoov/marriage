@@ -20,7 +20,7 @@ import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapL
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
-import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
+import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
@@ -327,6 +327,14 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   assertIncludes(stylesSource, ".evidence-annotation.miss", "误指材料必须只标出玩家圈偏的位置");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   assert(!appSource.includes("choiceGroup(\"圈哪一处\""), "材料检视不能退回下方普通按钮组选项");
+  assertIncludes(appSource, "evidenceCheckScreenHtml", "材料检视整页 HTML 必须从 app.js 拆到 ui/evidenceView");
+  assert(!appSource.includes("这份材料里，哪一块最该先指出？"), "材料检视提示文案不能继续手写在 app.js");
+  const screenHtml = evidenceCheckScreenHtml({
+    check: { title: "账单检视", prompt: "圈哪里？", material: "账单缺页。", options: [{ label: "缺页", correct: true }] },
+    reviewHtml: "<aside>刚才说到</aside>"
+  });
+  assertIncludes(screenHtml, "evidence-workbench", "材料检视页面 helper 必须保留材料操作台");
+  assertIncludes(screenHtml, "刚才说到", "材料检视页面 helper 必须能接入上一段回看");
   assert(!stylesSource.includes("evidence-check-card"), "材料操作台上线后不能留下旧材料段落卡样式");
 });
 
@@ -355,6 +363,14 @@ test("INVESTIGATION-001", "host investigation backflow is fixed material, not fr
   assertIncludes(appSource, "unlockedInvestigationEntriesFor", "回流材料必须由已听到的矛盾触发，不能开局直接发答案");
   assertIncludes(appSource, "investigationPicks", "回流材料选择必须可存档、可回放、可测试");
   assertIncludes(appSource, "investigationRouteIndexBase", "路线图必须把回流节点标出来，不能伪装成第六段对话");
+  assertIncludes(appSource, "investigationBackflowScreenHtml", "后台私信回流整页 HTML 必须从 app.js 拆到 ui/evidenceView");
+  assert(!appSource.includes("收麦后，有人补了一张图。"), "后台私信默认文案不能继续手写在 app.js");
+  const backflowHtml = investigationBackflowScreenHtml({
+    hook: { surface: "后台私信", appearsNowBecause: "有人补了一句。", prompt: "圈哪句？", material: "返给对接人。", options: [{ label: "对接人", correct: true }] },
+    reviewHtml: "<aside>刚才说到</aside>"
+  });
+  assertIncludes(backflowHtml, "后台私信", "后台私信页面 helper 必须保留来源标题");
+  assertIncludes(backflowHtml, "evidence-workbench", "后台私信页面 helper 必须复用材料操作台");
   assertIncludes(stateSource, "investigationPicks", "旧存档迁移必须补回流材料选择容器");
   cases.forEach((brief, index) => {
     assert((brief.investigationHooks ?? []).length >= 1, `第 ${index + 1} 案必须有至少一个案后回流材料`);

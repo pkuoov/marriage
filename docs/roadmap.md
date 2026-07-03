@@ -54,6 +54,7 @@
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`，并有单元断言覆盖；`app.js` 继续收状态，UI 细节开始脱离 god file。
 - 直播主舞台和控场台外壳已拆到 `src/ui/liveFrameView.js`，topbar、control deck 和 `live-console-shell` 可由纯 UI 模块测试。
 - 通用通话气泡、流程按钮组和上一段回看已拆到 `src/ui/callFlowView.js`，直播文本通用 DOM 不再散在 `app.js`。
+- 材料检视和后台私信回流整页 HTML 已拆到 `src/ui/evidenceView.js`，材料操作台外壳、圈点反馈和回看接入不再散在 `app.js`。
 - 案间过渡文案模型已拆到 `src/runtime/storyInterludeModel.js`，上一通收束、下一通物件名和桥接句不再作为纯文本判断留在 `app.js`。
 - 标题页 HTML 已拆到 `src/ui/titleView.js`，直播信号、热线 hook 和不剧透目录都有纯 UI 断言。
 - 对话回合 HTML 已拆到 `src/ui/sceneReviewView.js`，当前/已完成对话正文、追问气泡组装和继续按钮都有纯 UI 断言。

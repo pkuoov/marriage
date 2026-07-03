@@ -50,9 +50,9 @@ npm run smoke:desktop
 | ROUTE-001 | Hidden route map | Every playable choice records a route axis and tone. | 玩家选择无法生成路线图、回溯和主播倾向。 |
 | ROUTE-002 | Route-log helpers | Route axis, tone, and dominant profile are pure runtime helpers covered outside DOM rendering. | 路线图逻辑继续堆在 `app.js`，后续 UI 改文案时误伤路线画像。 |
 | MATERIAL-001 | Material operation model | Material hit/miss produces a reusable operation outcome: hit records contradiction without patience loss, miss spends patience without revealing the answer. | 资料操作继续散在 UI 事件里，后续做圈点时重复实现并误泄露正确答案。 |
-| MATERIAL-002 | Material board UI | Material inspection renders as a markable document board with file lines, in-board targets, and hit/miss annotations. | 材料检视退回纯段落、普通按钮列表，或点击后没有“圈出来”的游戏反馈。 |
+| MATERIAL-002 | Material board UI | Material inspection renders as a markable document board with file lines, in-board targets, hit/miss annotations, and page-level HTML owned by `ui/evidenceView`. | 材料检视退回纯段落、普通按钮列表，整页模板长回 `app.js`，或点击后没有“圈出来”的游戏反馈。 |
 | MATERIAL-003 | Material type skins | Bills, tables, screenshots, approval flows, and generic files render with distinct document bodies. | 账单、表格、截图和审批流又退回同一种普通文字卡，试玩 UI 缺少操作感。 |
-| INVESTIGATION-001 | Evidence source expansion | Investigation hooks only unlock from already heard contradictions, render as fixed materials, and never create freeform facts or second-party live debate. | 后台核实变成任务提示、AI 编事实、另一方上麦吵架，或未先发现矛盾就直接发答案。 |
+| INVESTIGATION-001 | Evidence source expansion | Investigation hooks only unlock from already heard contradictions, render as fixed materials through `ui/evidenceView`, and never create freeform facts or second-party live debate. | 后台核实变成任务提示、AI 编事实、另一方上麦吵架、页面模板散回 `app.js`，或未先发现矛盾就直接发答案。 |
 | STATE-001 | Save migration | Legacy saves migrate into episode-compatible shape while preserving explicit daily saves and settings. | Old saves breaking after refactors. |
 | RUNTIME-001 | Outcome math | Internal carryover scores clamp correctly for wins/failures. | Run result values drifting out of range. |
 | RUNTIME-002 | Pacing and difficulty | Daily budget has a floor and hint count stays at one; story-pack cases can use manifest difficulty profiles to vary patience budget and truth-boundary prompt count. | Mobile short-case pacing getting too long or too guided, or story-pack difficulty staying flat across every case. |
