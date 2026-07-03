@@ -16,6 +16,7 @@ import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
 import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
+import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
@@ -368,6 +369,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
   const routeMapSource = readFileSync(new URL("../src/runtime/routeMapModel.js", import.meta.url), "utf8");
   const livePressureSource = readFileSync(new URL("../src/runtime/livePressure.js", import.meta.url), "utf8");
+  const storyInterludeModelSource = readFileSync(new URL("../src/runtime/storyInterludeModel.js", import.meta.url), "utf8");
   const storyPackSummarySource = readFileSync(new URL("../src/runtime/storyPackSummaryModel.js", import.meta.url), "utf8");
   const liveCallViewSource = readFileSync(new URL("../src/ui/liveCallView.js", import.meta.url), "utf8");
   const recapViewSource = readFileSync(new URL("../src/ui/recapView.js", import.meta.url), "utf8");
@@ -411,12 +413,19 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(routeTrailUi, ">料<", "路线图 UI 必须把材料节点显示为料");
   assertIncludes(routeTrailUi, ">回<", "路线图 UI 必须把回流节点显示为回");
   assertIncludes(routeTrailUi, "你当时有没有起疑心？", "路线图 UI 必须保留玩家实际问题痕迹");
-  assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
+  assertIncludes(appSource, "./runtime/storyInterludeModel.js", "案间过渡文案模型必须从 app.js 拆到 runtime/storyInterludeModel");
+  assertIncludes(storyInterludeModelSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
+  assert(!appSource.includes("function storyInterludeRecapLine"), "案间收束句模型不能继续定义在 app.js");
+  assertIncludes(storyInterludeRecapLine({ storyInterludeRecap: "账单摊开了。" }, { issuePercent: 80 }, { label: "钱流线" }, {}, { line: "后台也补了一句。" }), "钱流线", "案间收束句必须回收玩家路线");
+  assertIncludes(storyInterludeRecapLine({}, { issuePercent: 20 }, {}, { summary: "那路麦挂得早。" }, { line: "后台补了一张图。" }), "后台补了一张图", "案间收束句必须回收私信回流余味");
   assert(!appSource.includes("\"lost-job-hidden-credit\": `账单摊开以后"), "案间收束句必须来自内容包 storyInterludeRecap，不能留 app.js plotId 映射");
   assert(!appSource.includes("\"lost-job-hidden-credit\": \"backdrop-credit\""), "案件背景 class 必须来自 brief.backdropClass，不能留 app.js plotId 映射");
   assert(!appSource.includes("brief.plotId === \"education-income-fake-profile\""), "存款证明结算特判必须来自内容 JSON 字段，不能留在 app.js");
   assertIncludes(appSource, "conclusionBranchFor", "案后分支结论必须走内容字段匹配，而不是 plotId 特判");
-  assertIncludes(appSource, "storyInterludeObjectLabel", "案间过渡必须用物件钩子接下一通，减少目录感");
+  assertIncludes(storyInterludeObjectLabel({ storyObjectLabel: "表格" }), "表格", "案间过渡必须用物件钩子接下一通，减少目录感");
+  assertIncludes(storyInterludeNextLine({ storyBridge: "后台又亮了一张审批图。" }), "审批图", "案间桥接句必须来自内容包 bridge");
+  assert(!appSource.includes("function storyInterludeObjectLabel"), "案间物件名模型不能继续定义在 app.js");
+  assert(!appSource.includes("function storyInterludeNextLine"), "案间桥接句模型不能继续定义在 app.js");
   assertIncludes(storyInterludeViewSource, "上一通留下", "案间过渡上一张卡必须从上一通余味进入，不是目录页");
   assertIncludes(storyInterludeViewSource, "新来电接入", "案间过渡下一张卡必须是直播接入语，不是下一案目录");
   assert(!storyInterludeViewSource.includes("下一案") && !storyInterludeViewSource.includes("下一通来电"), "案间过渡 UI 不能退回目录式标题");

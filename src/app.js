@@ -11,6 +11,7 @@ import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuot
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
+import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "./runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
@@ -236,26 +237,6 @@ function renderDailyCase() {
 
 function liveChapterTitle(brief = {}) {
   return isStoryPackMode() ? "热线连线" : brief.storyArcTitle ?? "今日来电";
-}
-
-function storyInterludeRecapLine(brief = {}, result = {}, route = {}, interlude = {}, backflow = {}) {
-  const percent = Number(result.issuePercent ?? 0);
-  const backflowLine = backflow.line ? backflow.line : "";
-  if (percent < 50) return `${interlude.summary ?? "刚才那通挂得早，弹幕还在翻开场那句。"}${backflowLine}`;
-  const routeLabel = route.label ? `你刚才一直压着${route.label}问。` : "";
-  const recap = brief.storyInterludeRecap ?? brief.weeklyInterludeRecap ?? interlude.summary;
-  return recap ? `${recap}${routeLabel}${backflowLine}` : (backflowLine || "这边刚挂，后台又亮了。");
-}
-
-function storyInterludeObjectLabel(brief = {}) {
-  return brief.storyObjectLabel ?? brief.weeklyObjectLabel ?? brief.storyClueObject ?? brief.clueObject ?? "新材料";
-}
-
-function storyInterludeNextLine(brief = {}) {
-  if (!brief) return "后台又亮了一路麦。";
-  const bridge = brief.storyBridge ?? brief.weeklyBridge ?? "";
-  if (bridge) return bridge;
-  return "后台又亮了一路麦。";
 }
 
 function renderCaseOpen(brief) {
