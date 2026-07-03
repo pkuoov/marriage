@@ -464,6 +464,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(browserSmokeSource, "name: \"perfect\"", "浏览器回放必须覆盖 perfect route");
   assertIncludes(browserSmokeSource, "outer-then-core", "浏览器回放必须覆盖外围追问后继续主线");
   assertIncludes(browserSmokeSource, "material-miss", "浏览器回放必须覆盖材料误圈路线");
+  assertIncludes(browserSmokeSource, "keyboard-perfect", "浏览器回放必须覆盖真实键盘焦点路线");
+  assertIncludes(browserSmokeSource, "page.keyboard.press(\"Enter\")", "键盘回放必须用真实键盘确认，而不是只用 DOM click");
   assertIncludes(buildDesktopSource, "start: \"electron .\"", "桌面壳 package 必须能被 Electron 直接启动验包");
   assertIncludes(desktopBuilderSource, "\"app\": \"dist/desktop-electron\"", "Electron 打包器必须以桌面壳目录为 app 输入");
   assertIncludes(desktopBuilderSource, "\"output\": \"dist/steam\"", "Electron 打包产物必须进入独立 Steam 输出目录");
