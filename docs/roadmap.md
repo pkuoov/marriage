@@ -49,6 +49,7 @@
 - 对话段落推进已从 `renderSceneReview` 抽成 `src/runtime/sceneAdvance.js` 的 `sceneReviewModel`，最后一段去材料、深入追问还是原话选择都能纯函数测试。
 - 材料检视和后台私信回流推进也已拆到 `src/runtime/sceneAdvance.js`，当前材料、未处理回流和下一步按钮不再由 `app.js` 临时判断。
 - 直播 HUD/弹幕/来电人立绘 HTML 已拆到 `src/ui/liveCallView.js`，并有单元断言覆盖；`app.js` 继续收状态，UI 细节开始脱离 god file。
+- 直播主舞台和控场台外壳已拆到 `src/ui/liveFrameView.js`，topbar、control deck 和 `live-console-shell` 可由纯 UI 模块测试。
 - 标题页 HTML 已拆到 `src/ui/titleView.js`，直播信号、热线 hook 和不剧透目录都有纯 UI 断言。
 - 对话回合 HTML 已拆到 `src/ui/sceneReviewView.js`，当前/已完成对话正文、追问气泡组装和继续按钮都有纯 UI 断言。
 - 单案收麦回看 HTML 已拆到 `src/ui/recapView.js`，事实边界归位、最终原话对比、回看页面组和分页/按钮 flow 都有纯 UI 断言。

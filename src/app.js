@@ -15,6 +15,7 @@ import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPress
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
+import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
@@ -702,69 +703,36 @@ function renderStoryPackComplete() {
   bind('[data-action="title"]', resetToTitle);
 }
 
-function liveControlDeck(brief = {}, label = "") {
-  const pressure = currentLivePressure(brief);
-  const total = Math.max(1, keyQuestionLimit(brief));
-  const segment = Math.max(1, Math.min(total, answeredSceneCount(brief) + 1));
-  const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
-  const material = brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录";
-  return `
-    <aside class="control-deck" aria-label="直播控场台">
-      <section class="deck-card deck-card-live">
-        <span><i></i>ON AIR</span>
-        <b>${escapeHtml(isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中")}</b>
-        <small>${escapeHtml(label || "连线中")}</small>
-      </section>
-      <section class="deck-card">
-        <span>连线段落</span>
-        <b>${segment}/${total}</b>
-        <small>麦没断，话还在往下走。</small>
-      </section>
-      <section class="deck-card deck-card-pressure">
-        <span>听众耐心</span>
-        <b>${pressure.remaining}/${pressure.max}</b>
-        <small>${escapeHtml(pressure.patienceLabel)}</small>
-      </section>
-      <section class="deck-card deck-card-material">
-        <span>后台材料</span>
-        <b>${escapeHtml(material)}</b>
-        <small>先放在台面边上。</small>
-      </section>
-    </aside>
-  `;
-}
-
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true }) {
   const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
   const backdropClass = caseBackdropClass(brief);
   const visualHud = showCaseHud
     ? `${caseProgressStrip(brief)}${audiencePatienceHud(brief)}${liveCommentStrip(brief)}${portraitLayer(brief, mood)}`
     : storyPackSummaryHud();
-  app.innerHTML = `
-    <main>
-      <header class="topbar">
-        <button data-action="title" type="button" aria-label="回到标题页">${PRODUCT_NAME}</button>
-        <nav aria-label="章节"><span class="active"><i></i>${modeLabel}</span></nav>
-        <button data-action="sound" type="button">音效 ${isSoundEnabled() ? "开" : "关"}</button>
-        <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
-      </header>
-      <section class="story-grid case-vn-grid live-console-shell">
-        ${showCaseHud ? liveControlDeck(brief, label) : ""}
-        <article class="vn-stage">
-          <div class="visual-scene backdrop-office ${backdropClass}" aria-hidden="true">
-            <div class="scene-label">${escapeHtml(label)}</div>
-            ${visualHud}
-          </div>
-          <div class="dialogue-card" aria-live="polite">
-            <p class="eyebrow">${escapeHtml(chapter)}</p>
-            ${text}
-            ${reactionLine()}
-            <div class="choices">${choices}</div>
-          </div>
-        </article>
-      </section>
-    </main>
-  `;
+  const total = Math.max(1, keyQuestionLimit(brief));
+  const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
+  app.innerHTML = liveFrameHtml({
+    productName: PRODUCT_NAME,
+    modeLabel,
+    soundEnabled: isSoundEnabled(),
+    backdropClass,
+    label,
+    chapter,
+    text,
+    reactionHtml: reactionLine(),
+    choices,
+    visualHud,
+    controlDeckHtml: showCaseHud
+      ? liveControlDeckHtml({
+          onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
+          label,
+          segment: answeredSceneCount(brief) + 1,
+          total,
+          pressure: currentLivePressure(brief),
+          material: brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录"
+        })
+      : ""
+  });
   const hadPressureCue = Boolean(state.lastReaction || state.lastPressureSignal);
   if (hadPressureCue) {
     state.lastReaction = null;

@@ -20,6 +20,7 @@ import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPress
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
+import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
@@ -574,7 +575,9 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
 test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const liveFrameViewSource = readFileSync(new URL("../src/ui/liveFrameView.js", import.meta.url), "utf8");
   assertIncludes(appSource, "./ui/liveCallView.js", "直播 HUD/立绘 HTML 必须从 app.js 拆到 ui/liveCallView");
+  assertIncludes(appSource, "./ui/liveFrameView.js", "案内主舞台 HTML 必须从 app.js 拆到 ui/liveFrameView");
   assertIncludes(audiencePatienceHudHtml({ level: "mid", ratio: 0.5, remaining: 4, max: 8 }), "听众忍耐", "听众忍耐 HUD 必须可由纯 UI 模块渲染");
   assertIncludes(liveCommentStripHtml({ comments: ["弹幕安静", "账单边上有时间"] }), "账单边上有时间", "直播弹幕条必须可由纯 UI 模块渲染");
   assertIncludes(caseProgressStripHtml({ total: 5, answered: 2, label: "匿名来电" }), "第 3/5 段", "通话进度条必须可由纯 UI 模块渲染");
@@ -656,10 +659,17 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(titleHtml, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
   assertIncludes(titleHtml, "热线已接入", "标题页必须像热线接入，不提前列目录");
   assert(!/四案|4\s*案|故事集目录|第一案|第二案|第三案|第四案|主题论点/.test(titleHtml), "标题页不能提前暴露案数、目录或主题论点");
-  assertIncludes(appSource, "liveControlDeck", "案内 UI 必须由直播控场台统一生成");
-  assertIncludes(appSource, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
-  assertIncludes(appSource, "live-console-shell", "案内主画面必须使用控场台布局骨架");
-  assertIncludes(appSource, "后台材料", "控场台必须把材料作为直播间后台对象呈现");
+  assertIncludes(liveFrameViewSource, "liveControlDeckHtml", "案内 UI 必须由直播控场台纯 UI 模块统一生成");
+  assertIncludes(liveFrameViewSource, "liveFrameHtml", "案内主舞台 HTML 必须由纯 UI 模块生成");
+  assert(!appSource.includes("class=\"control-deck\""), "控场台 DOM 不能继续写在 app.js");
+  assert(!appSource.includes("live-console-shell"), "案内主舞台骨架 DOM 不能继续写在 app.js");
+  const deckHtml = liveControlDeckHtml({ onAirLabel: "匿名热线", label: "看材料", segment: 2, total: 5, pressure: { remaining: 6, max: 8, patienceLabel: "压得住" }, material: "审批图" });
+  assertIncludes(deckHtml, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
+  assertIncludes(deckHtml, "后台材料", "控场台必须把材料作为直播间后台对象呈现");
+  assertIncludes(deckHtml, "审批图", "控场台必须展示当前后台材料");
+  const frameHtml = liveFrameHtml({ productName: "直播间大侦探", modeLabel: "试玩连线", soundEnabled: true, label: "继续对话", chapter: "匿名来电", text: "<p>正文</p>", choices: "<button>继续</button>", visualHud: "<div>HUD</div>", controlDeckHtml: deckHtml });
+  assertIncludes(frameHtml, "live-console-shell", "案内主画面必须使用控场台布局骨架");
+  assertIncludes(frameHtml, "音效 开", "案内主画面 topbar 必须可由纯 UI 模块渲染");
   assertIncludes(stylesSource, ".story-grid.case-vn-grid.live-console-shell", "控场台布局必须覆盖普通 VN 单栏布局");
   assertIncludes(stylesSource, ".deck-card-live", "控场台必须有直播信号视觉模块");
   assertIncludes(stylesSource, ".deck-card-material", "控场台必须有后台材料视觉模块");
