@@ -63,6 +63,13 @@ function assertEvidenceOperation(operation, label) {
   });
 }
 
+function collectTextLength(value) {
+  if (typeof value === "string") return value.trim().length;
+  if (Array.isArray(value)) return value.reduce((sum, item) => sum + collectTextLength(item), 0);
+  if (value && typeof value === "object") return Object.values(value).reduce((sum, item) => sum + collectTextLength(item), 0);
+  return 0;
+}
+
 async function readJson(path) {
   return JSON.parse(await readFile(resolve(root, path), "utf8"));
 }
@@ -162,6 +169,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       });
 
       assertArrayMin(casePacket.sceneVersions, 3, `${casePacket.caseId} sceneVersions 至少要有三段可追问内容`);
+      assertArrayMin(casePacket.sceneVersions, 5, `${casePacket.caseId} 试玩包案件至少需要五段来电，不能退回短问答`);
       casePacket.sceneVersions.forEach((scene, sceneIndex) => {
         assertNonEmptyString(scene.speakerId, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 speakerId`);
         assertNonEmptyString(scene.version, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 version`);
@@ -196,6 +204,19 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.note, `${casePacket.caseId} deepFollowup.note 不能为空`);
+      assertNonEmptyString(casePacket.selfServingOmission, `${casePacket.caseId} 必须写出来电人对自己不利的修剪`);
+      assertNonEmptyString(casePacket.thirdPressure, `${casePacket.caseId} 必须有第三压力源`);
+      assert((casePacket.evidenceChecks?.length ?? 0) + (casePacket.investigationHooks?.length ?? 0) >= 2, `${casePacket.caseId} 至少需要两份可读材料`);
+      assert(collectTextLength({
+        openingDialogue: casePacket.openingDialogue,
+        sceneVersions: casePacket.sceneVersions,
+        evidenceChecks: casePacket.evidenceChecks,
+        investigationHooks: casePacket.investigationHooks,
+        deepFollowup: casePacket.deepFollowup,
+        stageJudgement: casePacket.stageJudgement,
+        followupTwist: casePacket.followupTwist,
+        truth: casePacket.truth
+      }) >= 2600, `${casePacket.caseId} 文本体量过薄，不能支撑试玩包单案`);
       ["stageJudgement", "storyInterludeRecap", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"].forEach((field) => {
         assertNonEmptyString(casePacket[field], `${casePacket.caseId} ${field} 不能为空`);
       });

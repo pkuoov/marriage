@@ -9,7 +9,8 @@ const routes = [
   { name: "perfect", sceneMode: "core", materialMode: "hit" },
   { name: "outer", sceneMode: "outer-then-core", materialMode: "hit" },
   { name: "material-miss", sceneMode: "core", materialMode: "miss" },
-  { name: "keyboard-perfect", sceneMode: "core", materialMode: "hit", inputMode: "keyboard" }
+  { name: "keyboard-perfect", sceneMode: "core", materialMode: "hit", inputMode: "keyboard" },
+  { name: "gamepad-perfect", sceneMode: "core", materialMode: "hit", inputMode: "gamepad" }
 ];
 
 const browser = await launchBrowser();
@@ -57,11 +58,22 @@ async function runRoute(route) {
   await context.addInitScript(() => {
     window.localStorage?.clear();
     window.sessionStorage?.clear();
+    window.__smokeGamepad = {
+      connected: false,
+      index: 0,
+      axes: [0, 0],
+      buttons: Array.from({ length: 16 }, () => ({ pressed: false }))
+    };
+    Object.defineProperty(navigator, "getGamepads", {
+      configurable: true,
+      value: () => window.__smokeGamepad?.connected ? [window.__smokeGamepad] : []
+    });
   });
   const page = await context.newPage();
   page.setDefaultTimeout(8000);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-${route.name}-${Date.now()}&storyKey=steam-demo-01`);
+    if (route.inputMode === "gamepad") await connectGamepad(page);
     await activate(page, route, "[data-start-story]");
     await activate(page, route, '[data-scene="sceneReview"]');
 
@@ -130,6 +142,10 @@ async function activate(page, route, selector, index = 0) {
     await keyboardActivate(page, selector, index);
     return;
   }
+  if (route.inputMode === "gamepad") {
+    await gamepadActivate(page, selector, index);
+    return;
+  }
   await click(page, selector, index);
 }
 
@@ -143,13 +159,39 @@ async function keyboardActivate(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
   await page.waitForFunction(() => document.activeElement?.matches?.("button"));
-  await moveKeyboardFocusTo(page, selector, index);
+  await moveFocusTo(page, selector, index, () => page.keyboard.press("ArrowDown"), "Keyboard");
   await page.keyboard.press("Enter");
 }
 
-async function moveKeyboardFocusTo(page, selector, index = 0) {
+async function gamepadActivate(page, selector, index = 0) {
+  const target = page.locator(selector).nth(index);
+  await target.waitFor({ state: "visible" });
+  await page.waitForFunction(() => document.activeElement?.matches?.("button"));
+  await moveFocusTo(page, selector, index, () => gamepadPress(page, 13), "Gamepad");
+  await gamepadPress(page, 0);
+}
+
+async function connectGamepad(page) {
+  await page.evaluate(() => {
+    window.__smokeGamepad.connected = true;
+  });
+  await page.waitForTimeout(180);
+}
+
+async function gamepadPress(page, buttonIndex) {
+  await page.evaluate((index) => {
+    window.__smokeGamepad.buttons[index].pressed = true;
+  }, buttonIndex);
+  await page.waitForTimeout(180);
+  await page.evaluate((index) => {
+    window.__smokeGamepad.buttons[index].pressed = false;
+  }, buttonIndex);
+  await page.waitForTimeout(180);
+}
+
+async function moveFocusTo(page, selector, index = 0, moveNext, label) {
   const targetHandle = await page.locator(selector).nth(index).elementHandle();
-  if (!targetHandle) throw new Error(`Keyboard target missing: ${selector}`);
+  if (!targetHandle) throw new Error(`${label} target missing: ${selector}`);
   const targetIndex = await page.evaluate((target) => {
     const buttons = Array.from(document.querySelectorAll("button:not(:disabled)"))
       .filter((button) => {
@@ -159,7 +201,7 @@ async function moveKeyboardFocusTo(page, selector, index = 0) {
     return buttons.indexOf(target);
   }, targetHandle);
   await targetHandle?.dispose();
-  if (targetIndex < 0) throw new Error(`Keyboard target not focusable: ${selector}`);
+  if (targetIndex < 0) throw new Error(`${label} target not focusable: ${selector}`);
 
   for (let step = 0; step < 20; step += 1) {
     const activeIndex = await page.evaluate(() => {
@@ -171,9 +213,9 @@ async function moveKeyboardFocusTo(page, selector, index = 0) {
       return buttons.indexOf(document.activeElement);
     });
     if (activeIndex === targetIndex) return;
-    await page.keyboard.press("ArrowDown");
+    await moveNext();
   }
-  throw new Error(`Keyboard focus did not reach: ${selector}`);
+  throw new Error(`${label} focus did not reach: ${selector}`);
 }
 
 async function assertVisibleText(page, text, message) {

@@ -172,6 +172,26 @@ export function storyQuoteProfile(results = []) {
   };
 }
 
+export function storyObjectProfile(briefs = []) {
+  const objects = (Array.isArray(briefs) ? briefs : [])
+    .map((brief) => brief?.storyObjectLabel ?? brief?.weeklyObjectLabel ?? brief?.storyClueObject ?? brief?.clueObject ?? "")
+    .map((item) => String(item ?? "").trim())
+    .filter(Boolean);
+  const unique = [...new Set(objects)];
+  const objectText = unique.slice(0, 4).join("、");
+  return {
+    total: unique.length,
+    objects: unique,
+    label: unique.length ? "物件串起来了" : "物件没落地",
+    line: unique.length
+      ? `这一晚翻过的不是目录，是${objectText}。每件东西都有人想让它只证明对自己有利的那半句。`
+      : "今晚没有留下能串起故事包的物件。",
+    comment: unique.length
+      ? `「${objectText}放一起看，比单听谁委屈更有意思。」`
+      : ""
+  };
+}
+
 export function storyThemeProfile(briefs = []) {
   const first = briefs.find(Boolean) ?? {};
   return {
@@ -254,7 +274,8 @@ export function storyCommentWall({
   boundaryProfile = {},
   pressureProfile = {},
   materialProfile = {},
-  quoteProfile = {}
+  quoteProfile = {},
+  objectProfile = storyObjectProfile(briefs)
 } = {}) {
   const rows = briefs.map((brief, index) => {
     const result = results[index] ?? {};
@@ -294,6 +315,7 @@ export function storyCommentWall({
   [materialProfile.comment, quoteProfile.comment].filter(Boolean).forEach((comment, index) => {
     replaceOrAppendComment(comments, comment, Math.min(3, index + 2));
   });
+  appendCommentIfRoom(comments, objectProfile.comment);
   return comments.slice(0, 4);
 }
 
@@ -385,6 +407,11 @@ function replaceOrAppendComment(comments, comment, preferredIndex) {
   } else {
     comments.push(comment);
   }
+}
+
+function appendCommentIfRoom(comments, comment) {
+  if (!comment || comments.includes(comment) || comments.length >= 4) return;
+  comments.push(comment);
 }
 
 function backflowLabel({ total, hits, misses }) {

@@ -26,6 +26,20 @@
 
 入库前必须去掉真实姓名、账号、地点、金额、完整时间线和可反推原案的原话。
 
+当前素材池入口：
+
+```text
+content/intelligence/plot-template-pool.json
+```
+
+它保存的是压力系统种子，不是可玩剧本。每个条目必须有 `dramaticAnchor`、`objectPurpose`、`callerBenefit`、`otherBenefit`、`thirdPressure`、`truthBoundary` 和 `routeAxes`。运行：
+
+```bash
+npm run verify:content-pipeline
+```
+
+可以校验模板池至少 12 个 plot id、非婚恋题材不少于一半、路线轴和事实边界完整。
+
 ## 2. Showrunner Pass
 
 把 3-4 张素材卡融合成一个原创案：
@@ -101,6 +115,7 @@
 
 ```bash
 npm run content:index
+npm run verify:content-pipeline
 npm run verify:pack
 npm run check
 npm run build:h5

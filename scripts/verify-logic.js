@@ -10,10 +10,11 @@ import { platformRuntime } from "../src/platformRuntime.js?v=0.20.68";
 import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.68";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.68";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.68";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "../src/runtime/livePressure.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
+import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
 import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceCheckModel, initialCaseBudget, investigationBackflowModel, investigationRouteIndexBase, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
 import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
@@ -145,6 +146,18 @@ test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outs
   assertIncludes(profile.summary, "不急着相信来电人的版本", "连续怀疑来电人时，summary 必须反映路线倾向");
   assertIncludes(caseEngineSource, "DAILY_TEMPLATE_BUILDERS", "日案模板分发必须走 registry，减少新增 plot 的硬编码入口");
   assert(!caseEngineSource.includes("if (brief.plotId ==="), "日案模板分发不能退回 plotId if 链");
+  const trail = routeTrailModel({
+    choices: [
+      { sceneIndex: 0, axis: "caller-credibility", question: "你当时有没有起疑心？" },
+      { sceneIndex: 5, axis: "document-edge", question: "这份材料少了哪一边？" },
+      { sceneIndex: 10, axis: "external-corroboration", question: "后台回流里哪句最该圈？" }
+    ],
+    keyQuestionCount: 5,
+    investigationIndexBase: 10
+  });
+  assertEqual(trail[0].mark, 1, "路线图普通追问必须保留段落序号");
+  assertEqual(trail[1].mark, "料", "路线图材料节点必须标成料");
+  assertEqual(trail[2].mark, "回", "路线图回流节点必须标成回");
 });
 
 test("MATERIAL-001", "material operation model records hit and miss without UI coupling", () => {
@@ -212,6 +225,9 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   const quoteProfile = storyQuoteProfile([{ quoteHit: true, dailyAccuseLabel: "原话 A" }, { quoteHit: false, dailyAccuseLabel: "原话 B" }]);
   assertEqual(quoteProfile.label, "接住几句", "故事集终局必须汇总最终原话选择");
   assertIncludes(quoteProfile.comment, "收得准", "原话汇总必须进入评论区余味");
+  const objectProfile = storyObjectProfile([{ storyObjectLabel: "账单" }, { storyObjectLabel: "表格" }, { storyObjectLabel: "账单" }]);
+  assertEqual(objectProfile.total, 2, "故事集物件汇总必须去重");
+  assertIncludes(objectProfile.line, "账单、表格", "故事集终局必须回收每案物件，而不是只看路线轴");
   const theme = storyThemeProfile([{ storyThemeTitle: "今晚四通麦", storyThemeThesis: "别替人补完。", storyThemeCommentPrompt: "弹幕还在吵。" }]);
   const axes = storyPackAxes([{ axis: "money-flow" }, { axis: "money-flow" }, { axis: "document-edge" }]);
   const bestAxis = storyPackBestAxis(65, axes);
@@ -236,7 +252,8 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
       highRevealTone: "你没有急着判人，几张图和几句话都被你接住了。"
     },
     materialProfile,
-    quoteProfile
+    quoteProfile,
+    objectProfile
   });
   assertEqual(wall.length, 4, "故事集评论墙必须稳定输出 4 条以内");
   assertIncludes(wall.join(""), "心疼可以", "故事集评论墙必须能读取内容包评论种子");
@@ -326,6 +343,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
   const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
+  const routeMapSource = readFileSync(new URL("../src/runtime/routeMapModel.js", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -343,8 +361,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "storyPackClosingLine", "故事集终局小字必须按本局表现生成，不能写成玩法说明");
   assertIncludes(appSource, "storyPackCallLine(briefs.length)", "故事集终局正文必须按实际案数生成，不能写死四路麦");
   assert(!appSource.includes("今晚四路麦都挂了"), "故事集终局不能写死四路麦");
-  assertIncludes(appSource, "sceneIndex >= keyQuestionLimit(brief) ? \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
-  assertIncludes(appSource, "sceneIndex >= investigationRouteIndexBase(brief) ? \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
+  assertIncludes(routeMapSource, "return \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
+  assertIncludes(routeMapSource, "return \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
   assertIncludes(appSource, "storyInterludeRecapLine", "案间过渡必须按上一通内容和玩家路线生成收束句");
   assert(!appSource.includes("\"lost-job-hidden-credit\": `账单摊开以后"), "案间收束句必须来自内容包 storyInterludeRecap，不能留 app.js plotId 映射");
   assert(!appSource.includes("\"lost-job-hidden-credit\": \"backdrop-credit\""), "案件背景 class 必须来自 brief.backdropClass，不能留 app.js plotId 映射");
@@ -371,8 +389,10 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "pressure-recap-card", "收麦回看必须显示现场压力余味");
   assertIncludes(appSource, "storyPackMaterialProfile", "故事集终局必须回收材料圈点结果");
   assertIncludes(appSource, "storyQuoteProfile", "故事集终局必须回收最终原话选择");
+  assertIncludes(appSource, "storyObjectProfile", "故事集终局必须回收每案物件");
   assertIncludes(appSource, "材料圈点", "终局 UI 必须展示材料圈点余味");
   assertIncludes(appSource, "收麦原话", "终局 UI 必须展示原话选择余味");
+  assertIncludes(appSource, "这晚翻过", "终局 UI 必须展示故事包物件余味");
   assertIncludes(appSource, "truthBoundaryReviewHtml", "收麦回看必须把事实边界显示出来，不能让 truthBoundary 只停在 JSON 元数据");
   assertIncludes(appSource, "data-truth-boundary-pick", "事实边界必须可交互归位，不能只做静态说明页");
   assertIncludes(appSource, "picks[prompt.id] === prompt.expected", "事实边界归位必须放对才能继续，不能只点过就放行");
@@ -424,11 +444,13 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(packageSource, "\"build:steam\"", "必须保留 Steam 构建入口");
   assertIncludes(packageSource, "\"build:steam\": \"npm run build:desktop\"", "Steam 构建必须指向桌面壳构建，不能继续只产出浏览器静态页");
   assertIncludes(packageSource, "\"package:win\"", "Steam/Windows 发版必须有 exe/portable 打包入口");
+  assertIncludes(packageSource, "\"steam:preflight\"", "Steam 发版必须有本地 preflight 检查入口");
   assertIncludes(packageSource, "\"smoke:desktop\"", "桌面 staging 必须有不启动 Electron 的文件烟测");
   assertIncludes(packageSource, "\"smoke:browser\"", "大测试必须有真实浏览器回放 smoke 入口");
   assertIncludes(packageSource, "\"electron-builder\"", "Windows 打包入口必须声明 electron-builder 依赖");
   assertIncludes(packageSource, "scripts/smoke-desktop.js", "check 必须语法检查桌面烟测脚本");
   assertIncludes(packageSource, "scripts/smoke-browser-replay.js", "check 必须语法检查浏览器回放脚本");
+  assertIncludes(packageSource, "scripts/steam-preflight.js", "check 必须语法检查 Steam preflight 脚本");
   assertIncludes(packageSource, "scripts/build-desktop.js", "桌面构建必须生成 Electron 壳目录");
   assertIncludes(packageSource, "\"content:index\"", "构建前必须生成 content 运行时索引");
   assertIncludes(packageSource, "\"play:windows\"", "必须保留 Windows 一键试玩入口");
@@ -439,6 +461,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const desktopMainSource = readFileSync(new URL("../desktop/electron/main.cjs", import.meta.url), "utf8");
   const desktopPreloadSource = readFileSync(new URL("../desktop/electron/preload.cjs", import.meta.url), "utf8");
   const desktopBuilderSource = readFileSync(new URL("../desktop/electron-builder.json", import.meta.url), "utf8");
+  const desktopSteamPlan = readFileSync(new URL("../docs/desktop-steam-build-plan.md", import.meta.url), "utf8");
+  const steamPreflightSource = readFileSync(new URL("../scripts/steam-preflight.js", import.meta.url), "utf8");
   const buildDesktopSource = readFileSync(new URL("../scripts/build-desktop.js", import.meta.url), "utf8");
   const buildPlayableSource = readFileSync(new URL("../scripts/build-playable.js", import.meta.url), "utf8");
   const browserSmokeSource = readFileSync(new URL("../scripts/smoke-browser-replay.js", import.meta.url), "utf8");
@@ -468,6 +492,12 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(browserSmokeSource, "material-miss", "浏览器回放必须覆盖材料误圈路线");
   assertIncludes(browserSmokeSource, "keyboard-perfect", "浏览器回放必须覆盖真实键盘焦点路线");
   assertIncludes(browserSmokeSource, "page.keyboard.press(\"Enter\")", "键盘回放必须用真实键盘确认，而不是只用 DOM click");
+  assertIncludes(browserSmokeSource, "gamepad-perfect", "浏览器回放必须覆盖模拟 Gamepad API 路线");
+  assertIncludes(browserSmokeSource, "navigator, \"getGamepads\"", "手柄回放必须走 Gamepad API 入口，而不是复用键盘或 DOM click");
+  assertIncludes(steamPreflightSource, "nodeSupportsElectronPackaging", "Steam preflight 必须明确 Node/Electron 打包版本要求");
+  assertIncludes(steamPreflightSource, "dist/steam", "Steam preflight 必须检查打包输出目录");
+  assertIncludes(desktopSteamPlan, "Steam Cloud Contract", "桌面发版计划必须写清 Steam Cloud 存档口径");
+  assertIncludes(desktopSteamPlan, "Steam Deck Smoke", "桌面发版计划必须保留 Steam Deck 实机验收清单");
   assertIncludes(buildDesktopSource, "start: \"electron .\"", "桌面壳 package 必须能被 Electron 直接启动验包");
   assertIncludes(desktopBuilderSource, "\"app\": \"dist/desktop-electron\"", "Electron 打包器必须以桌面壳目录为 app 输入");
   assertIncludes(desktopBuilderSource, "\"output\": \"dist/steam\"", "Electron 打包产物必须进入独立 Steam 输出目录");

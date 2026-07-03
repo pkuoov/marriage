@@ -25,6 +25,8 @@
 - 现场压力模型第一层已拆到 `src/runtime/livePressure.js`：听众耐心、弹幕跑偏/压住、连线人防备和人物表情钩子开始由同一份纯函数画像生成；追问语气和材料命中/误指也开始从这里生成现场反应，并已进入单案结算和故事集终局。
 - 故事集终局已回收路线画像、现场压力、事实边界、材料圈点和收麦原话，不再只看揭示率。
 - 故事集终局评价模型已拆到 `src/runtime/recapModel.js`：主题、路线画像、评论墙、分享标题和收麦余味有纯函数测试，`app.js` 只负责收集当前存档和渲染。
+- 故事集终局已新增物件回收：`storyObjectProfile` 会把每案的账单、表格、资料图、审批图等物件串起来，评论墙也能围绕物件发声。
+- 路线图节点模型已拆到 `src/runtime/routeMapModel.js`：普通追问、材料圈点和后台回流的节点标记由纯函数输出，`app.js` 只渲染 HTML。
 - 对话段落推进已拆出 `sceneReviewModel`：当前段落、完成态、最后一段后的材料/深入追问/原话选择分支都在 `src/runtime/sceneAdvance.js` 里纯函数测试。
 - 材料检视和后台私信回流推进已拆出 `evidenceCheckModel` / `investigationBackflowModel`：当前材料、未处理回流、缺省态和下一步按钮都可纯函数测试。
 - 案件包架构开始从“四案固定”改为“内容包决定案数”：当前 demo 包仍是四案，但 `episode` 存档、包校验和故事生成不再把 4 当成运行时铁律。
@@ -35,7 +37,7 @@
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
 - `verify:pack` 已支持指定 pack id，并新增运行时内容 schema 检查：开场、追问、材料、回流、深入追问、收束和分享字段都必须是可玩的嵌套结构。
-- 已新增 Playwright 浏览器回放 smoke：`npm run smoke:browser` 会打开离线 playable，覆盖 perfect route、外围追问后继续主线、材料误圈和纯键盘 perfect 四条单案路线，并走到收麦回看。
+- 已新增 Playwright 浏览器回放 smoke：`npm run smoke:browser` 会打开离线 playable，覆盖 perfect route、外围追问后继续主线、材料误圈、纯键盘 perfect 和模拟 Gamepad API perfect 五条单案路线，并走到收麦回看。
 - 案间物件名和下一案桥接句已从 manifest `sequence.objectLabel/bridge` 进入运行时，`app.js` 不再用 `plotId` 表维护这一组文案。
 - 案间上一通收束句已迁入每案 JSON 的 `storyInterludeRecap`，并纳入 runtime-loaded 必填字段，避免 `app.js` 继续按 `plotId` 写剧本文案。
 - 案件背景 class 已迁入日案定义和 manifest `sequence.backdropClass`，案内视觉背景不再由 `app.js` 的 `plotId` 表决定。
@@ -45,6 +47,7 @@
 - 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。
 - 日案模板分发已收口到 `DAILY_TEMPLATE_BUILDERS` registry：新增 daily 兜底模板不再改一串 `plotId` if 链。
 - H5 构建和离线 playable 构建已隔离输出目录：`build:h5` 不再删除整个 `dist`，避免并行构建时踩掉 `dist/playable`。
+- P2 内容生产池已新增 `content/intelligence/plot-template-pool.json`：12 个压力系统种子、非婚恋过半，并由 `npm run verify:content-pipeline` 校验。
 
 ## P0：试玩版必须补齐
 
@@ -56,6 +59,7 @@
 - 已补 Electron / electron-builder devDependencies 和 `package:win` Windows portable 打包入口；Electron 43 打包环境需要 Node 22.12 或更高版本，当前仍需在有依赖和目标平台的环境里实际跑一次打包验收。
 - 已补桌面窗口状态保存、全屏/缩放快捷键、单实例锁和 crash log 文件输出。
 - 桌面 staging 构建已改成同脚本生成 playable + desktop，并使用临时目录和锁目录，避免 `build:steam` / `smoke:desktop` 并发时互相踩 `dist/playable` 或 `dist/desktop-electron/playable`。
+- 已补 `docs/desktop-steam-build-plan.md` 和 `npm run steam:preflight`：本地可检查 package 入口、electron-builder 输出目录、portable x64、desktop staging、文件存档桥、crash log 和 Node/Electron 打包版本要求。
 - 仍需补 Steam overlay/Cloud 接入、安装器、签名和真实 Windows/Steam Deck 验包。
 
 验收：
@@ -70,7 +74,7 @@
 
 - 基础键盘操作已接入：方向键 / WASD 切换选项，Enter / Space 确认，Esc 返回标题或重试入口。
 - 已有默认焦点和焦点环，大 test 会校验全局键盘入口、焦点移动、渲染后默认落焦和输入意图纯函数。
-- 基础手柄映射已接：十字键 / 左摇杆切换选项，A 确认，B 返回，Y 回看/复盘入口；Tab 已能切换当前回看面板。仍需 Steam Deck/控制器实机手感验证。
+- 基础手柄映射已接：十字键 / 左摇杆切换选项，A 确认，B 返回，Y 回看/复盘入口；Tab 已能切换当前回看面板。Playwright 已用模拟 Gamepad API 跑通第一案，仍需 Steam Deck/控制器实机手感验证。
 
 验收：
 
@@ -122,7 +126,7 @@ content/packs/steam-demo-01/
 优先拆：
 
 - `src/runtime/sceneAdvance.js` 已接管动作扣耐心、当前对话段落推进、材料检视推进、回流页面推进、收麦前守门和回流解锁；下一步只补缺口，不再把页面推进判断写回 `app.js`。
-- 继续补强 `src/runtime/routeLog.js`，把路线图模型和故事集路线统计也完全纯函数化。
+- 继续补强 `src/runtime/routeLog.js` / `src/runtime/routeMapModel.js`，故事集路线统计已走纯函数，后续只补新增路线轴。
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - `src/ui/renderSceneReview.js`
 - `src/ui/renderRecap.js`
@@ -151,6 +155,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 每案至少 1 个“来电人藏着自己的不利信息”的后半程揭示。
 - 每案至少 1 个第三压力源：父母、朋友、老板、平台、介绍人、供应商、期限。
 - 外围选项要有真实诱惑，不能只是弱答案。
+- 这些要求已进入 `verify:pack` 的 `PACK-005`：runtime-loaded 案件至少 5 段来电、2 份可读材料、2600 字以上文本体量、来电人自我修剪和第三压力源。
 
 验收：
 
@@ -221,7 +226,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 需要补：
 
 - 每案收麦后带出下一案问题，但不能剧透目录。
-- 故事包总结要回收每案物件，而不只是路线轴。
+- 故事包总结已回收每案物件，而不只是路线轴。
 - 评论区审判墙要更像真实评论，不像功能说明。
 - 失败/低揭示路线也要有完整余味，不要只像没通关。
 
@@ -235,12 +240,12 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 
 ### 模板池扩容
 
-当前模板池 5 个，正式内容生产不够。
+运行时 daily 兜底模板仍是 5 个；内容生产池已经扩到 12 个压力系统种子，正式内容生产不再从空白开始。
 
 目标：
 
-- 扩到至少 9-12 个不同 plot id。
-- 非婚恋至少占一半。
+- 内容生产池扩到至少 9-12 个不同 plot id。已完成，当前 12 个。
+- 非婚恋至少占一半。已完成，当前 8 个非婚恋。
 - 每个故事包内的案件题材不能同质化。
 
 优先题材：
@@ -261,8 +266,8 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 需要补：
 
 - `docs/story-pack-development-pipeline.md`
-- `content/intelligence/` 原始素材摘要目录。
-- 每案 `qa-report.md`：逻辑链、AI 味检查、价值观检查、事实边界。
+- `content/intelligence/` 原始素材摘要目录。已新增 README 和 plot template pool；真实采风摘要后续继续进该目录，但不能含可反推原案的信息。
+- 每案 `qa-report.md`：逻辑链、AI 味检查、价值观检查、事实边界。当前 demo 包已有 `content/packs/steam-demo-01/qa-report.md`，后续新包必须同样保留。
 
 ## P3：AI 问答实验
 
@@ -303,7 +308,7 @@ AI 问答值得做，但不能让 AI 生成事实。
 - `docs/unfinished-backlog.md`：本文件，作为未完成项目总入口。
 - `docs/story-pack-development-pipeline.md`：已新增，故事包从热点采风到上线的流程。
 - `docs/content-pack-schema.md`：已补内容包 JSON 字段、runtime-loaded 嵌套结构、路线字段、校验规则和改包流程；后续随 schema 演进继续更新示例。
-- `docs/desktop-steam-build-plan.md`：桌面壳、存档、Steam Cloud、Steam Input。
+- `docs/desktop-steam-build-plan.md`：已新增，覆盖桌面壳、Windows portable、Steam Cloud、Steam Deck/Steam Input、签名和实机验包。
 - `docs/controlled-ai-intent-schema.md`：受控自由追问 intent / alias / answerId 结构。
 - `docs/playtest-report-template.md`：每次大测试的记录模板。
 
@@ -318,7 +323,7 @@ AI 问答值得做，但不能让 AI 生成事实。
 
 ### 自动测试还缺
 
-- 真实手柄流程测试：键盘已补 Playwright 级回放；手柄仍只有纯函数和源码守卫，缺 Steam Deck/控制器实机回放。
+- 真实手柄流程测试：键盘和模拟 Gamepad API 已补 Playwright 级回放；仍缺 Steam Deck/控制器实机回放。
 - 结果页/案间页截图对比。
 
 ## 当前建议顺序

@@ -51,7 +51,7 @@
 - Electron 桌面壳源码已落到 `desktop/electron/`，`build:desktop` 会生成 `dist/desktop-electron`，并通过 preload 暴露文件存档桥；已补 `package:win`、electron-builder portable 配置、窗口状态、全屏/缩放快捷键、崩溃日志和单实例锁，安装器/签名和实机验包仍未完成。
 - 桌面 staging 构建已收口到同一个带锁脚本：`build:desktop` 会生成 playable 和 desktop staging，临时目录替换避免并发构建互踩。
 - `verify:pack -- <pack-id>` 已支持指定内容包，并新增 `PACK-005` 运行时嵌套结构校验。
-- Playwright 浏览器回放 smoke 已接入：`smoke:browser` 用离线 playable 跑 perfect、outer、material-miss 和 keyboard-perfect 四条单案路线，并能捕获离线 bundler alias、后台回流页、真实键盘焦点这类运行时错误。
+- Playwright 浏览器回放 smoke 已接入：`smoke:browser` 用离线 playable 跑 perfect、outer、material-miss、keyboard-perfect 和 gamepad-perfect 五条单案路线，并能捕获离线 bundler alias、后台回流页、键盘/手柄焦点这类运行时错误。
 - 手机端主流程保留视觉人物层，并显示核心问题/追问进度。
 - 增加 unit test 和 narrative flow 验证，覆盖当前 demo 包、日案兼容、UTC+8、匿名来电、单人来电、戏剧灰区、无废选项、存款证明逻辑链、路线图字段和非婚恋公共事件模板。
 

@@ -7,9 +7,10 @@ import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, pressurePackProfile, pressureRecapProfile, questionPressureReaction } from "./runtime/livePressure.js?v=0.20.68";
-import { compactRouteQuestion, normalizeRouteChoice, routeAxisForChoice, routeAxisLabel, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
+import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
+import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
@@ -713,6 +714,7 @@ function renderStoryPackComplete() {
   const pressureProfile = storyPressureProfile(briefs);
   const materialProfile = storyPackMaterialProfile(briefs);
   const quoteProfile = storyQuoteProfile(results);
+  const objectProfile = storyObjectProfile(briefs);
   const comments = storyCommentWall({
     briefs,
     results,
@@ -723,7 +725,8 @@ function renderStoryPackComplete() {
     boundaryProfile,
     pressureProfile,
     materialProfile,
-    quoteProfile
+    quoteProfile,
+    objectProfile
   });
   frame({
     brief: briefs[Math.max(0, Number(state.chapter ?? 1) - 1)] ?? briefs[0],
@@ -769,6 +772,13 @@ function renderStoryPackComplete() {
             <span>收麦原话</span>
             <b>${escapeHtml(quoteProfile.label)}</b>
             <p>${escapeHtml(quoteProfile.line)}</p>
+          </div>
+        ` : ""}
+        ${objectProfile.total ? `
+          <div class="weekly-boundary-line">
+            <span>这晚翻过</span>
+            <b>${escapeHtml(objectProfile.label)}</b>
+            <p>${escapeHtml(objectProfile.line)}</p>
           </div>
         ` : ""}
         <div class="weekly-result-list">
@@ -1759,25 +1769,25 @@ function routeAxisProfile(brief, result = {}) {
 }
 
 function routeTrailHtml(brief) {
-  const choices = routeChoicesForCase(brief);
-  if (!choices.length) return "";
+  const nodes = routeTrailModel({
+    choices: routeChoicesForCase(brief),
+    keyQuestionCount: keyQuestionLimit(brief),
+    investigationIndexBase: investigationRouteIndexBase(brief)
+  });
+  if (!nodes.length) return "";
   return `
     <div class="route-trail">
-      ${choices.map((item) => routeTrailItemHtml(item, brief)).join("")}
+      ${nodes.map((item) => routeTrailItemHtml(item)).join("")}
     </div>
   `;
 }
 
-function routeTrailItemHtml(item, brief = {}) {
-  const label = routeAxisLabel(item.axis);
-  const question = compactRouteQuestion(item.question);
-  const sceneIndex = Number(item.sceneIndex ?? 0);
-  const mark = sceneIndex >= investigationRouteIndexBase(brief) ? "回" : sceneIndex >= keyQuestionLimit(brief) ? "料" : sceneIndex + 1;
+function routeTrailItemHtml(item) {
   return `
     <span>
-      <em>${escapeHtml(mark)}</em>
-      <b>${escapeHtml(label)}</b>
-      ${question ? `<small>${escapeHtml(question)}</small>` : ""}
+      <em>${escapeHtml(item.mark)}</em>
+      <b>${escapeHtml(item.label)}</b>
+      ${item.question ? `<small>${escapeHtml(item.question)}</small>` : ""}
     </span>
   `;
 }
