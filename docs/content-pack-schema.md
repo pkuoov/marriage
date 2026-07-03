@@ -63,6 +63,53 @@ content/packs/<pack-id>/
 
 `metadata-only` 案件不能写 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup` 这类运行时字段。写了这些字段却不切到 `runtime-loaded`，会变成影子资产。`runtime-loaded` 案件必须包含完整运行时必填字段。
 
+### runtime-loaded 字段
+
+`runtime-loaded` 不是“多写几句台词”，而是让该案完整接管运行时。最低字段如下：
+
+- `openingComplaint`：来电人开口的压缩版，用于旧兼容和摘要。
+- `openingDialogue`：开场麦上来回，至少两句；每句包含 `role`、`text`。日案仍是单来电人结构，另一方只能通过转述、截图、语音摘录或回流材料出现。
+- `sceneVersions`：主追问段落，试玩包标准是 5 段；每段包含 `speakerId`、`version`、`doubt`、`contradiction`、`reliability`、`questionOptions`。
+- `questionOptions`：每段至少两个 host 问法；每项包含 `question`、`answer`、`routeAxis`、`routeTone`。必须且只能有一个核心追问，核心追问用 `correct: true` 和 `contradiction` 标出。其他选项也要像主播会问的话，不能写成故意错选。
+- `evidenceChecks`：材料圈点，至少一个；每项包含 `id`、`title`、`prompt`、`material`、`options`。`options` 至少三个，必须且只能一个 `correct: true`，正确项要写 `contradiction`。
+- `investigationHooks`：案后回流，至少一个；字段和材料圈点一致，并额外包含 `source`、`triggerContradiction`、`proves`、`stillCannotProve`。回流必须关联玩家已经听到的矛盾，不能凭空爆答案。
+- `deepFollowup`：全核心命中后自动出现的一问，包含 `question`、`answer`、`note`。它不是奖励提示，要像主播顺着已经听到的事实多问了一句。
+- `stageJudgement`、`storyInterludeRecap`、`followupTwist`、`truth`：收麦、案间和后续余味文案。
+- `dailyShareTitle`、`dailyShareBody`、`dailyShareQuestion`：单案分享卡文案。
+- `conclusionWhenCleared` / `conclusionBranches`：可选。用于把某案的特殊结论从代码迁到 JSON；分支条件写成已揭示矛盾或最终原话，不写 `plotId` 特判。
+
+### 路线字段
+
+`routeAxis` 和 `routeTone` 是隐藏路线图数据，不在直播中显示。推荐轴包括：
+
+- `money-flow`：钱、垫付、返款、债务、共同账户。
+- `document-edge`：截图少边、证明缺页、表格字段、审批状态。
+- `caller-credibility`：来电人自我修剪、先站队、隐藏自身收益。
+- `process-control`：谁控制流程入口、话术顺序、付款/见面/审批节奏。
+- `identity-wording`：学历、身份、关系名分、职位称呼。
+- `outer-thread`：合理但不够咬住核心的外围问法。
+
+路线字段只能影响复盘、终局评论和压力画像，不能在选择按钮旁显示成攻略提示。
+
+## 新增或修改内容包流程
+
+1. 先写压力系统：`whyTonight`、`objectPurpose`、`callerStake`、`otherStake`、`thirdPressure`、`truthBoundary`、`selfServingOmission`。
+2. 再写整通电话：开场、5 段来电、每段 2-3 个主播问法、材料、回流、深问、原话收麦、复盘余味。
+3. 把整通电话拆进 JSON 字段，不要直接在代码里补台词。
+4. `runtimeContentStatus` 保持 `metadata-only`，直到完整运行时字段都写完。
+5. 切到 `runtime-loaded` 后运行：
+
+```bash
+npm run content:index
+npm run verify:pack -- <pack-id>
+npm run check
+npm run smoke:browser
+```
+
+6. 如果只改 manifest 顺序、主题、案数或桥接字段，也要运行 `npm run content:index`；`npm run content:index:check` 会在 CI/本地检查索引是否过期。
+
+不要把同一个字段写两份：故事包级别的顺序、物件和桥接在 `manifest.json`，单案可玩内容在 `cases/*.json`，评论底色在 `comments.json`，路线原型在 `route-archetypes.json`。
+
 ## 校验
 
 ```bash

@@ -302,7 +302,7 @@ AI 问答值得做，但不能让 AI 生成事实。
 
 - `docs/unfinished-backlog.md`：本文件，作为未完成项目总入口。
 - `docs/story-pack-development-pipeline.md`：已新增，故事包从热点采风到上线的流程。
-- `docs/content-pack-schema.md`：内容包 JSON 字段、校验规则、示例。
+- `docs/content-pack-schema.md`：已补内容包 JSON 字段、runtime-loaded 嵌套结构、路线字段、校验规则和改包流程；后续随 schema 演进继续更新示例。
 - `docs/desktop-steam-build-plan.md`：桌面壳、存档、Steam Cloud、Steam Input。
 - `docs/controlled-ai-intent-schema.md`：受控自由追问 intent / alias / answerId 结构。
 - `docs/playtest-report-template.md`：每次大测试的记录模板。
