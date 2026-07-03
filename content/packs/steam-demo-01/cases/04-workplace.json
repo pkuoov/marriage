@@ -8,6 +8,12 @@
   "callerStake": "咨询者想拿主责和表现，也想把垫款风险推回同事。",
   "otherStake": "对方需要借审批截图安抚垫款人，同时继续控制供应商和财务入口。",
   "thirdPressure": "老板临时指派、项目署名、供应商催款和财务流程。",
+  "taskProfile": {
+    "id": "audit",
+    "label": "款项卡住了",
+    "recommendedSpecialtyId": "audit",
+    "summary": "截图看着完整，钱却没落到该落的位置。"
+  },
   "routeAxisComments": {
     "process-control": ["入口在谁手里", "流程词太熟了"],
     "document-edge": ["审批图少的是钱", "截图卡在最会挡人的页"],

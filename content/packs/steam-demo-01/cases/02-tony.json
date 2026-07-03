@@ -8,6 +8,12 @@
   "callerStake": "咨询者想证明自己不是误会，也不想承认自己享受过被当成自己人的感觉。",
   "otherStake": "对方需要维持服务热情和私人暧昧之间的模糊边界。",
   "thirdPressure": "店内业绩、同事起哄和熟客维护话术。",
+  "taskProfile": {
+    "id": "emotion",
+    "label": "情绪卡住了",
+    "recommendedSpecialtyId": "emotion",
+    "summary": "情绪很满，有人一直把问题推回爱不爱。"
+  },
   "routeAxisComments": {
     "identity-wording": ["自己人这词又来了", "甜话先别急着信"],
     "money-flow": ["后面接消费就变味", "办卡那一下太快了"],

@@ -51,6 +51,7 @@
 - 输入导航规则已拆到 `src/runtime/inputNavigation.js`：键盘意图、焦点循环和摇杆方向/冷却都有纯函数测试，`app.js` 只负责把意图落到按钮。
 - 内容包 manifest 元数据已接到运行时生成索引：`npm run content:index` 从 `content/packs/*/manifest.json` 生成 `src/generated/contentPackIndex.js`，`storyPacks.js` 不再手写一份故事包镜像。
 - 完整案件 JSON loader 入口已接上：生成索引会输出 `CONTENT_CASES`，`runtime-loaded` 案件可通过 `src/runtime/contentCase.js` 覆盖模板字段；当前 demo 四案均已切到 `runtime-loaded`。
+- 任务画像 `taskProfile` 已随 runtime-loaded 案件进入内容包：四案的操作类型、推荐专业和摘要不再只靠 `caseEngine.js` 的 `plotId` 表。
 - daily 模式已优先加载 runtime-loaded JSON：同一 `plotId` 的试玩案不再在故事集和今日来电里维护两套台词，未迁移的轮换案继续走模板兜底。
 - 故事集终局 profile 收集已拆到 `src/runtime/storyPackSummaryModel.js`：事实边界、现场压力、材料圈点、原话、物件、评论墙和分享文案模型能脱离 `app.js` 测试。
 - `verify:pack` 已支持指定 pack id，并新增运行时内容 schema 检查：开场、追问、材料、回流、深入追问、收束和分享字段都必须是可玩的嵌套结构。
@@ -132,6 +133,7 @@ content/packs/steam-demo-01/
 - 改故事集顺序、主题、案数只改 `content/packs/*/manifest.json` 并运行 `npm run content:index`；`npm run check` 会拦截过期索引。
 - 改故事集难度曲线优先改 manifest `sequence[].difficultyProfile`；预算、边界题量和后续压力字段必须能被 `verify:pack` 拦住，而不是回到 `difficulty.js` 写案名分支。
 - `runtimeContentStatus` 从 `metadata-only` 切到 `runtime-loaded` 以后，JSON 必须包含完整 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup`、收麦和复盘字段，并由运行时读取。
+- runtime-loaded JSON 必须包含 `taskProfile`，新增案子的操作类型不要只写在 `caseEngine.js` 兜底模板里。
 - `runtime-loaded` 迁移必须一案一案做；每迁一案都要保证 `EPISODE-002` 自动回放和叙事流测试不变。
 - `npm run verify:pack` 能单独检查当前案件包结构和运行时定义一致性。
 - 新故事包可以新增目录接入；正式迁移后完整台词也不再写在 `src/caseEngine.js`。

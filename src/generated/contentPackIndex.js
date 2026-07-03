@@ -119,6 +119,12 @@ export const CONTENT_CASES = {
       "storyArcSummary": "账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
       "storySuspense": "这案一不小心就吵成“你嫌我穷”。账单日期比委屈更诚实。",
       "storyClueObject": "信用卡账单与社保断缴截图",
+      "taskProfile": {
+        "id": "audit",
+        "label": "钱款说不清",
+        "recommendedSpecialtyId": "audit",
+        "summary": "钱说得急，责任却还没落到人。"
+      },
       "routeAxisComments": {
         "money-flow": [
           "弹幕开始算账了",
@@ -484,6 +490,12 @@ export const CONTENT_CASES = {
       "storyArcSummary": "看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
       "storySuspense": "他会聊天不稀奇，稀奇的是每句亲近后面都接了店里的事。",
       "storyClueObject": "理发店排班表与办卡记录",
+      "taskProfile": {
+        "id": "emotion",
+        "label": "情绪卡住了",
+        "recommendedSpecialtyId": "emotion",
+        "summary": "情绪很满，有人一直把问题推回爱不爱。"
+      },
       "routeAxisComments": {
         "identity-wording": [
           "自己人这词又来了",
@@ -849,6 +861,12 @@ export const CONTENT_CASES = {
       "storyArcSummary": "材料会越要越细，男方有话没说全，女方也有话没跟家里说。",
       "storySuspense": "几张图都挺像真的，问题是它们刚好少了最容易吵起来的部分。",
       "storyClueObject": "几张资料截图和一张存款证明",
+      "taskProfile": {
+        "id": "verification",
+        "label": "资料有雾",
+        "recommendedSpecialtyId": "verification",
+        "summary": "标签都好看，材料却总少一块。"
+      },
       "routeAxisComments": {
         "identity-wording": [
           "名校两个字太省事",
@@ -1267,6 +1285,12 @@ export const CONTENT_CASES = {
       "storyArcSummary": "先问三件事：谁让垫、谁拿署名、截图到底停在哪一步。",
       "storySuspense": "这案很容易骂成同事骗钱。审批通过和钱到账不是一回事。",
       "storyClueObject": "报销审批截图、活动群聊和供应商报价单",
+      "taskProfile": {
+        "id": "audit",
+        "label": "款项卡住了",
+        "recommendedSpecialtyId": "audit",
+        "summary": "截图看着完整，钱却没落到该落的位置。"
+      },
       "routeAxisComments": {
         "process-control": [
           "入口在谁手里",

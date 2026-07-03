@@ -72,6 +72,14 @@ function assertDifficultyProfile(profile, label) {
   assert(profile.truthBoundaryPromptLimit >= 5, `${label} 事实边界题量不能低于 5`);
 }
 
+function assertTaskProfile(profile, label) {
+  assert(profile && typeof profile === "object", `${label} 缺少 taskProfile`);
+  assertNonEmptyString(profile.id, `${label} taskProfile.id 不能为空`);
+  assertNonEmptyString(profile.label, `${label} taskProfile.label 不能为空`);
+  assertNonEmptyString(profile.recommendedSpecialtyId, `${label} taskProfile.recommendedSpecialtyId 不能为空`);
+  assertNonEmptyString(profile.summary, `${label} taskProfile.summary 不能为空`);
+}
+
 function collectTextLength(value) {
   if (typeof value === "string") return value.trim().length;
   if (Array.isArray(value)) return value.reduce((sum, item) => sum + collectTextLength(item), 0);
@@ -147,6 +155,7 @@ test("PACK-003", "case pressure packets are complete", () => {
       RUNTIME_CASE_REQUIRED_FIELDS.forEach((runtimeField) => {
         assert(casePacket[runtimeField] !== undefined, `${casePacket.caseId} runtime-loaded 缺少 ${runtimeField}`);
       });
+      assertTaskProfile(casePacket.taskProfile, casePacket.caseId);
       const axisCommentValues = Object.values(casePacket.routeAxisComments ?? {}).flat();
       assert(axisCommentValues.length >= 4, `${casePacket.caseId} 至少需要 4 条路线轴弹幕`);
       axisCommentValues.forEach((comment, commentIndex) => {
