@@ -36,6 +36,14 @@ export function questionPressureSignal(option = {}, routeTone = "") {
   return option.contradiction ? "held" : "drift";
 }
 
+export function pressuredAnswerVariant(option = {}, { pressureSignal = "" } = {}) {
+  const guarded = pressureSignal === "drift" && option.guardedAnswer;
+  return {
+    answer: guarded ? option.guardedAnswer : option.answer ?? "",
+    guarded: Boolean(guarded)
+  };
+}
+
 export function questionPressureReaction(option = {}, routeTone = "") {
   const tone = routeTone || option.routeTone || "";
   if (/太细|不太好听|尴尬/.test(option.answer ?? "")) return "弹幕先吵起尺度：问得细不细，和这张资料为什么出现，是两件事。";

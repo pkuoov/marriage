@@ -8,7 +8,7 @@ import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
 import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
-import { livePressureProfile, materialPressureReaction, materialPressureSignal, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
+import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount as countAnsweredEvidence, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, sceneReviewModel, unlockedInvestigationEntries } from "./runtime/sceneAdvance.js?v=0.20.68";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "./runtime/storyInterludeModel.js?v=0.20.68";
@@ -895,6 +895,8 @@ function handleSceneDialogueButton(button) {
   if (!brief || !option) return;
   const key = answerKey(brief, sceneIndex);
   const current = state.sceneDialoguePicks?.[key] ?? [];
+  const answerVariant = pressuredAnswerVariant(option, { pressureSignal: state.lastPressureSignal ?? "" });
+  const answer = answerVariant.answer;
   if (!current.some((item) => item.optionIndex === optionIndex)) {
     state.sceneDialoguePicks = {
       ...(state.sceneDialoguePicks ?? {}),
@@ -903,7 +905,8 @@ function handleSceneDialogueButton(button) {
         {
           optionIndex,
           question: option.question ?? "",
-          answer: option.answer ?? "",
+          answer,
+          guarded: answerVariant.guarded,
           routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
           routeTone: option.routeTone ?? routeToneForChoice(option)
         }
@@ -911,7 +914,7 @@ function handleSceneDialogueButton(button) {
     };
   }
   markAction(brief, `dialogue:${sceneIndex}:${optionIndex}`, { spend: true });
-  state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
+  state.lastReaction = questionPressureReaction({ ...option, answer }, option.routeTone ?? routeToneForChoice(option));
   state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
   state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
   if (audiencePatienceLost(brief)) return;
@@ -924,6 +927,8 @@ function handleSceneQuestionButton(button) {
   const { brief, scene, options } = sceneChoiceContext(sceneIndex);
   const option = options[optionIndex] ?? options[0];
   if (!brief || !option) return;
+  const answerVariant = pressuredAnswerVariant(option, { pressureSignal: state.lastPressureSignal ?? "" });
+  const answer = answerVariant.answer;
   markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: !option.contradiction });
   markAction(brief, `version:${sceneIndex}`);
   if (option.contradiction) {
@@ -931,23 +936,24 @@ function handleSceneQuestionButton(button) {
     recordContradiction(brief, scene.contradiction);
   }
   else {
-    state.lastReaction = questionPressureReaction(option, option.routeTone ?? routeToneForChoice(option));
+    state.lastReaction = questionPressureReaction({ ...option, answer }, option.routeTone ?? routeToneForChoice(option));
     state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
   }
   state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
   state.sceneAnswers = {
     ...(state.sceneAnswers ?? {}),
-    [answerKey(brief, sceneIndex)]: option.answer ?? ""
+    [answerKey(brief, sceneIndex)]: answer
   };
   state.sceneQuestionPicks = {
     ...(state.sceneQuestionPicks ?? {}),
     [answerKey(brief, sceneIndex)]: {
       question: option.question ?? "",
-      answer: option.answer ?? "",
+      answer,
       contradiction: option.contradiction ?? "",
       routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
       routeTone: option.routeTone ?? routeToneForChoice(option),
-      correct: Boolean(option.contradiction)
+      correct: Boolean(option.contradiction),
+      guarded: answerVariant.guarded
     }
   };
   recordRouteChoice(brief, sceneIndex, option, scene);

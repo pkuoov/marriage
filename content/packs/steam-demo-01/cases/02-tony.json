@@ -126,6 +126,7 @@
         {
           "question": "他说压力大之后，最常接什么请求？",
           "answer": "不是只求安慰。聊着聊着就会说，能不能帮他转个活动，或者问我朋友最近要不要剪头。",
+          "guardedAnswer": "不是只求安慰。聊着聊着会接到活动、剪头这些事。我当时没把话说死，因为我也吃了那个“自己人”的感觉。",
           "contradiction": "情绪求助后接商业转化请求。",
           "correct": true,
           "routeAxis": "counterparty-credibility",

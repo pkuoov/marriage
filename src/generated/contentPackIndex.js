@@ -180,6 +180,7 @@ export const CONTENT_CASES = {
             {
               "question": "他开口借钱之前，有没有跟你说过工作最近不稳定？",
               "answer": "没有。他之前一直说最近忙、加班多。要不是那张办材料的截图，我根本不知道他已经断缴两个月了。",
+              "guardedAnswer": "没有。他之前一直说最近忙、加班多。我那会儿也没敢追太狠，怕显得我只盯着工作。后来看到截图，才知道断缴不是这两天的事。",
               "contradiction": "社保断缴早于借钱，失业不是突然发生。",
               "correct": true,
               "routeAxis": "money-flow",
@@ -577,6 +578,7 @@ export const CONTENT_CASES = {
             {
               "question": "他说压力大之后，最常接什么请求？",
               "answer": "不是只求安慰。聊着聊着就会说，能不能帮他转个活动，或者问我朋友最近要不要剪头。",
+              "guardedAnswer": "不是只求安慰。聊着聊着会接到活动、剪头这些事。我当时没把话说死，因为我也吃了那个“自己人”的感觉。",
               "contradiction": "情绪求助后接商业转化请求。",
               "correct": true,
               "routeAxis": "counterparty-credibility",
@@ -914,6 +916,7 @@ export const CONTENT_CASES = {
             {
               "question": "这些截图是什么时候发的，发之前你们怎么说到材料的？",
               "answer": "我没敢直接说“你把截图发来”。是我妈一直说见面前得摸清楚，我夹在中间，只能含糊跟他说：我妈可能会问学校和收入，让他别被问住。第二天他就把几张图发来了。",
+              "guardedAnswer": "不是我直接说“你把截图发来”。我当时夹在中间，只说我妈可能会问学校和收入，让他别被问住。现在回头看，这话其实已经把材料要出来了。",
               "contradiction": "女方家在见面前就开始核对择偶条件。",
               "correct": true,
               "routeAxis": "money-flow",
@@ -1325,6 +1328,7 @@ export const CONTENT_CASES = {
             {
               "question": "他让你垫钱时，原话有没有提署名和老板？",
               "answer": "有。他说这次答谢会缺个执行负责人，如果我先垫场地和礼品费，复盘材料里可以写我主责。我没说的是，我前面已经跟老板表过态，想接这个活。",
+              "guardedAnswer": "提了。他说缺执行负责人，复盘材料里可以写我主责。我当时没有把自己摘干净，因为我确实先跟老板表过态，想接这个活。",
               "contradiction": "咨询者先向老板表态想主责，同事借这个把垫款包装成机会。",
               "correct": true,
               "routeAxis": "identity-wording",
