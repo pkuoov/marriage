@@ -1904,15 +1904,20 @@ function portraitLayer(brief, mood = "listening") {
     thinking: "接话"
   };
   const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
+  const artSrc = casePortraitArt(brief, npc);
   return `
 	    <div class="case-duel-portraits">
 	      <figure class="case-portrait mood-${mood} active">
-	        <img src="${CHARACTER_ART[npc.id]}" alt="" />
+	        <img src="${escapeHtml(artSrc)}" alt="" />
 	        <div class="call-expression expression-${escapeHtml(expression.kind)}"><span>${escapeHtml(expression.text)}</span></div>
 	        <figcaption><span>匿名来电｜${moodLabels[mood] ?? "听线"}</span><b>来电形象</b></figcaption>
 	      </figure>
 	    </div>
 	  `;
+}
+
+function casePortraitArt(brief, npc) {
+  return brief.callerArt ?? CHARACTER_ART[npc.id] ?? CHARACTER_ART.meng;
 }
 
 function callerExpressionFor(brief, mood = "listening") {

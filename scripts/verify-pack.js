@@ -98,9 +98,10 @@ test("PACK-002", "manifest keeps distinct playable cases", () => {
   assertEqual(new Set(manifest.sequence.map((item) => item.caseId)).size, manifest.size, "caseId 不能重复");
   assertEqual(new Set(manifest.sequence.map((item) => item.plotId)).size, manifest.size, "plotId 不能重复");
   manifest.sequence.forEach((item, index) => {
-    ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "backdropClass", "bridge"].forEach((field) => {
+    ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "backdropClass", "callerArt", "bridge"].forEach((field) => {
       assert(item[field], `第 ${index + 1} 案缺少 ${field}`);
     });
+    assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png(\?v=[\w.-]+)?$/.test(item.callerArt), `第 ${index + 1} 案 callerArt 必须指向匿名来电人 PNG`);
     assert(!/下一案|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);
   });
 });

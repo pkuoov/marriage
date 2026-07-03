@@ -40,6 +40,7 @@ export const CONTENT_PACKS = {
         "act": "体面",
         "objectLabel": "账单",
         "backdropClass": "backdrop-credit",
+        "callerArt": "./assets/generated/callers/caller_credit_anxious.png?v=0.20.71",
         "bridge": "电话已经接进来，她先把账单递到麦前。"
       },
       {
@@ -51,6 +52,7 @@ export const CONTENT_PACKS = {
         "act": "自己人",
         "objectLabel": "店表",
         "backdropClass": "backdrop-tony",
+        "callerArt": "./assets/generated/callers/caller_salon_guarded.png?v=0.20.71",
         "bridge": "先别急着骂暧昧。店里那张表，比甜话更像账本。"
       },
       {
@@ -62,6 +64,7 @@ export const CONTENT_PACKS = {
         "act": "条件",
         "objectLabel": "资料图",
         "backdropClass": "backdrop-profile",
+        "callerArt": "./assets/generated/callers/caller_profile_controlled.png?v=0.20.71",
         "bridge": "几张资料图被她一口气发过来，话说得急，停顿也多。"
       },
       {
@@ -73,6 +76,7 @@ export const CONTENT_PACKS = {
         "act": "主责",
         "objectLabel": "审批截图",
         "backdropClass": "backdrop-work",
+        "callerArt": "./assets/generated/callers/caller_work_reimbursement_tired.png?v=0.20.71",
         "bridge": "公司那边也亮了麦。截图看着完整，钱却还没回。"
       }
     ]

@@ -252,6 +252,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       storyBridge: spec.bridge,
       storyObjectLabel: spec.objectLabel,
       backdropClass: spec.backdropClass ?? brief.backdropClass,
+      callerArt: spec.callerArt ?? brief.callerArt,
       weeklyCase: true,
       weeklyKey: storyKey,
       weeklyThemeId: theme.id,

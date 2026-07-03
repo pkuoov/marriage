@@ -178,6 +178,10 @@ characters/player_female_eq.png
 ====================
 
 backgrounds/agency_office.png
+backgrounds/credit_bill_room.png
+backgrounds/salon_counter_schedule.png
+backgrounds/profile_verification_desk.png
+backgrounds/office_finance_reimbursement.png
 backgrounds/cafe_date.png
 backgrounds/lounge_date.png
 backgrounds/parents_home.png
@@ -187,6 +191,11 @@ backgrounds/married_home.png
 backgrounds/housing_sales.png
 backgrounds/hospital_birth.png
 backgrounds/school_gate_year10.png
+
+callers/caller_credit_anxious.png
+callers/caller_salon_guarded.png
+callers/caller_profile_controlled.png
+callers/caller_work_reimbursement_tired.png
 
 
 ====================

@@ -55,6 +55,8 @@ Needed:
 - Keep names hidden in UI. File names can be production-facing, but the screen should continue showing `咨询者 / 匿名来电`.
 - Style should be semi-cartoon, less photo-model, with bolder silhouette and cleaner edges than the generated realistic PNGs.
 
+2026-07-03 update: first-pass anonymous caller portraits have been generated under `assets/generated/callers/` and wired through content-pack `sequence.callerArt`. `portraitLayer` now uses the pack-specific caller art before falling back to named NPC portraits.
+
 ### P0: Asset Resolution And Style Consistency
 
 - Backgrounds are `1672x941`, close to 16:9 but below the prompt target of `1920x1080`.
@@ -107,11 +109,10 @@ Action:
 ## Recommended Priority
 
 1. Replace the four case backgrounds with object-specific public-incident backgrounds.
-2. Add four anonymous caller portrait variants and point story-pack cases to those instead of named archetype portraits.
-3. Upgrade portrait format from low-detail SVG to transparent semi-cartoon PNG with expression variants.
-4. Add material thumbnails for each case.
-5. Add a small host monitor layer to strengthen "player as broadcaster".
-6. Archive or de-emphasize old marriage-route backgrounds.
+2. Upgrade anonymous caller portraits with expression variants.
+3. Add material thumbnails for each case.
+4. Add a small host monitor layer to strengthen "player as broadcaster".
+5. Archive or de-emphasize old marriage-route backgrounds.
 
 ## Prompt Direction
 
