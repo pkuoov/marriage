@@ -7,7 +7,7 @@ import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
-import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
+import { dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, storyCallCountText, storyCommentWall, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeChoicesFromPicks, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "./runtime/routeMapModel.js?v=0.20.68";
@@ -16,6 +16,7 @@ import { evidenceOperationHtml, evidencePickFeedbackHtml } from "./ui/evidenceVi
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced } from "./ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
+import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -685,6 +686,11 @@ function renderStoryPackComplete() {
   const materialProfile = storyPackMaterialProfile(briefs);
   const quoteProfile = storyQuoteProfile(results);
   const objectProfile = storyObjectProfile(briefs);
+  const playerType = storyPlayerType(avgPercent, displayBest);
+  const shareTitle = storyShareTitle(avgPercent, displayBest);
+  const aftertaste = storyPackAftertaste(avgPercent, briefs.length);
+  const closingLine = storyPackClosingLine(avgPercent, displayBest, briefs.length);
+  const callCountText = storyCallCountText(briefs.length);
   const comments = storyCommentWall({
     briefs,
     results,
@@ -704,74 +710,38 @@ function renderStoryPackComplete() {
     label: "试玩收麦",
     chapter: "试玩收麦",
     showCaseHud: false,
-    text: `
-      <p><b>今晚收麦</b></p>
-      <p>${escapeHtml(storyPackCallLine(briefs.length))}你最常回头看的，是：${escapeHtml(displayBest.label)}。</p>
-      <section class="share-result-card">
-        <div class="share-card-head"><span>${escapeHtml(theme.title)}</span><em>${escapeHtml(displayBest.label)}</em></div>
-        <div class="share-player-type">
-          <span>你是</span>
-          <b>${escapeHtml(storyPlayerType(avgPercent, displayBest))}</b>
-        </div>
-        <p class="share-card-title">${escapeHtml(storyShareTitle(avgPercent, displayBest))}</p>
-        <p class="weekly-theme-thesis">${escapeHtml(theme.thesis)}</p>
-        <p class="issue-score">${escapeHtml(storyPackAftertaste(avgPercent, briefs.length))}</p>
-        ${boundaryProfile.total ? `
-          <div class="weekly-boundary-line">
-            <span>事实边界</span>
-            <b>${escapeHtml(boundaryProfile.label)}</b>
-            <p>${escapeHtml(boundaryProfile.line)}</p>
-          </div>
-        ` : ""}
-        ${pressureProfile.total ? `
-          <div class="weekly-boundary-line">
-            <span>现场压力</span>
-            <b>${escapeHtml(pressureProfile.label)}</b>
-            <p>${escapeHtml(pressureProfile.line)}</p>
-          </div>
-        ` : ""}
-        ${materialProfile.total ? `
-          <div class="weekly-boundary-line">
-            <span>材料圈点</span>
-            <b>${escapeHtml(materialProfile.label)}</b>
-            <p>${escapeHtml(materialProfile.line)}</p>
-          </div>
-        ` : ""}
-        ${quoteProfile.total ? `
-          <div class="weekly-boundary-line">
-            <span>收麦原话</span>
-            <b>${escapeHtml(quoteProfile.label)}</b>
-            <p>${escapeHtml(quoteProfile.line)}</p>
-          </div>
-        ` : ""}
-        ${objectProfile.total ? `
-          <div class="weekly-boundary-line">
-            <span>这晚翻过</span>
-            <b>${escapeHtml(objectProfile.label)}</b>
-            <p>${escapeHtml(objectProfile.line)}</p>
-          </div>
-        ` : ""}
-        <div class="weekly-result-list">
-          ${briefs.map((item, index) => {
-            const result = results[index] ?? {};
-            const route = routeProfiles[index] ?? routeAxisProfile(item, result);
-            return `<p><span>${index + 1}. ${escapeHtml(item.label)}</span><b>${escapeHtml(route.label)}</b><small>${escapeHtml(result.dailyAccuseLabel ?? "未收麦")}</small></p>`;
-          }).join("")}
-        </div>
-        <div class="comment-wall">
-          <span>评论区审判墙</span>
-          ${comments.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
-        </div>
-        <small>${escapeHtml(storyPackClosingLine(avgPercent, displayBest, briefs.length))}</small>
-      </section>
-    `,
+    text: storyPackCompleteHtml({
+      displayBest,
+      theme,
+      boundaryProfile,
+      pressureProfile,
+      materialProfile,
+      quoteProfile,
+      objectProfile,
+      briefs,
+      results,
+      routeProfiles,
+      comments,
+      playerType,
+      shareTitle,
+      aftertaste,
+      closingLine,
+      callCountText
+    }),
     choices: flowGroup(`
       <button class="primary" data-copy-weekly-result type="button">复制收麦文案</button>
       <button data-action="title" type="button">回标题</button>
     `)
   });
   bind("[data-copy-weekly-result]", async () => {
-    const text = `《直播间大侦探》试玩收麦\n${theme.title}\n我今晚常看的线：${displayBest.label}\n现场压力：${pressureProfile.label}\n材料圈点：${materialProfile.label}\n收麦原话：${quoteProfile.label}\n${storyPlayerType(avgPercent, displayBest)}`;
+    const text = storyPackShareText({
+      theme,
+      displayBest,
+      pressureProfile,
+      materialProfile,
+      quoteProfile,
+      playerType
+    });
     try {
       await navigator.clipboard?.writeText(text);
       state.lastReaction = "收麦文案已复制。";
@@ -781,13 +751,6 @@ function renderStoryPackComplete() {
     render();
   });
   bind('[data-action="title"]', resetToTitle);
-}
-
-function storyPackCallLine(caseCount = 0) {
-  const count = Math.max(0, Math.floor(Number(caseCount) || 0));
-  if (count === 1) return "今晚这一路麦挂了。";
-  if (count > 1) return `今晚这 ${count} 路麦都挂了。`;
-  return "今晚这几路麦都挂了。";
 }
 
 function liveControlDeck(brief = {}, label = "") {

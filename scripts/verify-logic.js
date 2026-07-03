@@ -20,6 +20,7 @@ import { evidenceMaterialKind, evidenceOperationHtml } from "../src/ui/evidenceV
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
+import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -361,6 +362,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   const livePressureSource = readFileSync(new URL("../src/runtime/livePressure.js", import.meta.url), "utf8");
   const liveCallViewSource = readFileSync(new URL("../src/ui/liveCallView.js", import.meta.url), "utf8");
   const recapViewSource = readFileSync(new URL("../src/ui/recapView.js", import.meta.url), "utf8");
+  const storyPackCompleteViewSource = readFileSync(new URL("../src/ui/storyPackCompleteView.js", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -376,7 +378,8 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
   assertIncludes(materialSource, "spend: !correct", "材料检视圈中不能消耗听众忍耐，误指才扣");
   assertIncludes(appSource, "storyPackClosingLine", "故事集终局小字必须按本局表现生成，不能写成玩法说明");
-  assertIncludes(appSource, "storyPackCallLine(briefs.length)", "故事集终局正文必须按实际案数生成，不能写死四路麦");
+  assertIncludes(appSource, "storyCallCountText(briefs.length)", "故事集终局正文必须按实际案数生成，不能写死四路麦");
+  assertIncludes(storyPackCompleteViewSource, "callCountText", "故事集终局 UI 必须接收实际案数称呼，不能写死四案");
   assert(!appSource.includes("今晚四路麦都挂了"), "故事集终局不能写死四路麦");
   assertIncludes(routeMapSource, "return \"料\"", "路线图里的材料检视节点必须标成材料，不能伪装成第六段对话");
   assertIncludes(routeMapSource, "return \"回\"", "路线图里的私信回流节点必须标成回流，不能伪装成材料或第六段对话");
@@ -413,9 +416,10 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(appSource, "storyPackMaterialProfile", "故事集终局必须回收材料圈点结果");
   assertIncludes(appSource, "storyQuoteProfile", "故事集终局必须回收最终原话选择");
   assertIncludes(appSource, "storyObjectProfile", "故事集终局必须回收每案物件");
-  assertIncludes(appSource, "材料圈点", "终局 UI 必须展示材料圈点余味");
-  assertIncludes(appSource, "收麦原话", "终局 UI 必须展示原话选择余味");
-  assertIncludes(appSource, "这晚翻过", "终局 UI 必须展示故事包物件余味");
+  assertIncludes(storyPackCompleteViewSource, "材料圈点", "终局 UI 必须展示材料圈点余味");
+  assertIncludes(storyPackCompleteViewSource, "收麦原话", "终局 UI 必须展示原话选择余味");
+  assertIncludes(storyPackCompleteViewSource, "这晚翻过", "终局 UI 必须展示故事包物件余味");
+  assertIncludes(storyPackCompleteViewSource, "weeklyProfileLine", "故事集终局结果卡必须能由纯 UI 模块复用 profile 行");
   assertIncludes(recapViewSource, "truthBoundaryReviewHtml", "收麦回看必须把事实边界显示出来，不能让 truthBoundary 只停在 JSON 元数据");
   assertIncludes(appSource, "data-truth-boundary-pick", "事实边界必须可交互归位，不能只做静态说明页");
   assertIncludes(recapViewSource, "truthBoundaryPlaced", "事实边界必须改成一次放置后继续，不能强制玩家改到标准答案");
@@ -543,6 +547,9 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(truthBoundaryReviewHtml({ title: "边界", line: "先放句子", choices: [{ key: "true", label: "能确认" }], columns: [{ key: "true", label: "能确认", items: ["A"] }], prompts: [{ id: "true:0", text: "A", expected: "true" }] }, {}), "data-truth-boundary-pick", "事实边界归位按钮必须可由纯 UI 模块渲染");
   assert(truthBoundaryPlaced({ prompts: [{ id: "a" }] }, { a: "true" }), "事实边界一次放置完成判断必须可由纯 UI 模块测试");
   assertIncludes(solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "压住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" })[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
+  assertIncludes(appSource, "./ui/storyPackCompleteView.js", "故事集终局 HTML 必须从 app.js 拆到 ui/storyPackCompleteView");
+  assertIncludes(storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料咬住" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" }), "评论区审判墙", "故事集终局结果卡必须可由纯 UI 模块渲染");
+  assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "压住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, playerType: "收麦主播" }), "材料圈点：圈准", "故事集终局复制文案必须可由纯 UI 模块生成");
   assertIncludes(appSource, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
   assertIncludes(appSource, "liveControlDeck", "案内 UI 必须由直播控场台统一生成");
   assertIncludes(appSource, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
