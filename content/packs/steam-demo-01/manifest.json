@@ -26,6 +26,12 @@
       "objectLabel": "账单",
       "backdropClass": "backdrop-credit",
       "callerArt": "./assets/generated/callers/caller_credit_anxious.png?v=0.20.71",
+      "difficultyProfile": {
+        "tier": 1,
+        "label": "开场体面",
+        "budgetDelta": 1,
+        "truthBoundaryPromptLimit": 5
+      },
       "bridge": "电话已经接进来，她先把账单递到麦前。"
     },
     {
@@ -38,6 +44,12 @@
       "objectLabel": "店表",
       "backdropClass": "backdrop-tony",
       "callerArt": "./assets/generated/callers/caller_salon_guarded.png?v=0.20.71",
+      "difficultyProfile": {
+        "tier": 2,
+        "label": "自己人加压",
+        "budgetDelta": 0,
+        "truthBoundaryPromptLimit": 5
+      },
       "bridge": "先别急着骂暧昧。店里那张表，比甜话更像账本。"
     },
     {
@@ -50,6 +62,12 @@
       "objectLabel": "资料图",
       "backdropClass": "backdrop-profile",
       "callerArt": "./assets/generated/callers/caller_profile_controlled.png?v=0.20.71",
+      "difficultyProfile": {
+        "tier": 3,
+        "label": "条件反问",
+        "budgetDelta": 0,
+        "truthBoundaryPromptLimit": 6
+      },
       "bridge": "几张资料图被她一口气发过来，话说得急，停顿也多。"
     },
     {
@@ -62,6 +80,12 @@
       "objectLabel": "审批截图",
       "backdropClass": "backdrop-work",
       "callerArt": "./assets/generated/callers/caller_work_reimbursement_tired.png?v=0.20.71",
+      "difficultyProfile": {
+        "tier": 4,
+        "label": "流程压麦",
+        "budgetDelta": -1,
+        "truthBoundaryPromptLimit": 6
+      },
       "bridge": "公司那边也亮了麦。截图看着完整，钱却还没回。"
     }
   ]

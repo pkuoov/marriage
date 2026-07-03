@@ -63,6 +63,15 @@ function assertEvidenceOperation(operation, label) {
   });
 }
 
+function assertDifficultyProfile(profile, label) {
+  assert(profile && typeof profile === "object", `${label} 缺少 difficultyProfile`);
+  assert(Number.isInteger(profile.tier) && profile.tier >= 1, `${label} difficultyProfile.tier 必须是正整数`);
+  assertNonEmptyString(profile.label, `${label} difficultyProfile.label 不能为空`);
+  assert(Number.isInteger(profile.budgetDelta), `${label} difficultyProfile.budgetDelta 必须是整数`);
+  assert(Number.isInteger(profile.truthBoundaryPromptLimit), `${label} difficultyProfile.truthBoundaryPromptLimit 必须是整数`);
+  assert(profile.truthBoundaryPromptLimit >= 5, `${label} 事实边界题量不能低于 5`);
+}
+
 function collectTextLength(value) {
   if (typeof value === "string") return value.trim().length;
   if (Array.isArray(value)) return value.reduce((sum, item) => sum + collectTextLength(item), 0);
@@ -101,6 +110,10 @@ test("PACK-002", "manifest keeps distinct playable cases", () => {
     ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "backdropClass", "callerArt", "bridge"].forEach((field) => {
       assert(item[field], `第 ${index + 1} 案缺少 ${field}`);
     });
+    assertDifficultyProfile(item.difficultyProfile, `第 ${index + 1} 案`);
+    if (index > 0) {
+      assert(item.difficultyProfile.tier >= manifest.sequence[index - 1].difficultyProfile.tier, `第 ${index + 1} 案 difficultyProfile.tier 不能倒退`);
+    }
     assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png(\?v=[\w.-]+)?$/.test(item.callerArt), `第 ${index + 1} 案 callerArt 必须指向匿名来电人 PNG`);
     assert(!/下一案|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);
   });

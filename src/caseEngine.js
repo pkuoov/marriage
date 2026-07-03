@@ -235,7 +235,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
     })[0];
     const runtimeContent = storyPackCaseContentFor(storyKey, spec.caseId);
     const brief = applyRuntimeContentForBrief(templateBrief, runtimeContent);
-    return {
+    const episodeBrief = {
       ...brief,
       id: `episode-${storyKey}-${index + 1}-${brief.plotId}`,
       order: index + 1,
@@ -273,6 +273,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       weeklyEpisodeTitle: storyPack.title,
       weeklyCaseLabel: storyPack.caseLabels?.[index] ?? "匿名来电"
     };
+    return applyDifficultyProfile(episodeBrief, spec.difficultyProfile);
   });
 }
 

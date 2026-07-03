@@ -54,7 +54,7 @@ npm run smoke:desktop
 | INVESTIGATION-001 | Evidence source expansion | Investigation hooks only unlock from already heard contradictions, render as fixed materials, and never create freeform facts or second-party live debate. | 后台核实变成任务提示、AI 编事实、另一方上麦吵架，或未先发现矛盾就直接发答案。 |
 | STATE-001 | Save migration | Legacy saves migrate into episode-compatible shape while preserving explicit daily saves and settings. | Old saves breaking after refactors. |
 | RUNTIME-001 | Outcome math | Internal carryover scores clamp correctly for wins/failures. | Run result values drifting out of range. |
-| RUNTIME-002 | Daily pacing | Daily budget has a floor and hint count stays at one. | Mobile short-case pacing getting too long or too guided. |
+| RUNTIME-002 | Pacing and difficulty | Daily budget has a floor and hint count stays at one; story-pack cases can use manifest difficulty profiles to vary patience budget and truth-boundary prompt count. | Mobile short-case pacing getting too long or too guided, or story-pack difficulty staying flat across every case. |
 | RUNTIME-003 | Accusation logic | Stance, structure, clue threshold, and expected accusation remain stable for underlying case math. | Responsibility layer drifting while the daily UI uses reveal ratio. |
 | RUNTIME-004 | Daily reveal flow | Daily quoted-line picks should not override the reveal-ratio result; the visible result is based on core issue completion. | Players feeling punished by a wrong-answer model instead of seeing completion. |
 | NARRATION-001 | Copy helpers | Core labels and narration helper outputs remain stable. | Share/recap copy losing key terms. |

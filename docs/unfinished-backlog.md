@@ -60,6 +60,7 @@
 - 案件背景 class 已迁入日案定义和 manifest `sequence.backdropClass`，案内视觉背景不再由 `app.js` 的 `plotId` 表决定。
 - 存款证明案的特殊结算分支已迁入内容 JSON 的 `conclusionWhenCleared/conclusionBranches`，分享卡也改回读取 `dailyShare*` 字段，减少 runtime `plotId` 文案特判。
 - 事实边界已进入收麦回看和故事集终局：每案 `truthBoundary` 会要求玩家一次性归位多句话；放完即可继续，错放不当场纠正，会在下一页回看和终局标签、分享卡、评论区审判墙里体现。
+- 故事包难度曲线已开始数据化：manifest `sequence[].difficultyProfile` 可以调每案听众耐心预算和事实边界题量，后段案件不再和开场案完全同一压力。
 - `comments.json` 已进入内容索引和终局评论墙：内容包可以控制本集评论区底色，高低揭示率、压力、材料和原话选择仍由运行时模型替换局部评论。
 - 路线轴和语气推断已收口到 `src/runtime/routeLog.js`：`caseEngine` 不再维护第二套 `inferRouteAxis / inferRouteTone`。
 - 日案模板分发已收口到 `DAILY_TEMPLATE_BUILDERS` registry：新增 daily 兜底模板不再改一串 `plotId` if 链。
@@ -129,6 +130,7 @@ content/packs/steam-demo-01/
 
 - 改故事集顺序、主题和压力系统不改 `src/app.js`。
 - 改故事集顺序、主题、案数只改 `content/packs/*/manifest.json` 并运行 `npm run content:index`；`npm run check` 会拦截过期索引。
+- 改故事集难度曲线优先改 manifest `sequence[].difficultyProfile`；预算、边界题量和后续压力字段必须能被 `verify:pack` 拦住，而不是回到 `difficulty.js` 写案名分支。
 - `runtimeContentStatus` 从 `metadata-only` 切到 `runtime-loaded` 以后，JSON 必须包含完整 `openingDialogue`、`sceneVersions`、`evidenceChecks`、`investigationHooks`、`deepFollowup`、收麦和复盘字段，并由运行时读取。
 - `runtime-loaded` 迁移必须一案一案做；每迁一案都要保证 `EPISODE-002` 自动回放和叙事流测试不变。
 - `npm run verify:pack` 能单独检查当前案件包结构和运行时定义一致性。

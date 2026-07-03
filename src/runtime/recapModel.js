@@ -1,4 +1,5 @@
 import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.68";
+import { truthBoundaryPromptLimitForCase } from "../difficulty.js?v=0.20.68";
 import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.68";
 import { routeAxisLabel } from "./routeLog.js?v=0.20.68";
 
@@ -82,7 +83,7 @@ export function truthBoundaryReview(brief = {}) {
     { key: "edited", label: "被修剪", items: cleanBoundaryItems(boundary.edited) },
     { key: "unknown", label: "今晚定不了", items: cleanBoundaryItems(boundary.unknown) }
   ].filter((column) => column.items.length);
-  const prompts = boundaryPrompts(columns, TRUTH_BOUNDARY_PROMPT_LIMIT);
+  const prompts = boundaryPrompts(columns, truthBoundaryPromptLimitForCase(brief, TRUTH_BOUNDARY_PROMPT_LIMIT));
   return {
     title: "事实边界",
     line: columns.length
