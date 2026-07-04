@@ -7,14 +7,14 @@ description: Use when writing or rewriting 《直播间大侦探》 case content
 
 Use this skill for any case creation or dialogue change larger than typo polish. It is the writing-side companion to two review skills:
 
-- [detective-plot-coupling-review](/Users/pkuiloveoov/code/love/project-skills/detective-plot-coupling-review/SKILL.md) checks whether the mystery structure works: case ledger, false solutions, missing edges, coupling, fair play, story-pack threads. Run its ledger before writing and its checks after writing.
-- [livestream-game-flow-review](/Users/pkuiloveoov/code/love/project-skills/livestream-game-flow-review/SKILL.md) checks the played flow: playtest loop, UI regressions, continuity checklist. Run it after content lands.
+- [detective-plot-coupling-review](../detective-plot-coupling-review/SKILL.md) checks whether the mystery structure works: case ledger, false solutions, missing edges, coupling, fair play, story-pack threads. Run its ledger before writing and its checks after writing.
+- [livestream-game-flow-review](../livestream-game-flow-review/SKILL.md) checks the played flow: playtest loop, UI regressions, continuity checklist. Run it after content lands.
 
 Authority order when rules conflict:
 
 1. Mechanical bans in `scripts/verify-logic.js` (DAILY-009 family and related copy tests) — these fail the build.
-2. Value boundaries in [game-philosophy.md](/Users/pkuiloveoov/code/love/docs/game-philosophy.md) and the value baseline below.
-3. [dialogue-continuity-audit.md](/Users/pkuiloveoov/code/love/docs/dialogue-continuity-audit.md) and the flow-review regression checklist.
+2. Value boundaries in [game-philosophy.md](../../docs/game-philosophy.md) and the value baseline below.
+3. [dialogue-continuity-audit.md](../../docs/dialogue-continuity-audit.md) and the flow-review regression checklist.
 4. The techniques in this skill.
 
 Examples in this skill are technique demonstrations, not content patches. Any new fact they imply — a timestamp, an amount, a new material, a new third party — must pass the case `truthBoundary`, the coupling-review ledger, and the pack `qa-report.md` before it enters a shipped case.
@@ -23,10 +23,34 @@ Examples in this skill are technique demonstrations, not content patches. Any ne
 
 The goal is not "colorful" speech. It is a caller who sounds like a real person under pressure, in plain spoken Chinese, anchored to specific objects and numbers.
 
+Two targets must hold at the same time, and they fail differently:
+- 口语化: the line sounds spoken, not composed. This lives in syntax and rhythm, not in exclamation.
+- 语意连贯: every line hooks the previous one. A line can be perfectly colloquial and still answer nothing; a line can connect logically and still sound like an essay. Write for both, audit for both.
+
 Caller vocabulary:
 - No clinical or jargon speech in the caller's mouth: `核心风险`, `成本转移`, `转嫁债务`, `信用背书`, `认知偏差`, `流程空挡`, `洗房边界`. Callers argue in `钱`, `面子`, `责任`, `吃亏`, `谁占便宜`.
 - No machine clichés: `心里咯噔一下`, `不由得倒吸一口凉气`, `不得不承认`, `听到这里`, `真正…的不是…而是…`. These are already banned mechanically; do not reintroduce them through paraphrase.
 - Do not replace AI flavor with short-video melodrama flavor. `我当时脑子嗡的一声`, `这哪是爱我，这是把我当提款机啊` is the same failure in different clothes. When in doubt, go plainer: a concrete object, a time, an amount, and one feeling.
+
+Spoken syntax (口语感靠句法，不靠感叹):
+- 语气词 are calibrated per character and state, not sprinkled: `吧` softens or admits uncertainty, `嘛` claims the obvious, `啊` warms or protests, `呢` dangles a question. A guarded caller uses fewer particles, not more. Uniform particle density across characters is an AI tell.
+- Ellipsis over completeness: drop subjects and objects the context already carries — 「问过。没敢再问。」 beats 「我问过他这个问题，但我没敢再问下去。」 Spoken Chinese runs on short clauses in a topic chain, not on complete sentences.
+- Afterthought placement (追补句): real speakers finish the point first and patch the frame after — 「挺吓人的，那张表。」「我没答应，当场就没答应。」 Use 1-2 per case at high-pressure moments; it reads as thinking-while-talking.
+- Lopsided recall instead of neat lists: a caller remembers one vivid item and trails off — 「他就总说店里压力大，别的……反正就那些。」 Never let a caller enumerate in tidy triples (「他会说A、说B、还说C」); inventory speech is essay speech.
+- Vary sentence length hard: a three-character burst next to a long rambling clause. Uniform medium-length sentences are the strongest single AI tell in dialogue.
+- One visible self-repair per case at most, and it must do work — either characterization or a clue (the cognitive-dissonance slip in Clue Insertion Techniques). Repair as a verbal tic is noise.
+- Keep object names stable per character: pick what this caller would call the thing (「那张表」) and hold it. Cycling synonyms (表格/资源表/排班表/名单) inside one speech is elegant-variation slop — a label change must mean something, like the pronominal shift.
+
+Coherence (连贯靠接话头，不靠连接词):
+- Every turn picks up the previous turn: echo its word, answer its question, resist it, or visibly dodge it. A visible dodge is a connection — the audience hears the swerve. A topic jump is not.
+- Question-answer adjacency runs both ways: the host may only ask what the last caller line makes askable; the caller must address — or audibly evade — the question actually asked. An answer that would fit under any question answers none; rewrite it around one word from the question.
+- Anchor by repetition, not pronouns: when a referent could blur across turns, a stressed caller repeats the object — 「那八万」「那张表」 — instead of 「它」「这个事」. This is simultaneously more spoken and more coherent; it is the cheap trick that resolves the 口语化-vs-连贯 tension.
+- Discourse markers (`后来`, `反正`, `就是`, `要不`) are structural signals, at most one per turn: `后来` returns to the timeline, `反正` closes an argument the speaker refuses to itemize, `要不` raises an option they are half-committed to. Never use them as sentence lubricant.
+- Do not polish lines in isolation. A pass that makes each line individually colloquial but breaks who-answers-what is a regression. Coherence is audited at transcript level — see the pickup audit in the writing workflow.
+
+Voice fingerprint:
+- Plan 2-3 speech fingerprints per caller in the story packet and hold them for the whole call: a pet filler, a sentence-length habit, what they call the other party (and where that label shifts), and which topic makes them go short.
+- Guard state modulates the fingerprint — guarded means shorter turns, fewer particles, more object-name repetition — it does not replace it.
 
 Iron rule — perception, not conclusion:
 - The caller reports what they saw, heard, and felt. The deduction is the player's job. Emotional self-evaluation is allowed; deductive conclusions about the other party's motive are not, unless the beat is explicitly the caller's late realization and the facts supporting it are already on screen.
@@ -63,8 +87,8 @@ Required passes:
 3. Pressure-system pass: define why tonight, dramatic anchor, object purpose, caller stake, other stake, third pressure, and truth boundary.
 4. Beat-ladder pass: draft 5-6 caller statements that each add a new pressure, not a restatement.
 5. Branch-design pass: for each beat, write 2-3 plausible host questions with different route axes and reveal depth.
-6. Actor-consistency pass: separately ask what the caller, the other party, and the third-pressure source each gain by saying less than the full truth.
-7. Continuity QA pass: read the whole call aloud and check that every reveal follows from what is already on screen.
+6. Actor-consistency / stake-alignment pass: separately ask what the caller, the other party, and the third-pressure source each gain by saying less than the full truth. For every visible line, name whose face, money, status, safety, or convenience the line protects; if it only delivers background to the player, fold it into a material, host prompt, or later confession.
+7. Continuity QA pass: read the whole call aloud and check that every reveal follows from what is already on screen. A small clue may open one local question; it may not instantly become a full motive, scam label, or final judgement.
 8. Length QA pass: estimate what the player actually does. If the case has only live reading plus one quote-pick, it is underbuilt for Steam. Add authored interaction, not prose bulk.
 
 Five-beat minimum for a 20-minute case:
@@ -91,6 +115,24 @@ Playable enrichment menu:
 - **Backflow after the call**: a DM, forwarded screenshot, supplier note, friend correction, or platform record appears only after a relevant contradiction has been heard. It should revalue an earlier beat and still leave one unknown alive.
 - **Route-specific crowd echo**: comments react to the player's chosen route axis after the choice. They can be confidently wrong, sharp, or funny, but they never announce the answer before the player acts.
 - **Fact-boundary pressure**: final sorting should include true, edited, and unknown statements in uneven counts. The player commits once; the game does not correct them until aftermath.
+
+Double-layer question economy:
+- The live-call screen may have a free context layer and a committed pursuit layer, but they must not be the same option list twice.
+- `dialogueOptions` are authored free asks: chronology, caller self-protection, relationship context, document origin, or a concrete "how did that line happen" probe. They can add texture, loosen or tighten the caller, and surface a small human excuse, but they must not solve the node.
+- `questionOptions` are committed pursuit routes. Each current node should have 2-3 plausible host angles with different reveal depth: one closest to the load-bearing gap, one socially tempting detour, and one caller-side or document-side pressure when the beat supports it.
+- Free asks are not a spoiler mode. Asking around can make the caller more guarded, reduce later answer texture, or leave the live room noisier. Do not let the player sweep free asks to identify the correct committed route for no cost.
+- Do not write the free ask by copying the committed option and changing one word. The player should feel they asked a side question, not previewed the answer key.
+- Visible UI labels must stay clear before they stay stylish. Avoid `soft ask`, `hard ask`, `核心`, `正确`, `最佳`, route-axis labels, and vague process labels like "先问两句", "接着追", or "选一句往下追". Because the game has two different economies on the same screen, the panel may explicitly say "普通提问" and "关键选择"; each button should carry the same kind marker so the player never has to infer the rule from color alone.
+
+Material board writing:
+- Material text says what is visible, not what is missing. Put the gap in the selectable marks and feedback.
+- Bad: "看不到连续流水、收入构成" when the correct mark is "连续流水和收入构成".
+- Good: "资料里有一张当日存款证明，余额停在 28.6 万；另一张收入截图只露出本月到账和公司抬头." The player then chooses whether the missing flow, sender, timestamp, or account edge matters.
+- A material board is strongest when every miss is genuinely suspicious but less load-bearing than the correct mark.
+
+Runtime-length plan hygiene:
+- `runtimeLengthPlan` is not decorative metadata. When it exists, review must compare it against actual JSON counts: live beats, material boards, backflow items, truth-boundary prompts, and what the player does besides reading.
+- If automated verification is available, wire these counts into `verify:pack` as warnings. Until then, every content pass must check them manually so the field does not become another shadow asset.
 
 Do not enrich by:
 - adding a second live caller in the daily/unit case;
@@ -123,6 +165,8 @@ Do not enrich by:
    - Place the best quote-pick line late enough that it feels earned. Early dialogue may contain bait lines, but it should not state the full answer.
    - Read it aloud as one phone call before splitting it into `openingDialogue`, `sceneVersions`, `questionOptions`, `deepFollowup`, and final quote-pick choices.
    - While reading, run the coupling questions: does Scene 4's number get seeded by Scene 1? Does Scene 3's turn follow Scene 2's emotion? If a beat could be removed with nothing breaking, merge it or give it a missing edge.
+   - Pickup audit (接话头): for every turn, name the exact word, question, or claim from the previous turn that it picks up — or the visible dodge it performs. A turn that could follow any previous line equally well connects to none; rewrite it around one word from the turn before it.
+   - Voice audit: check each caller turn against the packet's `callerVoice` fingerprint — filler, sentence habit, name for the other party, shutdown topic — and check that guard state tightens the fingerprint instead of replacing it.
 
 3. Only then split into data fields.
    - Each UI field must be traceable back to the story packet.
@@ -150,24 +194,31 @@ Hard rule: a daily case is not assembled from interchangeable good-sounding line
   "callerStake": "",
   "otherStake": "",
   "thirdPressure": "",
-	  "investigationBackflow": [
-	    {
-	      "source": "dm|backstage|off-mic-inquiry",
-	      "triggeredBy": "",
-	      "appearsNowBecause": "",
-	      "proves": "",
-	      "stillCannotProve": ""
-	    }
-	  ],
-	  "runtimeLengthPlan": {
-	    "liveBeatCount": 0,
-	    "materialBoardCount": 0,
-	    "backflowCount": 0,
-	    "truthBoundaryPromptCount": 0,
-	    "caseSpecificPressure": "",
-	    "whatPlayerDoesBesidesRead": []
-	  },
-	  "truthBoundary": {
+  "callerVoice": {
+    "filler": "",
+    "sentenceHabit": "",
+    "nameForOther": "",
+    "nameShiftsAt": "",
+    "shutdownTopic": ""
+  },
+  "investigationBackflow": [
+    {
+      "source": "dm|backstage|off-mic-inquiry",
+      "triggeredBy": "",
+      "appearsNowBecause": "",
+      "proves": "",
+      "stillCannotProve": ""
+    }
+  ],
+  "runtimeLengthPlan": {
+    "liveBeatCount": 0,
+    "materialBoardCount": 0,
+    "backflowCount": 0,
+    "truthBoundaryPromptCount": 0,
+    "caseSpecificPressure": "",
+    "whatPlayerDoesBesidesRead": []
+  },
+  "truthBoundary": {
     "true": [],
     "edited": [],
     "unknown": []
@@ -277,7 +328,7 @@ For the main playable beat, use a linear call loop:
 - The caller answer should reveal a new detail, a softened responsibility, or a pressure shift. It should not tell the player the lesson.
 - The player may choose exactly one angle per statement. After that answer, the route moves forward; do not allow sweeping the remaining options on the same node.
 - Each on-screen exchange should be at most two back-and-forth turns. If the text is long, collapse it to one host question and one caller answer.
-- If every core node is hit, insert exactly one non-choice "深入一问" before the final "选一句原话" moment. This question should surface the caller's own stake, cost, family pressure, money position, or hidden ask.
+- If every core node is hit, insert exactly one non-choice "深入一问" before the final "选一句往下追" moment. This question should surface the caller's own stake, cost, family pressure, money position, or hidden ask.
 - If the player misses one or more core nodes, skip the deep question and move to the final quote-pick after all statements have received one choice.
 - Avoid "上一句", "后来呢", and player-like transport controls in the main route. The flow should feel like a call progressing, not a menu being managed.
 
@@ -322,6 +373,11 @@ Motive chain:
 Opening:
 - Caller speaks first and gives relationship context.
 - Host asks a neutral continuation question.
+- Conversational Phrasing Rules (直播连线拟真话语权与对话承接规范):
+  - Do not use abrupt, clinical, or command-style speech for the host or caller. It must feel like a real phone-in talk show, not a rigid script or a police interrogation.
+  - **Caller openings must be conversational and progressive**: Instead of keyword-heavy statements like `“我们谈了半年，之前约会一直挺体面。前几天他突然说信用卡要周转...”` (abrupt and robotic), write it with natural spoken transitions: `“我们谈了半年多，平时约会消费什么的都挺体面的，我也没觉得有什么问题。结果前几天他突然跟我说信用卡需要周转，想让我先帮他顶一下。”` (colloquial, natural pace).
+  - **Host transitions must be warm and inquiry-based**: Instead of abrupt commands like `“先说第一次提钱，他原话怎么讲？”` (sounds like an interrogator), write it as an empathetic inquiry: `“晚上好。我想问一下，他提钱的时候，原话是怎么讲的？”` (natural hosting transition).
+  - Avoid any Host or Caller lines that sound like system placeholders or prompt labels.
 - Do not pack relationship source, relationship stage, family reaction, suspicious material, and caller doubt into the first caller line. Split them into beats:
   - caller: call reason only
   - host: how did you meet / where has it progressed
@@ -343,6 +399,9 @@ Live-room response beats:
 - A limited "select the line to respond to" beat can replace abstract final judgement after enough dialogue has been heard.
 - Keep it as livestream behavior, not courtroom behavior. The player is choosing how the host/live room responds, not "presenting evidence" or cross-examining another speaker.
 - Quote choices should be actual caller lines or very close paraphrases of lines already shown. Do not introduce a new conclusion inside the button.
+- Final quote choices must be ungated under the one-commit question economy. Every `accusationChoices[].label` must have a source in text all routes can see: opening dialogue, `sceneVersions[].version`, material board text, or investigation/backflow material. A quote that exists only inside one branch answer is unfair after the player can hear only one answer per node.
+- When an audit finds a gated final quote, repair the local chain rather than just swapping the button: weave the quote into the ungated scene version if it belongs there, then rewrite the branch answer to avoid repetition; or replace the final quote with a line already present on the public surface.
+- `quotePickCandidates` is a planning ledger for the shipped final choices. It must match `accusationChoices` in order and wording after punctuation normalization. Drift is a planning debt and should fail pack verification.
 - Do not mix caller quotes and host conclusions in the same final choice set. The visible choice is the caller quote; the host's response belongs in a separate response/result field after selection.
 - Internally the chosen quote can map to respondent, caller, both, or no-premeditated responsibility, but the visible button should feel like selecting line 1 / line 2 / line 3.
 - The correct quote should not always be first. Partial-but-tempting quotes should be plausible enough that players argue about them.
@@ -372,11 +431,12 @@ Hidden clue pacing:
 - A story-pack single case's main scene should usually be 5-6 caller statements advanced one at a time, enough to support at least 20 minutes with recap and route comparison. Each statement gets one current-node choice before the call moves forward, so the player is reading the live call rather than managing a menu.
 
 UI copy:
-- Buttons should feel like a linear call: "继续", "选一句原话", and short case-specific questions for the current point.
+- Buttons should feel like a linear call: "继续", "选一句往下追", and short case-specific questions for the current point.
 - Avoid mechanical labels: "阶段判断", "资料核验", "通话回放", "内容提示".
 - In daily cases, avoid "接哪边的麦", "让另一方补话", or any copy implying two-sided mediation.
 - Case-specific summary buttons should reflect the case: screenshot source, missing edge, evasive wording, timing, party switch.
 - Investigation copy should sound like live-room backflow, not task UI. Prefer "后台进来一条私信", "有人补了一张图", "这页刚翻出来", or "对方没上麦，只留了这句". Avoid "new clue unlocked", "verification succeeded", "evidence chain complete", "correct route", or any copy that tells the player the system has found the answer.
+- Choice-panel helper notes must pass the rule-clarity test before the read-aloud test. Dressing a rule explanation in stream slang is still a rule explanation — "这段只能定一次。问偏了，弹幕会散。" fails the same way "问偏会掉耐心" does. But hiding the rule behind "随口问问" or "选一句往下追" also fails if the player cannot tell which button advances the scene. Use direct labels for the two economies: 「普通提问 / 不推进剧情，可以多问。」 and 「关键选择 / 会推进剧情，只选一句。」. This is allowed mechanical copy because it prevents a real misclick, not because it helps solve the mystery.
 
 ## Clue Insertion Techniques
 
@@ -386,6 +446,7 @@ Verbal clues (in the caller's retelling or quoted lines):
 - Cognitive-dissonance slip: the caller or quoted party says half a truth, then scrambles to re-wrap it. 「我当时只是想，既然他工资卡交给我……啊不是，我的意思是，以后一起过日子，钱合着管比较好……」 The slip must be small, human, and recoverable — one per case at most.
 - Euphemism downgrade: vocabulary drops from packaged to raw as pressure rises. Early: 「他在做一个周转」. Under pressure: 「我哪知道那是拆东墙补西墙啊」. Plan the word pair in the story packet so the downgrade lands as a beat, not an accident.
 - Pronominal shift: the caller's label for the other party tracks their心理防线: 「我男朋友」 (opening, defended) → 「他」 (doubt) → 「那个人 / 对方」 (cut). Do not force the full chain into every case; even one visible shift late in the call reads loudly. Keep recap wording consistent with wherever the chain ended.
+- Agency laundering (春秋笔法): the caller's early lines wash their own initiative out of shared actions through verb choice — 「他带我去的那种店」 when the reservation was on her member account, 「他手机上弄的分期」 when the equipment sits in her room, 「我妈想看流水」 when she forwarded the screenshot herself. This is the catchable form of the unreliable narrator: the bias lives in verbs and attributions from the opening, and a later material, backflow item, or slip exposes the true subject of the sentence. Every case needs at least one laundered verb planted early and one surface that exposes it; a caller whose edit is only confessed at the end was never catchable, and the Rashomon collapses into a diary.
 
 Physical clues (materials on the board):
 - Accidental attachment: the material enters the call through a believable slip — 发错表、多选了一张图、转发时带上了上一条. The sender's intended message and the accidental payload should both be nameable.
@@ -409,6 +470,44 @@ Guard continuity: the caller's guard state moves with the player's questioning, 
 
 Guarded answers are not bonus confessions. A `guardedAnswer` must withhold: fewer specifics, hedging, subject changes, a half-answer that still contains the beat's contradiction but with less texture. It must never pre-spend the deepFollowup confession, the recap conclusion, or the final quote payoff. If the normal answer names three details, the guarded answer names one and resists the other two.
 
+## De-AI & Anti-Robotic Scripting Guide (避坑指南：识破并消除“非人类/AI式”剧情与台词)
+
+AI 或机械化剧本编写容易引入特定的“非人类思路”模板。Codex 在重构或审查时，必须对照以下三维坐标，彻底消除非人类逻辑缺陷，并向编写者提出针对性建议：
+
+### 1. 剧情与逻辑层面的“非人类思路”
+*   **A. 顿悟式信息跃迁 (The Telepathic Leap)**
+    *   *机械表现*：仅凭一个孤立微弱的线索（如看到理发店排班表发错），Host 或 Caller 瞬间推理出对方的庞大心机或商业阴谋。
+    *   *人类思路*：线索仅引出一个“切实的疑点”（如“备注栏不像剪头”）。必须通过后续对话的拉扯、第二块物证对比、或者是下播私信的证据拼图，最后在 Quote-pick 阶段由玩家自己提炼出最终结论。
+*   **B. 极善与极恶的强行对立 (The Cartoon Villain / Perfect Victim Trap)**
+    *   *机械表现*：来电人是 100% 被欺骗、被利用的无辜天使；另一方是处心积虑、没有丝毫人性温度的诈骗魔王。
+    *   *人类思路*：连线充满灰区（Grey-Zone）。来电人一定隐瞒了自己虚荣、贪小便宜、或者极力逃避自身责任的部分。而另一方也有在自我利益受损时的防御性自我合理化话术（如“我只是太想跟你结婚了”）。
+*   **C. 判决书/心理学报告式的 Host 选项 (The Clinical Judge Trap)**
+    *   *机械表现*：Host 给出充满大词和定性的抽象选项（如 `“他是在进行债务转移”`、`“这属于职场霸凌”`、`“你需要运用法律武器”`）。
+    *   *人类思路*：Host 讲的是人话，是直播间老水友的日常交流话术。Host 的追问应该是具体行为的撕开点（如 `“那你当时就没问问他，这笔钱到底花哪去了？”`、`“所以这顿大餐，你当时也吃得挺高兴的对吧？”`）。
+*   **D. 平淡无奇的说明文剧情 (The Flat Narrative Trap)**
+    *   *机械表现*：剧情线索单一，一眼望底；案件只有平铺直叙的交代，毫无剧场性冲突。
+    *   *人类思路（三大硬性剧作标准）*：每个案件在重构和创作时，必须确保具备以下“三大剧情性特征”中的 **至少两项**：
+        1.  **引人入胜（信息绝不说全）**：开局隐去核心症结，仅留局部反常，真相如同剥洋葱般，由玩家操作层层剥开至最后一幕。
+        2.  **罗生门（Caller自利性隐瞒）**：连线人（Complainant）只挑对自己道德高地或财产有利的信息陈述，极力遮掩和美化自己贪心、虚荣、或违规的真相（必须包含 `selfServingOmission` 并有对应材料击碎）。
+        3.  **多头并行（多线线索缠绕咬合）**：线索构成不能单一。必须由“言语纰漏（口头线索） + 材料数据存疑（实物线索） + 下播私信/粉丝群物证（外围反转）”三者交织成网。
+
+### 2. 文本台词层面的“AI机写味”
+*   **A. 平铺直叙的“剧情汇报说明书” (The Info-Dump Paragraph)**
+    *   *机械表现*：人物一上麦，一口气说完了“相遇背景、相处半年、约会体面、突然借钱、看到截图、非常懵”的完整前因后果，台词像项目工作总结。
+    *   *人类思路*：口语说话是“挤牙膏式”的，需要有语气词、口癖和情绪缓冲（如 `“平时约会消费什么的都挺体面的，我也没觉得有什么问题。结果前几天...”`）。
+*   **B. melo-drama 腔调的夸张情感排比 (Melodramatic Parallels)**
+    *   *机械表现*：宣泄高频使用 `“我脑子嗡的一声”`、`“这哪是爱我，这是把我当提款机”`。
+    *   *人类思路*：普通人在诉苦时，往往会通过对“极其具体的物理数字、日常事件”的描述来表达难受（如 `“他就差把那张最低还款单贴我脸上了，我真的连看都不想看”`）。
+*   **C. 机械的因果逻辑词 (Robotic Transitions)**
+    *   *机械表现*：句式中充满 `“其实”`、`“并不是...而是...”`、`“真正...的...”`。
+    *   *人类思路*：口语更零碎、更偏向感知陈述（如 `“那会儿我脑子有点乱……”`，`“我当时真是……”`），而不是严丝合缝的说明文因果过渡。
+
+### 3. 给 Codex 的审查与重构建议 (Codex Audit Guidelines)
+在进行剧本的 De-AI 重构时，Codex 必须强制执行以下工作流：
+1.  **角色互换测试 (Role-Swap Test)**：尝试将 Host 选项的问句与 Caller 的答句互换，或者将这起案件套在另外两个不同性格的角色身上。如果没有任何违和感，说明台词缺乏特定人设，过于泛化，必须打磨其口语特征。
+2.  **一口气朗读测试 (The Read-Aloud Test)**：所有翻译或重写的 JSON 台词，必须在脑中模拟真人电话朗读。如果一个句子过长、包含复杂的从句、修饰词，必须无条件拆分为 2-3 个碎片句。
+3.  **利益归属审查 (Stake Alignment Review)**：每一句台词，Codex 都必须回答一个问题：*“咨询者说出这句话，是在极力粉饰他自己的什么诉求？或者保护他什么面子？”* 如果一句话仅仅是为了给玩家交代背景事实而存在，那就是“非人类思路的说明书”，必须废除或融合。
+
 ## Diegetic Comment Hints
 
 Comments are crowd noise first, hints second. They must never sound like a tutorial, name a clickable region before the player's first attempt, or use system voice ("快去点击社保截图" is banned).
@@ -425,7 +524,7 @@ Cross-case callbacks: in a story pack, later-case comments may echo only cases t
 
 ## Structure Archetypes
 
-For case and pack skeletons drawn from classic detective fiction — false solutions, missing edges, distributed responsibility, weaponized narration — use [detective-patterns.md](/Users/pkuiloveoov/code/love/project-skills/detective-plot-coupling-review/references/detective-patterns.md). It includes the Rashomon multi-version self-edit and the Gone Girl-style "caller weaponizes the live room" patterns alongside the canon table. Use archetypes when designing new cases and packs; do not retrofit shipped demo cases onto a template.
+For case and pack skeletons drawn from classic detective fiction — false solutions, missing edges, distributed responsibility, weaponized narration — use [detective-patterns.md](../detective-plot-coupling-review/references/detective-patterns.md). It includes the Rashomon multi-version self-edit and the Gone Girl-style "caller weaponizes the live room" patterns alongside the canon table. Use archetypes when designing new cases and packs; do not retrofit shipped demo cases onto a template.
 
 ## Validation
 

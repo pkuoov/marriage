@@ -7,7 +7,13 @@
       "Bash(python3 -c \"import json; print\\(list\\(json.load\\(open\\('package.json'\\)\\)['scripts'].keys\\(\\)\\)\\)\")",
       "Bash(git check-ignore *)",
       "Bash(python3 -)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:m.thepaper.cn)",
+      "WebFetch(domain:zhuanlan.zhihu.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:lab.indienova.com)"
     ],
     "additionalDirectories": [
       "/Users/pkuiloveoov/code/love/src/runtime"

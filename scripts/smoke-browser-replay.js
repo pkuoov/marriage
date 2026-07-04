@@ -86,6 +86,13 @@ async function runRoute(route) {
 
     for (let beat = 0; beat < 5; beat += 1) {
       await page.locator(".scene-question-group").waitFor({ state: "visible" });
+      if (route.sceneMode === "outer") {
+        const dialogueButtons = page.locator("[data-scene-dialogue]");
+        if (await dialogueButtons.count() > 0) {
+          await activate(page, route, "[data-scene-dialogue]", 0);
+          await page.locator(".scene-question-group").waitFor({ state: "visible" });
+        }
+      }
       const questionIndex = route.sceneMode === "outer" && await page.locator("[data-scene-question]").count() > 1 ? 1 : 0;
       await activate(page, route, "[data-scene-question]", questionIndex);
       await advanceSceneBeat(page, route);

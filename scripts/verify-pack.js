@@ -80,6 +80,55 @@ function assertTaskProfile(profile, label) {
   assertNonEmptyString(profile.summary, `${label} taskProfile.summary 不能为空`);
 }
 
+function truthBoundaryItemCount(packet = {}) {
+  return ["true", "edited", "unknown"].reduce((sum, field) => sum + (packet.truthBoundary?.[field] ?? []).length, 0);
+}
+
+function assertRuntimeLengthPlan(packet, manifestItem, label) {
+  const plan = packet.runtimeLengthPlan;
+  const promptLimit = manifestItem?.difficultyProfile?.truthBoundaryPromptLimit;
+  assert(plan && typeof plan === "object", `${label} 缺少 runtimeLengthPlan`);
+  assertEqual(plan.liveBeatCount, packet.sceneVersions?.length ?? 0, `${label} runtimeLengthPlan.liveBeatCount 必须等于实际来电段落数`);
+  assertEqual(plan.materialBoardCount, packet.evidenceChecks?.length ?? 0, `${label} runtimeLengthPlan.materialBoardCount 必须等于实际材料板数量`);
+  assertEqual(plan.backflowCount, packet.investigationHooks?.length ?? 0, `${label} runtimeLengthPlan.backflowCount 必须等于实际后台回流数量`);
+  assertEqual(plan.truthBoundaryPromptCount, promptLimit, `${label} runtimeLengthPlan.truthBoundaryPromptCount 必须等于 manifest 出题上限`);
+  assert(truthBoundaryItemCount(packet) >= plan.truthBoundaryPromptCount, `${label} truthBoundary 池子不能少于实际出题数`);
+  assertNonEmptyString(plan.caseSpecificPressure, `${label} runtimeLengthPlan.caseSpecificPressure 不能为空`);
+  assertArrayMin(plan.whatPlayerDoesBesidesRead, 4, `${label} runtimeLengthPlan.whatPlayerDoesBesidesRead 至少列出四种读以外的操作`);
+}
+
+function normalizeQuoteText(value) {
+  return normalizeOverlapText(String(value ?? "").replace(/^“|”$/g, ""));
+}
+
+function ungatedSurfaceText(packet = {}) {
+  return collectTextFrom([
+    packet.openingComplaint,
+    packet.openingDialogue?.map((line) => line.text),
+    packet.sceneVersions?.map((scene) => scene.version),
+    packet.evidenceCards?.map((card) => [card.title, card.front, card.detail]),
+    packet.evidenceChecks?.map((check) => [check.title, check.material, check.prompt]),
+    packet.investigationHooks?.map((hook) => [hook.surface, hook.appearsNowBecause, hook.title, hook.material, hook.prompt])
+  ]);
+}
+
+function collectTextFrom(value) {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map(collectTextFrom).join("\n");
+  if (value && typeof value === "object") return Object.values(value).map(collectTextFrom).join("\n");
+  return "";
+}
+
+function assertQuotePickCandidates(packet = {}, label = "") {
+  const choiceLabels = (packet.accusationChoices ?? []).map((choice) => normalizeQuoteText(choice.label));
+  const candidateLabels = (packet.quotePickCandidates ?? []).map(normalizeQuoteText);
+  assertDeepEqual(candidateLabels, choiceLabels, `${label} quotePickCandidates 必须与实际 accusationChoices 顺序一致`);
+  const surfaceText = normalizeQuoteText(ungatedSurfaceText(packet));
+  choiceLabels.forEach((quote, index) => {
+    assert(surfaceText.includes(quote), `${label} 第 ${index + 1} 条最终引语没有无门控出处: ${packet.accusationChoices?.[index]?.label}`);
+  });
+}
+
 function collectTextLength(value) {
   if (typeof value === "string") return value.trim().length;
   if (Array.isArray(value)) return value.reduce((sum, item) => sum + collectTextLength(item), 0);
@@ -179,6 +228,7 @@ test("PACK-003", "case pressure packets are complete", () => {
         assert(casePacket[runtimeField] !== undefined, `${casePacket.caseId} runtime-loaded 缺少 ${runtimeField}`);
       });
       assertTaskProfile(casePacket.taskProfile, casePacket.caseId);
+      assertRuntimeLengthPlan(casePacket, manifestItem, casePacket.caseId);
       const axisCommentValues = Object.values(casePacket.routeAxisComments ?? {}).flat();
       assert(axisCommentValues.length >= 4, `${casePacket.caseId} 至少需要 4 条路线轴弹幕`);
       axisCommentValues.forEach((comment, commentIndex) => {
@@ -193,6 +243,7 @@ test("PACK-003", "case pressure packets are complete", () => {
     assert((casePacket.truthBoundary?.true ?? []).length >= 2, `${casePacket.caseId} truthBoundary.true 至少需要 2 条，避免固定成三栏各一`);
     assert((casePacket.quotePickCandidates ?? []).length >= 3, `${casePacket.caseId} 至少需要三句原话候选`);
     assert((casePacket.accusationChoices ?? []).length >= 3, `${casePacket.caseId} 至少需要三句最终收麦原话`);
+    assertQuotePickCandidates(casePacket, casePacket.caseId);
     (casePacket.accusationChoices ?? []).forEach((choice, choiceIndex) => {
       assert(choice.label && /^“.+”$/.test(choice.label), `${casePacket.caseId} 第 ${choiceIndex + 1} 句最终收麦必须像原话`);
       assert(choice.accuse || choice.accuseRole, `${casePacket.caseId} 第 ${choiceIndex + 1} 句最终收麦缺少责任指向`);

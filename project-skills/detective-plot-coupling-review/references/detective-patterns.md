@@ -74,7 +74,15 @@ The reveal should not add a speech. It should make a previous line mean somethin
 - "I just care about honesty" becomes incomplete once the bank-flow demand repeats.
 - "The approval has passed" becomes incomplete once payment and supplier entry are separated.
 
-### 5. Fair Unknown
+### 5. True Excuse, Wrong Coverage
+
+The strongest false solution is a real fact with the wrong scope. The excuse is verifiably true — the store really does teach a sales script, finance really did announce a payment delay, the diploma really is from that school — so the room relaxes. The reversal is not "the excuse was a lie" but "the excuse only covers one of the two paths": the script is real but this table has a private column; the delay is real but the supplier refund never runs through finance. The player's aha is a coverage check, not a lie catch, and the false solution stays alive right up to the flip.
+
+### 6. Identity Futures (身份期货)
+
+The manipulation formula this game keeps exposing: a future identity is issued now, and present money is collected against it — 老板娘, 投资你, 一家人, 主责署名. The identity is the credit instrument; the bill is always due today. Within a case, the pattern is one quote followed by one ask. Across a pack, the recurring formula is the hidden thread: surface it only at the finale wall, where four different words collapse into one grammar.
+
+### 7. Fair Unknown
 
 Detective pleasure is not the same as full certainty. Strong endings can say:
 

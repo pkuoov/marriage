@@ -13,7 +13,7 @@ export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
         ${pick ? evidenceAnnotationHtml(pick) : ""}
       </div>
       <div class="evidence-target-board" aria-label="圈点区域">
-        <span>荧光笔</span>
+        <span>圈哪一处</span>
         ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick)).join("")}
       </div>
     </section>

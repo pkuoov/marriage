@@ -1,22 +1,72 @@
 export function focusedQuestionOptions(options = []) {
-  const normalized = (options ?? []).filter(Boolean);
-  if (normalized.length <= 2) return normalized;
-  const core = normalized.find((option) => option.contradiction);
-  const detour = normalized.find((option) => !option.contradiction);
-  return [core, detour].filter(Boolean);
+  return (options ?? []).filter(Boolean);
 }
 
-export function sceneQuestionChoicesHtml(sceneIndex, options = [], askedDialoguePicks = []) {
-  void askedDialoguePicks;
-  const rows = options
-    .map((option, optionIndex) => choiceQuestionButton(sceneIndex, optionIndex, option))
+export function sceneDialogueOptions(scene = {}, keyOptions = focusedQuestionOptions(scene?.questionOptions ?? [])) {
+  const authored = Array.isArray(scene.dialogueOptions) ? scene.dialogueOptions.filter(Boolean) : [];
+  if (authored.length) return authored.map((option, optionIndex) => normalizeDialogueOption(option, optionIndex));
+  return keyOptions
+    .map((option, sourceIndex) => ({ option, sourceIndex }))
+    .filter(({ option }) => !option.contradiction)
+    .map(({ option, sourceIndex }, optionIndex) => normalizeDialogueOption({
+      ...option,
+      sourceIndex,
+      question: option.dialogueQuestion ?? option.freeQuestion ?? fallbackDialogueQuestion(option, scene, optionIndex)
+    }, optionIndex));
+}
+
+export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePicks = []) {
+  const keyOptions = focusedQuestionOptions(scene?.questionOptions ?? []);
+  const dialogueOptions = sceneDialogueOptions(scene, keyOptions);
+  const askedIndexes = new Set((askedDialoguePicks ?? []).map((pick) => Number(pick.optionIndex)));
+  const dialogueRows = dialogueOptions
+    .map(({ option, optionIndex }) => dialogueQuestionButton(sceneIndex, optionIndex, option, askedIndexes.has(optionIndex)))
     .join("");
-  return choiceGroup("这句怎么问", rows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group");
+  const keyRows = keyOptions
+    .map((option, optionIndex) => keyQuestionButton(sceneIndex, optionIndex, option))
+    .join("");
+  return [
+    dialogueRows
+      ? choiceGroup("普通提问", dialogueRows, "dialogue-question-group", "不推进剧情，可以多问。")
+      : "",
+    choiceGroup("关键选择", keyRows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group key-question-group", "会推进剧情，只选一句。")
+  ].join("");
 }
 
-function choiceQuestionButton(sceneIndex, optionIndex, option = {}) {
+function normalizeDialogueOption(option = {}, optionIndex = 0) {
+  return {
+    option: {
+      ...option,
+      optionIndex
+    },
+    optionIndex
+  };
+}
+
+function fallbackDialogueQuestion(option = {}, scene = {}, optionIndex = 0) {
+  if (option.dialogueQuestion || option.freeQuestion) return option.dialogueQuestion ?? option.freeQuestion;
+  const axis = option.routeAxis ?? "";
+  if (axis === "caller-credibility") return "你当时怎么想的？";
+  if (axis === "money-flow") return "钱这块当时怎么说的？";
+  if (axis === "document-edge") return "这张图当时是怎么发过来的？";
+  if (axis === "identity-wording") return "这句话当时怎么说的？";
+  if (scene?.version?.includes("截图") || scene?.version?.includes("资料")) return "这东西当时怎么拿出来的？";
+  return optionIndex === 0 ? "先把前后问清楚。" : "你当时怎么回他的？";
+}
+
+function dialogueQuestionButton(sceneIndex, optionIndex, option = {}, asked = false) {
   return `
-    <button class="choice-question" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
+    <button class="choice-question dialogue-question" data-scene-dialogue="${sceneIndex}:${optionIndex}" type="button" ${asked ? "disabled" : ""}>
+      <span class="choice-kind">普通</span>
+      <span class="choice-text">${escapeHtml(asked ? `已问：${option.question ?? "接着问"}` : option.question ?? "接着问")}</span>
+    </button>
+  `;
+}
+
+function keyQuestionButton(sceneIndex, optionIndex, option = {}) {
+  return `
+    <button class="choice-question key-question" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
+      <span class="choice-kind choice-kind-key">关键</span>
       <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
     </button>
   `;

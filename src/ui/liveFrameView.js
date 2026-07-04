@@ -8,6 +8,9 @@ export function liveControlDeckHtml({
 } = {}) {
   const safeTotal = Math.max(1, Number(total ?? 1));
   const safeSegment = Math.max(1, Math.min(safeTotal, Number(segment ?? 1)));
+  const pressureRemaining = Number(pressure.remaining ?? 0);
+  const pressureMax = Number(pressure.max ?? 0);
+  const showPatienceHint = safeSegment === 1 && pressureMax > 0 && pressureRemaining === pressureMax;
   const materialKind = materialKindForLabel(material);
   const hostState = hostMonitorStateForPressure(pressure);
   return `
@@ -18,7 +21,10 @@ export function liveControlDeckHtml({
         <small>${escapeHtml(label || "连线中")}</small>
         <div class="deck-host-monitor host-${escapeHtml(hostState.kind)}" aria-hidden="true">
           <i></i>
-          <b>${escapeHtml(hostState.label)}</b>
+          <span>
+            <b>主播监听</b>
+            <small>${escapeHtml(hostState.label)}</small>
+          </span>
           <em><i></i><i></i><i></i><i></i></em>
         </div>
         <div class="deck-live-metrics" aria-hidden="true">
@@ -32,14 +38,15 @@ export function liveControlDeckHtml({
         </div>
       </section>
       <section class="deck-card">
-        <span>连线句子</span>
+        <span>通话进度</span>
         <b>${safeSegment}/${safeTotal}</b>
-        <small>麦没断，话还在往下走。</small>
+        <small>当前第 ${safeSegment} 段，共 ${safeTotal} 段。</small>
       </section>
       <section class="deck-card deck-card-pressure">
         <span>听众耐心</span>
-        <b>${Number(pressure.remaining ?? 0)}/${Number(pressure.max ?? 0)}</b>
+        <b>${pressureRemaining}/${pressureMax}</b>
         <small>${escapeHtml(pressure.patienceLabel ?? "")}</small>
+        ${showPatienceHint ? `<small class="deck-patience-hint">绕问、误指会掉耐心；归零要重听本段。</small>` : ""}
       </section>
       <section class="deck-card deck-card-material">
         <span>后台材料</span>
@@ -60,7 +67,7 @@ function hostMonitorStateForPressure(pressure = {}) {
   if (level === "low" || crowd === "散了") return { kind: "pressed", label: "压麦" };
   if (crowd === "跑偏") return { kind: "thinking", label: "拉回" };
   if (crowd === "压住" || crowd === "追上") return { kind: "held", label: "收住" };
-  return { kind: "idle", label: "听线" };
+  return { kind: "idle", label: "监听中" };
 }
 
 function viewerCountForPressure(pressure = {}) {
@@ -100,7 +107,8 @@ export function liveFrameHtml({
   choices = "",
   visualHud = "",
   controlDeckHtml = "",
-  material = ""
+  material = "",
+  screenEffect = ""
 } = {}) {
   const materialKind = materialKindForLabel(material);
   return `
@@ -112,6 +120,7 @@ export function liveFrameHtml({
         <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
       </header>
       <section class="story-grid case-vn-grid live-console-shell">
+        ${screenEffect ? `<div class="screen-effect screen-effect-${escapeHtml(screenEffect)}" aria-hidden="true"></div>` : ""}
         ${controlDeckHtml}
         <article class="vn-stage">
           <div class="visual-scene backdrop-office ${escapeHtml(backdropClass)}" aria-hidden="true">

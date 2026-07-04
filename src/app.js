@@ -1,7 +1,7 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.68";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.86";
 import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
 import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.68";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.68";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.78";
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
@@ -11,17 +11,17 @@ import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialogu
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, recordPatienceLostState, retryPatienceLostState, sceneReviewModel } from "./runtime/sceneAdvance.js?v=0.20.68";
+import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, recordPatienceLostState, retryPatienceLostState, sceneReviewModel } from "./runtime/sceneAdvance.js?v=0.20.76";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "./runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
-import { evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.68";
+import { evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.83";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
-import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.68";
+import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.77";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.68";
+import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.82";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "./ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
@@ -265,7 +265,6 @@ function renderSceneReview(brief) {
   const { index, scene, done, lastStage, nextStage, nextLabel } = review;
   const pick = selectedScenePickForState(state, brief, index);
   const dialoguePicks = askedDialoguePicksForState(state, brief, index);
-  const options = focusedQuestionOptions(scene.questionOptions ?? []);
   frame({
     brief,
     mood: "thinking",
@@ -280,9 +279,10 @@ function renderSceneReview(brief) {
     }),
     choices: done
       ? sceneReviewDoneChoicesHtml({ lastStage, nextStage, nextLabel })
-      : sceneQuestionChoicesHtml(index, options, dialoguePicks)
+      : sceneQuestionChoicesHtml(index, scene, dialoguePicks)
   });
   bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
+  bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
   bind("[data-next-scene-stage]", () => setIndex(brief, "sceneReview", index + 1));
   bindSceneButtons();
 }
@@ -375,7 +375,7 @@ function renderDeepFollowup(brief) {
       ])}
       <p class="hint">${escapeHtml(followup.note)}</p>
     `,
-    choices: flowGroupHtml(`<button class="primary" data-scene="accusation" type="button">选一句原话</button>`)
+    choices: flowGroupHtml(`<button class="primary" data-scene="accusation" type="button">选一句往下追</button>`)
   });
   bindSceneButtons();
 }
@@ -421,11 +421,11 @@ function renderAccusation(brief) {
     label: "收住话头",
     chapter: liveChapterTitle(brief),
     text: `
-      <p><b>选一句原话</b></p>
-      <p>聊到这儿，你会选哪句原话往下接？</p>
+      <p><b>选一句往下追</b></p>
+      <p>下面哪句最该继续追？</p>
       ${choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))}
     `,
-    choices: choiceGroupHtml("收哪句", choices.map((choice) => `<button data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${escapeHtml(choice.label)}</button>`).join(""), "single-choice-group", "从刚才的话里挑")
+    choices: choiceGroupHtml("往下追", choices.map((choice) => `<button data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${escapeHtml(choice.label)}</button>`).join(""), "single-choice-group", "从刚才听到的话里选一句")
   });
   document.querySelectorAll("[data-accuse]").forEach((button) => {
     button.addEventListener("click", () => resolveAccusationFromButton(brief, button));
@@ -677,6 +677,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
     choices,
     visualHud,
     material: currentMaterial,
+    screenEffect: state.lastScreenEffect ?? "",
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
           onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
@@ -688,11 +689,12 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
         })
       : ""
   });
-  const hadPressureCue = Boolean(state.lastReaction || state.lastPressureSignal);
+  const hadPressureCue = Boolean(state.lastReaction || state.lastPressureSignal || state.lastScreenEffect);
   if (hadPressureCue) {
     state.lastReaction = null;
     state.lastPressureSignal = null;
     state.lastPressureAxis = null;
+    state.lastScreenEffect = null;
     saveState();
   }
   bind('[data-action="title"]', resetToTitle);
@@ -903,6 +905,37 @@ function handleSceneQuestionButton(button) {
   render();
 }
 
+function handleSceneDialogueButton(button) {
+  const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
+  const { brief, scene, options } = sceneChoiceContext(sceneIndex);
+  const dialogueRows = sceneDialogueOptions(scene, options);
+  const option = dialogueRows[optionIndex]?.option ?? null;
+  if (!brief || !option) return;
+  const key = answerKey(brief, sceneIndex);
+  const current = state.sceneDialoguePicks?.[key] ?? [];
+  if (current.some((pick) => Number(pick.optionIndex) === Number(optionIndex))) return;
+  const answerVariant = pressuredAnswerVariant(option, { pressureSignal: state.lastPressureSignal ?? "" });
+  state.sceneDialoguePicks = {
+    ...(state.sceneDialoguePicks ?? {}),
+    [key]: [
+      ...current,
+      {
+        optionIndex,
+        question: option.question ?? "",
+        answer: answerVariant.answer,
+        routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
+        routeTone: option.routeTone ?? routeToneForChoice(option),
+        guarded: answerVariant.guarded
+      }
+    ]
+  };
+  state.lastReaction = questionPressureReaction({ ...option, answer: answerVariant.answer }, option.routeTone ?? routeToneForChoice(option));
+  state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
+  state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
+  saveState();
+  render();
+}
+
 function sceneChoiceContext(sceneIndex) {
   const brief = activeCaseBrief();
   const scene = brief?.sceneVersions?.[sceneIndex] ?? {};
@@ -930,6 +963,7 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
       state.lastReaction = materialPressureReaction(outcome, check);
       state.lastPressureSignal = materialPressureSignal(outcome);
+      if (outcome.correct) state.lastScreenEffect = "material-hit";
       state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
       if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
         area: "evidenceCheck",
@@ -973,6 +1007,7 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
       );
       state.lastReaction = investigationPickReaction(outcome, hook);
       state.lastPressureSignal = materialPressureSignal(outcome);
+      if (outcome.correct) state.lastScreenEffect = "material-hit";
       state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
       if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
         area: "investigationBackflow",
@@ -1243,6 +1278,7 @@ function omitRecordKey(record = {}, keyToOmit) {
 
 function markAction(brief, actionKey, { spend = false } = {}) {
   const key = caseKey(brief);
+  const previousRemaining = Number(ensureBudget(brief).remaining ?? 0);
   const patch = applyActionMark({
     caseActionLog: state.caseActionLog,
     caseId: key,
@@ -1252,6 +1288,9 @@ function markAction(brief, actionKey, { spend = false } = {}) {
   });
   state.caseBudgets = { ...(state.caseBudgets ?? {}), [key]: patch.budget };
   state.caseActionLog = patch.caseActionLog;
+  if (patch.budget && Number(patch.budget.remaining ?? 0) < previousRemaining) {
+    state.lastScreenEffect = state.lastScreenEffect ?? "patience-drop";
+  }
 }
 
 function audiencePatienceLost(brief, context = {}) {

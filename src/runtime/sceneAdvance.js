@@ -172,7 +172,7 @@ export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => fal
     ? hasEvidence ? "evidenceCheck" : canDeepFollow ? "deepFollowup" : "accusation"
     : "sceneReview";
   const nextLabel = lastStage
-    ? hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句原话"
+    ? hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句往下追"
     : "继续";
   return {
     scenes,
@@ -202,7 +202,7 @@ export function evidenceCheckModel({ brief = {}, index = 0, pick = null, issueBa
     missing: !check,
     lastCheck,
     nextStage,
-    nextLabel: nextStage === "deepFollowup" ? "再深入一句" : "选一句原话"
+    nextLabel: nextStage === "deepFollowup" ? "再深入一句" : "选一句往下追"
   };
 }
 

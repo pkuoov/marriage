@@ -16,7 +16,7 @@ import { livePressureProfile, materialPressureReaction, materialPressureSignal, 
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.68";
+import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.76";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
@@ -26,7 +26,7 @@ import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
-import { focusedQuestionOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.68";
+import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.76";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
@@ -150,7 +150,7 @@ test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outs
   assert(!caseEngineSource.includes("function inferRouteTone"), "caseEngine 不能再维护第二套语气推断");
   const choices = [
     normalizeRouteChoice(0, { routeAxis: "caller-credibility", routeTone: "caller-skeptical", question: "你当时有没有起疑心？" }),
-    normalizeRouteChoice(1, { routeAxis: "caller-credibility", routeTone: "caller-skeptical", question: "那你为什么一直绕着说要看账单？" }),
+    normalizeRouteChoice(1, { routeAxis: "caller-credibility", routeTone: "caller-skeptical", question: "你一直说要看账单，那句不好说出口的话是什么？" }),
     normalizeRouteChoice(2, { routeAxis: "money-flow", routeTone: "pressure-point", contradiction: "账单不对", question: "钱花在哪？" })
   ];
   const profile = routeAxisProfileFromChoices(choices);
@@ -397,15 +397,20 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   assertIncludes(markedHtml, "evidence-annotation hit", "材料选择后必须在文件上显示圈点结果");
   assertIncludes(stylesSource, ".evidence-target.selected", "被圈位置必须有视觉反馈");
   assertIncludes(stylesSource, ".evidence-annotation.miss", "误指材料必须只标出玩家圈偏的位置");
+  assertIncludes(stylesSource, ".evidence-workbench.marked.hit::before", "材料命中必须有局部扫描高光，避免圈中反馈太硬");
+  assertIncludes(stylesSource, "evidenceHitScan", "材料命中扫描必须有独立动画");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   assert(!appSource.includes("choiceGroup(\"圈哪一处\""), "材料检视不能退回下方普通按钮组选项");
   assertIncludes(appSource, "evidenceCheckScreenHtml", "材料检视整页 HTML 必须从 app.js 拆到 ui/evidenceView");
+  assertIncludes(appSource, "state.lastScreenEffect = \"material-hit\"", "材料命中必须触发一次全屏 CRT 扫描反馈");
   assert(!appSource.includes("这份材料里，哪一块最该先指出？"), "材料检视提示文案不能继续手写在 app.js");
   const screenHtml = evidenceCheckScreenHtml({
     check: { title: "账单检视", prompt: "圈哪里？", material: "账单缺页。", options: [{ label: "缺页", correct: true }] },
     reviewHtml: "<aside>上一问</aside>"
   });
   assertIncludes(screenHtml, "evidence-workbench", "材料检视页面 helper 必须保留材料操作台");
+  assertIncludes(screenHtml, "圈哪一处", "材料检视候选区不能写成工具名，必须提示玩家圈内容");
+  assert(!screenHtml.includes("荧光笔"), "材料检视候选区不能继续显示不明确的工具名");
   assertIncludes(screenHtml, "上一问", "材料检视页面 helper 必须能接入上一问回看");
   assert(!stylesSource.includes("evidence-check-card"), "材料操作台上线后不能留下旧材料段落卡样式");
 });
@@ -461,7 +466,7 @@ test("INVESTIGATION-001", "host investigation backflow is fixed material, not fr
   assert(!appSource.includes("核验成功"), "回流不能写成通关提示");
 });
 
-test("UI-001", "current-node questions stay in one panel without explainer tags", () => {
+test("UI-001", "current-node questions separate free asks from key choices", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
   const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
@@ -480,13 +485,32 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
     { question: "你朋友怎么说？", answer: "朋友劝我看账单。" }
   ]);
-  const questionHtml = sceneQuestionChoicesHtml(2, questionOptions, []);
-  assertIncludes(questionHtml, "scene-question-group", "当前节点追问必须走统一面板，避免上下两个孤立单选组");
-  assertIncludes(questionHtml, "class=\"choice-question\"", "同一组追问按钮必须使用同权重样式");
-  assertIncludes(questionHtml, "data-scene-question=\"2:0\"", "关键追问仍要保留可点击数据，不显示成独立解释区");
-  assertIncludes(questionHtml, "data-scene-question=\"2:1\"", "外围追问必须也是一次性当前节点选择，不能点完再扫核心追问");
-  assert(!questionHtml.includes("data-scene-dialogue"), "当前节点不能再提供可扫选的外围对话按钮");
-  assert(!appSource.includes("handleSceneDialogueButton"), "新流程不能保留外围追问后再点核心的事件入口");
+  const scene = { version: "他说账单今晚必须先转。", questionOptions };
+  const dialogueOptions = sceneDialogueOptions(scene, questionOptions);
+  const questionHtml = sceneQuestionChoicesHtml(2, scene, []);
+  const askedQuestionHtml = sceneQuestionChoicesHtml(2, scene, [{ optionIndex: 0, question: dialogueOptions[0].option.question, answer: "有一点。" }]);
+  assertIncludes(questionHtml, "dialogue-question-group", "当前节点必须保留随意提问区，方便扩写人物和背景");
+  assertIncludes(questionHtml, "key-question-group", "当前节点必须保留关键选择区，正式推进本段矛盾");
+  assertIncludes(questionHtml, "data-scene-dialogue=\"2:0\"", "随意提问必须有独立事件入口，不结束当前段落");
+  assertIncludes(questionHtml, "data-scene-question=\"2:1\"", "关键追问仍要保留可点击数据");
+  assertIncludes(questionHtml, "普通提问", "随意提问区标题必须明确这是非关键选择");
+  assertIncludes(questionHtml, "不推进剧情，可以多问。", "随意提问区必须明确不会推进本段剧情");
+  assertIncludes(questionHtml, "关键选择", "正式追问区标题必须明确这是关键选择");
+  assertIncludes(questionHtml, "会推进剧情，只选一句。", "正式追问区必须明确会推进剧情且只能选一次");
+  assertIncludes(questionHtml, "choice-kind\">普通", "普通提问按钮必须带类型标识，不能只靠颜色区分");
+  assertIncludes(questionHtml, "choice-kind choice-kind-key\">关键", "关键选择按钮必须带类型标识，不能只靠颜色区分");
+  assert(!questionHtml.includes("先问两句"), "随意提问区不能写成意义不明的流程标签");
+  assert(!questionHtml.includes("接着追"), "正式追问区不能写成意义不明的半截话");
+  assert(!questionHtml.includes("问偏"), "面板说明不许把失败机制直接说给玩家听");
+  assert(!questionHtml.includes("弹幕会散"), "面板说明不能用伪直播马甲解释机制");
+  assert(!questionHtml.includes("问偏会掉耐心"), "正式追问区不能写成机制说明书");
+  assert(!questionHtml.includes("关键追问"), "正式追问区不能使用含糊的设计师标签");
+  assert(!dialogueOptions.some((row) => row.option.question === questionOptions[row.option.sourceIndex ?? row.optionIndex]?.question), "随意提问不能原样复用正式追问选项");
+  assert(!/dialogue-question[^>]*data-scene-question/.test(questionHtml), "普通提问按钮不能同时拥有关键选择入口");
+  assert(!/key-question[^>]*data-scene-dialogue/.test(questionHtml), "关键选择按钮不能同时拥有普通提问入口");
+  assertIncludes(askedQuestionHtml, `已问：${dialogueOptions[0].option.question}`, "随意提问问过后必须标记已问，避免重复刷同一句");
+  assertIncludes(appSource, "handleSceneDialogueButton", "随意提问必须有事件入口，不能和关键追问混成一个按钮组");
+  assertIncludes(appSource, "state.lastPressureSignal = questionPressureSignal", "随意提问也必须影响来电人防备，避免免费扫雷");
   assertIncludes(appSource, "renderEvidenceCheck", "追问结束后必须保留材料检视阶段，避免玩法退回纯问答");
   assertIncludes(appSource, "evidenceCheckPicks", "材料检视选择必须进入存档和复盘状态");
   assertIncludes(appSource, "spend: !option.contradiction", "关键追问命中不能消耗听众忍耐，忍耐条应惩罚绕问和错问");
@@ -670,7 +694,7 @@ test("UI-001", "current-node questions stay in one panel without explainer tags"
   assertIncludes(buildPlayableSource, "importAliasDeclarations", "离线 playable bundler 必须保留 import alias，避免 app 运行时 undefined");
   assertIncludes(browserSmokeSource, "name: \"perfect\"", "浏览器回放必须覆盖 perfect route");
   assertIncludes(browserSmokeSource, "sceneMode: \"outer\"", "浏览器回放必须覆盖只点外围追问也能继续主线");
-  assert(!browserSmokeSource.includes("data-scene-dialogue"), "浏览器回放不能再扫外围后继续点核心追问");
+  assertIncludes(browserSmokeSource, "data-scene-dialogue", "浏览器回放必须覆盖先问普通问题再点关键追问的流程");
   assertIncludes(browserSmokeSource, "material-miss", "浏览器回放必须覆盖材料误圈路线");
   assertIncludes(browserSmokeSource, "keyboard-perfect", "浏览器回放必须覆盖真实键盘焦点路线");
   assertIncludes(browserSmokeSource, "page.keyboard.press(\"Enter\")", "键盘回放必须用真实键盘确认，而不是只用 DOM click");
@@ -696,7 +720,10 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assert(!appSource.includes("function choiceGroup"), "通用选择组 HTML 不能继续留在 app.js");
   assert(!appSource.includes("function flowGroup"), "流程按钮组 HTML 不能继续留在 app.js");
   assert(!appSource.includes("function callLine"), "通话气泡 HTML 不能继续留在 app.js");
-  assertIncludes(choiceGroupHtml("收哪句", "<button>原话</button>", "single-choice-group", "从刚才的话里挑"), "choice-label", "通用选择组必须可由纯 UI 模块渲染");
+  assertIncludes(choiceGroupHtml("往下追", "<button>原话</button>", "single-choice-group", "从刚才听到的话里选一句"), "choice-label", "通用选择组必须可由纯 UI 模块渲染");
+  assert(!appSource.includes("收哪句"), "最终原话选择不能写“收哪句”这种内部黑话");
+  assert(!appSource.includes("选关键原话"), "最终原话选择不能写“关键”这种替玩家评估的设计词");
+  assertIncludes(appSource, "下面哪句最该继续追？", "最终原话选择页必须明确玩家在选下一句追问对象");
   assertIncludes(flowGroupHtml("<button>继续</button>"), "flow-group", "流程按钮组必须可由纯 UI 模块渲染");
   assertIncludes(callDialogueHtml([{ role: "host", text: "你当时怎么回的？" }, { role: "caller", text: "我说先看账单。" }]), "你当时怎么回的？", "通话气泡必须可由纯 UI 模块渲染");
   assertIncludes(choiceReviewHtml([{ role: "caller", text: "账单只有消费页。" }]), "上一问", "上一问回看必须可由纯 UI 模块渲染");
@@ -793,9 +820,15 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assert(!appSource.includes("class=\"control-deck\""), "控场台 DOM 不能继续写在 app.js");
   assert(!appSource.includes("live-console-shell"), "案内主舞台骨架 DOM 不能继续写在 app.js");
   const deckHtml = liveControlDeckHtml({ onAirLabel: "匿名热线", label: "看材料", segment: 2, total: 5, pressure: { remaining: 6, max: 8, patienceLabel: "压得住" }, material: "审批图" });
+  const firstDeckHtml = liveControlDeckHtml({ onAirLabel: "匿名热线", label: "继续对话", segment: 1, total: 5, pressure: { remaining: 8, max: 8, patienceLabel: "还在听" }, material: "信用卡账单" });
   assertIncludes(deckHtml, "class=\"control-deck\"", "案内主画面必须保留直播控场台侧栏");
   assertIncludes(deckHtml, "deck-live-metrics", "控场台必须有 LIVE 时间和观众数氛围指标");
   assertIncludes(deckHtml, "deck-host-monitor", "控场台必须保留主播监看层，强化玩家在主播台控场");
+  assertIncludes(deckHtml, "主播监听", "控场台监看层应像直播监听状态，不要退回抽象的听线小仪表");
+  assertIncludes(deckHtml, "当前第 2 段，共 5 段。", "控场台通话进度必须说清当前段落，不能用指代不明的氛围句");
+  assert(!deckHtml.includes("麦没断"), "控场台通话进度不能再写“麦没断”这类指代不明文案");
+  assertIncludes(firstDeckHtml, "绕问、误指会掉耐心", "第一次进入通话时，听众耐心必须有简短规则提示");
+  assert(!deckHtml.includes("绕问、误指会掉耐心"), "听众耐心提示只在首次满格进入时出现，不能常驻挤占控场台");
   assertIncludes(deckHtml, "Viewers", "控场台直播指标必须像直播间状态，不写成玩法分数");
   assertIncludes(deckHtml, "deck-monitor-strip", "控场台必须有麦克风/监听状态，不能只是普通信息卡");
   assertIncludes(deckHtml, "后台材料", "控场台必须把材料作为直播间后台对象呈现");
@@ -807,16 +840,26 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(frameHtml, "scene-evidence-props", "主舞台必须有案件物件前景层，不能只有背景图和立绘");
   assertIncludes(frameHtml, "scene-props-credit", "案件物件前景层必须跟随场景背景切换");
   assertIncludes(frameHtml, "props-bill", "案件物件前景层必须跟随材料类型切换");
+  assertIncludes(liveFrameHtml({ text: "<p>正文</p>", screenEffect: "patience-drop" }), "screen-effect-patience-drop", "耐心扣除必须能渲染一次性红色暗角层");
+  assertIncludes(stylesSource, ".screen-effect-material-hit", "材料命中必须有全屏 CRT 扫描反馈层");
+  assertIncludes(stylesSource, ".screen-effect-patience-drop", "耐心扣除必须有红闪暗角反馈层");
+  assertIncludes(stylesSource, "patienceRedVignette", "耐心扣除红闪必须由短动画控制，不应常驻");
+  assertIncludes(appSource, "state.lastScreenEffect = state.lastScreenEffect ?? \"patience-drop\"", "真实消耗耐心时必须触发一次红闪反馈");
+  assertIncludes(appSource, "state.lastScreenEffect = null", "屏幕反馈渲染后必须清空，不能存档后反复闪");
   assertIncludes(stylesSource, ".story-grid.case-vn-grid.live-console-shell", "控场台布局必须覆盖普通 VN 单栏布局");
   assertIncludes(stylesSource, ".deck-card-live", "控场台必须有直播信号视觉模块");
+  assert(!stylesSource.includes("50% 50% 44% 44%"), "控场台主播监听不能再画成小人脸图标");
   assertIncludes(stylesSource, ".scene-evidence-props", "主舞台案件物件前景层必须有样式");
   assertIncludes(stylesSource, ".scene-evidence-props.props-bill", "账单类前景物件必须有区别于普通文件的样式");
   assertIncludes(stylesSource, ".scene-evidence-props.props-flow", "审批/流程类前景物件必须有区别于普通文件的样式");
   assertIncludes(stylesSource, ".deck-live-metrics", "控场台 LIVE 指标必须有独立样式");
+  assertIncludes(stylesSource, ".deck-patience-hint", "听众耐心首次提示必须有独立样式，避免混成普通状态文案");
   assertIncludes(stylesSource, ".deck-card-material", "控场台必须有后台材料视觉模块");
   assertIncludes(stylesSource, ".deck-monitor-strip", "控场台必须有麦控监看条样式");
   assertIncludes(stylesSource, ".deck-material-preview", "控场台必须有材料缩略图样式");
   assertIncludes(stylesSource, ".title-console-strip", "标题页必须有直播状态条样式");
+  assert(/\.title-console-strip span[\s\S]*pointer-events: none/.test(stylesSource), "标题页 ON AIR/REC/LIVE 是状态灯，不能保留可点击区域");
+  assert(/\.deck-live-metrics i[\s\S]*pointer-events: none/.test(stylesSource), "控场台 LIVE/REC 这类信号指标不能像可点击按钮");
   assertIncludes(appSource, 'document.addEventListener("keydown"', "Steam/桌面输入必须有全局键盘入口");
   assertIncludes(appSource, "moveButtonFocus", "方向键/WASD 必须能切换可用按钮焦点");
   assertIncludes(appSource, "keyboardNavigationIntent", "键盘输入意图必须走纯函数模型，不能全散在 app.js 事件里");
@@ -911,7 +954,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
     assert((brief.accusationChoices ?? []).length >= 3, `第 ${index + 1} 案最终收麦原话必须来自内容包`);
     assert(!/故事集|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+|体面|一家人|条件|主责/.test(`${brief.modeLabel} ${brief.storyArcTitle} ${brief.storyCaseLabel}`), "案内可见标题不能像目录或剧透标签");
     assert(brief.sceneVersions.length >= 5 && brief.sceneVersions.length <= 6, `第 ${index + 1} 案必须是 5-6 段来电`);
-    assert(brief.sceneVersions.every((scene) => (scene.questionOptions ?? []).length === 2), `第 ${index + 1} 案每段必须只有两个主播追问`);
+    assert(brief.sceneVersions.every((scene) => (scene.questionOptions ?? []).length >= 2 && (scene.questionOptions ?? []).length <= 4), `第 ${index + 1} 案每段必须保留 2-4 个主播问法，兼顾随意提问和关键选择`);
     assert((brief.evidenceChecks ?? []).length >= 1, `第 ${index + 1} 案必须有材料检视节点，不能只有口述二选一`);
     (brief.evidenceChecks ?? []).forEach((check, checkIndex) => {
       assert(check.material && check.prompt, `第 ${index + 1} 案第 ${checkIndex + 1} 个材料检视必须有材料文本和问题`);
@@ -994,7 +1037,7 @@ test("EPISODE-004", "daily mode reuses runtime-loaded JSON content before templa
 test("EPISODE-001B", "each demo case exposes the caller's self-serving omission", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const expectedOmissions = {
-    "lost-job-hidden-credit": ["撑不住场面", "自己其实很吃那种体面"],
+    "lost-job-hidden-credit": ["撑不住场面", "自己很吃那种体面"],
     "tony-multi-dating": ["自己人", "没逼他说清楚"],
     "education-income-fake-profile": ["我自己也不是特别宽裕", "我嘴上说家里想看稳定"],
     "workplace-reimbursement-screenshot": ["我也确实想要这个主责", "我先跟老板说"]
@@ -1155,7 +1198,7 @@ test("DAILY-006", "daily choices avoid no-click throwaway answers", () => {
 });
 
 test("DAILY-006B", "host questions avoid leading caller psychology labels", () => {
-  const forbidden = /你当时是不是|你是不是也|你当时为什么没有把关系问死|你当时帮他，是因为|有没有觉得这事也算值|关系一直没说死|怎么接的/;
+  const forbidden = /你当时是不是|你是不是也|你当时为什么没有把关系问死|你当时帮他，是因为|有没有觉得这事也算值|关系一直没说死|怎么接的|那你为什么一直绕着说要看账单|你后来为什么没有跟家里改口|他说主责署名的时候，你为什么先答应垫|主责写了你以后，你为什么反而更慌/;
   [
     ...generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" }),
     ...Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
@@ -1258,7 +1301,7 @@ test("DAILY-009B", "case copy avoids gender-war framing but allows mutual harm",
 
 test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => {
   const awkwardShortJobPhrase = `${"工作"}${"不太"}${"稳"}`;
-  const forbidden = new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|成本归属|满格以后|这通电话|心里咯噔一下|算借款、赠与|借款、赠与|${awkwardShortJobPhrase}`);
+  const forbidden = new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|债务转移|法律武器|商业阴谋|蓄意诈骗|白莲花|丧尽天良|处心积虑|脑子嗡|提款机|成本归属|满格以后|这通电话|心里咯噔一下|算借款、赠与|借款、赠与|先说第一次提钱|表先放一下|为什么一开始是你垫|按理说活动是大家一起办的|主播你好，我想问一个相亲后暧昧|${awkwardShortJobPhrase}`);
   const frozenShareFrame = /^让我.*(?:的是|不是)/;
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
@@ -1334,7 +1377,7 @@ test("DAILY-013", "daily linear flow has one focused choice per stage", () => {
       assert(sceneCount >= 5, `${brief.plotId} 精选集单案必须有足够句子支撑二十分钟玩法`);
       brief.sceneVersions.forEach((scene, index) => {
         assert((scene.questionOptions ?? []).length >= 2, `${brief.plotId} 第 ${index + 1} 段必须有多个追问角度`);
-        assert((scene.questionOptions ?? []).length <= 2, `${brief.plotId} 第 ${index + 1} 段不能超过两个追问，手机端会反应不过来`);
+        assert((scene.questionOptions ?? []).length <= 4, `${brief.plotId} 第 ${index + 1} 段不能超过四个追问，手机端会反应不过来`);
       });
     });
 });
@@ -1416,7 +1459,7 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
       sceneVersions: [
         {
           questionOptions: [
-            { question: "你后来为什么没有跟家里改口？", routeAxis: "money-flow" },
+            { question: "后来这件事，你跟家里改过口吗？", routeAxis: "money-flow" },
             { question: "这个好看的版本，是他一个人说出来的吗？", routeAxis: "money-flow" }
           ]
         }
@@ -1649,7 +1692,7 @@ test("RUNTIME-006", "scene advance helpers stay pure outside app state", () => {
   const deepReview = sceneReviewModel({ brief: { id: "no-evidence", sceneVersions: [{}, {}] }, index: 1, actionDone: () => true, issueBadge: true, hasDeepFollowup: true });
   assertEqual(deepReview.nextStage, "deepFollowup", "无材料且已问到关键点时才进入深入追问");
   const accusationReview = sceneReviewModel({ brief: { id: "plain", sceneVersions: [{}] }, index: 0, actionDone: () => true });
-  assertEqual(accusationReview.nextLabel, "选一句原话", "普通末段应进入原话选择");
+  assertEqual(accusationReview.nextLabel, "选一句往下追", "普通末段应进入原话追问选择");
   const firstEvidence = evidenceCheckModel({ brief, index: 0, pick: { correct: true }, issueBadge: true, hasDeepFollowup: true });
   assertEqual(firstEvidence.missing, false, "材料模型必须返回当前材料");
   assertEqual(firstEvidence.nextStage, "deepFollowup", "材料全部处理完后才按案件状态决定下一步");
