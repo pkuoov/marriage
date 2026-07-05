@@ -69,6 +69,7 @@ export function evidencePickFeedbackHtml(pick = {}) {
       <b>${escapeHtml(pick.label ?? "")}</b>
       <p>${escapeHtml(pick.feedback ?? "")}</p>
     </section>
+    ${pick.reactionLine ? evidenceReactionLineHtml(pick.reactionLine) : ""}
   `;
 }
 
@@ -147,6 +148,15 @@ function evidenceAnnotationHtml(pick = {}) {
     <div class="evidence-annotation ${pick.correct ? "hit" : "miss"}">
       <span>${pick.correct ? "圈住" : "圈偏"}</span>
       <b>${escapeHtml(pick.label ?? "")}</b>
+    </div>
+  `;
+}
+
+function evidenceReactionLineHtml(text = "") {
+  return `
+    <div class="call-line caller evidence-reaction-line">
+      <b>咨询者</b>
+      <p>${escapeHtml(text)}</p>
     </div>
   `;
 }

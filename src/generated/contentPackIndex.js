@@ -497,24 +497,28 @@ export const CONTENT_CASES = {
               "correct": true,
               "contradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。",
               "feedback": "圈到这里，“临时挡几天”就没那么轻了。社保断了，吃住玩还在往卡上走。",
+              "reactionLine": "……你这么一圈，我自己都说不出“就挡几天”这四个字了。",
               "routeAxis": "money-flow"
             },
             {
               "label": "最低还款金额本身很高",
               "correct": false,
               "feedback": "金额高当然可疑，但这张账单更要先看：钱是在失业后怎么继续刷出来的。",
+              "reactionLine": "金额我也吓到过。可你这么问，他还是那句“先帮我挡一下”。",
               "routeAxis": "money-flow"
             },
             {
               "label": "那笔 1.2 万的短视频平台分期",
               "correct": false,
               "feedback": "这笔今晚已经有主了，它说明她也在这份体面里。可压垮“挡几天”的，还是断缴后照刷的吃住玩。",
+              "reactionLine": "那笔……刚才都说开了。您别盯着它了，我怕弹幕又拐回我身上。",
               "routeAxis": "document-edge"
             },
             {
               "label": "他说自己怕被分手",
               "correct": false,
               "feedback": "这句话会让人心软，但它不是账单里的消费记录。先把卡上那几笔圈清楚。",
+              "reactionLine": "这句我听一次软一次。可软完，账单还在我手机里亮着。",
               "routeAxis": "caller-credibility"
             }
           ]

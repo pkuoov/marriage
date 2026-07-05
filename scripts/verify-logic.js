@@ -406,10 +406,13 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   assert(!appSource.includes("这份材料里，哪一块最该先指出？"), "材料检视提示文案不能继续手写在 app.js");
   const screenHtml = evidenceCheckScreenHtml({
     check: { title: "账单检视", prompt: "圈哪里？", material: "账单缺页。", options: [{ label: "缺页", correct: true }] },
+    pick: { optionIndex: 0, label: "缺页", correct: true, feedback: "圈住了缺口。", reactionLine: "这页我刚才没敢细看。" },
     reviewHtml: "<aside>上一问</aside>"
   });
   assertIncludes(screenHtml, "evidence-workbench", "材料检视页面 helper 必须保留材料操作台");
   assertIncludes(screenHtml, "圈哪一处", "材料检视候选区不能写成工具名，必须提示玩家圈内容");
+  assertIncludes(screenHtml, "咨询者", "材料圈点后的 reactionLine 必须以咨询者对话气泡渲染");
+  assertIncludes(screenHtml, "这页我刚才没敢细看。", "材料圈点后的 reactionLine 必须出现在材料结果页");
   assert(!screenHtml.includes("荧光笔"), "材料检视候选区不能继续显示不明确的工具名");
   assertIncludes(screenHtml, "上一问", "材料检视页面 helper 必须能接入上一问回看");
   assert(!stylesSource.includes("evidence-check-card"), "材料操作台上线后不能留下旧材料段落卡样式");
@@ -1808,6 +1811,7 @@ test("DOCS-001", "AI intent and large playtest templates stay explicit", () => {
 
 test("DETECTIVE-001", "detective plot coupling method stays explicit", () => {
   const detectiveSkill = readFileSync(new URL("../project-skills/detective-plot-coupling-review/SKILL.md", import.meta.url), "utf8");
+  const scriptwritingSkill = readFileSync(new URL("../project-skills/case-scriptwriting/SKILL.md", import.meta.url), "utf8");
   const patternReference = readFileSync(new URL("../project-skills/detective-plot-coupling-review/references/detective-patterns.md", import.meta.url), "utf8");
   const improvementPlan = readFileSync(new URL("../docs/detective-coupling-improvement-plan.md", import.meta.url), "utf8");
   const flowSkill = readFileSync(new URL("../project-skills/livestream-game-flow-review/SKILL.md", import.meta.url), "utf8");
@@ -1815,6 +1819,10 @@ test("DETECTIVE-001", "detective plot coupling method stays explicit", () => {
   assertIncludes(detectiveSkill, "Missing edge", "侦探结构 skill 必须要求缺口");
   assertIncludes(detectiveSkill, "Quote payoff", "侦探结构 skill 必须要求原话回收");
   assertIncludes(detectiveSkill, "No reveal may depend on a fact the player could not have noticed", "侦探结构 skill 必须守住公平揭示");
+  assertIncludes(detectiveSkill, "实物-言语死锁", "侦探结构 skill 必须要求材料边缘和口头说法互相卡死");
+  assertIncludes(detectiveSkill, "No pristine victims", "侦探结构 skill 必须禁止无瑕受害者");
+  assertIncludes(scriptwritingSkill, "绝不提供“无瑕受害者”", "案本 skill 必须在写作规则中禁止无瑕受害者");
+  assertIncludes(scriptwritingSkill, "实物-言语死锁", "案本 skill 必须要求材料板物理疑点锁住口头谎言");
   assertIncludes(patternReference, "Sherlock Holmes", "侦探模式参考必须包含经典可见线索模型");
   assertIncludes(patternReference, "Agatha Christie", "侦探模式参考必须包含群像隐瞒模型");
   assertIncludes(patternReference, "Columbo", "侦探模式参考必须包含压力访谈模型");

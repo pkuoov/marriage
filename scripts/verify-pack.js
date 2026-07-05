@@ -58,6 +58,7 @@ function assertEvidenceOperation(operation, label) {
   operation.options.forEach((option, optionIndex) => {
     assertNonEmptyString(option.label, `${label}.options[${optionIndex}] 缺少 label`);
     assertNonEmptyString(option.feedback, `${label}.options[${optionIndex}] 缺少 feedback`);
+    if (option.reactionLine !== undefined) assertNonEmptyString(option.reactionLine, `${label}.options[${optionIndex}] reactionLine 若存在必须是非空字符串`);
     assertNonEmptyString(option.routeAxis, `${label}.options[${optionIndex}] 缺少 routeAxis`);
     if (option.correct) assertNonEmptyString(option.contradiction, `${label}.options[${optionIndex}] 正确圈点缺少 contradiction`);
   });

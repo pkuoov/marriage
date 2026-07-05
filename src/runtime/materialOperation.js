@@ -14,6 +14,7 @@ export function materialOperationOutcome(check = {}, checkIndex = 0, optionIndex
       optionIndex,
       label,
       feedback: option.feedback ?? "",
+      reactionLine: option.reactionLine ?? "",
       contradiction: fullContradiction,
       routeAxis,
       correct

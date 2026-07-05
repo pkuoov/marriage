@@ -1,4 +1,4 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.86";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.87";
 import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
 import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.68";
 import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.78";
@@ -6,7 +6,7 @@ import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
-import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.68";
+import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.87";
 import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js?v=0.20.68";
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
@@ -16,7 +16,7 @@ import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapL
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
-import { evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.83";
+import { evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.77";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";

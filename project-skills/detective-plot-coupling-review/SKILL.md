@@ -26,9 +26,10 @@ Before changing dialogue, write the case ledger in this order:
 5. Interest path: who saves money, face, time, opportunity, status, or responsibility if the surface claim is accepted.
 6. Caller edit: what the caller softened, delayed, cropped, or framed to protect themselves.
 7. Third pressure: whose deadline, mouth, workplace rule, family expectation, or public image is being borrowed.
-8. Reversal: the moment when an earlier sentence changes meaning.
-9. Boundary: what can be confirmed, what was edited, and what remains unknowable tonight.
-10. Quote payoff: the final line the player can pick because they heard it earlier.
+8. Physical-verbal lock: which material-board edge makes a spoken claim impossible to smooth over.
+9. Reversal: the moment when an earlier sentence changes meaning.
+10. Boundary: what can be confirmed, what was edited, and what remains unknowable tonight.
+11. Quote payoff: the final line the player can pick because they heard it earlier.
 
 If a case cannot fill these ten slots, do not add more dialogue yet. Fix the pressure system first.
 
@@ -64,6 +65,7 @@ A case has no mystery if the player finishes forming their verdict in scene 1-2 
 - The false solution must be fed real evidence. If nothing on screen ever genuinely supports "他只是慌了" or "流程真的慢", it was never a live hypothesis and the case is a confirmation march, not a mystery. Give the false solution at least one true fact that survives until the reversal.
 - At least one load-bearing fact after the midpoint must flip the reading of an early line, not extend it. "More of the same, worse" is escalation; "that line meant something else" is a reversal. A case needs the second kind.
 - The caller's edit must be catchable from the opening (春秋笔法), not only confessed at the end. Plant initiative-hiding wording in the caller's early lines — 「他带我去的那种店」 when the reservation was hers — and let a material or backflow item expose the verb, so the player can catch the narrator instead of waiting for the narrator to surrender. A late confession that was never catchable earlier is a diary, not a Rashomon.
+- No pristine victims: a caller may be truly harmed, but the case must still name what convenience, benefit, face, status, or avoided embarrassment made them cooperate with the bad setup longer than their opening version admits. If the caller sounds perfectly clean through the whole live call, the case is not grey-zone writing; it is a verdict with scenery.
 
 ## Scene Turns, Information Gaps, and the A/B Story
 
@@ -90,6 +92,8 @@ A genre mystery works only if the puzzle is real and the solution is earned. For
 - The surface claim must genuinely puzzle: a reasonable viewer could hold the false solution without being stupid.
 - Every evidence-check correct answer and final quote-pick must be derivable from at least two independent on-screen sources — a spoken line plus a material edge, or two materials, or a line plus a backflow item. One-source answers are guesses with extra steps.
 - The two sources must triangulate, not repeat: each rules out a different wrong reading.
+- At least one load-bearing reveal per case must form a **实物-言语死锁**: a physical material edge and a spoken claim trap each other. The material alone is not just "suspicious", and the line alone is not just "fishy"; together they make the old reading untenable. Examples: a bill date against a pressure deadline, a cropped payment page against "approval passed", a private table column against "store template", or a chat top line against "my mom asked".
+- If a case can be solved by asking the caller the right question without ever needing the material board, it fails this rule. Rewrite the material, the spoken claim, or the deep question so the psychological break follows from the physical-verbal lock.
 
 ## Knowledge Ledger (谁知道什么)
 
@@ -120,6 +124,7 @@ For each scene beat, ask:
 - What later beat needs this information?
 - What false solution does this beat temporarily support?
 - What cost or pressure becomes more concrete after this beat?
+- What physical material edge, if any, locks against the spoken claim in this beat?
 - What would break if this beat were removed?
 
 If the answer is "nothing breaks," merge the beat, replace it with a material action, or make it carry a missing edge.
@@ -157,4 +162,3 @@ When editing content JSON, prefer adding explicit structure over encoding detect
 - `accusationChoices[].quoteSourceSceneId`: where the final line was first heard.
 
 These fields should guide writing and validation. They must not show up as player-facing labels.
-

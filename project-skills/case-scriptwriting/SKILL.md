@@ -88,8 +88,10 @@ Required passes:
 4. Beat-ladder pass: draft 5-6 caller statements that each add a new pressure, not a restatement.
 5. Branch-design pass: for each beat, write 2-3 plausible host questions with different route axes and reveal depth.
 6. Actor-consistency / stake-alignment pass: separately ask what the caller, the other party, and the third-pressure source each gain by saying less than the full truth. For every visible line, name whose face, money, status, safety, or convenience the line protects; if it only delivers background to the player, fold it into a material, host prompt, or later confession.
-7. Continuity QA pass: read the whole call aloud and check that every reveal follows from what is already on screen. A small clue may open one local question; it may not instantly become a full motive, scam label, or final judgement.
-8. Length QA pass: estimate what the player actually does. If the case has only live reading plus one quote-pick, it is underbuilt for Steam. Add authored interaction, not prose bulk.
+7. No-pristine-victim pass: when the caller gets a highly sympathetic or pitiful line, immediately plant the caller's tolerated convenience, benefit, face-saving, or shortcut in `selfServingOmission`, an early verb choice, a visible material edge, or a later deep question. A caller can be more harmed than guilty, but they cannot be written as morally spotless until the recap suddenly says otherwise.
+8. Evidence-verbal deadlock pass: identify the material-board edge that locks against a spoken claim. If the core reveal can be reached by host questioning alone, add or rework a physical clue: a missing half of a screenshot, a date on a bill, a cropped approval page, a stray account name, a private column, or a backflow material. The deep question should feel forced open by this deadlock, not by the host being clever.
+9. Continuity QA pass: read the whole call aloud and check that every reveal follows from what is already on screen. A small clue may open one local question; it may not instantly become a full motive, scam label, or final judgement.
+10. Length QA pass: estimate what the player actually does. If the case has only live reading plus one quote-pick, it is underbuilt for Steam. Add authored interaction, not prose bulk.
 
 Five-beat minimum for a 20-minute case:
 1. Surface oddness: material, quote, bill, screenshot, or action first appears.
@@ -129,6 +131,7 @@ Material board writing:
 - Bad: "看不到连续流水、收入构成" when the correct mark is "连续流水和收入构成".
 - Good: "资料里有一张当日存款证明，余额停在 28.6 万；另一张收入截图只露出本月到账和公司抬头." The player then chooses whether the missing flow, sender, timestamp, or account edge matters.
 - A material board is strongest when every miss is genuinely suspicious but less load-bearing than the correct mark.
+- Every case needs at least one **实物-言语死锁**: a material-board detail must contradict, limit, or reframe a spoken claim so tightly that neither side can talk around it. Examples: a bill date that outlives the "I had no choice tonight" line, a missing payment page that breaks "approval passed", a private "next push" column that breaks "store template", or a group-chat top line that breaks "my mom asked". Do not let the host solve the case through oral questioning alone.
 
 Runtime-length plan hygiene:
 - `runtimeLengthPlan` is not decorative metadata. When it exists, review must compare it against actual JSON counts: live beats, material boards, backflow items, truth-boundary prompts, and what the player does besides reading.
@@ -305,6 +308,7 @@ Value baseline (see `docs/game-philosophy.md` for the full statement):
 
 Grey-zone character checks:
 - The caller is never a perfect victim. They must be hiding vanity, self-interest, luck-riding, or convenience somewhere in the opening — surfaced in the back half or the deep question.
+- If the caller's line is especially委屈 or可怜, do not leave it clean. Within the same local chain, plant the benefit, face, convenience, or fear that made them tolerate the situation longer than they now want to admit. Store that pressure in `selfServingOmission` and pay it off through a material edge, backflow item, or deep question.
 - The other party is never a cartoon villain. Every cost-shifting move has an internally "reasonable" excuse in their own logic: 「我只是怕你离开我」, 「这是让你在老板面前展现执行力」.
 - The host peels, never sentences. Options move from fact gaps toward the caller's own stake; the non-choice deep question lands on the caller's sorest money or face point.
 
@@ -481,6 +485,7 @@ AI 或机械化剧本编写容易引入特定的“非人类思路”模板。Co
 *   **B. 极善与极恶的强行对立 (The Cartoon Villain / Perfect Victim Trap)**
     *   *机械表现*：来电人是 100% 被欺骗、被利用的无辜天使；另一方是处心积虑、没有丝毫人性温度的诈骗魔王。
     *   *人类思路*：连线充满灰区（Grey-Zone）。来电人一定隐瞒了自己虚荣、贪小便宜、或者极力逃避自身责任的部分。而另一方也有在自我利益受损时的防御性自我合理化话术（如“我只是太想跟你结婚了”）。
+    *   *执行要求*：绝不提供“无瑕受害者”。当 Caller 开始讲出听着十分委屈、可怜的台词时，必须立刻在 `selfServingOmission`、早期动词、材料边角或 deepFollowup 里埋下“因为贪图某种便利 / 好处 / 面子而纵容了事态发展”的伏笔。
 *   **C. 判决书/心理学报告式的 Host 选项 (The Clinical Judge Trap)**
     *   *机械表现*：Host 给出充满大词和定性的抽象选项（如 `“他是在进行债务转移”`、`“这属于职场霸凌”`、`“你需要运用法律武器”`）。
     *   *人类思路*：Host 讲的是人话，是直播间老水友的日常交流话术。Host 的追问应该是具体行为的撕开点（如 `“那你当时就没问问他，这笔钱到底花哪去了？”`、`“所以这顿大餐，你当时也吃得挺高兴的对吧？”`）。
@@ -490,6 +495,7 @@ AI 或机械化剧本编写容易引入特定的“非人类思路”模板。Co
         1.  **引人入胜（信息绝不说全）**：开局隐去核心症结，仅留局部反常，真相如同剥洋葱般，由玩家操作层层剥开至最后一幕。
         2.  **罗生门（Caller自利性隐瞒）**：连线人（Complainant）只挑对自己道德高地或财产有利的信息陈述，极力遮掩和美化自己贪心、虚荣、或违规的真相（必须包含 `selfServingOmission` 并有对应材料击碎）。
         3.  **多头并行（多线线索缠绕咬合）**：线索构成不能单一。必须由“言语纰漏（口头线索） + 材料数据存疑（实物线索） + 下播私信/粉丝群物证（外围反转）”三者交织成网。
+        4.  **实物-言语死锁（physical-verbal lock）**：核心矛盾不能只靠 Host 选项里的口头追问破案。材料板上的物理疑点必须和 Caller/Respondent 的一句话互相卡死，并逼出 deep question 里的心理防线松动。
 
 ### 2. 文本台词层面的“AI机写味”
 *   **A. 平铺直叙的“剧情汇报说明书” (The Info-Dump Paragraph)**
