@@ -70,7 +70,8 @@ export function latestChoiceReviewRowsForState(state = {}, brief = {}, { exclude
     return [
       { role: "caller", text: scenes[lastAnsweredIndex]?.version ?? "" },
       { role: "host", text: selectedPick?.question ?? "" },
-      { role: "caller", text: selectedPick?.answer ?? sceneAnswerForState(state, brief, lastAnsweredIndex) }
+      { role: "caller", text: selectedPick?.answer ?? sceneAnswerForState(state, brief, lastAnsweredIndex) },
+      ...latestEvidenceRevisionRowsForState(state, brief)
     ].filter((line) => line.text);
   }
   return [
@@ -80,6 +81,14 @@ export function latestChoiceReviewRowsForState(state = {}, brief = {}, { exclude
       { role: "caller", text: pick.answer }
     ])
   ].filter((line) => line.text);
+}
+
+function latestEvidenceRevisionRowsForState(state = {}, brief = {}) {
+  const picks = evidenceChecksFor(brief)
+    .map((_, index) => selectedEvidencePickForState(state, brief, index))
+    .filter((pick) => pick?.revisedVersion);
+  const latest = picks[picks.length - 1] ?? null;
+  return latest ? [{ role: "caller", text: latest.revisedVersion }] : [];
 }
 
 export function selectedEvidencePickForState(state = {}, brief = {}, index = 0) {

@@ -70,6 +70,7 @@ export function evidencePickFeedbackHtml(pick = {}) {
       <p>${escapeHtml(pick.feedback ?? "")}</p>
     </section>
     ${pick.reactionLine ? evidenceReactionLineHtml(pick.reactionLine) : ""}
+    ${pick.revisedVersion ? evidenceReactionLineHtml(pick.revisedVersion) : ""}
   `;
 }
 

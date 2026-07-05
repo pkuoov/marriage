@@ -239,7 +239,7 @@ test("MATERIAL-001", "material operation model records hit and miss without UI c
     prompt: "这张审批图少了哪一边？",
     material: "截图只露出审批通过，没有付款状态。",
     options: [
-      { label: "付款状态和收款账户", correct: true, contradiction: "审批截图缺少付款状态和收款账户。", feedback: "缺的这一页才决定钱去了哪里。", routeAxis: "document-edge" },
+      { label: "付款状态和收款账户", correct: true, contradiction: "审批截图缺少付款状态和收款账户。", feedback: "缺的这一页才决定钱去了哪里。", revisesScene: 1, routeAxis: "document-edge" },
       { label: "活动现场照片", correct: false, feedback: "活动办没办不是当前缺口。", routeAxis: "outer-thread" }
     ]
   };
@@ -248,6 +248,7 @@ test("MATERIAL-001", "material operation model records hit and miss without UI c
   assertEqual(hit.spend, false, "材料命中不能消耗听众耐心");
   assertEqual(hit.routeChoice.routeTone, "evidence-hit", "材料命中必须进入 evidence-hit 路线语气");
   assertEqual(hit.routeChoice.contradiction, "审批截图缺少付款状态和收款账户。", "材料命中必须记录矛盾");
+  assertEqual(hit.pick.revisesScene, 1, "材料命中必须保留可触发证言重述的场景下标");
   const miss = materialOperationOutcome(check, 0, 1);
   assertEqual(miss.correct, false, "材料误指必须标记 miss");
   assertEqual(miss.spend, true, "材料误指要消耗听众耐心");
@@ -406,13 +407,14 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   assert(!appSource.includes("这份材料里，哪一块最该先指出？"), "材料检视提示文案不能继续手写在 app.js");
   const screenHtml = evidenceCheckScreenHtml({
     check: { title: "账单检视", prompt: "圈哪里？", material: "账单缺页。", options: [{ label: "缺页", correct: true }] },
-    pick: { optionIndex: 0, label: "缺页", correct: true, feedback: "圈住了缺口。", reactionLine: "这页我刚才没敢细看。" },
+    pick: { optionIndex: 0, label: "缺页", correct: true, feedback: "圈住了缺口。", reactionLine: "这页我刚才没敢细看。", revisedVersion: "……我再说一遍，那页不是没看，是没敢看。" },
     reviewHtml: "<aside>上一问</aside>"
   });
   assertIncludes(screenHtml, "evidence-workbench", "材料检视页面 helper 必须保留材料操作台");
   assertIncludes(screenHtml, "圈哪一处", "材料检视候选区不能写成工具名，必须提示玩家圈内容");
   assertIncludes(screenHtml, "咨询者", "材料圈点后的 reactionLine 必须以咨询者对话气泡渲染");
   assertIncludes(screenHtml, "这页我刚才没敢细看。", "材料圈点后的 reactionLine 必须出现在材料结果页");
+  assertIncludes(screenHtml, "……我再说一遍，那页不是没看，是没敢看。", "材料命中后的 revisedVersion 必须作为咨询者气泡出现在反应台词之后");
   assert(!screenHtml.includes("荧光笔"), "材料检视候选区不能继续显示不明确的工具名");
   assertIncludes(screenHtml, "上一问", "材料检视页面 helper 必须能接入上一问回看");
   assert(!stylesSource.includes("evidence-check-card"), "材料操作台上线后不能留下旧材料段落卡样式");

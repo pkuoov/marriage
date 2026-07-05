@@ -102,6 +102,9 @@ async function runRoute(route) {
     const materialIndex = route.materialMode === "miss" ? 1 : 0;
     const materialButtons = page.locator("[data-evidence-check]");
     await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
+    if (route.name === "perfect") {
+      await assertVisibleText(page, "账单我再说一遍", "perfect route should show testimony revision after the material hit");
+    }
 
     await advanceToAccusation(page, route);
     await activate(page, route, "[data-accuse]");

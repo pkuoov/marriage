@@ -15,6 +15,7 @@ export function materialOperationOutcome(check = {}, checkIndex = 0, optionIndex
       label,
       feedback: option.feedback ?? "",
       reactionLine: option.reactionLine ?? "",
+      revisesScene: option.revisesScene,
       contradiction: fullContradiction,
       routeAxis,
       correct

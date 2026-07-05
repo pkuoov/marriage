@@ -59,6 +59,10 @@ function assertEvidenceOperation(operation, label) {
     assertNonEmptyString(option.label, `${label}.options[${optionIndex}] 缺少 label`);
     assertNonEmptyString(option.feedback, `${label}.options[${optionIndex}] 缺少 feedback`);
     if (option.reactionLine !== undefined) assertNonEmptyString(option.reactionLine, `${label}.options[${optionIndex}] reactionLine 若存在必须是非空字符串`);
+    if (option.revisesScene !== undefined) {
+      assert(Boolean(option.correct), `${label}.options[${optionIndex}] 只有正确圈点可以触发证言重述`);
+      assert(Number.isInteger(option.revisesScene), `${label}.options[${optionIndex}] revisesScene 必须是场景下标`);
+    }
     assertNonEmptyString(option.routeAxis, `${label}.options[${optionIndex}] 缺少 routeAxis`);
     if (option.correct) assertNonEmptyString(option.contradiction, `${label}.options[${optionIndex}] 正确圈点缺少 contradiction`);
   });
@@ -326,6 +330,12 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       }
       casePacket.evidenceChecks.forEach((check, checkIndex) => {
         assertEvidenceOperation(check, `${casePacket.caseId} evidenceChecks[${checkIndex}]`);
+        (check.options ?? []).forEach((option, optionIndex) => {
+          if (option.revisesScene === undefined) return;
+          const scene = casePacket.sceneVersions?.[option.revisesScene];
+          assert(scene, `${casePacket.caseId} evidenceChecks[${checkIndex}].options[${optionIndex}] revisesScene 指向不存在的场景`);
+          assertNonEmptyString(scene.revisedVersion, `${casePacket.caseId} evidenceChecks[${checkIndex}].options[${optionIndex}] revisesScene 指向的场景缺少 revisedVersion`);
+        });
       });
 
       assertArrayMin(casePacket.investigationHooks, 1, `${casePacket.caseId} 至少需要一个后台回流`);

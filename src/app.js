@@ -958,7 +958,7 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       }
       state.evidenceCheckPicks = {
         ...(state.evidenceCheckPicks ?? {}),
-        [evidenceAnswerKey(brief, checkIndex)]: outcome.pick
+        [evidenceAnswerKey(brief, checkIndex)]: evidencePickWithRevision(brief, outcome.pick)
       };
       recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
       state.lastReaction = materialPressureReaction(outcome, check);
@@ -978,6 +978,16 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       render();
     });
   });
+}
+
+function evidencePickWithRevision(brief, pick = {}) {
+  if (!pick.correct || pick.revisesScene === undefined) return pick;
+  const scene = brief?.sceneVersions?.[Number(pick.revisesScene)] ?? null;
+  if (!scene?.revisedVersion) return pick;
+  return {
+    ...pick,
+    revisedVersion: scene.revisedVersion
+  };
 }
 
 function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
