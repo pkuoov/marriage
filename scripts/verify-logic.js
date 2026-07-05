@@ -488,7 +488,14 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
     { question: "你朋友怎么说？", answer: "朋友劝我看账单。" }
   ]);
-  const scene = { version: "他说账单今晚必须先转。", questionOptions };
+  const scene = {
+    version: "他说账单今晚必须先转。",
+    questionOptions,
+    casualQuestions: [
+      { question: "你们平时谁管钱多一点？", answer: "各花各的。" },
+      { question: "他以前跟你开过口借钱吗？", answer: "没有。" }
+    ]
+  };
   const dialogueOptions = sceneDialogueOptions(scene, questionOptions);
   const questionHtml = sceneQuestionChoicesHtml(2, scene, []);
   const askedQuestionHtml = sceneQuestionChoicesHtml(2, scene, [{ optionIndex: 0, question: dialogueOptions[0].option.question, answer: "有一点。" }]);
@@ -496,6 +503,8 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(questionHtml, "key-question-group", "当前节点必须保留关键选择区，正式推进本段矛盾");
   assertIncludes(questionHtml, "data-scene-dialogue=\"2:0\"", "随意提问必须有独立事件入口，不结束当前段落");
   assertIncludes(questionHtml, "data-scene-question=\"2:1\"", "关键追问仍要保留可点击数据");
+  assertIncludes(questionHtml, "你们平时谁管钱多一点？", "有 casualQuestions 时普通区必须渲染署名闲聊层");
+  assert(dialogueOptions.every((row) => scene.casualQuestions.some((option) => option.question === row.option.question)), "有 casualQuestions 时普通区不能继续回收关键选择里的外围项");
   assertIncludes(questionHtml, "普通提问", "随意提问区标题必须明确这是非关键选择");
   assertIncludes(questionHtml, "不推进剧情，可以多问。", "随意提问区必须明确不会推进本段剧情");
   assertIncludes(questionHtml, "关键选择", "正式追问区标题必须明确这是关键选择");

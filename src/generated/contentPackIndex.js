@@ -226,6 +226,16 @@ export const CONTENT_CASES = {
           "doubt": "说是奖金晚发，可社保已经断缴两个月。",
           "contradiction": "TA 一边说奖金延迟，一边在失业后继续刷体面消费，说明资金缺口不是临时才出现。",
           "reliability": "mixed",
+          "casualQuestions": [
+            {
+              "question": "你们平时谁管钱多一点？",
+              "answer": "各花各的。约会基本他出，我偶尔抢着买单，他不让，说“跟我你还客气什么”。"
+            },
+            {
+              "question": "他丢工作前，加班是什么样子？",
+              "answer": "天天说忙。几点回家我其实不清楚，我们没住一起，都是他说什么我听什么。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他开口借钱之前，有没有跟你说过工作最近不稳定？",
@@ -274,6 +284,16 @@ export const CONTENT_CASES = {
           "doubt": "金额、用途和时间都比“挡几天”重得多。",
           "contradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事；短视频分期的受益人还没说清。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "那些餐厅是什么档次？",
+              "answer": "人均四五百吧。他老说“这家你肯定喜欢”，其实有两家是我收藏了很久的。"
+            },
+            {
+              "question": "礼物都送了些什么？",
+              "answer": "香水、一条项链。项链那次他发了朋友圈，配文“她值得”。我朋友都点赞了。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "这几笔账，哪些是在他没工作以后花的？",
@@ -328,6 +348,16 @@ export const CONTENT_CASES = {
           "doubt": "时间被说急了，咨询者更容易先转钱。",
           "contradiction": "TA 把还款截止时间说急，制造咨询者当晚转钱的压力。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "他以前跟你开过口借钱吗？",
+              "answer": "没有。一次都没有，所以这次我才慌。他那个人，以前连打车钱都不让我掏。"
+            },
+            {
+              "question": "“怕你离开”那句，他是打字还是语音？",
+              "answer": "语音。声音很低，我听了三遍。……然后金额是打字发的，很整齐。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他为什么把三天后的期限说成今晚？",
@@ -375,6 +405,16 @@ export const CONTENT_CASES = {
           "doubt": "她说“没细看”的那笔分期，设备一直摆在她屋里。",
           "contradiction": "TA 失业后开通的分期，买的是给咨询者做账号用的设备和推广。",
           "reliability": "mixed",
+          "casualQuestions": [
+            {
+              "question": "探店号你做起来了吗？",
+              "answer": "发了十几条。最高一条八百多赞。他每条都转。"
+            },
+            {
+              "question": "那套设备现在还用吗？",
+              "answer": "灯上个月还开过。现在拍不动了，一开灯就想起这事。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "设备在你这儿，当时分期是谁提出来开的？",
@@ -422,6 +462,16 @@ export const CONTENT_CASES = {
           "doubt": "借钱这件事开始被说成尊严和结婚态度。",
           "contradiction": "TA 把个人债务转成关系忠诚测试，咨询者也不愿承认自己被体面吸引。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "你朋友现在知道多少？",
+              "answer": "知道我们在闹别扭，不知道钱的事。我还没想好怎么开口。"
+            },
+            {
+              "question": "“低你一头”这话，他以前说过吗？",
+              "answer": "说过一次，喝了酒。那时候我当情话听的。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他把你不垫钱和结婚联系起来，是怎么说的？",
@@ -672,6 +722,16 @@ export const CONTENT_CASES = {
           "doubt": "没有确认关系，但对方一直给排他式的亲近感。",
           "contradiction": "TA 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
           "reliability": "mixed",
+          "casualQuestions": [
+            {
+              "question": "你在他们店剪了多久头发？",
+              "answer": "一年多。最早是同事推荐的，后来就只找他。"
+            },
+            {
+              "question": "相亲那次是谁牵的线？",
+              "answer": "我姨。她就说人家手艺人踏实。现在想想，介绍完第二周，他就开始给我留最晚的号。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他有没有说过你们现在到底算什么关系？",
@@ -705,6 +765,16 @@ export const CONTENT_CASES = {
           "doubt": "情绪求助后面开始接店里的经营目标。",
           "contradiction": "TA 把亲密聊天接到办卡、带客和朋友圈推广上。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "店长骂他，他都怎么跟你说？",
+              "answer": "语音，叹气，说“这行就这样”。我每次都接一句“你手艺好，怕什么”。"
+            },
+            {
+              "question": "帮他转活动，你朋友什么反应？",
+              "answer": "有个闺蜜真去剪了，还说不错。后来她办没办卡，我没好意思问。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他说压力大之后，最常接什么请求？",
@@ -739,6 +809,16 @@ export const CONTENT_CASES = {
           "doubt": "那张表不像普通客户备注，更像在写每个人能带来什么。",
           "contradiction": "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "那张表你存下来了吗？",
+              "answer": "截了图。当时手比脑子快，现在想想幸好截了。"
+            },
+            {
+              "question": "备注里“稳情绪”三个字，你第一眼什么感觉？",
+              "answer": "说不上来。就是觉得……我在他那儿是个项目。这话我没跟人说过。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "这张表是在记发型需求，还是在记你们能带来什么？",
@@ -772,6 +852,16 @@ export const CONTENT_CASES = {
           "doubt": "没说“只有你”，不代表没有让人往那个方向想。",
           "contradiction": "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "老板娘那句话之后，店里人怎么看你？",
+              "answer": "有个小妹叫过我一次“嫂子”。他没接话，也没否认。"
+            },
+            {
+              "question": "年卡多少钱？",
+              "answer": "三千八。我没办。不是舍不得，是那天刚好看到那张表。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他说老板娘之后，有没有马上让你办卡或投店？",
@@ -805,6 +895,16 @@ export const CONTENT_CASES = {
           "doubt": "表格不只是备注，还写了下一步怎么把人往店里推进。",
           "contradiction": "TA 把不同暧昧对象按可推进资源分层管理。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "你现在还去那家店吗？",
+              "answer": "号还留着，人没去。头发长了，随便找了家快剪。"
+            },
+            {
+              "question": "那个开过店的朋友，怎么认识的？",
+              "answer": "大学室友。她开过两年美容店，后来累垮了转行。她看东西毒。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "这张表是在排员工，还是在排你们这些人下一步怎么推进？",
@@ -1078,6 +1178,16 @@ export const CONTENT_CASES = {
           "doubt": "见面前问到流水，这个尺度已经不太像普通寒暄。",
           "contradiction": "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。",
           "reliability": "mixed",
+          "casualQuestions": [
+            {
+              "question": "你们相亲见了几次？",
+              "answer": "四次。两次饭，一次展，一次他接我下班。节奏不快不慢。"
+            },
+            {
+              "question": "你跟你妈平时什么都聊吗？",
+              "answer": "大事聊。她比我急。我 28 了，她逢人就说我“不挑”，其实是她挑。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "这些截图是什么时候发的，发之前你们怎么说到材料的？",
@@ -1112,6 +1222,16 @@ export const CONTENT_CASES = {
           "doubt": "这个好看版本不是男方一个人说出来的。",
           "contradiction": "介绍人、男方和咨询者都参与放大了体面标签，完整信息被层层修剪。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "介绍人跟男方家什么关系？",
+              "answer": "他妈的老同事。所以话肯定挑好的说，这我懂。"
+            },
+            {
+              "question": "“家里省心”这话你怎么理解？",
+              "answer": "就是独生子、爸妈有退休金、不用他贴钱。相亲市场上这四个字值钱。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "这个好看的版本，是他一个人说出来的吗？",
@@ -1145,6 +1265,16 @@ export const CONTENT_CASES = {
           "doubt": "名校这句有真东西，但别人听到的可能是另一层意思。",
           "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "他解释 MBA 的时候，语气什么样？",
+              "answer": "不躲。就是说得很顺，顺得像回答过很多遍。"
+            },
+            {
+              "question": "你自己学历怎么样？",
+              "answer": "普通一本。所以“名校”两个字我提的时候，其实也在给自己贴金。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "那张学校图少了哪一边，少的是本科、项目还是学制？",
@@ -1178,6 +1308,16 @@ export const CONTENT_CASES = {
           "doubt": "收入截图是一回事，平时钱怎么花又是另一回事。",
           "contradiction": "男方声称收入和日常花销不匹配，咨询者才把存款证明追成流水和真实收入。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "团购那顿饭，最后谁付的？",
+              "answer": "他。用了券，又用了会员积分。他算得很快，我坐对面看着，有点走神。"
+            },
+            {
+              "question": "你妈见过他照片吗？",
+              "answer": "见过。第一句问的是“个子多高”，第二句就是“做什么的”。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "你问流水，是想确认他到底赚多少？",
@@ -1211,6 +1351,16 @@ export const CONTENT_CASES = {
           "doubt": "问流水这件事，已经快碰到婚后钱怎么管了。",
           "contradiction": "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "工资卡那句，他说完你们冷场了多久？",
+              "answer": "十几秒吧。后来是服务员来加水解的围。"
+            },
+            {
+              "question": "你身边有婚后一起管钱的例子吗？",
+              "answer": "我表姐。管得挺好，但她挣得比姐夫多。这话我没跟我妈说过。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "这句你有没有转给他？",
@@ -1526,6 +1676,16 @@ export const CONTENT_CASES = {
           "doubt": "咨询者不是完全被逼，也确实想拿这个表现机会。",
           "contradiction": "咨询者先想要主责曝光，同事再把垫付款包装成机会，资金风险被弱化。",
           "reliability": "mixed",
+          "casualQuestions": [
+            {
+              "question": "你进这家公司多久了？",
+              "answer": "八个月。试用期转正第二个月，就接了这个活。"
+            },
+            {
+              "question": "那位同事平时人缘怎么样？",
+              "answer": "好。谁都能聊两句，领导也喜欢。这种人你很难当面翻脸。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他让你垫钱时，原话有没有提署名和老板？",
@@ -1560,6 +1720,16 @@ export const CONTENT_CASES = {
           "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
           "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "大群里一般谁管预算？",
+              "answer": "部门助理发流程，财务出数。以前都这么走，就这次说来不及。"
+            },
+            {
+              "question": "老板对答谢会满意吗？",
+              "answer": "满意，会上还点了名。我那天挺高兴的。现在想想，高兴得有点早。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "他为什么不让你在大群确认预算？",
@@ -1593,6 +1763,16 @@ export const CONTENT_CASES = {
           "doubt": "审批通过看着像结束了，后面还差付款那一步。",
           "contradiction": "报销截图只显示审批通过，没有付款流水和收款账户。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "垫的钱是多少？",
+              "answer": "……不方便说具体。我一张卡刷了大半额度，下个月账单要来了。"
+            },
+            {
+              "question": "财务那边你认识人吗？",
+              "answer": "不认识。入职培训见过一面。真要问，也得同事引荐，又绕回他。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "这张审批图少了哪一边，是付款状态还是收款账户？",
@@ -1626,6 +1806,16 @@ export const CONTENT_CASES = {
           "doubt": "钱卡着不动，可能还牵着供应商那边的返款。",
           "contradiction": "供应商报价单出现服务协调费，返款却可能打给同事这个对接人。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "服务协调费，行价一般多少？",
+              "answer": "我查过。有的有，有的没有，查完更乱了。"
+            },
+            {
+              "question": "供应商是谁选的？",
+              "answer": "他定的，说合作过。我连对接人微信都没有。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "供应商返款打给谁，和你的垫付款是不是同一条钱路？",
@@ -1659,6 +1849,16 @@ export const CONTENT_CASES = {
           "doubt": "署名给了表面责任，关键入口仍在同事手里。",
           "contradiction": "咨询者拿到项目署名，却没有拿到付款和供应商入口。",
           "reliability": "partial",
+          "casualQuestions": [
+            {
+              "question": "复盘材料是谁写？",
+              "answer": "我写初稿，他“把关”。把关俩字是他说的。"
+            },
+            {
+              "question": "如果重来一次，你还接这个活吗？",
+              "answer": "接。但会先在群里问一句预算。就一句，够了。"
+            }
+          ],
           "questionOptions": [
             {
               "question": "主责署名和付款入口，最后在同一个人手里吗？",

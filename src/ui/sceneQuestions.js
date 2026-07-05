@@ -3,6 +3,8 @@ export function focusedQuestionOptions(options = []) {
 }
 
 export function sceneDialogueOptions(scene = {}, keyOptions = focusedQuestionOptions(scene?.questionOptions ?? [])) {
+  const casual = Array.isArray(scene.casualQuestions) ? scene.casualQuestions.filter(Boolean) : [];
+  if (casual.length) return casual.map((option, optionIndex) => normalizeDialogueOption(option, optionIndex));
   const authored = Array.isArray(scene.dialogueOptions) ? scene.dialogueOptions.filter(Boolean) : [];
   if (authored.length) return authored.map((option, optionIndex) => normalizeDialogueOption(option, optionIndex));
   return keyOptions

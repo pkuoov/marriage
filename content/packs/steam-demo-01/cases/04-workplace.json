@@ -106,6 +106,16 @@
       "doubt": "咨询者不是完全被逼，也确实想拿这个表现机会。",
       "contradiction": "咨询者先想要主责曝光，同事再把垫付款包装成机会，资金风险被弱化。",
       "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "你进这家公司多久了？",
+          "answer": "八个月。试用期转正第二个月，就接了这个活。"
+        },
+        {
+          "question": "那位同事平时人缘怎么样？",
+          "answer": "好。谁都能聊两句，领导也喜欢。这种人你很难当面翻脸。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "他让你垫钱时，原话有没有提署名和老板？",
@@ -140,6 +150,16 @@
       "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
       "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "大群里一般谁管预算？",
+          "answer": "部门助理发流程，财务出数。以前都这么走，就这次说来不及。"
+        },
+        {
+          "question": "老板对答谢会满意吗？",
+          "answer": "满意，会上还点了名。我那天挺高兴的。现在想想，高兴得有点早。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "他为什么不让你在大群确认预算？",
@@ -173,6 +193,16 @@
       "doubt": "审批通过看着像结束了，后面还差付款那一步。",
       "contradiction": "报销截图只显示审批通过，没有付款流水和收款账户。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "垫的钱是多少？",
+          "answer": "……不方便说具体。我一张卡刷了大半额度，下个月账单要来了。"
+        },
+        {
+          "question": "财务那边你认识人吗？",
+          "answer": "不认识。入职培训见过一面。真要问，也得同事引荐，又绕回他。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "这张审批图少了哪一边，是付款状态还是收款账户？",
@@ -206,6 +236,16 @@
       "doubt": "钱卡着不动，可能还牵着供应商那边的返款。",
       "contradiction": "供应商报价单出现服务协调费，返款却可能打给同事这个对接人。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "服务协调费，行价一般多少？",
+          "answer": "我查过。有的有，有的没有，查完更乱了。"
+        },
+        {
+          "question": "供应商是谁选的？",
+          "answer": "他定的，说合作过。我连对接人微信都没有。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "供应商返款打给谁，和你的垫付款是不是同一条钱路？",
@@ -239,6 +279,16 @@
       "doubt": "署名给了表面责任，关键入口仍在同事手里。",
       "contradiction": "咨询者拿到项目署名，却没有拿到付款和供应商入口。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "复盘材料是谁写？",
+          "answer": "我写初稿，他“把关”。把关俩字是他说的。"
+        },
+        {
+          "question": "如果重来一次，你还接这个活吗？",
+          "answer": "接。但会先在群里问一句预算。就一句，够了。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "主责署名和付款入口，最后在同一个人手里吗？",

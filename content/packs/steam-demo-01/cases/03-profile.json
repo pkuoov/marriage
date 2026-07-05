@@ -112,6 +112,16 @@
       "doubt": "见面前问到流水，这个尺度已经不太像普通寒暄。",
       "contradiction": "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。",
       "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "你们相亲见了几次？",
+          "answer": "四次。两次饭，一次展，一次他接我下班。节奏不快不慢。"
+        },
+        {
+          "question": "你跟你妈平时什么都聊吗？",
+          "answer": "大事聊。她比我急。我 28 了，她逢人就说我“不挑”，其实是她挑。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "这些截图是什么时候发的，发之前你们怎么说到材料的？",
@@ -146,6 +156,16 @@
       "doubt": "这个好看版本不是男方一个人说出来的。",
       "contradiction": "介绍人、男方和咨询者都参与放大了体面标签，完整信息被层层修剪。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "介绍人跟男方家什么关系？",
+          "answer": "他妈的老同事。所以话肯定挑好的说，这我懂。"
+        },
+        {
+          "question": "“家里省心”这话你怎么理解？",
+          "answer": "就是独生子、爸妈有退休金、不用他贴钱。相亲市场上这四个字值钱。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "这个好看的版本，是他一个人说出来的吗？",
@@ -179,6 +199,16 @@
       "doubt": "名校这句有真东西，但别人听到的可能是另一层意思。",
       "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "他解释 MBA 的时候，语气什么样？",
+          "answer": "不躲。就是说得很顺，顺得像回答过很多遍。"
+        },
+        {
+          "question": "你自己学历怎么样？",
+          "answer": "普通一本。所以“名校”两个字我提的时候，其实也在给自己贴金。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "那张学校图少了哪一边，少的是本科、项目还是学制？",
@@ -212,6 +242,16 @@
       "doubt": "收入截图是一回事，平时钱怎么花又是另一回事。",
       "contradiction": "男方声称收入和日常花销不匹配，咨询者才把存款证明追成流水和真实收入。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "团购那顿饭，最后谁付的？",
+          "answer": "他。用了券，又用了会员积分。他算得很快，我坐对面看着，有点走神。"
+        },
+        {
+          "question": "你妈见过他照片吗？",
+          "answer": "见过。第一句问的是“个子多高”，第二句就是“做什么的”。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "你问流水，是想确认他到底赚多少？",
@@ -245,6 +285,16 @@
       "doubt": "问流水这件事，已经快碰到婚后钱怎么管了。",
       "contradiction": "女方家问流水，不只是怕被骗，也带着婚后工资透明和上交工资的预设。",
       "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "工资卡那句，他说完你们冷场了多久？",
+          "answer": "十几秒吧。后来是服务员来加水解的围。"
+        },
+        {
+          "question": "你身边有婚后一起管钱的例子吗？",
+          "answer": "我表姐。管得挺好，但她挣得比姐夫多。这话我没跟我妈说过。"
+        }
+      ],
       "questionOptions": [
         {
           "question": "这句你有没有转给他？",
