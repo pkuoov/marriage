@@ -22,6 +22,8 @@ export const RUNTIME_CASE_CONTENT_FIELDS = [
   "evidenceCards",
   "evidenceChecks",
   "investigationHooks",
+  "advisorNotes",
+  "respondentNote",
   "deepFollowup",
   "stageJudgement",
   "storyInterludeRecap",

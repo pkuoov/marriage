@@ -7,6 +7,7 @@ export function solvedRecapPagesHtml({
   pressure = {},
   quoteComparison = null,
   conclusion = {},
+  offMicLetters = [],
   boundary = {},
   boundaryPicks = {},
   boundaryLine = "",
@@ -54,6 +55,7 @@ export function solvedRecapPagesHtml({
       <p><b>后续回拨</b></p>
       <p>${escapeHtml(conclusion.followup)}</p>
     `,
+    offMicLettersHtml(offMicLetters),
     truthBoundaryReviewHtml(boundary, boundaryPicks),
     `
       <p><b>连线收住</b></p>
@@ -61,7 +63,26 @@ export function solvedRecapPagesHtml({
       ${boundaryLine ? `<p class="hint">${escapeHtml(boundaryLine)}</p>` : ""}
       <p>${escapeHtml(conclusion.truth)}</p>
     `
-  ];
+  ].filter((page) => String(page ?? "").trim());
+}
+
+export function offMicLettersHtml(letters = []) {
+  const rows = (letters ?? []).filter(Boolean);
+  if (!rows.length) return "";
+  return `
+    <section class="offmic-letter-card">
+      <p><b>麦外来信</b></p>
+      <div class="offmic-letter-list">
+        ${rows.map((letter) => `
+          <article class="offmic-letter ${escapeHtml(letter.kind ?? "note")}">
+            <span>${escapeHtml(letter.badge ?? "后台留言")}</span>
+            ${letter.appearsNowBecause ? `<small>${escapeHtml(letter.appearsNowBecause)}</small>` : ""}
+            <p>${escapeHtml(letter.text ?? "")}</p>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
 }
 
 export function solvedRecapFlowView({

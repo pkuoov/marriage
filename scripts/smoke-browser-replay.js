@@ -169,9 +169,15 @@ async function completePostAccusation(page, route) {
 }
 
 async function exerciseTruthBoundary(page, route) {
+  let sawOffMicLetter = false;
   for (let step = 0; step < 6; step += 1) {
     if (await page.locator(".truth-boundary-card").count()) break;
+    const body = await page.locator("body").innerText().catch(() => "");
+    if (body.includes("麦外来信")) sawOffMicLetter = true;
     await activate(page, route, "[data-recap-next]");
+  }
+  if (!sawOffMicLetter) {
+    throw new Error("Recap flow should show 麦外来信 before truth boundary when off-mic letters exist");
   }
   await page.locator(".truth-boundary-card").waitFor({ state: "visible" });
   const promptCount = await page.locator(".truth-boundary-prompt").count();

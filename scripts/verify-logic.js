@@ -3,6 +3,7 @@ import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapTex
 import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.68";
 import { requiredContradictionsForCase, truthBoundaryPromptLimitForCase } from "../src/difficulty.js?v=0.20.68";
 import { migrateState } from "../src/state.js?v=0.20.68";
+import { CONTENT_ADVISORS } from "../src/generated/contentPackIndex.js?v=0.20.87";
 import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.68";
 import { NPCS } from "../src/story.js?v=0.20.68";
 import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.68";
@@ -24,7 +25,7 @@ import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } f
 import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
-import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
+import { finalQuoteComparisonHtml, offMicLettersHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.76";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.20.68";
@@ -469,6 +470,34 @@ test("INVESTIGATION-001", "host investigation backflow is fixed material, not fr
   });
   assert(!appSource.includes("新线索解锁"), "回流不能写成任务系统提示");
   assert(!appSource.includes("核验成功"), "回流不能写成通关提示");
+});
+
+test("INVESTIGATION-002", "off-mic letters render after backflow before truth boundary", () => {
+  assert(CONTENT_ADVISORS["zhao-lawyer"], "顾问注册表必须进入运行时内容索引");
+  const letterHtml = offMicLettersHtml([
+    {
+      kind: "advisor",
+      badge: "赵律师 · 家事与债务",
+      appearsNowBecause: "收麦后，后台一位常来的律师听友留了几句。",
+      text: "口说的不算，落纸的算数。"
+    },
+    {
+      kind: "respondent",
+      badge: "对方留言",
+      appearsNowBecause: "收麦后，对方给节目后台留了一段文字。",
+      text: "这两码事。"
+    }
+  ]);
+  assertIncludes(letterHtml, "麦外来信", "麦外来信必须有独立阅读页标题");
+  assertIncludes(letterHtml, "赵律师 · 家事与债务", "顾问条目必须显示姓名和领域名牌");
+  assertIncludes(letterHtml, "对方留言", "缺席方单向留言必须显示对方留言名牌");
+  const pages = solvedRecapPagesHtml({
+    offMicLetters: [{ badge: "赵律师 · 家事与债务", text: "口说的不算，落纸的算数。" }],
+    boundary: { title: "事实边界", columns: [{ key: "true", label: "能确认", items: ["账单存在"] }], prompts: [], choices: [] },
+    boundaryPicks: {}
+  }).join("\n");
+  assert(pages.indexOf("后续回拨") < pages.indexOf("麦外来信"), "麦外来信必须在后续回拨之后");
+  assert(pages.indexOf("麦外来信") < pages.indexOf("事实边界"), "麦外来信必须在事实边界之前");
 });
 
 test("UI-001", "current-node questions separate free asks from key choices", () => {

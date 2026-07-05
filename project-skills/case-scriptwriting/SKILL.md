@@ -145,6 +145,30 @@ Do not enrich by:
 - repeating the same contradiction in different words;
 - turning the host into a judge, therapist, lawyer, or lecturer.
 
+### Expansion Playbook (把 10 分钟做成 20 分钟)
+
+Nine expansion methods, ordered by cost. Every added minute must carry an A/B conversion, a value turn, or a live hypothesis — an added minute that carries none is prose bulk wearing a mechanic. Never expand by adding a second live caller.
+
+Content-only (no engine work):
+
+1. **Authored press layer** (from Ace Attorney's press-any-statement design: pressing is never punished, rewards the curious, and occasionally shakes loose real texture). Give each scene 2-3 authored 随意提问 questions — background, feelings, the other party's habits — written separately from key options, never recycled from them. Pressing yields characterization and guard shifts, not contradictions. Curious players roughly double their dialogue time; the main path stays untouched. This is depth-on-demand, the safest minutes in the game.
+2. **In-call act structure** (from TV act craft: every act is a mini-arc and every act break is a hook). Group 5-6 beats into 2-3 mini-acts. Each act ends on an open hook — a withheld object, a half-question, a friend's silence — and each act break is where a material board or backflow item wants to sit. A beat may not end an act on closure.
+3. **Intensity alternation with one legal breather** (from TV pacing: high-intensity scenes reveal, low-intensity scenes let the audience process). One low-intensity beat per act — the caller catching her breath, a lighter crowd exchange — is legitimate content that makes the next reveal land harder. Maximum one per act; two breathers in a row is sag.
+
+Small engine (one field plus render):
+
+4. **Evidence reaction lines** (`evidenceChecks[].options[].reactionLine`): the caller answers the player's mark in voice. Turns each board pick into a dramatic beat. (Contracted in drama pass 3.)
+5. **Testimony revision** (the single strongest AA borrow: pressing forces the witness to modify testimony). After a core hit or board hit, the caller restates an earlier version with 1-2 sentences changed — field like `revisedVersion` anchored to a scene. The player replays the comparison in their head; spot-the-difference is gameplay made of pure dialogue. +2-3 minutes per case, and it converts confession-driven reveals into detection-driven ones.
+6. **Mid-call material anchoring** (`evidenceChecks[].afterScene`): alternate testimony segments and material segments instead of all-scenes-then-board — AA's trial rhythm. Expands play through rhythm, and it is the structural fix for boards being an epilogue instead of a turning weapon.
+7. **Multi-mark boards** (`marksRequired: 2`): one rich material, two or three required marks in sequence — 先圈时间列，再圈用途行. Each mark gets its own feedback and reaction line. Doubles the time a board carries without adding a board.
+
+Larger engine (new interaction, design first):
+
+8. **Timeline assembly**: order 4-5 dated events (断缴 → 分期开通 → 借钱 → 催款). Native to this pack's 时间诡计 load-bearing layer — the case's whole trick made into a hands-on beat. One-shot like the boundary sort; misses count at the finale.
+9. **Live-room B-runner** (from TV A/B/C story ratios — roughly 9 main beats to 2-3 runner beats, and the runner resolves before the A-story climax): 2-3 interruption micro-beats inside the live room itself — a 黑粉 thread the host must answer once, a platform warning strip. The runner must stay host-versus-room diegesis; it never becomes a second case party and never violates the single-caller contract. Resolve it before the final quote-pick so the ending belongs to the A story.
+
+Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press layer +2-3 (opt-in); testimony revision +2-3; mid-call board rhythm +1-2; multi-mark or timeline +1-2; act hooks and breather pacing make the same minutes feel fuller rather than longer. Prefer methods 1-5 before 6-9; prefer any of them over longer answers.
+
 ### Integrated Writing Loop
 
 1. Write the unified story packet before touching UI fields.
@@ -527,6 +551,25 @@ Pity layer (gated): a sideways, in-character nudge that points at the neighborho
 Pity-layer register — a sharp viewer thinking out loud, not an oracle: 「审批过了就完了？我们公司过审和打款差着仨签字呢」 (after a miss on the approval screenshot). Compare the banned direct version: 「去圈付款回执那一栏」.
 
 Cross-case callbacks: in a story pack, later-case comments may echo only cases the player has already finished — 「这跟刚才那单一个味,先给身份后要钱」 — to make the pack thread felt during play. Hard spoiler boundary: a comment for the current case must never mention, foreshadow, title, object-label, or quote any case that appears later in the pack sequence. If the engine cannot prove a prior case is completed in state, use a case-local comment instead.
+
+## Advisor NPCs and Off-Mic Surfaces
+
+Design reference: `docs/advisor-npc-and-offmic-design.md`. Four fixed advisors (赵律师/周会计/小林老师/张法医), recurring across cases with stable domains and voice fingerprints.
+
+The effect/detection iron line:
+- Advisors judge **effect**, never **detection**: they say what counts, what does not count, and what class of thing one generally needs to look at — 「口说的不算，落纸的算数」「审批、付款、到账，是三张纸」. They never say where to mark: 「圈」「那一栏」「哪一块」 and any spot-naming phrasing are banned in advisor copy.
+- Advisor knowledge in their own domain is reliable (their law/procedure statements are true); what stays arguable is applicability. Exception by design: 小林老师 is deliberately grey — she exposes matchmaking tricks while defending the trade, so her advice carries a visible professional tilt the player learns to discount. Her tilt is 护行不护人, never dishonesty about facts.
+- Advisors interpret materials; they never testify about this case's parties beyond what authored materials show. Advisor-unlocked materials are authored JSON that passes `truthBoundary` and the promise ledger like any other evidence.
+- Delivery surfaces, in cost order: post-recap backflow persona (`investigationHooks[].source: "advisor"` + `advisorId`), miss-gated pity layer in persona voice, act-break consult retold by the caller, and — only as a designed scarce resource — a once-per-case guest mic. Advisors never replace the host's questioning and never speak inside scene beats.
+- Act-break consults come back through the caller's mouth, and her retelling may itself be edited (she quotes the half of the advice that helps her) — advisor input passes through the Rashomon filter like everything else.
+
+The absent party's half mouth (对方后台留言):
+- The other party still never joins the live room. Post-recap, they may leave exactly one one-way message (text or voice note, `source: "respondent-note"`), not questionable, not answerable.
+- The note must carry its own catchable edit: their version trims different places than the caller's version, and the gap between the two edits is playable Rashomon. A note that merely denies or merely apologizes is wasted surface.
+- At most one per case (complex family packs may allow a second from a third party).
+
+Character bible:
+- Every recurring caller and advisor gets a card in `content/characters/`: backstory, family, job, three voice fingerprints, and lying habits (who retreats to passive voice, who quotes numbers when nervous). All `casualQuestions` draw from the card; daily-rotation reuse of the same character must not contradict it. Cards are writing reference, not runtime data.
 
 ## Structure Archetypes
 

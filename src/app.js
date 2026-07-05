@@ -26,6 +26,7 @@ import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneCho
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
+import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js?v=0.20.87";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -464,6 +465,7 @@ function renderSolved(brief) {
     pressure,
     quoteComparison,
     conclusion,
+    offMicLetters: offMicLettersForBrief(brief, CONTENT_ADVISORS),
     boundary,
     boundaryPicks,
     boundaryLine,
@@ -528,6 +530,26 @@ function renderSolved(brief) {
     moveScene("runComplete");
   });
   bindSceneButtons();
+}
+
+function offMicLettersForBrief(brief = {}, advisors = {}) {
+  const advisorRows = (brief.advisorNotes ?? []).map((note) => {
+    const advisor = advisors[note.advisorId] ?? {};
+    const title = [advisor.name, advisor.domain].filter(Boolean).join(" · ");
+    return {
+      kind: "advisor",
+      badge: title || "顾问留言",
+      appearsNowBecause: note.appearsNowBecause ?? "",
+      text: note.text ?? ""
+    };
+  });
+  const respondent = brief.respondentNote ? [{
+    kind: "respondent",
+    badge: "对方留言",
+    appearsNowBecause: brief.respondentNote.appearsNowBecause ?? "",
+    text: brief.respondentNote.text ?? ""
+  }] : [];
+  return [...advisorRows, ...respondent].filter((letter) => letter.text);
 }
 
 function renderStoryInterlude(brief) {

@@ -175,6 +175,8 @@ const caseFiles = await Promise.all(
 );
 const comments = await readJson(`content/packs/${packId}/comments.json`);
 const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes.json`);
+const advisorRegistry = await readJson("content/characters/advisors.json").catch(() => ({ advisors: [] }));
+const advisorIds = new Set((advisorRegistry.advisors ?? []).map((advisor) => advisor.id));
 
 test("PACK-001", "manifest matches runtime story pack definition", () => {
   assert(runtimePack, `运行时故事包不存在: ${packId}`);
@@ -346,6 +348,19 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assertNonEmptyString(hook.stillCannotProve, `${casePacket.caseId} investigationHooks[${hookIndex}] 缺少 stillCannotProve`);
         assertEvidenceOperation(hook, `${casePacket.caseId} investigationHooks[${hookIndex}]`);
       });
+
+      (casePacket.advisorNotes ?? []).forEach((note, noteIndex) => {
+        assertNonEmptyString(note.advisorId, `${casePacket.caseId} advisorNotes[${noteIndex}] 缺少 advisorId`);
+        assert(advisorIds.has(note.advisorId), `${casePacket.caseId} advisorNotes[${noteIndex}] advisorId 不在注册表中`);
+        assertNonEmptyString(note.appearsNowBecause, `${casePacket.caseId} advisorNotes[${noteIndex}] 缺少 appearsNowBecause`);
+        assertNonEmptyString(note.text, `${casePacket.caseId} advisorNotes[${noteIndex}] 缺少 text`);
+        assert(!/[圈]|那一栏|哪一块/.test(note.text), `${casePacket.caseId} advisorNotes[${noteIndex}] 顾问文案不能替玩家点位置`);
+      });
+      if (casePacket.respondentNote !== undefined) {
+        assert(!Array.isArray(casePacket.respondentNote), `${casePacket.caseId} respondentNote 每案至多一个`);
+        assertNonEmptyString(casePacket.respondentNote.appearsNowBecause, `${casePacket.caseId} respondentNote 缺少 appearsNowBecause`);
+        assertNonEmptyString(casePacket.respondentNote.text, `${casePacket.caseId} respondentNote 缺少 text`);
+      }
 
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);
