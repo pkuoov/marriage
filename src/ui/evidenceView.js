@@ -65,7 +65,7 @@ export function evidenceMaterialLines(material = "") {
 export function evidencePickFeedbackHtml(pick = {}) {
   return `
     <section class="evidence-result-card ${pick.correct ? "hit" : "miss"}">
-      <span>${pick.correct ? "圈中了" : "没咬住"}</span>
+      <span>${pick.correct ? "圈中了" : "没圈准"}</span>
       <b>${escapeHtml(pick.label ?? "")}</b>
       <p>${escapeHtml(pick.feedback ?? "")}</p>
     </section>

@@ -72,6 +72,21 @@ function assertThrows(fn, pattern, message) {
   throw new Error(`${message}｜expected throw`);
 }
 
+function stockAiForbiddenCopyRegex() {
+  const awkwardShortJobPhrase = `${"工作"}${"不太"}${"稳"}`;
+  return new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|债务转移|法律武器|商业阴谋|蓄意诈骗|白莲花|丧尽天良|处心积虑|脑子嗡|提款机|成本归属|满格以后|这通电话|心里咯噔一下|算借款、赠与|借款、赠与|先说第一次提钱|表先放一下|为什么一开始是你垫|按理说活动是大家一起办的|主播你好，我想问一个相亲后暧昧|${awkwardShortJobPhrase}`);
+}
+
+function chineseStringLiterals(source = "") {
+  const literals = [];
+  const pattern = /(["'`])((?:\\.|(?!\1)[\s\S])*[\u3400-\u9fff](?:\\.|(?!\1)[\s\S])*)\1/g;
+  let match;
+  while ((match = pattern.exec(source))) {
+    literals.push(match[2]);
+  }
+  return literals;
+}
+
 function dailyCase(key, options = {}) {
   return generateCasesForMode("daily", NPCS, attrs, { dailyKey: key, ...options })[0];
 }
@@ -280,7 +295,7 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
     pressureSignal: "held",
     intentHook: "返钱入口对上了"
   });
-  assertEqual(hit.crowd, "压住", "命中材料必须能压住弹幕");
+  assertEqual(hit.crowd, "稳住", "命中材料必须能稳住弹幕");
   assertEqual(hit.callerGuard, "松动", "命中材料后连线人防备应松动");
   const hinted = livePressureProfile({
     budget: { max: 8, remaining: 6 },
@@ -290,16 +305,16 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertEqual(hinted.callerGuard, "绷住", "场景压力提示必须能驱动连线人防备状态");
   assertEqual(hinted.expression.text, "流程词说得很顺", "现场压力画像必须从 JSON hint 给人物表情层提供钩子");
   assertEqual(questionPressureSignal({ routeTone: "softening" }), "drift", "追问压力状态必须由 routeTone 结构化生成");
-  assertEqual(questionPressureSignal({ routeTone: "pressure-point" }), "held", "核心追问语气必须能压住现场");
+  assertEqual(questionPressureSignal({ routeTone: "pressure-point" }), "held", "核心追问语气必须能稳住现场");
   const guardedVariant = pressuredAnswerVariant(
     { answer: "原回答", guardedAnswer: "收紧回答" },
     { pressureSignal: "drift" }
   );
   assertEqual(guardedVariant.answer, "收紧回答", "上一拍跑偏后必须能切到内容包写好的收紧版回答");
   assertEqual(guardedVariant.guarded, true, "收紧版回答必须留下 guarded 标记，供路线回看和结算继续使用");
-  assertEqual(pressuredAnswerVariant({ answer: "原回答", guardedAnswer: "收紧回答" }, { pressureSignal: "held" }).answer, "原回答", "压住现场时不能无故改写来电人回答");
+  assertEqual(pressuredAnswerVariant({ answer: "原回答", guardedAnswer: "收紧回答" }, { pressureSignal: "held" }).answer, "原回答", "稳住现场时不能无故改写来电人回答");
   assertEqual(materialPressureSignal({ correct: false }), "drift", "材料误指必须生成结构化跑偏状态");
-  assertIncludes(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "给了对方台阶", "追问语气必须能生成现场压力反应，但不能写成抽象氛围值");
+  assertEqual(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "", "普通绕路追问不应生成空泛现场氛围句");
   assertIncludes(materialPressureReaction({ correct: true, pick: { label: "付款状态", feedback: "缺的这一页才决定钱去了哪里。" } }, { title: "审批图", material: "付款和收款账户没露出来。" }), "缺的这一页", "材料命中必须优先使用内容包写好的反馈");
   assertIncludes(materialPressureReaction({ correct: false, pick: { label: "截图边角" } }, { title: "截图" }), "撑不住", "材料误指必须说清这一处撑不住，不能只写抽象氛围");
   const recap = pressureRecapProfile({
@@ -783,7 +798,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(finalQuoteComparisonHtml({ sameQuote: true, pickedLabel: "“原话”", pickedResponse: "接住了" }), "这句够了", "最终原话对比卡必须可由纯 UI 模块渲染");
   assertIncludes(truthBoundaryReviewHtml({ title: "边界", line: "先放句子", choices: [{ key: "true", label: "能确认" }], columns: [{ key: "true", label: "能确认", items: ["A"] }], prompts: [{ id: "true:0", text: "A", expected: "true" }] }, {}), "data-truth-boundary-pick", "事实边界归位按钮必须可由纯 UI 模块渲染");
   assert(truthBoundaryPlaced({ prompts: [{ id: "a" }] }, { a: "true" }), "事实边界一次放置完成判断必须可由纯 UI 模块测试");
-  assertIncludes(solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "压住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" })[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
+  assertIncludes(solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "稳住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" })[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
   const recapFlow = solvedRecapFlowView({ pages: ["第一页", "第二页"], step: 0 });
   assertIncludes(recapFlow.text, "1/2", "收麦回看分页 kicker 必须由纯 UI flow helper 生成");
   assertIncludes(recapFlow.choices, "data-recap-next", "收麦回看非末页继续按钮必须由纯 UI flow helper 生成");
@@ -836,10 +851,10 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(storyInterludeChoicesHtml(), "接下一路麦", "案间过渡按钮必须保持直播语言，不退回目录式下一案");
   assertIncludes(appSource, "./ui/storyPackCompleteView.js", "故事集终局 HTML 必须从 app.js 拆到 ui/storyPackCompleteView");
   const hiddenThreadProfile = { total: 4, title: "今晚暗线", label: "同款话术", line: "好听话后面接成本。", beats: ["体面接钱", "自己人接资源"] };
-  const storyCompleteCard = storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料咬住" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, hiddenThreadProfile, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" });
+  const storyCompleteCard = storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料圈准" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, hiddenThreadProfile, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" });
   assertIncludes(storyCompleteCard, "评论区审判墙", "故事集终局结果卡必须可由纯 UI 模块渲染");
   assertIncludes(storyCompleteCard, "hidden-thread-card", "故事集终局必须能渲染串案暗线卡");
-  assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "压住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, hiddenThreadProfile, playerType: "收麦主播" }), "散场暗线：同款话术", "故事集终局复制文案必须带出散场暗线");
+  assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "稳住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, hiddenThreadProfile, playerType: "收麦主播" }), "散场暗线：同款话术", "故事集终局复制文案必须带出散场暗线");
   const summaryBriefs = [{ label: "第一案", truthBoundary: { true: ["账单是真的"], edited: ["少了来源"], unknown: ["动机定不了"] }, storyClueObject: "账单", storyHiddenThread: { title: "今晚暗线", label: "同款话术", reveal: "好听词后面接成本。", beats: ["账单", "表格"] } }];
   const summary = storyPackSummaryModel({
     briefs: summaryBriefs,
@@ -1343,8 +1358,7 @@ test("DAILY-009B", "case copy avoids gender-war framing but allows mutual harm",
 });
 
 test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => {
-  const awkwardShortJobPhrase = `${"工作"}${"不太"}${"稳"}`;
-  const forbidden = new RegExp(`不是.*而是|真正|听到这里|你把这句记下|抓到的关键|核心风险|债务转移|法律武器|商业阴谋|蓄意诈骗|白莲花|丧尽天良|处心积虑|脑子嗡|提款机|成本归属|满格以后|这通电话|心里咯噔一下|算借款、赠与|借款、赠与|先说第一次提钱|表先放一下|为什么一开始是你垫|按理说活动是大家一起办的|主播你好，我想问一个相亲后暧昧|${awkwardShortJobPhrase}`);
+  const forbidden = stockAiForbiddenCopyRegex();
   const frozenShareFrame = /^让我.*(?:的是|不是)/;
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
@@ -1366,6 +1380,20 @@ test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => 
       assert(!forbidden.test(text), `${brief.plotId} 仍有总结腔/AI 腔短语`);
       assert(!frozenShareFrame.test(brief.dailyShareBody ?? ""), `${brief.plotId} 结果卡不能用“让我……的是/不是……”作文式开头`);
     });
+});
+
+test("RUNTIME-COPY-001", "runtime generated copy avoids AI and empty-atmosphere phrasing", () => {
+  const forbidden = stockAiForbiddenCopyRegex();
+  const atmosphereForbidden = /咬住|压住|带散|麦温|人声/;
+  [
+    ["livePressure", readFileSync(new URL("../src/runtime/livePressure.js", import.meta.url), "utf8")],
+    ["recapModel", readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8")]
+  ].forEach(([name, source]) => {
+    chineseStringLiterals(source).forEach((literal) => {
+      assert(!forbidden.test(literal), `${name} runtime copy has AI phrase: ${literal}`);
+      assert(!atmosphereForbidden.test(literal), `${name} runtime copy has atmosphere filler: ${literal}`);
+    });
+  });
 });
 
 test("DAILY-010", "daily scenes expose one core issue question per beat", () => {
@@ -1707,7 +1735,7 @@ test("RUNTIME-005", "recap model stays pure and reusable outside app rendering",
   assertEqual(wrongProfile.label, "定急了", "事实边界一次放错要改变故事集终局标签");
   assertIncludes(wrongProfile.line, "证据到不了", "故事集终局必须回收边界误放痕迹");
   const backflowHit = investigationBackflowProfile([{ correct: true }]);
-  assertEqual(backflowHit.label, "私信咬住", "回流材料命中必须生成案间余味标签");
+  assertEqual(backflowHit.label, "私信补上", "回流材料命中必须生成案间余味标签");
   assertIncludes(backflowHit.line, "缺口", "回流材料命中必须回收到案间过渡");
   const backflowMiss = investigationBackflowProfile([{ correct: false }]);
   assertEqual(backflowMiss.label, "被带偏", "回流材料误指必须生成不同案间余味");

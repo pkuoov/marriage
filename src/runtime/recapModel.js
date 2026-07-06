@@ -10,7 +10,7 @@ export function issueLine(issue = {}) {
   if (issue.percent >= 75) return "开场那套说法已经站不稳了，还差一两句没问穿。";
   if (issue.percent >= 50) return "有几处不对劲已经露出来了，后半截还压着。";
   if (issue.percent > 0) return "你抓到了一处别扭，麦里还有话没出来。";
-  return "这轮还停在表层，真正别扭的地方没露头。";
+  return "这轮还停在表层，别扭的地方没露头。";
 }
 
 export function issueResultLine(issue = {}) {
@@ -107,7 +107,7 @@ export function dailyConclusionModel(brief = {}, result = {}, issue = {}, { pick
   }
 
   return {
-    summary: issue.revealed?.length ? `这轮摆到台面上的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，真正别扭的地方还没上桌。",
+    summary: issue.revealed?.length ? `这轮摆到台面上的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，别扭的地方还没上桌。",
     deepQuestion: "",
     followup: issue.revealed?.length ? "后续回拨里，话还没完，评论区会继续抓着没说出口的地方吵。" : brief.followupTwist ?? "",
     truth: brief.truth ?? "这案不能只按第一印象走，得看每个人少说了哪半截。"
@@ -343,7 +343,7 @@ export function storyPackAftertaste(avgPercent, caseCount = 0) {
 export function storyPackClosingLine(avgPercent, best = {}, caseCount = 0) {
   const callText = storyCallCountText(caseCount);
   if (avgPercent >= 90) return `这晚问得紧，${callText}里那些省掉的钱、边界和责任都露了面。`;
-  if (avgPercent < 40) return "这晚你更多接住的是现场情绪，几路麦真正省掉的那半句还压在里面。";
+  if (avgPercent < 40) return "这晚你更多接住的是现场情绪，几路麦省掉的那半句还压在里面。";
   if (best.axis === "document-edge") return "你这一晚总爱回头看图，看截图里少了哪一页、哪一边。";
   if (best.axis === "money-flow") return "你这一晚总盯钱最后落到谁身上。";
   return "这晚有几处接住了，也有几句还卡在原话里。";
@@ -442,12 +442,12 @@ export function investigationBackflowProfile(picks = []) {
 }
 
 export function investigationPickReaction(outcome = {}, hook = {}) {
+  void hook;
   if (outcome.correct) {
-    if (/私信|后台|补/.test(hook.surface ?? "")) return "后台这页咬住了，弹幕短暂安静。";
-    return "这块圈住了，麦里的话往回收了一点。";
+    return "";
   }
   if (/截图|图|表|账/.test(outcome.pick?.label ?? "")) return "这一块圈偏了，弹幕又吵到旁边去了。";
-  return "这一下没咬住，评论区开始翻另一边。";
+  return "这一下圈偏了，评论区开始翻另一边。";
 }
 
 function materialPackLabel({ total, hits, misses }) {
@@ -463,14 +463,14 @@ function materialPackLine({ total, hits, misses, firstMiss }) {
   if (hits > 0 && misses === 0) return `${hits} 处材料都圈在要害上，几通麦没有只靠听感往前冲。`;
   if (hits >= misses && hits > 0) return `${hits} 处圈住了，${misses} 处跑偏过，材料最后还是把话拉回台面。`;
   if (misses > 0) return `${firstMiss?.caseLabel || "有一通"}那块材料圈偏过，弹幕会抓着这一下继续吵。`;
-  return "材料看过了，但还没真正咬住本案缺口。";
+  return "材料看过了，但还没圈到本案缺口。";
 }
 
 function materialPackComment({ total, hits, misses }) {
   if (!total) return "「今晚像是只听电话，后台材料没真用起来。」";
   if (hits > 0 && misses === 0) return "「材料圈得准，比空口判断有劲。」";
   if (hits >= misses && hits > 0) return "「有几下圈偏了，但后面还是靠材料拉回来了。」";
-  return "「材料没完全咬住，现场那股热闹压过了图上的缺口。」";
+  return "「材料还没圈准，现场那股热闹盖过了图上的缺口。」";
 }
 
 function quotePackLabel({ total, hits, picked }) {
@@ -484,7 +484,7 @@ function quotePackLine({ total, hits, picked }) {
   if (!picked) return "今晚还没留下能被观众记住的收麦原话。";
   if (hits === total && total > 0) return "几通麦最后都接在原话上，收麦没有变成立场宣告。";
   if (hits > 0) return `${hits} 句原话接准了，剩下几句更像换了个角度收尾。`;
-  return "原话都接了，但没有完全接到最能压住现场的那一句。";
+  return "原话都接了，但没有完全接到最能让现场停下来的那一句。";
 }
 
 function quotePackComment({ total, hits, picked }) {
@@ -510,7 +510,7 @@ function appendCommentIfRoom(comments, comment) {
 
 function backflowLabel({ total, hits, misses }) {
   if (!total) return "未回流";
-  if (hits > 0 && misses === 0) return "私信咬住";
+  if (hits > 0 && misses === 0) return "私信补上";
   if (hits > 0) return "补回来了";
   return "被带偏";
 }
@@ -518,7 +518,7 @@ function backflowLabel({ total, hits, misses }) {
 function backflowLine({ total, hits, misses }) {
   if (!total) return "";
   if (hits > 0 && misses === 0) return "后台补来的那页，把刚才麦里的缺口又钉了一下。";
-  if (hits > 0) return "私信里有噪音，也有一块真正咬住了前面的矛盾。";
+  if (hits > 0) return "私信里有噪音，也有一块补上了前面的矛盾。";
   return "后台那页没圈到要害，弹幕又把话题带回了表面。";
 }
 
@@ -540,7 +540,7 @@ function boundaryPackLabel({ total, settledCount, missCount }) {
 function boundaryPackLine({ total, settledCount, missCount, unsettledLabel }) {
   if (!total) return "今晚没有留下可回看的事实边界。";
   if (missCount > 0 && settledCount < total) return `${unsettledLabel || "有一通"}有几句还撑不住，证据到不了那里。`;
-  if (settledCount < total) return `${unsettledLabel || "有一通"}还有几句没归位，评论区会咬着不放。`;
+  if (settledCount < total) return `${unsettledLabel || "有一通"}还有几句没归位，评论区还会继续吵。`;
   if (missCount > 0) return "有几句一开始放偏了，最后还是收回到证据能撑住的位置。";
   return "该钉的钉了，定不了的没替人补完。";
 }

@@ -66,7 +66,7 @@ function hostMonitorStateForPressure(pressure = {}) {
   const crowd = pressure.crowd ?? "";
   if (level === "low" || crowd === "散了") return { kind: "pressed", label: "压麦" };
   if (crowd === "跑偏") return { kind: "thinking", label: "拉回" };
-  if (crowd === "压住" || crowd === "追上") return { kind: "held", label: "收住" };
+  if (crowd === "稳住" || crowd === "追上") return { kind: "held", label: "收住" };
   return { kind: "idle", label: "监听中" };
 }
 

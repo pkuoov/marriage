@@ -28,7 +28,7 @@ export function routeAxisProfileFromChoices(choices = []) {
   if (choices.length) {
     if (skeptical > softening && skeptical >= 2) summary = "你不急着相信来电人的版本，会先追她自己没说全的利益和压力。";
     else if (softening > skeptical && softening >= 2) summary = "你会先给双方留余地，再等材料和后面的话补上。";
-    else if (coreHits === choices.length) summary = "你每段都咬住了，后面的话就没那么容易散。";
+    else if (coreHits === choices.length) summary = "你每段都问到了，后面的话就没那么容易散。";
     else summary = `你主要盯着${label}问，中间也听了几句外围解释。`;
   }
   return { axis, label, count, summary, coreHits, total: choices.length };
