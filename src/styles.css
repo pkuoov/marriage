@@ -1855,6 +1855,13 @@ button:active:not(:disabled) {
   line-height: 1.6;
 }
 
+.evidence-material-note {
+  margin: 10px 0 0;
+  color: rgba(237, 241, 238, .66);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
 .evidence-table-grid {
   display: grid;
   overflow: hidden;
@@ -3103,6 +3110,40 @@ button.evidence-target {
 
 .call-line p {
   margin: 0;
+}
+
+.scene-evidence-card {
+  justify-self: start;
+  display: grid;
+  gap: 5px;
+  width: min(420px, 92%);
+  margin-top: -4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 204, 128, .24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 204, 128, .10), rgba(255, 255, 255, .035)),
+    rgba(18, 20, 18, .68);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
+}
+
+.scene-evidence-card span {
+  color: rgba(255, 204, 128, .78);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+
+.scene-evidence-card b {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.scene-evidence-card p {
+  margin: 0;
+  color: rgba(237, 241, 238, .76);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .reaction {

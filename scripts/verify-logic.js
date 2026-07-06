@@ -22,7 +22,7 @@ import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapL
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
-import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
+import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialRows, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, offMicLettersHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
@@ -446,6 +446,17 @@ test("MATERIAL-003", "material board uses distinct visual layouts by material ty
   assertIncludes(evidenceOperationHtml({ title: "信用卡账单", material: "餐厅消费。", options: [] }), "evidence-thumb-bill", "材料板必须有可见缩略图，不能只是一块文字板");
   assertIncludes(evidenceMaterialThumbHtml({ title: "报销审批", material: "审批通过。" }), "evidence-thumb-flow", "材料缩略图必须跟随材料类型变化");
   assertIncludes(evidenceOperationHtml({ title: "信用卡账单", material: "餐厅消费。", options: [] }), "evidence-ledger", "账单材料必须渲染成账单行，而不是普通段落");
+  const structuredBill = {
+    title: "信用卡账单",
+    material: "社保断缴后，同一张卡上继续出现几笔消费。",
+    materialRows: ["纪念日晚餐 · 断缴后", "短视频平台分期 · 1.2 万"],
+    options: []
+  };
+  const structuredBillHtml = evidenceCheckScreenHtml({ check: structuredBill });
+  assertEqual(JSON.stringify(evidenceMaterialRows(structuredBill)), JSON.stringify(structuredBill.materialRows), "材料板必须优先使用内容包写好的 materialRows");
+  assertIncludes(structuredBillHtml, "纪念日晚餐 · 断缴后", "结构化账单行必须进入材料板正文");
+  assertIncludes(structuredBillHtml, "短视频平台分期 · 1.2 万", "结构化账单行必须保留短视频分期疑点");
+  assertIncludes(structuredBillHtml, "evidence-material-note", "materialRows 存在时，原 material 必须降为板下注释");
   assertIncludes(evidenceOperationHtml({ title: "排班表", material: "顾客｜备注。", options: [] }), "evidence-table-grid", "表格材料必须渲染成表格感区域");
   assertIncludes(evidenceOperationHtml({ title: "截图", material: "学校图里只有项目。", options: [] }), "evidence-shot-frame", "截图材料必须渲染成截图/手机框区域");
   assertIncludes(evidenceOperationHtml({ title: "审批流", material: "审批通过。没有付款状态。", options: [] }), "evidence-flow-track", "审批流材料必须渲染成流程节点区域");
@@ -454,6 +465,16 @@ test("MATERIAL-003", "material board uses distinct visual layouts by material ty
   assertIncludes(stylesSource, ".evidence-shot-frame", "截图材料必须有独立视觉皮肤");
   assertIncludes(stylesSource, ".evidence-flow-track", "流程材料必须有独立视觉皮肤");
   assertIncludes(stylesSource, ".evidence-thumb", "材料检视必须有缩略图样式，补直播后台资产感");
+});
+
+test("MATERIAL-004", "scene dialogue can reveal read-only evidence cards", () => {
+  const card = { type: "账单", title: "信用卡账单", front: "餐厅、礼物分期、两次酒店集中在断缴后一个月内；另有“短视频平台分期 1.2 万”一笔。" };
+  const activeHtml = activeSceneExchangeHtml({ scene: { version: "我翻到账单。", shownCard: card } });
+  const completedHtml = completedSceneExchangeHtml({ scene: { version: "我翻到账单。", shownCard: card }, pick: { question: "哪几笔？", answer: "餐厅和酒店。" } });
+  assertIncludes(activeHtml, "scene-evidence-card", "场景内材料卡必须在当前对话里可见");
+  assertIncludes(activeHtml, "短视频平台分期 1.2 万", "场景内材料卡必须显示 evidenceCard.front");
+  assertIncludes(completedHtml, "scene-evidence-card", "完成后的对话回看仍需保留只读材料卡");
+  assert(!activeHtml.includes("button"), "场景内材料卡必须是只读展示，不能变成可点击材料板");
 });
 
 test("INVESTIGATION-001", "host investigation backflow is fixed material, not freeform facts", () => {

@@ -53,6 +53,12 @@ function assertEvidenceOperation(operation, label) {
   assertNonEmptyString(operation.title, `${label} 缺少 title`);
   assertNonEmptyString(operation.prompt, `${label} 缺少 prompt`);
   assertNonEmptyString(operation.material, `${label} 缺少 material`);
+  if (operation.materialRows !== undefined) {
+    assertArrayMin(operation.materialRows, 2, `${label} materialRows 至少需要两行`);
+    operation.materialRows.forEach((row, rowIndex) => {
+      assertNonEmptyString(row, `${label}.materialRows[${rowIndex}] 不能为空`);
+    });
+  }
   assertArrayMin(operation.options, 3, `${label} 至少需要三个材料圈点选项`);
   assertOneCorrect(operation.options, `${label} 必须且只能有一个正确圈点`);
   operation.options.forEach((option, optionIndex) => {
@@ -286,6 +292,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         casePacket.sceneVersions.some((scene) => (scene.questionOptions ?? []).some((option) => option.guardedAnswer)),
         `${casePacket.caseId} 至少需要一条 guardedAnswer，让现场防备有写好的回答后果`
       );
+      const evidenceCardIds = new Set((casePacket.evidenceCards ?? []).map((card) => card.id).filter(Boolean));
       casePacket.sceneVersions.forEach((scene, sceneIndex) => {
         assertNonEmptyString(scene.speakerId, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 speakerId`);
         assertNonEmptyString(scene.version, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 version`);
@@ -296,6 +303,10 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assert(["guarded", "tense", "listening"].includes(scene.pressureHint?.callerGuard), `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.callerGuard 不合法`);
         assert(["blink", "pause", "shift"].includes(scene.pressureHint?.expression?.kind), `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.expression.kind 不合法`);
         assertNonEmptyString(scene.pressureHint?.expression?.text, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 pressureHint.expression.text`);
+        if (scene.showsCard !== undefined) {
+          assertNonEmptyString(scene.showsCard, `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 不能为空`);
+          assert(evidenceCardIds.has(scene.showsCard), `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 指向不存在的 evidenceCards id: ${scene.showsCard}`);
+        }
         if (scene.casualQuestions !== undefined) {
           assertArrayMin(scene.casualQuestions, 1, `${casePacket.caseId} sceneVersions[${sceneIndex}].casualQuestions 若存在至少需要一条`);
           const keyQuestions = new Set((scene.questionOptions ?? []).map((option) => option.question));

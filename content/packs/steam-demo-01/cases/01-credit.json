@@ -107,6 +107,7 @@
       "doubt": "说是奖金晚发，可社保已经断缴两个月。",
       "contradiction": "TA 一边说奖金延迟，一边在失业后继续刷体面消费，说明资金缺口不是临时才出现。",
       "reliability": "mixed",
+      "showsCard": "daily-credit-social-security",
       "casualQuestions": [
         {
           "question": "你们平时谁管钱多一点？",
@@ -165,6 +166,7 @@
       "doubt": "金额、用途和时间都比“挡几天”重得多。",
       "contradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事；短视频分期的受益人还没说清。",
       "reliability": "partial",
+      "showsCard": "daily-credit-card-bill",
       "revisedVersion": "……账单我再说一遍。8 万出头，餐厅、礼物、酒店，断缴以后一笔都没停。店，有几家是我自己挑的。那笔分期，也不是没细看，是没敢细看。",
       "casualQuestions": [
         {
@@ -395,7 +397,7 @@
       "id": "daily-credit-card-bill",
       "type": "账单",
       "title": "信用卡账单",
-      "front": "餐厅、礼物分期、酒店、1.2 万短视频分期和最低还款集中在同一周。",
+      "front": "餐厅、礼物分期、两次酒店集中在断缴后一个月内；另有“短视频平台分期 1.2 万”一笔。",
       "detail": "账单显示债务与体面恋爱消费有关，短视频分期另有受益人。",
       "targets": [
         "sceneHint"
@@ -420,6 +422,13 @@
       "title": "账单检视",
       "prompt": "这张信用卡账单里，哪一块最该先圈出来？",
       "material": "社保断缴后，同一张卡上继续出现纪念日晚餐、礼物分期、两次酒店，还有一笔 1.2 万的短视频平台分期。",
+      "materialRows": [
+        "纪念日晚餐 · 断缴后",
+        "礼物分期 · 断缴后",
+        "酒店消费 ×2 · 断缴后",
+        "短视频平台分期 · 1.2 万",
+        "本期最低还款 · 待还"
+      ],
       "options": [
         {
           "label": "断缴后的餐厅、礼物和酒店消费",

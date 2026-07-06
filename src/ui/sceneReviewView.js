@@ -30,6 +30,7 @@ export function sceneReviewDoneChoicesHtml({
 export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {}) {
   return [
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    sceneEvidenceCardHtml(scene.shownCard),
     ...dialoguePicks.flatMap((pick) => [
       callLineHtml({ role: "host", text: pick.question }),
       callLineHtml({ role: "caller", text: pick.answer })
@@ -40,6 +41,7 @@ export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {})
 export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pick = {}, fallbackAnswer = "" } = {}) {
   return [
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    sceneEvidenceCardHtml(scene.shownCard),
     ...dialoguePicks.flatMap((item) => [
       callLineHtml({ role: "host", text: item.question }),
       callLineHtml({ role: "caller", text: item.answer })
@@ -71,6 +73,17 @@ function callLineHtml(line = {}) {
       <b>${speaker}</b>
       <p>${escapeHtml(text)}</p>
     </div>
+  `;
+}
+
+function sceneEvidenceCardHtml(card = null) {
+  if (!card) return "";
+  return `
+    <aside class="scene-evidence-card" aria-label="随麦材料">
+      <span>${escapeHtml(card.type ?? "材料")}</span>
+      <b>${escapeHtml(card.title ?? "")}</b>
+      <p>${escapeHtml(card.front ?? "")}</p>
+    </aside>
   `;
 }
 

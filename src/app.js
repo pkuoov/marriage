@@ -264,6 +264,7 @@ function renderSceneReview(brief) {
     hasDeepFollowup: hasDeepFollowup(brief)
   });
   const { index, scene, done, lastStage, nextStage, nextLabel } = review;
+  const sceneForView = sceneWithShownCard(brief, scene);
   const pick = selectedScenePickForState(state, brief, index);
   const dialoguePicks = askedDialoguePicksForState(state, brief, index);
   frame({
@@ -274,8 +275,8 @@ function renderSceneReview(brief) {
     text: sceneReviewHtml({
       index,
       done,
-      completedExchangeHtml: done ? completedSceneExchangeHtml(completedSceneExchangeForState(state, brief, scene, index, pick)) : "",
-      activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene, dialoguePicks }),
+      completedExchangeHtml: done ? completedSceneExchangeHtml(completedSceneExchangeForState(state, brief, sceneForView, index, pick)) : "",
+      activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene: sceneForView, dialoguePicks }),
       reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief, { excludeIndex: index }))
     }),
     choices: done
@@ -286,6 +287,12 @@ function renderSceneReview(brief) {
   bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
   bind("[data-next-scene-stage]", () => setIndex(brief, "sceneReview", index + 1));
   bindSceneButtons();
+}
+
+function sceneWithShownCard(brief = {}, scene = {}) {
+  if (!scene?.showsCard) return scene;
+  const shownCard = (brief.evidenceCards ?? []).find((card) => card.id === scene.showsCard);
+  return shownCard ? { ...scene, shownCard } : scene;
 }
 
 function renderEvidenceCheck(brief) {

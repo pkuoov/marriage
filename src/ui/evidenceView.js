@@ -62,6 +62,13 @@ export function evidenceMaterialLines(material = "") {
   return lines.length ? lines : [String(material ?? "")].filter(Boolean);
 }
 
+export function evidenceMaterialRows(check = {}) {
+  const rows = Array.isArray(check.materialRows) && check.materialRows.length
+    ? check.materialRows
+    : evidenceMaterialLines(check.material ?? "");
+  return rows.map((row) => String(row ?? "").trim()).filter(Boolean);
+}
+
 export function evidencePickFeedbackHtml(pick = {}) {
   return `
     <section class="evidence-result-card ${pick.correct ? "hit" : "miss"}">
@@ -83,6 +90,7 @@ export function evidenceCheckScreenHtml({
   return `
     <p><b>${escapeHtml(check.title ?? "材料检视")}</b></p>
     ${evidenceOperationHtml(check, pick, index)}
+    ${evidenceMaterialNoteHtml(check)}
     <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>
     ${pick ? evidencePickFeedbackHtml(pick) : ""}
     ${reviewHtml}
@@ -99,6 +107,7 @@ export function investigationBackflowScreenHtml({
     <p><b>${escapeHtml(hook.surface ?? "后台进来一条私信")}</b></p>
     <p>${escapeHtml(hook.appearsNowBecause ?? "收麦后，有人补了一张图。")}</p>
     ${evidenceOperationHtml(hook, pick, index)}
+    ${evidenceMaterialNoteHtml(hook)}
     <p>${escapeHtml(hook.prompt ?? "这条回流里，哪一句最该圈出来？")}</p>
     ${pick ? evidencePickFeedbackHtml(pick) : ""}
     ${reviewHtml}
@@ -106,7 +115,7 @@ export function investigationBackflowScreenHtml({
 }
 
 function evidenceMaterialBodyHtml(check = {}, kind = "file") {
-  const lines = evidenceMaterialLines(check.material ?? "");
+  const lines = evidenceMaterialRows(check);
   if (kind === "bill") {
     return `<div class="evidence-ledger">${lines.map((line, index) => `
       <span class="evidence-ledger-row"><i>${String(index + 1).padStart(2, "0")}</i><b>${escapeHtml(line)}</b></span>
@@ -127,11 +136,16 @@ function evidenceMaterialBodyHtml(check = {}, kind = "file") {
       <span><i>${index + 1}</i><b>${escapeHtml(line)}</b></span>
     `).join("")}</div>`;
   }
-  return `<div class="evidence-document-lines">${evidenceMaterialLinesHtml(check.material ?? "")}</div>`;
+  return `<div class="evidence-document-lines">${evidenceMaterialRowsHtml(check)}</div>`;
 }
 
-function evidenceMaterialLinesHtml(material = "") {
-  return evidenceMaterialLines(material).map((line) => `<span>${escapeHtml(line)}</span>`).join("");
+function evidenceMaterialRowsHtml(check = {}) {
+  return evidenceMaterialRows(check).map((line) => `<span>${escapeHtml(line)}</span>`).join("");
+}
+
+function evidenceMaterialNoteHtml(check = {}) {
+  if (!Array.isArray(check.materialRows) || !check.materialRows.length || !check.material) return "";
+  return `<p class="evidence-material-note">${escapeHtml(check.material)}</p>`;
 }
 
 function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick = null) {
