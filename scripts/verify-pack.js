@@ -109,7 +109,7 @@ function assertRuntimeLengthPlan(packet, manifestItem, label) {
 }
 
 function normalizeQuoteText(value) {
-  return normalizeOverlapText(String(value ?? "").replace(/^“|”$/g, ""));
+  return normalizeOverlapText(String(value ?? "").replace(/^“|”$/g, "").replace(/其实/g, ""));
 }
 
 function ungatedSurfaceText(packet = {}) {

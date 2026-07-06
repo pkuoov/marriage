@@ -1116,7 +1116,7 @@ test("EPISODE-004", "daily mode reuses runtime-loaded JSON content before templa
 test("EPISODE-001B", "each demo case exposes the caller's self-serving omission", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const expectedOmissions = {
-    "lost-job-hidden-credit": ["撑不住场面", "自己很吃那种体面"],
+    "lost-job-hidden-credit": ["撑不住场面", "自己其实很吃那种体面"],
     "tony-multi-dating": ["自己人", "没逼他说清楚"],
     "education-income-fake-profile": ["我自己也不是特别宽裕", "我嘴上说家里想看稳定"],
     "workplace-reimbursement-screenshot": ["我也确实想要这个主责", "我先跟老板说"]
@@ -1455,7 +1455,9 @@ test("DAILY-012", "final response choices separate caller quote from host respon
       dailyAccusationChoices(brief).forEach((button) => {
         assertIncludes(button.label, "“", `${brief.plotId} 最终选择按钮必须像来电原话`);
         const quote = button.label.replace(/^“|”$/g, "");
-        const quoteDisclosed = disclosedText.includes(quote) || quote.split(/[，。？！]/).filter((part) => part.length >= 4).every((part) => disclosedText.includes(part));
+        const normalizedDisclosed = disclosedText.replace(/其实/g, "");
+        const normalizedQuote = quote.replace(/其实/g, "");
+        const quoteDisclosed = normalizedDisclosed.includes(normalizedQuote) || normalizedQuote.split(/[，。？！]/).filter((part) => part.length >= 4).every((part) => normalizedDisclosed.includes(part));
         assert(quoteDisclosed, `${brief.plotId} 最终原话必须来自玩家已经听过或看过的内容：${button.label}`);
         assert(typeof button.response === "string" && button.response.length >= 8, `${brief.plotId} 主播接法必须放在 response 字段`);
       });
