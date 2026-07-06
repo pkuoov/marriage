@@ -174,6 +174,10 @@
         {
           "question": "礼物都送了些什么？",
           "answer": "香水、一条项链。项链那次他发了朋友圈，配文“她值得”。我朋友都点赞了。"
+        },
+        {
+          "question": "那笔短视频平台的分期是怎么回事？",
+          "answer": "……他手机上弄的，我真没细看。先说大头吧，餐厅和酒店那几笔。"
         }
       ],
       "questionOptions": [
@@ -184,13 +188,6 @@
           "correct": true,
           "routeAxis": "money-flow",
           "routeTone": "pressure-point"
-        },
-        {
-          "question": "短视频平台分期这一项，是不是也不对劲？",
-          "answer": "我当时也觉得怪。但它写得很含糊，我没往自己身上想。反正那会儿我先盯着餐厅和酒店。",
-          "correct": false,
-          "routeAxis": "document-edge",
-          "routeTone": "trust-but-verify"
         },
         {
           "question": "有没有可能这些消费是他在硬撑？",
@@ -465,8 +462,8 @@
       "title": "朋友圈补图",
       "triggerContradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。",
       "appearsNowBecause": "收麦后，咨询者的朋友补了一张当晚朋友圈截图。",
-      "prompt": "这张补图里，哪一处最该留下？",
-      "material": "朋友圈照片发在纪念日晚餐那晚，定位是她常去的那家店，配文写“终于有人把日子过得体面一点”。朋友多嘴补了一句：你那阵子天天发探店视频，灯和稳定器还是他分期给你置的吧。",
+      "prompt": "这张补图里，最该圈的是哪一处？",
+      "material": "朋友圈照片发在纪念日晚餐那晚，定位是她常去的那家店，配文写“终于有人把日子过得体面一点”。发图的朋友补了句话：“她那阵子天天发探店视频，灯和稳定器还是那笔分期置的吧。”",
       "proves": "体面是两个人一起经营的，其中一笔的受益人是她。",
       "stillCannotProve": "不能证明她该替对方还这八万，也不能证明他失业前的旧债从哪来。",
       "routeAxis": "external-corroboration",
@@ -475,7 +472,7 @@
           "label": "探店视频和那套分期设备",
           "correct": true,
           "contradiction": "分期设备和推广的受益账号是咨询者自己的号，“他带我消费”的说法被她自己的视频拆了半边。",
-          "feedback": "这条不替他还账。但今晚的账单里，有一笔的受益人一直坐在麦前。",
+          "feedback": "这条不替他还账。可那笔一万二的分期，东西收在她那儿，号也是她的号。",
           "routeAxis": "external-corroboration"
         },
         {
