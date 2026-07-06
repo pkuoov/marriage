@@ -1768,6 +1768,7 @@ test("RUNTIME-005", "recap model stays pure and reusable outside app rendering",
 test("RUNTIME-006", "scene advance helpers stay pure outside app state", () => {
   const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const done = new Set(["version:0", "version:1", "evidenceCheck:0"]);
+  (brief.evidenceChecks ?? []).forEach((_, index) => done.add(`evidenceCheck:${index}`));
   const actionDone = (key) => done.has(key);
   const notReady = accusationReadinessForCase(brief, actionDone);
   assertEqual(notReady.ready, false, "未问完场景时不能进入收麦");

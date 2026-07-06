@@ -128,8 +128,18 @@ async function runRoute(route) {
 }
 
 async function advanceToAccusation(page, route) {
-  for (let step = 0; step < 4; step += 1) {
+  for (let step = 0; step < 8; step += 1) {
     if (await page.locator("[data-accuse]").count()) return;
+    if (await page.locator("[data-evidence-check]").count()) {
+      const materialButtons = page.locator("[data-evidence-check]");
+      const materialIndex = route.materialMode === "miss" ? 1 : 0;
+      await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
+      continue;
+    }
+    if (await page.locator("[data-next-evidence-check]").count()) {
+      await activate(page, route, "[data-next-evidence-check]");
+      continue;
+    }
     const next = page.locator("button[data-scene]").first();
     if (!await next.count()) break;
     await activate(page, route, "button[data-scene]");
