@@ -10,6 +10,7 @@ export const RUNTIME_CASE_CONTENT_FIELDS = [
   "storyArcSummary",
   "storySuspense",
   "storyClueObject",
+  "callMedium",
   "taskProfile",
   "routeAxisComments",
   "truthBoundary",

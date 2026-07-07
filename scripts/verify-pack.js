@@ -59,6 +59,10 @@ function assertOneCorrect(options, message) {
   assertEqual((options ?? []).filter((option) => option.correct === true).length, 1, message);
 }
 
+function assertAtLeastOneCorrect(options, message) {
+  assert((options ?? []).some((option) => option.correct === true), message);
+}
+
 function assertEvidenceOperation(operation, label) {
   assertNonEmptyString(operation.id, `${label} 缺少 id`);
   assertNonEmptyString(operation.title, `${label} 缺少 title`);
@@ -189,6 +193,11 @@ function assertHostDisclosure(packet = {}, label = "") {
     return;
   }
   assert(["afterBackflow", "beforeDeepFollowup", "atStageJudgement"].includes(anchor), `${label} hostDisclosure anchor 不合法`);
+}
+
+function assertCallMedium(packet = {}, label = "") {
+  const medium = packet.callMedium ?? "voice";
+  assert(["voice", "video"].includes(medium), `${label} callMedium 必须是 voice 或 video`);
 }
 
 function collectTextLength(value) {
@@ -372,7 +381,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
           });
         }
         assertArrayMin(scene.questionOptions, 2, `${casePacket.caseId} sceneVersions[${sceneIndex}] 至少需要两个追问选项`);
-        assertOneCorrect(scene.questionOptions, `${casePacket.caseId} sceneVersions[${sceneIndex}] 必须且只能有一个核心追问`);
+        assertAtLeastOneCorrect(scene.questionOptions, `${casePacket.caseId} sceneVersions[${sceneIndex}] 至少需要一个核心追问`);
         scene.questionOptions.forEach((option, optionIndex) => {
           assertNonEmptyString(option.question, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 question`);
           assertNonEmptyString(option.answer, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 answer`);
@@ -426,6 +435,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       }
       assertCrossCaseEchoes(casePacket, caseOrder, casePacket.caseId);
       assertHostDisclosure(casePacket, casePacket.caseId);
+      assertCallMedium(casePacket, casePacket.caseId);
 
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);

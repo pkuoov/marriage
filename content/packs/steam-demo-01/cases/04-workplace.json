@@ -5,6 +5,7 @@
   "dramaticAnchor": "报销审批截图、活动群聊和供应商报价单",
   "whyTonight": "季度复盘会下周一开，主责署名即将写死，垫的钱还没回来。",
   "objectPurpose": "审批截图被用来证明钱马上会回来，但付款状态、收款账户和返款入口都没露出来。",
+  "callMedium": "voice",
   "callerStake": "咨询者想拿主责和表现，也想把垫款风险推回同事。",
   "otherStake": "对方需要借审批截图安抚垫款人，同时继续控制供应商和财务入口。",
   "thirdPressure": "老板临时指派、项目署名、供应商催款和财务流程。",
@@ -194,6 +195,7 @@
       "doubt": "审批通过看着像结束了，后面还差付款那一步。",
       "contradiction": "报销截图只显示审批通过，没有付款流水和收款账户。",
       "reliability": "partial",
+      "showsCard": "daily-work-repay-approval",
       "casualQuestions": [
         {
           "question": "垫的钱是多少？",
@@ -322,8 +324,8 @@
       "id": "daily-work-repay-approval",
       "type": "报销截图",
       "title": "审批通过页",
-      "front": "截图只露出“审批通过”，没有付款状态和收款账户。",
-      "detail": "审批通过不等于钱已到账。",
+      "front": "抬头写着“报销审批通过”，下方是审批流转记录。",
+      "detail": "这张图只显示审批流转已经走到通过。",
       "targets": [
         "truthWithGap"
       ],

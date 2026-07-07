@@ -165,6 +165,7 @@ export const CONTENT_CASES = {
       "storyArcSummary": "账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
       "storySuspense": "这案一不小心就吵成“你嫌我穷”。账单日期比委屈更诚实。",
       "storyClueObject": "信用卡账单与社保断缴截图",
+      "callMedium": "voice",
       "taskProfile": {
         "id": "audit",
         "label": "钱款说不清",
@@ -721,6 +722,7 @@ export const CONTENT_CASES = {
       "storyArcSummary": "看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
       "storySuspense": "他会聊天不稀奇，稀奇的是每句亲近后面都接了店里的事。",
       "storyClueObject": "理发店排班表与办卡记录",
+      "callMedium": "voice",
       "taskProfile": {
         "id": "emotion",
         "label": "情绪卡住了",
@@ -748,12 +750,14 @@ export const CONTENT_CASES = {
       "truthBoundary": {
         "true": [
           "对方对多名顾客使用相似亲密称呼",
+          "他的深夜语音背景里一直有店内做头发的声音",
           "亲密话术后面接着办卡、带客或投店请求",
           "排班表能显示他把同样窗口留给多人",
           "理发行业确实有店家统一教的话术和维护表"
         ],
         "edited": [
           "咨询者把自己说成被动受害，却没有逼他说清楚关系",
+          "“下班陪你聊天”是店里接客的间隙",
           "对方把销售话术说成性格会聊",
           "咨询者把免费剪发、插号和顺手带客说成纯粹心软帮忙"
         ],
@@ -850,7 +854,7 @@ export const CONTENT_CASES = {
         {
           "speakerId": "he",
           "speaker": "咨询者",
-          "version": "后来我翻聊天，发现一个节奏特别明显。他先说“店里压力大”“今晚又被店长说了”，还说这些只跟我讲。我跟朋友复述的时候都说：“他说我像店里自己人。”我一心软，他就接让我帮忙发活动、带朋友去剪头，或者问我下次要不要直接办年卡。",
+          "version": "后来我翻聊天，发现一个节奏特别明显。他先说“店里压力大”“今晚又被店长说了”，还说这些只跟我讲。我跟朋友提起他，都是这么说的：“他说我像店里自己人。”我一心软，他就接让我帮忙发活动、带朋友去剪头，或者问我下次要不要直接办年卡。我放一条他那阵子的语音你们听听——就这条。……听到了吧，背景里吹风机一直响。他说的下班陪我，是他手上正做着别人的头。",
           "doubt": "情绪求助后面开始接店里的经营目标。",
           "contradiction": "TA 把亲密聊天接到办卡、带客和朋友圈推广上。",
           "reliability": "partial",
@@ -883,7 +887,7 @@ export const CONTENT_CASES = {
             }
           ],
           "pressureHint": {
-            "intentHook": "甜话后面接要求",
+            "intentHook": "背景音里是不是有吹风机",
             "callerGuard": "guarded",
             "expression": {
               "kind": "shift",
@@ -898,6 +902,7 @@ export const CONTENT_CASES = {
           "doubt": "那张表不像普通客户备注，更像在写每个人能带来什么。",
           "contradiction": "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
           "reliability": "partial",
+          "showsCard": "daily-tony-roster",
           "casualQuestions": [
             {
               "question": "那张表你存下来了吗？",
@@ -1200,6 +1205,7 @@ export const CONTENT_CASES = {
       "storyArcSummary": "材料会越要越细，男方有话没说全，女方也有话没跟家里说。",
       "storySuspense": "几张图都挺像真的，问题是它们刚好少了最容易吵起来的部分。",
       "storyClueObject": "几张资料截图和一张存款证明",
+      "callMedium": "voice",
       "taskProfile": {
         "id": "verification",
         "label": "资料有雾",
@@ -1228,11 +1234,13 @@ export const CONTENT_CASES = {
         "true": [
           "MBA 经历可能是真的",
           "存款证明本身不能证明长期收入",
+          "存款证明没人要求，是他当天开好主动发来的",
           "资料里的学历和正式学历不是同一个口径",
           "他吃饭算团购、停车问 AA，节俭是真的"
         ],
         "edited": [
           "对方把 MBA 包装成更好听的学历标签",
+          "对方用抢答式的“周到”把材料包装成稳定人设",
           "咨询者把收入诉求说成只是家里想看稳定",
           "流水这一问被她挂在“我妈想看”名下"
         ],
@@ -1295,6 +1303,7 @@ export const CONTENT_CASES = {
           "doubt": "见面前问到流水，这个尺度已经不太像普通寒暄。",
           "contradiction": "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。",
           "reliability": "mixed",
+          "showsCard": "daily-profile-deposit",
           "casualQuestions": [
             {
               "question": "你们相亲见了几次？",
@@ -1321,6 +1330,14 @@ export const CONTENT_CASES = {
               "correct": false,
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
+            },
+            {
+              "question": "存款证明是家里要求的，还是他自己发的？",
+              "answer": "没人提存款。学校收入的图发完，隔了半天，他又补了张当日的存款证明。我那会儿还觉得他周到，现在想，那份周到我说不清哪里怪。",
+              "contradiction": "没人索要，TA 先开好当日存款证明补位。",
+              "correct": true,
+              "routeAxis": "document-edge",
+              "routeTone": "trust-but-verify"
             }
           ],
           "pressureHint": {
@@ -1526,6 +1543,18 @@ export const CONTENT_CASES = {
       ],
       "evidenceCards": [
         {
+          "id": "daily-profile-deposit",
+          "type": "存款证明",
+          "title": "当日存款证明",
+          "front": "当日开具的存款证明，余额 28.6 万。",
+          "detail": "这张图只证明那一天账上有这笔余额。",
+          "targets": [
+            "truthWithGap",
+            "sceneHint"
+          ],
+          "contradiction": "没人索要，TA 先开好当日存款证明补位。"
+        },
+        {
           "id": "daily-profile-scale",
           "type": "聊天原话",
           "title": "见面前的问题",
@@ -1692,7 +1721,7 @@ export const CONTENT_CASES = {
         "answer": "我自己也不是特别宽裕，所以我才更在意他收入到底落不落地。我嘴上说家里想看稳定，我也想知道以后这笔钱是不是能进小家。",
         "note": "问到这里，资料真假还在桌上，她自己最在意的钱也上桌了。"
       },
-      "stageJudgement": "别只盯他的图。学历口径是他挑的，流水那一问是谁先开的口，今晚也上桌了；两边都在给对方递体面，也都在给自己留退路。",
+      "stageJudgement": "别只盯他的图。学历是细问才挤出来的，存款证明是没人问就递来的——一个藏，一个抢答。流水那一问是谁先开的口，今晚也上桌了；两边都在给对方递体面，也都在给自己留退路。",
       "storyInterludeRecap": "资料图是真的，没放出来的那几栏也是真的。",
       "conclusionWhenCleared": {
         "summary": "照她一开始的说法，问题像是男方资料不干净：MBA 被说成名校毕业，收入和花销也对不上。可一路问下来，她最放不下的是收入到底有多少、以后钱怎么管。MBA 的事她不是完全没感觉，只是借着见父母这次一起问了。",
@@ -1717,7 +1746,7 @@ export const CONTENT_CASES = {
       "dailyShareTitle": "存款证明都发了，怎么反而更怪？",
       "dailyShareBody": "今晚最该吵的是：他不是全假，她也不只是求安心，流水后面已经碰到工资怎么管。",
       "dailyShareQuestion": "你听完会觉得是包装，是筛选，还是两边都在试探婚后的钱？",
-      "truth": "两条账分开算。他的：“名校毕业”四个字留足想象空间，收入只肯给单月截图，流水一问就往后缩。图都是真的，口径全是挑过的。她的：流水是她先提的，回头跟家里只说“学校那边是真的”，两头各留了半句好听的。还有一条要说公平：他吃饭算团购、停车问 AA，“会过日子”这半句是真的，真的和虚的得分开记。定不了的：他的收入到底稳不稳，条件摊开之后这两个人还走不走得下去。"
+      "truth": "两条账分开算。他的：“名校毕业”四个字留足想象空间，没人问存款他先把当日证明开好了，收入却只肯给单月截图——图都是真的，口径全是挑过的：肯抢答的抢答，怕追问的往后缩。她的：流水是她先提的，回头跟家里只说“学校那边是真的”，两头各留了半句好听的。还有一条要说公平：他吃饭算团购、停车问 AA，“会过日子”这半句是真的，真的和虚的得分开记。定不了的：他的收入到底稳不稳，条件摊开之后这两个人还走不走得下去。"
     },
     "04-workplace": {
       "caseId": "04-workplace",
@@ -1729,6 +1758,7 @@ export const CONTENT_CASES = {
       "storyArcSummary": "先问三件事：谁让垫、谁拿署名、截图到底停在哪一步。",
       "storySuspense": "这案很容易骂成同事骗钱。审批通过和钱到账不是一回事。",
       "storyClueObject": "报销审批截图、活动群聊和供应商报价单",
+      "callMedium": "voice",
       "taskProfile": {
         "id": "audit",
         "label": "款项卡住了",
@@ -1906,6 +1936,7 @@ export const CONTENT_CASES = {
           "doubt": "审批通过看着像结束了，后面还差付款那一步。",
           "contradiction": "报销截图只显示审批通过，没有付款流水和收款账户。",
           "reliability": "partial",
+          "showsCard": "daily-work-repay-approval",
           "casualQuestions": [
             {
               "question": "垫的钱是多少？",
@@ -2034,8 +2065,8 @@ export const CONTENT_CASES = {
           "id": "daily-work-repay-approval",
           "type": "报销截图",
           "title": "审批通过页",
-          "front": "截图只露出“审批通过”，没有付款状态和收款账户。",
-          "detail": "审批通过不等于钱已到账。",
+          "front": "抬头写着“报销审批通过”，下方是审批流转记录。",
+          "detail": "这张图只显示审批流转已经走到通过。",
           "targets": [
             "truthWithGap"
           ],

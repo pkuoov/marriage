@@ -1044,7 +1044,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
       const normal = (scene.questionOptions ?? []).filter((option) => !option.contradiction);
       const critical = (scene.questionOptions ?? []).filter((option) => option.contradiction);
       assert(normal.length >= 1, `第 ${index + 1} 案第 ${sceneIndex + 1} 段必须有可岔开的问法`);
-      assertEqual(critical.length, 1, `第 ${index + 1} 案第 ${sceneIndex + 1} 段必须只有一个盯住的问法`);
+      assert(critical.length >= 1 && critical.length <= 2, `第 ${index + 1} 案第 ${sceneIndex + 1} 段必须有 1-2 个盯住的问法`);
     });
     assertEqual(dailyAccusationChoices(brief).length, 4, `第 ${index + 1} 案最终必须给四句原话`);
   });
@@ -1417,12 +1417,12 @@ test("RUNTIME-COPY-001", "runtime generated copy avoids AI and empty-atmosphere 
   });
 });
 
-test("DAILY-010", "daily scenes expose one core issue question per beat", () => {
+test("DAILY-010", "daily scenes expose bounded core issue questions per beat", () => {
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
       (brief.sceneVersions ?? []).forEach((scene, sceneIndex) => {
         const issueQuestions = (scene.questionOptions ?? []).filter((option) => option.contradiction);
-        assertEqual(issueQuestions.length, 1, `${brief.plotId} 第 ${sceneIndex + 1} 段只能有一个核心问题追问`);
+        assert(issueQuestions.length >= 1 && issueQuestions.length <= 2, `${brief.plotId} 第 ${sceneIndex + 1} 段只能有 1-2 个核心问题追问`);
       });
     });
 });
