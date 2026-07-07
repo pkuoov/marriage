@@ -136,7 +136,7 @@ function validateFlow(flow) {
   check(hasGrayZoneMotivation(allText), "GRAY_ZONE_MOTIVE", "精选集单案必须有灰区动机或不明确推手，例如父母、面子、转述、平台、朋友或双方压力。");
   check(hasPurposeSignal(allText), "MOTIVE_CHAIN", "隐藏/裁切/改口必须有目的：推进、过关、借钱、见父母、面子、资源、署名、流程或退路。");
   check(hasRiskIfExposed(allText), "RISK_IF_EXPOSED", "必须能看出完整说清后会失去什么或被谁追问。");
-  check(flow.scenes.length >= 5 && flow.scenes.length <= 6, "SCENE_COUNT", "精选集单案 sceneReview 应为 5-6 段，才能支撑至少二十分钟的直播连线。");
+  check(flow.scenes.length >= 5 && flow.scenes.length <= 7, "SCENE_COUNT", "精选集单案 sceneReview 应为 5-7 段，才能支撑至少二十分钟的直播连线。");
   flow.scenes.forEach((scene) => {
     check(Boolean(scene.text && scene.contradiction), "SCENE_HAS_GAP", `${scene.id} 必须同时有叙述和矛盾。`);
     check(scene.options.length >= 2 && scene.options.length <= 3, "CHOICE_COUNT", `${scene.id} 选项应为 2-3 个。`);

@@ -11,7 +11,7 @@ import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialogu
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, recordPatienceLostState, retryPatienceLostState, sceneReviewModel } from "./runtime/sceneAdvance.js?v=0.20.76";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.76";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "./runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
@@ -22,7 +22,7 @@ import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.82";
-import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "./ui/sceneReviewView.js?v=0.20.68";
+import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.20.68";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
@@ -99,6 +99,7 @@ function normalizeDailyState(saved) {
     sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
     evidenceCheckPicks: saved?.evidenceCheckPicks ?? {},
     investigationPicks: saved?.investigationPicks ?? {},
+    stanceSnapshots: saved?.stanceSnapshots ?? {},
     truthBoundaryPicks: saved?.truthBoundaryPicks ?? {},
     truthBoundaryMisses: saved?.truthBoundaryMisses ?? {},
     materialPityLog: saved?.materialPityLog ?? {},
@@ -220,6 +221,8 @@ function renderTitle() {
 function renderDailyCase() {
   const brief = activeCaseBrief();
   if (state.scene === "sceneReview") return renderSceneReview(brief);
+  if (state.scene === "stanceSnapshot") return renderStanceSnapshot(brief);
+  if (state.scene === "afterSceneEvidence") return renderAfterSceneEvidence(brief);
   if (state.scene === "evidenceCheck") return renderEvidenceCheck(brief);
   if (state.scene === "investigationBackflow") return renderInvestigationBackflow(brief);
   if (state.scene === "deepFollowup") return renderDeepFollowup(brief);
@@ -294,10 +297,73 @@ function renderSceneReview(brief) {
   bindSceneButtons();
 }
 
+function renderStanceSnapshot(brief) {
+  const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  const snapshot = stanceSnapshotForScene(brief, sceneIndex, (key) => actionDone(brief, key));
+  if (!snapshot) {
+    state.scene = "sceneReview";
+    saveState();
+    return renderSceneReview(brief);
+  }
+  const pick = stanceSnapshotPickForState(brief);
+  frame({
+    brief,
+    mood: "thinking",
+    label: "立场快照",
+    chapter: liveChapterTitle(brief),
+    text: `
+      ${choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))}
+      ${stanceSnapshotHtml(snapshot, pick)}
+    `,
+    choices: pick
+      ? flowGroupHtml(`<button class="primary" data-after-stance-snapshot type="button">${escapeHtml(snapshot.continueLabel ?? "继续听")}</button>`)
+      : ""
+  });
+  document.querySelectorAll("[data-stance-snapshot]").forEach((button) => {
+    button.addEventListener("click", () => recordStanceSnapshot(brief, snapshot, Number(button.dataset.stanceSnapshot ?? 0)));
+  });
+  bind("[data-after-stance-snapshot]", () => {
+    state.scene = "sceneReview";
+    saveState();
+    render();
+  });
+  bindSceneButtons();
+}
+
 function sceneWithShownCard(brief = {}, scene = {}) {
   if (!scene?.showsCard) return scene;
   const shownCard = (brief.evidenceCards ?? []).find((card) => card.id === scene.showsCard);
   return shownCard ? { ...scene, shownCard } : scene;
+}
+
+function renderAfterSceneEvidence(brief) {
+  const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  const afterScene = afterSceneEvidenceFor(brief, sceneIndex, (key) => actionDone(brief, key));
+  if (!afterScene?.check) {
+    state.scene = "sceneReview";
+    saveState();
+    return renderSceneReview(brief);
+  }
+  const { check, checkIndex } = afterScene;
+  const pick = selectedEvidencePickForState(state, brief, checkIndex);
+  frame({
+    brief,
+    mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
+    label: afterScene.label ?? "看材料",
+    chapter: liveChapterTitle(brief),
+    text: evidenceCheckScreenHtml({
+      check,
+      pick,
+      index: checkIndex,
+      reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
+    }),
+    choices: pick
+      ? flowGroupHtml(`<button class="primary" data-after-scene-evidence type="button">${escapeHtml(afterScene.continueLabel ?? "继续听")}</button>`)
+      : ""
+  });
+  bindEvidenceCheckButtons(brief, check, { afterSceneIndex: sceneIndex });
+  bind("[data-after-scene-evidence]", () => continueAfterSceneEvidence(brief, sceneIndex));
+  bindSceneButtons();
 }
 
 function renderEvidenceCheck(brief) {
@@ -481,6 +547,7 @@ function renderSolved(brief) {
     pressure,
     quoteComparison,
     conclusion,
+    stanceSnapshot: stanceSnapshotRecapForBrief(brief),
     offMicLetters: offMicLettersForBrief(brief, CONTENT_ADVISORS),
     boundary,
     boundaryPicks,
@@ -559,13 +626,29 @@ function offMicLettersForBrief(brief = {}, advisors = {}) {
       text: note.text ?? ""
     };
   });
-  const respondent = brief.respondentNote ? [{
+  const respondentNotes = Array.isArray(brief.respondentNote)
+    ? brief.respondentNote
+    : brief.respondentNote
+      ? [brief.respondentNote]
+      : [];
+  const respondent = respondentNotes.map((note) => ({
     kind: "respondent",
-    badge: "对方留言",
-    appearsNowBecause: brief.respondentNote.appearsNowBecause ?? "",
-    text: brief.respondentNote.text ?? ""
-  }] : [];
+    badge: note.badge ?? "对方留言",
+    appearsNowBecause: note.appearsNowBecause ?? "",
+    text: note.text ?? ""
+  }));
   return [...advisorRows, ...respondent].filter((letter) => letter.text);
+}
+
+function stanceSnapshotRecapForBrief(brief = {}) {
+  const pick = stanceSnapshotPickForState(brief);
+  if (!pick) return null;
+  const configured = (brief.stanceSnapshot?.options ?? []).find((option) => option.id === pick.id) ?? null;
+  return {
+    kicker: brief.stanceSnapshot?.recapKicker ?? "中段立场",
+    label: pick.label,
+    recap: configured?.recap ?? pick.recap ?? brief.stanceSnapshot?.recap ?? "这次判断不判分，只用来回看你的路线。"
+  };
 }
 
 function hostDisclosureForAnchor(brief = {}, anchor = "") {
@@ -1006,7 +1089,7 @@ function sceneChoiceContext(sceneIndex) {
   };
 }
 
-function bindEvidenceCheckButtons(brief, check = {}) {
+function bindEvidenceCheckButtons(brief, check = {}, context = {}) {
   document.querySelectorAll("[data-evidence-check]").forEach((button) => {
     button.addEventListener("click", () => {
       const [checkIndex, optionIndex] = button.dataset.evidenceCheck.split(":").map(Number);
@@ -1027,9 +1110,12 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       if (outcome.correct) state.lastScreenEffect = "material-hit";
       state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
       if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
-        area: "evidenceCheck",
+        area: Number.isInteger(context.afterSceneIndex) ? "afterSceneEvidence" : "evidenceCheck",
         index: checkIndex,
-        actionKeys: [`evidenceCheck:${checkIndex}:${optionIndex}`, `evidenceCheck:${checkIndex}`],
+        actionKeys: [
+          `evidenceCheck:${checkIndex}:${optionIndex}`,
+          `evidenceCheck:${checkIndex}`,
+        ],
         answerKey: evidenceAnswerKey(brief, checkIndex),
         routeIndex: keyQuestionLimit(brief) + checkIndex,
         spent: true,
@@ -1039,6 +1125,46 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       render();
     });
   });
+}
+
+function recordStanceSnapshot(brief, snapshot = {}, optionIndex = 0) {
+  const option = snapshot.options?.[optionIndex] ?? snapshot.options?.[0] ?? null;
+  if (!option) return;
+  const key = caseKey(brief);
+  state.stanceSnapshots = {
+    ...(state.stanceSnapshots ?? {}),
+    [key]: {
+      sceneIndex: snapshot.sceneIndex,
+      optionIndex,
+      id: option.id ?? String(optionIndex),
+      label: option.label ?? "",
+      summary: option.summary ?? "",
+      feedback: option.feedback ?? "",
+      recap: option.recap ?? snapshot.recap ?? "",
+      at: Date.now()
+    }
+  };
+  markAction(brief, `stanceSnapshot:${snapshot.sceneIndex}`);
+  state.lastReaction = snapshot.afterPickLine ?? "先记下，不判分。后面的材料会回看你这次站队。";
+  saveState();
+  render();
+}
+
+function stanceSnapshotPickForState(brief = {}) {
+  return state.stanceSnapshots?.[caseKey(brief)] ?? null;
+}
+
+function continueAfterSceneEvidence(brief, sceneIndex = 0) {
+  markAction(brief, `afterScene:${sceneIndex}`);
+  const nextSceneIndex = Number(sceneIndex ?? 0) + 1;
+  if (nextSceneIndex < (brief.sceneVersions?.length ?? 0)) {
+    setIndexValue(brief, "sceneReview", nextSceneIndex);
+    state.scene = "sceneReview";
+  } else {
+    state.scene = sceneAfterEvidenceFor(brief);
+  }
+  saveState();
+  render();
 }
 
 function evidencePickWithRevision(brief, pick = {}) {
@@ -1319,6 +1445,7 @@ function resetCaseAttempt(brief) {
   state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
   state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
   state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);
+  state.stanceSnapshots = omitRecordKey(state.stanceSnapshots, key);
   state.truthBoundaryPicks = omitRecordKey(state.truthBoundaryPicks, key);
   state.truthBoundaryMisses = omitRecordKey(state.truthBoundaryMisses, key);
   state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
@@ -1421,6 +1548,7 @@ function recordRouteChoice(brief, sceneIndex, option = {}, scene = {}) {
 }
 
 function sceneAfterEvidenceFor(brief) {
+  if (pendingEvidenceChecksFor(brief, (actionKey) => actionDone(brief, actionKey)).length) return "evidenceCheck";
   return nextSceneAfterEvidence({ issueBadge: issueCompletion(brief).badge, hasDeepFollowup: hasDeepFollowup(brief) });
 }
 

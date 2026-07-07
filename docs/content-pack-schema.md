@@ -76,11 +76,25 @@ content/packs/<pack-id>/
 - `routeAxisComments`：按玩家最近一次路线轴显示的直播弹幕短句池，只用于现场表演反馈，不写成过关提示。至少覆盖本案主要路线轴。
 - `questionOptions`：每段至少两个 host 问法；每项包含 `question`、`answer`、`routeAxis`、`routeTone`。必须且只能有一个核心追问，核心追问用 `correct: true` 和 `contradiction` 标出。其他选项也要像主播会问的话，不能写成故意错选。
 - `evidenceChecks`：材料圈点，至少一个；每项包含 `id`、`title`、`prompt`、`material`、`options`。`options` 至少三个，必须且只能一个 `correct: true`，正确项要写 `contradiction`。职场/流程案可以用两份材料制造流程压力，例如先看审批图，再看供应商返款入口。
+- `sceneVersions[].afterScene`：可选的幕间材料板锚点。当前支持 `{ "kind": "evidenceCheck", "checkId": "" }`，`checkId` 必须指向本案 `evidenceChecks[].id`。它会在该句追问完成后立刻打开对应材料；材料仍按普通 `evidenceChecks` 记录、扣耐心和进入路线图。用于 pass 11 的“材料板中置”，不是新增第二套材料系统。
+- `stanceSnapshot`：可选的中段立场快照，形如 `{ "afterScene": 2, "prompt": "现在这通麦，你先站哪边？", "options": [{ "id": "", "label": "", "summary": "" }] }`。`afterScene` 是一基场景序号；`options` 至少三项，**不得写 `correct`**，记录不判分，只在回看中展示玩家当时的判断弧线。
 - `investigationHooks`：案后回流，至少一个；字段和材料圈点一致，并额外包含 `source`、`triggerContradiction`、`proves`、`stillCannotProve`。回流必须关联玩家已经听到的矛盾，不能凭空爆答案。
 - `deepFollowup`：全核心命中后自动出现的一问，包含 `question`、`answer`、`note`。它不是奖励提示，要像主播顺着已经听到的事实多问了一句。
 - `stageJudgement`、`storyInterludeRecap`、`followupTwist`、`truth`：收麦、案间和后续余味文案。
 - `dailyShareTitle`、`dailyShareBody`、`dailyShareQuestion`：单案分享卡文案。
 - `conclusionWhenCleared` / `conclusionBranches`：可选。用于把某案的特殊结论从代码迁到 JSON；分支条件写成已揭示矛盾或最终原话，不写 `plotId` 特判。
+- `advisorNotes` / `respondentNote`：麦外声音。`advisorNotes` 每案最多两条；`respondentNote` 兼容旧对象写法，也可写数组，扩容包每案最多两条。所有麦外声音只能进入材料、回流、留言、顾问单等合法表面，不能替玩家点圈点位置。
+
+### pass 11 扩容配额字段
+
+第 11 批起，单案扩容执行单应先写可验证蓝图，再写台词：
+
+- `runtimeLengthPlan.liveBeatCount` 必须等于实际 `sceneVersions.length`。
+- `runtimeLengthPlan.materialBoardCount` 必须等于实际 `evidenceChecks.length`，中置材料仍计入这里。
+- `runtimeLengthPlan.backflowCount` 必须等于实际 `investigationHooks.length`。
+- 新增现场拍优先落在 `sceneVersions`，并用 `afterScene` 把材料板插到幕间。
+- 有立场的麦外声音写入 `advisorNotes`、`respondentNote`、`investigationHooks` 或材料文本；新增具名声音需要同步角色圣经。
+- 中段误判用 `stanceSnapshot` 表达，必须由前文真证据喂出来，后续材料负责 revalue。
 
 ### 路线字段
 

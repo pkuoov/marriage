@@ -1032,7 +1032,10 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
     assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png(\?v=[\w.-]+)?$/.test(brief.callerArt), "故事包来电人立绘必须来自匿名 callers 资产目录");
     assert((brief.accusationChoices ?? []).length >= 3, `第 ${index + 1} 案最终收麦原话必须来自内容包`);
     assert(!/故事集|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+|体面|一家人|条件|主责/.test(`${brief.modeLabel} ${brief.storyArcTitle} ${brief.storyCaseLabel}`), "案内可见标题不能像目录或剧透标签");
-    assert(brief.sceneVersions.length >= 5 && brief.sceneVersions.length <= 6, `第 ${index + 1} 案必须是 5-6 段来电`);
+    assert(brief.sceneVersions.length >= 5 && brief.sceneVersions.length <= 7, `第 ${index + 1} 案必须是 5-7 段来电`);
+    if (brief.runtimeLengthPlan?.liveBeatCount !== undefined) {
+      assertEqual(brief.runtimeLengthPlan.liveBeatCount, brief.sceneVersions.length, `第 ${index + 1} 案 runtimeLengthPlan.liveBeatCount 必须等于实际段落数`);
+    }
     assert(brief.sceneVersions.every((scene) => (scene.questionOptions ?? []).length >= 2 && (scene.questionOptions ?? []).length <= 4), `第 ${index + 1} 案每段必须保留 2-4 个主播问法，兼顾随意提问和关键选择`);
     assert((brief.evidenceChecks ?? []).length >= 1, `第 ${index + 1} 案必须有材料检视节点，不能只有口述二选一`);
     (brief.evidenceChecks ?? []).forEach((check, checkIndex) => {
@@ -1311,12 +1314,21 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assertEqual(brief.premeditated, false, "三张截图不应强行写成预谋犯罪");
   assertIncludes(brief.openingDialogue.map((line) => line.text).join(" "), "见父母", "截图出现必须有关系阶段触发");
   assertIncludes(brief.openingDialogue.map((line) => line.text).join(" "), "名校毕业", "外层说法应先是名校毕业，不应一开始就摊开 MBA");
+  const sceneVersionsText = brief.sceneVersions.map((scene) => scene.version).join(" ");
+  const introducerScene = brief.sceneVersions.find((scene) => scene.version.includes("介绍人"));
+  const dinnerScene = brief.sceneVersions.find((scene) => scene.version.includes("第一次吃饭"));
+  const mbaScene = brief.sceneVersions.find((scene) => scene.version.includes("细问") && scene.version.includes("本科"));
+  const spendingScene = brief.sceneVersions.find((scene) => scene.version.includes("花销"));
+  const wageScene = brief.sceneVersions.find((scene) => scene.version.includes("工资"));
   assertIncludes(brief.sceneVersions[0].version, "见父母", "第一段必须指出见家长前问得过细本身不正常");
-  assertIncludes(brief.sceneVersions[1].version, "介绍人", "扩成长案后必须交代体面标签不是单人凭空出现");
-  assertIncludes(brief.sceneVersions[2].version, "细问", "MBA 必须是追问后才揭示出的具体说法");
-  assertIncludes(brief.sceneVersions[2].version, "本科", "男方资料必须明确 MBA 项目真实但本科学历有落差");
-  assertIncludes(brief.sceneVersions[3].version, "花销", "收入疑点必须来自日常观察而不只是截图缺边");
-  assertIncludes(brief.sceneVersions[4].version, "工资", "女方家关注流水必须连到婚后管钱预设");
+  assertIncludes(sceneVersionsText, "介绍人", "扩成长案后必须交代体面标签不是单人凭空出现");
+  assertIncludes(sceneVersionsText, "第一次吃饭", "扩成长案后必须还原第一次饭局现场");
+  assertIncludes(sceneVersionsText, "两边", "扩成长案后必须还原介绍链双面话术");
+  assert(introducerScene, "扩成长案后必须有介绍人参与的场景");
+  assert(dinnerScene, "扩成长案后必须有第一次饭局场景");
+  assert(mbaScene, "MBA 必须是追问后才揭示出的具体说法，并明确本科学历有落差");
+  assert(spendingScene, "收入疑点必须来自日常观察而不只是截图缺边");
+  assert(wageScene, "女方家关注流水必须连到婚后管钱预设");
   assertIncludes(JSON.stringify(brief), "工资卡", "追问流水必须触发额外隐藏信息");
   assertIncludes(brief.deepFollowup?.question, "你自己的家庭经济状况", "满格后必须能继续追问女方自己的经济位置");
   assertIncludes(brief.deepFollowup?.answer, "我自己也不是特别宽裕", "深入一问必须揭示女方收入诉求和自身经济压力");
@@ -1782,8 +1794,12 @@ test("RUNTIME-006", "scene advance helpers stay pure outside app state", () => {
   const firstReview = sceneReviewModel({ brief, index: 0, actionDone });
   assertEqual(firstReview.done, true, "对话段落完成状态必须由纯函数读取");
   assertEqual(firstReview.nextStage, "sceneReview", "非最后一段仍应停在继续对话流程");
+  const pendingDone = new Set(done);
+  pendingDone.delete("evidenceCheck:0");
+  const pendingReview = sceneReviewModel({ brief, index: (brief.sceneVersions ?? []).length - 1, actionDone: (key) => pendingDone.has(key), issueBadge: true, hasDeepFollowup: true });
+  assertEqual(pendingReview.nextStage, "evidenceCheck", "最后一段后若还有未处理材料，必须先看材料");
   const lastReview = sceneReviewModel({ brief, index: (brief.sceneVersions ?? []).length - 1, actionDone, issueBadge: true, hasDeepFollowup: true });
-  assertEqual(lastReview.nextStage, "evidenceCheck", "最后一段后若有材料，必须先看材料");
+  assertEqual(lastReview.nextStage, "deepFollowup", "最后一段后若材料已中置处理，可进入深入追问");
   const deepReview = sceneReviewModel({ brief: { id: "no-evidence", sceneVersions: [{}, {}] }, index: 1, actionDone: () => true, issueBadge: true, hasDeepFollowup: true });
   assertEqual(deepReview.nextStage, "deepFollowup", "无材料且已问到关键点时才进入深入追问");
   const accusationReview = sceneReviewModel({ brief: { id: "plain", sceneVersions: [{}] }, index: 0, actionDone: () => true });

@@ -84,7 +84,13 @@ async function runRoute(route) {
     await activate(page, route, "[data-start-story]");
     await activate(page, route, '[data-scene="sceneReview"]');
 
-    for (let beat = 0; beat < 5; beat += 1) {
+    for (let beat = 0; beat < 12; beat += 1) {
+      if (await page.locator("[data-evidence-check]").count()) break;
+      if (await page.locator("[data-stance-snapshot]").count()) {
+        await activate(page, route, "[data-stance-snapshot]", 0);
+        await activate(page, route, "[data-after-stance-snapshot]");
+        continue;
+      }
       await page.locator(".scene-question-group").waitFor({ state: "visible" });
       if (route.sceneMode === "outer") {
         const dialogueButtons = page.locator("[data-scene-dialogue]");

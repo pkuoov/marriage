@@ -36,6 +36,7 @@ export const baseState = {
   sceneDialoguePicks: {},
   evidenceCheckPicks: {},
   investigationPicks: {},
+  stanceSnapshots: {},
   truthBoundaryPicks: {},
   truthBoundaryMisses: {},
   materialPityLog: {},
@@ -81,6 +82,7 @@ export function migrateState(saved) {
   if (!next.sceneDialoguePicks || Array.isArray(next.sceneDialoguePicks)) next.sceneDialoguePicks = {};
   if (!next.evidenceCheckPicks || Array.isArray(next.evidenceCheckPicks)) next.evidenceCheckPicks = {};
   if (!next.investigationPicks || Array.isArray(next.investigationPicks)) next.investigationPicks = {};
+  if (!next.stanceSnapshots || Array.isArray(next.stanceSnapshots)) next.stanceSnapshots = {};
   if (!next.truthBoundaryPicks || Array.isArray(next.truthBoundaryPicks)) next.truthBoundaryPicks = {};
   if (!next.truthBoundaryMisses || Array.isArray(next.truthBoundaryMisses)) next.truthBoundaryMisses = {};
   if (!next.materialPityLog || Array.isArray(next.materialPityLog)) next.materialPityLog = {};

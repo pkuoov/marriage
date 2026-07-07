@@ -7,6 +7,7 @@ export function solvedRecapPagesHtml({
   pressure = {},
   quoteComparison = null,
   conclusion = {},
+  stanceSnapshot = null,
   offMicLetters = [],
   boundary = {},
   boundaryPicks = {},
@@ -37,6 +38,7 @@ export function solvedRecapPagesHtml({
           <b>${escapeHtml(pressure.label)}</b>
           <small>${escapeHtml(pressure.line)}</small>
         </div>
+        ${stanceSnapshot ? stanceSnapshotRecapHtml(stanceSnapshot) : ""}
         <p><strong>你接住的那句</strong>：${escapeHtml(result.dailyAccuseLabel ?? "还没选最后那句")}。</p>
         ${result.dailyResponse ? `<p><strong>主播接法</strong>：${escapeHtml(result.dailyResponse)}</p>` : ""}
         ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
@@ -82,6 +84,16 @@ export function offMicLettersHtml(letters = []) {
         `).join("")}
       </div>
     </section>
+  `;
+}
+
+function stanceSnapshotRecapHtml(snapshot = {}) {
+  return `
+    <div class="stance-recap-card">
+      <span>${escapeHtml(snapshot.kicker ?? "中段立场")}</span>
+      <b>${escapeHtml(snapshot.label ?? "未记录")}</b>
+      <small>${escapeHtml(snapshot.recap ?? "这次判断不判分，只用来回看你的路线。")}</small>
+    </div>
   `;
 }
 

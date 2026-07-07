@@ -199,9 +199,55 @@ function assertHostDisclosure(packet = {}, label = "") {
   assert(["afterBackflow", "beforeDeepFollowup", "atStageJudgement"].includes(anchor), `${label} hostDisclosure anchor 不合法`);
 }
 
+function assertStanceSnapshot(packet = {}, label = "") {
+  if (packet.stanceSnapshot === undefined) return;
+  const snapshot = packet.stanceSnapshot;
+  assert(snapshot && typeof snapshot === "object" && !Array.isArray(snapshot), `${label} stanceSnapshot 必须是对象`);
+  const afterScene = Number(snapshot.afterScene ?? 0);
+  assert(Number.isInteger(afterScene) && afterScene >= 1, `${label} stanceSnapshot.afterScene 必须是一基场景序号`);
+  assert(afterScene <= (packet.sceneVersions?.length ?? 0), `${label} stanceSnapshot.afterScene 指向不存在的场景`);
+  assertNonEmptyString(snapshot.prompt, `${label} stanceSnapshot.prompt 不能为空`);
+  assertArrayMin(snapshot.options, 3, `${label} stanceSnapshot.options 至少需要三项`);
+  snapshot.options.forEach((option, optionIndex) => {
+    assertNonEmptyString(option.id, `${label} stanceSnapshot.options[${optionIndex}] 缺少 id`);
+    assertNonEmptyString(option.label, `${label} stanceSnapshot.options[${optionIndex}] 缺少 label`);
+    assertNonEmptyString(option.summary, `${label} stanceSnapshot.options[${optionIndex}] 缺少 summary`);
+    assert(option.correct === undefined, `${label} stanceSnapshot.options[${optionIndex}] 不得设置 correct，立场快照不判分`);
+  });
+}
+
 function assertCallMedium(packet = {}, label = "") {
   const medium = packet.callMedium ?? "voice";
   assert(["voice", "video"].includes(medium), `${label} callMedium 必须是 voice 或 video`);
+}
+
+const INVESTIGATION_SOURCE_BADGES = {
+  dm: "后台私信",
+  "respondent-note": "对方留言",
+  "store-manager-note": "店长留言",
+  "leader-note": "领导批注",
+  "department-assistant": "部门助理记录",
+  "introducer-note": "介绍人留言",
+  "cousin-note": "表姐说明"
+};
+
+const RESPONDENT_NOTE_THIRD_PARTY_PATTERN = /介绍人|表姐|店长|部门助理|领导|前同事|闺蜜|亲戚|朋友|助理|同事/;
+
+function assertInvestigationSourceRules(packet = {}, label = "") {
+  const hooks = packet.investigationHooks ?? [];
+  const respondentHooks = hooks.filter((hook) => hook.source === "respondent-note");
+  assert(respondentHooks.length <= 1, `${label} respondent-note 每案至多一条`);
+  hooks.forEach((hook, hookIndex) => {
+    assert(INVESTIGATION_SOURCE_BADGES[hook.source], `${label} investigationHooks[${hookIndex}] source 未注册: ${hook.source}`);
+    if (hook.source !== "respondent-note") return;
+    const senderText = collectTextFrom([hook.surface, hook.title, hook.appearsNowBecause]).trim();
+    assert(!RESPONDENT_NOTE_THIRD_PARTY_PATTERN.test(senderText), `${label} investigationHooks[${hookIndex}] respondent-note 只能来自本案对方，不能标第三方`);
+  });
+}
+
+function respondentNotesFor(packet = {}) {
+  if (packet.respondentNote === undefined) return [];
+  return Array.isArray(packet.respondentNote) ? packet.respondentNote : [packet.respondentNote];
 }
 
 function collectTextLength(value) {
@@ -358,6 +404,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         `${casePacket.caseId} 至少需要一条 guardedAnswer，让现场防备有写好的回答后果`
       );
       const evidenceCardIds = new Set((casePacket.evidenceCards ?? []).map((card) => card.id).filter(Boolean));
+      const evidenceCheckIds = new Set((casePacket.evidenceChecks ?? []).map((check) => check.id).filter(Boolean));
       casePacket.sceneVersions.forEach((scene, sceneIndex) => {
         assertNonEmptyString(scene.speakerId, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 speakerId`);
         assertNonEmptyString(scene.version, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 version`);
@@ -371,6 +418,12 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         if (scene.showsCard !== undefined) {
           assertNonEmptyString(scene.showsCard, `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 不能为空`);
           assert(evidenceCardIds.has(scene.showsCard), `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 指向不存在的 evidenceCards id: ${scene.showsCard}`);
+        }
+        if (scene.afterScene !== undefined) {
+          assert(scene.afterScene && typeof scene.afterScene === "object" && !Array.isArray(scene.afterScene), `${casePacket.caseId} sceneVersions[${sceneIndex}].afterScene 必须是对象`);
+          assertEqual(scene.afterScene.kind, "evidenceCheck", `${casePacket.caseId} sceneVersions[${sceneIndex}].afterScene.kind 目前只支持 evidenceCheck`);
+          assertNonEmptyString(scene.afterScene.checkId, `${casePacket.caseId} sceneVersions[${sceneIndex}].afterScene 缺少 checkId`);
+          assert(evidenceCheckIds.has(scene.afterScene.checkId), `${casePacket.caseId} sceneVersions[${sceneIndex}].afterScene.checkId 指向不存在的 evidenceChecks id: ${scene.afterScene.checkId}`);
         }
         if (scene.casualQuestions !== undefined) {
           assertArrayMin(scene.casualQuestions, 1, `${casePacket.caseId} sceneVersions[${sceneIndex}].casualQuestions 若存在至少需要一条`);
@@ -417,6 +470,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       });
 
       assertArrayMin(casePacket.investigationHooks, 1, `${casePacket.caseId} 至少需要一个后台回流`);
+      assertInvestigationSourceRules(casePacket, casePacket.caseId);
       casePacket.investigationHooks.forEach((hook, hookIndex) => {
         assertNonEmptyString(hook.source, `${casePacket.caseId} investigationHooks[${hookIndex}] 缺少 source`);
         assertNonEmptyString(hook.triggerContradiction, `${casePacket.caseId} investigationHooks[${hookIndex}] 缺少 triggerContradiction`);
@@ -432,13 +486,19 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assertNonEmptyString(note.text, `${casePacket.caseId} advisorNotes[${noteIndex}] 缺少 text`);
         assert(!/[圈]|那一栏|哪一块/.test(note.text), `${casePacket.caseId} advisorNotes[${noteIndex}] 顾问文案不能替玩家点位置`);
       });
+      assert((casePacket.advisorNotes ?? []).length <= 2, `${casePacket.caseId} advisorNotes 每案最多两条`);
       if (casePacket.respondentNote !== undefined) {
-        assert(!Array.isArray(casePacket.respondentNote), `${casePacket.caseId} respondentNote 每案至多一个`);
-        assertNonEmptyString(casePacket.respondentNote.appearsNowBecause, `${casePacket.caseId} respondentNote 缺少 appearsNowBecause`);
-        assertNonEmptyString(casePacket.respondentNote.text, `${casePacket.caseId} respondentNote 缺少 text`);
+        const respondentNotes = respondentNotesFor(casePacket);
+        assert(respondentNotes.length <= 1, `${casePacket.caseId} respondentNote 每案最多一条`);
+        respondentNotes.forEach((note, noteIndex) => {
+          if (note.source !== undefined) assertEqual(note.source, "respondent-note", `${casePacket.caseId} respondentNote[${noteIndex}] source 必须是 respondent-note`);
+          assertNonEmptyString(note.appearsNowBecause, `${casePacket.caseId} respondentNote[${noteIndex}] 缺少 appearsNowBecause`);
+          assertNonEmptyString(note.text, `${casePacket.caseId} respondentNote[${noteIndex}] 缺少 text`);
+        });
       }
       assertCrossCaseEchoes(casePacket, caseOrder, casePacket.caseId);
       assertHostDisclosure(casePacket, casePacket.caseId);
+      assertStanceSnapshot(casePacket, casePacket.caseId);
       assertCallMedium(casePacket, casePacket.caseId);
 
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);

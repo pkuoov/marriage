@@ -27,6 +27,21 @@ export function sceneReviewDoneChoicesHtml({
   `);
 }
 
+export function stanceSnapshotHtml(snapshot = {}, pick = null) {
+  const options = Array.isArray(snapshot.options) ? snapshot.options : [];
+  return `
+    <section class="stance-snapshot-card">
+      <span>${escapeHtml(snapshot.kicker ?? "立场快照")}</span>
+      <b>${escapeHtml(snapshot.prompt ?? "现在这通麦，你先站哪边？")}</b>
+      ${snapshot.note ? `<p>${escapeHtml(snapshot.note)}</p>` : ""}
+      <div class="stance-snapshot-options">
+        ${options.map((option, optionIndex) => stanceSnapshotOptionHtml(option, optionIndex, pick)).join("")}
+      </div>
+      ${pick ? `<p class="hint">${escapeHtml(snapshot.afterPickLine ?? "先记下，不判分。后面的材料会回看你这次站队。")}</p>` : ""}
+    </section>
+  `;
+}
+
 export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {}) {
   return [
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
@@ -62,6 +77,24 @@ export function keyChoiceExchangeHtml({ scene = {}, pick = {}, fallbackAnswer = 
 
 function flowGroup(content) {
   return `<div class="choice-flow">${content}</div>`;
+}
+
+function stanceSnapshotOptionHtml(option = {}, optionIndex = 0, pick = null) {
+  const selected = pick && Number(pick.optionIndex) === optionIndex;
+  if (pick) {
+    return `
+      <article class="stance-snapshot-option ${selected ? "selected" : "dimmed"}">
+        <b>${escapeHtml(option.label ?? "")}</b>
+        <p>${escapeHtml(selected ? option.feedback ?? option.summary ?? "" : option.summary ?? "")}</p>
+      </article>
+    `;
+  }
+  return `
+    <button class="stance-snapshot-option" data-stance-snapshot="${optionIndex}" type="button">
+      <b>${escapeHtml(option.label ?? "")}</b>
+      <p>${escapeHtml(option.summary ?? "")}</p>
+    </button>
+  `;
 }
 
 function callLineHtml(line = {}) {

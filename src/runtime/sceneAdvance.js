@@ -137,6 +137,12 @@ export function evidenceChecksFor(brief = {}) {
   return Array.isArray(brief?.evidenceChecks) ? brief.evidenceChecks : [];
 }
 
+export function pendingEvidenceChecksFor(brief = {}, actionDone = () => false) {
+  return evidenceChecksFor(brief)
+    .map((check, index) => ({ check, index }))
+    .filter(({ index }) => !actionDone(`evidenceCheck:${index}`));
+}
+
 export function investigationHooksFor(brief = {}) {
   return Array.isArray(brief?.investigationHooks) ? brief.investigationHooks : [];
 }
@@ -165,15 +171,25 @@ export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => fal
   const safeIndex = Math.max(0, Math.min(Number(index ?? 0), total - 1));
   const scene = scenes[safeIndex] ?? {};
   const done = actionDone(`version:${safeIndex}`);
+  const pendingSnapshot = done ? stanceSnapshotForScene(brief, safeIndex, actionDone) : null;
+  const pendingAfterSceneEvidence = done ? afterSceneEvidenceFor(brief, safeIndex, actionDone) : null;
   const lastStage = safeIndex >= scenes.length - 1;
-  const hasEvidence = evidenceChecksFor(brief).length > 0;
+  const hasEvidence = pendingEvidenceChecksFor(brief, actionDone).length > 0;
   const canDeepFollow = Boolean(issueBadge && hasDeepFollowup);
-  const nextStage = lastStage
-    ? hasEvidence ? "evidenceCheck" : canDeepFollow ? "deepFollowup" : "accusation"
-    : "sceneReview";
-  const nextLabel = lastStage
-    ? hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句往下追"
-    : "继续";
+  const nextStage = pendingSnapshot
+    ? "stanceSnapshot"
+    : pendingAfterSceneEvidence
+      ? "afterSceneEvidence"
+      : lastStage
+        ? hasEvidence ? "evidenceCheck" : canDeepFollow ? "deepFollowup" : "accusation"
+        : "sceneReview";
+  const nextLabel = pendingSnapshot
+    ? pendingSnapshot.nextLabel ?? "先站一下"
+    : pendingAfterSceneEvidence
+      ? pendingAfterSceneEvidence.nextLabel ?? "看这份材料"
+      : lastStage
+        ? hasEvidence ? "看材料" : canDeepFollow ? "再深入一句" : "选一句往下追"
+        : "继续";
   return {
     scenes,
     index: safeIndex,
@@ -182,6 +198,8 @@ export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => fal
     lastStage,
     hasEvidence,
     canDeepFollow,
+    pendingSnapshot,
+    pendingAfterSceneEvidence,
     nextStage,
     nextLabel
   };
@@ -203,6 +221,34 @@ export function evidenceCheckModel({ brief = {}, index = 0, pick = null, issueBa
     lastCheck,
     nextStage,
     nextLabel: nextStage === "deepFollowup" ? "再深入一句" : "选一句往下追"
+  };
+}
+
+export function afterSceneEvidenceFor(brief = {}, sceneIndex = 0, actionDone = () => false) {
+  const scene = brief?.sceneVersions?.[sceneIndex] ?? null;
+  const afterScene = scene?.afterScene;
+  if (!afterScene || afterScene.kind !== "evidenceCheck") return null;
+  if (actionDone(`afterScene:${sceneIndex}`)) return null;
+  const checks = evidenceChecksFor(brief);
+  const checkIndex = checks.findIndex((check) => check.id === afterScene.checkId);
+  if (checkIndex < 0) return null;
+  return {
+    ...afterScene,
+    sceneIndex,
+    checkIndex,
+    check: checks[checkIndex]
+  };
+}
+
+export function stanceSnapshotForScene(brief = {}, sceneIndex = 0, actionDone = () => false) {
+  const snapshot = brief?.stanceSnapshot;
+  if (!snapshot || !Array.isArray(snapshot.options) || !snapshot.options.length) return null;
+  const afterScene = Number(snapshot.afterScene ?? 0);
+  if (afterScene !== sceneIndex + 1) return null;
+  if (actionDone(`stanceSnapshot:${sceneIndex}`)) return null;
+  return {
+    ...snapshot,
+    sceneIndex
   };
 }
 
