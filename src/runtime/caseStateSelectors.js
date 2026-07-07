@@ -111,6 +111,10 @@ export function selectedInvestigationPicksForState(state = {}, brief = {}) {
     .filter(Boolean);
 }
 
+export function selectedDelegationPickForState(state = {}, brief = {}) {
+  return state.delegationPicks?.[caseKey(brief)] ?? null;
+}
+
 export function truthBoundaryPicksForState(state = {}, brief = {}) {
   return state.truthBoundaryPicks?.[caseKey(brief)] ?? {};
 }

@@ -115,6 +115,53 @@ export function investigationBackflowScreenHtml({
   `;
 }
 
+export function delegationScreenHtml({
+  delegation = {},
+  advisors = {},
+  pick = null,
+  reviewHtml = ""
+} = {}) {
+  const material = delegation.material ?? {};
+  if (pick && !pick.skipped) {
+    return `
+      <section class="delegation-card returned">
+        <p><b>顾问回单</b></p>
+        <span class="source-badge">${escapeHtml(pick.advisorBadge ?? "顾问回单")}</span>
+        <div class="delegation-material">
+          <span>送检材料</span>
+          <b>${escapeHtml(material.label ?? "后台材料")}</b>
+        </div>
+        <p>${escapeHtml(pick.text ?? "")}</p>
+      </section>
+      ${reviewHtml}
+    `;
+  }
+  return `
+    <section class="delegation-card">
+      <p><b>后台委托</b></p>
+      <p>这份材料可以送给一位熟人看一眼。选谁看，就是先信哪条路。</p>
+      <div class="delegation-material">
+        <span>待送材料</span>
+        <b>${escapeHtml(material.label ?? "后台材料")}</b>
+      </div>
+      <div class="delegation-advisor-grid">
+        ${Object.values(advisors ?? {}).map((advisor) => delegationAdvisorButtonHtml(advisor)).join("")}
+      </div>
+    </section>
+    ${reviewHtml}
+  `;
+}
+
+function delegationAdvisorButtonHtml(advisor = {}) {
+  return `
+    <button class="delegation-advisor" data-delegation-advisor="${escapeHtml(advisor.id ?? "")}" type="button">
+      <b>${escapeHtml(advisor.name ?? "顾问")}</b>
+      <span>${escapeHtml(advisor.domain ?? "")}</span>
+      <small>${escapeHtml(advisor.catchphrase ?? "")}</small>
+    </button>
+  `;
+}
+
 const INVESTIGATION_SOURCE_BADGES = {
   dm: "后台私信",
   "respondent-note": "对方留言",

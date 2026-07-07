@@ -884,6 +884,31 @@ export const CONTENT_CASES = {
           ]
         }
       ],
+      "delegation": {
+        "moment": "actBreak:2",
+        "material": {
+          "id": "credit-history-pages",
+          "label": "往期账单那几页"
+        },
+        "outcomes": {
+          "zhou-accountant": {
+            "tone": "strong",
+            "text": "工资入账都带代发抬头，这笔 8 号的还入没有——是私人转的。谁转的我看不见，但它不是工资，这一点看得死死的。钱只认路径，不认说法。"
+          },
+          "zhao-lawyer": {
+            "tone": "partial",
+            "text": "按月固定还入，若是借的，就是新债养旧债；若是赠与，停了也不欠。两种在法律上是两个世界。具体看证据，我只说一般情况。"
+          },
+          "lin-matchmaker": {
+            "tone": "partial",
+            "text": "这个账单我看不出门道。但一个人肯按月替另一个人填窟窿，在我们行里，这叫'关系没断干净'。当笑话听吧。"
+          },
+          "zhang-forensic": {
+            "tone": "offDomain",
+            "text": "流水单不是我的领域。链条上说，银行流水造假成本极高，这几页大概率是真的——所以更值得认真对。"
+          }
+        }
+      },
       "stanceSnapshot": {
         "afterScene": 4,
         "kicker": "中段立场快照",
@@ -1569,6 +1594,31 @@ export const CONTENT_CASES = {
           ]
         }
       ],
+      "delegation": {
+        "moment": "actBreak:2",
+        "material": {
+          "id": "tony-roster-column",
+          "label": "那张表"
+        },
+        "outcomes": {
+          "lin-matchmaker": {
+            "tone": "strong",
+            "text": "维护表我见过几百张。写到'下一次推进'这个细法的，不是新手上进，是老手养熟客——这一列的写法，行里叫'关系落袋'。他这个岁数写出这个列，不是店里教的，是有人带过或者自己悟的。"
+          },
+          "zhang-forensic": {
+            "tone": "partial",
+            "text": "截图链条完整，没有拼接痕迹。表是真表，字是一次录入——这张图本身干净，脏的不在图上。"
+          },
+          "zhou-accountant": {
+            "tone": "partial",
+            "text": "年卡三千八进的是店收银还是个人码，让她查下支付记录的商户名。进店的算业绩，进个人的算什么，她该想清楚。"
+          },
+          "zhao-lawyer": {
+            "tone": "offDomain",
+            "text": "'老板娘'这种话在法律上一文不值。可它值三千八——这句不归我管，归她自己管。"
+          }
+        }
+      },
       "stanceSnapshot": {
         "afterScene": 4,
         "kicker": "中段立场快照",
@@ -2367,6 +2417,31 @@ export const CONTENT_CASES = {
           ]
         }
       ],
+      "delegation": {
+        "moment": "actBreak:2",
+        "material": {
+          "id": "profile-mba-gap",
+          "label": "他发来的学校图"
+        },
+        "outcomes": {
+          "zhang-forensic": {
+            "tone": "strong",
+            "text": "图是原图，像素没动过——她验得对。但鉴定书只管图，不管图外之意：这类项目学位，学信网三分钟能验真伪。真问题从来不是图的真假，是口径——像素没动过，不等于话没动过。链条不全，报告就是纸。"
+          },
+          "zhao-lawyer": {
+            "tone": "partial",
+            "text": "恋爱里把 MBA 说成名校毕业，不犯法；婚姻登记处也不查学历。法律管骗婚财，不管吹牛皮——所以这事只能在饭桌上算，算之前先把话留好底。"
+          },
+          "lin-matchmaker": {
+            "tone": "partial",
+            "text": "'名校毕业'这四个字在相亲市场上有牌价。他这么说，介绍人这么传，女方家这么听——三方都没吃亏，直到有人当真。行里的话，得翻译着听。"
+          },
+          "zhou-accountant": {
+            "tone": "offDomain",
+            "text": "图我不看。要看看流水——收入这种事，纸上写的都是形容词，到账的才是名词。"
+          }
+        }
+      },
       "stanceSnapshot": {
         "afterScene": 5,
         "kicker": "中段立场快照",
@@ -3116,6 +3191,31 @@ export const CONTENT_CASES = {
           ]
         }
       ],
+      "delegation": {
+        "moment": "actBreak:2",
+        "material": {
+          "id": "work-approval-missing",
+          "label": "那张审批图"
+        },
+        "outcomes": {
+          "zhou-accountant": {
+            "tone": "strong",
+            "text": "对公付款都有回单号。让她别问'钱怎么还没到'，就问财务要这单的付款回单号——报得出，是真在走；报不出，就是根本没付。一句话的事，比吵十次管用。"
+          },
+          "zhao-lawyer": {
+            "tone": "partial",
+            "text": "群里'让我垫'的原话，加上她的转账记录，债权凭证已经够了。走不走那一步是她的事，但料要现在留好——口说的不算，落纸的算数。"
+          },
+          "zhang-forensic": {
+            "tone": "partial",
+            "text": "这张截图是完整截屏，底部没有裁切痕迹——它不是被剪过，它本来就只走到审批这一步。图没撒谎，撒谎的是拿图当回执用的人。"
+          },
+          "lin-matchmaker": {
+            "tone": "offDomain",
+            "text": "职场不是我的场。但'想表现'这个东西我熟——我们行里叫'客户自己想成交'，最好的销售从来不推销，只递台阶。"
+          }
+        }
+      },
       "stanceSnapshot": {
         "afterScene": 3,
         "kicker": "中段立场快照",

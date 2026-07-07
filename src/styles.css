@@ -1943,6 +1943,80 @@ button:active:not(:disabled) {
   padding: 5px 8px;
 }
 
+.delegation-card {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid rgba(139, 228, 212, .18);
+  border-radius: 8px;
+  background: rgba(8, 19, 23, .72);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, .22);
+}
+
+.delegation-card.returned {
+  border-color: rgba(255, 204, 128, .24);
+  background: rgba(27, 20, 9, .72);
+}
+
+.delegation-card > p {
+  margin: 0;
+}
+
+.delegation-material {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid rgba(237, 241, 238, .12);
+  border-radius: 6px;
+  background: rgba(237, 241, 238, .045);
+}
+
+.delegation-material span {
+  color: rgba(237, 241, 238, .58);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.delegation-material b {
+  color: rgba(247, 244, 233, .92);
+  font-size: 16px;
+}
+
+.delegation-advisor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.delegation-advisor {
+  align-items: start;
+  min-height: 96px;
+  padding: 12px;
+  text-align: left;
+}
+
+.delegation-advisor b,
+.delegation-advisor span,
+.delegation-advisor small {
+  display: block;
+}
+
+.delegation-advisor span {
+  margin-top: 4px;
+  color: rgba(139, 228, 212, .82);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.delegation-advisor small {
+  margin-top: 8px;
+  color: rgba(237, 241, 238, .64);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .evidence-table-grid {
   display: grid;
   overflow: hidden;

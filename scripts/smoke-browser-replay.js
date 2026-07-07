@@ -139,6 +139,16 @@ async function runRoute(route) {
 async function advanceToAccusation(page, route) {
   for (let step = 0; step < 8; step += 1) {
     if (await page.locator("[data-accuse]").count()) return;
+    if (await page.locator("[data-delegation-advisor]").count()) {
+      if (route.name === "perfect") {
+        await activate(page, route, '[data-delegation-advisor="zhou-accountant"]');
+        await assertVisibleText(page, "这笔 8 号的还入没有——是私人转的", "perfect route should show the strong delegation return before final quote");
+        await activate(page, route, "[data-after-delegation]");
+      } else {
+        await activate(page, route, "[data-skip-delegation]");
+      }
+      continue;
+    }
     if (await page.locator("[data-evidence-check]").count()) {
       const materialButtons = page.locator("[data-evidence-check]");
       const materialIndex = route.materialMode === "miss" ? 1 : 0;

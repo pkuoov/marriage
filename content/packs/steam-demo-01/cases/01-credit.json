@@ -30,6 +30,16 @@
     "identity-wording": ["体面这词开始扎人", "身份话压到钱上了"],
     "process-control": ["订座号也有名字", "开箱那晚不只是礼物"]
   },
+  "delegation": {
+    "moment": "actBreak:2",
+    "material": { "id": "credit-history-pages", "label": "往期账单那几页" },
+    "outcomes": {
+      "zhou-accountant": { "tone": "strong", "text": "工资入账都带代发抬头，这笔 8 号的还入没有——是私人转的。谁转的我看不见，但它不是工资，这一点看得死死的。钱只认路径，不认说法。" },
+      "zhao-lawyer": { "tone": "partial", "text": "按月固定还入，若是借的，就是新债养旧债；若是赠与，停了也不欠。两种在法律上是两个世界。具体看证据，我只说一般情况。" },
+      "lin-matchmaker": { "tone": "partial", "text": "这个账单我看不出门道。但一个人肯按月替另一个人填窟窿，在我们行里，这叫'关系没断干净'。当笑话听吧。" },
+      "zhang-forensic": { "tone": "offDomain", "text": "流水单不是我的领域。链条上说，银行流水造假成本极高，这几页大概率是真的——所以更值得认真对。" }
+    }
+  },
   "stanceSnapshot": {
     "afterScene": 4,
     "kicker": "中段立场快照",

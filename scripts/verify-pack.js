@@ -221,6 +221,45 @@ function assertCallMedium(packet = {}, label = "") {
   assert(["voice", "video"].includes(medium), `${label} callMedium 必须是 voice 或 video`);
 }
 
+function sentenceSetFrom(value) {
+  return String(value ?? "")
+    .split(/[。！？!?；;]/u)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function assertDelegation(packet = {}, label = "") {
+  if (packet.delegation === undefined) return;
+  const delegation = packet.delegation;
+  assert(delegation && typeof delegation === "object" && !Array.isArray(delegation), `${label} delegation 必须是对象`);
+  assertEqual(delegation.moment, "actBreak:2", `${label} delegation.moment 必须是 actBreak:2`);
+  assertNonEmptyString(delegation.material?.id, `${label} delegation.material 缺少 id`);
+  assertNonEmptyString(delegation.material?.label, `${label} delegation.material 缺少 label`);
+  const materialIds = new Set([
+    ...(packet.evidenceCards ?? []).map((card) => card.id),
+    ...(packet.evidenceChecks ?? []).map((check) => check.id),
+    ...(packet.investigationHooks ?? []).map((hook) => hook.id)
+  ]);
+  assert(materialIds.has(delegation.material.id), `${label} delegation.material.id 指向不存在的材料: ${delegation.material.id}`);
+  assert(delegation.outcomes && typeof delegation.outcomes === "object" && !Array.isArray(delegation.outcomes), `${label} delegation.outcomes 必须是对象`);
+  advisorIdList.forEach((advisorId) => {
+    assert(delegation.outcomes[advisorId], `${label} delegation.outcomes 缺少 ${advisorId}`);
+  });
+  assertEqual(Object.keys(delegation.outcomes).length, advisorIdList.length, `${label} delegation.outcomes 只能覆盖四位注册顾问`);
+  const strongCount = Object.values(delegation.outcomes).filter((outcome) => outcome?.tone === "strong").length;
+  assert(strongCount <= 1, `${label} delegation strong 回单最多一条`);
+  const advisorSentences = new Set((packet.advisorNotes ?? []).flatMap((note) => sentenceSetFrom(note.text)));
+  Object.entries(delegation.outcomes).forEach(([advisorId, outcome]) => {
+    assert(advisorIds.has(advisorId), `${label} delegation.outcomes 未注册顾问: ${advisorId}`);
+    assert(DELEGATION_TONES.has(outcome?.tone), `${label} delegation.outcomes.${advisorId}.tone 不合法`);
+    assertNonEmptyString(outcome?.text, `${label} delegation.outcomes.${advisorId}.text 不能为空`);
+    assert(!DELEGATION_FORBIDDEN_TEXT.test(outcome.text), `${label} delegation.outcomes.${advisorId}.text 不能替玩家点位置`);
+    sentenceSetFrom(outcome.text).forEach((sentence) => {
+      assert(!advisorSentences.has(sentence), `${label} delegation.outcomes.${advisorId}.text 不能复用 advisorNotes 整句: ${sentence}`);
+    });
+  });
+}
+
 const INVESTIGATION_SOURCE_BADGES = {
   dm: "后台私信",
   "respondent-note": "对方留言",
@@ -293,7 +332,10 @@ const comments = await readJson(`content/packs/${packId}/comments.json`);
 const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes.json`);
 const advisorRegistry = await readJson("content/characters/advisors.json").catch(() => ({ advisors: [] }));
 const advisorIds = new Set((advisorRegistry.advisors ?? []).map((advisor) => advisor.id));
+const advisorIdList = [...advisorIds];
 const caseOrder = manifest.sequence.map((item) => item.caseId);
+const DELEGATION_TONES = new Set(["strong", "partial", "offDomain"]);
+const DELEGATION_FORBIDDEN_TEXT = /圈|那一栏|哪一块/;
 
 test("PACK-001", "manifest matches runtime story pack definition", () => {
   assert(runtimePack, `运行时故事包不存在: ${packId}`);
@@ -500,6 +542,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertHostDisclosure(casePacket, casePacket.caseId);
       assertStanceSnapshot(casePacket, casePacket.caseId);
       assertCallMedium(casePacket, casePacket.caseId);
+      assertDelegation(casePacket, casePacket.caseId);
 
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);

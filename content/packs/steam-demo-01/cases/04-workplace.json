@@ -29,6 +29,16 @@
     "money-flow": ["钱还没落地", "返款口子要看清"],
     "caller-credibility": ["他也想要主责", "表现机会不是免费午餐"]
   },
+  "delegation": {
+    "moment": "actBreak:2",
+    "material": { "id": "work-approval-missing", "label": "那张审批图" },
+    "outcomes": {
+      "zhou-accountant": { "tone": "strong", "text": "对公付款都有回单号。让她别问'钱怎么还没到'，就问财务要这单的付款回单号——报得出，是真在走；报不出，就是根本没付。一句话的事，比吵十次管用。" },
+      "zhao-lawyer": { "tone": "partial", "text": "群里'让我垫'的原话，加上她的转账记录，债权凭证已经够了。走不走那一步是她的事，但料要现在留好——口说的不算，落纸的算数。" },
+      "zhang-forensic": { "tone": "partial", "text": "这张截图是完整截屏，底部没有裁切痕迹——它不是被剪过，它本来就只走到审批这一步。图没撒谎，撒谎的是拿图当回执用的人。" },
+      "lin-matchmaker": { "tone": "offDomain", "text": "职场不是我的场。但'想表现'这个东西我熟——我们行里叫'客户自己想成交'，最好的销售从来不推销，只递台阶。" }
+    }
+  },
   "stanceSnapshot": {
     "afterScene": 3,
     "kicker": "中段立场快照",

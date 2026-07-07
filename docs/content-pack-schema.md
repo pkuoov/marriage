@@ -79,6 +79,7 @@ content/packs/<pack-id>/
 - `sceneVersions[].afterScene`：可选的幕间材料板锚点。当前支持 `{ "kind": "evidenceCheck", "checkId": "" }`，`checkId` 必须指向本案 `evidenceChecks[].id`。它会在该句追问完成后立刻打开对应材料；材料仍按普通 `evidenceChecks` 记录、扣耐心和进入路线图。用于 pass 11 的“材料板中置”，不是新增第二套材料系统。
 - `stanceSnapshot`：可选的中段立场快照，形如 `{ "afterScene": 2, "prompt": "现在这通麦，你先站哪边？", "options": [{ "id": "", "label": "", "summary": "" }] }`。`afterScene` 是一基场景序号；`options` 至少三项，**不得写 `correct`**，记录不判分，只在回看中展示玩家当时的判断弧线。
 - `investigationHooks`：案后回流，至少一个；字段和材料圈点一致，并额外包含 `source`、`triggerContradiction`、`proves`、`stillCannotProve`。回流必须关联玩家已经听到的矛盾，不能凭空爆答案。
+- `delegation`：可选的证据委托，形如 `{ "moment": "actBreak:2", "material": { "id": "", "label": "" }, "outcomes": { "<advisorId>": { "tone": "strong|partial|offDomain", "text": "" } } }`。当前每案一件材料、一次委托；玩家可选一位顾问，也可点「先不送」。选顾问的回单必须早于最终选原话，跳过不惩罚、终局不提。
 - `deepFollowup`：全核心命中后自动出现的一问，包含 `question`、`answer`、`note`。它不是奖励提示，要像主播顺着已经听到的事实多问了一句。
 - `stageJudgement`、`storyInterludeRecap`、`followupTwist`、`truth`：收麦、案间和后续余味文案。
 - `dailyShareTitle`、`dailyShareBody`、`dailyShareQuestion`：单案分享卡文案。

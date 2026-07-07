@@ -7,16 +7,16 @@ import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.87";
-import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js?v=0.20.68";
+import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedDelegationPickForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js?v=0.20.68";
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.76";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, caseKey, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.76";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "./runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
-import { evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
+import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.77";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
@@ -99,6 +99,7 @@ function normalizeDailyState(saved) {
     sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
     evidenceCheckPicks: saved?.evidenceCheckPicks ?? {},
     investigationPicks: saved?.investigationPicks ?? {},
+    delegationPicks: saved?.delegationPicks ?? {},
     stanceSnapshots: saved?.stanceSnapshots ?? {},
     truthBoundaryPicks: saved?.truthBoundaryPicks ?? {},
     truthBoundaryMisses: saved?.truthBoundaryMisses ?? {},
@@ -224,6 +225,7 @@ function renderDailyCase() {
   if (state.scene === "stanceSnapshot") return renderStanceSnapshot(brief);
   if (state.scene === "afterSceneEvidence") return renderAfterSceneEvidence(brief);
   if (state.scene === "evidenceCheck") return renderEvidenceCheck(brief);
+  if (state.scene === "delegation") return renderDelegation(brief);
   if (state.scene === "investigationBackflow") return renderInvestigationBackflow(brief);
   if (state.scene === "deepFollowup") return renderDeepFollowup(brief);
   if (state.scene === "testimony" || state.scene === "evidence") {
@@ -434,6 +436,44 @@ function renderInvestigationBackflow(brief) {
   });
   bindInvestigationButtons(brief, hook, index);
   bind("[data-after-investigation]", () => moveScene("caseSolved"));
+  bindSceneButtons();
+}
+
+function renderDelegation(brief) {
+  const delegation = delegationFor(brief);
+  const pick = selectedDelegationPickForState(state, brief);
+  if (!delegation || !delegation.material || actionDone(brief, "delegation") && !pick) {
+    state.scene = "accusation";
+    saveState();
+    return renderAccusation(brief);
+  }
+  if (pick?.skipped) {
+    state.scene = "accusation";
+    saveState();
+    return renderAccusation(brief);
+  }
+  frame({
+    brief,
+    mood: pick ? "focused" : "thinking",
+    label: pick ? "顾问回单" : "后台委托",
+    chapter: liveChapterTitle(brief),
+    text: delegationScreenHtml({
+      delegation,
+      advisors: CONTENT_ADVISORS,
+      pick,
+      reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
+    }),
+    choices: pick
+      ? flowGroupHtml(`<button class="primary" data-after-delegation type="button">选一句往下追</button>`)
+      : flowGroupHtml(`<button data-skip-delegation type="button">先不送</button>`)
+  });
+  bindDelegationButtons(brief, delegation);
+  bind("[data-skip-delegation]", () => skipDelegation(brief));
+  bind("[data-after-delegation]", () => {
+    state.scene = "accusation";
+    saveState();
+    renderAccusation(brief);
+  });
   bindSceneButtons();
 }
 
@@ -1221,6 +1261,62 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0) {
   });
 }
 
+function bindDelegationButtons(brief, delegation = {}) {
+  document.querySelectorAll("[data-delegation-advisor]").forEach((button) => {
+    button.addEventListener("click", () => recordDelegationPick(brief, delegation, button.dataset.delegationAdvisor ?? ""));
+  });
+}
+
+function recordDelegationPick(brief, delegation = {}, advisorId = "") {
+  const outcome = delegationOutcomeFor(delegation, advisorId);
+  const advisor = CONTENT_ADVISORS[advisorId] ?? {};
+  if (!outcome || !advisor.id) return;
+  const key = caseKey(brief);
+  const material = delegation.material ?? {};
+  const advisorBadge = [advisor.name, advisor.domain].filter(Boolean).join(" · ");
+  state.delegationPicks = {
+    ...(state.delegationPicks ?? {}),
+    [key]: {
+      advisorId,
+      advisorBadge,
+      material,
+      tone: outcome.tone ?? "",
+      text: outcome.text ?? "",
+      skipped: false,
+      at: Date.now()
+    }
+  };
+  markAction(brief, "delegation");
+  recordRouteChoice(brief, delegationRouteIndexFor(brief), {
+    question: `委托${advisor.name ?? "顾问"}看${material.label ?? "后台材料"}`,
+    answer: outcome.text ?? "",
+    routeAxis: delegationRouteAxisForAdvisor(advisorId),
+    routeTone: `delegation-${outcome.tone ?? "partial"}`
+  }, { version: material.label ?? "" });
+  state.lastReaction = "回单到了，先看这句。";
+  saveState();
+  render();
+}
+
+function skipDelegation(brief) {
+  const key = caseKey(brief);
+  state.delegationPicks = {
+    ...(state.delegationPicks ?? {}),
+    [key]: {
+      skipped: true,
+      at: Date.now()
+    }
+  };
+  markAction(brief, "delegation");
+  state.scene = "accusation";
+  saveState();
+  renderAccusation(brief);
+}
+
+function delegationRouteIndexFor(brief = {}) {
+  return keyQuestionLimit(brief) + evidenceChecksFor(brief).length - 0.5;
+}
+
 function moveScene(scene) {
   const brief = activeCaseBrief();
   if (scene === "accusation") {
@@ -1232,6 +1328,11 @@ function moveScene(scene) {
         ...(state.dialogueProgress ?? {}),
         [`${caseKey(brief)}:sceneReview`]: firstUnansweredSceneIndex(brief)
       };
+      saveState();
+      return render();
+    }
+    if (delegationFor(brief) && !actionDone(brief, "delegation")) {
+      state.scene = "delegation";
       saveState();
       return render();
     }
@@ -1445,6 +1546,7 @@ function resetCaseAttempt(brief) {
   state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
   state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
   state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);
+  state.delegationPicks = omitRecordKey(state.delegationPicks, key);
   state.stanceSnapshots = omitRecordKey(state.stanceSnapshots, key);
   state.truthBoundaryPicks = omitRecordKey(state.truthBoundaryPicks, key);
   state.truthBoundaryMisses = omitRecordKey(state.truthBoundaryMisses, key);

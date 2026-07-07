@@ -30,6 +30,16 @@
     "caller-credibility": ["她也顺着这个位置走了", "关系没说死才难听"],
     "process-control": ["行业模板不能包住私加列", "推进两个字不对劲"]
   },
+  "delegation": {
+    "moment": "actBreak:2",
+    "material": { "id": "tony-roster-column", "label": "那张表" },
+    "outcomes": {
+      "lin-matchmaker": { "tone": "strong", "text": "维护表我见过几百张。写到'下一次推进'这个细法的，不是新手上进，是老手养熟客——这一列的写法，行里叫'关系落袋'。他这个岁数写出这个列，不是店里教的，是有人带过或者自己悟的。" },
+      "zhang-forensic": { "tone": "partial", "text": "截图链条完整，没有拼接痕迹。表是真表，字是一次录入——这张图本身干净，脏的不在图上。" },
+      "zhou-accountant": { "tone": "partial", "text": "年卡三千八进的是店收银还是个人码，让她查下支付记录的商户名。进店的算业绩，进个人的算什么，她该想清楚。" },
+      "zhao-lawyer": { "tone": "offDomain", "text": "'老板娘'这种话在法律上一文不值。可它值三千八——这句不归我管，归她自己管。" }
+    }
+  },
   "stanceSnapshot": {
     "afterScene": 4,
     "kicker": "中段立场快照",

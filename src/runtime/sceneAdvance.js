@@ -147,6 +147,26 @@ export function investigationHooksFor(brief = {}) {
   return Array.isArray(brief?.investigationHooks) ? brief.investigationHooks : [];
 }
 
+export function delegationFor(brief = {}) {
+  const delegation = brief?.delegation;
+  if (!delegation || typeof delegation !== "object") return null;
+  if (!delegation.material || typeof delegation.outcomes !== "object") return null;
+  return delegation;
+}
+
+export function delegationOutcomeFor(delegation = {}, advisorId = "") {
+  return delegation?.outcomes?.[advisorId] ?? null;
+}
+
+export function delegationRouteAxisForAdvisor(advisorId = "") {
+  return {
+    "zhou-accountant": "money-flow",
+    "zhao-lawyer": "process-control",
+    "lin-matchmaker": "identity-wording",
+    "zhang-forensic": "document-edge"
+  }[advisorId] ?? "outer-thread";
+}
+
 export function answeredSceneCount(brief = {}, actionDone = () => false) {
   return (brief.sceneVersions ?? []).filter((_, index) => actionDone(`version:${index}`)).length;
 }
