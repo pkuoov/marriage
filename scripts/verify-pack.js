@@ -28,6 +28,17 @@ function assertEqual(actual, expected, message) {
   }
 }
 
+function warnAndFail(message) {
+  console.warn(`WARN ${message}`);
+  throw new Error(message);
+}
+
+function assertSoftEqual(actual, expected, message) {
+  if (actual !== expected) {
+    warnAndFail(`${message}｜expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+  }
+}
+
 function assertDeepEqual(actual, expected, message) {
   const actualText = JSON.stringify(actual);
   const expectedText = JSON.stringify(expected);
@@ -99,10 +110,10 @@ function assertRuntimeLengthPlan(packet, manifestItem, label) {
   const plan = packet.runtimeLengthPlan;
   const promptLimit = manifestItem?.difficultyProfile?.truthBoundaryPromptLimit;
   assert(plan && typeof plan === "object", `${label} 缺少 runtimeLengthPlan`);
-  assertEqual(plan.liveBeatCount, packet.sceneVersions?.length ?? 0, `${label} runtimeLengthPlan.liveBeatCount 必须等于实际来电段落数`);
-  assertEqual(plan.materialBoardCount, packet.evidenceChecks?.length ?? 0, `${label} runtimeLengthPlan.materialBoardCount 必须等于实际材料板数量`);
-  assertEqual(plan.backflowCount, packet.investigationHooks?.length ?? 0, `${label} runtimeLengthPlan.backflowCount 必须等于实际后台回流数量`);
-  assertEqual(plan.truthBoundaryPromptCount, promptLimit, `${label} runtimeLengthPlan.truthBoundaryPromptCount 必须等于 manifest 出题上限`);
+  assertSoftEqual(plan.liveBeatCount, packet.sceneVersions?.length ?? 0, `${label} runtimeLengthPlan.liveBeatCount 必须等于实际来电段落数`);
+  assertSoftEqual(plan.materialBoardCount, packet.evidenceChecks?.length ?? 0, `${label} runtimeLengthPlan.materialBoardCount 必须等于实际材料板数量`);
+  assertSoftEqual(plan.backflowCount, packet.investigationHooks?.length ?? 0, `${label} runtimeLengthPlan.backflowCount 必须等于实际后台回流数量`);
+  assertSoftEqual(plan.truthBoundaryPromptCount, promptLimit, `${label} runtimeLengthPlan.truthBoundaryPromptCount 必须等于 manifest 出题上限`);
   assert(truthBoundaryItemCount(packet) >= plan.truthBoundaryPromptCount, `${label} truthBoundary 池子不能少于实际出题数`);
   assertNonEmptyString(plan.caseSpecificPressure, `${label} runtimeLengthPlan.caseSpecificPressure 不能为空`);
   assertArrayMin(plan.whatPlayerDoesBesidesRead, 4, `${label} runtimeLengthPlan.whatPlayerDoesBesidesRead 至少列出四种读以外的操作`);
@@ -110,6 +121,14 @@ function assertRuntimeLengthPlan(packet, manifestItem, label) {
 
 function normalizeQuoteText(value) {
   return normalizeOverlapText(String(value ?? "").replace(/^“|”$/g, "").replace(/其实/g, ""));
+}
+
+function normalizeQuoteCandidateText(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/^“|”$/g, "")
+    .replace(/[。！？!?；;，,、：:]+$/u, "")
+    .trim();
 }
 
 function ungatedSurfaceText(packet = {}) {
@@ -131,11 +150,13 @@ function collectTextFrom(value) {
 }
 
 function assertQuotePickCandidates(packet = {}, label = "") {
-  const choiceLabels = (packet.accusationChoices ?? []).map((choice) => normalizeQuoteText(choice.label));
-  const candidateLabels = (packet.quotePickCandidates ?? []).map(normalizeQuoteText);
-  assertDeepEqual(candidateLabels, choiceLabels, `${label} quotePickCandidates 必须与实际 accusationChoices 顺序一致`);
+  const choiceLabels = (packet.accusationChoices ?? []).map((choice) => normalizeQuoteCandidateText(choice.label));
+  const candidateLabels = (packet.quotePickCandidates ?? []).map(normalizeQuoteCandidateText);
+  if (JSON.stringify(candidateLabels) !== JSON.stringify(choiceLabels)) {
+    warnAndFail(`${label} quotePickCandidates 必须与实际 accusationChoices 顺序一致｜expected ${JSON.stringify(choiceLabels)}, got ${JSON.stringify(candidateLabels)}`);
+  }
   const surfaceText = normalizeQuoteText(ungatedSurfaceText(packet));
-  choiceLabels.forEach((quote, index) => {
+  (packet.accusationChoices ?? []).map((choice) => normalizeQuoteText(choice.label)).forEach((quote, index) => {
     assert(surfaceText.includes(quote), `${label} 第 ${index + 1} 条最终引语没有无门控出处: ${packet.accusationChoices?.[index]?.label}`);
   });
 }
@@ -151,6 +172,23 @@ function assertCrossCaseEchoes(packet = {}, caseOrder = [], label = "") {
     assert(requiredIndex >= 0, `${label} crossCaseEchoes[${echoIndex}] requiresCaseId 不在当前包内`);
     assert(requiredIndex < currentIndex, `${label} crossCaseEchoes[${echoIndex}] requiresCaseId 必须是包内更早的案子`);
   });
+}
+
+function assertHostDisclosure(packet = {}, label = "") {
+  if (packet.hostDisclosure === undefined) return;
+  assert(!Array.isArray(packet.hostDisclosure), `${label} hostDisclosure 每案至多一条`);
+  assert(packet.hostDisclosure && typeof packet.hostDisclosure === "object", `${label} hostDisclosure 必须是对象`);
+  const anchor = packet.hostDisclosure.anchor ?? "";
+  assertNonEmptyString(anchor, `${label} hostDisclosure 缺少 anchor`);
+  assertNonEmptyString(packet.hostDisclosure.text, `${label} hostDisclosure 缺少 text`);
+  assert(!/[圈]|那一栏|哪一块/.test(packet.hostDisclosure.text), `${label} hostDisclosure 文本不能替玩家点位置`);
+  if (anchor.startsWith("afterScene:")) {
+    const rawIndex = Number(anchor.split(":")[1]);
+    assert(Number.isInteger(rawIndex) && rawIndex >= 1, `${label} hostDisclosure afterScene anchor 必须是一基场景序号`);
+    assert(rawIndex <= (packet.sceneVersions?.length ?? 0), `${label} hostDisclosure afterScene anchor 指向不存在的场景`);
+    return;
+  }
+  assert(["afterBackflow", "beforeDeepFollowup", "atStageJudgement"].includes(anchor), `${label} hostDisclosure anchor 不合法`);
 }
 
 function collectTextLength(value) {
@@ -381,14 +419,15 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assertNonEmptyString(note.text, `${casePacket.caseId} advisorNotes[${noteIndex}] 缺少 text`);
         assert(!/[圈]|那一栏|哪一块/.test(note.text), `${casePacket.caseId} advisorNotes[${noteIndex}] 顾问文案不能替玩家点位置`);
       });
-	      if (casePacket.respondentNote !== undefined) {
-	        assert(!Array.isArray(casePacket.respondentNote), `${casePacket.caseId} respondentNote 每案至多一个`);
-	        assertNonEmptyString(casePacket.respondentNote.appearsNowBecause, `${casePacket.caseId} respondentNote 缺少 appearsNowBecause`);
-	        assertNonEmptyString(casePacket.respondentNote.text, `${casePacket.caseId} respondentNote 缺少 text`);
-	      }
-	      assertCrossCaseEchoes(casePacket, caseOrder, casePacket.caseId);
+      if (casePacket.respondentNote !== undefined) {
+        assert(!Array.isArray(casePacket.respondentNote), `${casePacket.caseId} respondentNote 每案至多一个`);
+        assertNonEmptyString(casePacket.respondentNote.appearsNowBecause, `${casePacket.caseId} respondentNote 缺少 appearsNowBecause`);
+        assertNonEmptyString(casePacket.respondentNote.text, `${casePacket.caseId} respondentNote 缺少 text`);
+      }
+      assertCrossCaseEchoes(casePacket, caseOrder, casePacket.caseId);
+      assertHostDisclosure(casePacket, casePacket.caseId);
 
-	      assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
+      assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.note, `${casePacket.caseId} deepFollowup.note 不能为空`);
       assertNonEmptyString(casePacket.selfServingOmission, `${casePacket.caseId} 必须写出来电人对自己不利的修剪`);

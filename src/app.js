@@ -267,6 +267,9 @@ function renderSceneReview(brief) {
   const sceneForView = sceneWithShownCard(brief, scene);
   const pick = selectedScenePickForState(state, brief, index);
   const dialoguePicks = askedDialoguePicksForState(state, brief, index);
+  const completedExchangeHtml = done
+    ? `${completedSceneExchangeHtml(completedSceneExchangeForState(state, brief, sceneForView, index, pick))}${hostDisclosureForAnchor(brief, `afterScene:${index + 1}`)}`
+    : "";
   frame({
     brief,
     mood: "thinking",
@@ -275,7 +278,7 @@ function renderSceneReview(brief) {
     text: sceneReviewHtml({
       index,
       done,
-      completedExchangeHtml: done ? completedSceneExchangeHtml(completedSceneExchangeForState(state, brief, sceneForView, index, pick)) : "",
+      completedExchangeHtml,
       activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene: sceneForView, dialoguePicks }),
       reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief, { excludeIndex: index }))
     }),
@@ -348,12 +351,15 @@ function renderInvestigationBackflow(brief) {
     mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
     label: "后台私信",
     chapter: liveChapterTitle(brief),
-    text: investigationBackflowScreenHtml({
-      hook,
-      pick,
-      index,
-      reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
-    }),
+    text: `
+      ${investigationBackflowScreenHtml({
+        hook,
+        pick,
+        index,
+        reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
+      })}
+      ${pick ? hostDisclosureForAnchor(brief, "afterBackflow") : ""}
+    `,
     choices: pick
       ? flowGroupHtml(`<button class="primary" data-after-investigation type="button">${nextLabel}</button>`)
       : ""
@@ -377,6 +383,7 @@ function renderDeepFollowup(brief) {
     label: "深入一问",
     chapter: liveChapterTitle(brief),
     text: `
+      ${hostDisclosureForAnchor(brief, "beforeDeepFollowup")}
       ${callDialogueHtml([
         { role: "host", text: followup.question },
         { role: "caller", text: followup.answer }
@@ -459,7 +466,7 @@ function renderSolved(brief) {
   const boundaryMisses = truthBoundaryMissesForState(state, brief);
   const boundaryLine = truthBoundaryAftertaste(boundary, boundaryPicks, boundaryMisses);
   const finalScene = isFinalStoryPackCase();
-  const pages = solvedRecapPagesHtml({
+  const pages = withStageJudgementDisclosure(solvedRecapPagesHtml({
     rank,
     issue,
     result,
@@ -477,7 +484,7 @@ function renderSolved(brief) {
     boundaryPicks,
     boundaryLine,
     issueLineText: issueLine(issue, result)
-  });
+  }), brief);
   const recap = solvedRecapFlowView({
     pages,
     step,
@@ -557,6 +564,18 @@ function offMicLettersForBrief(brief = {}, advisors = {}) {
     text: brief.respondentNote.text ?? ""
   }] : [];
   return [...advisorRows, ...respondent].filter((letter) => letter.text);
+}
+
+function hostDisclosureForAnchor(brief = {}, anchor = "") {
+  const disclosure = brief.hostDisclosure;
+  if (!disclosure || disclosure.anchor !== anchor || !disclosure.text) return "";
+  return callDialogueHtml([{ role: "host", text: disclosure.text }], "host-disclosure");
+}
+
+function withStageJudgementDisclosure(pages = [], brief = {}) {
+  const disclosureHtml = hostDisclosureForAnchor(brief, "atStageJudgement");
+  if (!disclosureHtml) return pages;
+  return pages.map((page, index) => index === 2 ? `${disclosureHtml}${page}` : page);
 }
 
 function renderStoryInterlude(brief) {
