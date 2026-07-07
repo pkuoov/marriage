@@ -2,20 +2,20 @@
   "caseId": "04-workplace",
   "plotId": "workplace-reimbursement-screenshot",
   "runtimeContentStatus": "runtime-loaded",
-  "dramaticAnchor": "报销审批截图、活动群聊和供应商报价单",
+  "dramaticAnchor": "预算沟通记录、报销审批截图、活动群聊和供应商报价单",
   "whyTonight": "季度复盘会下周一开，主责署名即将写死，垫的钱还没回来。",
-  "objectPurpose": "审批截图被用来证明钱马上会回来，但付款状态、收款账户和返款入口都没露出来。",
+  "objectPurpose": "预算沟通记录证明公开流程先被绕开，审批截图证明钱没到账，供应商报价单证明返款入口另有一条路。",
   "callMedium": "voice",
   "callerStake": "咨询者想拿主责和表现，也想把垫款风险推回同事。",
   "otherStake": "对方需要借审批截图安抚垫款人，同时继续控制供应商和财务入口。",
-  "thirdPressure": "老板临时指派、项目署名、供应商催款和财务流程。",
+  "thirdPressure": "老板临时指派、部门助理流程、项目署名、供应商催款和财务流程。",
   "runtimeLengthPlan": {
-    "liveBeatCount": 5,
-    "materialBoardCount": 2,
-    "backflowCount": 1,
+    "liveBeatCount": 7,
+    "materialBoardCount": 3,
+    "backflowCount": 3,
     "truthBoundaryPromptCount": 6,
-    "caseSpecificPressure": "终案用两块流程材料压缩耐心预算，突出审批、付款和入口控制之间的错位。",
-    "whatPlayerDoesBesidesRead": ["先问两句", "定向追问", "圈审批截图", "圈供应商报价", "看后台回流", "归位事实边界", "选一句往下追"]
+    "caseSpecificPressure": "终案用预算流程、审批截图和供应商返款三块材料压缩耐心预算，突出审批、付款、返点和项目署名之间的错位。",
+    "whatPlayerDoesBesidesRead": ["先问两句", "定向追问", "做中段立场快照", "圈预算沟通记录", "圈审批截图", "圈供应商报价", "看三条后台回流", "归位事实边界", "选一句往下追"]
   },
   "taskProfile": {
     "id": "audit",
@@ -29,21 +29,57 @@
     "money-flow": ["钱还没落地", "返款口子要看清"],
     "caller-credibility": ["他也想要主责", "表现机会不是免费午餐"]
   },
+  "stanceSnapshot": {
+    "afterScene": 3,
+    "kicker": "中段立场快照",
+    "prompt": "现在这通麦，你先站哪边？",
+    "note": "不判分。先把此刻的判断按下来，后面的材料会回看它。",
+    "afterPickLine": "先记下，不判分。后面的钱路会回看你这次站队。",
+    "continueLabel": "继续听",
+    "recapKicker": "中段立场",
+    "options": [
+      {
+        "id": "respondent-problem",
+        "label": "他的问题更大",
+        "summary": "他绕开大群预算，把垫款放进私下流程。",
+        "feedback": "这个判断抓住了入口控制，但还没看到两条钱路。",
+        "recap": "你中段先抓的是对方绕流程。后面材料证明，流程慢只是表层，更要紧的是钱路入口。"
+      },
+      {
+        "id": "caller-complicit",
+        "label": "她也有份",
+        "summary": "她确实想要主责，也怕公开问预算显得不担事。",
+        "feedback": "这个判断抓住了她的自我暴露，但还不能把垫款责任直接推给她。",
+        "recap": "你中段先看见了她想要主责。后面材料把判断往回拉：不豁免她，也不能让钱路控制消失。"
+      },
+      {
+        "id": "unclear",
+        "label": "还听不出来",
+        "summary": "公开预算被绕开是真的，但钱到底卡在哪里还没上桌。",
+        "feedback": "这个判断保留了空位。后面要看的，就是审批和返款各自走哪条路。",
+        "recap": "你中段留了空位。后面两块材料正好把空位填成审批、付款、返款三层。"
+      }
+    ]
+  },
   "truthBoundary": {
     "true": [
       "审批流程可能已经走到某一步",
       "咨询者确实垫了款",
       "截图没有显示付款完成",
-      "财务群确实发过供应商付款延后的通知"
+      "财务群确实发过供应商付款延后的通知",
+      "部门助理在大群发过正常预算流程样本",
+      "复盘会上领导确实点名夸了咨询者"
     ],
     "edited": [
       "对方把审批通过说成钱已经能返",
       "咨询者没说自己也想要这个项目主责",
-      "对方拿延后通知盖住了不走财务的返款那条路"
+      "对方拿延后通知盖住了不走财务的返款那条路",
+      "领导的夸奖被咨询者听成保护伞，也被对方用来让她闭嘴"
     ],
     "unknown": [
       "款项最终进入谁的账户",
-      "老板是否知道真实垫款和对接过程"
+      "老板是否知道真实垫款和对接过程",
+      "老规矩从哪一年开始、还有谁拿过"
     ]
   },
   "selfServingOmission": "咨询者先跟老板说自己能扛主责，后来才发现对方把入口攥在手里。",
@@ -78,9 +114,9 @@
   "label": "职场报销截图",
   "storyArcTitle": "今日来电：职场报销截图",
   "publicHook": "同事说报销已经批了，却一直不把垫付款转回。那张截图看着没问题，偏偏少了付款那一截。",
-  "storyArcSummary": "先问三件事：谁让垫、谁拿署名、截图到底停在哪一步。",
-  "storySuspense": "这案很容易骂成同事骗钱。审批通过和钱到账不是一回事。",
-  "storyClueObject": "报销审批截图、活动群聊和供应商报价单",
+  "storyArcSummary": "先问四件事：正常流程在哪、谁让垫、谁拿署名、截图到底停在哪一步。",
+  "storySuspense": "这案很容易骂成同事骗钱，也很容易反骂她博署名。审批通过、流程绕开和钱到账不是一回事。",
+  "storyClueObject": "预算沟通记录、报销审批截图、活动群聊和供应商报价单",
   "openingComplaint": "咨询者连线说：“公司上个月办客户答谢会，同事说财务流程来不及，让我先拿个人信用卡垫了场地和礼品费。活动办完很久，报销批下来了，可那笔钱一直没回我。”",
   "openingDialogue": [
     {
@@ -147,10 +183,9 @@
     {
       "speakerId": "chen",
       "speaker": "咨询者",
-      "version": "我后来才想起来，活动前他让我别在大群里问预算，说客户答谢会临时调整太多，先私下把事办成，复盘再补流程。我也怕在大群问预算，会显得我前面说能主责是嘴硬。",
-      "revisedVersion": "大群那件事，我再说一遍。他说别问，我就没问——当时我以为他在护我的面子。返款那行圈出来以后再想，大群里一有记录，钱走哪条路就瞒不住人了。",
-      "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
-      "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
+      "version": "活动前一天下午，部门助理其实在大群里发过流程表，说客户活动要先填预算、供应商走对公、个人垫付要提前报备。我当时看到了，还回了一个“收到”。所以不是完全没有规矩摆在那儿。",
+      "doubt": "正常流程先出现过，绕流程不是因为流程不存在。",
+      "contradiction": "部门助理已经发过预算流程，个人垫款本来需要提前报备。",
       "reliability": "partial",
       "casualQuestions": [
         {
@@ -158,8 +193,60 @@
           "answer": "部门助理发流程，财务出数。以前都这么走，就这次说来不及。"
         },
         {
-          "question": "老板对答谢会满意吗？",
-          "answer": "满意，会上还点了名。我那天挺高兴的。现在想想，高兴得有点早。"
+          "question": "你当时看懂那张流程表了吗？",
+          "answer": "看懂了大概。预算、审批、对公付款这些字都在，只是我当时觉得自己刚接活，先别显得太麻烦。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "既然流程表在群里，你当时为什么没有顺手问预算？",
+          "answer": "我怕一问预算，大家就知道我其实还没摸清流程。刚跟老板说能主责，马上在群里问钱，我怕显得我只是嘴上能扛。",
+          "guardedAnswer": "流程表我看到了，但我没问。因为我前面刚说能主责，马上问预算，太像没底。",
+          "contradiction": "咨询者看见正常流程，却因为主责面子没有公开确认预算。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        },
+        {
+          "question": "部门助理后来有没有催你补报备？",
+          "answer": "没有直接催我。她可能以为对接人在他那边，预算也在他那边。我那时候还以为自己只是先帮忙刷一下。",
+          "correct": false,
+          "routeAxis": "process-control",
+          "routeTone": "softening"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "规矩先在群里出现过",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "把“收到”两个字念得很轻"
+        }
+      }
+    },
+    {
+      "speakerId": "chen",
+      "speaker": "咨询者",
+      "version": "可流程表刚发完没多久，他就私聊我，说客户答谢会临时调整太多，预算先别在大群里问，不然领导会觉得我推活。他说先私下把事办成，复盘再补流程。我也怕在大群问预算，会显得我前面说能主责是嘴硬。",
+      "revisedVersion": "大群那件事，我再说一遍。他说别问，我就没问——当时我以为他在护我的面子。预算记录和延后通知放一起看才吓人：他说来不及那天，财务还没发过延后通知。",
+      "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
+      "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
+      "reliability": "partial",
+      "afterScene": {
+        "kind": "evidenceCheck",
+        "checkId": "work-budget-timeline",
+        "label": "材料板",
+        "nextLabel": "看预算沟通",
+        "continueLabel": "继续听"
+      },
+      "casualQuestions": [
+        {
+          "question": "那条私聊你留着吗？",
+          "answer": "留着。我之前不敢拿出来，是因为里面也有我自己说“我来扛”。"
+        },
+        {
+          "question": "他当时提过财务延后吗？",
+          "answer": "没有。他那天只说来不及、别问。财务延后通知是后面才发的。"
         }
       ],
       "questionOptions": [
@@ -196,6 +283,13 @@
       "contradiction": "报销截图只显示审批通过，没有付款流水和收款账户。",
       "reliability": "partial",
       "showsCard": "daily-work-repay-approval",
+      "afterScene": {
+        "kind": "evidenceCheck",
+        "checkId": "work-approval-missing",
+        "label": "材料板",
+        "nextLabel": "看审批截图",
+        "continueLabel": "继续听"
+      },
       "casualQuestions": [
         {
           "question": "垫的钱是多少？",
@@ -272,6 +366,49 @@
         "expression": {
           "kind": "blink",
           "text": "连眨了两下"
+        }
+      }
+    },
+    {
+      "speakerId": "chen",
+      "speaker": "咨询者",
+      "version": "活动后小复盘那天，领导确实点名夸了我，说“这次客户反馈不错，执行主责要记下来”。我当时心里还松了一口气。可他后面又补了一句：“流程你们自己按老规矩补齐。”那句话一出来，我就不好在会上提垫款了。",
+      "doubt": "小复盘夸奖把主责写实，也把流程问题压回执行层。",
+      "contradiction": "领导夸的是结果和主责，没有追问垫款与流程入口。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "领导当场知道你刷了个人卡吗？",
+          "answer": "我不确定。会上没人说“个人卡”三个字。说的都是执行效率、客户反馈。"
+        },
+        {
+          "question": "那句老规矩是谁先接的话？",
+          "answer": "他接得最快，说会补齐。后来我才发现，补齐这两个字也要经过他。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "领导夸你的时候，有没有同时确认钱和流程？",
+          "answer": "没有。他只说结果不错、主责记下来。钱谁垫、流程谁补、供应商谁对接，一句都没有。我当时被夸住了，也被架住了。",
+          "contradiction": "领导只确认结果和署名，没有确认垫款与流程责任。",
+          "correct": true,
+          "routeAxis": "process-control",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你是不是因为被夸了，就更不好意思追钱？",
+          "answer": "是。被点名那一下我真的高兴，可高兴完才发现，这等于大家都知道我是主责了。主责追钱，听起来就像我自己流程没走好。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "夸奖把话堵回去",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "说到被夸时反而把声音压低"
         }
       }
     },
@@ -356,6 +493,42 @@
   ],
   "evidenceChecks": [
     {
+      "id": "work-budget-timeline",
+      "title": "预算沟通记录检视",
+      "prompt": "这组聊天里，哪一处说明“来不及”不是财务延后的结果？",
+      "material": "部门助理 14:05 在大群发流程表：预算金额、个人垫付报备、供应商对公账户。当天 14:22，同事私聊“先别在大群问预算，来不及，复盘再补流程”。财务延后通知是九天后才发的。",
+      "materialRows": [
+        "14:05 部门助理：活动预算先填金额，个人垫付需提前报备",
+        "14:22 同事私聊：先别在大群问预算，来不及，复盘再补流程",
+        "九天后 财务群：供应商付款本月统一延后"
+      ],
+      "options": [
+        {
+          "label": "延后通知晚了九天",
+          "correct": true,
+          "contradiction": "同事说来不及时，财务还没有发布付款延后通知。",
+          "feedback": "这一下把借口的时间线拆开了：绕流程先发生，财务延后后发生。",
+          "reactionLine": "我一直把这两件事混在一起。可他让我别问的时候，财务根本还没说延后。",
+          "revisesScene": 2,
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "个人垫付需报备",
+          "correct": false,
+          "feedback": "这条说明她也没照流程走，但最刺的是借口出现得比延后通知早。",
+          "reactionLine": "这条我认。我没报备，所以后来更怕被说成我自己乱来。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "供应商对公账户",
+          "correct": false,
+          "feedback": "对公账户重要，但这里先看谁把公开流程挪到私聊里。",
+          "reactionLine": "对公那行我后来才知道严重。当时我只想着别在群里丢脸。",
+          "routeAxis": "money-flow"
+        }
+      ]
+    },
+    {
       "id": "work-approval-missing",
       "title": "审批截图检视",
       "prompt": "这张审批图最该让对方补哪一页？",
@@ -397,7 +570,7 @@
           "contradiction": "供应商返款入口仍在同事手里，垫付款可能被卡在对接流程里。",
           "feedback": "审批图挡不住这一行：返款往谁手里走。",
           "reactionLine": "“老规矩”仨字，他说得比谁都顺。我现在听见这词就发毛。",
-          "revisesScene": 1,
+          "revisesScene": 2,
           "routeAxis": "process-control"
         },
         {
@@ -418,6 +591,87 @@
     }
   ],
   "investigationHooks": [
+    {
+      "id": "work-assistant-flow-sample",
+      "source": "department-assistant",
+      "surface": "后台收到一份流程样本",
+      "title": "部门助理流程样本",
+      "triggerContradiction": "同事说来不及时，财务还没有发布付款延后通知。",
+      "appearsNowBecause": "收麦后，部门助理把那天的大群流程样本补给后台。",
+      "prompt": "这份样本里，哪一处说明这单绕开的是正常入口？",
+      "material": "部门助理补充：正常客户活动单先由执行人填预算，个人垫付需要提前报备，供应商付款优先走对公。她说“我只按模板发流程，不判断谁私下说了什么”。",
+      "materialRows": [
+        "执行人先填预算金额",
+        "个人垫付需提前报备",
+        "供应商付款优先走对公",
+        "助理备注：我只按模板发流程，不判断谁私下说了什么"
+      ],
+      "proves": "这单不是没有流程，而是公开流程被私聊绕开。",
+      "stillCannotProve": "不能证明助理知道垫款，也不能证明老板知情。",
+      "routeAxis": "process-control",
+      "options": [
+        {
+          "label": "个人垫付需提前报备",
+          "correct": true,
+          "contradiction": "正常流程要求个人垫付提前报备，这单却被挪到私聊里。",
+          "feedback": "这条把正常入口摆出来了：不是流程不存在，是有人让她绕过去。",
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "我只按模板发流程",
+          "correct": false,
+          "feedback": "这句说明助理自保，但不是这单绕开的关键入口。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "供应商付款优先走对公",
+          "correct": false,
+          "feedback": "这句重要，但和供应商返款要合看；这份样本先证明公开流程被绕开。",
+          "routeAxis": "money-flow"
+        }
+      ]
+    },
+    {
+      "id": "work-leader-recap-note",
+      "source": "leader-note",
+      "surface": "后台收到复盘批注",
+      "title": "领导复盘批注",
+      "triggerContradiction": "领导只确认结果和署名，没有确认垫款与流程责任。",
+      "appearsNowBecause": "收麦后，有人把活动小复盘的批注截给后台。",
+      "prompt": "这条批注里，哪一句最说明领导看见的是结果，不是钱路？",
+      "material": "领导批注：“客户反馈不错，执行主责记陈；流程按老规矩补齐，不要影响季度复盘数据。”批注里没有垫款金额、付款账户、供应商对接人。",
+      "materialRows": [
+        "客户反馈不错",
+        "执行主责记陈",
+        "流程按老规矩补齐",
+        "不要影响季度复盘数据",
+        "未出现：垫款金额、付款账户、供应商对接人"
+      ],
+      "proves": "领导的批注强化了主责署名，但没有核对垫款和资金入口。",
+      "stillCannotProve": "不能证明领导参与拿钱，只能证明组织层面对结果和数据更敏感。",
+      "routeAxis": "process-control",
+      "options": [
+        {
+          "label": "执行主责记陈",
+          "correct": true,
+          "contradiction": "领导批注强化咨询者主责，却没有同步确认资金入口。",
+          "feedback": "这句把她写进责任位，却没把钱路交给她。",
+          "routeAxis": "identity-wording"
+        },
+        {
+          "label": "客户反馈不错",
+          "correct": false,
+          "feedback": "结果好是真的，但它解释不了垫款为什么回不来。",
+          "routeAxis": "outer-thread"
+        },
+        {
+          "label": "不要影响季度复盘数据",
+          "correct": false,
+          "feedback": "这句露出领导利益，但要先抓主责和资金入口没有同步。",
+          "routeAxis": "process-control"
+        }
+      ]
+    },
     {
       "id": "work-supplier-dm",
       "source": "dm",
@@ -472,6 +726,7 @@
   },
   "hostWoundHook": "满嘴流程词的人准没好事",
   "respondentNote": {
+    "source": "respondent-note",
     "appearsNowBecause": "收麦后，那位同事托人给后台带了话。",
     "text": "垫款我认，月底肯定结。审批本来就走完了，是财务节奏的事。主责署名是人家自己开口要的，这话敢不敢认？返款是供应商这边的老规矩，跟垫款两码事。"
   },
@@ -480,11 +735,11 @@
     "answer": "我最怕他们说我是为了抢署名才私下垫款，流程不规范。我先跟老板说能主责，我也确实想要这个主责；但他用这个让我先刷卡、又拿审批截图挡我，也是真的。",
     "note": "问到这里，咨询者想表现是真的，被人拿这个点压着先垫钱也是真的。"
   },
-  "stageJudgement": "咨询者把难听的先说了：想要主责，先表过态。所以别问咨询者还藏了什么，问那两条钱路为什么都过对方的手。",
-  "storyInterludeRecap": "主责挂在报告上，垫款却实打实从自己卡里划走了。",
-  "followupTwist": "后续回拨里，财务说审批通过后还要二次付款确认，收款账户填的是同事账户。截图不是假，只是刚好截到最能让人闭嘴的地方。",
+  "stageJudgement": "咨询者把难听的先说了：想要主责，先表过态，也看见过正常流程却没公开问。可这不等于她认下垫款。现在要问的是：为什么公开流程被私聊挪开，为什么主责写给她，钱路和供应商入口还在对方手里。",
+  "storyInterludeRecap": "主责挂在报告上，流程样本在群里，垫款却实打实从自己卡里划走了。",
+  "followupTwist": "后续回拨里，财务说审批通过后还要二次付款确认，收款账户填的是同事账户。部门助理又补了一句：她那天发的流程表没问题，问题是有人把流程挪到私聊里。截图不是假，只是刚好截到最能让人闭嘴的地方。",
   "dailyShareTitle": "报销截图都发了，钱为什么还没回来？",
-  "dailyShareBody": "审批图是过了，可付款状态、收款账户、供应商返款，一项都没露。",
+  "dailyShareBody": "流程表发过，审批图也过了，可付款状态、收款账户、供应商返款，一项都没露。",
   "dailyShareQuestion": "你会先问审批截图，还是先问谁拿了项目署名？",
-  "truth": "这案咨询者把难听的先说了：咨询者想拿表现，先表了态，垫钱时也有自己的算盘。可自认归自认，账不跟着走。认了想表现，不等于认下那笔垫款。对方手里的才要紧：审批图只截到最好看那页，“财务延后”只盖得住报销那条路，付款确认和供应商返款全攥在对方手里。定不了的：钱最后进了谁的账户，老板知不知道。回拨里财务那句话之后，这两条更得钉死了再说。"
+  "truth": "这案咨询者把难听的先说了：咨询者想拿表现，先表了态，也看见过流程表却没在群里问预算。可自认归自认，账不跟着走。认了想表现，不等于认下那笔垫款。对方手里的才要紧：他说来不及的时候，财务延后通知还没出现；审批图只截到最好看那页；“财务延后”只盖得住报销那条路，付款确认和供应商返款全攥在对方手里。领导批注只把主责写给她，没有把钱路交给她。定不了的：钱最后进了谁的账户，老板知不知道，“老规矩”从哪一年开始、还有谁拿过。"
 }
