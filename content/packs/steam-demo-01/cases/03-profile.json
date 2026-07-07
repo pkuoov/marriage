@@ -239,6 +239,7 @@
       "speakerId": "lin",
       "speaker": "咨询者",
       "version": "我开始不踏实，是因为他口头收入说得不错，可平时花销看起来对不上。他不是没钱那种，但特别会算，约会也经常把便宜说成会过日子。",
+      "revisedVersion": "花销对不上这话，我收回半句。他不是花不起，是每笔都要算到值。对不上的，是嘴上的收入，和只肯给一个月截图的底气。",
       "doubt": "收入截图是一回事，平时钱怎么花又是另一回事。",
       "contradiction": "男方声称收入和日常花销不匹配，咨询者才把存款证明追成流水和真实收入。",
       "reliability": "partial",
@@ -399,18 +400,21 @@
           "correct": true,
           "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
           "feedback": "图不一定假，但少的这一块会让“名校毕业”变成另一种听法。",
+          "reactionLine": "问了三次才凑齐这三样。他从没一次给全过。",
           "routeAxis": "identity-wording"
         },
         {
           "label": "截图像不像修过",
           "correct": false,
           "feedback": "修没修先放下，这张图缺的是后半截。",
+          "reactionLine": "图是真的。我拿原件对过校名。",
           "routeAxis": "document-edge"
         },
         {
           "label": "介绍人有没有夸张",
           "correct": false,
           "feedback": "介绍人是前因，这张图缺的是另一半。",
+          "reactionLine": "介绍人肯定挑好听的说。这个我从一开始就知道。",
           "routeAxis": "caller-credibility"
         }
       ]
@@ -426,18 +430,22 @@
           "correct": true,
           "contradiction": "单张存款证明和当日收入截图撑不起长期收入判断。",
           "feedback": "这一块不补，稳定两个字还是悬着。",
+          "reactionLine": "单月那张他发得特别快。我后来才想，快，可能就是因为只有那一张拿得出手。",
+          "revisesScene": 3,
           "routeAxis": "money-flow"
         },
         {
           "label": "存款当天的余额数字",
           "correct": false,
           "feedback": "余额数字好看，但它只站在那一天。",
+          "reactionLine": "二十八万六，数字我记得很牢。牢得有点丢人。",
           "routeAxis": "money-flow"
         },
         {
           "label": "截图是不是原图",
           "correct": false,
           "feedback": "原图也可能只截到最好看的那一页。",
+          "reactionLine": "原图。我检查过像素，没修。是我自己想歪了方向。",
           "routeAxis": "document-edge"
         }
       ]

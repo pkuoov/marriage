@@ -147,6 +147,7 @@
       "speakerId": "chen",
       "speaker": "咨询者",
       "version": "我后来才想起来，活动前他让我别在大群里问预算，说客户答谢会临时调整太多，先私下把事办成，复盘再补流程。我也怕在大群问预算，会显得我前面说能主责是嘴硬。",
+      "revisedVersion": "大群那件事，我再说一遍。他说别问，我就没问——当时我以为他在护我的面子。返款那行圈出来以后再想，大群里一有记录，钱走哪条路就瞒不住人了。",
       "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
       "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
       "reliability": "partial",
@@ -363,18 +364,21 @@
           "correct": true,
           "contradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
           "feedback": "审批过不等于钱到账，少的就是这一页。",
+          "reactionLine": "这两栏……我要早看这两栏，就不会等三个星期。",
           "routeAxis": "document-edge"
         },
         {
           "label": "活动现场照片",
           "correct": false,
           "feedback": "活动办了也不代表钱回来了。",
+          "reactionLine": "现场照片老板都点过赞。活动本身没毛病。",
           "routeAxis": "outer-thread"
         },
         {
           "label": "老板有没有看到复盘",
           "correct": false,
           "feedback": "复盘写了谁主责，没写他什么时候把垫款还回来。",
+          "reactionLine": "复盘老板看了，还夸了。夸完我更不敢提钱。",
           "routeAxis": "identity-wording"
         }
       ]
@@ -390,18 +394,22 @@
           "correct": true,
           "contradiction": "供应商返款入口仍在同事手里，垫付款可能被卡在对接流程里。",
           "feedback": "审批图挡不住这一行：返款往谁手里走。",
+          "reactionLine": "“老规矩”仨字，他说得比谁都顺。我现在听见这词就发毛。",
+          "revisesScene": 1,
           "routeAxis": "process-control"
         },
         {
           "label": "服务协调费",
           "correct": false,
           "feedback": "这名目是可疑，但先看钱最后回到谁那儿。",
+          "reactionLine": "这笔费我查过行价，查不出对错。",
           "routeAxis": "money-flow"
         },
         {
           "label": "报价单最下面",
           "correct": false,
           "feedback": "在最下面容易漏看，但问题不是位置，是收款的人。",
+          "reactionLine": "那行小字是小，我也是拿放大镜看的。",
           "routeAxis": "document-edge"
         }
       ]

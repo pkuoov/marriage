@@ -801,6 +801,7 @@ export const CONTENT_CASES = {
           "speakerId": "he",
           "speaker": "咨询者",
           "version": "TA 每次下班后都陪我聊天，说只有我能接住 TA 的情绪，还说别人都不懂。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。去店里剪头他从来不收我钱，号再满也给我插进去。我就顺手帮他转过几次店里的活动。",
+          "revisedVersion": "……那句“只有你能接住我”，我当宝贝存了半年。表上那列圈出来以后，这句话像是从模板里复制出来的。",
           "doubt": "没有确认关系，但对方一直给排他式的亲近感。",
           "contradiction": "TA 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
           "reliability": "mixed",
@@ -1062,18 +1063,22 @@ export const CONTENT_CASES = {
               "correct": true,
               "contradiction": "TA 把不同对象按可推进资源分层管理。",
               "feedback": "这不是剪头需求，是把人按能带来什么往下排。",
+              "reactionLine": "你圈的这列，我自己盯着看过半小时。找不出别的解释。",
+              "revisesScene": 0,
               "routeAxis": "process-control"
             },
             {
               "label": "预约时间",
               "correct": false,
               "feedback": "预约时间本身没问题，刺眼的是备注里的功能标签。",
+              "reactionLine": "预约时间倒都对得上，他排号一向准。",
               "routeAxis": "document-edge"
             },
             {
               "label": "店员名字",
               "correct": false,
               "feedback": "名字不够要紧，后面那些“稳情绪”“能投店”才让这张表变了性质。",
+              "reactionLine": "名字我都认识，店里就那几个人。",
               "routeAxis": "outer-thread"
             }
           ]
@@ -1089,18 +1094,21 @@ export const CONTENT_CASES = {
               "correct": true,
               "contradiction": "亲密身份话后立刻接年卡和投店试探。",
               "feedback": "甜话可以是玩笑，可它后面马上接了消费。",
+              "reactionLine": "……对，先给位置，再谈钱。我当时怎么就觉得顺呢。",
               "routeAxis": "money-flow"
             },
             {
               "label": "22:48 这个时间",
               "correct": false,
               "feedback": "深夜聊天容易暧昧，但时间本身不是这条记录最扎眼的地方。",
+              "reactionLine": "深夜聊天我们常有，那会儿我不觉得晚。",
               "routeAxis": "identity-wording"
             },
             {
               "label": "先别催，稳住",
               "correct": false,
               "feedback": "这句很冷，但它说明的是推进手法；前面那句先把关系位置垫起来了。",
+              "reactionLine": "“稳住”俩字我读了好几遍，越读越冷。",
               "routeAxis": "process-control"
             }
           ]
@@ -1391,6 +1399,7 @@ export const CONTENT_CASES = {
           "speakerId": "lin",
           "speaker": "咨询者",
           "version": "我开始不踏实，是因为他口头收入说得不错，可平时花销看起来对不上。他不是没钱那种，但特别会算，约会也经常把便宜说成会过日子。",
+          "revisedVersion": "花销对不上这话，我收回半句。他不是花不起，是每笔都要算到值。对不上的，是嘴上的收入，和只肯给一个月截图的底气。",
           "doubt": "收入截图是一回事，平时钱怎么花又是另一回事。",
           "contradiction": "男方声称收入和日常花销不匹配，咨询者才把存款证明追成流水和真实收入。",
           "reliability": "partial",
@@ -1551,18 +1560,21 @@ export const CONTENT_CASES = {
               "correct": true,
               "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
               "feedback": "图不一定假，但少的这一块会让“名校毕业”变成另一种听法。",
+              "reactionLine": "问了三次才凑齐这三样。他从没一次给全过。",
               "routeAxis": "identity-wording"
             },
             {
               "label": "截图像不像修过",
               "correct": false,
               "feedback": "修没修先放下，这张图缺的是后半截。",
+              "reactionLine": "图是真的。我拿原件对过校名。",
               "routeAxis": "document-edge"
             },
             {
               "label": "介绍人有没有夸张",
               "correct": false,
               "feedback": "介绍人是前因，这张图缺的是另一半。",
+              "reactionLine": "介绍人肯定挑好听的说。这个我从一开始就知道。",
               "routeAxis": "caller-credibility"
             }
           ]
@@ -1578,18 +1590,22 @@ export const CONTENT_CASES = {
               "correct": true,
               "contradiction": "单张存款证明和当日收入截图撑不起长期收入判断。",
               "feedback": "这一块不补，稳定两个字还是悬着。",
+              "reactionLine": "单月那张他发得特别快。我后来才想，快，可能就是因为只有那一张拿得出手。",
+              "revisesScene": 3,
               "routeAxis": "money-flow"
             },
             {
               "label": "存款当天的余额数字",
               "correct": false,
               "feedback": "余额数字好看，但它只站在那一天。",
+              "reactionLine": "二十八万六，数字我记得很牢。牢得有点丢人。",
               "routeAxis": "money-flow"
             },
             {
               "label": "截图是不是原图",
               "correct": false,
               "feedback": "原图也可能只截到最好看的那一页。",
+              "reactionLine": "原图。我检查过像素，没修。是我自己想歪了方向。",
               "routeAxis": "document-edge"
             }
           ]
@@ -1803,6 +1819,7 @@ export const CONTENT_CASES = {
           "speakerId": "chen",
           "speaker": "咨询者",
           "version": "我后来才想起来，活动前他让我别在大群里问预算，说客户答谢会临时调整太多，先私下把事办成，复盘再补流程。我也怕在大群问预算，会显得我前面说能主责是嘴硬。",
+          "revisedVersion": "大群那件事，我再说一遍。他说别问，我就没问——当时我以为他在护我的面子。返款那行圈出来以后再想，大群里一有记录，钱走哪条路就瞒不住人了。",
           "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
           "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
           "reliability": "partial",
@@ -2019,18 +2036,21 @@ export const CONTENT_CASES = {
               "correct": true,
               "contradiction": "审批截图缺少付款状态和收款账户，不能证明钱已到账。",
               "feedback": "审批过不等于钱到账，少的就是这一页。",
+              "reactionLine": "这两栏……我要早看这两栏，就不会等三个星期。",
               "routeAxis": "document-edge"
             },
             {
               "label": "活动现场照片",
               "correct": false,
               "feedback": "活动办了也不代表钱回来了。",
+              "reactionLine": "现场照片老板都点过赞。活动本身没毛病。",
               "routeAxis": "outer-thread"
             },
             {
               "label": "老板有没有看到复盘",
               "correct": false,
               "feedback": "复盘写了谁主责，没写他什么时候把垫款还回来。",
+              "reactionLine": "复盘老板看了，还夸了。夸完我更不敢提钱。",
               "routeAxis": "identity-wording"
             }
           ]
@@ -2046,18 +2066,22 @@ export const CONTENT_CASES = {
               "correct": true,
               "contradiction": "供应商返款入口仍在同事手里，垫付款可能被卡在对接流程里。",
               "feedback": "审批图挡不住这一行：返款往谁手里走。",
+              "reactionLine": "“老规矩”仨字，他说得比谁都顺。我现在听见这词就发毛。",
+              "revisesScene": 1,
               "routeAxis": "process-control"
             },
             {
               "label": "服务协调费",
               "correct": false,
               "feedback": "这名目是可疑，但先看钱最后回到谁那儿。",
+              "reactionLine": "这笔费我查过行价，查不出对错。",
               "routeAxis": "money-flow"
             },
             {
               "label": "报价单最下面",
               "correct": false,
               "feedback": "在最下面容易漏看，但问题不是位置，是收款的人。",
+              "reactionLine": "那行小字是小，我也是拿放大镜看的。",
               "routeAxis": "document-edge"
             }
           ]
