@@ -1414,7 +1414,7 @@ function dailyConclusion(brief, result, issue) {
 
 function currentLivePressure(brief, mood = "listening") {
   const sceneHint = currentScenePressureHint(brief);
-  return livePressureProfile({
+  const pressure = livePressureProfile({
     budget: ensureBudget(brief),
     foundCount: contradictionsForState(state, brief).length,
     intentHook: liveIntentHookFor(brief),
@@ -1425,6 +1425,36 @@ function currentLivePressure(brief, mood = "listening") {
     sceneHint,
     mood
   });
+  return withCrossCaseEchoes(pressure, brief);
+}
+
+function withCrossCaseEchoes(pressure = {}, brief = {}) {
+  const echo = eligibleCrossCaseEcho(brief);
+  const comments = Array.isArray(pressure.comments) ? [...pressure.comments] : [];
+  if (!echo || comments.length === 0) return pressure;
+  comments[stableEchoIndex(`${brief.id}:${echo.requiresCaseId}:${echo.text}`, comments.length)] = echo.text;
+  return { ...pressure, comments };
+}
+
+function eligibleCrossCaseEcho(brief = {}) {
+  if (!isStoryPackMode()) return null;
+  const echoes = Array.isArray(brief.crossCaseEchoes) ? brief.crossCaseEchoes : [];
+  if (!echoes.length) return null;
+  const solvedContentCaseIds = new Set((state.caseBriefs ?? [])
+    .filter((item) => (state.solvedCaseIds ?? []).includes(item.id))
+    .map((item) => item.runtimeContentCaseId ?? item.caseId)
+    .filter(Boolean));
+  return echoes.find((echo) => solvedContentCaseIds.has(echo.requiresCaseId)) ?? null;
+}
+
+function stableEchoIndex(seed = "", length = 1) {
+  const safeLength = Math.max(1, Number(length ?? 1));
+  let hash = 2166136261;
+  for (const char of String(seed)) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0) % safeLength;
 }
 
 function storyInterludeBackflowProfile(brief = {}) {

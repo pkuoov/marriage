@@ -140,6 +140,19 @@ function assertQuotePickCandidates(packet = {}, label = "") {
   });
 }
 
+function assertCrossCaseEchoes(packet = {}, caseOrder = [], label = "") {
+  if (packet.crossCaseEchoes === undefined) return;
+  assert(Array.isArray(packet.crossCaseEchoes), `${label} crossCaseEchoes 必须是数组`);
+  const currentIndex = caseOrder.indexOf(packet.caseId);
+  packet.crossCaseEchoes.forEach((echo, echoIndex) => {
+    assertNonEmptyString(echo.requiresCaseId, `${label} crossCaseEchoes[${echoIndex}] 缺少 requiresCaseId`);
+    assertNonEmptyString(echo.text, `${label} crossCaseEchoes[${echoIndex}] 缺少 text`);
+    const requiredIndex = caseOrder.indexOf(echo.requiresCaseId);
+    assert(requiredIndex >= 0, `${label} crossCaseEchoes[${echoIndex}] requiresCaseId 不在当前包内`);
+    assert(requiredIndex < currentIndex, `${label} crossCaseEchoes[${echoIndex}] requiresCaseId 必须是包内更早的案子`);
+  });
+}
+
 function collectTextLength(value) {
   if (typeof value === "string") return value.trim().length;
   if (Array.isArray(value)) return value.reduce((sum, item) => sum + collectTextLength(item), 0);
@@ -183,6 +196,7 @@ const comments = await readJson(`content/packs/${packId}/comments.json`);
 const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes.json`);
 const advisorRegistry = await readJson("content/characters/advisors.json").catch(() => ({ advisors: [] }));
 const advisorIds = new Set((advisorRegistry.advisors ?? []).map((advisor) => advisor.id));
+const caseOrder = manifest.sequence.map((item) => item.caseId);
 
 test("PACK-001", "manifest matches runtime story pack definition", () => {
   assert(runtimePack, `运行时故事包不存在: ${packId}`);
@@ -367,13 +381,14 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assertNonEmptyString(note.text, `${casePacket.caseId} advisorNotes[${noteIndex}] 缺少 text`);
         assert(!/[圈]|那一栏|哪一块/.test(note.text), `${casePacket.caseId} advisorNotes[${noteIndex}] 顾问文案不能替玩家点位置`);
       });
-      if (casePacket.respondentNote !== undefined) {
-        assert(!Array.isArray(casePacket.respondentNote), `${casePacket.caseId} respondentNote 每案至多一个`);
-        assertNonEmptyString(casePacket.respondentNote.appearsNowBecause, `${casePacket.caseId} respondentNote 缺少 appearsNowBecause`);
-        assertNonEmptyString(casePacket.respondentNote.text, `${casePacket.caseId} respondentNote 缺少 text`);
-      }
+	      if (casePacket.respondentNote !== undefined) {
+	        assert(!Array.isArray(casePacket.respondentNote), `${casePacket.caseId} respondentNote 每案至多一个`);
+	        assertNonEmptyString(casePacket.respondentNote.appearsNowBecause, `${casePacket.caseId} respondentNote 缺少 appearsNowBecause`);
+	        assertNonEmptyString(casePacket.respondentNote.text, `${casePacket.caseId} respondentNote 缺少 text`);
+	      }
+	      assertCrossCaseEchoes(casePacket, caseOrder, casePacket.caseId);
 
-      assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
+	      assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.note, `${casePacket.caseId} deepFollowup.note 不能为空`);
       assertNonEmptyString(casePacket.selfServingOmission, `${casePacket.caseId} 必须写出来电人对自己不利的修剪`);
