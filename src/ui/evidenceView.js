@@ -105,6 +105,7 @@ export function investigationBackflowScreenHtml({
 } = {}) {
   return `
     <p><b>${escapeHtml(hook.surface ?? "后台进来一条私信")}</b></p>
+    <span class="source-badge">${escapeHtml(investigationSourceBadge(hook.source))}</span>
     <p>${escapeHtml(hook.appearsNowBecause ?? "收麦后，有人补了一张图。")}</p>
     ${evidenceOperationHtml(hook, pick, index)}
     ${evidenceMaterialNoteHtml(hook)}
@@ -112,6 +113,20 @@ export function investigationBackflowScreenHtml({
     ${pick ? evidencePickFeedbackHtml(pick) : ""}
     ${reviewHtml}
   `;
+}
+
+const INVESTIGATION_SOURCE_BADGES = {
+  dm: "后台私信",
+  "respondent-note": "对方留言",
+  "store-manager-note": "店长留言",
+  "leader-note": "领导批注",
+  "department-assistant": "部门助理记录",
+  "introducer-note": "介绍人留言",
+  "cousin-note": "表姐说明"
+};
+
+function investigationSourceBadge(source = "") {
+  return INVESTIGATION_SOURCE_BADGES[source] ?? "后台来源";
 }
 
 function evidenceMaterialBodyHtml(check = {}, kind = "file") {
