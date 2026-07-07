@@ -38,6 +38,7 @@ export const baseState = {
   investigationPicks: {},
   truthBoundaryPicks: {},
   truthBoundaryMisses: {},
+  materialPityLog: {},
   routeChoiceLog: {},
   caseBudgets: {},
   caseActionLog: {},
@@ -48,6 +49,7 @@ export const baseState = {
   lastReaction: null,
   lastPressureSignal: null,
   lastPressureAxis: null,
+  lastPityLine: null,
   patienceLostContext: null,
   recapStep: 0
 };
@@ -81,6 +83,7 @@ export function migrateState(saved) {
   if (!next.investigationPicks || Array.isArray(next.investigationPicks)) next.investigationPicks = {};
   if (!next.truthBoundaryPicks || Array.isArray(next.truthBoundaryPicks)) next.truthBoundaryPicks = {};
   if (!next.truthBoundaryMisses || Array.isArray(next.truthBoundaryMisses)) next.truthBoundaryMisses = {};
+  if (!next.materialPityLog || Array.isArray(next.materialPityLog)) next.materialPityLog = {};
   if (!next.routeChoiceLog || Array.isArray(next.routeChoiceLog)) next.routeChoiceLog = {};
   if (!next.caseBudgets || Array.isArray(next.caseBudgets)) next.caseBudgets = {};
   if (!next.caseActionLog || Array.isArray(next.caseActionLog)) next.caseActionLog = {};
@@ -90,6 +93,7 @@ export function migrateState(saved) {
   if (!next.caseInterludes || Array.isArray(next.caseInterludes)) next.caseInterludes = {};
   if (!("lastReaction" in next)) next.lastReaction = null;
   if (!("lastPressureSignal" in next)) next.lastPressureSignal = null;
+  if (!("lastPityLine" in next)) next.lastPityLine = null;
   if (!("patienceLostContext" in next)) next.patienceLostContext = null;
   if (!("lastPressureAxis" in next)) next.lastPressureAxis = null;
   next.sceneQuestionPicks = migrateChoiceRecord(next.sceneQuestionPicks);

@@ -101,6 +101,7 @@ function normalizeDailyState(saved) {
     investigationPicks: saved?.investigationPicks ?? {},
     truthBoundaryPicks: saved?.truthBoundaryPicks ?? {},
     truthBoundaryMisses: saved?.truthBoundaryMisses ?? {},
+    materialPityLog: saved?.materialPityLog ?? {},
     routeChoiceLog: saved?.routeChoiceLog ?? {},
     caseActionLog: saved?.caseActionLog ?? {},
     caseBudgets: saved?.caseBudgets ?? {},
@@ -111,6 +112,7 @@ function normalizeDailyState(saved) {
     lastReaction: saved?.lastReaction ?? null,
     lastPressureSignal: saved?.lastPressureSignal ?? null,
     lastPressureAxis: saved?.lastPressureAxis ?? null,
+    lastPityLine: saved?.lastPityLine ?? null,
     patienceLostContext: saved?.patienceLostContext ?? null,
     settings: { ...baseState.settings, ...(saved?.settings ?? {}) }
   };
@@ -707,8 +709,9 @@ function renderStoryPackComplete() {
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true }) {
   const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
   const backdropClass = caseBackdropClass(brief);
+  const pressure = showCaseHud ? currentLivePressure(brief, mood) : {};
   const visualHud = showCaseHud
-    ? `${caseProgressStrip(brief)}${audiencePatienceHud(brief)}${liveCommentStrip(brief)}${portraitLayer(brief, mood)}`
+    ? `${caseProgressStrip(brief)}${audiencePatienceHud(pressure)}${liveCommentStrip(pressure)}${portraitLayer(brief, mood)}`
     : storyPackSummaryHud();
   const total = Math.max(1, keyQuestionLimit(brief));
   const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
@@ -732,17 +735,26 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
           label,
           segment: answeredSceneCountForState(state, brief) + 1,
           total,
-          pressure: currentLivePressure(brief),
+          pressure,
           material: currentMaterial
         })
       : ""
   });
-  const hadPressureCue = Boolean(state.lastReaction || state.lastPressureSignal || state.lastScreenEffect);
+  const hadPressureCue = Boolean(state.lastReaction || state.lastPressureSignal || state.lastScreenEffect || state.lastPityLine);
+  if (pressure.pityKey) {
+    state.materialPityLog = {
+      ...(state.materialPityLog ?? {}),
+      [pressure.pityKey]: true
+    };
+  }
   if (hadPressureCue) {
     state.lastReaction = null;
     state.lastPressureSignal = null;
     state.lastPressureAxis = null;
+    state.lastPityLine = null;
     state.lastScreenEffect = null;
+    saveState();
+  } else if (pressure.pityKey) {
     saveState();
   }
   bind('[data-action="title"]', resetToTitle);
@@ -1011,6 +1023,7 @@ function bindEvidenceCheckButtons(brief, check = {}) {
       recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
       state.lastReaction = materialPressureReaction(outcome, check);
       state.lastPressureSignal = materialPressureSignal(outcome);
+      state.lastPityLine = materialPityLineFor(brief, check, checkIndex, outcome);
       if (outcome.correct) state.lastScreenEffect = "material-hit";
       state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
       if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
@@ -1444,7 +1457,7 @@ function currentLivePressure(brief, mood = "listening") {
     sceneHint,
     mood
   });
-  return withCrossCaseEchoes(pressure, brief);
+  return withMaterialPityLine(withCrossCaseEchoes(pressure, brief), brief);
 }
 
 function withCrossCaseEchoes(pressure = {}, brief = {}) {
@@ -1476,6 +1489,31 @@ function stableEchoIndex(seed = "", length = 1) {
   return (hash >>> 0) % safeLength;
 }
 
+function withMaterialPityLine(pressure = {}, brief = {}) {
+  const pity = activeMaterialPityLine(pressure, brief);
+  const comments = Array.isArray(pressure.comments) ? [...pressure.comments] : [];
+  if (!pity || comments.length === 0) return pressure;
+  comments[Math.min(1, comments.length - 1)] = pity.text;
+  return { ...pressure, comments, pityKey: pity.key };
+}
+
+function activeMaterialPityLine(pressure = {}, brief = {}) {
+  const pending = state.lastPityLine;
+  if (pending?.key && pending?.text && !state.materialPityLog?.[pending.key]) return pending;
+  if (state.scene !== "evidenceCheck" || pressure.level !== "low") return null;
+  const checkIndex = currentIndex(brief, "evidenceCheck", evidenceChecksFor(brief).length || 1);
+  if (selectedEvidencePickForState(state, brief, checkIndex)) return null;
+  const check = evidenceChecksFor(brief)[checkIndex] ?? {};
+  return materialPityLineFor(brief, check, checkIndex);
+}
+
+function materialPityLineFor(brief = {}, check = {}, checkIndex = 0, outcome = null) {
+  if (!check.pityLine || outcome?.correct) return null;
+  const key = `${caseKey(brief)}:evidence:${checkIndex}`;
+  if (state.materialPityLog?.[key]) return null;
+  return { key, text: check.pityLine };
+}
+
 function storyInterludeBackflowProfile(brief = {}) {
   return investigationBackflowProfile(selectedInvestigationPicksForState(state, brief));
 }
@@ -1489,8 +1527,8 @@ function caseProgressStrip(brief) {
   });
 }
 
-function audiencePatienceHud(brief) {
-  return audiencePatienceHudHtml(currentLivePressure(brief));
+function audiencePatienceHud(pressure = {}) {
+  return audiencePatienceHudHtml(pressure);
 }
 
 function storyPackSummaryHud() {
@@ -1499,8 +1537,8 @@ function storyPackSummaryHud() {
   return storyPackSummaryHudHtml({ total, solved });
 }
 
-function liveCommentStrip(brief) {
-  return liveCommentStripHtml(currentLivePressure(brief));
+function liveCommentStrip(pressure = {}) {
+  return liveCommentStripHtml(pressure);
 }
 
 function liveIntentHookFor(brief) {

@@ -105,6 +105,9 @@ async function runRoute(route) {
     if (route.name === "perfect") {
       await assertVisibleText(page, "账单我再说一遍", "perfect route should show testimony revision after the material hit");
     }
+    if (route.name === "material-miss") {
+      await assertVisibleText(page, "这卡上像戒了的样子吗？", "material-miss route should show pity line after the first miss");
+    }
 
     await advanceToAccusation(page, route);
     await activate(page, route, "[data-accuse]");

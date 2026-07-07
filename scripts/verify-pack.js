@@ -68,6 +68,10 @@ function assertEvidenceOperation(operation, label) {
   assertNonEmptyString(operation.title, `${label} 缺少 title`);
   assertNonEmptyString(operation.prompt, `${label} 缺少 prompt`);
   assertNonEmptyString(operation.material, `${label} 缺少 material`);
+  if (operation.pityLine !== undefined) {
+    assertNonEmptyString(operation.pityLine, `${label} pityLine 若存在必须是非空字符串`);
+    assert(!/[圈]|那一栏|哪一块/.test(operation.pityLine), `${label} pityLine 不能替玩家点位置`);
+  }
   if (operation.materialRows !== undefined) {
     assertArrayMin(operation.materialRows, 2, `${label} materialRows 至少需要两行`);
     operation.materialRows.forEach((row, rowIndex) => {
