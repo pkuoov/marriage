@@ -621,6 +621,7 @@ Sensor bandwidth (感知带宽 — the crowd is a microphone, not a camera):
 - The caller portrait and expression beats (「指尖停在屏幕上」「连眨了两下」) are **player-facing visualization, not the room's camera feed**. Comments must never reference visual tells unless the case declares video.
 - What the crowd CAN know: the call audio, whatever the host has already put on stream (a material becomes crowd-visible only after its board/card shows), their own life experience and trade knowledge (the pity layer), and the host's public history. What it can NEVER know: off-stream facts, unshown materials, the parties' identities (the show anonymizes; no doxxing plots), and anything later in the pack.
 - Write the bandwidth into the truth ledger: when planning comments, list what the microphone has actually carried so far. A comment that knows too much is the crowd version of a host question that assumes an unheard fact.
+Portrait art is canonically the host's mind's-eye rendering of a voice — the V2 semi-silhouette direction (docs/art-direction-v2-prompts.md) is this rule made visible; art acceptance includes the anonymity check.
 
 ## Advisor NPCs and Off-Mic Surfaces
 

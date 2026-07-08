@@ -61,8 +61,11 @@ export function callerExpressionForView({ pressure = {}, budget = {}, scene = ""
   return { kind: "blink", text: "麦里轻轻吸气" };
 }
 
-export function portraitLayerHtml({ artSrc = "", mood = "listening", expression = null } = {}) {
+export function portraitLayerHtml({ artSrc = "", fallbackSrc = "", mood = "listening", expression = null } = {}) {
   const safeExpression = expression ?? { kind: "blink", text: "麦里轻轻吸气" };
+  const fallbackAttr = fallbackSrc && fallbackSrc !== artSrc
+    ? ` data-fallback-src="${escapeHtml(fallbackSrc)}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;"`
+    : "";
   const moodLabels = {
     anxious: "紧张",
     focused: "盯资料",
@@ -73,7 +76,7 @@ export function portraitLayerHtml({ artSrc = "", mood = "listening", expression 
   return `
     <div class="case-duel-portraits">
       <figure class="case-portrait mood-${escapeHtml(mood)} active">
-        <img src="${escapeHtml(artSrc)}" alt="" />
+        <img src="${escapeHtml(artSrc)}" alt=""${fallbackAttr} />
         <div class="call-expression expression-${escapeHtml(safeExpression.kind)}"><span>${escapeHtml(safeExpression.text)}</span></div>
         <figcaption><span>匿名来电｜${escapeHtml(moodLabels[mood] ?? "听线")}</span><b>来电形象</b></figcaption>
       </figure>

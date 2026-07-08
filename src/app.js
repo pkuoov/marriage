@@ -1785,12 +1785,29 @@ function liveIntentHookFor(brief) {
 
 function portraitLayer(brief, mood = "listening") {
   const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
-  const artSrc = casePortraitArt(brief, npc);
-  return portraitLayerHtml({ artSrc, mood, expression: callerExpressionFor(brief, mood) });
+  const art = casePortraitArt(brief, npc);
+  return portraitLayerHtml({ artSrc: art.src, fallbackSrc: art.fallbackSrc, mood, expression: callerExpressionFor(brief, mood) });
 }
 
 function casePortraitArt(brief, npc) {
-  return brief.callerArt ?? CHARACTER_ART[npc.id] ?? CHARACTER_ART.meng;
+  const neutralArt = CHARACTER_ART[npc.id];
+  const variantArt = callerVariantArt(neutralArt, currentScenePressureHint(brief));
+  if (variantArt) return variantArt;
+  const fallback = neutralArt ?? CHARACTER_ART.meng;
+  return { src: brief.callerArt ?? fallback, fallbackSrc: fallback };
+}
+
+function callerVariantArt(neutralArt, pressureHint = {}) {
+  if (!neutralArt || !/_neutral\.png(\?v=[\w.-]+)?$/.test(neutralArt)) return null;
+  const variant = callerPortraitVariant(pressureHint);
+  const src = neutralArt.replace("_neutral.png", `_${variant}.png`);
+  return { src, fallbackSrc: neutralArt };
+}
+
+function callerPortraitVariant(pressureHint = {}) {
+  if (pressureHint.callerGuard === "guarded") return "guarded";
+  if (pressureHint.expression?.kind === "pause") return "pause";
+  return "neutral";
 }
 
 function callerExpressionFor(brief, mood = "listening") {

@@ -1,3 +1,4 @@
+已封存:V2 方向见 docs/art-direction-v2-prompts.md,本包仅供历史参照。
 《直播间大侦探》场景背景 Prompt 包
 
 用途：

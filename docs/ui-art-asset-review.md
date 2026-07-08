@@ -10,6 +10,15 @@ Reviewed:
 - Runtime portrait mapping through `CHARACTER_ART` and `portraitLayer`.
 - Existing generated background and portrait asset sheets.
 
+## V2 验收标准
+
+- 匿名感(来电人脸不可全见)
+- 光带一致性(宽度与倾角跨差分统一)
+- 每案双色调纯度
+- 颗粒密度统一
+
+三层清晰度原则:来电人>朦胧,顾问>清晰,主播永不露脸。
+
 ## Current Strengths
 
 - The title screen has a strong broadcast desk signal. `livestream_studio_v2.png` works better than the older dating/marriage backgrounds because it immediately says live room, mic, files, screens, and investigation.
