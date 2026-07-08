@@ -677,7 +677,15 @@ function offMicLettersForBrief(brief = {}, advisors = {}) {
     appearsNowBecause: note.appearsNowBecause ?? "",
     text: note.text ?? ""
   }));
-  return [...advisorRows, ...respondent].filter((letter) => letter.text);
+  const lurker = brief.lurkerNote?.presenceLine && brief.lurkerNote?.deletedFragment
+    ? [{
+      kind: "lurker",
+      badge: "后台提示",
+      appearsNowBecause: brief.lurkerNote.presenceLine,
+      text: `已删除弹幕残影：「${brief.lurkerNote.deletedFragment}」`
+    }]
+    : [];
+  return [...advisorRows, ...respondent, ...lurker].filter((letter) => letter.text);
 }
 
 function stanceSnapshotRecapForBrief(brief = {}) {

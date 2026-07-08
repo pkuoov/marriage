@@ -202,7 +202,16 @@ async function exerciseTruthBoundary(page, route) {
   for (let step = 0; step < 6; step += 1) {
     if (await page.locator(".truth-boundary-card").count()) break;
     const body = await page.locator("body").innerText().catch(() => "");
-    if (body.includes("麦外来信")) sawOffMicLetter = true;
+    if (body.includes("麦外来信")) {
+      sawOffMicLetter = true;
+      if (body.includes("灯是我真心买的")) {
+        assertTextOrder(body, [
+          "收麦后，后台一位常来的律师听友留了几句。",
+          "赵律师留完话没多久，周会计也来了一条，像是不同意。",
+          "灯是我真心买的"
+        ], "麦外来信 should order Zhao, Zhou, then lurker");
+      }
+    }
     await activate(page, route, "[data-recap-next]");
   }
   if (!sawOffMicLetter) {
@@ -321,5 +330,14 @@ async function assertVisibleText(page, text, message) {
 async function assertNoPageText(page, text, message) {
   if ((await page.locator("body").innerText()).includes(text)) {
     throw new Error(message);
+  }
+}
+
+function assertTextOrder(body, texts, message) {
+  let cursor = -1;
+  for (const text of texts) {
+    const index = body.indexOf(text);
+    if (index <= cursor) throw new Error(message);
+    cursor = index;
   }
 }

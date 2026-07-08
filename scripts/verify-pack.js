@@ -260,6 +260,18 @@ function assertDelegation(packet = {}, label = "") {
   });
 }
 
+function assertLurkerNote(packet = {}, label = "") {
+  if (packet.lurkerNote === undefined) return;
+  const note = packet.lurkerNote;
+  assert(note && typeof note === "object" && !Array.isArray(note), `${label} lurkerNote 必须是对象`);
+  assertNonEmptyString(note.presenceLine, `${label} lurkerNote.presenceLine 不能为空`);
+  assertNonEmptyString(note.deletedFragment, `${label} lurkerNote.deletedFragment 不能为空`);
+  assert(!/8\s*号|五万多|5万多/.test(note.deletedFragment), `${label} lurkerNote.deletedFragment 不能触碰 8 号或五万多`);
+  const commentsText = collectTextFrom(comments);
+  assert(!commentsText.includes(note.deletedFragment), `${label} lurkerNote.deletedFragment 不得进入弹幕或终局评论墙`);
+  assert(!commentsText.includes(note.presenceLine), `${label} lurkerNote.presenceLine 不得进入弹幕或终局评论墙`);
+}
+
 const INVESTIGATION_SOURCE_BADGES = {
   dm: "后台私信",
   "respondent-note": "对方留言",
@@ -543,6 +555,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertStanceSnapshot(casePacket, casePacket.caseId);
       assertCallMedium(casePacket, casePacket.caseId);
       assertDelegation(casePacket, casePacket.caseId);
+      assertLurkerNote(casePacket, casePacket.caseId);
 
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);
@@ -564,6 +577,11 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assertNonEmptyString(casePacket[field], `${casePacket.caseId} ${field} 不能为空`);
       });
     });
+});
+
+test("PACK-006", "theatrical license lurker budget stays singular", () => {
+  const lurkerCases = caseFiles.filter((casePacket) => casePacket.lurkerNote !== undefined);
+  assert(lurkerCases.length <= 1, `每包至多一个案子使用 lurkerNote，当前 ${lurkerCases.length} 个`);
 });
 
 const failed = results.filter((result) => !result.ok);
