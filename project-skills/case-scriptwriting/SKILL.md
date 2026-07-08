@@ -65,11 +65,61 @@ Subjective recall over recap:
 Detour options are not stupid options:
 - A wrong-side option should be the caller (or host) reaching for a plausible, socially common, or self-protective reading — 极力替对方解释、给自己台阶 — never a joke answer or an obvious no-click.
 
+## Manufacturing Doubt, Questions, and Turns (疑点、问题点、转折点的制造方法)
+
+Doubt points are not invented; they are computed. Run this method between the pressure-system pass and the beat-ladder pass. Its checking-side counterparts (A/B story, suspense check, promise ledger) live in `detective-plot-coupling-review`.
+
+### The Truth Ledger with Numbers (真相账本)
+
+Before any dialogue, write the B story's full accounting — every amount, every date, every money path, every object's history — **including the parts that will never appear on screen**. The demo's best turn (五万缺口) only became findable when 八万 was decomposed into itemized spending; its second turn (每月 8 号还入) only existed because someone wrote the debt's repayment history that no scene had ever needed. The unstated ledger is where turns hide. A case whose B story is only prose has no turns to find.
+
+### The Six Operations (六种运算)
+
+Run each operation over the case's own objects. Any operation whose output contradicts the A story is a candidate turn:
+
+1. 加总 — do the stated parts sum to the stated whole? (八万里可见消费不到三万)
+2. 日期差 — subtract any two dates. (断缴早于借钱 47 天；供血停止早于开口三个月)
+3. 往前翻 — every object has history pages: last month's bill, older chat logs, the schedule before this one. (往期账单上的交往前同款消费)
+4. 主语核对 — for each action, who actually performed it? (订座的会员号是她的；群里"要不要问流水"是她先发的)
+5. 覆盖检查 — does the excuse cover every path it claims to cover? (财务延后盖得住报销，盖不住供应商返款)
+6. 模式比对 — the same pattern elsewhere, elsewhen, or to others; and against the institutional template. (同款话术发给多人；维护表店里都有，"下一次推进"列只有他有)
+
+Hidden-in-plain-sight rule (藏在明处守则): prefer operations the player could have run themselves, and ensure **every input to the operation was on screen before the operation is executed**. The aha of "我怎么没算过" is the fair-play form of 意料之外、情理之中.
+
+### The Processing Chain (疑点 → 问题点 → 转折点)
+
+- 疑点 is the perceivable form of an unexecuted operation: the caller can report it without interpreting it (「他非要我当晚转，我就开始不踏实了」 is the perceivable form of a date subtraction nobody has done yet).
+- 问题点 is the one natural question that names the operation (「剩下那五万多，你问过是什么吗？」 names the 加总). Every 疑点 must own exactly one askable question — a 疑点 without its question is an unfired gun; a question without its 疑点 is unfair. Question points become key options; the answer either converts an A-piece or dodges visibly.
+- 转折点 is the operation executed on screen, and its output must change the case's **subject, nature, coverage, or timeline — never merely its weight**. The escalation test: if the player's verdict sentence survives with a bigger adjective (「他更渣了」), you wrote escalation; if the sentence's subject or predicate changes (「这不是消费债，是旧洞借恋爱叙事递账」), you wrote a turn.
+
+### The Four Flip Axes and Two Closure Types
+
+A real turn flips one of four axes:
+- 主语翻转 — who benefited or initiated (分期的受益账号是她的)
+- 性质翻转 — what kind of case this is (消费债 → 旧洞包装)
+- 覆盖翻转 — the excuse covers less than claimed (延后通知只盖一条钱路；八万里只有三万可见)
+- 时间线翻转 — the story started earlier than told (交往之前的同款消费)
+
+And closes in one of two ways:
+- 确认型 — the turn closes into one reading. At most one per case, and packs must vary which case gets it (案 2 确认多线；案 1 因此不得再确认多线).
+- 开放型 — the turn opens 2-3 readings and closes none (8 号还入让拆东墙/多线/化债全部立起又都不落死). Strongest at case end. The share question is the only surface allowed to invite the speculation; live copy, recap verdicts, comments, and advisors must leave all readings standing.
+
+### Placement Rhythm (布点节奏)
+
+- 疑点 land early and must split between hypotheses — some feed the false solution, or the case becomes a confirmation march (the polarity rule).
+- 问题点 occupy the mid-case key options.
+- 转折点 land after the midpoint, with all operation inputs pre-shown.
+- The ending is the question the turn opens but tonight cannot close. 留白必须有形状: "那五万多是什么" is dust; "每月 8 号那笔是谁的" is a blade — a shaped unknown names exactly what we now know we don't know.
+
 ## Writing Workflow
 
 ### Screenwriter Contract
 
 Before writing UI fields, write the case as a small pressure system, not as a mystery answer. The player should feel they are listening to someone slowly reveal a messy relationship or public-life conflict, while the live room argues over which sentence is off.
+
+Two governing clauses (宗旨):
+- **Mainline first, branches second**: write the spine — the complete mainline story, beginning to aftermath — before designing any choice, branch, or variant. Branches are camera angles on a finished story; they are never patches on an unfinished one. If a branch needs a fact the mainline doesn't own, the mainline is not done. This ordering applies at every scale: pack before case, case before scene, scene before options.
+- **Everyone is flesh and blood**: every speaking being — caller, advisor, off-mic voice, the host, even one line of crowd chatter — has 七情六欲 before it has a function. Appetites, tempers, shames, wants. Before writing any line, name what its speaker wants in that moment; if a line could be delivered by "an NPC", its speaker doesn't have a want yet — stop and give them one. Stance cards, voice fingerprints, and the family web exist to serve this clause, not to replace it.
 
 Never generate or repair case text one field or one sentence at a time. A case must be written as one integrated call first, then split into UI fields. If one line changes the motive, pressure, object purpose, or responsibility balance, regenerate the whole local chain around it: opening, scene beat, current-node options, feedback, optional full-hit deep question, final quote-pick, recap/share copy, and migration copy.
 
@@ -480,6 +530,7 @@ Physical clues (materials on the board):
 - Accidental attachment: the material enters the call through a believable slip — 发错表、多选了一张图、转发时带上了上一条. The sender's intended message and the accidental payload should both be nameable.
 - Intentional crop: the material is real but cut where cost or responsibility lives — 审批图裁掉付款回执、账单只截上半页、聊天记录从第二句开始. The crop line itself is the clue; the evidence check should let the player mark the missing edge, not the visible content.
 - Metadata discrepancy: timestamps, battery/signal bars, weekday vs claimed context, background details that contradict the story. Use sparingly, and only when the discrepancy is markable in the material board (an `evidenceChecks` option), not prose-only trivia.
+- Audio tells (听觉线索, voice-call native): the microphone carries clues the caller did not choose to send — typing sounds while claiming to be off work, a second voice in the background, the echo of an emptied apartment, a lighter clicking during a "我早戒了". Fair-play rules: the sound must be authored into the scene (the crowd or host may notice it — 「刚才背景音里是不是有人翻东西」), the crowd may only report what it heard and never interpret it into a verdict, and per the two-source rule an audio tell alone convicts nothing — it needs the caller's acknowledgment or a material to corroborate. On voice calls this is the only clue channel the crowd owns outright; use it to make the room feel like a thousand ears.
 
 Placement rules:
 - A physical clue's flaw should read as a common life mistake, not a puzzle-maker's plant.
@@ -497,6 +548,19 @@ Guard continuity: the caller's guard state moves with the player's questioning, 
 - Drifting on outer questions keeps the caller relaxed and self-assured — until the final quote-pick confronts them, where the dissonance should be audible.
 
 Guarded answers are not bonus confessions. A `guardedAnswer` must withhold: fewer specifics, hedging, subject changes, a half-answer that still contains the beat's contradiction but with less texture. It must never pre-spend the deepFollowup confession, the recap conclusion, or the final quote payoff. If the normal answer names three details, the guarded answer names one and resists the other two.
+
+当事人的“防御闪躲”与推诿话术机制 (Evasion & Deflection Mechanics):
+当连线人在核心疑点被 Host 戳中或面对矛盾材料时，决不能立即坦白或爽快承认，必须表现出强烈的心理防御，采用以下三种口语化闪躲话术以制造对话张力：
+1.  **打感情/道德牌 (The Emotional Shield)**：用感情深度或无辜动机转移视线。`“我们平时感情一直挺好的，他真不是那种人，可能就是一时想岔了……”` 或 `“我只是怕他走弯路，我有什么错呢？”`。
+2.  **责任分担/借口盾牌 (The Excuse Shield)**：将责任转嫁给客观环境或第三方。`“这也是我妈非要问的，我其实无所谓的，我也就是顺口替家里问了一句……”`（案3）或 `“这都是因为公司流程太死板，当时要是不垫，答谢会就砸了……”`（案4）。
+3.  **强行转移焦点 (Focus Shifting)**：将对“事实”的追问引向“解决当下急迫问题”。`“现在最低还款日期马上到了是事实，我们不该先想办法把钱转过去吗？纠结他从哪天开始失业有什么意义？”`（案1）。
+
+弹幕舆论的“极化与反转”张力轨迹 (Comment Polarization & Reversal Trajectory):
+直播间的弹幕评论不仅是氛围背景，其情感倾向必须随着剧情疑点和转折呈现“极化 → 起疑 → 反转/争吵”的张力曲线：
+*   **开场极化期 (Initial Polarization)**：弹幕水友根据来电人的一面之词，迅速站队并情绪化声讨另一方。`“渣男，妥妥的软饭硬吃！”` / `“心疼小姐姐，赶紧分！”`。
+*   **中段起疑期 (The Seeds of Doubt)**：随着材料展示或言语纰漏被指出，部分敏锐的水友开始察觉不对，风向出现分化。`“等等，那套一万二的设备不是在她屋里摆着吗？”` / `“这理发师备注里写的‘能投店’是啥意思？”`。
+*   **尾声反转/交锋期 (The Revaluation / Clash)**：真相大白或进入开放式结局时，弹幕不再有统一标准答案，而是分裂成两个立场对等的阵营剧烈交锋。`“这女的也太有心机了，白拿了设备还上麦带节奏！”` / `“两边都是千年的狐狸，玩什么聊斋啊”`。
+Codex 在编写弹幕配置时，必须根据玩家的路线选择（Route Axis）动态拟真出这种极具网络特征的争论张力。
 
 ## De-AI & Anti-Robotic Scripting Guide (避坑指南：识破并消除“非人类/AI式”剧情与台词)
 
@@ -552,6 +616,12 @@ Pity-layer register — a sharp viewer thinking out loud, not an oracle: 「审�
 
 Cross-case callbacks: in a story pack, later-case comments may echo only cases the player has already finished — 「这跟刚才那单一个味,先给身份后要钱」 — to make the pack thread felt during play. Hard spoiler boundary: a comment for the current case must never mention, foreshadow, title, object-label, or quote any case that appears later in the pack sequence. If the engine cannot prove a prior case is completed in state, use a case-local comment instead.
 
+Sensor bandwidth (感知带宽 — the crowd is a microphone, not a camera):
+- The room's knowledge is bounded by the stream medium. Anonymous hotline calls are **voice-only** (`callMedium: "voice"`, the default): the crowd hears voice, tone, pauses, and background sound — it cannot see the caller's room, face, hands, or equipment. A comment like 「她背后那个环形灯不便宜啊」 is an epistemic violation on a voice call; on a declared `"video"` call it becomes legal, but only for what a webcam frame would plausibly show.
+- The caller portrait and expression beats (「指尖停在屏幕上」「连眨了两下」) are **player-facing visualization, not the room's camera feed**. Comments must never reference visual tells unless the case declares video.
+- What the crowd CAN know: the call audio, whatever the host has already put on stream (a material becomes crowd-visible only after its board/card shows), their own life experience and trade knowledge (the pity layer), and the host's public history. What it can NEVER know: off-stream facts, unshown materials, the parties' identities (the show anonymizes; no doxxing plots), and anything later in the pack.
+- Write the bandwidth into the truth ledger: when planning comments, list what the microphone has actually carried so far. A comment that knows too much is the crowd version of a host question that assumes an unheard fact.
+
 ## Advisor NPCs and Off-Mic Surfaces
 
 Design reference: `docs/advisor-npc-and-offmic-design.md`. Four fixed advisors (赵律师/周会计/小林老师/张法医), recurring across cases with stable domains and voice fingerprints.
@@ -568,8 +638,38 @@ The absent party's half mouth (对方后台留言):
 - The note must carry its own catchable edit: their version trims different places than the caller's version, and the gap between the two edits is playable Rashomon. A note that merely denies or merely apologizes is wasted surface.
 - At most one per case (complex family packs may allow a second from a third party).
 
+Evidence delegation (证据委托 — the scene-switch turn):
+- The loop: the caller deposits an artifact backstage (照片、报告、账单页), the player chooses **which advisor** to send it to, and the advisor's reply comes back as a new authored fact before the final quote-pick — early enough to change the judgment, or it is scenery.
+- Choosing the advisor IS the deduction: matching the material to the right domain is the trick taxonomy made playable. The strong lead exists only for the right pairing; mismatched pairings return an honest, in-character partial read (「图我看不出花头，链条上这类截图造假成本高，大概率是真的」) — never nothing, never mockery, never the strong lead leaked.
+- One delegation per case. The choice logs a route axis (周会计=money-flow, 赵律师=process/responsibility, 小林老师=identity-wording, 张法医=document-edge) — who you trust to look is who you are.
+- The reply is a **new authored fact** (a report), not a hint: it must never point at an existing board's correct option (no detection-by-proxy). It is usually one of the six operations executed by a professional — 周会计 on repayment rows performs the 主语核对 (「工资入账有代发抬头，这笔是私人打的」).
+- Reports prefer the open closure type: they sharpen the unknown's shape without naming anyone (「私人转账」 makes 8 号那笔的刀刃更利，仍不指认付款人). A confirming report counts against the pack's confirmation quota.
+- All delegation outcomes are authored JSON passing `truthBoundary` and the promise ledger; the caller's deposit line and the report's return are both promise-ledger entries.
+
 Character bible:
 - Every recurring caller and advisor gets a card in `content/characters/`: backstory, family, job, three voice fingerprints, and lying habits (who retreats to passive voice, who quotes numbers when nervous). All `casualQuestions` draw from the card; daily-rotation reuse of the same character must not contradict it. Cards are writing reference, not runtime data.
+- Every named off-mic voice (friend, cousin, store manager, team lead, introducer, the other woman) gets a three-line stance card before it speaks: 立场 (what it wants the room to believe), 遮掩 (what it hides or softens), 利益 (what it gains from its version). A voice that exists only to confirm the mainline is a prop — cut it or arm it. Two victims who want different things (说法 vs 止损) are drama; two witnesses who agree are furniture. Stance cards feed the sensor contract audit: what the voice knows must fit its life, and what it says must serve its stake.
+
+The host is a person (design: `docs/host-character-design.md`):
+- Fixed past, player-expressed present: the host's wounds, loves, and hates are canon (bible card); his present tendencies are whatever the player's route choices make them. Never write host lines that pre-decide the player's route.
+- 心热、嘴稳、手上使计: the host has open loves and hates — he wants to help the wronged and it shows. But his wound (he once helped a live room convict the wrong man on an edited bill) gates the timing: feeling fires early, verdict fires only after facts lock. His 爱憎 is allowed to aim at the wrong target early — that is `hostWoundHook`, misdirection sourced from the player's own chair — and the case must correct him along with the player.
+- Signature syntax: the host thinks in 「X 归 X，Y 是 Y」 — it already runs through every shipped recap. New host copy prefers this mold; it separates, it does not sentence.
+- Self-disclosure budget: at most one host self-disclosure per case, at that case's resonance point, feelings and history only, never conclusions — the perception-not-conclusion iron rule applies to the host's own mouth and inner voice.
+- 奇正相生 (stratagem beats): the host helps the caller obtain evidence through small, legal stratagems — 正 is asking straight, 奇 is the clever route: prompting the caller to make an innocent request whose refusal pattern is itself evidence, a designed callback that stays silent on X to see if the other party volunteers it, an advisor-routed request that an honest counterparty could satisfy in one screenshot. Iron rules for stratagems: 阳谋不阴谋 — a stratagem is a touchstone, not a trap: it only reveals what is already true, an innocent party passes it harmlessly, and it never entraps anyone into new wrongdoing, never impersonates authority, never crosses recording/privacy law. The reaction it fishes back is authored material passing `truthBoundary` and the promise ledger like all evidence.
+- Hard limits: host bias touches tone, self-disclosure, and stratagem flavor — never materials, boundaries, or scoring; wound details are never fully told; the host never personally knows this case's parties (same script as his past, never the same people); one host-history comment from the crowd per case at most. The protagonist of a case is the caller; a host who overshares is stealing the mic.
+- The family web is canon: 赵律师 is the host's partner (the far end of the wrongful-verdict episode — she was that man's lawyer), 张法医 is his oldest friend (哥们归哥们，发票归发票), 周会计 is 张's partner and the keeper of the one dinner table where the show is never discussed; 小林老师 stays outside the web by design. Host gender stays unspecified — write 对象/另一半, never gendered terms for the host.
+- Domestic register enters only openers and closing half-lines; the professional core of any advice stays word-for-word professional. At most one family/couple beat per case. Relationships never bend facts or verdicts — 赵's disclaimers got stricter, not softer, when she became family.
+- The room half-knows: regulars dare to type "赵姐" and never dare to ask; on-air copy never explains why she always answers. The apology-turned-dinner origin is bible-only.
+
+## Theatrical License (戏剧性特许)
+
+This is a game, and a night of theater beats a panel discussion. Realism discipline (fair play, sensor contracts, value baseline) governs FACTS; it does not require every voice to be reasonable or every event to be probable. Budget the improbable deliberately:
+
+- **One theatrical license per case**: one moment slightly too staged for reality — the wrong attachment, the deleted comment, the word collision, the accused sitting silently in the viewer list. The license buys improbability, never unfairness: the moment must still pass truth ledger, sensor contract, and promise ledger. Its in-world justification is the show's mythology: 深夜热线专收这种夜晚.
+- **One unreasonable voice per case**: among the off-mic voices, at least one wants something too much — the co-victim who wants a crusade when the caller wants closure, the manager who defends too loudly. Measured voices establish facts; the immoderate one creates scenes. If every voice in a case is fair, arm one.
+- **The show is a character**: the hotline carries light urban-legend gravity — the room that hears everything, advisors who answer at 2 a.m., a host whose old wound the regulars all know. Mythology lives in flavor and interludes, never in evidence.
+- **Experts may collide**: two advisors reading the same fact through different frames (法律说是赠与，会计说是路径) is licensed courtroom theater — it dramatizes ambiguity instead of resolving it, so it protects openness rather than spending it.
+- License audit: if a case's most memorable beat could appear unchanged in a documentary, the case is under-licensed; if its facts could not survive a skeptical replay, it is over-licensed. Aim between.
 
 ## Structure Archetypes
 

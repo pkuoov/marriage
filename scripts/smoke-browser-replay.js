@@ -206,7 +206,8 @@ async function exerciseTruthBoundary(page, route) {
       sawOffMicLetter = true;
       if (body.includes("灯是我真心买的")) {
         assertTextOrder(body, [
-          "收麦后，后台一位常来的律师听友留了几句。",
+          "后台转来一条，备注只写了个\"赵\"。",
+          "以对象身份说的，不算法律意见，算意见",
           "赵律师留完话没多久，周会计也来了一条，像是不同意。",
           "灯是我真心买的"
         ], "麦外来信 should order Zhao, Zhou, then lurker");
