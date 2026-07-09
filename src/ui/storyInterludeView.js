@@ -2,7 +2,8 @@ export function storyInterludeHtml({
   previousLabel = "",
   previousLine = "",
   nextObjectLabel = "",
-  nextLine = ""
+  nextLine = "",
+  shellLine = ""
 } = {}) {
   return `
     <section class="story-interlude-card">
@@ -10,6 +11,12 @@ export function storyInterludeHtml({
       <b>${escapeHtml(previousLabel)}</b>
       <p>${escapeHtml(previousLine)}</p>
     </section>
+    ${shellLine ? `
+    <section class="story-interlude-card shell">
+      <span>幕间</span>
+      <p>${escapeHtml(shellLine)}</p>
+    </section>
+    ` : ""}
     <section class="story-interlude-card next">
       <span>新来电接入</span>
       <b>${escapeHtml(nextObjectLabel)}</b>

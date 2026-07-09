@@ -7,6 +7,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
 const routes = [
   { name: "lab-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-lab", "day-restaurant"], opener: "timeline-clarity", callerQuestion: "ask-fifty-thousand" },
+  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-lab"], documentRows: ["r08", "r11"], opener: "timeline-clarity", callerQuestion: "ask-fifty-thousand" },
   { name: "home-restaurant", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-home", "day-restaurant"], opener: "window-seat-proof", callerQuestion: "dont-answer-for-her" },
   { name: "zero-fallback", sceneMode: "core", materialMode: "miss", dayScenes: [], callerQuestion: "ask-fifty-thousand" },
   { name: "keyboard-lab-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-lab", "day-restaurant"], opener: "timeline-clarity", callerQuestion: "ask-fifty-thousand" },
@@ -82,6 +83,10 @@ async function runRoute(route) {
     await page.goto(`${playableUrl}?playtest=browser-smoke-${route.name}-${Date.now()}&storyKey=steam-demo-01`);
     if (route.inputMode === "gamepad") await connectGamepad(page);
     await activate(page, route, "[data-start-story]");
+    if (await page.locator("[data-enter-first-case]").count()) {
+      await assertVisibleText(page, "深夜热线。说得出口的归麦,说不出口的归夜。开始接线。", "night shell prologue should render before first case");
+      await activate(page, route, "[data-enter-first-case]");
+    }
     await activate(page, route, '[data-scene="sceneReview"]');
 
     for (let beat = 0; beat < 24; beat += 1) {
@@ -107,6 +112,14 @@ async function runRoute(route) {
           await assertVisibleText(page, "提前两周", "restaurant route should use window-seat opener");
         }
         await activate(page, route, "[data-enter-overnight-night2]");
+        continue;
+      }
+      if (await page.locator("[data-document-question]").count()) {
+        await activate(page, route, "[data-document-question]");
+        continue;
+      }
+      if (await page.locator("[data-close-document-question]").count()) {
+        await activate(page, route, "[data-close-document-question]");
         continue;
       }
       if (await page.locator("[data-stance-snapshot]").count()) {
@@ -191,6 +204,13 @@ async function completeOvernightDay(page, route) {
       await activate(page, route, "[data-day-followup]");
       await assertVisibleText(page, "因为两年前，有人替观众答过一次。", "home follow-up should render");
     }
+    if (sceneId === "day-bank-flow") {
+      await assertVisibleText(page, "他的银行流水(她导出的近五个月)", "document day scene should render bank flow");
+      for (const rowId of route.documentRows ?? ["r08", "r11"]) {
+        await activate(page, route, `[data-document-row="${rowId}"]`);
+      }
+      await assertVisibleText(page, "五万进,三天后四万九千八出——这算周转吗?", "document route should unlock the r08/r11 cross question");
+    }
     await activate(page, route, "[data-complete-day-scene]");
   }
   await assertOvernightState(page, (overnight) => (overnight.dayScenesDone ?? []).length === route.dayScenes.length, "day route should record completed scenes");
@@ -203,7 +223,7 @@ async function advanceToAccusation(page, route) {
     if (await page.locator("[data-delegation-advisor]").count()) {
       if (route.name === "lab-restaurant") {
         await activate(page, route, '[data-delegation-advisor="zhou-accountant"]');
-        await assertVisibleText(page, "这笔 8 号的还入没有——是私人转的", "lab-restaurant route should show the strong delegation return before final quote");
+        await assertVisibleText(page, "转账备注是空的。备注空着的定期转账,做账的都知道:不是不会写,是不能写。钱只认路径,不认说法。", "lab-restaurant route should show the strong delegation return before final quote");
         await activate(page, route, "[data-after-delegation]");
       } else {
         await activate(page, route, "[data-skip-delegation]");

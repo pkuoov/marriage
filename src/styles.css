@@ -3503,6 +3503,26 @@ button.evidence-target {
   background: rgba(101, 214, 194, .065);
 }
 
+.story-interlude-card.shell,
+.night-shell-card {
+  border-color: rgba(255, 204, 128, .18);
+  background: rgba(255, 204, 128, .055);
+}
+
+.night-shell-card {
+  display: grid;
+  gap: 11px;
+  padding: 18px;
+  border: 1px solid rgba(255, 204, 128, .18);
+  border-radius: 8px;
+}
+
+.night-shell-card p {
+  margin: 0;
+  color: rgba(247, 244, 233, .86);
+  line-height: 1.65;
+}
+
 .story-interlude-card span {
   color: rgba(237, 241, 238, .58);
   font-size: 12px;

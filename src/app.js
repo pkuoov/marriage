@@ -28,6 +28,7 @@ import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterlu
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
 import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js?v=0.20.87";
+import { storyPackForKey } from "./storyPacks.js?v=0.20.87";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -171,7 +172,7 @@ function startStoryPack() {
   state = normalizeDailyState({
     ...structuredClone(baseState),
     screen: "chapter",
-    scene: "caseOpen",
+    scene: mode === "daily" || !nightShellForStoryKey(caseBriefs[0]?.storyKey ?? storyKeyFromUrl())?.prologue ? "caseOpen" : "nightShellPrologue",
     profileDone: true,
     caseMode: mode,
     chapter: 1,
@@ -225,6 +226,8 @@ function renderTitle() {
 function renderDailyCase() {
   const brief = activeCaseBrief();
   if (isSceneReviewScene(state.scene)) return renderSceneReview(brief);
+  if (state.scene === "nightShellPrologue") return renderNightShellPrologue(brief);
+  if (state.scene === "nightShellEpilogue") return renderNightShellEpilogue(brief);
   if (state.scene === "stanceSnapshot") return renderStanceSnapshot(brief);
   if (state.scene === "overnightHangup") return renderOvernightHangup(brief);
   if (state.scene === "dayMap") return renderDayMap(brief);
@@ -266,6 +269,29 @@ function liveChapterTitle(brief = {}) {
   return isStoryPackMode() ? "热线连线" : brief.storyArcTitle ?? "今日来电";
 }
 
+function nightShellForStoryKey(storyKey = "") {
+  return storyPackForKey(storyKey)?.nightShell ?? null;
+}
+
+function nightShellForBrief(brief = {}) {
+  if (!isStoryPackMode()) return null;
+  return nightShellForStoryKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl());
+}
+
+function nightShellInterludeLine(brief = {}) {
+  const shell = nightShellForBrief(brief);
+  return (shell?.interludes ?? []).find((item) => item.afterCaseId === brief.id || item.afterCaseId === brief.caseId)?.line ?? "";
+}
+
+function nightShellGoodEnding() {
+  const briefs = state.caseBriefs ?? [];
+  const results = briefs.map((brief) => normalizedDailyResult(brief));
+  const finished = results.filter((result) => result.accused);
+  if (!finished.length) return false;
+  const average = finished.reduce((sum, result) => sum + Number(result.issuePercent ?? 0), 0) / finished.length;
+  return average >= 60;
+}
+
 function renderCaseOpen(brief) {
   const lines = compactDialogueLines(brief.openingDialogue ?? []);
   frame({
@@ -277,6 +303,51 @@ function renderCaseOpen(brief) {
     choices: flowGroupHtml(`<button class="primary" data-scene="sceneReview" type="button">继续</button>`)
   });
   bindSceneButtons();
+}
+
+function renderNightShellPrologue(brief) {
+  const prologue = nightShellForBrief(brief)?.prologue ?? {};
+  const lines = [...(prologue.lines ?? []), prologue.hostLine].filter(Boolean);
+  frame({
+    brief,
+    mood: "focused",
+    label: "夜班序章",
+    chapter: "深夜档",
+    showCaseHud: false,
+    text: nightShellHtml(lines),
+    choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">开始接线</button>`)
+  });
+  bind("[data-enter-first-case]", () => {
+    state.scene = "caseOpen";
+    saveState();
+    render();
+  });
+  bindSceneButtons();
+}
+
+function renderNightShellEpilogue(brief) {
+  const epilogue = nightShellForBrief(brief)?.epilogue ?? {};
+  const resultLine = nightShellGoodEnding() ? epilogue.good : epilogue.bad;
+  const lines = [epilogue.opening, resultLine, epilogue.home, epilogue.close].filter(Boolean);
+  frame({
+    brief,
+    mood: "focused",
+    label: "天亮前",
+    chapter: "深夜档",
+    showCaseHud: false,
+    text: nightShellHtml(lines),
+    choices: flowGroupHtml(`<button class="primary" data-finish-night-shell type="button">收麦</button>`)
+  });
+  bind("[data-finish-night-shell]", () => moveScene("runComplete"));
+  bindSceneButtons();
+}
+
+function nightShellHtml(lines = []) {
+  return `
+    <section class="night-shell-card">
+      ${lines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+    </section>
+  `;
 }
 
 function renderSceneReview(brief) {
@@ -1585,6 +1656,11 @@ function renderSolved(brief) {
       saveState();
       return render();
     }
+    if (isStoryPackMode() && nightShellForBrief(brief)?.epilogue) {
+      state.scene = "nightShellEpilogue";
+      saveState();
+      return render();
+    }
     moveScene("runComplete");
   });
   bindSceneButtons();
@@ -1677,7 +1753,8 @@ function renderStoryInterlude(brief) {
       previousLabel: route.label,
       previousLine: storyInterludeRecapLine(brief, result, route, interlude, backflow),
       nextObjectLabel: storyInterludeObjectLabel(nextBrief),
-      nextLine: storyInterludeNextLine(nextBrief)
+      nextLine: storyInterludeNextLine(nextBrief),
+      shellLine: nightShellInterludeLine(brief)
     }),
     choices: flowGroupHtml(storyInterludeChoicesHtml())
   });

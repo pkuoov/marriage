@@ -42,6 +42,7 @@ async function loadContentPacks() {
       title: manifest.title,
       size: manifest.size,
       theme: manifest.theme,
+      nightShell: manifest.nightShell,
       comments,
       caseLabels: manifest.caseLabels,
       sequence: manifest.sequence
