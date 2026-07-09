@@ -17,7 +17,7 @@ import { livePressureProfile, materialPressureReaction, materialPressureSignal, 
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
-import { answerKey, applyActionMark, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.76";
+import { answerKey, applyActionMark, availableOvernightCallbackOpeners, casePatienceLost, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterOvernightHangupAfterScene, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.76";
 import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
@@ -771,13 +771,15 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(buildPlayableSource, "mkdtemp", "离线 playable 构建必须先写临时目录，避免并发写 dist/playable");
   assertIncludes(buildPlayableSource, "rename(tempDir, outDir)", "离线 playable 构建必须以临时目录替换目标目录");
   assertIncludes(buildPlayableSource, "importAliasDeclarations", "离线 playable bundler 必须保留 import alias，避免 app 运行时 undefined");
-  assertIncludes(browserSmokeSource, "name: \"perfect\"", "浏览器回放必须覆盖 perfect route");
+  assertIncludes(browserSmokeSource, "lab-restaurant", "浏览器回放必须覆盖鉴定所+餐厅白天路线");
+  assertIncludes(browserSmokeSource, "home-restaurant", "浏览器回放必须覆盖家+餐厅白天路线");
+  assertIncludes(browserSmokeSource, "zero-fallback", "浏览器回放必须覆盖零地点 fallback 路线");
   assertIncludes(browserSmokeSource, "sceneMode: \"outer\"", "浏览器回放必须覆盖只点外围追问也能继续主线");
   assertIncludes(browserSmokeSource, "data-scene-dialogue", "浏览器回放必须覆盖先问普通问题再点关键追问的流程");
-  assertIncludes(browserSmokeSource, "material-miss", "浏览器回放必须覆盖材料误圈路线");
-  assertIncludes(browserSmokeSource, "keyboard-perfect", "浏览器回放必须覆盖真实键盘焦点路线");
+  assertIncludes(browserSmokeSource, "materialMode: \"miss\"", "浏览器回放必须覆盖材料误圈路线");
+  assertIncludes(browserSmokeSource, "keyboard-lab-restaurant", "浏览器回放必须覆盖真实键盘焦点路线");
   assertIncludes(browserSmokeSource, "page.keyboard.press(\"Enter\")", "键盘回放必须用真实键盘确认，而不是只用 DOM click");
-  assertIncludes(browserSmokeSource, "gamepad-perfect", "浏览器回放必须覆盖模拟 Gamepad API 路线");
+  assertIncludes(browserSmokeSource, "gamepad-home-restaurant", "浏览器回放必须覆盖模拟 Gamepad API 路线");
   assertIncludes(browserSmokeSource, "navigator, \"getGamepads\"", "手柄回放必须走 Gamepad API 入口，而不是复用键盘或 DOM click");
   assertIncludes(steamPreflightSource, "nodeSupportsElectronPackaging", "Steam preflight 必须明确 Node/Electron 打包版本要求");
   assertIncludes(steamPreflightSource, "dist/steam", "Steam preflight 必须检查打包输出目录");
@@ -1894,6 +1896,31 @@ test("RUNTIME-007", "action mark patches spend budget without mutating old state
   assertEqual(retried.patienceLostContext, null, "重试后不能保留失败上下文");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   assert(!appSource.includes("data-after-patience-lost"), "耐心耗尽页不能跳下一通或进故事集总结");
+});
+
+test("RUNTIME-008", "overnight helpers gate day budget and callback openers", () => {
+  const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const structure = overnightStructureFor(brief);
+  assert(structure, "案 1 必须启用 overnightStructure");
+  const anchorIndex = overnightAnchorSceneIndex(brief);
+  assert(anchorIndex >= 0, "隔夜锚点必须命中场景");
+  assertIncludes(brief.sceneVersions[anchorIndex].version, "五万多", "隔夜锚点必须落在审计拍");
+  assert(shouldEnterOvernightHangupAfterScene(brief, anchorIndex), "审计拍完成后必须进入隔夜挂断");
+  assertEqual(overnightFirstNight2SceneIndex(brief), anchorIndex + 1, "夜 2 必须从锚点后下一段开始");
+  const initial = initialOvernightStateFor(brief);
+  assertEqual(initial.dayBudget.remaining, 2, "白天初始预算必须来自 JSON");
+  assertEqual(daySceneById(brief, "day-lab")?.body?.earnedItemId, "timeline-clarity", "鉴定所必须产出 timeline-clarity");
+  assertEqual(daySceneById(brief, "day-home")?.body?.earnedItemId, "dont-answer-for-her", "家线必须产出 dont-answer-for-her");
+  const openers = availableOvernightCallbackOpeners(brief, ["timeline-clarity", "window-seat-proof"]).map((opener) => opener.id);
+  assert(openers.includes("timeline-clarity"), "带回时间线清晰度必须解锁时间线回拨");
+  assert(openers.includes("window-seat-proof"), "带回靠窗位事实必须解锁靠窗位回拨");
+  assert(!openers.includes("dont-answer-for-her"), "没回家不能解锁家线 opener");
+  assertEqual(overnightCallbackOpenerById(brief, "window-seat-proof")?.line, "「你去了？……所以\"提前两周\"是真的。那我现在想知道的是：他到底是提前两周为我订的，还是那排位子，他常年有。」", "靠窗位回拨台词必须稳定");
+  const callerQuestion = overnightCallerQuestionFor(brief);
+  assertEqual(callerQuestion?.prompt, "主播，你说……我该不该垫？", "她的那一问必须稳定");
+  assertEqual(callerQuestion.options.find((option) => option.id === "dont-answer-for-her")?.requiresEarnedItem, "dont-answer-for-her", "第三选项必须只由家线解锁");
+  assertEqual(overnightReturnPostureFor({ id: "caller-benefited" }), "againstCaller", "中段先怪她必须让回拨防御");
+  assertEqual(availableOvernightCallbackOpeners({ id: "plain" }, ["timeline-clarity"]).length, 0, "无 overnightStructure 的旧案不应暴露隔夜 opener");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {

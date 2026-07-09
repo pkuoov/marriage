@@ -43,6 +43,8 @@ export const baseState = {
   materialPityLog: {},
   routeChoiceLog: {},
   caseBudgets: {},
+  caseNights: {},
+  caseOvernights: {},
   caseActionLog: {},
   contradictionLog: {},
   accusationHistory: [],
@@ -90,6 +92,8 @@ export function migrateState(saved) {
   if (!next.materialPityLog || Array.isArray(next.materialPityLog)) next.materialPityLog = {};
   if (!next.routeChoiceLog || Array.isArray(next.routeChoiceLog)) next.routeChoiceLog = {};
   if (!next.caseBudgets || Array.isArray(next.caseBudgets)) next.caseBudgets = {};
+  if (!next.caseNights || Array.isArray(next.caseNights)) next.caseNights = {};
+  if (!next.caseOvernights || Array.isArray(next.caseOvernights)) next.caseOvernights = {};
   if (!next.caseActionLog || Array.isArray(next.caseActionLog)) next.caseActionLog = {};
   if (!next.contradictionLog || Array.isArray(next.contradictionLog)) next.contradictionLog = {};
   if (!Array.isArray(next.solvedCaseIds)) next.solvedCaseIds = [];
