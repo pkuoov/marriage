@@ -207,7 +207,8 @@ export const CONTENT_CASES = {
           "每月 8 号曾有一笔固定还入，三个月前停止",
           "纪念日晚餐是咨询者用会员号订的座",
           "纪念日晚餐朋友圈由咨询者发布，朋友曾跟着起哄",
-          "短视频设备开箱和首拍夜发生在咨询者屋里"
+          "短视频设备开箱和首拍夜发生在咨询者屋里",
+          "那排靠窗位确需提前两周预订"
         ],
         "edited": [
           "对方把长期资金缺口说成奖金晚发",
@@ -491,7 +492,7 @@ export const CONTENT_CASES = {
         {
           "speakerId": "shen",
           "speaker": "咨询者",
-          "version": "我后来把账单又对了一遍，日期和数字都对了。断缴以后的吃住玩，加上那笔分期，不到三万。可他让我垫的是八万，剩下那五万多，他从来没提过。还有，他第一次说周转那天，账单其实还有三天才到期，他先催我“今晚就要”，后面又改成“这几天都行”。后来我把往期的账单也翻出来了，越翻越冷。那几页我带来了。",
+          "version": "我后来把账单又对了一遍，日期和数字都对了。断缴以后的吃住玩，加上那笔分期，不到三万。可他让我垫的是八万，剩下那五万多，他从来没提过。还有，他第一次说周转那天，账单其实还有三天才到期，他先催我“今晚就要”，后面又改成“这几天都行”。后来我把往期的账单也翻出来了，越翻越冷。那几页我带来了。……主播，这个数我得想一晚上。明晚这个点，我再打进来——你等我。",
           "doubt": "数字对不上：可见的消费加分期不到三万，缺口是八万。",
           "contradiction": "TA 无法解释八万缺口的大头，并用催款堵住追问。",
           "reliability": "partial",
@@ -544,7 +545,7 @@ export const CONTENT_CASES = {
         {
           "speakerId": "shen",
           "speaker": "咨询者",
-          "version": "主播，还有笔账我得说清楚。你们弹幕一直在问那个一万二的分期。那个……是一套拍视频的灯和稳定器，还有平台的推广套餐。东西，在我这儿。",
+          "version": "灯和稳定器的事，前面说了，不重复。我现在卡的是另一个数：账单可见的消费加分期，撑死三万出头，他开口却是八万。中间五万多，他只说「不是乱来的钱」。还有——账单明明还有几天，他要我今晚就转。",
           "doubt": "她说“没细看”的那笔分期，设备一直摆在她屋里。",
           "contradiction": "TA 失业后开通的分期，买的是给咨询者做账号用的设备和推广。",
           "reliability": "mixed",
@@ -601,7 +602,7 @@ export const CONTENT_CASES = {
         {
           "speakerId": "shen",
           "speaker": "咨询者",
-          "version": "他后来发来一句：“我只是怕你知道我失业后就离开我。”说完，紧接着把最低还款金额发了过来。还有一句我没好意思说：他提过如果我这次不帮，以后他可能就不敢跟我谈结婚了，说自己会一直觉得低我一头。我前面也没说全，那周我们刚吃过很贵的纪念日晚餐，店是我用会员号订的，朋友圈也是我发的。我跟朋友一直把他讲得挺体面，也没想承认自己其实很吃那种体面。真说出来，我也怕别人觉得我找了个撑不住场面的人，像是我自己看走眼。",
+          "version": "他后来发来一句：“我只是怕你知道我失业后就离开我。”说完，紧接着把最低还款金额发了过来。他还提过：“以后他可能就不敢跟我谈结婚了。”那句话把钱说成了态度，我也怕别人觉得我找了个撑不住场面的人，也怕承认自己其实很吃那种体面。",
           "doubt": "借钱这件事开始被说成尊严和结婚态度。",
           "contradiction": "TA 把个人债务转成关系忠诚测试，咨询者也不愿承认自己被体面吸引。",
           "reliability": "partial",
@@ -849,6 +850,18 @@ export const CONTENT_CASES = {
               "feedback": "贵不贵只是第一眼的感觉，和账单同周出现才咬得上。",
               "routeAxis": "document-edge"
             }
+          ],
+          "replyChoices": [
+            {
+              "id": "blame-cheer",
+              "label": "你当时起哄也算观众",
+              "stanceNudge": "defensive"
+            },
+            {
+              "id": "protect-friend",
+              "label": "直播里先不提你",
+              "stanceNudge": "open"
+            }
           ]
         },
         {
@@ -911,6 +924,111 @@ export const CONTENT_CASES = {
           }
         }
       },
+      "overnightStructure": {
+        "hangupAnchor": "五万多",
+        "hangupLine": "电话轻轻挂了。没有摔，就是轻轻的。",
+        "hostHoldLine": "热线每晚都开。我们等你。",
+        "dayIntro": "第二天，下午。节目不在线，弹幕不在，城市在。你有一个下午，够去两个地方。",
+        "dayBudget": 2,
+        "dayScenes": [
+          {
+            "id": "day-lab",
+            "label": "张法医的鉴定所",
+            "backdropClass": "day-lab",
+            "kind": "lab",
+            "body": {
+              "text": "白瓷灯，一切都有编号。张法医把打印出来的账单页推回来：「图我看了，像素没问题。你要我看的不是图吧——坐下，把这几页按日子排给我看。」",
+              "routeAxis": "document-edge",
+              "earnedItemId": "timeline-clarity",
+              "timelineSort": {
+                "cards": [
+                  "社保断缴",
+                  "分期开通",
+                  "8 号还入停止",
+                  "他开口借八万"
+                ],
+                "correctOrder": [
+                  "社保断缴",
+                  "分期开通",
+                  "8 号还入停止",
+                  "他开口借八万"
+                ],
+                "payoffLine": "排对了。你看，先停的是钱，后开的是口。剩下的，你自己去问。",
+                "missLine": "顺序不对。没关系，晚上她自己会替你排一遍——用更疼的方式。"
+              }
+            }
+          },
+          {
+            "id": "day-restaurant",
+            "label": "那家餐厅",
+            "backdropClass": "day-restaurant",
+            "kind": "visit",
+            "body": {
+              "text": "下午三点，那排靠窗位空着，桌上立着「已预订」的牌子。服务员擦着杯子：「靠窗那排？最少提前两周。……您也是听了直播来的？今天第三拨了。」你没接话。她又补了一句：「这排位子，吃的人换来换去，点的菜都差不多。」",
+              "routeAxis": "process-control",
+              "earnedItemId": "window-seat-proof"
+            }
+          },
+          {
+            "id": "day-home",
+            "label": "家",
+            "backdropClass": "day-home",
+            "kind": "home",
+            "body": {
+              "text": "她在改合同，茶凉了半杯。没抬头：「你睡了四个小时。……案子我听了。垫付赠与那套我说过了。今晚我只说一句不是律师说的话：她要是问你\"该不该垫\"，你不许替她答。」",
+              "routeAxis": "process-control",
+              "earnedItemId": "dont-answer-for-her",
+              "followup": {
+                "question": "为什么？",
+                "answer": "因为两年前，有人替观众答过一次。"
+              }
+            }
+          }
+        ],
+        "callbackOpeners": {
+          "timeline-clarity": {
+            "line": "「你把日子排了一遍？……我昨晚也排了。排到第三张的时候睡着了，梦里全是 8 号。」"
+          },
+          "window-seat-proof": {
+            "line": "「你去了？……所以\"提前两周\"是真的。那我现在想知道的是：他到底是提前两周为我订的，还是那排位子，他常年有。」"
+          },
+          "dont-answer-for-her": {
+            "line": "「我想了一晚上，还是得把话说完——你接着问吧。」"
+          }
+        },
+        "callbackFallback": {
+          "line": "「我想了一晚上，还是得把话说完——你接着问吧。」"
+        },
+        "postures": {
+          "againstCaller": "我差点不打回来。刚才弹幕……我都听到了。你要是也觉得是我贪体面，这通我讲不下去。",
+          "withCaller": "我回来了。八万的事，你继续问——我不怕对账。"
+        },
+        "callerQuestion": {
+          "prompt": "主播，你说……我该不该垫？",
+          "options": [
+            {
+              "id": "not-your-debt",
+              "label": "不该。这不是你的债。",
+              "callerLine": "……你和我闺蜜说得一样。可你们都不用陪他过日子。",
+              "routeAxis": "caller-credibility"
+            },
+            {
+              "id": "ask-fifty-thousand",
+              "label": "该不该，先看他肯不肯把那五万多说清楚。",
+              "callerLine": "又绕回那儿了。好，那我自己去问他。",
+              "routeAxis": "money-flow"
+            },
+            {
+              "id": "dont-answer-for-her",
+              "label": "这题我不替你答。今晚听到的都在这儿，答案你自己拿。",
+              "callerLine": "她沉默很久：「……谢谢。第一次有人不替我答。」",
+              "routeAxis": "process-control",
+              "requiresEarnedItem": "dont-answer-for-her",
+              "recapAftertaste": "有一题，主播还给了她自己。"
+            }
+          ]
+        }
+      },
       "stanceSnapshot": {
         "afterScene": 4,
         "kicker": "中段立场快照",
@@ -947,18 +1065,13 @@ export const CONTENT_CASES = {
         "presenceLine": "后台在线名单里，有个 ID 从第一分钟听到现在。刚才发了一条，两秒后自己删了。",
         "deletedFragment": "灯是我真心买的"
       },
-      "advisorNotes": [
-        {
-          "advisorId": "zhao-lawyer",
-          "appearsNowBecause": "后台转来一条，备注只写了个\"赵\"。",
-          "text": "以对象身份说的，不算法律意见，算意见：这笔要是真转了，往后想按垫付要回来，就得留痕——转账备注写清楚用途，让对方补张欠条。口说的不算，落纸的算数。睡前把手机放远点。"
-        },
-        {
-          "advisorId": "zhou-accountant",
-          "appearsNowBecause": "赵律师留完话没多久，周会计也来了一条，像是不同意。",
-          "text": "赵律师说赠与和借贷是两个世界。我做账的只认一条：每月 8 号，一笔进，准时；三个月前，断了。什么由头能让钱这么准时，我不猜。我只记路径——路径断的那天，就是这案子开始的那天。"
-        }
-      ],
+      "advisorNotes": [],
+      "respondentNote": {
+        "source": "respondent-note",
+        "appearsNowBecause": "收麦后，对方给后台留了一段文字，说不上麦。",
+        "teaseDuringSegment2": true,
+        "text": "失业是真的，账单也是真的。八万里有她也想去的店，订座是她的会员号——这她自己清楚。五万多那块，不是乱来的钱，但细节我不会在节目里讲。她上麦把灯说成「他手机上弄的」的时候，开箱那天她笑得可开心了。"
+      },
       "hostDisclosure": {
         "anchor": "afterScene:2",
         "text": "“先帮我挡几天”——这话我也听过一次，原版的。那笔钱我后来没再提。所以下面这些，我问她，也问我自己当年为什么没问。"
