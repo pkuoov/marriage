@@ -351,10 +351,15 @@ function assertOvernightStructure(packet = {}, label = "") {
     sceneIds.add(scene.id);
     assertNonEmptyString(scene.label, `${label} overnightStructure.dayScenes[${sceneIndex}] 缺少 label`);
     assertNonEmptyString(scene.backdropClass, `${label} overnightStructure.dayScenes[${sceneIndex}] 缺少 backdropClass`);
-    assert(["lab", "visit", "home", "studio"].includes(scene.kind), `${label} overnightStructure.dayScenes[${sceneIndex}].kind 不合法`);
-    assertNonEmptyString(scene.body?.text, `${label} overnightStructure.dayScenes[${sceneIndex}].body.text 不能为空`);
-    assertNonEmptyString(scene.body?.earnedItemId, `${label} overnightStructure.dayScenes[${sceneIndex}].body.earnedItemId 不能为空`);
-    earnedIds.add(scene.body.earnedItemId);
+    assert(["lab", "visit", "home", "studio", "document"].includes(scene.kind), `${label} overnightStructure.dayScenes[${sceneIndex}].kind 不合法`);
+    if (scene.kind === "document") {
+      assertNonEmptyString(scene.body?.documentId, `${label} overnightStructure.dayScenes[${sceneIndex}].body.documentId 不能为空`);
+      assert((packet.documents ?? []).some((document) => document.id === scene.body.documentId), `${label} overnightStructure.dayScenes[${sceneIndex}].body.documentId 指向不存在的 documents`);
+    } else {
+      assertNonEmptyString(scene.body?.text, `${label} overnightStructure.dayScenes[${sceneIndex}].body.text 不能为空`);
+      assertNonEmptyString(scene.body?.earnedItemId, `${label} overnightStructure.dayScenes[${sceneIndex}].body.earnedItemId 不能为空`);
+      earnedIds.add(scene.body.earnedItemId);
+    }
     if (scene.body?.timelineSort !== undefined) {
       const timeline = scene.body.timelineSort;
       assertArrayMin(timeline.cards, 2, `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.cards 至少两张`);
@@ -381,6 +386,68 @@ function assertOvernightStructure(packet = {}, label = "") {
       assertNonEmptyString(option.routeAxis, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 缺少 routeAxis`);
       assert(option.correct === undefined, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 不得设置 correct`);
     });
+  }
+}
+
+function assertDocuments(packet = {}, label = "") {
+  if (packet.documents === undefined) return;
+  assertArrayMin(packet.documents, 1, `${label} documents 至少需要一份文档`);
+  packet.documents.forEach((document, documentIndex) => {
+    assertNonEmptyString(document.id, `${label} documents[${documentIndex}] 缺少 id`);
+    assertNonEmptyString(document.title, `${label} documents[${documentIndex}] 缺少 title`);
+    assertNonEmptyString(document.intro, `${label} documents[${documentIndex}] 缺少 intro`);
+    assert(Number.isInteger(document.markLimit) && document.markLimit > 0, `${label} documents[${documentIndex}].markLimit 必须是正整数`);
+    assertArrayMin(document.rows, 2, `${label} documents[${documentIndex}].rows 至少两行`);
+    const rowIds = new Set();
+    let previousDateValue = -1;
+    document.rows.forEach((row, rowIndex) => {
+      assertNonEmptyString(row.rowId, `${label} documents[${documentIndex}].rows[${rowIndex}] 缺少 rowId`);
+      assert(!rowIds.has(row.rowId), `${label} documents[${documentIndex}] rowId 重复: ${row.rowId}`);
+      rowIds.add(row.rowId);
+      assert(/^\d{2}-\d{2}$/.test(row.date ?? ""), `${label} documents[${documentIndex}].rows[${rowIndex}].date 必须是 MM-DD`);
+      const dateValue = Number(String(row.date).replace("-", ""));
+      assert(dateValue >= previousDateValue, `${label} documents[${documentIndex}].rows 日期必须升序`);
+      previousDateValue = dateValue;
+      assert(["入账", "支出", "提醒", "空行"].includes(row.kind), `${label} documents[${documentIndex}].rows[${rowIndex}].kind 不合法`);
+      ["amount", "party", "memo"].forEach((field) => assertNonEmptyString(row[field], `${label} documents[${documentIndex}].rows[${rowIndex}].${field} 不能为空`));
+    });
+    Object.entries(document.rowQuestions ?? {}).forEach(([rowId, questions]) => {
+      assert(rowIds.has(rowId), `${label} documents[${documentIndex}].rowQuestions 引用不存在 rowId: ${rowId}`);
+      assertArrayMin(questions, 1, `${label} documents[${documentIndex}].rowQuestions.${rowId} 至少一题`);
+      questions.forEach((question, questionIndex) => {
+        assertNonEmptyString(question.question, `${label} documents[${documentIndex}].rowQuestions.${rowId}[${questionIndex}].question 不能为空`);
+        assertNonEmptyString(question.answer, `${label} documents[${documentIndex}].rowQuestions.${rowId}[${questionIndex}].answer 不能为空`);
+        assertNonEmptyString(question.routeAxis, `${label} documents[${documentIndex}].rowQuestions.${rowId}[${questionIndex}].routeAxis 不能为空`);
+      });
+    });
+    (document.crossQuestions ?? []).forEach((question, questionIndex) => {
+      assertArrayMin(question.rows, 2, `${label} documents[${documentIndex}].crossQuestions[${questionIndex}].rows 至少两行`);
+      question.rows.forEach((rowId) => assert(rowIds.has(rowId), `${label} documents[${documentIndex}].crossQuestions[${questionIndex}] 引用不存在 rowId: ${rowId}`));
+      assertNonEmptyString(question.question, `${label} documents[${documentIndex}].crossQuestions[${questionIndex}].question 不能为空`);
+      assertNonEmptyString(question.answer, `${label} documents[${documentIndex}].crossQuestions[${questionIndex}].answer 不能为空`);
+      assertNonEmptyString(question.contradiction, `${label} documents[${documentIndex}].crossQuestions[${questionIndex}].contradiction 不能为空`);
+    });
+  });
+  assertDocumentNumberConsistency(packet, label);
+}
+
+function assertDocumentNumberConsistency(packet = {}, label = "") {
+  const text = collectTextFrom(packet);
+  const rows = (packet.documents ?? []).flatMap((document) => document.rows ?? []);
+  if (rows.some((row) => row.party === "新阳信贷有限公司" && row.amount === "¥50,000")) {
+    assert(/新阳信贷.*五万|50,000.*新阳信贷|五万/.test(text), `${label} 新阳信贷五万必须进入事实或证言文本`);
+  }
+  if (rows.some((row) => row.party === "转出·尾号 3301" && row.amount === "¥49,800")) {
+    assert(text.includes("49,800") && text.includes("3301"), `${label} 49,800 与 3301 必须进入事实或证言文本`);
+  }
+  if (rows.some((row) => row.amount === "¥8,214")) {
+    assert(text.includes("8,214"), `${label} 8,214 必须进入文本互检池`);
+  }
+  if (rows.some((row) => row.date === "07-08" && row.kind === "空行")) {
+    assert(text.includes("8 号"), `${label} 8 号空行必须与证言/事实互检`);
+  }
+  if (text.includes("社保断缴早于第一次借钱")) {
+    assert(text.includes("47 天"), `${label} 47 天阶梯不得丢失`);
   }
 }
 
@@ -678,6 +745,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertHostDisclosure(casePacket, casePacket.caseId);
       assertStanceSnapshot(casePacket, casePacket.caseId);
       assertCallMedium(casePacket, casePacket.caseId);
+      assertDocuments(casePacket, casePacket.caseId);
       assertNightStructure(casePacket, casePacket.caseId);
       assertOvernightStructure(casePacket, casePacket.caseId);
       assertDelegation(casePacket, casePacket.caseId);

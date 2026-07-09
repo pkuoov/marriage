@@ -939,6 +939,12 @@ button:active:not(:disabled) {
     url("../assets/generated/backgrounds/housing_sales.png?v=0.20.53") center / cover;
 }
 
+.day-document {
+  background:
+    linear-gradient(180deg, rgba(232, 238, 229, .18), rgba(13, 16, 13, .46)),
+    url("../assets/generated/backgrounds/credit_bill_room.png?v=0.20.70") center / cover;
+}
+
 .scene-label {
   position: absolute;
   top: 18px;
@@ -2143,6 +2149,122 @@ button:active:not(:disabled) {
 .day-followup button {
   min-height: 38px;
   padding: 8px 11px;
+}
+
+.document-viewer-card,
+.document-reconcile-card {
+  display: grid;
+  gap: 12px;
+}
+
+.document-mark-limit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(139, 228, 212, .16);
+  border-radius: 8px;
+  background: rgba(101, 214, 194, .065);
+}
+
+.document-mark-limit b {
+  color: rgba(139, 228, 212, .95);
+}
+
+.document-mark-limit span {
+  color: rgba(237, 241, 238, .64);
+  font-size: 13px;
+}
+
+.bank-flow-table {
+  display: grid;
+  max-height: min(48vh, 460px);
+  overflow: auto;
+  border: 1px solid rgba(237, 241, 238, .13);
+  border-radius: 8px;
+  background: rgba(6, 12, 12, .42);
+}
+
+.bank-flow-head,
+.bank-flow-row {
+  display: grid;
+  grid-template-columns: 56px 72px 58px 82px minmax(138px, 1.2fr) minmax(74px, .8fr);
+  gap: 8px;
+  align-items: center;
+  min-width: 680px;
+}
+
+.bank-flow-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px 12px;
+  color: rgba(139, 228, 212, .82);
+  background: rgba(10, 18, 18, .94);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.bank-flow-row {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 0;
+  border-top: 1px solid rgba(237, 241, 238, .075);
+  border-radius: 0;
+  text-align: left;
+  background: rgba(255, 255, 255, .025);
+}
+
+.bank-flow-row.marked {
+  color: rgba(247, 244, 233, .96);
+  background: rgba(101, 214, 194, .13);
+  opacity: 1;
+}
+
+.bank-flow-row span {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.document-earned-preview,
+.document-question-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.document-earned-preview {
+  padding: 12px;
+  border: 1px solid rgba(255, 204, 128, .16);
+  border-radius: 8px;
+  background: rgba(255, 204, 128, .055);
+}
+
+.document-earned-preview p {
+  margin: 0;
+  color: rgba(237, 241, 238, .76);
+}
+
+.document-question-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.document-question-grid button {
+  display: grid;
+  gap: 6px;
+  min-height: 92px;
+  padding: 12px;
+  text-align: left;
+}
+
+.document-question-grid b {
+  color: rgba(139, 228, 212, .92);
+  font-size: 13px;
+}
+
+.document-question-grid span {
+  line-height: 1.5;
 }
 
 .delegation-material {
