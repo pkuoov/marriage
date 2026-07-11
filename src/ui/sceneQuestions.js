@@ -35,6 +35,23 @@ export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePi
   ].join("");
 }
 
+export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks = []) {
+  const dialogueOptions = sceneDialogueOptions(scene, focusedQuestionOptions(scene?.questionOptions ?? []));
+  const asked = (askedDialoguePicks ?? []).length;
+  return `
+    <section class="question-menu-card" aria-label="提问选单">
+      <header>
+        <span>提问选单</span>
+        <b>这段话里，你还想从哪里问起？</b>
+        ${dialogueOptions.length ? `<small>普通提问已问 ${asked}/${dialogueOptions.length} 句。</small>` : ""}
+      </header>
+      <div class="question-menu-options">
+        ${sceneQuestionChoicesHtml(sceneIndex, scene, askedDialoguePicks)}
+      </div>
+    </section>
+  `;
+}
+
 function normalizeDialogueOption(option = {}, optionIndex = 0) {
   return {
     option: {

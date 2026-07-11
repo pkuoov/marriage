@@ -1,5 +1,5 @@
 export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
-  const options = check.options ?? [];
+  const options = (check.options ?? []).slice(0, 4);
   const kind = evidenceMaterialKind(check);
   return `
     <section class="evidence-workbench material-${kind} ${pick ? pick.correct ? "marked hit" : "marked miss" : ""}">
@@ -14,7 +14,9 @@ export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
       </div>
       <div class="evidence-target-board" aria-label="圈点区域">
         <span>圈哪一处</span>
-        ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick)).join("")}
+        <div class="evidence-target-grid">
+          ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick)).join("")}
+        </div>
       </div>
     </section>
   `;
@@ -22,6 +24,7 @@ export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
 
 export function evidenceMaterialKind(check = {}) {
   const text = `${check.title ?? ""} ${check.material ?? ""}`;
+  if (check.socialPost || /朋友圈|探店/.test(text)) return "social";
   if (/审批|付款|报销|收款|流程|通过/.test(text)) return "flow";
   if (/表|排班|预约|列/.test(text)) return "table";
   if (/账单|信用卡|消费|分期|还款/.test(text)) return "bill";
@@ -36,6 +39,7 @@ export function evidenceMaterialType(check = {}) {
     flow: "FLOW",
     table: "TABLE",
     shot: "SHOT",
+    social: "POST",
     file: "FILE"
   }[kind] ?? "FILE";
 }
@@ -47,6 +51,7 @@ export function evidenceMaterialThumbHtml(check = {}, kind = evidenceMaterialKin
     flow: "→",
     table: "▦",
     shot: "▣",
+    social: "◎",
     file: "≡"
   }[kind] ?? "≡";
   return `<i class="evidence-thumb evidence-thumb-${escapeHtml(kind)}" aria-hidden="true"><b>${escapeHtml(glyph)}</b><em>${escapeHtml(shortMaterialLabel(title))}</em></i>`;
@@ -193,12 +198,35 @@ function evidenceMaterialBodyHtml(check = {}, kind = "file") {
       <span class="${index % 2 ? "alt" : ""}"><b>${escapeHtml(line)}</b></span>
     `).join("")}</div>`;
   }
+  if (kind === "social") return socialPostHtml(check.socialPost ?? {});
   if (kind === "flow") {
     return `<div class="evidence-flow-track">${lines.map((line, index) => `
       <span><i>${index + 1}</i><b>${escapeHtml(line)}</b></span>
     `).join("")}</div>`;
   }
   return `<div class="evidence-document-lines">${evidenceMaterialRowsHtml(check)}</div>`;
+}
+
+function socialPostHtml(post = {}) {
+  return `
+    <article class="social-post-shot" aria-label="朋友圈截图">
+      <header>
+        <i aria-hidden="true">友</i>
+        <span><b>${escapeHtml(post.author ?? "朋友圈用户")}</b><small>${escapeHtml(post.postedAt ?? "")}</small></span>
+        <em>···</em>
+      </header>
+      <figure>
+        ${post.imageSrc ? `<img src="${escapeHtml(post.imageSrc)}" alt="${escapeHtml(post.imageAlt ?? "朋友圈配图")}" />` : ""}
+      </figure>
+      <p class="social-post-caption">${escapeHtml(post.caption ?? "")}</p>
+      ${post.location ? `<span class="social-post-location">⌖ ${escapeHtml(post.location)}</span>` : ""}
+      <section class="social-post-comments">
+        <p><b>${escapeHtml(post.commentAuthor ?? "朋友")}</b>：${escapeHtml(post.comment ?? "")}</p>
+        ${post.commentNote ? `<small>${escapeHtml(post.commentNote)}</small>` : ""}
+      </section>
+      ${post.followup ? `<aside>${escapeHtml(post.followup)}</aside>` : ""}
+    </article>
+  `;
 }
 
 function evidenceMaterialRowsHtml(check = {}) {
@@ -213,7 +241,7 @@ function evidenceMaterialNoteHtml(check = {}) {
 function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick = null) {
   const selected = pick && Number(pick.optionIndex) === optionIndex;
   const className = `evidence-target ${selected ? pick.correct ? "selected hit" : "selected miss" : pick ? "dimmed" : ""}`;
-  const content = `<i></i><b>${escapeHtml(option.label ?? "这块")}</b>`;
+  const content = `<i>${optionIndex + 1}</i><b>${escapeHtml(option.label ?? "这块")}</b>`;
   if (pick) {
     return `<span class="${className}">${content}</span>`;
   }

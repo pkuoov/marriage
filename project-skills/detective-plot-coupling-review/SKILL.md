@@ -60,12 +60,35 @@ Track every planted detail the way continuity engines track promises: each seed 
 
 ## Suspense Structure Check (悬疑感)
 
-A case has no mystery if the player finishes forming their verdict in scene 1-2 and every later beat only adds weight to it. Check three things:
+A case has no mystery if the player finishes forming their verdict in scene 1-2 and every later beat only adds weight to it. The generative counterpart of this check — how to compute doubt points and turns from a numbered truth ledger via the six operations — lives in `case-scriptwriting`'s "Manufacturing Doubt, Questions, and Turns". Check three things:
 
 - The false solution must be fed real evidence. If nothing on screen ever genuinely supports "他只是慌了" or "流程真的慢", it was never a live hypothesis and the case is a confirmation march, not a mystery. Give the false solution at least one true fact that survives until the reversal.
 - At least one load-bearing fact after the midpoint must flip the reading of an early line, not extend it. "More of the same, worse" is escalation; "that line meant something else" is a reversal. A case needs the second kind.
 - The caller's edit must be catchable from the opening (春秋笔法), not only confessed at the end. Plant initiative-hiding wording in the caller's early lines — 「他带我去的那种店」 when the reservation was hers — and let a material or backflow item expose the verb, so the player can catch the narrator instead of waiting for the narrator to surrender. A late confession that was never catchable earlier is a diary, not a Rashomon.
 - No pristine victims: a caller may be truly harmed, but the case must still name what convenience, benefit, face, status, or avoided embarrassment made them cooperate with the bad setup longer than their opening version admits. If the caller sounds perfectly clean through the whole live call, the case is not grey-zone writing; it is a verdict with scenery.
+
+## Non-linearity Law (线性禁令)
+
+Structure verdict from live playtest: a case that is one continuous call with NPCs arriving on schedule to explain clues is a reading, not a game — no matter how good the lines are. Laws:
+
+- Every case must contain at least one node where the player decides **what to do next**, not what to say next — and different doings must produce different information states (order and trade-offs, not just flavor).
+- At least one stretch of each case's information must be earnable out of order.
+- Any proposed new surface that "arrives on schedule and requires no player action" is rejected by default — reposition it behind a player action or cut it.
+- NPC three-verb quota, per pack: at least one **refusal** (an NPC demands something the player must go get — through the caller), one **interruption** (an NPC acts unprompted mid-call), one **conflict requiring a choice** (two NPCs' frames collide and the player must adopt one). An NPC whose lifecycle is arrive→explain→exit may not be written.
+- Reference structure: the two-call night (`docs/two-call-night-design.md`) — segment 1 → the player's interlude turn → callback whose opening the player assembles.
+
+## Evidence Chain Shape and the Misjudgment Beat (三段证据链与误判拍)
+
+呈堂律 (the exhibit law): core evidence must be entered as a row-level simulated document — dates, amounts, counterparties, memos, rendered as the artifact itself (`docs/demo2-rebuild-blueprint.md`). Prose summaries may only introduce a document, never replace it. A key contradiction with no document beneath it may not be written. 行派生律: key follow-up questions derive from rows the player marked (single-row questions and two-row cross-examinations); a question option with no row or testimony behind it is an unearned question. Empty rows are evidence too; two rows read together beat one — the cross-reference is the soul of document play.
+
+Three-stage evidence chain: a case's core materials should form 支持 → 部分推翻 → 拖入灰区 — the first piece backs the caller's version, the second overturns part of it, the third drags both sides into the grey. Each stage must revalue the previous one (wire via `revalues` / the promise ledger); three pieces that all point the same way are one piece with extra steps. Demo calibration: 账单 → 往期账单 → 会员记录＋朋友圈.
+
+The engineered misjudgment (误判拍): a mystery earns its late turns by letting the player genuinely commit to a wrong reading mid-case, not just hear about one. Rules:
+
+- The misjudgment must be evidence-fed: the wrong reading peaks because real, honest material supports it (the fed false solution at full dose) — never because information was withheld unfairly.
+- Give the commitment a surface: a mid-case stance snapshot (无惩罚的阶段性判断, recorded, revisable) turns the misjudgment from a private hunch into an arc the finale can mirror. The snapshot never scores; being overturned by later evidence is its design goal, and the recap shows the player's judgment arc without mocking it.
+- The crowd may lead the misjudgment (弹幕带节奏toward the magnetic wrong reading) — this is the sanctioned use of the room's confident wrongness, and the host's wound hook may pull the same direction.
+- The correction must not excuse: when the reading flips back, the previously-suspected party keeps whatever genuine faults the middle stage established. A misjudgment that ends in full exoneration is melodrama; one that ends in re-weighting is a mystery.
 
 ## Scene Turns, Information Gaps, and the A/B Story
 
@@ -104,6 +127,13 @@ For Rashomon-style cases, drift in who-knows-what is the most common continuity 
 - 来电人实际知道: what the caller knows but has not said — this column powers guarded answers, the deep question, and the caller-edit reveal.
 
 Host questions may only draw on column one. Caller slips and guarded answers draw on column three. If a line needs column-three knowledge to make sense but plays before the caller would plausibly reveal it, move it.
+
+The ledger generalizes to every speaking surface — each has a sensor contract:
+- 弹幕 knows the call audio, materials already shown on stream, life experience, and the host's public history — never visuals on a voice call, never unshown materials, never identities (see `case-scriptwriting`'s sensor-bandwidth rules).
+- Advisors know only what was shown or delegated to them, plus their trade knowledge.
+- Backflow senders know only what their own life plausibly carries: the friend knows the朋友圈, the cousin is in the family group, the other woman holds her own copy of the table. A sender whose material exceeds their life is a plausibility break (the 案 3 表妹 fix was exactly this class).
+- The absent party knows what they did — and says only the half that serves them.
+Audit any new line against its speaker's contract before checking its content.
 
 ## Fair-Play Checks
 

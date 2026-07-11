@@ -35,6 +35,8 @@ export const RUNTIME_CASE_CONTENT_FIELDS = [
   "hostDisclosure",
   "deepFollowup",
   "stageJudgement",
+  "caseClosing",
+  "caseTitle",
   "storyInterludeRecap",
   "conclusionWhenCleared",
   "conclusionBranches",

@@ -1,0 +1,4 @@
+interface:
+  display_name: "剧情与叙事编排"
+  short_description: "重构剧情、NPC、结案转场、叙事UI与试玩流程验证"
+  default_prompt: "使用 $story-dialogue-staging 重构本案的剧情、结案转场、下一案标题和可玩叙事 UI。"

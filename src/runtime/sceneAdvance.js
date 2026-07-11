@@ -277,6 +277,7 @@ export function completeNightAction(night = {}, action = {}, structure = {}) {
   return {
     ...night,
     segment: "interlude",
+    activeActionId: null,
     interludeBudget: {
       ...budget,
       remaining: Math.max(0, Number(budget.remaining ?? 0) - cost),

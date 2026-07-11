@@ -3,7 +3,8 @@ export function titleScreenHtml({
   storyPack = true,
   title = "",
   hook = "",
-  object = ""
+  object = "",
+  host = {}
 } = {}) {
   return `
     <main>
@@ -17,6 +18,13 @@ export function titleScreenHtml({
             <span><b>REC</b><small>后台留档</small></span>
             <span><b>LIVE</b><small>弹幕入场</small></span>
           </div>
+          ${storyPack ? `
+            <section class="title-host-card">
+              <span>今晚值班的主播</span>
+              <b>${escapeHtml(host.name ?? "林旭阳")}<small>${escapeHtml(host.role ?? "深夜热线主播")}</small></b>
+              <p>${escapeHtml(host.setup ?? "不替任何人下结论，只把没说全的话问清楚。")}</p>
+            </section>
+          ` : ""}
           <div class="quick-play-card case-file-ledger daily-hook-card">
             <span>${escapeHtml(object)}</span>
             <b>${escapeHtml(hook)}</b>

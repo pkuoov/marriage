@@ -15,7 +15,16 @@
     "backflowCount": 2,
     "truthBoundaryPromptCount": 5,
     "caseSpecificPressure": "用店长话术和会员系统先制造“行业就这样”的中段误判，再用私加推进列和带客折扣把双方拖进灰区。",
-    "whatPlayerDoesBesidesRead": ["先问两句", "定向追问", "圈店长培训材料", "做中段立场快照", "圈排班表", "圈办卡记录", "看两条后台回流", "归位事实边界", "选一句往下追"]
+    "whatPlayerDoesBesidesRead": [
+      "先问两句",
+      "定向追问",
+      "第一夜挂断后进入第二天下午",
+      "去婚介店找小林 / 送鉴定 / 提前看回流",
+      "回拨开场与立场",
+      "圈排班表与办卡记录",
+      "归位事实边界",
+      "选一句往下追"
+    ]
   },
   "taskProfile": {
     "id": "emotion",
@@ -24,28 +33,58 @@
     "summary": "情绪很满，有人一直把问题推回爱不爱。"
   },
   "routeAxisComments": {
-    "identity-wording": ["自己人这词又来了", "甜话先别急着信"],
-    "money-flow": ["后面接消费就变味", "办卡那一下太快了"],
-    "document-edge": ["表格比情话冷", "备注栏有点硬"],
-    "caller-credibility": ["她也顺着这个位置走了", "关系没说死才难听"],
-    "process-control": ["行业模板不能包住私加列", "推进两个字不对劲"]
+    "identity-wording": [
+      "自己人这词又来了",
+      "甜话先别急着信"
+    ],
+    "money-flow": [
+      "后面接消费就变味",
+      "办卡那一下太快了"
+    ],
+    "document-edge": [
+      "表格比情话冷",
+      "备注栏有点硬"
+    ],
+    "caller-credibility": [
+      "她也顺着这个位置走了",
+      "关系没说死才难听"
+    ],
+    "process-control": [
+      "行业模板不能包住私加列",
+      "推进两个字不对劲"
+    ]
   },
   "delegation": {
-    "moment": "actBreak:2",
-    "material": { "id": "tony-roster-column", "label": "那张表" },
+    "moment": "interlude:send-appraisal",
+    "material": {
+      "id": "tony-roster-column",
+      "label": "那张表"
+    },
     "outcomes": {
-      "lin-matchmaker": { "tone": "strong", "text": "维护表我见过几百张。写到'下一次推进'这个细法的，不是新手上进，是老手养熟客——这一列的写法，行里叫'关系落袋'。他这个岁数写出这个列，不是店里教的，是有人带过或者自己悟的。" },
-      "zhang-forensic": { "tone": "partial", "text": "截图链条完整，没有拼接痕迹。表是真表，字是一次录入——这张图本身干净，脏的不在图上。" },
-      "zhou-accountant": { "tone": "partial", "text": "年卡三千八进的是店收银还是个人码，让她查下支付记录的商户名。进店的算业绩，进个人的算什么，她该想清楚。" },
-      "zhao-lawyer": { "tone": "offDomain", "text": "'老板娘'这种话在法律上一文不值。可它值三千八——这句不归我管，归她自己管。" }
+      "lin-matchmaker": {
+        "tone": "strong",
+        "text": "标准维护表会记服务偏好、到店频率和办卡可能。我没见过把人写成“稳情绪、能投店”，再接“下一次推进”的。能说这不是标准模板，不能替你说他没有真心。"
+      },
+      "zhang-forensic": {
+        "tone": "partial",
+        "text": "截图链条完整，没有拼接痕迹。表是真表，字是一次录入——这张图本身干净，脏的不在图上。"
+      },
+      "zhou-accountant": {
+        "tone": "partial",
+        "text": "年卡三千八进的是店收银还是个人码，让她查下支付记录的商户名。进店的算业绩，进个人的算什么，她该想清楚。"
+      },
+      "zhao-lawyer": {
+        "tone": "offDomain",
+        "text": "'老板娘'这种话在法律上一文不值。可它值三千八——这句不归我管，归她自己管。"
+      }
     }
   },
   "stanceSnapshot": {
     "afterScene": 4,
     "kicker": "中段立场快照",
     "prompt": "现在这通麦，你先站哪边？",
-    "note": "不判分。先把此刻的判断按下来，后面的私加列和折扣会回看它。",
-    "afterPickLine": "先记下，不判分。行业话术是真的，但私人推进也还没说完。",
+    "note": "不判分。只记下你现在更相信关系、人情还是门店话术。",
+    "afterPickLine": "先记下。行业维护是真的，关系没有说死也是真的；这两句还包不住整张表。",
     "continueLabel": "继续听",
     "recapKicker": "中段立场",
     "options": [
@@ -99,14 +138,14 @@
   },
   "selfServingOmission": "咨询者明知道关系没说死，却一直顺着自己人这个词往下接。",
   "quotePickCandidates": [
-    "只有我能接住 TA 的情绪",
+    "只有我能接住他",
     "他说我像店里自己人",
     "我从来没说只有你一个",
     "以后店开起来，你就是老板娘"
   ],
   "accusationChoices": [
     {
-      "label": "“只有我能接住 TA 的情绪。”",
+      "label": "“只有我能接住他。”",
       "accuseRole": "respondent",
       "response": "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。"
     },
@@ -128,6 +167,11 @@
   ],
   "label": "理发店排班表",
   "storyArcTitle": "今日来电：理发店排班表",
+  "caseTitle": {
+    "title": "理发店排班表",
+    "subtitle": "“自己人”的位置，究竟是暧昧，还是一套成交流程？",
+    "intro": "第二天下午，一张店内排班表被发到节目后台。表上的“下一次推进”，看起来不像普通的熟客备注。"
+  },
   "publicHook": "她以为自己快要确定关系，直到对方发错一张店里预约表，备注不像剪头，倒像在给人分类。",
   "storyArcSummary": "看那张表怎么从预约表变成资源表：先承认行业话术，再找出他私加的推进列。",
   "storySuspense": "他会聊天不稀奇，稀奇的是行业模板之外，还有一列只服务他自己的下一步。",
@@ -154,7 +198,7 @@
     {
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "TA 每次下班后都陪我聊天，说只有我能接住 TA 的情绪，还说别人都不懂。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。去店里剪头他从来不收我钱，号再满也给我插进去。我就顺手帮他转过几次店里的活动。",
+      "version": "他总说下班陪我聊到凌晨，说只有我能接住他。我们没正式说过在一起，我就默认是在往那边走。剪头不收钱，号再满也给我插。……我放一条语音，就这条。听到了吧，吹风机一直响。他说的下班，是手上正做着别人的头。我自己人那三个字——是，我受用。",
       "revisedVersion": "……那句“只有你能接住我”，我当宝贝存了半年。表上那列圈出来以后，这句话像是从模板里复制出来的。",
       "doubt": "没有确认关系，但对方一直给排他式的亲近感。",
       "contradiction": "TA 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
@@ -293,7 +337,7 @@
     {
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "昨天他发错那张表，我才把前面的事串起来。表头写的是预约，可备注没写“烫发”“修刘海”，写的是“情绪稳定”“办卡意向强”“朋友多”。我那一行后面写着“稳情绪”。我拿给一个在别家店干过的朋友看。她说话术这行都教，表也都有。可她盯着最后那一列看了半天，没说话。",
+      "version": "昨天他手滑发错那张表。表头写预约，备注没写烫发修刘海，写的是「情绪稳定」「办卡意向强」「朋友多」。我那一行——稳情绪。挺吓人的，那三个字。拿给开过店的朋友看，她盯着最后那列半天没说话。话术这行都教，表也都有。可她没见过那一列。",
       "doubt": "那张表不像普通客户备注，更像在写每个人能带来什么。",
       "contradiction": "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
       "reliability": "partial",
@@ -337,7 +381,7 @@
     {
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "我拿表问他，他回我：“我从来没说只有你一个。”可我翻聊天，他发过“以后店开起来，你就是老板娘”。这句话不是求婚，可听完以后，他再说办年卡、以后投一点，我就没那么防备。",
+      "version": "他最后回我的原话是：“我从来没说只有你一个。”可我翻聊天，他又说过“以后店开起来，你就是老板娘”。这不是求婚，可后面再接年卡、投店，我确实没那么防备。",
       "doubt": "没说“只有你”，不代表没有让人往那个方向想。",
       "contradiction": "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
       "reliability": "partial",
@@ -423,7 +467,7 @@
     {
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "我后来盯着最后那列看了很久：“下一次推进”。我那行写“年卡已聊，可稳情绪”；另一个女生写“能投店，约饭再谈”；还有一个写“朋友多，带客”。看到那儿，我才知道不是我一个人在自作多情。那个开过店的朋友后来给我回了句话：话术哪家都教，表哪家都有，这一列，她没见过。",
+      "version": "最后那列：下一次推进。我那行写年卡已聊、可稳情绪；另一个写能投店；还有一个写朋友多、带客。不是排班，是人往哪儿推。开过店的朋友回了句话：模板里没这列。……我挂断前他来电，就问我「你怎么还在说表」。",
       "doubt": "表格不只是备注，还写了下一步怎么把人往店里推进。",
       "contradiction": "TA 把不同暧昧对象按可推进资源分层管理。",
       "reliability": "partial",
@@ -673,6 +717,24 @@
           "feedback": "年卡是旧线，新私信更重的是投店和分红已经进表。",
           "routeAxis": "money-flow"
         }
+      ],
+      "replyChoices": [
+        {
+          "id": "side-other",
+          "label": "支持她拉群要说法",
+          "grantsInventory": [
+            "side-other-caller"
+          ],
+          "stanceNudge": "defensive"
+        },
+        {
+          "id": "side-caller",
+          "label": "劝她先止损别闹店",
+          "grantsInventory": [
+            "side-caller-stop"
+          ],
+          "stanceNudge": "open"
+        }
       ]
     }
   ],
@@ -684,8 +746,8 @@
   "advisorNotes": [
     {
       "advisorId": "lin-matchmaker",
-      "appearsNowBecause": "收麦后，一位做了多年婚介的听友留了话。",
-      "text": "这行的维护表我见过不少，写“能带客”“能投店”的也有。但把感情备注和推进节点写进同一张表的，干十年也数得过来。手艺人靠手吃饭，他这套是靠人吃饭——话说回来，别因为一个人，把一行手艺人都看扁了。"
+      "appearsNowBecause": "收麦后，小林又丢了一句家常。",
+      "text": "表的事你们台上对过了。我只补一句：别把整行手艺人跟着一个人骂脏。"
     }
   ],
   "crossCaseEchoes": [
@@ -698,7 +760,7 @@
     "anchor": "afterBackflow",
     "text": "我做节目这些年，最怕的就是“自己人”这三个字。它不收钱，收的都比钱贵。"
   },
-  "hostWoundHook": "话术即铁证，直接钉死",
+  "hostWoundHook": "行业都这样，别上纲上线",
   "deepFollowup": {
     "question": "那我多问一句，看到排班表里写投店、带客以后，你自己当时为什么还愿意接那些店里的事？",
     "answer": "剪头不要钱，号随便插，带闺蜜去还有六折，活动我顺手就转了。因为我也吃了那个“自己人”的感觉。他说以后店里有我一个位置，我就觉得办卡、转活动、带朋友过去都像在帮我们。现在看，他不承认关系，我也没逼他说清楚，投店、带客这些难听话就被我们一起往后拖了。",
@@ -707,8 +769,237 @@
   "stageJudgement": "这案卡在两层：话术和维护表是店里教的没错，可“下一次推进”那列，店长也说不是模板；她说自己只是心软，可免费剪发、插号和带客折扣，她都收过。",
   "storyInterludeRecap": "店长培训页一露，行业模板是真的；排班表一露，甜话就不只是在谈感情。",
   "followupTwist": "后续回拨里，那位女生又来了消息：她在拉群，已经有四个人，要来电人进群带头，把事情闹到店里去。来电人回了一句\"让我想想\"。到这里，两个受害者已经不同路了——一个要说法，一个想止损，谁也说服不了谁。",
-  "dailyShareTitle": "你会从哪一句看出 TA 在养鱼？",
+  "dailyShareTitle": "“自己人”，是关系还是销售位置？",
   "dailyShareBody": "行业话术能解释一半，排班表里那几栏解释不了：情绪稳定、能投店、能带客。",
-  "dailyShareQuestion": "你觉得“你和别人不一样”算锤吗？",
-  "truth": "三条账分开算。行业的：熟客维护、会员指标、话术培训都真实存在，不该把一整行手艺人说成骗局。他的：同一句“只有你懂我”发给几个人，情绪话后面接办卡、带客、投店，表上还写着下一次怎么推进；店长说培训模板里没有那一列。她的：剪头不收钱，号随便插，带闺蜜去有六折和护理免单，“自己人”的好处她一直收着，也就一直没逼他把关系说死。这些不欠他什么，可今晚的委屈里得给这一块留个位置。定不了的今晚不定：他对谁动过真心，别的顾客把这段当成什么，同款表到底做过几张，都还在麦外面。"
+  "dailyShareQuestion": "你觉得“你和别人不一样”在什么情况下才算证据？",
+  "truth": "三条账分开算。行业的：熟客维护、会员指标、话术培训都真实存在，不该把一整行手艺人说成骗局。他的：同一句“只有你懂我”发给几个人，情绪话后面接办卡、带客、投店，表上还写着下一次怎么推进；店长说培训模板里没有那一列。她的：剪头不收钱，号随便插，带闺蜜去有六折和护理免单，“自己人”的好处她一直收着，也就一直没逼他把关系说死。这些不欠他什么，可今晚的委屈里得给这一块留个位置。定不了的今晚不定：他对谁动过真心，别的顾客把这段当成什么，同款表到底做过几张，都还在麦外面。",
+  "nightStructure": {
+    "enabled": true,
+    "segment1SceneIndexes": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "segment2SceneIndexes": [
+      4,
+      5,
+      6
+    ],
+    "hangup": {
+      "afterSceneIndex": 3,
+      "speaker": "咨询者",
+      "line": "……他一直打。我今晚不接了。那张表我现在再往下看，只会先替自己找理由。明晚这个点，我回来。",
+      "hostLine": "好。表留下。明晚别只带他的解释回来，也把你愿意承认的带回来。",
+      "stageDirection": "连线断开。屏幕上的“下一次推进”停在最后一列。"
+    },
+    "interlude": {
+      "title": "第二天下午·离台调查",
+      "kicker": "节目不在线。你有一个下午，最多做三件事；去见谁，决定第二夜先问什么。",
+      "budget": 3,
+      "minActions": 2,
+      "maxActions": 3,
+      "continueLabel": "等她第二夜回拨",
+      "actions": [
+        {
+          "id": "send-appraisal",
+          "label": "送鉴定",
+          "summary": "把排班表那一列送给一位顾问。",
+          "cost": 1,
+          "kind": "delegation",
+          "grantsInventory": [
+            "delegation-return"
+          ]
+        },
+        {
+          "id": "visit-lin",
+          "label": "去打烊后的婚介店",
+          "summary": "找小林老师，把标准维护表和理发店私表并排。",
+          "cost": 1,
+          "kind": "advisorConflict",
+          "advisorId": "lin-matchmaker",
+          "npcVerb": "refuse",
+          "backdropClass": "day-matchmaking",
+          "chapter": "第二天下午·婚介门店",
+          "sceneText": "半亮的招牌还没关。小林正把墙上的相亲资料一张张收进抽屉，白板上“稳定、顾家、有上进心”擦得只剩浅印。她把两张表压在茶杯下面：“记偏好不是骗。熟客连水温都得记。可标准表到这里就停了。”她不替你判断真心，只准你带一条问题回去。",
+          "options": [
+            {
+              "id": "carry-private-column",
+              "label": "带走“私加列”差异",
+              "advisorLine": "小林把标准表推过来：“服务项目、熟客偏好、办卡可能，行业里会记。‘下一次推进’不在上面。你能问这列是谁加的，不能拿它证明喜欢都是假的。”",
+              "routeAxis": "document-edge",
+              "grantsInventory": [
+                "小林的标准模板"
+              ]
+            },
+            {
+              "id": "carry-benefits",
+              "label": "带走“自己人收益”",
+              "advisorLine": "她把咨询者那行按住：“插号、免单、朋友六折，她都接了。好处不等于她同意进表，可你回拨时也别把这一半藏掉。”",
+              "routeAxis": "caller-credibility",
+              "grantsInventory": [
+                "自己人收益清单"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reopen-training",
+          "label": "重看培训材料",
+          "summary": "把店长培训页再翻一遍，看模板有没有那一列。",
+          "cost": 1,
+          "kind": "evidencePass",
+          "grantsInventory": [
+            "training-no-column"
+          ],
+          "focusCheckIds": [
+            "tony-training-system"
+          ]
+        },
+        {
+          "id": "other-caller-dm",
+          "label": "回女客私信",
+          "summary": "另一位女生发来同款表，可以回一句。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "tony-other-caller-dm",
+          "grantsInventory": [
+            "other-caller-dm-seen"
+          ]
+        },
+        {
+          "id": "listen-dryer",
+          "label": "听回放",
+          "summary": "回听「下班陪我」那段，看背景音。",
+          "cost": 1,
+          "kind": "playback",
+          "grantsInventory": [
+            "playback-dryer"
+          ],
+          "script": {
+            "clipLabel": "回放·深夜语音",
+            "clipLine": "今晚又被店长说了，只有你能接住我。",
+            "hostNote": "背景里吹风机没停——他说的下班，是手上正做着别人的头。"
+          }
+        },
+        {
+          "id": "manager-note-early",
+          "label": "看店长说明",
+          "summary": "店长托人转的说明，现在到了。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "tony-manager-training-note",
+          "grantsInventory": [
+            "manager-note-seen"
+          ]
+        }
+      ]
+    },
+    "callbackOpeners": [
+      {
+        "id": "opener-delegation",
+        "requiresAny": [
+          "delegation-return"
+        ],
+        "label": "用顾问回单开场",
+        "hostLine": "你回来了。送出去的人只确认表是真的；关系是什么，图上验不出来。",
+        "callerRevisedOpening": "……好。那我不拿表替自己回答感情。我只说表里确实写了什么。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-lin-column",
+        "requiresAny": [],
+        "requiresChoiceId": "carry-private-column",
+        "label": "带小林的标准模板回麦",
+        "hostLine": "我去了小林的门店。标准维护表会记偏好和办卡可能，但没有“下一次推进”。这列是谁加的？",
+        "callerRevisedOpening": "我今天也只问了他这一句。他没回答是谁加的。后面那句话，我上麦说。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-lin-benefit",
+        "requiresAny": [],
+        "requiresChoiceId": "carry-benefits",
+        "label": "带“自己人收益”回麦",
+        "hostLine": "小林没先问他。她先问你：插号、免单、朋友六折，你是不是都接了？",
+        "callerRevisedOpening": "……接了。昨天我只想证明他把我写进表，今天这半句我也得认。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-dryer",
+        "requiresAny": [
+          "playback-dryer"
+        ],
+        "label": "用回放矛盾开场",
+        "hostLine": "回拨前我又听了一遍。你说他下班陪你——背景里吹风机一直在响。",
+        "callerRevisedOpening": "……这一句我今天又听了一遍。他手上做着别人的头，嘴上说只有我能接住。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-other-caller-side",
+        "requiresAny": [
+          "side-other-caller"
+        ],
+        "label": "用女客要闹店开场",
+        "hostLine": "你不在线的时候，后台那位也收到同款表。她想拉群闹到店里——你怎么看？",
+        "callerRevisedOpening": "她跟你说了？……我不想闹店。我只想把自己的卡和朋友退出来。可那张表，确实不止我一个人。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-other-caller-stop",
+        "requiresAny": [
+          "side-caller-stop"
+        ],
+        "label": "用止损立场开场",
+        "hostLine": "有人想拉你出头。你刚才挂断，是不是也在躲这件事？",
+        "callerRevisedOpening": "……是。他一直打，我没接。可我也不想被人绑去店里吵架。表的事，我得自己说清。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-manager",
+        "requiresAny": [
+          "manager-note-seen",
+          "training-no-column"
+        ],
+        "label": "用店长说明开场",
+        "hostLine": "店长托人说了：培训模板有，「下一次推进」不是模板。你怎么接这句？",
+        "callerRevisedOpening": "……所以我才卡在那儿。行业模板是真的，私加列也是真的。我接他电话之前，就想把这句说清楚。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-soft",
+        "requiresAny": [],
+        "label": "软开场",
+        "hostLine": "你回来了。表和培训页还在台上，我们从你挂断的地方继续。",
+        "callerRevisedOpening": "嗯。昨天我没再接他的电话。今天我把那张表重新看了一遍。",
+        "appliesRevisedOnScenes": []
+      }
+    ],
+    "returnStance": {
+      "fromSnapshotOptionIds": {
+        "respondent-problem": "open",
+        "industry-gray": "neutral",
+        "caller-complicit": "defensive"
+      },
+      "default": "neutral",
+      "lines": {
+        "defensive": "我差点不打回来。弹幕说我也有份……我自己人那点儿好处，我又没否认。可那列推进，不是我自己写上去的。",
+        "open": "我回来了。表的事你继续问——这回我不替行业开脱。",
+        "neutral": "我回来了。隔了一天再看，那一列还在。"
+      }
+    }
+  }
 }

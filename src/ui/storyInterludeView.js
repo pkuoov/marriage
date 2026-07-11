@@ -1,24 +1,15 @@
 export function storyInterludeHtml({
-  previousLabel = "",
-  previousLine = "",
   nextObjectLabel = "",
   nextLine = "",
   shellLine = ""
 } = {}) {
   return `
-    <section class="story-interlude-card">
-      <span>上一通留下</span>
-      <b>${escapeHtml(previousLabel)}</b>
-      <p>${escapeHtml(previousLine)}</p>
-    </section>
-    ${shellLine ? `
     <section class="story-interlude-card shell">
-      <span>幕间</span>
-      <p>${escapeHtml(shellLine)}</p>
+      <span>广告间隙</span>
+      <p>${escapeHtml(shellLine || "控台安静了一会儿，下一通的材料先到了后台。")}</p>
     </section>
-    ` : ""}
     <section class="story-interlude-card next">
-      <span>新来电接入</span>
+      <span>下一通 · 材料先到</span>
       <b>${escapeHtml(nextObjectLabel)}</b>
       <p>${escapeHtml(nextLine)}</p>
     </section>
@@ -26,7 +17,7 @@ export function storyInterludeHtml({
 }
 
 export function storyInterludeChoicesHtml() {
-  return `<button class="primary" data-enter-next-case type="button">接下一路麦</button><button data-retry-case type="button">回头重问</button>`;
+  return `<button class="primary" data-enter-next-case type="button">查看下一案</button><button data-retry-case type="button">回看本案</button>`;
 }
 
 function escapeHtml(value) {

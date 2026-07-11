@@ -1,3 +1,5 @@
+import { HOST_NAME } from "../hostProfile.js?v=0.20.94";
+
 export function hangupBeatHtml(hangup = {}) {
   return `
     <section class="hangup-beat-card">
@@ -57,6 +59,7 @@ export function interludeConflictActionHtml(action = {}, selectedChoiceId = "") 
     <section class="interlude-action-card advisor-conflict-card">
       <span class="source-badge">${escapeHtml(action.label ?? "顾问分歧")}</span>
       <p><b>${escapeHtml(action.summary ?? "")}</b></p>
+      ${action.sceneText ? `<p>${escapeHtml(action.sceneText)}</p>` : ""}
       <div class="advisor-conflict-options">
         ${options.map((option) => advisorConflictOptionHtml(option, selected)).join("")}
       </div>
@@ -203,8 +206,8 @@ function inventoryLabel(inventory = []) {
 }
 
 function callLineHtml(line = {}) {
-  const role = line.role === "host" ? "host" : "caller";
-  const speaker = line.speaker ?? (role === "host" ? "你" : "咨询者");
+  const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
+  const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   return `
     <div class="call-line ${role}">
       <b>${escapeHtml(speaker)}</b>

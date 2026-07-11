@@ -131,15 +131,15 @@ export function truthBoundaryReview(brief = {}) {
   const boundary = brief.truthBoundary ?? {};
   const columns = [
     { key: "true", label: "能确认", items: cleanBoundaryItems(boundary.true) },
-    { key: "edited", label: "被修剪", items: cleanBoundaryItems(boundary.edited) },
-    { key: "unknown", label: "今晚定不了", items: cleanBoundaryItems(boundary.unknown) }
+    { key: "edited", label: "被改过", items: cleanBoundaryItems(boundary.edited) },
+    { key: "unknown", label: "还不能定", items: cleanBoundaryItems(boundary.unknown) }
   ].filter((column) => column.items.length);
   const prompts = boundaryPrompts(columns, truthBoundaryPromptLimitForCase(brief, TRUTH_BOUNDARY_PROMPT_LIMIT));
   return {
-    title: "事实边界",
+    title: "把话分开说",
     line: columns.length
-      ? "这几句话，哪句能落，哪句还缺半边。"
-      : "这通还没留下足够边界。",
+      ? "按证据放：能确认的、被改过的、今晚还不能定的。"
+      : "这通还缺能确认的材料。",
     columns,
     prompts,
     choices: columns.map(({ key, label }) => ({ key, label }))

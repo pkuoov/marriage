@@ -338,6 +338,14 @@ function assertOvernightStructure(packet = {}, label = "") {
   const anchorIndex = (packet.sceneVersions ?? []).findIndex((scene) => String(scene?.version ?? "").includes(structure.hangupAnchor));
   assert(anchorIndex >= 0, `${label} overnightStructure.hangupAnchor 未命中任何 sceneVersions`);
   assertNonEmptyString(structure.hangupLine, `${label} overnightStructure.hangupLine 不能为空`);
+  if (structure.postHangupContact !== undefined) {
+    assertNonEmptyString(structure.postHangupContact?.label, `${label} overnightStructure.postHangupContact.label 不能为空`);
+    assertArrayMin(structure.postHangupContact?.lines, 2, `${label} overnightStructure.postHangupContact.lines 至少需要两句`);
+    structure.postHangupContact.lines.forEach((line, lineIndex) => {
+      assertNonEmptyString(line?.speaker, `${label} overnightStructure.postHangupContact.lines[${lineIndex}].speaker 不能为空`);
+      assertNonEmptyString(line?.text, `${label} overnightStructure.postHangupContact.lines[${lineIndex}].text 不能为空`);
+    });
+  }
   assertNonEmptyString(structure.hostHoldLine, `${label} overnightStructure.hostHoldLine 不能为空`);
   assertNonEmptyString(structure.dayIntro, `${label} overnightStructure.dayIntro 不能为空`);
   assert(Number.isInteger(structure.dayBudget) && structure.dayBudget > 0, `${label} overnightStructure.dayBudget 必须是正整数`);

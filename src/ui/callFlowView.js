@@ -1,3 +1,5 @@
+import { HOST_NAME } from "../hostProfile.js?v=0.20.94";
+
 export function choiceGroupHtml(label, content, className = "", note = "") {
   if (!content?.trim()) return "";
   return `
@@ -21,8 +23,8 @@ export function flowGroupHtml(content) {
 }
 
 export function callLineHtml(line = {}) {
-  const role = line.role === "host" || line.speaker === "你" ? "host" : "caller";
-  const speaker = role === "host" ? "你" : "咨询者";
+  const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
+  const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
   return `
     <div class="call-line ${role}">

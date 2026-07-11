@@ -15,7 +15,16 @@
     "backflowCount": 3,
     "truthBoundaryPromptCount": 6,
     "caseSpecificPressure": "终案用预算流程、审批截图和供应商返款三块材料压缩耐心预算，突出审批、付款、返点和项目署名之间的错位。",
-    "whatPlayerDoesBesidesRead": ["先问两句", "定向追问", "做中段立场快照", "圈预算沟通记录", "圈审批截图", "圈供应商报价", "看三条后台回流", "归位事实边界", "选一句往下追"]
+    "whatPlayerDoesBesidesRead": [
+      "先问两句",
+      "定向追问",
+      "中段挂断进幕间",
+      "幕间送鉴定 / 顾问冲突 / 提前看流程样本",
+      "回拨开场与立场",
+      "圈审批与供应商材料",
+      "归位事实边界",
+      "选一句往下追"
+    ]
   },
   "taskProfile": {
     "id": "audit",
@@ -24,19 +33,46 @@
     "summary": "截图看着完整，钱却没落到该落的位置。"
   },
   "routeAxisComments": {
-    "process-control": ["入口在谁手里", "流程词太熟了"],
-    "document-edge": ["审批图少的是钱", "截图卡在最会挡人的页"],
-    "money-flow": ["钱还没落地", "返款口子要看清"],
-    "caller-credibility": ["他也想要主责", "表现机会不是免费午餐"]
+    "process-control": [
+      "入口在谁手里",
+      "流程词太熟了"
+    ],
+    "document-edge": [
+      "审批图少的是钱",
+      "截图卡在最会挡人的页"
+    ],
+    "money-flow": [
+      "钱还没落地",
+      "返款口子要看清"
+    ],
+    "caller-credibility": [
+      "他也想要主责",
+      "表现机会不是免费午餐"
+    ]
   },
   "delegation": {
-    "moment": "actBreak:2",
-    "material": { "id": "work-approval-missing", "label": "那张审批图" },
+    "moment": "interlude:send-appraisal",
+    "material": {
+      "id": "work-approval-missing",
+      "label": "那张审批图"
+    },
     "outcomes": {
-      "zhou-accountant": { "tone": "strong", "text": "对公付款都有回单号。让她别问'钱怎么还没到'，就问财务要这单的付款回单号——报得出，是真在走；报不出，就是根本没付。一句话的事，比吵十次管用。" },
-      "zhao-lawyer": { "tone": "partial", "text": "群里'让我垫'的原话，加上她的转账记录，债权凭证已经够了。走不走那一步是她的事，但料要现在留好——口说的不算，落纸的算数。" },
-      "zhang-forensic": { "tone": "partial", "text": "这张截图是完整截屏，底部没有裁切痕迹——它不是被剪过，它本来就只走到审批这一步。图没撒谎，撒谎的是拿图当回执用的人。" },
-      "lin-matchmaker": { "tone": "offDomain", "text": "职场不是我的场。但'想表现'这个东西我熟——我们行里叫'客户自己想成交'，最好的销售从来不推销，只递台阶。" }
+      "zhou-accountant": {
+        "tone": "strong",
+        "text": "对公付款都有回单号。让她别问'钱怎么还没到'，就问财务要这单的付款回单号——报得出，是真在走；报不出，就是根本没付。一句话的事，比吵十次管用。"
+      },
+      "zhao-lawyer": {
+        "tone": "partial",
+        "text": "群里'让我垫'的原话，加上她的转账记录，债权凭证已经够了。走不走那一步是她的事，但料要现在留好——口说的不算，落纸的算数。"
+      },
+      "zhang-forensic": {
+        "tone": "partial",
+        "text": "这张截图是完整截屏，底部没有裁切痕迹——它不是被剪过，它本来就只走到审批这一步。图没撒谎，撒谎的是拿图当回执用的人。"
+      },
+      "lin-matchmaker": {
+        "tone": "offDomain",
+        "text": "职场不是我的场。但'想表现'这个东西我熟——我们行里叫'客户自己想成交'，最好的销售从来不推销，只递台阶。"
+      }
     }
   },
   "stanceSnapshot": {
@@ -44,7 +80,7 @@
     "kicker": "中段立场快照",
     "prompt": "现在这通麦，你先站哪边？",
     "note": "不判分。先把此刻的判断按下来，后面的材料会回看它。",
-    "afterPickLine": "先记下，不判分。后面的钱路会回看你这次站队。",
+    "afterPickLine": "下一段只核两件事：钱有没有到账，主责是谁先写上去的。",
     "continueLabel": "继续听",
     "recapKicker": "中段立场",
     "options": [
@@ -97,7 +133,7 @@
     "报销审批通过",
     "我也确实想要这个主责",
     "返款统一打给对接人",
-    "先私下把事办成，复盘再补流程"
+    "先私下办成，复盘再补流程"
   ],
   "accusationChoices": [
     {
@@ -116,7 +152,7 @@
       "response": "这句和审批截图放一起看，钱为什么一直回不来就有方向了。"
     },
     {
-      "label": "“先私下把事办成，复盘再补流程。”",
+      "label": "“先私下办成，复盘再补流程。”",
       "accuseRole": "respondent",
       "response": "这句是入口。流程先被挪到私下，后面截图再漂亮，也补不了垫款风险。"
     }
@@ -237,7 +273,7 @@
     {
       "speakerId": "chen",
       "speaker": "咨询者",
-      "version": "可流程表刚发完没多久，他就私聊我，说客户答谢会临时调整太多，预算先别在大群里问，不然领导会觉得我推活。他说先私下把事办成，复盘再补流程。我也怕在大群问预算，会显得我前面说能主责是嘴硬。",
+      "version": "流程表刚发完没多久，他就私聊我：客户答谢会调整太多，预算先别在大群问，不然领导觉得我不担事。说先私下办成，复盘再补流程。……我回了大群「收到」，私聊里回了「我来扛」。后来才知道，他说来不及那天，财务延后通知还没发。",
       "revisedVersion": "大群那件事，我再说一遍。他说别问，我就没问——当时我以为他在护我的面子。预算记录和延后通知放一起看才吓人：他说来不及那天，财务还没发过延后通知。",
       "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
       "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
@@ -288,7 +324,7 @@
     {
       "speakerId": "chen",
       "speaker": "咨询者",
-      "version": "他后来发给我的那张图，抬头是“报销审批通过”。我当时以为等于钱已经到了，可仔细看下面没有付款流水，也没有收款账户。财务群这个月倒是真发过通知，说供应商付款统一延后。我一开始就是信了这个。",
+      "version": "他发来那张图，抬头报销审批通过。我当时以为钱到了。细看——下面没有付款流水，也没有收款账户。财务群这个月发过延后通知，我一开始就是信这个。……可延后归延后，付款状态总该有吧？我一提，他就把同一张图再发一遍。",
       "doubt": "审批通过看着像结束了，后面还差付款那一步。",
       "contradiction": "报销截图只显示审批通过，没有付款流水和收款账户。",
       "reliability": "partial",
@@ -382,7 +418,7 @@
     {
       "speakerId": "chen",
       "speaker": "咨询者",
-      "version": "活动后小复盘那天，领导确实点名夸了我，说“这次客户反馈不错，执行主责要记下来”。我当时心里还松了一口气。可他后面又补了一句：“流程你们自己按老规矩补齐。”那句话一出来，我就不好在会上提垫款了。",
+      "version": "小复盘领导点名夸了我，说客户反馈不错、执行主责要记下来。我当时松了口气。可他补了一句：流程你们自己按老规矩补齐。……批注里没垫款，没账户，没对接人。我想提钱，怕显得主责没走好。",
       "doubt": "小复盘夸奖把主责写实，也把流程问题压回执行层。",
       "contradiction": "领导夸的是结果和主责，没有追问垫款与流程入口。",
       "reliability": "partial",
@@ -420,7 +456,8 @@
           "kind": "shift",
           "text": "说到被夸时反而把声音压低"
         }
-      }
+      },
+      "revisedVersion": "批注你看见了？主责写我，钱路一个字没有。……我截的时候手都在抖。不是怕领导，是怕下周一写死以后，钱还在他那儿。"
     },
     {
       "speakerId": "chen",
@@ -639,6 +676,20 @@
           "feedback": "这句重要，但和供应商返款要合看；这份样本先证明公开流程被绕开。",
           "routeAxis": "money-flow"
         }
+      ],
+      "replyChoices": [
+        {
+          "id": "ask-public-budget",
+          "label": "请在群里补预算确认",
+          "grantsInventory": [
+            "fetch-public-budget"
+          ]
+        },
+        {
+          "id": "let-it-go",
+          "label": "先不催助理",
+          "stanceNudge": "defensive"
+        }
       ]
     },
     {
@@ -734,11 +785,12 @@
     "anchor": "atStageJudgement",
     "text": "我上一份工作丢的时候，也是流程词最多的那个月。这案里谁在说流程词，各位都听见了。"
   },
-  "hostWoundHook": "满嘴流程词的人准没好事",
+  "hostWoundHook": "财务慢很常见，别先定罪",
   "respondentNote": {
     "source": "respondent-note",
     "appearsNowBecause": "收麦后，那位同事托人给后台带了话。",
-    "text": "垫款我认，月底肯定结。审批本来就走完了，是财务节奏的事。主责署名是人家自己开口要的，这话敢不敢认？返款是供应商这边的老规矩，跟垫款两码事。"
+    "text": "垫款我认，月底肯定结。审批本来就走完了，是财务节奏的事。主责署名是人家自己开口要的，这话敢不敢认？返款是供应商这边的老规矩，跟垫款两码事。",
+    "teaseDuringSegment2": true
   },
   "deepFollowup": {
     "question": "那我多问一句，如果今天不只是钱没回来，你最怕这件事在公司里被说成什么？",
@@ -751,5 +803,233 @@
   "dailyShareTitle": "报销截图都发了，钱为什么还没回来？",
   "dailyShareBody": "流程表发过，审批图也过了，可付款状态、收款账户、供应商返款，一项都没露。",
   "dailyShareQuestion": "你会先问审批截图，还是先问谁拿了项目署名？",
-  "truth": "这案咨询者把难听的先说了：咨询者想拿表现，先表了态，也看见过流程表却没在群里问预算。可自认归自认，账不跟着走。认了想表现，不等于认下那笔垫款。对方手里的才要紧：他说来不及的时候，财务延后通知还没出现；审批图只截到最好看那页；“财务延后”只盖得住报销那条路，付款确认和供应商返款全攥在对方手里。领导批注只把主责写给她，没有把钱路交给她。定不了的：钱最后进了谁的账户，老板知不知道，“老规矩”从哪一年开始、还有谁拿过。"
+  "truth": "这案咨询者把难听的先说了：咨询者想拿表现，先表了态，也看见过流程表却没在群里问预算。可自认归自认，账不跟着走。认了想表现，不等于认下那笔垫款。对方手里的才要紧：他说来不及的时候，财务延后通知还没出现；审批图只截到最好看那页；“财务延后”只盖得住报销那条路，付款确认和供应商返款全攥在对方手里。领导批注只把主责写给她，没有把钱路交给她。定不了的：钱最后进了谁的账户，老板知不知道，“老规矩”从哪一年开始、还有谁拿过。",
+  "nightStructure": {
+    "enabled": true,
+    "segment1SceneIndexes": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "segment2SceneIndexes": [
+      4,
+      5,
+      6
+    ],
+    "hangup": {
+      "afterSceneIndex": 3,
+      "speaker": "咨询者",
+      "line": "复盘材料弹了条新批注。我截一下——你别挂，我马上回来。",
+      "hostLine": "去截。审批图先留台上。",
+      "stageDirection": "忙音。付款状态那一栏仍然是空的。"
+    },
+    "interlude": {
+      "title": "幕间·调查台",
+      "kicker": "她不在线。时间只够做两三件事。",
+      "budget": 3,
+      "minActions": 2,
+      "maxActions": 3,
+      "continueLabel": "回拨她",
+      "actions": [
+        {
+          "id": "send-appraisal",
+          "label": "送鉴定",
+          "summary": "把审批截图送给一位顾问。",
+          "cost": 1,
+          "kind": "delegation",
+          "grantsInventory": [
+            "delegation-return"
+          ]
+        },
+        {
+          "id": "zhao-zhou-work",
+          "label": "今晚只问得动一个家人",
+          "summary": "赵要债权留痕，周要付款回单号。预算不够两个都深挖。",
+          "cost": 2,
+          "kind": "advisorConflict",
+          "npcVerb": "conflict",
+          "options": [
+            {
+              "id": "work-frame-zhao",
+              "label": "问赵：群里原话+转账",
+              "advisorLine": "群里「让我垫」的原话，加上转账记录，债权凭证够了。回拨逼他补一句欠条措辞——口说的不算，落纸的算数。",
+              "grantsInventory": [
+                "work-frame-zhao"
+              ],
+              "routeAxis": "process-control"
+            },
+            {
+              "id": "work-frame-zhou",
+              "label": "问周：只要回单号",
+              "advisorLine": "别问感受。回拨只问财务要这单的付款回单号——报得出是真在走，报不出就是没付。钱只认路径。",
+              "grantsInventory": [
+                "work-frame-zhou"
+              ],
+              "routeAxis": "money-flow"
+            }
+          ]
+        },
+        {
+          "id": "leader-interrupt",
+          "label": "领导批注（未邀）",
+          "summary": "后台同步了一条新批注。",
+          "cost": 0,
+          "kind": "interruptToast",
+          "npcVerb": "interrupt",
+          "from": "领导批注（后台同步）",
+          "text": "季度复盘别节外生枝。主责按名单走，流程按老规矩补齐。",
+          "choices": [
+            {
+              "id": "bring-to-callback",
+              "label": "带回拨质问「老规矩」",
+              "grantsInventory": [
+                "leader-note-hot"
+              ]
+            },
+            {
+              "id": "hold-back",
+              "label": "先压下，怕影响她署名",
+              "grantsInventory": [
+                "leader-note-cold"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reopen-timeline",
+          "label": "重看预算时间线",
+          "summary": "「来不及」和财务延后通知，谁在先？",
+          "cost": 1,
+          "kind": "evidencePass",
+          "grantsInventory": [
+            "timeline-delay-gap"
+          ],
+          "focusCheckIds": [
+            "work-budget-timeline"
+          ]
+        },
+        {
+          "id": "assistant-sample",
+          "label": "看助理流程样本",
+          "summary": "大群正常流程，现在补到了。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "work-assistant-flow-sample",
+          "grantsInventory": [
+            "assistant-sample-seen"
+          ]
+        },
+        {
+          "id": "listen-pad",
+          "label": "听回放",
+          "summary": "回听私聊里「让我垫」原话。",
+          "cost": 1,
+          "kind": "playback",
+          "grantsInventory": [
+            "playback-pad"
+          ],
+          "script": {
+            "clipLabel": "回放·私聊",
+            "clipLine": "你先顶上，复盘材料里可以写你主责。",
+            "hostNote": "署名和垫款在同一句里——表现机会压着资金风险。"
+          }
+        },
+        {
+          "id": "supplier-dm-early",
+          "label": "看供应商补话",
+          "summary": "返款打给对接人——匿名补了一句。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "work-supplier-dm",
+          "grantsInventory": [
+            "supplier-dm-seen"
+          ]
+        }
+      ]
+    },
+    "callbackOpeners": [
+      {
+        "id": "opener-zhao-frame",
+        "requiresAny": [
+          "work-frame-zhao"
+        ],
+        "label": "用赵框架开场",
+        "hostLine": "回拨了。群里那句「让我垫」，你有没有留屏？他补过欠条没有？",
+        "callerRevisedOpening": "……留屏了。欠条没有。我当时怕一追就显得斤斤计较，主责都接了。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-zhou-frame",
+        "requiresAny": [
+          "work-frame-zhou"
+        ],
+        "label": "用周框架开场",
+        "hostLine": "回拨了。别跟我谈财务慢——付款回单号，你问过没有？",
+        "callerRevisedOpening": "没问过。财务我不认识人，一问又得经过他。截图我倒是收了三遍。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-timeline",
+        "requiresAny": [
+          "timeline-delay-gap"
+        ],
+        "label": "用时间线开场",
+        "hostLine": "预算记录对过了：他说来不及那天，财务延后通知还没发。",
+        "callerRevisedOpening": "……我一直把两件事混在一起。他让我别问的时候，财务根本还没说延后。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-leader-hot",
+        "requiresAny": [
+          "leader-note-hot"
+        ],
+        "label": "用领导批注开场",
+        "hostLine": "你截的那条批注：主责写你，钱路一个字没有。你怎么接？",
+        "callerRevisedOpening": "……被夸住的时候，我真的高兴。高兴完才发现，批注里只有结果，没有垫款。",
+        "appliesRevisedOnScenes": [
+          5
+        ]
+      },
+      {
+        "id": "opener-supplier",
+        "requiresAny": [
+          "supplier-dm-seen"
+        ],
+        "label": "用供应商返款开场",
+        "hostLine": "供应商补了一句：服务协调费按老规矩返给对接人。对接人还是他。",
+        "callerRevisedOpening": "……审批图只到「通过」。返款这条路，我截批注的时候才真正看见。",
+        "appliesRevisedOnScenes": [
+          4
+        ]
+      },
+      {
+        "id": "opener-soft",
+        "requiresAny": [],
+        "label": "软开场",
+        "hostLine": "你回来了。审批图还在台上，从批注那儿继续。",
+        "callerRevisedOpening": "嗯。截完了。付款状态那栏——还是空的。",
+        "appliesRevisedOnScenes": []
+      }
+    ],
+    "returnStance": {
+      "fromSnapshotOptionIds": {
+        "respondent-problem": "open",
+        "caller-complicit": "defensive",
+        "unclear": "neutral"
+      },
+      "default": "neutral",
+      "lines": {
+        "defensive": "我差点不打回来。弹幕说我也想要主责……我是想要。可钱不能一直卡在他手里。",
+        "open": "我回来了。流程和截图你继续问——这回我不替财务慢开脱。",
+        "neutral": "我回来了。批注截完，我自己又把审批图看了一眼。少的那页还在。"
+      }
+    }
+  }
 }

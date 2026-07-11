@@ -1,3 +1,5 @@
+import { HOST_NAME } from "../hostProfile.js?v=0.20.94";
+
 export function sceneReviewHtml({
   index = 0,
   done = false,
@@ -37,7 +39,6 @@ export function stanceSnapshotHtml(snapshot = {}, pick = null) {
       <div class="stance-snapshot-options">
         ${options.map((option, optionIndex) => stanceSnapshotOptionHtml(option, optionIndex, pick)).join("")}
       </div>
-      ${pick ? `<p class="hint">${escapeHtml(snapshot.afterPickLine ?? "先记下，不判分。后面的材料会回看你这次站队。")}</p>` : ""}
     </section>
   `;
 }
@@ -51,6 +52,26 @@ export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {})
       callLineHtml({ role: "caller", text: pick.answer })
     ])
   ].join("");
+}
+
+export function scenePromptExchangeHtml({ scene = {}, askedCount = 0 } = {}) {
+  return [
+    callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    sceneEvidenceCardHtml(scene.shownCard),
+    askedCount ? `<p class="asked-question-summary">本段已问 ${Number(askedCount)} 句。需要时可回到提问选单查看。</p>` : ""
+  ].join("");
+}
+
+export function sceneQuestionAnswerHtml({ question = "", answer = "", kind = "dialogue" } = {}) {
+  return `
+    <section class="question-answer-card question-answer-${escapeHtml(kind)}">
+      <span>${kind === "key" ? "关键追问" : "这一句"}</span>
+      <div class="call-dialogue">
+        ${callLineHtml({ role: "host", text: question })}
+        ${callLineHtml({ role: "caller", text: answer })}
+      </div>
+    </section>
+  `;
 }
 
 export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pick = {}, fallbackAnswer = "" } = {}) {
@@ -98,8 +119,8 @@ function stanceSnapshotOptionHtml(option = {}, optionIndex = 0, pick = null) {
 }
 
 function callLineHtml(line = {}) {
-  const role = line.role === "host" || line.speaker === "你" ? "host" : "caller";
-  const speaker = role === "host" ? "你" : "咨询者";
+  const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
+  const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
   return `
     <div class="call-line ${role}">
