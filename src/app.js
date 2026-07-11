@@ -62,7 +62,7 @@ document.addEventListener("keydown", (event) => {
   }
   const intent = keyboardNavigationIntent(event.key);
   if (intent === "confirm") {
-    const dialogue = app?.querySelector("[data-dialogue-advance]:not([data-dialogue-done])");
+    const dialogue = currentDialogueAdvance();
     if (dialogue) {
       event.preventDefault();
       dialogue.click();
@@ -182,7 +182,7 @@ function modeFromUrl() {
 
 function hasFreshStartParam() {
   try {
-    const url = new URL(globalThis.location?.href ?? "http://localhost/");
+    const url = new URL(globalThis.location?.href ?? "https://local.invalid/");
     if (url.searchParams.get("fresh") !== "1") return false;
     url.searchParams.delete("fresh");
     globalThis.history?.replaceState?.(null, "", `${url.pathname}${url.search}${url.hash}`);
@@ -2310,7 +2310,7 @@ function firstActiveGamepad() {
 
 function handleGamepadInput(gamepad) {
   handleGamepadButton(gamepad, 0, () => {
-    const dialogue = app?.querySelector("[data-dialogue-advance]:not([data-dialogue-done])");
+    const dialogue = currentDialogueAdvance();
     if (dialogue) return dialogue.click();
     const button = document.activeElement?.matches?.("button") ? document.activeElement : preferredDefaultButton();
     activateButton(button);
@@ -2324,6 +2324,11 @@ function handleGamepadInput(gamepad) {
   handleGamepadButton(gamepad, 14, () => moveButtonFocus(-1));
   handleGamepadButton(gamepad, 15, () => moveButtonFocus(1));
   handleGamepadAxis(gamepad);
+}
+
+function currentDialogueAdvance() {
+  return Array.from(app?.querySelectorAll?.("[data-dialogue-advance]:not([data-dialogue-done])") ?? [])
+    .find((element) => element.getClientRects().length > 0 && !element.closest("[hidden]")) ?? null;
 }
 
 function handleGamepadButton(gamepad, buttonIndex, handler) {
