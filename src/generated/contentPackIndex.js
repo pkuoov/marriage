@@ -2297,7 +2297,7 @@ export const CONTENT_CASES = {
               "script": {
                 "clipLabel": "回放·深夜语音",
                 "clipLine": "今晚又被店长说了，只有你能接住我。",
-                "hostNote": "背景里吹风机没停——他说的下班，是手上正做着别人的头。"
+                "hostNote": "这条已经在麦上放过。回拨时只问她：为什么当时愿意把“下班”当成只留给自己的时间。"
               }
             },
             {
@@ -2354,8 +2354,8 @@ export const CONTENT_CASES = {
               "playback-dryer"
             ],
             "label": "用回放矛盾开场",
-            "hostLine": "回拨前我又听了一遍。你说他下班陪你——背景里吹风机一直在响。",
-            "callerRevisedOpening": "……这一句我今天又听了一遍。他手上做着别人的头，嘴上说只有我能接住。",
+            "hostLine": "回拨前我没再放那条语音。你当时为什么愿意把“下班陪你”当成只留给你的时间？",
+            "callerRevisedOpening": "……我今天一直想起那句下班。不是没听见背景，是我想把它听成我们之间的时间。",
             "appliesRevisedOnScenes": [
               4
             ]
@@ -4699,8 +4699,8 @@ export const CONTENT_CASES = {
             "id": "respondent-problem",
             "label": "他的问题更大",
             "summary": "他绕开大群预算，把垫款放进私下流程。",
-            "feedback": "这个判断抓住了入口控制，但还没看到两条钱路。",
-            "recap": "你中段先抓的是对方绕流程。后面材料证明，流程慢只是表层，更要紧的是钱路入口。"
+            "feedback": "这个判断抓住了入口控制，但付款去向还没有露出来。",
+            "recap": "你中段先抓的是对方绕流程。后面材料把“流程慢”的说法放回了具体字段旁边。"
           },
           {
             "id": "caller-complicit",
