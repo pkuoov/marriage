@@ -21,6 +21,7 @@ import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScr
 import { callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.20.89";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.77";
+import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js?v=0.21.0";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.20.95";
@@ -54,6 +55,11 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.defaultPrevented || keyEventInTextInput(event)) return;
+  if (event.key === "a" || event.key === "A") {
+    event.preventDefault();
+    cycleAvgSetting("auto");
+    return;
+  }
   const intent = keyboardNavigationIntent(event.key);
   if (intent === "confirm") {
     const dialogue = app?.querySelector("[data-dialogue-advance]:not([data-dialogue-done])");
@@ -2165,14 +2171,28 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
 }
 
 function mountCurrentDialogue() {
-  mountDialoguePresentation(app, {
+  const card = app?.querySelector(".dialogue-card");
+  if (card) card.insertAdjacentHTML("beforeend", avgSystemBarHtml(state.settings));
+  let controller = null;
+  controller = mountDialoguePresentation(app, {
     speed: state.settings?.textSpeed ?? "normal",
     onShown: (page) => {
       state.dialogueBacklog = [...(state.dialogueBacklog ?? []), page].slice(-500);
       saveState();
+      if (state.settings?.autoMode) setTimeout(() => controller?.advance(), Math.max(1, Number(state.settings.autoDelay ?? 2)) * 500);
     }
   });
   bind("[data-material-card]", (event) => event.currentTarget.classList.toggle("expanded"));
+  mountCourtRecord(app, { state, onSettingsChange: cycleAvgSetting });
+}
+
+function cycleAvgSetting(kind) {
+  const speeds = ["slow", "normal", "fast", "instant"];
+  if (kind === "auto") state.settings.autoMode = !state.settings.autoMode;
+  if (kind === "speed") state.settings.textSpeed = speeds[(speeds.indexOf(state.settings.textSpeed) + 1) % speeds.length];
+  if (kind === "fast") state.settings.fastForward = !state.settings.fastForward;
+  saveState();
+  render();
 }
 
 function caseBackdropClass(brief = {}) {
@@ -2228,6 +2248,11 @@ function preferredReviewButton() {
 }
 
 function toggleReviewPanel() {
+  const record = app?.querySelector(".court-record");
+  if (record) {
+    record.hidden = !record.hidden;
+    return true;
+  }
   const panel = app?.querySelector(".choice-review");
   if (!panel) return false;
   panel.open = !panel.open;

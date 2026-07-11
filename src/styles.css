@@ -4766,3 +4766,15 @@ button.evidence-target {
 @keyframes avg-card-in { from { opacity: 0; transform: translateY(14px); } }
 @keyframes avg-panel-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .avg-material-card, .evidence-screen, .investigation-screen, .delegation-screen { animation: none; } }
+.record-button { margin-left: auto; }
+.court-record { position: fixed; z-index: 80; inset: 0; padding: 7vh 7vw; color: #eef2f7; background: rgba(2,5,12,.9); }
+.court-record[hidden] { display: none; }
+.court-record-panel { height: 86vh; padding: 1.2rem; overflow: hidden; background: #141c2b; border: 1px solid #77849b; }
+.court-record-panel header, .court-record-panel nav { display: flex; gap: .65rem; align-items: center; }
+.court-record-panel header button { margin-left: auto; }
+.court-record-panel nav { margin: .8rem 0; border-bottom: 1px solid #536075; }
+.court-record-panel nav .active { color: #f4d57d; border-color: #f4d57d; }
+.court-record-panel section { height: calc(100% - 7rem); overflow: auto; }
+.record-backlog p { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; padding: .5rem; border-bottom: 1px solid rgba(255,255,255,.1); }
+.avg-system-bar { display: flex; justify-content: flex-end; gap: .35rem; margin-top: .35rem; }
+.avg-system-bar button { min-height: 1.8rem; padding: .15rem .45rem; font-size: .78rem; }

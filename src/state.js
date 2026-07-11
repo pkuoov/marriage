@@ -22,6 +22,9 @@ export const baseState = {
   saveSlot: "slot1",
   settings: {
     textSpeed: "normal",
+    autoMode: false,
+    autoDelay: 2,
+    fastForward: false,
     contentWarningAccepted: false
   },
   caseMode: "episode",
@@ -31,9 +34,11 @@ export const baseState = {
   caseBrief: null,
   caseBriefs: [],
   dialogueProgress: {},
+  dialogueBacklog: [],
   sceneAnswers: {},
   sceneQuestionPicks: {},
   sceneDialoguePicks: {},
+  sceneQuestionFocus: null,
   evidenceCheckPicks: {},
   investigationPicks: {},
   delegationPicks: {},
@@ -75,6 +80,7 @@ export function migrateState(saved) {
   };
   next.saveSlot = activeSaveSlot();
   next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
+  if (!Array.isArray(next.dialogueBacklog)) next.dialogueBacklog = [];
   if (!("caseBrief" in next)) next.caseBrief = null;
   if (!Array.isArray(next.caseBriefs)) next.caseBriefs = [];
   next.caseBriefs = next.caseBriefs.map(migrateCaseBrief);
@@ -83,6 +89,7 @@ export function migrateState(saved) {
   if (!next.sceneAnswers || Array.isArray(next.sceneAnswers)) next.sceneAnswers = {};
   if (!next.sceneQuestionPicks || Array.isArray(next.sceneQuestionPicks)) next.sceneQuestionPicks = {};
   if (!next.sceneDialoguePicks || Array.isArray(next.sceneDialoguePicks)) next.sceneDialoguePicks = {};
+  if (!next.sceneQuestionFocus || typeof next.sceneQuestionFocus !== "object" || Array.isArray(next.sceneQuestionFocus)) next.sceneQuestionFocus = null;
   if (!next.evidenceCheckPicks || Array.isArray(next.evidenceCheckPicks)) next.evidenceCheckPicks = {};
   if (!next.investigationPicks || Array.isArray(next.investigationPicks)) next.investigationPicks = {};
   if (!next.delegationPicks || Array.isArray(next.delegationPicks)) next.delegationPicks = {};
