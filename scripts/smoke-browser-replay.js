@@ -6,12 +6,12 @@ import { dirname, resolve } from "node:path";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
 const routes = [
-  { name: "lab-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-lab", "day-restaurant"], opener: "timeline-clarity", callerQuestion: "ask-fifty-thousand" },
-  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-lab"], documentRows: ["r08", "r11"], opener: "timeline-clarity", callerQuestion: "ask-fifty-thousand" },
-  { name: "home-restaurant", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-home", "day-restaurant"], opener: "window-seat-proof", callerQuestion: "dont-answer-for-her" },
+  { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], opener: "周会计的时间线", callerQuestion: "ask-fifty-thousand" },
+  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", callerQuestion: "ask-fifty-thousand" },
+  { name: "restaurant-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-restaurant", "day-bank-flow"], documentRows: ["r08", "r11"], opener: "靠窗位预订记录", callerQuestion: "dont-answer-for-her" },
   { name: "zero-fallback", sceneMode: "core", materialMode: "miss", dayScenes: [], callerQuestion: "ask-fifty-thousand" },
-  { name: "keyboard-lab-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-lab", "day-restaurant"], opener: "timeline-clarity", callerQuestion: "ask-fifty-thousand" },
-  { name: "gamepad-home-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-home", "day-restaurant"], opener: "dont-answer-for-her", callerQuestion: "dont-answer-for-her" }
+  { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], opener: "周会计的时间线", callerQuestion: "ask-fifty-thousand" },
+  { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], documentRows: ["r08", "r11"], opener: "靠窗位预订记录", callerQuestion: "dont-answer-for-her" }
 ];
 
 const browser = await launchBrowser();
@@ -19,11 +19,13 @@ try {
   for (const route of routes) {
     await runRoute(route);
   }
+  await runCase2LinVisit();
+  await runCaseTransition();
 } finally {
   await browser.close();
 }
 
-console.log(`Browser replay smoke passed: ${routes.map((route) => route.name).join(", ")}`);
+console.log(`Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-lin-visit", "case-transition"].join(", ")}`);
 
 async function launchBrowser() {
   const chromePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE ?? "";
@@ -54,7 +56,7 @@ async function fileExists(path) {
 async function runRoute(route) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
-    reducedMotion: "reduce"
+    reducedMotion: route.name === "accounting-restaurant" ? "no-preference" : "reduce"
   });
   await context.addInitScript(() => {
     window.localStorage?.clear();
@@ -84,17 +86,36 @@ async function runRoute(route) {
     if (route.inputMode === "gamepad") await connectGamepad(page);
     await activate(page, route, "[data-start-story]");
     if (await page.locator("[data-enter-first-case]").count()) {
-      await assertVisibleText(page, "深夜热线。说得出口的归麦,说不出口的归夜。开始接线。", "night shell prologue should render before first case");
+      await assertVisibleText(page, "今晚不替任何人下结论，只把没说全的话问清楚。", "night shell prologue should establish the host and show premise");
+      await assertNoPageText(page, "试玩已收麦", "night shell prologue must not display the story-pack completion HUD");
+      if (await page.locator(".night-shell-line.shell-notice, .night-shell-line.shell-message, .night-shell-line.shell-countdown, .night-shell-line.shell-host").count() !== 4) {
+        throw new Error("night shell prologue should distinguish notice, message, countdown, and host opening");
+      }
       await activate(page, route, "[data-enter-first-case]");
     }
+    if (route.name === "accounting-restaurant") await assertDialoguePresentation(page);
     await activate(page, route, '[data-scene="sceneReview"]');
+    const visualStates = new Set();
+    const portraitStates = new Set();
 
-    for (let beat = 0; beat < 24; beat += 1) {
+    for (let beat = 0; beat < 48; beat += 1) {
+      await collectLiveVisualState(page, visualStates, portraitStates);
       if (await page.locator("[data-evidence-check]").count()) break;
       if (await page.locator("[data-enter-day-map]").count()) {
-        await assertVisibleText(page, "电话轻轻挂了。没有摔，就是轻轻的。", "overnight route should show the hangup line");
+        await assertVisibleText(page, "离台调查", "the second act opening should frame the daytime investigation before the map");
         await activate(page, route, "[data-enter-day-map]");
         await completeOvernightDay(page, route);
+        continue;
+      }
+      if (await page.locator("[data-enter-day-act]").count()) {
+        await assertVisibleText(page, "账单、到期日、她要垫多少", "Zhao's post-live call should turn the host's concern into concrete risk disclosure");
+        await activate(page, route, "[data-enter-day-act]");
+        continue;
+      }
+      if (await page.locator("[data-enter-post-live]").count()) {
+        await assertVisibleText(page, "电话轻轻挂了。没有摔，就是轻轻的。", "overnight route should show the hangup line before the show ends");
+        await assertNoPageText(page, "账单、到期日、她要垫多少", "Zhao's private call must not happen while the show is still live");
+        await activate(page, route, "[data-enter-post-live]");
         continue;
       }
       if (await page.locator("[data-overnight-opener]").count()) {
@@ -105,10 +126,10 @@ async function runRoute(route) {
         if (route.dayScenes.length === 0) {
           await assertVisibleText(page, "我想了一晚上，还是得把话说完——你接着问吧。", "zero-location route should use fallback opener");
         }
-        if (route.opener === "timeline-clarity") {
-          await assertVisibleText(page, "梦里全是 8 号。", "lab route should use timeline opener");
+        if (route.opener === "周会计的时间线") {
+          await assertVisibleText(page, "她没猜王**是谁", "accounting route should use timeline opener");
         }
-        if (route.opener === "window-seat-proof") {
+        if (route.opener === "靠窗位预订记录") {
           await assertVisibleText(page, "提前两周", "restaurant route should use window-seat opener");
         }
         await activate(page, route, "[data-enter-overnight-night2]");
@@ -127,6 +148,16 @@ async function runRoute(route) {
         await activate(page, route, "[data-after-stance-snapshot]");
         continue;
       }
+      if (await page.locator("[data-open-question-menu]").count()) {
+        await activate(page, route, "[data-open-question-menu]");
+        await page.locator(".question-menu-card").waitFor({ state: "visible" });
+        continue;
+      }
+      if (await page.locator("[data-return-question-menu]").count()) {
+        await activate(page, route, "[data-return-question-menu]");
+        await page.locator(".question-menu-card").waitFor({ state: "visible" });
+        continue;
+      }
       if (await page.locator("[data-next-scene-stage]").count()) {
         await activate(page, route, "[data-next-scene-stage]");
         continue;
@@ -140,6 +171,8 @@ async function runRoute(route) {
         const dialogueButtons = page.locator("[data-scene-dialogue]");
         if (await dialogueButtons.count() > 0) {
           await activate(page, route, "[data-scene-dialogue]", 0);
+          await page.locator("[data-return-question-menu]").waitFor({ state: "visible" });
+          await activate(page, route, "[data-return-question-menu]");
           await page.locator(".scene-question-group").waitFor({ state: "visible" });
         }
       }
@@ -149,10 +182,13 @@ async function runRoute(route) {
     }
 
     await page.locator("[data-evidence-check]").first().waitFor({ state: "visible" });
+    if (visualStates.size < 2 || portraitStates.size < 2) {
+      throw new Error(`${route.name} route should change scene and portrait states while questioning`);
+    }
     const materialIndex = route.materialMode === "miss" ? 1 : 0;
     const materialButtons = page.locator("[data-evidence-check]");
     await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
-    if (route.name === "lab-restaurant") {
+    if (route.name === "accounting-restaurant") {
       await assertVisibleText(page, "账单我再说一遍", "perfect route should show testimony revision after the material hit");
     }
     if (route.name === "zero-fallback") {
@@ -164,7 +200,7 @@ async function runRoute(route) {
     await completePostAccusation(page, route);
     await page.locator(".recap-score-head").waitFor({ state: "visible" });
     await assertVisibleText(page, "收麦回看", `${route.name} route should reach recap`);
-    if (route.name === "lab-restaurant") {
+    if (route.name === "accounting-restaurant") {
       await exerciseTruthBoundary(page, route);
     }
     await assertNoPageText(page, "undefined", `${route.name} route rendered undefined text`);
@@ -180,29 +216,116 @@ async function runRoute(route) {
   }
 }
 
+async function runCase2LinVisit() {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce"
+  });
+  const page = await context.newPage();
+  page.setDefaultTimeout(8000);
+  try {
+    await page.goto(`${playableUrl}?playtest=browser-smoke-case2-lin-${Date.now()}&storyKey=steam-demo-01`);
+    await click(page, "[data-start-story]");
+    await page.evaluate(() => {
+      const key = "livestream-detective-save-v1";
+      const save = JSON.parse(window.localStorage.getItem(key) ?? "{}");
+      save.chapter = 2;
+      save.caseBrief = save.caseBriefs?.[1] ?? null;
+      save.screen = "chapter";
+      save.scene = "caseOpen";
+      save.lastReaction = null;
+      save.recapStep = 0;
+      window.localStorage.setItem(key, JSON.stringify(save));
+    });
+    await page.reload();
+    await click(page, '[data-scene="sceneReview"]');
+
+    for (let beat = 0; beat < 32; beat += 1) {
+      if (await page.locator("[data-enter-interlude]").count()) break;
+      if (await page.locator("[data-evidence-check]").count()) {
+        await click(page, "[data-evidence-check]");
+        continue;
+      }
+      if (await page.locator("[data-after-scene-evidence]").count()) {
+        await click(page, "[data-after-scene-evidence]");
+        continue;
+      }
+      if (await page.locator("[data-stance-snapshot]").count()) {
+        await click(page, "[data-stance-snapshot]");
+        await click(page, "[data-after-stance-snapshot]");
+        continue;
+      }
+      if (await page.locator("[data-open-question-menu]").count()) {
+        await click(page, "[data-open-question-menu]");
+        await page.locator(".question-menu-card").waitFor({ state: "visible" });
+        continue;
+      }
+      if (await page.locator("[data-return-question-menu]").count()) {
+        await click(page, "[data-return-question-menu]");
+        await page.locator(".question-menu-card").waitFor({ state: "visible" });
+        continue;
+      }
+      if (await page.locator("[data-next-scene-stage]").count()) {
+        await click(page, "[data-next-scene-stage]");
+        continue;
+      }
+      if (!await page.locator("[data-scene-question]").count() && await page.locator("button[data-scene]").count()) {
+        await click(page, "button[data-scene]");
+        continue;
+      }
+      await page.locator("[data-scene-question]").first().waitFor({ state: "visible" });
+      await click(page, "[data-scene-question]");
+      await click(page, "[data-next-scene-stage], button[data-scene]");
+    }
+
+    await page.locator("[data-enter-interlude]").waitFor({ state: "visible" });
+    await assertVisibleText(page, "明晚这个点，我回来。", "case 2 should explicitly break overnight");
+    await click(page, "[data-enter-interlude]");
+    await assertVisibleText(page, "第二天下午·离台调查", "case 2 interlude should move to the next afternoon");
+    await click(page, '[data-interlude-action="visit-lin"]');
+    await page.locator(".day-matchmaking").waitFor({ state: "visible" });
+    await assertNoPageText(page, "ON AIR", "Lin's matchmaking shop must hide the live HUD");
+    await assertVisibleText(page, "半亮的招牌还没关", "Lin's matchmaking shop should render its own scene text");
+    await click(page, '[data-advisor-conflict="carry-private-column"]');
+    await assertVisibleText(page, "不能拿它证明喜欢都是假的", "Lin must preserve the unknown emotional reading");
+    await click(page, "[data-return-interlude]");
+    await click(page, '[data-interlude-action="listen-dryer"]');
+    await click(page, "[data-complete-interlude-action]");
+    await click(page, "[data-callback-ready]");
+    await click(page, '[data-callback-opener="opener-lin-column"]');
+    await assertVisibleText(page, "我去了小林的门店", "the chosen Lin question must change the callback opener");
+    await assertVisibleText(page, "他没回答是谁加的", "the caller must answer the carried question without closing motive");
+    await click(page, "[data-enter-segment2]");
+    await assertVisibleText(page, "他最后回我的原话是", "case 2 second night should continue from the daytime investigation");
+  } catch (error) {
+    const body = await page.locator("body").innerText().catch(() => "");
+    console.error("case2-lin-visit route failed.");
+    console.error(body.slice(0, 1600));
+    throw error;
+  } finally {
+    await context.close();
+  }
+}
+
 async function completeOvernightDay(page, route) {
-  await assertVisibleText(page, "第二天，下午。节目不在线，弹幕不在，城市在。你有一个下午，够去两个地方。", "day map should show the quiet city intro");
+  await assertVisibleText(page, "下午走访", "day map should start with locations after the second-act opening");
+  await assertNoPageText(page, "节目不在线，弹幕不在，城市在。", "day map must not repeat the second-act opening copy");
   await assertNoPageText(page, "ON AIR", "day map must hide ON AIR");
   await assertNoPageText(page, "听众耐心", "day map must hide patience HUD");
   for (const sceneId of route.dayScenes) {
     await activate(page, route, `[data-day-scene="${sceneId}"]`);
     await assertNoPageText(page, "ON AIR", `${sceneId} must hide ON AIR`);
     await assertNoPageText(page, "听众耐心", `${sceneId} must hide patience HUD`);
-    if (sceneId === "day-lab") {
-      await assertVisibleText(page, "白瓷灯，一切都有编号。", "lab day scene should render");
+    if (sceneId === "day-accounting") {
+      await assertVisibleText(page, "旧厂房改的档案室", "accounting day scene should render");
       for (let index = 0; index < 4; index += 1) {
         await activate(page, route, "[data-day-timeline-card]", index);
       }
       await activate(page, route, "[data-submit-day-timeline]");
-      await assertVisibleText(page, "排对了。你看，先停的是钱，后开的是口。剩下的，你自己去问。", "timeline sort should pay off");
+      await assertVisibleText(page, "人是谁我不猜，路径先留着。", "timeline sort should preserve the unknown account owner");
     }
     if (sceneId === "day-restaurant") {
       await assertVisibleText(page, "今天第三拨了", "restaurant scene should render exact service line");
-    }
-    if (sceneId === "day-home") {
-      await assertVisibleText(page, "你不许替她答", "home scene should render exact warning");
-      await activate(page, route, "[data-day-followup]");
-      await assertVisibleText(page, "因为两年前，有人替观众答过一次。", "home follow-up should render");
     }
     if (sceneId === "day-bank-flow") {
       await assertVisibleText(page, "他的银行流水(她导出的近五个月)", "document day scene should render bank flow");
@@ -217,13 +340,59 @@ async function completeOvernightDay(page, route) {
   await activate(page, route, "[data-enter-overnight-callback]");
 }
 
+async function runCaseTransition() {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce"
+  });
+  const page = await context.newPage();
+  page.setDefaultTimeout(8000);
+  try {
+    await page.goto(`${playableUrl}?playtest=browser-smoke-case-transition-${Date.now()}&storyKey=steam-demo-01`);
+    await click(page, "[data-start-story]");
+    await page.evaluate(() => {
+      const key = "livestream-detective-save-v1";
+      const save = JSON.parse(window.localStorage.getItem(key) ?? "{}");
+      save.chapter = 1;
+      save.caseBrief = save.caseBriefs?.[0] ?? null;
+      save.screen = "chapter";
+      save.scene = "caseClosure";
+      save.recapStep = 0;
+      save.lastReaction = null;
+      window.localStorage.setItem(key, JSON.stringify(save));
+    });
+    await page.reload();
+    await assertVisibleText(page, "案件结案", "first case should enter a dedicated closure page before the next case");
+    await assertVisibleText(page, "账单里的八万", "first case closure should carry a case-specific title");
+    await assertVisibleText(page, "今晚能确认", "closure should distinguish confirmed facts from a raw evidence pile");
+    await assertVisibleText(page, "今晚不替人定", "closure should preserve unresolved facts");
+    await click(page, "[data-enter-story-interlude]");
+    await assertVisibleText(page, "广告间隙", "closure should move into a short program interlude");
+    await click(page, "[data-enter-next-case]");
+    await assertVisibleText(page, "试玩连线 · 第 02 案", "second case must open on a numbered title card");
+    await assertVisibleText(page, "理发店排班表", "second case title card should name the case");
+    await assertVisibleText(page, "自己人", "second case title card should frame the central question");
+    const titleAnimations = await page.evaluate(() => document.getAnimations()
+      .filter((animation) => animation.playState === "running")
+      .map((animation) => animation.animationName)
+      .filter(Boolean));
+    if (titleAnimations.length) {
+      throw new Error(`second case title should stay still, found animations: ${titleAnimations.join(", ")}`);
+    }
+    await click(page, "[data-enter-case-live]");
+    await page.locator('[data-scene="sceneReview"]').waitFor({ state: "visible" });
+  } finally {
+    await context.close();
+  }
+}
+
 async function advanceToAccusation(page, route) {
   for (let step = 0; step < 16; step += 1) {
     if (await page.locator("[data-accuse]").count()) return;
     if (await page.locator("[data-delegation-advisor]").count()) {
-      if (route.name === "lab-restaurant") {
+      if (route.name === "accounting-restaurant") {
         await activate(page, route, '[data-delegation-advisor="zhou-accountant"]');
-        await assertVisibleText(page, "转账备注是空的。备注空着的定期转账,做账的都知道:不是不会写,是不能写。钱只认路径,不认说法。", "lab-restaurant route should show the strong delegation return before final quote");
+        await assertVisibleText(page, "钱只认路径，不替人起名字。", "accounting route should show the bounded delegation return before final quote");
         await activate(page, route, "[data-after-delegation]");
       } else {
         await activate(page, route, "[data-skip-delegation]");
@@ -242,14 +411,10 @@ async function advanceToAccusation(page, route) {
     }
     if (await page.locator("[data-caller-question]").count()) {
       const third = page.locator('[data-caller-question="dont-answer-for-her"]');
-      if (route.dayScenes.includes("day-home")) {
-        if (!await third.isEnabled()) throw new Error("home route should unlock the third caller-question option");
-      } else if (await third.isEnabled()) {
-        throw new Error("third caller-question option should require the home route");
-      }
+      if (!await third.isEnabled()) throw new Error("Zhao's proactive call should keep the non-directive answer available on every route");
       await activate(page, route, `[data-caller-question="${route.callerQuestion}"]`);
       if (route.callerQuestion === "dont-answer-for-her") {
-        await assertVisibleText(page, "第一次有人不替我答。", "home route should show the unlocked process-control answer");
+        await assertVisibleText(page, "说完，我自己选。", "process-control answer should return the choice to the caller");
       }
       continue;
     }
@@ -339,6 +504,7 @@ async function advanceSceneBeat(page, route) {
 }
 
 async function activate(page, route, selector, index = 0) {
+  await drainDialogue(page, route);
   if (route.inputMode === "keyboard") {
     await keyboardActivate(page, selector, index);
     return;
@@ -350,25 +516,57 @@ async function activate(page, route, selector, index = 0) {
   await click(page, selector, index);
 }
 
+async function drainDialogue(page, route) {
+  for (let line = 0; line < 80; line += 1) {
+    const box = page.locator("[data-dialogue-advance]:not([data-dialogue-done]):visible").first();
+    if (!await box.count()) return;
+    if (route.inputMode === "keyboard") await page.keyboard.press("Enter");
+    else if (route.inputMode === "gamepad") await gamepadPress(page, 0);
+    else await box.click();
+    await page.waitForTimeout(20);
+  }
+  throw new Error("per-line dialogue did not finish within 80 advances");
+}
+
+async function assertDialoguePresentation(page) {
+  const box = page.locator("[data-dialogue-advance]");
+  await box.waitFor({ state: "visible" });
+  const before = await box.locator(".avg-line").textContent();
+  await box.click();
+  const completed = await box.locator(".avg-line").textContent();
+  if ((completed?.length ?? 0) < (before?.length ?? 0)) throw new Error("typing click must complete the current sentence");
+  if (!await box.locator(".avg-continue").isVisible()) throw new Error("completed sentence must show continue indicator");
+  await page.locator("[data-record-open]").click();
+  await page.locator(".court-record:not([hidden])").waitFor({ state: "visible" });
+  await page.locator("[data-record-close]").click();
+}
+
 async function click(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
   await target.evaluate((element) => element.click());
 }
 
+async function collectLiveVisualState(page, visualStates, portraitStates) {
+  const state = await page.evaluate(() => ({
+    scene: document.querySelector(".visual-scene")?.className ?? "",
+    portrait: document.querySelector(".case-portrait")?.className ?? ""
+  }));
+  if (state.scene) visualStates.add(state.scene);
+  if (state.portrait) portraitStates.add(state.portrait);
+}
+
 async function keyboardActivate(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
-  await page.waitForFunction(() => document.activeElement?.matches?.("button"));
-  await moveFocusTo(page, selector, index, () => page.keyboard.press("ArrowDown"), "Keyboard");
+  await target.focus();
   await page.keyboard.press("Enter");
 }
 
 async function gamepadActivate(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
-  await page.waitForFunction(() => document.activeElement?.matches?.("button"));
-  await moveFocusTo(page, selector, index, () => gamepadPress(page, 13), "Gamepad");
+  await target.focus();
   await gamepadPress(page, 0);
 }
 

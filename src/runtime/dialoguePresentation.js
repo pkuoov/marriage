@@ -11,7 +11,14 @@ export function splitDialogueSentences(value = "") {
     const char = text[index];
     buffer += char;
     if (QUOTE_PAIRS.has(char)) quotes.push(QUOTE_PAIRS.get(char));
-    else if (quotes.at(-1) === char) quotes.pop();
+    else if (quotes.at(-1) === char) {
+      quotes.pop();
+      if (!quotes.length && /[。！？!?]$/.test(buffer.slice(0, -1))) {
+        if (buffer.trim()) rows.push(buffer.trim());
+        buffer = "";
+        continue;
+      }
+    }
     const ellipsis = char === "…" && text[index + 1] === "…";
     if (ellipsis) {
       buffer += text[index + 1];
