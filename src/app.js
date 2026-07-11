@@ -8,33 +8,38 @@ import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.87";
 import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedDelegationPickForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js?v=0.20.68";
-import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
+import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.20.68";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.76";
-import { storyInterludeNextLine, storyInterludeObjectLabel, storyInterludeRecapLine } from "./runtime/storyInterludeModel.js?v=0.20.68";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.77";
+import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
+import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.0";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
-import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.68";
+import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
-import { callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.20.88";
+import { callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.20.89";
 import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.77";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
-import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js?v=0.20.82";
-import { activeSceneExchangeHtml, completedSceneExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.20.68";
+import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.20.95";
+import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.20.95";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
+import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
 import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js?v=0.20.87";
 import { storyPackForKey } from "./storyPacks.js?v=0.20.87";
+import { HOST_PROFILE } from "./hostProfile.js?v=0.20.94";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
 const DEFAULT_ATTRS = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 
-let state = normalizeDailyState(loadState() ?? structuredClone(baseState));
+const startsFresh = hasFreshStartParam();
+if (startsFresh) clearStateSnapshot();
+let state = normalizeDailyState(startsFresh ? structuredClone(baseState) : loadState() ?? structuredClone(baseState));
 let meta = loadMeta();
 let gamepadPollingStarted = false;
 let gamepadPreviousButtons = {};
@@ -51,6 +56,12 @@ document.addEventListener("keydown", (event) => {
   if (event.defaultPrevented || keyEventInTextInput(event)) return;
   const intent = keyboardNavigationIntent(event.key);
   if (intent === "confirm") {
+    const dialogue = app?.querySelector("[data-dialogue-advance]:not([data-dialogue-done])");
+    if (dialogue) {
+      event.preventDefault();
+      dialogue.click();
+      return;
+    }
     const button = document.activeElement?.matches?.("button") ? document.activeElement : preferredDefaultButton();
     if (!button) return;
     event.preventDefault();
@@ -99,6 +110,7 @@ function normalizeDailyState(saved) {
     sceneAnswers: saved?.sceneAnswers ?? {},
     sceneQuestionPicks: saved?.sceneQuestionPicks ?? {},
     sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
+    sceneQuestionFocus: saved?.sceneQuestionFocus ?? null,
     evidenceCheckPicks: saved?.evidenceCheckPicks ?? {},
     investigationPicks: saved?.investigationPicks ?? {},
     delegationPicks: saved?.delegationPicks ?? {},
@@ -162,6 +174,18 @@ function modeFromUrl() {
   }
 }
 
+function hasFreshStartParam() {
+  try {
+    const url = new URL(globalThis.location?.href ?? "http://localhost/");
+    if (url.searchParams.get("fresh") !== "1") return false;
+    url.searchParams.delete("fresh");
+    globalThis.history?.replaceState?.(null, "", `${url.pathname}${url.search}${url.hash}`);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function startStoryPack() {
   const mode = modeFromUrl();
   const caseBriefs = generateCasesForMode(mode, NPCS, DEFAULT_ATTRS, {
@@ -218,18 +242,22 @@ function renderTitle() {
   const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
   const hook = storyPack ? preview?.storyThemeIntro ?? preview?.weeklyThemeIntro ?? "热线已经接进来。资料在后台，她已经开口了。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
   const object = storyPack ? "热线已接入" : preview?.storyClueObject ?? "今日通话摘录";
-  app.innerHTML = titleScreenHtml({ productName: PRODUCT_NAME, storyPack, title, hook, object });
+  app.innerHTML = titleScreenHtml({ productName: PRODUCT_NAME, storyPack, title, hook, object, host: HOST_PROFILE });
   bind("[data-start-story]", startStoryPack);
   queueDefaultFocus();
 }
 
 function renderDailyCase() {
   const brief = activeCaseBrief();
+  if (state.scene === "sceneQuestionMenu") return renderSceneQuestionMenu(brief);
+  if (state.scene === "sceneQuestionAnswer") return renderSceneQuestionAnswer(brief);
   if (isSceneReviewScene(state.scene)) return renderSceneReview(brief);
   if (state.scene === "nightShellPrologue") return renderNightShellPrologue(brief);
   if (state.scene === "nightShellEpilogue") return renderNightShellEpilogue(brief);
   if (state.scene === "stanceSnapshot") return renderStanceSnapshot(brief);
   if (state.scene === "overnightHangup") return renderOvernightHangup(brief);
+  if (state.scene === "overnightPostLive") return renderOvernightPostLive(brief);
+  if (state.scene === "dayActOpening") return renderDayActOpening(brief);
   if (state.scene === "dayMap") return renderDayMap(brief);
   if (state.scene === "dayScene") return renderDayScene(brief);
   if (state.scene === "overnightCallback") return renderOvernightCallback(brief);
@@ -256,13 +284,15 @@ function renderDailyCase() {
   if (state.scene === "accusation") return renderAccusation(brief);
   if (state.scene === "patienceLost") return renderPatienceLost(brief);
   if (state.scene === "caseSolved") return renderSolved(brief);
+  if (state.scene === "caseClosure") return renderCaseClosure(brief);
   if (state.scene === "storyInterlude") return renderStoryInterlude(brief);
+  if (state.scene === "caseTitle") return renderCaseTitle(brief);
   if (state.scene === "runComplete") return renderRunComplete(brief);
   return renderCaseOpen(brief);
 }
 
 function isSceneReviewScene(scene = "") {
-  return ["sceneReview", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2"].includes(scene);
+  return ["sceneReview", "sceneQuestionMenu", "sceneQuestionAnswer", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2"].includes(scene);
 }
 
 function liveChapterTitle(brief = {}) {
@@ -314,6 +344,7 @@ function renderNightShellPrologue(brief) {
     label: "夜班序章",
     chapter: "深夜档",
     showCaseHud: false,
+    visualHud: "",
     text: nightShellHtml(lines),
     choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">开始接线</button>`)
   });
@@ -345,7 +376,15 @@ function renderNightShellEpilogue(brief) {
 function nightShellHtml(lines = []) {
   return `
     <section class="night-shell-card">
-      ${lines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+      ${lines.map((line) => {
+        const entry = typeof line === "string" ? { text: line } : line ?? {};
+        return `
+          <div class="night-shell-line shell-${escapeHtml(entry.type ?? "plain")}">
+            ${entry.speaker ? `<b>${escapeHtml(entry.speaker)}</b>` : ""}
+            <p>${escapeHtml(entry.text ?? "")}</p>
+          </div>
+        `;
+      }).join("")}
     </section>
   `;
 }
@@ -374,15 +413,64 @@ function renderSceneReview(brief) {
       index,
       done,
       completedExchangeHtml,
-      activeExchangeHtml: done ? "" : activeSceneExchangeHtml({ scene: sceneForView, dialoguePicks }),
+      activeExchangeHtml: done ? "" : scenePromptExchangeHtml({ scene: sceneForView, askedCount: dialoguePicks.length }),
       reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief, { excludeIndex: index }))
     }),
     choices: done
       ? sceneReviewDoneChoicesHtml({ lastStage, nextStage, nextLabel })
-      : sceneQuestionChoicesHtml(index, scene, dialoguePicks)
+      : flowGroupHtml(`<button class="primary" data-open-question-menu type="button">提问</button>`)
+  });
+  bind("[data-open-question-menu]", () => openSceneQuestionMenu(brief, index));
+  bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
+  bindSceneButtons();
+}
+
+function renderSceneQuestionMenu(brief) {
+  const index = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
+  const dialoguePicks = askedDialoguePicksForState(state, brief, index);
+  if (selectedScenePickForState(state, brief, index)) return closeSceneQuestionMenu(brief);
+  frame({
+    brief,
+    mood: "thinking",
+    label: "选择提问",
+    chapter: liveChapterTitle(brief),
+    text: sceneQuestionMenuHtml(index, scene, dialoguePicks),
+    choices: flowGroupHtml(`<button data-close-question-menu type="button">先不问了</button>`)
   });
   bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
   bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
+  bind("[data-close-question-menu]", () => closeSceneQuestionMenu(brief));
+  bindSceneButtons();
+}
+
+function renderSceneQuestionAnswer(brief) {
+  const index = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  const focus = sceneQuestionFocusFor(brief, index);
+  if (!focus) return closeSceneQuestionMenu(brief);
+  const dialoguePicks = askedDialoguePicksForState(state, brief, index);
+  const pick = focus.kind === "dialogue"
+    ? dialoguePicks.find((item) => Number(item.optionIndex) === Number(focus.optionIndex))
+    : selectedScenePickForState(state, brief, index);
+  if (!pick?.question || !pick?.answer) return closeSceneQuestionMenu(brief);
+  const review = sceneReviewModel({
+    brief,
+    index,
+    actionDone: (key) => actionDone(brief, key),
+    issueBadge: issueCompletion(brief).badge,
+    hasDeepFollowup: !nightStructureFor(brief) && !overnightStructureFor(brief) && hasDeepFollowup(brief)
+  });
+  frame({
+    brief,
+    mood: focus.kind === "key" ? "focused" : "thinking",
+    label: focus.kind === "key" ? "关键追问" : "问答",
+    chapter: liveChapterTitle(brief),
+    text: sceneQuestionAnswerHtml({ question: pick.question, answer: pick.answer, kind: focus.kind }),
+    choices: focus.kind === "key"
+      ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
+      : flowGroupHtml(`<button class="primary" data-return-question-menu type="button">回到提问选单</button>`)
+  });
+  bind("[data-return-question-menu]", () => openSceneQuestionMenu(brief, index));
   bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
   bindSceneButtons();
 }
@@ -472,7 +560,70 @@ function renderOvernightHangup(brief) {
         ${callDialogueHtml([{ role: "host", text: structure.hostHoldLine ?? "" }])}
       </section>
     `,
-    choices: flowGroupHtml(`<button class="primary" data-enter-day-map type="button">等到第二天下午</button>`)
+    choices: flowGroupHtml(`<button class="primary" data-enter-post-live type="button">收麦，离开直播台</button>`)
+  });
+  bind("[data-enter-post-live]", () => {
+    state.scene = "overnightPostLive";
+    saveState();
+    render();
+  });
+  bindSceneButtons();
+}
+
+function renderOvernightPostLive(brief) {
+  const structure = overnightStructureFor(brief);
+  const contact = structure?.postHangupContact ?? null;
+  if (!structure || !contact?.lines?.length) {
+    state.scene = "dayActOpening";
+    saveState();
+    return renderDayActOpening(brief);
+  }
+  frame({
+    brief,
+    mood: "focused",
+    label: "收麦后",
+    chapter: "第一夜 · 后台",
+    showCaseHud: false,
+    visualHud: "",
+    text: `
+      <section class="hangup-beat-card hangup-npc-contact">
+        <span>${escapeHtml(contact.stageDirection ?? "直播信号已经切断。")}</span>
+        <span class="source-badge">${escapeHtml(contact.label ?? "收麦后通话")}</span>
+        ${callDialogueHtml(contact.lines)}
+      </section>
+    `,
+    choices: flowGroupHtml(`<button class="primary" data-enter-day-act type="button">进入第二幕</button>`)
+  });
+  bind("[data-enter-day-act]", () => {
+    state.scene = "dayActOpening";
+    saveState();
+    render();
+  });
+  bindSceneButtons();
+}
+
+function renderDayActOpening(brief) {
+  const structure = overnightStructureFor(brief);
+  if (!structure) {
+    state.scene = "dayMap";
+    saveState();
+    return renderDayMap(brief);
+  }
+  const caseNumber = Number(state.chapter ?? 1);
+  dayFrame({
+    brief,
+    label: `第 ${caseNumber} 案 · 第二幕`,
+    chapter: "第二天，下午 · 离台调查",
+    backdropClass: "day-city",
+    text: `
+      <section class="day-act-opening">
+        <span>第二天，下午</span>
+        <b>离台调查</b>
+        <p>${escapeHtml(structure.dayIntro ?? "")}</p>
+        <small>没有弹幕替你接话。现在去找人，也去找原件。</small>
+      </section>
+    `,
+    choices: flowGroupHtml(`<button class="primary" data-enter-day-map type="button">开始走访</button>`)
   });
   bind("[data-enter-day-map]", () => {
     updateOvernight(brief, { segment: "day", hangupDone: true });
@@ -519,8 +670,7 @@ function renderDayMap(brief) {
     backdropClass: "day-city",
     text: `
       <section class="day-map-card">
-        <span class="source-badge">节目不在线</span>
-        <p>${escapeHtml(structure.dayIntro ?? "")}</p>
+        <span class="source-badge">下午走访</span>
         <div class="interlude-budget" aria-label="白天预算">
           <b>剩余 ${remaining}/${Number(overnight.dayBudget?.max ?? 0)}</b>
           <span>去过 ${(overnight.dayScenesDone ?? []).length} 处。</span>
@@ -742,21 +892,34 @@ function dayTimelineHtml(dayScene = {}, timeline = {}, timelineState = {}) {
   const payoff = timelineState.correct ? timeline.payoffLine : timeline.missLine;
   return `
     <section class="day-timeline-sort">
-      <span class="source-badge">按日子排</span>
-      <div class="timeline-picked">
-        ${order.length ? order.map((card, index) => `<span>${index + 1}. ${escapeHtml(card)}</span>`).join("") : "<span>还没放卡。</span>"}
-      </div>
+      <header class="timeline-sort-head">
+        <span class="source-badge">时间线</span>
+        <b>把确认过的时间点，从早到晚放进来。</b>
+        <small>已放 ${order.length}/${cards.length} 张。</small>
+      </header>
+      <section class="timeline-order" aria-label="当前时间线">
+        <span>当前顺序</span>
+        <ol class="timeline-picked">
+          ${cards.map((_, index) => {
+            const card = order[index];
+            return `<li class="${card ? "filled" : "empty"}"><i>${index + 1}</i><span>${escapeHtml(card ?? "等待放入")}</span></li>`;
+          }).join("")}
+        </ol>
+      </section>
       ${submitted ? `<p class="reaction">${escapeHtml(payoff ?? "")}</p>` : `
-        <div class="timeline-card-grid">
-          ${cards.map((card) => `
-            <button data-day-timeline-card="${escapeHtml(card)}" ${selected.has(card) ? "disabled" : ""} type="button">
-              ${escapeHtml(card)}
-            </button>
-          `).join("")}
-        </div>
+        <section class="timeline-available">
+          <span>待放时间点</span>
+          <div class="timeline-card-grid">
+            ${cards.map((card) => `
+              <button data-day-timeline-card="${escapeHtml(card)}" ${selected.has(card) ? "disabled" : ""} type="button">
+                ${escapeHtml(card)}
+              </button>
+            `).join("")}
+          </div>
+        </section>
         <div class="inline-actions">
-          <button data-reset-day-timeline type="button">重排</button>
-          <button class="primary" data-submit-day-timeline ${order.length === cards.length ? "" : "disabled"} type="button">提交顺序</button>
+          <button data-reset-day-timeline ${order.length ? "" : "disabled"} type="button">清空重排</button>
+          <button class="primary" data-submit-day-timeline ${order.length === cards.length ? "" : "disabled"} type="button">确认时间线</button>
         </div>
       `}
     </section>
@@ -1201,16 +1364,20 @@ function renderInterludePlayback(brief, action) {
 function renderInterludeAdvisorConflict(brief, action) {
   const night = ensureNight(brief);
   const selectedChoiceId = night.interludeActionChoices?.[action.id] ?? "";
-  frame({
+  const screen = {
     brief,
-    mood: "focused",
     label: action.label ?? "顾问分歧",
-    chapter: "幕间·调查台",
+    chapter: action.chapter ?? "幕间·调查台",
     text: interludeConflictActionHtml(action, selectedChoiceId),
     choices: selectedChoiceId
       ? flowGroupHtml(`<button class="primary" data-return-interlude type="button">回调查台</button>`)
       : ""
-  });
+  };
+  if (action.backdropClass) {
+    dayFrame({ ...screen, backdropClass: action.backdropClass });
+  } else {
+    frame({ ...screen, mood: "focused" });
+  }
   bind("[data-advisor-conflict]", (event) => recordAdvisorConflictChoice(brief, action, event.currentTarget?.getAttribute("data-advisor-conflict") ?? ""));
   bind("[data-return-interlude]", () => closeInterludeAction(brief));
   bindSceneButtons();
@@ -1605,7 +1772,7 @@ function renderSolved(brief) {
     step,
     boundary,
     boundaryPicks,
-    afterLabel: isStoryPackMode() ? finalScene ? "查看整晚收麦" : "接下一路麦" : "查看今日结果"
+    afterLabel: isStoryPackMode() ? finalScene ? "查看整晚收麦" : "完成结案" : "查看今日结果"
   });
   frame({
     brief,
@@ -1652,7 +1819,7 @@ function renderSolved(brief) {
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
   bind("[data-after-recap]", () => {
     if (isStoryPackMode() && !isFinalStoryPackCase()) {
-      state.scene = "storyInterlude";
+      state.scene = "caseClosure";
       saveState();
       return render();
     }
@@ -1662,6 +1829,56 @@ function renderSolved(brief) {
       return render();
     }
     moveScene("runComplete");
+  });
+  bindSceneButtons();
+}
+
+function renderCaseClosure(brief) {
+  const boundary = truthBoundaryReview(brief);
+  frame({
+    brief,
+    mood: "focused",
+    label: "案件结案",
+    chapter: `第 ${String(Number(state.chapter ?? 1)).padStart(2, "0")} 案 · 收束`,
+    showCaseHud: false,
+    visualHud: "",
+    text: caseClosingHtml({
+      caseNumber: Number(state.chapter ?? 1),
+      closing: brief.caseClosing,
+      boundary
+    }),
+    choices: flowGroupHtml(caseClosingChoicesHtml())
+  });
+  bind("[data-enter-story-interlude]", () => {
+    state.scene = "storyInterlude";
+    saveState();
+    render();
+  });
+  bind("[data-return-recap]", () => {
+    state.scene = "caseSolved";
+    state.recapStep = 0;
+    saveState();
+    render();
+  });
+  bindSceneButtons();
+}
+
+function renderCaseTitle(brief) {
+  frame({
+    brief,
+    mood: "focused",
+    label: "新案接入",
+    chapter: "热线连线",
+    showCaseHud: false,
+    visualHud: "",
+    screenClass: "case-title-screen",
+    text: caseTitleHtml({ caseNumber: Number(state.chapter ?? 1), brief }),
+    choices: flowGroupHtml(caseTitleChoicesHtml(Number(state.chapter ?? 1)))
+  });
+  bind("[data-enter-case-live]", () => {
+    state.scene = "caseOpen";
+    saveState();
+    render();
   });
   bindSceneButtons();
 }
@@ -1740,18 +1957,12 @@ function overnightCallerQuestionAftertasteHtml(brief = {}) {
 
 function renderStoryInterlude(brief) {
   const nextBrief = state.caseBriefs?.[Number(state.chapter ?? 1)] ?? null;
-  const result = normalizedDailyResult(brief);
-  const route = routeAxisProfileForState(state, brief, result);
-  const interlude = state.caseInterludes?.[brief.id] ?? {};
-  const backflow = storyInterludeBackflowProfile(brief);
   frame({
     brief,
     mood: "focused",
     label: "案间过渡",
     chapter: "案间",
     text: storyInterludeHtml({
-      previousLabel: route.label,
-      previousLine: storyInterludeRecapLine(brief, result, route, interlude, backflow),
       nextObjectLabel: storyInterludeObjectLabel(nextBrief),
       nextLine: storyInterludeNextLine(nextBrief),
       shellLine: nightShellInterludeLine(brief)
@@ -1865,13 +2076,13 @@ function renderStoryPackComplete() {
   bind('[data-action="title"]', resetToTitle);
 }
 
-function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true }) {
+function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "" }) {
   const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
   const backdropClass = caseBackdropClass(brief);
   const pressure = showCaseHud ? currentLivePressure(brief, mood) : {};
-  const visualHud = showCaseHud
+  const visualHud = visualHudOverride ?? (showCaseHud
     ? `${caseProgressStrip(brief)}${audiencePatienceHud(pressure)}${liveCommentStrip(pressure)}${portraitLayer(brief, mood)}`
-    : storyPackSummaryHud();
+    : storyPackSummaryHud());
   const total = Math.max(1, keyQuestionLimit(brief));
   const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
   const currentMaterial = brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录";
@@ -1888,6 +2099,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
     visualHud,
     material: currentMaterial,
     screenEffect: state.lastScreenEffect ?? "",
+    screenClass: `${screenClass} ${showCaseHud ? liveSceneClass(brief, mood) : ""}`.trim(),
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
           onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
@@ -1922,6 +2134,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true 
     toggleSound();
     render();
   });
+  mountCurrentDialogue();
   queueDefaultFocus();
 }
 
@@ -1947,7 +2160,18 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
     toggleSound();
     render();
   });
+  mountCurrentDialogue();
   queueDefaultFocus();
+}
+
+function mountCurrentDialogue() {
+  mountDialoguePresentation(app, {
+    speed: state.settings?.textSpeed ?? "normal",
+    onShown: (page) => {
+      state.dialogueBacklog = [...(state.dialogueBacklog ?? []), page].slice(-500);
+      saveState();
+    }
+  });
 }
 
 function caseBackdropClass(brief = {}) {
@@ -2060,6 +2284,8 @@ function firstActiveGamepad() {
 
 function handleGamepadInput(gamepad) {
   handleGamepadButton(gamepad, 0, () => {
+    const dialogue = app?.querySelector("[data-dialogue-advance]:not([data-dialogue-done])");
+    if (dialogue) return dialogue.click();
     const button = document.activeElement?.matches?.("button") ? document.activeElement : preferredDefaultButton();
     activateButton(button);
   });
@@ -2145,6 +2371,8 @@ function handleSceneQuestionButton(button) {
     spent: !option.contradiction,
     removeQuestionPick: true
   })) return;
+  state.sceneQuestionFocus = { caseId: caseKey(brief), sceneIndex, kind: "key", optionIndex };
+  state.scene = "sceneQuestionAnswer";
   saveState();
   render();
 }
@@ -2176,8 +2404,31 @@ function handleSceneDialogueButton(button) {
   state.lastReaction = questionPressureReaction({ ...option, answer: answerVariant.answer }, option.routeTone ?? routeToneForChoice(option));
   state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
   state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
+  state.sceneQuestionFocus = { caseId: caseKey(brief), sceneIndex, kind: "dialogue", optionIndex };
+  state.scene = "sceneQuestionAnswer";
   saveState();
   render();
+}
+
+function openSceneQuestionMenu(brief, sceneIndex) {
+  state.sceneQuestionFocus = null;
+  state.scene = "sceneQuestionMenu";
+  setIndexValue(brief, "sceneReview", sceneIndex);
+  saveState();
+  render();
+}
+
+function closeSceneQuestionMenu(brief) {
+  state.sceneQuestionFocus = null;
+  state.scene = "sceneReview";
+  saveState();
+  render();
+}
+
+function sceneQuestionFocusFor(brief, sceneIndex) {
+  const focus = state.sceneQuestionFocus;
+  if (!focus || focus.caseId !== caseKey(brief) || Number(focus.sceneIndex) !== Number(sceneIndex)) return null;
+  return focus;
 }
 
 function sceneChoiceContext(sceneIndex) {
@@ -2251,12 +2502,13 @@ function recordStanceSnapshot(brief, snapshot = {}, optionIndex = 0) {
     }
   };
   markAction(brief, `stanceSnapshot:${snapshot.sceneIndex}`);
-  state.lastReaction = snapshot.afterPickLine ?? "先记下，不判分。后面的材料会回看你这次站队。";
+  state.lastReaction = null;
   saveState();
   render();
 }
 
 function continueAfterSceneReview(brief, sceneIndex = 0) {
+  state.sceneQuestionFocus = null;
   if (shouldEnterOvernightHangupAfterScene(brief, sceneIndex)) {
     state.scene = "overnightHangup";
     saveState();
@@ -2278,6 +2530,16 @@ function stanceSnapshotPickForState(brief = {}) {
 
 function continueAfterSceneEvidence(brief, sceneIndex = 0) {
   markAction(brief, `afterScene:${sceneIndex}`);
+  if (shouldEnterOvernightHangupAfterScene(brief, sceneIndex)) {
+    state.scene = "overnightHangup";
+    saveState();
+    return render();
+  }
+  if (shouldEnterHangupAfterScene(brief, sceneIndex)) {
+    state.scene = "hangupBeat";
+    saveState();
+    return render();
+  }
   const nextSceneIndex = Number(sceneIndex ?? 0) + 1;
   if (nextSceneIndex < (brief.sceneVersions?.length ?? 0)) {
     setIndexValue(brief, "sceneReview", nextSceneIndex);
@@ -2637,10 +2899,14 @@ function isFinalStoryPackCase() {
 function advanceToNextStoryPackCase(message = "新的来电接进来，上一通留给弹幕吵。") {
   state.chapter = Math.min(Number(state.chapter ?? 1) + 1, state.caseBriefs?.length ?? 1);
   state.caseBrief = activeCaseBrief();
-  state.scene = "caseOpen";
+  state.scene = "caseTitle";
   state.recapStep = 0;
   state.patienceLostContext = null;
-  state.lastReaction = message;
+  void message;
+  state.lastReaction = null;
+  state.lastPressureSignal = null;
+  state.lastPressureAxis = null;
+  state.lastScreenEffect = null;
   saveState();
   render();
 }
@@ -2661,6 +2927,7 @@ function retryPatienceLostStep(brief) {
 function resetCaseAttempt(brief) {
   const key = caseKey(brief);
   state.scene = "caseOpen";
+  state.sceneQuestionFocus = null;
   state.dialogueProgress = removeKeyPrefix(state.dialogueProgress, `${key}:`);
   state.sceneAnswers = removeKeyPrefix(state.sceneAnswers, `${key}:`);
   state.sceneQuestionPicks = removeKeyPrefix(state.sceneQuestionPicks, `${key}:`);
@@ -2846,6 +3113,7 @@ function recordAdvisorConflictChoice(brief, action = {}, choiceId = "") {
   const inventory = [...new Set([...(night.inventory ?? []), ...(choice.grantsInventory ?? [])])];
   const interludeChoicesDone = [...new Set([...(night.interludeChoicesDone ?? []), choice.id])];
   updateNight(brief, {
+    activeActionId: action.id,
     inventory,
     interludeChoicesDone,
     interludeActionChoices: {
@@ -3022,10 +3290,6 @@ function materialPityLineFor(brief = {}, check = {}, checkIndex = 0, outcome = n
   return { key, text: check.pityLine };
 }
 
-function storyInterludeBackflowProfile(brief = {}) {
-  return investigationBackflowProfile(selectedInvestigationPicksForState(state, brief));
-}
-
 function caseProgressStrip(brief) {
   if (!brief) return "";
   return caseProgressStripHtml({
@@ -3056,28 +3320,20 @@ function liveIntentHookFor(brief) {
 function portraitLayer(brief, mood = "listening") {
   const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
   const art = casePortraitArt(brief, npc);
-  return portraitLayerHtml({ artSrc: art.src, fallbackSrc: art.fallbackSrc, mood, expression: callerExpressionFor(brief, mood) });
+  const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  return portraitLayerHtml({
+    artSrc: art.src,
+    fallbackSrc: art.fallbackSrc,
+    mood,
+    expression: callerExpressionFor(brief, mood),
+    sceneIndex
+  });
 }
 
 function casePortraitArt(brief, npc) {
   const neutralArt = CHARACTER_ART[npc.id];
-  const variantArt = callerVariantArt(neutralArt, currentScenePressureHint(brief));
-  if (variantArt) return variantArt;
   const fallback = neutralArt ?? CHARACTER_ART.meng;
   return { src: brief.callerArt ?? fallback, fallbackSrc: fallback };
-}
-
-function callerVariantArt(neutralArt, pressureHint = {}) {
-  if (!neutralArt || !/_neutral\.png(\?v=[\w.-]+)?$/.test(neutralArt)) return null;
-  const variant = callerPortraitVariant(pressureHint);
-  const src = neutralArt.replace("_neutral.png", `_${variant}.png`);
-  return { src, fallbackSrc: neutralArt };
-}
-
-function callerPortraitVariant(pressureHint = {}) {
-  if (pressureHint.callerGuard === "guarded") return "guarded";
-  if (pressureHint.expression?.kind === "pause") return "pause";
-  return "neutral";
 }
 
 function callerExpressionFor(brief, mood = "listening") {
@@ -3092,6 +3348,13 @@ function currentScenePressureHint(brief) {
   const scenes = brief?.sceneVersions ?? [];
   const index = currentIndex(brief, "sceneReview", scenes.length || 1);
   return scenes[index]?.pressureHint ?? {};
+}
+
+function liveSceneClass(brief, mood = "listening") {
+  const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  const pressure = currentLivePressure(brief, mood);
+  const expression = pressure.expression?.kind ?? "blink";
+  return `scene-beat-${sceneIndex % 4} scene-expression-${expression} scene-guard-${pressure.callerGuard ?? "listening"}`;
 }
 
 function reactionLine() {
