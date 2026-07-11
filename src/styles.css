@@ -4748,3 +4748,21 @@ button.evidence-target {
 @keyframes avg-continue { 50% { opacity: .25; transform: translateY(2px); } }
 @keyframes avg-line-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .avg-continue { animation: none; } .avg-textbox.reduced-fade .avg-line { animation-duration: 150ms; } }
+.case-vn-grid { position: relative; }
+.case-vn-grid .control-deck { position: absolute; z-index: 5; top: .4rem; left: 1rem; right: 1rem; display: flex; min-height: 2.65rem; overflow: hidden; }
+.case-vn-grid .control-deck .deck-card { min-width: 0; flex: 1; padding: .35rem .65rem; }
+.case-vn-grid .control-deck .deck-card small, .case-vn-grid .deck-host-monitor, .case-vn-grid .deck-live-metrics, .case-vn-grid .deck-monitor-strip, .case-vn-grid .deck-material-preview { display: none; }
+.vn-stage { position: relative; min-height: calc(100vh - 4rem); }
+.vn-stage .visual-scene { min-height: calc(100vh - 4rem); }
+.vn-stage .dialogue-card { position: absolute; z-index: 10; left: clamp(.75rem, 4vw, 4rem); right: clamp(.75rem, 4vw, 4rem); bottom: 1rem; background: transparent; border: 0; box-shadow: none; }
+.case-portrait:not(.active) { filter: brightness(.8); }
+.avg-material-card { position: absolute; z-index: 12; right: 5%; bottom: 12rem; width: min(16rem, 34vw); padding: .75rem; transform: translateY(0); animation: avg-card-in 200ms ease-out; }
+.avg-material-card.expanded { position: fixed; inset: 10%; width: auto; z-index: 40; font-size: 1.35rem; }
+.avg-choice-overlay:not([hidden]) { position: fixed; z-index: 30; inset: 0; display: flex; align-items: center; justify-content: center; padding: 12vh 20vw; background: rgba(2,5,12,.76); }
+.avg-choice-overlay:not([hidden]) .choice-group { width: min(44rem, 100%); padding: 1rem; }
+.avg-choice-overlay:not([hidden]) .choice-stack { display: flex; flex-direction: column; gap: .75rem; }
+.avg-choice-overlay:not([hidden]) button { min-height: 3.5rem; font-size: 1.05rem; }
+.evidence-screen, .investigation-screen, .delegation-screen { animation: avg-panel-in 200ms ease-out; }
+@keyframes avg-card-in { from { opacity: 0; transform: translateY(14px); } }
+@keyframes avg-panel-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .avg-material-card, .evidence-screen, .investigation-screen, .delegation-screen { animation: none; } }

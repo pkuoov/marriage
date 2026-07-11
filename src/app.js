@@ -2172,6 +2172,7 @@ function mountCurrentDialogue() {
       saveState();
     }
   });
+  bind("[data-material-card]", (event) => event.currentTarget.classList.toggle("expanded"));
 }
 
 function caseBackdropClass(brief = {}) {

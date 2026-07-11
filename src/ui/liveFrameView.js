@@ -108,7 +108,8 @@ export function liveFrameHtml({
   visualHud = "",
   controlDeckHtml = "",
   material = "",
-  screenEffect = ""
+  screenEffect = "",
+  screenClass = ""
 } = {}) {
   const materialKind = materialKindForLabel(material);
   return `
@@ -118,8 +119,9 @@ export function liveFrameHtml({
         <nav aria-label="章节"><span class="active"><i></i>${escapeHtml(modeLabel)}</span></nav>
         <button data-action="sound" type="button">音效 ${soundEnabled ? "开" : "关"}</button>
         <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
+        <button class="record-button" data-record-open type="button">案卷</button>
       </header>
-      <section class="story-grid case-vn-grid live-console-shell">
+      <section class="story-grid case-vn-grid live-console-shell ${escapeHtml(screenClass)}">
         ${screenEffect ? `<div class="screen-effect screen-effect-${escapeHtml(screenEffect)}" aria-hidden="true"></div>` : ""}
         ${controlDeckHtml}
         <article class="vn-stage">
@@ -128,11 +130,12 @@ export function liveFrameHtml({
             ${sceneEvidencePropsHtml(backdropClass, materialKind)}
             ${visualHud}
           </div>
+          ${material ? `<button class="avg-material-card" data-material-card type="button"><small>材料</small><b>${escapeHtml(material)}</b></button>` : ""}
           <div class="dialogue-card" aria-live="polite">
             <p class="eyebrow">${escapeHtml(chapter)}</p>
             ${text}
             ${reactionHtml}
-            <div class="choices">${choices}</div>
+            <div class="choices avg-choice-overlay">${choices}</div>
           </div>
         </article>
       </section>
