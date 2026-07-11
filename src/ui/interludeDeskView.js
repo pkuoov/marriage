@@ -59,7 +59,7 @@ export function interludeConflictActionHtml(action = {}, selectedChoiceId = "") 
     <section class="interlude-action-card advisor-conflict-card">
       <span class="source-badge">${escapeHtml(action.label ?? "顾问分歧")}</span>
       <p><b>${escapeHtml(action.summary ?? "")}</b></p>
-      ${action.sceneText ? `<p>${escapeHtml(action.sceneText)}</p>` : ""}
+      ${selected?.sceneText || action.sceneText ? `<p>${escapeHtml(selected?.sceneText ?? action.sceneText)}</p>` : ""}
       <div class="advisor-conflict-options">
         ${options.map((option) => advisorConflictOptionHtml(option, selected)).join("")}
       </div>
@@ -202,7 +202,23 @@ function advisorName(advisorId = "") {
 }
 
 function inventoryLabel(inventory = []) {
-  return (inventory ?? []).length ? inventory.join(" / ") : "还没有硬物";
+  const labels = {
+    "profile-zhou-continuity": "当日余额与单月收入对照",
+    "profile-lin-two-prices": "介绍人给两家的两套话",
+    "family-chat-seen": "家里群整页截图",
+    "cousin-note-seen": "表姐的资料说明",
+    "assistant-sample-seen": "部门公开流程样本",
+    "delegation-return": "顾问回单",
+    "leader-note-cold": "暂缓公开的领导批注",
+    "leader-note-hot": "准备回拨追问的领导批注",
+    "playback-pad": "私聊原话回放",
+    "supplier-dm-seen": "供应商返款补话",
+    "timeline-delay-gap": "来不及与延后通知时间线",
+    "work-frame-lin": "小林老师的主责拆词",
+    "work-frame-zhao": "赵律师的证据边界",
+    "work-frame-zhou": "周会计的付款回单框架"
+  };
+  return (inventory ?? []).length ? inventory.map((item) => labels[item] ?? item).join(" / ") : "还没有带回物";
 }
 
 function callLineHtml(line = {}) {

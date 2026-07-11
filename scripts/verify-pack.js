@@ -63,7 +63,7 @@ function assertAtLeastOneCorrect(options, message) {
   assert((options ?? []).some((option) => option.correct === true), message);
 }
 
-function assertEvidenceOperation(operation, label) {
+function assertEvidenceOperation(operation, label, { requireMaterialRows = false } = {}) {
   assertNonEmptyString(operation.id, `${label} 缺少 id`);
   assertNonEmptyString(operation.title, `${label} 缺少 title`);
   assertNonEmptyString(operation.prompt, `${label} 缺少 prompt`);
@@ -72,7 +72,7 @@ function assertEvidenceOperation(operation, label) {
     assertNonEmptyString(operation.pityLine, `${label} pityLine 若存在必须是非空字符串`);
     assert(!/[圈]|那一栏|哪一块/.test(operation.pityLine), `${label} pityLine 不能替玩家点位置`);
   }
-  if (operation.materialRows !== undefined) {
+  if (requireMaterialRows || operation.materialRows !== undefined) {
     assertArrayMin(operation.materialRows, 2, `${label} materialRows 至少需要两行`);
     operation.materialRows.forEach((row, rowIndex) => {
       assertNonEmptyString(row, `${label}.materialRows[${rowIndex}] 不能为空`);
@@ -108,6 +108,29 @@ function assertTaskProfile(profile, label) {
   assertNonEmptyString(profile.label, `${label} taskProfile.label 不能为空`);
   assertNonEmptyString(profile.recommendedSpecialtyId, `${label} taskProfile.recommendedSpecialtyId 不能为空`);
   assertNonEmptyString(profile.summary, `${label} taskProfile.summary 不能为空`);
+}
+
+function assertCaseClosing(closing, label) {
+  assert(closing && typeof closing === "object", `${label} 缺少正式 caseClosing`);
+  ["title", "verdict", "nextStep"].forEach((field) => assertNonEmptyString(closing[field], `${label}.caseClosing 缺少 ${field}`));
+  ["beats", "confirmed", "unresolved"].forEach((field) => assertArrayMin(closing[field], 1, `${label}.caseClosing.${field} 不能为空`));
+}
+
+function assertCaseTitle(title, label) {
+  assert(title && typeof title === "object", `${label} 缺少正式 caseTitle`);
+  ["title", "subtitle", "intro"].forEach((field) => assertNonEmptyString(title[field], `${label}.caseTitle 缺少 ${field}`));
+}
+
+function assertHostIdentity(packet = {}, label = "") {
+  const hostNames = new Set(["林旭阳", "主播·林旭阳"]);
+  const lines = [
+    ...(packet.openingDialogue ?? []),
+    ...((packet.overnightStructure?.postHangupContact?.lines) ?? []),
+    ...((packet.nightStructure?.postHangupContact?.lines) ?? [])
+  ];
+  lines.filter((line) => line?.role === "host" || line?.speaker === "你" || hostNames.has(line?.speaker)).forEach((line, index) => {
+    assert(hostNames.has(line.speaker), `${label} host line ${index + 1} 必须显示林旭阳，不能用裸“你”`);
+  });
 }
 
 function truthBoundaryItemCount(packet = {}) {
@@ -166,6 +189,39 @@ function assertQuotePickCandidates(packet = {}, label = "") {
   const surfaceText = normalizeQuoteText(ungatedSurfaceText(packet));
   (packet.accusationChoices ?? []).map((choice) => normalizeQuoteText(choice.label)).forEach((quote, index) => {
     assert(surfaceText.includes(quote), `${label} 第 ${index + 1} 条最终引语没有无门控出处: ${packet.accusationChoices?.[index]?.label}`);
+  });
+}
+
+function assertDetectiveAuthoringLedger(packet = {}, label = "") {
+  const scenes = packet.sceneVersions ?? [];
+  const sceneIds = new Set();
+  scenes.forEach((scene, sceneIndex) => {
+    assertNonEmptyString(scene.id, `${label} sceneVersions[${sceneIndex}] 启用侦探账本后必须有 id`);
+    assert(!sceneIds.has(scene.id), `${label} sceneVersions id 重复: ${scene.id}`);
+    sceneIds.add(scene.id);
+    assert(["setup", "misdirect", "missing-edge", "reversal", "payoff"].includes(scene.clueRole), `${label} sceneVersions[${sceneIndex}].clueRole 不合法`);
+    assertNonEmptyString(scene.falseFrame, `${label} sceneVersions[${sceneIndex}] 缺少 falseFrame`);
+    assertArrayMin(scene.payoffFor, 1, `${label} sceneVersions[${sceneIndex}].payoffFor 至少指向一处伏笔或回收`);
+  });
+  scenes.forEach((scene, sceneIndex) => {
+    (scene.payoffFor ?? []).forEach((sceneId) => {
+      assert(sceneIds.has(sceneId), `${label} sceneVersions[${sceneIndex}].payoffFor 指向不存在的 scene id: ${sceneId}`);
+    });
+  });
+  (packet.evidenceChecks ?? []).forEach((check, checkIndex) => {
+    assertArrayMin(check.revalues, 1, `${label} evidenceChecks[${checkIndex}].revalues 至少指向一个场景`);
+    (check.revalues ?? []).forEach((sceneId) => {
+      assert(sceneIds.has(sceneId), `${label} evidenceChecks[${checkIndex}].revalues 指向不存在的 scene id: ${sceneId}`);
+    });
+  });
+  scenes.forEach((scene, sceneIndex) => {
+    const guarded = (scene.questionOptions ?? []).filter((option) => option.guardedAnswer);
+    assert(guarded.length >= 1, `${label} sceneVersions[${sceneIndex}] 至少需要一条 guardedAnswer`);
+    assert(guarded.some((option) => option.guardedAnswer.length < option.answer.length), `${label} ${scene.id} 至少一条 guardedAnswer 必须短于普通回答`);
+  });
+  (packet.accusationChoices ?? []).forEach((choice, choiceIndex) => {
+    assertNonEmptyString(choice.quoteSourceSceneId, `${label} accusationChoices[${choiceIndex}] 缺少 quoteSourceSceneId`);
+    assert(sceneIds.has(choice.quoteSourceSceneId), `${label} accusationChoices[${choiceIndex}].quoteSourceSceneId 指向不存在的 scene id`);
   });
 }
 
@@ -556,6 +612,11 @@ test("PACK-001", "manifest matches runtime story pack definition", () => {
   assertDeepEqual(manifest.theme, runtimePack.theme, "manifest theme 必须和运行时定义一致");
   assertDeepEqual(manifest.caseLabels, runtimePack.caseLabels, "manifest caseLabels 必须和运行时定义一致");
   assertDeepEqual(manifest.sequence, runtimePack.sequence, "manifest sequence 必须和运行时定义一致");
+  const manifestText = JSON.stringify(manifest);
+  assert(!manifestText.includes("我是孟") && !manifestText.includes("孟（主持人）"), "manifest 不得保留旧主播身份");
+  (manifest.nightShell?.lines ?? []).filter((line) => line?.role === "host" || line?.speaker === "你").forEach((line) => {
+    assert(["林旭阳", "主播·林旭阳"].includes(line.speaker), "nightShell 主播必须显示林旭阳，不能用裸“你”");
+  });
 });
 
 test("PACK-002", "manifest keeps distinct playable cases", () => {
@@ -611,6 +672,9 @@ test("PACK-003", "case pressure packets are complete", () => {
       axisCommentValues.forEach((comment, commentIndex) => {
         assertNonEmptyString(comment, `${casePacket.caseId} routeAxisComments[${commentIndex}] 不能为空`);
       });
+      if (index <= 2) assertCaseClosing(casePacket.caseClosing, casePacket.caseId);
+      if (index >= 1) assertCaseTitle(casePacket.caseTitle, casePacket.caseId);
+      assertHostIdentity(casePacket, casePacket.caseId);
     }
     ["true", "edited", "unknown"].forEach((field) => {
       assert((casePacket.truthBoundary?.[field] ?? []).length > 0, `${casePacket.caseId} truthBoundary.${field} 不能为空`);
@@ -652,6 +716,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
 
       assertArrayMin(casePacket.sceneVersions, 3, `${casePacket.caseId} sceneVersions 至少要有三段可追问内容`);
       assertArrayMin(casePacket.sceneVersions, 5, `${casePacket.caseId} 试玩包案件至少需要五段来电，不能退回短问答`);
+      assertDetectiveAuthoringLedger(casePacket, casePacket.caseId);
       assert(
         casePacket.sceneVersions.some((scene) => (scene.questionOptions ?? []).some((option) => option.guardedAnswer)),
         `${casePacket.caseId} 至少需要一条 guardedAnswer，让现场防备有写好的回答后果`
@@ -713,7 +778,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assertArrayMin(casePacket.evidenceChecks, 2, "04-workplace 必须有两份材料检视，体现职场流程压力");
       }
       casePacket.evidenceChecks.forEach((check, checkIndex) => {
-        assertEvidenceOperation(check, `${casePacket.caseId} evidenceChecks[${checkIndex}]`);
+        assertEvidenceOperation(check, `${casePacket.caseId} evidenceChecks[${checkIndex}]`, { requireMaterialRows: true });
         (check.options ?? []).forEach((option, optionIndex) => {
           if (option.revisesScene === undefined) return;
           const scene = casePacket.sceneVersions?.[option.revisesScene];

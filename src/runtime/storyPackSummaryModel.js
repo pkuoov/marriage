@@ -15,7 +15,7 @@ import {
   truthBoundaryPackProfile,
   truthBoundaryReview
 } from "./recapModel.js?v=0.20.68";
-import { pressurePackProfile, pressureRecapProfile } from "./livePressure.js?v=0.20.68";
+import { pressurePackProfile, pressureRecapProfile } from "./livePressure.js?v=0.21.1";
 
 export function storyPackSummaryModel({
   briefs = [],

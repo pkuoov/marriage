@@ -13,7 +13,7 @@ import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.68";
 import { actionDoneForState, answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedEvidencePicksForState, selectedInvestigationPicksForState, selectedScenePickForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "../src/runtime/caseStateSelectors.js?v=0.20.68";
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyHiddenThreadProfile, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
-import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "../src/runtime/livePressure.js?v=0.20.68";
+import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "../src/runtime/livePressure.js?v=0.21.1";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
 import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js?v=0.21.0";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
@@ -28,8 +28,8 @@ import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, offMicLettersHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
-import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.20.76";
-import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.20.68";
+import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.21.1";
+import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.21.1";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "../src/ui/caseTransitionView.js?v=0.20.96";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
@@ -318,6 +318,7 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   );
   assertEqual(guardedVariant.answer, "收紧回答", "上一拍跑偏后必须能切到内容包写好的收紧版回答");
   assertEqual(guardedVariant.guarded, true, "收紧版回答必须留下 guarded 标记，供路线回看和结算继续使用");
+  assertEqual(pressuredAnswerVariant({ answer: "原回答", guardedAnswer: "收紧回答" }, { pressureSignal: "guarded" }).answer, "收紧回答", "同一问题进入防备状态时必须返回不同文本");
   assertEqual(pressuredAnswerVariant({ answer: "原回答", guardedAnswer: "收紧回答" }, { pressureSignal: "held" }).answer, "原回答", "稳住现场时不能无故改写来电人回答");
   assertEqual(materialPressureSignal({ correct: false }), "drift", "材料误指必须生成结构化跑偏状态");
   assertEqual(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "", "普通绕路追问不应生成空泛现场氛围句");
@@ -581,18 +582,14 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   const dialogueOptions = sceneDialogueOptions(scene, questionOptions);
   const questionHtml = sceneQuestionChoicesHtml(2, scene, []);
   const askedQuestionHtml = sceneQuestionChoicesHtml(2, scene, [{ optionIndex: 0, question: dialogueOptions[0].option.question, answer: "有一点。" }]);
-  assertIncludes(questionHtml, "dialogue-question-group", "当前节点必须保留随意提问区，方便扩写人物和背景");
-  assertIncludes(questionHtml, "key-question-group", "当前节点必须保留关键选择区，正式推进本段矛盾");
+  assertIncludes(questionHtml, "scene-question-group", "当前节点必须把所有主播问题放进同一面板");
   assertIncludes(questionHtml, "data-scene-dialogue=\"2:0\"", "随意提问必须有独立事件入口，不结束当前段落");
   assertIncludes(questionHtml, "data-scene-question=\"2:1\"", "关键追问仍要保留可点击数据");
   assertIncludes(questionHtml, "你们平时谁管钱多一点？", "有 casualQuestions 时普通区必须渲染署名闲聊层");
   assert(dialogueOptions.every((row) => scene.casualQuestions.some((option) => option.question === row.option.question)), "有 casualQuestions 时普通区不能继续回收关键选择里的外围项");
-  assertIncludes(questionHtml, "普通提问", "随意提问区标题必须明确这是非关键选择");
-  assertIncludes(questionHtml, "不推进剧情，可以多问。", "随意提问区必须明确不会推进本段剧情");
-  assertIncludes(questionHtml, "关键选择", "正式追问区标题必须明确这是关键选择");
-  assertIncludes(questionHtml, "会推进剧情，只选一句。", "正式追问区必须明确会推进剧情且只能选一次");
-  assertIncludes(questionHtml, "choice-kind\">普通", "普通提问按钮必须带类型标识，不能只靠颜色区分");
-  assertIncludes(questionHtml, "choice-kind choice-kind-key\">关键", "关键选择按钮必须带类型标识，不能只靠颜色区分");
+  ["普通提问", "关键选择", "普通", "关键", "核心问题", "推荐", "路线轴", "会推进剧情", "不推进剧情"].forEach((term) => {
+    assert(!questionHtml.includes(term), `提问面板不得泄露后台类型：${term}`);
+  });
   assert(!questionHtml.includes("先问两句"), "随意提问区不能写成意义不明的流程标签");
   assert(!questionHtml.includes("接着追"), "正式追问区不能写成意义不明的半截话");
   assert(!questionHtml.includes("问偏"), "面板说明不许把失败机制直接说给玩家听");
@@ -600,9 +597,8 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assert(!questionHtml.includes("问偏会掉耐心"), "正式追问区不能写成机制说明书");
   assert(!questionHtml.includes("关键追问"), "正式追问区不能使用含糊的设计师标签");
   assert(!dialogueOptions.some((row) => row.option.question === questionOptions[row.option.sourceIndex ?? row.optionIndex]?.question), "随意提问不能原样复用正式追问选项");
-  assert(!/dialogue-question[^>]*data-scene-question/.test(questionHtml), "普通提问按钮不能同时拥有关键选择入口");
-  assert(!/key-question[^>]*data-scene-dialogue/.test(questionHtml), "关键选择按钮不能同时拥有普通提问入口");
-  assertIncludes(askedQuestionHtml, `已问：${dialogueOptions[0].option.question}`, "随意提问问过后必须标记已问，避免重复刷同一句");
+  assert(!questionHtml.includes("choice-kind"), "问题按钮不能额外显示类型标签");
+  assertIncludes(askedQuestionHtml, `data-scene-dialogue="2:0"`, "问过的非推进问题仍应保留原问句和禁用入口");
   assertIncludes(appSource, "handleSceneDialogueButton", "随意提问必须有事件入口，不能和关键追问混成一个按钮组");
   assertIncludes(appSource, "state.lastPressureSignal = questionPressureSignal", "随意提问也必须影响来电人防备，避免免费扫雷");
   assertIncludes(appSource, "renderEvidenceCheck", "追问结束后必须保留材料检视阶段，避免玩法退回纯问答");
@@ -898,7 +894,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(sceneReviewDoneChoicesHtml({ lastStage: true, nextStage: "evidenceCheck", nextLabel: "看材料" }), "data-scene=\"evidenceCheck\"", "末段对话回合跳转按钮必须可由纯 UI 模块渲染");
   assertIncludes(appSource, "./ui/storyInterludeView.js", "案间过渡 HTML 必须从 app.js 拆到 ui/storyInterludeView");
   assertIncludes(storyInterludeHtml({ nextObjectLabel: "表格", nextLine: "后台又亮了一路麦" }), "表格", "案间过渡必须可由纯 UI 模块渲染下一通物件钩子");
-  assertIncludes(storyInterludeChoicesHtml(), "查看下一案", "案间过渡必须把玩家带往下一案标题页");
+  assertIncludes(storyInterludeChoicesHtml(), "接下一路麦", "案间过渡必须用直播节目语言进入下一案标题页");
   const closingCard = caseClosingHtml({
     caseNumber: 1,
     closing: { title: "账单里的八万", verdict: "先别垫。", beats: [{ label: "来电", text: "要八万。" }], confirmed: ["失业早于借钱"], unresolved: ["3301 归属未定"], nextStep: "先对账。" }
@@ -1160,8 +1156,8 @@ test("EPISODE-001B", "each demo case exposes the caller's self-serving omission"
   const expectedOmissions = {
     "lost-job-hidden-credit": ["撑不住场面", "自己其实很吃那种体面"],
     "tony-multi-dating": ["自己人", "没逼他说清楚"],
-    "education-income-fake-profile": ["我自己也不是特别宽裕", "我嘴上说家里想看稳定"],
-    "workplace-reimbursement-screenshot": ["我也确实想要这个主责", "我先跟老板说"]
+    "education-income-fake-profile": ["一万出头", "流水是我先提的"],
+    "workplace-reimbursement-screenshot": ["主责，我确实想要", "我来扛"]
   };
   briefs.forEach((brief) => {
     const text = JSON.stringify({
@@ -1212,9 +1208,9 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
   ["她不是完全被逼", "她想表现", "她想拿表现", "他就有办法一直拖"].forEach((badPhrase) => {
     assert(!text.includes(badPhrase), `职场报销案不能用错性别代词或旧硬编码：${badPhrase}`);
   });
-  assertIncludes(text, "咨询者想拿表现", "职场报销案应使用角色称谓承接来电人，避免头像和代词冲突");
-  assertIncludes(text, "对方手里", "职场报销案应使用对方/同事承接缺席方，避免性别绑定");
-  assertIncludes(text, "付款入口", "职场报销案应把缺席方问题落到流程入口，不回到性别代词判断");
+  assertIncludes(text, "咨询者先想要主责", "职场报销案应使用角色称谓承接来电人，避免头像和代词冲突");
+  assertIncludes(text, "供应商确认人", "职场报销案应使用流程角色承接缺席方，避免性别绑定");
+  assertIncludes(text, "付款对接人", "职场报销案应把缺席方问题落到流程入口，不回到性别代词判断");
 });
 
 test("EPISODE-002", "demo story pack can be played through with core reveals", () => {
@@ -1355,13 +1351,13 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assertIncludes(brief.openingDialogue.map((line) => line.text).join(" "), "名校毕业", "外层说法应先是名校毕业，不应一开始就摊开 MBA");
   const sceneVersionsText = brief.sceneVersions.map((scene) => scene.version).join(" ");
   const introducerScene = brief.sceneVersions.find((scene) => scene.version.includes("介绍人"));
-  const dinnerScene = brief.sceneVersions.find((scene) => scene.version.includes("第一次吃饭"));
+  const dinnerScene = brief.sceneVersions.find((scene) => scene.version.includes("第一次正式吃饭"));
   const mbaScene = brief.sceneVersions.find((scene) => scene.version.includes("细问") && scene.version.includes("本科"));
-  const spendingScene = brief.sceneVersions.find((scene) => scene.version.includes("花销"));
+  const spendingScene = brief.sceneVersions.find((scene) => scene.version.includes("团购") && scene.version.includes("停车 AA"));
   const wageScene = brief.sceneVersions.find((scene) => scene.version.includes("工资"));
   assertIncludes(brief.sceneVersions[0].version, "见父母", "第一段必须指出见家长前问得过细本身不正常");
   assertIncludes(sceneVersionsText, "介绍人", "扩成长案后必须交代体面标签不是单人凭空出现");
-  assertIncludes(sceneVersionsText, "第一次吃饭", "扩成长案后必须还原第一次饭局现场");
+  assertIncludes(sceneVersionsText, "第一次正式吃饭", "扩成长案后必须还原第一次饭局现场");
   assertIncludes(sceneVersionsText, "两边", "扩成长案后必须还原介绍链双面话术");
   assert(introducerScene, "扩成长案后必须有介绍人参与的场景");
   assert(dinnerScene, "扩成长案后必须有第一次饭局场景");
@@ -1369,8 +1365,8 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assert(spendingScene, "收入疑点必须来自日常观察而不只是截图缺边");
   assert(wageScene, "女方家关注流水必须连到婚后管钱预设");
   assertIncludes(JSON.stringify(brief), "工资卡", "追问流水必须触发额外隐藏信息");
-  assertIncludes(brief.deepFollowup?.question, "你自己的家庭经济状况", "满格后必须能继续追问女方自己的经济位置");
-  assertIncludes(brief.deepFollowup?.answer, "我自己也不是特别宽裕", "深入一问必须揭示女方收入诉求和自身经济压力");
+  assertIncludes(brief.deepFollowup?.question, "你要看他的收入和工资卡", "满格后必须从已出现的收入要求追问咨询者自己的经济位置");
+  assertIncludes(brief.deepFollowup?.answer, "一万出头", "深入一问必须用具体数字揭示咨询者自身经济压力");
 });
 
 test("DAILY-008", "daily livestream stays anonymous and single-caller", () => {
@@ -1989,9 +1985,38 @@ test("RUNTIME-009", "case 2 requires an in-person Lin visit with two distinct ca
   assert(!benefitOpeners.includes("opener-lin-column"), "收益路线不能同时获得私加列路线开场");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const interludeViewSource = readFileSync(new URL("../src/ui/interludeDeskView.js", import.meta.url), "utf8");
-  assertIncludes(appSource, "if (action.backdropClass)", "带背景的 NPC 行动必须使用白天场景渲染");
+  assertIncludes(appSource, "if (backdropClass)", "带背景的 NPC 行动必须使用白天场景渲染，并允许选择后切换具体地点");
   assertIncludes(appSource, "shouldEnterHangupAfterScene(brief, sceneIndex)", "场后材料结束不能再绕过两段连线挂断");
   assertIncludes(interludeViewSource, "action.sceneText", "NPC 地点场景必须渲染独立场景文本");
+});
+
+test("RUNTIME-010", "case 3 daytime route is a real one-location trade-off", () => {
+  const brief = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
+    .find((item) => item.runtimeContentCaseId === "03-profile");
+  const structure = nightStructureFor(brief);
+  assertEqual(structure?.interlude?.budget, 1, "案 3 白天只能支出一次行动预算");
+  assertEqual(structure?.interlude?.maxActions, 1, "案 3 白天不能扫完两个 NPC");
+  const route = nightActionById(brief, "profile-day-route");
+  assertEqual(route?.kind, "advisorConflict", "案 3 白天选择必须进入真实 NPC 场景");
+  assertEqual(route?.options?.length, 2, "案 3 白天必须只在周会计和小林老师之间二选一");
+  assertEqual(route?.options?.[0]?.backdropClass, "day-document", "周会计路线必须切到档案室背景");
+  assertEqual(route?.options?.[1]?.backdropClass, "day-matchmaking", "小林路线必须切到婚介门店背景");
+  const zhouOpeners = availableCallbackOpeners(brief, ["profile-zhou-continuity"], ["chase-flow"]).map((item) => item.id);
+  const linOpeners = availableCallbackOpeners(brief, ["profile-lin-two-prices"], ["chase-introducer"]).map((item) => item.id);
+  assert(zhouOpeners.includes("opener-zhou") && !zhouOpeners.includes("opener-lin"), "周路线只能解锁周会计回拨开场");
+  assert(linOpeners.includes("opener-lin") && !linOpeners.includes("opener-zhou"), "小林路线只能解锁小林回拨开场");
+});
+
+test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", () => {
+  const brief = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
+    .find((item) => item.runtimeContentCaseId === "04-workplace");
+  const conflict = nightActionById(brief, "zhao-zhou-work");
+  assertEqual(conflict?.kind, "advisorConflict", "案 4 三位顾问必须在同一冲突场景出现");
+  assertEqual(conflict?.options?.length, 3, "案 4 必须同时呈现赵律师、周会计和小林老师三套框架");
+  ["work-frame-zhao", "work-frame-zhou", "work-frame-lin"].forEach((id) => {
+    assert(conflict.options.some((option) => option.id === id), `案 4 顾问冲突缺少 ${id}`);
+  });
+  assert(availableCallbackOpeners(brief, ["work-frame-lin"], ["work-frame-lin"]).some((item) => item.id === "opener-lin-frame"), "采小林框架必须改变第二夜开场");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {

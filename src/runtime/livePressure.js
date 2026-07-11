@@ -37,7 +37,7 @@ export function questionPressureSignal(option = {}, routeTone = "") {
 }
 
 export function pressuredAnswerVariant(option = {}, { pressureSignal = "" } = {}) {
-  const guarded = pressureSignal === "drift" && option.guardedAnswer;
+  const guarded = (pressureSignal === "drift" || pressureSignal === "guarded") && option.guardedAnswer;
   return {
     answer: guarded ? option.guardedAnswer : option.answer ?? "",
     guarded: Boolean(guarded)

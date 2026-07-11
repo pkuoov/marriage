@@ -27,23 +27,14 @@ export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePi
   const keyRows = keyOptions
     .map((option, optionIndex) => keyQuestionButton(sceneIndex, optionIndex, option))
     .join("");
-  return [
-    dialogueRows
-      ? choiceGroup("普通提问", dialogueRows, "dialogue-question-group", "不推进剧情，可以多问。")
-      : "",
-    choiceGroup("关键选择", keyRows || `<p class="choice-note">这段没岔口。</p>`, "scene-question-group key-question-group", "会推进剧情，只选一句。")
-  ].join("");
+  return choiceGroup(`${dialogueRows}${keyRows}`, "scene-question-group");
 }
 
 export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks = []) {
-  const dialogueOptions = sceneDialogueOptions(scene, focusedQuestionOptions(scene?.questionOptions ?? []));
-  const asked = (askedDialoguePicks ?? []).length;
   return `
-    <section class="question-menu-card" aria-label="提问选单">
+    <section class="question-menu-card" aria-label="连线追问">
       <header>
-        <span>提问选单</span>
-        <b>这段话里，你还想从哪里问起？</b>
-        ${dialogueOptions.length ? `<small>普通提问已问 ${asked}/${dialogueOptions.length} 句。</small>` : ""}
+        <b>这句话，你想先问哪一句？</b>
       </header>
       <div class="question-menu-options">
         ${sceneQuestionChoicesHtml(sceneIndex, scene, askedDialoguePicks)}
@@ -75,30 +66,24 @@ function fallbackDialogueQuestion(option = {}, scene = {}, optionIndex = 0) {
 
 function dialogueQuestionButton(sceneIndex, optionIndex, option = {}, asked = false) {
   return `
-    <button class="choice-question dialogue-question" data-scene-dialogue="${sceneIndex}:${optionIndex}" type="button" ${asked ? "disabled" : ""}>
-      <span class="choice-kind">普通</span>
-      <span class="choice-text">${escapeHtml(asked ? `已问：${option.question ?? "接着问"}` : option.question ?? "接着问")}</span>
+    <button class="choice-question" data-scene-dialogue="${sceneIndex}:${optionIndex}" type="button" ${asked ? "disabled" : ""}>
+      <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
     </button>
   `;
 }
 
 function keyQuestionButton(sceneIndex, optionIndex, option = {}) {
   return `
-    <button class="choice-question key-question" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
-      <span class="choice-kind choice-kind-key">关键</span>
+    <button class="choice-question" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
       <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
     </button>
   `;
 }
 
-function choiceGroup(label, content, className = "", note = "") {
+function choiceGroup(content, className = "") {
   if (!content?.trim()) return "";
   return `
     <section class="choice-group ${className}">
-      <div class="choice-label">
-        <span>${escapeHtml(label)}</span>
-        ${note ? `<small>${escapeHtml(note)}</small>` : ""}
-      </div>
       <div class="choice-stack">${content}</div>
     </section>
   `;

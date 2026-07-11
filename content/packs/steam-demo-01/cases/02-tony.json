@@ -146,21 +146,25 @@
   "accusationChoices": [
     {
       "label": "“只有我能接住他。”",
+      "quoteSourceSceneId": "tony-exclusive-voice",
       "accuseRole": "respondent",
       "response": "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。"
     },
     {
       "label": "“他说我像店里自己人。”",
+      "quoteSourceSceneId": "tony-exclusive-voice",
       "accuseRole": "complainant",
       "response": "这句要承认。她不是错在帮忙，是她也不想太早拆穿那个位置到底算不算关系。"
     },
     {
       "label": "“我从来没说只有你一个。”",
+      "quoteSourceSceneId": "tony-future-title",
       "accuse": "noPremeditated",
       "response": "他确实留了口子，但“老板娘”这种话也不是随便听听就算了。"
     },
     {
       "label": "“以后店开起来，你就是老板娘。”",
+      "quoteSourceSceneId": "tony-future-title",
       "accuse": "both",
       "response": "这句甜不甜先放一边，后面有没有接办卡、投店，才是关键。"
     }
@@ -185,7 +189,7 @@
       "mood": "anxious"
     },
     {
-      "speaker": "你",
+      "speaker": "林旭阳",
       "role": "host",
       "text": "晚上好。那张表格的事我们先放一放，在发错表之前，他平时都是怎么跟你相处的？",
       "mood": "listening"
@@ -196,9 +200,13 @@
   },
   "sceneVersions": [
     {
+      "id": "tony-exclusive-voice",
+      "clueRole": "setup",
+      "falseFrame": "排他式的话术足以证明关系承诺。",
+      "payoffFor": ["tony-emotion-to-sales"],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "他总说下班陪我聊到凌晨，说只有我能接住他。我们没正式说过在一起，我就默认是在往那边走。剪头不收钱，号再满也给我插。……我放一条语音，就这条。听到了吧，吹风机一直响。他说的下班，是手上正做着别人的头。我自己人那三个字——是，我受用。",
+      "version": "关系一直没说死。他总说只有我能接住他。他说我像店里自己人，剪头不收钱，号满也给我插。我就默认在往那边走。",
       "revisedVersion": "……那句“只有你能接住我”，我当宝贝存了半年。表上那列圈出来以后，这句话像是从模板里复制出来的。",
       "doubt": "没有确认关系，但对方一直给排他式的亲近感。",
       "contradiction": "TA 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
@@ -217,6 +225,7 @@
         {
           "question": "他有没有说过你们现在到底算什么关系？",
           "answer": "没有。他会说“你跟别人不一样”，但真问到关系，他就说慢慢来。",
+          "guardedAnswer": "他说慢慢来。我就没再逼着问。",
           "contradiction": "亲密感很满，关系承诺却一直悬着。",
           "correct": true,
           "routeAxis": "identity-wording",
@@ -240,9 +249,13 @@
       }
     },
     {
+      "id": "tony-emotion-to-sales",
+      "clueRole": "misdirect",
+      "falseFrame": "情绪陪伴和消费请求只是店内人情。",
+      "payoffFor": ["tony-store-card-pressure"],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "后来我翻聊天，发现一个节奏特别明显。他先说“店里压力大”“今晚又被店长说了”，还说这些只跟我讲。我跟朋友提起他，都是这么说的：“他说我像店里自己人。”我一心软，他就接让我帮忙发活动、带朋友去剪头，或者问我下次要不要直接办年卡。我放一条他那阵子的语音你们听听——就这条。……听到了吧，背景里吹风机一直响。他说的下班陪我，是他手上正做着别人的头。",
+      "version": "有次他半夜说下班陪我聊，我留了一条语音。吹风机一直响。他嘴里下班，手上还在接客。",
       "doubt": "情绪求助后面开始接店里的经营目标。",
       "contradiction": "TA 把亲密聊天接到办卡、带客和朋友圈推广上。",
       "reliability": "partial",
@@ -260,7 +273,7 @@
         {
           "question": "他说压力大之后，最常接什么请求？",
           "answer": "不只是安慰。说着说着就会拐到店里活动，让我转一下，或者问我朋友要不要来剪头。",
-          "guardedAnswer": "不只是安慰。聊到后面总会带到活动、剪头。我当时还觉得，关系都这样了，帮一下也不算外人。",
+          "guardedAnswer": "会接活动和剪头。我当时没往外人那边想。",
           "contradiction": "情绪求助后接商业转化请求。",
           "correct": true,
           "routeAxis": "counterparty-credibility",
@@ -284,9 +297,13 @@
       }
     },
     {
+      "id": "tony-store-card-pressure",
+      "clueRole": "missing-edge",
+      "falseFrame": "“自己人”只是一句店内玩笑。",
+      "payoffFor": ["tony-roster-function-notes"],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "办卡那天其实也怪。店长就在前台，他先当着店长说我“不是普通顾客”，旁边一个小妹还笑着喊了声“嫂子”。我当时没接，也没否认。店长顺着说，自己人办年卡划算，反正以后常来。我那一瞬间真的有点晕，觉得这是不是大家都默认了。",
+      "version": "他喊压力大以后，会问我能不能发活动、带朋友来，或者聊年卡。我那时把这些当帮他，也当帮我们。",
       "doubt": "店内现场把暧昧称呼、店长话术和年卡推荐压在一起。",
       "contradiction": "店内起哄和店长话术把关系位置推向消费决策。",
       "reliability": "mixed",
@@ -335,9 +352,13 @@
       }
     },
     {
+      "id": "tony-roster-function-notes",
+      "clueRole": "reversal",
+      "falseFrame": "预约表只是全店通用维护模板。",
+      "payoffFor": ["tony-next-push-column"],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "昨天他手滑发错那张表。表头写预约，备注没写烫发修刘海，写的是「情绪稳定」「办卡意向强」「朋友多」。我那一行——稳情绪。挺吓人的，那三个字。拿给开过店的朋友看，她盯着最后那列半天没说话。话术这行都教，表也都有。可她没见过那一列。",
+      "version": "年卡是上个月十二号提的。店长在前台，他说我不是普通顾客，小妹喊嫂子，店长顺着说自己人办卡划算。他后来还说“以后店开起来，你就是老板娘”。我没办。",
       "doubt": "那张表不像普通客户备注，更像在写每个人能带来什么。",
       "contradiction": "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
       "reliability": "partial",
@@ -356,6 +377,7 @@
         {
           "question": "这张表是在记发型需求，还是在记你们能带来什么？",
           "answer": "他写的不是我想剪什么头，备注里全是我能不能安抚、会不会办卡、能不能带朋友。发型那栏反而空着。",
+          "guardedAnswer": "我看不懂那张表。反正不只是在写剪头。",
           "contradiction": "预约表实际在记录对象可转化的资源。",
           "correct": true,
           "routeAxis": "document-edge",
@@ -379,9 +401,13 @@
       }
     },
     {
+      "id": "tony-future-title",
+      "clueRole": "misdirect",
+      "falseFrame": "“老板娘”只是暧昧称呼，不接商业承诺。",
+      "payoffFor": ["tony-caller-benefits"],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "他最后回我的原话是：“我从来没说只有你一个。”可我翻聊天，他又说过“以后店开起来，你就是老板娘”。这不是求婚，可后面再接年卡、投店，我确实没那么防备。",
+      "version": "昨天他发错预约表。我的备注是“稳情绪”，别人的有“办卡意向强”“朋友多”。发型需求栏反而空着。",
       "doubt": "没说“只有你”，不代表没有让人往那个方向想。",
       "contradiction": "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
       "reliability": "partial",
@@ -399,6 +425,7 @@
         {
           "question": "他说老板娘之后，有没有马上让你办卡或投店？",
           "answer": "有。那晚没过多久就聊年卡，说我以后常来店里方便。后来还提过店要是扩大，我可以先投一点。",
+          "guardedAnswer": "提过办卡。投店那句，他后来就岔开了。",
           "contradiction": "未来身份暗示后紧接着出现办卡和投店话题。",
           "correct": true,
           "routeAxis": "identity-wording",
@@ -422,9 +449,13 @@
       }
     },
     {
+      "id": "tony-caller-benefits",
+      "clueRole": "reversal",
+      "falseFrame": "折扣只是普通顾客福利。",
+      "payoffFor": ["tony-next-push-column"],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "还有一次，我带闺蜜去剪头。他给我闺蜜打了六折，说是看我的面子，还把我那次护理也免了。闺蜜出来说“你这关系可以啊”，我嘴上说没有没有，心里其实挺受用。后来我看到表上“朋友多，带客”那一行，才突然想起那天。",
+      "version": "朋友说店里确实有熟客维护模板，情绪偏好、消费能力、带客可能都会记。她只问了一句：模板里为什么没有“下一次推进”？",
       "doubt": "咨询者不是只被索取，她也享受过自己人位置带来的折扣。",
       "contradiction": "咨询者带客时拿过折扣和免单，自己人位置有实际收益。",
       "reliability": "mixed",
@@ -442,6 +473,7 @@
         {
           "question": "你带朋友去剪头那次，折扣是人情还是带客记录？",
           "answer": "我当时觉得是人情。可他表上写“朋友多，带客”，我就没法只把那次当甜头了。闺蜜折扣是真的，我也是真的受用了。",
+          "guardedAnswer": "有折扣，也有免单。具体怎么算的，我没问。",
           "contradiction": "带客折扣把咨询者的自己人位置落成实际收益。",
           "correct": true,
           "routeAxis": "caller-credibility",
@@ -465,9 +497,13 @@
       }
     },
     {
+      "id": "tony-next-push-column",
+      "clueRole": "payoff",
+      "falseFrame": "“下一次推进”只是排班备注。",
+      "payoffFor": ["tony-exclusive-voice"],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "最后那列：下一次推进。我那行写年卡已聊、可稳情绪；另一个写能投店；还有一个写朋友多、带客。不是排班，是人往哪儿推。开过店的朋友回了句话：模板里没这列。……我挂断前他来电，就问我「你怎么还在说表」。",
+      "version": "他后来只说“我从来没说只有你一个”。我收过插号、护理免单，闺蜜也拿过六折。表里却把我写成“年卡已聊、稳情绪”，把别人写成能投店、能带客。",
       "doubt": "表格不只是备注，还写了下一步怎么把人往店里推进。",
       "contradiction": "TA 把不同暧昧对象按可推进资源分层管理。",
       "reliability": "partial",
@@ -485,6 +521,7 @@
         {
           "question": "这张表是在排员工，还是在排你们这些人下一步怎么推进？",
           "answer": "那不是排班。我的名字后面是“年卡已聊、稳情绪”；另一个也不是班次，是“能投店”“能带客”。",
+          "guardedAnswer": "不像只排员工。再往下我不想替他念。",
           "contradiction": "排班表实为暧昧对象资源分层表。",
           "correct": true,
           "routeAxis": "document-edge",
@@ -547,6 +584,7 @@
   "evidenceChecks": [
     {
       "id": "tony-training-system",
+      "revalues": ["tony-roster-function-notes","tony-next-push-column"],
       "title": "店长培训材料检视",
       "prompt": "这份培训材料里，哪一处会让事情先变灰？",
       "material": "店长培训页写着：熟客要记情绪偏好、消费能力、带客可能；会员系统里也有“维护备注”。但标准模板没有“下一次推进”列。",
@@ -584,9 +622,16 @@
     },
     {
       "id": "tony-roster-column",
+      "revalues": ["tony-exclusive-voice","tony-next-push-column"],
       "title": "排班表检视",
       "prompt": "这张表里哪一列不像预约表？",
-      "material": "表头写预约，备注却写着“情绪稳定”“办卡意向强”“朋友多”，最后一列还有“下一次推进”。",
+      "material": "后台把这张预约表按原行抄出来。",
+      "materialRows": [
+        "20:30｜咨询者｜备注：稳情绪｜下一次推进：年卡已聊",
+        "21:00｜顾客 A｜备注：办卡意向强｜下一次推进：护理套卡",
+        "21:30｜顾客 B｜备注：朋友多｜下一次推进：带客",
+        "发型需求栏｜空"
+      ],
       "options": [
         {
           "label": "备注和下一次推进",
@@ -615,9 +660,17 @@
     },
     {
       "id": "tony-card-timing",
+      "revalues": ["tony-store-card-pressure","tony-caller-benefits"],
       "title": "会员与带客折扣检视",
       "prompt": "这份记录里，哪一处最能把她也拖进灰区？",
-      "material": "会员系统记录：“老板娘玩笑后 22:48 聊年卡，次日推护理套卡；带朋友到店，朋友六折，咨询者护理免单；备注：先别催，稳住。”",
+      "material": "会员记录和一条备注被并排放到后台。",
+      "materialRows": [
+        "22:48｜“老板娘”玩笑后｜聊年卡",
+        "次日｜推护理套卡",
+        "带朋友到店｜朋友六折",
+        "咨询者护理｜免单",
+        "备注｜先别催，稳住"
+      ],
       "options": [
         {
           "label": "朋友六折和护理免单",
@@ -767,6 +820,18 @@
     "note": "问到这里，甜话和店里的账已经缠在一起了。"
   },
   "stageJudgement": "这案卡在两层：话术和维护表是店里教的没错，可“下一次推进”那列，店长也说不是模板；她说自己只是心软，可免费剪发、插号和带客折扣，她都收过。",
+  "caseClosing": {
+    "title": "表格里的下一次",
+    "verdict": "林旭阳没有替她给这段关系定性，只把“自己人”后面接着的办卡、带客和投店拆开了。",
+    "beats": [
+      { "label": "来电", "text": "一句“只有你能接住我”，把她留在了关系没说死的位置。" },
+      { "label": "麦上", "text": "培训模板是真的，私加的“下一次推进”列也是真的。" },
+      { "label": "回看", "text": "她收过插号、免单和朋友折扣，但这些不等于替任何人的生意承诺买单。" }
+    ],
+    "confirmed": ["同一套亲密话术与消费推进相连", "标准维护模板没有私加推进列", "咨询者实际收过“自己人”的好处"],
+    "unresolved": ["对方是否对任何一人有真实好感", "这类表格还有多少份", "其他顾客怎样理解那段关系"],
+    "nextStep": "先把会员、折扣和个人边界分开；任何办卡、投钱或带客承诺，都不要再用暧昧话替代。"
+  },
   "storyInterludeRecap": "店长培训页一露，行业模板是真的；排班表一露，甜话就不只是在谈感情。",
   "followupTwist": "后续回拨里，那位女生又来了消息：她在拉群，已经有四个人，要来电人进群带头，把事情闹到店里去。来电人回了一句\"让我想想\"。到这里，两个受害者已经不同路了——一个要说法，一个想止损，谁也说服不了谁。",
   "dailyShareTitle": "“自己人”，是关系还是销售位置？",

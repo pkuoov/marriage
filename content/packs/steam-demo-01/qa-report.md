@@ -94,3 +94,46 @@
 - **设计性韵脚**：同一排靠窗位既演纪念日的体面也演相亲的体面，且介绍人拿得到位子——舞台是同一个。守则：**正片内任何表面不得点破两案关联**，只有终局墙这一句；两处植入细节（靠窗、提前两周）必须逐字保持可对上。
 - **关系披露阶梯**：骂了一年、第七次道歉、第八次改饭——只存在于圣经；正片与终局至多露到"赵姐"级别的半知半觉；任何表面不得解释赵律师为什么总在。
 - **家常配额**：每案家人/情侣梗至多一次；家常腔永不进入委托回单与顾问信的专业核心段。
+
+## 2026-07-11 Case 3 / 4 New-Skill Re-review
+
+### Case 3 Authoring Ledger
+
+- Cover trick: “材料太周到 / 女方家问太深”的感性误导。
+- Load-bearing trick: 真图缺相邻口径的材料边界诡计。
+- Physical-verbal locks: `profile-mba-gap` revalues `profile-dinner-pause + profile-caller-repeats-label`; 家里群首句与“我妈想看”完成主语核对。
+- Day trade-off: 幕间预算固定为 1；`chase-flow` 带回当日与连续的差别，`chase-introducer` 带回介绍人的两套报价，不能同日完成。
+- Fair unknown: 持续收入、MBA 学费来源和坦白条件后的关系结果保持未知；团购、积分、AA 不得写成收入造假的证据。
+- Promise chain: 没人问的存款证明 → 收入材料板；饭局十几秒停顿 → MBA 缺口；“学校是真的” → 来电人半句转述；“我妈想看” → 家里群起头人。
+
+### Case 4 Authoring Ledger
+
+- Cover trick: 财务真的延后、咨询者真的想要主责，两条真事实共同喂养假解。
+- Load-bearing trick: 14:22 “来不及”早于延后通知九天的时间诡计，随后通过覆盖检查拆出报销与返款。
+- Physical-verbal locks: “财务慢”只覆盖报销，不覆盖“返给对接人”；“主责写你”与主责 / 付款对接 / 供应商确认三栏主语核对互锁。
+- NPC conflict: 赵律师守匿名与效力，周会计只认付款回单，小林老师只拆“主责”身份词；玩家先采一套，三人均不得替玩家指出材料点位。
+- Caller edit: 第一幕主动承认想要主责；可抓的修剪改为看过流程仍回“收到”、私聊再回“我来扛”。
+- Fair unknown: 最终账户、老板知情程度、两处“老规矩”是否同一套均保持未知。
+- Promise chain: 主责与垫款同句 → 最终责任/入口分离；群里“收到” → 深问行动代价；审批图发三遍 → 缺付款页；领导主责批注 → 三栏主语核对。
+
+### Mechanical Guard
+
+Cases that opt into the new detective authoring ledger must keep every scene's `id / clueRole / falseFrame / payoffFor`, every material board's `revalues`, and every final quote's `quoteSourceSceneId`. `scripts/verify-pack.js` rejects orphaned scene references and source-less quote choices.
+
+## 2026-07-11 Four-Case Structural Rebuild
+
+### Night Spine and Boundary
+
+- 平台数据压力始终只构成林旭阳的控场诱因，不能把任何一通麦改成判官式表演；四案依次把“体面 / 自己人 / 条件 / 主责”后面的实际成本推到台面。
+- 赵律师的旧案卷采用试玩尾钩：终局只露出 `2019-11-08 / 已撤回的账单`，不进入第五案，也不改写四案收麦。
+
+### Case Corrections
+
+- **01-credit**：七段各只承担断缴、八万、共同经营、设备受益、五万缺口、8号流水、忠诚测试之一；五万和49,800仍只说明存在未解释钱路，3301与王**不指认。
+- **02-tony**：吹风机语音只在第二段完整播放；年卡压力明确发生在上月12日，发错预约表发生在昨天。行业模板仍是真材料，私加的“下一次推进”仍是不能被模板洗掉的缺口。
+- **03-profile**：服务员加水只服务于本科/MBA的第一次饭局停顿；工资卡改为饭后微信。团购、积分、停车AA只记作节俭，不参与收入造假推论。
+- **04-workplace**：正文只展示14:05群流程、14:22私聊、延后通知、审批页和报价字段；九天差、缺页与报销/返款覆盖差异全部留给材料操作及其后 `reactionLine` / `revisedVersion` 回收。
+
+### Persisting Unknowns
+
+- 案1：3301、王**与后续还款能力；案2：其他顾客的真实好感；案3：持续收入、MBA学费与关系结果；案4：最终账户、老板知情程度与两处“老规矩”是否同一套。

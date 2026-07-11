@@ -17,7 +17,7 @@ export function storyInterludeHtml({
 }
 
 export function storyInterludeChoicesHtml() {
-  return `<button class="primary" data-enter-next-case type="button">查看下一案</button><button data-retry-case type="button">回看本案</button>`;
+  return `<button class="primary" data-enter-next-case type="button">接下一路麦</button><button data-retry-case type="button">回看这通</button>`;
 }
 
 function escapeHtml(value) {

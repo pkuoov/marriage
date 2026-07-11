@@ -13,19 +13,27 @@ const routes = [
   { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], opener: "周会计的时间线", callerQuestion: "ask-fifty-thousand" },
   { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], documentRows: ["r08", "r11"], opener: "靠窗位预订记录", callerQuestion: "dont-answer-for-her" }
 ];
+const smokeTarget = process.env.SMOKE_TARGET ?? "all";
 
 const browser = await launchBrowser();
 try {
-  for (const route of routes) {
-    await runRoute(route);
+  if (smokeTarget === "case34") {
+    await runCase3DayRoutes();
+    await runCase4AdvisorConflict();
+  } else {
+    for (const route of routes) {
+      await runRoute(route);
+    }
+    await runCase2LinVisit();
+    await runCaseTransition();
   }
-  await runCase2LinVisit();
-  await runCaseTransition();
 } finally {
   await browser.close();
 }
 
-console.log(`Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-lin-visit", "case-transition"].join(", ")}`);
+console.log(smokeTarget === "case34"
+  ? "Browser replay smoke passed: case3-zhou, case3-lin, case4-three-advisors"
+  : `Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-lin-visit", "case-transition"].join(", ")}`);
 
 async function launchBrowser() {
   const chromePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE ?? "";
@@ -216,6 +224,152 @@ async function runRoute(route) {
   }
 }
 
+async function runCase3DayRoutes() {
+  for (const route of [
+    {
+      name: "case3-zhou",
+      choiceId: "chase-flow",
+      backdrop: ".day-document",
+      sceneText: "旧厂房档案室",
+      openerId: "opener-zhou",
+      openerText: "二十八万六只在开证明那天",
+      inventoryText: "当日余额与单月收入对照"
+    },
+    {
+      name: "case3-lin",
+      choiceId: "chase-introducer",
+      backdrop: ".day-matchmaking",
+      sceneText: "打烊后的婚介门店",
+      openerId: "opener-lin",
+      openerText: "介绍人给你家报",
+      inventoryText: "介绍人给两家的两套话"
+    }
+  ]) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    page.setDefaultTimeout(8000);
+    try {
+      await openCaseAtChapter(page, 3, route.name);
+      await advanceNightCaseToInterlude(page);
+      await click(page, "[data-enter-interlude]");
+      await assertVisibleText(page, "第二天下午·只能去一处", "case 3 must present a real one-location trade-off");
+      await click(page, '[data-interlude-action="profile-day-route"]');
+      await assertNoPageText(page, "ON AIR", "case 3 daytime visit must hide the live HUD");
+      if (await page.locator("[data-advisor-conflict]").count() !== 2) throw new Error(`${route.name} should show exactly two daytime destinations`);
+      await click(page, `[data-advisor-conflict="${route.choiceId}"]`);
+      await page.locator(route.backdrop).waitFor({ state: "visible" });
+      await assertVisibleText(page, route.sceneText, `${route.name} should switch to its own location scene`);
+      await click(page, "[data-return-interlude]");
+      await assertVisibleText(page, "剩余 0/1", "case 3 choice must spend the only daytime action");
+      await assertVisibleText(page, route.inventoryText, "case 3 carried material must use a readable label");
+      if (await page.locator('[data-interlude-action="profile-closed-zhang"]:not(:disabled)').count()) throw new Error("case 3 must lock the other daytime actions after choosing one place");
+      await click(page, "[data-callback-ready]");
+      await click(page, `[data-callback-opener="${route.openerId}"]`);
+      await assertVisibleText(page, route.openerText, `${route.name} must change the callback opening`);
+    } catch (error) {
+      console.error(`${route.name} targeted route failed.`);
+      console.error((await page.locator("body").innerText().catch(() => "")).slice(0, 1600));
+      throw error;
+    } finally {
+      await context.close();
+    }
+  }
+}
+
+async function runCase4AdvisorConflict() {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  page.setDefaultTimeout(8000);
+  try {
+    await openCaseAtChapter(page, 4, "case4-three-advisors");
+    await advanceNightCaseToInterlude(page);
+    await click(page, "[data-enter-interlude]");
+    if (await page.locator("[data-interrupt-choice]").count()) {
+      await click(page, "[data-interrupt-choice]");
+      await click(page, "[data-return-interlude]");
+    }
+    await click(page, '[data-interlude-action="zhao-zhou-work"]');
+    await assertNoPageText(page, "ON AIR", "case 4 advisor conflict must happen off air");
+    await assertVisibleText(page, "赵律师站在控制室门口", "case 4 must stage all three advisors in one scene");
+    if (await page.locator("[data-advisor-conflict]").count() !== 3) throw new Error("case 4 must show exactly three advisor frames");
+    await assertVisibleText(page, "先采赵律师的边界", "case 4 must show Zhao's frame");
+    await assertVisibleText(page, "先采周会计的钱路", "case 4 must show Zhou's frame");
+    await assertVisibleText(page, "先采小林老师的身份词", "case 4 must show Lin's frame");
+    await click(page, '[data-advisor-conflict="work-frame-lin"]');
+    await click(page, "[data-return-interlude]");
+    await click(page, '[data-interlude-action="listen-pad"]');
+    await assertNoPageText(page, "ON AIR", "case 4 private-chat playback must stay off air");
+    await click(page, "[data-complete-interlude-action]");
+    await assertVisibleText(page, "小林老师的主责拆词", "case 4 carried material must use a readable label");
+    await click(page, "[data-callback-ready]");
+    await click(page, '[data-callback-opener="opener-lin-frame"]');
+    await assertVisibleText(page, "主责先给你", "case 4 Lin choice must change the callback opening");
+  } catch (error) {
+    console.error("case4-three-advisors targeted route failed.");
+    console.error((await page.locator("body").innerText().catch(() => "")).slice(0, 1600));
+    throw error;
+  } finally {
+    await context.close();
+  }
+}
+
+async function openCaseAtChapter(page, chapter, name) {
+  await page.goto(`${playableUrl}?playtest=browser-smoke-${name}-${Date.now()}&storyKey=steam-demo-01`);
+  await click(page, "[data-start-story]");
+  await page.evaluate((targetChapter) => {
+    const key = "livestream-detective-save-v1";
+    const save = JSON.parse(window.localStorage.getItem(key) ?? "{}");
+    save.chapter = targetChapter;
+    save.caseBrief = save.caseBriefs?.[targetChapter - 1] ?? null;
+    save.screen = "chapter";
+    save.scene = "caseOpen";
+    save.lastReaction = null;
+    save.recapStep = 0;
+    window.localStorage.setItem(key, JSON.stringify(save));
+  }, chapter);
+  await page.reload();
+  await click(page, '[data-scene="sceneReview"]');
+}
+
+async function advanceNightCaseToInterlude(page) {
+  for (let beat = 0; beat < 48; beat += 1) {
+    if (await page.locator("[data-enter-interlude]").count()) return;
+    if (await page.locator("[data-evidence-check]").count()) {
+      await click(page, "[data-evidence-check]");
+      continue;
+    }
+    if (await page.locator("[data-after-scene-evidence]").count()) {
+      await click(page, "[data-after-scene-evidence]");
+      continue;
+    }
+    if (await page.locator("[data-stance-snapshot]").count()) {
+      await click(page, "[data-stance-snapshot]");
+      await click(page, "[data-after-stance-snapshot]");
+      continue;
+    }
+    if (await page.locator("[data-open-question-menu]").count()) {
+      await click(page, "[data-open-question-menu]");
+      continue;
+    }
+    if (await page.locator("[data-return-question-menu]").count()) {
+      await click(page, "[data-return-question-menu]");
+      continue;
+    }
+    if (await page.locator("[data-next-scene-stage]").count()) {
+      await click(page, "[data-next-scene-stage]");
+      continue;
+    }
+    if (!await page.locator("[data-scene-question]").count() && await page.locator("button[data-scene]").count()) {
+      await click(page, "button[data-scene]");
+      continue;
+    }
+    await page.locator("[data-scene-question]").first().waitFor({ state: "visible" });
+    await click(page, "[data-scene-question]");
+    await click(page, "[data-next-scene-stage], button[data-scene]");
+  }
+  throw new Error("targeted case did not reach interlude");
+}
+
 async function runCase2LinVisit() {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -375,7 +529,7 @@ async function runCaseTransition() {
     const titleAnimations = await page.evaluate(() => document.getAnimations()
       .filter((animation) => animation.playState === "running")
       .map((animation) => animation.animationName)
-      .filter(Boolean));
+      .filter((name) => Boolean(name) && name !== "focusCurrent"));
     if (titleAnimations.length) {
       throw new Error(`second case title should stay still, found animations: ${titleAnimations.join(", ")}`);
     }
@@ -559,6 +713,7 @@ async function collectLiveVisualState(page, visualStates, portraitStates) {
 async function keyboardActivate(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
+  await page.waitForTimeout(120);
   await target.focus();
   await page.keyboard.press("Enter");
 }
@@ -566,6 +721,7 @@ async function keyboardActivate(page, selector, index = 0) {
 async function gamepadActivate(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
+  await page.waitForTimeout(120);
   await target.focus();
   await gamepadPress(page, 0);
 }

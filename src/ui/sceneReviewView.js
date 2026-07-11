@@ -54,18 +54,16 @@ export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {})
   ].join("");
 }
 
-export function scenePromptExchangeHtml({ scene = {}, askedCount = 0 } = {}) {
+export function scenePromptExchangeHtml({ scene = {} } = {}) {
   return [
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
-    sceneEvidenceCardHtml(scene.shownCard),
-    askedCount ? `<p class="asked-question-summary">本段已问 ${Number(askedCount)} 句。需要时可回到提问选单查看。</p>` : ""
+    sceneEvidenceCardHtml(scene.shownCard)
   ].join("");
 }
 
-export function sceneQuestionAnswerHtml({ question = "", answer = "", kind = "dialogue" } = {}) {
+export function sceneQuestionAnswerHtml({ question = "", answer = "" } = {}) {
   return `
-    <section class="question-answer-card question-answer-${escapeHtml(kind)}">
-      <span>${kind === "key" ? "关键追问" : "这一句"}</span>
+    <section class="question-answer-card">
       <div class="call-dialogue">
         ${callLineHtml({ role: "host", text: question })}
         ${callLineHtml({ role: "caller", text: answer })}
