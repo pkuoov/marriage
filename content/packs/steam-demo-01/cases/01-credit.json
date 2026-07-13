@@ -48,7 +48,7 @@
     ],
     "process-control": [
       "订座号也有名字",
-      "开箱那晚不只是礼物"
+      "开箱那晚，灯和稳定器在她家"
     ]
   },
   "delegation": {
@@ -81,30 +81,30 @@
     "kicker": "中段立场快照",
     "prompt": "现在这通麦，你先站哪边？",
     "note": "不判分。只记下你此刻更信哪条说法。",
-    "afterPickLine": "下一段只核两件事：这八万从什么时候开始欠，她实际替他垫了多少。",
+    "afterPickLine": "下一段对日期和金额。八万从哪天开始，她又拿过什么，分开看。",
     "continueLabel": "继续听",
     "recapKicker": "中段立场",
     "options": [
       {
         "id": "caller-benefited",
         "label": "她占的便宜不小",
-        "summary": "会员订座、朋友圈和设备都在她这边，她不只是被动消费。",
-        "feedback": "这个判断抓住了她的受益位置，但八万里仍有一大块没有名字。",
-        "recap": "你中段先看见她也吃了体面红利。后来流水证明，这条成立，但八万的大头不是她吃出来的。"
+        "summary": "订座在她会员号上，朋友圈是她发的，设备也送进了她家。",
+        "feedback": "设备在她家，八万里还有五万多对不上。两笔先分开记。",
+        "recap": "订座、发圈和设备把她的受益摆上桌；后面的流水又把八万里那笔旧洞单独拎了出来。"
       },
       {
         "id": "respondent-shifted-debt",
         "label": "他在转嫁债务",
         "summary": "失业、断缴、催最低还款都在同一条钱路上。",
-        "feedback": "这个判断抓住了钱路，但还要把她参与过的体面成本也留在账上。",
-        "recap": "你中段先看见他在转嫁债务。后面材料继续支持这点，同时把她的体面参与也补上。"
+        "feedback": "断缴和催转都压在他这边；她拿过设备这件事也没消失。",
+        "recap": "断缴、催转和五万去向把债务压回他那边；订座与设备又补上她参与过的那一份。"
       },
       {
         "id": "both-performed",
         "label": "双方一起撑体面",
         "summary": "他刷卡，她订座发圈，关系里的好看样子是两个人一起养出来的。",
-        "feedback": "这个判断留住了灰区，但共同撑体面，不等于共同承担所有旧账。",
-        "recap": "你中段已经看见体面是共同撑出来的。后来流水把旧洞单独拎出来，没让她替旧账背锅。"
+        "feedback": "体面是一起撑的，交往前的旧账不是。",
+        "recap": "订座、发圈和设备由两个人一起撑起；往期流水又把交往前的旧洞分了出去。"
       }
     ]
   },
@@ -203,10 +203,12 @@
       "id": "credit-layoff-gap",
       "clueRole": "setup",
       "falseFrame": "奖金晚发只是短暂周转。",
-      "payoffFor": ["credit-eight-wan-bill"],
+      "payoffFor": [
+        "credit-eight-wan-bill"
+      ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "他说奖金晚发，让我先挡几天。后来他发办材料截图，我才看见社保停了两个月。他每天还说加班，我当时没接上这件事。",
+      "version": "他一开始说“奖金晚发，帮我挡几天”。我真以为就是手头紧。后来他把办材料的截图丢给我，我才看见社保已经停了两个月。那一刻我不是生气，是懵：他每天还跟我说加班。",
       "doubt": "说是奖金晚发，可社保已经断缴两个月。",
       "contradiction": "TA 一边说奖金延迟，一边在失业后继续刷体面消费，说明资金缺口不是临时才出现。",
       "reliability": "mixed",
@@ -225,7 +227,7 @@
         {
           "question": "他开口借钱之前，有没有跟你说过工作最近不稳定？",
           "answer": "没有。他之前一直说最近忙、加班多。要不是那张截图，我还以为他每天真在公司耗着。",
-          "guardedAnswer": "他一直说忙。我没再追。",
+          "guardedAnswer": "他说忙，我就没再问。那阵子我真不想当查岗的人。",
           "contradiction": "社保断缴早于借钱，失业不是突然发生。",
           "correct": true,
           "routeAxis": "money-flow",
@@ -266,10 +268,13 @@
       "id": "credit-eight-wan-bill",
       "clueRole": "misdirect",
       "falseFrame": "八万主要是两人维持体面的消费。",
-      "payoffFor": ["credit-anniversary-agency","credit-five-wan-gap"],
+      "payoffFor": [
+        "credit-anniversary-agency",
+        "credit-five-wan-gap"
+      ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "账单翻出来是八万出头。餐厅、礼物、酒店和一笔短视频分期都在上面。钱具体怎么凑成八万，我没算过。",
+      "version": "我把那张信用卡账单翻出来才知道，不是小几千，是 8 万出头。大头是餐厅、礼物和两次酒店，都是他安排的那种店。往下还有一笔一万二的分期，写着什么短视频平台，我没细看，反正也是他手机上弄的。",
       "doubt": "金额、用途和时间都比“挡几天”重得多。",
       "contradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事；短视频分期的受益人还没说清。",
       "reliability": "partial",
@@ -334,29 +339,31 @@
       "id": "credit-anniversary-agency",
       "clueRole": "reversal",
       "falseFrame": "纪念日完全由对方单方面安排。",
-      "payoffFor": ["credit-device-benefit"],
+      "payoffFor": [
+        "credit-device-benefit"
+      ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "纪念日的店是我订的，窗边位也是我备注的。他点酒，我发朋友圈。闺蜜在下面起哄，后来把评论删了。",
-      "doubt": "纪念日晚餐不是他一个人安排出来的体面。",
-      "contradiction": "纪念日晚餐由咨询者订座、参与点酒并发布朋友圈，体面现场不是单方制造。",
+      "version": "纪念日那晚，他提前两周说订好了靠窗位，还把酒单推给我，说“都纪念日了，总不能太寒酸”。我那时只顾着看窗外，没问那张卡还剩多少额度。照片发出去以后，朋友都在夸，说他真舍得。",
+      "doubt": "纪念日晚餐看起来全由他安排，订座和发图的人却还没说清。",
+      "contradiction": "咨询者只肯确认酒是对方点的，回避订座与发图的主语。",
       "reliability": "mixed",
       "showsCard": "daily-credit-anniversary",
       "casualQuestions": [
         {
-          "question": "会员号是谁的？",
-          "answer": "我的。那家店我早就收藏了，会员也是我之前办的。"
+          "question": "那家店你以前去过吗？",
+          "answer": "去过两次。靠窗那排总要等，我知道。那晚坐下以后，我还跟他说这位置挺难订。"
         },
         {
-          "question": "朋友圈发了多久？",
-          "answer": "到今天还在。只是那条起哄评论没了，我昨天才发现她删了。"
+          "question": "照片发出去以后，朋友怎么说？",
+          "answer": "都在夸，说那顿饭看着很有心。我那时看得挺高兴，没去想是谁在替谁撑。"
         }
       ],
       "questionOptions": [
         {
           "question": "那晚谁订座、谁点酒、谁发圈？",
-          "answer": "我订座，他点酒，我发圈。说出来很难听，但那顿饭不是他硬把我拖去撑面子，是我也想要那种被安排得很好看的纪念日。",
-          "guardedAnswer": "订座是我，别的我记不清了。那晚我没想把账算那么细。",
+          "answer": "我先说酒，酒是他点的。订座记录和朋友圈，我……我想等账单翻完再说。那晚我没觉得自己也在做什么，只觉得被安排得很周到。",
+          "guardedAnswer": "酒是他点的。别的我不想现在拆。那晚已经够难看了。",
           "contradiction": "咨询者参与制造纪念日晚餐的体面场面。",
           "correct": true,
           "routeAxis": "caller-credibility",
@@ -370,8 +377,8 @@
           "routeTone": "trust-but-verify"
         },
         {
-          "question": "闺蜜那条评论为什么删？",
-          "answer": "她说怕我尴尬。可我知道，她当时确实跟着夸过，说我终于找了个体面的人。",
+          "question": "朋友当时都站你这边吗？",
+          "answer": "站。她们看见照片，都说我这次没看错人。我也爱听，手机亮一次就看一次。",
           "correct": false,
           "routeAxis": "outer-thread",
           "routeTone": "softening"
@@ -390,17 +397,19 @@
       "id": "credit-device-benefit",
       "clueRole": "missing-edge",
       "falseFrame": "设备分期和咨询者无关。",
-      "payoffFor": ["credit-five-wan-gap"],
+      "payoffFor": [
+        "credit-five-wan-gap"
+      ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "设备快递送到我家。我架灯，他调稳定器，第一条视频拍到很晚。他说“我来投资你”，我当时听着很受用。",
-      "doubt": "一万二分期不是她完全没碰过的账。",
-      "contradiction": "设备开箱和首拍夜发生在咨询者屋里，她实际使用并发布过开箱内容。",
+      "version": "那笔一万二，他后来一直叫“投资”。他说“账号做起来，你就不用看别人脸色”。我以前随口提过想做探店号，听见这句，第一反应不是问分期，是觉得他真把我的事当事。现在回头看，我最不敢碰的就是这句。",
+      "doubt": "她听懂了“投资你”的好处，却还没有说明设备最后去了哪里。",
+      "contradiction": "咨询者承认自己想做探店号，却继续回避设备的去向与使用者。",
       "reliability": "mixed",
       "casualQuestions": [
         {
-          "question": "第一条视频拍的是什么？",
-          "answer": "一家甜品店。我说灯太亮，他蹲在地上调了很久。"
+          "question": "你以前真想过做探店号？",
+          "answer": "想过，断断续续念了几个月。真要拍，我又总说没设备。"
         },
         {
           "question": "那句“投资你”，你当时怎么听？",
@@ -410,8 +419,8 @@
       "questionOptions": [
         {
           "question": "开箱和首拍那晚，设备到底怎么用起来的？",
-          "answer": "快递在我家拆的，灯是我架的，稳定器他调的。首拍那晚我也很兴奋。我要说自己完全不知道那笔钱用在哪儿，站不住。",
-          "guardedAnswer": "设备在我家拆的。怎么分期、怎么拍，我没细问。",
+          "answer": "这件事我想留到第二晚说。现在只说那一万二，分期不是我签的。……可你问到这儿，我也没法再说自己完全不知情。",
+          "guardedAnswer": "分期不是我签的。设备那边，我现在不想说。",
           "contradiction": "短视频分期的设备和推广实际服务过咨询者账号。",
           "correct": true,
           "routeAxis": "document-edge",
@@ -419,14 +428,14 @@
         },
         {
           "question": "这套设备能不能抵掉那一万二？",
-          "answer": "抵不掉。我没签过分期，也没答应替他还。但我确实收了东西，不能再说自己没看见。",
+          "answer": "抵不掉。就算最后有东西进了我这边，谁签的分期、谁答应还，还是两回事。别让我现在把后半句也说了。",
           "correct": false,
           "routeAxis": "money-flow",
           "routeTone": "trust-but-verify"
         },
         {
           "question": "你为什么先说是他手机上弄的？",
-          "answer": "因为这句话听起来离我远一点。账单一摊开，我下意识想把自己从那笔分期里摘出去。",
+          "answer": "因为分期确实是他手机上开的。至于我为什么只说到这儿……等流水翻完，我会补。现在我说不顺。",
           "contradiction": "咨询者把收了设备的分期说成“没细看”。",
           "correct": true,
           "routeAxis": "caller-credibility",
@@ -446,10 +455,12 @@
       "id": "credit-five-wan-gap",
       "clueRole": "reversal",
       "falseFrame": "可见消费足以解释八万。",
-      "payoffFor": ["credit-bank-flow"],
+      "payoffFor": [
+        "credit-bank-flow"
+      ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "我问剩下五万多花在哪。他只说不是乱来的钱，又催我今晚先转。账单还有三天才到期。",
+      "version": "我后来把账单又对了一遍，日期和数字都对了。断缴以后的吃住玩，加上那笔分期，不到三万。可他让我垫的是八万，剩下那五万多，他从来没提过。还有，他第一次说周转那天，账单其实还有三天才到期，他先催我“今晚就要”，后面又改成“这几天都行”。后来我把往期的账单也翻出来了，越翻越冷。那几页我带来了。……主播，这个数我得想一晚上。明晚这个点，我再打进来——你等我。流水我发你们后台了。白天……你们自己看吧。我不想在麦上一行一行念它。",
       "doubt": "数字对不上：可见的消费加分期不到三万，缺口是八万。",
       "contradiction": "TA 无法解释八万缺口的大头，并用催款堵住追问。",
       "reliability": "partial",
@@ -503,37 +514,39 @@
     {
       "id": "credit-bank-flow",
       "clueRole": "missing-edge",
-      "falseFrame": "固定转账只是已结清的人情。",
-      "payoffFor": ["credit-loyalty-test"],
+      "falseFrame": "分期由对方操作，所以设备收益也与咨询者无关。",
+      "payoffFor": [
+        "credit-loyalty-test"
+      ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "流水我昨晚才抄完：工资四月后停了，五月六月八号各有一笔私人转账，七月空着。五万信贷进来三天后转出四万九千八，尾号3301。",
-      "doubt": "工资停了以后，两笔固定私人转账短暂顶上；它们一停，五万信贷随即出现并近额转走。",
-      "contradiction": "TA 把持续数月的资金缺口说成奖金晚发，却不肯解释固定转账人与尾号 3301。",
-      "reliability": "partial",
+      "version": "第二晚再开麦，我先把自己那一笔补上。灯和稳定器一直在我屋里。第一条探店视频拍到凌晨一点，他蹲在地上调了很久，还说“我来投资你”。我当时挺高兴，第二天真发了开箱视频。现在那盏灯还没收，靠着墙。",
+      "doubt": "咨询者终于承认设备与探店账号由自己受益。",
+      "contradiction": "咨询者把实际使用过的设备分期说成“他手机上弄的”，借操作主语洗掉了受益主语。",
+      "reliability": "mixed",
       "casualQuestions": [
         {
-          "question": "你确定 3301 不是自己的卡？",
-          "answer": "确定。我的卡他转过钱，不是这个尾号。我没见过 3301。"
+          "question": "探店号你做起来了吗？",
+          "answer": "发了十几条。最高一条八百多赞。他每条都转。"
         },
         {
-          "question": "会不会只是他把贷款转去还别的平台？",
-          "answer": "可能。我没有另一边的账。也可能是家里，也可能是别的债。今晚我只能说，不是转给我。"
+          "question": "那套设备现在还用吗？",
+          "answer": "灯上个月还开过。现在拍不动了，一开灯就想起这事。"
         }
       ],
       "questionOptions": [
         {
-          "question": "8 号那两笔，你问过是谁转的吗？",
-          "answer": "问过。他只说“以前的账，跟你没关系”。我问是谁，他就不往下说了。",
-          "guardedAnswer": "问过，他说是以前的人情。我没再追名字。",
-          "contradiction": "固定私人转账被解释成模糊的旧账，却拒绝给出可核对的来源。",
+          "question": "那套设备为什么开场只说“他手机上弄的”？",
+          "answer": "……我怕说了，直播间就不站我了。他瞒失业是真的，让我垫八万也是真的，我不想这两件事被一笔分期搅浑。可快递在我家拆，我架灯，他调稳定器；我要说完全不知道那笔钱用在哪，站不住。",
+          "guardedAnswer": "设备在我屋里。开场没说，是我不想先讲。",
+          "contradiction": "咨询者用分期操作人遮住了实际受益人。",
           "correct": true,
           "routeAxis": "money-flow",
           "routeTone": "pressure-point"
         },
         {
-          "question": "3301，你为什么敢确定不是自己的卡？",
-          "answer": "因为他给我转过钱，我的尾号不是这个。可我也不能因为不是我的，就把它猜成另一个女人。",
+          "question": "你收了设备，就该替他还这一万二吗？",
+          "answer": "不该。我没签分期，也没答应替他还。可东西确实进了我屋里，这一笔不能再装成跟我没关系。",
           "correct": false,
           "routeAxis": "document-edge",
           "routeTone": "trust-but-verify"
@@ -541,24 +554,24 @@
       ],
       "dialogueOptions": [
         {
-          "question": "你昨晚有想过直接拿 3301 问他吗？",
-          "answer": "想过。可只扔一个尾号过去，他随便给个名字，我还是没东西核对。",
-          "routeAxis": "money-flow",
+          "question": "那套东西现在还用吗？",
+          "answer": "灯上个月还开过。现在拍不动了，一开灯就想起这事。",
+          "routeAxis": "caller-credibility",
           "routeTone": "detour"
         },
         {
-          "question": "你为什么非要把流水抄一遍？",
-          "answer": "手机上每一行都一样小。写到纸上以后，我才看见不是一笔突然欠出来的钱，是一段一段接不上。",
-          "routeAxis": "document-edge",
+          "question": "他说投资你的时候，你怎么回的？",
+          "answer": "我没拦。还挺高兴的。现在说这个很难听，但当时我真的觉得他是在支持我。",
+          "routeAxis": "money-flow",
           "routeTone": "softening"
         }
       ],
       "pressureHint": {
-        "intentHook": "钱路到 3301 断了",
+        "intentHook": "设备的受益人终于说出来",
         "callerGuard": "guarded",
         "expression": {
           "kind": "pause",
-          "text": "念到尾号时压低了声音"
+          "text": "说到那盏灯时看了眼墙边"
         }
       }
     },
@@ -566,10 +579,12 @@
       "id": "credit-loyalty-test",
       "clueRole": "payoff",
       "falseFrame": "害怕被离开只是情绪表达，与催转账无关。",
-      "payoffFor": ["credit-layoff-gap"],
+      "payoffFor": [
+        "credit-layoff-gap"
+      ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "他发来一句“我只是怕你知道我失业后就离开我”，接着发最低还款。他还说“以后他可能就不敢跟我谈结婚了”。我也怕别人觉得我找了个撑不住场面的人，自己其实很吃那种体面。",
+      "version": "他后来发来一句：“我只是怕你知道我失业后就离开我。”说完，紧接着把最低还款金额发了过来。他还提过：“以后他可能就不敢跟我谈结婚了。”到第二晚我也不想再藏：纪念日的店是我用会员号订的，照片是我发的。我也怕别人觉得我找了个撑不住场面的人，也怕承认自己其实很吃那种体面。",
       "doubt": "借钱这件事开始被说成尊严和结婚态度。",
       "contradiction": "TA 把个人债务转成关系忠诚测试，咨询者也不愿承认自己被体面吸引。",
       "reliability": "partial",
@@ -591,7 +606,7 @@
         {
           "question": "他说怕你离开，那最低还款为什么要你先转？",
           "answer": "我当时确实被那句“怕你离开”弄心软了。可他下一句就把最低还款金额发过来，我脑子有点空。前半句像求我别走，后半句就是让我先掏钱。",
-          "guardedAnswer": "他说怕我走。别的，他没在电话里多讲。",
+          "guardedAnswer": "他说怕我走。后面跟着什么，我现在不想再念了；我一念，就像又在替那句话找理由。",
           "contradiction": "情绪脆弱不能自动变成别人替他还款。",
           "correct": true,
           "routeAxis": "caller-credibility",
@@ -666,7 +681,10 @@
   "evidenceChecks": [
     {
       "id": "credit-after-layoff-spend",
-      "revalues": ["credit-layoff-gap","credit-eight-wan-bill"],
+      "revalues": [
+        "credit-layoff-gap",
+        "credit-eight-wan-bill"
+      ],
       "title": "账单检视",
       "prompt": "这张信用卡账单里，哪一块最该先圈出来？",
       "material": "社保断缴后，同一张卡上继续出现纪念日晚餐、礼物分期、两次酒店，还有一笔 1.2 万的短视频平台分期。",
@@ -691,14 +709,14 @@
         {
           "label": "最低还款金额本身很高",
           "correct": false,
-          "feedback": "金额高当然可疑，但这张账单更要先看：钱是在失业后怎么继续刷出来的。",
+          "feedback": "最低还款一万多，谁看都得发慌。可它只报这一期要还多少，没交代这八万是怎么滚出来的。",
           "reactionLine": "金额我也吓到过。可你这么问，他还是那句“先帮我挡一下”。",
           "routeAxis": "money-flow"
         },
         {
           "label": "那笔 1.2 万的短视频平台分期",
           "correct": false,
-          "feedback": "这笔今晚已经有主了，它说明她也在这份体面里。可压垮“挡几天”的，还是断缴后照刷的吃住玩。",
+          "feedback": "这一笔和她有关。圈它能把她从“完全不知情”里拉出来，八万其余部分还得另算。",
           "reactionLine": "那笔……刚才都说开了。您别盯着它了，我怕弹幕又拐回我身上。",
           "routeAxis": "document-edge"
         },
@@ -713,7 +731,10 @@
     },
     {
       "id": "credit-anniversary-footprint",
-      "revalues": ["credit-eight-wan-bill","credit-anniversary-agency"],
+      "revalues": [
+        "credit-eight-wan-bill",
+        "credit-anniversary-agency"
+      ],
       "title": "纪念日痕迹检视",
       "prompt": "纪念日晚餐这组痕迹里，哪一处最该圈出来？",
       "material": "会员订座记录显示订座账号是咨询者；酒水小票在账单里；朋友圈照片由咨询者发布，闺蜜的起哄评论已删除。",
@@ -736,14 +757,14 @@
         {
           "label": "酒水是他主动点的",
           "correct": false,
-          "feedback": "这说明他在刷体面，但这组材料更要看：谁把这份体面摆到外面给人看。",
+          "feedback": "餐厅和酒店都刷在他卡上。单凭消费地点，还分不出谁在经营这顿饭的样子。",
           "reactionLine": "酒是他点的，我没拦。那晚我也想让它好看一点。",
           "routeAxis": "money-flow"
         },
         {
           "label": "闺蜜评论删了",
           "correct": false,
-          "feedback": "删评论是后续态度，核心痕迹还是订座和发圈。",
+          "feedback": "删评发生在事后。那晚的订座记录和朋友圈还留着。",
           "reactionLine": "她删掉我也懂。谁都不想显得自己当初眼光很响。",
           "routeAxis": "outer-thread"
         }
@@ -751,7 +772,10 @@
     },
     {
       "id": "credit-history-pages",
-      "revalues": ["credit-five-wan-gap","credit-bank-flow"],
+      "revalues": [
+        "credit-five-wan-gap",
+        "credit-bank-flow"
+      ],
       "title": "往期账单检视",
       "prompt": "往前翻的这几页里，最该圈哪一处？",
       "material": "后台流水索引: case1-bank-flow r04/r06/r09。",
@@ -766,7 +790,7 @@
           "label": "每月 8 日的固定入账，三个月前中断",
           "correct": true,
           "contradiction": "他的账户以前每月 8 日都有一笔固定入账。那笔钱中断三个月后，他才开口让咨询者垫。",
-          "feedback": "这条不说钱是谁的，只说明原来有稳定进账，后来断了。",
+          "feedback": "两笔都在 8 号进来，七月断了。付款人是谁，流水没写。",
           "reactionLine": "……每月 8 日那笔入账，我也看到了。我不敢猜是谁转的。",
           "routeAxis": "money-flow"
         },
@@ -817,7 +841,7 @@
           "label": "删掉的起哄评论和探店设备",
           "correct": true,
           "contradiction": "闺蜜当初起哄“他真大方”，后来删评撇清，体面人设有过观众。",
-          "feedback": "这条不替他还账。它只证明，当初围观体面的人现在也想把自己摘干净。",
+          "feedback": "朋友圈那晚有人跟着起哄，第二天又删了。她不是这八万的还款人，最多算这份人设的观众。",
           "routeAxis": "external-corroboration"
         },
         {
@@ -963,6 +987,7 @@
     "hostHoldLine": "热线每晚都开。我们等你。",
     "dayIntro": "第二天，下午。节目不在线，弹幕不在，城市在。你有一个下午，够去两个地方。",
     "dayBudget": 2,
+    "minDayScenes": 2,
     "dayScenes": [
       {
         "id": "day-accounting",
@@ -975,10 +1000,10 @@
           "earnedItemId": "周会计的时间线",
           "timelineSort": {
             "cards": [
-              "社保断缴",
+              "他开口借八万",
               "分期开通",
-              "每月 8 日的固定入账中断",
-              "他开口借八万"
+              "社保断缴",
+              "每月 8 日的固定入账中断"
             ],
             "correctOrder": [
               "社保断缴",
