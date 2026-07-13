@@ -45,8 +45,9 @@ export function dialoguePagesFrom(root) {
 
 export function mountDialoguePresentation(root, options = {}) {
   const card = root?.querySelector?.(".dialogue-card");
-  const source = card?.querySelector?.(".call-dialogue");
-  const pages = dialoguePagesFrom(card);
+  const source = Array.from(card?.querySelectorAll?.(".call-dialogue") ?? [])
+    .find((candidate) => !candidate.closest("details:not([open])"));
+  const pages = dialoguePagesFrom(source);
   if (!card || !source || !pages.length) return null;
   source.hidden = true;
   card.classList.add("avg-dialogue-active");

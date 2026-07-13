@@ -179,6 +179,7 @@ async function runRoute(route) {
         const dialogueButtons = page.locator("[data-scene-dialogue]");
         if (await dialogueButtons.count() > 0) {
           await activate(page, route, "[data-scene-dialogue]", 0);
+          await drainDialogue(page, route);
           await page.locator("[data-return-question-menu]").waitFor({ state: "visible" });
           await activate(page, route, "[data-return-question-menu]");
           await page.locator(".scene-question-group").waitFor({ state: "visible" });
@@ -450,7 +451,7 @@ async function runCase2LinVisit() {
     await assertVisibleText(page, "我去了小林的门店", "the chosen Lin question must change the callback opener");
     await assertVisibleText(page, "他没回答是谁加的", "the caller must answer the carried question without closing motive");
     await click(page, "[data-enter-segment2]");
-    await assertVisibleText(page, "他最后回我的原话是", "case 2 second night should continue from the daytime investigation");
+    await assertVisibleText(page, "我拿表问他", "case 2 second night should continue from the daytime investigation");
   } catch (error) {
     const body = await page.locator("body").innerText().catch(() => "");
     console.error("case2-lin-visit route failed.");
@@ -472,8 +473,8 @@ async function completeOvernightDay(page, route) {
     await assertNoPageText(page, "听众耐心", `${sceneId} must hide patience HUD`);
     if (sceneId === "day-accounting") {
       await assertVisibleText(page, "旧厂房改的档案室", "accounting day scene should render");
-      for (let index = 0; index < 4; index += 1) {
-        await activate(page, route, "[data-day-timeline-card]", index);
+      for (const card of ["社保断缴", "分期开通", "每月 8 日的固定入账中断", "他开口借八万"]) {
+        await activate(page, route, `[data-day-timeline-card="${card}"]`);
       }
       await activate(page, route, "[data-submit-day-timeline]");
       await assertVisibleText(page, "人是谁我不猜，路径先留着。", "timeline sort should preserve the unknown account owner");
@@ -534,6 +535,7 @@ async function runCaseTransition() {
       throw new Error(`second case title should stay still, found animations: ${titleAnimations.join(", ")}`);
     }
     await click(page, "[data-enter-case-live]");
+    await drainDialogue(page, {});
     await page.locator('[data-scene="sceneReview"]').waitFor({ state: "visible" });
   } finally {
     await context.close();
@@ -676,7 +678,7 @@ async function drainDialogue(page, route) {
     if (!await box.count()) return;
     if (route.inputMode === "keyboard") await page.keyboard.press("Enter");
     else if (route.inputMode === "gamepad") await gamepadPress(page, 0);
-    else await box.click();
+    else await box.evaluate((element) => element.click());
     await page.waitForTimeout(20);
   }
   throw new Error("per-line dialogue did not finish within 80 advances");
@@ -696,7 +698,8 @@ async function assertDialoguePresentation(page) {
 }
 
 async function click(page, selector, index = 0) {
-  const target = page.locator(selector).nth(index);
+  await drainDialogue(page, {});
+  const target = page.locator(`${selector}:visible`).nth(index);
   await target.waitFor({ state: "visible" });
   await target.evaluate((element) => element.click());
 }
@@ -729,19 +732,20 @@ async function gamepadActivate(page, selector, index = 0) {
 async function connectGamepad(page) {
   await page.evaluate(() => {
     window.__smokeGamepad.connected = true;
+    window.dispatchEvent(new Event("gamepadconnected"));
   });
-  await page.waitForTimeout(180);
+  await page.waitForTimeout(500);
 }
 
 async function gamepadPress(page, buttonIndex) {
   await page.evaluate((index) => {
     window.__smokeGamepad.buttons[index].pressed = true;
   }, buttonIndex);
-  await page.waitForTimeout(180);
+  await page.waitForTimeout(500);
   await page.evaluate((index) => {
     window.__smokeGamepad.buttons[index].pressed = false;
   }, buttonIndex);
-  await page.waitForTimeout(180);
+  await page.waitForTimeout(250);
 }
 
 async function moveFocusTo(page, selector, index = 0, moveNext, label) {

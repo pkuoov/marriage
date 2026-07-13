@@ -13,7 +13,7 @@ import { livePressureProfile, materialPressureReaction, materialPressureSignal, 
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.77";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
-import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.0";
+import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
@@ -2312,12 +2312,12 @@ function firstActiveGamepad() {
 
 function handleGamepadInput(gamepad) {
   handleGamepadButton(gamepad, 0, () => {
+    const dialogue = currentDialogueAdvance();
+    if (dialogue) return dialogue.click();
     const focusedButton = document.activeElement?.matches?.("button:not(:disabled)") && isVisibleElement(document.activeElement)
       ? document.activeElement
       : null;
     if (focusedButton) return activateButton(focusedButton);
-    const dialogue = currentDialogueAdvance();
-    if (dialogue) return dialogue.click();
     activateButton(preferredDefaultButton());
   });
   handleGamepadButton(gamepad, 1, () => activateButton(preferredBackButton()));

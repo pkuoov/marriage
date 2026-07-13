@@ -427,7 +427,8 @@ function assertOvernightStructure(packet = {}, label = "") {
     if (scene.body?.timelineSort !== undefined) {
       const timeline = scene.body.timelineSort;
       assertArrayMin(timeline.cards, 2, `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.cards 至少两张`);
-      assertDeepEqual(timeline.correctOrder, timeline.cards, `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.correctOrder 必须与 cards 同序`);
+      assertDeepEqual([...timeline.correctOrder].sort(), [...timeline.cards].sort(), `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.correctOrder 必须与 cards 使用同一组卡片`);
+      assert(JSON.stringify(timeline.correctOrder) !== JSON.stringify(timeline.cards), `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.cards 不能按正确顺序预排`);
       assertNonEmptyString(timeline.payoffLine, `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.payoffLine 不能为空`);
       assertNonEmptyString(timeline.missLine, `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.missLine 不能为空`);
     }
