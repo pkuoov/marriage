@@ -546,7 +546,7 @@ export const CONTENT_CASES = {
           "questionOptions": [
             {
               "question": "开箱和首拍那晚，设备到底怎么用起来的？",
-              "answer": "这件事我想留到第二晚说。现在只说那一万二，分期不是我签的。……可你问到这儿，我也没法再说自己完全不知情。",
+              "answer": "这件事我今晚说不动，先让我把账说完。现在只说那一万二，分期不是我签的。……可你问到这儿，我也没法再说自己完全不知情。",
               "guardedAnswer": "分期不是我签的。设备那边，我现在不想说。",
               "contradiction": "短视频分期的设备和推广实际服务过咨询者账号。",
               "correct": true,
@@ -609,7 +609,7 @@ export const CONTENT_CASES = {
             },
             {
               "question": "这些账单上的日子，你们当时在一起吗？",
-              "answer": "近几个月的对得上，都是我们俩的。再往前的……我没敢一个人看完。那几页带来了，你们看吧。",
+              "answer": "近几个月的对得上，都是我们俩的。再往前的……我没敢一个人看完。",
               "correct": false,
               "routeAxis": "document-edge",
               "routeTone": "trust-but-verify"
@@ -672,7 +672,7 @@ export const CONTENT_CASES = {
               "routeTone": "pressure-point"
             },
             {
-              "question": "你收了设备，就该替他还这一万二吗？",
+              "question": "设备进了你家，这一万二算谁的？",
               "answer": "不该。我没签分期，也没答应替他还。可东西确实进了我屋里，这一笔不能再装成跟我没关系。",
               "correct": false,
               "routeAxis": "document-edge",
@@ -2815,7 +2815,7 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "lin",
           "speaker": "咨询者",
-          "version": "后来介绍人把两边的聊天都发来了。给我家是“学校好、收入稳、家里省心”；给他家是“女生稳定、家里不折腾、对学历不太计较”。两边的短处都被她说轻了，听着就像特别合适。她没替谁作证，每句话都只往能成了说。",
+          "version": "后来我妈把话埋怨到介绍人头上。她怕两头不是人，把两边的聊天都甩了出来：\"话我可都没说假。\"给我家是“学校好、收入稳、家里省心”；给他家是“女生稳定、家里不折腾、对学历不太计较”。两边的短处都被她说轻了，听着就像特别合适。她没替谁作证，每句话都只往能成了说。",
           "doubt": "介绍人不是单纯夸男方，她在两边都把短处说轻。",
           "contradiction": "介绍人对两边都抬高好处、压低短处，条件版本被介绍链共同加工。",
           "reliability": "partial",
