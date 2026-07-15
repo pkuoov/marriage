@@ -12,14 +12,14 @@
   "runtimeLengthPlan": {
     "liveBeatCount": 7,
     "materialBoardCount": 3,
-    "backflowCount": 3,
+    "backflowCount": 2,
     "truthBoundaryPromptCount": 6,
     "caseSpecificPressure": "资料图、饭局冷场和介绍链双面原话一起把“婚骗”误判翻成婚恋市场共谋图景。",
     "whatPlayerDoesBesidesRead": [
       "先问两句",
       "定向追问",
       "中段挂断进幕间",
-      "幕间送鉴定 / 顾问冲突 / 提前看家里群",
+      "幕间短呼 / 回听冷场 / 提前看家里群",
       "回拨开场与立场",
       "圈学历与收入材料",
       "归位事实边界",
@@ -885,40 +885,6 @@
           "routeAxis": "identity-wording"
         }
       ]
-    },
-    {
-      "id": "profile-cousin-family-note",
-      "source": "cousin-note",
-      "surface": "男方亲戚补了一句",
-      "title": "表姐的资料说明",
-      "triggerContradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
-      "appearsNowBecause": "收麦后，男方表姐发来一段话，只愿意解释资料怎么整理。",
-      "prompt": "表姐这段话里，哪一句能用、哪一句不能越界？",
-      "material": "表姐说：“资料是我们家一起帮他整理的，学校、工作、存款证明都挑好说的先放。收入构成我不知道，也别让我说。MBA 学费当年谁出的，我也不在场。家里催婚是真的。”",
-      "proves": "资料不是男方一个人临时周到，男方家参与整理过稳定人设。",
-      "stillCannotProve": "不能证明收入构成，也不能证明 MBA 学费来源。",
-      "routeAxis": "external-corroboration",
-      "options": [
-        {
-          "label": "资料是我们家一起帮他整理的",
-          "correct": true,
-          "contradiction": "男方家把资料整理说成他一个人周到，实际是家庭一起挑了好说的部分。",
-          "feedback": "这句能用。它证明协作整理，不证明收入。",
-          "routeAxis": "process-control"
-        },
-        {
-          "label": "收入构成我不知道",
-          "correct": false,
-          "feedback": "这句反倒是边界：她不知道，所以不能拿她来证实收入。",
-          "routeAxis": "money-flow"
-        },
-        {
-          "label": "MBA 学费当年谁出的",
-          "correct": false,
-          "feedback": "这就是今晚答不了的缺口。",
-          "routeAxis": "identity-wording"
-        }
-      ]
     }
   ],
   "advisorNotes": [
@@ -1005,6 +971,86 @@
     "teaseDuringSegment2": true,
     "text": "MBA 是真读的，存款证明也是我主动开的，我不想第一次见家长还解释半天。她家问流水、问工资卡，问得像审人。介绍人两边说了什么，我后来才知道。"
   },
+  "documents": [
+    {
+      "id": "case3-credential-balance",
+      "title": "学历核验页与存款证明对读",
+      "intro": "四张截页被摆在同一屏：项目、本科、当天余额，以及家里群里那句追问。",
+      "rows": [
+        {
+          "rowId": "p01",
+          "date": "06-16",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "某名校 MBA 项目",
+          "memo": "校名与项目可核"
+        },
+        {
+          "rowId": "p02",
+          "date": "06-16",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "本科 / 学制",
+          "memo": "未与 MBA 截图同页"
+        },
+        {
+          "rowId": "p03",
+          "date": "06-18",
+          "kind": "提醒",
+          "amount": "¥286,000",
+          "party": "本人账户",
+          "memo": "只列当日余额"
+        },
+        {
+          "rowId": "p04",
+          "date": "06-19",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "要不要把流水也问了",
+          "memo": "两分钟后母亲接话"
+        }
+      ],
+      "rowQuestions": {
+        "p01": [
+          {
+            "question": "核验页确认的是毕业学历，还是项目经历？",
+            "answer": "项目经历。校名和项目都对，本科没在这一页。我以前把这页直接念成名校毕业。",
+            "contradiction": "真实项目经历被概括成更宽的学历标签。",
+            "routeAxis": "identity-wording"
+          }
+        ],
+        "p03": [
+          {
+            "question": "二十八万六能证明多久的收入？",
+            "answer": "一天。开证明那天有这笔钱，前后怎么来、能不能一直有，这张纸不管。",
+            "contradiction": "当日余额不能替代连续收入。",
+            "routeAxis": "money-flow"
+          }
+        ],
+        "p04": [
+          {
+            "question": "流水这句话，群里是谁先发的？",
+            "answer": "我。不是我妈替我问，是我先发，她才接到婚后管钱。",
+            "contradiction": "咨询者把自己的收入焦虑转述成母亲要求。",
+            "routeAxis": "caller-credibility"
+          }
+        ]
+      },
+      "crossQuestions": [
+        {
+          "rows": [
+            "p01",
+            "p03"
+          ],
+          "question": "把这两张真图放在一起，能得到“学历好、收入稳”吗？",
+          "answer": "得不到。一个只管项目，一个只管当天余额。那六个字，是介绍人、两家人，还有我自己一截一截接上去的。",
+          "contradiction": "两份真实材料被介绍链拼成了更完整的人设。",
+          "routeAxis": "process-control"
+        }
+      ],
+      "markLimit": 2
+    }
+  ],
   "nightStructure": {
     "enabled": true,
     "segment1SceneIndexes": [
@@ -1026,52 +1072,18 @@
       "stageDirection": "忙音。介绍人的名字还停在弹幕里。"
     },
     "interlude": {
-      "title": "第二天下午·只能去一处",
-      "kicker": "周会计在档案室等到五点，小林老师的门店六点关灯。来回路程不够，只能选一边。",
+      "title": "收麦后·控台短查",
+      "kicker": "出门前只够打一通短电话，或先把家里群原话调出来。",
       "budget": 1,
       "minActions": 1,
       "maxActions": 1,
       "continueLabel": "带着这一页回拨",
       "actions": [
         {
-          "id": "profile-day-route",
-          "label": "选一处登门",
-          "summary": "查钱能不能连续，或查好条件是谁一层层说高的。",
-          "cost": 1,
-          "kind": "advisorConflict",
-          "npcVerb": "conflict",
-          "backdropClass": "day-city",
-          "sceneText": "一边是当日余额和单月收入，一边是介绍人给两家的两套话。选定后，另一处今天去不了。",
-          "options": [
-            {
-              "id": "chase-flow",
-              "label": "去周会计的档案室",
-              "backdropClass": "day-document",
-              "sceneText": "旧厂房档案室。周会计把当日证明和单月收入压在两只铁夹下，不肯看“条件不错”四个字。",
-              "advisorLine": "二十八万六只站在开证明那天，三万一只站在那个月。钱只认路径。没有连续流水，我不替任何人说收入稳。",
-              "grantsInventory": [
-                "profile-zhou-continuity"
-              ],
-              "routeAxis": "money-flow"
-            },
-            {
-              "id": "chase-introducer",
-              "label": "去小林老师的婚介门店",
-              "backdropClass": "day-matchmaking",
-              "sceneText": "打烊后的婚介门店。小林老师把两家条件卡并排贴上白板，先替同行说一句，再让林旭阳自己选先拆哪层。",
-              "advisorLine": "介绍人两头报好价是行规，行规不等于免单。她对男方家说女方不计较学历，对女方家说男方收入稳——先问谁靠这两句把饭局推下去。",
-              "grantsInventory": [
-                "profile-lin-two-prices"
-              ],
-              "routeAxis": "process-control"
-            }
-          ]
-        },
-        {
           "id": "profile-closed-zhang",
           "label": "鉴定所已停止收件",
           "summary": "聊天截图不进鉴定链，今天也等不到原件。",
-          "cost": 2,
+          "cost": 1,
           "kind": "advisorCall",
           "advisorId": "zhang-forensic",
           "npcVerb": "refuse",
@@ -1084,7 +1096,7 @@
           "id": "profile-family-chat-late",
           "label": "家里群还在争日期",
           "summary": "整页聊天由来电人回拨时自己念，后台不代她认。",
-          "cost": 2,
+          "cost": 1,
           "kind": "backflowEarly",
           "hookId": "profile-family-chat-backflow",
           "grantsInventory": [
@@ -1092,54 +1104,22 @@
           ]
         },
         {
-          "id": "profile-cousin-late",
-          "label": "表姐拒绝再说",
-          "summary": "她只认资料由家里一起整理，不碰收入和学费。",
-          "cost": 2,
-          "kind": "backflowEarly",
-          "hookId": "profile-cousin-family-note",
+          "id": "profile-listen-dinner-pause",
+          "label": "回听饭局冷场",
+          "summary": "只听问到学历后那十几秒，不替任何人补话。",
+          "cost": 1,
+          "kind": "playback",
           "grantsInventory": [
-            "cousin-note-seen"
-          ]
+            "profile-dinner-pause-playback"
+          ],
+          "script": {
+            "clipLabel": "回放·第一次饭局",
+            "clipLine": "‘本科也是那所学校吗？’杯碟声停了十几秒，随后有人把话题转到停车费。",
+            "hostNote": "冷场能证明问题被绕开，不能替缺失的学历口径作答。"
+          }
         }
       ]
     },
-    "callbackOpeners": [
-      {
-        "id": "opener-zhou",
-        "requiresAny": [
-          "profile-zhou-continuity"
-        ],
-        "label": "带回周会计的两行数",
-        "hostLine": "二十八万六只在开证明那天，三万一只在那个月。你敢不敢把“收入稳”三个字先拿掉？",
-        "callerRevisedOpening": "敢。连续流水没见到，稳定就不能替他说。可流水是谁先要的，我也得认。",
-        "appliesRevisedOnScenes": [
-          5
-        ]
-      },
-      {
-        "id": "opener-lin",
-        "requiresAny": [
-          "profile-lin-two-prices"
-        ],
-        "label": "带回介绍人的两套话",
-        "hostLine": "介绍人给你家报“收入稳”，给他家报“女方不计较学历”。你们两边，谁先把这报价当真了？",
-        "callerRevisedOpening": "我先把“名校”说顺，他家也把材料备顺。谁都没凭空造假，谁都没把短处先放桌上。",
-        "appliesRevisedOnScenes": [
-          5
-        ]
-      },
-      {
-        "id": "opener-soft",
-        "requiresAny": [],
-        "label": "从家里群原话开场",
-        "hostLine": "你回来了。先不说你妈，群里最上面那句是谁发的？",
-        "callerRevisedOpening": "我。‘要不要把流水也问了’，是我先发的。两分钟后，我妈才把话接到婚后管钱。",
-        "appliesRevisedOnScenes": [
-          5
-        ]
-      }
-    ],
     "returnStance": {
       "fromSnapshotOptionIds": {
         "respondent-fraud": "open",
@@ -1152,6 +1132,140 @@
         "open": "我回来了。他的图你继续拆——介绍人那边我也摊。",
         "neutral": "我回来了。群里吵完，我自己也把那几张图又翻了一遍。"
       }
+    }
+  },
+  "overnightStructure": {
+    "hangupAnchor": "本科和学制",
+    "hangupLine": "忙音。介绍人的名字还停在弹幕里。",
+    "hostHoldLine": "去。学历和流水的事，台上先搁着。",
+    "interludeEarnedItemMap": {
+      "family-chat-seen": "家里群原话"
+    },
+    "dayIntro": "介绍人肯把两边记录摊开，男方表姐只肯在门口说一句，后台还有两张真图没对读。三处只能去两处。",
+    "dayBudget": 2,
+    "minDayScenes": 2,
+    "dayScenes": [
+      {
+        "id": "day-profile-teahouse",
+        "label": "介绍人约的茶馆",
+        "backdropClass": "day-matchmaking",
+        "kind": "visit",
+        "body": {
+          "text": "介绍人选了临街的小茶馆，进门先把手机扣在桌上。她被两边家长轮番埋怨，索性把两段聊天都调出来。",
+          "routeAxis": "process-control",
+          "cast": [
+            "介绍人",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "介绍人",
+              "text": "先看原话。给女方家，我说他读过名校 MBA，手里有存款，收入稳。"
+            },
+            {
+              "speaker": "介绍人",
+              "text": "给男方家，我说她工作稳定，不计较学历，家里也好说话。"
+            },
+            {
+              "speaker": "你",
+              "text": "哪几句是材料里没有的？"
+            },
+            {
+              "speaker": "介绍人",
+              "text": "收入稳，是我说高了。不计较学历，也是我替她压低了要求。两头都怪我时，我只拿全记录说话。"
+            },
+            {
+              "speaker": "介绍人",
+              "text": "我承认添过话。谁后来把“读过项目”说成“名校毕业”，你回去问他们自己。"
+            }
+          ],
+          "choice": {
+            "prompt": "两边记录都摊开了，你带哪一层回去？",
+            "options": [
+              {
+                "id": "keep-both-records",
+                "label": "保留两边完整原话",
+                "grantsEarnedItemId": "介绍人双边记录",
+                "routeAxis": "external-corroboration"
+              },
+              {
+                "id": "mark-added-claims",
+                "label": "只圈她自己添高添低的两句",
+                "grantsEarnedItemId": "介绍人添话标记",
+                "routeAxis": "process-control"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-profile-cousin-doorstep",
+        "label": "男方表姐家门口",
+        "backdropClass": "day-home",
+        "kind": "doorstep",
+        "body": {
+          "text": "门只开到防盗链。表姐没有请你进去，楼道声控灯灭了两次，她仍只肯认一件事。",
+          "routeAxis": "external-corroboration",
+          "earnedItemId": "表姐门口口供",
+          "cast": [
+            "男方表姐",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "男方表姐",
+              "text": "收入别问我，我没见过他工资卡。MBA 学费谁出的，我也不说。"
+            },
+            {
+              "speaker": "你",
+              "text": "资料是他一个人整理的吗？"
+            },
+            {
+              "speaker": "男方表姐",
+              "text": "不是。姑姑、我、他都在群里挑过。存款图放哪张，项目图截到哪儿，家里一起弄的。"
+            },
+            {
+              "speaker": "男方表姐",
+              "text": "我只认这句。你别拿我去证收入，也别替我补学费。"
+            }
+          ]
+        }
+      },
+      {
+        "id": "day-profile-credential-docs",
+        "label": "后台·核验页与存款证明",
+        "backdropClass": "day-document",
+        "kind": "document",
+        "body": {
+          "documentId": "case3-credential-balance",
+          "routeAxis": "document-edge",
+          "earnedItemId": "双份材料圈注"
+        }
+      }
+    ],
+    "callbackOpeners": {
+      "介绍人双边记录": {
+        "line": "「她把两边记录给你看了？……‘收入稳’是她添的，‘不计较学历’也是她添的。可我妈把名校说顺的时候，我没拦。」"
+      },
+      "介绍人添话标记": {
+        "line": "「你只圈了她添的两句？……一边被说成收入稳，一边被说成不计较学历。她想把事办成，我们也都捡了顺耳的那半句。」"
+      },
+      "表姐门口口供": {
+        "line": "「她连门都没让你进？……她只认资料是家里一起挑的。那份‘周到’不是他一个人做出来的，我也不是只被他一个人说服。」"
+      },
+      "双份材料圈注": {
+        "line": "「你把核验页和存款证明并排圈了？……一张只管项目，一张只管当天余额。‘学历好、收入稳’，是我们把两张图接成了一句话。」"
+      },
+      "家里群原话": {
+        "line": "「家里群那页也带回来了？……最先问流水的人是我。两分钟后我妈才接话，昨晚我把自己的问题说成了她的问题。」"
+      }
+    },
+    "callbackFallback": {
+      "line": "「我回来了。群里还在吵。你白天先去了哪一处？」"
+    },
+    "postures": {
+      "againstCaller": "「流水是我先问的。今晚我不再拿我妈挡这句话。」",
+      "withCaller": "「我把家里群留着没删。你查到哪一截，就从哪一截问。」"
     }
   }
 }
