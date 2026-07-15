@@ -910,11 +910,11 @@
       "stageDirection": "忙音。付款状态那一栏仍然是空的。"
     },
     "interlude": {
-      "title": "幕间·调查台",
-      "kicker": "她不在线。时间只够做两三件事。",
-      "budget": 3,
-      "minActions": 2,
-      "maxActions": 3,
+      "title": "收麦后·控台短查",
+      "kicker": "出门前只够处理一样：顾问短会、回放或时间线。",
+      "budget": 1,
+      "minActions": 1,
+      "maxActions": 1,
       "continueLabel": "回拨她",
       "actions": [
         {
@@ -931,7 +931,7 @@
           "id": "zhao-zhou-work",
           "label": "三路同时进后台",
           "summary": "赵守边界，周追钱路，小林拆“主责”。先采一套，另两套留在终局材料台。",
-          "cost": 2,
+          "cost": 1,
           "kind": "advisorConflict",
           "npcVerb": "conflict",
           "backdropClass": "day-city",
@@ -1006,17 +1006,6 @@
           ]
         },
         {
-          "id": "assistant-sample",
-          "label": "看助理流程样本",
-          "summary": "大群正常流程，现在补到了。",
-          "cost": 1,
-          "kind": "backflowEarly",
-          "hookId": "work-assistant-flow-sample",
-          "grantsInventory": [
-            "assistant-sample-seen"
-          ]
-        },
-        {
           "id": "listen-pad",
           "label": "听回放",
           "summary": "回听私聊里「让我垫」原话。",
@@ -1030,102 +1019,9 @@
             "clipLine": "你先顶上，复盘材料里可以写你主责。",
             "hostNote": "署名和垫款在同一句里——表现机会压着资金风险。"
           }
-        },
-        {
-          "id": "supplier-dm-early",
-          "label": "看供应商补话",
-          "summary": "返款打给对接人——匿名补了一句。",
-          "cost": 1,
-          "kind": "backflowEarly",
-          "hookId": "work-supplier-dm",
-          "grantsInventory": [
-            "supplier-dm-seen"
-          ]
         }
       ]
     },
-    "callbackOpeners": [
-      {
-        "id": "opener-zhao-frame",
-        "requiresAny": [
-          "work-frame-zhao"
-        ],
-        "label": "用赵框架开场",
-        "hostLine": "回拨了。群里那句「让我垫」，你有没有留屏？他补过欠条没有？",
-        "callerRevisedOpening": "……留屏了。欠条没有。我当时怕一追就显得斤斤计较，主责都接了。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-zhou-frame",
-        "requiresAny": [
-          "work-frame-zhou"
-        ],
-        "label": "用周框架开场",
-        "hostLine": "回拨了。别跟我谈财务慢——付款回单号，你问过没有？",
-        "callerRevisedOpening": "没问过。财务我不认识人，一问又得经过他。截图我倒是收了三遍。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-lin-frame",
-        "requiresAny": [
-          "work-frame-lin"
-        ],
-        "label": "用小林的“主责”开场",
-        "hostLine": "小林老师只拆一个词：主责先给你，垫款当天交。你自己先要过这个位置，这两件事怎么分？",
-        "callerRevisedOpening": "想要主责是我的，拿主责压我刷卡是他的。两句都得留，不能拿前一句替后一句销账。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-timeline",
-        "requiresAny": [
-          "timeline-delay-gap"
-        ],
-        "label": "用时间线开场",
-        "hostLine": "预算记录对过了：他说来不及那天，财务延后通知还没发。",
-        "callerRevisedOpening": "……我一直把两件事混在一起。他让我别问的时候，财务根本还没说延后。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-leader-hot",
-        "requiresAny": [
-          "leader-note-hot"
-        ],
-        "label": "用领导批注开场",
-        "hostLine": "你截的那条批注：主责写你，钱路一个字没有。你怎么接？",
-        "callerRevisedOpening": "……被夸住的时候，我真的高兴。高兴完才发现，批注里只有结果，没有垫款。",
-        "appliesRevisedOnScenes": [
-          5
-        ]
-      },
-      {
-        "id": "opener-supplier",
-        "requiresAny": [
-          "supplier-dm-seen"
-        ],
-        "label": "用供应商返款开场",
-        "hostLine": "供应商补了一句：服务协调费按老规矩返给对接人。对接人还是他。",
-        "callerRevisedOpening": "……审批图只到「通过」。返款这条路，我截批注的时候才看见。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-soft",
-        "requiresAny": [],
-        "label": "软开场",
-        "hostLine": "你回来了。审批图还在台上，从批注那儿继续。",
-        "callerRevisedOpening": "嗯。截完了。付款状态那栏——还是空的。",
-        "appliesRevisedOnScenes": []
-      }
-    ],
     "returnStance": {
       "fromSnapshotOptionIds": {
         "respondent-problem": "open",
@@ -1138,6 +1034,176 @@
         "open": "我回来了。流程和截图你继续问——这回我不替财务慢开脱。",
         "neutral": "我回来了。批注截完，我自己又把审批图看了一眼。少的那页还在。"
       }
+    }
+  },
+  "overnightStructure": {
+    "hangupAnchor": "一共三次",
+    "hangupLine": "忙音。付款状态那一栏仍然是空的。",
+    "hostHoldLine": "去截。审批图先留台上。",
+    "interludeEarnedItemMap": {
+      "work-frame-zhao": "赵律师边界框架",
+      "work-frame-zhou": "周会计钱路框架",
+      "work-frame-lin": "小林主责框架",
+      "timeline-delay-gap": "预算时间线复核",
+      "leader-note-hot": "领导批注"
+    },
+    "dayIntro": "财务窗口要回单号，供应商只肯谈对接单，部门助理同意在茶水间把三页材料摊开。下午只能跑两处。",
+    "dayBudget": 2,
+    "minDayScenes": 2,
+    "dayScenes": [
+      {
+        "id": "day-work-finance-window",
+        "label": "财务服务窗口",
+        "backdropClass": "day-studio",
+        "kind": "studio",
+        "body": {
+          "text": "午休前，财务服务窗只剩一个号。你遮住公司名和姓名，把咨询者收到的审批页递进窗口。经办人没有替你查个案。",
+          "routeAxis": "money-flow",
+          "earnedItemId": "财务窗口回单要求",
+          "cast": [
+            "财务经办",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "财务经办",
+              "text": "这页只到审批通过。要核付款，请报回单号，或收款账户后四位。"
+            },
+            {
+              "speaker": "你",
+              "text": "对方把同一页发了三次。"
+            },
+            {
+              "speaker": "财务经办",
+              "text": "发三次也还是审批页。我不查别人的单，只告诉你：付款和到账各有自己的凭据。"
+            },
+            {
+              "speaker": "财务经办",
+              "text": "拿不到回单号，就先别说钱已经付出。"
+            }
+          ]
+        }
+      },
+      {
+        "id": "day-work-supplier-visit",
+        "label": "供应商仓库门市",
+        "backdropClass": "day-city",
+        "kind": "visit",
+        "body": {
+          "text": "仓库门市正忙着点货。项目员认出报价单，却不肯替你猜返款账户，只把对接栏和一段工作语音放在一起。",
+          "routeAxis": "external-corroboration",
+          "earnedItemId": "供应商对接补话",
+          "cast": [
+            "供应商项目员",
+            "仓库管理员",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "供应商项目员",
+              "text": "语音原话是：服务协调费按老规矩返给对接人。"
+            },
+            {
+              "speaker": "你",
+              "text": "这张单上的对接人还是那位同事？"
+            },
+            {
+              "speaker": "供应商项目员",
+              "text": "单上写的是他。钱最后进哪个账户，我没看见，不替你往下说。"
+            },
+            {
+              "speaker": "仓库管理员",
+              "text": "出货单、协调费、公司报销，各走各的页。你手里少的是后两页。"
+            }
+          ]
+        }
+      },
+      {
+        "id": "day-work-breakroom-observe",
+        "label": "共享茶水间·流程观察",
+        "backdropClass": "day-office",
+        "kind": "observe",
+        "body": {
+          "text": "部门助理约你在共享茶水间交一份公开流程样本。她不谈私聊，只同意当着你的面核三页：同事托话、领导批注、审批截图。",
+          "routeAxis": "process-control",
+          "cast": [
+            "部门助理",
+            "同事托话（手机）",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "同事托话（手机）",
+              "text": "审批过了，别再往大群里问。"
+            },
+            {
+              "speaker": "部门助理",
+              "text": "领导批注只写：执行主责记陈，流程按老规矩补齐。"
+            },
+            {
+              "speaker": "部门助理",
+              "text": "审批页能看见通过，看不见付款状态。三页都摆在这儿，我仍不能替谁解释那句私聊。"
+            },
+            {
+              "speaker": "部门助理",
+              "text": "我只认公开流程：个人垫付要提前报备，供应商付款优先走对公。"
+            }
+          ],
+          "choice": {
+            "prompt": "三页摊到这里，你先带哪条回去？",
+            "options": [
+              {
+                "id": "keep-receipt-gap",
+                "label": "留下三页都缺回单号",
+                "grantsEarnedItemId": "茶水间回单缺口",
+                "routeAxis": "money-flow"
+              },
+              {
+                "id": "keep-responsibility-gap",
+                "label": "留下托话和批注没对上",
+                "grantsEarnedItemId": "茶水间责任对照",
+                "routeAxis": "process-control"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "callbackOpeners": {
+      "财务窗口回单要求": {
+        "line": "「窗口也只认回单号？……我问了他三遍到账，手里只有同一张审批图。回单号，我一次都没问到。」"
+      },
+      "供应商对接补话": {
+        "line": "「供应商当面还是只说返给对接人？……那张单上的对接人是他。钱有没有进他的账户，我不替这句往下猜。」"
+      },
+      "茶水间回单缺口": {
+        "line": "「助理把三页摊给你看了？……同事让我别在群里问，领导只写主责，审批页没有付款。三句话都让我等，没一句给回单号。」"
+      },
+      "茶水间责任对照": {
+        "line": "「你先留下托话和批注？……同事让我别问，领导只把主责记给我。谁负责催付款、谁负责给回单，两页都没写。」"
+      },
+      "赵律师边界框架": {
+        "line": "「赵律师先问留屏和欠条？……留屏了，欠条没有。我当时怕一追就显得斤斤计较，主责都接了。」"
+      },
+      "周会计钱路框架": {
+        "line": "「周会计先要付款回单号？……没问到。财务我不认识人，一问又得经过他；同一张截图，我倒是收了三遍。」"
+      },
+      "小林主责框架": {
+        "line": "「小林老师先拆“主责”？……想要这个位置是我的，拿位置压我刷卡是他的。两句都留着，谁也别替谁销账。」"
+      },
+      "预算时间线复核": {
+        "line": "「预算记录已经对过？……他说来不及那天，财务延后通知还没发。我一直把两件事混在一起。」"
+      },
+      "领导批注": {
+        "line": "「那条批注也带回来了？……主责写我，钱路一个字没有。被夸住的时候我确实高兴，高兴完才看见垫款没落纸。」"
+      }
+    },
+    "callbackFallback": {
+      "line": "「我回来了。新批注还在手机里。你白天先核了哪一处？」"
+    },
+    "postures": {
+      "againstCaller": "「主责是我先要的，我来扛也是我回的。可这两句不能替付款回单。」",
+      "withCaller": "「我把三张审批图都留着。你查到哪一页，就从哪一页问。」"
     }
   }
 }
