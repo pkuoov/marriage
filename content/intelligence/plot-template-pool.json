@@ -1,215 +1,375 @@
 {
-  "version": 1,
-  "minimumPlotCount": 9,
-  "targetPlotCount": 12,
-  "templates": [
-    {
-      "plotId": "lost-job-hidden-credit",
-      "category": "relationship-money",
-      "nonRomance": false,
-      "dramaticAnchor": "体面消费后，信用卡账单才出现。",
-      "objectPurpose": "账单被拿来证明不是故意拖累，但它也把最低还款压力推到台面。",
-      "thirdPressure": "朋友和家庭对体面恋爱的期待。",
-      "callerBenefit": "来电人可以把自己当成被隐瞒的一方，同时避开自己也喜欢那份体面的事实。",
-      "otherBenefit": "对方可以把失业说成怕失去关系，从而延后谈债务责任。",
-      "truthBoundary": {
-        "true": ["失业早于账单爆出。"],
-        "edited": ["消费被包装成维持体面。"],
-        "unknown": ["对方一开始是否计划让来电人兜底。"]
-      },
-      "routeAxes": ["money-flow", "caller-credibility", "document-edge"]
-    },
-    {
-      "plotId": "house-name-security-test",
-      "category": "relationship-property",
-      "nonRomance": false,
-      "dramaticAnchor": "加名被说成安全感，共同还贷表把钱摊开了。",
-      "objectPurpose": "共同账户和房产信息被拿来测试婚前承诺。",
-      "thirdPressure": "双方父母对买房、还贷和名分的期待。",
-      "callerBenefit": "来电人可以把自己说成只要安全感，不先说想要位置。",
-      "otherBenefit": "对方可以用一家人的话省掉明确分账。",
-      "truthBoundary": {
-        "true": ["房产登记和还款安排不是同一件事。"],
-        "edited": ["安全感背后有资产位置诉求。"],
-        "unknown": ["分开时双方是否愿意按投入清算。"]
-      },
-      "routeAxes": ["money-flow", "identity-wording", "caller-credibility"]
-    },
-    {
-      "plotId": "tony-multi-dating",
-      "category": "relationship-service",
-      "nonRomance": false,
-      "dramaticAnchor": "排班表和专属话术撞在一起。",
-      "objectPurpose": "店表证明话术不是只对一个人发生。",
-      "thirdPressure": "店里业绩、办卡和熟客关系。",
-      "callerBenefit": "来电人可以把自己放在被暧昧的位置，少说自己也吃了自己人的甜头。",
-      "otherBenefit": "对方可以把暧昧话术解释成服务热情。",
-      "truthBoundary": {
-        "true": ["相同话术出现在多个服务关系里。"],
-        "edited": ["来电人也从特殊位置里得到过情绪价值。"],
-        "unknown": ["对方是否对某个人有真实好感。"]
-      },
-      "routeAxes": ["identity-wording", "process-control", "caller-credibility"]
-    },
-    {
-      "plotId": "education-income-fake-profile",
-      "category": "relationship-profile",
-      "nonRomance": false,
-      "dramaticAnchor": "名校、收入和流水被放进同一张资料图。",
-      "objectPurpose": "资料图被拿来推进关系筛选和婚后财务安排。",
-      "thirdPressure": "介绍人和家庭筛选条件。",
-      "callerBenefit": "来电人可以说自己只是查真假，少说自己想确认婚后钱怎么管。",
-      "otherBenefit": "对方可以用好听标签减少细问。",
-      "truthBoundary": {
-        "true": ["学校标签和学历层级需要分开说。"],
-        "edited": ["收入信息只露出好看的部分。"],
-        "unknown": ["真实可支配收入和家庭资产细节。"]
-      },
-      "routeAxes": ["identity-wording", "money-flow", "document-edge"]
-    },
-    {
-      "plotId": "workplace-reimbursement-screenshot",
-      "category": "workplace-reimbursement",
-      "nonRomance": true,
-      "dramaticAnchor": "审批通过截图少了付款状态。",
-      "objectPurpose": "审批图被拿来压住垫付款追问。",
-      "thirdPressure": "项目主责、供应商期限和公司流程。",
-      "callerBenefit": "来电人可以把自己说成被拖款，同时少说自己也想抢主责机会。",
-      "otherBenefit": "对方可以用流程已过拖住返款。",
-      "truthBoundary": {
-        "true": ["审批通过不等于付款完成。"],
-        "edited": ["来电人也从先垫款里换取过机会。"],
-        "unknown": ["财务最后把钱打给谁。"]
-      },
-      "routeAxes": ["process-control", "money-flow", "document-edge"]
-    },
-    {
-      "plotId": "course-refund-prepaid-card",
-      "category": "consumer-refund",
-      "nonRomance": true,
-      "dramaticAnchor": "课程承诺截图和退费排队表对不上。",
-      "objectPurpose": "截图被拿来证明销售没乱说，排队表却把退款期限拖开。",
-      "thirdPressure": "销售业绩、平台投诉期限和孩子考试节点。",
-      "callerBenefit": "来电人可以强调被承诺诱导，少说自己也想用低价锁名额。",
-      "otherBenefit": "机构可以把承诺说成顾问个人话术，把退费变成流程等待。",
-      "truthBoundary": {
-        "true": ["付款和承诺发生过。"],
-        "edited": ["优惠名额制造了时间压力。"],
-        "unknown": ["机构是否从一开始就无法履约。"]
-      },
-      "routeAxes": ["process-control", "document-edge", "money-flow"]
-    },
-    {
-      "plotId": "rental-deposit-repair-gap",
-      "category": "rental-deposit",
-      "nonRomance": true,
-      "dramaticAnchor": "退租照片少了维修报价单的项目来源。",
-      "objectPurpose": "照片和报价单被拿来扣押金。",
-      "thirdPressure": "中介、下一任租客入住期限和维修师傅口径。",
-      "callerBenefit": "来电人可以说自己房子交得干净，少说入住时也没拍全。",
-      "otherBenefit": "房东可以把旧损耗放进新维修。",
-      "truthBoundary": {
-        "true": ["退租时确实存在损耗争议。"],
-        "edited": ["报价单没有区分旧损耗和新增损坏。"],
-        "unknown": ["每一处损耗具体发生时间。"]
-      },
-      "routeAxes": ["document-edge", "process-control", "caller-credibility"]
-    },
-    {
-      "plotId": "platform-transaction-after-sale",
-      "category": "platform-trade",
-      "nonRomance": true,
-      "dramaticAnchor": "客服截图显示受理，物流签收图却少了开箱过程。",
-      "objectPurpose": "客服截图被拿来证明平台已介入，物流图被拿来转移责任。",
-      "thirdPressure": "平台申诉倒计时、商家售后话术和快递签收规则。",
-      "callerBenefit": "来电人可以强调自己被踢皮球，少说开箱证据确实没留。",
-      "otherBenefit": "商家可以用签收完成拒绝继续举证。",
-      "truthBoundary": {
-        "true": ["售后受理和签收都发生过。"],
-        "edited": ["开箱缺证让责任链断了一段。"],
-        "unknown": ["损坏发生在发货、运输还是签收后。"]
-      },
-      "routeAxes": ["document-edge", "process-control", "outer-thread"]
-    },
-    {
-      "plotId": "acquaintance-loan-transfer-note",
-      "category": "acquaintance-loan",
-      "nonRomance": true,
-      "dramaticAnchor": "转账备注写人情，聊天记录里又出现还款日期。",
-      "objectPurpose": "转账备注被拿来模糊借和赠，聊天记录把期限露出来。",
-      "thirdPressure": "共同朋友、饭局面子和年底资金周转。",
-      "callerBenefit": "来电人可以强调对方赖账，少说当时也想用人情维持关系。",
-      "otherBenefit": "对方可以抓住备注，把借款改说成帮忙或礼金。",
-      "truthBoundary": {
-        "true": ["钱转出去了，后续聊过归还。"],
-        "edited": ["备注没有把借贷关系写清。"],
-        "unknown": ["双方当时是否都明确它是借款。"]
-      },
-      "routeAxes": ["money-flow", "identity-wording", "caller-credibility"]
-    },
-    {
-      "plotId": "workplace-authorship-credit",
-      "category": "workplace-credit",
-      "nonRomance": true,
-      "dramaticAnchor": "汇报 PPT 署名和群聊分工截图对不上。",
-      "objectPurpose": "PPT 被拿来证明贡献，群聊却显示关键工作被改口。",
-      "thirdPressure": "绩效窗口、领导口头安排和项目上线期限。",
-      "callerBenefit": "来电人可以说自己被抢署名，少说自己也绕过组内流程私下汇报。",
-      "otherBenefit": "对方可以把署名说成最终整合人。",
-      "truthBoundary": {
-        "true": ["来电人参与了关键工作。"],
-        "edited": ["汇报版本压掉了部分分工过程。"],
-        "unknown": ["领导最初到底把主责口头给了谁。"]
-      },
-      "routeAxes": ["process-control", "identity-wording", "caller-credibility"]
-    },
-    {
-      "plotId": "family-account-insurance-beneficiary",
-      "category": "family-finance",
-      "nonRomance": true,
-      "dramaticAnchor": "家庭共同账户流水和保险受益人变更通知同一天出现。",
-      "objectPurpose": "流水被拿来证明共同承担，受益人通知暴露家庭内部排序。",
-      "thirdPressure": "父母养老、兄弟姐妹比较和保险代理人催签。",
-      "callerBenefit": "来电人可以说自己只是问公平，少说自己也想借流水证明话语权。",
-      "otherBenefit": "家人可以用一家人的钱淡化个人边界。",
-      "truthBoundary": {
-        "true": ["共同账户确实承担了家庭支出。"],
-        "edited": ["受益人变更没有同步说明。"],
-        "unknown": ["变更是临时安排还是长期偏向。"]
-      },
-      "routeAxes": ["money-flow", "identity-wording", "process-control"]
-    },
-    {
-      "plotId": "community-group-buy-refund",
-      "category": "community-commerce",
-      "nonRomance": true,
-      "dramaticAnchor": "团购接龙表和退款名单少了供应商结算页。",
-      "objectPurpose": "接龙表被拿来证明邻里信任，退款名单把钱卡在团长手上。",
-      "thirdPressure": "小区熟人关系、供应商结算周期和群公告压力。",
-      "callerBenefit": "来电人可以说自己替邻居出头，少说自己也参与催单扩大规模。",
-      "otherBenefit": "团长可以把个人收款说成临时帮忙。",
-      "truthBoundary": {
-        "true": ["钱集中到过团长账户。"],
-        "edited": ["供应商结算和退款节奏没有公开。"],
-        "unknown": ["团长是否挪用了退款。"]
-      },
-      "routeAxes": ["money-flow", "process-control", "document-edge"]
-    },
-    {
-      "plotId": "creator-collab-delivery-scope",
-      "category": "creator-collaboration",
-      "nonRomance": true,
-      "dramaticAnchor": "合作报价单写交付三条，聊天里又不断追加脚本修改。",
-      "objectPurpose": "报价单被拿来固定合作范围，聊天记录暴露追加需求。",
-      "thirdPressure": "上线档期、品牌审核和平台流量窗口。",
-      "callerBenefit": "来电人可以说甲方压榨，少说自己早期也用低价抢单。",
-      "otherBenefit": "甲方可以把追加说成正常优化。",
-      "truthBoundary": {
-        "true": ["原始报价范围有限。"],
-        "edited": ["双方都借上线压力压缩了边界。"],
-        "unknown": ["追加修改是否已经构成新合同。"]
-      },
-      "routeAxes": ["process-control", "document-edge", "money-flow"]
-    }
-  ]
+ "version": 1,
+ "minimumPlotCount": 9,
+ "targetPlotCount": 12,
+ "templates": [
+  {
+   "plotId": "lost-job-hidden-credit",
+   "category": "relationship-money",
+   "nonRomance": false,
+   "dramaticAnchor": "体面消费后，信用卡账单才出现。",
+   "objectPurpose": "账单被拿来证明不是故意拖累，但它也把最低还款压力推到台面。",
+   "thirdPressure": "朋友和家庭对体面恋爱的期待。",
+   "callerBenefit": "来电人可以把自己当成被隐瞒的一方，同时避开自己也喜欢那份体面的事实。",
+   "otherBenefit": "对方可以把失业说成怕失去关系，从而延后谈债务责任。",
+   "truthBoundary": {
+    "true": [
+     "失业早于账单爆出。"
+    ],
+    "edited": [
+     "消费被包装成维持体面。"
+    ],
+    "unknown": [
+     "对方一开始是否计划让来电人兜底。"
+    ]
+   },
+   "routeAxes": [
+    "money-flow",
+    "caller-credibility",
+    "document-edge"
+   ]
+  },
+  {
+   "plotId": "house-name-security-test",
+   "category": "relationship-property",
+   "nonRomance": false,
+   "dramaticAnchor": "加名被说成安全感，共同还贷表把钱摊开了。",
+   "objectPurpose": "共同账户和房产信息被拿来测试婚前承诺。",
+   "thirdPressure": "双方父母对买房、还贷和名分的期待。",
+   "callerBenefit": "来电人可以把自己说成只要安全感，不先说想要位置。",
+   "otherBenefit": "对方可以用一家人的话省掉明确分账。",
+   "truthBoundary": {
+    "true": [
+     "房产登记和还款安排不是同一件事。"
+    ],
+    "edited": [
+     "安全感背后有资产位置诉求。"
+    ],
+    "unknown": [
+     "分开时双方是否愿意按投入清算。"
+    ]
+   },
+   "routeAxes": [
+    "money-flow",
+    "identity-wording",
+    "caller-credibility"
+   ]
+  },
+  {
+   "plotId": "tony-multi-dating",
+   "category": "relationship-service",
+   "nonRomance": false,
+   "dramaticAnchor": "排班表和专属话术撞在一起。",
+   "objectPurpose": "店表证明话术不是只对一个人发生。",
+   "thirdPressure": "店里业绩、办卡和熟客关系。",
+   "callerBenefit": "来电人可以把自己放在被暧昧的位置，少说自己也吃了自己人的甜头。",
+   "otherBenefit": "对方可以把暧昧话术解释成服务热情。",
+   "truthBoundary": {
+    "true": [
+     "相同话术出现在多个服务关系里。"
+    ],
+    "edited": [
+     "来电人也从特殊位置里得到过情绪价值。"
+    ],
+    "unknown": [
+     "对方是否对某个人有真实好感。"
+    ]
+   },
+   "routeAxes": [
+    "identity-wording",
+    "process-control",
+    "caller-credibility"
+   ]
+  },
+  {
+   "plotId": "education-income-fake-profile",
+   "category": "relationship-profile",
+   "nonRomance": false,
+   "dramaticAnchor": "名校、收入和流水被放进同一张资料图。",
+   "objectPurpose": "资料图被拿来推进关系筛选和婚后财务安排。",
+   "thirdPressure": "介绍人和家庭筛选条件。",
+   "callerBenefit": "来电人可以说自己只是查真假，少说自己想确认婚后钱怎么管。",
+   "otherBenefit": "对方可以用好听标签减少细问。",
+   "truthBoundary": {
+    "true": [
+     "学校标签和学历层级需要分开说。"
+    ],
+    "edited": [
+     "收入信息只露出好看的部分。"
+    ],
+    "unknown": [
+     "真实可支配收入和家庭资产细节。"
+    ]
+   },
+   "routeAxes": [
+    "identity-wording",
+    "money-flow",
+    "document-edge"
+   ]
+  },
+  {
+   "plotId": "workplace-reimbursement-screenshot",
+   "category": "workplace-reimbursement",
+   "nonRomance": true,
+   "dramaticAnchor": "审批通过截图少了付款状态。",
+   "objectPurpose": "审批图被拿来压住垫付款追问。",
+   "thirdPressure": "项目主责、供应商期限和公司流程。",
+   "callerBenefit": "来电人可以把自己说成被拖款，同时少说自己也想抢主责机会。",
+   "otherBenefit": "对方可以用流程已过拖住返款。",
+   "truthBoundary": {
+    "true": [
+     "审批通过不等于付款完成。"
+    ],
+    "edited": [
+     "来电人也从先垫款里换取过机会。"
+    ],
+    "unknown": [
+     "财务最后把钱打给谁。"
+    ]
+   },
+   "routeAxes": [
+    "process-control",
+    "money-flow",
+    "document-edge"
+   ]
+  },
+  {
+   "plotId": "course-refund-prepaid-card",
+   "category": "consumer-refund",
+   "nonRomance": true,
+   "dramaticAnchor": "课程承诺截图和退费排队表对不上。",
+   "objectPurpose": "截图被拿来证明销售没乱说，排队表却把退款期限拖开。",
+   "thirdPressure": "销售业绩、平台投诉期限和孩子考试节点。",
+   "callerBenefit": "来电人可以强调被承诺诱导，少说自己也想用低价锁名额。",
+   "otherBenefit": "机构可以把承诺说成顾问个人话术，把退费变成流程等待。",
+   "truthBoundary": {
+    "true": [
+     "付款和承诺发生过。"
+    ],
+    "edited": [
+     "优惠名额制造了时间压力。"
+    ],
+    "unknown": [
+     "机构是否从一开始就无法履约。"
+    ]
+   },
+   "routeAxes": [
+    "process-control",
+    "document-edge",
+    "money-flow"
+   ]
+  },
+  {
+   "plotId": "rental-deposit-repair-gap",
+   "category": "rental-deposit",
+   "nonRomance": true,
+   "dramaticAnchor": "退租照片少了维修报价单的项目来源。",
+   "objectPurpose": "照片和报价单被拿来扣押金。",
+   "thirdPressure": "中介、下一任租客入住期限和维修师傅口径。",
+   "callerBenefit": "来电人可以说自己房子交得干净，少说入住时也没拍全。",
+   "otherBenefit": "房东可以把旧损耗放进新维修。",
+   "truthBoundary": {
+    "true": [
+     "退租时确实存在损耗争议。"
+    ],
+    "edited": [
+     "报价单没有区分旧损耗和新增损坏。"
+    ],
+    "unknown": [
+     "每一处损耗具体发生时间。"
+    ]
+   },
+   "routeAxes": [
+    "document-edge",
+    "process-control",
+    "caller-credibility"
+   ]
+  },
+  {
+   "plotId": "platform-transaction-after-sale",
+   "category": "platform-trade",
+   "nonRomance": true,
+   "dramaticAnchor": "客服截图显示受理，物流签收图却少了开箱过程。",
+   "objectPurpose": "客服截图被拿来证明平台已介入，物流图被拿来转移责任。",
+   "thirdPressure": "平台申诉倒计时、商家售后话术和快递签收规则。",
+   "callerBenefit": "来电人可以强调自己被踢皮球，少说开箱证据确实没留。",
+   "otherBenefit": "商家可以用签收完成拒绝继续举证。",
+   "truthBoundary": {
+    "true": [
+     "售后受理和签收都发生过。"
+    ],
+    "edited": [
+     "开箱缺证让责任链断了一段。"
+    ],
+    "unknown": [
+     "损坏发生在发货、运输还是签收后。"
+    ]
+   },
+   "routeAxes": [
+    "document-edge",
+    "process-control",
+    "outer-thread"
+   ]
+  },
+  {
+   "plotId": "acquaintance-loan-transfer-note",
+   "category": "acquaintance-loan",
+   "nonRomance": true,
+   "dramaticAnchor": "转账备注写人情，聊天记录里又出现还款日期。",
+   "objectPurpose": "转账备注被拿来模糊借和赠，聊天记录把期限露出来。",
+   "thirdPressure": "共同朋友、饭局面子和年底资金周转。",
+   "callerBenefit": "来电人可以强调对方赖账，少说当时也想用人情维持关系。",
+   "otherBenefit": "对方可以抓住备注，把借款改说成帮忙或礼金。",
+   "truthBoundary": {
+    "true": [
+     "钱转出去了，后续聊过归还。"
+    ],
+    "edited": [
+     "备注没有把借贷关系写清。"
+    ],
+    "unknown": [
+     "双方当时是否都明确它是借款。"
+    ]
+   },
+   "routeAxes": [
+    "money-flow",
+    "identity-wording",
+    "caller-credibility"
+   ]
+  },
+  {
+   "plotId": "workplace-authorship-credit",
+   "category": "workplace-credit",
+   "nonRomance": true,
+   "dramaticAnchor": "汇报 PPT 署名和群聊分工截图对不上。",
+   "objectPurpose": "PPT 被拿来证明贡献，群聊却显示关键工作被改口。",
+   "thirdPressure": "绩效窗口、领导口头安排和项目上线期限。",
+   "callerBenefit": "来电人可以说自己被抢署名，少说自己也绕过组内流程私下汇报。",
+   "otherBenefit": "对方可以把署名说成最终整合人。",
+   "truthBoundary": {
+    "true": [
+     "来电人参与了关键工作。"
+    ],
+    "edited": [
+     "汇报版本压掉了部分分工过程。"
+    ],
+    "unknown": [
+     "领导最初到底把主责口头给了谁。"
+    ]
+   },
+   "routeAxes": [
+    "process-control",
+    "identity-wording",
+    "caller-credibility"
+   ]
+  },
+  {
+   "plotId": "family-account-insurance-beneficiary",
+   "category": "family-finance",
+   "nonRomance": true,
+   "dramaticAnchor": "家庭共同账户流水和保险受益人变更通知同一天出现。",
+   "objectPurpose": "流水被拿来证明共同承担，受益人通知暴露家庭内部排序。",
+   "thirdPressure": "父母养老、兄弟姐妹比较和保险代理人催签。",
+   "callerBenefit": "来电人可以说自己只是问公平，少说自己也想借流水证明话语权。",
+   "otherBenefit": "家人可以用一家人的钱淡化个人边界。",
+   "truthBoundary": {
+    "true": [
+     "共同账户确实承担了家庭支出。"
+    ],
+    "edited": [
+     "受益人变更没有同步说明。"
+    ],
+    "unknown": [
+     "变更是临时安排还是长期偏向。"
+    ]
+   },
+   "routeAxes": [
+    "money-flow",
+    "identity-wording",
+    "process-control"
+   ]
+  },
+  {
+   "plotId": "community-group-buy-refund",
+   "category": "community-commerce",
+   "nonRomance": true,
+   "dramaticAnchor": "团购接龙表和退款名单少了供应商结算页。",
+   "objectPurpose": "接龙表被拿来证明邻里信任，退款名单把钱卡在团长手上。",
+   "thirdPressure": "小区熟人关系、供应商结算周期和群公告压力。",
+   "callerBenefit": "来电人可以说自己替邻居出头，少说自己也参与催单扩大规模。",
+   "otherBenefit": "团长可以把个人收款说成临时帮忙。",
+   "truthBoundary": {
+    "true": [
+     "钱集中到过团长账户。"
+    ],
+    "edited": [
+     "供应商结算和退款节奏没有公开。"
+    ],
+    "unknown": [
+     "团长是否挪用了退款。"
+    ]
+   },
+   "routeAxes": [
+    "money-flow",
+    "process-control",
+    "document-edge"
+   ]
+  },
+  {
+   "plotId": "creator-collab-delivery-scope",
+   "category": "creator-collaboration",
+   "nonRomance": true,
+   "dramaticAnchor": "合作报价单写交付三条，聊天里又不断追加脚本修改。",
+   "objectPurpose": "报价单被拿来固定合作范围，聊天记录暴露追加需求。",
+   "thirdPressure": "上线档期、品牌审核和平台流量窗口。",
+   "callerBenefit": "来电人可以说甲方压榨，少说自己早期也用低价抢单。",
+   "otherBenefit": "甲方可以把追加说成正常优化。",
+   "truthBoundary": {
+    "true": [
+     "原始报价范围有限。"
+    ],
+    "edited": [
+     "双方都借上线压力压缩了边界。"
+    ],
+    "unknown": [
+     "追加修改是否已经构成新合同。"
+    ]
+   },
+   "routeAxes": [
+    "process-control",
+    "document-edge",
+    "money-flow"
+   ]
+  },
+  {
+   "plotId": "reordered-chat-evidence",
+   "category": "relationship-money",
+   "nonRomance": false,
+   "dramaticAnchor": "同一段聊天记录的两个版本：他律师函里附的“公证版”，和她手机里的原始版——句子一模一样，顺序不一样，意思全反了。",
+   "objectPurpose": "重排版被用来证明她“主动求借”；原始顺序里，同一句“那我先收着”是被再三推让后的收尾。顺序即证词，时间戳即口供。",
+   "thirdPressure": "律师函的答复期限、“公证”二字的官方感、以及帮人“做证据”的灰色服务——几百块一份，带公证样式。",
+   "callerBenefit": "来电人可以只讲顺序被改，不讲自己也删过记录——她删掉了分手后自己求复合的那几条。删除的动机是丢人，不是要钱，但删过就是删过。",
+   "otherBenefit": "对方拿着带章的重排版，把一笔分手补偿说成借款；公证真假他都不吃亏——是真的，他赢；是假的，查出来之前她先怕。",
+   "truthBoundary": {
+    "true": [
+     "两份记录里每一句的文字完全相同。",
+     "原始设备内的对话顺序与“公证版”不一致。",
+     "那笔转账真实发生过。"
+    ],
+    "edited": [
+     "“公证版”的先后顺序与时间戳经过调整。",
+     "她的“完整原始记录”也删过自己求复合的几条。"
+    ],
+    "unknown": [
+     "那份公证书是假章，还是真章走了后门。",
+     "重排是他自己动的手，还是买的服务。"
+    ]
+   },
+   "routeAxes": [
+    "document-edge",
+    "process-control",
+    "caller-credibility"
+   ]
+  }
+ ]
 }
