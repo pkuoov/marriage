@@ -65,6 +65,12 @@ Subjective recall over recap:
 Detour options are not stupid options:
 - A wrong-side option should be the caller (or host) reaching for a plausible, socially common, or self-protective reading — 极力替对方解释、给自己台阶 — never a joke answer or an obvious no-click.
 
+摘要即回归 (compression is regression):
+- Per-line/AVG display is achieved by SHORT SENTENCES, never by SHORT SCENES — the chunker splits long speech; it never licenses deleting texture. Any edit that raises information density by removing emotional beats, direct quotes, verb texture, or connective breath is a content regression regardless of intent (the 15d5749b incident: 「他把截图丢给我…那一刻我不是生气，是懵」 became 「他发办材料截图…我当时没接上这件事」 — that is a log line, not a person).
+- Per-scene texture floor: every `version` keeps at least one direct quote OR one afterthought/particle beat, AND at least one non-load-bearing sentence. A scene where every sentence carries plot is a synopsis.
+- 发现权守恒 (conservation of discovery): anything the player is designed to earn — document rows, laundering catches, replay finds, mid-case turns — may never be pre-narrated by the caller or any surface. A refactor that surfaces hidden agency early, or has the caller recite exhibit rows, breaks the case even if every sentence reads fine.
+- Any rewrite pass must ship a texture diff: count of direct quotes, emotional beats, and breath sentences before/after per scene. Net loss requires explicit sign-off, not a commit message.
+
 ## Manufacturing Doubt, Questions, and Turns (疑点、问题点、转折点的制造方法)
 
 Doubt points are not invented; they are computed. Run this method between the pressure-system pass and the beat-ladder pass. Its checking-side counterparts (A/B story, suspense check, promise ledger) live in `detective-plot-coupling-review`.
@@ -661,6 +667,20 @@ The host is a person (design: `docs/host-character-design.md`):
 - The family web is canon: 赵律师 is the host's partner (the far end of the wrongful-verdict episode — she was that man's lawyer), 张法医 is his oldest friend (哥们归哥们，发票归发票), 周会计 is 张's partner and the keeper of the one dinner table where the show is never discussed; 小林老师 stays outside the web by design. Host gender stays unspecified — write 对象/另一半, never gendered terms for the host.
 - Domestic register enters only openers and closing half-lines; the professional core of any advice stays word-for-word professional. At most one family/couple beat per case. Relationships never bend facts or verdicts — 赵's disclaimers got stricter, not softer, when she became family.
 - The room half-knows: regulars dare to type "赵姐" and never dare to ask; on-air copy never explains why she always answers. The apology-turned-dinner origin is bible-only.
+
+## Multi-Scene and Offline Rashomon (多元场景)
+
+Design source: `docs/multi-scene-rashomon-design.md`. The show is titled for the livestream, but plot-driving stages must diversify.
+
+- Write daytime locations as scenes with casts and beats, not as one-sentence souvenirs. A visit that only returns a label for the callback opener is underwritten.
+- DayScene kinds beyond `visit`/`studio`/`document`: `observe` (same room, different table — watch, do not intervene), `sitIn` (licensed eavesdrop co-presence — host silent by caller request), `doorstep` (refusal at the threshold).
+- At most one face-to-face privilege with the other party per pack; other cases use mediated Rashomon. The host does not interrogate the other party on the player's behalf during sitIn — notes feed the night-B callback.
+- Every day location still obeys bring-back law: `earnedItemId` must unlock a distinct `callbackOpeners` line the player could not have gotten from the console alone.
+- Keep the interlude short and the city day long: when both surfaces exist, spend interlude budget on one or two console-scale actions and put walking, observing, doorstep refusals, and document visits in `dayScenes`.
+- With `overnightStructure`, write night-B openings only in `overnightStructure.callbackOpeners`. Any interlude result intended to change that opening must be copied into `earnedItems` by the same id or an explicit inventory map; never leave a player-facing "carried" item outside the opener pool.
+- Do not write parallel hangup or opener prose for `nightStructure` and `overnightStructure`. Align the hangup seam and maintain one callback-opening source of truth.
+- Give at least one off-console scene per case a consequential `choice`: different branches grant different information state, route state, or `grantsEarnedItemId`; cosmetic branch labels do not satisfy the scene.
+- Before shipping, audit NPC ownership and document wiring: one load-bearing NPC beat lives in one scene only, and every callback-changing document grants an earned item with a matching opener.
 
 ## Theatrical License (戏剧性特许)
 
