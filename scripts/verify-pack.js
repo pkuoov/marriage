@@ -373,6 +373,8 @@ function assertNightStructure(packet = {}, label = "") {
     assert(!(structure.callbackOpeners ?? []).length, `${label} 存在 overnightStructure 时不得保留第二套 nightStructure.callbackOpeners`);
     assert(structure.hangup.stageDirection === packet.overnightStructure.hangupLine, `${label} nightStructure.hangup.stageDirection 必须与 overnightStructure.hangupLine 对齐`);
     assert(structure.hangup.hostLine === packet.overnightStructure.hostHoldLine, `${label} nightStructure.hangup.hostLine 必须与 overnightStructure.hostHoldLine 对齐`);
+    assertNonEmptyString(interlude.continueLabel, `${label} nightStructure.interlude.continueLabel 不能为空`);
+    assert(interlude.continueLabel.includes("白天") && !interlude.continueLabel.includes("回拨"), `${label} nightStructure.interlude.continueLabel 进入白天地图库时必须明确写“白天”，不能误写“回拨”`);
   } else {
     assertArrayMin(structure.callbackOpeners, 1, `${label} nightStructure.callbackOpeners 不能为空`);
     assert(structure.callbackOpeners.some((opener) => opener.id === "opener-soft" && Array.isArray(opener.requiresAny) && opener.requiresAny.length === 0), `${label} nightStructure.callbackOpeners 必须包含无 requiresAny 的 opener-soft`);
@@ -474,11 +476,13 @@ function assertOvernightStructure(packet = {}, label = "") {
     assert(openerIds.has(earnedId), `${label} overnightStructure.callbackOpeners 缺少 earnedItem opener: ${earnedId}`);
     assertNonEmptyString(structure.callbackOpeners?.[earnedId]?.line, `${label} overnightStructure.callbackOpeners.${earnedId}.line 不能为空`);
   });
+  const firstConflictHostLines = new Set();
   Object.entries(structure.callbackOpeners ?? {}).forEach(([earnedId, opener]) => {
-    if (opener?.firstConflict === undefined) return;
     assert(opener.firstConflict && typeof opener.firstConflict === "object" && !Array.isArray(opener.firstConflict), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 必须是对象`);
     assertNonEmptyString(opener.firstConflict.hostLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.hostLine 不能为空`);
     assertNonEmptyString(opener.firstConflict.callerLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerLine 不能为空`);
+    assert(!firstConflictHostLines.has(opener.firstConflict.hostLine), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.hostLine 不得与另一带回物共用同一句`);
+    firstConflictHostLines.add(opener.firstConflict.hostLine);
   });
   if (structure.interludeEarnedItemMap !== undefined) {
     assert(structure.interludeEarnedItemMap && typeof structure.interludeEarnedItemMap === "object" && !Array.isArray(structure.interludeEarnedItemMap), `${label} overnightStructure.interludeEarnedItemMap 必须是对象`);

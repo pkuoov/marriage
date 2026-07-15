@@ -2011,6 +2011,19 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assert(overnightCallbackOpenerById(brief, "他对五万的沉默")?.firstConflict?.callerLine, "旁听提前离开必须改变夜 B 第一轮回答");
   assertIncludes(JSON.stringify(sitIn?.body?.choice?.options ?? []), "灯是我真心买的", "同席原句必须保留，供麦外来信精确回声");
   assertEqual(brief.lurkerNote?.deletedFragment, "灯是我真心买的", "lurker 只能复现同席已经当面说过的原句");
+  const deviceSeed = brief.sceneVersions.find((scene) => scene.id === "credit-device-benefit");
+  const deviceReveal = brief.sceneVersions.find((scene) => scene.id === "credit-bank-flow");
+  assert(deviceSeed, "案 1 夜 A 必须保留设备受益种子");
+  assert(deviceReveal, "案 1 夜 B 必须保留设备受益揭示");
+  assertIncludes(deviceSeed.version, "投资", "案 1 夜 A 只能先种下投资话术");
+  assert(!deviceSeed.version.includes("灯架和稳定器一直在我屋里"), "案 1 夜 A 不得抢先说完设备实际受益");
+  assert(!(deviceSeed.questionOptions ?? []).some((option) => /实际服务过咨询者账号|收了设备/.test(option.contradiction ?? "")), "案 1 夜 A 的矛盾入账不得提前公布设备受益结论");
+  assertEqual(brief.callMedium, "voice", "案 1 必须保持纯语音连线");
+  assertIncludes(deviceReveal.version, "麦克风", "案 1 夜 B 的设备揭示必须落成麦克风可听见的现场动作");
+  ["共享屏幕", "镜头", "看了眼墙边"].forEach((visualLeak) => {
+    assert(!JSON.stringify(deviceReveal).includes(visualLeak), `案 1 纯语音设备揭示不得依赖视觉信息: ${visualLeak}`);
+  });
+  assert(!overnightCallbackOpenerById(brief, "流水圈注")?.firstConflict?.hostLine?.includes("这条边"), "流水圈注第一轮追问不得向玩家暴露创作黑话");
   const couplingSkill = readFileSync(new URL("../project-skills/detective-plot-coupling-review/SKILL.md", import.meta.url), "utf8");
   assertIncludes(couplingSkill, "同席特许的当面句允许在麦外来信复现一次，复现即人物", "侦探结构 skill 必须写明 lurker 同席回声特许");
   [`会员号追问${"边"}`, `常客轮订${"边"}`, `旁听·订座与${"灯"}`, `旁听·五万拒${"答"}`].forEach((legacyName) => {
@@ -2066,6 +2079,22 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   const dryerEarned = interludeEarnedItemsForOvernight(brief, ["吹风机回放"]);
   assert(dryerEarned.includes("吹风机回放"), "案 2 同名吹风机回放必须显式同步进 overnight earnedItems");
   assert(availableOvernightCallbackOpeners(brief, dryerEarned).some((opener) => opener.id === "吹风机回放"), "案 2 吹风机回放必须能改变第二夜第一句");
+  const otherCallerAction = nightActionById(brief, "other-caller-dm");
+  const otherCallerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");
+  assert(otherCallerAction, "案 2 幕间必须保留回女客私信动作");
+  assert(!otherCallerAction?.grantsInventory?.length, "回女客私信动作本身不得授予无消费者的已读物件");
+  assert(!JSON.stringify(brief).includes("other-caller-dm-seen"), "案 2 运行时内容不得残留孤儿 other-caller-dm-seen");
+  [
+    ["side-other", "side-other-caller", "女客拉群立场"],
+    ["side-caller", "side-caller-stop", "咨询者止损立场"]
+  ].forEach(([replyId, inventoryId, openerId]) => {
+    const reply = otherCallerHook?.replyChoices?.find((choice) => choice.id === replyId);
+    assertEqual(reply?.grantsInventory?.[0], inventoryId, `案 2 私信回复 ${replyId} 必须授予对应立场`);
+    const earned = interludeEarnedItemsForOvernight(brief, [inventoryId]);
+    assert(earned.includes(openerId), `案 2 私信回复 ${replyId} 必须映射到 ${openerId}`);
+    assert(availableOvernightCallbackOpeners(brief, earned).some((opener) => opener.id === openerId), `案 2 私信回复 ${replyId} 必须解锁 ${openerId}`);
+    assert(overnightCallbackOpenerById(brief, openerId)?.firstConflict?.hostLine, `案 2 私信回复 ${replyId} 的 opener 必须有第一轮冲突`);
+  });
   [`工作室·标准表${"边"}`, `工作室·六折${"边"}`, legacyDryerId].forEach((legacyName) => {
     assert(!JSON.stringify(brief).includes(legacyName), `案 2 不得再暴露旧带回名: ${legacyName}`);
   });
@@ -2092,16 +2121,25 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
   assertEqual(structure?.dayScenes?.length, 3, "案 3 白天必须提供三处调查面");
   assertEqual(daySceneById(brief, "day-profile-teahouse")?.kind, "visit", "案 3 必须到茶馆核两套报价");
   assertEqual(daySceneById(brief, "day-profile-teahouse")?.body?.choice?.options?.length, 2, "案 3 茶馆必须有两岔现场取舍");
+  assert(daySceneById(brief, "day-profile-teahouse")?.body?.choice?.options?.every((option) => (option.resultBeats ?? []).length >= 2), "案 3 茶馆两岔必须留下不同的当场确认，不能只换 earnedItem 标签");
   assertEqual(daySceneById(brief, "day-profile-cousin-doorstep")?.kind, "doorstep", "案 3 表姐必须只在门口有限作证");
   assertEqual(daySceneById(brief, "day-profile-credential-docs")?.kind, "document", "案 3 必须并读学历核验与存款证明");
   assert(!(structure.dayScenes ?? []).some((scene) => scene.kind === "sitIn"), "案 3 不得增加第二次同席");
   const initial = initialOvernightStateFor(brief);
   assert(!canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-profile-teahouse"] }), "案 3 只去一处不能进入第二夜");
   assert(canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-profile-teahouse", "day-profile-cousin-doorstep"] }), "案 3 去满两处后必须允许回拨");
-  ["介绍人双边记录", "表姐门口口供", "双份材料圈注"].forEach((itemId) => {
+  const case3OpenerIds = ["介绍人双边记录", "介绍人添话标记", "表姐门口口供", "双份材料圈注", "家里群原话", "饭局停顿回放"];
+  case3OpenerIds.forEach((itemId) => {
     assert(availableOvernightCallbackOpeners(brief, [itemId]).some((opener) => opener.id === itemId), `案 3 带回 ${itemId} 必须改变第二夜第一句`);
+    assert(overnightCallbackOpenerById(brief, itemId)?.firstConflict?.hostLine, `案 3 带回 ${itemId} 必须改变第二夜第一轮对峙`);
   });
+  assertEqual(new Set(case3OpenerIds.map((itemId) => overnightCallbackOpenerById(brief, itemId)?.firstConflict?.hostLine)).size, case3OpenerIds.length, "案 3 每个带回物必须有不同的第一拳");
   assert(interludeEarnedItemsForOvernight(brief, ["family-chat-seen"]).includes("家里群原话"), "案 3 家里群原话必须从幕间同步进 overnight earnedItems");
+  assert(interludeEarnedItemsForOvernight(brief, ["profile-dinner-pause-playback"]).includes("饭局停顿回放"), "案 3 饭局停顿回放必须从幕间同步进 overnight earnedItems");
+  assertEqual(nightStructure?.interlude?.continueLabel, "进入白天调查", "案 3 幕间结束必须明确进入白天，不能误导为立即回拨");
+  assertEqual(nightStructure?.hangup?.stageDirection, structure?.hangupLine, "案 3 挂断舞台指示必须与 overnight 挂断文案对齐");
+  assertEqual(nightStructure?.hangup?.hostLine, structure?.hostHoldLine, "案 3 主持人挂断句必须与 overnight 保持单一来源");
+  assert(!nightStructure?.hangup?.line?.includes("马上"), "案 3 挂断不能再写成马上回来的软离席");
 });
 
 test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", () => {
@@ -2115,10 +2153,32 @@ test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", ()
   });
   assertEqual(nightStructureFor(brief)?.interlude?.budget, 1, "案 4 短幕间最多支出一步");
   assert(!(nightStructureFor(brief)?.callbackOpeners ?? []).length, "案 4 存在 overnightStructure 时不得保留第二套 opener 表");
+  const structure = overnightStructureFor(brief);
   const linFrameEarned = interludeEarnedItemsForOvernight(brief, ["work-frame-lin"]);
   assert(linFrameEarned.includes("小林主责框架"), "案 4 镜框 inventory 必须同步进 overnight earnedItems");
   assert(availableOvernightCallbackOpeners(brief, linFrameEarned).some((item) => item.id === "小林主责框架"), "采小林框架必须改变第二夜开场");
+  assert(interludeEarnedItemsForOvernight(brief, ["delegation-return"]).includes("顾问回单"), "案 4 顾问回单必须从幕间同步进 overnight earnedItems");
+  assert(interludeEarnedItemsForOvernight(brief, ["playback-pad"]).includes("垫款回放"), "案 4 垫款回放必须从幕间同步进 overnight earnedItems");
+  const leaderInterrupt = nightActionById(brief, "leader-interrupt");
+  assert(leaderInterrupt?.choices?.find((choice) => choice.id === "bring-to-callback")?.grantsInventory?.includes("leader-note-hot"), "案 4 带回领导批注必须继续解锁回拨");
+  assert(!(leaderInterrupt?.choices?.find((choice) => choice.id === "hold-back")?.grantsInventory ?? []).length, "案 4 压下批注不得再授予孤儿 inventory");
+  ["day-work-finance-window", "day-work-supplier-visit", "day-work-breakroom-observe"].forEach((sceneId) => {
+    const options = daySceneById(brief, sceneId)?.body?.choice?.options ?? [];
+    assertEqual(options.length, 2, `案 4 ${sceneId} 必须有两岔现场取舍`);
+    assert(options.every((option) => (option.resultBeats ?? []).length >= 2), `案 4 ${sceneId} 两岔必须产生不同当场信息`);
+    assertEqual(new Set(options.map((option) => option.grantsEarnedItemId)).size, options.length, `案 4 ${sceneId} 两岔必须改变不同夜 B 第一拳`);
+  });
   assertEqual(daySceneById(brief, "day-work-breakroom-observe")?.body?.choice?.options?.length, 2, "案 4 茶水间观察必须有两岔现场取舍");
+  const case4OpenerIds = Object.keys(structure?.callbackOpeners ?? {});
+  assertEqual(case4OpenerIds.length, 13, "案 4 必须覆盖九条既有 opener、两条白天分叉与两条幕间带回");
+  case4OpenerIds.forEach((itemId) => {
+    assert(overnightCallbackOpenerById(brief, itemId)?.firstConflict?.hostLine, `案 4 带回 ${itemId} 必须改变第二夜第一轮对峙`);
+  });
+  assertEqual(new Set(case4OpenerIds.map((itemId) => overnightCallbackOpenerById(brief, itemId)?.firstConflict?.hostLine)).size, case4OpenerIds.length, "案 4 每个带回物必须有不同的第一拳");
+  assertEqual(nightStructureFor(brief)?.interlude?.continueLabel, "进入白天调查", "案 4 幕间结束必须明确进入白天，不能误导为立即回拨");
+  assertEqual(nightStructureFor(brief)?.hangup?.stageDirection, structure?.hangupLine, "案 4 挂断舞台指示必须与 overnight 挂断文案对齐");
+  assertEqual(nightStructureFor(brief)?.hangup?.hostLine, structure?.hostHoldLine, "案 4 主持人挂断句必须与 overnight 保持单一来源");
+  assert(!nightStructureFor(brief)?.hangup?.line?.includes("马上"), "案 4 挂断不能再写成马上回来的软离席");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {

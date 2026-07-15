@@ -263,7 +263,8 @@ async function runCase3DayRoutes() {
       { id: "day-profile-cousin-doorstep", text: "门只开到防盗链" }
     ],
     opener: "介绍人双边记录",
-    openerText: "‘收入稳’是她添的"
+    openerText: "‘收入稳’是她添的",
+    conflictText: "给女方家抬高了哪句"
   });
 }
 
@@ -279,7 +280,8 @@ async function runCase4AdvisorConflict() {
       { id: "day-work-breakroom-observe", text: "三页都摆在这儿" }
     ],
     opener: "小林主责框架",
-    openerText: "想要这个位置是我的"
+    openerText: "想要这个位置是我的",
+    conflictText: "哪句是你主动要的"
   });
 }
 
@@ -353,9 +355,37 @@ async function runCase2DayMap() {
     opener: "吹风机回放",
     openerText: "我把背景剪掉了"
   });
+  await runOfflineDayMap({
+    chapter: 2,
+    name: "case2-dm-other",
+    interludeAction: "other-caller-dm",
+    interludeReplyChoice: "side-other",
+    expectedNightInventory: "side-other-caller",
+    expectedDaySceneCount: 4,
+    dayScenes: [
+      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "你还是自己人" },
+      { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
+    ],
+    opener: "女客拉群立场",
+    openerText: "你支持她拉群要说法"
+  });
+  await runOfflineDayMap({
+    chapter: 2,
+    name: "case2-dm-caller",
+    interludeAction: "other-caller-dm",
+    interludeReplyChoice: "side-caller",
+    expectedNightInventory: "side-caller-stop",
+    expectedDaySceneCount: 4,
+    dayScenes: [
+      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "你还是自己人" },
+      { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
+    ],
+    opener: "咨询者止损立场",
+    openerText: "顺手把她那张同款表也压下去"
+  });
 }
 
-async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoice = "", interludeText = "", expectedDaySceneCount = 3, dayScenes, opener, openerText }) {
+async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoice = "", interludeReplyChoice = "", expectedNightInventory = "", interludeText = "", expectedDaySceneCount = 3, dayScenes, opener, openerText, conflictText = "" }) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     reducedMotion: "reduce"
@@ -378,7 +408,18 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     await click(page, `[data-interlude-action="${interludeAction}"]`);
     await assertNoPageText(page, "ON AIR", `${name} interlude action must stay off air`);
     if (interludeText) await assertVisibleText(page, interludeText, `${name} must render the selected interlude NPC action`);
-    if (interludeChoice) {
+    if (interludeReplyChoice) {
+      await click(page, "[data-evidence-check]");
+      if (await page.locator("[data-return-interlude]").count()) {
+        throw new Error(`${name} must require a reply before returning to the interlude desk`);
+      }
+      await assertNightState(page, (night) => !(night.interludeActionsDone ?? []).includes(interludeAction), `${name} must not complete the private-message action before reply`);
+      await assertNightState(page, (night) => !(night.inventory ?? []).includes("other-caller-dm-seen"), `${name} must not grant the orphan read receipt`);
+      await click(page, `[data-reply-choice="${interludeReplyChoice}"]`);
+      await assertNightState(page, (night) => (night.interludeActionsDone ?? []).includes(interludeAction), `${name} must complete the private-message action after reply`);
+      await assertNightState(page, (night) => (night.inventory ?? []).includes(expectedNightInventory), `${name} must grant the selected reply stance`);
+      await assertNightState(page, (night) => !(night.inventory ?? []).includes("other-caller-dm-seen"), `${name} must keep the orphan read receipt absent after reply`);
+    } else if (interludeChoice) {
       await click(page, `[data-advisor-conflict="${interludeChoice}"]`);
       await click(page, "[data-return-interlude]");
     } else {
@@ -402,6 +443,7 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     await click(page, "[data-enter-overnight-callback]");
     await click(page, `[data-overnight-opener="${opener}"]`);
     await assertVisibleText(page, openerText, `${name} must use the selected daytime item in the second-night opener`);
+    if (conflictText) await assertVisibleText(page, conflictText, `${name} must render the selected item's first night-B confrontation`);
     await assertNoPageText(page, "undefined", `${name} rendered undefined text`);
     await assertNoPageText(page, "NaN", `${name} rendered NaN text`);
   } catch (error) {
@@ -754,6 +796,18 @@ async function assertOvernightState(page, predicate, message) {
   });
   if (!predicate(overnight)) {
     throw new Error(`${message}: ${JSON.stringify(overnight)}`);
+  }
+}
+
+async function assertNightState(page, predicate, message) {
+  const night = await page.evaluate(() => {
+    const raw = window.localStorage?.getItem("livestream-detective-save-v1");
+    const save = raw ? JSON.parse(raw) : {};
+    const nights = save.caseNights ?? {};
+    return Object.values(nights)[0] ?? {};
+  });
+  if (!predicate(night)) {
+    throw new Error(`${message}: ${JSON.stringify(night)}`);
   }
 }
 
