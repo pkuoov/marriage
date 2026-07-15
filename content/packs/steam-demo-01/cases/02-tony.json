@@ -999,10 +999,7 @@
           "summary": "另一位女生发来同款表，可以回一句。",
           "cost": 1,
           "kind": "backflowEarly",
-          "hookId": "tony-other-caller-dm",
-          "grantsInventory": [
-            "other-caller-dm-seen"
-          ]
+          "hookId": "tony-other-caller-dm"
         },
         {
           "id": "listen-dryer",

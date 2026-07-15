@@ -2814,7 +2814,10 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0, context = {})
       if (outcome.correct) state.lastScreenEffect = "material-hit";
       state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
       if (context.interludeAction) {
-        completeInterludeAction(brief, context.interludeAction, { renderNow: false });
+        const replyChoices = context.interludeAction.replyChoices ?? hook.replyChoices ?? [];
+        if (!replyChoices.length) {
+          completeInterludeAction(brief, context.interludeAction, { renderNow: false });
+        }
         saveState();
         return render();
       }
