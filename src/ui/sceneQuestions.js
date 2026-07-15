@@ -27,7 +27,20 @@ export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePi
   const keyRows = keyOptions
     .map((option, optionIndex) => keyQuestionButton(sceneIndex, optionIndex, option))
     .join("");
-  return choiceGroup(`${dialogueRows}${keyRows}`, "scene-question-group");
+  return choiceGroup(`
+    ${questionSectionHtml({
+      className: "question-section-dialogue",
+      title: "补问背景",
+      hint: "先听细节，不收束当前这句话。",
+      content: dialogueRows
+    })}
+    ${questionSectionHtml({
+      className: "question-section-key",
+      title: "追原话",
+      hint: "选一句继续；绕开要点可能消耗听众耐心。",
+      content: keyRows
+    })}
+  `, "scene-question-group");
 }
 
 export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks = []) {
@@ -77,6 +90,19 @@ function keyQuestionButton(sceneIndex, optionIndex, option = {}) {
     <button class="choice-question" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
       <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
     </button>
+  `;
+}
+
+function questionSectionHtml({ className = "", title = "", hint = "", content = "" } = {}) {
+  if (!content?.trim()) return "";
+  return `
+    <section class="question-section ${className}">
+      <header class="question-section-head">
+        <b>${escapeHtml(title)}</b>
+        <small>${escapeHtml(hint)}</small>
+      </header>
+      <div class="choice-stack">${content}</div>
+    </section>
   `;
 }
 

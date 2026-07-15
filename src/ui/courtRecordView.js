@@ -1,11 +1,11 @@
-export function mountCourtRecord(root, { state, onSettingsChange = () => {} } = {}) {
+export function mountCourtRecord(root, { state, onSettingsChange = () => {}, onBeforeOpen = () => {} } = {}) {
   if (!root) return;
   const overlay = document.createElement("aside");
   overlay.className = "court-record";
   overlay.hidden = true;
   overlay.innerHTML = courtRecordHtml(state);
   root.append(overlay);
-  const open = () => { overlay.hidden = false; overlay.querySelector("button")?.focus(); };
+  const open = () => { onBeforeOpen(); overlay.hidden = false; overlay.querySelector("button")?.focus(); };
   const close = () => { overlay.hidden = true; };
   root.querySelectorAll("[data-record-open]").forEach((button) => button.addEventListener("click", open));
   overlay.querySelector("[data-record-close]")?.addEventListener("click", close);

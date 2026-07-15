@@ -227,7 +227,8 @@ export function initialNightStateFor(brief = {}) {
     interludeChoicesDone: [],
     inventory: [],
     callbackOpenerId: null,
-    callerStanceOnReturn: "neutral"
+    callerStanceOnReturn: "neutral",
+    stanceNudge: null
   };
 }
 
@@ -242,6 +243,7 @@ export function initialOvernightStateFor(brief = {}) {
     earnedItems: [],
     timelineSorts: {},
     dayFollowups: {},
+    dayChoices: {},
     documentMarks: {},
     documentEarnedQuestions: [],
     documentAnsweredQuestions: {},
@@ -310,7 +312,9 @@ export function returnStanceFor(brief = {}, snapshotPick = null) {
   return stance?.fromSnapshotOptionIds?.[optionId] ?? stance?.default ?? "neutral";
 }
 
-export function overnightReturnPostureFor(snapshotPick = null) {
+export function overnightReturnPostureFor(snapshotPick = null, stanceNudge = null) {
+  if (stanceNudge === "defensive") return "againstCaller";
+  if (stanceNudge === "open") return "withCaller";
   return snapshotPick?.id === "caller-benefited" ? "againstCaller" : "withCaller";
 }
 
@@ -356,6 +360,26 @@ export function availableOvernightCallbackOpeners(brief = {}, earnedItems = []) 
   return Object.entries(overnightStructureFor(brief)?.callbackOpeners ?? {})
     .filter(([earnedItemId]) => carried.has(earnedItemId))
     .map(([id, opener]) => ({ id, ...(opener ?? {}) }));
+}
+
+export function interludeEarnedItemsForOvernight(brief = {}, inventory = []) {
+  const structure = overnightStructureFor(brief);
+  const mapping = structure?.interludeEarnedItemMap ?? {};
+  const openerIds = new Set(Object.keys(structure?.callbackOpeners ?? {}));
+  const carried = new Set(inventory ?? []);
+  const directItems = [...carried].filter((inventoryId) => openerIds.has(inventoryId));
+  const mappedItems = Object.entries(mapping)
+    .filter(([inventoryId]) => carried.has(inventoryId))
+    .flatMap(([, earnedItemIds]) => Array.isArray(earnedItemIds) ? earnedItemIds : [earnedItemIds])
+    .filter(Boolean);
+  return [...new Set([...directItems, ...mappedItems])];
+}
+
+export function canEnterOvernightCallback(brief = {}, overnight = {}) {
+  const structure = overnightStructureFor(brief);
+  if (!structure) return false;
+  const required = Math.max(0, Number(structure.minDayScenes ?? 0));
+  return (overnight.dayScenesDone ?? []).length >= required;
 }
 
 export function overnightCallbackOpenerById(brief = {}, openerId = "") {

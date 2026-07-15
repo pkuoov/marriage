@@ -4,7 +4,7 @@ export const HOST_PROFILE = {
   gender: "male",
   role: "深夜热线主播",
   title: "前调解节目编导 · 深夜热线主播",
-  setup: "两年前，他曾在舆论最响的时候误判过一宗案子。现在，平台要他把节目做成更好看的判决秀；他只肯把没说全的话问清楚。"
+  setup: "两年前，他拿一张剪过的账单做错过判断。现在平台催他把节目做得更像判决秀，他每次开麦都得提醒自己：先把原话听完。"
 };
 
 export const HOST_NAME = HOST_PROFILE.name;

@@ -45,25 +45,25 @@ export function solvedRecapPagesHtml({
       </section>
     `,
     `
-      <p><b>台面上的话</b></p>
-      <p>${(issue.revealed ?? []).length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮只听到表层，评论区还会继续吵。"}</p>
+      <section class="recap-boundary-page">
+        <p><b>台面上的话</b></p>
+        <p>${(issue.revealed ?? []).length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮只听到表层，评论区还会继续吵。"}</p>
+        <p><b>主播收话</b></p>
+        <p>${escapeHtml(conclusion.summary)}</p>
+        ${truthBoundaryReviewHtml(boundary, boundaryPicks)}
+      </section>
     `,
     `
-      <p><b>主播收话</b></p>
-      <p>${escapeHtml(conclusion.summary)}</p>
-      ${conclusion.deepQuestion ? `<p class="hint"><strong>多问一句</strong>：${escapeHtml(conclusion.deepQuestion)}</p>` : ""}
-    `,
-    `
-      <p><b>后续回拨</b></p>
-      <p>${escapeHtml(conclusion.followup)}</p>
-    `,
-    offMicLettersHtml(offMicLetters),
-    truthBoundaryReviewHtml(boundary, boundaryPicks),
-    `
-      <p><b>连线收住</b></p>
-      ${truthBoundaryRevealHtml(boundary, boundaryPicks)}
-      ${boundaryLine ? `<p class="hint">${escapeHtml(boundaryLine)}</p>` : ""}
-      <p>${escapeHtml(conclusion.truth)}</p>
+      <section class="recap-aftercare-page">
+        <p><b>后续回拨</b></p>
+        <p>${escapeHtml(conclusion.followup)}</p>
+        ${conclusion.deepQuestion ? `<p class="hint"><strong>多问一句</strong>：${escapeHtml(conclusion.deepQuestion)}</p>` : ""}
+        ${offMicLettersHtml(offMicLetters)}
+        <p><b>连线收住</b></p>
+        ${truthBoundaryRevealHtml(boundary, boundaryPicks)}
+        ${boundaryLine ? `<p class="hint">${escapeHtml(boundaryLine)}</p>` : ""}
+        <p>${escapeHtml(conclusion.truth)}</p>
+      </section>
     `
   ].filter((page) => String(page ?? "").trim());
 }

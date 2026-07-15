@@ -1,4 +1,4 @@
-import { HOST_NAME } from "../hostProfile.js?v=0.20.94";
+import { HOST_NAME } from "../hostProfile.js?v=0.20.95";
 
 export function hangupBeatHtml(hangup = {}) {
   return `
@@ -17,15 +17,14 @@ export function interludeDeskHtml({
   canReturn = false
 } = {}) {
   const budget = night.interludeBudget ?? {};
-  const doneCount = (night.interludeActionsDone ?? []).length;
   return `
     <section class="interlude-desk-card">
       <span class="source-badge">广告中 / 等待回拨</span>
       <p><b>${escapeHtml(interlude.title ?? "幕间·调查台")}</b></p>
       <p>${escapeHtml(interlude.kicker ?? "她不在线。时间只够做两三件事。")}</p>
-      <div class="interlude-budget" aria-label="幕间预算">
-        <b>剩余 ${Number(budget.remaining ?? 0)}/${Number(budget.max ?? 0)}</b>
-        <span>已做 ${doneCount} 件，至少 ${Number(interlude.minActions ?? 0)} 件，最多 ${Number(interlude.maxActions ?? 0)} 件。</span>
+      <div class="interlude-budget" aria-label="幕间剩余 ${Number(budget.remaining ?? 0)} 格，总计 ${Number(budget.max ?? 0)} 格">
+        <b>剩余 ${Number(budget.remaining ?? 0)} 格</b>
+        <span>${canReturn ? "已经带回可用内容" : "行动耗时标在卡片右下角"}</span>
       </div>
       <div class="interlude-action-grid">
         ${actionStates.map((item) => interludeActionButtonHtml(item)).join("")}
@@ -161,20 +160,48 @@ function interludeActionButtonHtml({ action = {}, done = false, disabled = false
 }
 
 function advisorConflictOptionHtml(option = {}, selected = null) {
+  const advisor = advisorMetaForOption(option);
   if (selected) {
     return `
       <article class="advisor-conflict-option ${selected.id === option.id ? "selected" : "dimmed"}">
-        <b>${escapeHtml(option.label ?? "")}</b>
-        <p>${escapeHtml(option.advisorLine ?? "")}</p>
+        ${advisorOptionHeadHtml(option, advisor)}
+        <p>${escapeHtml(selected.id === option.id ? option.advisorLine ?? "" : advisorLinePreview(option.advisorLine))}</p>
       </article>
     `;
   }
   return `
     <button class="advisor-conflict-option" data-advisor-conflict="${escapeHtml(option.id ?? "")}" type="button">
-      <b>${escapeHtml(option.label ?? "")}</b>
-      <p>${escapeHtml(option.advisorLine ?? "")}</p>
+      ${advisorOptionHeadHtml(option, advisor)}
+      <p>${escapeHtml(advisorLinePreview(option.advisorLine))}</p>
     </button>
   `;
+}
+
+function advisorOptionHeadHtml(option = {}, advisor = {}) {
+  return `
+    <span class="advisor-option-head">
+      <span class="advisor-avatar advisor-${escapeHtml(advisor.key ?? "default")}" aria-hidden="true">${escapeHtml(advisor.surname ?? "顾")}</span>
+      <span class="advisor-option-title">
+        <b>${escapeHtml(option.label ?? advisor.name ?? "顾问")}</b>
+        <small>${escapeHtml(advisor.domain ?? "专业意见")}</small>
+      </span>
+    </span>
+  `;
+}
+
+function advisorMetaForOption(option = {}) {
+  const key = `${option.id ?? ""} ${option.label ?? ""}`;
+  if (/zhao|赵/.test(key)) return { key: "zhao", surname: "赵", name: "赵律师", domain: "证据与性质边界" };
+  if (/zhou|周/.test(key)) return { key: "zhou", surname: "周", name: "周会计", domain: "账目与资金路径" };
+  if (/lin|小林|林老师/.test(key)) return { key: "lin", surname: "林", name: "小林老师", domain: "身份词与关系成本" };
+  if (/zhang|张/.test(key)) return { key: "zhang", surname: "张", name: "张法医", domain: "材料与保全边界" };
+  return { key: "default", surname: "顾", name: "顾问", domain: "专业意见" };
+}
+
+function advisorLinePreview(line = "") {
+  const text = String(line ?? "").trim();
+  const firstSentence = text.match(/^.*?[。！？]/)?.[0] ?? text;
+  return firstSentence.length > 44 ? `${firstSentence.slice(0, 43)}…` : firstSentence;
 }
 
 function replyChoiceButtonHtml(choice = {}, selected = null, attr = "reply-choice") {

@@ -112,6 +112,8 @@ export function liveFrameHtml({
   screenClass = ""
 } = {}) {
   const materialKind = materialKindForLabel(material);
+  const choicesAreFlow = String(choices ?? "").includes("flow-group");
+  const choiceLayer = `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choices}</div>`;
   return `
     <main>
       <header class="topbar">
@@ -121,7 +123,7 @@ export function liveFrameHtml({
         <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
         <button class="record-button" data-record-open type="button">案卷</button>
       </header>
-      <section class="story-grid case-vn-grid live-console-shell ${escapeHtml(screenClass)}">
+      <section class="story-grid case-vn-grid live-console-shell ${controlDeckHtml ? "has-control-deck" : ""} ${escapeHtml(screenClass)}" data-live-shell>
         ${screenEffect ? `<div class="screen-effect screen-effect-${escapeHtml(screenEffect)}" aria-hidden="true"></div>` : ""}
         ${controlDeckHtml}
         <article class="vn-stage">
@@ -130,16 +132,40 @@ export function liveFrameHtml({
             ${sceneEvidencePropsHtml(backdropClass, materialKind)}
             ${visualHud}
           </div>
-          ${material ? `<button class="avg-material-card" data-material-card type="button"><small>材料</small><b>${escapeHtml(material)}</b></button>` : ""}
           <div class="dialogue-card" aria-live="polite">
-            <p class="eyebrow">${escapeHtml(chapter)}</p>
+            <div class="dialogue-toolbar">
+              <p class="eyebrow">${escapeHtml(chapter)}</p>
+              ${material ? `<button class="avg-material-card" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="打开材料板：${escapeHtml(material)}" type="button"><small>材料</small><b>1</b></button>` : ""}
+            </div>
             ${text}
             ${reactionHtml}
-            <div class="choices avg-choice-overlay">${choices}</div>
           </div>
+          ${choicesAreFlow ? choiceLayer : ""}
         </article>
+        ${choicesAreFlow ? "" : choiceLayer}
+        ${material ? materialModalHtml(material, materialKind) : ""}
       </section>
     </main>
+  `;
+}
+
+function materialModalHtml(material = "", materialKind = "file") {
+  return `
+    <aside class="avg-material-modal" id="avg-material-modal" data-material-modal hidden>
+      <button class="avg-material-backdrop" data-material-close aria-label="关闭材料板" type="button"></button>
+      <section class="avg-material-panel" role="dialog" aria-modal="true" aria-labelledby="avg-material-title">
+        <header>
+          <span>后台材料</span>
+          <button data-material-close type="button">关闭</button>
+        </header>
+        <div class="avg-material-sheet material-${escapeHtml(materialKind)}">
+          <small id="avg-material-title">当前材料</small>
+          <i aria-hidden="true">${escapeHtml(materialGlyph(materialKind))}</i>
+          <b>${escapeHtml(material)}</b>
+          <em>材料文字由案卷记录，图面只标纸张与圈点位置。</em>
+        </div>
+      </section>
+    </aside>
   `;
 }
 

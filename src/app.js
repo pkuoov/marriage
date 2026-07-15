@@ -11,20 +11,20 @@ import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialogu
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.21.1";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.77";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.78";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
-import { callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.20.90";
-import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.20.68";
-import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.20.77";
-import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js?v=0.21.0";
-import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.20.68";
+import { callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.21.3";
+import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.21.4";
+import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.21.3";
+import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js?v=0.21.3";
+import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.21.3";
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
-import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.21.1";
+import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.21.3";
 import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.21.1";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
@@ -32,7 +32,7 @@ import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackComplet
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
 import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js?v=0.20.87";
 import { storyPackForKey } from "./storyPacks.js?v=0.20.87";
-import { HOST_PROFILE } from "./hostProfile.js?v=0.20.94";
+import { HOST_PROFILE } from "./hostProfile.js?v=0.20.95";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
@@ -90,6 +90,10 @@ document.addEventListener("keydown", (event) => {
     return;
   }
   if (intent === "back") {
+    if (closeTopOverlay()) {
+      event.preventDefault();
+      return;
+    }
     const backButton = preferredBackButton();
     if (!backButton) return;
     event.preventDefault();
@@ -580,9 +584,7 @@ function renderOvernightPostLive(brief) {
   const structure = overnightStructureFor(brief);
   const contact = structure?.postHangupContact ?? null;
   if (!structure || !contact?.lines?.length) {
-    state.scene = "dayActOpening";
-    saveState();
-    return renderDayActOpening(brief);
+    return enterOvernightInterludeOrDay(brief);
   }
   frame({
     brief,
@@ -601,11 +603,21 @@ function renderOvernightPostLive(brief) {
     choices: flowGroupHtml(`<button class="primary" data-enter-day-act type="button">进入第二幕</button>`)
   });
   bind("[data-enter-day-act]", () => {
-    state.scene = "dayActOpening";
-    saveState();
-    render();
+    enterOvernightInterludeOrDay(brief);
   });
   bindSceneButtons();
+}
+
+function enterOvernightInterludeOrDay(brief) {
+  const interlude = nightStructureFor(brief)?.interlude;
+  if ((interlude?.actions ?? []).length) {
+    updateNight(brief, { segment: "interlude", hangupDone: true });
+    state.scene = "interludeDesk";
+  } else {
+    state.scene = "dayActOpening";
+  }
+  saveState();
+  render();
 }
 
 function renderDayActOpening(brief) {
@@ -650,6 +662,9 @@ function renderDayMap(brief) {
   const overnight = ensureOvernight(brief);
   const done = new Set(overnight.dayScenesDone ?? []);
   const remaining = Number(overnight.dayBudget?.remaining ?? 0);
+  const required = Math.max(0, Number(structure.minDayScenes ?? 0));
+  const completedCount = (overnight.dayScenesDone ?? []).length;
+  const callbackReady = canEnterOvernightCallback(brief, overnight);
   const scenes = structure.dayScenes ?? [];
   const sceneGrid = scenes.map((scene) => {
     const completed = done.has(scene.id);
@@ -665,7 +680,7 @@ function renderDayMap(brief) {
     return `
       <button class="day-place" data-day-scene="${escapeHtml(scene.id ?? "")}" ${disabled ? "disabled" : ""} type="button">
         <b>${escapeHtml(scene.label ?? "")}</b>
-        <span>${disabled ? "下午不够了" : "过去看看"}</span>
+        <span>${disabled ? "下午不够了" : "耗时 1"}</span>
       </button>
     `;
   }).join("");
@@ -677,15 +692,17 @@ function renderDayMap(brief) {
     text: `
       <section class="day-map-card">
         <span class="source-badge">下午走访</span>
-        <div class="interlude-budget" aria-label="白天预算">
-          <b>剩余 ${remaining}/${Number(overnight.dayBudget?.max ?? 0)}</b>
-          <span>去过 ${(overnight.dayScenesDone ?? []).length} 处。</span>
+        <div class="interlude-budget" aria-label="白天剩余 ${remaining} 格，总计 ${Number(overnight.dayBudget?.max ?? 0)} 格">
+          <b>剩余 ${remaining} 格</b>
+          <span>${completedCount ? `已走访 ${completedCount} 处` : "每处耗时 1 格"}</span>
         </div>
         <div class="day-place-grid">${sceneGrid}</div>
         ${(overnight.earnedItems ?? []).length ? `<p class="hint">带到夜里的东西：${escapeHtml((overnight.earnedItems ?? []).join(" / "))}</p>` : ""}
       </section>
     `,
-    choices: flowGroupHtml(`<button class="primary" data-enter-overnight-callback type="button">等到夜里</button>`)
+    choices: flowGroupHtml(callbackReady
+      ? `<button class="primary" data-enter-overnight-callback type="button">等到夜里</button>`
+      : `<button type="button" disabled>还要去 ${Math.max(0, required - completedCount)} 处</button>`)
   });
   bind("[data-day-scene]", (event) => {
     updateOvernight(brief, { activeDaySceneId: event.currentTarget?.getAttribute("data-day-scene") ?? "" });
@@ -717,10 +734,13 @@ function renderDayScene(brief) {
   const timeline = body.timelineSort;
   const timelineState = overnight.timelineSorts?.[dayScene.id] ?? { order: [], submitted: false };
   const followupAsked = Boolean(overnight.dayFollowups?.[dayScene.id]);
+  const choiceStateId = overnight.dayChoices?.[dayScene.id] ?? "";
   const interaction = timeline
     ? dayTimelineHtml(dayScene, timeline, timelineState)
     : dayFollowupHtml(body, followupAsked);
-  const canLeave = completed || !timeline || timelineState.submitted;
+  const stageExtras = dayStageExtrasHtml(dayScene, body);
+  let canLeave = completed || !timeline || timelineState.submitted;
+  if (body.choice && !choiceStateId) canLeave = false;
   dayFrame({
     brief,
     label: dayScene.label ?? "白天调查",
@@ -729,13 +749,16 @@ function renderDayScene(brief) {
     text: `
       <section class="day-scene-card">
         <span class="source-badge">${escapeHtml(dayScene.label ?? "白天")}</span>
+        ${stageExtras}
         <p>${escapeHtml(body.text ?? "")}</p>
+        ${dayBeatsHtml(body)}
         ${interaction}
+        ${dayChoiceHtml(body, choiceStateId)}
       </section>
     `,
     choices: flowGroupHtml(`
       <button data-scene="dayMap" type="button">先退回街上</button>
-      ${canLeave ? `<button class="primary" data-complete-day-scene type="button">记下离开</button>` : ""}
+      ${canLeave ? `<button class="primary" data-complete-day-scene type="button">记下离开</button>` : (body.choice && !choiceStateId ? `<button type="button" disabled>先选一步</button>` : "")}
     `)
   });
   bind("[data-day-timeline-card]", (event) => {
@@ -762,8 +785,74 @@ function renderDayScene(brief) {
     saveState();
     render();
   });
+  bind("[data-day-choice]", (event) => {
+    const optionId = event.currentTarget?.getAttribute("data-day-choice") ?? "";
+    if (!optionId) return;
+    updateOvernight(brief, {
+      dayChoices: {
+        ...(ensureOvernight(brief).dayChoices ?? {}),
+        [dayScene.id]: optionId
+      }
+    });
+    saveState();
+    render();
+  });
   bind("[data-complete-day-scene]", () => completeDayScene(brief, dayScene));
   bindSceneButtons();
+}
+
+function dayStageExtrasHtml(dayScene = {}, body = {}) {
+  const parts = [];
+  if (Array.isArray(body.cast) && body.cast.length) {
+    parts.push(`<div class="day-cast">${body.cast.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</div>`);
+  }
+  if (dayScene.kind === "sitIn") {
+    parts.push(`<p class="hint day-sitin-hint">她求你听着，别开口。旁听不算上麦。</p>`);
+  }
+  if (dayScene.kind === "observe") {
+    parts.push(`<p class="hint day-sitin-hint">同场不同桌。你只看，不介入。</p>`);
+  }
+  return parts.join("");
+}
+
+function dayBeatsHtml(body = {}) {
+  const beats = body.beats ?? [];
+  if (!beats.length) return "";
+  return callDialogueHtml(beats.map((beat) => {
+    const speaker = beat.speaker ?? "";
+    const isHost = /你|主播|林旭阳/.test(speaker);
+    return { role: isHost ? "host" : "caller", speaker, text: beat.text ?? "" };
+  }));
+}
+
+function dayChoiceHtml(body = {}, choiceStateId = "") {
+  const choice = body.choice;
+  if (!choice?.prompt) return "";
+  const options = choice.options ?? [];
+  if (choiceStateId) {
+    const selected = options.find((option) => option.id === choiceStateId);
+    const resultText = selected?.resultText
+      ? `<p>${escapeHtml(selected.resultText)}</p>`
+      : "";
+    const resultBeats = dayBeatsHtml({ beats: selected?.resultBeats ?? [] });
+    return `
+      <section class="day-followup">
+        <p class="reaction">${escapeHtml(selected?.label ?? "已记下")}</p>
+        ${resultText}
+        ${resultBeats}
+      </section>
+    `;
+  }
+  return `
+    <section class="day-followup">
+      <b>${escapeHtml(choice.prompt)}</b>
+      <div class="day-choice-grid">
+        ${options.map((option) => `
+          <button data-day-choice="${escapeHtml(option.id ?? "")}" type="button">${escapeHtml(option.label ?? "")}</button>
+        `).join("")}
+      </div>
+    </section>
+  `;
 }
 
 function renderOvernightCallback(brief) {
@@ -808,8 +897,10 @@ function renderOvernightCallback(brief) {
   const opener = overnight.callbackOpenerId
     ? overnightCallbackOpenerById(brief, overnight.callbackOpenerId)
     : openers[0] ?? { id: "fallback", ...(structure.callbackFallback ?? {}) };
-  const posture = overnightReturnPostureFor(stanceSnapshotPickForState(brief));
+  const stanceNudge = nightStructureFor(brief) ? ensureNight(brief).stanceNudge : null;
+  const posture = overnightReturnPostureFor(stanceSnapshotPickForState(brief), stanceNudge);
   const stanceLine = structure.postures?.[posture] ?? "";
+  const firstConflict = opener.firstConflict ?? {};
   frame({
     brief,
     mood: posture === "againstCaller" ? "tense" : "focused",
@@ -820,7 +911,9 @@ function renderOvernightCallback(brief) {
         <span class="source-badge">第二夜</span>
         ${callDialogueHtml([
           ...(stanceLine ? [{ role: "caller", text: stanceLine }] : []),
-          { role: "caller", text: opener.line ?? "" }
+          { role: "caller", text: opener.line ?? "" },
+          ...(firstConflict.hostLine ? [{ role: "host", text: firstConflict.hostLine }] : []),
+          ...(firstConflict.callerLine ? [{ role: "caller", text: firstConflict.callerLine }] : [])
         ])}
       </section>
     `,
@@ -845,6 +938,7 @@ function renderDocumentDayScene(brief, dayScene = {}) {
   }
   const overnight = ensureOvernight(brief);
   const markedRows = overnight.documentMarks?.[document.id] ?? [];
+  const canLeave = markedRows.length > 0;
   dayFrame({
     brief,
     label: dayScene.label ?? document.title ?? "回后台审流水",
@@ -853,7 +947,9 @@ function renderDocumentDayScene(brief, dayScene = {}) {
     text: documentViewerHtml({ document, markedRows }),
     choices: flowGroupHtml(`
       <button data-scene="dayMap" type="button">先退回街上</button>
-      <button class="primary" data-complete-day-scene type="button">记下离开</button>
+      ${canLeave
+        ? `<button class="primary" data-complete-day-scene type="button">记下离开</button>`
+        : `<button type="button" disabled>先圈一行</button>`}
     `)
   });
   bind("[data-document-row]", (event) => markDocumentRow(brief, dayScene, document, event.currentTarget?.getAttribute("data-document-row") ?? ""));
@@ -951,7 +1047,10 @@ function quietDayChapter(dayKind = "") {
     visit: "白天·街上",
     home: "白天·家",
     studio: "白天·工作室",
-    document: "白天·后台流水"
+    document: "白天·后台流水",
+    observe: "白天·同场观察",
+    sitIn: "白天·旁听同席",
+    doorstep: "白天·门口"
   }[dayKind] ?? "白天";
 }
 
@@ -1160,7 +1259,9 @@ function completeDayScene(brief, dayScene = {}, { renderNow = true, stayActive =
   const overnight = ensureOvernight(brief);
   const alreadyDone = (overnight.dayScenesDone ?? []).includes(dayScene.id);
   const budget = overnight.dayBudget ?? { max: 0, remaining: 0, used: 0 };
-  const earnedItemId = dayScene.body?.earnedItemId;
+  const choiceId = overnight.dayChoices?.[dayScene.id];
+  const choiceOpt = (dayScene.body?.choice?.options ?? []).find((option) => option.id === choiceId);
+  const earnedItemId = choiceOpt?.grantsEarnedItemId || dayScene.body?.earnedItemId;
   updateOvernight(brief, {
     dayBudget: alreadyDone ? budget : {
       ...budget,
@@ -1176,8 +1277,8 @@ function completeDayScene(brief, dayScene = {}, { renderNow = true, stayActive =
     recordRouteChoice(brief, overnightRouteIndexFor(brief, dayScene), {
       question: dayScene.label ?? "白天地点",
       answer: earnedItemId ?? "visited",
-      routeAxis: dayScene.body?.routeAxis ?? "outer-thread",
-      routeTone: "day-scene"
+      routeAxis: choiceOpt?.routeAxis ?? dayScene.body?.routeAxis ?? "outer-thread",
+      routeTone: choiceOpt?.routeTone ?? "day-scene"
     }, { version: dayScene.body?.text ?? "" });
   }
   if (renderNow) {
@@ -1228,7 +1329,14 @@ function renderInterludeDesk(brief) {
     render();
   });
   bind("[data-callback-ready]", () => {
-    state.scene = "callbackOpener";
+    if (overnightStructureFor(brief)) {
+      const overnight = ensureOvernight(brief);
+      const syncedItems = interludeEarnedItemsForOvernight(brief, ensureNight(brief).inventory);
+      updateOvernight(brief, {
+        earnedItems: [...new Set([...(overnight.earnedItems ?? []), ...syncedItems])]
+      });
+    }
+    state.scene = overnightStructureFor(brief) ? "dayActOpening" : "callbackOpener";
     saveState();
     render();
   });
@@ -2142,6 +2250,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     toggleSound();
     render();
   });
+  resetViewportScroll();
   mountCurrentDialogue();
   queueDefaultFocus();
 }
@@ -2168,6 +2277,7 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
     toggleSound();
     render();
   });
+  resetViewportScroll();
   mountCurrentDialogue();
   queueDefaultFocus();
 }
@@ -2175,6 +2285,7 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
 function mountCurrentDialogue() {
   const card = app?.querySelector(".dialogue-card");
   if (card) card.insertAdjacentHTML("beforeend", avgSystemBarHtml(state.settings));
+  const materialPanel = mountMaterialPanel();
   let controller = null;
   controller = mountDialoguePresentation(app, {
     speed: state.settings?.textSpeed ?? "normal",
@@ -2182,10 +2293,53 @@ function mountCurrentDialogue() {
       state.dialogueBacklog = [...(state.dialogueBacklog ?? []), page].slice(-500);
       saveState();
       if (state.settings?.autoMode) setTimeout(() => controller?.advance(), Math.max(1, Number(state.settings.autoDelay ?? 2)) * 500);
-    }
+    },
+    onChoicesShown: () => materialPanel.syncChoices()
   });
-  bind("[data-material-card]", (event) => event.currentTarget.classList.toggle("expanded"));
-  mountCourtRecord(app, { state, onSettingsChange: cycleAvgSetting });
+  materialPanel.syncChoices();
+  mountCourtRecord(app, {
+    state,
+    onSettingsChange: cycleAvgSetting,
+    onBeforeOpen: () => materialPanel.close({ restoreFocus: false })
+  });
+}
+
+function mountMaterialPanel() {
+  const shell = app?.querySelector("[data-live-shell]");
+  const modal = app?.querySelector("[data-material-modal]");
+  const trigger = app?.querySelector("[data-material-open]");
+  const choices = app?.querySelector(".avg-choice-overlay");
+  let lastFocused = null;
+
+  const close = ({ restoreFocus = true } = {}) => {
+    if (!modal || modal.hidden) return false;
+    modal.hidden = true;
+    shell?.classList.remove("material-open");
+    trigger?.setAttribute("aria-expanded", "false");
+    if (restoreFocus && lastFocused && isVisibleElement(lastFocused)) focusButton(lastFocused);
+    return true;
+  };
+
+  const syncChoices = () => {
+    const choicesOpen = Boolean(choices && !choices.hidden && choices.querySelector("button:not(:disabled)"));
+    shell?.classList.toggle("choices-open", choicesOpen);
+    if (choicesOpen) close({ restoreFocus: false });
+  };
+
+  if (!modal || !trigger) return { close, syncChoices };
+
+  trigger.addEventListener("click", () => {
+    if (shell?.classList.contains("choices-open")) return;
+    const record = app?.querySelector(".court-record:not([hidden])");
+    if (record) record.hidden = true;
+    lastFocused = document.activeElement;
+    modal.hidden = false;
+    shell?.classList.add("material-open");
+    trigger.setAttribute("aria-expanded", "true");
+    focusButton(modal.querySelector(".avg-material-panel [data-material-close]"));
+  });
+  modal.querySelectorAll("[data-material-close]").forEach((button) => button.addEventListener("click", () => close()));
+  return { close, syncChoices };
 }
 
 function cycleAvgSetting(kind) {
@@ -2213,6 +2367,10 @@ function bind(selector, handler) {
   });
 }
 
+function resetViewportScroll() {
+  globalThis.scrollTo?.(0, 0);
+}
+
 function bindChoiceActivation(selector, handler) {
   document.querySelectorAll(selector).forEach((element) => {
     let lastPointerAt = 0;
@@ -2236,13 +2394,13 @@ function setupDefaultFocus() {
 }
 
 function preferredDefaultButton() {
-  return app?.querySelector(
-    ".choices button.primary:not(:disabled), .choices button[data-primary='true']:not(:disabled), .choices button:not(:disabled), .title-actions button:not(:disabled), .topbar button:not(:disabled)"
+  return topInteractiveScope()?.querySelector(
+    "button.primary:not(:disabled), button[data-primary='true']:not(:disabled), button:not(:disabled)"
   ) ?? null;
 }
 
 function preferredBackButton() {
-  return app?.querySelector('[data-action="title"]:not(:disabled), [data-retry-case]:not(:disabled)') ?? null;
+  return topInteractiveScope()?.querySelector('[data-material-close]:not(:disabled), [data-record-close]:not(:disabled), [data-close-question-menu]:not(:disabled), [data-retry-case]:not(:disabled), [data-action="title"]:not(:disabled)') ?? null;
 }
 
 function preferredReviewButton() {
@@ -2250,6 +2408,7 @@ function preferredReviewButton() {
 }
 
 function toggleReviewPanel() {
+  closeMaterialPanel();
   const record = app?.querySelector(".court-record");
   if (record) {
     record.hidden = !record.hidden;
@@ -2270,7 +2429,33 @@ function moveButtonFocus(direction) {
 }
 
 function focusableButtons() {
-  return Array.from(app?.querySelectorAll("button:not(:disabled)") ?? []).filter(isVisibleElement);
+  return Array.from(topInteractiveScope()?.querySelectorAll("button:not(:disabled)") ?? []).filter(isVisibleElement);
+}
+
+function topInteractiveScope() {
+  const material = app?.querySelector(".avg-material-modal:not([hidden])");
+  if (material) return material;
+  const record = app?.querySelector(".court-record:not([hidden])");
+  if (record) return record;
+  const choices = app?.querySelector(".avg-choice-overlay:not([hidden])");
+  if (choices?.querySelector("button:not(:disabled)") && isVisibleElement(choices)) return choices;
+  return app;
+}
+
+function closeMaterialPanel() {
+  const modal = app?.querySelector(".avg-material-modal:not([hidden])");
+  const closeButton = modal?.querySelector(".avg-material-panel [data-material-close]");
+  if (!closeButton) return false;
+  closeButton.click();
+  return true;
+}
+
+function closeTopOverlay() {
+  if (closeMaterialPanel()) return true;
+  const recordClose = app?.querySelector(".court-record:not([hidden]) [data-record-close]");
+  if (!recordClose) return false;
+  recordClose.click();
+  return true;
 }
 
 function isVisibleElement(element) {
@@ -2320,7 +2505,9 @@ function handleGamepadInput(gamepad) {
     if (focusedButton) return activateButton(focusedButton);
     activateButton(preferredDefaultButton());
   });
-  handleGamepadButton(gamepad, 1, () => activateButton(preferredBackButton()));
+  handleGamepadButton(gamepad, 1, () => {
+    if (!closeTopOverlay()) activateButton(preferredBackButton());
+  });
   handleGamepadButton(gamepad, 3, () => {
     if (!toggleReviewPanel()) activateButton(preferredReviewButton());
   });
@@ -3355,21 +3542,25 @@ function liveIntentHookFor(brief) {
 
 function portraitLayer(brief, mood = "listening") {
   const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
-  const art = casePortraitArt(brief, npc);
   const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  const expression = callerExpressionFor(brief, mood);
+  const art = casePortraitArt(brief, npc, expression);
   return portraitLayerHtml({
     artSrc: art.src,
     fallbackSrc: art.fallbackSrc,
     mood,
-    expression: callerExpressionFor(brief, mood),
+    expression,
     sceneIndex
   });
 }
 
-function casePortraitArt(brief, npc) {
-  const neutralArt = CHARACTER_ART[npc.id];
-  const fallback = neutralArt ?? CHARACTER_ART.meng;
-  return { src: brief.callerArt ?? fallback, fallbackSrc: fallback };
+function casePortraitArt(brief, npc, expression = {}) {
+  const neutralArt = brief.callerArtVariants?.neutral ?? brief.callerArt ?? CHARACTER_ART[npc.id] ?? "";
+  return callerArtForExpression({
+    neutralSrc: neutralArt,
+    variants: brief.callerArtVariants,
+    expression
+  });
 }
 
 function callerExpressionFor(brief, mood = "listening") {

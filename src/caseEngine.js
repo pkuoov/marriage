@@ -266,6 +266,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       storyObjectLabel: spec.objectLabel,
       backdropClass: spec.backdropClass ?? brief.backdropClass,
       callerArt: spec.callerArt ?? brief.callerArt,
+      callerArtVariants: spec.callerArtVariants ?? brief.callerArtVariants ?? {},
       weeklyCase: true,
       weeklyKey: storyKey,
       weeklyThemeId: theme.id,

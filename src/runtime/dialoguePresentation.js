@@ -36,36 +36,36 @@ export function splitDialogueSentences(value = "") {
 }
 
 export function dialoguePagesFrom(root) {
-  return Array.from(root?.querySelectorAll?.(".call-line") ?? []).flatMap((line) => {
+  return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line") ?? []).flatMap((line) => {
     const speaker = line.querySelector("b")?.textContent?.trim() || "咨询者";
-    const role = line.classList.contains("host") ? "host" : "caller";
+    const role = line.classList.contains("host") || line.classList.contains("shell-host") ? "host" : "caller";
     return splitDialogueSentences(line.querySelector("p")?.textContent ?? "").map((text) => ({ speaker, role, text }));
   });
 }
 
 export function mountDialoguePresentation(root, options = {}) {
   const card = root?.querySelector?.(".dialogue-card");
-  const source = Array.from(card?.querySelectorAll?.(".call-dialogue") ?? [])
+  const source = Array.from(card?.querySelectorAll?.(".call-dialogue, .night-shell-card") ?? [])
     .find((candidate) => !candidate.closest("details:not([open])"));
   const pages = dialoguePagesFrom(source);
   if (!card || !source || !pages.length) return null;
-  source.hidden = true;
-  card.classList.add("avg-dialogue-active");
-  const choices = card.querySelector(".choices");
-  if (choices) choices.hidden = true;
   const box = document.createElement("section");
   box.className = "avg-textbox";
   box.tabIndex = 0;
   box.dataset.dialogueAdvance = "true";
   box.innerHTML = `<b class="avg-nameplate"></b><p class="avg-line"></p><i class="avg-continue" aria-label="继续">▼</i>`;
   source.after(box);
+  const choices = root?.querySelector?.(".choices");
+  if (choices) choices.hidden = true;
+  source.hidden = true;
+  card.classList.add("avg-dialogue-active");
   const controller = createDialogueController({ box, pages, choices, ...options });
   box.addEventListener("click", () => controller.advance());
   controller.start();
   return controller;
 }
 
-export function createDialogueController({ box, pages, choices, speed = "normal", onShown = () => {} } = {}) {
+export function createDialogueController({ box, pages, choices, speed = "normal", onShown = () => {}, onChoicesShown = () => {} } = {}) {
   let pageIndex = 0;
   let visibleCount = 0;
   let frameId = 0;
@@ -125,6 +125,7 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
     }
     indicator.hidden = true;
     if (choices) choices.hidden = false;
+    onChoicesShown(choices);
     box.dataset.dialogueDone = "true";
     choices?.querySelector("button:not(:disabled)")?.focus?.({ preventScroll: true });
   }

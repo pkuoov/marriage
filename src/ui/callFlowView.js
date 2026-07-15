@@ -1,4 +1,4 @@
-import { HOST_NAME } from "../hostProfile.js?v=0.20.94";
+import { HOST_NAME } from "../hostProfile.js?v=0.20.95";
 
 export function choiceGroupHtml(label, content, className = "", note = "") {
   if (!content?.trim()) return "";
