@@ -259,7 +259,7 @@
       ],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "后来我翻聊天，发现一个节奏特别明显。他先说“店里压力大”“今晚又被店长说了”，还说这些只跟我讲。我跟朋友提起他，都是这么说的：“他说我像店里自己人。”我一心软，他就接让我帮忙发活动、带朋友去剪头，或者问我下次要不要直接办年卡。那阵子我留了一条语音。先放后台吧，我现在不想听。",
+      "version": "后来我翻聊天，发现一个节奏特别明显。他先说“店里压力大”“今晚又被店长说了”，还说这些只跟我讲。我跟朋友提起他，都是这么说的：“他说我像店里自己人。”我一心软，他就接让我帮忙发活动、带朋友去剪头，或者问我下次要不要直接办年卡。那阵子我留了一条语音。先放后台吧，我现在不想听。后来我想，店里发的行业模板本来就教维护和办卡，我才更容易把那句「店里都这样」听成理所当然。",
       "doubt": "情绪求助后面开始接店里的经营目标。",
       "contradiction": "TA 把亲密聊天接到办卡、带客和朋友圈推广上。",
       "reliability": "partial",
@@ -366,7 +366,7 @@
       ],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "昨天他发错那张表，我才把前面的事串起来。表头写的是预约，可备注没写“烫发”“修刘海”，写的是“情绪稳定”“办卡意向强”“朋友多”。我那一行后面写着“稳情绪”。我拿给一个在别家店干过的朋友看。她说话术这行都教，表也都有。可她盯着最后那一列看了半天，没说话。",
+      "version": "昨天他发错那张表，我才把前面的事串起来。表头写的是预约，可备注没写“烫发”“修刘海”，写的是“情绪稳定”“办卡意向强”“朋友多”。我那一行后面写着“稳情绪”。我把图发给一个开过店的大学室友。她没替我下结论，只回了一句：先把店里会记什么，和最后那一列分开。",
       "doubt": "那张表不像普通客户备注，更像在写每个人能带来什么。",
       "contradiction": "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
       "reliability": "partial",
@@ -517,7 +517,7 @@
       ],
       "speakerId": "he",
       "speaker": "咨询者",
-      "version": "我后来盯着最后那列看了很久：“下一次推进”。我那行写“年卡已聊，可稳情绪”；另一个女生写“能投店，约饭再谈”；还有一个写“朋友多，带客”。看到那儿，我才知道不是我一个人在自作多情。那个开过店的朋友后来给我回了句话：话术哪家都教，表哪家都有，这一列，她没见过。",
+      "version": "我后来盯着最后那列看了很久：“下一次推进”。我那行写“年卡已聊，可稳情绪”；另一个女生写“能投店，约饭再谈”；还有一个写“朋友多，带客”。看到那儿，我才知道不是我一个人在自作多情。昨晚我还拿“店里都这样”给自己找台阶。今天再看，我还是不敢把那一列叫预约。",
       "doubt": "表格还写了下一步怎么把人往店里推进。",
       "contradiction": "TA 把不同暧昧对象按可推进资源分层管理。",
       "reliability": "partial",
@@ -729,34 +729,34 @@
       "triggerContradiction": "店长培训材料证明维护模板存在，但不包含私人推进列。",
       "appearsNowBecause": "收麦后，店长托人转来一段说明，说店里确实有培训，但不接受把整家店说成骗局。",
       "prompt": "这段说明里，哪一句最该拎出来？",
-      "material": "店长说：熟客维护表、会员指标、话术培训都是我教的，业绩压死人，这点不装。但“下一次推进”不是店里模板，年轻人自己想多做点业绩，我不可能每行都盯着。",
+      "material": "店长说：熟客维护表、会员指标、话术培训都是我教的，业绩压死人，这点不装。Tony 私下怎么写、写给谁，我没看过完整原表，也不替他答。年轻人想多做点业绩，我不可能每行都盯着；别拿个人那张表扣整个店。",
       "materialRows": [
         "熟客维护表、会员指标、话术培训都是我教的",
         "业绩压死人，这点不装",
-        "“下一次推进”不是店里模板",
-        "年轻人自己想多做点业绩，我不可能每行都盯着"
+        "Tony 私下怎么写、写给谁，我没看过完整原表",
+        "年轻人想多做点业绩，我不可能每行都盯着"
       ],
-      "proves": "行业销售模板和门店指标真实存在，但私人推进列不能直接归成普通模板。",
-      "stillCannotProve": "不能证明店长完全不知情，也不能证明全店都用同一套私人推进表。",
+      "proves": "门店确实有熟客维护、会员指标和统一话术；店长对 Tony 的私表只肯划清责任，不肯替他说明。",
+      "stillCannotProve": "不能证明店长是否见过那一列，也不能证明私人推进表由谁要求或默许。",
       "routeAxis": "process-control",
       "options": [
         {
-          "label": "不是店里模板",
+          "label": "培训和指标都是店里教的",
           "correct": true,
-          "contradiction": "店长承认话术培训存在，但否认私人推进列属于标准模板。",
-          "feedback": "这句把灰区切开：模板是真的，私加列也是真的。",
+          "contradiction": "店长承认统一维护和业绩压力存在，却拒绝替 Tony 的私表说明来源。",
+          "feedback": "这句先把行业那一半留下。Tony 的私表，还得回到原件和他自己的说法。",
           "routeAxis": "process-control"
         },
         {
           "label": "业绩压死人",
           "correct": false,
-          "feedback": "店长当然想护住门店。可他说的是培训有模板，那一列是谁加的，他没答。",
+          "feedback": "业绩压力能解释店里为什么催卡，解释不了 Tony 为什么那样记人。",
           "routeAxis": "money-flow"
         },
         {
           "label": "我不可能每行都盯着",
           "correct": false,
-          "feedback": "他承认培训里有统一话术。那张表是不是培训模板，说明里没写。",
+          "feedback": "这句是在划责任。那张私表谁加的、谁看过，他仍没答。",
           "routeAxis": "caller-credibility"
         }
       ]
@@ -842,7 +842,7 @@
     "answer": "剪头不要钱，号随便插，带闺蜜去还有六折，活动我顺手就转了。因为我也吃了那个“自己人”的感觉。他说以后店里有我一个位置，我就觉得办卡、转活动、带朋友过去都像在帮我们。现在看，他不承认关系，我也没逼他说清楚，投店、带客这些难听话就被我们一起往后拖了。",
     "note": "问到这里，甜话和店里的账已经缠在一起了。"
   },
-  "stageJudgement": "这案卡在两层：话术和维护表是店里教的没错，可“下一次推进”那列，店长也说不是模板；她说自己只是心软，可免费剪发、插号和带客折扣，她都收过。",
+  "stageJudgement": "这案卡在两层：话术和维护表是店里教的没错，可培训页里没有“下一次推进”；她说自己只是心软，可免费剪发、插号和带客折扣，她都收过。",
   "caseClosing": {
     "title": "表格里的下一次",
     "verdict": "林旭阳没有替她给这段关系定性，只把“自己人”后面接着的办卡、带客和投店拆开了。",
@@ -877,7 +877,71 @@
   "dailyShareTitle": "“自己人”，是关系还是销售位置？",
   "dailyShareBody": "行业话术能解释一半，排班表里那几栏解释不了：情绪稳定、能投店、能带客。",
   "dailyShareQuestion": "你觉得“你和别人不一样”在什么情况下才算证据？",
-  "truth": "三条账分开算。行业的：熟客维护、会员指标、话术培训都真实存在，不该把一整行手艺人说成骗局。他的：同一句“只有你懂我”发给几个人，情绪话后面接办卡、带客、投店，表上还写着下一次怎么推进；店长说培训模板里没有那一列。她的：剪头不收钱，号随便插，带闺蜜去有六折和护理免单，“自己人”的好处她一直收着，也就一直没逼他把关系说死。这些不欠他什么，可今晚的委屈里得给这一块留个位置。定不了的今晚不定：他对谁动过真心，别的顾客把这段当成什么，同款表到底做过几张，都还在麦外面。",
+  "truth": "三条账分开算。行业的：熟客维护、会员指标、话术培训都真实存在，不该把一整行手艺人说成骗局。他的：同一句“只有你懂我”发给几个人，情绪话后面接办卡、带客、投店，表上还写着下一次怎么推进；培训页和会员系统里没有那一列。她的：剪头不收钱，号随便插，带闺蜜去有六折和护理免单，“自己人”的好处她一直收着，也就一直没逼他把关系说死。这些不欠他什么，可今晚的委屈里得给这一块留个位置。定不了的今晚不定：他对谁动过真心，别的顾客把这段当成什么，同款表到底做过几张，都还在麦外面。",
+  "documents": [
+    {
+      "id": "case2-member-training",
+      "title": "会员维护表与私表截图",
+      "intro": "四行来自培训页、会员系统和发错的预约表。先圈你要带回夜里的那一行。",
+      "rows": [
+        {
+          "rowId": "m01",
+          "date": "07-11",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "服务项目 / 熟客偏好",
+          "memo": "记录发型、药水、聊天禁忌"
+        },
+        {
+          "rowId": "m02",
+          "date": "07-11",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "办卡可能 / 下次预约",
+          "memo": "店长确认属于门店维护"
+        },
+        {
+          "rowId": "m03",
+          "date": "07-12",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "稳情绪 / 能带客",
+          "memo": "发型需求栏为空"
+        },
+        {
+          "rowId": "m04",
+          "date": "07-12",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "下一次推进",
+          "memo": "培训页与会员系统均无此列"
+        }
+      ],
+      "rowQuestions": {
+        "m04": [
+          {
+            "question": "培训页里能找到“下一次推进”吗？",
+            "answer": "找不到。办卡可能有，下次预约也有，就是没有这五个字。昨晚我一直拿‘店里都这样’替他挡。",
+            "contradiction": "门店维护模板存在，但私人推进列不在标准字段中。",
+            "routeAxis": "document-edge"
+          }
+        ]
+      },
+      "crossQuestions": [
+        {
+          "rows": [
+            "m02",
+            "m04"
+          ],
+          "question": "标准表和私表，差的只是一个名字吗？",
+          "answer": "不是。标准表记下次服务，私表记下一次怎么推我。可他为什么加、给多少人加，我现在还不能替他说。",
+          "contradiction": "标准服务维护与私人关系推进使用了不同字段。",
+          "routeAxis": "document-edge"
+        }
+      ],
+      "markLimit": 2
+    }
+  ],
   "nightStructure": {
     "enabled": true,
     "segment1SceneIndexes": [
@@ -899,12 +963,12 @@
       "stageDirection": "连线断开。屏幕上的“下一次推进”停在最后一列。"
     },
     "interlude": {
-      "title": "第二天下午·离台调查",
-      "kicker": "节目不在线。你有一个下午，最多做三件事；去见谁，决定第二夜先问什么。",
-      "budget": 3,
-      "minActions": 2,
-      "maxActions": 3,
-      "continueLabel": "等她第二夜回拨",
+      "title": "收麦后·控台短查",
+      "kicker": "出门前只够处理一样：送材料、听回放，或回一条私信。",
+      "budget": 1,
+      "minActions": 1,
+      "maxActions": 1,
+      "continueLabel": "进入白天调查",
       "actions": [
         {
           "id": "send-appraisal",
@@ -914,38 +978,6 @@
           "kind": "delegation",
           "grantsInventory": [
             "delegation-return"
-          ]
-        },
-        {
-          "id": "visit-lin",
-          "label": "去打烊后的婚介店",
-          "summary": "找小林老师，把标准维护表和理发店私表并排。",
-          "cost": 1,
-          "kind": "advisorConflict",
-          "advisorId": "lin-matchmaker",
-          "npcVerb": "refuse",
-          "backdropClass": "day-matchmaking",
-          "chapter": "第二天下午·婚介门店",
-          "sceneText": "半亮的招牌还没关。小林正把墙上的相亲资料一张张收进抽屉，白板上“稳定、顾家、有上进心”擦得只剩浅印。她把两张表压在茶杯下面：“记偏好不是骗。熟客连水温都得记。可标准表到这里就停了。”她不替你判断真心，只准你带一条问题回去。",
-          "options": [
-            {
-              "id": "carry-private-column",
-              "label": "带走“私加列”差异",
-              "advisorLine": "小林把标准表推过来：“服务项目、熟客偏好、办卡可能，行业里会记。‘下一次推进’不在上面。你能问这列是谁加的，不能拿它证明喜欢都是假的。”",
-              "routeAxis": "document-edge",
-              "grantsInventory": [
-                "小林的标准模板"
-              ]
-            },
-            {
-              "id": "carry-benefits",
-              "label": "带走“自己人收益”",
-              "advisorLine": "她把咨询者那行按住：“插号、免单、朋友六折，她都接了。好处不等于她同意进表，可你回拨时也别把这一半藏掉。”",
-              "routeAxis": "caller-credibility",
-              "grantsInventory": [
-                "自己人收益清单"
-              ]
-            }
           ]
         },
         {
@@ -979,7 +1011,7 @@
           "cost": 1,
           "kind": "playback",
           "grantsInventory": [
-            "playback-dryer"
+            "吹风机回放"
           ],
           "script": {
             "clipLabel": "回放·深夜语音",
@@ -988,111 +1020,17 @@
           }
         },
         {
-          "id": "manager-note-early",
-          "label": "看店长说明",
-          "summary": "店长托人转的说明，现在到了。",
-          "cost": 1,
-          "kind": "backflowEarly",
-          "hookId": "tony-manager-training-note",
-          "grantsInventory": [
-            "manager-note-seen"
-          ]
+          "id": "shop-sync-interrupt",
+          "label": "后台同步（未邀）",
+          "summary": "店长微信闪过一句，不进直播。",
+          "cost": 0,
+          "kind": "interruptToast",
+          "npcVerb": "interrupt",
+          "from": "店长微信（后台同步）",
+          "text": "别来拍店门，也别把店名带进直播。Tony 私下怎么记人，你们问他；今晚我不接电话。"
         }
       ]
     },
-    "callbackOpeners": [
-      {
-        "id": "opener-delegation",
-        "requiresAny": [
-          "delegation-return"
-        ],
-        "label": "用顾问回单开场",
-        "hostLine": "你回来了。送出去的人只确认表是真的；关系是什么，图上验不出来。",
-        "callerRevisedOpening": "……好。那我不拿表替自己回答感情。我只说表里确实写了什么。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-lin-column",
-        "requiresAny": [],
-        "requiresChoiceId": "carry-private-column",
-        "label": "带小林的标准模板回麦",
-        "hostLine": "我去了小林的门店。标准维护表会记偏好和办卡可能，但没有“下一次推进”。这列是谁加的？",
-        "callerRevisedOpening": "我今天也只问了他这一句。他没回答是谁加的。后面那句话，我上麦说。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-lin-benefit",
-        "requiresAny": [],
-        "requiresChoiceId": "carry-benefits",
-        "label": "带“自己人收益”回麦",
-        "hostLine": "小林没先问他。她先问你：插号、免单、朋友六折，你是不是都接了？",
-        "callerRevisedOpening": "……接了。昨天我只想证明他把我写进表，今天这半句我也得认。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-dryer",
-        "requiresAny": [
-          "playback-dryer"
-        ],
-        "label": "用回放矛盾开场",
-        "hostLine": "回拨前我没再放那条语音。你当时为什么愿意把“下班陪你”当成只留给你的时间？",
-        "callerRevisedOpening": "……我今天一直想起那句下班。不是没听见背景，是我想把它听成我们之间的时间。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-other-caller-side",
-        "requiresAny": [
-          "side-other-caller"
-        ],
-        "label": "用女客要闹店开场",
-        "hostLine": "你不在线的时候，后台那位也收到同款表。她想拉群闹到店里——你怎么看？",
-        "callerRevisedOpening": "她跟你说了？……我不想闹店。我只想把自己的卡和朋友退出来。可那张表，确实不止我一个人。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-other-caller-stop",
-        "requiresAny": [
-          "side-caller-stop"
-        ],
-        "label": "用止损立场开场",
-        "hostLine": "有人想拉你出头。你刚才挂断，是不是也在躲这件事？",
-        "callerRevisedOpening": "……是。他一直打，我没接。可我也不想被人绑去店里吵架。表的事，我得自己说清。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-manager",
-        "requiresAny": [
-          "manager-note-seen",
-          "training-no-column"
-        ],
-        "label": "用店长说明开场",
-        "hostLine": "店长托人说了：培训模板有，「下一次推进」不是模板。你怎么接这句？",
-        "callerRevisedOpening": "……所以我才卡在那儿。行业模板是真的，私加列也是真的。我接他电话之前，就想把这句说清楚。",
-        "appliesRevisedOnScenes": [
-          4
-        ]
-      },
-      {
-        "id": "opener-soft",
-        "requiresAny": [],
-        "label": "软开场",
-        "hostLine": "你回来了。表和培训页还在台上，我们从你挂断的地方继续。",
-        "callerRevisedOpening": "嗯。昨天我没再接他的电话。今天我把那张表重新看了一遍。",
-        "appliesRevisedOnScenes": []
-      }
-    ],
     "returnStance": {
       "fromSnapshotOptionIds": {
         "respondent-problem": "open",
@@ -1105,6 +1043,266 @@
         "open": "我回来了。表的事你继续问——这回我不替行业开脱。",
         "neutral": "我回来了。隔了一天再看，那一列还在。"
       }
+    }
+  },
+  "overnightStructure": {
+    "hangupAnchor": "最后那一列",
+    "hangupLine": "连线断开。屏幕上的“下一次推进”停在最后一列。",
+    "hostHoldLine": "好。表留下。明晚别只带他的解释回来，也把你愿意承认的带回来。",
+    "interludeEarnedItemMap": {
+      "delegation-return": "顾问回单",
+      "side-other-caller": "女客拉群立场",
+      "side-caller-stop": "咨询者止损立场",
+      "training-no-column": "培训模板说明"
+    },
+    "dayIntro": "店里照常营业。你只能去两处：在门边听一小段称呼、找开过店的人拆服务和好处、回后台圈培训页，或在店长门口确认他拒绝回答什么。",
+    "dayBudget": 2,
+    "minDayScenes": 2,
+    "dayScenes": [
+      {
+        "id": "day-tony-shop-observe",
+        "label": "理发店外·隔窗观察",
+        "backdropClass": "day-city",
+        "kind": "observe",
+        "body": {
+          "text": "傍晚五点，你坐在理发店同侧的奶茶店外摆位，离门三四步。隔着玻璃能看见动作；门开时，最多漏出一两句。你不进店，也不拦人。",
+          "routeAxis": "external-corroboration",
+          "cast": [
+            "Tony（店内）",
+            "熟客",
+            "前台"
+          ],
+          "beats": [
+            {
+              "speaker": "Tony（店内）",
+              "text": "姐，稍等。我给你插个位。"
+            }
+          ],
+          "choice": {
+            "prompt": "看到这里，你带哪一层回夜里？",
+            "options": [
+              {
+                "id": "note-shared-address",
+                "label": "留在门边，听他怎么称呼熟客",
+                "grantsEarnedItemId": "店外称呼观察",
+                "routeAxis": "external-corroboration",
+                "resultBeats": [
+                  {
+                    "speaker": "Tony（门边）",
+                    "text": "姐，你还是自己人。晚点我给你插一位。"
+                  },
+                  {
+                    "speaker": "熟客",
+                    "text": "又自己人？上回那护理我不续。你别拿这句哄我。"
+                  },
+                  {
+                    "speaker": "Tony（门边）",
+                    "text": "不续就不续，先坐。"
+                  }
+                ]
+              },
+              {
+                "id": "note-service-sequence",
+                "label": "绕到侧窗，只看插位和会员登记",
+                "grantsEarnedItemId": "店外服务序列",
+                "routeAxis": "process-control",
+                "resultText": "你绕到侧窗。Tony 先指了指候位牌，前台随后翻开蓝色《会员预约》册，在七点那格落了一笔。隔着玻璃，你看不清姓名和金额，只能确认插位与会员登记紧挨着发生。"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-tony-friend-studio",
+        "label": "旧店主的工作室",
+        "backdropClass": "day-studio",
+        "kind": "studio",
+        "body": {
+          "text": "她那位开过店的朋友如今在摄影棚做造型。她把旧会员表从纸箱里翻出来，又让你把发错的私表放到旁边。",
+          "routeAxis": "process-control",
+          "cast": [
+            "开过店的朋友",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "开过店的朋友",
+              "text": "水温、发型、忌讳、办卡可能，我们都会记。熟客多，忘一次就丢人。"
+            },
+            {
+              "speaker": "你",
+              "text": "标准表和她拿过的好处，你先拆哪件？"
+            }
+          ],
+          "choice": {
+            "prompt": "你先拆哪件事带回夜里？",
+            "options": [
+              {
+                "id": "split-template",
+                "label": "先拆店里的标准表——对照到下次护理就停",
+                "grantsEarnedItemId": "店里的标准表",
+                "routeAxis": "process-control",
+                "resultBeats": [
+                  {
+                    "speaker": "开过店的朋友",
+                    "text": "先别拿我的旧表替 Tony 作证。我的表只管服务，最多写到下次护理；他那张私表是谁加的，我没在店里，不能替你说。"
+                  },
+                  {
+                    "speaker": "你",
+                    "text": "那就只带回边界：旧表能说明行业怎么服务，说明不了 Tony 为什么那样记人。"
+                  }
+                ]
+              },
+              {
+                "id": "point-benefits",
+                "label": "先点那次六折——把好处摊在桌上",
+                "grantsEarnedItemId": "那次六折",
+                "routeAxis": "caller-credibility",
+                "resultBeats": [
+                  {
+                    "speaker": "开过店的朋友",
+                    "text": "她拿过插号、免单和朋友六折。好处不等于她同意被写进私表，可回麦时别把自己说成普通顾客。"
+                  },
+                  {
+                    "speaker": "你",
+                    "text": "好处留着，私表也留着。两边不互相抵。"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-tony-manager-doorstep",
+        "label": "店长门口",
+        "backdropClass": "day-city",
+        "kind": "doorstep",
+        "body": {
+          "text": "后门只开一条缝。店长没让你进店，手里还捏着培训页的复印件。",
+          "routeAxis": "external-corroboration",
+          "earnedItemId": "店长门口拒答",
+          "cast": [
+            "店长",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "店长",
+              "text": "昨晚那条微信你看见了。培训页我让人转了，页上写什么就看页，别拿我当 Tony 的证人。"
+            },
+            {
+              "speaker": "你",
+              "text": "我只问一件：Tony 私下那张表，你见过完整原表吗？"
+            },
+            {
+              "speaker": "店长",
+              "text": "没见过完整的。我确认店里有维护和办卡指标；他把谁写进哪一列，我不替他答。"
+            },
+            {
+              "speaker": "店长",
+              "text": "就这一句。门我要关了。"
+            }
+          ]
+        }
+      },
+      {
+        "id": "day-tony-member-docs",
+        "label": "后台·会员表与培训页",
+        "backdropClass": "day-document",
+        "kind": "document",
+        "body": {
+          "documentId": "case2-member-training",
+          "routeAxis": "document-edge",
+          "earnedItemId": "培训页圈注"
+        }
+      }
+    ],
+    "callbackOpeners": {
+      "店外称呼观察": {
+        "line": "「你在门边听见了？……他管另一个熟客也叫自己人。她当场说不续护理，我昨晚只顾着听那三个字，没问它后面接了什么。」",
+        "firstConflict": {
+          "hostLine": "同一句称呼落到熟客身上。你昨晚为什么只把它收进关系里？",
+          "callerLine": "因为我想听成只对我说。现在得把它和插位、护理一起听。"
+        }
+      },
+      "店外服务序列": {
+        "line": "「你没留在门边，只看了插位和会员登记？……好。那条路没听见称呼，只看见两个动作挨着发生。」",
+        "firstConflict": {
+          "hostLine": "插位紧挨会员登记，能证明到哪一步？",
+          "callerLine": "只能证明服务安排和会员动作挨着。熟客和他是什么关系，隔着玻璃看不出来。"
+        }
+      },
+      "培训页圈注": {
+        "line": "「你把培训页圈过了？……办卡可能在，下一次预约也在，就是没有‘下一次推进’。我昨晚拿店里都这样替他挡，挡不住这一列。」",
+        "firstConflict": {
+          "hostLine": "行业模板能解释维护和办卡。它解释不了哪一截？",
+          "callerLine": "解释不了他为什么把每个人下一步怎么推，另外写在私表里。"
+        }
+      },
+      "顾问回单": {
+        "line": "「送出去的人只确认表是真的？……好。那我不拿表替自己回答感情，只说表里确实写了什么。」",
+        "firstConflict": {
+          "hostLine": "表是真的，不等于动机已经定了。你今晚还要追哪一件？",
+          "callerLine": "追那列是谁加的、同款有几张。不拿一张表说他从没动过真心。"
+        }
+      },
+      "吹风机回放": {
+        "line": "「你把吹风机那段听清了？……我今天一直想起那句下班。背景一直在，是我把它听成了只留给我的时间。」",
+        "firstConflict": {
+          "hostLine": "吹风机说明语音还在店里的空当。你昨晚讲这段时，剪掉了什么？",
+          "callerLine": "我把背景剪掉了，只留下“只有你能接住我”。那样听着更像专门留给我的。"
+        }
+      },
+      "女客拉群立场": {
+        "line": "「后台那位想拉群闹到店里？……我不想闹店，只想把自己的卡和朋友退出来。可那张表，确实不止我一个人。」",
+        "firstConflict": {
+          "hostLine": "你支持她拉群要说法，她真要公开，你又不肯去。你是在止损，还是怕跟她站到一起？",
+          "callerLine": "两样都有。我先退卡、停带客；表她可以留，我不替她带人去堵店。"
+        }
+      },
+      "咨询者止损立场": {
+        "line": "「你劝她先止损？……是。他一直打，我没接。我也不想被绑去店里吵架，表的事得自己说清。」",
+        "firstConflict": {
+          "hostLine": "劝她止损可以。你有没有顺手把她那张同款表也压下去？",
+          "callerLine": "没有。表她留着，我只是不答应替她领头闹店。"
+        }
+      },
+      "培训模板说明": {
+        "line": "「你把培训材料重看了一遍？……行业模板是真的，可那五个字不在培训页上。我接他电话前，就想把这句说清。」",
+        "firstConflict": {
+          "hostLine": "昨晚你已经看到这条边，为什么还一直拿行业替他挡？",
+          "callerLine": "因为模板能给我一个台阶。承认私表越出去，我也得承认自己一直不肯问关系。"
+        }
+      },
+      "店里的标准表": {
+        "line": "「你把两张表分开了？……旧表只能说明店里怎么服务，说明不了他为什么那样记人。我昨晚一直把这两件事混着说。」",
+        "firstConflict": {
+          "hostLine": "朋友不替 Tony 作证。那张旧表最多能带回什么？",
+          "callerLine": "带回服务边界。谁加了私表、为什么加，还得问原件和他。"
+        }
+      },
+      "那次六折": {
+        "line": "「你先点了那次六折？……好处我认。可那列推进，不是拿六折就能开脱的。」",
+        "firstConflict": {
+          "hostLine": "那就先把你拿过的说全，再问他的表。",
+          "callerLine": "免费剪、插号、朋友六折，我都拿过。我认这部分，不认它等于我同意进那张私表。"
+        }
+      },
+      "店长门口拒答": {
+        "line": "「你去店长门口了？……他只确认维护和办卡指标，没见过完整私表，也不替 Tony 答那几列是谁写的。」",
+        "firstConflict": {
+          "hostLine": "店长拒答，能不能反过来当成他见过那张表？",
+          "callerLine": "不能。只能记他划清责任；私表还是得看原件，不能拿关门声补答案。"
+        }
+      }
+    },
+    "callbackFallback": {
+      "line": "「我回来了。那张表我又看了一遍。你白天先查了哪一处？」"
+    },
+    "postures": {
+      "againstCaller": "「插号、免单、朋友六折，我都认。可我没答应被写成下一步生意。」",
+      "withCaller": "「我没接他的电话。你白天去了哪里，先说给我听。」"
     }
   }
 }

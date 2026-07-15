@@ -111,7 +111,7 @@
         "cost": 1,
         "kind": "playback",
         "grantsInventory": [
-          "playback-dryer"
+          "吹风机回放"
         ],
         "script": {
           "clipLabel": "回放·深夜语音",
@@ -149,7 +149,7 @@
     {
       "id": "opener-dryer",
       "requiresAny": [
-        "playback-dryer"
+        "吹风机回放"
       ],
       "label": "用回放矛盾开场",
       "hostLine": "回拨前我又听了一遍。你说他下班陪你——背景里吹风机一直在响。",
