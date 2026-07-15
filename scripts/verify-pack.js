@@ -337,7 +337,7 @@ function assertNightStructure(packet = {}, label = "") {
   assert(Number.isInteger(interlude.minActions) && interlude.minActions >= 1, `${label} nightStructure.interlude.minActions 必须是正整数`);
   assert(Number.isInteger(interlude.maxActions) && interlude.maxActions >= interlude.minActions, `${label} nightStructure.interlude.maxActions 不能小于 minActions`);
   assert(interlude.budget >= interlude.maxActions, `${label} nightStructure.interlude.budget 不能小于 maxActions`);
-  assertArrayMin(interlude.actions, 4, `${label} nightStructure.interlude.actions 至少需要四个行动位`);
+  assertArrayMin(interlude.actions, 3, `${label} nightStructure.interlude.actions 至少需要三个行动位`);
   const actionIds = new Set();
   interlude.actions.forEach((action, actionIndex) => {
     assertNonEmptyString(action.id, `${label} nightStructure.interlude.actions[${actionIndex}] 缺少 id`);
@@ -369,17 +369,23 @@ function assertNightStructure(packet = {}, label = "") {
     interlude.actions.some((action) => ["advisorCall", "advisorConflict", "interruptToast"].includes(action.kind)),
     `${label} nightStructure.interlude.actions 至少需要一个 NPC 行动位`
   );
-  assertArrayMin(structure.callbackOpeners, 1, `${label} nightStructure.callbackOpeners 不能为空`);
-  assert(structure.callbackOpeners.some((opener) => opener.id === "opener-soft" && Array.isArray(opener.requiresAny) && opener.requiresAny.length === 0), `${label} nightStructure.callbackOpeners 必须包含无 requiresAny 的 opener-soft`);
-  structure.callbackOpeners.forEach((opener, openerIndex) => {
-    assertNonEmptyString(opener.id, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 id`);
-    assert(Array.isArray(opener.requiresAny), `${label} nightStructure.callbackOpeners[${openerIndex}].requiresAny 必须是数组`);
-    assertNonEmptyString(opener.label, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 label`);
-    assertNonEmptyString(opener.hostLine, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 hostLine`);
-    assertNonEmptyString(opener.callerRevisedOpening, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 callerRevisedOpening`);
-    if (opener.requiresChoiceId !== undefined) assertNonEmptyString(opener.requiresChoiceId, `${label} nightStructure.callbackOpeners[${openerIndex}].requiresChoiceId 不能为空`);
-    if (opener.blocksIfInventory !== undefined) assert(Array.isArray(opener.blocksIfInventory), `${label} nightStructure.callbackOpeners[${openerIndex}].blocksIfInventory 必须是数组`);
-  });
+  if (packet.overnightStructure) {
+    assert(!(structure.callbackOpeners ?? []).length, `${label} 存在 overnightStructure 时不得保留第二套 nightStructure.callbackOpeners`);
+    assert(structure.hangup.stageDirection === packet.overnightStructure.hangupLine, `${label} nightStructure.hangup.stageDirection 必须与 overnightStructure.hangupLine 对齐`);
+    assert(structure.hangup.hostLine === packet.overnightStructure.hostHoldLine, `${label} nightStructure.hangup.hostLine 必须与 overnightStructure.hostHoldLine 对齐`);
+  } else {
+    assertArrayMin(structure.callbackOpeners, 1, `${label} nightStructure.callbackOpeners 不能为空`);
+    assert(structure.callbackOpeners.some((opener) => opener.id === "opener-soft" && Array.isArray(opener.requiresAny) && opener.requiresAny.length === 0), `${label} nightStructure.callbackOpeners 必须包含无 requiresAny 的 opener-soft`);
+    structure.callbackOpeners.forEach((opener, openerIndex) => {
+      assertNonEmptyString(opener.id, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 id`);
+      assert(Array.isArray(opener.requiresAny), `${label} nightStructure.callbackOpeners[${openerIndex}].requiresAny 必须是数组`);
+      assertNonEmptyString(opener.label, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 label`);
+      assertNonEmptyString(opener.hostLine, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 hostLine`);
+      assertNonEmptyString(opener.callerRevisedOpening, `${label} nightStructure.callbackOpeners[${openerIndex}] 缺少 callerRevisedOpening`);
+      if (opener.requiresChoiceId !== undefined) assertNonEmptyString(opener.requiresChoiceId, `${label} nightStructure.callbackOpeners[${openerIndex}].requiresChoiceId 不能为空`);
+      if (opener.blocksIfInventory !== undefined) assert(Array.isArray(opener.blocksIfInventory), `${label} nightStructure.callbackOpeners[${openerIndex}].blocksIfInventory 必须是数组`);
+    });
+  }
   assert(structure.returnStance && typeof structure.returnStance === "object" && !Array.isArray(structure.returnStance), `${label} nightStructure.returnStance 必须是对象`);
   ["defensive", "open", "neutral"].forEach((stance) => {
     assertNonEmptyString(structure.returnStance.lines?.[stance], `${label} nightStructure.returnStance.lines.${stance} 不能为空`);
@@ -405,6 +411,8 @@ function assertOvernightStructure(packet = {}, label = "") {
   assertNonEmptyString(structure.hostHoldLine, `${label} overnightStructure.hostHoldLine 不能为空`);
   assertNonEmptyString(structure.dayIntro, `${label} overnightStructure.dayIntro 不能为空`);
   assert(Number.isInteger(structure.dayBudget) && structure.dayBudget > 0, `${label} overnightStructure.dayBudget 必须是正整数`);
+  assert(Number.isInteger(structure.minDayScenes) && structure.minDayScenes > 0, `${label} overnightStructure.minDayScenes 必须是正整数`);
+  assert(structure.minDayScenes <= structure.dayBudget, `${label} overnightStructure.minDayScenes 不能超过 dayBudget`);
   assertArrayMin(structure.dayScenes, 3, `${label} overnightStructure.dayScenes 至少需要三处`);
   assert(structure.dayBudget < structure.dayScenes.length, `${label} overnightStructure.dayBudget 必须小于地点数`);
   const sceneIds = new Set();
@@ -415,15 +423,43 @@ function assertOvernightStructure(packet = {}, label = "") {
     sceneIds.add(scene.id);
     assertNonEmptyString(scene.label, `${label} overnightStructure.dayScenes[${sceneIndex}] 缺少 label`);
     assertNonEmptyString(scene.backdropClass, `${label} overnightStructure.dayScenes[${sceneIndex}] 缺少 backdropClass`);
-    assert(["lab", "visit", "home", "studio", "document"].includes(scene.kind), `${label} overnightStructure.dayScenes[${sceneIndex}].kind 不合法`);
+    assert(["lab", "visit", "home", "studio", "document", "observe", "sitIn", "doorstep"].includes(scene.kind), `${label} overnightStructure.dayScenes[${sceneIndex}].kind 不合法`);
+    if (Array.isArray(scene.body?.beats)) {
+      assert(scene.body.beats.length > 0, `${label} overnightStructure.dayScenes[${sceneIndex}].body.beats 不能为空`);
+      scene.body.beats.forEach((beat, beatIndex) => {
+        assertNonEmptyString(beat?.text, `${label} overnightStructure.dayScenes[${sceneIndex}].body.beats[${beatIndex}].text 不能为空`);
+      });
+    }
+    if (scene.body?.choice) {
+      assertNonEmptyString(scene.body.choice.prompt, `${label} overnightStructure.dayScenes[${sceneIndex}].body.choice.prompt 不能为空`);
+      assertArrayMin(scene.body.choice.options, 2, `${label} overnightStructure.dayScenes[${sceneIndex}].body.choice.options 至少两项`);
+      scene.body.choice.options.forEach((option, optionIndex) => {
+        assertNonEmptyString(option?.id, `${label} overnightStructure.dayScenes[${sceneIndex}].body.choice.options[${optionIndex}].id 不能为空`);
+        assertNonEmptyString(option?.label, `${label} overnightStructure.dayScenes[${sceneIndex}].body.choice.options[${optionIndex}].label 不能为空`);
+        if (option?.resultText !== undefined) {
+          assertNonEmptyString(option.resultText, `${label} overnightStructure.dayScenes[${sceneIndex}].body.choice.options[${optionIndex}].resultText 不能为空`);
+        }
+        if (option?.resultBeats !== undefined) {
+          assertArrayMin(option.resultBeats, 1, `${label} overnightStructure.dayScenes[${sceneIndex}].body.choice.options[${optionIndex}].resultBeats 不能为空`);
+          option.resultBeats.forEach((beat, beatIndex) => {
+            assertNonEmptyString(beat?.text, `${label} overnightStructure.dayScenes[${sceneIndex}].body.choice.options[${optionIndex}].resultBeats[${beatIndex}].text 不能为空`);
+          });
+        }
+      });
+    }
     if (scene.kind === "document") {
       assertNonEmptyString(scene.body?.documentId, `${label} overnightStructure.dayScenes[${sceneIndex}].body.documentId 不能为空`);
       assert((packet.documents ?? []).some((document) => document.id === scene.body.documentId), `${label} overnightStructure.dayScenes[${sceneIndex}].body.documentId 指向不存在的 documents`);
     } else {
       assertNonEmptyString(scene.body?.text, `${label} overnightStructure.dayScenes[${sceneIndex}].body.text 不能为空`);
-      assertNonEmptyString(scene.body?.earnedItemId, `${label} overnightStructure.dayScenes[${sceneIndex}].body.earnedItemId 不能为空`);
-      earnedIds.add(scene.body.earnedItemId);
+      const choiceOptions = scene.body?.choice?.options ?? [];
+      const choiceAlwaysGrants = choiceOptions.length > 0 && choiceOptions.every((option) => typeof option?.grantsEarnedItemId === "string" && option.grantsEarnedItemId.trim());
+      assert(scene.body?.earnedItemId || choiceAlwaysGrants, `${label} overnightStructure.dayScenes[${sceneIndex}] 必须由 body.earnedItemId 或每个 choice 分支产出带回物`);
     }
+    if (scene.body?.earnedItemId) earnedIds.add(scene.body.earnedItemId);
+    (scene.body?.choice?.options ?? []).forEach((option) => {
+      if (option?.grantsEarnedItemId) earnedIds.add(option.grantsEarnedItemId);
+    });
     if (scene.body?.timelineSort !== undefined) {
       const timeline = scene.body.timelineSort;
       assertArrayMin(timeline.cards, 2, `${label} overnightStructure.dayScenes[${sceneIndex}].timelineSort.cards 至少两张`);
@@ -438,6 +474,37 @@ function assertOvernightStructure(packet = {}, label = "") {
     assert(openerIds.has(earnedId), `${label} overnightStructure.callbackOpeners 缺少 earnedItem opener: ${earnedId}`);
     assertNonEmptyString(structure.callbackOpeners?.[earnedId]?.line, `${label} overnightStructure.callbackOpeners.${earnedId}.line 不能为空`);
   });
+  Object.entries(structure.callbackOpeners ?? {}).forEach(([earnedId, opener]) => {
+    if (opener?.firstConflict === undefined) return;
+    assert(opener.firstConflict && typeof opener.firstConflict === "object" && !Array.isArray(opener.firstConflict), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 必须是对象`);
+    assertNonEmptyString(opener.firstConflict.hostLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.hostLine 不能为空`);
+    assertNonEmptyString(opener.firstConflict.callerLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerLine 不能为空`);
+  });
+  if (structure.interludeEarnedItemMap !== undefined) {
+    assert(structure.interludeEarnedItemMap && typeof structure.interludeEarnedItemMap === "object" && !Array.isArray(structure.interludeEarnedItemMap), `${label} overnightStructure.interludeEarnedItemMap 必须是对象`);
+    const interludeInventoryIds = new Set();
+    (packet.nightStructure?.interlude?.actions ?? []).forEach((action) => {
+      (action.grantsInventory ?? []).forEach((id) => interludeInventoryIds.add(id));
+      [...(action.options ?? []), ...(action.choices ?? [])].forEach((option) => {
+        (option.grantsInventory ?? []).forEach((id) => interludeInventoryIds.add(id));
+      });
+    });
+    (packet.investigationHooks ?? []).forEach((hook) => {
+      (hook.replyChoices ?? []).forEach((option) => {
+        (option.grantsInventory ?? []).forEach((id) => interludeInventoryIds.add(id));
+      });
+    });
+    Object.entries(structure.interludeEarnedItemMap).forEach(([inventoryId, mappedIds]) => {
+      assertNonEmptyString(inventoryId, `${label} overnightStructure.interludeEarnedItemMap 的 inventory id 不能为空`);
+      assert(interludeInventoryIds.has(inventoryId), `${label} overnightStructure.interludeEarnedItemMap 来源未由幕间产出: ${inventoryId}`);
+      const targets = Array.isArray(mappedIds) ? mappedIds : [mappedIds];
+      assertArrayMin(targets, 1, `${label} overnightStructure.interludeEarnedItemMap.${inventoryId} 不能为空`);
+      targets.forEach((earnedId) => {
+        assertNonEmptyString(earnedId, `${label} overnightStructure.interludeEarnedItemMap.${inventoryId} 目标不能为空`);
+        assert(openerIds.has(earnedId), `${label} overnightStructure.interludeEarnedItemMap.${inventoryId} 缺少 callback opener: ${earnedId}`);
+      });
+    });
+  }
   assertNonEmptyString(structure.callbackFallback?.line, `${label} overnightStructure.callbackFallback.line 不能为空`);
   assertNonEmptyString(structure.postures?.againstCaller, `${label} overnightStructure.postures.againstCaller 不能为空`);
   assertNonEmptyString(structure.postures?.withCaller, `${label} overnightStructure.postures.withCaller 不能为空`);
@@ -599,6 +666,14 @@ const caseFiles = await Promise.all(
 const comments = await readJson(`content/packs/${packId}/comments.json`);
 const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes.json`);
 const advisorRegistry = await readJson("content/characters/advisors.json").catch(() => ({ advisors: [] }));
+const callerArtPaths = [...new Set(manifest.sequence.flatMap((item) => [
+  item.callerArt,
+  ...Object.values(item.callerArtVariants ?? {})
+]).filter(Boolean))];
+const callerArtFiles = new Map(await Promise.all(callerArtPaths.map(async (artPath) => {
+  const cleanPath = String(artPath).replace(/^\.\//, "").replace(/\?.*$/, "");
+  return [artPath, await readFile(resolve(root, cleanPath)).catch(() => null)];
+})));
 const advisorIds = new Set((advisorRegistry.advisors ?? []).map((advisor) => advisor.id));
 const advisorIdList = [...advisorIds];
 const caseOrder = manifest.sequence.map((item) => item.caseId);
@@ -634,9 +709,24 @@ test("PACK-002", "manifest keeps distinct playable cases", () => {
       assert(item.difficultyProfile.tier >= manifest.sequence[index - 1].difficultyProfile.tier, `第 ${index + 1} 案 difficultyProfile.tier 不能倒退`);
     }
     assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png(\?v=[\w.-]+)?$/.test(item.callerArt), `第 ${index + 1} 案 callerArt 必须指向匿名来电人 PNG`);
+    assert(callerArtFiles.get(item.callerArt), `第 ${index + 1} 案 callerArt 文件不存在`);
+    assert(pngHasAlpha(callerArtFiles.get(item.callerArt)), `第 ${index + 1} 案 callerArt 必须是真透明 PNG，不能使用烘入棋盘格的 RGB 图`);
+    Object.entries(item.callerArtVariants ?? {}).forEach(([kind, artPath]) => {
+      assert(["neutral", "guarded", "pause"].includes(kind), `第 ${index + 1} 案 callerArtVariants 不支持 ${kind}`);
+      assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png(\?v=[\w.-]+)?$/.test(artPath), `第 ${index + 1} 案 ${kind} 立绘必须指向匿名 callers PNG`);
+      assert(callerArtFiles.get(artPath), `第 ${index + 1} 案 ${kind} 立绘文件不存在`);
+      assert(pngHasAlpha(callerArtFiles.get(artPath)), `第 ${index + 1} 案 ${kind} 立绘必须含真实 alpha 通道`);
+    });
     assert(!/下一案|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);
   });
 });
+
+function pngHasAlpha(buffer) {
+  if (!buffer || buffer.length < 26) return false;
+  const pngSignature = "89504e470d0a1a0a";
+  if (buffer.subarray(0, 8).toString("hex") !== pngSignature) return false;
+  return [4, 6].includes(buffer[25]);
+}
 
 test("PACK-003", "case pressure packets are complete", () => {
   const requiredFields = [

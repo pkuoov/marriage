@@ -18,13 +18,13 @@ import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "
 import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js?v=0.21.0";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
-import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.77";
+import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.78";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialRows, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
-import { audiencePatienceHudHtml, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.20.68";
+import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.21.4";
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, offMicLettersHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
@@ -400,6 +400,9 @@ test("INPUT-001", "keyboard and gamepad navigation has pure focus rules", () => 
   assertEqual(gamepadAxisDirection({ axes: [-0.7, 0], lastMoveAt: 0, now: 500 }), -1, "左摇杆左推必须生成上一项方向");
   assertEqual(gamepadAxisDirection({ axes: [0.2, 0], lastMoveAt: 0, now: 500 }), 0, "摇杆小幅漂移不能移动焦点");
   assertEqual(gamepadAxisDirection({ axes: [0.8, 0], lastMoveAt: 450, now: 500 }), 0, "摇杆移动必须有冷却，避免一帧扫过多个按钮");
+  const inputAppSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const gamepadHandler = inputAppSource.slice(inputAppSource.indexOf("function handleGamepadInput"), inputAppSource.indexOf("function currentDialogueAdvance"));
+  assert(gamepadHandler.indexOf("const dialogue = currentDialogueAdvance()") < gamepadHandler.indexOf("const focusedButton"), "手柄 A 键必须先推进正在播放的 AVG 对白，不能误点全局按钮");
 });
 
 test("MATERIAL-002", "material inspection renders as an in-document markable board", () => {
@@ -524,7 +527,7 @@ test("INVESTIGATION-001", "host investigation backflow is fixed material, not fr
   assert(!appSource.includes("核验成功"), "回流不能写成通关提示");
 });
 
-test("INVESTIGATION-002", "off-mic letters render after backflow before truth boundary", () => {
+test("INVESTIGATION-002", "off-mic letters share the final recap page after boundary placement", () => {
   assert(CONTENT_ADVISORS["zhao-lawyer"], "顾问注册表必须进入运行时内容索引");
   const letterHtml = offMicLettersHtml([
     {
@@ -547,9 +550,11 @@ test("INVESTIGATION-002", "off-mic letters render after backflow before truth bo
     offMicLetters: [{ badge: "赵律师 · 家事与债务", text: "口说的不算，落纸的算数。" }],
     boundary: { title: "事实边界", columns: [{ key: "true", label: "能确认", items: ["账单存在"] }], prompts: [], choices: [] },
     boundaryPicks: {}
-  }).join("\n");
-  assert(pages.indexOf("后续回拨") < pages.indexOf("麦外来信"), "麦外来信必须在后续回拨之后");
-  assert(pages.indexOf("麦外来信") < pages.indexOf("事实边界"), "麦外来信必须在事实边界之前");
+  });
+  assertEqual(pages.length, 3, "收麦回看必须压缩成三页");
+  assertIncludes(pages[1], "事实边界", "第二页必须完成事实边界放置");
+  assert(pages[2].indexOf("后续回拨") < pages[2].indexOf("麦外来信"), "末页必须先交代后续回拨，再显示麦外来信");
+  assertIncludes(pages[2], "连线收住", "末页必须保留事实边界揭示与收束");
 });
 
 test("UI-001", "current-node questions separate free asks from key choices", () => {
@@ -566,6 +571,8 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   const sceneReviewViewSource = readFileSync(new URL("../src/ui/sceneReviewView.js", import.meta.url), "utf8");
   const storyInterludeViewSource = readFileSync(new URL("../src/ui/storyInterludeView.js", import.meta.url), "utf8");
   const storyPackCompleteViewSource = readFileSync(new URL("../src/ui/storyPackCompleteView.js", import.meta.url), "utf8");
+  const interludeDeskViewSource = readFileSync(new URL("../src/ui/interludeDeskView.js", import.meta.url), "utf8");
+  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -586,8 +593,13 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(questionHtml, "data-scene-dialogue=\"2:0\"", "随意提问必须有独立事件入口，不结束当前段落");
   assertIncludes(questionHtml, "data-scene-question=\"2:1\"", "关键追问仍要保留可点击数据");
   assertIncludes(questionHtml, "你们平时谁管钱多一点？", "有 casualQuestions 时普通区必须渲染署名闲聊层");
+  assertIncludes(questionHtml, "question-section-dialogue", "补问背景必须有独立视觉分区");
+  assertIncludes(questionHtml, "补问背景", "自由补问必须使用玩家可理解的场内标签");
+  assertIncludes(questionHtml, "question-section-key", "推进原话必须有独立视觉分区");
+  assertIncludes(questionHtml, "追原话", "推进选择必须使用场内语义，不能写设计师术语");
+  assertIncludes(questionHtml, "消耗听众耐心", "追问区必须给出非剧透成本提示");
   assert(dialogueOptions.every((row) => scene.casualQuestions.some((option) => option.question === row.option.question)), "有 casualQuestions 时普通区不能继续回收关键选择里的外围项");
-  ["普通提问", "关键选择", "普通", "关键", "核心问题", "推荐", "路线轴", "会推进剧情", "不推进剧情"].forEach((term) => {
+  ["普通提问", "关键选择", "核心问题", "推荐", "路线轴", "会推进剧情", "不推进剧情", "正确答案", "加分", "必选"].forEach((term) => {
     assert(!questionHtml.includes(term), `提问面板不得泄露后台类型：${term}`);
   });
   assert(!questionHtml.includes("先问两句"), "随意提问区不能写成意义不明的流程标签");
@@ -595,7 +607,6 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assert(!questionHtml.includes("问偏"), "面板说明不许把失败机制直接说给玩家听");
   assert(!questionHtml.includes("弹幕会散"), "面板说明不能用伪直播马甲解释机制");
   assert(!questionHtml.includes("问偏会掉耐心"), "正式追问区不能写成机制说明书");
-  assert(!questionHtml.includes("关键追问"), "正式追问区不能使用含糊的设计师标签");
   assert(!dialogueOptions.some((row) => row.option.question === questionOptions[row.option.sourceIndex ?? row.optionIndex]?.question), "随意提问不能原样复用正式追问选项");
   assert(!questionHtml.includes("choice-kind"), "问题按钮不能额外显示类型标签");
   assertIncludes(askedQuestionHtml, `data-scene-dialogue="2:0"`, "问过的非推进问题仍应保留原问句和禁用入口");
@@ -685,6 +696,11 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(appSource, "data-truth-boundary-pick", "事实边界必须可交互归位，不能只做静态说明页");
   assertIncludes(recapViewSource, "truthBoundaryPlaced", "事实边界必须改成一次放置后继续，不能强制玩家改到标准答案");
   assertIncludes(recapViewSource, "solvedRecapFlowView", "单案收麦回看分页和按钮必须由纯 UI 模块生成");
+  assertIncludes(interludeDeskViewSource, "剩余 ${Number(budget.remaining ?? 0)} 格", "幕间预算必须压成一行剩余格数");
+  assertIncludes(interludeDeskViewSource, "advisor-avatar", "顾问分歧必须有可辨识头像槽");
+  assertIncludes(stylesSource, ".day-studio", "工作室白天场景必须有独立背景规则");
+  assertIncludes(stylesSource, ".day-office", "办公室白天场景必须有独立背景规则");
+  assertIncludes(stylesSource, "backgrounds/cafe_date.png", "餐厅与咖啡馆必须接入已有场景图");
   assertIncludes(appSource, "solvedRecapFlowView", "renderSolved 必须调用纯 UI flow helper，不能继续本地拼分页按钮");
   assert(!appSource.includes("先把这几句放完") && !recapViewSource.includes("先把这几句放完"), "事实边界阻止继续的按钮文案不能继续写回运行时代码或 UI 模块");
   assert(!appSource.includes("这句还不能这么放"), "事实边界不能当场提示对错，错放应留到回看/终局揭晓");
@@ -722,7 +738,6 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   const oldLowerGroup = `choiceGroup("${"盯住"}${"一句"}`;
   assert(!appSource.includes(oldUpperGroup), "不能恢复成上方单独一个岔开按钮组");
   assert(!appSource.includes(oldLowerGroup), "不能恢复成下方单独一个关键按钮组");
-  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
   const windowsPlaySource = readFileSync(new URL("../play-windows.bat", import.meta.url), "utf8");
   const buildStaticSource = readFileSync(new URL("../scripts/build-static.js", import.meta.url), "utf8");
@@ -789,14 +804,14 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(buildPlayableSource, "importAliasDeclarations", "离线 playable bundler 必须保留 import alias，避免 app 运行时 undefined");
   assertIncludes(browserSmokeSource, "accounting-restaurant", "浏览器回放必须覆盖周会计档案室+餐厅白天路线");
   assertIncludes(browserSmokeSource, "restaurant-document", "浏览器回放必须覆盖餐厅+独立审流水路线");
-  assertIncludes(browserSmokeSource, "zero-fallback", "浏览器回放必须覆盖零地点 fallback 路线");
+  assertIncludes(browserSmokeSource, "day map must not allow skipping the required two daytime actions", "浏览器回放必须覆盖白天调查的两处最低门槛");
   assertIncludes(browserSmokeSource, "sceneMode: \"outer\"", "浏览器回放必须覆盖只点外围追问也能继续主线");
   assertIncludes(browserSmokeSource, "data-scene-dialogue", "浏览器回放必须覆盖先问普通问题再点关键追问的流程");
   assertIncludes(browserSmokeSource, "materialMode: \"miss\"", "浏览器回放必须覆盖材料误圈路线");
   assertIncludes(browserSmokeSource, "keyboard-accounting-restaurant", "浏览器回放必须覆盖真实键盘焦点路线");
   assertIncludes(browserSmokeSource, "page.keyboard.press(\"Enter\")", "键盘回放必须用真实键盘确认，而不是只用 DOM click");
   assertIncludes(browserSmokeSource, "gamepad-restaurant-document", "浏览器回放必须覆盖模拟 Gamepad API 路线");
-  assertIncludes(browserSmokeSource, "case2-lin-visit", "浏览器回放必须覆盖第二案主动去婚介门店找小林");
+  assertIncludes(browserSmokeSource, "case2-day-map", "浏览器回放必须覆盖第二案店外观察与会员文档路线");
   assertIncludes(browserSmokeSource, "navigator, \"getGamepads\"", "手柄回放必须走 Gamepad API 入口，而不是复用键盘或 DOM click");
   assertIncludes(steamPreflightSource, "nodeSupportsElectronPackaging", "Steam preflight 必须明确 Node/Electron 打包版本要求");
   assertIncludes(steamPreflightSource, "dist/steam", "Steam preflight 必须检查打包输出目录");
@@ -813,6 +828,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const callFlowViewSource = readFileSync(new URL("../src/ui/callFlowView.js", import.meta.url), "utf8");
   const liveFrameViewSource = readFileSync(new URL("../src/ui/liveFrameView.js", import.meta.url), "utf8");
+  const dialoguePresentationSource = readFileSync(new URL("../src/runtime/dialoguePresentation.js", import.meta.url), "utf8");
   assertIncludes(appSource, "./ui/callFlowView.js", "通用通话气泡和按钮组 HTML 必须从 app.js 拆到 ui/callFlowView");
   assertIncludes(callFlowViewSource, "choiceReviewHtml", "上一问回看必须由纯 UI 模块渲染");
   assert(!appSource.includes("function choiceGroup"), "通用选择组 HTML 不能继续留在 app.js");
@@ -836,6 +852,9 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(caseProgressStripHtml({ total: 5, answered: 2, label: "匿名来电" }), "第 3/5 句", "通话进度条必须可由纯 UI 模块渲染");
   assertIncludes(storyPackSummaryHudHtml({ total: 4, solved: 2 }), "2/4", "故事包收麦 HUD 必须可由纯 UI 模块渲染");
   assertEqual(callerExpressionForView({ mood: "thinking", sceneIndex: 1 }).kind, "shift", "来电人表情 fallback 必须可脱离 app 状态测试");
+  assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: { guarded: "guarded.png", pause: "pause.png" }, expression: { kind: "shift" } }).src, "guarded.png", "shift 表演必须切到 guarded 立绘");
+  assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: { pause: "pause.png" }, expression: { kind: "pause" } }).src, "pause.png", "pause 表演必须切到 pause 立绘");
+  assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: {}, expression: { kind: "pause" } }).src, "neutral.png", "缺少差分图时必须安全回退 neutral");
   assertIncludes(portraitLayerHtml({ artSrc: "./caller.png", mood: "tense", expression: { kind: "pause", text: "停了一下" } }), "停了一下", "来电人立绘层必须可由纯 UI 模块渲染");
   const guardedPortrait = portraitLayerHtml({ artSrc: "./assets/generated/characters/shen_guarded.png", fallbackSrc: "./assets/generated/characters/shen_neutral.png", mood: "tense" });
   assertIncludes(guardedPortrait, 'data-fallback-src="./assets/generated/characters/shen_neutral.png"', "来电人差分缺图必须带 neutral 回退");
@@ -844,7 +863,9 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(finalQuoteComparisonHtml({ sameQuote: true, pickedLabel: "“原话”", pickedResponse: "接住了" }), "这句够了", "最终原话对比卡必须可由纯 UI 模块渲染");
   assertIncludes(truthBoundaryReviewHtml({ title: "边界", line: "先放句子", choices: [{ key: "true", label: "能确认" }], columns: [{ key: "true", label: "能确认", items: ["A"] }], prompts: [{ id: "true:0", text: "A", expected: "true" }] }, {}), "data-truth-boundary-pick", "事实边界归位按钮必须可由纯 UI 模块渲染");
   assert(truthBoundaryPlaced({ prompts: [{ id: "a" }] }, { a: "true" }), "事实边界一次放置完成判断必须可由纯 UI 模块测试");
-  assertIncludes(solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "稳住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" })[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
+  const compactRecapPages = solvedRecapPagesHtml({ issue: { percent: 80, revealed: ["A"] }, result: { dailyBadge: true, dailyAccuseLabel: "“A”" }, route: { label: "钱流", summary: "盯钱" }, pressure: { label: "稳住了", line: "现场收住" }, conclusion: { summary: "收住", followup: "后续", truth: "事实" }, boundary: { columns: [] }, issueLineText: "问到了" });
+  assertIncludes(compactRecapPages[0], "收麦回看", "收麦回看页面组必须可由纯 UI 模块渲染");
+  assertEqual(compactRecapPages.length, 3, "收麦回看必须固定压缩为三页");
   const recapFlow = solvedRecapFlowView({ pages: ["第一页", "第二页"], step: 0 });
   assertIncludes(recapFlow.text, "1/2", "收麦回看分页 kicker 必须由纯 UI flow helper 生成");
   assertIncludes(recapFlow.choices, "data-recap-next", "收麦回看非末页继续按钮必须由纯 UI flow helper 生成");
@@ -950,10 +971,15 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(deckHtml, "审批图", "控场台必须展示当前后台材料");
   const frameHtml = liveFrameHtml({ productName: "直播间大侦探", modeLabel: "试玩连线", soundEnabled: true, label: "继续对话", chapter: "匿名来电", text: "<p>正文</p>", choices: "<button>继续</button>", visualHud: "<div>HUD</div>", controlDeckHtml: deckHtml, backdropClass: "backdrop-credit", material: "信用卡账单" });
   assertIncludes(frameHtml, "live-console-shell", "案内主画面必须使用控场台布局骨架");
+  assertIncludes(frameHtml, "has-control-deck", "有控场台时主舞台必须进入明确的桌面两栏状态");
+  assertIncludes(frameHtml, "data-live-shell", "主舞台必须暴露稳定的交互外壳标记，不能由 app.js 复制骨架类名");
   assertIncludes(frameHtml, "音效 开", "案内主画面 topbar 必须可由纯 UI 模块渲染");
   assertIncludes(frameHtml, "scene-evidence-props", "主舞台必须有案件物件前景层，不能只有背景图和立绘");
   assertIncludes(frameHtml, "scene-props-credit", "案件物件前景层必须跟随场景背景切换");
   assertIncludes(frameHtml, "props-bill", "案件物件前景层必须跟随材料类型切换");
+  assertIncludes(frameHtml, "data-material-modal", "材料详情必须进入独立模态层，不能继续浮在对白上");
+  assertIncludes(frameHtml, "data-material-close", "材料模态必须提供明确关闭操作");
+  assertIncludes(frameHtml, "aria-expanded=\"false\"", "材料入口必须向辅助技术报告展开状态");
   assertIncludes(liveFrameHtml({ text: "<p>正文</p>", screenEffect: "patience-drop" }), "screen-effect-patience-drop", "耐心扣除必须能渲染一次性红色暗角层");
   assertIncludes(stylesSource, ".screen-effect-material-hit", "材料命中必须有全屏 CRT 扫描反馈层");
   assertIncludes(stylesSource, ".screen-effect-patience-drop", "耐心扣除必须有红闪暗角反馈层");
@@ -961,6 +987,10 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(appSource, "state.lastScreenEffect = state.lastScreenEffect ?? \"patience-drop\"", "真实消耗耐心时必须触发一次红闪反馈");
   assertIncludes(appSource, "state.lastScreenEffect = null", "屏幕反馈渲染后必须清空，不能存档后反复闪");
   assertIncludes(stylesSource, ".story-grid.case-vn-grid.live-console-shell", "控场台布局必须覆盖普通 VN 单栏布局");
+  assertIncludes(stylesSource, ".live-console-shell.has-control-deck > .vn-stage", "桌面主舞台必须明确进入第二列");
+  assert(!stylesSource.includes(".case-vn-grid .control-deck { position: absolute"), "控场台不能再被后置 AVG 样式改成遮挡舞台的绝对定位");
+  assertIncludes(stylesSource, ".avg-material-modal[hidden]", "材料模态关闭后必须真正退出布局");
+  assertIncludes(stylesSource, ".choices-open .avg-material-card", "选择出现时必须收起材料入口，避免两个交互层争抢");
   assertIncludes(stylesSource, ".deck-card-live", "控场台必须有直播信号视觉模块");
   assert(!stylesSource.includes("50% 50% 44% 44%"), "控场台主播监听不能再画成小人脸图标");
   assertIncludes(stylesSource, ".scene-evidence-props", "主舞台案件物件前景层必须有样式");
@@ -987,6 +1017,10 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(appSource, "handleGamepadButton(gamepad, 3", "手柄 Y 键必须预留给回看/复盘入口");
   assertIncludes(appSource, "intent === \"review\"", "Tab 必须能通过键盘意图打开或收起当前回看面板");
   assertIncludes(appSource, "toggleReviewPanel", "键盘 Tab 和手柄 Y 必须复用同一套回看切换逻辑");
+  assertIncludes(appSource, "closeTopOverlay", "Esc 与手柄 B 必须先关闭材料或案卷顶层");
+  assertIncludes(appSource, "onChoicesShown", "对白结束展示选项时必须同步材料层状态");
+  assertIncludes(appSource, "resetViewportScroll", "SPA 切换场景后必须回到新画面顶部，不能继承上一页滚动位置");
+  assertIncludes(dialoguePresentationSource, ".night-shell-line", "夜班序章必须进入逐句 AVG 分页，不能在手机端堆成长页");
   assertIncludes(appSource, "handleGamepadAxis", "左摇杆必须能移动焦点");
   assertIncludes(appSource, "gamepadAxisDirection", "摇杆方向和冷却必须走可测试纯函数");
   assertIncludes(stylesSource, "button:focus-visible", "键盘和手柄焦点必须有可见焦点环");
@@ -1427,6 +1461,7 @@ test("DAILY-009B", "case copy avoids gender-war framing but allows mutual harm",
 
 test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => {
   const forbidden = stockAiForbiddenCopyRegex();
+  const answerCoaching = /更要先看|但这里先看|才是关键|核心痕迹|真正越界要看|这个判断|你中段|这句说明|这说明|它说明|这条不替/;
   const frozenShareFrame = /^让我.*(?:的是|不是)/;
   Array.from({ length: 8 }, (_, index) => dailyCase(`2026-06-${String(24 + index).padStart(2, "0")}`))
     .forEach((brief) => {
@@ -1438,6 +1473,12 @@ test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => 
         sceneVersions: brief.sceneVersions,
         deepFollowup: brief.deepFollowup,
         evidenceCards: brief.evidenceCards,
+        evidenceChecks: brief.evidenceChecks,
+        investigationHooks: brief.investigationHooks,
+        stanceSnapshot: brief.stanceSnapshot,
+        accusationChoices: brief.accusationChoices,
+        nightStructure: brief.nightStructure,
+        overnightStructure: brief.overnightStructure,
         stageJudgement: brief.stageJudgement,
         followupTwist: brief.followupTwist,
         truth: brief.truth,
@@ -1446,6 +1487,7 @@ test("DAILY-009C", "playable case copy avoids stock AI-summary phrasing", () => 
         dailyShareQuestion: brief.dailyShareQuestion
       });
       assert(!forbidden.test(text), `${brief.plotId} 仍有总结腔/AI 腔短语`);
+      assert(!answerCoaching.test(text), `${brief.plotId} 误选反馈或复盘仍在替玩家提示正确方向`);
       assert(!frozenShareFrame.test(brief.dailyShareBody ?? ""), `${brief.plotId} 结果卡不能用“让我……的是/不是……”作文式开头`);
     });
 });
@@ -1939,72 +1981,127 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assertEqual(overnightFirstNight2SceneIndex(brief), anchorIndex + 1, "夜 2 必须从锚点后下一段开始");
   const initial = initialOvernightStateFor(brief);
   assertEqual(initial.dayBudget.remaining, 2, "白天初始预算必须来自 JSON");
+  assert(!canEnterOvernightCallback(brief, initial), "第一案不能跳过白天调查直接进入第二夜");
+  assert(!canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-accounting"] }), "第一案只去一处时还不能进入第二夜");
+  assert(canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-accounting", "day-bank-flow"] }), "第一案完成两处调查后必须允许进入第二夜");
   assertEqual(daySceneById(brief, "day-accounting")?.body?.earnedItemId, "周会计的时间线", "周会计档案室必须产出可带回夜里的时间线");
-  assert(!daySceneById(brief, "day-home"), "赵律师改为挂断后主动来电，白天地图不应再要求玩家回家解锁她");
-  assertEqual(brief.overnightStructure.postHangupContact?.label, "收麦后 · 赵律师来电", "赵律师必须在第一夜收麦后主动联系主播");
-  assertIncludes(brief.overnightStructure.postHangupContact?.stageDirection, "ON AIR 灯熄了", "赵律师来电必须明确发生在直播结束后");
-  assertIncludes(brief.overnightStructure.postHangupContact?.lines?.[0]?.text, "别替她选", "赵律师主动来电只能纠正主播行动方式，不替咨询者作答");
-  const openers = availableOvernightCallbackOpeners(brief, ["周会计的时间线", "靠窗位预订记录"]).map((opener) => opener.id);
+  assertEqual(daySceneById(brief, "day-bank-flow")?.body?.earnedItemId, "流水圈注", "流水圈注必须正式进入 overnight earnedItems");
+  const timeline = daySceneById(brief, "day-accounting")?.body?.timelineSort;
+  assert(JSON.stringify(timeline?.cards) !== JSON.stringify(timeline?.correctOrder), "时间排序不能把卡片按正确顺序直接摆好");
+  assert(!daySceneById(brief, "day-home"), "赵律师改入幕间框架冲突，白天地图不应再要求玩家回家解锁她");
+  assert(!brief.overnightStructure.postHangupContact, "案1 收麦后赵律师说教已迁出 postHangupContact");
+  const frameAction = nightActionById(brief, "zhao-zhou-frame");
+  assertEqual(frameAction?.kind, "advisorConflict", "案1 幕间必须保留赵周框架冲突");
+  assertEqual(frameAction?.npcVerb, "conflict", "案1 幕间赵周框架必须标记 conflict");
+  assert(frameAction?.options?.some((option) => option.id === "frame-zhao"), "幕间必须能先采性质框架");
+  assert(frameAction?.options?.some((option) => option.id === "frame-zhou"), "幕间必须能先采路径框架");
+  const restaurant = daySceneById(brief, "day-restaurant");
+  assertEqual(restaurant?.body?.choice?.options?.length, 2, "餐厅必须有会员号/轮订两岔");
+  assert(restaurant?.body?.choice?.options?.every((option) => option.grantsEarnedItemId), "餐厅两岔必须产出不同带回物");
+  assert(restaurant?.body?.choice?.options?.every((option) => (option.resultBeats ?? []).length || option.resultText), "餐厅两岔必须在选择后才展示各自所得");
+  const sitIn = daySceneById(brief, "day-cafe-sitin");
+  assert(sitIn?.body?.choice?.options?.every((option) => (option.resultBeats ?? []).length || option.resultText), "旁听两岔必须改变玩家实际听到的信息");
+  const openers = availableOvernightCallbackOpeners(brief, ["周会计的时间线", "她的会员号"]).map((opener) => opener.id);
   assert(openers.includes("周会计的时间线"), "带回周会计时间线必须解锁时间线回拨");
-  assert(openers.includes("靠窗位预订记录"), "带回靠窗位事实必须解锁靠窗位回拨");
-  assertEqual(overnightCallbackOpenerById(brief, "靠窗位预订记录")?.line, "「你去了？……所以\"提前两周\"是真的。那我现在想知道的是：他到底是提前两周为我订的，还是那排位子，他常年有。」", "靠窗位回拨台词必须稳定");
+  assert(openers.includes("她的会员号"), "带回她的会员号必须解锁对应回拨");
+  assert(availableOvernightCallbackOpeners(brief, ["常客的轮订规律"]).some((opener) => opener.id === "常客的轮订规律"), "常客的轮订规律必须改变第二夜第一句");
+  assert(availableOvernightCallbackOpeners(brief, ["流水圈注"]).some((opener) => opener.id === "流水圈注"), "流水圈注必须改变第二夜第一句");
+  assertIncludes(overnightCallbackOpenerById(brief, "她的会员号")?.line ?? "", "不外传", "她的会员号回拨台词必须稳定");
+  assert(overnightCallbackOpenerById(brief, "她的会员号")?.firstConflict?.hostLine, "会员号带回必须改变夜 B 第一轮追问，不能只换开场文案");
+  assert(overnightCallbackOpenerById(brief, "他对五万的沉默")?.firstConflict?.callerLine, "旁听提前离开必须改变夜 B 第一轮回答");
+  assertIncludes(JSON.stringify(sitIn?.body?.choice?.options ?? []), "灯是我真心买的", "同席原句必须保留，供麦外来信精确回声");
+  assertEqual(brief.lurkerNote?.deletedFragment, "灯是我真心买的", "lurker 只能复现同席已经当面说过的原句");
+  const couplingSkill = readFileSync(new URL("../project-skills/detective-plot-coupling-review/SKILL.md", import.meta.url), "utf8");
+  assertIncludes(couplingSkill, "同席特许的当面句允许在麦外来信复现一次，复现即人物", "侦探结构 skill 必须写明 lurker 同席回声特许");
+  [`会员号追问${"边"}`, `常客轮订${"边"}`, `旁听·订座与${"灯"}`, `旁听·五万拒${"答"}`].forEach((legacyName) => {
+    assert(!JSON.stringify(brief).includes(legacyName), `案 1 不得再暴露黑话带回名: ${legacyName}`);
+  });
   const callerQuestion = overnightCallerQuestionFor(brief);
   assertEqual(callerQuestion?.prompt, "主播，你说……我该不该垫？", "她的那一问必须稳定");
-  assert(!callerQuestion.options.find((option) => option.id === "dont-answer-for-her")?.requiresEarnedItem, "赵律师主动来电后，不替咨询者作答必须成为常驻选项");
+  assert(!callerQuestion.options.find((option) => option.id === "dont-answer-for-her")?.requiresEarnedItem, "不替咨询者作答必须成为常驻选项");
   assertEqual(overnightReturnPostureFor({ id: "caller-benefited" }), "againstCaller", "中段先怪她必须让回拨防御");
+  assertEqual(overnightReturnPostureFor({ id: "respondent-shifted-debt" }, "defensive"), "againstCaller", "幕间 defensive nudge 必须覆盖中段快照进入隔夜姿态");
+  assertEqual(overnightReturnPostureFor({ id: "caller-benefited" }, "open"), "withCaller", "幕间 open nudge 必须覆盖中段快照进入隔夜姿态");
   assertEqual(availableOvernightCallbackOpeners({ id: "plain" }, ["周会计的时间线"]).length, 0, "无 overnightStructure 的旧案不应暴露隔夜 opener");
 });
 
-test("RUNTIME-009", "case 2 requires an in-person Lin visit with two distinct callback frames", () => {
+test("RUNTIME-009", "case 2 moves shop observation and table comparison into a two-stop day map", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const brief = briefs.find((item) => item.runtimeContentCaseId === "02-tony");
   assert(brief, "案 2 必须存在");
-  const structure = nightStructureFor(brief);
-  assert(structure, "案 2 必须保留两段连线结构");
+  const nightStructure = nightStructureFor(brief);
+  assert(nightStructure, "案 2 必须保留两段连线结构");
   assert(shouldEnterHangupAfterScene(brief, 3), "案 2 第四段材料结束后必须真正进入跨夜挂断");
-  const visit = nightActionById(brief, "visit-lin");
-  assertEqual(visit?.kind, "advisorConflict", "找小林必须进入可选择的问题场景");
-  assertEqual(visit?.npcVerb, "refuse", "小林必须拒绝替玩家判断真心");
-  assertEqual(visit?.backdropClass, "day-matchmaking", "找小林必须切到婚介门店背景");
-  assertIncludes(visit?.sceneText, "半亮的招牌还没关", "婚介门店必须有独立白天场景文本");
-  assert(!nightActionById(brief, "call-lin"), "小林不能退回远程电话提示器");
-  assert(!nightActionById(brief, "lin-interrupt"), "小林不能再未经邀请主动发短信");
-  const completedPlayback = completeNightAction({
-    segment: "interlude",
-    activeActionId: "listen-dryer",
-    interludeBudget: { max: 3, remaining: 2, used: 1 },
-    interludeActionsDone: ["visit-lin"],
-    inventory: []
-  }, nightActionById(brief, "listen-dryer"), structure);
-  assertEqual(completedPlayback.activeActionId, null, "幕间行动完成后必须回到调查台，不能卡在行动页");
-  const columnOpeners = availableCallbackOpeners(brief, [], ["carry-private-column"]).map((opener) => opener.id);
-  const benefitOpeners = availableCallbackOpeners(brief, [], ["carry-benefits"]).map((opener) => opener.id);
-  assert(columnOpeners.includes("opener-lin-column"), "带走私加列差异必须解锁对应回拨开场");
-  assert(!columnOpeners.includes("opener-lin-benefit"), "私加列路线不能同时获得收益路线开场");
-  assert(benefitOpeners.includes("opener-lin-benefit"), "带走自己人收益必须解锁对应回拨开场");
-  assert(!benefitOpeners.includes("opener-lin-column"), "收益路线不能同时获得私加列路线开场");
+  assertEqual(nightStructure.interlude?.budget, 1, "案 2 短幕间最多支出一步");
+  assertEqual(nightStructure.interlude?.maxActions, 1, "案 2 短幕间不能和白天地图库叠满");
+  assert(!(nightStructure.callbackOpeners ?? []).length, "案 2 存在 overnightStructure 时不得保留第二套 opener 表");
+  assert(!nightActionById(brief, "visit-lin"), "标准表对照必须迁入白天地图库，不能继续藏在旧幕间登门");
+  assert(!nightActionById(brief, "call-manager-boundary"), "店长拒答已迁出幕间，不得再保留 call-manager-boundary");
+  assertEqual(nightActionById(brief, "shop-sync-interrupt")?.npcVerb, "interrupt", "短幕间须保留 NPC interrupt 配额");
+  const structure = overnightStructureFor(brief);
+  assertEqual(structure?.dayBudget, 2, "案 2 白天地图库必须四选二");
+  assertEqual(structure?.dayScenes?.length, 4, "案 2 白天必须提供四处地点");
+  assertEqual(daySceneById(brief, "day-tony-shop-observe")?.kind, "observe", "案 2 必须有店外观察");
+  assertEqual(daySceneById(brief, "day-tony-shop-observe")?.body?.choice?.options?.length, 2, "案 2 店外观察必须有两岔现场取舍");
+  assert(!daySceneById(brief, "day-tony-shop-observe")?.body?.text?.includes("斜对面"), "店外观察不能隔街听清整段店内对话");
+  assert(daySceneById(brief, "day-tony-shop-observe")?.body?.choice?.options?.every((option) => (option.resultBeats ?? []).length || option.resultText), "店外观察两岔必须在选择后产生不同感知结果");
+  assertEqual(daySceneById(brief, "day-tony-friend-studio")?.kind, "studio", "案 2 必须有旧店主工作室");
+  assertEqual(daySceneById(brief, "day-tony-friend-studio")?.body?.choice?.options?.length, 2, "案 2 工作室必须有标准表/六折两岔");
+  assert(daySceneById(brief, "day-tony-friend-studio")?.body?.choice?.options?.every((option) => (option.resultBeats ?? []).length || option.resultText), "工作室两岔必须在选择后才展开各自内容");
+  assertEqual(daySceneById(brief, "day-tony-manager-doorstep")?.kind, "doorstep", "案 2 店长拒答必须落在白天门口");
+  assertEqual(daySceneById(brief, "day-tony-manager-doorstep")?.body?.earnedItemId, "店长门口拒答", "店长门口必须产出拒答带回物");
+  assertEqual(daySceneById(brief, "day-tony-member-docs")?.kind, "document", "案 2 必须能圈会员与培训文档");
+  assert(!(structure.dayScenes ?? []).some((scene) => scene.kind === "sitIn"), "案 2 不得再消耗包级同席配额");
+  const initial = initialOvernightStateFor(brief);
+  assert(!canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-tony-shop-observe"] }), "案 2 只去一处不能进入第二夜");
+  assert(canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-tony-shop-observe", "day-tony-member-docs"] }), "案 2 去满两处后必须允许回拨");
+  ["店外称呼观察", "店外服务序列", "店里的标准表", "那次六折", "培训页圈注", "店长门口拒答"].forEach((itemId) => {
+    assert(availableOvernightCallbackOpeners(brief, [itemId]).some((opener) => opener.id === itemId), `案 2 带回 ${itemId} 必须改变第二夜第一句`);
+    assert(overnightCallbackOpenerById(brief, itemId)?.firstConflict?.hostLine, `案 2 带回 ${itemId} 必须改变第二夜第一轮冲突`);
+  });
+  const dryerAction = nightActionById(brief, "listen-dryer");
+  assertEqual(dryerAction?.grantsInventory?.[0], "吹风机回放", "listen-dryer 必须直接带回同名物件，不能再用假 inventory id");
+  const legacyDryerId = ["playback", "dryer"].join("-");
+  assert(!structure?.interludeEarnedItemMap?.[legacyDryerId], "案 2 不得保留旧吹风机假映射");
+  const dryerEarned = interludeEarnedItemsForOvernight(brief, ["吹风机回放"]);
+  assert(dryerEarned.includes("吹风机回放"), "案 2 同名吹风机回放必须显式同步进 overnight earnedItems");
+  assert(availableOvernightCallbackOpeners(brief, dryerEarned).some((opener) => opener.id === "吹风机回放"), "案 2 吹风机回放必须能改变第二夜第一句");
+  [`工作室·标准表${"边"}`, `工作室·六折${"边"}`, legacyDryerId].forEach((legacyName) => {
+    assert(!JSON.stringify(brief).includes(legacyName), `案 2 不得再暴露旧带回名: ${legacyName}`);
+  });
+  assert(overnightCallbackOpenerById(brief, "女客拉群立场")?.firstConflict?.callerLine, "女客拉群选择必须进入夜 B 冲突，不得只改标签");
+  const managerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-manager-training-note");
+  assert(!managerHook?.material?.includes("“下一次推进”不是店里模板"), "店长后台说明不得重复培训页的承重结论");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
-  const interludeViewSource = readFileSync(new URL("../src/ui/interludeDeskView.js", import.meta.url), "utf8");
-  assertIncludes(appSource, "if (backdropClass)", "带背景的 NPC 行动必须使用白天场景渲染，并允许选择后切换具体地点");
-  assertIncludes(appSource, "shouldEnterHangupAfterScene(brief, sceneIndex)", "场后材料结束不能再绕过两段连线挂断");
-  assertIncludes(interludeViewSource, "action.sceneText", "NPC 地点场景必须渲染独立场景文本");
+  assertIncludes(appSource, "先圈一行", "流水调查必须要求玩家实际圈行，不能空手记下离开");
+  assertIncludes(appSource, "firstConflict.hostLine", "隔夜 opener 后必须渲染路线专属第一轮冲突");
 });
 
-test("RUNTIME-010", "case 3 daytime route is a real one-location trade-off", () => {
+test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential comparison as a two-stop trade-off", () => {
   const brief = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
     .find((item) => item.runtimeContentCaseId === "03-profile");
-  const structure = nightStructureFor(brief);
-  assertEqual(structure?.interlude?.budget, 1, "案 3 白天只能支出一次行动预算");
-  assertEqual(structure?.interlude?.maxActions, 1, "案 3 白天不能扫完两个 NPC");
-  const route = nightActionById(brief, "profile-day-route");
-  assertEqual(route?.kind, "advisorConflict", "案 3 白天选择必须进入真实 NPC 场景");
-  assertEqual(route?.options?.length, 2, "案 3 白天必须只在周会计和小林老师之间二选一");
-  assertEqual(route?.options?.[0]?.backdropClass, "day-document", "周会计路线必须切到档案室背景");
-  assertEqual(route?.options?.[1]?.backdropClass, "day-matchmaking", "小林路线必须切到婚介门店背景");
-  const zhouOpeners = availableCallbackOpeners(brief, ["profile-zhou-continuity"], ["chase-flow"]).map((item) => item.id);
-  const linOpeners = availableCallbackOpeners(brief, ["profile-lin-two-prices"], ["chase-introducer"]).map((item) => item.id);
-  assert(zhouOpeners.includes("opener-zhou") && !zhouOpeners.includes("opener-lin"), "周路线只能解锁周会计回拨开场");
-  assert(linOpeners.includes("opener-lin") && !linOpeners.includes("opener-zhou"), "小林路线只能解锁小林回拨开场");
+  const nightStructure = nightStructureFor(brief);
+  assertEqual(nightStructure?.interlude?.budget, 1, "案 3 短幕间只能支出一次行动预算");
+  assertEqual(nightStructure?.interlude?.maxActions, 1, "案 3 短幕间不能和白天地图重复扫点");
+  assert(!nightActionById(brief, "profile-cousin-message"), "案 3 幕间不得重复表姐门口承重拍");
+  assert(!(brief.investigationHooks ?? []).some((hook) => hook.id === "profile-cousin-family-note"), "案 3 表姐幕间 hook 必须移除");
+  assert(!(nightStructure.callbackOpeners ?? []).length, "案 3 存在 overnightStructure 时不得保留第二套 opener 表");
+  assert(!nightActionById(brief, "profile-day-route"), "案 3 旧的一地点登门必须迁出幕间");
+  const structure = overnightStructureFor(brief);
+  assertEqual(structure?.dayBudget, 2, "案 3 白天必须三选二");
+  assertEqual(structure?.dayScenes?.length, 3, "案 3 白天必须提供三处调查面");
+  assertEqual(daySceneById(brief, "day-profile-teahouse")?.kind, "visit", "案 3 必须到茶馆核两套报价");
+  assertEqual(daySceneById(brief, "day-profile-teahouse")?.body?.choice?.options?.length, 2, "案 3 茶馆必须有两岔现场取舍");
+  assertEqual(daySceneById(brief, "day-profile-cousin-doorstep")?.kind, "doorstep", "案 3 表姐必须只在门口有限作证");
+  assertEqual(daySceneById(brief, "day-profile-credential-docs")?.kind, "document", "案 3 必须并读学历核验与存款证明");
+  assert(!(structure.dayScenes ?? []).some((scene) => scene.kind === "sitIn"), "案 3 不得增加第二次同席");
+  const initial = initialOvernightStateFor(brief);
+  assert(!canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-profile-teahouse"] }), "案 3 只去一处不能进入第二夜");
+  assert(canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-profile-teahouse", "day-profile-cousin-doorstep"] }), "案 3 去满两处后必须允许回拨");
+  ["介绍人双边记录", "表姐门口口供", "双份材料圈注"].forEach((itemId) => {
+    assert(availableOvernightCallbackOpeners(brief, [itemId]).some((opener) => opener.id === itemId), `案 3 带回 ${itemId} 必须改变第二夜第一句`);
+  });
+  assert(interludeEarnedItemsForOvernight(brief, ["family-chat-seen"]).includes("家里群原话"), "案 3 家里群原话必须从幕间同步进 overnight earnedItems");
 });
 
 test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", () => {
@@ -2016,7 +2113,12 @@ test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", ()
   ["work-frame-zhao", "work-frame-zhou", "work-frame-lin"].forEach((id) => {
     assert(conflict.options.some((option) => option.id === id), `案 4 顾问冲突缺少 ${id}`);
   });
-  assert(availableCallbackOpeners(brief, ["work-frame-lin"], ["work-frame-lin"]).some((item) => item.id === "opener-lin-frame"), "采小林框架必须改变第二夜开场");
+  assertEqual(nightStructureFor(brief)?.interlude?.budget, 1, "案 4 短幕间最多支出一步");
+  assert(!(nightStructureFor(brief)?.callbackOpeners ?? []).length, "案 4 存在 overnightStructure 时不得保留第二套 opener 表");
+  const linFrameEarned = interludeEarnedItemsForOvernight(brief, ["work-frame-lin"]);
+  assert(linFrameEarned.includes("小林主责框架"), "案 4 镜框 inventory 必须同步进 overnight earnedItems");
+  assert(availableOvernightCallbackOpeners(brief, linFrameEarned).some((item) => item.id === "小林主责框架"), "采小林框架必须改变第二夜开场");
+  assertEqual(daySceneById(brief, "day-work-breakroom-observe")?.body?.choice?.options?.length, 2, "案 4 茶水间观察必须有两岔现场取舍");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {
