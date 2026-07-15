@@ -52,7 +52,7 @@
     ]
   },
   "delegation": {
-    "moment": "actBreak:2",
+    "moment": "interlude:send-appraisal",
     "material": {
       "id": "credit-history-pages",
       "label": "往期账单那几页"
@@ -64,7 +64,7 @@
       },
       "zhao-lawyer": {
         "tone": "partial",
-        "text": "按月固定还入，若是借的，就是新债养旧债；若是赠与，停了也不欠。两种在法律上是两个世界。具体看证据，我只说一般情况。"
+        "text": "按月固定还入，只能说明一条钱路曾经稳定。借来的、送的、代付还是还款，要看转账备注、聊天和有没有约定返还；这些不齐，别先替它定性。"
       },
       "lin-matchmaker": {
         "tone": "partial",
@@ -139,7 +139,8 @@
       "王**的具体身份仍无法确认",
       "对方后续是否具备还款能力仍无法确认",
       "双方摊开账单后是否继续关系仍无法确认"
-    ]
+    ],
+    "offlineSitIn": "日间咖啡厅旁听（sitIn）所得：对方认订座号是她的、灯是真心；五万细节拒讲。属线下旁听笔记，非 ON AIR 双麦；不指认 8 号付款人。"
   },
   "selfServingOmission": "咨询者自己参与过体面叙事，也收下过那套短视频设备，怕一说出来直播间不再给她一个干净裁决。",
   "quotePickCandidates": [
@@ -460,7 +461,7 @@
       ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "我后来把账单又对了一遍，日期和数字都对了。断缴以后的吃住玩，加上那笔分期，不到三万。可他让我垫的是八万，剩下那五万多，他从来没提过。还有，他第一次说周转那天，账单其实还有三天才到期，他先催我“今晚就要”，后面又改成“这几天都行”。后来我把往期的账单也翻出来了，越翻越冷。那几页我带来了。……主播，这个数我得想一晚上。明晚这个点，我再打进来——你等我。流水我发你们后台了。白天……你们自己看吧。我不想在麦上一行一行念它。",
+      "version": "我后来把账单又对了一遍。断缴以后的吃住玩，加上那笔分期，不到三万。可他让我垫的是八万，剩下那五万多——他从来不细说。还有，他第一次说周转那天，账单还有三天才到期，他先催我「今晚就要」，后面又改成「这几天都行」。主播，五万多的细节我今晚说不完。这个数我得想一晚上。明晚这个点，我再打进来。流水我发你们后台了。白天……你们自己看吧。",
       "doubt": "数字对不上：可见的消费加分期不到三万，缺口是八万。",
       "contradiction": "TA 无法解释八万缺口的大头，并用催款堵住追问。",
       "reliability": "partial",
@@ -962,30 +963,101 @@
     "teaseDuringSegment2": true,
     "text": "失业是真的，账单也是真的。八万里有她也想去的店，订座是她的会员号——这她自己清楚。五万多那块，不是乱来的钱，但细节我不会在节目里讲。她上麦把灯说成「他手机上弄的」的时候，开箱那天她笑得可开心了。"
   },
-  "overnightStructure": {
-    "hangupAnchor": "五万多",
-    "hangupLine": "电话轻轻挂了。没有摔，就是轻轻的。弹幕还在替她喊“别转”。",
-    "postHangupContact": {
-      "label": "收麦后 · 赵律师来电",
-      "stageDirection": "林旭阳摘下耳机，切掉直播信号。控台的 ON AIR 灯熄了，赵律师的电话才响。",
-      "lines": [
+  "nightStructure": {
+    "enabled": true,
+    "segment1SceneIndexes": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "segment2SceneIndexes": [
+      5,
+      6
+    ],
+    "hangup": {
+      "afterSceneIndex": 4,
+      "speaker": "咨询者",
+      "line": "剩下那五万多……我今晚讲不完细节。明晚这个点，我再打进来。",
+      "hostLine": "热线每晚都开。我们等你。",
+      "stageDirection": "电话轻轻挂了。没有摔，就是轻轻的。弹幕还在替她喊“别转”。"
+    },
+    "interlude": {
+      "title": "收麦后·控台短查",
+      "kicker": "出门前只够做一件事。",
+      "budget": 1,
+      "minActions": 1,
+      "maxActions": 1,
+      "continueLabel": "进入白天调查",
+      "actions": [
         {
-          "speaker": "赵律师",
-          "text": "弹幕已经替她答了一遍。你刚才也差一点。明晚她要真问该不该垫，先把转钱会失去什么说清楚，别替她选。"
+          "id": "send-appraisal",
+          "label": "送鉴定",
+          "summary": "把往期账单那几页送给一位顾问。",
+          "cost": 1,
+          "kind": "delegation",
+          "grantsInventory": [
+            "delegation-return"
+          ]
         },
         {
-          "role": "host",
-          "speaker": "林旭阳",
-          "text": "我只是怕她今晚真转。"
+          "id": "zhao-zhou-frame",
+          "label": "先采一套顾问框架",
+          "summary": "赵律师谈性质，周会计谈路径。先采一套，另一套今夜不问。",
+          "cost": 1,
+          "kind": "advisorConflict",
+          "npcVerb": "conflict",
+          "backdropClass": "day-document",
+          "sceneText": "赵律师站在控台边，周会计开着远程表格。两个人都不肯替对方让路。",
+          "options": [
+            {
+              "id": "frame-zhao",
+              "label": "先采赵律师的性质框架",
+              "advisorLine": "固定入账停了，只能说明一条钱路断了。借来的、送的、代付还是还款，要看备注、聊天和有没有约定返还。回拨先问凭据够不够，别让任何一方先给它起名字。",
+              "grantsInventory": [
+                "frame-zhao"
+              ],
+              "routeAxis": "process-control"
+            },
+            {
+              "id": "frame-zhou",
+              "label": "先采周会计的路径框架",
+              "advisorLine": "钱只认路径。摘要谁写的我不看。回拨先问原件日期和到账顺序；报不出，就别拿口头故事当流水。",
+              "grantsInventory": [
+                "frame-zhou"
+              ],
+              "routeAxis": "money-flow"
+            }
+          ]
         },
         {
-          "speaker": "赵律师",
-          "text": "那就把账单、到期日、她要垫多少，一样一样念给她听。念完她还要转，那是她自己决定；你别替她抢着做。"
+          "id": "friend-dm-early",
+          "label": "回闺蜜私信",
+          "summary": "闺蜜补来删评边的朋友圈截图，可以先回一句。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "credit-friend-dm",
+          "grantsInventory": [
+            "friend-dm-seen"
+          ]
         }
       ]
     },
+    "returnStance": {
+      "default": "neutral",
+      "lines": {
+        "defensive": "我差点不打回来。弹幕说我贪体面……我认过探店，可八万我不替他还。",
+        "open": "我回来了。五万多的事你继续问——这回我不先替他挡。",
+        "neutral": "我回来了。隔了一天，那五万多还在。"
+      }
+    }
+  },
+  "overnightStructure": {
+    "hangupAnchor": "五万多",
+    "hangupLine": "电话轻轻挂了。没有摔，就是轻轻的。弹幕还在替她喊“别转”。",
     "hostHoldLine": "热线每晚都开。我们等你。",
-    "dayIntro": "第二天，下午。节目不在线，弹幕不在，城市在。你有一个下午，够去两个地方。",
+    "dayIntro": "第二天，下午。收麦后你只够在控台做一件短查，再出门。节目不在线，弹幕不在，城市在。你有一个下午，够去两个地方。",
     "dayBudget": 2,
     "minDayScenes": 2,
     "dayScenes": [
@@ -995,7 +1067,7 @@
         "backdropClass": "day-document",
         "kind": "studio",
         "body": {
-          "text": "旧厂房改的档案室，白炽灯照着一排铁柜。你把手机摘要递过去，周会计没接：「摘要谁写的？原表呢。钱只认路径。先把四个日子排清楚，别急着给人起名字。」",
+          "text": "旧厂房改的档案室，白炽灯照着一排铁柜。你把手机摘要递过去，周会计没接：「摘要不要。原件没有就别猜王**。钱只认路径。先把四个日子排清楚，别急着给人起名字。」",
           "routeAxis": "money-flow",
           "earnedItemId": "周会计的时间线",
           "timelineSort": {
@@ -1011,8 +1083,8 @@
               "每月 8 日的固定入账中断",
               "他开口借八万"
             ],
-            "payoffLine": "周会计把纸推回来：「顺序对了。工作先停，分期还在开；每月 8 日的固定入账一断，借八万才开口。人是谁我不猜，路径先留着。」",
-            "missLine": "周会计把纸转回去：「顺序没对上。先别补故事，晚上把这四个日子原样问回去。」"
+            "payoffLine": "周会计把纸推回来：「顺序对了。工作先停，分期还在开；每月 8 日的固定入账一断，借八万才开口。人是谁我不猜，摘要我也不收——路径先留着。」",
+            "missLine": "周会计把纸转回去：「顺序没对上。原件都没有，晚上别拿摘要去猜王**。把这四个日子原样问回去。」"
           }
         }
       },
@@ -1022,9 +1094,128 @@
         "backdropClass": "day-restaurant",
         "kind": "visit",
         "body": {
-          "text": "下午三点，那排靠窗位空着，桌上立着「已预订」的牌子。服务员擦着杯子：「靠窗那排？最少提前两周。……您也是听了直播来的？今天第三拨了。」你没接话。她又补了一句：「这排位子，吃的人换来换去，点的菜都差不多。」",
+          "text": "下午三点，靠窗那排立着「已预订」。你坐下假装等人。服务员擦杯子时多看了你一眼，邻桌常客把菜单一合。",
           "routeAxis": "process-control",
-          "earnedItemId": "靠窗位预订记录"
+          "cast": [
+            "服务员",
+            "邻桌常客"
+          ],
+          "beats": [
+            {
+              "speaker": "服务员",
+              "text": "靠窗那排？最少提前两周。……您也是听了直播来的？今天第三拨了。"
+            }
+          ],
+          "choice": {
+            "prompt": "你把哪件事带回夜里？",
+            "options": [
+              {
+                "id": "chase-member",
+                "label": "追她的会员号——记下「不外传」",
+                "grantsEarnedItemId": "她的会员号",
+                "routeAxis": "process-control",
+                "routeTone": "refuse-edge",
+                "resultBeats": [
+                  {
+                    "speaker": "你",
+                    "text": "会员号能对一下吗？她说号是她的。"
+                  },
+                  {
+                    "speaker": "服务员",
+                    "text": "会员号不外传。您拿直播里的说法来问，我也不能替任何一边作证。"
+                  },
+                  {
+                    "speaker": "你",
+                    "text": "好。我只记下你拒绝核对，不把拒绝当成确认。"
+                  }
+                ]
+              },
+              {
+                "id": "chase-rotation",
+                "label": "追常客的轮订规律——记下「不专给一对」",
+                "grantsEarnedItemId": "常客的轮订规律",
+                "routeAxis": "external-corroboration",
+                "routeTone": "rotation-edge",
+                "resultBeats": [
+                  {
+                    "speaker": "你",
+                    "text": "刚才那句「今天第三拨」，都在问同一排位子？"
+                  },
+                  {
+                    "speaker": "邻桌常客",
+                    "text": "那排我上个月也订过。熟客轮着用，位置难订是真的，专门给哪一对就说不准。"
+                  },
+                  {
+                    "speaker": "服务员",
+                    "text": "我只能确认要提前订。谁为了谁订，不归店里答。"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-cafe-sitin",
+        "label": "咖啡厅·旁听",
+        "backdropClass": "day-cafe",
+        "kind": "sitIn",
+        "body": {
+          "text": "她发来定位：「我约了他，只对账。你坐隔壁，耳机戴上，别开口——开口我就不说了。」店里下午茶客不多。你背对那桌，耳机里是她手机的共享听筒。",
+          "routeAxis": "caller-credibility",
+          "cast": [
+            "咨询者",
+            "对方（隔壁）",
+            "你（旁听）"
+          ],
+          "beats": [
+            {
+              "speaker": "咨询者",
+              "text": "八万里，可见的吃住玩加分期不到三万。中间那五万多，你到底干什么用了。"
+            },
+            {
+              "speaker": "对方（隔壁）",
+              "text": "不是乱来的钱。细节我不在这儿讲。"
+            }
+          ],
+          "choice": {
+            "prompt": "旁听至此，你——",
+            "options": [
+              {
+                "id": "stay-note",
+                "label": "记下订座号和灯的两句",
+                "grantsEarnedItemId": "旁听记下的两句",
+                "routeAxis": "document-edge",
+                "routeTone": "detail-note",
+                "resultBeats": [
+                  {
+                    "speaker": "咨询者",
+                    "text": "那订座呢？会员号是我的。你开口第一句还说都是你安排的。"
+                  },
+                  {
+                    "speaker": "对方（隔壁）",
+                    "text": "……号是你的。灯是我真心买的。这两句我认。"
+                  },
+                  {
+                    "speaker": "咨询者",
+                    "text": "真心买灯，和叫我垫八万，哪一句算数。"
+                  },
+                  {
+                    "speaker": "对方（隔壁）",
+                    "text": "你要是只为了在直播间赢，我们没必要坐这儿。"
+                  }
+                ]
+              },
+              {
+                "id": "leave-early",
+                "label": "只记五万拒答，先离开",
+                "grantsEarnedItemId": "他对五万的沉默",
+                "routeAxis": "money-flow",
+                "routeTone": "cold-note",
+                "resultText": "你摘下共享听筒，没再听订座和灯。笔记只留下那句：五万多仍然拒答。"
+              }
+            ]
+          }
         }
       },
       {
@@ -1033,16 +1224,82 @@
         "backdropClass": "day-document",
         "kind": "document",
         "body": {
-          "documentId": "case1-bank-flow"
+          "documentId": "case1-bank-flow",
+          "routeAxis": "money-flow",
+          "earnedItemId": "流水圈注"
         }
       }
     ],
     "callbackOpeners": {
       "周会计的时间线": {
-        "line": "「你去找周会计了？……她没猜王**是谁，对吧。我昨晚也没敢猜。我只记得，8 号那笔一停，他才来找我。」"
+        "line": "「你去找周会计了？……她没猜王**是谁，摘要也不收。我昨晚也没敢猜。我只记得，8 号那笔一停，他才来找我。」",
+        "firstConflict": {
+          "hostLine": "先别猜那笔是谁的。四个日子里，哪一个断点让他第一次开口？",
+          "callerLine": "每月 8 号那笔停了以后。他才来找我。名字我不猜，顺序先留着。"
+        }
       },
-      "靠窗位预订记录": {
-        "line": "「你去了？……所以\"提前两周\"是真的。那我现在想知道的是：他到底是提前两周为我订的，还是那排位子，他常年有。」"
+      "她的会员号": {
+        "line": "「你去餐厅追会员号了？……他们不外传。那我现在想知道的是：号是我的，可他为什么说都是他安排的。」",
+        "firstConflict": {
+          "hostLine": "店里拒绝核对，不能替你证明订座。能问的是，你开场为什么把订座也说成他安排。",
+          "callerLine": "因为那样好听。号是我的，这个主语我昨晚没说。"
+        }
+      },
+      "常客的轮订规律": {
+        "line": "「你听见熟客说轮订了？……所以「提前两周」是真的，可「专门为我」未必。那排位子，他常年有。」",
+        "firstConflict": {
+          "hostLine": "提前两周是真的，专门为你却未必。你当时最吃哪一句？",
+          "callerLine": "专门为我。现在只能确认位置难订，确认不了那份专门。"
+        }
+      },
+      "旁听记下的两句": {
+        "line": "「你昨天坐隔壁了？……他亲口说订座号是我的，灯是真心的。你听着的时候，我先护住这两句。」",
+        "firstConflict": {
+          "hostLine": "他认号和灯，却不讲五万。你先护那两句，是不是还想给这段关系留点体面？",
+          "callerLine": "是。真心那句我舍不得扔，可五万不能跟着它一起过去。"
+        }
+      },
+      "他对五万的沉默": {
+        "line": "「你昨天坐隔壁了？……五万他仍不讲。后面你没再听，我也不拿订座和灯岔开。」",
+        "firstConflict": {
+          "hostLine": "既然只带回拒答，就先别让灯替五万说话。你现在还准备垫吗？",
+          "callerLine": "不垫。他把那笔讲清以前，我不转。"
+        }
+      },
+      "流水圈注": {
+        "line": "「你把流水圈过了？……每月 8 号那笔一停，他才来找我借八万。钱从哪儿来，我今晚还是不知道；先把这条顺序留住。」",
+        "firstConflict": {
+          "hostLine": "流水能证明钱停、贷款进、随后转出；它不能证明尾号 3301 是谁。你能守住这条边吗？",
+          "callerLine": "能。我只问他为什么不说，不替那串尾号认人。"
+        }
+      },
+      "顾问回单": {
+        "line": "「送出去的人只确认路径和断点？……好。那我不拿摘要替自己回答，只说账单上确实写了什么。」",
+        "firstConflict": {
+          "hostLine": "顾问只确认路径和断点。你原本最想让这张回单替你证明什么？",
+          "callerLine": "我想让它证明他骗我。现在它只能证明，他把一段钱路藏在八万后面。"
+        }
+      },
+      "性质框架": {
+        "line": "「赵律师说先别急着给那笔钱定性？……好。借、送、代付还是还款，先看他手里有什么。」",
+        "firstConflict": {
+          "hostLine": "先不问借还是送，只问他有没有备注、聊天，或者说过要不要还。",
+          "callerLine": "好。我问凭据，不逼他先挑一个名字。"
+        }
+      },
+      "路径框架": {
+        "line": "「周会计说只追路径？……好。今晚我先问原件日期和到账顺序，不猜王**是谁。」",
+        "firstConflict": {
+          "hostLine": "他要是又讲人情，你先问哪一天？",
+          "callerLine": "先问每月 8 号为什么停，再问五万进来三天后去了哪。"
+        }
+      },
+      "闺蜜删评边": {
+        "line": "「闺蜜把删评边补来了？……她当初起哄，后来又删。体面是我俩一起演过的，可八万我不替他还。」",
+        "firstConflict": {
+          "hostLine": "她补图是后悔。她的后悔能替你减掉哪一笔吗？",
+          "callerLine": "减不了。体面是我们一起撑过的，八万还是得分开算。"
+        }
       }
     },
     "callbackFallback": {
@@ -1050,7 +1307,7 @@
     },
     "postures": {
       "againstCaller": "我差点不打回来。刚才弹幕……我都听到了。你要是也觉得是我贪体面，这通我讲不下去。",
-      "withCaller": "我回来了。八万的事，你继续问——我不怕对账。"
+      "withCaller": "我回来了。八万的事，你继续问——我不怕对账。控台那点短查，你先说给我听。"
     },
     "callerQuestion": {
       "prompt": "主播，你说……我该不该垫？",
@@ -1075,6 +1332,12 @@
           "recapAftertaste": "有一题，主播还给了她自己。"
         }
       ]
+    },
+    "interludeEarnedItemMap": {
+      "delegation-return": "顾问回单",
+      "frame-zhao": "性质框架",
+      "frame-zhou": "路径框架",
+      "friend-dm-seen": "闺蜜删评边"
     }
   },
   "documents": [
