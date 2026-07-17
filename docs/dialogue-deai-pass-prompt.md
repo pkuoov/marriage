@@ -193,3 +193,5 @@ AI 味主因不是禁词，而是：句长均一、开场汇报包、来电人�
 ---
 
 相关规则见：[`project-skills/case-scriptwriting/SKILL.md`](../project-skills/case-scriptwriting/SKILL.md) → **Language Rules (De-AI)** / **De-AI & Anti-Robotic Scripting Guide**。
+
+残留抛光 List Prompt：[`docs/plot-dialogue-residual-fix-prompt.md`](plot-dialogue-residual-fix-prompt.md)（2026-07-17 复审后）。
