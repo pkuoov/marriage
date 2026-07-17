@@ -387,6 +387,28 @@ export function overnightCallbackOpenerById(brief = {}, openerId = "") {
   return opener ? { id: openerId, ...opener } : null;
 }
 
+export function snapshotEchoFor(brief = {}, snapshotPick = null) {
+  const optionId = snapshotPick?.id ?? "";
+  if (!optionId) return "";
+  return overnightStructureFor(brief)?.snapshotEcho?.[optionId] ?? "";
+}
+
+export function liveCounterBeatsFor(brief = {}) {
+  const beats = overnightStructureFor(brief)?.liveCounterBeats;
+  return Array.isArray(beats) ? beats : [];
+}
+
+export function liveCounterBeatById(brief = {}, beatId = "") {
+  return liveCounterBeatsFor(brief).find((beat) => beat.id === beatId) ?? null;
+}
+
+export function liveCounterBeatAfterScene(brief = {}, sceneIndex = 0, actionDone = () => false) {
+  return liveCounterBeatsFor(brief).find((beat) => (
+    Number(beat.afterSceneIndex) === Number(sceneIndex)
+      && !actionDone(`liveCounterBeat:${beat.id}`)
+  )) ?? null;
+}
+
 export function overnightCallerQuestionFor(brief = {}) {
   const question = overnightStructureFor(brief)?.callerQuestion;
   if (!question || typeof question !== "object" || Array.isArray(question)) return null;

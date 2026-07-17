@@ -266,6 +266,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       storyObjectLabel: spec.objectLabel,
       backdropClass: spec.backdropClass ?? brief.backdropClass,
       callerArt: spec.callerArt ?? brief.callerArt,
+      callerArtStyle: spec.callerArtStyle ?? brief.callerArtStyle ?? "",
       callerArtVariants: spec.callerArtVariants ?? brief.callerArtVariants ?? {},
       weeklyCase: true,
       weeklyKey: storyKey,
@@ -398,7 +399,7 @@ function dailyLostJobCreditTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "他一开始说“奖金晚发，帮我挡几天”。我真以为就是手头紧。后来他把办材料的截图丢给我，我才看见社保已经停了两个月。那一刻我不是生气，是懵：他每天还跟我说加班。",
+        version: "他先说：“奖金晚发，帮我挡几天。”我真当成手头紧。后来他发了张办材料的截图，我瞄见社保那栏，停了两个多月——那张图还是他上个月办材料时截的。可他每天还跟我说加班。那张图我盯了半天，没回他。",
         doubt: "说是奖金晚发，可社保已经断缴两个月。",
         contradiction: "TA 一边说奖金延迟，一边在失业后继续刷体面消费，说明资金缺口不是临时才出现。",
         reliability: "mixed",
@@ -424,7 +425,7 @@ function dailyLostJobCreditTemplate(brief, names) {
           { question: "有没有可能这些消费是他在硬撑？", answer: "可能。所以我才难受。他硬撑的时候，我也没少享受。账压过来以后，我才发现自己也在那场体面里。", correct: false }
         ],
         dialogueOptions: [
-          { question: "你第一眼先看到哪一栏？", answer: "先看到最低还款。一万多，我手都停了一下。再往下翻，才看到那些消费明细。", routeAxis: "money-flow", routeTone: "detour" },
+          { question: "你第一眼先看到哪一栏？", answer: "先看到最低还款。八千多，我手都停了一下。再往下翻，才看到那些消费明细。", routeAxis: "money-flow", routeTone: "detour" },
           { question: "那几页账单是完整的吗？", answer: "他一开始没发完整的。我说要看明细，他才补。补出来以后，我就有点不想看了。", routeAxis: "document-edge", routeTone: "trust-but-verify" }
         ]
       },
@@ -474,7 +475,7 @@ function dailyLostJobCreditTemplate(brief, names) {
       }
     ],
     evidenceCards: [
-      { id: "daily-credit-social-security", type: "社保截图", title: "社保断缴时间", front: "断缴月份早于第一次借钱 47 天。", detail: "失业并非临时发生。", targets: ["truthWithGap", "sceneHint"], contradiction: "社保断缴早于借钱，说明失业被持续隐瞒。" },
+      { id: "daily-credit-social-security", type: "社保截图", title: "社保断缴时间", front: "断缴发生在第一次借钱之前。", detail: "失业并非临时发生。", targets: ["truthWithGap", "sceneHint"], contradiction: "社保断缴早于借钱，说明失业被持续隐瞒。" },
       { id: "daily-credit-card-bill", type: "账单", title: "信用卡账单", front: "餐厅、礼物分期、酒店、1.2 万短视频分期和最低还款集中在同一周。", detail: "账单显示债务与体面恋爱消费有关，短视频分期另有受益人。", targets: ["sceneHint"], contradiction: "信用卡债务包含维持恋爱体面的消费成本，也包含一笔咨询者受益的短视频分期。" },
       { id: "daily-credit-chat", type: "聊天", title: "最低还款请求", front: "“你先帮我挡一下，我不想这段关系因为钱毁了。”", detail: "把债务包装成关系考验。", targets: ["truthWithGap"], contradiction: "还款请求把个人债务包装成关系考验。" }
     ],
@@ -520,9 +521,9 @@ function dailyLostJobCreditTemplate(brief, names) {
     stageJudgement: "这通麦别急着站队。他社保停了没说，卡照刷，期限说急，最后一句“怕你离开”接一个还款金额；她开口说“他带我消费”，可订座的会员号、探店的账号，都是她自己的。",
     followupTwist: "后续回拨里，对方承认失业和账单都是真的，也认了那句“投资你”是想把她留住。他问了一句：她收灯的时候挺高兴的，怎么上麦就成了“他手机上弄的”？",
     dailyShareTitle: "8 万信用卡，到底该不该帮 TA 还？",
-    dailyShareBody: "手头紧可以理解，可社保断了快两个月，约会账单还在往上堆。",
+    dailyShareBody: "手头紧可以理解，可社保早已断缴，约会账单还在往上堆。",
     dailyShareQuestion: "你会先问失业时间，还是先问 TA 为什么借钱？",
-    truth: "两条账分开算。他的：失业先瞒 47 天，断缴后照样刷吃住玩，三天的期限说成今晚，最后拿感情递账单。这四步一步比一步重，八万的主体是他的债，递不到她手里。她的：店多半是她挑的，人设是她发的，一万二的分期她收了东西还说没细看。这三步不欠他钱，但欠今晚的直播间半个真相。定不了的今晚就不定：他失业前的旧债从哪来的，这两个人往后还过不过，弹幕替谁着急都没用。"
+    truth: "两条账分开算。他的：失业早已发生，断缴后照样刷吃住玩，三天的期限说成今晚，最后拿感情递账单。这四步一步比一步重，八万的主体是他的债，递不到她手里。她的：店多半是她挑的，人设是她发的，一万二的分期她收了东西还说没细看。这三步不欠他钱，但欠今晚的直播间半个真相。定不了的今晚就不定：他失业前的旧债从哪来的，这两个人往后还过不过，弹幕替谁着急都没用。"
   });
 }
 

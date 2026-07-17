@@ -84,7 +84,7 @@ Before any dialogue, write the B story's full accounting — every amount, every
 Run each operation over the case's own objects. Any operation whose output contradicts the A story is a candidate turn:
 
 1. 加总 — do the stated parts sum to the stated whole? (八万里可见消费不到三万)
-2. 日期差 — subtract any two dates. (断缴早于借钱 47 天；供血停止早于开口三个月)
+2. 日期差 — subtract any two dates, but publish the quantity only when both endpoints exist in the same evidence ledger. Prefer the row dates themselves when the case date is not explicit. (工资停发早于贷款入账；供血停止早于开口)
 3. 往前翻 — every object has history pages: last month's bill, older chat logs, the schedule before this one. (往期账单上的交往前同款消费)
 4. 主语核对 — for each action, who actually performed it? (订座的会员号是她的；群里"要不要问流水"是她先发的)
 5. 覆盖检查 — does the excuse cover every path it claims to cover? (财务延后盖得住报销，盖不住供应商返款)
@@ -178,6 +178,8 @@ Double-layer question economy:
 - The live-call screen may have a free context layer and a committed pursuit layer, but they must not be the same option list twice.
 - `dialogueOptions` are authored free asks: chronology, caller self-protection, relationship context, document origin, or a concrete "how did that line happen" probe. They can add texture, loosen or tighten the caller, and surface a small human excuse, but they must not solve the node.
 - `questionOptions` are committed pursuit routes. Each current node should have 2-3 plausible host angles with different reveal depth: one closest to the load-bearing gap, one socially tempting detour, and one caller-side or document-side pressure when the beat supports it.
+- A committed route may expose a short `suspicionLabel` instead of its full `question` when the player's decision is the doubt direction, not the protagonist's wording. Keep `question` mandatory: after selection, 林旭阳 speaks that natural full sentence and the caller answers it. `suspicionLabel` names only an already-visible person, object, action, number, or mismatch; it must not contain a conclusion, route-axis term, or answer.
+- Direction-only display is a node-level presentation mode, not a correctness badge. If one sibling option in a node has `suspicionLabel`, give every committed sibling one of similar specificity and visual weight. Never put short labels only on core/correct routes.
 - Free asks are not a spoiler mode. Asking around can make the caller more guarded, reduce later answer texture, or leave the live room noisier. Do not let the player sweep free asks to identify the correct committed route for no cost.
 - Do not write the free ask by copying the committed option and changing one word. The player should feel they asked a side question, not previewed the answer key.
 - Visible UI labels must stay clear before they stay stylish. Avoid `soft ask`, `hard ask`, `核心`, `正确`, `最佳`, route-axis labels, and vague process labels like "先问两句", "接着追", or "选一句往下追". Because the game has two different economies on the same screen, the panel may explicitly say "普通提问" and "关键选择"; each button should carry the same kind marker so the player never has to infer the rule from color alone.
@@ -256,6 +258,7 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - No field may introduce a motive, fact, object, or conclusion that did not appear in the stitched transcript.
    - An outer branch can reveal less, but it must still point at the same case core. Do not use generic emotional outer angles such as "do you still like them" unless the case core is actually emotional attachment.
    - Quote-pick choices must be copied from disclosed lines or compressed from disclosed lines. They are not labels for hidden conclusions.
+   - For a direction-only node, preserve both layers: `suspicionLabel` is what the player chooses; `question` is what 林旭阳 actually says. Read the question-answer exchange aloud without the label before shipping it.
 
 4. After any line edit, rerun local coherence.
    - Ask: whose face, money, status, safety, or convenience does this sentence protect?
@@ -654,8 +657,17 @@ Evidence delegation (证据委托 — the scene-switch turn):
 - All delegation outcomes are authored JSON passing `truthBoundary` and the promise ledger; the caller's deposit line and the report's return are both promise-ledger entries.
 
 Character bible:
-- Every recurring caller and advisor gets a card in `content/characters/`: backstory, family, job, three voice fingerprints, and lying habits (who retreats to passive voice, who quotes numbers when nervous). All `casualQuestions` draw from the card; daily-rotation reuse of the same character must not contradict it. Cards are writing reference, not runtime data.
+- Before writing or revising any spoken line, load `content/characters/cast.json` and resolve the speaker by **case id plus surface name**. Generic runtime actor ids such as `shen` or `chen` are casting slots and may represent different people in different cases; they are never a cross-case identity source.
+- Every recurring caller and advisor gets a fixed card in `content/characters/cast.json`: desire, fear, defense, core personality, pressure response, voice rhythm, vocabulary, habits, avoid-list, and knowledge boundary. `content/characters/voice-bible.md` is the human-readable review view. All `casualQuestions`, scene dialogue, off-mic lines, advisor copy, helper hints, messages, and callback lines must resolve to one card. Daily-rotation reuse of the same character must not contradict it.
+- Host, callers, and primary respondents must also define `voiceArc.nightA / day / nightB / ending`. When revising a load-bearing line, check its phase and preserve how far that phase allows the character's defense to loosen.
+- Cross-act change must be audible in sentence length, subject choice, form of address, or target of evasion. A new catchphrase is not an arc, and an arc never grants facts outside the character's knowledge boundary.
+- Before drafting an NPC line, write three private notes: surface fact, protected stake, and current tactic. The spoken line should perform the tactic; do not paste the three notes into expository dialogue.
+- Every player-visible voice must resolve structurally. Use `speaker` for direct beats and `speakerProfileId` for an authored DM, note, or relayed NPC material. Use `voiceAttribution: document` only when the artifact itself is the source and no new NPC is speaking. A generic `source: dm` is not voice attribution.
+- Personality changes expression, never fact access. An impatient witness may interrupt and a sensitive caller may over-explain, but neither may cross `knowledgeBoundary`, `truthBoundary`, or the sensor contract. Do not use a personality label to justify omniscience.
+- Pressure must be audible. At each character's load-bearing pressure point, apply the registered `stressResponse` through sentence length, subject choice, evasion, or vocabulary. Repeating a catchphrase without the registered defense action does not count as characterization.
+- Run the role-swap test: hide names and swap a line with another speaker in the same case. If it still reads naturally without changing syntax or defense, rewrite it. At least one of rhythm, action, or omission must identify the speaker; do not merely paste a catchphrase onto generic exposition.
 - Every named off-mic voice (friend, cousin, store manager, team lead, introducer, the other woman) gets a three-line stance card before it speaks: 立场 (what it wants the room to believe), 遮掩 (what it hides or softens), 利益 (what it gains from its version). A voice that exists only to confirm the mainline is a prop — cut it or arm it. Two victims who want different things (说法 vs 止损) are drama; two witnesses who agree are furniture. Stance cards feed the sensor contract audit: what the voice knows must fit its life, and what it says must serve its stake.
+- After editing dialogue, run `npm run content:dialogue-report`. Review one character vertically across phases and then one scene horizontally across speakers. The generated rhythm warnings are reading prompts, not automatic rewrite orders; the forbidden-template and attribution failures are hard errors.
 
 The host is a person (design: `docs/host-character-design.md`):
 - Fixed past, player-expressed present: the host's wounds, loves, and hates are canon (bible card); his present tendencies are whatever the player's route choices make them. Never write host lines that pre-decide the player's route.
@@ -667,6 +679,16 @@ The host is a person (design: `docs/host-character-design.md`):
 - The family web is canon: 赵律师 is the host's partner (the far end of the wrongful-verdict episode — she was that man's lawyer), 张法医 is his oldest friend (哥们归哥们，发票归发票), 周会计 is 张's partner and the keeper of the one dinner table where the show is never discussed; 小林老师 stays outside the web by design. Host gender stays unspecified — write 对象/另一半, never gendered terms for the host.
 - Domestic register enters only openers and closing half-lines; the professional core of any advice stays word-for-word professional. At most one family/couple beat per case. Relationships never bend facts or verdicts — 赵's disclaimers got stricter, not softer, when she became family.
 - The room half-knows: regulars dare to type "赵姐" and never dare to ask; on-air copy never explains why she always answers. The apology-turned-dinner origin is bible-only.
+
+## 对抗性法条
+
+- **金句配额律**:主播每案格言句 ≤3,只许落在深问、结案与金句拍;其余追问用工作语言(短问、实指、可重复)。判定法:一句话删掉案件名词后仍像格言,即计入配额。
+- **潜台词律**:来电人不得当场剖析自己的心理防御机制;自我洞察由行为、拒答或他人说破交付。每案"完美自知句"≤2,且只许出现在深问之后。
+- **答非所问配额**:每案至少 3 处来电人的回答是答非所问、反问或沉默;沉默用舞台指示承接,不许用台词填平。
+- **抵抗拍配额**:每案至少 1 拍来电人把矛头指向主播或节目本身;主播接话不得用格言,允许接不住(接不住要记账,后拍归还)。
+- **对手在场律**:对方不上麦铁律不变;但每案至少 1 次对方的实时反制经合法传感器进入(来电人转读、后台函件、第三方转话),且发生在夜 B 进行中,不许全部堆到收麦后。
+- **反转交付律**:反转不得由来电人自白首发;首发权属于玩家动作(圈行、带回物、排序、回放)。自白只作为玩家触发后的重述。同一故事包内四案反转型不得重复(钱路/规模/方向/权力)。
+- **押注归还律**:中段立场快照必须在夜 B 被回应——每个选项配一句回应拍,或打脸或加固;只记不用视同未接话头。
 
 ## Multi-Scene and Offline Rashomon (多元场景)
 

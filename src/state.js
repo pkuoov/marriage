@@ -38,11 +38,14 @@ export const baseState = {
   sceneAnswers: {},
   sceneQuestionPicks: {},
   sceneDialoguePicks: {},
+  helperHintPicks: {},
   sceneQuestionFocus: null,
   evidenceCheckPicks: {},
   investigationPicks: {},
   delegationPicks: {},
   stanceSnapshots: {},
+  liveCounterPicks: {},
+  activeLiveCounterBeatId: null,
   truthBoundaryPicks: {},
   truthBoundaryMisses: {},
   materialPityLog: {},
@@ -89,11 +92,14 @@ export function migrateState(saved) {
   if (!next.sceneAnswers || Array.isArray(next.sceneAnswers)) next.sceneAnswers = {};
   if (!next.sceneQuestionPicks || Array.isArray(next.sceneQuestionPicks)) next.sceneQuestionPicks = {};
   if (!next.sceneDialoguePicks || Array.isArray(next.sceneDialoguePicks)) next.sceneDialoguePicks = {};
+  if (!next.helperHintPicks || Array.isArray(next.helperHintPicks)) next.helperHintPicks = {};
   if (!next.sceneQuestionFocus || typeof next.sceneQuestionFocus !== "object" || Array.isArray(next.sceneQuestionFocus)) next.sceneQuestionFocus = null;
   if (!next.evidenceCheckPicks || Array.isArray(next.evidenceCheckPicks)) next.evidenceCheckPicks = {};
   if (!next.investigationPicks || Array.isArray(next.investigationPicks)) next.investigationPicks = {};
   if (!next.delegationPicks || Array.isArray(next.delegationPicks)) next.delegationPicks = {};
   if (!next.stanceSnapshots || Array.isArray(next.stanceSnapshots)) next.stanceSnapshots = {};
+  if (!next.liveCounterPicks || Array.isArray(next.liveCounterPicks)) next.liveCounterPicks = {};
+  if (!("activeLiveCounterBeatId" in next)) next.activeLiveCounterBeatId = null;
   if (!next.truthBoundaryPicks || Array.isArray(next.truthBoundaryPicks)) next.truthBoundaryPicks = {};
   if (!next.truthBoundaryMisses || Array.isArray(next.truthBoundaryMisses)) next.truthBoundaryMisses = {};
   if (!next.materialPityLog || Array.isArray(next.materialPityLog)) next.materialPityLog = {};

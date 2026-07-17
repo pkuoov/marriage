@@ -43,12 +43,14 @@ export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePi
   `, "scene-question-group");
 }
 
-export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks = []) {
+export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks = [], { helper = null, helperRevealed = false } = {}) {
   return `
     <section class="question-menu-card" aria-label="连线追问">
       <header>
-        <b>这句话，你想先问哪一句？</b>
+        <b>这句话，你想往哪儿追？</b>
+        <small>标着“疑点方向”的选项只选方向，具体问法由林旭阳开口。</small>
       </header>
+      ${helperPromptHtml(sceneIndex, scene, helper, helperRevealed)}
       <div class="question-menu-options">
         ${sceneQuestionChoicesHtml(sceneIndex, scene, askedDialoguePicks)}
       </div>
@@ -80,16 +82,45 @@ function fallbackDialogueQuestion(option = {}, scene = {}, optionIndex = 0) {
 function dialogueQuestionButton(sceneIndex, optionIndex, option = {}, asked = false) {
   return `
     <button class="choice-question" data-scene-dialogue="${sceneIndex}:${optionIndex}" type="button" ${asked ? "disabled" : ""}>
-      <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
+      <span class="choice-label"><span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span></span>
+      <small class="choice-cost-meta">${asked ? "已问过" : "补问 · 不收束"}</small>
     </button>
   `;
 }
 
 function keyQuestionButton(sceneIndex, optionIndex, option = {}) {
+  const directionOnly = Boolean(option.suspicionLabel);
   return `
-    <button class="choice-question" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
-      <span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span>
+    <button class="choice-question ${directionOnly ? "choice-question-direction" : ""}" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
+      <span class="choice-label">
+        ${directionOnly ? `<small class="choice-direction-kicker">疑点方向</small>` : ""}
+        <span class="choice-text">${escapeHtml(playerQuestionLabel(option))}</span>
+      </span>
+      <small class="choice-cost-meta">收束 · 未命中 −1 耐心</small>
     </button>
+  `;
+}
+
+export function playerQuestionLabel(option = {}) {
+  return option.suspicionLabel ?? option.question ?? "接着问";
+}
+
+function helperPromptHtml(sceneIndex, scene = {}, helper = null, helperRevealed = false) {
+  const hint = String(scene.helperHint ?? "").trim();
+  if (!helper?.id || !hint) return "";
+  if (!helperRevealed) {
+    return `
+      <aside class="helper-prompt helper-prompt-closed" aria-label="场下求助">
+        <span><b>${escapeHtml(helper.name ?? "场下帮手")}</b><small>${escapeHtml(helper.role ?? "场下观察员")}</small></span>
+        <button data-scene-helper="${sceneIndex}" type="button">求助 ${escapeHtml(helper.name ?? "场下帮手")}</button>
+      </aside>
+    `;
+  }
+  return `
+    <aside class="helper-prompt helper-prompt-open" aria-label="${escapeHtml(helper.name ?? "场下帮手")}的提示">
+      <span class="helper-avatar" aria-hidden="true">V</span>
+      <p><b>${escapeHtml(helper.name ?? "场下帮手")}</b><small>${escapeHtml(helper.role ?? "场下观察员")}</small>${escapeHtml(hint)}</p>
+    </aside>
   `;
 }
 

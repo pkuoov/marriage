@@ -153,7 +153,7 @@ flowchart LR
 - `segment1SceneIndexes: [0,1,2,3,4]` / `segment2SceneIndexes: [5,6]`
 - hangup `afterSceneIndex: 4`；`hostLine`/`stageDirection` 对齐 overnight
 - 幕间三行动：`send-appraisal` / `zhao-zhou-frame`(conflict) / `friend-dm-early`
-- map：delegation-return→顾问回单；frame-zhao→性质框架；frame-zhou→路径框架；friend-dm-seen→闺蜜删评边
+- map：delegation-return→顾问回单；frame-zhao→性质框架；frame-zhou→路径框架；friend-dm-seen→闺蜜删掉的那条评论
 - 白天：周 refuse+timeline；餐厅两 earned；sitIn 两 earned；流水圈注
 - 删除 `postHangupContact`；`delegation.moment=interlude:send-appraisal`
 

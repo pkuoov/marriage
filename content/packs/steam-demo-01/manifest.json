@@ -35,6 +35,14 @@
       "sceneId": "rental-room",
       "complainantId": "shen",
       "respondentId": "xu",
+      "castProfileIds": [
+        "case1-caller-shen",
+        "case1-respondent",
+        "case1-friend",
+        "case1-ex-coworker",
+        "case1-waiter",
+        "case1-regular"
+      ],
       "act": "体面",
       "objectLabel": "账单",
       "backdropClass": "backdrop-credit",
@@ -53,10 +61,25 @@
       "sceneId": "late-night-chat",
       "complainantId": "he",
       "respondentId": "chen",
+      "castProfileIds": [
+        "case2-caller-he",
+        "case2-tony",
+        "case2-regular",
+        "case2-former-owner",
+        "case2-manager",
+        "case2-front-desk",
+        "case2-other-customer"
+      ],
       "act": "自己人",
       "objectLabel": "店表",
       "backdropClass": "backdrop-tony",
-      "callerArt": "./assets/generated/callers/caller_salon_guarded.png?v=0.20.71",
+      "callerArt": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.24.0",
+      "callerArtStyle": "pixel",
+      "callerArtVariants": {
+        "neutral": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.24.0",
+        "guarded": "./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png?v=0.24.0",
+        "pause": "./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.24.0"
+      },
       "difficultyProfile": {
         "tier": 2,
         "label": "自己人加压",
@@ -71,6 +94,12 @@
       "sceneId": "live-call",
       "complainantId": "lin",
       "respondentId": "zhou",
+      "castProfileIds": [
+        "case3-caller-lin",
+        "case3-respondent",
+        "case3-introducer",
+        "case3-cousin"
+      ],
       "act": "条件",
       "objectLabel": "资料图",
       "backdropClass": "backdrop-profile",
@@ -89,6 +118,15 @@
       "sceneId": "office-chat",
       "complainantId": "chen",
       "respondentId": "shen",
+      "castProfileIds": [
+        "case4-caller-chen",
+        "case4-colleague",
+        "case4-finance",
+        "case4-supplier",
+        "case4-warehouse",
+        "case4-department-assistant",
+        "case4-leader"
+      ],
       "act": "主责",
       "objectLabel": "审批截图",
       "backdropClass": "backdrop-work",
@@ -108,7 +146,7 @@
         {
           "speaker": "运营 · 老方（工作消息）",
           "type": "notice",
-          "text": "深夜档这个月的数据再不达标，平台准备把我们并进娱乐分区。下周一前，把改版方案给我。"
+          "text": "深夜档这个月再不达标，就并进娱乐区。改版方案，下周一前给我。"
         },
         {
           "speaker": "旁白",
@@ -123,7 +161,8 @@
         {
           "speaker": "导播",
           "type": "countdown",
-          "text": "三、二、一。ON AIR。"
+          "text": "三、二、一。ON AIR。",
+          "audioCueId": "voice.broadcast.countdown"
         }
       ],
       "hostLine": {
@@ -135,22 +174,22 @@
     "interludes": [
       {
         "afterCaseId": "01-credit",
-        "line": "老方:'第一通不错,就这个劲儿。'——他从不夸人,除非想让你答应什么。"
+        "line": "老方：“第一通不错，就这个劲儿。”——他从不夸人，除非想让你答应什么。"
       },
       {
         "afterCaseId": "02-tony",
-        "line": "老方发来一张竞品截图:同时段,情感调解,判官式收麦,数据是你的三倍。你没回。"
+        "line": "老方发来一张竞品截图：同时段，情感调解，判官式收麦，数据是你的三倍。你没回。"
       },
       {
         "afterCaseId": "03-profile",
-        "line": "赵:'包里的案卷,想好了吗。'你还是没翻。"
+        "line": "赵：“包里的案卷，想好了吗。”你还是没翻。"
       }
     ],
     "epilogue": {
-      "opening": "ON AIR 灯灭了。耳机放下的声音,比想象里响。",
-      "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息,至少今晚是。",
-      "bad": "后台曲线停在老地方。老方的短信显示'输入中'……又消失了。下周,方案还是要交。",
-      "home": "天有点亮了。赵睡在沙发上,合同盖在脸上。你把她的合同挪开,把自己的手机放远了点。",
+      "opening": "ON AIR 灯灭了。耳机放下的声音，比想象里响。",
+      "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息，至少今晚是。",
+      "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。下周，方案还是要交。",
+      "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。你把她的合同挪开，把自己的手机放远了点。",
       "close": "林旭阳拿起椅背上的牛皮纸案卷。封口露出一角：2019-11-08，‘已撤回的账单’。这条线留给后续正式内容。"
     }
   }

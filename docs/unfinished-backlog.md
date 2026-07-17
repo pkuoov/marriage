@@ -104,6 +104,7 @@
 - 桌面 staging 构建已改成同脚本生成 playable + desktop，并使用临时目录和锁目录，避免 `build:steam` / `smoke:desktop` 并发时互相踩 `dist/playable` 或 `dist/desktop-electron/playable`。
 - 已补 `docs/desktop-steam-build-plan.md` 和 `npm run steam:preflight`：本地可检查 package 入口、electron-builder 输出目录、portable x64、desktop staging、文件存档桥、crash log 和 Node/Electron 打包版本要求。
 - 源码侧 P0 已收口到可构建/可预检形态；Steam Cloud 配置、overlay、签名、真实 Windows 和 Steam Deck 验包属于发行外部验收门，记录在 `docs/desktop-steam-build-plan.md`，不再当作当前代码 backlog。
+- 2026-07-16 全套回归再次通过：`npm run check`、完整浏览器回放和桌面 smoke 均为绿；`steam:preflight` 仅提示当前 Node 18.15.0 不能承担 Electron 43 最终 Windows 打包，仍按 Node 22.12+ 实机门处理。
 
 验收：
 
@@ -125,6 +126,19 @@
 - 每个页面只有一个清楚的默认焦点。
 - 选项、回看、重开、继续都能键盘操作。
 - Steam Deck/控制器实机验证属于发行验收门；源码侧由 `INPUT-001` 和 `smoke:browser` 的模拟 Gamepad 路线守住。
+
+### 声音资产
+
+- 2026-07-17 已交付首批 5 条可随离线包分发的 OGG 交互音效：热线接通、热线挂断、ON AIR、后台来信、材料标记；均已接到真实事件，并由 `npm run verify:audio` 校验文件头、体积、目录状态和运行时引用。它们是试玩 foley，不替代后续正式混音验收。
+- 当前声音目录共有 9 个 `ready` cue（含 4 个运行时合成点击）和 29 个明确的 `planned` cue；设置面板、BGM/环境/SFX/语音分轨、语音压低底噪与缺资产安全降级已接通。
+- 仍未完成的是制作型资产：首夜/白天/回拨/压力层 BGM，直播间/餐厅/工作室/办公室环境底，以及案 2 吹风机回放等关键原话语音。未交付 cue 不显示伪播放入口。
+- 下一批按试玩收益排序：案 2「吹风机回放」语音 → 直播间与白天各 1 条环境底 → 首夜与压力层各 1 条短循环 BGM；真人录音或授权音源入库后再把 catalog 状态切为 `ready`。
+
+验收：
+
+- 离线构建中 5 条关键交互音效都能播放，静音与 SFX 分轨立即生效。
+- 任一标成 `ready` 的文件缺失、过小或不是合法 OGG 时，`verify:audio` 必须失败。
+- 所有语音仍保留可见文字稿；声音永远不是理解事实的唯一入口。
 
 ### 内容包数据化
 
@@ -177,8 +191,9 @@ content/packs/steam-demo-01/
 - `src/runtime/caseStateSelectors.js` 已接管案件存档读取、已完成问答模型和上一问回看 rows；后续不要在 `app.js` 重新写 selectedScenePick / selectedEvidencePicks / routeAxisProfile / keyChoiceReview 这类 selector。
 - `src/runtime/recapModel.js` 已接管单案结算、事实边界、材料/原话故事集汇总和故事集终局评价；下一步只补缺口，不再把终局模型写回 `app.js`。
 - 内容分支结算已归入 `src/runtime/recapModel.js`；新增案子的分支收束优先写 JSON 字段，不回到 `app.js` 写案名或问题正则。
-- `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；下一步继续拆 `renderSceneReview` / `renderRecap`。
+- `src/ui/liveCallView.js` 已接管直播进度条、听众忍耐 HUD、弹幕条、故事包收麦 HUD 和来电人立绘层的 HTML；`sceneReviewView` 与 `recapView` 也已分别接管回合正文和收麦页面，不再把同类 HTML 写回 `app.js`。
 - `src/ui/liveFrameView.js` 已接管案内 topbar、直播控场台和主舞台骨架 HTML，`app.js` 只保留状态清理、按钮绑定和默认焦点。
+- `src/ui/audioController.js` 已接管声音设置事件、录音进度 DOM 同步和场景音频计划落地；`app.js` 只传当前 scene / backdrop / pressure 与重渲染回调。
 - `src/ui/callFlowView.js` 已接管通用选择组、流程按钮组、通话气泡和上一问回看 details。
 - `src/ui/evidenceView.js` 已接管材料检视和后台私信回流的页面 HTML；`app.js` 只传入当前材料模型、上一问回看和绑定点击。
 - `src/runtime/storyInterludeModel.js` 已接管案间上一通收束、下一通物件名和桥接句模型。
@@ -191,7 +206,7 @@ content/packs/steam-demo-01/
 - `src/ui/recapView.js` 已接管单案回看页面组和 flow 外壳；后续只在新增回看状态时补 helper，不再把分页/按钮文案写回 `app.js`。
 - `src/ui/routeTrailView.js` 已接管路线图 HTML，`app.js` 只准备 route choices、关键追问数和回流起始下标。
 - `src/ui/dailyCompleteView.js` 已接管 daily 单案结果卡和复制文案。
-- `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；`desktop/electron/preload.cjs` 已接同步文件存档 IPC，下一步接 Electron 依赖和打包器。
+- `src/platform/saveStore.js` 已有 Web 抽象和桌面文件桥入口；Electron 依赖、打包器、preload 文件存档 IPC 和 portable 入口均已接入，剩余是 Node 22.12+ Windows 实机验包。
 
 验收：
 
@@ -216,6 +231,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 第 13 批：戏剧特许四味。
 - 第 14 批：家人网。
 - 第 15 批前置接线：立绘变体接线与 V2 验收准备。
+- P1 像素立绘样张：案 2 `neutral / guarded / pause` 已完成母版、发运版、运行时三态切换与自动验收；四案迁移等真人试玩后决定。
 
 剩余未做项：
 
@@ -224,7 +240,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 时间线拼装。
 - 多点圈选。
 - 第二故事包。
-- 美术 V2 资产生产。
+- 四案像素立绘迁移：案 2 样张已接入；先完成真人 UI 验收，再决定是否替换其余三案，规格见 `docs/pixel-art-transition-and-portrait-direction.md`。
 - playtest 观察项。
 
 ### UI 和美术资产
@@ -235,21 +251,22 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 
 - 已替换四案背景：信用卡/社保账单、理发表格/会员卡、资料核验桌、财务报销办公室。后续只做质量升级，不再回退到咖啡馆/酒廊/家宴旧方向。
 - 已增加四个匿名来电人半卡通立绘，并通过内容包 `sequence.callerArt` 接入，不再只复用命名 NPC 约会/职场 archetype。
-- 继续补紧张、停顿、防备、松动等表情差分，让连线动作不只靠文字气泡表现。
+- 案 2 已补 `neutral / guarded / pause` 像素差分并随现场表情切图；其余三案是否迁移等单案真人验收，不再继续生产旧半写实 V2 差分。
 - 已给材料板和控场台补材料缩略图，材料检视不再只是一块文字板。
 - 已给主舞台补 `scene-evidence-props` 前景物件层：账单、表格、截图和审批流在进入材料检视前就以台面物件出现，不写教程文字、不提示答案。
 - 已增加小型主播监看/麦控视觉，不做第二人上麦；监看状态随现场压力切换“听线 / 拉回 / 收住 / 压麦”。
 - 已给控场台补 LIVE 时间/观众数氛围指标，并给立绘层加直播流扫描线和淡入过渡样式；它们只做直播质感，不参与过关提示。
 - 已给来电人立绘补接触阴影和 expression-specific 微动效，让眨眼、停顿、闪躲不再像同一张贴片。
+- 已在开麦、挂断、昼夜转换、回拨、案间和收麦加入短像素过场，并尊重系统减少动态效果；不扩散到逐句对白切换。
 - 已把“上一问”回看改成通话记录抽屉感，仍保留线性主流程，不新增随时翻完整档案的自由线索夹。
 - 动态弹幕瀑布和完整手机模拟器先暂缓，必须先单独做交互/性能/遮挡设计，不能混进当前 P1 收口。
 - Gemini 建议复核见 `docs/gemini-suggestions-review.md`：热度/观众数只作为现有压力模型的视觉反馈，不新增第二套失败经济；随身线索夹进入 P2 设计，不做成提示面板；虚拟手机检视和弹幕瀑布继续暂缓。
 
 ### 每案 20 分钟体量
 
-当前每案已经有 5 段来电、材料检视、深问、原话收麦，但实际体量还偏精简。
+当前四案均已扩到 7 段来电、3 个材料板、2–3 个后台回流、深问、原话收麦和事实边界。是否仍显得偏短只能由完整真人 playtest 的计时与阅读行为判断，不再凭字段数量继续加戏。
 
-2026-07-03 按 `project-skills/case-scriptwriting/SKILL.md` 复审后确认：短感不是来电段数不足，而是前三案的可玩材料密度不足。四案均有 5 段来电、1 个案后回流、7 条事实边界；第 2/3/4 案已各有 2 个材料板，第 1 案暂保留 1 个材料板，等 playtest 判断是否需要加重开场案。
+2026-07-03 的材料密度问题已经随第 11–12 批扩容解决；当前 `verify:pack` 会把实际段落、材料板、回流数和 manifest 事实边界出题上限与 `runtimeLengthPlan` 对齐。后续只按 playtest 报告调整节奏。
 
 需要补：
 
@@ -315,7 +332,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 
 - 每个最终原话都要来自前文，不能是抽象立场。
 - 已解决（2026-07-04 两批修订单落地）：一次承诺制关键追问上线后，四案共 5 条最终原话的出处被分支门控，走另一条路的玩家没听过它们——`01-credit`「我也怕别人觉得我找了个撑不住场面的人」（场景5外围）、`02-tony`「他说我像店里自己人」（场景1外围）、`03-profile`「他一直说名校毕业，细问才说是 MBA」（场景3核心）与「我只说他学校那边确实是真的」（场景3外围）、`04-workplace`「我也确实想要这个主责」（场景1外围/深问）。旧机制下玩家能听全所有回答所以没事，机制改造后这是追溯性的公平性欠账：要么把这些话挪进无门控的 version 正文，要么换成已在正文出现的原话。规则已写入 `detective-plot-coupling-review` 公平性检查（引语出处不得被分支门控）。
-- 部分解决（候选与计划字段已同步；`verify:pack` 的规划字段软校验仍未接）：`01-credit` 的 `quotePickCandidates` 与实际 `accusationChoices` 曾漂移（候选里的「奖金晚发」「最难的时候你都不站在我这边」未出货，出货的三条不在候选里）；`runtimeLengthPlan.truthBoundaryPromptCount` 写 7 但 manifest 难度限制是 5。规划字段与出货内容的一致性应并入 `verify:pack` 软校验。
+- 已解决：`verify:pack` 会校验 `quotePickCandidates` 与实际 `accusationChoices` 的顺序和文本一致、最终引语存在无门控出处，并校验 `runtimeLengthPlan` 的段落数、材料板数、回流数及事实边界出题数与实际/manifest 一致。
 - 最强原话选择后，主播回应要短、准、像直播间接话。
 - 选择非最强原话时，不判死错，但要生成不同余味。
 - 结果页不能给“最佳答案教程”，只能做对照和余波。

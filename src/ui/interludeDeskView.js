@@ -34,13 +34,14 @@ export function interludeDeskHtml({
   `;
 }
 
-export function interludeDialogueActionHtml(action = {}, followupAsked = false) {
+export function interludeDialogueActionHtml(action = {}, followupAsked = false, audioCue = null) {
   const script = action.script ?? {};
   const speaker = advisorName(action.advisorId);
   return `
     <section class="interlude-action-card">
       <span class="source-badge">${escapeHtml(action.label ?? "幕间行动")}</span>
       <p><b>${escapeHtml(action.summary ?? "")}</b></p>
+      ${audioPlaybackControlsHtml(audioCue)}
       <div class="call-dialogue">
         ${script.open ? callLineHtml({ role: "host", text: script.open }) : ""}
         ${script.reply ? callLineHtml({ role: "caller", speaker, text: script.reply }) : ""}
@@ -82,16 +83,28 @@ export function interruptToastHtml(action = {}, selectedChoiceId = "") {
   `;
 }
 
-export function interludePlaybackActionHtml(action = {}) {
+export function interludePlaybackActionHtml(action = {}, audioCue = null) {
   const script = action.script ?? {};
   return `
     <section class="interlude-action-card">
       <span class="source-badge">${escapeHtml(script.clipLabel ?? action.label ?? "回放")}</span>
       <p><b>${escapeHtml(action.summary ?? "")}</b></p>
+      ${audioPlaybackControlsHtml(audioCue)}
       <div class="call-dialogue">
         ${script.clipLine ? callLineHtml({ role: "caller", text: script.clipLine }) : ""}
         ${script.hostNote ? callLineHtml({ role: "host", text: script.hostNote }) : ""}
       </div>
+    </section>
+  `;
+}
+
+export function audioPlaybackControlsHtml(audioCue = {}) {
+  if (!audioCue?.available) return "";
+  return `
+    <section class="audio-playback" data-audio-playback="${escapeHtml(audioCue.id ?? "")}">
+      <button data-audio-play="${escapeHtml(audioCue.id ?? "")}" type="button">播放录音</button>
+      <input data-audio-seek="${escapeHtml(audioCue.id ?? "")}" type="range" min="0" max="0" step="0.1" value="0" aria-label="录音进度">
+      <output data-audio-time="${escapeHtml(audioCue.id ?? "")}">00:00 / 00:00</output>
     </section>
   `;
 }

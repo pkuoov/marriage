@@ -26,7 +26,9 @@ content/packs/<pack-id>/
 - `size`：当前内容包包含的案件数。当前 `steam-demo-01` 是 `4`，但运行时不应把 4 当成固定规则。
 - `theme`：`id`、`title`、`intro`、`thesis`、`commentPrompt`。
 - `caseLabels`：案内可见称呼，当前统一为 `匿名来电`。
-- `sequence`：案件顺序，每项包含 `caseId`、`plotId`、`sceneId`、`complainantId`、`respondentId`、`act`、`objectLabel`、`backdropClass`、`bridge`。
+- `sequence`：案件顺序，每项包含 `caseId`、`plotId`、`sceneId`、`complainantId`、`respondentId`、`castProfileIds`、`act`、`objectLabel`、`backdropClass`、`bridge`。
+
+`castProfileIds` 必须列出本案所有逐案角色卡，引用 `content/characters/cast.json`。写台词时以 `caseId + surfaceNames` 解析说话人；`complainantId`、`respondentId` 是运行时演员槽位，不表示不同案件里的同名 ID 是同一个角色。常驻主播、顾问、导播和 V哥使用 `caseIds: ["*"]` 的全局卡。
 
 通话流程内不能直接显示 `act`、`title` 或 `1/4` 这类目录结构。案间页可以使用 `objectLabel` 做下一通钩子。
 
@@ -60,6 +62,8 @@ content/packs/<pack-id>/
 - `accusationChoices`
 
 每案至少要有三个 `quotePickCandidates` 和三句 `accusationChoices`。`quotePickCandidates` 是素材池，`accusationChoices` 是最终收麦按钮，必须包含 `label`、`accuse` 或 `accuseRole`、`response`。`truthBoundary` 三层都不能为空。
+
+`verify:pack` 会把 `quotePickCandidates` 与 `accusationChoices[].label` 归一化后逐项比对，并检查每句最终原话在无门控正文中确有出处。`runtimeLengthPlan` 的 `liveBeatCount / materialBoardCount / backflowCount / truthBoundaryPromptCount` 也必须分别等于实际段落、材料板、回流数和 manifest 的事实边界出题上限；规划字段不是可漂移的备注。
 
 运行时会从 `truthBoundary.true / edited / unknown` 里抽多句做一次性归位判断。玩家放完即可继续，错放不会当场给标准答案，只会在后一页回看和故事集终局里影响边界标签与评论区反应；因此不要把三栏都写成刚好一条。
 
@@ -120,12 +124,15 @@ content/packs/<pack-id>/
 
 ```bash
 npm run content:index
+npm run content:script
 npm run verify:pack -- <pack-id>
 npm run check
 npm run smoke:browser
 ```
 
 6. 如果只改 manifest 顺序、主题、案数或桥接字段，也要运行 `npm run content:index`；`npm run content:index:check` 会在 CI/本地检查索引是否过期。
+7. `npm run content:script` 会生成三份视图：`<pack-id>-full-readable-script.md`、`<pack-id>-director-script.md` 与 `<pack-id>-character-dialogue-report.md`。前者完整汇编源文本，中者保留排演需要的台词和动作，后者按人物和幕次聚合实际出声位置。`content:script:check` 会阻止任一版本落后于 JSON 真源。
+8. 玩家可见的 NPC 私信、留言或转述材料必须声明 `speakerProfileId`；只有原始截图、群聊或表格可用 `voiceAttribution: "document"`。`PACK-011` 会检查这条归属链，并要求带 `advisorLine` 的选项明确写 `advisorId`。
 
 不要把同一个字段写两份：故事包级别的顺序、物件和桥接在 `manifest.json`，单案可玩内容在 `cases/*.json`，评论底色在 `comments.json`，路线原型在 `route-archetypes.json`。
 

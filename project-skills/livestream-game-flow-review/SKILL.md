@@ -13,6 +13,8 @@ This is a game and a narrative text experience, not a tutorial, worksheet, consu
 
 Risk signalling exception: the UI may briefly tell the player that a committed pursuit has risk, but only in live-room language and only when it does not reveal the answer. Allowed shape: "这段只能定一次。问偏了，弹幕会散。" or "随口聊可以先问；真要往哪头追，这段只有一次。" Banned shape: "hard ask", "关键追问", "核心问题", "正确路线", "问偏会掉耐心", "扣血", or any route-axis/helper explanation. If tests require a risk signal, update this skill and the test in the same change so they do not fight each other.
 
+Player-requested help exception: a named offstage helper may appear only after the player presses a help action. The hint may restate which already-visible objects, subjects, dates, amounts, or steps should be compared; it must not add facts, name the route axis, identify the correct option, speak the protagonist's question, affect scoring/patience, or join professional advisor systems. The helper is absent from the scene until requested.
+
 Before continuing broad optimization work, read `docs/unfinished-backlog.md`, `docs/roadmap.md`, and `docs/game-unit-test-cases.md`. For a large playtest pass, also use `docs/playtest-report-template.md` so actual screen text, route, AI-flavored lines, UI overlap, and retry/failure behavior are captured in the same format. Do not rely on chat memory for unfinished work. Promote any repeated complaint into one of those files or this skill before ending the turn.
 
 For large story-coupling work, hidden-thread design, or detective-plot rewrites, also use `project-skills/detective-plot-coupling-review/SKILL.md`. This flow skill catches live-call/UI problems; the detective skill checks false solutions, missing edges, clue payoffs, fair-play reveals, and story-pack coupling.
@@ -32,7 +34,7 @@ For all case creation and any dialogue change larger than typo polish — story 
    - Use "重开" if local state is mid-flow.
    - Walk through homepage, entry page, opening call, every current-node question set, every feedback line, conditional deep question, quote-pick page, recap/share pages, retry/failure if present.
    - For a story-pack single case with 5-6 scene beats, do not stop at the happy path. Reopen/retry enough times to click every scene option and verify each answer advances forward. Also run one perfect core-hit route to verify the single non-choice deep question appears, and one outer route to verify it is skipped.
-   - In every large playtest pass, inspect at least three current-node choice panels across different cases. Confirm they are one panel, contain only host questions as buttons, use equal visual weight for all current-node choices, and do not contain explainer tags, route-axis hints, or "how to play" copy.
+   - In every large playtest pass, inspect at least three current-node choice panels across different cases. Confirm they are one panel, use equal visual weight for all current-node choices, and do not contain route-axis hints or "how to play" copy. A node may show short suspicion directions instead of full host questions only when every committed option in that node has a corresponding full spoken question.
 
 2. Capture raw screen text.
    - Use browser DOM text, not memory.
@@ -46,7 +48,7 @@ For all case creation and any dialogue change larger than typo polish — story 
 - Does the hidden/cropped/changed information have a clear purpose? If not, add the pressure, desired outcome, and benefit before treating it as a clue.
    - Is this a daily case? Then every `sceneVersion` and `deepFollowup.answer` beat must be spoken by the anonymous caller. Materials can appear only because the caller pulls them out, reads them, forwards them, or explains how they got them.
    - Is the case answer already stated in the setup? If yes, replace the answer with visual or conversational clues.
-   - Are all choices plausible things a host might say? If no, rewrite the weak outer option as a tempting but less revealing route.
+   - Are all full `question` values plausible things a host might say, and are any player-visible `suspicionLabel` values faithful short directions for those questions? If no, rewrite the weak outer route or its label.
    - Would a real player ever choose this option? If it says "是真的就先相信", "别纠结", "别聊僵", or any obvious throwaway answer, replace it with a plausible outer angle.
    - Is the caller's version too clean? Add a self-protective omission, softened responsibility, or partial truth unless the case is a pure scammer scenario.
    - Is feedback written in the same speaker perspective? If the label says "咨询者", use first-person or direct quoted speech, not "她说".
@@ -79,7 +81,7 @@ For all case creation and any dialogue change larger than typo polish — story 
    - Does a main-flow action area add labels or notes that only explain the UI, such as "麦上动作" or "麦还连着"? If yes, remove the label layer and let the buttons stand on their own.
    - Does a collapsed review/backlog affordance use archive labels such as "前文对话", "开场对话", or "上一轮追问后"? If yes, replace it with one plain live-call phrase such as "上一问".
    - Do background live-room chips sound like AI workflow instructions, such as "continue chasing the original quote", "listen to the next original line", or "key original quote"? If yes, rewrite them as natural audience/host atmosphere: "麦里有回声", "话没说满", "弹幕压一压".
-   - Does a current-choice hint tell the player which hidden route axis to use, such as "first look at money flow/material edge/process control"? If yes, remove the axis hint from the play screen. Route tendencies belong in recap, not before the choice.
+   - Does a current-choice hint tell the player which hidden route axis or exact option to use, such as "first look at money flow/material edge/process control"? If yes, remove it. A requested helper hint may only ask the player to compare concrete facts already on screen; route tendencies belong in recap.
    - Does the deep-question screen show scoring or completion copy such as "full-hit follow-up" or "key points connected"? If yes, remove it and let the host question itself carry the moment.
    - Does the recap or conclusion page sound like a grading rubric, lesson, or best-answer comparison, with words like "sharper conclusion", "best answer", "full score", "badge", or "problem reveal rate"? If yes, rewrite it as host wrap-up and live-room aftertaste.
    - Does the recap score label use abstract AI-flavored copy such as "the taste left in the mic"? If yes, replace it with a plain diegetic phrase like "话头收住".
@@ -149,8 +151,8 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - Route-map recap must preserve player memory: each beat should show at least the route axis plus a short trace of the actual question or tone.
 - Material inspection belongs in route-map memory too, but it should be marked as material. Do not number it like another dialogue statement.
 - Choice-group hints must match the player's actual question intent. Material, identity wording, money flow, process control, and caller credibility are different axes even when they appear in the same scene.
-- Current-node choices must not render as two lonely one-button groups. A small choice set should live in one panel, and the buttons should read as host questions, not as UI categories explaining the question type.
-- Button text is not a legend. Do not label choices with route categories, difficulty categories, or designer shorthand. If the player can ask it, show the question. If it only explains the design, keep it out of the live-call UI.
+- Current-node choices must not render as two lonely one-button groups. A small choice set should live in one panel. Buttons normally read as host questions; a direction-only node may instead show concrete doubt points while keeping the protagonist's full spoken lines in `question`.
+- Button text is not a route legend. Do not label choices with route categories, difficulty categories, conclusions, or designer shorthand. `suspicionLabel` is allowed only as a concrete in-story doubt point, applied to every committed sibling in the node without correctness styling.
 - Current-node buttons should have equal visual weight. Hidden core/outer route data must not leak through color, border, card style, placement labels, or "recommended" emphasis.
 - Main-flow button groups do not need a heading. Avoid filler labels such as "麦上动作" and "麦还连着"; they make the screen sound like a prototype.
 - Backlog/review affordances should not sound like document categories. Prefer "上一问" over "前文对话 / 开场对话 / 上一轮追问后".

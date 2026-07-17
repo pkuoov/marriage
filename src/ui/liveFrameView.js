@@ -1,3 +1,5 @@
+import { audioSettingsPanelHtml } from "./audioSettingsView.js?v=0.22.0";
+
 export function liveControlDeckHtml({
   onAirLabel = "匿名热线",
   label = "连线中",
@@ -99,6 +101,7 @@ export function liveFrameHtml({
   productName = "直播间大侦探",
   modeLabel = "试玩连线",
   soundEnabled = true,
+  audioSettings = null,
   backdropClass = "backdrop-live",
   label = "",
   chapter = "",
@@ -109,17 +112,19 @@ export function liveFrameHtml({
   controlDeckHtml = "",
   material = "",
   screenEffect = "",
-  screenClass = ""
+  screenClass = "",
+  pixelTransition = null
 } = {}) {
   const materialKind = materialKindForLabel(material);
   const choicesAreFlow = String(choices ?? "").includes("flow-group");
   const choiceLayer = `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choices}</div>`;
   return `
     <main>
+      ${pixelTransitionHtml(pixelTransition)}
       <header class="topbar">
         <button data-action="title" type="button" aria-label="回到标题页">${escapeHtml(productName)}</button>
         <nav aria-label="章节"><span class="active"><i></i>${escapeHtml(modeLabel)}</span></nav>
-        <button data-action="sound" type="button">音效 ${soundEnabled ? "开" : "关"}</button>
+        ${audioSettingsPanelHtml(audioSettings ?? { enabled: soundEnabled }, { placement: "topbar" })}
         <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
         <button class="record-button" data-record-open type="button">案卷</button>
       </header>
@@ -146,6 +151,16 @@ export function liveFrameHtml({
         ${material ? materialModalHtml(material, materialKind) : ""}
       </section>
     </main>
+  `;
+}
+
+export function pixelTransitionHtml(transition = null) {
+  if (!transition?.label) return "";
+  return `
+    <div class="pixel-transition" aria-hidden="true">
+      <div class="pixel-transition-grid"></div>
+      <p><small>${escapeHtml(transition.eyebrow ?? "SCENE SHIFT")}</small><b>${escapeHtml(transition.label)}</b></p>
+    </div>
   `;
 }
 

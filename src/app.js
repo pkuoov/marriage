@@ -1,6 +1,7 @@
 import { generateCasesForMode } from "./caseModes.js?v=0.20.87";
 import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
-import { isSoundEnabled, playSfx, toggleSound } from "./sound.js?v=0.20.68";
+import { getAudioSettings, playAudioCueOnce, playSfx, resetAudioCueHistory } from "./sound.js?v=0.22.0";
+import { audioCueView } from "./audioCatalog.js?v=0.22.0";
 import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.78";
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 import { NPCS } from "./story.js?v=0.20.68";
@@ -11,15 +12,17 @@ import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialogu
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.21.1";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.78";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.78";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
-import { callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.21.3";
+import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.21.3";
+import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js?v=0.24.1";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.21.4";
+import { liveCounterBeatHtml } from "./ui/liveCounterBeatView.js?v=0.24.2";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.21.3";
 import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js?v=0.21.3";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.21.3";
@@ -30,13 +33,14 @@ import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterlu
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
-import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js?v=0.20.87";
+import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.23.0";
 import { storyPackForKey } from "./storyPacks.js?v=0.20.87";
 import { HOST_PROFILE } from "./hostProfile.js?v=0.20.95";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "直播间大侦探";
 const DEFAULT_ATTRS = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
+const SCENE_HELPER = CONTENT_HELPER_NPCS["v-bro"] ?? null;
 
 const startsFresh = hasFreshStartParam();
 if (startsFresh) clearStateSnapshot();
@@ -45,11 +49,15 @@ let meta = loadMeta();
 let gamepadPollingStarted = false;
 let gamepadPreviousButtons = {};
 let lastGamepadMoveAt = 0;
+let shownPixelTransitions = new Set();
+
+watchAudioPlaybackControls({ getRoot: () => app });
 
 document.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button || button.disabled) return;
-  if (button.dataset.action === "sound") return;
+  if (button.hasAttribute("data-audio-mute")) return;
+  if (button.matches("[data-evidence-check], [data-document-row]")) return;
   playSfx(button.classList.contains("primary") || button.dataset.accuse ? "confirm" : "click");
 });
 
@@ -120,11 +128,14 @@ function normalizeDailyState(saved) {
     sceneAnswers: saved?.sceneAnswers ?? {},
     sceneQuestionPicks: saved?.sceneQuestionPicks ?? {},
     sceneDialoguePicks: saved?.sceneDialoguePicks ?? {},
+    helperHintPicks: saved?.helperHintPicks ?? {},
     sceneQuestionFocus: saved?.sceneQuestionFocus ?? null,
     evidenceCheckPicks: saved?.evidenceCheckPicks ?? {},
     investigationPicks: saved?.investigationPicks ?? {},
     delegationPicks: saved?.delegationPicks ?? {},
     stanceSnapshots: saved?.stanceSnapshots ?? {},
+    liveCounterPicks: saved?.liveCounterPicks ?? {},
+    activeLiveCounterBeatId: saved?.activeLiveCounterBeatId ?? null,
     truthBoundaryPicks: saved?.truthBoundaryPicks ?? {},
     truthBoundaryMisses: saved?.truthBoundaryMisses ?? {},
     materialPityLog: saved?.materialPityLog ?? {},
@@ -197,6 +208,8 @@ function hasFreshStartParam() {
 }
 
 function startStoryPack() {
+  resetAudioCueHistory();
+  shownPixelTransitions = new Set();
   const mode = modeFromUrl();
   const caseBriefs = generateCasesForMode(mode, NPCS, DEFAULT_ATTRS, {
     dailyKey: dailyKeyFromUrl(),
@@ -232,6 +245,7 @@ function storyPreviewBriefs() {
 
 function resetToTitle() {
   clearStateSnapshot();
+  shownPixelTransitions = new Set();
   state = normalizeDailyState(structuredClone(baseState));
   state.screen = "title";
   saveState();
@@ -252,8 +266,10 @@ function renderTitle() {
   const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
   const hook = storyPack ? preview?.storyThemeIntro ?? preview?.weeklyThemeIntro ?? "热线已经接进来。资料在后台，她已经开口了。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
   const object = storyPack ? "热线已接入" : preview?.storyClueObject ?? "今日通话摘录";
-  app.innerHTML = titleScreenHtml({ productName: PRODUCT_NAME, storyPack, title, hook, object, host: HOST_PROFILE });
+  app.innerHTML = titleScreenHtml({ productName: PRODUCT_NAME, storyPack, title, hook, object, host: HOST_PROFILE, audioSettings: getAudioSettings() });
   bind("[data-start-story]", startStoryPack);
+  bindAudioControls({ root: app, onToggleSound: render });
+  syncSceneAudio({ scene: "title" });
   queueDefaultFocus();
 }
 
@@ -272,6 +288,7 @@ function renderDailyCase() {
   if (state.scene === "dayScene") return renderDayScene(brief);
   if (state.scene === "overnightCallback") return renderOvernightCallback(brief);
   if (state.scene === "documentReconcile") return renderDocumentReconcile(brief);
+  if (state.scene === "liveCounterBeat") return renderLiveCounterBeat(brief);
   if (state.scene === "hangupBeat") return renderHangupBeat(brief);
   if (state.scene === "interludeDesk") return renderInterludeDesk(brief);
   if (state.scene === "callbackOpener") return renderCallbackOpener(brief);
@@ -358,6 +375,8 @@ function renderNightShellPrologue(brief) {
     text: nightShellHtml(lines),
     choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">开始接线</button>`)
   });
+  const countdownCueId = (prologue.lines ?? []).find((line) => line.audioCueId)?.audioCueId ?? "";
+  playAudioCueOnce(countdownCueId, `${caseKey(brief)}:night-shell-countdown`);
   bind("[data-enter-first-case]", () => {
     state.scene = "caseOpen";
     saveState();
@@ -430,6 +449,7 @@ function renderSceneReview(brief) {
       ? sceneReviewDoneChoicesHtml({ lastStage, nextStage, nextLabel })
       : flowGroupHtml(`<button class="primary" data-open-question-menu type="button">提问</button>`)
   });
+  playAudioCueOnce(sceneForView.audioCueId, `${caseKey(brief)}:scene:${index}:${sceneForView.id ?? "beat"}`);
   bind("[data-open-question-menu]", () => openSceneQuestionMenu(brief, index));
   bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
   bindSceneButtons();
@@ -445,11 +465,15 @@ function renderSceneQuestionMenu(brief) {
     mood: "thinking",
     label: "连线继续",
     chapter: liveChapterTitle(brief),
-    text: sceneQuestionMenuHtml(index, scene, dialoguePicks),
+    text: sceneQuestionMenuHtml(index, scene, dialoguePicks, {
+      helper: SCENE_HELPER,
+      helperRevealed: Boolean(state.helperHintPicks?.[answerKey(brief, index)])
+    }),
     choices: flowGroupHtml(`<button data-close-question-menu type="button">先不问了</button>`)
   });
   bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
   bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
+  bind("[data-scene-helper]", () => revealSceneHelperHint(brief, index, scene));
   bind("[data-close-question-menu]", () => closeSceneQuestionMenu(brief));
   bindSceneButtons();
 }
@@ -475,7 +499,7 @@ function renderSceneQuestionAnswer(brief) {
     mood: focus.kind === "key" ? "focused" : "thinking",
     label: "连线继续",
     chapter: liveChapterTitle(brief),
-    text: sceneQuestionAnswerHtml({ question: pick.question, answer: pick.answer }),
+    text: sceneQuestionAnswerHtml({ question: pick.question, answer: pick.answer, resistanceBeat: pick.resistanceBeat }),
     choices: focus.kind === "key"
       ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
       : flowGroupHtml(`<button class="primary" data-return-question-menu type="button">继续问</button>`)
@@ -541,7 +565,8 @@ function renderHangupBeat(brief) {
     label: "连线挂断",
     chapter: "第一段连线",
     text: hangupBeatHtml(structure.hangup),
-    choices: flowGroupHtml(`<button class="primary" data-enter-interlude type="button">切到调查台</button>`)
+    choices: flowGroupHtml(`<button class="primary" data-enter-interlude type="button">切到调查台</button>`),
+    audioEnterCueId: structure.hangup.audioCueId
   });
   bind("[data-enter-interlude]", () => {
     updateNight(brief, { segment: "interlude", hangupDone: true });
@@ -570,7 +595,8 @@ function renderOvernightHangup(brief) {
         ${callDialogueHtml([{ role: "host", text: structure.hostHoldLine ?? "" }])}
       </section>
     `,
-    choices: flowGroupHtml(`<button class="primary" data-enter-post-live type="button">收麦，离开直播台</button>`)
+    choices: flowGroupHtml(`<button class="primary" data-enter-post-live type="button">收麦，离开直播台</button>`),
+    audioEnterCueId: structure.hangupAudioCueId
   });
   bind("[data-enter-post-live]", () => {
     state.scene = "overnightPostLive";
@@ -835,10 +861,12 @@ function dayChoiceHtml(body = {}, choiceStateId = "") {
       ? `<p>${escapeHtml(selected.resultText)}</p>`
       : "";
     const resultBeats = dayBeatsHtml({ beats: selected?.resultBeats ?? [] });
+    const audioPlayback = audioPlaybackControlsHtml(audioCueView(selected?.audioCueId ?? ""));
     return `
       <section class="day-followup">
         <p class="reaction">${escapeHtml(selected?.label ?? "已记下")}</p>
         ${resultText}
+        ${audioPlayback}
         ${resultBeats}
       </section>
     `;
@@ -898,9 +926,11 @@ function renderOvernightCallback(brief) {
     ? overnightCallbackOpenerById(brief, overnight.callbackOpenerId)
     : openers[0] ?? { id: "fallback", ...(structure.callbackFallback ?? {}) };
   const stanceNudge = nightStructureFor(brief) ? ensureNight(brief).stanceNudge : null;
-  const posture = overnightReturnPostureFor(stanceSnapshotPickForState(brief), stanceNudge);
+  const snapshotPick = stanceSnapshotPickForState(brief);
+  const posture = overnightReturnPostureFor(snapshotPick, stanceNudge);
   const stanceLine = structure.postures?.[posture] ?? "";
   const firstConflict = opener.firstConflict ?? {};
+  const snapshotEcho = snapshotEchoFor(brief, snapshotPick);
   frame({
     brief,
     mood: posture === "againstCaller" ? "tense" : "focused",
@@ -913,7 +943,10 @@ function renderOvernightCallback(brief) {
           ...(stanceLine ? [{ role: "caller", text: stanceLine }] : []),
           { role: "caller", text: opener.line ?? "" },
           ...(firstConflict.hostLine ? [{ role: "host", text: firstConflict.hostLine }] : []),
-          ...(firstConflict.callerLine ? [{ role: "caller", text: firstConflict.callerLine }] : [])
+          ...(firstConflict.callerLine ? [{ role: "caller", text: firstConflict.callerLine }] : []),
+          ...(firstConflict.pauseAfterCallerLine ? [{ role: "pause" }] : []),
+          ...(firstConflict.callerFollowupLine ? [{ role: "caller", text: firstConflict.callerFollowupLine }] : []),
+          ...(snapshotEcho ? [{ role: "caller", text: snapshotEcho }] : [])
         ])}
       </section>
     `,
@@ -926,6 +959,38 @@ function renderOvernightCallback(brief) {
     saveState();
     render();
   });
+  bindSceneButtons();
+}
+
+function renderLiveCounterBeat(brief) {
+  const beat = liveCounterBeatById(brief, state.activeLiveCounterBeatId)
+    ?? liveCounterBeatAfterScene(
+      brief,
+      currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1),
+      (key) => actionDone(brief, key)
+    );
+  if (!beat) {
+    state.activeLiveCounterBeatId = null;
+    state.scene = "overnightNight2";
+    saveState();
+    return renderSceneReview(brief);
+  }
+  const pick = liveCounterPickForState(brief, beat.id);
+  const requiresChoice = (beat.choices ?? []).length > 0;
+  frame({
+    brief,
+    mood: "tense",
+    label: "现场反压",
+    chapter: "第二夜",
+    text: liveCounterBeatHtml(beat, pick),
+    choices: (!requiresChoice || pick)
+      ? flowGroupHtml(`<button class="primary" data-continue-live-counter type="button">继续追问</button>`)
+      : ""
+  });
+  bind("[data-live-counter-choice]", (event) => {
+    recordLiveCounterChoice(brief, beat, event.currentTarget?.getAttribute("data-live-counter-choice") ?? "");
+  });
+  bind("[data-continue-live-counter]", () => continueAfterLiveCounterBeat(brief, beat));
   bindSceneButtons();
 }
 
@@ -1193,6 +1258,7 @@ function markDocumentRow(brief, dayScene = {}, document = {}, rowId = "") {
     documentEarnedQuestions: earned
   });
   markAction(brief, `document:${document.id}:${rowId}`);
+  playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:document:${document.id}:${rowId}`);
   recordRouteChoice(brief, overnightRouteIndexFor(brief, dayScene) + markedRows.length / 1000, {
     question: `圈行 ${rowId}`,
     answer: documentRowSummary(documentRowById(document, rowId)),
@@ -1436,16 +1502,18 @@ function renderInterludeBackflow(brief, action) {
 function renderInterludeAdvisorCall(brief, action) {
   const night = ensureNight(brief);
   const followupAsked = Boolean(night.interludeFollowups?.[action.id]);
+  const cueId = action.script?.audioCueId ?? action.audioCueId ?? "";
   dayFrame({
     brief,
     backdropClass: action.backdropClass ?? "day-city",
     label: action.label ?? "幕间通话",
     chapter: "幕间·调查台",
-    text: interludeDialogueActionHtml(action, followupAsked),
+    text: interludeDialogueActionHtml(action, followupAsked, audioCueView(cueId)),
     choices: flowGroupHtml(`
       ${action.script?.followupQuestion && !followupAsked ? `<button data-interlude-followup="${escapeHtml(action.id)}" type="button">追一问</button>` : ""}
       <button class="primary" data-complete-interlude-action type="button">记下回调查台</button>
-    `)
+    `),
+    keepVoiceCueId: cueId
   });
   bind("[data-interlude-followup]", (event) => {
     const actionId = event.currentTarget?.getAttribute("data-interlude-followup") ?? "";
@@ -1463,13 +1531,15 @@ function renderInterludeAdvisorCall(brief, action) {
 }
 
 function renderInterludePlayback(brief, action) {
+  const cueId = action.script?.audioCueId ?? action.audioCueId ?? "";
   dayFrame({
     brief,
     backdropClass: action.backdropClass ?? "day-document",
     label: action.label ?? "听回放",
     chapter: "幕间·调查台",
-    text: interludePlaybackActionHtml(action),
-    choices: flowGroupHtml(`<button class="primary" data-complete-interlude-action type="button">记下回调查台</button>`)
+    text: interludePlaybackActionHtml(action, audioCueView(cueId)),
+    choices: flowGroupHtml(`<button class="primary" data-complete-interlude-action type="button">记下回调查台</button>`),
+    keepVoiceCueId: cueId
   });
   bind("[data-complete-interlude-action]", () => completeInterludeAction(brief, action));
   bindSceneButtons();
@@ -1503,6 +1573,7 @@ function renderInterludeInterruptToast(brief, action) {
   const night = ensureNight(brief);
   const selectedChoiceId = night.interludeActionChoices?.[action.id] ?? "";
   const hasChoices = (action.choices ?? []).length > 0;
+  playAudioCueOnce("sfx.message.notification", `${caseKey(brief)}:interrupt:${action.id}`);
   dayFrame({
     brief,
     backdropClass: action.backdropClass ?? "day-city",
@@ -1576,11 +1647,58 @@ function sceneWithShownCard(brief = {}, scene = {}) {
 }
 
 function sceneWithCallbackRevision(brief = {}, scene = {}, sceneIndex = 0) {
-  if (!nightStructureFor(brief)) return scene;
-  const opener = callbackOpenerById(brief, ensureNight(brief).callbackOpenerId);
-  if (!opener?.appliesRevisedOnScenes?.includes(sceneIndex)) return scene;
-  if (!scene?.revisedVersion) return scene;
-  return { ...scene, version: scene.revisedVersion };
+  let revisionUnlocked = false;
+  if (nightStructureFor(brief)) {
+    const opener = callbackOpenerById(brief, ensureNight(brief).callbackOpenerId);
+    revisionUnlocked = Boolean(opener?.appliesRevisedOnScenes?.includes(sceneIndex));
+  }
+  if (scene.revisedVersionTriggers) {
+    revisionUnlocked = revisionUnlocked || sceneRevisionUnlocked(brief, scene.revisedVersionTriggers);
+  }
+  let next = revisionUnlocked && scene?.revisedVersion
+    ? { ...scene, version: scene.revisedVersion }
+    : scene;
+  if (!revisionUnlocked && scene.revisedVersionTriggers) {
+    next = {
+      ...next,
+      questionOptions: (next.questionOptions ?? []).map((option) => (
+        option.answerRequiresRevisedVersion && option.guardedAnswer
+          ? { ...option, answer: option.guardedAnswer, forcedGuardedAnswer: true }
+          : option
+      ))
+    };
+  }
+  return sceneWithLiveCounterQuestionOverride(brief, next);
+}
+
+function sceneRevisionUnlocked(brief = {}, triggers = {}) {
+  const overnight = ensureOvernight(brief);
+  const documentHit = (triggers.documentRows ?? []).some((entry) => {
+    const splitAt = String(entry).lastIndexOf(":");
+    if (splitAt < 0) return false;
+    const documentId = String(entry).slice(0, splitAt);
+    const rowId = String(entry).slice(splitAt + 1);
+    return (overnight.documentMarks?.[documentId] ?? []).includes(rowId);
+  });
+  const openerHit = (triggers.callbackOpeners ?? []).includes(overnight.callbackOpenerId);
+  return documentHit || openerHit;
+}
+
+function sceneWithLiveCounterQuestionOverride(brief = {}, scene = {}) {
+  const override = liveCounterBeatsFor(brief).flatMap((beat) => {
+    const pick = liveCounterPickForState(brief, beat.id);
+    const choice = (beat.choices ?? []).find((item) => item.id === pick?.choiceId);
+    return choice?.questionOverride ? [choice.questionOverride] : [];
+  }).find((item) => item.sceneId === scene.id);
+  if (!override) return scene;
+  return {
+    ...scene,
+    questionOptions: (scene.questionOptions ?? []).map((option, optionIndex) => (
+      optionIndex === Number(override.optionIndex ?? 0)
+        ? { ...option, question: override.question }
+        : option
+    ))
+  };
 }
 
 function renderAfterSceneEvidence(brief) {
@@ -1783,6 +1901,7 @@ function renderDeepFollowup(brief) {
       ${hostDisclosureForAnchor(brief, "beforeDeepFollowup")}
       ${callDialogueHtml([
         { role: "host", text: followup.question },
+        ...(followup.resistanceBeat?.lines ?? []),
         { role: "caller", text: followup.answer }
       ])}
       <p class="hint">${escapeHtml(followup.note)}</p>
@@ -1826,7 +1945,11 @@ function renderAccusation(brief) {
     saveState();
     return render();
   }
-  const choices = dailyAccusationChoices(brief);
+  const choices = dailyAccusationChoices(brief).filter((choice) => {
+    if (!choice.requiresRevisedSceneId) return true;
+    const sourceScene = (brief.sceneVersions ?? []).find((scene) => scene.id === choice.requiresRevisedSceneId);
+    return Boolean(sourceScene?.revisedVersion && sceneRevisionUnlocked(brief, sourceScene.revisedVersionTriggers ?? {}));
+  });
   frame({
     brief,
     mood: "tense",
@@ -2059,8 +2182,18 @@ function respondentTeaseHtml(brief = {}, sceneIndex = 0) {
 function withStageJudgementDisclosure(pages = [], brief = {}) {
   const disclosureHtml = hostDisclosureForAnchor(brief, "atStageJudgement");
   const overnightAftertasteHtml = overnightCallerQuestionAftertasteHtml(brief);
-  if (!disclosureHtml && !overnightAftertasteHtml) return pages;
-  return pages.map((page, index) => index === 2 ? `${disclosureHtml}${overnightAftertasteHtml}${page}` : page);
+  const liveCounterAftertaste = liveCounterAftertasteHtml(brief);
+  if (!disclosureHtml && !overnightAftertasteHtml && !liveCounterAftertaste) return pages;
+  return pages.map((page, index) => index === 2 ? `${disclosureHtml}${overnightAftertasteHtml}${liveCounterAftertaste}${page}` : page);
+}
+
+function liveCounterAftertasteHtml(brief = {}) {
+  const aftertaste = liveCounterBeatsFor(brief).map((beat) => {
+    const pick = liveCounterPickForState(brief, beat.id);
+    const choice = (beat.choices ?? []).find((item) => item.id === pick?.choiceId);
+    return choice?.recapAftertaste ?? "";
+  }).find(Boolean);
+  return aftertaste ? callDialogueHtml([{ role: "host", text: aftertaste }], "host-disclosure") : "";
 }
 
 function overnightCallerQuestionAftertasteHtml(brief = {}) {
@@ -2192,7 +2325,7 @@ function renderStoryPackComplete() {
   bind('[data-action="title"]', resetToTitle);
 }
 
-function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "" }) {
+function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", audioEnterCueId = "", keepVoiceCueId = "" }) {
   const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
   const backdropClass = caseBackdropClass(brief);
   const pressure = showCaseHud ? currentLivePressure(brief, mood) : {};
@@ -2205,7 +2338,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
   app.innerHTML = liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel,
-    soundEnabled: isSoundEnabled(),
+    audioSettings: getAudioSettings(),
     backdropClass,
     label,
     chapter,
@@ -2215,6 +2348,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     visualHud,
     material: currentMaterial,
     screenEffect: state.lastScreenEffect ?? "",
+    pixelTransition: pixelTransitionForCurrentScene(brief),
     screenClass: `${screenClass} ${showCaseHud ? liveSceneClass(brief, mood) : ""}`.trim(),
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
@@ -2246,20 +2380,18 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
   }
   bind('[data-action="title"]', resetToTitle);
   bind('[data-action="reset"]', resetToTitle);
-  bind('[data-action="sound"]', () => {
-    toggleSound();
-    render();
-  });
+  bindAudioControls({ root: app, onToggleSound: render });
+  syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, pressureLevel: pressure.level, audioEnterCueId, keepVoiceCueId });
   resetViewportScroll();
   mountCurrentDialogue();
   queueDefaultFocus();
 }
 
-function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-city" }) {
+function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-city", audioEnterCueId = "", keepVoiceCueId = "" }) {
   app.innerHTML = liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel: "白天调查",
-    soundEnabled: isSoundEnabled(),
+    audioSettings: getAudioSettings(),
     backdropClass,
     label,
     chapter,
@@ -2269,17 +2401,33 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
     visualHud: "",
     material: label,
     screenEffect: "",
+    pixelTransition: pixelTransitionForCurrentScene(brief),
     controlDeckHtml: ""
   });
   bind('[data-action="title"]', resetToTitle);
   bind('[data-action="reset"]', resetToTitle);
-  bind('[data-action="sound"]', () => {
-    toggleSound();
-    render();
-  });
+  bindAudioControls({ root: app, onToggleSound: render });
+  syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, audioEnterCueId, keepVoiceCueId });
   resetViewportScroll();
   mountCurrentDialogue();
   queueDefaultFocus();
+}
+
+function pixelTransitionForCurrentScene(brief = {}) {
+  const transition = {
+    nightShellPrologue: { eyebrow: "NIGHT 01", label: "深夜档开麦" },
+    overnightPostLive: { eyebrow: "SIGNAL LOST", label: "挂断以后" },
+    dayActOpening: { eyebrow: "DAY SHIFT", label: "白天调查" },
+    overnightCallback: { eyebrow: "CALLBACK", label: "第二晚回拨" },
+    storyInterlude: { eyebrow: "LINE CLOSED", label: "换下一通热线" },
+    caseTitle: { eyebrow: `CALL ${String(state.chapter ?? 1).padStart(2, "0")}`, label: "新案接入" },
+    nightShellEpilogue: { eyebrow: "OFF AIR", label: "天亮前" }
+  }[state.scene];
+  if (!transition) return null;
+  const key = `${caseKey(brief)}:${state.scene}`;
+  if (shownPixelTransitions.has(key)) return null;
+  shownPixelTransitions.add(key);
+  return transition;
 }
 
 function mountCurrentDialogue() {
@@ -2576,12 +2724,14 @@ function handleSceneQuestionButton(button) {
     ...(state.sceneQuestionPicks ?? {}),
     [answerKey(brief, sceneIndex)]: {
       question: option.question ?? "",
+      suspicionLabel: option.suspicionLabel ?? "",
       answer,
       contradiction: option.contradiction ?? "",
       routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
       routeTone: option.routeTone ?? routeToneForChoice(option),
       correct: Boolean(option.contradiction),
-      guarded: answerVariant.guarded
+      guarded: answerVariant.guarded || Boolean(option.forcedGuardedAnswer),
+      resistanceBeat: option.resistanceBeat ?? null
     }
   };
   recordRouteChoice(brief, sceneIndex, option, scene);
@@ -2596,6 +2746,20 @@ function handleSceneQuestionButton(button) {
   })) return;
   state.sceneQuestionFocus = { caseId: caseKey(brief), sceneIndex, kind: "key", optionIndex };
   state.scene = "sceneQuestionAnswer";
+  saveState();
+  render();
+}
+
+function revealSceneHelperHint(brief, sceneIndex, scene = {}) {
+  if (!SCENE_HELPER?.id || !String(scene.helperHint ?? "").trim()) return;
+  const key = answerKey(brief, sceneIndex);
+  state.helperHintPicks = {
+    ...(state.helperHintPicks ?? {}),
+    [key]: {
+      helperId: SCENE_HELPER.id,
+      revealed: true
+    }
+  };
   saveState();
   render();
 }
@@ -2656,7 +2820,7 @@ function sceneQuestionFocusFor(brief, sceneIndex) {
 
 function sceneChoiceContext(sceneIndex) {
   const brief = activeCaseBrief();
-  const scene = brief?.sceneVersions?.[sceneIndex] ?? {};
+  const scene = sceneWithCallbackRevision(brief, brief?.sceneVersions?.[sceneIndex] ?? {}, sceneIndex);
   return {
     brief,
     scene,
@@ -2669,6 +2833,7 @@ function bindEvidenceCheckButtons(brief, check = {}, context = {}) {
     button.addEventListener("click", () => {
       const [checkIndex, optionIndex] = button.dataset.evidenceCheck.split(":").map(Number);
       const outcome = materialOperationOutcome(check, checkIndex, optionIndex);
+      playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:evidence:${checkIndex}:${optionIndex}`);
       markAction(brief, `evidenceCheck:${checkIndex}:${optionIndex}`, { spend: outcome.spend });
       markAction(brief, `evidenceCheck:${checkIndex}`);
       if (outcome.contradiction) {
@@ -2732,6 +2897,7 @@ function recordStanceSnapshot(brief, snapshot = {}, optionIndex = 0) {
 
 function continueAfterSceneReview(brief, sceneIndex = 0) {
   state.sceneQuestionFocus = null;
+  if (enterLiveCounterBeatAfterScene(brief, sceneIndex)) return;
   if (shouldEnterOvernightHangupAfterScene(brief, sceneIndex)) {
     state.scene = "overnightHangup";
     saveState();
@@ -2751,8 +2917,64 @@ function stanceSnapshotPickForState(brief = {}) {
   return state.stanceSnapshots?.[caseKey(brief)] ?? null;
 }
 
+function liveCounterPickKey(brief = {}, beatId = "") {
+  return `${caseKey(brief)}:${beatId}`;
+}
+
+function liveCounterPickForState(brief = {}, beatId = "") {
+  return state.liveCounterPicks?.[liveCounterPickKey(brief, beatId)] ?? null;
+}
+
+function enterLiveCounterBeatAfterScene(brief = {}, sceneIndex = 0) {
+  const beat = liveCounterBeatAfterScene(brief, sceneIndex, (key) => actionDone(brief, key));
+  if (!beat) return false;
+  state.activeLiveCounterBeatId = beat.id;
+  state.scene = "liveCounterBeat";
+  saveState();
+  render();
+  return true;
+}
+
+function recordLiveCounterChoice(brief = {}, beat = {}, choiceId = "") {
+  const choice = (beat.choices ?? []).find((item) => item.id === choiceId) ?? null;
+  if (!choice) return;
+  state.liveCounterPicks = {
+    ...(state.liveCounterPicks ?? {}),
+    [liveCounterPickKey(brief, beat.id)]: {
+      choiceId: choice.id,
+      label: choice.label ?? "",
+      recapAftertaste: choice.recapAftertaste ?? "",
+      at: Date.now()
+    }
+  };
+  recordRouteChoice(brief, Number(beat.afterSceneIndex ?? 0) + 0.5, {
+    question: beat.text ?? beat.from ?? "现场反压",
+    answer: choice.label ?? "",
+    routeAxis: choice.routeAxis,
+    routeTone: choice.routeTone ?? "live-counter"
+  }, { version: beat.from ?? "现场反压" });
+  saveState();
+  render();
+}
+
+function continueAfterLiveCounterBeat(brief = {}, beat = {}) {
+  if ((beat.choices ?? []).length && !liveCounterPickForState(brief, beat.id)) return;
+  markAction(brief, `liveCounterBeat:${beat.id}`);
+  state.activeLiveCounterBeatId = null;
+  const nextSceneIndex = Number(beat.afterSceneIndex ?? 0) + 1;
+  if (nextSceneIndex < (brief.sceneVersions?.length ?? 0)) {
+    setIndexValue(brief, "sceneReview", nextSceneIndex);
+    state.scene = "overnightNight2";
+  } else {
+    state.scene = sceneAfterEvidenceFor(brief);
+  }
+  saveState();
+  render();
+}
+
 function continueAfterSceneEvidence(brief, sceneIndex = 0) {
   markAction(brief, `afterScene:${sceneIndex}`);
+  if (enterLiveCounterBeatAfterScene(brief, sceneIndex)) return;
   if (shouldEnterOvernightHangupAfterScene(brief, sceneIndex)) {
     state.scene = "overnightHangup";
     saveState();
@@ -2789,6 +3011,7 @@ function bindInvestigationButtons(brief, hook = {}, hookIndex = 0, context = {})
     button.addEventListener("click", () => {
       const optionIndex = Number(button.dataset.evidenceCheck.split(":")[1] ?? 0);
       const outcome = materialOperationOutcome(hook, hookIndex, optionIndex);
+      playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:investigation:${hookIndex}:${optionIndex}`);
       const spend = hook.spendOnMiss === true && outcome.spend;
       markAction(brief, `investigation:${hookIndex}:${optionIndex}`, { spend });
       markAction(brief, `investigation:${hookIndex}`);
@@ -3162,6 +3385,8 @@ function resetCaseAttempt(brief) {
   state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);
   state.delegationPicks = omitRecordKey(state.delegationPicks, key);
   state.stanceSnapshots = omitRecordKey(state.stanceSnapshots, key);
+  state.liveCounterPicks = removeKeyPrefix(state.liveCounterPicks, `${key}:`);
+  state.activeLiveCounterBeatId = null;
   state.truthBoundaryPicks = omitRecordKey(state.truthBoundaryPicks, key);
   state.truthBoundaryMisses = omitRecordKey(state.truthBoundaryMisses, key);
   state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
@@ -3551,6 +3776,7 @@ function portraitLayer(brief, mood = "listening") {
   return portraitLayerHtml({
     artSrc: art.src,
     fallbackSrc: art.fallbackSrc,
+    artStyle: brief.callerArtStyle,
     mood,
     expression,
     sceneIndex

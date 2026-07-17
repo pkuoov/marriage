@@ -19,6 +19,8 @@ Reviewed:
 
 三层清晰度原则:来电人>朦胧,顾问>清晰,主播永不露脸。
 
+2026-07-16 方向补充：像素风进入单案样张验证，不立刻替换四案。代码层大切点过场已落地；立绘迁移规格与验收门见 `docs/pixel-art-transition-and-portrait-direction.md`。在案 2 三态样张通过真实 UI 验收前，现有半写实立绘继续作为运行时回退。
+
 ## Current Strengths
 
 - The title screen has a strong broadcast desk signal. `livestream_studio_v2.png` works better than the older dating/marriage backgrounds because it immediately says live room, mic, files, screens, and investigation.
@@ -80,6 +82,8 @@ Upgrade target:
 
 2026-07-03 update: without adding new image files, the runtime now gives anonymous portraits a stronger stage integration pass: contact shadow, broadcast scan overlay, expression-specific micro-motion, and mobile-safe expression placement. Dedicated PNG expression variants remain a later art-production pass.
 
+2026-07-16 update: the art direction has moved from a full semi-realistic V2 rollout to a controlled pixel-art sample. Case 2 now ships `neutral / guarded / pause` as transparent `256x512` masters plus nearest-neighbor `1024x2048` runtime assets. Runtime and pack validation are complete; the remaining gate is a real UI playtest before migrating the other three callers.
+
 ### P1: Missing Host-Side Visual Identity
 
 The title background shows a studio, but in the live call the visible portrait is only the caller. The player is the host, yet the host has no persistent visual presence except UI text.
@@ -125,7 +129,7 @@ Action:
 ## Recommended Priority
 
 1. Replace the four case backgrounds with object-specific public-incident backgrounds.
-2. Upgrade anonymous caller portraits with expression variants.
+2. 先用案 2 制作 `neutral / guarded / pause` 三态像素样张；验收通过后再决定是否把四案匿名立绘整体迁移。
 3. Add material thumbnails / foreground evidence props for each case. CSS foreground prop pass complete; final bespoke image thumbnails remain optional polish.
 4. Add a small host monitor layer to strengthen "player as broadcaster". First CSS pass complete; future PNG monitor variants are optional polish.
 5. Archive or de-emphasize old marriage-route backgrounds.

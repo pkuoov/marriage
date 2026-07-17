@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.68";
 import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.68";
+import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.24.0";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
@@ -55,8 +56,26 @@ function assertArrayMin(value, minLength, message) {
   assert(Array.isArray(value) && value.length >= minLength, message);
 }
 
+function assertBeatLines(lines, label) {
+  assertArrayMin(lines, 1, `${label} 至少需要一拍`);
+  lines.forEach((line, lineIndex) => {
+    assert(["caller", "host", "stage", "pause"].includes(line?.role), `${label}[${lineIndex}].role 不合法`);
+    if (line.role !== "pause") assertNonEmptyString(line.text, `${label}[${lineIndex}].text 不能为空`);
+  });
+}
+
 function assertOneCorrect(options, message) {
   assertEqual((options ?? []).filter((option) => option.correct === true).length, 1, message);
+}
+
+function assertThrows(fn, pattern, message) {
+  try {
+    fn();
+  } catch (error) {
+    assert(pattern.test(String(error?.message ?? error)), `${message}｜异常不匹配: ${error?.message ?? error}`);
+    return;
+  }
+  throw new Error(`${message}｜expected throw`);
 }
 
 function assertAtLeastOneCorrect(options, message) {
@@ -187,8 +206,15 @@ function assertQuotePickCandidates(packet = {}, label = "") {
     warnAndFail(`${label} quotePickCandidates 必须与实际 accusationChoices 顺序一致｜expected ${JSON.stringify(choiceLabels)}, got ${JSON.stringify(candidateLabels)}`);
   }
   const surfaceText = normalizeQuoteText(ungatedSurfaceText(packet));
-  (packet.accusationChoices ?? []).map((choice) => normalizeQuoteText(choice.label)).forEach((quote, index) => {
-    assert(surfaceText.includes(quote), `${label} 第 ${index + 1} 条最终引语没有无门控出处: ${packet.accusationChoices?.[index]?.label}`);
+  (packet.accusationChoices ?? []).forEach((choice, index) => {
+    const quote = normalizeQuoteText(choice.label);
+    if (choice.requiresRevisedSceneId) {
+      const sourceScene = (packet.sceneVersions ?? []).find((scene) => scene.id === choice.requiresRevisedSceneId);
+      assert(sourceScene?.revisedVersionTriggers, `${label} 第 ${index + 1} 条门控引语缺少有效重述触发器`);
+      assert(normalizeQuoteText(sourceScene?.revisedVersion).includes(quote), `${label} 第 ${index + 1} 条门控引语不在重述文本里: ${choice.label}`);
+      return;
+    }
+    assert(surfaceText.includes(quote), `${label} 第 ${index + 1} 条最终引语没有无门控出处: ${choice.label}`);
   });
 }
 
@@ -411,6 +437,49 @@ function assertOvernightStructure(packet = {}, label = "") {
     });
   }
   assertNonEmptyString(structure.hostHoldLine, `${label} overnightStructure.hostHoldLine 不能为空`);
+  if (structure.snapshotEcho !== undefined) {
+    assert(structure.snapshotEcho && typeof structure.snapshotEcho === "object" && !Array.isArray(structure.snapshotEcho), `${label} overnightStructure.snapshotEcho 必须是对象`);
+    const stanceIds = (packet.stanceSnapshot?.options ?? []).map((option) => option.id).sort();
+    const echoIds = Object.keys(structure.snapshotEcho).sort();
+    assertDeepEqual(echoIds, stanceIds, `${label} overnightStructure.snapshotEcho 必须逐项回应 stanceSnapshot`);
+    Object.entries(structure.snapshotEcho).forEach(([optionId, line]) => {
+      assertNonEmptyString(line, `${label} overnightStructure.snapshotEcho.${optionId} 不能为空`);
+    });
+  }
+  if (structure.liveCounterBeats !== undefined) {
+    assertArrayMin(structure.liveCounterBeats, 1, `${label} overnightStructure.liveCounterBeats 不能为空`);
+    const beatIds = new Set();
+    structure.liveCounterBeats.forEach((beat, beatIndex) => {
+      assertNonEmptyString(beat.id, `${label} overnightStructure.liveCounterBeats[${beatIndex}] 缺少 id`);
+      assert(!beatIds.has(beat.id), `${label} overnightStructure.liveCounterBeats id 重复: ${beat.id}`);
+      beatIds.add(beat.id);
+      assertEqual(beat.kind, "interruptToast", `${label} overnightStructure.liveCounterBeats[${beatIndex}].kind 必须是 interruptToast`);
+      assertEqual(beat.cost, 0, `${label} overnightStructure.liveCounterBeats[${beatIndex}].cost 必须为 0`);
+      assert(Number.isInteger(beat.afterSceneIndex), `${label} overnightStructure.liveCounterBeats[${beatIndex}].afterSceneIndex 必须是整数`);
+      assert(beat.afterSceneIndex > anchorIndex && beat.afterSceneIndex < (packet.sceneVersions?.length ?? 0), `${label} overnightStructure.liveCounterBeats[${beatIndex}] 必须落在夜 B 场景之间`);
+      assertNonEmptyString(beat.from, `${label} overnightStructure.liveCounterBeats[${beatIndex}].from 不能为空`);
+      assert(Boolean(beat.text || (beat.lines ?? []).length), `${label} overnightStructure.liveCounterBeats[${beatIndex}] 缺少可见内容`);
+      if (beat.text) {
+        const hasProfile = typeof beat.speakerProfileId === "string" && beat.speakerProfileId.length > 0;
+        const isDocument = beat.voiceAttribution === "document";
+        assert(hasProfile || isDocument, `${label} overnightStructure.liveCounterBeats[${beatIndex}] 的第三方文字必须声明 speakerProfileId 或 voiceAttribution=document`);
+      }
+      if (beat.lines !== undefined) assertBeatLines(beat.lines, `${label} overnightStructure.liveCounterBeats[${beatIndex}].lines`);
+      (beat.choices ?? []).forEach((choice, choiceIndex) => {
+        assertNonEmptyString(choice.id, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 id`);
+        assertNonEmptyString(choice.label, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 label`);
+        assert(choice.correct === undefined, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 不得判对错`);
+        if (choice.questionOverride) {
+          assertNonEmptyString(choice.questionOverride.sceneId, `${label} liveCounter questionOverride 缺少 sceneId`);
+          const targetScene = (packet.sceneVersions ?? []).find((scene) => scene.id === choice.questionOverride.sceneId);
+          assert(targetScene, `${label} liveCounter questionOverride 指向不存在的场景`);
+          assert(Number.isInteger(choice.questionOverride.optionIndex), `${label} liveCounter questionOverride.optionIndex 必须是整数`);
+          assert(targetScene?.questionOptions?.[choice.questionOverride.optionIndex], `${label} liveCounter questionOverride.optionIndex 越界`);
+          assertNonEmptyString(choice.questionOverride.question, `${label} liveCounter questionOverride.question 不能为空`);
+        }
+      });
+    });
+  }
   assertNonEmptyString(structure.dayIntro, `${label} overnightStructure.dayIntro 不能为空`);
   assert(Number.isInteger(structure.dayBudget) && structure.dayBudget > 0, `${label} overnightStructure.dayBudget 必须是正整数`);
   assert(Number.isInteger(structure.minDayScenes) && structure.minDayScenes > 0, `${label} overnightStructure.minDayScenes 必须是正整数`);
@@ -472,6 +541,9 @@ function assertOvernightStructure(packet = {}, label = "") {
     }
   });
   const openerIds = new Set(Object.keys(structure.callbackOpeners ?? {}));
+  openerIds.forEach((earnedId) => {
+    assert(!/(?:追问边|轮订边|标准表边|六折边|删评边|订座与灯|五万拒答)/.test(earnedId), `${label} callback opener 玩家可见名仍含设计黑话: ${earnedId}`);
+  });
   earnedIds.forEach((earnedId) => {
     assert(openerIds.has(earnedId), `${label} overnightStructure.callbackOpeners 缺少 earnedItem opener: ${earnedId}`);
     assertNonEmptyString(structure.callbackOpeners?.[earnedId]?.line, `${label} overnightStructure.callbackOpeners.${earnedId}.line 不能为空`);
@@ -481,6 +553,10 @@ function assertOvernightStructure(packet = {}, label = "") {
     assert(opener.firstConflict && typeof opener.firstConflict === "object" && !Array.isArray(opener.firstConflict), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 必须是对象`);
     assertNonEmptyString(opener.firstConflict.hostLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.hostLine 不能为空`);
     assertNonEmptyString(opener.firstConflict.callerLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerLine 不能为空`);
+    if (opener.firstConflict.callerFollowupLine !== undefined) {
+      assertNonEmptyString(opener.firstConflict.callerFollowupLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerFollowupLine 不能为空`);
+      assertEqual(opener.firstConflict.pauseAfterCallerLine, true, `${label} firstConflict 分拍续句前必须声明 pauseAfterCallerLine`);
+    }
     assert(!firstConflictHostLines.has(opener.firstConflict.hostLine), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.hostLine 不得与另一带回物共用同一句`);
     firstConflictHostLines.add(opener.firstConflict.hostLine);
   });
@@ -582,9 +658,83 @@ function assertDocumentNumberConsistency(packet = {}, label = "") {
   if (rows.some((row) => row.date === "07-08" && row.kind === "空行")) {
     assert(text.includes("8 号"), `${label} 8 号空行必须与证言/事实互检`);
   }
-  if (text.includes("社保断缴早于第一次借钱")) {
-    assert(text.includes("47 天"), `${label} 47 天阶梯不得丢失`);
+}
+
+function assertDocumentTimelineConsistency(packet = {}, label = "") {
+  const rows = (packet.documents ?? []).flatMap((document) => document.rows ?? []);
+  if (!rows.length) return;
+  const rowDates = new Set(rows.map((row) => row.date));
+  const summaryText = collectTextFrom([
+    packet.truth,
+    respondentNotesFor(packet).map((note) => note.text)
+  ]);
+  const claimText = collectTextFrom([
+    summaryText,
+    packet.followupTwist,
+    packet.dailyShareBody,
+    packet.truthBoundary,
+    packet.evidenceCards,
+    packet.evidenceChecks,
+    packet.documents?.map((document) => [document.rowQuestions, document.crossQuestions])
+  ]);
+
+  for (const match of claimText.matchAll(/([一二两三四五六七八九十]+)月([一二两三四五六七八九十]+)[日号]/gu)) {
+    const month = chineseInteger(match[1]);
+    const day = chineseInteger(match[2]);
+    const mmdd = `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    assert(rowDates.has(mmdd), `${label} 时间文本“${match[0]}”在 documents 行中没有对应日期 ${mmdd}`);
   }
+
+  const loanRow = rows.find((row) => row.memo === "贷款发放" || /信贷/.test(row.party ?? ""));
+  const transferRow = loanRow
+    ? rows.find((row) => row.kind === "支出" && row.memo === "转账" && rowDateValue(row.date) > rowDateValue(loanRow.date))
+    : null;
+  if (loanRow && transferRow) {
+    const actualDays = daysBetweenMmDd(loanRow.date, transferRow.date);
+    for (const match of claimText.matchAll(/(?:贷款到账|五万(?:贷款)?(?:入账|进(?:来)?))[^。！？\n]{0,8}?([零一二两三四五六七八九十百\d]+)\s*天后/gu)) {
+      const claimedDays = chineseInteger(match[1]);
+      assertEqual(claimedDays, actualDays, `${label} “${match[0]}”必须由 documents ${loanRow.date}→${transferRow.date} 行级日期计算`);
+    }
+  }
+
+  for (const match of summaryText.matchAll(/(?:离职|失业)[^。！？\n]{0,8}?([零一二两三四五六七八九十百\d]+)\s*(天|个?月)/gu)) {
+    const departureRow = rows.find((row) => /离职|失业|解除劳动/.test(collectTextFrom(row)));
+    assert(departureRow, `${label} truth/respondentNote 写了“${match[0]}”，但 documents 没有可计算离职时长的起点行`);
+    const latestRow = rows.reduce((latest, row) => rowDateValue(row.date) > rowDateValue(latest.date) ? row : latest, rows[0]);
+    const actualDays = daysBetweenMmDd(departureRow.date, latestRow.date);
+    const claimed = chineseInteger(match[1]);
+    const matchesRows = match[2] === "天"
+      ? claimed === actualDays
+      : Math.abs(claimed * 30 - actualDays) <= 15;
+    assert(matchesRows, `${label} truth/respondentNote 的“${match[0]}”与 documents ${departureRow.date}→${latestRow.date} 不符`);
+  }
+}
+
+function chineseInteger(value = "") {
+  if (/^\d+$/.test(value)) return Number(value);
+  const digits = { 零: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+  let total = 0;
+  let current = 0;
+  for (const char of String(value)) {
+    if (char in digits) current = digits[char];
+    else if (char === "十") {
+      total += (current || 1) * 10;
+      current = 0;
+    } else if (char === "百") {
+      total += (current || 1) * 100;
+      current = 0;
+    }
+  }
+  return total + current;
+}
+
+function rowDateValue(mmdd = "") {
+  const [month, day] = String(mmdd).split("-").map(Number);
+  return Date.UTC(2024, month - 1, day);
+}
+
+function daysBetweenMmDd(start = "", end = "") {
+  return Math.round((rowDateValue(end) - rowDateValue(start)) / 86400000);
 }
 
 function assertLurkerNote(packet = {}, label = "") {
@@ -670,6 +820,8 @@ const caseFiles = await Promise.all(
 const comments = await readJson(`content/packs/${packId}/comments.json`);
 const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes.json`);
 const advisorRegistry = await readJson("content/characters/advisors.json").catch(() => ({ advisors: [] }));
+const helperRegistry = await readJson("content/characters/helper-npcs.json").catch(() => ({ helpers: [] }));
+const castRegistry = await readJson("content/characters/cast.json").catch(() => ({ cast: [] }));
 const callerArtPaths = [...new Set(manifest.sequence.flatMap((item) => [
   item.callerArt,
   ...Object.values(item.callerArtVariants ?? {})
@@ -677,6 +829,11 @@ const callerArtPaths = [...new Set(manifest.sequence.flatMap((item) => [
 const callerArtFiles = new Map(await Promise.all(callerArtPaths.map(async (artPath) => {
   const cleanPath = String(artPath).replace(/^\.\//, "").replace(/\?.*$/, "");
   return [artPath, await readFile(resolve(root, cleanPath)).catch(() => null)];
+})));
+const callerNativePixelFiles = new Map(await Promise.all(callerArtPaths.map(async (artPath) => {
+  const cleanPath = String(artPath).replace(/^\.\//, "").replace(/\?.*$/, "");
+  const nativePath = cleanPath.replace(/\.png$/, "_256.png");
+  return [artPath, await readFile(resolve(root, nativePath)).catch(() => null)];
 })));
 const advisorIds = new Set((advisorRegistry.advisors ?? []).map((advisor) => advisor.id));
 const advisorIdList = [...advisorIds];
@@ -721,15 +878,36 @@ test("PACK-002", "manifest keeps distinct playable cases", () => {
       assert(callerArtFiles.get(artPath), `第 ${index + 1} 案 ${kind} 立绘文件不存在`);
       assert(pngHasAlpha(callerArtFiles.get(artPath)), `第 ${index + 1} 案 ${kind} 立绘必须含真实 alpha 通道`);
     });
+    if (item.callerArtStyle !== undefined) {
+      assert(["pixel"].includes(item.callerArtStyle), `第 ${index + 1} 案 callerArtStyle 不支持 ${item.callerArtStyle}`);
+    }
+    if (item.callerArtStyle === "pixel") {
+      assertDeepEqual(Object.keys(item.callerArtVariants ?? {}).sort(), ["guarded", "neutral", "pause"], `第 ${index + 1} 案像素立绘必须一次交付 neutral / guarded / pause 三态`);
+      assertEqual(item.callerArt, item.callerArtVariants.neutral, `第 ${index + 1} 案 callerArt 必须与像素 neutral 同源`);
+      Object.entries(item.callerArtVariants).forEach(([kind, artPath]) => {
+        const runtimeMeta = pngMetadata(callerArtFiles.get(artPath));
+        const nativeMeta = pngMetadata(callerNativePixelFiles.get(artPath));
+        assert(runtimeMeta?.width === 1024 && runtimeMeta?.height === 2048, `第 ${index + 1} 案 ${kind} 像素立绘发运尺寸必须是 1024x2048`);
+        assert(nativeMeta?.width === 256 && nativeMeta?.height === 512 && nativeMeta.hasAlpha, `第 ${index + 1} 案 ${kind} 像素立绘必须保留 256x512 真透明母版`);
+      });
+    }
     assert(!/下一案|第[一二三四五六七八九十\d]+\s*案|\d+\s*\/\s*\d+/.test(item.objectLabel), `第 ${index + 1} 案 objectLabel 不能是目录话术`);
   });
 });
 
 function pngHasAlpha(buffer) {
-  if (!buffer || buffer.length < 26) return false;
+  return Boolean(pngMetadata(buffer)?.hasAlpha);
+}
+
+function pngMetadata(buffer) {
+  if (!buffer || buffer.length < 26) return null;
   const pngSignature = "89504e470d0a1a0a";
-  if (buffer.subarray(0, 8).toString("hex") !== pngSignature) return false;
-  return [4, 6].includes(buffer[25]);
+  if (buffer.subarray(0, 8).toString("hex") !== pngSignature) return null;
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20),
+    hasAlpha: [4, 6].includes(buffer[25])
+  };
 }
 
 test("PACK-003", "case pressure packets are complete", () => {
@@ -821,6 +999,8 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       casePacket.sceneVersions.forEach((scene, sceneIndex) => {
         assertNonEmptyString(scene.speakerId, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 speakerId`);
         assertNonEmptyString(scene.version, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 version`);
+        assertNonEmptyString(scene.helperHint, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 helperHint，V哥必须能在每段被主动求助`);
+        assert(!/(正确答案|答案是|选第|路线轴|money-flow|document-edge|process-control)/i.test(scene.helperHint), `${casePacket.caseId} sceneVersions[${sceneIndex}].helperHint 不能点答案或后台路线`);
         assertNonEmptyString(scene.doubt, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 doubt`);
         assertNonEmptyString(scene.contradiction, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 contradiction`);
         assert(["mixed", "partial", "guarded", "clear"].includes(scene.reliability), `${casePacket.caseId} sceneVersions[${sceneIndex}] reliability 不合法`);
@@ -852,15 +1032,28 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         }
         assertArrayMin(scene.questionOptions, 2, `${casePacket.caseId} sceneVersions[${sceneIndex}] 至少需要两个追问选项`);
         assertAtLeastOneCorrect(scene.questionOptions, `${casePacket.caseId} sceneVersions[${sceneIndex}] 至少需要一个核心追问`);
+        const directionOnlyOptions = scene.questionOptions.filter((option) => option.suspicionLabel !== undefined);
+        if (directionOnlyOptions.length) {
+          assertEqual(directionOnlyOptions.length, scene.questionOptions.length, `${casePacket.caseId} sceneVersions[${sceneIndex}] 疑点方向必须覆盖同节点全部正式选项，不能泄露正确项`);
+        }
         scene.questionOptions.forEach((option, optionIndex) => {
           assertNonEmptyString(option.question, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 question`);
           assertNonEmptyString(option.answer, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 answer`);
+          if (option.suspicionLabel !== undefined) {
+            assertNonEmptyString(option.suspicionLabel, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}].suspicionLabel 不能为空`);
+            assert(option.suspicionLabel.length <= 24, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}].suspicionLabel 过长，不再是疑点短标签`);
+            assert(!/[？?。！!]$/.test(option.suspicionLabel), `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}].suspicionLabel 应是方向，不是完整语句`);
+            assert(option.suspicionLabel !== option.question, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 疑点标签不能原样复制主播问句`);
+          }
           if (option.guardedAnswer) {
             assertNonEmptyString(option.guardedAnswer, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] guardedAnswer 不能为空`);
             assert(
               longestCommonSubstringLength(option.guardedAnswer, casePacket.deepFollowup?.answer) < 14,
               `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] guardedAnswer 不能提前复用 deepFollowup 的自白金句`
             );
+          }
+          if (option.resistanceBeat !== undefined) {
+            assertBeatLines(option.resistanceBeat?.lines, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}].resistanceBeat.lines`);
           }
           assertNonEmptyString(option.routeAxis, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeAxis`);
           assertNonEmptyString(option.routeTone, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeTone`);
@@ -922,6 +1115,9 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.note, `${casePacket.caseId} deepFollowup.note 不能为空`);
+      if (casePacket.deepFollowup?.resistanceBeat !== undefined) {
+        assertBeatLines(casePacket.deepFollowup.resistanceBeat?.lines, `${casePacket.caseId} deepFollowup.resistanceBeat.lines`);
+      }
       assertNonEmptyString(casePacket.selfServingOmission, `${casePacket.caseId} 必须写出来电人对自己不利的修剪`);
       assertNonEmptyString(casePacket.thirdPressure, `${casePacket.caseId} 必须有第三压力源`);
       assert((casePacket.evidenceChecks?.length ?? 0) + (casePacket.investigationHooks?.length ?? 0) >= 2, `${casePacket.caseId} 至少需要两份可读材料`);
@@ -937,6 +1133,8 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       }) >= 2600, `${casePacket.caseId} 文本体量过薄，不能支撑试玩包单案`);
       ["stageJudgement", "storyInterludeRecap", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"].forEach((field) => {
         assertNonEmptyString(casePacket[field], `${casePacket.caseId} ${field} 不能为空`);
+        const prosePunctuation = casePacket[field].replace(/\d{1,3}(?:,\d{3})+/g, "");
+        assert(!/[,:;]/.test(prosePunctuation), `${casePacket.caseId} ${field} 玩家可见中文正文不得混入半角逗号、冒号或分号`);
       });
     });
 });
@@ -953,6 +1151,113 @@ test("PACK-007", "NPC verbs cover refuse interrupt and conflict", () => {
   if (verbs.size === 0) return;
   ["refuse", "interrupt", "conflict"].forEach((verb) => {
     assert(verbs.has(verb), `故事包缺少 NPC ${verb} 动词`);
+  });
+});
+
+test("PACK-008", "offstage helper NPC stays separate from professional advisors", () => {
+  const helpers = helperRegistry.helpers ?? [];
+  const vBro = helpers.find((helper) => helper.id === "v-bro");
+  assert(vBro, "场下求助 NPC 注册表必须包含 v-bro");
+  assertNonEmptyString(vBro.boundary, "V哥必须声明求助边界");
+  assert(CONTENT_HELPER_NPCS["v-bro"], "V哥必须进入运行时内容索引");
+  assert(!advisorIds.has("v-bro"), "V哥不能混入专业顾问注册表");
+});
+
+test("PACK-009", "document-derived timeline claims stay aligned with row dates", () => {
+  caseFiles.forEach((casePacket) => assertDocumentTimelineConsistency(casePacket, casePacket.caseId));
+  const creditCase = caseFiles.find((casePacket) => casePacket.caseId === "01-credit");
+  assert(creditCase, "PACK-009 需要案 1 流水夹具");
+  assertThrows(
+    () => assertDocumentTimelineConsistency({ ...creditCase, truth: "他离职已经四十七天。" }, "01-credit fixture"),
+    /没有可计算离职时长的起点行/,
+    "truth 不得写 documents 无法推出的离职天数"
+  );
+  assertThrows(
+    () => assertDocumentTimelineConsistency({ ...creditCase, truth: "贷款到账三天后，49,800 转出。" }, "01-credit fixture"),
+    /07-05→07-19/,
+    "truth 的贷款转出间隔必须由流水行计算"
+  );
+});
+
+test("PACK-010", "every manifest role resolves to a fixed personality and voice profile", () => {
+  const requiredProfileFields = ["id", "name", "kind", "caseIds", "surfaceNames", "personality", "motivation", "fear", "defense", "voice", "knowledgeBoundary"];
+  const profiles = castRegistry.cast ?? [];
+  const profileIds = new Set();
+  assert(profiles.length > 0, "固定角色注册表不能为空");
+  profiles.forEach((profile, profileIndex) => {
+    requiredProfileFields.forEach((field) => assert(profile[field] !== undefined, `cast[${profileIndex}] 缺少 ${field}`));
+    assertNonEmptyString(profile.id, `cast[${profileIndex}].id 不能为空`);
+    assert(!profileIds.has(profile.id), `固定角色 id 重复: ${profile.id}`);
+    profileIds.add(profile.id);
+    assertArrayMin(profile.caseIds, 1, `${profile.id}.caseIds 不能为空`);
+    assertArrayMin(profile.surfaceNames, 1, `${profile.id}.surfaceNames 不能为空`);
+    assertNonEmptyString(profile.personality?.core, `${profile.id}.personality.core 不能为空`);
+    assertNonEmptyString(profile.personality?.stressResponse, `${profile.id}.personality.stressResponse 不能为空`);
+    assertNonEmptyString(profile.voice?.rhythm, `${profile.id}.voice.rhythm 不能为空`);
+    assertArrayMin(profile.voice?.habits, 1, `${profile.id}.voice.habits 不能为空`);
+    assertArrayMin(profile.voice?.avoid, 1, `${profile.id}.voice.avoid 不能为空`);
+    if (["host", "caller", "respondent"].includes(profile.kind)) {
+      ["nightA", "day", "nightB", "ending"].forEach((phase) => {
+        assertNonEmptyString(profile.voiceArc?.[phase], `${profile.id}.voiceArc.${phase} 不能为空`);
+      });
+    }
+    assert(CONTENT_CAST[profile.id], `${profile.id} 必须进入运行时内容索引`);
+  });
+  manifest.sequence.forEach((item) => {
+    assertArrayMin(item.castProfileIds, 2, `${item.caseId} 必须声明逐案 castProfileIds`);
+    item.castProfileIds.forEach((profileId) => {
+      assert(profileIds.has(profileId), `${item.caseId} 引用了不存在的固定角色: ${profileId}`);
+      assert(CONTENT_CAST[profileId], `${item.caseId}/${profileId} 未进入运行时内容索引`);
+      const profile = CONTENT_CAST[profileId];
+      assert(profile.caseIds.includes("*") || profile.caseIds.includes(item.caseId), `${profileId} 的 caseIds 不包含 ${item.caseId}`);
+    });
+    const casePacket = caseFiles.find((packet) => packet.caseId === item.caseId);
+    const allowedSurfaceNames = new Set(profiles
+      .filter((profile) => profile.caseIds.includes("*") || item.castProfileIds.includes(profile.id))
+      .flatMap((profile) => profile.surfaceNames));
+    const usedSurfaceNames = new Set();
+    const visit = (value, parentKey = "") => {
+      if (Array.isArray(value)) {
+        if (parentKey === "cast") value.filter((entry) => typeof entry === "string").forEach((entry) => usedSurfaceNames.add(entry));
+        value.forEach((entry) => visit(entry, parentKey));
+        return;
+      }
+      if (!value || typeof value !== "object") return;
+      Object.entries(value).forEach(([key, entry]) => {
+        if (key === "speaker" && typeof entry === "string") usedSurfaceNames.add(entry);
+        if (key === "speakerProfileId" && typeof entry === "string") {
+          assert(profileIds.has(entry), `${item.caseId} 引用了不存在的 speakerProfileId: ${entry}`);
+          const profile = profiles.find((candidate) => candidate.id === entry);
+          assert(item.castProfileIds.includes(entry) || profile?.caseIds?.includes("*"), `${item.caseId}/${entry} 必须进入 manifest castProfileIds 或声明为全局角色`);
+        }
+        visit(entry, key);
+      });
+    };
+    visit(casePacket);
+    for (const surfaceName of usedSurfaceNames) {
+      assert(allowedSurfaceNames.has(surfaceName), `${item.caseId} 的出声者“${surfaceName}”没有逐案固定声纹卡`);
+    }
+  });
+  for (const advisorId of advisorIds) assert(profileIds.has(advisorId), `顾问 ${advisorId} 缺少固定声纹卡`);
+  for (const helper of helperRegistry.helpers ?? []) assert(profileIds.has(helper.id), `求助 NPC ${helper.id} 缺少固定声纹卡`);
+});
+
+test("PACK-011", "player-visible NPC material keeps structured voice attribution", () => {
+  const profilesById = new Map((castRegistry.cast ?? []).map((profile) => [profile.id, profile]));
+  caseFiles.forEach((casePacket) => {
+    for (const hook of casePacket.investigationHooks ?? []) {
+      const hasProfile = typeof hook.speakerProfileId === "string" && hook.speakerProfileId.length > 0;
+      const isDocument = hook.voiceAttribution === "document";
+      assert(hasProfile || isDocument, `${casePacket.caseId}/${hook.id} 必须声明 speakerProfileId 或 voiceAttribution=document`);
+      if (hasProfile) assert(profilesById.has(hook.speakerProfileId), `${casePacket.caseId}/${hook.id} 的 speakerProfileId 不存在`);
+    }
+    for (const action of casePacket.nightStructure?.interlude?.actions ?? []) {
+      for (const option of action.options ?? []) {
+        if (!option.advisorLine) continue;
+        assertNonEmptyString(option.advisorId, `${casePacket.caseId}/${action.id}/${option.id} 有 advisorLine 时必须声明 advisorId`);
+        assert(profilesById.get(option.advisorId)?.kind === "advisor", `${casePacket.caseId}/${option.id} 的 advisorId 必须指向顾问声纹卡`);
+      }
+    }
   });
 });
 

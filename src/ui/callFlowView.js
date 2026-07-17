@@ -23,6 +23,10 @@ export function flowGroupHtml(content) {
 }
 
 export function callLineHtml(line = {}) {
+  if (line.role === "pause") return '<div class="call-pause" aria-hidden="true"></div>';
+  if (line.role === "stage") {
+    return `<div class="call-stage-direction"><span>${escapeHtml(line.text ?? "")}</span></div>`;
+  }
   const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
@@ -35,7 +39,7 @@ export function callLineHtml(line = {}) {
 }
 
 export function callDialogueHtml(lines = [], className = "") {
-  const rows = (lines ?? []).filter((line) => line?.text || line?.version || line?.line);
+  const rows = (lines ?? []).filter((line) => line?.role === "pause" || line?.text || line?.version || line?.line);
   if (!rows.length) return "";
   return `
     <div class="call-dialogue ${escapeHtml(className)}">

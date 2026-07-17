@@ -76,8 +76,9 @@ export function callerArtForExpression({ neutralSrc = "", variants = {}, express
   };
 }
 
-export function portraitLayerHtml({ artSrc = "", fallbackSrc = "", mood = "listening", expression = null, sceneIndex = 0 } = {}) {
+export function portraitLayerHtml({ artSrc = "", fallbackSrc = "", artStyle = "", mood = "listening", expression = null, sceneIndex = 0 } = {}) {
   const safeExpression = expression ?? { kind: "blink", text: "麦里轻轻吸气" };
+  const artStyleClass = artStyle === "pixel" ? " art-pixel" : "";
   const fallbackAttr = fallbackSrc && fallbackSrc !== artSrc
     ? ` data-fallback-src="${escapeHtml(fallbackSrc)}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;"`
     : ` onerror="this.hidden=true;this.closest('figure')?.classList.add('art-missing');"`;
@@ -90,7 +91,7 @@ export function portraitLayerHtml({ artSrc = "", fallbackSrc = "", mood = "liste
   };
   return `
     <div class="case-duel-portraits">
-      <figure class="case-portrait mood-${escapeHtml(mood)} pose-${escapeHtml(safeExpression.kind)} beat-${Math.max(0, Number(sceneIndex ?? 0)) % 4} active">
+      <figure class="case-portrait${artStyleClass} mood-${escapeHtml(mood)} pose-${escapeHtml(safeExpression.kind)} beat-${Math.max(0, Number(sceneIndex ?? 0)) % 4} active">
         ${artSrc ? `<img src="${escapeHtml(artSrc)}" alt=""${fallbackAttr} /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>` : `<span class="anonymous-portrait-placeholder" aria-hidden="true"></span>`}
         <div class="call-expression expression-${escapeHtml(safeExpression.kind)}"><span>${escapeHtml(safeExpression.text)}</span></div>
         <figcaption><span>匿名来电｜${escapeHtml(moodLabels[mood] ?? "听线")}</span><b>来电形象</b></figcaption>

@@ -254,6 +254,113 @@ button:active:not(:disabled) {
   gap: 10px;
 }
 
+.audio-settings {
+  position: relative;
+  z-index: 18;
+}
+
+.audio-settings > summary {
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 10px 16px;
+  border: 1px solid rgba(237, 241, 238, .2);
+  border-radius: 12px;
+  color: inherit;
+  background: rgba(255, 255, 255, .055);
+  cursor: pointer;
+  font-weight: 750;
+  list-style: none;
+  user-select: none;
+}
+
+.audio-settings > summary::-webkit-details-marker {
+  display: none;
+}
+
+.audio-settings[open] > summary {
+  border-color: rgba(101, 214, 194, .48);
+  color: var(--accent);
+}
+
+.audio-settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(320px, calc(100vw - 24px));
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(101, 214, 194, .28);
+  border-radius: 14px;
+  color: #edf1ee;
+  background: rgba(10, 14, 13, .98);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, .42);
+}
+
+.audio-settings-title .audio-settings-panel {
+  right: auto;
+  left: 0;
+}
+
+.audio-settings-panel header,
+.audio-volume-row {
+  display: grid;
+  grid-template-columns: 64px minmax(112px, 1fr) 42px;
+  gap: 10px;
+  align-items: center;
+}
+
+.audio-settings-panel header {
+  grid-template-columns: 1fr auto;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(237, 241, 238, .12);
+}
+
+.audio-settings-panel header button {
+  min-height: 32px;
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+.audio-volume-row span,
+.audio-volume-row output {
+  font-size: 12px;
+}
+
+.audio-volume-row output {
+  color: rgba(237, 241, 238, .68);
+  text-align: right;
+}
+
+.audio-volume-row input,
+.audio-playback input {
+  accent-color: var(--accent);
+}
+
+.audio-playback {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid rgba(101, 214, 194, .2);
+  border-radius: 10px;
+  background: rgba(101, 214, 194, .055);
+}
+
+.audio-playback button {
+  min-height: 36px;
+  padding: 6px 10px;
+}
+
+.audio-playback output {
+  color: rgba(237, 241, 238, .68);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .primary,
 .choices button,
 .topbar button {
@@ -1275,6 +1382,10 @@ button:active:not(:disabled) {
   animation: portraitBlink 6.8s infinite;
 }
 
+.case-portrait.art-pixel img {
+  image-rendering: pixelated;
+}
+
 .case-portrait img:last-of-type {
   animation: portraitBlink 6.8s infinite, portraitCrossFade .25s ease-out;
 }
@@ -1705,12 +1816,45 @@ button:active:not(:disabled) {
 
 .choices button.choice-question {
   min-height: 46px;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
+  gap: 10px;
   padding: 10px 12px;
   text-align: left;
   color: rgba(237, 241, 238, .72);
   background: rgba(255, 255, 255, .022);
+}
+
+.choices button.choice-question.choice-question-direction,
+button.choice-question.choice-question-direction {
+  align-items: center;
+}
+
+.choice-label {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.choice-cost-meta {
+  justify-self: end;
+  color: rgba(237, 241, 238, .46);
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.question-section-key .choice-cost-meta {
+  color: rgba(255, 204, 128, .62);
+}
+
+.choice-direction-kicker {
+  color: rgba(139, 228, 212, .72);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
 }
 
 .question-section-key .choice-question {
@@ -1723,6 +1867,17 @@ button:active:not(:disabled) {
   color: rgba(237, 241, 238, .44);
   opacity: .72;
   background: rgba(255, 255, 255, .012);
+}
+
+@media (max-width: 620px) {
+  .choices button.choice-question {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .choice-cost-meta {
+    justify-self: start;
+  }
 }
 
 .question-menu-card {
@@ -1767,6 +1922,72 @@ button:active:not(:disabled) {
   padding-right: 3px;
   overflow-y: auto;
   scrollbar-color: rgba(101, 214, 194, .45) transparent;
+}
+
+.helper-prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px dashed rgba(101, 214, 194, .28);
+  border-radius: 8px;
+  background: rgba(7, 18, 18, .62);
+}
+
+.helper-prompt > span:not(.helper-avatar) {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.helper-prompt b {
+  color: rgba(237, 241, 238, .88);
+  font-size: 12px;
+}
+
+.helper-prompt small {
+  color: rgba(237, 241, 238, .48);
+  font-size: 10px;
+}
+
+.helper-prompt-closed button {
+  min-height: 34px;
+  margin-left: auto;
+  padding: 7px 10px;
+  color: rgba(139, 228, 212, .9);
+  border-color: rgba(101, 214, 194, .32);
+  background: rgba(101, 214, 194, .08);
+  font-size: 12px;
+}
+
+.helper-prompt-open {
+  align-items: flex-start;
+  border-style: solid;
+}
+
+.helper-avatar {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #0a1715;
+  border-radius: 4px;
+  background: rgba(139, 228, 212, .9);
+  font-size: 15px;
+  font-weight: 950;
+  image-rendering: pixelated;
+}
+
+.helper-prompt-open p {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+  margin: 0;
+  color: rgba(237, 241, 238, .78);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .question-menu-options .choice-group {
@@ -4433,6 +4654,26 @@ button.evidence-target {
   margin: 0;
 }
 
+.call-stage-direction {
+  width: min(88%, 36rem);
+  margin: 0.15rem auto;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.call-stage-direction span::before,
+.call-stage-direction span::after {
+  content: "—";
+  margin: 0 0.35rem;
+  opacity: 0.55;
+}
+
+.call-pause {
+  height: 0.65rem;
+}
+
 .scene-evidence-card {
   justify-self: start;
   display: grid;
@@ -4853,10 +5094,81 @@ button.evidence-target {
 
 @media (prefers-reduced-motion: reduce) {
   .screen-effect,
+  .pixel-transition,
   .evidence-workbench.marked.hit::before,
   .evidence-workbench.marked.hit::after {
     animation: none;
     opacity: 0;
+  }
+}
+
+.pixel-transition {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  pointer-events: none;
+  background: #07100f;
+  animation: pixel-transition-out 920ms steps(8, end) forwards;
+}
+
+.pixel-transition-grid {
+  position: absolute;
+  inset: -8px;
+  opacity: .58;
+  background:
+    linear-gradient(90deg, transparent 50%, rgba(101, 214, 194, .2) 50%) 0 0 / 32px 32px,
+    linear-gradient(transparent 50%, rgba(212, 180, 106, .14) 50%) 0 0 / 32px 32px,
+    #07100f;
+  image-rendering: pixelated;
+  animation: pixel-grid-shift 480ms steps(6, end) both;
+}
+
+.pixel-transition p {
+  position: relative;
+  display: grid;
+  min-width: min(76vw, 340px);
+  gap: 5px;
+  margin: 0;
+  padding: 18px 24px;
+  text-align: center;
+  border: 4px solid rgba(139, 228, 212, .82);
+  background: rgba(5, 12, 12, .94);
+  box-shadow: 10px 10px 0 rgba(212, 180, 106, .34);
+  image-rendering: pixelated;
+}
+
+.pixel-transition small {
+  color: rgba(139, 228, 212, .76);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.pixel-transition b {
+  color: #f3edda;
+  font-size: clamp(23px, 5vw, 38px);
+  line-height: 1.15;
+  letter-spacing: .08em;
+}
+
+@keyframes pixel-grid-shift {
+  from { transform: translate(-32px, 32px) scale(1.08); }
+  to { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes pixel-transition-out {
+  0%, 56% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-transition {
+    display: none;
+    animation: none;
   }
 }
 /* AVG dialogue presentation: content remains in the source DOM; only this render layer paginates it. */
@@ -4929,6 +5241,10 @@ button.evidence-target {
   .topbar { grid-template-columns: minmax(0, 1fr) repeat(3, auto); gap: 6px; }
   .topbar button { min-height: 36px; padding: 6px 8px; font-size: 12px; white-space: nowrap; }
   .topbar > button[data-action="title"] { overflow: hidden; text-overflow: ellipsis; }
+  .audio-settings > summary { min-height: 36px; padding: 6px 8px; font-size: 12px; }
+  .audio-settings-panel { position: fixed; top: 58px; right: 8px; left: auto; }
+  .audio-playback { grid-template-columns: auto minmax(80px, 1fr); }
+  .audio-playback output { grid-column: 1 / -1; text-align: right; }
   .story-grid.case-vn-grid.live-console-shell,
   .story-grid.case-vn-grid.live-console-shell.has-control-deck { grid-template-columns: minmax(0, 1fr); }
   .live-console-shell.has-control-deck > .control-deck,

@@ -61,11 +61,12 @@ export function scenePromptExchangeHtml({ scene = {} } = {}) {
   ].join("");
 }
 
-export function sceneQuestionAnswerHtml({ question = "", answer = "" } = {}) {
+export function sceneQuestionAnswerHtml({ question = "", answer = "", resistanceBeat = null } = {}) {
   return `
     <section class="question-answer-card">
       <div class="call-dialogue">
         ${callLineHtml({ role: "host", text: question })}
+        ${resistanceBeatLinesHtml(resistanceBeat)}
         ${callLineHtml({ role: "caller", text: answer })}
       </div>
     </section>
@@ -90,8 +91,13 @@ export function keyChoiceExchangeHtml({ scene = {}, pick = {}, fallbackAnswer = 
   const answer = safePick.answer ?? fallbackAnswer ?? "";
   return [
     callLineHtml({ role: "host", text: question }),
+    resistanceBeatLinesHtml(safePick.resistanceBeat),
     answer ? callLineHtml({ role: "caller", text: answer }) : ""
   ].join("");
+}
+
+function resistanceBeatLinesHtml(resistanceBeat = null) {
+  return (resistanceBeat?.lines ?? []).map((line) => callLineHtml(line)).join("");
 }
 
 function flowGroup(content) {
@@ -117,6 +123,10 @@ function stanceSnapshotOptionHtml(option = {}, optionIndex = 0, pick = null) {
 }
 
 function callLineHtml(line = {}) {
+  if (line.role === "pause") return '<div class="call-pause" aria-hidden="true"></div>';
+  if (line.role === "stage") {
+    return `<div class="call-stage-direction"><span>${escapeHtml(line.text ?? "")}</span></div>`;
+  }
   const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";

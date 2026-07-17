@@ -14,7 +14,11 @@
       "WebFetch(domain:zhuanlan.zhihu.com)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:lab.indienova.com)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(rg -n \"helperHint|suspicionLabel|timelineSort|audioCueId\" src/ui/*.js src/app.js src/sound.js)",
+      "Bash(rg -n \"v-bro\" -A 8 content/characters/*.json src/generated/contentPackIndex.js)",
+      "Bash(rg -n \"3301|新阳信贷|吹风机\" content/packs/steam-demo-01/cases/*.json)",
+      "Bash(awk -F: '{print $1\" line \"$2}')"
     ],
     "additionalDirectories": [
       "/Users/pkuiloveoov/code/love/src/runtime"

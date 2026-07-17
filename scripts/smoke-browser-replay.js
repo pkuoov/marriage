@@ -6,12 +6,12 @@ import { dirname, resolve } from "node:path";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
 const routes = [
-  { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-rotation" }, dayChoiceText: { "day-restaurant": "位置难订是真的" }, opener: "常客的轮订规律", openerText: "确认不了那份专门", callerQuestion: "ask-fifty-thousand" },
-  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "哪一个断点让他第一次开口", callerQuestion: "ask-fifty-thousand" },
-  { name: "restaurant-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, dayChoiceText: { "day-restaurant": "会员号不外传" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "这个主语我昨晚没说", callerQuestion: "dont-answer-for-her" },
-  { name: "material-miss-accounting-restaurant", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "哪一个断点让他第一次开口", callerQuestion: "ask-fifty-thousand" },
-  { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "哪一个断点让他第一次开口", callerQuestion: "ask-fifty-thousand" },
-  { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "这个主语我昨晚没说", callerQuestion: "dont-answer-for-her" }
+  { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-rotation" }, dayChoiceText: { "day-restaurant": "位置难订是真的" }, opener: "常客的轮订规律", openerText: "他只说提前订了", callerQuestion: "ask-fifty-thousand" },
+  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "每月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
+  { name: "restaurant-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, dayChoiceText: { "day-restaurant": "会员号不能给" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "会员号在你手上", callerQuestion: "dont-answer-for-her" },
+  { name: "material-miss-accounting-restaurant", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "每月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
+  { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "每月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
+  { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "会员号在你手上", callerQuestion: "dont-answer-for-her" }
 ];
 const smokeTarget = process.env.SMOKE_TARGET ?? "all";
 
@@ -45,6 +45,26 @@ console.log(smokeTarget === "case34"
     : smokeTarget === "case2-transition"
       ? "Browser replay smoke passed: case2-day-map, case-transition"
     : `Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition"].join(", ")}`);
+
+async function assertAudioSettings(page) {
+  await page.locator("[data-audio-settings] > summary").click();
+  if (await page.locator("[data-audio-volume]").count() !== 5) {
+    throw new Error("audio settings should expose master, BGM, ambience, SFX, and voice buses");
+  }
+  await page.locator('[data-audio-volume="master"]').evaluate((input) => {
+    input.value = "0.4";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await page.waitForFunction(() => {
+    const stored = JSON.parse(localStorage.getItem("livestream-detective-audio-settings-v1") || "{}");
+    return stored.master === 0.4 && stored.voice === 1;
+  });
+  await page.locator("[data-audio-mute]").click();
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem("livestream-detective-audio-settings-v1") || "{}").enabled === false);
+  await page.locator("[data-audio-settings] > summary").click();
+  await page.locator("[data-audio-mute]").click();
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem("livestream-detective-audio-settings-v1") || "{}").enabled === true);
+}
 
 async function launchBrowser() {
   const chromePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE ?? "";
@@ -102,8 +122,14 @@ async function runRoute(route) {
   page.setDefaultTimeout(8000);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-${route.name}-${Date.now()}&storyKey=steam-demo-01`);
+    if (route.name === "accounting-restaurant") await assertAudioSettings(page);
     if (route.inputMode === "gamepad") await connectGamepad(page);
     await activate(page, route, "[data-start-story]");
+    if (route.name === "accounting-restaurant") {
+      if (await page.locator(".pixel-transition").count() !== 1) throw new Error("night shell should mount one pixel transition overlay");
+      const pointerEvents = await page.locator(".pixel-transition").evaluate((element) => getComputedStyle(element).pointerEvents);
+      if (pointerEvents !== "none") throw new Error("pixel transition must never block player input");
+    }
     if (await page.locator("[data-enter-first-case]").count()) {
       await assertVisibleText(page, "先听完，账和话一件件对。", "night shell prologue should establish the host and show premise");
       await assertNoPageText(page, "试玩已收麦", "night shell prologue must not display the story-pack completion HUD");
@@ -116,6 +142,8 @@ async function runRoute(route) {
     await activate(page, route, '[data-scene="sceneReview"]');
     const visualStates = new Set();
     const portraitStates = new Set();
+    let helperChecked = false;
+    let directionChoiceChecked = false;
 
     for (let beat = 0; beat < 48; beat += 1) {
       await collectLiveVisualState(page, visualStates, portraitStates);
@@ -132,7 +160,7 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-enter-post-live]").count()) {
-        await assertVisibleText(page, "电话轻轻挂了。没有摔，就是轻轻的。", "overnight route should show the hangup line before the show ends");
+        await assertVisibleText(page, "电话没摔，只轻轻断了。", "overnight route should show the authored hangup line before the show ends");
         await assertNoPageText(page, "账单、到期日、她要垫多少", "Zhao's private call must not happen while the show is still live");
         await activate(page, route, "[data-enter-post-live]");
         continue;
@@ -176,6 +204,18 @@ async function runRoute(route) {
         await activate(page, route, "[data-after-stance-snapshot]");
         continue;
       }
+      if (await page.locator("[data-live-counter-choice]").count()) {
+        await activate(page, route, "[data-live-counter-choice]", 0);
+        continue;
+      }
+      if (await page.locator("[data-continue-live-counter]").count()) {
+        if (route.name === "accounting-restaurant") {
+          await assertVisibleText(page, "他在听。", "night-B counter-pressure should interrupt between two live scenes");
+          await assertVisibleText(page, "让他听。", "the host must answer the relayed counter-pressure without putting the other party on mic");
+        }
+        await activate(page, route, "[data-continue-live-counter]");
+        continue;
+      }
       if (await page.locator("[data-open-question-menu]").count()) {
         await activate(page, route, "[data-open-question-menu]");
         await page.locator(".question-menu-card").waitFor({ state: "visible" });
@@ -195,6 +235,16 @@ async function runRoute(route) {
         continue;
       }
       await page.locator(".scene-question-group").waitFor({ state: "visible" });
+      if (!helperChecked && route.name === "accounting-restaurant" && await page.locator("[data-scene-helper]").count()) {
+        const beforeHelp = await savedHelpInvariant(page);
+        await activate(page, route, "[data-scene-helper]");
+        await page.locator(".helper-prompt-open").waitFor({ state: "visible" });
+        await assertVisibleText(page, "V哥", "V哥 should only speak after the player asks for help");
+        const afterHelp = await savedHelpInvariant(page);
+        if (afterHelp.helperCount !== beforeHelp.helperCount + 1) throw new Error("V哥 help should persist exactly one scene hint record");
+        if (afterHelp.budgets !== beforeHelp.budgets || afterHelp.routes !== beforeHelp.routes) throw new Error("V哥 help must not change patience budgets or route scoring");
+        helperChecked = true;
+      }
       if (route.sceneMode === "outer") {
         const dialogueButtons = page.locator("[data-scene-dialogue]");
         if (await dialogueButtons.count() > 0) {
@@ -206,7 +256,20 @@ async function runRoute(route) {
         }
       }
       const questionIndex = route.sceneMode === "outer" && await page.locator("[data-scene-question]").count() > 1 ? 1 : 0;
+      const selectedQuestion = page.locator("[data-scene-question]").nth(questionIndex);
+      const directionLabel = await selectedQuestion.locator(".choice-direction-kicker").count()
+        ? await selectedQuestion.locator(".choice-text").innerText()
+        : "";
       await activate(page, route, "[data-scene-question]", questionIndex);
+      if (directionLabel && !directionChoiceChecked) {
+        const expectedSpokenQuestion = {
+          "八万里的五万缺口": "剩下那五万多，你问过他是什么吗？",
+          "账单日期和交往时间": "这些账单上的日子，你们当时在一起吗？"
+        }[directionLabel];
+        if (expectedSpokenQuestion) await assertVisibleText(page, expectedSpokenQuestion, "direction choice should turn into Lin Xuyang's authored spoken question");
+        await assertNoPageText(page, `林旭阳\n${directionLabel}`, "direction label must not replace the protagonist's spoken line");
+        directionChoiceChecked = true;
+      }
       await advanceSceneBeat(page, route);
     }
 
@@ -214,11 +277,14 @@ async function runRoute(route) {
     if (visualStates.size < 2 || portraitStates.size < 2) {
       throw new Error(`${route.name} route should change scene and portrait states while questioning`);
     }
+    if (route.name === "accounting-restaurant" && (!helperChecked || !directionChoiceChecked)) {
+      throw new Error("primary browser route must exercise both V哥 help and a direction-only question");
+    }
     const materialIndex = route.materialMode === "miss" ? 1 : 0;
     const materialButtons = page.locator("[data-evidence-check]");
     await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
     if (route.name === "accounting-restaurant") {
-      await assertVisibleText(page, "账单我再说一遍", "perfect route should show testimony revision after the material hit");
+      await assertVisibleText(page, "这张账我重说", "perfect route should show testimony revision after the material hit");
     }
     if (route.name === "material-miss-accounting-restaurant") {
       await assertVisibleText(page, "这卡上像戒了的样子吗？", "material-miss route should show pity line after the first miss");
@@ -245,6 +311,17 @@ async function runRoute(route) {
   }
 }
 
+async function savedHelpInvariant(page) {
+  return page.evaluate(() => {
+    const save = JSON.parse(localStorage.getItem("livestream-detective-save-v1") || "{}");
+    return {
+      helperCount: Object.keys(save.helperHintPicks || {}).length,
+      budgets: JSON.stringify(save.caseBudgets || {}),
+      routes: JSON.stringify(save.routeChoiceLog || {})
+    };
+  });
+}
+
 async function completeCase1Interlude(page, route) {
   await assertVisibleText(page, "幕间调查台", `${route.name} must pass through the short interlude before the day map`);
   await activate(page, route, '[data-interlude-action="zhao-zhou-frame"]');
@@ -263,8 +340,8 @@ async function runCase3DayRoutes() {
       { id: "day-profile-cousin-doorstep", text: "门只开到防盗链" }
     ],
     opener: "介绍人双边记录",
-    openerText: "‘收入稳’是她添的",
-    conflictText: "给女方家抬高了哪句"
+    openerText: "‘收入稳’，她给我家加的",
+    conflictText: "她替你家添了‘收入稳’"
   });
 }
 
@@ -276,12 +353,12 @@ async function runCase4AdvisorConflict() {
     interludeChoice: "work-frame-lin",
     interludeText: "赵律师站在控制室门口",
     dayScenes: [
-      { id: "day-work-finance-window", text: "要核付款，请报回单号" },
-      { id: "day-work-breakroom-observe", text: "三页都摆在这儿" }
+      { id: "day-work-finance-window", text: "核付款，报回单号" },
+      { id: "day-work-breakroom-observe", text: "这三页我给你并着看" }
     ],
     opener: "小林主责框架",
-    openerText: "想要这个位置是我的",
-    conflictText: "哪句是你主动要的"
+    openerText: "位置，是我想要的",
+    conflictText: "你认‘我来扛’"
   });
 }
 
@@ -303,9 +380,10 @@ async function openCaseAtChapter(page, chapter, name) {
   await click(page, '[data-scene="sceneReview"]');
 }
 
-async function advanceNightCaseToOvernightHangup(page) {
+async function advanceNightCaseToOvernightHangup(page, portraitAssets = null) {
   for (let beat = 0; beat < 48; beat += 1) {
-    if (await page.locator("[data-enter-post-live]").count()) return;
+    await collectPortraitAsset(page, portraitAssets);
+    if (await page.locator("[data-enter-post-live], [data-enter-interlude]").count()) return;
     if (await page.locator("[data-evidence-check]").count()) {
       await click(page, "[data-evidence-check]");
       continue;
@@ -337,6 +415,7 @@ async function advanceNightCaseToOvernightHangup(page) {
     }
     await page.locator("[data-scene-question]").first().waitFor({ state: "visible" });
     await click(page, "[data-scene-question]");
+    await collectPortraitAsset(page, portraitAssets);
     await click(page, "[data-next-scene-stage], button[data-scene]");
   }
   throw new Error("targeted case did not reach overnight hangup");
@@ -353,7 +432,7 @@ async function runCase2DayMap() {
       { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
     ],
     opener: "吹风机回放",
-    openerText: "我把背景剪掉了"
+    openerText: "是我把它剪掉"
   });
   await runOfflineDayMap({
     chapter: 2,
@@ -367,7 +446,7 @@ async function runCase2DayMap() {
       { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
     ],
     opener: "女客拉群立场",
-    openerText: "你支持她拉群要说法"
+    openerText: "你支持她留表"
   });
   await runOfflineDayMap({
     chapter: 2,
@@ -381,7 +460,7 @@ async function runCase2DayMap() {
       { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
     ],
     opener: "咨询者止损立场",
-    openerText: "顺手把她那张同款表也压下去"
+    openerText: "你说止损"
   });
 }
 
@@ -394,9 +473,18 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
   page.setDefaultTimeout(8000);
   try {
     await openCaseAtChapter(page, chapter, name);
-    await advanceNightCaseToOvernightHangup(page);
+    const portraitAssets = chapter === 2 ? new Set() : null;
+    if (chapter === 2) await assertCase2PixelPortrait(page);
+    await advanceNightCaseToOvernightHangup(page, portraitAssets);
+    if (chapter === 2) {
+      ["neutral", "guarded", "pause"].forEach((kind) => {
+        if (![...portraitAssets].some((src) => src.includes(`caller_salon_${kind}_pixel.png`))) {
+          throw new Error(`${name} must render the case-2 ${kind} pixel portrait during the live call`);
+        }
+      });
+    }
     await assertNoPageText(page, "第二天，下午", `${name} must show the hangup before daytime`);
-    await click(page, "[data-enter-post-live]");
+    await click(page, "[data-enter-post-live], [data-enter-interlude]");
     if (await page.locator("[data-interrupt-choice]").count()) {
       await click(page, "[data-interrupt-choice]");
       await click(page, "[data-return-interlude]");
@@ -484,7 +572,7 @@ async function completeOvernightDay(page, route) {
       for (const rowId of route.documentRows ?? ["r08", "r11"]) {
         await activate(page, route, `[data-document-row="${rowId}"]`);
       }
-      await assertVisibleText(page, "五万进,三天后四万九千八出——这算周转吗?", "document route should unlock the r08/r11 cross question");
+      await assertVisibleText(page, "七月五日五万进，七月十九日四万九千八出——这算周转吗？", "document route should unlock the r08/r11 cross question");
     }
     if (await page.locator("[data-day-choice]").count()) {
       const choiceId = route.dayChoices?.[sceneId];
@@ -709,6 +797,27 @@ async function collectLiveVisualState(page, visualStates, portraitStates) {
   }));
   if (state.scene) visualStates.add(state.scene);
   if (state.portrait) portraitStates.add(state.portrait);
+}
+
+async function assertCase2PixelPortrait(page) {
+  const portrait = page.locator(".case-portrait.art-pixel img").first();
+  await portrait.waitFor({ state: "visible" });
+  const state = await portrait.evaluate((element) => ({
+    src: element.getAttribute("src") ?? "",
+    imageRendering: getComputedStyle(element).imageRendering
+  }));
+  if (!["neutral", "guarded", "pause"].some((kind) => state.src.includes(`caller_salon_${kind}_pixel.png`))) {
+    throw new Error("case-2 live call must start from one of the authored pixel portrait states");
+  }
+  if (state.imageRendering !== "pixelated") {
+    throw new Error(`case-2 pixel portrait must use nearest-neighbor rendering, got ${state.imageRendering}`);
+  }
+}
+
+async function collectPortraitAsset(page, assets) {
+  if (!assets) return;
+  const src = await page.locator(".case-portrait img:visible").first().getAttribute("src").catch(() => "");
+  if (src) assets.add(src);
 }
 
 async function keyboardActivate(page, selector, index = 0) {

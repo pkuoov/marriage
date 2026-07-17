@@ -367,9 +367,9 @@ Use the supplied Chen neutral V2 candidate as the exact character reference. Sam
   [x] 追问分组 + 非剧透成本 hint
   [x] 幕间「剩余 N」+ 卡上「耗时」
   [x] Recap ≤3 页
-  [ ] 四案 callerArt 为 V2；匿名不回退主播正脸（安全回退已完成；待四张 V2 原生透明 PNG）
+  [~] 四案 callerArt 统一方向：旧 V2 全量替换已被 2026-07-16 的像素迁移决策取代；案 2 像素三态已接入，其余三案等真人样张验收
   [x] 顾问分歧有头像槽（当前为姓氏剪影占位）
-  [ ]（E 后）guarded/pause 接到 expression.kind（运行时映射与 neutral 回退已完成；待 8 张差分图）
+  [x] 案 2 guarded/pause 接到 expression.kind，并保留 neutral 安全回退；其余三案不在样张验收前批量生产
 ```
 
 ---

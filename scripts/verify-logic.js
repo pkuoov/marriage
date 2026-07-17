@@ -3,13 +3,16 @@ import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapTex
 import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.68";
 import { requiredContradictionsForCase, truthBoundaryPromptLimitForCase } from "../src/difficulty.js?v=0.20.68";
 import { migrateState } from "../src/state.js?v=0.20.68";
-import { CONTENT_ADVISORS } from "../src/generated/contentPackIndex.js?v=0.20.87";
+import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.23.0";
 import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.68";
 import { NPCS } from "../src/story.js?v=0.20.68";
 import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.68";
+import { AUDIO_CUES, audioCueView } from "../src/audioCatalog.js?v=0.22.0";
 import { platformRuntime } from "../src/platformRuntime.js?v=0.20.68";
 import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.68";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.68";
+import { audioBusGain, normalizeAudioSettings, updateAudioBusVolume } from "../src/runtime/audioModel.js?v=0.22.0";
+import { ambienceCueForBackdrop, audioScenePlan } from "../src/runtime/audioSceneModel.js?v=0.22.0";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.68";
 import { actionDoneForState, answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedEvidencePicksForState, selectedInvestigationPicksForState, selectedScenePickForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "../src/runtime/caseStateSelectors.js?v=0.20.68";
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyHiddenThreadProfile, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
@@ -18,17 +21,20 @@ import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "
 import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js?v=0.21.0";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
-import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.78";
+import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatById, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.78";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
+import { audioSettingsPanelHtml } from "../src/ui/audioSettingsView.js?v=0.22.0";
+import { formatAudioTime } from "../src/ui/audioController.js?v=0.24.1";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialRows, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
+import { audioPlaybackControlsHtml, interludePlaybackActionHtml } from "../src/ui/interludeDeskView.js?v=0.21.3";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.21.4";
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, offMicLettersHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
-import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js?v=0.21.1";
+import { focusedQuestionOptions, playerQuestionLabel, sceneDialogueOptions, sceneQuestionChoicesHtml, sceneQuestionMenuHtml } from "../src/ui/sceneQuestions.js?v=0.23.0";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.21.1";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "../src/ui/caseTransitionView.js?v=0.20.96";
@@ -160,6 +166,54 @@ test("PLATFORM-002", "save store wraps storage for future desktop saves", () => 
   fileStore.remove("desktop-save");
   assertEqual(fileStore.read("desktop-save"), null, "桌面文件桥缺失值必须归一成 null");
   assertEqual(touchedStorage.length, 0, "桌面文件桥存在时不能再落回 localStorage");
+});
+
+test("AUDIO-001", "audio buses clamp, persist independently, and duck scene beds under voice", () => {
+  const normalized = normalizeAudioSettings({ enabled: true, master: 2, bgm: -1, ambience: 0.4, sfx: "0.6", voice: 0.9 });
+  assertEqual(normalized.master, 1, "主音量必须钳制到 1");
+  assertEqual(normalized.bgm, 0, "BGM 音量不能低于 0");
+  assertEqual(normalized.sfx, 0.6, "字符串滑杆值必须归一成数值");
+  const changed = updateAudioBusVolume({ ...normalized, bgm: 0.5 }, "voice", 0.35);
+  assertEqual(changed.voice, 0.35, "语音音量必须能独立更新");
+  assertEqual(changed.ambience, 0.4, "更新语音不能改写环境音");
+  assert(audioBusGain(changed, "bgm", { ducked: true }) < audioBusGain(changed, "bgm"), "语音播放时必须压低 BGM");
+  assertEqual(audioBusGain({ ...changed, enabled: false }, "voice"), 0, "总静音必须压住所有总线");
+});
+
+test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
+  assertEqual(audioScenePlan({ scene: "title" }).bgmCueId, "bgm.title-nightshift", "标题页必须有稳定 BGM cue");
+  assertEqual(audioScenePlan({ scene: "nightShellPrologue" }).enterSfxCueId, "sfx.broadcast.on-air", "首夜开播必须触发真实 ON AIR 音效");
+  assertEqual(audioScenePlan({ scene: "caseOpen" }).enterSfxCueId, "sfx.phone.connect", "案件接线必须触发真实接通音效");
+  assertEqual(audioScenePlan({ scene: "sceneReview", pressureLevel: "low" }).bgmCueId, "bgm.pressure-stem", "耐心偏低时必须切到压力层");
+  assertEqual(audioScenePlan({ scene: "overnightCallback" }).bgmCueId, "bgm.callback-return", "第二夜回拨必须使用回拨 cue");
+  assertEqual(audioScenePlan({ scene: "liveCounterBeat" }).ambienceCueId, "ambience.studio-line", "实时反压仍在直播中，不能误切到收麦后台声场");
+  assertEqual(ambienceCueForBackdrop("day-restaurant"), "ambience.restaurant", "餐厅背景必须映射餐厅环境音");
+  assertEqual(ambienceCueForBackdrop("day-studio"), "ambience.archive-studio", "工作室背景必须映射室内工作环境音");
+  ["sfx.case1.lamp-drag", "voice.case2.dryer-message", "voice.case3.dinner-pause", "voice.case4.pad-message", "voice.case4.supplier-message"].forEach((cueId) => {
+    assert(AUDIO_CUES[cueId], `必要剧情 cue 不得从目录消失: ${cueId}`);
+  });
+  assertEqual(audioCueView("voice.case2.dryer-message")?.available, false, "未交付资产的 cue 必须安全保持不可播放");
+  ["sfx.phone.connect", "sfx.phone.disconnect", "sfx.broadcast.on-air", "sfx.message.notification", "sfx.document.mark"].forEach((cueId) => {
+    assertEqual(audioCueView(cueId)?.available, true, `试玩关键音效必须有可播放资产: ${cueId}`);
+  });
+});
+
+test("AUDIO-003", "audio UI keeps visible transcripts and exposes accessible controls only for ready cues", () => {
+  const settingsHtml = audioSettingsPanelHtml({ enabled: true, master: 0.8, bgm: 0.5, ambience: 0.4, sfx: 0.7, voice: 1 });
+  ["master", "bgm", "ambience", "sfx", "voice"].forEach((busId) => {
+    assertIncludes(settingsHtml, `data-audio-volume="${busId}"`, `声音设置必须包含 ${busId} 滑杆`);
+  });
+  assertIncludes(settingsHtml, "data-audio-mute", "声音设置必须保留一键静音");
+  const cue = { id: "voice.test", available: true };
+  const controls = audioPlaybackControlsHtml(cue);
+  assertIncludes(controls, "data-audio-play", "可用语音必须显示播放/暂停按钮");
+  assertIncludes(controls, "data-audio-seek", "可用语音必须显示进度拖动条");
+  const playback = interludePlaybackActionHtml({ summary: "听原话", script: { clipLine: "文字原句仍在。", hostNote: "只按可见事实判断。" } }, cue);
+  assertIncludes(playback, "文字原句仍在。", "语音线索必须始终保留可见逐字稿");
+  assertIncludes(playback, "data-audio-play", "有资产时回放卡必须接入语音控制");
+  assert(!interludePlaybackActionHtml({ script: { clipLine: "无资产也可读。" } }, { id: "voice.missing", available: false }).includes("data-audio-play"), "未交付资产不能显示假播放按钮");
+  assertEqual(formatAudioTime(65.9), "01:05", "录音控制器必须稳定格式化分钟和秒数");
+  assertEqual(formatAudioTime(-4), "00:00", "录音控制器不能显示负时间");
 });
 
 test("ROUTE-002", "route log helpers infer axis, tone, and dominant profile outside app rendering", () => {
@@ -589,6 +643,16 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   const dialogueOptions = sceneDialogueOptions(scene, questionOptions);
   const questionHtml = sceneQuestionChoicesHtml(2, scene, []);
   const askedQuestionHtml = sceneQuestionChoicesHtml(2, scene, [{ optionIndex: 0, question: dialogueOptions[0].option.question, answer: "有一点。" }]);
+  const directionScene = {
+    helperHint: "把八万和已经说清的消费分开看。",
+    questionOptions: [
+      { question: "剩下那五万多，你问过他是什么吗？", suspicionLabel: "八万里的五万缺口", answer: "问过。", contradiction: "缺口未解释。" },
+      { question: "这些账单上的日子，你们当时在一起吗？", suspicionLabel: "账单日期和交往时间", answer: "有些在。", contradiction: "时间待核。" }
+    ]
+  };
+  const directionHtml = sceneQuestionChoicesHtml(4, directionScene, []);
+  const helperClosedHtml = sceneQuestionMenuHtml(4, directionScene, [], { helper: CONTENT_HELPER_NPCS["v-bro"], helperRevealed: false });
+  const helperOpenHtml = sceneQuestionMenuHtml(4, directionScene, [], { helper: CONTENT_HELPER_NPCS["v-bro"], helperRevealed: true });
   assertIncludes(questionHtml, "scene-question-group", "当前节点必须把所有主播问题放进同一面板");
   assertIncludes(questionHtml, "data-scene-dialogue=\"2:0\"", "随意提问必须有独立事件入口，不结束当前段落");
   assertIncludes(questionHtml, "data-scene-question=\"2:1\"", "关键追问仍要保留可点击数据");
@@ -598,6 +662,17 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(questionHtml, "question-section-key", "推进原话必须有独立视觉分区");
   assertIncludes(questionHtml, "追原话", "推进选择必须使用场内语义，不能写设计师术语");
   assertIncludes(questionHtml, "消耗听众耐心", "追问区必须给出非剧透成本提示");
+  assertIncludes(questionHtml, "补问 · 不收束", "每个背景补问按钮必须直接说明不会收束本句");
+  assertIncludes(questionHtml, "收束 · 未命中 −1 耐心", "每个正式追问按钮必须直接说明推进与失败成本");
+  assertIncludes(askedQuestionHtml, "已问过", "已使用的背景补问必须把按钮代价位改成完成态");
+  assertIncludes(directionHtml, "八万里的五万缺口", "方向式节点必须显示玩家选择的疑点短标签");
+  assert(!directionHtml.includes("剩下那五万多，你问过他是什么吗？"), "方向式节点在选择前不能暴露主播完整句子");
+  assertEqual(playerQuestionLabel(directionScene.questionOptions[0]), "八万里的五万缺口", "玩家可见标签必须优先使用 suspicionLabel");
+  assertIncludes(helperClosedHtml, "求助 V哥", "V哥必须只以玩家主动求助入口出现");
+  assert(!helperClosedHtml.includes(directionScene.helperHint), "玩家未求助前不能自动显示 V哥提示");
+  assertIncludes(helperOpenHtml, directionScene.helperHint, "玩家求助后必须显示当前场景的 V哥提示");
+  assert(!helperOpenHtml.includes("求助 V哥"), "提示展开后不应重复提供求助按钮");
+  assert(CONTENT_HELPER_NPCS["v-bro"] && !CONTENT_ADVISORS["v-bro"], "V哥必须与专业顾问注册表分离");
   assert(dialogueOptions.every((row) => scene.casualQuestions.some((option) => option.question === row.option.question)), "有 casualQuestions 时普通区不能继续回收关键选择里的外围项");
   ["普通提问", "关键选择", "核心问题", "推荐", "路线轴", "会推进剧情", "不推进剧情", "正确答案", "加分", "必选"].forEach((term) => {
     assert(!questionHtml.includes(term), `提问面板不得泄露后台类型：${term}`);
@@ -755,6 +830,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(packageSource, "\"steam:preflight\"", "Steam 发版必须有本地 preflight 检查入口");
   assertIncludes(packageSource, "\"smoke:desktop\"", "桌面 staging 必须有不启动 Electron 的文件烟测");
   assertIncludes(packageSource, "\"smoke:browser\"", "大测试必须有真实浏览器回放 smoke 入口");
+  assertIncludes(packageSource, "\"verify:audio\"", "全套校验必须检查音频 cue 与资产状态");
   assertIncludes(packageSource, "\"electron-builder\"", "Windows 打包入口必须声明 electron-builder 依赖");
   assertIncludes(packageSource, "scripts/smoke-desktop.js", "check 必须语法检查桌面烟测脚本");
   assertIncludes(packageSource, "scripts/smoke-browser-replay.js", "check 必须语法检查浏览器回放脚本");
@@ -773,6 +849,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assert(!/http\.server|127\.0\.0\.1|localhost/i.test(windowsPlaySource), "Windows 一键试玩不能依赖本地端口或 dev server");
   assert(!buildStaticSource.includes("rm(dist"), "H5 构建不能删除整个 dist，否则会和 dist/playable 构建互相踩目录");
   assertIncludes(buildStaticSource, "cleanStaticBuildTargets", "H5 构建必须只清理自己的静态目标");
+  assertIncludes(buildStaticSource, 'resolve(root, "assets")', "H5 构建必须递归带上音频资产目录");
   const desktopMainSource = readFileSync(new URL("../desktop/electron/main.cjs", import.meta.url), "utf8");
   const desktopPreloadSource = readFileSync(new URL("../desktop/electron/preload.cjs", import.meta.url), "utf8");
   const desktopBuilderSource = readFileSync(new URL("../desktop/electron-builder.json", import.meta.url), "utf8");
@@ -802,6 +879,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(buildPlayableSource, "mkdtemp", "离线 playable 构建必须先写临时目录，避免并发写 dist/playable");
   assertIncludes(buildPlayableSource, "rename(tempDir, outDir)", "离线 playable 构建必须以临时目录替换目标目录");
   assertIncludes(buildPlayableSource, "importAliasDeclarations", "离线 playable bundler 必须保留 import alias，避免 app 运行时 undefined");
+  assertIncludes(buildPlayableSource, 'copyTree(resolve(root, "assets")', "离线 playable 必须递归带上音频资产目录");
   assertIncludes(browserSmokeSource, "accounting-restaurant", "浏览器回放必须覆盖周会计档案室+餐厅白天路线");
   assertIncludes(browserSmokeSource, "restaurant-document", "浏览器回放必须覆盖餐厅+独立审流水路线");
   assertIncludes(browserSmokeSource, "day map must not allow skipping the required two daytime actions", "浏览器回放必须覆盖白天调查的两处最低门槛");
@@ -828,6 +906,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const callFlowViewSource = readFileSync(new URL("../src/ui/callFlowView.js", import.meta.url), "utf8");
   const liveFrameViewSource = readFileSync(new URL("../src/ui/liveFrameView.js", import.meta.url), "utf8");
+  const audioControllerSource = readFileSync(new URL("../src/ui/audioController.js", import.meta.url), "utf8");
   const dialoguePresentationSource = readFileSync(new URL("../src/runtime/dialoguePresentation.js", import.meta.url), "utf8");
   assertIncludes(appSource, "./ui/callFlowView.js", "通用通话气泡和按钮组 HTML 必须从 app.js 拆到 ui/callFlowView");
   assertIncludes(callFlowViewSource, "choiceReviewHtml", "上一问回看必须由纯 UI 模块渲染");
@@ -855,6 +934,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: { guarded: "guarded.png", pause: "pause.png" }, expression: { kind: "shift" } }).src, "guarded.png", "shift 表演必须切到 guarded 立绘");
   assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: { pause: "pause.png" }, expression: { kind: "pause" } }).src, "pause.png", "pause 表演必须切到 pause 立绘");
   assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: {}, expression: { kind: "pause" } }).src, "neutral.png", "缺少差分图时必须安全回退 neutral");
+  assertIncludes(portraitLayerHtml({ artSrc: "./caller_pixel.png", artStyle: "pixel" }), "art-pixel", "像素立绘必须给浏览器显式最近邻渲染标记");
   assertIncludes(portraitLayerHtml({ artSrc: "./caller.png", mood: "tense", expression: { kind: "pause", text: "停了一下" } }), "停了一下", "来电人立绘层必须可由纯 UI 模块渲染");
   const guardedPortrait = portraitLayerHtml({ artSrc: "./assets/generated/characters/shen_guarded.png", fallbackSrc: "./assets/generated/characters/shen_neutral.png", mood: "tense" });
   assertIncludes(guardedPortrait, 'data-fallback-src="./assets/generated/characters/shen_neutral.png"', "来电人差分缺图必须带 neutral 回退");
@@ -911,6 +991,22 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(completedExchange, "少了哪一页？", "已完成对话气泡组装必须保留关键追问");
   assertIncludes(completedExchange, "少了还款来源。", "已完成对话气泡组装必须保留关键回答");
   assertIncludes(keyChoiceExchangeHtml({ scene: { questionOptions: [{ question: "默认问法？", contradiction: "A" }] }, fallbackAnswer: "兜底回答" }), "兜底回答", "关键追问气泡组装必须支持存档兜底回答");
+  const resistanceHtml = keyChoiceExchangeHtml({
+    pick: {
+      question: "为什么？",
+      answer: "第二拍回答。",
+      resistanceBeat: {
+        lines: [
+          { role: "caller", text: "你们就等我这句？" },
+          { role: "stage", text: "直播间安静了两秒。" },
+          { role: "host", text: "先记下。" }
+        ]
+      }
+    }
+  });
+  assertIncludes(resistanceHtml, "你们就等我这句？", "关键追问必须先渲染来电人的抵抗拍");
+  assertIncludes(resistanceHtml, "直播间安静了两秒。", "抵抗拍必须支持舞台指示");
+  assert(resistanceHtml.indexOf("先记下。") < resistanceHtml.indexOf("第二拍回答。"), "抵抗拍必须在第二拍回答之前播放");
   assertIncludes(sceneReviewDoneChoicesHtml({ lastStage: false }), "data-next-scene-stage", "普通对话回合继续按钮必须可由纯 UI 模块渲染");
   assertIncludes(sceneReviewDoneChoicesHtml({ lastStage: true, nextStage: "evidenceCheck", nextLabel: "看材料" }), "data-scene=\"evidenceCheck\"", "末段对话回合跳转按钮必须可由纯 UI 模块渲染");
   assertIncludes(appSource, "./ui/storyInterludeView.js", "案间过渡 HTML 必须从 app.js 拆到 ui/storyInterludeView");
@@ -949,6 +1045,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(titleHtml, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
   assertIncludes(titleHtml, "林旭阳", "标题页必须交代固定主播角色");
   assertIncludes(titleHtml, "热线已接入", "标题页必须像热线接入，不提前列目录");
+  assertIncludes(titleHtml, "data-audio-settings", "标题页必须能在开始前调声音");
   assert(!/四案|4\s*案|故事集目录|第一案|第二案|第三案|第四案|主题论点/.test(titleHtml), "标题页不能提前暴露案数、目录或主题论点");
   assertIncludes(liveFrameViewSource, "liveControlDeckHtml", "案内 UI 必须由直播控场台纯 UI 模块统一生成");
   assertIncludes(liveFrameViewSource, "liveFrameHtml", "案内主舞台 HTML 必须由纯 UI 模块生成");
@@ -973,7 +1070,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(frameHtml, "live-console-shell", "案内主画面必须使用控场台布局骨架");
   assertIncludes(frameHtml, "has-control-deck", "有控场台时主舞台必须进入明确的桌面两栏状态");
   assertIncludes(frameHtml, "data-live-shell", "主舞台必须暴露稳定的交互外壳标记，不能由 app.js 复制骨架类名");
-  assertIncludes(frameHtml, "音效 开", "案内主画面 topbar 必须可由纯 UI 模块渲染");
+  assertIncludes(frameHtml, "data-audio-settings", "案内主画面 topbar 必须提供分路声音设置");
+  assertIncludes(frameHtml, "data-audio-volume=\"voice\"", "案内声音设置必须能独立调语音");
   assertIncludes(frameHtml, "scene-evidence-props", "主舞台必须有案件物件前景层，不能只有背景图和立绘");
   assertIncludes(frameHtml, "scene-props-credit", "案件物件前景层必须跟随场景背景切换");
   assertIncludes(frameHtml, "props-bill", "案件物件前景层必须跟随材料类型切换");
@@ -981,6 +1079,9 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(frameHtml, "data-material-close", "材料模态必须提供明确关闭操作");
   assertIncludes(frameHtml, "aria-expanded=\"false\"", "材料入口必须向辅助技术报告展开状态");
   assertIncludes(liveFrameHtml({ text: "<p>正文</p>", screenEffect: "patience-drop" }), "screen-effect-patience-drop", "耐心扣除必须能渲染一次性红色暗角层");
+  assertIncludes(liveFrameHtml({ text: "<p>正文</p>", pixelTransition: { eyebrow: "DAY SHIFT", label: "白天调查" } }), "pixel-transition", "大切点必须能渲染像素风过场层");
+  assertIncludes(stylesSource, "@keyframes pixel-transition-out", "像素风过场必须由短促分步动画控制");
+  assertIncludes(stylesSource, "prefers-reduced-motion: reduce", "像素风过场必须尊重减少动态效果设置");
   assertIncludes(stylesSource, ".screen-effect-material-hit", "材料命中必须有全屏 CRT 扫描反馈层");
   assertIncludes(stylesSource, ".screen-effect-patience-drop", "耐心扣除必须有红闪暗角反馈层");
   assertIncludes(stylesSource, "patienceRedVignette", "耐心扣除红闪必须由短动画控制，不应常驻");
@@ -991,6 +1092,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assert(!stylesSource.includes(".case-vn-grid .control-deck { position: absolute"), "控场台不能再被后置 AVG 样式改成遮挡舞台的绝对定位");
   assertIncludes(stylesSource, ".avg-material-modal[hidden]", "材料模态关闭后必须真正退出布局");
   assertIncludes(stylesSource, ".choices-open .avg-material-card", "选择出现时必须收起材料入口，避免两个交互层争抢");
+  assertIncludes(stylesSource, ".case-portrait.art-pixel img", "像素立绘必须使用独立的最近邻渲染规则，不能给旧立绘全局套滤镜");
   assertIncludes(stylesSource, ".deck-card-live", "控场台必须有直播信号视觉模块");
   assert(!stylesSource.includes("50% 50% 44% 44%"), "控场台主播监听不能再画成小人脸图标");
   assertIncludes(stylesSource, ".scene-evidence-props", "主舞台案件物件前景层必须有样式");
@@ -1002,6 +1104,12 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(stylesSource, ".deck-monitor-strip", "控场台必须有麦控监看条样式");
   assertIncludes(stylesSource, ".deck-material-preview", "控场台必须有材料缩略图样式");
   assertIncludes(stylesSource, ".title-console-strip", "标题页必须有直播状态条样式");
+  assertIncludes(stylesSource, ".audio-settings-panel", "分路声音设置必须有独立浮层样式");
+  assertIncludes(stylesSource, ".audio-playback", "录音回放必须有独立控制条样式");
+  assertIncludes(appSource, "./ui/audioController.js", "声音 DOM 协调必须从 app.js 拆到独立控制器");
+  assert(!appSource.includes("function bindAudioControls"), "app.js 不能重新内联声音设置事件绑定");
+  assertIncludes(audioControllerSource, "syncAudioScene", "场景声音控制器必须统一同步 BGM 与环境音");
+  assertIncludes(audioControllerSource, "toggleVoiceCue", "声音控制器必须支持录音播放与暂停");
   assert(/\.title-console-strip span[\s\S]*pointer-events: none/.test(stylesSource), "标题页 ON AIR/REC/LIVE 是状态灯，不能保留可点击区域");
   assert(/\.deck-live-metrics i[\s\S]*pointer-events: none/.test(stylesSource), "控场台 LIVE/REC 这类信号指标不能像可点击按钮");
   assertIncludes(appSource, 'document.addEventListener("keydown"', "Steam/桌面输入必须有全局键盘入口");
@@ -1062,6 +1170,8 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assertEqual(a[0].runtimeContentCaseId, "01-credit", "第一案必须记录接管它的内容包 caseId");
   assertEqual(a[1].runtimeContentSource, "content-pack-json", "第二案必须从 content JSON 接管完整运行时内容");
   assertEqual(a[1].runtimeContentCaseId, "02-tony", "第二案必须记录接管它的内容包 caseId");
+  assertEqual(a[1].callerArtStyle, "pixel", "第二案必须作为像素立绘单案样张进入运行时");
+  assertEqual(Object.keys(a[1].callerArtVariants ?? {}).sort().join("|"), "guarded|neutral|pause", "第二案像素样张必须接齐 neutral / guarded / pause 三态");
   assertEqual(a[2].runtimeContentSource, "content-pack-json", "第三案必须从 content JSON 接管完整运行时内容");
   assertEqual(a[2].runtimeContentCaseId, "03-profile", "第三案必须记录接管它的内容包 caseId");
   assertEqual(a[3].runtimeContentSource, "content-pack-json", "第四案必须从 content JSON 接管完整运行时内容");
@@ -1617,6 +1727,7 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
   assertEqual(migrated.lastPressureSignal, null, "旧存档必须补结构化现场压力状态");
   assertEqual(migrated.lastPressureAxis, null, "旧存档必须补路线轴现场压力状态");
   assertEqual(migrated.patienceLostContext, null, "旧存档必须补耐心耗尽重试上下文");
+  assertEqual(typeof migrated.helperHintPicks, "object", "旧存档必须补 V哥求助记录，且不混入路线记录");
 
   const dailyCallMigrated = migrateState({
     caseMode: "daily",
@@ -2104,6 +2215,23 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   assertIncludes(appSource, "先圈一行", "流水调查必须要求玩家实际圈行，不能空手记下离开");
   assertIncludes(appSource, "firstConflict.hostLine", "隔夜 opener 后必须渲染路线专属第一轮冲突");
+});
+
+test("RUNTIME-008B", "night-B snapshot echoes and live counter beats are selected by pure helpers", () => {
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  briefs.forEach((brief) => {
+    (brief.stanceSnapshot?.options ?? []).forEach((option) => {
+      assert(snapshotEchoFor(brief, { id: option.id }), `${brief.runtimeContentCaseId} 的 ${option.id} 必须在夜 B 归还立场押注`);
+    });
+    const beat = brief.overnightStructure?.liveCounterBeats?.[0];
+    assert(beat, `${brief.runtimeContentCaseId} 必须有夜 B 对手实时反制`);
+    assertEqual(liveCounterBeatById(brief, beat.id)?.id, beat.id, `${brief.runtimeContentCaseId} 必须能按 id 取反压拍`);
+    assertEqual(liveCounterBeatAfterScene(brief, beat.afterSceneIndex, () => false)?.id, beat.id, `${brief.runtimeContentCaseId} 必须在指定场景后插入反压拍`);
+    assertEqual(liveCounterBeatAfterScene(brief, beat.afterSceneIndex, (key) => key === `liveCounterBeat:${beat.id}`), null, `${brief.runtimeContentCaseId} 已播反压拍不得重复`);
+  });
+  const case2 = briefs.find((brief) => brief.runtimeContentCaseId === "02-tony");
+  const choice = case2.overnightStructure.liveCounterBeats[0].choices.find((item) => item.id === "ask-person-not-shop");
+  assertEqual(choice?.questionOverride?.question, "店名不说了。那列备注，你念你自己那行就行。", "案 2 避开店名路线必须带入备用首问");
 });
 
 test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential comparison as a two-stop trade-off", () => {

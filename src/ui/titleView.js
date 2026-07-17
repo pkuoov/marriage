@@ -1,10 +1,13 @@
+import { audioSettingsPanelHtml } from "./audioSettingsView.js?v=0.22.0";
+
 export function titleScreenHtml({
   productName = "直播间大侦探",
   storyPack = true,
   title = "",
   hook = "",
   object = "",
-  host = {}
+  host = {},
+  audioSettings = {}
 } = {}) {
   return `
     <main>
@@ -32,6 +35,7 @@ export function titleScreenHtml({
           </div>
           <div class="title-actions">
             <button class="primary" data-start-story type="button">${storyPack ? "接通" : "我来接一句"}</button>
+            ${audioSettingsPanelHtml(audioSettings, { placement: "title" })}
           </div>
         </div>
       </section>

@@ -13,7 +13,8 @@ function normalizeAccusationChoices(choices = [], brief = {}) {
     .map((choice) => ({
       label: choice.label,
       accuse: resolveAccuseRole(choice.accuse ?? choice.accuseRole, { respondent, complainant }),
-      response: choice.response
+      response: choice.response,
+      requiresRevisedSceneId: choice.requiresRevisedSceneId ?? null
     }))
     .filter((choice) => choice.accuse);
 }
