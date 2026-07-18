@@ -10,9 +10,20 @@
 - 案 2 来电人已经完成 `neutral / guarded / pause` 三态像素样张，并通过 `manifest.sequence[].callerArtVariants` 接到真实直播舞台；旧半写实立绘只保留为其他三案回退。
 - 三态同时保留 `256x512` 真透明母版和 `1024x2048` 最近邻放大发运版；`verify:pack` 会校验三态齐全、尺寸与 alpha，浏览器 smoke 会确认实际切图。
 
-## 单案样张已完成，暂不批量替换
+## 四案立绘已经统一
 
-案 2 已作为唯一像素立绘样张进入运行时。下一步不是立刻替换四案，而是先做完整真人试玩，确认它和现有背景、材料板、移动端对白区同屏时仍然清楚，再决定是否建立四案色板和批量资产清单。
+2026-07-18 的 P1 美术批次已将案 1、3、4 迁移到案 2 的像素舞台语言。四案现在都使用 `neutral / guarded / pause` 三态透明立绘；每态同时保留 `256x512` 母版和 `1024x2048` 最近邻发运版。旧写实 PNG 不再进入试玩运行时，但暂留仓库作为身份、服装和道具参考。
+
+新资产目录：
+
+- `assets/generated/callers/pixel-case01/`
+- `assets/generated/callers/pixel-sample-case02/`
+- `assets/generated/callers/pixel-case03/`
+- `assets/generated/callers/pixel-case04/`
+
+生成采用内置 imagegen 的 style-transfer 工作流。每案以旧来电人图作为服装与道具参考，以案 2 像素样张作为光色和像素密度参考；一次生成同人物三态横向母表，再以绿色键背景去背、切片和最近邻缩放。共同 prompt 约束如下：
+
+> authored 2D pixel art, 24–32 dominant colors, crisp hand-placed clusters, dark teal shadows and coral rim light; three equal full-body columns for neutral, guarded and pause; identical identity, outfit, prop, scale and baseline; cyan-white eye-light strip; no text, shadow, photorealism or identity-revealing eyes.
 
 样张规格：
 
@@ -28,7 +39,7 @@
 2. 与材料板、控场台和像素过场同屏时属于同一个游戏，不像贴入另一套素材。
 3. 不增加人物身份信息，不削弱匿名感。
 4. 过场不频繁盖住阅读；减少动态效果时完全静默退出。
-5. 自动 smoke 只证明接线正确；单案真人试玩通过后，才建立四案色板和批量资产清单。
+5. 自动 smoke 证明接线、切图和最近邻渲染；最终发布前仍需在真实 Steam Deck 与 `390x844` 手机上做一次人工可读性验收。
 
 ## 明确不做
 

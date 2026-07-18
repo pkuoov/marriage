@@ -240,7 +240,7 @@ P1 只承接“直播控场系统”，不再散成多个方向。当前顺序�
 - 时间线拼装。
 - 多点圈选。
 - 第二故事包。
-- 四案像素立绘迁移：案 2 样张已接入；先完成真人 UI 验收，再决定是否替换其余三案，规格见 `docs/pixel-art-transition-and-portrait-direction.md`。
+- 四案像素立绘迁移已完成：案 1/2/3/4 均接入 `neutral / guarded / pause` 三态、真透明母版与最近邻发运版；剩余仅是 Steam Deck 和手机实机可读性发布验收，规格见 `docs/pixel-art-transition-and-portrait-direction.md`。
 - playtest 观察项。
 
 ### UI 和美术资产

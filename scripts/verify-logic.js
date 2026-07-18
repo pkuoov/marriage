@@ -1394,8 +1394,10 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assertEqual(a[0].runtimeContentCaseId, "01-credit", "第一案必须记录接管它的内容包 caseId");
   assertEqual(a[1].runtimeContentSource, "content-pack-json", "第二案必须从 content JSON 接管完整运行时内容");
   assertEqual(a[1].runtimeContentCaseId, "02-tony", "第二案必须记录接管它的内容包 caseId");
-  assertEqual(a[1].callerArtStyle, "pixel", "第二案必须作为像素立绘单案样张进入运行时");
-  assertEqual(Object.keys(a[1].callerArtVariants ?? {}).sort().join("|"), "guarded|neutral|pause", "第二案像素样张必须接齐 neutral / guarded / pause 三态");
+  a.forEach((brief, index) => {
+    assertEqual(brief.callerArtStyle, "pixel", `第 ${index + 1} 案必须使用统一像素立绘`);
+    assertEqual(Object.keys(brief.callerArtVariants ?? {}).sort().join("|"), "guarded|neutral|pause", `第 ${index + 1} 案像素立绘必须接齐 neutral / guarded / pause 三态`);
+  });
   assertEqual(a[2].runtimeContentSource, "content-pack-json", "第三案必须从 content JSON 接管完整运行时内容");
   assertEqual(a[2].runtimeContentCaseId, "03-profile", "第三案必须记录接管它的内容包 caseId");
   assertEqual(a[3].runtimeContentSource, "content-pack-json", "第四案必须从 content JSON 接管完整运行时内容");

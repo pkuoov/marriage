@@ -282,7 +282,7 @@
         "intentHook": "流程词说得太熟",
         "callerGuard": "tense",
         "expression": {
-          "kind": "pause",
+          "kind": "blink",
           "text": "流程词说得很顺"
         }
       }

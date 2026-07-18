@@ -1834,7 +1834,13 @@ export const CONTENT_PACKS = {
         "act": "体面",
         "objectLabel": "账单",
         "backdropClass": "backdrop-credit",
-        "callerArt": "./assets/generated/callers/caller_credit_anxious.png?v=0.20.71",
+        "callerArt": "./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.25.0",
+        "callerArtStyle": "pixel",
+        "callerArtVariants": {
+          "neutral": "./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.25.0",
+          "guarded": "./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png?v=0.25.0",
+          "pause": "./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.25.0"
+        },
         "difficultyProfile": {
           "tier": 1,
           "label": "开场体面",
@@ -1892,7 +1898,13 @@ export const CONTENT_PACKS = {
         "act": "条件",
         "objectLabel": "资料图",
         "backdropClass": "backdrop-profile",
-        "callerArt": "./assets/generated/callers/caller_profile_controlled.png?v=0.20.71",
+        "callerArt": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.25.0",
+        "callerArtStyle": "pixel",
+        "callerArtVariants": {
+          "neutral": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.25.0",
+          "guarded": "./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.25.0",
+          "pause": "./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.25.0"
+        },
         "difficultyProfile": {
           "tier": 3,
           "label": "条件反问",
@@ -1920,7 +1932,13 @@ export const CONTENT_PACKS = {
         "act": "主责",
         "objectLabel": "审批截图",
         "backdropClass": "backdrop-work",
-        "callerArt": "./assets/generated/callers/caller_work_reimbursement_tired.png?v=0.20.71",
+        "callerArt": "./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.25.0",
+        "callerArtStyle": "pixel",
+        "callerArtVariants": {
+          "neutral": "./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.25.0",
+          "guarded": "./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png?v=0.25.0",
+          "pause": "./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.25.0"
+        },
         "difficultyProfile": {
           "tier": 4,
           "label": "流程压麦",
@@ -7179,7 +7197,7 @@ export const CONTENT_CASES = {
             "intentHook": "流程词说得太熟",
             "callerGuard": "tense",
             "expression": {
-              "kind": "pause",
+              "kind": "blink",
               "text": "流程词说得很顺"
             }
           }

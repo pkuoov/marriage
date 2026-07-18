@@ -138,7 +138,10 @@ async function runRoute(route) {
       }
       await activate(page, route, "[data-enter-first-case]");
     }
-    if (route.name === "accounting-restaurant") await assertDialoguePresentation(page);
+    if (route.name === "accounting-restaurant") {
+      await assertDialoguePresentation(page);
+      await assertPixelPortrait(page, 1);
+    }
     await activate(page, route, '[data-scene="sceneReview"]');
     const visualStates = new Set();
     const portraitStates = new Set();
@@ -494,16 +497,15 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
   page.setDefaultTimeout(8000);
   try {
     await openCaseAtChapter(page, chapter, name);
-    const portraitAssets = chapter === 2 ? new Set() : null;
-    if (chapter === 2) await assertCase2PixelPortrait(page);
+    const portraitAssets = new Set();
+    await assertPixelPortrait(page, chapter);
     await advanceNightCaseToOvernightHangup(page, portraitAssets);
-    if (chapter === 2) {
-      ["neutral", "guarded", "pause"].forEach((kind) => {
-        if (![...portraitAssets].some((src) => src.includes(`caller_salon_${kind}_pixel.png`))) {
-          throw new Error(`${name} must render the case-2 ${kind} pixel portrait during the live call`);
-        }
-      });
-    }
+    const portraitStem = ({ 2: "caller_salon", 3: "caller_profile", 4: "caller_work" })[chapter];
+    ["neutral", "guarded", "pause"].forEach((kind) => {
+      if (![...portraitAssets].some((src) => src.includes(`${portraitStem}_${kind}_pixel.png`))) {
+        throw new Error(`${name} must render the case-${chapter} ${kind} pixel portrait during the live call`);
+      }
+    });
     await assertNoPageText(page, "第二天，下午", `${name} must show the hangup before daytime`);
     await click(page, "[data-enter-post-live], [data-enter-interlude]");
     if (await page.locator("[data-interrupt-choice]").count()) {
@@ -860,18 +862,19 @@ async function collectLiveVisualState(page, visualStates, portraitStates) {
   if (state.portrait) portraitStates.add(state.portrait);
 }
 
-async function assertCase2PixelPortrait(page) {
+async function assertPixelPortrait(page, chapter) {
   const portrait = page.locator(".case-portrait.art-pixel img").first();
   await portrait.waitFor({ state: "visible" });
   const state = await portrait.evaluate((element) => ({
     src: element.getAttribute("src") ?? "",
     imageRendering: getComputedStyle(element).imageRendering
   }));
-  if (!["neutral", "guarded", "pause"].some((kind) => state.src.includes(`caller_salon_${kind}_pixel.png`))) {
-    throw new Error("case-2 live call must start from one of the authored pixel portrait states");
+  const portraitStem = ({ 1: "caller_credit", 2: "caller_salon", 3: "caller_profile", 4: "caller_work" })[chapter];
+  if (!["neutral", "guarded", "pause"].some((kind) => state.src.includes(`${portraitStem}_${kind}_pixel.png`))) {
+    throw new Error(`case-${chapter} live call must start from one of the authored pixel portrait states`);
   }
   if (state.imageRendering !== "pixelated") {
-    throw new Error(`case-2 pixel portrait must use nearest-neighbor rendering, got ${state.imageRendering}`);
+    throw new Error(`case-${chapter} pixel portrait must use nearest-neighbor rendering, got ${state.imageRendering}`);
   }
 }
 
