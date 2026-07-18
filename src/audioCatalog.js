@@ -7,9 +7,9 @@ export const AUDIO_CUES = Object.freeze({
   "ui.warning": readySynth("警告", "warning"),
   "ui.page": readySynth("翻页", "page"),
 
-  "bgm.title-nightshift": plannedLoop("夜班标题", "bgm", "./assets/audio/bgm/title-nightshift.ogg", 0.72),
+  "bgm.title-nightshift": readyLoop("夜班标题", "bgm", "./assets/audio/bgm/title-nightshift.ogg", 0.72),
   "bgm.live-call": plannedLoop("直播连线", "bgm", "./assets/audio/bgm/live-call.ogg", 0.66),
-  "bgm.pressure-stem": plannedLoop("现场压力层", "bgm", "./assets/audio/bgm/pressure-stem.ogg", 0.48),
+  "bgm.pressure-stem": readyLoop("现场压力层", "bgm", "./assets/audio/bgm/pressure-stem.ogg", 0.48),
   "bgm.offair-desk": plannedLoop("收麦调查台", "bgm", "./assets/audio/bgm/offair-desk.ogg", 0.62),
   "bgm.day-investigation": plannedLoop("白天调查", "bgm", "./assets/audio/bgm/day-investigation.ogg", 0.64),
   "bgm.callback-return": plannedLoop("夜间回拨", "bgm", "./assets/audio/bgm/callback-return.ogg", 0.68),
@@ -17,7 +17,7 @@ export const AUDIO_CUES = Object.freeze({
   "bgm.recap-afterhours": plannedLoop("收麦回看", "bgm", "./assets/audio/bgm/recap-afterhours.ogg", 0.58),
   "bgm.epilogue-dawn": plannedLoop("天亮前", "bgm", "./assets/audio/bgm/epilogue-dawn.ogg", 0.62),
 
-  "ambience.studio-room": plannedLoop("直播棚室内底噪", "ambience", "./assets/audio/ambience/studio-room.ogg", 0.46),
+  "ambience.studio-room": readyLoop("直播棚室内底噪", "ambience", "./assets/audio/ambience/studio-room.ogg", 0.46),
   "ambience.studio-line": plannedLoop("热线线路底噪", "ambience", "./assets/audio/ambience/studio-line.ogg", 0.42),
   "ambience.restaurant": plannedLoop("餐厅", "ambience", "./assets/audio/ambience/restaurant.ogg", 0.5),
   "ambience.cafe": plannedLoop("咖啡厅", "ambience", "./assets/audio/ambience/cafe.ogg", 0.5),
@@ -26,7 +26,7 @@ export const AUDIO_CUES = Object.freeze({
   "ambience.office": plannedLoop("办公室", "ambience", "./assets/audio/ambience/office.ogg", 0.46),
   "ambience.archive-studio": plannedLoop("档案室与工作室", "ambience", "./assets/audio/ambience/archive-studio.ogg", 0.46),
   "ambience.document-desk": plannedLoop("后台审材料", "ambience", "./assets/audio/ambience/document-desk.ogg", 0.4),
-  "ambience.city-afternoon": plannedLoop("城市下午", "ambience", "./assets/audio/ambience/city-afternoon.ogg", 0.44),
+  "ambience.city-afternoon": readyLoop("城市下午", "ambience", "./assets/audio/ambience/city-afternoon.ogg", 0.44),
 
   "sfx.phone.connect": readyOneShot("热线接通", "./assets/audio/sfx/phone-connect.ogg", 0.8),
   "sfx.phone.disconnect": readyOneShot("连线断开", "./assets/audio/sfx/phone-disconnect.ogg", 0.78),
@@ -39,7 +39,7 @@ export const AUDIO_CUES = Object.freeze({
 
   "voice.broadcast.countdown": plannedVoice("导播倒数", "./assets/audio/voice/broadcast-countdown.ogg", "三、二、一。ON AIR。"),
   "voice.case1.loyalty-message": plannedVoice("案1·怕你离开", "./assets/audio/voice/case1-loyalty-message.ogg", "我只是怕你知道我失业后就离开我。"),
-  "voice.case2.dryer-message": plannedVoice("案2·深夜语音", "./assets/audio/voice/case2-dryer-message.ogg", "今晚又被店长说了，只有你能接住我。"),
+  "voice.case2.dryer-message": readyVoice("案2·吹风机回放", "./assets/audio/voice/case2-dryer-message.ogg", "今晚又被店长说了，只有你能接住我。"),
   "voice.case3.dinner-pause": plannedVoice("案3·饭局停顿", "./assets/audio/voice/case3-dinner-pause.ogg", "本科也是那所学校吗？"),
   "voice.case4.pad-message": plannedVoice("案4·垫款私聊", "./assets/audio/voice/case4-pad-message.ogg", "你先顶上，复盘材料里可以写你主责。"),
   "voice.case4.supplier-message": plannedVoice("案4·供应商补话", "./assets/audio/voice/case4-supplier-message.ogg", "服务协调费按老规矩返给对接人。"),
@@ -69,6 +69,10 @@ function plannedLoop(label, bus, src, gain) {
   return Object.freeze({ label, bus, status: "planned", src, gain, loop: true });
 }
 
+function readyLoop(label, bus, src, gain) {
+  return Object.freeze({ label, bus, status: "ready", src, gain, loop: true });
+}
+
 function plannedOneShot(label, src, gain) {
   return Object.freeze({ label, bus: "sfx", status: "planned", src, gain, loop: false });
 }
@@ -79,4 +83,8 @@ function readyOneShot(label, src, gain) {
 
 function plannedVoice(label, src, transcript) {
   return Object.freeze({ label, bus: "voice", status: "planned", src, transcript, gain: 1, loop: false });
+}
+
+function readyVoice(label, src, transcript) {
+  return Object.freeze({ label, bus: "voice", status: "ready", src, transcript, gain: 1, loop: false });
 }

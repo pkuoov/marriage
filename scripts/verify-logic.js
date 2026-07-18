@@ -393,7 +393,9 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   ["sfx.case1.lamp-drag", "voice.case2.dryer-message", "voice.case3.dinner-pause", "voice.case4.pad-message", "voice.case4.supplier-message"].forEach((cueId) => {
     assert(AUDIO_CUES[cueId], `必要剧情 cue 不得从目录消失: ${cueId}`);
   });
-  assertEqual(audioCueView("voice.case2.dryer-message")?.available, false, "未交付资产的 cue 必须安全保持不可播放");
+  ["bgm.title-nightshift", "bgm.pressure-stem", "ambience.studio-room", "ambience.city-afternoon", "voice.case2.dryer-message"].forEach((cueId) => {
+    assertEqual(audioCueView(cueId)?.available, true, `P1 关键声轨必须有可播放资产: ${cueId}`);
+  });
   ["sfx.phone.connect", "sfx.phone.disconnect", "sfx.broadcast.on-air", "sfx.message.notification", "sfx.document.mark"].forEach((cueId) => {
     assertEqual(audioCueView(cueId)?.available, true, `试玩关键音效必须有可播放资产: ${cueId}`);
   });

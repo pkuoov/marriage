@@ -56,8 +56,18 @@ const requiredReadySfx = [
   "sfx.message.notification",
   "sfx.document.mark"
 ];
+const requiredReadyP1 = [
+  "bgm.title-nightshift",
+  "bgm.pressure-stem",
+  "ambience.studio-room",
+  "ambience.city-afternoon",
+  "voice.case2.dryer-message"
+];
 for (const cueId of requiredReadySfx) {
   if (AUDIO_CUES[cueId]?.status !== "ready") fail(`${cueId}: demo-critical SFX must be ready`);
+}
+for (const cueId of requiredReadyP1) {
+  if (AUDIO_CUES[cueId]?.status !== "ready") fail(`${cueId}: P1 demo audio must be ready`);
 }
 const referencedCueIds = new Set(references.map(({ cueId }) => cueId));
 for (const cueId of requiredContentCues) {
