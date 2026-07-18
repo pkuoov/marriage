@@ -134,10 +134,12 @@ function renderScript() {
     renderNode(lines, overnight.callbackOpeners, "带回物开场（全部分支）", 3);
     renderNode(lines, overnight.callbackFallback, "无带回物兜底开场", 3);
     renderNode(lines, overnight.postures, "回拨立场", 3);
+    renderNode(lines, overnight.returnBeat, "回拨后的生活拍", 3);
     renderNode(lines, overnight.snapshotEcho, "立场快照回应拍", 3);
     renderNode(lines, overnight.callerQuestion, "来电人反问", 3);
     const secondNightIndexes = packet.nightStructure?.segment2SceneIndexes ?? [];
     secondNightIndexes.forEach((sceneIndex, localIndex) => {
+      (overnight.liveCounterBeats ?? []).filter((beat) => beat.beforeSceneIndex === sceneIndex).forEach((beat) => renderNode(lines, beat, "场前情绪反应", 3));
       renderScene(lines, packet.sceneVersions?.[sceneIndex], sceneIndex, `夜 B · ${localIndex + 1}`);
       (overnight.liveCounterBeats ?? []).filter((beat) => beat.afterSceneIndex === sceneIndex).forEach((beat) => renderNode(lines, beat, "场间实时反压", 3));
     });
@@ -175,7 +177,11 @@ function renderScript() {
     add("");
 
     const interlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === packet.caseId);
-    if (interlude) add("## 案间串场", "", interlude.line, "");
+    if (interlude) {
+      add("## 案间串场", "");
+      for (const line of interlude.lines ?? []) renderSpokenLine(lines, line);
+      if (interlude.line) add(interlude.line, "");
+    }
   });
 
   add("# 尾声", "");
@@ -250,7 +256,8 @@ function renderDirectorScript() {
     lines.push("### 带回物开场", "");
     for (const [earnedItem, opener] of Object.entries(overnight.callbackOpeners ?? {})) {
       lines.push(`#### ${earnedItem}`, "", `**咨询者：** ${opener.line ?? ""}`, "");
-      if (opener.firstConflict?.hostLine) lines.push(`**林旭阳：** ${opener.firstConflict.hostLine}`, "");
+      for (const line of opener.firstConflict?.lines ?? []) renderDirectorSpoken(lines, line);
+      if (!opener.firstConflict?.lines?.length && opener.firstConflict?.hostLine) lines.push(`**林旭阳：** ${opener.firstConflict.hostLine}`, "");
       if (opener.firstConflict?.callerLine) lines.push(`**咨询者：** ${opener.firstConflict.callerLine}`, "");
       if (opener.firstConflict?.pauseAfterCallerLine) lines.push("【停顿】", "");
       if (opener.firstConflict?.callerFollowupLine) lines.push(`**咨询者：** ${opener.firstConflict.callerFollowupLine}`, "");
@@ -266,10 +273,16 @@ function renderDirectorScript() {
       for (const [optionId, line] of Object.entries(overnight.snapshotEcho)) lines.push(`- **${optionId}：** ${line}`);
       lines.push("");
     }
+    if (overnight.returnBeat?.lines?.length) {
+      lines.push("### 回拨后的生活拍", "");
+      for (const line of overnight.returnBeat.lines) renderDirectorSpoken(lines, line);
+    }
     (packet.nightStructure?.segment2SceneIndexes ?? []).forEach((sceneIndex, localIndex) => {
+      for (const beat of (overnight.liveCounterBeats ?? []).filter((item) => item.beforeSceneIndex === sceneIndex)) renderDirectorLiveCounter(lines, beat);
       renderDirectorScene(lines, packet.sceneVersions?.[sceneIndex], `夜 B · ${localIndex + 1}`);
       for (const beat of (overnight.liveCounterBeats ?? []).filter((item) => item.afterSceneIndex === sceneIndex)) renderDirectorLiveCounter(lines, beat);
     });
+    renderDirectorCallerQuestion(lines, overnight.callerQuestion);
 
     lines.push("## 终局｜确认到哪，停在哪", "");
     if (packet.hostDisclosure?.text) lines.push(`【主播自揭，仅一次】${packet.hostDisclosure.text}`, "");
@@ -282,7 +295,11 @@ function renderDirectorScript() {
     if (packet.stageJudgement) lines.push(`**林旭阳：** ${packet.stageJudgement}`, "");
     renderDirectorClosing(lines, packet.caseClosing);
     const interlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === packet.caseId);
-    if (interlude?.line) lines.push("## 案间转场", "", `【${interlude.line}】`, "");
+    if (interlude) {
+      lines.push("## 案间转场", "");
+      for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
+      if (interlude.line) lines.push(`【${interlude.line}】`, "");
+    }
   });
 
   lines.push("# 尾声", "");
@@ -296,7 +313,9 @@ function renderDirectorScript() {
 function renderDirectorScene(lines, scene, label) {
   if (!scene) return;
   lines.push(`### ${label}｜${scene.id ?? "未命名场"}`, "");
+  for (const line of scene.beforeVersion?.lines ?? []) renderDirectorSpoken(lines, line);
   if (scene.version) lines.push(`**${scene.speaker ?? "咨询者"}：** ${scene.version}`, "");
+  for (const line of scene.afterVersion?.lines ?? []) renderDirectorSpoken(lines, line);
   if (scene.pressureHint?.expression?.text) lines.push(`【受压动作】${scene.pressureHint.expression.text}`, "");
   const coreQuestions = (scene.questionOptions ?? []).filter((option) => option.correct);
   for (const option of coreQuestions) {
@@ -306,6 +325,14 @@ function renderDirectorScene(lines, scene, label) {
     lines.push(`**咨询者：** ${option.answer}`, "");
     if (option.guardedAnswer) lines.push(`【防备分支·咨询者】${option.guardedAnswer}`, "");
   }
+  const optionalQuestions = [...(scene.casualQuestions ?? []), ...(scene.dialogueOptions ?? [])];
+  if (optionalQuestions.length) lines.push("#### 可选补问", "");
+  for (const option of optionalQuestions) {
+    lines.push(`**林旭阳：** ${option.question ?? ""}`, "");
+    if (option.lines?.length) option.lines.forEach((line) => renderDirectorSpoken(lines, line));
+    else if (option.answer) lines.push(`**咨询者：** ${option.answer}`, "");
+  }
+  for (const line of scene.sceneCloser?.lines ?? []) renderDirectorSpoken(lines, line);
   if (scene.revisedVersion) lines.push(`【材料触发后的重述】**${scene.speaker ?? "咨询者"}：** ${scene.revisedVersion}`, "");
   if (scene.afterScene?.line) lines.push(`【段后】${scene.afterScene.line}`, "");
 }
@@ -325,6 +352,21 @@ function renderDirectorSpoken(lines, line) {
   if (spoken) lines.push(`**${speaker}：** ${spoken}`, "");
 }
 
+function renderDirectorCallerQuestion(lines, question = null) {
+  if (!question?.prompt) return;
+  lines.push("### 来电人反问", "", `**咨询者：** ${question.prompt}`, "");
+  for (const option of question.options ?? []) {
+    lines.push(`#### 主播选｜${option.label ?? ""}`, "", `**林旭阳：** ${option.label ?? ""}`, "");
+    if (option.lines?.length) option.lines.forEach((line) => renderDirectorSpoken(lines, line));
+    else if (option.callerLine) lines.push(`**咨询者：** ${option.callerLine}`, "");
+    for (const hostChoice of option.hostChoices ?? []) {
+      lines.push(`【再选｜${hostChoice.label ?? ""}｜立场 ${hostChoice.stanceNudge ?? ""}】`, "");
+      if (!hostChoice.silent) lines.push(`**林旭阳：** ${hostChoice.label ?? ""}`, "");
+      for (const line of hostChoice.lines ?? []) renderDirectorSpoken(lines, line);
+    }
+  }
+}
+
 function renderDirectorLiveCounter(lines, beat = {}) {
   lines.push(`### 场间实时反压｜${beat.from ?? beat.id ?? "后台"}`, "");
   if (beat.text) lines.push(`【${beat.text}】`, "");
@@ -333,6 +375,11 @@ function renderDirectorLiveCounter(lines, beat = {}) {
     lines.push(`- **玩家选择：** ${choice.label}`);
     if (choice.questionOverride?.question) lines.push(`  - **下一问改为：** ${choice.questionOverride.question}`);
     if (choice.recapAftertaste) lines.push(`  - **回味：** ${choice.recapAftertaste}`);
+    if (choice.lines?.length) {
+      lines.push("");
+      if (!choice.silent) lines.push(`**林旭阳：** ${choice.label ?? ""}`, "");
+      for (const line of choice.lines) renderDirectorSpoken(lines, line);
+    }
   }
   if ((beat.choices ?? []).length) lines.push("");
 }
@@ -420,6 +467,14 @@ function renderScene(lines, scene, sourceIndex, label) {
 
 function renderSpokenLine(lines, line) {
   if (!line) return;
+  if (line.role === "pause") {
+    lines.push("【停顿】", "");
+    return;
+  }
+  if (line.role === "stage") {
+    lines.push(`【${line.text ?? ""}】`, "");
+    return;
+  }
   const speaker = line.speaker ?? roleLabel(line.role) ?? "台词";
   const text = line.text ?? line.line ?? "";
   if (text) lines.push(`**${speaker}：** ${text}`, "");
@@ -457,14 +512,16 @@ function renderNode(lines, value, label, level = 3) {
     renderDocument(lines, value, level + 1);
     return;
   }
-  if (value.speaker && (value.text || value.line)) {
+  if ((value.speaker || value.role) && (value.text || value.line || value.role === "pause")) {
     lines.push(`${"#".repeat(Math.min(level, 6))} ${title}`, "");
     renderSpokenLine(lines, value);
     return;
   }
   if (value.question && value.answer) {
-    lines.push(`${"#".repeat(Math.min(level, 6))} ${title}`, "", `**林旭阳：** ${value.question}`, "", `**咨询者：** ${value.answer}`, "");
-    renderObjectBody(lines, value, level + 1, new Set(["question", "answer"]));
+    lines.push(`${"#".repeat(Math.min(level, 6))} ${title}`, "", `**林旭阳：** ${value.question}`, "");
+    if (value.lines?.length) value.lines.forEach((line) => renderSpokenLine(lines, line));
+    else lines.push(`**咨询者：** ${value.answer}`, "");
+    renderObjectBody(lines, value, level + 1, new Set(["question", "answer", "lines"]));
     return;
   }
   lines.push(`${"#".repeat(Math.min(level, 6))} ${title}`, "");
@@ -521,7 +578,7 @@ function humanLabel(key) {
     clueRole: "线索职能", falseFrame: "错误框架", payoffFor: "回收目标", speakerId: "说话人 ID", doubt: "现场疑点", contradiction: "矛盾", reliability: "可靠度", showsCard: "展示卡片",
     casualQuestions: "自由追问", questionOptions: "关键追问", dialogueOptions: "补充对话", question: "主播问句", answer: "咨询者回答", guardedAnswer: "防备回答", suspicionLabel: "玩家所选怀疑方向", correct: "是否核心项", routeAxis: "路线轴", routeTone: "路线口气",
     pressureHint: "压力表演", intentHook: "意图钩子", callerGuard: "防备状态", expression: "表情/听感", helperHint: "V哥提示",
-    afterScene: "段后触发", kind: "类型", checkId: "材料检视 ID", revisedVersion: "材料触发后的重述",
+    afterScene: "段后触发", beforeVersion: "正文前节拍", afterVersion: "正文后节拍", sceneCloser: "场尾自动拍", returnBeat: "回拨后的生活拍", hostChoices: "主播应对选择", stanceNudge: "立场变化", nonLoadBearing: "生活噪声标记", silent: "不出声", kind: "类型", checkId: "材料检视 ID", revisedVersion: "材料触发后的重述",
     title: "标题", subtitle: "副标题", intro: "引子", text: "正文", line: "台词", role: "角色职能", type: "表现类型", audioCueId: "音频提示",
     opening: "开场", good: "数据较好分支", bad: "数据较差分支", home: "回家", close: "收束",
     true: "能确认", edited: "被修剪", unknown: "今晚定不了", offlineSitIn: "同席特许事实", truthBoundary: "事实边界",
@@ -565,7 +622,10 @@ function assertSourceCompleteness(markdown, sources) {
       return;
     }
     if (value && typeof value === "object") {
-      Object.entries(value).forEach(([key, entry]) => visit(entry, `${path}.${key}`));
+      Object.entries(value).forEach(([key, entry]) => {
+        if (key === "answer" && Array.isArray(value.lines) && value.lines.length) return;
+        visit(entry, `${path}.${key}`);
+      });
     }
   };
   visit(sources, "source");

@@ -12,7 +12,7 @@ import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialogu
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.21.1";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.20.78";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
@@ -335,9 +335,9 @@ function nightShellForBrief(brief = {}) {
   return nightShellForStoryKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl());
 }
 
-function nightShellInterludeLine(brief = {}) {
+function nightShellInterludeForBrief(brief = {}) {
   const shell = nightShellForBrief(brief);
-  return (shell?.interludes ?? []).find((item) => item.afterCaseId === brief.id || item.afterCaseId === brief.caseId)?.line ?? "";
+  return (shell?.interludes ?? []).find((item) => item.afterCaseId === brief.id || item.afterCaseId === brief.caseId) ?? null;
 }
 
 function nightShellGoodEnding() {
@@ -419,9 +419,11 @@ function nightShellHtml(lines = []) {
 }
 
 function renderSceneReview(brief) {
+  const currentSceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+  if (enterLiveCounterBeatBeforeScene(brief, currentSceneIndex)) return;
   const review = sceneReviewModel({
     brief,
-    index: currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1),
+    index: currentSceneIndex,
     actionDone: (key) => actionDone(brief, key),
     issueBadge: issueCompletion(brief).badge,
     hasDeepFollowup: !nightStructureFor(brief) && !overnightStructureFor(brief) && hasDeepFollowup(brief)
@@ -499,7 +501,7 @@ function renderSceneQuestionAnswer(brief) {
     mood: focus.kind === "key" ? "focused" : "thinking",
     label: "连线继续",
     chapter: liveChapterTitle(brief),
-    text: sceneQuestionAnswerHtml({ question: pick.question, answer: pick.answer, resistanceBeat: pick.resistanceBeat }),
+    text: sceneQuestionAnswerHtml({ question: pick.question, answer: pick.answer, lines: pick.lines, resistanceBeat: pick.resistanceBeat }),
     choices: focus.kind === "key"
       ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
       : flowGroupHtml(`<button class="primary" data-return-question-menu type="button">继续问</button>`)
@@ -942,11 +944,12 @@ function renderOvernightCallback(brief) {
         ${callDialogueHtml([
           ...(stanceLine ? [{ role: "caller", text: stanceLine }] : []),
           { role: "caller", text: opener.line ?? "" },
-          ...(firstConflict.hostLine ? [{ role: "host", text: firstConflict.hostLine }] : []),
+          ...(firstConflict.lines ?? (firstConflict.hostLine ? [{ role: "host", text: firstConflict.hostLine }] : [])),
           ...(firstConflict.callerLine ? [{ role: "caller", text: firstConflict.callerLine }] : []),
           ...(firstConflict.pauseAfterCallerLine ? [{ role: "pause" }] : []),
           ...(firstConflict.callerFollowupLine ? [{ role: "caller", text: firstConflict.callerFollowupLine }] : []),
-          ...(snapshotEcho ? [{ role: "caller", text: snapshotEcho }] : [])
+          ...(snapshotEcho ? [{ role: "caller", text: snapshotEcho }] : []),
+          ...(structure.returnBeat?.lines ?? [])
         ])}
       </section>
     `,
@@ -964,10 +967,17 @@ function renderOvernightCallback(brief) {
 
 function renderLiveCounterBeat(brief) {
   const beat = liveCounterBeatById(brief, state.activeLiveCounterBeatId)
+    ?? liveCounterBeatBeforeScene(
+      brief,
+      currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1),
+      (key) => actionDone(brief, key),
+      ensureOvernight(brief)
+    )
     ?? liveCounterBeatAfterScene(
       brief,
       currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1),
-      (key) => actionDone(brief, key)
+      (key) => actionDone(brief, key),
+      ensureOvernight(brief)
     );
   if (!beat) {
     state.activeLiveCounterBeatId = null;
@@ -1855,6 +1865,7 @@ function renderCallerQuestion(brief) {
     return render();
   }
   const picked = (question.options ?? []).find((option) => option.id === overnight.callerQuestionChoiceId) ?? null;
+  const hostPick = (picked?.hostChoices ?? []).find((option) => option.id === overnight.callerQuestionHostChoiceId) ?? null;
   const earned = new Set(overnight.earnedItems ?? []);
   frame({
     brief,
@@ -1865,10 +1876,14 @@ function renderCallerQuestion(brief) {
       ${callDialogueHtml([{ role: "caller", text: question.prompt ?? "" }])}
       ${picked ? callDialogueHtml([
         { role: "host", text: picked.label ?? "" },
-        { role: "caller", text: picked.callerLine ?? "" }
+        ...(picked.lines ?? (picked.callerLine ? [{ role: "caller", text: picked.callerLine }] : [])),
+        ...(hostPick?.silent ? [] : hostPick ? [{ role: "host", text: hostPick.label ?? "" }] : []),
+        ...(hostPick?.lines ?? [])
       ]) : ""}
     `,
-    choices: picked
+    choices: picked && (picked.hostChoices ?? []).length && !hostPick
+      ? choiceGroupHtml("主播怎么接", (picked.hostChoices ?? []).map((option) => `<button data-caller-question-host="${escapeHtml(option.id ?? "")}" type="button">${escapeHtml(option.label ?? "")}</button>`).join(""), "single-choice-group", "不判对错，只记下你怎么接住这次迁怒")
+      : picked
       ? flowGroupHtml(`<button class="primary" data-after-caller-question type="button">再深入一句</button>`)
       : choiceGroupHtml("主播回应", (question.options ?? []).map((option) => {
           const locked = option.requiresEarnedItem && !earned.has(option.requiresEarnedItem);
@@ -1876,6 +1891,7 @@ function renderCallerQuestion(brief) {
         }).join(""), "single-choice-group", "不判对错，只留下余味")
   });
   bind("[data-caller-question]", (event) => recordCallerQuestionChoice(brief, event.currentTarget?.getAttribute("data-caller-question") ?? ""));
+  bind("[data-caller-question-host]", (event) => recordCallerQuestionHostChoice(brief, event.currentTarget?.getAttribute("data-caller-question-host") ?? ""));
   bind("[data-after-caller-question]", () => {
     state.scene = nextSceneAfterEvidence({ issueBadge: issueCompletion(brief).badge, hasDeepFollowup: hasDeepFollowup(brief) });
     saveState();
@@ -2206,6 +2222,7 @@ function overnightCallerQuestionAftertasteHtml(brief = {}) {
 
 function renderStoryInterlude(brief) {
   const nextBrief = state.caseBriefs?.[Number(state.chapter ?? 1)] ?? null;
+  const interlude = nightShellInterludeForBrief(brief);
   frame({
     brief,
     mood: "focused",
@@ -2214,7 +2231,8 @@ function renderStoryInterlude(brief) {
     text: storyInterludeHtml({
       nextObjectLabel: storyInterludeObjectLabel(nextBrief),
       nextLine: storyInterludeNextLine(nextBrief),
-      shellLine: nightShellInterludeLine(brief)
+      shellLine: interlude?.line ?? "",
+      shellLines: interlude?.lines ?? []
     }),
     choices: flowGroupHtml(storyInterludeChoicesHtml())
   });
@@ -2782,6 +2800,7 @@ function handleSceneDialogueButton(button) {
         optionIndex,
         question: option.question ?? "",
         answer: answerVariant.answer,
+        lines: answerVariant.guarded ? null : option.lines ?? null,
         routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
         routeTone: option.routeTone ?? routeToneForChoice(option),
         guarded: answerVariant.guarded
@@ -2925,8 +2944,23 @@ function liveCounterPickForState(brief = {}, beatId = "") {
   return state.liveCounterPicks?.[liveCounterPickKey(brief, beatId)] ?? null;
 }
 
+function enterLiveCounterBeatBeforeScene(brief = {}, sceneIndex = 0) {
+  const beat = liveCounterBeatBeforeScene(
+    brief,
+    sceneIndex,
+    (key) => actionDone(brief, key),
+    ensureOvernight(brief)
+  );
+  if (!beat) return false;
+  state.activeLiveCounterBeatId = beat.id;
+  state.scene = "liveCounterBeat";
+  saveState();
+  renderLiveCounterBeat(brief);
+  return true;
+}
+
 function enterLiveCounterBeatAfterScene(brief = {}, sceneIndex = 0) {
-  const beat = liveCounterBeatAfterScene(brief, sceneIndex, (key) => actionDone(brief, key));
+  const beat = liveCounterBeatAfterScene(brief, sceneIndex, (key) => actionDone(brief, key), ensureOvernight(brief));
   if (!beat) return false;
   state.activeLiveCounterBeatId = beat.id;
   state.scene = "liveCounterBeat";
@@ -2944,15 +2978,20 @@ function recordLiveCounterChoice(brief = {}, beat = {}, choiceId = "") {
       choiceId: choice.id,
       label: choice.label ?? "",
       recapAftertaste: choice.recapAftertaste ?? "",
+      stanceNudge: choice.stanceNudge ?? null,
+      routeTone: choice.routeTone ?? "live-counter",
       at: Date.now()
     }
   };
-  recordRouteChoice(brief, Number(beat.afterSceneIndex ?? 0) + 0.5, {
+  const anchorIndex = Number(beat.beforeSceneIndex ?? beat.afterSceneIndex ?? 0);
+  recordRouteChoice(brief, anchorIndex + (beat.beforeSceneIndex === undefined ? 0.5 : -0.5), {
     question: beat.text ?? beat.from ?? "现场反压",
     answer: choice.label ?? "",
-    routeAxis: choice.routeAxis,
-    routeTone: choice.routeTone ?? "live-counter"
+    routeAxis: choice.routeAxis ?? "caller-credibility",
+    routeTone: choice.routeTone ?? "live-counter",
+    stanceNudge: choice.stanceNudge ?? null
   }, { version: beat.from ?? "现场反压" });
+  state.lastReaction = choice.recapAftertaste ?? "";
   saveState();
   render();
 }
@@ -2961,6 +3000,22 @@ function continueAfterLiveCounterBeat(brief = {}, beat = {}) {
   if ((beat.choices ?? []).length && !liveCounterPickForState(brief, beat.id)) return;
   markAction(brief, `liveCounterBeat:${beat.id}`);
   state.activeLiveCounterBeatId = null;
+  if (beat.beforeSceneIndex !== undefined) {
+    state.scene = overnightStructureFor(brief)
+      ? ensureOvernight(brief).segment === "night2" ? "overnightNight2" : "overnightNight1"
+      : "sceneReview";
+    saveState();
+    render();
+    return;
+  }
+  const nextBeat = liveCounterBeatAfterScene(brief, beat.afterSceneIndex, (key) => actionDone(brief, key), ensureOvernight(brief));
+  if (nextBeat) {
+    state.activeLiveCounterBeatId = nextBeat.id;
+    state.scene = "liveCounterBeat";
+    saveState();
+    render();
+    return;
+  }
   const nextSceneIndex = Number(beat.afterSceneIndex ?? 0) + 1;
   if (nextSceneIndex < (brief.sceneVersions?.length ?? 0)) {
     setIndexValue(brief, "sceneReview", nextSceneIndex);
@@ -3120,13 +3175,35 @@ function recordCallerQuestionChoice(brief, choiceId = "") {
   const overnight = ensureOvernight(brief);
   if (!choice) return;
   if (choice.requiresEarnedItem && !(overnight.earnedItems ?? []).includes(choice.requiresEarnedItem)) return;
-  updateOvernight(brief, { callerQuestionChoiceId: choice.id });
+  updateOvernight(brief, { callerQuestionChoiceId: choice.id, callerQuestionHostChoiceId: null, callerQuestionStanceNudge: null });
+  if ((choice.hostChoices ?? []).length) {
+    saveState();
+    return render();
+  }
+  completeCallerQuestionChoice(brief, question, choice);
+}
+
+function recordCallerQuestionHostChoice(brief, hostChoiceId = "") {
+  const question = overnightCallerQuestionFor(brief);
+  const overnight = ensureOvernight(brief);
+  const choice = (question?.options ?? []).find((option) => option.id === overnight.callerQuestionChoiceId);
+  const hostChoice = (choice?.hostChoices ?? []).find((option) => option.id === hostChoiceId);
+  if (!choice || !hostChoice) return;
+  updateOvernight(brief, {
+    callerQuestionHostChoiceId: hostChoice.id,
+    callerQuestionStanceNudge: hostChoice.stanceNudge ?? null
+  });
+  completeCallerQuestionChoice(brief, question, choice, hostChoice);
+}
+
+function completeCallerQuestionChoice(brief, question = {}, choice = {}, hostChoice = null) {
   markAction(brief, "overnight:callerQuestion");
   recordRouteChoice(brief, keyQuestionLimit(brief) + evidenceChecksFor(brief).length + 0.8, {
     question: question.prompt ?? "她的那一问",
-    answer: choice.label ?? "",
+    answer: [choice.label, hostChoice?.label].filter(Boolean).join(" / "),
     routeAxis: choice.routeAxis ?? "process-control",
-    routeTone: "caller-question"
+    routeTone: hostChoice?.routeTone ?? "caller-question",
+    stanceNudge: hostChoice?.stanceNudge ?? null
   }, { version: question.prompt ?? "" });
   state.lastReaction = choice.aftertaste ?? "";
   saveState();
@@ -3680,6 +3757,7 @@ function currentLivePressure(brief, mood = "listening") {
     pressureSignal: state.lastPressureSignal ?? "",
     routeAxis: state.lastPressureAxis ?? "",
     routeAxisComments: brief.routeAxisComments ?? {},
+    driftComments: brief.driftComments ?? [],
     scene: state.scene,
     sceneHint,
     mood

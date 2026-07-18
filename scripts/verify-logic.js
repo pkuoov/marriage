@@ -19,9 +19,10 @@ import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyR
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "../src/runtime/livePressure.js?v=0.21.1";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
 import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js?v=0.21.0";
+import { assertDialogueTexture, dialogueTextureMetrics, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js?v=0.22.0";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
-import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatById, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.20.78";
+import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatTriggerMet, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
@@ -47,6 +48,120 @@ const results = [];
 
 test("AVG-001", "render-layer sentence splitting preserves quoted sentences and ellipses", () => {
   assertEqual(splitDialogueSentences("她说：「等等。别走！」然后停了……我没回。 ").join("|"), "她说：「等等。别走！」|然后停了……|我没回。", "引号内标点不得拆句，省略号必须保留");
+  assertEqual(splitDialogueSentences("这跟八万比——你别管。 ").join("|"), "这跟八万比——|你别管。", "句尾双破折号必须按被打断拍掐断显示");
+});
+
+test("TEXTURE-001", "humanization texture metrics are gated, measurable, and enforced", () => {
+  const unmarked = dialogueTextureMetrics({ caseId: "unmarked" });
+  assertEqual(unmarked.skipped, true, "未打 texturePass 标记的案件必须跳过纹理门控");
+  const broken = dialogueTextureMetrics({ caseId: "broken", texturePass: true, voiceTics: { 沈: ["反正"] }, sceneVersions: [] });
+  assertEqual(broken.valid, false, "打标案件不足阈值时必须失败");
+  assertThrows(() => assertDialogueTexture({ caseId: "broken", texturePass: true, voiceTics: { 沈: ["反正"] } }), /短答句/, "纹理断言必须报告具体缺项");
+  const caseOne = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/cases/01-credit.json", import.meta.url), "utf8"));
+  const result = assertDialogueTexture(caseOne);
+  assert(result.metrics.shortAnswerCount >= 3, "案 1 必须有至少三句短答");
+  assert(result.metrics.longRambleCount >= 2, "案 1 必须有至少两段长絮叨");
+  assert(result.metrics.interruptionCount >= 2, "案 1 必须有至少两处掐断");
+  assertEqual(result.metrics.nonLoadBearingCount, 3, "案 1 必须显式标出三拍生活噪声");
+  assert(result.metrics.callerTicCount >= 3 && result.metrics.otherTicCount === 0, "沈的口癖必须集中在本人台词且不串给其他角色");
+});
+
+test("TEXTURE-002", "zero-tic fingerprints, one-time tics, and clean ending lines are pure assertions", () => {
+  const longLine = "我把这件事从头又说了一遍，数字写在纸上，主语也补回来了。".repeat(6);
+  const base = {
+    caseId: "texture-pure",
+    texturePass: true,
+    voiceTicArc: { 测试角色: "测试分布" },
+    sceneVersions: [
+      {
+        version: longLine,
+        beforeVersion: { lines: [
+          { role: "caller", text: "我先——" },
+          { role: "caller", text: "没有。" },
+          { role: "caller", text: "水凉了。", nonLoadBearing: true }
+        ] }
+      },
+      {
+        version: longLine,
+        sceneCloser: { lines: [
+          { role: "host", text: "今晚——" },
+          { role: "caller", text: "发。" },
+          { role: "caller", text: "灯太亮。", nonLoadBearing: true },
+          { role: "caller", text: "我去关窗。", nonLoadBearing: true }
+        ] }
+      }
+    ],
+    deepFollowup: { question: "你报多少？", answer: "唉。……一万出头。" }
+  };
+  const negative = dialogueTextureMetrics({
+    ...base,
+    voiceTics: { 林: [] },
+    oneTimeTic: "唉",
+    oneTimeTicPath: "deepFollowup.answer"
+  });
+  assert(negative.valid, `零语气词与 oneTimeTic 合法样本必须通过: ${negative.errors.join(" / ")}`);
+  assertEqual(negative.metrics.oneTimeCallerCount, 1, "oneTimeTic 必须精确出现一次");
+  const leaked = dialogueTextureMetrics({
+    ...base,
+    voiceTics: { 林: [] },
+    oneTimeTic: "唉",
+    oneTimeTicPath: "deepFollowup.answer",
+    sceneVersions: [{ ...base.sceneVersions[0], version: `${longLine} 呃。` }, base.sceneVersions[1]]
+  });
+  assert(leaked.errors.some((error) => error.includes("零语气词指纹泄漏")), "空口癖表必须抓住通用语气词泄漏");
+  const cleanLine = "……写。主责我还想留，钱也得回来。";
+  const clean = dialogueTextureMetrics({
+    ...base,
+    voiceTics: { 陈: ["呃"] },
+    sceneVersions: [
+      { ...base.sceneVersions[0], version: `${longLine} 呃，呃，呃。` },
+      base.sceneVersions[1]
+    ],
+    deepFollowup: { question: "写不写？", answer: cleanLine },
+    voiceTicCleanLines: [cleanLine]
+  });
+  assert(clean.valid, `指定无口癖句合法样本必须通过: ${clean.errors.join(" / ")}`);
+  const contaminatedLine = `${cleanLine}呃。`;
+  const contaminated = dialogueTextureMetrics({
+    ...base,
+    voiceTics: { 陈: ["呃"] },
+    sceneVersions: [
+      { ...base.sceneVersions[0], version: `${longLine} 呃，呃，呃。` },
+      base.sceneVersions[1]
+    ],
+    deepFollowup: { question: "写不写？", answer: contaminatedLine },
+    voiceTicCleanLines: [contaminatedLine]
+  });
+  assert(contaminated.errors.some((error) => error.includes("指定干净句未通过")), "指定干净句混入口癖必须失败");
+});
+
+test("TEXTURE-003", "spoken surfaces reject half-width prose punctuation without policing typed comments", () => {
+  const packet = {
+    texturePass: false,
+    openingDialogue: [{ role: "caller", text: "我看见了,但没回。" }],
+    driftComments: ["看见了,没回"]
+  };
+  assertEqual(spokenPunctuationLeaks(packet).length, 1, "半角逗号只应从说话面报错");
+  assertEqual(spokenPunctuationLeaks(packet)[0].path, "packet.openingDialogue[0]", "报错必须保留可定位路径");
+  assertEqual(spokenPunctuationLeaks({ ...packet, openingDialogue: [{ role: "caller", text: "我看见了，但没回。" }] }).length, 0, "全角口语必须通过，打字弹幕不参与检查");
+});
+
+test("TEXTURE-004", "staged ramble metrics count rendered lines instead of hidden fallback answers", () => {
+  const result = dialogueTextureMetrics({
+    texturePass: true,
+    voiceTics: { 陈: ["呃"] },
+    voiceTicArc: { 陈: "前密后净" },
+    sceneVersions: [{
+      casualQuestions: [{
+        textureRole: "ramble",
+        answer: "备用答案里也有呃，但玩家不会听到。",
+        lines: [{ role: "caller", text: "玩家只听见这一句，呃。" }]
+      }]
+    }]
+  });
+  assertEqual(result.metrics.longRambleCount, 1, "拆拍长絮叨必须按一段计数");
+  assertEqual(result.metrics.callerTicCount, 1, "未渲染 answer 不得重复贡献口癖计数");
+  assertIncludes(result.samples.longRambles[0], ".lines[0]", "长絮叨样本必须指向实际渲染的 lines");
 });
 
 function test(id, name, fn) {
@@ -350,6 +465,12 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertEqual(miss.crowd, "跑偏", "误指材料必须推动弹幕跑偏");
   assertEqual(miss.callerGuard, "防备", "弹幕跑偏必须提高连线人防备");
   assertIncludes(miss.comments.join("/"), "截图少的那页开始吵", "现场弹幕必须能按玩家路线轴读取内容包种子");
+  const drift = livePressureProfile({
+    budget: { max: 8, remaining: 6 },
+    pressureSignal: "drift",
+    driftComments: ["蹲一个主播同款保温杯"]
+  });
+  assertEqual(drift.comments[0], "蹲一个主播同款保温杯", "跑偏态必须用案件原生跑题弹幕替代通用文案");
   const hit = livePressureProfile({
     budget: { max: 8, remaining: 6 },
     pressureSignal: "held",
@@ -990,6 +1111,20 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   });
   assertIncludes(completedExchange, "少了哪一页？", "已完成对话气泡组装必须保留关键追问");
   assertIncludes(completedExchange, "少了还款来源。", "已完成对话气泡组装必须保留关键回答");
+  const texturedExchange = completedSceneExchangeHtml({
+    scene: {
+      beforeVersion: { lines: [{ role: "caller", text: "开场杂音。" }] },
+      version: "正文。",
+      afterVersion: { lines: [{ role: "caller", text: "关窗。", nonLoadBearing: true }] },
+      sceneCloser: { lines: [{ role: "host", text: "场尾。" }] }
+    },
+    dialoguePicks: [{ question: "还留着？", answer: "留着。", lines: [{ role: "caller", text: "嗯。" }, { role: "pause" }, { role: "caller", text: "留着。" }] }],
+    pick: { question: "问完了吗？", answer: "完了。" }
+  });
+  assert(texturedExchange.indexOf("开场杂音。") < texturedExchange.indexOf("正文。"), "beforeVersion 必须在正文前渲染");
+  assert(texturedExchange.indexOf("关窗。") < texturedExchange.indexOf("还留着？"), "afterVersion 必须接在正文后、补问前渲染");
+  assertIncludes(texturedExchange, "call-pause", "补充对话 lines 必须保留停顿拍");
+  assert(texturedExchange.indexOf("场尾。") > texturedExchange.indexOf("完了。"), "sceneCloser 必须在关键追问结束后自动播");
   assertIncludes(keyChoiceExchangeHtml({ scene: { questionOptions: [{ question: "默认问法？", contradiction: "A" }] }, fallbackAnswer: "兜底回答" }), "兜底回答", "关键追问气泡组装必须支持存档兜底回答");
   const resistanceHtml = keyChoiceExchangeHtml({
     pick: {
@@ -1011,6 +1146,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(sceneReviewDoneChoicesHtml({ lastStage: true, nextStage: "evidenceCheck", nextLabel: "看材料" }), "data-scene=\"evidenceCheck\"", "末段对话回合跳转按钮必须可由纯 UI 模块渲染");
   assertIncludes(appSource, "./ui/storyInterludeView.js", "案间过渡 HTML 必须从 app.js 拆到 ui/storyInterludeView");
   assertIncludes(storyInterludeHtml({ nextObjectLabel: "表格", nextLine: "后台又亮了一路麦" }), "表格", "案间过渡必须可由纯 UI 模块渲染下一通物件钩子");
+  assertIncludes(storyInterludeHtml({ shellLine: "老方发来消息。", shellLines: [{ speaker: "林旭阳", text: "广告弹幕念错了。" }] }), "广告弹幕念错了。", "案间串场必须能在原旁白前追加主播台词");
   assertIncludes(storyInterludeChoicesHtml(), "接下一路麦", "案间过渡必须用直播节目语言进入下一案标题页");
   const closingCard = caseClosingHtml({
     caseNumber: 1,
@@ -2223,15 +2359,54 @@ test("RUNTIME-008B", "night-B snapshot echoes and live counter beats are selecte
     (brief.stanceSnapshot?.options ?? []).forEach((option) => {
       assert(snapshotEchoFor(brief, { id: option.id }), `${brief.runtimeContentCaseId} 的 ${option.id} 必须在夜 B 归还立场押注`);
     });
-    const beat = brief.overnightStructure?.liveCounterBeats?.[0];
+    const beat = brief.overnightStructure?.liveCounterBeats?.find((item) => item.afterSceneIndex !== undefined && !item.triggerAny);
     assert(beat, `${brief.runtimeContentCaseId} 必须有夜 B 对手实时反制`);
     assertEqual(liveCounterBeatById(brief, beat.id)?.id, beat.id, `${brief.runtimeContentCaseId} 必须能按 id 取反压拍`);
     assertEqual(liveCounterBeatAfterScene(brief, beat.afterSceneIndex, () => false)?.id, beat.id, `${brief.runtimeContentCaseId} 必须在指定场景后插入反压拍`);
-    assertEqual(liveCounterBeatAfterScene(brief, beat.afterSceneIndex, (key) => key === `liveCounterBeat:${beat.id}`), null, `${brief.runtimeContentCaseId} 已播反压拍不得重复`);
+    const followingBeat = liveCounterBeatAfterScene(brief, beat.afterSceneIndex, (key) => key === `liveCounterBeat:${beat.id}`);
+    assert(followingBeat?.id !== beat.id, `${brief.runtimeContentCaseId} 已播反压拍不得重复自身`);
   });
   const case2 = briefs.find((brief) => brief.runtimeContentCaseId === "02-tony");
-  const choice = case2.overnightStructure.liveCounterBeats[0].choices.find((item) => item.id === "ask-person-not-shop");
+  const choice = case2.overnightStructure.liveCounterBeats
+    .find((item) => item.id === "tony-business-letter")
+    ?.choices.find((item) => item.id === "ask-person-not-shop");
   assertEqual(choice?.questionOverride?.question, "店名不说了。那列备注，你念你自己那行就行。", "案 2 避开店名路线必须带入备用首问");
+});
+
+test("RUNTIME-008C", "conditional reaction beats trigger from either a marked row or callback opener and only once", () => {
+  const beat = {
+    id: "conditional-reaction",
+    beforeSceneIndex: 5,
+    triggerAny: {
+      documentRows: ["case3-credential-balance:p04"],
+      callbackOpeners: ["家里群原话"]
+    }
+  };
+  const brief = { overnightStructure: { liveCounterBeats: [beat] } };
+  assertEqual(liveCounterBeatTriggerMet(beat, {}), false, "未触发反转时不得提前播放情绪拍");
+  assert(liveCounterBeatTriggerMet(beat, { documentMarks: { "case3-credential-balance": ["p04"] } }), "圈中 p04 必须触发情绪拍");
+  assert(liveCounterBeatTriggerMet(beat, { callbackOpenerId: "家里群原话" }), "家里群 opener 必须触发情绪拍");
+  assertEqual(liveCounterBeatBeforeScene(brief, 5, () => false, { callbackOpenerId: "家里群原话" })?.id, beat.id, "触发后必须在指定 version 前返回情绪拍");
+  assertEqual(liveCounterBeatBeforeScene(brief, 5, (key) => key === `liveCounterBeat:${beat.id}`, { callbackOpenerId: "家里群原话" }), null, "播过一次后不得重复");
+  const afterBrief = { overnightStructure: { liveCounterBeats: [{ ...beat, beforeSceneIndex: undefined, afterSceneIndex: 5 }] } };
+  assertEqual(liveCounterBeatAfterScene(afterBrief, 5, () => false, { callbackOpenerId: "家里群原话" })?.id, beat.id, "同一触发器必须支持在反转场尾播放");
+
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const case2 = briefs.find((item) => item.runtimeContentCaseId === "02-tony");
+  assertEqual(liveCounterBeatBeforeScene(case2, 5, () => false)?.id, "tony-comment-benefit-blowup", "案 2 评论区爆句必须在下一段辩解前出现");
+  const case3 = briefs.find((item) => item.runtimeContentCaseId === "03-profile");
+  assertEqual(
+    liveCounterBeatAfterScene(case3, 5, () => false, { documentMarks: { "case3-credential-balance": ["p04"] } })?.id,
+    "profile-family-chat-blowup",
+    "案 3 圈中 p04 后必须在家里群反转场尾出现情绪拍"
+  );
+  const case4 = briefs.find((item) => item.runtimeContentCaseId === "04-workplace");
+  assertEqual(liveCounterBeatAfterScene(case4, 5, () => false)?.id, "work-comment-stupid-blowup", "案 4 蠢话爆句必须先于群内还款截图");
+  assertEqual(
+    liveCounterBeatAfterScene(case4, 5, (key) => key === "liveCounterBeat:work-comment-stupid-blowup")?.id,
+    "work-group-repayment-message",
+    "案 4 情绪拍播完后必须继续归还原有群内还款反制"
+  );
 });
 
 test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential comparison as a two-stop trade-off", () => {

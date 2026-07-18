@@ -5,6 +5,7 @@ export function livePressureProfile({
   pressureSignal = "",
   routeAxis = "",
   routeAxisComments = {},
+  driftComments = [],
   scene = "",
   sceneHint = {},
   mood = "listening"
@@ -23,7 +24,7 @@ export function livePressureProfile({
     crowd,
     callerGuard,
     patienceLabel: patienceLabelFor(level),
-    comments: liveCommentsFor({ crowd, foundCount, intentHook, level, routeAxis, routeAxisComments, scene }),
+    comments: liveCommentsFor({ crowd, foundCount, intentHook, level, routeAxis, routeAxisComments, driftComments, scene }),
     expression: expressionFor({ callerGuard, crowd, level, mood, scene, sceneHint })
   };
 }
@@ -156,15 +157,20 @@ function callerGuardState({ pressureSignal = "", crowd = "", mood = "", sceneHin
   return "听着";
 }
 
-function liveCommentsFor({ crowd = "", foundCount = 0, intentHook = "", level = "high", routeAxis = "", routeAxisComments = {}, scene = "" }) {
+function liveCommentsFor({ crowd = "", foundCount = 0, intentHook = "", level = "high", routeAxis = "", routeAxisComments = {}, driftComments = [], scene = "" }) {
   const hook = intentHook || "话太顺了";
   const axisComment = routeAxisCommentFor(routeAxis, routeAxisComments);
   if (scene === "patienceLost" || level === "low") return withAxisComment(["弹幕散了", "麦要断了", hook], axisComment);
-  if (crowd === "跑偏") return withAxisComment(["弹幕跑题", hook, "话题偏了"], axisComment);
+  if (crowd === "跑偏") return withAxisComment([driftCommentFor(driftComments) || "弹幕跑题", hook, "话题偏了"], axisComment);
   if (crowd === "稳住") return withAxisComment(["弹幕缓下来", hook, "那句对上了"], axisComment);
   if (foundCount >= 2) return withAxisComment(["弹幕刷得快", hook, "话还没完"], axisComment);
   if (foundCount === 1) return withAxisComment(["开始对上了", hook, "话没说满"], axisComment);
   return withAxisComment(["刚接进来", "弹幕在等", hook], axisComment);
+}
+
+function driftCommentFor(comments = []) {
+  if (!Array.isArray(comments) || comments.length === 0) return "";
+  return String(comments[0] ?? "");
 }
 
 function routeAxisCommentFor(routeAxis = "", routeAxisComments = {}) {

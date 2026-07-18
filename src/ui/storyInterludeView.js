@@ -1,11 +1,13 @@
 export function storyInterludeHtml({
   nextObjectLabel = "",
   nextLine = "",
-  shellLine = ""
+  shellLine = "",
+  shellLines = []
 } = {}) {
   return `
     <section class="story-interlude-card shell">
       <span>广告间隙</span>
+      ${(shellLines ?? []).map((line) => `<div class="story-interlude-line"><b>${escapeHtml(line.speaker ?? "")}</b><p>${escapeHtml(line.text ?? "")}</p></div>`).join("")}
       <p>${escapeHtml(shellLine || "控台安静了一会儿，下一通的材料先到了后台。")}</p>
     </section>
     <section class="story-interlude-card next">

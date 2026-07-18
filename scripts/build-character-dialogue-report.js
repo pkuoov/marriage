@@ -80,6 +80,9 @@ function collectCaseDialogue(packet) {
     if (typeof value.speaker === "string" && (typeof value.text === "string" || typeof value.line === "string")) {
       const profileId = resolveSurface(value.speaker, `${path}.speaker`);
       if (profileId) add(profileId, phase, path, value.text ?? value.line, value.speaker);
+    } else if (typeof value.role === "string" && typeof value.text === "string") {
+      if (value.role === "host") add(hostId, phase, path, value.text, "林旭阳");
+      if (value.role === "caller") add(callerId, phase, path, value.text, "咨询者");
     }
     if (typeof value.speakerProfileId === "string") {
       for (const key of ["material", "text", "line"]) add(value.speakerProfileId, phase, `${path}.${key}`, value[key]);
@@ -111,7 +114,7 @@ function collectCaseDialogue(packet) {
       for (const [optionIndex, option] of (scene[groupName] ?? []).entries()) {
         const base = `$case.sceneVersions[${sceneIndex}].${groupName}[${optionIndex}]`;
         add(hostId, phase, `${base}.question`, option.question, "林旭阳");
-        add(callerId, phase, `${base}.answer`, option.answer, "咨询者");
+        if (!option.lines?.length) add(callerId, phase, `${base}.answer`, option.answer, "咨询者");
         add(callerId, phase, `${base}.guardedAnswer`, option.guardedAnswer, "咨询者");
         add(callerId, phase, `${base}.reactionLine`, option.reactionLine, "咨询者");
       }
@@ -133,6 +136,9 @@ function collectCaseDialogue(packet) {
     add(callerId, "nightB", "$case.overnightStructure.callerQuestion.prompt", callerQuestion.prompt, "咨询者");
     for (const [index, option] of (callerQuestion.options ?? []).entries()) {
       add(hostId, "nightB", `$case.overnightStructure.callerQuestion.options[${index}].label`, option.label, "林旭阳");
+      for (const [choiceIndex, choice] of (option.hostChoices ?? []).entries()) {
+        if (!choice.silent) add(hostId, "nightB", `$case.overnightStructure.callerQuestion.options[${index}].hostChoices[${choiceIndex}].label`, choice.label, "林旭阳");
+      }
     }
   }
 
@@ -175,6 +181,7 @@ function collectShellDialogue() {
     Object.entries(value).forEach(([key, entry]) => visit(entry, `${path}.${key}`));
   };
   visit(manifest.nightShell?.prologue, "$manifest.nightShell.prologue");
+  visit(manifest.nightShell?.interludes, "$manifest.nightShell.interludes");
   visit(manifest.nightShell?.epilogue, "$manifest.nightShell.epilogue");
 }
 

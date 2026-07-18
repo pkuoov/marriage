@@ -2,6 +2,7 @@ import { callDialogueHtml } from "./callFlowView.js?v=0.20.69";
 
 export function liveCounterBeatHtml(beat = {}, pick = null) {
   const choices = beat.choices ?? [];
+  const selectedChoice = choices.find((choice) => choice.id === pick?.choiceId) ?? null;
   return `
     <section class="interlude-action-card interrupt-toast-card live-counter-beat-card">
       <span class="source-badge">${escapeHtml(beat.from ?? "现场新消息")}</span>
@@ -12,6 +13,7 @@ export function liveCounterBeatHtml(beat = {}, pick = null) {
           ${choices.map((choice) => counterChoiceHtml(choice, pick)).join("")}
         </div>
       ` : ""}
+      ${selectedChoice?.lines?.length ? callDialogueHtml(selectedChoice.lines, "live-counter-response") : ""}
     </section>
   `;
 }

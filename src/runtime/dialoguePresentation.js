@@ -24,7 +24,8 @@ export function splitDialogueSentences(value = "") {
       buffer += text[index + 1];
       index += 1;
     }
-    if (!quotes.length && (SENTENCE_END.has(char) || ellipsis || char === "\n")) {
+    const interruption = char === "—" && text[index - 1] === "—";
+    if (!quotes.length && (SENTENCE_END.has(char) || ellipsis || interruption || char === "\n")) {
       const trailing = text[index + 1];
       if (["」", "』", "”", "’", "\""].includes(trailing)) continue;
       if (buffer.trim()) rows.push(buffer.trim());

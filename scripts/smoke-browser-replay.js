@@ -6,11 +6,11 @@ import { dirname, resolve } from "node:path";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
 const routes = [
-  { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-rotation" }, dayChoiceText: { "day-restaurant": "位置难订是真的" }, opener: "常客的轮订规律", openerText: "他只说提前订了", callerQuestion: "ask-fifty-thousand" },
-  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "每月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
+  { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-rotation" }, dayChoiceText: { "day-restaurant": "位置难订是真的" }, opener: "常客的轮订规律", openerText: "他只说提前订了", callerQuestion: "not-your-debt", callerQuestionHost: "soothe" },
+  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "六月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
   { name: "restaurant-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, dayChoiceText: { "day-restaurant": "会员号不能给" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "会员号在你手上", callerQuestion: "dont-answer-for-her" },
-  { name: "material-miss-accounting-restaurant", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "每月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
-  { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "每月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
+  { name: "material-miss-accounting-restaurant", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "六月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
+  { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "六月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
   { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "会员号在你手上", callerQuestion: "dont-answer-for-her" }
 ];
 const smokeTarget = process.env.SMOKE_TARGET ?? "all";
@@ -160,7 +160,7 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-enter-post-live]").count()) {
-        await assertVisibleText(page, "电话没摔，只轻轻断了。", "overnight route should show the authored hangup line before the show ends");
+        await assertVisibleText(page, "电话断了。后台那张流水还亮着", "overnight route should show the authored hangup line before the show ends");
         await assertNoPageText(page, "账单、到期日、她要垫多少", "Zhao's private call must not happen while the show is still live");
         await activate(page, route, "[data-enter-post-live]");
         continue;
@@ -343,6 +343,20 @@ async function runCase3DayRoutes() {
     openerText: "‘收入稳’，她给我家加的",
     conflictText: "她替你家添了‘收入稳’"
   });
+  await runOfflineDayMap({
+    chapter: 3,
+    name: "case3-reaction-beat",
+    interludeAction: "profile-closed-zhang",
+    dayScenes: [
+      { id: "day-profile-credential-docs", text: "学历核验页与存款证明对读", rows: ["p04"] },
+      { id: "day-profile-teahouse", text: "两段聊天都调出来" }
+    ],
+    opener: "双份材料圈注",
+    openerText: "‘学历好、收入稳’……纸上没有这整句",
+    reactionText: "她拍我家的群。给一个直播间。",
+    reactionChoice: "push-back",
+    reactionResponse: "……行。播完的。"
+  });
 }
 
 async function runCase4AdvisorConflict() {
@@ -358,7 +372,11 @@ async function runCase4AdvisorConflict() {
     ],
     opener: "小林主责框架",
     openerText: "位置，是我想要的",
-    conflictText: "你认‘我来扛’"
+    conflictText: "你认‘我来扛’",
+    reactionText: "我蠢得可有规律了",
+    reactionChoice: "silence",
+    reactionResponse: "没蠢过的举手",
+    nextCounterText: "陈垫的钱月底统一走"
   });
 }
 
@@ -432,7 +450,10 @@ async function runCase2DayMap() {
       { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
     ],
     opener: "吹风机回放",
-    openerText: "是我把它剪掉"
+    openerText: "是我把它剪掉",
+    reactionText: "收了好处装什么受害者",
+    reactionChoice: "soothe",
+    reactionResponse: "……嗯。你问吧。"
   });
   await runOfflineDayMap({
     chapter: 2,
@@ -464,7 +485,7 @@ async function runCase2DayMap() {
   });
 }
 
-async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoice = "", interludeReplyChoice = "", expectedNightInventory = "", interludeText = "", expectedDaySceneCount = 3, dayScenes, opener, openerText, conflictText = "" }) {
+async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoice = "", interludeReplyChoice = "", expectedNightInventory = "", interludeText = "", expectedDaySceneCount = 3, dayScenes, opener, openerText, conflictText = "", reactionText = "", reactionChoice = "", reactionResponse = "", nextCounterText = "" }) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     reducedMotion: "reduce"
@@ -532,6 +553,15 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     await click(page, `[data-overnight-opener="${opener}"]`);
     await assertVisibleText(page, openerText, `${name} must use the selected daytime item in the second-night opener`);
     if (conflictText) await assertVisibleText(page, conflictText, `${name} must render the selected item's first night-B confrontation`);
+    if (reactionText) {
+      await advanceToReactionBeat(page, reactionText, name);
+      await click(page, `[data-live-counter-choice="${reactionChoice}"]`);
+      await assertVisibleText(page, reactionResponse, `${name} must render the selected humanization response`);
+      if (nextCounterText) {
+        await click(page, "[data-continue-live-counter]");
+        await assertVisibleText(page, nextCounterText, `${name} must queue the next scene-tail counter beat instead of skipping it`);
+      }
+    }
     await assertNoPageText(page, "undefined", `${name} rendered undefined text`);
     await assertNoPageText(page, "NaN", `${name} rendered NaN text`);
   } catch (error) {
@@ -542,6 +572,31 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
   } finally {
     await context.close();
   }
+}
+
+async function advanceToReactionBeat(page, expectedText, name) {
+  for (let step = 0; step < 48; step += 1) {
+    if (await page.getByText(expectedText, { exact: false }).count()) return;
+    for (const selector of [
+      "[data-enter-overnight-night2]",
+      "[data-enter-overnight-night2-direct]",
+      "[data-document-question]",
+      "[data-close-document-question]",
+      "[data-after-scene-evidence]",
+      "[data-open-question-menu]",
+      "[data-return-question-menu]",
+      "[data-next-scene-stage]",
+      "[data-continue-live-counter]"
+    ]) {
+      if (await page.locator(selector).count()) {
+        await click(page, selector);
+        break;
+      }
+    }
+    if (await page.locator("[data-scene-question]").count()) await click(page, "[data-scene-question]");
+    await page.waitForTimeout(20);
+  }
+  throw new Error(`${name} did not reach reaction beat: ${expectedText}`);
 }
 
 async function completeOvernightDay(page, route) {
@@ -664,6 +719,12 @@ async function advanceToAccusation(page, route) {
       if (route.callerQuestion === "dont-answer-for-her") {
         await assertVisibleText(page, "说完，我自己选。", "process-control answer should return the choice to the caller");
       }
+      continue;
+    }
+    if (await page.locator("[data-caller-question-host]").count()) {
+      const hostChoice = route.callerQuestionHost ?? "soothe";
+      await activate(page, route, `[data-caller-question-host="${hostChoice}"]`);
+      if (hostChoice === "soothe") await assertVisibleText(page, "水在手边放凉一晚上了", "humanization branch must render the chosen emotional-labor response");
       continue;
     }
     if (await page.locator("[data-after-caller-question]").count()) {
@@ -848,11 +909,23 @@ async function gamepadPress(page, buttonIndex) {
   await page.evaluate((index) => {
     window.__smokeGamepad.buttons[index].pressed = true;
   }, buttonIndex);
-  await page.waitForTimeout(500);
+  await waitForAnimationFrames(page, 3);
   await page.evaluate((index) => {
     window.__smokeGamepad.buttons[index].pressed = false;
   }, buttonIndex);
-  await page.waitForTimeout(250);
+  await waitForAnimationFrames(page, 2);
+}
+
+async function waitForAnimationFrames(page, count) {
+  await page.evaluate((frameCount) => new Promise((resolveFrame) => {
+    let elapsed = 0;
+    const advance = () => {
+      elapsed += 1;
+      if (elapsed >= frameCount) resolveFrame();
+      else requestAnimationFrame(advance);
+    };
+    requestAnimationFrame(advance);
+  }), count);
 }
 
 async function moveFocusTo(page, selector, index = 0, moveNext, label) {

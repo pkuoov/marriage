@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.68";
+import { assertDialogueTexture, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js?v=0.22.0";
 import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.68";
 import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.24.0";
 
@@ -453,10 +454,12 @@ function assertOvernightStructure(packet = {}, label = "") {
       assertNonEmptyString(beat.id, `${label} overnightStructure.liveCounterBeats[${beatIndex}] 缺少 id`);
       assert(!beatIds.has(beat.id), `${label} overnightStructure.liveCounterBeats id 重复: ${beat.id}`);
       beatIds.add(beat.id);
-      assertEqual(beat.kind, "interruptToast", `${label} overnightStructure.liveCounterBeats[${beatIndex}].kind 必须是 interruptToast`);
+      assert(["interruptToast", "emotionalChoice"].includes(beat.kind), `${label} overnightStructure.liveCounterBeats[${beatIndex}].kind 必须是 interruptToast 或 emotionalChoice`);
       assertEqual(beat.cost, 0, `${label} overnightStructure.liveCounterBeats[${beatIndex}].cost 必须为 0`);
-      assert(Number.isInteger(beat.afterSceneIndex), `${label} overnightStructure.liveCounterBeats[${beatIndex}].afterSceneIndex 必须是整数`);
-      assert(beat.afterSceneIndex > anchorIndex && beat.afterSceneIndex < (packet.sceneVersions?.length ?? 0), `${label} overnightStructure.liveCounterBeats[${beatIndex}] 必须落在夜 B 场景之间`);
+      const placementIndexes = [beat.beforeSceneIndex, beat.afterSceneIndex].filter(Number.isInteger);
+      assertEqual(placementIndexes.length, 1, `${label} overnightStructure.liveCounterBeats[${beatIndex}] 必须且只能声明一个场前/场后位置`);
+      const placementIndex = placementIndexes[0];
+      assert(placementIndex > anchorIndex && placementIndex < (packet.sceneVersions?.length ?? 0), `${label} overnightStructure.liveCounterBeats[${beatIndex}] 必须落在夜 B 场景之间`);
       assertNonEmptyString(beat.from, `${label} overnightStructure.liveCounterBeats[${beatIndex}].from 不能为空`);
       assert(Boolean(beat.text || (beat.lines ?? []).length), `${label} overnightStructure.liveCounterBeats[${beatIndex}] 缺少可见内容`);
       if (beat.text) {
@@ -469,6 +472,11 @@ function assertOvernightStructure(packet = {}, label = "") {
         assertNonEmptyString(choice.id, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 id`);
         assertNonEmptyString(choice.label, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 label`);
         assert(choice.correct === undefined, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 不得判对错`);
+        if (choice.lines !== undefined) {
+          assertBeatLines(choice.lines, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}].lines`);
+          assert(choice.lines.filter((line) => line.role !== "pause").length <= 3, `${label} liveCounter 情绪支线最多三行收束`);
+        }
+        if (choice.stanceNudge !== undefined) assert(["open", "defensive", "neutral"].includes(choice.stanceNudge), `${label} liveCounter stanceNudge 非法`);
         if (choice.questionOverride) {
           assertNonEmptyString(choice.questionOverride.sceneId, `${label} liveCounter questionOverride 缺少 sceneId`);
           const targetScene = (packet.sceneVersions ?? []).find((scene) => scene.id === choice.questionOverride.sceneId);
@@ -478,6 +486,7 @@ function assertOvernightStructure(packet = {}, label = "") {
           assertNonEmptyString(choice.questionOverride.question, `${label} liveCounter questionOverride.question 不能为空`);
         }
       });
+      if (beat.kind === "emotionalChoice") assertEqual((beat.choices ?? []).length, 3, `${label} 情绪应对必须提供哄/顶/不接话三选`);
     });
   }
   assertNonEmptyString(structure.dayIntro, `${label} overnightStructure.dayIntro 不能为空`);
@@ -551,14 +560,16 @@ function assertOvernightStructure(packet = {}, label = "") {
   const firstConflictHostLines = new Set();
   Object.entries(structure.callbackOpeners ?? {}).forEach(([earnedId, opener]) => {
     assert(opener.firstConflict && typeof opener.firstConflict === "object" && !Array.isArray(opener.firstConflict), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 必须是对象`);
-    assertNonEmptyString(opener.firstConflict.hostLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.hostLine 不能为空`);
+    const firstConflictHostLine = opener.firstConflict.hostLine ?? opener.firstConflict.lines?.find((line) => line.role === "host")?.text;
+    assertNonEmptyString(firstConflictHostLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 必须有主播起手句`);
+    if (opener.firstConflict.lines !== undefined) assertBeatLines(opener.firstConflict.lines, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.lines`);
     assertNonEmptyString(opener.firstConflict.callerLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerLine 不能为空`);
     if (opener.firstConflict.callerFollowupLine !== undefined) {
       assertNonEmptyString(opener.firstConflict.callerFollowupLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerFollowupLine 不能为空`);
       assertEqual(opener.firstConflict.pauseAfterCallerLine, true, `${label} firstConflict 分拍续句前必须声明 pauseAfterCallerLine`);
     }
-    assert(!firstConflictHostLines.has(opener.firstConflict.hostLine), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.hostLine 不得与另一带回物共用同一句`);
-    firstConflictHostLines.add(opener.firstConflict.hostLine);
+    assert(!firstConflictHostLines.has(firstConflictHostLine), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 主播起手句不得与另一带回物共用同一句`);
+    firstConflictHostLines.add(firstConflictHostLine);
   });
   if (structure.interludeEarnedItemMap !== undefined) {
     assert(structure.interludeEarnedItemMap && typeof structure.interludeEarnedItemMap === "object" && !Array.isArray(structure.interludeEarnedItemMap), `${label} overnightStructure.interludeEarnedItemMap 必须是对象`);
@@ -588,13 +599,22 @@ function assertOvernightStructure(packet = {}, label = "") {
   assertNonEmptyString(structure.callbackFallback?.line, `${label} overnightStructure.callbackFallback.line 不能为空`);
   assertNonEmptyString(structure.postures?.againstCaller, `${label} overnightStructure.postures.againstCaller 不能为空`);
   assertNonEmptyString(structure.postures?.withCaller, `${label} overnightStructure.postures.withCaller 不能为空`);
+  if (structure.returnBeat !== undefined) assertBeatLines(structure.returnBeat?.lines, `${label} overnightStructure.returnBeat.lines`);
   if (structure.callerQuestion !== undefined) {
     assertNonEmptyString(structure.callerQuestion.prompt, `${label} overnightStructure.callerQuestion.prompt 不能为空`);
     assertArrayMin(structure.callerQuestion.options, 3, `${label} overnightStructure.callerQuestion.options 至少三项`);
     structure.callerQuestion.options.forEach((option, optionIndex) => {
       assertNonEmptyString(option.id, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 缺少 id`);
       assertNonEmptyString(option.label, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 缺少 label`);
-      assertNonEmptyString(option.callerLine, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 缺少 callerLine`);
+      if (option.lines !== undefined) assertBeatLines(option.lines, `${label} overnightStructure.callerQuestion.options[${optionIndex}].lines`);
+      else assertNonEmptyString(option.callerLine, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 缺少 callerLine 或 lines`);
+      (option.hostChoices ?? []).forEach((choice, choiceIndex) => {
+        assertNonEmptyString(choice.id, `${label} overnightStructure.callerQuestion.options[${optionIndex}].hostChoices[${choiceIndex}] 缺少 id`);
+        assertNonEmptyString(choice.label, `${label} overnightStructure.callerQuestion.options[${optionIndex}].hostChoices[${choiceIndex}] 缺少 label`);
+        assertBeatLines(choice.lines, `${label} overnightStructure.callerQuestion.options[${optionIndex}].hostChoices[${choiceIndex}].lines`);
+        assert(["open", "defensive", "neutral"].includes(choice.stanceNudge), `${label} callerQuestion hostChoices stanceNudge 不合法`);
+        assert(choice.correct === undefined, `${label} callerQuestion hostChoices 不得设置 correct`);
+      });
       assertNonEmptyString(option.routeAxis, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 缺少 routeAxis`);
       assert(option.correct === undefined, `${label} overnightStructure.callerQuestion.options[${optionIndex}] 不得设置 correct`);
     });
@@ -1008,6 +1028,9 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assert(["guarded", "tense", "listening"].includes(scene.pressureHint?.callerGuard), `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.callerGuard 不合法`);
         assert(["blink", "pause", "shift"].includes(scene.pressureHint?.expression?.kind), `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.expression.kind 不合法`);
         assertNonEmptyString(scene.pressureHint?.expression?.text, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 pressureHint.expression.text`);
+        for (const beatField of ["beforeVersion", "afterVersion", "sceneCloser"]) {
+          if (scene[beatField] !== undefined) assertBeatLines(scene[beatField]?.lines, `${casePacket.caseId} sceneVersions[${sceneIndex}].${beatField}.lines`);
+        }
         if (scene.showsCard !== undefined) {
           assertNonEmptyString(scene.showsCard, `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 不能为空`);
           assert(evidenceCardIds.has(scene.showsCard), `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 指向不存在的 evidenceCards id: ${scene.showsCard}`);
@@ -1025,6 +1048,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
             assertNonEmptyString(option.question, `${casePacket.caseId} sceneVersions[${sceneIndex}].casualQuestions[${optionIndex}] 缺少 question`);
             assertNonEmptyString(option.answer, `${casePacket.caseId} sceneVersions[${sceneIndex}].casualQuestions[${optionIndex}] 缺少 answer`);
             assert(!keyQuestions.has(option.question), `${casePacket.caseId} sceneVersions[${sceneIndex}].casualQuestions[${optionIndex}] 不能复用关键选择文案`);
+            if (option.lines !== undefined) assertBeatLines(option.lines, `${casePacket.caseId} sceneVersions[${sceneIndex}].casualQuestions[${optionIndex}].lines`);
             if (option.guardedAnswer) {
               assertNonEmptyString(option.guardedAnswer, `${casePacket.caseId} sceneVersions[${sceneIndex}].casualQuestions[${optionIndex}] guardedAnswer 不能为空`);
             }
@@ -1111,6 +1135,12 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertOvernightStructure(casePacket, casePacket.caseId);
       assertDelegation(casePacket, casePacket.caseId);
       assertLurkerNote(casePacket, casePacket.caseId);
+      assertDialogueTexture(casePacket);
+      const spokenPunctuation = spokenPunctuationLeaks(casePacket);
+      assert(
+        spokenPunctuation.length === 0,
+        `${casePacket.caseId} 说话面不得混入半角逗号、冒号或分号: ${spokenPunctuation.slice(0, 3).map((entry) => entry.path).join("、")}`
+      );
 
       assertNonEmptyString(casePacket.deepFollowup?.question, `${casePacket.caseId} deepFollowup.question 不能为空`);
       assertNonEmptyString(casePacket.deepFollowup?.answer, `${casePacket.caseId} deepFollowup.answer 不能为空`);

@@ -2,6 +2,22 @@
   "caseId": "01-credit",
   "plotId": "lost-job-hidden-credit",
   "runtimeContentStatus": "runtime-loaded",
+  "texturePass": true,
+  "voiceTics": {
+    "沈": [
+      "就……",
+      "反正"
+    ]
+  },
+  "voiceTicArc": {
+    "沈": "夜 A 密,夜 B 干净"
+  },
+  "driftComments": [
+    "主播你身后那盏灯闪一晚上了,强迫症都看犯了",
+    "蹲一个主播同款保温杯",
+    "课代表呢?进来就看见八万",
+    "刚下夜班,他还了吗"
+  ],
   "dramaticAnchor": "信用卡账单、社保断缴截图、会员订座记录与开箱视频",
   "whyTonight": "对方要求咨询者先垫最低还款，钱马上要从咨询者账户出去。",
   "objectPurpose": "账单被说成短期周转证明，社保截图意外暴露失业时间早于借钱，会员订座和开箱视频又露出咨询者自己的受益位置。",
@@ -32,7 +48,7 @@
   "routeAxisComments": {
     "money-flow": [
       "弹幕开始算账了",
-      "钱路比委屈快"
+      "我算了下我自己的卡,不敢细看"
     ],
     "document-edge": [
       "账单边上有时间",
@@ -72,7 +88,7 @@
       },
       "zhang-forensic": {
         "tone": "offDomain",
-        "text": "流水单不是我的领域。链条上说，银行流水造假成本极高，这几页大概率是真的——所以更值得认真对。"
+        "text": "流水单不是我的领域。链条上说，银行流水造假成本极高，这几页大概率是真的——所以更值得认真对。……先挂了啊,外卖在敲门,再不接汤就洒楼道了。"
       }
     }
   },
@@ -210,6 +226,15 @@
       "speakerId": "shen",
       "speaker": "咨询者",
       "version": "他先说：“奖金晚发，帮我挡几天。”我真当成手头紧。后来他发了张办材料的截图，我瞄见社保那栏，停了两个多月——那张图还是他上个月办材料时截的。可他每天还跟我说加班。那张图我盯了半天，没回他。",
+      "afterVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "……你等我一下，我把窗关了。楼下有车在报警，吵。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "helperHint": "先把“奖金晚发”和“社保停了两个月”分开看：他开口借钱前，哪件事没说。",
       "doubt": "说是奖金晚发，可社保已经断缴两个月。",
       "contradiction": "TA 用“奖金延迟”解释周转，社保停后却还在刷体面消费，资金缺口早已出现。",
@@ -228,7 +253,7 @@
       "questionOptions": [
         {
           "question": "他找你垫钱以前，提过工作出问题吗？",
-          "answer": "没有。嘴里一直是忙、加班。我还劝他别熬。要不是那张截图，我到现在都以为他每天在公司。",
+          "answer": "没有。就……嘴里一直是忙，加班，项目上线，说什么服务器凌晨得盯着，我也听不懂，反正就很忙。有一回我说下楼给你送个粥吧，他说别，公司门禁严。现在想想，门禁严——他那阵子都不在公司了，哪来的门禁。……哎，我说到哪了。对，工作出问题，他一个字没提过。",
           "guardedAnswer": "他说忙，我就信了。我们没住一起，我也不想天天问他在哪。",
           "contradiction": "社保断缴早于借钱，失业不是突然发生。",
           "correct": true,
@@ -276,7 +301,7 @@
       ],
       "speakerId": "shen",
       "speaker": "咨询者",
-      "version": "账单一翻开，右上角写着八万出头。我往下划，餐厅、礼物，两次酒店。再下一行是一万二，短视频平台。我在那儿停了几秒，还是划走了。分期从他手机上开的，我就拿这句话挡着，没再看。",
+      "version": "账单翻出来，我先看见右上角那个数。七万九……不对，八万零几百，反正八万出头。我往下划，餐厅、礼物，两次酒店。再下一行是一万二，短视频平台。我在那儿停了几秒，还是划走了。分期从他手机上开的，我就拿这句话挡着，没再看。",
       "helperHint": "八万先别当成一团。按失业前后切一刀，再看大额消费落在哪边。",
       "doubt": "金额、用途和时间都比“挡几天”重得多。",
       "contradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事；短视频分期的受益人还没说清。",
@@ -295,6 +320,25 @@
         {
           "question": "那笔短视频平台的分期是怎么回事？",
           "answer": "……分期在他手机上开的。买了什么，我现在不想说。先看餐厅和酒店。"
+        },
+        {
+          "question": "八万，他原话就要这么多?",
+          "answer": "一分没少。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "嗯。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "一分没少。"
+            }
+          ],
+          "routeAxis": "money-flow",
+          "routeTone": "detour"
         }
       ],
       "questionOptions": [
@@ -361,6 +405,25 @@
         {
           "question": "照片发出去以后，朋友怎么说？",
           "answer": "都在夸，说那顿饭看着很有心。我那时看得挺高兴，没去想是谁在替谁撑。"
+        },
+        {
+          "question": "那晚的照片删了吗?",
+          "answer": "舍不得。里面那盏灯拍得挺好看的。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "没删。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "舍不得。里面那盏灯拍得挺好看的。"
+            }
+          ],
+          "routeAxis": "caller-credibility",
+          "routeTone": "detour"
         }
       ],
       "questionOptions": [
@@ -388,6 +451,33 @@
           "routeTone": "softening"
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "订座的事，等账单翻完再说。"
+          },
+          {
+            "role": "caller",
+            "text": "等等。我就问一句，这句你帮我问不了……那个靠窗位，他是不是也带别人坐过。"
+          },
+          {
+            "role": "host",
+            "text": "这跟八万比——"
+          },
+          {
+            "role": "caller",
+            "text": "你别管跟八万比!"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "……人均四五百的店，我记住的是位置。可笑吧。我也觉得。"
+          }
+        ]
+      },
       "pressureHint": {
         "intentHook": "会员订座露出来",
         "callerGuard": "guarded",
@@ -414,7 +504,7 @@
       "casualQuestions": [
         {
           "question": "你以前真想过做探店号？",
-          "answer": "想过，断断续续念了几个月。真要拍，我又总说没设备。"
+          "answer": "想过，断断续续念了几个月。我关注了好些博主，有个杭州的姑娘，拍面馆的，就一个手机加个小支架，拍得特别香，她粉丝可多了。我还研究过转场，就那种一挥手换一家店的……哎，说这个干嘛。反正，真要拍我又总说没设备。现在设备倒是有了。"
         },
         {
           "question": "那句“投资你”，你当时怎么听？",
@@ -447,6 +537,15 @@
           "routeTone": "caller-skeptical"
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "……不好意思，咳两声。换季。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "pressureHint": {
         "intentHook": "开箱夜把分期钉住",
         "callerGuard": "tense",
@@ -606,6 +705,36 @@
       ],
       "speakerId": "shen",
       "speaker": "咨询者",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等下……他又发消息了。一个『抱抱』表情包，企鹅那个。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "他知道这是直播。他知道你们都看着。"
+          },
+          {
+            "role": "host",
+            "text": "几点发的?"
+          },
+          {
+            "role": "caller",
+            "text": "就刚才。十二点四十。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "……跟着又来一句：『账单 26 号出』。跟上回一模一样，连间隔都像卡着表的。"
+          }
+        ]
+      },
       "version": "他后来发了条语音：“我只是怕你知道我失业后就离开我。”语音一停，最低还款金额就跳出来。整整齐齐一行数字。还有一句，“以后他可能就不敢跟我谈结婚了。”这句是我说的。纪念日的座，我用会员号订；照片也是我发。我也怕别人觉得我找了个撑不住场面的人。我更怕承认，自己其实很吃那种体面。",
       "helperHint": "两句话挨得很近：先说怕失去她，后面紧接着要她做什么？",
       "doubt": "借钱这件事开始被说成尊严和结婚态度。",
@@ -623,6 +752,16 @@
         {
           "question": "“怕你离开”那句，他是打字还是语音？",
           "answer": "语音。声音很低，我听了三遍。……然后金额是打字发的，很整齐。"
+        },
+        {
+          "question": "你闺蜜后来还说什么了?",
+          "answer": "安慰我。说想开点，至少没领证，她表姐那种才叫惨。……我听完更想哭了。但她是好意，我知道她是好意。"
+        },
+        {
+          "question": "那条语音你还留着?",
+          "answer": "留着。",
+          "routeAxis": "caller-credibility",
+          "routeTone": "detour"
         }
       ],
       "questionOptions": [
@@ -1295,7 +1434,20 @@
       "周会计的时间线": {
         "line": "「周会计那张时间线，我看了。最扎眼的是 8 号。五月有，六月有，七月没了。王**是谁……先别问我，我真不知道。」",
         "firstConflict": {
-          "hostLine": "每月 8 号那笔没来，八万就开口了。你昨晚为什么只说“奖金晚发”？",
+          "lines": [
+            {
+              "role": "host",
+              "text": "六月 8 号那笔没来，八万就开口了。你昨晚——"
+            },
+            {
+              "role": "caller",
+              "text": "七月。六月是有的。"
+            },
+            {
+              "role": "host",
+              "text": "……对，七月，我念岔了。你昨晚为什么只说『奖金晚发』?"
+            }
+          ],
           "callerLine": "……说成断了，话就重了。",
           "pauseAfterCallerLine": true,
           "callerFollowupLine": "我没敢往那边说。"
@@ -1372,13 +1524,93 @@
       "againstCaller": "我差点不打回来。刚才弹幕……我都听到了。你要是也觉得是我贪体面，这通我讲不下去。",
       "withCaller": "我回来了。八万的事，你继续问——我不怕对账。控台那点短查，你先说给我听。"
     },
+    "returnBeat": {
+      "lines": [
+        {
+          "role": "caller",
+          "text": "今晚信号好像不太好，我换了个房间。你那边听得清吧?",
+          "nonLoadBearing": true
+        },
+        {
+          "role": "host",
+          "text": "清楚。"
+        }
+      ]
+    },
     "callerQuestion": {
       "prompt": "主播，你说……我该不该垫？",
       "options": [
         {
           "id": "not-your-debt",
           "label": "别垫。至少今晚别转。",
-          "callerLine": "……你和我闺蜜说得一样。可你们都不用陪他过日子。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "……你和我闺蜜说得一样。你们都不用陪他过日子。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "你凭什么说得这么轻巧?你是不是也觉得，我这种人就活该碰上这种事?"
+            }
+          ],
+          "hostChoices": [
+            {
+              "id": "soothe",
+              "label": "我不是这个意思。你先喝口水。",
+              "lines": [
+                {
+                  "role": "caller",
+                  "text": "……水在手边放凉一晚上了。"
+                },
+                {
+                  "role": "pause"
+                },
+                {
+                  "role": "caller",
+                  "text": "你接着说吧。"
+                }
+              ],
+              "stanceNudge": "open"
+            },
+            {
+              "id": "push-back",
+              "label": "我是主播，不是你男朋友。这句我照直说。",
+              "lines": [
+                {
+                  "role": "caller",
+                  "text": "……行。你们做节目的，嘴都硬。"
+                },
+                {
+                  "role": "pause"
+                },
+                {
+                  "role": "caller",
+                  "text": "硬点好。你继续。"
+                }
+              ],
+              "stanceNudge": "defensive",
+              "routeTone": "pressure-point"
+            },
+            {
+              "id": "silence",
+              "label": "(不接话)",
+              "silent": true,
+              "lines": [
+                {
+                  "role": "stage",
+                  "text": "他没接话。电流声里，她自己缓了过来。"
+                },
+                {
+                  "role": "caller",
+                  "text": "……对不起。我不该冲你来。你接着问。"
+                }
+              ],
+              "stanceNudge": "neutral"
+            }
+          ],
           "routeAxis": "caller-credibility"
         },
         {

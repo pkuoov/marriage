@@ -45,29 +45,33 @@ export function stanceSnapshotHtml(snapshot = {}, pick = null) {
 
 export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {}) {
   return [
+    sceneBeatLinesHtml(scene.beforeVersion),
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard),
     ...dialoguePicks.flatMap((pick) => [
       callLineHtml({ role: "host", text: pick.question }),
-      callLineHtml({ role: "caller", text: pick.answer })
+      dialogueAnswerHtml(pick)
     ])
   ].join("");
 }
 
 export function scenePromptExchangeHtml({ scene = {} } = {}) {
   return [
+    sceneBeatLinesHtml(scene.beforeVersion),
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard)
   ].join("");
 }
 
-export function sceneQuestionAnswerHtml({ question = "", answer = "", resistanceBeat = null } = {}) {
+export function sceneQuestionAnswerHtml({ question = "", answer = "", lines = null, resistanceBeat = null } = {}) {
   return `
     <section class="question-answer-card">
       <div class="call-dialogue">
         ${callLineHtml({ role: "host", text: question })}
         ${resistanceBeatLinesHtml(resistanceBeat)}
-        ${callLineHtml({ role: "caller", text: answer })}
+        ${dialogueAnswerHtml({ answer, lines })}
       </div>
     </section>
   `;
@@ -75,13 +79,16 @@ export function sceneQuestionAnswerHtml({ question = "", answer = "", resistance
 
 export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pick = {}, fallbackAnswer = "" } = {}) {
   return [
+    sceneBeatLinesHtml(scene.beforeVersion),
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard),
     ...dialoguePicks.flatMap((item) => [
       callLineHtml({ role: "host", text: item.question }),
-      callLineHtml({ role: "caller", text: item.answer })
+      dialogueAnswerHtml(item)
     ]),
-    keyChoiceExchangeHtml({ scene, pick, fallbackAnswer })
+    keyChoiceExchangeHtml({ scene, pick, fallbackAnswer }),
+    sceneBeatLinesHtml(scene.sceneCloser)
   ].join("");
 }
 
@@ -98,6 +105,15 @@ export function keyChoiceExchangeHtml({ scene = {}, pick = {}, fallbackAnswer = 
 
 function resistanceBeatLinesHtml(resistanceBeat = null) {
   return (resistanceBeat?.lines ?? []).map((line) => callLineHtml(line)).join("");
+}
+
+function sceneBeatLinesHtml(beat = null) {
+  return (beat?.lines ?? []).map((line) => callLineHtml(line)).join("");
+}
+
+function dialogueAnswerHtml(pick = {}) {
+  if (Array.isArray(pick.lines) && pick.lines.length) return pick.lines.map((line) => callLineHtml(line)).join("");
+  return callLineHtml({ role: "caller", text: pick.answer ?? "" });
 }
 
 function flowGroup(content) {

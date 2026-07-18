@@ -78,7 +78,7 @@ export function latestChoiceReviewRowsForState(state = {}, brief = {}, { exclude
     { role: "caller", text: scenes[lastDialogueIndex]?.version ?? "" },
     ...askedDialoguePicksForState(state, brief, lastDialogueIndex).flatMap((pick) => [
       { role: "host", text: pick.question },
-      { role: "caller", text: pick.answer }
+      ...(Array.isArray(pick.lines) && pick.lines.length ? pick.lines : [{ role: "caller", text: pick.answer }])
     ])
   ].filter((line) => line.text);
 }
