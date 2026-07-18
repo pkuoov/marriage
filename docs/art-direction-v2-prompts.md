@@ -1,6 +1,7 @@
-# 美术方向 V2 · 深夜双色调「声音的剪影」Prompt 包
+# 美术方向 V2.1 · 暖色侧脸「声音的剪影」Prompt 包
 
 日期：2026-07-08
+人脸方向修订：2026-07-18
 取代：`docs/character-prompts.txt` / `docs/background-prompts.txt` 的"轻现实主义"方向（旧包封存不删）。
 用途：交给图像模型生成人物立绘、表情差分与场景背景。
 
@@ -10,8 +11,8 @@
 
 新方向：**立绘不是"人长什么样"，是"这个声音在主播脑内的成像"。**
 
-- 来电人 = 半剪影。单一光源（手机冷光／台灯暖光），逆光轮廓，重胶片颗粒，脸永远差一点看不全。
-- 签名装置：**光带过眼**——一条屏幕光的横带打在眼睛位置，像一条由光组成的马赛克。匿名的诗意版，全游戏的视觉记忆点。
+- 来电人 = 暖色三分之二侧脸。轮廓仍受直播间冷暖双色光影响，但面部保持可读，不再用遮罩或重阴影制造匿名。
+- 签名装置：**不直视镜头的侧脸**——五官简化，眼睛没有细瞳孔、高光和睫毛；匿名来自观看角度和信息带宽，而不是赛博光带。
 - 表情不靠五官靠体态：肩线、指尖、下颌角度——正好对齐引擎的表演钩子（pause／shift／blink 本来就是姿态动词）。
 - 每案一组双色调：视觉即案件调性，四案并排即是海报。
 - 三层清晰度 = 三层关系：来电人最朦胧（陌生的声音）＞顾问较清晰（台灯下的熟人）＞主播永不露脸（玩家自己）。
@@ -32,13 +33,13 @@
 
 **来电人共用段**（接统一前缀之后）：
 
-> anonymous caller, semi-silhouette figure, backlit rim light tracing the outline, face partially obscured, a single horizontal band of soft screen-light falling across the eyes like a glowing anonymity bar, features suggested not stated, holding a phone, emotion carried by posture and hands
+> anonymous caller, warm readable three-quarter side profile looking away from camera, simplified pixel-art eyes without detailed pupils or catchlights, restrained backlit rim light tracing the outline, holding a phone, emotion carried by posture and hands, no mask, no visor, no eye-light strip, no deep upper-face shadow
 
 差分规格（三档对齐引擎表演钩子）：
 
-- `neutral`（listening）：站姿放松偏疲惫，光带平稳横过双眼，手机贴耳。
-- `guarded`（shift／防备收紧）：侧身四分之一转开，肩线收紧，光带变窄倾斜，another hand 抱臂或攥衣角。
-- `pause`（低头停顿）：头低下，光带从眼睛滑落到手中手机屏上——**眼睛第一次完全没入阴影**，屏幕照亮指尖。
+- `neutral`（listening）：站姿放松偏疲惫，三分之二侧脸，手机贴耳，面部暖光稳定。
+- `guarded`（shift／防备收紧）：肩线收紧，另一只手抱臂、攥衣角或把文件抱紧；下颌略收，但不遮脸。
+- `pause`（低头停顿）：手机短暂离耳或举到眼前，视线随手机下移，肩膀略松；不用压暗面部表达停顿。
 
 各案专属段：
 
@@ -81,7 +82,7 @@
 
 ## 八、落地顺序建议
 
-1. 先出 4 张来电人 neutral 验方向（光带过眼是成败关键，一次对不齐就调光带宽度与倾角，不要调人）。
+1. 先出 4 张来电人 neutral 验方向（三分之二侧脸、暖色可读面部和简化眼睛是关键；匿名不足时先调头部角度与眼睛细节，不加遮罩）。
 2. 过审后补 guarded/pause 差分与顾问四张。
 3. 场景包最后（它最便宜，也最不容易错）。
-4. `docs/ui-art-asset-review.md` 增补一节记录 V2 验收标准：**匿名感（脸不可全见）、光带一致性、每案双色调纯度、颗粒密度统一**。
+4. `docs/ui-art-asset-review.md` 增补一节记录 V2.1 验收标准：**不直视镜头、五官信息简化、面部亮度统一、每案双色调纯度、颗粒密度统一**。

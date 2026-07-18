@@ -1,5 +1,7 @@
 # UI 改版与美术增补 prompts
 
+> 2026-07-18 立绘方向勘误：本文中的“眼部光带”要求已废止。四案来电人以 `docs/pixel-art-transition-and-portrait-direction.md` 的暖色三分之二侧脸、简化五官标准为准；旧段落仅保留为历史执行记录。
+
 日期：2026-07-12
 
 以下提示词沿用 [art-direction-v2-prompts.md](/Users/pkuiloveoov/code/love/docs/art-direction-v2-prompts.md) 的“声音的剪影”方向。来电人变体必须使用对应的 V2 中性候选作为角色参考图，不能重新发明脸型、发型、服装和身材。

@@ -1,5 +1,7 @@
 # UI / 交互 / 场景 / 立绘 · 修改执行 Prompt 包
 
+> 2026-07-18 立绘方向勘误：本文中的“半剪影／眼部光带”要求已废止。四案来电人以 `docs/pixel-art-transition-and-portrait-direction.md` 的暖色三分之二侧脸、简化五官标准为准；旧段落仅保留为历史执行记录。
+
 日期：2026-07-15
 
 本包基于最新 canvas 审计 `ui-interaction-art-audit`（复核 `docs/ui-gameplay-art-review-2026-07-12.md` 与运行时壳层），把「要修什么」拆成可直接复制粘贴的执行 Prompt。

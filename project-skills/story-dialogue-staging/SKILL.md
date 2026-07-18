@@ -1,6 +1,6 @@
 ---
 name: story-dialogue-staging
-description: Use when restructuring or expanding a dialogue-driven game's overall plot, NPC participation, cross-night scene sequence, scene-by-scene storyboard, playable dialogue, case closure, inter-case transition, or narrative UI. Trigger for requests to continue modifying a case, write the full story before storyboards, increase NPC frequency, add daytime location changes, make investigation choices alter callback dialogue, rewrite scene lines, remove AI-sounding copy, add a formal case summary or next-case title, or turn narrative design into runtime content for 《直播间大侦探》.
+description: Use when restructuring or expanding a dialogue-driven game's overall plot, NPC participation, cross-night scene sequence, scene-by-scene storyboard, playable dialogue, case closure, inter-case transition, narrative UI, or anonymous-caller portrait rollout. Trigger for requests to continue modifying a case, write the full story before storyboards, increase NPC frequency, add daytime location changes, make investigation choices alter callback dialogue, rewrite scene lines, remove AI-sounding copy, add a formal case summary or next-case title, standardize caller portraits, or turn narrative design into runtime content for 《直播间大侦探》.
 ---
 
 # Story Dialogue Staging
@@ -185,6 +185,21 @@ NPC不是答案机。至少满足一项戏剧动作：拒绝、打断、误读�
 - 连线内每两到三个问答至少要出现可见的视觉状态变化：背景取景或色调、道具位置、来电人姿态/表情提示至少改变一项。不要只替换气泡文字。
 - 立绘差分只有在资源真实存在时才能引用；没有差分图时，用同一张图的姿态、取景、明暗和表情提示做状态变化，不要反复请求不存在的 `*_guarded.png`、`*_pause.png` 后再静默回退。
 - 从写实立绘转像素风时先做单案、同一角色的 `neutral / guarded / pause` 三态样张并在真实 UI 尺寸验收；未验收前保留现有资源回退，不批量套像素滤镜，也不混用写实脸与像素差分。
+
+#### 匿名来电人立绘基线（2026-07-18 复审定稿）
+
+以后生成、重画或验收四案来电人立绘，统一遵守：
+
+- 使用暖色可读的三分之二侧脸，人物不直视镜头；匿名感来自观看角度和五官信息简化，不来自遮脸。
+- 眼睛只保留简化像素形，不画细瞳孔、强高光、睫毛等身份化细节。
+- 禁止常驻眼部光带、发光面罩、墨镜、黑色遮罩和上半脸重阴影；禁止为了匿名把人物压成审讯、恐怖或赛博气氛。
+- `neutral / guarded / pause` 必须是同一个人、同一服装、同一道具、同一身材和同一基线。`guarded` 靠肩颈收紧、抱臂或把物件抱紧；`pause` 靠手机短暂离耳、视线下移或肩膀放松，不靠换脸或变暗。
+- 信号断帧、扫描线和像素错位只用于接通、断线等瞬间过场，不常驻脸部或全身立绘。
+- 每案以旧立绘锁定身份、服装和道具，以案 1 暖色侧脸样张锁定面部光色与像素密度；同案三态优先一次生成在同一张等栏母表，减少身份漂移。
+- 透明图使用平坦绿幕去背并检查 alpha、透明四角和绿边；交付 `256×512` 真透明母版，再以最近邻放大为 `1024×2048` 发运版，禁止平滑插值。
+- 替换运行时资产后同步提升 manifest 查询版本、重建内容索引与三份台本文档，并在 `390×844`、`1366×768` 和 Steam Deck 尺寸检查对白遮挡、人物亮度与三态辨认。
+
+详细 prompt、目录与验收门以 [pixel-art-transition-and-portrait-direction.md](../../docs/pixel-art-transition-and-portrait-direction.md) 为准。旧文档里“半剪影／眼部光带”段落只作历史记录，不得再作为生成要求。
 
 ### 12. 为交界面专门回放
 

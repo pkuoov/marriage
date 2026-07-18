@@ -21,15 +21,18 @@
 - `assets/generated/callers/pixel-case03/`
 - `assets/generated/callers/pixel-case04/`
 
-生成采用内置 imagegen 的 style-transfer 工作流。每案以旧来电人图作为服装与道具参考，以案 2 像素样张作为光色和像素密度参考；一次生成同人物三态横向母表，再以绿色键背景去背、切片和最近邻缩放。共同 prompt 约束如下：
+2026-07-18 人脸方向复审后，四案再次统一为“暖色三分之二侧脸”：常驻立绘取消眼部光带、遮罩和上半脸重阴影，匿名感改由侧脸角度、简化五官与不直视镜头共同承担。信号断帧只允许出现在接通、断线等瞬间过场，不常驻人物身上。
 
-> authored 2D pixel art, 24–32 dominant colors, crisp hand-placed clusters, dark teal shadows and coral rim light; three equal full-body columns for neutral, guarded and pause; identical identity, outfit, prop, scale and baseline; cyan-white eye-light strip; no text, shadow, photorealism or identity-revealing eyes.
+生成采用内置 imagegen 的 style-transfer 工作流。每案以旧来电人图作为服装与道具参考，以案 1 通过复审的暖色侧脸样张作为面部光色和像素密度参考；同案三态尽量在同一张横向母表中生成，再以绿色键背景去背、切片和最近邻缩放。共同 prompt 约束如下：
+
+> authored 2D pixel art, crisp hand-placed clusters, dark teal shadows, restrained coral rim light and warm natural facial light; three equal full-body columns for neutral, guarded and pause; identical identity, outfit, prop, scale and baseline; readable three-quarter side profile with simplified eye pixels; no mask, visor, eye-light strip, deep facial shadow, text or photorealism.
 
 样张规格：
 
 - 原生像素画布 `256x512`，透明背景；交付时可最近邻放大到 `1024x2048`，不得用柔化插值。
 - 每案控制在 24–32 个主色，轮廓、肤色、衣着与场景双色调共用稳定色板。
-- 保留匿名来电人的脸部遮挡和眼部光带，不因像素化变成清晰证件照。
+- 来电人保持三分之二侧脸，不直视镜头；五官可读但眼睛只用简化像素形，不画细瞳孔、高光、睫毛等身份化细节。
+- 禁止常驻眼部遮罩、光带、墨镜和上半脸重阴影；也不得为了“匿名”把整体压暗成审讯或恐怖气氛。
 - 三态只改变可读动作：视线、肩颈、握持物、停顿姿势；不得靠换脸或夸张表情泄露正确选项。
 - 运行时使用 `image-rendering: pixelated`；在 `390x844`、`1366x768` 和 Steam Deck 尺寸分别检查边缘抖动、对白遮挡和轮廓辨识。
 
@@ -37,7 +40,7 @@
 
 1. 缩到实际舞台尺寸仍能一眼区分三态。
 2. 与材料板、控场台和像素过场同屏时属于同一个游戏，不像贴入另一套素材。
-3. 不增加人物身份信息，不削弱匿名感。
+3. 不增加具体身份信息；匿名感来自视角与信息简化，而不是遮脸。
 4. 过场不频繁盖住阅读；减少动态效果时完全静默退出。
 5. 自动 smoke 证明接线、切图和最近邻渲染；最终发布前仍需在真实 Steam Deck 与 `390x844` 手机上做一次人工可读性验收。
 
@@ -45,5 +48,6 @@
 
 - 不对现有写实 PNG 直接套马赛克或降采样滤镜冒充像素画。
 - 不在同一角色的三态中混用写实与像素资源。
+- 不把信号断帧、扫描线或像素错位常驻叠在脸上或全身；这些效果只属于接通、断线过场。
 - 不把每次问答切换都做成过场。
 - 不在真人样张验收前重命名或删除其余三案现有 `callerArt`。

@@ -1,5 +1,12 @@
 # 编剧 Agent 生成 Playbook
 
+## 台本真源与导出
+
+- 四案最新台词只修改 `content/packs/steam-demo-01/cases/*.json`，包级序幕、案间和尾声修改 `manifest.json`；不要直接修改 `docs/generated/`。
+- 运行 `npm run content:script` 会同步生成三份阅读层：`full-readable-script` 保留全部字段和所有台词，`director-script` 面向排演，`pure-story-script` 只保留连续故事、台词、动作、材料和可听分支。
+- `full-readable-script` 有源字符串完整性断言。任何 JSON 中长度不少于四个字符的文案若未进入全量剧本，生成命令必须失败。
+- 人工阅读优先打开纯故事台本；查事实边界、分支条件或字段来源时再打开全量剧本。
+
 ## 参考方法
 
 本项目吸收网上成熟剧本/互动叙事方法，但不照搬传统电影模板。

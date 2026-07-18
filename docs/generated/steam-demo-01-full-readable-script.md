@@ -62,13 +62,13 @@
 - **act：** 体面
 - **object Label：** 账单
 - **舞台背景：** backdrop-credit
-- **caller Art：** ./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.25.0
+- **caller Art：** ./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.26.0
 - **caller Art Style：** pixel
 ##### caller Art Variants
 
-- **neutral：** ./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.25.0
-- **guarded：** ./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png?v=0.25.0
-- **pause：** ./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.25.0
+- **neutral：** ./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.26.0
+- **guarded：** ./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png?v=0.26.0
+- **pause：** ./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.26.0
 
 ##### difficulty Profile
 
@@ -99,13 +99,13 @@
 - **act：** 自己人
 - **object Label：** 店表
 - **舞台背景：** backdrop-tony
-- **caller Art：** ./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.24.0
+- **caller Art：** ./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0
 - **caller Art Style：** pixel
 ##### caller Art Variants
 
-- **neutral：** ./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.24.0
-- **guarded：** ./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png?v=0.24.0
-- **pause：** ./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.24.0
+- **neutral：** ./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0
+- **guarded：** ./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png?v=0.26.0
+- **pause：** ./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.26.0
 
 ##### difficulty Profile
 
@@ -134,13 +134,13 @@
 - **act：** 条件
 - **object Label：** 资料图
 - **舞台背景：** backdrop-profile
-- **caller Art：** ./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.25.0
+- **caller Art：** ./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0
 - **caller Art Style：** pixel
 ##### caller Art Variants
 
-- **neutral：** ./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.25.0
-- **guarded：** ./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.25.0
-- **pause：** ./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.25.0
+- **neutral：** ./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0
+- **guarded：** ./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.26.0
+- **pause：** ./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.26.0
 
 ##### difficulty Profile
 
@@ -172,13 +172,13 @@
 - **act：** 主责
 - **object Label：** 审批截图
 - **舞台背景：** backdrop-work
-- **caller Art：** ./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.25.0
+- **caller Art：** ./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.26.0
 - **caller Art Style：** pixel
 ##### caller Art Variants
 
-- **neutral：** ./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.25.0
-- **guarded：** ./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png?v=0.25.0
-- **pause：** ./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.25.0
+- **neutral：** ./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.26.0
+- **guarded：** ./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png?v=0.26.0
+- **pause：** ./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.26.0
 
 ##### difficulty Profile
 
