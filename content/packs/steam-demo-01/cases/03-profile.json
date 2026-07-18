@@ -2,6 +2,21 @@
   "caseId": "03-profile",
   "plotId": "education-income-fake-profile",
   "runtimeContentStatus": "runtime-loaded",
+  "texturePass": true,
+  "voiceTics": {
+    "林": []
+  },
+  "oneTimeTic": "唉",
+  "oneTimeTicPath": "deepFollowup.answer",
+  "voiceTicArc": {
+    "林": "全案零语气词,只在深问报出工资后用一次『唉』"
+  },
+  "driftComments": [
+    "28.6万什么水平,在我们县城能付个首付了",
+    "MBA是啥,速成班吗,有没有懂哥",
+    "主播我妈也这样,我恋爱她比我上心",
+    "蹲一个审计小姐姐的记账模板"
+  ],
   "dramaticAnchor": "几张资料截图、一张存款证明、饭局问答和介绍链原话",
   "whyTonight": "两家把见父母的饭定在周末，咨询者却在家里群里先开口要了流水；饭局再往前走，她就得把自己替双方说过的好听话一起摊开。",
   "objectPurpose": "学校图和单月收入截图用来让见父母这一步先过关；没人索要的存款证明是一次抢答，家里群整页截图则把“都是我妈要看”翻回咨询者自己。",
@@ -35,7 +50,7 @@
   "routeAxisComments": {
     "identity-wording": [
       "名校两个字太省事",
-      "标签好听也得拆开"
+      "名校俩字我妈也爱说,说我邻居家孩子"
     ],
     "money-flow": [
       "流水才是后半句",
@@ -229,7 +244,8 @@
         },
         {
           "question": "你跟你妈平时什么都聊吗？",
-          "answer": "大事聊。她比我急。我 28 了，她逢人就说我“不挑”，其实是她挑。"
+          "textureRole": "ramble",
+          "answer": "大事聊。她比我急。我 28，虚岁 29，她逢人就说我不挑，其实是她挑。上个月她把我照片发给三个介绍人，像素还调高了。我说妈，你这是发简历呢。她说简历怎么了，你爸当年也是我筛出来的。……筛出来的。她原话。"
         }
       ],
       "questionOptions": [
@@ -284,6 +300,15 @@
       "doubt": "第一次饭局的冷场不是因为问太细，是因为名校这句第一次被拆开。",
       "contradiction": "第一次饭局上问到资料时冷场了十几秒，服务员加水才把话岔过去。",
       "reliability": "mixed",
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "你等一下，我把台灯换个档。刺眼。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "casualQuestions": [
         {
           "question": "那顿饭是谁约的地方？",
@@ -390,11 +415,20 @@
       ],
       "speakerId": "lin",
       "speaker": "咨询者",
-      "version": "后来我妈在群里说介绍人偏男方。她直接甩来两张长截图，语音说得很快：“我偏谁？给你家是学校好、收入稳、家里省心；给他家是女生稳定、家里不折腾、对学历不太计较。两边原话都在，别只截顺耳的。”她不是偏谁。她是两边都往好听了说，想把这事做成。",
+      "version": "后来我妈在群里说介绍人偏男方。她直接甩来两张长截图，语音说得很快：“我偏谁？给你家是学校好、收入稳、家里省心；给他家是女生稳定、家里不折腾、对学历不太计较。两边原话都在，别只截顺耳的。”她两头都挑顺耳的说，就想把这事做成。",
       "helperHint": "介绍人的两边话术都在减轻阻力。先问她的收益是什么，不必先判她撒谎。",
       "doubt": "介绍人不是单纯夸男方，她在两边都把短处说轻。",
       "contradiction": "介绍人对两边都抬高好处、压低短处，条件版本被介绍链共同加工。",
       "reliability": "partial",
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "我水杯见底了。不管它，继续。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "casualQuestions": [
         {
           "question": "你怎么知道她跟男方家怎么说的？",
@@ -402,7 +436,7 @@
         },
         {
           "question": "你当时觉得介绍人偏谁？",
-          "answer": "偏成事。她不是偏谁，她是把两边都说成能成。"
+          "answer": "她偏自己那桩媒。饭能约成就行。"
         }
       ],
       "questionOptions": [
@@ -514,6 +548,36 @@
           "家里群原话"
         ]
       },
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "今天下午，他又发来一张。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "新的存款证明。日期是今天，金额多了四千。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "我们吵的是本科和流水。他给我开了张新的余额。"
+          },
+          {
+            "role": "host",
+            "text": "多了四千。"
+          },
+          {
+            "role": "caller",
+            "text": "嗯。可能发了工资吧。"
+          }
+        ]
+      },
       "doubt": "咨询者把自己先发起的流水要求挂在母亲名下。",
       "contradiction": "流水这一问从咨询者起头，家里随后把它推进到婚后工资管理。",
       "reliability": "partial",
@@ -525,6 +589,10 @@
         {
           "question": "你妈见过他照片吗？",
           "answer": "见过。第一句问的是“个子多高”，第二句就是“做什么的”。"
+        },
+        {
+          "question": "你妈现在什么态度?",
+          "answer": "就一句：『过了年你就 29 了，先别把人得罪死。』……这话她今年说了四回。我记着次数呢。你看，职业病。"
         }
       ],
       "questionOptions": [
@@ -579,9 +647,61 @@
         },
         {
           "question": "你身边有婚后一起管钱的例子吗？",
-          "answer": "我表姐。管得挺好，但她挣得比姐夫多。这话我没跟我妈说过。"
+          "textureRole": "ramble",
+          "answer": "我表姐。管得挺好，但她挣得比姐夫多。多百分之三十几吧，具体没算过——不对，我算过。百分之三十七。你看，我就是这样的人。这话我没跟我妈说过。我们家饭桌上，账是不能上桌的。"
+        },
+        {
+          "question": "他现在还给你发消息吗?",
+          "answer": "发。间隔很规律。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "发。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "间隔很规律。"
+            }
+          ]
+        },
+        {
+          "question": "周末那顿饭，你还想见吗?",
+          "answer": "不知道。"
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "材料就对到这儿。"
+          },
+          {
+            "role": "caller",
+            "text": "还有一份，你们没见过。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "我给这四次见面建了个表。每次的花销、聊的话题、冷场秒数。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "冷场秒数。打出这五个字，我自己都觉得有病。可我停不下来。"
+          },
+          {
+            "role": "host",
+            "text": "……那张就别发后台了。"
+          }
+        ]
+      },
       "questionOptions": [
         {
           "question": "他问工资卡，你怎么回的？",
@@ -807,7 +927,7 @@
           "contradiction": "单张存款证明和当日收入截图撑不起长期收入判断。",
           "feedback": "这一块不补，稳定两个字还是悬着。",
           "reactionLine": "单月那张他发得特别快。我后来才想，快，可能就是因为只有那一张拿得出手。",
-        "routeAxis": "money-flow"
+          "routeAxis": "money-flow"
         },
         {
           "label": "存款当天的余额数字",
@@ -892,7 +1012,7 @@
           "label": "相亲谁不先报个好价",
           "correct": true,
           "contradiction": "介绍人把两边短处都说轻了，体面版本不是单方生产。",
-          "feedback": "这一句把介绍链的利益说出来了：不是偏谁，是想成。",
+          "feedback": "她想把饭局促成，谢媒的人情也要还。",
           "routeAxis": "process-control"
         },
         {
@@ -930,7 +1050,7 @@
   "hostWoundHook": "相亲市场都这样，别只骂一方",
   "deepFollowup": {
     "question": "你要看他的收入和工资卡。那你自己的工资，一个月到底多少？",
-    "answer": "……一万出头。忙季多一点，不稳定。所以三万一那张图，我盯了很久。不是只怕被骗，是怕以后两个人都扛不住。",
+    "answer": "唉。……一万出头。忙季多一点，不稳定。所以三万一那张图，我盯了很久。不是只怕被骗，是怕以后两个人都扛不住。",
     "resistanceBeat": {
       "lines": [
         {
@@ -986,11 +1106,11 @@
       "match": "MBA|学历|本科|介绍",
       "summary": "你这轮主要盯住了学历那句。男方没有凭空编学校，但把 MBA 放进“名校毕业”里，别人很容易听成另一回事。",
       "followup": "电话挂到这里还会吵下去。学历那句在饭局上已经冷过一次，后面的介绍链也不会轻松。",
-      "truth": "学历是入口，不是整件事。后半段吵起来的，是收入、花销和婚后钱归谁管。"
+      "truth": "学历只开了个头。后半段吵起来的，是收入、花销和婚后钱归谁管。"
     },
     {
       "match": "流水|工资|收入|花销|存款",
-      "summary": "你这轮盯的是收入和流水。她不是只想听一句“稳定”，她想知道钱每个月到底怎么来、怎么花、以后进不进小家。",
+      "summary": "你这轮盯的是收入和流水。她想知道钱每个月到底怎么来、怎么花、以后进不进小家。",
       "followup": "电话挂到这里，饭桌上的空气已经变了。流水不是一张图的问题，学历那句也会被重新翻出来。",
       "truth": "流水已经碰到婚后工资怎么管、要不要进共同账户。查真假只是桌面上的说法。"
     }
@@ -1126,7 +1246,7 @@
           "script": {
             "audioCueId": "voice.advisor.zhang-closed",
             "open": "学校图还能不能替她往下验？",
-            "reply": "不能。像素真假我答过了，学历口径让当事人自己去学信网核。别拿复印件替人作证。"
+            "reply": "不能。像素真假我答过了，学历口径让当事人自己去学信网核。别拿复印件替人作证。……行了,今天真收了。我家那位喊我对发票呢。你说这日子。"
           }
         },
         {
@@ -1177,12 +1297,109 @@
     "hangupLine": "电话里只剩忙音。家里群最上面那句，还挂着未读。",
     "hangupAudioCueId": "sfx.phone.busy",
     "hostHoldLine": "去。群聊主语先留在台上；白天对原话，别拿谁想看代替谁先开口。",
+    "returnBeat": {
+      "lines": [
+        {
+          "role": "caller",
+          "text": "楼上不知道在装修还是怎么，有电钻声。你听不到就行，那是我这边的事。",
+          "nonLoadBearing": true
+        }
+      ]
+    },
     "snapshotEcho": {
       "respondent-fraud": "昨晚骂他包装的人最多。他的图是真的——今晚先拆图外面那句话，是谁说顺的。",
       "caller-control": "昨晚说我家查太深……这半票我先收下。查深查浅，今晚对完原话再算。",
       "market-coauthored": "昨晚站“都在做版本”的不多。介绍人把两边记录都摊了，你们再看看这一票。"
     },
     "liveCounterBeats": [
+      {
+        "id": "profile-family-chat-blowup",
+        "kind": "emotionalChoice",
+        "cost": 0,
+        "afterSceneIndex": 5,
+        "from": "家里群反转",
+        "triggerAny": {
+          "documentRows": [
+            "case3-credential-balance:p04"
+          ],
+          "callbackOpeners": [
+            "家里群原话"
+          ]
+        },
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等一下。那页群聊，是我表妹拍给你们的?"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "她拍我家的群。给一个直播间。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "你们等我一下，我要先给她打个电话。"
+          }
+        ],
+        "choices": [
+          {
+            "id": "soothe",
+            "label": "先别打。她也是看你困在里面。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "……困不困的，轮不到她替我拍板。"
+              },
+              {
+                "role": "pause"
+              },
+              {
+                "role": "caller",
+                "text": "算了。继续。"
+              }
+            ],
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure"
+          },
+          {
+            "id": "push-back",
+            "label": "打可以。播完再打。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "……行。播完的。"
+              }
+            ],
+            "stanceNudge": "defensive",
+            "routeAxis": "caller-credibility",
+            "routeTone": "pressure-point"
+          },
+          {
+            "id": "silence",
+            "label": "(不接话)",
+            "silent": true,
+            "lines": [
+              {
+                "role": "stage",
+                "text": "十几秒，只有她的呼吸声。"
+              },
+              {
+                "role": "caller",
+                "text": "……不打了。打了也是我妈接。"
+              }
+            ],
+            "stanceNudge": "neutral",
+            "routeAxis": "caller-credibility",
+            "routeTone": "neutral"
+          }
+        ]
+      },
       {
         "id": "profile-weekend-dinner-cancelled",
         "kind": "interruptToast",
