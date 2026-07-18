@@ -146,6 +146,13 @@ function collectCaseDialogue(packet) {
   add(hostId, "ending", "$case.deepFollowup.question", packet.deepFollowup?.question, "林旭阳");
   add(callerId, "ending", "$case.deepFollowup.answer", packet.deepFollowup?.answer, "咨询者");
   add(hostId, "ending", "$case.stageJudgement", packet.stageJudgement, "林旭阳");
+  for (const [choiceIndex, choice] of (packet.careChoices ?? []).entries()) {
+    add(hostId, "ending", `$case.careChoices[${choiceIndex}].hostLine`, choice.hostLine, "林旭阳");
+    for (const [lineIndex, line] of (choice.lines ?? []).entries()) {
+      if (line.role === "host") add(hostId, "ending", `$case.careChoices[${choiceIndex}].lines[${lineIndex}]`, line.text, line.speaker ?? "林旭阳");
+      if (line.role === "caller") add(callerId, "ending", `$case.careChoices[${choiceIndex}].lines[${lineIndex}]`, line.text, line.speaker ?? "咨询者");
+    }
+  }
   add(hostId, "ending", "$case.caseClosing.verdict", packet.caseClosing?.verdict, "林旭阳");
   if (respondentId) add(respondentId, "backstage", "$case.respondentNote.text", packet.respondentNote?.text, "对方后台留言");
 }
@@ -177,6 +184,14 @@ function collectShellDialogue() {
     if (typeof value.speaker === "string" && (typeof value.text === "string" || typeof value.line === "string")) {
       const profileId = resolveSurface(value.speaker, `${path}.speaker`);
       if (profileId) add(profileId, path, value.text ?? value.line, value.speaker);
+    }
+    if (typeof value.speakerProfileId === "string" && typeof value.base === "string") {
+      const profile = profilesById.get(value.speakerProfileId);
+      if (!profile) errors.push(`shell ${path}: speakerProfileId “${value.speakerProfileId}” missing`);
+      else {
+        add(profile.id, `${path}.base`, value.base, value.sender ?? profile.name);
+        Object.entries(value.echoes ?? {}).forEach(([choiceId, echo]) => add(profile.id, `${path}.echoes.${choiceId}`, echo, value.sender ?? profile.name));
+      }
     }
     Object.entries(value).forEach(([key, entry]) => visit(entry, `${path}.${key}`));
   };

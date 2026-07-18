@@ -305,9 +305,21 @@ function renderDirectorScript() {
 
   lines.push("# 尾声", "");
   const epilogue = manifest.nightShell?.epilogue;
-  if (epilogue?.line) lines.push(`【${epilogue.line}】`, "");
-  for (const line of epilogue?.lines ?? []) renderDirectorSpoken(lines, line);
-  if (epilogue?.hostLine) renderDirectorSpoken(lines, epilogue.hostLine);
+  if (epilogue?.opening) lines.push(`【${epilogue.opening}】`, "");
+  if (epilogue?.unreadMessages?.length) {
+    lines.push("## 收播后 · 后台未读", "");
+    for (const message of epilogue.unreadMessages) {
+      lines.push(`### ${message.sender ?? "陌生号码"}`, "");
+      if (message.attachment) lines.push(`【附图占位：${message.attachment.label ?? message.attachment.alt ?? "图片"}】`, "");
+      lines.push(message.base ?? "", "");
+      for (const [choiceId, echo] of Object.entries(message.echoes ?? {})) lines.push(`- ${choiceId} 回声：${echo}`);
+      if (message.echoes) lines.push("");
+    }
+  }
+  if (epilogue?.good) lines.push(`【数据较好分支】${epilogue.good}`, "");
+  if (epilogue?.bad) lines.push(`【数据较差分支】${epilogue.bad}`, "");
+  if (epilogue?.home) lines.push(`【回家】${epilogue.home}`, "");
+  if (epilogue?.close) lines.push(`【收束】${epilogue.close}`, "");
   return `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd()}\n`;
 }
 

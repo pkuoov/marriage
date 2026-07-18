@@ -1085,6 +1085,48 @@ export const CONTENT_CAST = {
       "那张图我看了四次。项目能核，余额能核。‘稳定’两个字，核不了。"
     ]
   },
+  "case3-caller-cousin": {
+    "id": "case3-caller-cousin",
+    "name": "案三咨询者表妹",
+    "kind": "offmic",
+    "caseIds": [
+      "03-profile"
+    ],
+    "surfaceNames": [
+      "表妹"
+    ],
+    "personality": {
+      "core": "替人递话的亲近晚辈",
+      "secondary": [
+        "感性",
+        "爽快",
+        "会替姐姐挡尴尬"
+      ],
+      "stressResponse": "越怕姐姐反悔，越用玩笑和催促把话说快。"
+    },
+    "motivation": "替姐姐把不便亲口说的谢谢送到，也盼两个人先谈一次。",
+    "fear": "家长再进场，把这次谈话重新变成条件核对。",
+    "defense": "只转姐姐准她说的生活安排，不碰材料真假。",
+    "voice": {
+      "rhythm": "打字快，先交代姐姐的决定，再替她遮一句不好意思。",
+      "lexicon": [
+        "我姐",
+        "替她说",
+        "你们等着"
+      ],
+      "habits": [
+        "把姐姐的尴尬揽到自己嘴上"
+      ],
+      "avoid": [
+        "评价男方条件",
+        "补充收入或学历事实"
+      ]
+    },
+    "knowledgeBoundary": "只知道姐姐告诉她的周末安排与回访意愿，不知道男方收入、学费和资料来源。",
+    "exampleLines": [
+      "她让我替她说声谢谢——她自己不好意思打。"
+    ]
+  },
   "case3-respondent": {
     "id": "case3-respondent",
     "name": "案三相亲对象",
@@ -1540,6 +1582,49 @@ export const CONTENT_CAST = {
     "exampleLines": [
       "项目先交，流程问题复盘再说。谁主责，看结果和记录。"
     ]
+  },
+  "case4-unknown-mover": {
+    "id": "case4-unknown-mover",
+    "name": "搬过三次仓库的人",
+    "kind": "offmic",
+    "caseIds": [
+      "04-workplace"
+    ],
+    "surfaceNames": [
+      "陌生号码"
+    ],
+    "personality": {
+      "core": "惜字如金的职场老手",
+      "secondary": [
+        "谨慎",
+        "疲惫",
+        "留一手"
+      ],
+      "stressResponse": "只报自己经历过几次，不说公司名，也不替任何账户作证。"
+    },
+    "motivation": "确认节目愿意听这类事后，给自己留一个以后再来的入口。",
+    "fear": "身份和旧公司被顺着仓库经历认出来。",
+    "defense": "匿名、延后、只约定专场，不交案件细节。",
+    "voice": {
+      "rhythm": "短消息，先落一句判断，再留下身份代号。",
+      "lexicon": [
+        "老规矩",
+        "专场",
+        "我再来"
+      ],
+      "habits": [
+        "以经历次数代替姓名"
+      ],
+      "avoid": [
+        "点公司名",
+        "给出新证据",
+        "指认返点账户"
+      ]
+    },
+    "knowledgeBoundary": "只知道自己的职场经历和节目公开播出的内容，不知道案四未公开的账户与管理层事实。",
+    "exampleLines": [
+      "你们哪天做职场专场,我再来。——搬过三次仓库的人"
+    ]
   }
 };
 
@@ -1622,6 +1707,76 @@ export const CONTENT_PACKS = {
       ],
       "epilogue": {
         "opening": "ON AIR 灯灭了。耳机放下的声音，比想象里响。",
+        "unreadMessages": [
+          {
+            "id": "case1-callback",
+            "caseId": "01-credit",
+            "caseLabel": "第一通回访",
+            "sender": "咨询者",
+            "speakerProfileId": "case1-caller-shen",
+            "base": "灯我收进箱子里了。睡了。谢谢你们没催我做决定。",
+            "echoes": {
+              "pragmatic": "面煮了,放了两个蛋。",
+              "affirm": "你那句话我又听了一遍。",
+              "accompany": "明晚我听着。不打了,就听。"
+            },
+            "attachment": {
+              "kind": "image-placeholder",
+              "label": "装回箱子的灯",
+              "alt": "一盏重新装回纸箱的灯"
+            }
+          },
+          {
+            "id": "case2-callback",
+            "caseId": "02-tony",
+            "caseLabel": "第二通回访",
+            "sender": "咨询者",
+            "speakerProfileId": "case2-caller-he",
+            "base": "我进群了。名字是我改的——退卡互助。讨说法的事,让证据去讨。",
+            "echoes": {
+              "pragmatic": "快剪店明天去试。",
+              "affirm": "群里她们也说,受用不丢人。",
+              "accompany": "想不好的时候,我再打。"
+            },
+            "attachment": {
+              "kind": "image-placeholder",
+              "label": "退卡互助(5)",
+              "alt": "群名片,群名为退卡互助,五人"
+            }
+          },
+          {
+            "id": "case3-callback",
+            "caseId": "03-profile",
+            "caseLabel": "第三通回访",
+            "sender": "表妹",
+            "speakerProfileId": "case3-caller-cousin",
+            "base": "我姐把周末的饭改成两个人先谈了,不带家长。她让我替她说声谢谢——她自己不好意思打。",
+            "echoes": {
+              "pragmatic": "她说包里会放张表,让你别问是哪张。",
+              "affirm": "她把『查得不过分』那句转给我姨了。",
+              "accompany": "谈完她可能真会打。你们等着。"
+            }
+          },
+          {
+            "id": "case4-callback",
+            "caseId": "04-workplace",
+            "caseLabel": "第四通回访",
+            "sender": "陈",
+            "speakerProfileId": "case4-caller-chen",
+            "base": "明天的话我写好了,三个版本。……开玩笑的。用第一版:先报备,再要回单号。",
+            "echoes": {
+              "pragmatic": "就是你说的顺序。",
+              "affirm": "『错的不是这个』,我抄在第一版开头了。",
+              "accompany": "归档前要是崩了,我真打啊。"
+            }
+          },
+          {
+            "id": "unknown-mover",
+            "sender": "陌生号码",
+            "speakerProfileId": "case4-unknown-mover",
+            "base": "老规矩不止你们一家。你们哪天做职场专场,我再来。——搬过三次仓库的人"
+          }
+        ],
         "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息，至少今晚是。",
         "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。下周，方案还是要交。",
         "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。你把她的合同挪开，把自己的手机放远了点。",
@@ -1722,6 +1877,7 @@ export const CONTENT_PACKS = {
         "respondentId": "zhou",
         "castProfileIds": [
           "case3-caller-lin",
+          "case3-caller-cousin",
           "case3-respondent",
           "case3-introducer",
           "case3-cousin"
@@ -1751,7 +1907,8 @@ export const CONTENT_PACKS = {
           "case4-supplier",
           "case4-warehouse",
           "case4-department-assistant",
-          "case4-leader"
+          "case4-leader",
+          "case4-unknown-mover"
         ],
         "act": "主责",
         "objectLabel": "审批截图",

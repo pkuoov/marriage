@@ -25,6 +25,7 @@ import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
 import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatTriggerMet, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { CARE_CHOICE_IDS, careChoiceById, careChoiceIsComplete, careChoiceLines } from "../src/runtime/careChoiceModel.js?v=0.24.3";
+import { epilogueUnreadMessages, epilogueUnreadStage } from "../src/runtime/epilogueUnreadModel.js?v=0.24.3";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { audioSettingsPanelHtml } from "../src/ui/audioSettingsView.js?v=0.22.0";
@@ -41,6 +42,7 @@ import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeH
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "../src/ui/caseTransitionView.js?v=0.20.96";
 import { careChoiceContinueHtml, careChoiceHtml } from "../src/ui/careChoiceView.js?v=0.24.3";
+import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "../src/ui/epilogueUnreadView.js?v=0.24.3";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "../src/ui/titleView.js?v=0.20.68";
 import { readFileSync } from "node:fs";
@@ -201,6 +203,32 @@ test("CARE-001", "closing care choices are complete, non-scored, and render auth
   const selectedHtml = careChoiceHtml({ selectedChoice: packets[0].careChoices[0] });
   assertIncludes(selectedHtml, "care-choice-pause", "选择后必须渲染停顿拍");
   assertIncludes(careChoiceContinueHtml({ finalCase: true }), "听完这夜", "最后一案关怀拍必须能进入整夜尾声");
+});
+
+test("CARE-002", "epilogue unread callbacks echo care choices before the data curve", () => {
+  const manifest = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/manifest.json", import.meta.url), "utf8"));
+  const epilogue = manifest.nightShell.epilogue;
+  const careChoices = {
+    "01-credit": "pragmatic",
+    "02-tony": "affirm",
+    "03-profile": "accompany",
+    "04-workplace": "pragmatic"
+  };
+  const messages = epilogueUnreadMessages(epilogue, careChoices);
+  assertEqual(messages.length, 5, "尾声必须依次有四条回访和一条陌生号码");
+  assertIncludes(messages[0].text, "面煮了,放了两个蛋。", "案 1 未读必须回声务实选择");
+  assertIncludes(messages[1].text, "受用不丢人。", "案 2 未读必须回声肯定选择");
+  assertIncludes(messages[2].text, "你们等着。", "案 3 未读必须回声陪伴选择");
+  assertEqual(messages[4].echo, "", "陌生号码不得拼接关怀回声");
+  const typedStrings = epilogue.unreadMessages.flatMap((message) => [message.base, ...Object.values(message.echoes ?? {})]);
+  assert(typedStrings.every((text) => !/[，：；]/.test(text)), "后台未读的打字面不得混入全角逗号、冒号或分号");
+  const unreadStage = epilogueUnreadStage(epilogue, careChoices, 5);
+  assertEqual(unreadStage.visibleMessages.length, 5, "第五步必须先显示完所有未读");
+  assertEqual(unreadStage.complete, false, "未读显示完时数据曲线仍不得提前出现");
+  assertEqual(epilogueUnreadStage(epilogue, careChoices, 6).complete, true, "第六步才允许进入数据曲线");
+  const unreadHtml = epilogueUnreadHtml({ messages, currentIndex: 4 });
+  assertEqual((unreadHtml.match(/epilogue-attachment-placeholder/g) ?? []).length, 2, "灯箱照和群名片必须各有一个素材占位");
+  assertIncludes(epilogueUnreadContinueHtml({ visibleCount: 5, total: 5 }), "看后台曲线", "读完五条后才出现曲线按钮");
 });
 
 function test(id, name, fn) {

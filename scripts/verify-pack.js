@@ -1306,6 +1306,30 @@ test("PACK-011", "player-visible NPC material keeps structured voice attribution
   });
 });
 
+test("PACK-012", "epilogue unread callbacks stay typed, attributed, and non-evidentiary", () => {
+  const messages = manifest.nightShell?.epilogue?.unreadMessages ?? [];
+  const profilesById = new Map((castRegistry.cast ?? []).map((profile) => [profile.id, profile]));
+  assertEqual(messages.length, 5, "尾声必须有四条案件回访和一条陌生号码");
+  assertEqual(messages.filter((message) => message.caseId).length, 4, "前四条必须逐案回访");
+  assertEqual(messages.filter((message) => message.attachment).length, 2, "仅灯箱照和群名片使用图片占位");
+  messages.forEach((message, index) => {
+    assertNonEmptyString(message.base, `epilogue.unreadMessages[${index}].base 不能为空`);
+    assertNonEmptyString(message.speakerProfileId, `epilogue.unreadMessages[${index}] 必须固定声纹`);
+    assert(profilesById.has(message.speakerProfileId), `epilogue.unreadMessages[${index}] speakerProfileId 不存在`);
+    const typedStrings = [message.base, ...Object.values(message.echoes ?? {})];
+    assert(typedStrings.every((text) => !/[，：；]/.test(text)), `epilogue.unreadMessages[${index}] 打字面标点不合规`);
+    assert(typedStrings.every((text) => !/3301|王\*\*|新阳信贷|返点账户|学费来源/.test(text)), `epilogue.unreadMessages[${index}] 不得夹带未决事实或新证据`);
+    if (message.caseId) {
+      assertDeepEqual(Object.keys(message.echoes ?? {}), ["pragmatic", "affirm", "accompany"], `epilogue.unreadMessages[${index}] 必须回声三种关怀选择`);
+      const manifestItem = manifest.sequence.find((item) => item.caseId === message.caseId);
+      assert(manifestItem?.castProfileIds?.includes(message.speakerProfileId), `${message.caseId}/${message.speakerProfileId} 必须进入逐案 castProfileIds`);
+    } else {
+      assert(!message.echoes, "陌生号码不得有选择回声");
+      assert(manifest.sequence.some((item) => item.castProfileIds?.includes(message.speakerProfileId)), "陌生号码也必须进入固定角色表");
+    }
+  });
+});
+
 const failed = results.filter((result) => !result.ok);
 for (const result of results) {
   console.log(`${result.ok ? "PASS" : "FAIL"} ${result.id} ${result.name}`);

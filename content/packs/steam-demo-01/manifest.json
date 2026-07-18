@@ -96,6 +96,7 @@
       "respondentId": "zhou",
       "castProfileIds": [
         "case3-caller-lin",
+        "case3-caller-cousin",
         "case3-respondent",
         "case3-introducer",
         "case3-cousin"
@@ -125,7 +126,8 @@
         "case4-supplier",
         "case4-warehouse",
         "case4-department-assistant",
-        "case4-leader"
+        "case4-leader",
+        "case4-unknown-mover"
       ],
       "act": "主责",
       "objectLabel": "审批截图",
@@ -194,6 +196,76 @@
     ],
     "epilogue": {
       "opening": "ON AIR 灯灭了。耳机放下的声音，比想象里响。",
+      "unreadMessages": [
+        {
+          "id": "case1-callback",
+          "caseId": "01-credit",
+          "caseLabel": "第一通回访",
+          "sender": "咨询者",
+          "speakerProfileId": "case1-caller-shen",
+          "base": "灯我收进箱子里了。睡了。谢谢你们没催我做决定。",
+          "echoes": {
+            "pragmatic": "面煮了,放了两个蛋。",
+            "affirm": "你那句话我又听了一遍。",
+            "accompany": "明晚我听着。不打了,就听。"
+          },
+          "attachment": {
+            "kind": "image-placeholder",
+            "label": "装回箱子的灯",
+            "alt": "一盏重新装回纸箱的灯"
+          }
+        },
+        {
+          "id": "case2-callback",
+          "caseId": "02-tony",
+          "caseLabel": "第二通回访",
+          "sender": "咨询者",
+          "speakerProfileId": "case2-caller-he",
+          "base": "我进群了。名字是我改的——退卡互助。讨说法的事,让证据去讨。",
+          "echoes": {
+            "pragmatic": "快剪店明天去试。",
+            "affirm": "群里她们也说,受用不丢人。",
+            "accompany": "想不好的时候,我再打。"
+          },
+          "attachment": {
+            "kind": "image-placeholder",
+            "label": "退卡互助(5)",
+            "alt": "群名片,群名为退卡互助,五人"
+          }
+        },
+        {
+          "id": "case3-callback",
+          "caseId": "03-profile",
+          "caseLabel": "第三通回访",
+          "sender": "表妹",
+          "speakerProfileId": "case3-caller-cousin",
+          "base": "我姐把周末的饭改成两个人先谈了,不带家长。她让我替她说声谢谢——她自己不好意思打。",
+          "echoes": {
+            "pragmatic": "她说包里会放张表,让你别问是哪张。",
+            "affirm": "她把『查得不过分』那句转给我姨了。",
+            "accompany": "谈完她可能真会打。你们等着。"
+          }
+        },
+        {
+          "id": "case4-callback",
+          "caseId": "04-workplace",
+          "caseLabel": "第四通回访",
+          "sender": "陈",
+          "speakerProfileId": "case4-caller-chen",
+          "base": "明天的话我写好了,三个版本。……开玩笑的。用第一版:先报备,再要回单号。",
+          "echoes": {
+            "pragmatic": "就是你说的顺序。",
+            "affirm": "『错的不是这个』,我抄在第一版开头了。",
+            "accompany": "归档前要是崩了,我真打啊。"
+          }
+        },
+        {
+          "id": "unknown-mover",
+          "sender": "陌生号码",
+          "speakerProfileId": "case4-unknown-mover",
+          "base": "老规矩不止你们一家。你们哪天做职场专场,我再来。——搬过三次仓库的人"
+        }
+      ],
       "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息，至少今晚是。",
       "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。下周，方案还是要交。",
       "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。你把她的合同挪开，把自己的手机放远了点。",

@@ -361,6 +361,20 @@
       "exampleLines": ["那张图我看了四次。项目能核，余额能核。‘稳定’两个字，核不了。"]
     },
     {
+      "id": "case3-caller-cousin",
+      "name": "案三咨询者表妹",
+      "kind": "offmic",
+      "caseIds": ["03-profile"],
+      "surfaceNames": ["表妹"],
+      "personality": { "core": "替人递话的亲近晚辈", "secondary": ["感性", "爽快", "会替姐姐挡尴尬"], "stressResponse": "越怕姐姐反悔，越用玩笑和催促把话说快。" },
+      "motivation": "替姐姐把不便亲口说的谢谢送到，也盼两个人先谈一次。",
+      "fear": "家长再进场，把这次谈话重新变成条件核对。",
+      "defense": "只转姐姐准她说的生活安排，不碰材料真假。",
+      "voice": { "rhythm": "打字快，先交代姐姐的决定，再替她遮一句不好意思。", "lexicon": ["我姐", "替她说", "你们等着"], "habits": ["把姐姐的尴尬揽到自己嘴上"], "avoid": ["评价男方条件", "补充收入或学历事实"] },
+      "knowledgeBoundary": "只知道姐姐告诉她的周末安排与回访意愿，不知道男方收入、学费和资料来源。",
+      "exampleLines": ["她让我替她说声谢谢——她自己不好意思打。"]
+    },
+    {
       "id": "case3-respondent",
       "name": "案三相亲对象",
       "kind": "respondent",
@@ -517,6 +531,20 @@
       "voice": { "rhythm": "简短、上位、不给情绪回应。", "lexicon": ["结果", "复盘", "项目交了", "流程自己补"], "habits": ["先确认交付", "把细节下放"], "avoid": ["主动追垫款金额", "承认看见返点归属"] },
       "knowledgeBoundary": "知道复盘与署名，不知道垫款金额、付款账户和返点归属。",
       "exampleLines": ["项目先交，流程问题复盘再说。谁主责，看结果和记录。"]
+    },
+    {
+      "id": "case4-unknown-mover",
+      "name": "搬过三次仓库的人",
+      "kind": "offmic",
+      "caseIds": ["04-workplace"],
+      "surfaceNames": ["陌生号码"],
+      "personality": { "core": "惜字如金的职场老手", "secondary": ["谨慎", "疲惫", "留一手"], "stressResponse": "只报自己经历过几次，不说公司名，也不替任何账户作证。" },
+      "motivation": "确认节目愿意听这类事后，给自己留一个以后再来的入口。",
+      "fear": "身份和旧公司被顺着仓库经历认出来。",
+      "defense": "匿名、延后、只约定专场，不交案件细节。",
+      "voice": { "rhythm": "短消息，先落一句判断，再留下身份代号。", "lexicon": ["老规矩", "专场", "我再来"], "habits": ["以经历次数代替姓名"], "avoid": ["点公司名", "给出新证据", "指认返点账户"] },
+      "knowledgeBoundary": "只知道自己的职场经历和节目公开播出的内容，不知道案四未公开的账户与管理层事实。",
+      "exampleLines": ["你们哪天做职场专场,我再来。——搬过三次仓库的人"]
     }
   ]
 }

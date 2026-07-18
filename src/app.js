@@ -15,6 +15,7 @@ import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
+import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
@@ -33,6 +34,7 @@ import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswe
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js?v=0.24.3";
+import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js?v=0.24.3";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
 import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.23.0";
@@ -151,6 +153,7 @@ function normalizeDailyState(saved) {
     solvedCaseIds: Array.isArray(saved?.solvedCaseIds) ? saved.solvedCaseIds : [],
     caseInterludes: saved?.caseInterludes ?? {},
     careChoices: saved?.careChoices ?? {},
+    epilogueUnreadStep: Number(saved?.epilogueUnreadStep ?? 0),
     lastReaction: saved?.lastReaction ?? null,
     lastPressureSignal: saved?.lastPressureSignal ?? null,
     lastPressureAxis: saved?.lastPressureAxis ?? null,
@@ -392,15 +395,28 @@ function renderNightShellPrologue(brief) {
 function renderNightShellEpilogue(brief) {
   const epilogue = nightShellForBrief(brief)?.epilogue ?? {};
   const resultLine = nightShellGoodEnding() ? epilogue.good : epilogue.bad;
-  const lines = [epilogue.opening, resultLine, epilogue.home, epilogue.close].filter(Boolean);
+  const stage = epilogueUnreadStage(epilogue, state.careChoices, state.epilogueUnreadStep);
+  const currentIndex = stage.visibleMessages.length - 1;
+  const lines = stage.complete
+    ? [resultLine, epilogue.home, epilogue.close].filter(Boolean)
+    : [];
+  const openingHtml = nightShellHtml([epilogue.opening].filter(Boolean));
+  const unreadHtml = epilogueUnreadHtml({ messages: stage.visibleMessages, currentIndex });
   frame({
     brief,
     mood: "focused",
-    label: "天亮前",
+    label: stage.complete ? "天亮前" : "收播后 · 后台未读",
     chapter: "深夜档",
     showCaseHud: false,
-    text: nightShellHtml(lines),
-    choices: flowGroupHtml(`<button class="primary" data-finish-night-shell type="button">收麦</button>`)
+    text: `${openingHtml}${unreadHtml}${stage.complete ? nightShellHtml(lines) : ""}`,
+    choices: flowGroupHtml(stage.complete
+      ? `<button class="primary" data-finish-night-shell type="button">收麦</button>`
+      : epilogueUnreadContinueHtml({ visibleCount: stage.visibleMessages.length, total: stage.messages.length }))
+  });
+  bind("[data-epilogue-unread-next]", () => {
+    state.epilogueUnreadStep = Math.min(stage.messages.length + 1, stage.index + 1);
+    saveState();
+    render();
   });
   bind("[data-finish-night-shell]", () => moveScene("runComplete"));
   bindSceneButtons();
