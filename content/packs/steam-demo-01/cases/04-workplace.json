@@ -2,6 +2,25 @@
   "caseId": "04-workplace",
   "plotId": "workplace-reimbursement-screenshot",
   "runtimeContentStatus": "runtime-loaded",
+  "texturePass": true,
+  "voiceTics": {
+    "陈": [
+      "呃",
+      "就是说"
+    ]
+  },
+  "voiceTicArc": {
+    "陈": "全程密,深问答应写七个字后的最后一句干净"
+  },
+  "voiceTicCleanLines": [
+    "……写。主责我还想留，钱也得回来。这七个字不写，月底账单只找我。"
+  ],
+  "driftComments": [
+    "打工人打卡,刚加完班,这单我熟",
+    "弱弱问下:垫付报备流程哪里有模板,我司也没有",
+    "主播喝口水吧,嗓子听着冒烟了",
+    "刚才谁说眉笔的,链接呢"
+  ],
   "dramaticAnchor": "预算沟通记录、报销审批截图、活动群聊和供应商报价单",
   "whyTonight": "季度复盘会下周一开，主责署名即将写死，垫的钱还没回来。",
   "objectPurpose": "预算群记录把“来不及”钉在财务延后通知之前；审批截图只证明流程通过，供应商报价单则露出另一条不走财务的返款入口。",
@@ -35,7 +54,7 @@
   "routeAxisComments": {
     "process-control": [
       "入口在谁手里",
-      "流程词太熟了"
+      "这套话术我上周刚听过一遍"
     ],
     "document-edge": [
       "审批图少的是钱",
@@ -59,7 +78,7 @@
     "outcomes": {
       "zhou-accountant": {
         "tone": "strong",
-        "text": "对公付款都有回单号。让她别问“钱怎么还没到”，就问财务要这单的付款回单号——报得出，是真在走；报不出，就是根本没付。一句话的事，比吵十次管用。"
+        "text": "对公付款都有回单号。让她别问“钱怎么还没到”，就问财务要这单的付款回单号——报得出，是真在走；报不出，就是根本没付。一句话的事，比吵十次管用。……先这样。老张点的外卖送我这儿了,地址又填错。验了半辈子指纹的人,自己家门牌号记不住。"
       },
       "zhao-lawyer": {
         "tone": "partial",
@@ -213,9 +232,32 @@
         },
         {
           "question": "那位同事平时人缘怎么样？",
-          "answer": "好。谁都能聊两句，领导也喜欢。这种人你很难当面翻脸。"
+          "textureRole": "ramble",
+          "answer": "好。谁都能聊两句,领导也喜欢。呃,他工位在我斜对面,桌上一盆多肉,谁路过都逗两句。就是说……有一回我加班到十点,他给我留了盏灯,贴了张便利贴:早点回。我当时觉得,这人真好。便利贴我还留着。你说我留它干嘛。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "好。谁都能聊两句，领导也喜欢。呃，他工位在我斜对面，桌上一盆多肉，谁路过都逗两句。就是说……有一回我加班到十点，他给我留了盏灯，贴了张便利贴：早点回。我当时觉得，这人真好。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "便利贴我还留着。你说我留它干嘛。"
+            }
+          ]
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "呃，我先把工牌摘了，硌得慌。……嗯，没事了。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "questionOptions": [
         {
           "question": "“写你主责”和“你先垫”，中间隔了几句？",
@@ -254,7 +296,7 @@
       ],
       "speakerId": "chen",
       "speaker": "咨询者",
-      "version": "活动前一天，14:05，部门助理在大群发了张流程表。我点开过。预算先填金额，供应商走对公；个人垫付，得提前报备。群里很快刷了一串“收到”。我也看见了。可场地在催，礼品也在催，我没去群里问预算。",
+      "version": "活动前一天，14：05，部门助理在大群发了张流程表。我点开过。预算先填金额，供应商走对公；个人垫付，得提前报备。群里很快刷了一串“收到”。我也看见了。可场地在催，礼品也在催，我没去群里问预算。",
       "helperHint": "公开流程已经出现。先追她为什么看见了，却没有用它保护自己。",
       "doubt": "正常流程先出现过，绕流程不是因为流程不存在。",
       "contradiction": "部门助理已经发过预算流程，个人垫款本来需要提前报备。",
@@ -306,12 +348,21 @@
       ],
       "speakerId": "chen",
       "speaker": "咨询者",
-      "version": "流程表发完十七分钟，14:22，他私聊我：“先别在大群问预算，来不及，复盘再补。刚接主责，别让领导觉得你不担事。”我看见“不担事”，就没问。九天后财务群真发了延后通知。我把九天后的通知，倒贴到前面去了。",
+      "version": "流程表发完十七分钟，14：22，他私聊我：“先别在大群问预算，来不及，复盘再补。刚接主责，别让领导觉得你不担事。”我看见“不担事”，就没问。九天后财务群真发了延后通知。我把九天后的通知，倒贴到前面去了。",
       "helperHint": "把 14:05 和 14:22 分开：公开规则说什么，私聊又让她别做什么。",
-      "revisedVersion": "时间我改口。两点二十二，是他说来不及。财务九天后才通知延后。不是财务先慢，是我们先躲进私聊。",
+      "revisedVersion": "时间我改口。两点二十二，是他说来不及。财务九天后才通知延后。财务还没慢，我们先躲进私聊了。",
       "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
       "contradiction": "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
       "reliability": "partial",
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等我一下，我妈敲门问我跟谁打电话。……说是同学。继续。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "afterScene": {
         "kind": "evidenceCheck",
         "checkId": "work-budget-timeline",
@@ -387,6 +438,23 @@
         {
           "question": "财务那边你认识人吗？",
           "answer": "不认识。入职培训见过一面。真要问，也得同事引荐，又绕回他。"
+        },
+        {
+          "question": "垫款用的哪张卡?",
+          "answer": "工资卡。就那一张。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "工资卡。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "就那一张。"
+            }
+          ]
         }
       ],
       "questionOptions": [
@@ -433,6 +501,18 @@
       "doubt": "钱卡着不动，可能还牵着供应商那边的返款。",
       "contradiction": "供应商报价单出现服务协调费，返款却可能打给同事这个对接人。",
       "reliability": "partial",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "stage",
+            "text": "他去够保温杯，碰倒了。半杯水泼在台本上。"
+          },
+          {
+            "role": "host",
+            "text": "……没事。纸干了再翻。你说。"
+          }
+        ]
+      },
       "casualQuestions": [
         {
           "question": "服务协调费，行价一般多少？",
@@ -441,6 +521,23 @@
         {
           "question": "供应商是谁选的？",
           "answer": "他定的，说合作过。我连对接人微信都没有。"
+        },
+        {
+          "question": "家里知道吗?",
+          "answer": "我妈知道个大概。她说:『垫就垫了,就当买个教训,别跟领导闹。』呃,六万八的教训。我们家,教训真贵。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "我妈知道个大概。她说：『垫就垫了，就当买个教训，别跟领导闹。』"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "呃，六万八的教训。我们家，教训真贵。"
+            }
+          ]
         }
       ],
       "questionOptions": [
@@ -479,11 +576,37 @@
       ],
       "speakerId": "chen",
       "speaker": "咨询者",
-      "version": "活动后小复盘，领导点名：“客户反馈不错，执行主责记陈；流程按老规矩补齐。”看到自己的姓，我真松了口气。后半句都没细看。第二晚我才把群翻回 14:05。那张流程表，我看见了，也回过“收到”。规矩不是没摆出来，是我当时不想让它拦我。",
+      "version": "活动后小复盘，领导点名：“客户反馈不错，执行主责记陈；流程按老规矩补齐。”看到自己的姓，我真松了口气。后半句都没细看。第二晚我才把群翻回 14：05。那张流程表，我看见了，也回过“收到”。规矩就摆在那儿。我当时不想让它拦我。",
       "helperHint": "领导一句话同时给了署名和流程要求。她先听进去了哪半句？",
       "doubt": "小复盘夸奖把主责写实，也把流程问题压回执行层。",
       "contradiction": "领导夸的是结果和主责，没有追问垫款与流程入口。",
       "reliability": "partial",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "今晚他在群里发了二十个红包，一共十六块八，配文『辛苦大家』。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "抢到最大那个的是老板。一块九。"
+          },
+          {
+            "role": "host",
+            "text": "一块九。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "host",
+            "text": "继续。"
+          }
+        ]
+      },
       "casualQuestions": [
         {
           "question": "领导当场知道你刷了个人卡吗？",
@@ -492,6 +615,10 @@
         {
           "question": "那句老规矩是谁先接的话？",
           "answer": "他接得最快，说会补齐。后来我才发现，补齐这两个字也要经过他。"
+        },
+        {
+          "question": "他今晚在群里说话了吗?",
+          "answer": "没。"
         }
       ],
       "questionOptions": [
@@ -541,13 +668,44 @@
       "casualQuestions": [
         {
           "question": "复盘材料是谁写？",
-          "answer": "我写初稿，他“把关”。把关俩字是他说的。"
+          "textureRole": "ramble",
+          "answer": "我写初稿。写到凌晨两点多，呃，写完还挺兴奋的，给我妈发消息说我第一次主责，她第二天早上回了个大拇指。然后他把关。就是说……把关。字体那事我刚说了。反正，把关俩字，是他自己说的。"
         },
         {
           "question": "如果重来一次，你还接这个活吗？",
           "answer": "接。但会先在群里问一句预算。就一句，够了。"
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "三栏念完了。今晚——"
+          },
+          {
+            "role": "caller",
+            "text": "等下，还有个特小的事。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "复盘 PPT 是我熬的，四十……呃，四十三页，我数过。他把关，就是改了个字体。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "署名页，把关人排我前面。字体啊!就改了个字体!"
+          },
+          {
+            "role": "host",
+            "text": "四十三页，记下了。"
+          }
+        ]
+      },
       "questionOptions": [
         {
           "question": "你按表上的顺序，把三栏念一遍。先别总结。",
@@ -758,7 +916,7 @@
           "label": "个人垫付需提前报备",
           "correct": true,
           "contradiction": "正常流程要求个人垫付提前报备，这单却被挪到私聊里。",
-          "feedback": "这条把正常入口摆出来了：不是流程不存在，是有人让她绕过去。",
+          "feedback": "正常入口就在流程表上，有人让她绕了过去。",
           "routeAxis": "process-control"
         },
         {
@@ -1078,12 +1236,101 @@
     "hangupLine": "忙音。审批页上，‘付款状态’还是空的。",
     "hangupAudioCueId": "sfx.phone.busy",
     "hostHoldLine": "去。审批图先留台上。拿不到付款回单号，就别把通过说成到账。",
+    "returnBeat": {
+      "lines": [
+        {
+          "role": "caller",
+          "text": "我这边空调滴水，滴在纸箱上，咚，咚的。你听见了别管。",
+          "nonLoadBearing": true
+        }
+      ]
+    },
     "snapshotEcho": {
       "respondent-problem": "昨晚记他一票的，回单号还是没有。票先留着，别提前庆祝。",
       "caller-complicit": "说我也有份的——“我来扛”仨字我认。今晚只算这仨字，值不值六万八。",
       "unclear": "昨晚留空的，今晚三张纸都到了：审批、批注、报价单。该落票了。"
     },
     "liveCounterBeats": [
+      {
+        "id": "work-comment-stupid-blowup",
+        "kind": "emotionalChoice",
+        "cost": 0,
+        "afterSceneIndex": 5,
+        "from": "来电人看见弹幕",
+        "lines": [
+          {
+            "role": "caller",
+            "text": "那条『你蠢』的，呃，我看见了。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "对，我蠢。入职八个月，我请全组喝过三次奶茶，一次三百多。我蠢得可有规律了。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "你们谁没蠢过啊?!"
+          }
+        ],
+        "choices": [
+          {
+            "id": "soothe",
+            "label": "三次奶茶的单子也留着。都是记录。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "……呃，真留着。你还真让我记。"
+              }
+            ],
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure"
+          },
+          {
+            "id": "push-back",
+            "label": "骂完了?骂完了接着对账。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "……嗯。对账。"
+              }
+            ],
+            "stanceNudge": "defensive",
+            "routeAxis": "caller-credibility",
+            "routeTone": "pressure-point"
+          },
+          {
+            "id": "silence",
+            "label": "(不接话)",
+            "silent": true,
+            "lines": [
+              {
+                "role": "stage",
+                "text": "弹幕慢下来。有人刷了一排\"没蠢过的举手\"，没人举。"
+              },
+              {
+                "role": "caller",
+                "text": "……哈。"
+              },
+              {
+                "role": "pause"
+              },
+              {
+                "role": "caller",
+                "text": "行，继续。"
+              }
+            ],
+            "stanceNudge": "neutral",
+            "routeAxis": "caller-credibility",
+            "routeTone": "neutral"
+          }
+        ]
+      },
       {
         "id": "work-group-repayment-message",
         "kind": "interruptToast",
