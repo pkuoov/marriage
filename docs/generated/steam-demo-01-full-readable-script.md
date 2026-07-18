@@ -62,7 +62,14 @@
 - **act：** 体面
 - **object Label：** 账单
 - **舞台背景：** backdrop-credit
-- **caller Art：** ./assets/generated/callers/caller_credit_anxious.png?v=0.20.71
+- **caller Art：** ./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.25.0
+- **caller Art Style：** pixel
+##### caller Art Variants
+
+- **neutral：** ./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.25.0
+- **guarded：** ./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png?v=0.25.0
+- **pause：** ./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.25.0
+
 ##### difficulty Profile
 
 - **tier：** 1
@@ -127,7 +134,14 @@
 - **act：** 条件
 - **object Label：** 资料图
 - **舞台背景：** backdrop-profile
-- **caller Art：** ./assets/generated/callers/caller_profile_controlled.png?v=0.20.71
+- **caller Art：** ./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.25.0
+- **caller Art Style：** pixel
+##### caller Art Variants
+
+- **neutral：** ./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.25.0
+- **guarded：** ./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.25.0
+- **pause：** ./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.25.0
+
 ##### difficulty Profile
 
 - **tier：** 3
@@ -158,7 +172,14 @@
 - **act：** 主责
 - **object Label：** 审批截图
 - **舞台背景：** backdrop-work
-- **caller Art：** ./assets/generated/callers/caller_work_reimbursement_tired.png?v=0.20.71
+- **caller Art：** ./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.25.0
+- **caller Art Style：** pixel
+##### caller Art Variants
+
+- **neutral：** ./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.25.0
+- **guarded：** ./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png?v=0.25.0
+- **pause：** ./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.25.0
+
 ##### difficulty Profile
 
 - **tier：** 4
@@ -6148,7 +6169,7 @@ MBA 项目是真的，存款证明也是真的，还是我主动开的。她可�
 - **防备状态：** tense
 ##### 表情/听感
 
-- **类型：** pause
+- **类型：** blink
 流程词说得很顺
 
 ### 夜 A · 2｜work-public-process

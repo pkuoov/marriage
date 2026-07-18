@@ -183,6 +183,7 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-overnight-opener]").count()) {
+        await assertVisibleText(page, "回拨开场 · 选后锁定", "overnight opener must disclose that the choice locks before activation");
         await activate(page, route, `[data-overnight-opener="${route.opener}"]`);
         continue;
       }
@@ -238,6 +239,9 @@ async function runRoute(route) {
         continue;
       }
       await page.locator(".scene-question-group").waitFor({ state: "visible" });
+      if (route.name === "accounting-restaurant") {
+        await assertVisibleText(page, "收束 · 未命中 −1 耐心", "key question buttons must expose the patience cost before activation");
+      }
       if (!helperChecked && route.name === "accounting-restaurant" && await page.locator("[data-scene-helper]").count()) {
         const beforeHelp = await savedHelpInvariant(page);
         await activate(page, route, "[data-scene-helper]");
@@ -277,6 +281,7 @@ async function runRoute(route) {
     }
 
     await page.locator("[data-evidence-check]").first().waitFor({ state: "visible" });
+    await assertVisibleText(page, "圈点 · 圈偏 −1 耐心", "evidence targets must expose the miss cost before activation");
     if (visualStates.size < 2 || portraitStates.size < 2) {
       throw new Error(`${route.name} route should change scene and portrait states while questioning`);
     }
@@ -294,6 +299,7 @@ async function runRoute(route) {
     }
 
     await advanceToAccusation(page, route);
+    await assertVisibleText(page, "终局追问 · 选后收麦", "final question must disclose that it closes the call");
     await activate(page, route, "[data-accuse]");
     await completePostAccusation(page, route);
     await page.locator(".recap-score-head").waitFor({ state: "visible" });
@@ -603,6 +609,7 @@ async function advanceToReactionBeat(page, expectedText, name) {
 
 async function completeOvernightDay(page, route) {
   await assertVisibleText(page, "下午走访", "day map should start with locations after the second-act opening");
+  await assertVisibleText(page, "耗时 1 · 占用一处走访", "day locations must expose their action cost before activation");
   await assertNoPageText(page, "节目不在线，弹幕不在，城市在。", "day map must not repeat the second-act opening copy");
   await assertNoPageText(page, "ON AIR", "day map must hide ON AIR");
   await assertNoPageText(page, "听众耐心", "day map must hide patience HUD");
@@ -615,6 +622,7 @@ async function completeOvernightDay(page, route) {
     await assertNoPageText(page, "听众耐心", `${sceneId} must hide patience HUD`);
     if (sceneId === "day-accounting") {
       await assertVisibleText(page, "旧厂房改的档案室", "accounting day scene should render");
+      await assertVisibleText(page, "排序 · 可清空重排", "timeline cards must explain that ordering is reversible");
       for (const card of ["社保断缴", "分期开通", "每月 8 日的固定入账中断", "他开口借八万"]) {
         await activate(page, route, `[data-day-timeline-card="${card}"]`);
       }
@@ -632,6 +640,7 @@ async function completeOvernightDay(page, route) {
       await assertVisibleText(page, "七月五日五万进，七月十九日四万九千八出——这算周转吗？", "document route should unlock the r08/r11 cross question");
     }
     if (await page.locator("[data-day-choice]").count()) {
+      await assertVisibleText(page, "现场判断 · 选后锁定", "day choices must disclose their lock before activation");
       const choiceId = route.dayChoices?.[sceneId];
       await activate(page, route, choiceId ? `[data-day-choice="${choiceId}"]` : "[data-day-choice]");
       if (route.dayChoiceText?.[sceneId]) {
@@ -784,6 +793,7 @@ async function exerciseTruthBoundary(page, route) {
   if (await page.locator("[data-recap-next]").count()) {
     throw new Error("Truth boundary allowed continuing before every prompt was placed");
   }
+  await assertVisibleText(page, "事实归位 · 选后锁定", "truth-boundary buttons must disclose their lock before activation");
   for (let index = 0; index < promptCount; index += 1) {
     const prompt = page.locator(".truth-boundary-prompt").nth(index);
     await prompt.locator("[data-truth-boundary-pick]").first().evaluate((element) => element.click());

@@ -1846,6 +1846,43 @@ button.choice-question.choice-question-direction {
   white-space: nowrap;
 }
 
+.decision-choice .choice-button-body {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  align-items: center;
+  text-align: left;
+}
+
+.choice-button-main {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.choice-button-main > b {
+  min-width: 0;
+  color: rgba(247, 244, 233, .92);
+  line-height: 1.4;
+}
+
+.choice-button-main > span {
+  min-width: 0;
+  color: rgba(237, 241, 238, .64);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.decision-choice .choice-cost-meta {
+  justify-self: end;
+  color: rgba(255, 204, 128, .70);
+  white-space: normal;
+  text-align: right;
+}
+
 .question-section-key .choice-cost-meta {
   color: rgba(255, 204, 128, .62);
 }
@@ -1877,6 +1914,16 @@ button.choice-question.choice-question-direction {
 
   .choice-cost-meta {
     justify-self: start;
+  }
+
+  .decision-choice .choice-button-body {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .decision-choice .choice-cost-meta {
+    justify-self: start;
+    text-align: left;
   }
 }
 
@@ -2940,23 +2987,12 @@ button.choice-question.choice-question-direction {
   text-align: left;
 }
 
-.delegation-advisor b,
-.delegation-advisor span,
-.delegation-advisor small {
+.delegation-advisor > .choice-button-quote {
   display: block;
-}
-
-.delegation-advisor span {
   margin-top: 4px;
   color: rgba(139, 228, 212, .82);
   font-size: 12px;
   font-weight: 900;
-}
-
-.delegation-advisor small {
-  margin-top: 8px;
-  color: rgba(237, 241, 238, .64);
-  font-size: 12px;
   line-height: 1.45;
 }
 
@@ -3924,6 +3960,20 @@ button.evidence-target {
   font-size: 12px;
 }
 
+.truth-boundary-options button.decision-choice {
+  display: grid;
+  min-height: 58px;
+  gap: 4px;
+  align-content: center;
+  text-align: center;
+}
+
+.truth-boundary-options button.decision-choice .choice-cost-meta {
+  justify-self: center;
+  font-size: 9px;
+  text-align: center;
+}
+
 .truth-boundary-options button.selected {
   border-color: rgba(139, 228, 212, .36);
   color: var(--accent);
@@ -4603,15 +4653,14 @@ button.evidence-target {
   text-align: left;
 }
 
-.care-choice-grid button span {
+.care-choice-grid .choice-button-main > b {
   color: var(--gold);
   font-size: 12px;
   font-weight: 900;
   letter-spacing: .08em;
 }
 
-.care-choice-grid button p {
-  margin: 0;
+.care-choice-grid .choice-button-main > span {
   color: rgba(247, 244, 233, .9);
   line-height: 1.58;
 }

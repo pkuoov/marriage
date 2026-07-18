@@ -1,3 +1,6 @@
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
+import { choiceButtonBodyHtml } from "./callFlowView.js?v=0.25.0";
+
 export function careChoiceHtml({ choices = [], selectedChoice = null } = {}) {
   return `
     <section class="care-choice-card">
@@ -9,9 +12,8 @@ export function careChoiceHtml({ choices = [], selectedChoice = null } = {}) {
       ${selectedChoice ? careChoiceDialogueHtml(selectedChoice) : `
         <div class="care-choice-grid">
           ${choices.map((choice) => `
-            <button data-care-choice="${escapeHtml(choice.id)}" type="button">
-              <span>${escapeHtml(choice.label)}</span>
-              <p>${escapeHtml(choice.hostLine)}</p>
+            <button class="decision-choice" data-care-choice="${escapeHtml(choice.id)}" type="button">
+              ${choiceButtonBodyHtml(choice.label, CHOICE_COST_META.careChoice, choice.hostLine)}
             </button>
           `).join("")}
         </div>

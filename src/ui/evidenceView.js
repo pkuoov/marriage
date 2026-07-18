@@ -1,3 +1,6 @@
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
+import { choiceButtonBodyHtml } from "./callFlowView.js?v=0.25.0";
+
 export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
   const options = (check.options ?? []).slice(0, 4);
   const kind = evidenceMaterialKind(check);
@@ -159,10 +162,9 @@ export function delegationScreenHtml({
 
 function delegationAdvisorButtonHtml(advisor = {}) {
   return `
-    <button class="delegation-advisor" data-delegation-advisor="${escapeHtml(advisor.id ?? "")}" type="button">
-      <b>${escapeHtml(advisor.name ?? "顾问")}</b>
-      <span>${escapeHtml(advisor.domain ?? "")}</span>
-      <small>${escapeHtml(advisor.catchphrase ?? "")}</small>
+    <button class="delegation-advisor decision-choice" data-delegation-advisor="${escapeHtml(advisor.id ?? "")}" type="button">
+      ${choiceButtonBodyHtml(advisor.name ?? "顾问", CHOICE_COST_META.advisorRoute, advisor.domain ?? "")}
+      <span class="choice-button-quote">${escapeHtml(advisor.catchphrase ?? "")}</span>
     </button>
   `;
 }
@@ -240,8 +242,10 @@ function evidenceMaterialNoteHtml(check = {}) {
 
 function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick = null) {
   const selected = pick && Number(pick.optionIndex) === optionIndex;
-  const className = `evidence-target ${selected ? pick.correct ? "selected hit" : "selected miss" : pick ? "dimmed" : ""}`;
-  const content = `<i>${optionIndex + 1}</i><b>${escapeHtml(option.label ?? "这块")}</b>`;
+  const className = `evidence-target ${pick ? "" : "decision-choice"} ${selected ? pick.correct ? "selected hit" : "selected miss" : pick ? "dimmed" : ""}`;
+  const content = `<i>${optionIndex + 1}</i>${pick
+    ? `<b>${escapeHtml(option.label ?? "这块")}</b>`
+    : choiceButtonBodyHtml(option.label ?? "这块", CHOICE_COST_META.evidenceMark)}`;
   if (pick) {
     return `<span class="${className}">${content}</span>`;
   }

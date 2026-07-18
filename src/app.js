@@ -17,9 +17,10 @@ import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/sto
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js?v=0.24.3";
+import { CHOICE_COST_META } from "./runtime/choiceCostModel.js?v=0.25.0";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
-import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
+import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.25.0";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
 import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.21.3";
@@ -727,9 +728,8 @@ function renderDayMap(brief) {
       `;
     }
     return `
-      <button class="day-place" data-day-scene="${escapeHtml(scene.id ?? "")}" ${disabled ? "disabled" : ""} type="button">
-        <b>${escapeHtml(scene.label ?? "")}</b>
-        <span>${disabled ? "下午不够了" : "耗时 1"}</span>
+      <button class="day-place decision-choice" data-day-scene="${escapeHtml(scene.id ?? "")}" ${disabled ? "disabled" : ""} type="button">
+        ${choiceButtonBodyHtml(scene.label ?? "", disabled ? "本日下午已用完" : CHOICE_COST_META.dayPlace)}
       </button>
     `;
   }).join("");
@@ -899,7 +899,7 @@ function dayChoiceHtml(body = {}, choiceStateId = "") {
       <b>${escapeHtml(choice.prompt)}</b>
       <div class="day-choice-grid">
         ${options.map((option) => `
-          <button data-day-choice="${escapeHtml(option.id ?? "")}" type="button">${escapeHtml(option.label ?? "")}</button>
+          <button class="decision-choice" data-day-choice="${escapeHtml(option.id ?? "")}" type="button">${choiceButtonBodyHtml(option.label ?? "", CHOICE_COST_META.dayChoice)}</button>
         `).join("")}
       </div>
     </section>
@@ -927,9 +927,8 @@ function renderOvernightCallback(brief) {
           <p><b>带一件白天的东西回到麦上</b></p>
           <div class="callback-opener-grid">
             ${openers.map((opener) => `
-              <button class="callback-opener-option" data-overnight-opener="${escapeHtml(opener.id ?? "")}" type="button">
-                <b>${escapeHtml(opener.id ?? "")}</b>
-                <span>${escapeHtml(opener.line ?? "")}</span>
+              <button class="callback-opener-option decision-choice" data-overnight-opener="${escapeHtml(opener.id ?? "")}" type="button">
+                ${choiceButtonBodyHtml(opener.id ?? "", CHOICE_COST_META.callbackOpener, opener.line ?? "")}
               </button>
             `).join("")}
           </div>
@@ -1109,8 +1108,8 @@ function dayTimelineHtml(dayScene = {}, timeline = {}, timelineState = {}) {
           <span>待放时间点</span>
           <div class="timeline-card-grid">
             ${cards.map((card) => `
-              <button data-day-timeline-card="${escapeHtml(card)}" ${selected.has(card) ? "disabled" : ""} type="button">
-                ${escapeHtml(card)}
+              <button class="decision-choice" data-day-timeline-card="${escapeHtml(card)}" ${selected.has(card) ? "disabled" : ""} type="button">
+                ${choiceButtonBodyHtml(card, selected.has(card) ? "已放入" : CHOICE_COST_META.timelineCard)}
               </button>
             `).join("")}
           </div>
@@ -1132,7 +1131,7 @@ function dayFollowupHtml(body = {}, followupAsked = false) {
       ${followupAsked ? callDialogueHtml([
         { role: "host", text: followup.question },
         { role: "caller", speaker: followup.speaker ?? "她", text: followup.answer ?? "" }
-      ]) : `<button data-day-followup type="button">${escapeHtml(followup.question)}</button>`}
+      ]) : `<button class="decision-choice" data-day-followup type="button">${choiceButtonBodyHtml(followup.question, CHOICE_COST_META.dayFollowup)}</button>`}
     </section>
   `;
 }
@@ -1865,7 +1864,7 @@ function renderDelegation(brief) {
     }),
     choices: pick
       ? flowGroupHtml(`<button class="primary" data-after-delegation type="button">选一句往下追</button>`)
-      : flowGroupHtml(`<button data-skip-delegation type="button">先不送</button>`)
+      : flowGroupHtml(`<button class="decision-choice" data-skip-delegation type="button">${choiceButtonBodyHtml("先不送", CHOICE_COST_META.skipAdvisor)}</button>`)
   });
   bindDelegationButtons(brief, delegation);
   bind("[data-skip-delegation]", () => skipDelegation(brief));
@@ -1903,12 +1902,12 @@ function renderCallerQuestion(brief) {
       ]) : ""}
     `,
     choices: picked && (picked.hostChoices ?? []).length && !hostPick
-      ? choiceGroupHtml("主播怎么接", (picked.hostChoices ?? []).map((option) => `<button data-caller-question-host="${escapeHtml(option.id ?? "")}" type="button">${escapeHtml(option.label ?? "")}</button>`).join(""), "single-choice-group", "不判对错，只记下你怎么接住这次迁怒")
+      ? choiceGroupHtml("主播怎么接", (picked.hostChoices ?? []).map((option) => `<button class="decision-choice" data-caller-question-host="${escapeHtml(option.id ?? "")}" type="button">${choiceButtonBodyHtml(option.label ?? "", CHOICE_COST_META.nonScoredReply)}</button>`).join(""), "single-choice-group", "不判对错，只记下你怎么接住这次迁怒")
       : picked
       ? flowGroupHtml(`<button class="primary" data-after-caller-question type="button">再深入一句</button>`)
       : choiceGroupHtml("主播回应", (question.options ?? []).map((option) => {
           const locked = option.requiresEarnedItem && !earned.has(option.requiresEarnedItem);
-          return `<button data-caller-question="${escapeHtml(option.id ?? "")}" ${locked ? "disabled" : ""} type="button">${escapeHtml(option.label ?? "")}</button>`;
+          return `<button class="decision-choice" data-caller-question="${escapeHtml(option.id ?? "")}" ${locked ? "disabled" : ""} type="button">${choiceButtonBodyHtml(option.label ?? "", locked ? `缺少：${option.requiresEarnedItem}` : CHOICE_COST_META.nonScoredReply)}</button>`;
         }).join(""), "single-choice-group", "不判对错，只留下余味")
   });
   bind("[data-caller-question]", (event) => recordCallerQuestionChoice(brief, event.currentTarget?.getAttribute("data-caller-question") ?? ""));
@@ -1997,7 +1996,7 @@ function renderAccusation(brief) {
       <p>下面哪句最该继续追？</p>
       ${choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))}
     `,
-    choices: choiceGroupHtml("往下追", choices.map((choice) => `<button data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${escapeHtml(choice.label)}</button>`).join(""), "single-choice-group", "从刚才听到的话里选一句")
+    choices: choiceGroupHtml("往下追", choices.map((choice) => `<button class="decision-choice" data-accuse="${escapeHtml(choice.accuse)}" data-accuse-label="${escapeHtml(choice.label)}" data-accuse-response="${escapeHtml(choice.response ?? "")}" type="button">${choiceButtonBodyHtml(choice.label, CHOICE_COST_META.finalQuestion)}</button>`).join(""), "single-choice-group", "从刚才听到的话里选一句")
   });
   document.querySelectorAll("[data-accuse]").forEach((button) => {
     button.addEventListener("click", () => resolveAccusationFromButton(brief, button));

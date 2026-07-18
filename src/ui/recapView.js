@@ -1,3 +1,5 @@
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
+
 export function solvedRecapPagesHtml({
   rank = "",
   issue = {},
@@ -198,7 +200,7 @@ function truthBoundaryChallengeHtml(review, picks = {}) {
             <p>${escapeHtml(prompt.text)}</p>
             <div class="truth-boundary-options">
               ${review.choices.map((choice) => `
-                <button class="${picked === choice.key ? "selected" : ""}" ${picked ? "disabled" : `data-truth-boundary-prompt="${escapeHtml(prompt.id)}" data-truth-boundary-pick="${escapeHtml(choice.key)}"`} type="button">${escapeHtml(choice.label)}</button>
+                <button class="decision-choice ${picked === choice.key ? "selected" : ""}" ${picked ? "disabled" : `data-truth-boundary-prompt="${escapeHtml(prompt.id)}" data-truth-boundary-pick="${escapeHtml(choice.key)}"`} type="button"><b>${escapeHtml(choice.label)}</b><small class="choice-cost-meta">${picked ? "已归位" : CHOICE_COST_META.truthBoundary}</small></button>
               `).join("")}
             </div>
             ${picked ? `<small>放在：${escapeHtml(pickedLabel)}。</small>` : ""}

@@ -1,4 +1,6 @@
 import { HOST_NAME } from "../hostProfile.js?v=0.20.95";
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
+import { choiceButtonBodyHtml } from "./callFlowView.js?v=0.25.0";
 
 export function hangupBeatHtml(hangup = {}) {
   return `
@@ -130,9 +132,8 @@ export function callbackOpenerChoiceHtml({ openers = [], inventory = [] } = {}) 
       <p class="hint">当前携带物：${escapeHtml(inventoryLabel(inventory))}</p>
       <div class="callback-opener-grid">
         ${openers.map((opener) => `
-          <button class="callback-opener-option" data-callback-opener="${escapeHtml(opener.id ?? "")}" type="button">
-            <b>${escapeHtml(opener.label ?? "开场")}</b>
-            <span>${escapeHtml(opener.hostLine ?? "")}</span>
+          <button class="callback-opener-option decision-choice" data-callback-opener="${escapeHtml(opener.id ?? "")}" type="button">
+            ${choiceButtonBodyHtml(opener.label ?? "开场", CHOICE_COST_META.callbackOpener, opener.hostLine ?? "")}
           </button>
         `).join("")}
       </div>
@@ -183,9 +184,10 @@ function advisorConflictOptionHtml(option = {}, selected = null) {
     `;
   }
   return `
-    <button class="advisor-conflict-option" data-advisor-conflict="${escapeHtml(option.id ?? "")}" type="button">
+    <button class="advisor-conflict-option decision-choice" data-advisor-conflict="${escapeHtml(option.id ?? "")}" type="button">
       ${advisorOptionHeadHtml(option, advisor)}
       <p>${escapeHtml(advisorLinePreview(option.advisorLine))}</p>
+      <small class="choice-cost-meta">${CHOICE_COST_META.advisorRoute}</small>
     </button>
   `;
 }
@@ -226,8 +228,8 @@ function replyChoiceButtonHtml(choice = {}, selected = null, attr = "reply-choic
     `;
   }
   return `
-    <button class="reply-choice-option" data-${attr}="${escapeHtml(choice.id ?? "")}" type="button">
-      <b>${escapeHtml(choice.label ?? "")}</b>
+    <button class="reply-choice-option decision-choice" data-${attr}="${escapeHtml(choice.id ?? "")}" type="button">
+      ${choiceButtonBodyHtml(choice.label ?? "", CHOICE_COST_META.nonScoredReply)}
     </button>
   `;
 }

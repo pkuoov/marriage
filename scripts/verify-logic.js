@@ -27,13 +27,14 @@ import { storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtim
 import { CARE_CHOICE_IDS, careChoiceById, careChoiceIsComplete, careChoiceLines } from "../src/runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadMessages, epilogueUnreadStage } from "../src/runtime/epilogueUnreadModel.js?v=0.24.3";
 import { hostDisclosureLinesForAnchor } from "../src/runtime/hostDisclosureModel.js?v=0.24.3";
+import { CHOICE_COST_META, choiceCostMeta } from "../src/runtime/choiceCostModel.js?v=0.25.0";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
-import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
+import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.25.0";
 import { audioSettingsPanelHtml } from "../src/ui/audioSettingsView.js?v=0.22.0";
 import { formatAudioTime } from "../src/ui/audioController.js?v=0.24.1";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js?v=0.20.68";
 import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialRows, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js?v=0.20.68";
-import { audioPlaybackControlsHtml, interludePlaybackActionHtml } from "../src/ui/interludeDeskView.js?v=0.21.3";
+import { audioPlaybackControlsHtml, callbackOpenerChoiceHtml, interludePlaybackActionHtml } from "../src/ui/interludeDeskView.js?v=0.25.0";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js?v=0.21.4";
 import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v=0.20.68";
 import { finalQuoteComparisonHtml, offMicLettersHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
@@ -201,6 +202,7 @@ test("CARE-001", "closing care choices are complete, non-scored, and render auth
   assertIncludes(packets[3].careChoices[0].lines[0].text, "呃", "案 4 务实支线必须保留陈的口癖");
   const choiceHtml = careChoiceHtml({ choices: packets[0].careChoices });
   assertIncludes(choiceHtml, "data-care-choice=\"pragmatic\"", "未选择时必须渲染三种关怀动词");
+  assertIncludes(choiceHtml, CHOICE_COST_META.careChoice, "关怀按钮必须在点击前说明不计分");
   const selectedHtml = careChoiceHtml({ selectedChoice: packets[0].careChoices[0] });
   assertIncludes(selectedHtml, "care-choice-pause", "选择后必须渲染停顿拍");
   assertIncludes(careChoiceContinueHtml({ finalCase: true }), "听完这夜", "最后一案关怀拍必须能进入整夜尾声");
@@ -679,6 +681,7 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   assertIncludes(html, "evidence-document-body", "材料对象必须有独立正文区域，便于按类型换版式");
   assertIncludes(html, "evidence-document-lines", "材料文本必须拆成文件行，形成可看的材料对象");
   assertIncludes(html, "class=\"evidence-target", "材料选项必须在材料板内部作为可圈点区域出现");
+  assertIncludes(html, CHOICE_COST_META.evidenceMark, "材料圈点必须在按钮级显示圈偏的耐心代价");
   const markedHtml = evidenceOperationHtml(
     { title: "聊天截图", material: "截图缺下半边。", options: [{ label: "下半边", correct: true }] },
     { optionIndex: 0, label: "下半边", correct: true, feedback: "圈住了缺口。" },
@@ -1108,6 +1111,22 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(desktopBuilderSource, "\"app\": \"dist/desktop-electron\"", "Electron 打包器必须以桌面壳目录为 app 输入");
   assertIncludes(desktopBuilderSource, "\"output\": \"dist/steam\"", "Electron 打包产物必须进入独立 Steam 输出目录");
   assertIncludes(desktopBuilderSource, "\"target\": \"portable\"", "Windows 首版打包先产出 portable 便于 Steam demo 验收");
+});
+
+test("UI-003", "decision buttons expose cost, lock, or scoring consequences before activation", () => {
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const metaValues = Object.values(CHOICE_COST_META);
+  assert(metaValues.length >= 12, "按钮代价词典必须覆盖追问、材料、白天、回拨、顾问、终局与关怀");
+  assertEqual(new Set(metaValues).size, metaValues.length, "不同决策类型不能复用模糊的同一句代价文案");
+  assertEqual(choiceCostMeta("evidenceMark"), "圈点 · 圈偏 −1 耐心", "材料圈点必须明确即时资源损失");
+  assertIncludes(choiceButtonBodyHtml("去财务窗口", CHOICE_COST_META.dayPlace), "choice-button-body", "统一按钮正文必须提供标签与代价双栏");
+  assertIncludes(callbackOpenerChoiceHtml({ openers: [{ id: "流水圈注", label: "流水圈注", hostLine: "从七月那一行问。" }] }), CHOICE_COST_META.callbackOpener, "回拨开场必须说明选后锁定");
+  assertIncludes(truthBoundaryReviewHtml({ title: "边界", line: "先放句子", choices: [{ key: "true", label: "能确认" }], columns: [{ key: "true", label: "能确认", items: ["A"] }], prompts: [{ id: "true:0", text: "A", expected: "true" }] }, {}), CHOICE_COST_META.truthBoundary, "事实归位必须说明选后锁定");
+  ["dayPlace", "dayChoice", "timelineCard", "dayFollowup", "callbackOpener", "skipAdvisor", "nonScoredReply", "finalQuestion"].forEach((key) => {
+    assertIncludes(appSource, `CHOICE_COST_META.${key}`, `主流程决策缺少按钮代价映射: ${key}`);
+  });
+  assertIncludes(stylesSource, ".decision-choice .choice-button-body", "按钮代价必须有桌面与移动端共用布局");
 });
 
 test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {

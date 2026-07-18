@@ -1,3 +1,5 @@
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
+
 export function focusedQuestionOptions(options = []) {
   return (options ?? []).filter(Boolean);
 }
@@ -83,7 +85,7 @@ function dialogueQuestionButton(sceneIndex, optionIndex, option = {}, asked = fa
   return `
     <button class="choice-question" data-scene-dialogue="${sceneIndex}:${optionIndex}" type="button" ${asked ? "disabled" : ""}>
       <span class="choice-label"><span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span></span>
-      <small class="choice-cost-meta">${asked ? "已问过" : "补问 · 不收束"}</small>
+      <small class="choice-cost-meta">${asked ? "已问过" : CHOICE_COST_META.dialogueQuestion}</small>
     </button>
   `;
 }
@@ -96,7 +98,7 @@ function keyQuestionButton(sceneIndex, optionIndex, option = {}) {
         ${directionOnly ? `<small class="choice-direction-kicker">疑点方向</small>` : ""}
         <span class="choice-text">${escapeHtml(playerQuestionLabel(option))}</span>
       </span>
-      <small class="choice-cost-meta">收束 · 未命中 −1 耐心</small>
+      <small class="choice-cost-meta">${CHOICE_COST_META.keyQuestion}</small>
     </button>
   `;
 }

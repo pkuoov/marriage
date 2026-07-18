@@ -22,6 +22,18 @@ export function flowGroupHtml(content) {
   `;
 }
 
+export function choiceButtonBodyHtml(label = "", meta = "", detail = "") {
+  return `
+    <span class="choice-button-body">
+      <span class="choice-button-main">
+        <b>${escapeHtml(label)}</b>
+        ${detail ? `<span>${escapeHtml(detail)}</span>` : ""}
+      </span>
+      ${meta ? `<small class="choice-cost-meta">${escapeHtml(meta)}</small>` : ""}
+    </span>
+  `;
+}
+
 export function callLineHtml(line = {}) {
   if (line.role === "pause") return '<div class="call-pause" aria-hidden="true"></div>';
   if (line.role === "stage") {
