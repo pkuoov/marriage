@@ -2,6 +2,24 @@
 
 > 2026-07-12 玩法与剧情复审及本轮改动见 [gameplay-story-rereview-2026-07-12.md](../../../docs/gameplay-story-rereview-2026-07-12.md)。
 
+## 2026-07-18 Pass 21 Case 01 Humanization Texture
+
+本批只给 `01-credit` 打 `texturePass` 标记，案 2–4 不启用纹理硬门控。统计范围覆盖来电人 `version`、关键/自由/补充追问回答，以及递归 `lines` 中的 caller 拍；掐断统计同时检查所有可听说话人，生活噪声只认显式 `nonLoadBearing: true`。
+
+| Metric | Required | Actual | Status |
+| --- | ---: | ---: | --- |
+| 去标点后 ≤6 字短答 | ≥3 | 6 | 通过 |
+| ≥120 字长絮叨段 | ≥2 | 4 | 通过 |
+| 句尾 `——` 掐断 | ≥2 | 2 | 通过 |
+| `nonLoadBearing` 生活噪声 | ≥3 | 3 | 通过 |
+| 沈的专属口癖合计 | ≥3 | 5 | 通过 |
+| 专属口癖串到其他说话人 | 0 | 0 | 通过 |
+
+- 口癖分布：`就……` 1 次，`反正` 4 次；其他说话人两项均为 0。
+- 三拍生活噪声：关窗避车警报、回拨后换房间确认信号、换季咳嗽。
+- 两处掐断：纪念日场尾主播被抢话；“周会计的时间线”回拨中主播念错月份被纠正。
+- 本表由 `src/runtime/dialogueTexture.js` 同口径结果抄录；`verify-pack` 与 `verify-logic` 都会对打标案件强制检查。
+
 ## Pack Spine
 
 四通来电都围绕“好听的身份或关系词，最后让谁承担钱和责任”展开。第一通是体面消费和债务，第二通是自己人话术和办卡，第三通是条件标签和资料缺口，第四通是主责、流程和垫付款。
@@ -121,6 +139,31 @@
 ### Mechanical Guard
 
 Cases that opt into the new detective authoring ledger must keep every scene's `id / clueRole / falseFrame / payoffFor`, every material board's `revalues`, and every final quote's `quoteSourceSceneId`. `scripts/verify-pack.js` rejects orphaned scene references and source-less quote choices.
+
+## 2026-07-18 Pass 21/22 Humanization Closeout
+
+### Review Findings and Fixes
+
+- 说话面标点曾沿用执行 Prompt 的半角逗号、冒号和分号，与 Pass 22 的书面纹理律冲突。本轮已将四案玩家可听台词统一为全角；`driftComments` 等打字面继续保留半角输入感，并由 `TEXTURE-003` 与 pack 校验分面约束。
+- 案 4 一段拆拍长絮叨同时保留 `lines` 与备用 `answer`，旧指标把未渲染文本重复计数。本轮改为只标记实际渲染的拆拍行，口癖计数从 11 回落为真实的 9；`TEXTURE-004` 固定该口径。
+- 案 3 的介绍人利益在证言、自由追问、材料反馈和收麦分支里出现多次“不是 X，是 Y”式复述；案 4 的财务时间线也有同类总结句。本轮保留事实与发现顺序，改成“她偏自己那桩媒”“财务还没慢，我们先躲进私聊了”等人物动作句。
+- 全量浏览器烟测原先在手柄路线耗时过长；固定毫秒等待又会漏采输入。本轮让模拟按键跨过 3 个动画帧、松开跨过 2 个动画帧，与游戏端的逐帧轮询一致，单独手柄路线和全组合路线均通过。
+
+### Final Texture Metrics
+
+| Case | 短答 | 长絮叨 | 抢话 | 生活噪声 | 来电人口癖 | 他人口癖 | 特殊约束 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 01-credit | 6 | 4 | 9 | 3 | 5 | 0 | 夜 A 密、夜 B 干净 |
+| 02-tony | 7 | 4 | 5 | 3 | 2 | 0 | “你知道吧”不串给他人 |
+| 03-profile | 6 | 3 | 4 | 3 | 0 | 0 | `oneTimeTic`“唉”仅在深问出现一次 |
+| 04-workplace | 6 | 2 | 3 | 3 | 9 | 0 | 七字承诺句无“呃/就是说” |
+
+### Closeout Validation
+
+- `npm run check` 通过：内容索引、生成剧本、音频引用、内容管线、PACK-001 至 PACK-011、72 项逻辑测试与 8 案叙事流全部通过。
+- `npm run smoke:browser` 通过：六条案 1 输入/调查路线、案 2 白天与情绪拍、案 3 条件情绪拍、案 4 连续反制及四案过渡全部走通。
+- `npm run content:script -- steam-demo-01` 已重建完整可读剧本、导演台本和人物台词报告；生成物与内容源一致。
+- 机器验收不能代替真人朗读。Pass 22 仍保留“每案随机两场 + 全部新增炸毛/补救拍”的线下抽读项。
 
 ## 2026-07-13 Pass 18 Dialogue Texture Restoration
 
