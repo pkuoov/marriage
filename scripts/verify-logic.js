@@ -164,6 +164,24 @@ test("TEXTURE-004", "staged ramble metrics count rendered lines instead of hidde
   assertIncludes(result.samples.longRambles[0], ".lines[0]", "长絮叨样本必须指向实际渲染的 lines");
 });
 
+test("TEXTURE-005", "declared night-A to night-B tic arcs reject late tic leakage", () => {
+  const packet = {
+    texturePass: true,
+    voiceTics: { 何: ["你知道吧"] },
+    voiceTicArc: { 何: "夜 A 密,夜 B 消失" },
+    nightStructure: { segment1SceneIndexes: [0], segment2SceneIndexes: [1] },
+    sceneVersions: [
+      { version: "你知道吧。", casualQuestions: [{ answer: "我说过，你知道吧。" }] },
+      { version: "到第二晚了，你知道吧。" }
+    ]
+  };
+  const leaked = dialogueTextureMetrics(packet);
+  assert(leaked.errors.some((message) => message.includes("夜 B 口癖未消失")), "夜 B 复现声明口癖必须报错");
+  packet.sceneVersions[1].version = "到第二晚了。";
+  const clean = dialogueTextureMetrics(packet);
+  assert(!clean.errors.some((message) => message.includes("夜 B 口癖未消失")), "口癖只落在夜 A 时弧线检查必须通过");
+});
+
 function test(id, name, fn) {
   try {
     fn();

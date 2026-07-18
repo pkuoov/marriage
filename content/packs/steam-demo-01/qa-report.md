@@ -146,6 +146,9 @@ Cases that opt into the new detective authoring ledger must keep every scene's `
 
 - 说话面标点曾沿用执行 Prompt 的半角逗号、冒号和分号，与 Pass 22 的书面纹理律冲突。本轮已将四案玩家可听台词统一为全角；`driftComments` 等打字面继续保留半角输入感，并由 `TEXTURE-003` 与 pack 校验分面约束。
 - 案 4 一段拆拍长絮叨同时保留 `lines` 与备用 `answer`，旧指标把未渲染文本重复计数。本轮改为只标记实际渲染的拆拍行，口癖计数从 11 回落为真实的 9；`TEXTURE-004` 固定该口径。
+- Pass 22 复核发现 `voiceTicArc` 过去只校验有无声明，不能阻止案 2 的“你知道吧”回流夜 B。`TEXTURE-005` 现按 `segment2SceneIndexes` 检查夜 B 消失规则，不绑定案件编号。
+- 顾问退场句存放在 `delegation.outcomes.text` 和幕间 `script.reply`，曾绕过说话面标点检查。采集器现覆盖顾问委托、幕间电话与 `advisorNotes`，四案退场句均已统一全角。
+- 执行单同时要求案 3 零语气词，并逐字保留“嗯。可能发了工资吧”。实现将“嗯”按问答中的确认词处理，不纳入通用口癖表；唯一破防语气词仍只有深问里的“唉”。
 - 案 3 的介绍人利益在证言、自由追问、材料反馈和收麦分支里出现多次“不是 X，是 Y”式复述；案 4 的财务时间线也有同类总结句。本轮保留事实与发现顺序，改成“她偏自己那桩媒”“财务还没慢，我们先躲进私聊了”等人物动作句。
 - 全量浏览器烟测原先在手柄路线耗时过长；固定毫秒等待又会漏采输入。本轮让模拟按键跨过 3 个动画帧、松开跨过 2 个动画帧，与游戏端的逐帧轮询一致，单独手柄路线和全组合路线均通过。
 
@@ -160,7 +163,7 @@ Cases that opt into the new detective authoring ledger must keep every scene's `
 
 ### Closeout Validation
 
-- `npm run check` 通过：内容索引、生成剧本、音频引用、内容管线、PACK-001 至 PACK-011、72 项逻辑测试与 8 案叙事流全部通过。
+- `npm run check` 通过：内容索引、生成剧本、音频引用、内容管线、PACK-001 至 PACK-011、73 项逻辑测试与 8 案叙事流全部通过。
 - `npm run smoke:browser` 通过：六条案 1 输入/调查路线、案 2 白天与情绪拍、案 3 条件情绪拍、案 4 连续反制及四案过渡全部走通。
 - `npm run content:script -- steam-demo-01` 已重建完整可读剧本、导演台本和人物台词报告；生成物与内容源一致。
 - 机器验收不能代替真人朗读。Pass 22 仍保留“每案随机两场 + 全部新增炸毛/补救拍”的线下抽读项。

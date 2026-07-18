@@ -43,6 +43,7 @@ export function dialogueTextureMetrics(packet = {}) {
     ? speech.caller.filter((entry) => occurrences(entry.text, oneTimeTic) > 0).map((entry) => entry.path)
     : [];
   const cleanLineResults = cleanLineChecks(speech.caller, packet.voiceTicCleanLines, voiceTics);
+  const voiceTicArcResults = voiceTicArcChecks(packet, speech.caller, voiceTics, cleanLineResults);
   const metrics = {
     shortAnswerCount: shortAnswers.length,
     longRambleCount: longRambles.length,
@@ -62,7 +63,8 @@ export function dialogueTextureMetrics(packet = {}) {
     oneTimePaths,
     oneTimeTicPath: packet.oneTimeTicPath,
     cleanLineResults,
-    voiceTicArcDeclared: packet.voiceTicArc && typeof packet.voiceTicArc === "object" && Object.values(packet.voiceTicArc).some((value) => typeof value === "string" && value.trim())
+    voiceTicArcDeclared: packet.voiceTicArc && typeof packet.voiceTicArc === "object" && Object.values(packet.voiceTicArc).some((value) => typeof value === "string" && value.trim()),
+    voiceTicArcResults
   });
   return {
     enabled: true,
@@ -77,6 +79,7 @@ export function dialogueTextureMetrics(packet = {}) {
     oneTimeTic,
     oneTimePaths,
     cleanLineResults,
+    voiceTicArcResults,
     samples: {
       shortAnswers: shortAnswers.map((entry) => entry.text),
       longRambles: longRambles.map((entry) => entry.path),
@@ -149,6 +152,17 @@ export function collectDialogueTextureSpeech(packet = {}) {
 
   add("other", packet.deepFollowup?.question, "deepFollowup.question");
   add("caller", packet.deepFollowup?.answer, "deepFollowup.answer");
+
+  Object.entries(packet.delegation?.outcomes ?? {}).forEach(([advisorId, outcome]) => {
+    add("other", outcome?.text, `delegation.outcomes.${advisorId}.text`);
+  });
+  (packet.nightStructure?.interlude?.actions ?? []).forEach((action, actionIndex) => {
+    add("other", action?.script?.open, `nightStructure.interlude.actions[${actionIndex}].script.open`);
+    add("other", action?.script?.reply, `nightStructure.interlude.actions[${actionIndex}].script.reply`);
+  });
+  (packet.advisorNotes ?? []).forEach((note, noteIndex) => {
+    add("other", note?.text, `advisorNotes[${noteIndex}].text`);
+  });
 
   return { caller, other, nonLoadBearing };
 }
@@ -243,6 +257,37 @@ function cleanLineChecks(callerEntries = [], cleanLines = [], voiceTics = []) {
   });
 }
 
+function voiceTicArcChecks(packet = {}, callerEntries = [], voiceTics = [], cleanLineResults = []) {
+  const descriptions = Object.values(packet.voiceTicArc ?? {}).filter((value) => typeof value === "string");
+  const description = descriptions.join("\n");
+  const results = [];
+
+  if (description.includes("夜 B 消失")) {
+    const nightBIndexes = new Set(packet.nightStructure?.segment2SceneIndexes ?? []);
+    const leakedPaths = callerEntries
+      .filter((entry) => voiceTics.some((tic) => occurrences(entry.text, tic) > 0))
+      .filter((entry) => isNightBTexturePath(entry.path, nightBIndexes))
+      .map((entry) => entry.path);
+    results.push({ rule: "night-b-silent", valid: leakedPaths.length === 0, leakedPaths });
+  }
+
+  if (description.includes("最后一句干净")) {
+    results.push({
+      rule: "clean-ending-line",
+      valid: cleanLineResults.length > 0 && cleanLineResults.every((item) => item.valid),
+      leakedPaths: cleanLineResults.filter((item) => !item.valid).flatMap((item) => item.paths)
+    });
+  }
+
+  return results;
+}
+
+function isNightBTexturePath(path = "", nightBIndexes = new Set()) {
+  if (String(path).includes("overnightStructure") || String(path).includes("deepFollowup")) return true;
+  const sceneMatch = String(path).match(/sceneVersions\[(\d+)\]/);
+  return sceneMatch ? nightBIndexes.has(Number(sceneMatch[1])) : false;
+}
+
 function occurrences(text = "", needle = "") {
   if (!needle) return 0;
   let count = 0;
@@ -262,7 +307,8 @@ function textureErrors(metrics = {}, options = {}) {
     oneTimePaths = [],
     oneTimeTicPath = "",
     cleanLineResults = [],
-    voiceTicArcDeclared = false
+    voiceTicArcDeclared = false,
+    voiceTicArcResults = []
   } = options;
   const errors = [];
   if (metrics.shortAnswerCount < TEXTURE_THRESHOLDS.shortAnswerCount) errors.push(`短答句 ${metrics.shortAnswerCount}/${TEXTURE_THRESHOLDS.shortAnswerCount}`);
@@ -279,6 +325,10 @@ function textureErrors(metrics = {}, options = {}) {
   if (oneTimeTic && oneTimeTicPath && (oneTimePaths.length !== 1 || oneTimePaths[0] !== oneTimeTicPath)) errors.push(`oneTimeTic「${oneTimeTic}」落点应为 ${oneTimeTicPath}`);
   cleanLineResults.filter((item) => !item.valid).forEach((item) => {
     errors.push(`指定干净句未通过: ${item.line}`);
+  });
+  voiceTicArcResults.filter((item) => !item.valid).forEach((item) => {
+    if (item.rule === "night-b-silent") errors.push(`夜 B 口癖未消失: ${item.leakedPaths.join("、")}`);
+    if (item.rule === "clean-ending-line") errors.push("噪声弧线缺少有效的最后干净句");
   });
   return errors;
 }
