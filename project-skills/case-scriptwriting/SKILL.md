@@ -772,6 +772,14 @@ Design source: `docs/multi-scene-rashomon-design.md`. The show is titled for the
 - Give at least one off-console scene per case a consequential `choice`: different branches grant different information state, route state, or `grantsEarnedItemId`; cosmetic branch labels do not satisfy the scene.
 - Before shipping, audit NPC ownership and document wiring: one load-bearing NPC beat lives in one scene only, and every callback-changing document grants an earned item with a matching opener.
 
+## 温情与尾巴法条
+
+- **互惠律**:每包主角至少被照顾 2 次,其中 1 次来自声纹最意想不到的表面;关怀须有物件载体(汤/水/便签),物件要走完整弧线(留下→在场→收尾,≥3 拍)。只给不收的关系网视同道具,不算关系。
+- **回访律**:结案不等于人物结束。尾声必须让每案传回一条非案件信息(未读),内容只许生活与关系,不许携带新事实、新证据、新指认。
+- **关怀动词律**:玩家每案至少一个非侦探动词(最后一句三选),不判分,但必须有回声——未读措辞随选择变化。没有回声的关怀选项视同装饰,不许写。
+- **破例即温情条款**:声纹破例是最强温情载体,每包 ≤1 次,破例者须是全包声纹最窄的角色;破例后立刻回归原声纹。
+- **活性尾巴律**:钩子=再来动因+信物+兑现形态,三件齐才算;只进未决清单的不算钩子。每包 ≥3 根活性尾巴 + 1 根主线尾巴(案卷级)。尾巴只约定形态(专场/再谈/再打),不约定未设计的答案;不许为悬念透支未来案件的真相。
+
 ## Theatrical License (戏剧性特许)
 
 This is a game, and a night of theater beats a panel discussion. Realism discipline (fair play, sensor contracts, value baseline) governs FACTS; it does not require every voice to be reasonable or every event to be probable. Budget the improbable deliberately:

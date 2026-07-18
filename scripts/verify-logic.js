@@ -2594,6 +2594,16 @@ test("DOCS-001", "AI intent and large playtest templates stay explicit", () => {
   assertIncludes(skillSource, "docs/playtest-report-template.md", "大测试 skill 必须引用统一记录模板");
 });
 
+test("DOCS-002", "case writing law keeps reciprocity, callbacks, care echoes, exceptions, and active tails", () => {
+  const scriptwritingSkill = readFileSync(new URL("../project-skills/case-scriptwriting/SKILL.md", import.meta.url), "utf8");
+  assertIncludes(scriptwritingSkill, "## 温情与尾巴法条", "案本 skill 必须有温情与尾巴法条专节");
+  assertIncludes(scriptwritingSkill, "**互惠律**:每包主角至少被照顾 2 次", "互惠律必须要求主角也被照顾");
+  assertIncludes(scriptwritingSkill, "**回访律**:结案不等于人物结束", "回访律必须让人物在结案后留下生活信息");
+  assertIncludes(scriptwritingSkill, "**关怀动词律**:玩家每案至少一个非侦探动词", "关怀动词必须进入玩家操作");
+  assertIncludes(scriptwritingSkill, "**破例即温情条款**:声纹破例是最强温情载体", "声纹破例必须受单次预算约束");
+  assertIncludes(scriptwritingSkill, "**活性尾巴律**:钩子=再来动因+信物+兑现形态", "活性尾巴必须具备三件套");
+});
+
 test("DETECTIVE-001", "detective plot coupling method stays explicit", () => {
   const detectiveSkill = readFileSync(new URL("../project-skills/detective-plot-coupling-review/SKILL.md", import.meta.url), "utf8");
   const scriptwritingSkill = readFileSync(new URL("../project-skills/case-scriptwriting/SKILL.md", import.meta.url), "utf8");
