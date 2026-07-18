@@ -2,6 +2,21 @@
   "caseId": "02-tony",
   "plotId": "tony-multi-dating",
   "runtimeContentStatus": "runtime-loaded",
+  "texturePass": true,
+  "voiceTics": {
+    "何": [
+      "你知道吧"
+    ]
+  },
+  "voiceTicArc": {
+    "何": "夜 A 密,夜 B 消失"
+  },
+  "driftComments": [
+    "插一句:大家平时剪头多少钱,我先看看我亏没亏",
+    "主播这个发型是不是也该修修了",
+    "课代表来了:上一通是账单,这一通是理发店",
+    "蹲各位的Tony老师故事,我先来:我办卡那家跑路了"
+  ],
   "dramaticAnchor": "理发店排班表、店长培训话术、会员记录与带客折扣",
   "whyTonight": "咨询者发现自己以为的专属暧昧，和多名顾客的办卡节奏重合。",
   "objectPurpose": "排班表证明私人推进列存在，店长培训话术证明行业模板也真实存在，会员记录和带客折扣把咨询者拖进灰区。",
@@ -35,7 +50,7 @@
   "routeAxisComments": {
     "identity-wording": [
       "自己人这词又来了",
-      "甜话先别急着信"
+      "我怎么还嗑上了,快打我"
     ],
     "money-flow": [
       "后面接消费就变味",
@@ -63,7 +78,7 @@
     "outcomes": {
       "lin-matchmaker": {
         "tone": "strong",
-        "text": "标准维护表会记服务偏好、到店频率和办卡可能。我没见过把人写成“稳情绪、能投店”，再接“下一次推进”的。能说这不是标准模板，不能替你说他没有真心。"
+        "text": "标准维护表会记服务偏好、到店频率和办卡可能。我没见过把人写成“稳情绪、能投店”，再接“下一次推进”的。能说这不是标准模板，不能替你说他没有真心。……哎呀先这样,我这边有个姑娘相亲相到一半跑出来了,我得去劝。行里的事,行里人命苦。"
       },
       "zhang-forensic": {
         "tone": "partial",
@@ -222,6 +237,23 @@
         {
           "question": "相亲那次是谁牵的线？",
           "answer": "我姨。她就说人家手艺人踏实。现在想想，介绍完第二周，他就开始给我留最晚的号。"
+        },
+        {
+          "question": "他多大?",
+          "answer": "二十九。说的。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "二十九。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "说的。"
+            }
+          ]
         }
       ],
       "questionOptions": [
@@ -268,13 +300,23 @@
       "casualQuestions": [
         {
           "question": "店长骂他，他都怎么跟你说？",
-          "answer": "多半是语音，发完有时又撤一条。我不敢隔太久，看到就回。那阵子手机一亮，我就怕他又挨骂了。"
+          "textureRole": "ramble",
+          "answer": "多半是语音。有时候发完又撤一条，你知道吧，就那种撤回，你看见小红点了但内容没了，我就猜他是不是说了重话又后悔。有回凌晨一点多，连着七条，最长那条五十九秒，我躺被窝里听完，又倒回去听了一遍。……哎，反正那阵子手机一亮，我就怕他又挨骂了。"
         },
         {
           "question": "帮他转活动，你朋友什么反应？",
           "answer": "有个闺蜜真去剪了，还说不错。后来她办没办卡，我没好意思问。"
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "……等下，我外卖到了，搁门口就行——嗯，你继续。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "questionOptions": [
         {
           "question": "他说完受委屈，下一句通常是什么？",
@@ -380,18 +422,28 @@
       "casualQuestions": [
         {
           "question": "那张表你存下来了吗？",
-          "answer": "截了图。当时手比脑子快，现在想想幸好截了。"
+          "textureRole": "ramble",
+          "answer": "截了。当时手比脑子快。我还顺手发给我室友了，就开过店那个。她那会儿在带娃，凌晨才回我，先回了个问号，又打电话过来……你知道吧，她一打电话，我反而不敢接了。缓了十分钟才回过去。"
         },
         {
           "question": "备注里“稳情绪”三个字，你第一眼什么感觉？",
           "answer": "说不上来。就是觉得……我在他那儿是个项目。这话我没跟人说过。"
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "今天降温，我在阳台说的，冷。我去拿件外套，你等我十秒。",
+            "nonLoadBearing": true
+          }
+        ]
+      },
       "questionOptions": [
         {
           "question": "这张表记的是发型，还是人能派什么用？",
           "suspicionLabel": "预约表到底在记什么",
-          "answer": "不是发型。写的是我能不能哄、会不会办卡、能不能带朋友。发型那一栏，反倒空着。",
+          "answer": "写的全是我能不能哄、会不会办卡、能不能带朋友。发型那一栏反倒空着。",
           "guardedAnswer": "发型那栏是空的。别的，我不想替他念。",
           "contradiction": "预约表实际在记录对象可转化的资源。",
           "correct": true,
@@ -430,6 +482,36 @@
       "doubt": "没说“只有你”，不代表没有让人往那个方向想。",
       "contradiction": "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
       "reliability": "partial",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "他凌晨发来一张券。满三百减一百二，烫染通用。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "配的字是：气消了来店里，我给你弄好看点。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "我气的是表，他给我发券。"
+          },
+          {
+            "role": "host",
+            "text": "他还说别的没有?"
+          },
+          {
+            "role": "caller",
+            "text": "没了。就一张券。"
+          }
+        ]
+      },
       "casualQuestions": [
         {
           "question": "老板娘那句话之后，店里人怎么看你？",
@@ -437,7 +519,11 @@
         },
         {
           "question": "年卡多少钱？",
-          "answer": "三千八。我没办。不是舍不得，是那天刚好看到那张表。"
+          "answer": "三千六……不对，三千八。带两次护理那种。我没办。不是舍不得，是那天刚好看到那张表。"
+        },
+        {
+          "question": "你姨知道这事了吗?",
+          "answer": "知道了。她第一句是：『手艺人也分好坏，回头我再给你踅摸一个。』……我还没说我难受呢，她已经在找下一个了。她是怕我卡在这儿。我懂。"
         }
       ],
       "questionOptions": [
@@ -552,8 +638,42 @@
         {
           "question": "那个开过店的朋友，怎么认识的？",
           "answer": "大学室友。她开过两年美容店，后来累垮了转行。她看东西毒。"
+        },
+        {
+          "question": "那个号，你退了吗?",
+          "answer": "还没。"
         }
       ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "表念完了。今晚就到——"
+          },
+          {
+            "role": "caller",
+            "text": "最后说个事。跟表没关系。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "上礼拜他还给我修过刘海，手特别轻。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "……一个把我写成『稳情绪』的人，手上怎么能那么轻。"
+          },
+          {
+            "role": "host",
+            "text": "嗯。这句记下了。"
+          }
+        ]
+      },
       "questionOptions": [
         {
           "question": "最后那列排的是班，还是人的下一步？",
@@ -680,7 +800,7 @@
           "label": "备注和下一次推进",
           "correct": true,
           "contradiction": "TA 把不同对象按可推进资源分层管理。",
-          "feedback": "这不是剪头需求，是把人按能带来什么往下排。",
+          "feedback": "备注在算每个人能带来什么，剪头需求反倒没写。",
           "reactionLine": "你圈的这列，我自己盯着看过半小时。找不出别的解释。",
           "revisesScene": 0,
           "routeAxis": "process-control"
@@ -808,7 +928,7 @@
           "label": "能投店和聊分红",
           "correct": false,
           "contradiction": "另一个对象也被写进投店推进表，亲密关系被接到商业转化上。",
-          "feedback": "这不是只对一个人嘴甜，是每个人后面都接着下一步用途。",
+          "feedback": "每个人后面都接着下一步用途，嘴甜只是开场。",
           "routeAxis": "external-corroboration"
         },
         {
@@ -1088,12 +1208,94 @@
     "hangupLine": "电话断了。屏幕还停在最后一列：“下一次推进”。",
     "hangupAudioCueId": "sfx.phone.disconnect",
     "hostHoldLine": "好。表留下。明晚别只带他的解释回来，也把你愿意承认的带回来。",
+    "returnBeat": {
+      "lines": [
+        {
+          "role": "caller",
+          "text": "我妈屋里电视还开着，吵的话你说一声。",
+          "nonLoadBearing": true
+        }
+      ]
+    },
     "snapshotEcho": {
       "respondent-problem": "昨晚一半人先记了他一票。今晚我把六折和免单也摆上来——这一票你们要改，现在改。",
       "industry-gray": "昨晚说“行业就这样”的，培训页我翻给你们看了。差的那一列，行业不背。",
       "caller-complicit": "说我也有份的，我听见了。好处我认。可那列推进，先写上去的不是我的手。"
     },
     "liveCounterBeats": [
+      {
+        "id": "tony-comment-benefit-blowup",
+        "kind": "emotionalChoice",
+        "cost": 0,
+        "beforeSceneIndex": 5,
+        "from": "来电人看见弹幕",
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等会儿。刚那条弹幕我看见了——『收了好处装什么受害者』。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "谁装了?!我免单那次是他硬免的!你们倒是来一个人剪头试试啊!"
+          }
+        ],
+        "choices": [
+          {
+            "id": "soothe",
+            "label": "弹幕我来管。你跟我说话,别跟屏幕吵。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "……嗯。你问吧。"
+              }
+            ],
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure"
+          },
+          {
+            "id": "push-back",
+            "label": "这条不算骂。你收没收,答这条就行。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "……收了。行了吧。"
+              },
+              {
+                "role": "pause"
+              },
+              {
+                "role": "caller",
+                "text": "往下问。"
+              }
+            ],
+            "stanceNudge": "defensive",
+            "routeAxis": "caller-credibility",
+            "routeTone": "pressure-point"
+          },
+          {
+            "id": "silence",
+            "label": "(不接话)",
+            "silent": true,
+            "lines": [
+              {
+                "role": "stage",
+                "text": "他把那条弹幕划掉了，没念。"
+              },
+              {
+                "role": "caller",
+                "text": "……算了。当我没看见。"
+              }
+            ],
+            "stanceNudge": "neutral",
+            "routeAxis": "caller-credibility",
+            "routeTone": "neutral"
+          }
+        ]
+      },
       {
         "id": "tony-business-letter",
         "kind": "interruptToast",
