@@ -27,7 +27,9 @@ export function callLineHtml(line = {}) {
   if (line.role === "stage") {
     return `<div class="call-stage-direction"><span>${escapeHtml(line.text ?? "")}</span></div>`;
   }
-  const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
+  const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME
+    ? "host"
+    : line.role === "director" ? "other" : "caller";
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
   return `

@@ -181,6 +181,7 @@ function renderScript() {
       add("## 案间串场", "");
       for (const line of interlude.lines ?? []) renderSpokenLine(lines, line);
       if (interlude.line) add(interlude.line, "");
+      for (const line of interlude.afterLines ?? []) renderSpokenLine(lines, line);
     }
   });
 
@@ -286,6 +287,7 @@ function renderDirectorScript() {
 
     lines.push("## 终局｜确认到哪，停在哪", "");
     if (packet.hostDisclosure?.text) lines.push(`【主播自揭，仅一次】${packet.hostDisclosure.text}`, "");
+    for (const line of packet.hostDisclosure?.lines ?? []) renderDirectorSpoken(lines, line);
     if (packet.deepFollowup?.question) {
       lines.push(`**林旭阳：** ${packet.deepFollowup.question}`, "");
       for (const beat of packet.deepFollowup.resistanceBeat?.lines ?? []) renderDirectorSpoken(lines, beat);
@@ -300,6 +302,7 @@ function renderDirectorScript() {
       lines.push("## 案间转场", "");
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
+      for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
     }
   });
 

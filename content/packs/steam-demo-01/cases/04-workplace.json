@@ -1047,7 +1047,15 @@
   ],
   "hostDisclosure": {
     "anchor": "atStageJudgement",
-    "text": "我上一份工作丢的时候，也是流程词最多的那个月。所以这通我容易先烦说流程的人——先把这口气压住。"
+    "text": "我上一份工作丢的时候，也是流程词最多的那个月。所以这通我容易先烦说流程的人——先把这口气压住。",
+    "lines": [
+      {
+        "role": "director",
+        "speaker": "导播（耳机）",
+        "speakerProfileId": "director",
+        "text": "……老林，喝口水。三十秒，不着急。"
+      }
+    ]
   },
   "hostWoundHook": "财务慢很常见，别先定罪",
   "respondentNote": {

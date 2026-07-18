@@ -4400,6 +4400,17 @@ button.evidence-target {
   line-height: 1.65;
 }
 
+.story-interlude-line.stage {
+  margin-top: 12px;
+  padding: 11px 12px;
+  border-left: 2px solid rgba(101, 214, 194, .48);
+  background: rgba(101, 214, 194, .055);
+}
+
+.story-interlude-line.stage p {
+  color: rgba(247, 244, 233, .82);
+}
+
 .case-closing-card,
 .case-title-card {
   display: grid;

@@ -152,6 +152,9 @@ export function collectDialogueTextureSpeech(packet = {}) {
 
   add("other", packet.deepFollowup?.question, "deepFollowup.question");
   add("caller", packet.deepFollowup?.answer, "deepFollowup.answer");
+  (packet.hostDisclosure?.lines ?? []).forEach((line, lineIndex) => {
+    add("other", line?.text, `hostDisclosure.lines[${lineIndex}].text`);
+  });
 
   Object.entries(packet.delegation?.outcomes ?? {}).forEach(([advisorId, outcome]) => {
     add("other", outcome?.text, `delegation.outcomes.${advisorId}.text`);

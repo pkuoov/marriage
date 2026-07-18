@@ -16,6 +16,7 @@ import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, an
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
+import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js?v=0.24.3";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
@@ -2231,9 +2232,7 @@ function stanceSnapshotRecapForBrief(brief = {}) {
 }
 
 function hostDisclosureForAnchor(brief = {}, anchor = "") {
-  const disclosure = brief.hostDisclosure;
-  if (!disclosure || disclosure.anchor !== anchor || !disclosure.text) return "";
-  return callDialogueHtml([{ role: "host", text: disclosure.text }], "host-disclosure");
+  return callDialogueHtml(hostDisclosureLinesForAnchor(brief, anchor), "host-disclosure");
 }
 
 function respondentTeaseHtml(brief = {}, sceneIndex = 0) {
@@ -2280,7 +2279,8 @@ function renderStoryInterlude(brief) {
       nextObjectLabel: storyInterludeObjectLabel(nextBrief),
       nextLine: storyInterludeNextLine(nextBrief),
       shellLine: interlude?.line ?? "",
-      shellLines: interlude?.lines ?? []
+      shellLines: interlude?.lines ?? [],
+      shellAfterLines: interlude?.afterLines ?? []
     }),
     choices: flowGroupHtml(storyInterludeChoicesHtml())
   });

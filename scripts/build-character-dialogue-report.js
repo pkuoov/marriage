@@ -143,6 +143,9 @@ function collectCaseDialogue(packet) {
   }
 
   add(hostId, "ending", "$case.hostDisclosure.text", packet.hostDisclosure?.text, "林旭阳");
+  for (const [lineIndex, line] of (packet.hostDisclosure?.lines ?? []).entries()) {
+    if (line.speakerProfileId) add(line.speakerProfileId, "ending", `$case.hostDisclosure.lines[${lineIndex}]`, line.text, line.speaker ?? line.speakerProfileId);
+  }
   add(hostId, "ending", "$case.deepFollowup.question", packet.deepFollowup?.question, "林旭阳");
   add(callerId, "ending", "$case.deepFollowup.answer", packet.deepFollowup?.answer, "咨询者");
   add(hostId, "ending", "$case.stageJudgement", packet.stageJudgement, "林旭阳");

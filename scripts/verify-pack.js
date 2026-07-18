@@ -1330,6 +1330,32 @@ test("PACK-012", "epilogue unread callbacks stay typed, attributed, and non-evid
   });
 });
 
+test("PACK-013", "warmth props close their arcs and the director breaks voice exactly once", () => {
+  const prologueText = manifest.nightShell?.prologue?.lines?.find((line) => line.speaker === "赵律师（消息）")?.text ?? "";
+  const caseThreeInterlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === "03-profile");
+  const epilogue = manifest.nightShell?.epilogue ?? {};
+  assert(prologueText.includes("汤在冰箱"), "汤弧线缺少序章留下拍");
+  assert(caseThreeInterlude?.afterLines?.some((line) => line.text?.includes("热过的汤")), "汤弧线缺少案间在场拍");
+  assert(epilogue.home?.includes("保温盒空了。他顺手洗了"), "汤弧线缺少回家收尾拍");
+  assert(epilogue.close?.includes("你当年没问完的那通"), "案卷便签没有形成正式版主线钩子");
+  assert(!epilogue.close?.includes("留给后续正式内容"), "玩家可见案卷不得夹带编剧说明");
+  const directorLines = [];
+  const visit = (value) => {
+    if (Array.isArray(value)) return value.forEach(visit);
+    if (!value || typeof value !== "object") return;
+    if ((value.speaker === "导播" || value.speaker === "导播（耳机）" || value.speakerProfileId === "director") && typeof value.text === "string") directorLines.push(value.text);
+    Object.values(value).forEach(visit);
+  };
+  visit(manifest);
+  caseFiles.forEach(visit);
+  const chineseLength = (text) => (String(text).match(/[\u3400-\u9fff]/g) ?? []).length;
+  const longLines = directorLines.filter((line) => chineseLength(line) > 6);
+  assertEqual(longLines.length, 1, "导播全包只能有一次超过六字的声纹破例");
+  assertEqual(longLines[0], "……老林，喝口水。三十秒，不着急。", "导播唯一破例台词不符");
+  const caseThree = caseFiles.find((packet) => packet.caseId === "03-profile");
+  assertEqual(assertDialogueTexture(caseThree).metrics.oneTimeCallerCount, 1, "案 3 oneTimeTic 必须维持唯一");
+});
+
 const failed = results.filter((result) => !result.ok);
 for (const result of results) {
   console.log(`${result.ok ? "PASS" : "FAIL"} ${result.id} ${result.name}`);

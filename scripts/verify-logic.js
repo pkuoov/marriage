@@ -26,6 +26,7 @@ import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernigh
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
 import { CARE_CHOICE_IDS, careChoiceById, careChoiceIsComplete, careChoiceLines } from "../src/runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadMessages, epilogueUnreadStage } from "../src/runtime/epilogueUnreadModel.js?v=0.24.3";
+import { hostDisclosureLinesForAnchor } from "../src/runtime/hostDisclosureModel.js?v=0.24.3";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { audioSettingsPanelHtml } from "../src/ui/audioSettingsView.js?v=0.22.0";
@@ -229,6 +230,24 @@ test("CARE-002", "epilogue unread callbacks echo care choices before the data cu
   const unreadHtml = epilogueUnreadHtml({ messages, currentIndex: 4 });
   assertEqual((unreadHtml.match(/epilogue-attachment-placeholder/g) ?? []).length, 2, "灯箱照和群名片必须各有一个素材占位");
   assertIncludes(epilogueUnreadContinueHtml({ visibleCount: 5, total: 5 }), "看后台曲线", "读完五条后才出现曲线按钮");
+});
+
+test("CARE-003", "soup arc, director exception, and case-file hook keep their authored order", () => {
+  const manifest = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/manifest.json", import.meta.url), "utf8"));
+  const caseThree = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/cases/03-profile.json", import.meta.url), "utf8"));
+  const caseFour = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/cases/04-workplace.json", import.meta.url), "utf8"));
+  assertIncludes(manifest.nightShell.prologue.lines[2].text, "汤在冰箱", "序章必须留下汤");
+  const interlude = manifest.nightShell.interludes.find((entry) => entry.afterCaseId === "03-profile");
+  const interludeHtml = storyInterludeHtml({ shellLine: interlude.line, shellAfterLines: interlude.afterLines });
+  assert(interludeHtml.indexOf("包里的案卷") < interludeHtml.indexOf("热过的汤"), "汤必须在赵追问案卷之后上控台");
+  assertIncludes(manifest.nightShell.epilogue.home, "保温盒空了。他顺手洗了", "回家段必须收回空保温盒");
+  assertIncludes(manifest.nightShell.epilogue.close, "你当年没问完的那通", "案卷便签必须接回主播旧伤");
+  assert(!manifest.nightShell.epilogue.close.includes("留给后续正式内容"), "玩家可见尾声不得出现编剧说明");
+  const disclosureLines = hostDisclosureLinesForAnchor(caseFour, "atStageJudgement");
+  assertEqual(disclosureLines.length, 2, "案 4 主播自揭后必须只追加一拍导播关怀");
+  assertEqual(disclosureLines[1].speaker, "导播（耳机）", "破例台词必须归属导播耳机");
+  assertIncludes(callDialogueHtml(disclosureLines), "call-line other", "导播破例不得渲染成咨询者气泡");
+  assertEqual(dialogueTextureMetrics(caseThree).metrics.oneTimeCallerCount, 1, "案 3 oneTimeTic 必须继续只出现一次");
 });
 
 function test(id, name, fn) {

@@ -41,7 +41,7 @@
       "name": "导播",
       "kind": "production",
       "caseIds": ["*"],
-      "surfaceNames": ["导播"],
+      "surfaceNames": ["导播", "导播（耳机）"],
       "personality": { "core": "冷静精确", "secondary": ["守时", "低存在感"], "stressResponse": "越忙越只报必要指令。" },
       "motivation": "让节目按秒顺利播出。",
       "fear": "技术失误打断直播。",
