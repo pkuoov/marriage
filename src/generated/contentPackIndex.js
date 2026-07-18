@@ -3524,6 +3524,52 @@ export const CONTENT_CASES = {
         "note": "问到这里，两个人的体面各归各，账单才能开始谈。"
       },
       "stageJudgement": "这通麦别只数他撒了几个谎。账单摊开，吃住玩加分期不到三万，八万的大头到收麦都没有名字；她这边，订座的会员号、纪念日朋友圈、探店的账号，也都是她自己的。",
+      "careChoices": [
+        {
+          "id": "pragmatic",
+          "label": "务实",
+          "hostLine": "回去先把转账页关了。饭吃了吗？没吃煮个面。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "……嗯。我现在就关。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "面看心情。"
+            }
+          ]
+        },
+        {
+          "id": "affirm",
+          "label": "肯定",
+          "hostLine": "今晚你没做错什么。八万的事，不是你把日子过坏了。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "……这句我存下了。语音的那种存。"
+            }
+          ]
+        },
+        {
+          "id": "accompany",
+          "label": "陪伴",
+          "hostLine": "不急着决定。热线明晚还开，我们都在。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "明晚……明晚我大概不打了。但我会听。"
+            }
+          ]
+        }
+      ],
       "caseClosing": {
         "title": "账单里的八万",
         "verdict": "林旭阳没有替她决定要不要分手，只把今晚能做的事说清：八万先别替人垫，先把每一笔欠款、还款人和转账去向拆开。",
@@ -5068,6 +5114,52 @@ export const CONTENT_CASES = {
         "note": "问到这里，甜话和店里的账已经缠在一起了。"
       },
       "stageJudgement": "这案卡在两层：话术和维护表是店里教的没错，可培训页里没有“下一次推进”；她说自己只是心软，可免费剪发、插号和带客折扣，她都收过。",
+      "careChoices": [
+        {
+          "id": "pragmatic",
+          "label": "务实",
+          "hostLine": "年卡别办，号先留着。头发该剪还得剪——换家店。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "……嗯。楼下新开了家，十五块快剪。就是不聊天。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "不聊挺好。"
+            }
+          ]
+        },
+        {
+          "id": "affirm",
+          "label": "肯定",
+          "hostLine": "受用不丢人。想被人当自己人，谁都想。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "……你这句，比他半年说的都实在。"
+            }
+          ]
+        },
+        {
+          "id": "accompany",
+          "label": "陪伴",
+          "hostLine": "群里的事不急。想不好，就来节目里想。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "行。想不好我就再打。"
+            }
+          ]
+        }
+      ],
       "caseClosing": {
         "title": "表格里的下一次",
         "verdict": "林旭阳没有替她给这段关系定性，只把“自己人”后面接着的办卡、带客和投店拆开了。",
@@ -6621,6 +6713,62 @@ export const CONTENT_CASES = {
         "note": "她报出自己的数字后，流水要求第一次不再躲在母亲后面。"
       },
       "stageJudgement": "真图归真图，真图能证明什么是另一回事。他把本科和持续收入留在图外，她把流水的起头人留在话外；介绍人再给两边各垫一句好听的，这顿饭才走到今天。",
+      "careChoices": [
+        {
+          "id": "pragmatic",
+          "label": "务实",
+          "hostLine": "两个人谈的时候，把你那张表带上。别念，放包里就行。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "带表……你不是让我别发后台吗。"
+            },
+            {
+              "role": "host",
+              "speaker": "林旭阳",
+              "text": "放包里，不是放台上。"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "……嗯。"
+            }
+          ]
+        },
+        {
+          "id": "affirm",
+          "label": "肯定",
+          "hostLine": "你查得不过分。想看清楚一个人，不丢人。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "……谢谢。这句，我妈应该听听。"
+            }
+          ]
+        },
+        {
+          "id": "accompany",
+          "label": "陪伴",
+          "hostLine": "谈完什么结果，都可以来说一声。不用带材料。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "不带材料。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "好。我试试。"
+            }
+          ]
+        }
+      ],
       "caseClosing": {
         "title": "没放在一起的三样",
         "verdict": "林旭阳把资料的真和资料的全分开：校名、项目和余额都能是真的，仍不足以替谁承诺长期收入和婚后安排。",
@@ -8311,6 +8459,68 @@ export const CONTENT_CASES = {
         "note": "主责利益没有消失，但她第一次给出愿意承担代价的行动。"
       },
       "stageJudgement": "想要主责归想要主责，替公司垫款是另一回事。她回过“收到”，也回过“我来扛”，这部分不能抹；可审批页没有付款，返款又写给对接人，这两条也不能拿她的野心抵掉。",
+      "careChoices": [
+        {
+          "id": "pragmatic",
+          "label": "务实",
+          "hostLine": "明天上班，先补报备，再提回单号。一件一件来。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "呃，我记下了。报备，回单。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "像考试划重点。"
+            }
+          ]
+        },
+        {
+          "id": "affirm",
+          "label": "肯定",
+          "hostLine": "想要主责没错。错的不是这个。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "……嗯。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "这句我想哭。忍住了。"
+            }
+          ]
+        },
+        {
+          "id": "accompany",
+          "label": "陪伴",
+          "hostLine": "周一归档前，有事随时打。夜里也开。",
+          "lines": [
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "夜里也开……"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "你们也早点睡吧。"
+            }
+          ]
+        }
+      ],
       "caseTitle": {
         "title": "职场报销截图",
         "subtitle": "审批通过以后，钱究竟停在了哪一步？",

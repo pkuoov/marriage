@@ -4540,6 +4540,112 @@ button.evidence-target {
   background: rgba(212, 180, 106, .07);
 }
 
+.care-choice-card {
+  display: grid;
+  gap: 18px;
+  padding: clamp(20px, 4vw, 34px);
+  border: 1px solid rgba(237, 241, 238, .16);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(17, 29, 34, .94), rgba(10, 17, 22, .88));
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .22);
+}
+
+.care-choice-heading {
+  display: grid;
+  gap: 7px;
+}
+
+.care-choice-heading span {
+  color: var(--mint);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+
+.care-choice-heading h2,
+.care-choice-heading p,
+.care-choice-line p {
+  margin: 0;
+}
+
+.care-choice-heading h2 {
+  color: rgba(247, 244, 233, .96);
+  font-family: Georgia, "Songti SC", serif;
+  font-size: clamp(23px, 5vw, 34px);
+}
+
+.care-choice-heading p {
+  color: rgba(237, 241, 238, .62);
+  line-height: 1.6;
+}
+
+.care-choice-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.care-choice-grid button {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+  padding: 15px 17px;
+  text-align: left;
+}
+
+.care-choice-grid button span {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.care-choice-grid button p {
+  margin: 0;
+  color: rgba(247, 244, 233, .9);
+  line-height: 1.58;
+}
+
+.care-choice-dialogue {
+  display: grid;
+  gap: 10px;
+}
+
+.care-choice-line {
+  display: grid;
+  gap: 5px;
+  max-width: min(86%, 680px);
+  padding: 13px 15px;
+  border: 1px solid rgba(237, 241, 238, .12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .045);
+}
+
+.care-choice-line.care-caller {
+  justify-self: end;
+  border-color: rgba(101, 214, 194, .24);
+}
+
+.care-choice-line b {
+  color: var(--gold);
+  font-size: 12px;
+}
+
+.care-choice-line p {
+  color: rgba(247, 244, 233, .92);
+  line-height: 1.65;
+}
+
+.care-choice-pause {
+  display: flex;
+  justify-content: center;
+  padding: 3px 0;
+}
+
+.care-choice-pause span {
+  width: 34px;
+  border-top: 1px solid rgba(237, 241, 238, .28);
+}
+
 .case-title-card {
   min-height: 360px;
   align-content: center;

@@ -1030,6 +1030,34 @@
     ],
     "nextStep": "先把会员、折扣和个人边界分开；任何办卡、投钱或带客承诺，都不要再用暧昧话替代。"
   },
+  "careChoices": [
+    {
+      "id": "pragmatic",
+      "label": "务实",
+      "hostLine": "年卡别办，号先留着。头发该剪还得剪——换家店。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……嗯。楼下新开了家，十五块快剪。就是不聊天。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "不聊挺好。" }
+      ]
+    },
+    {
+      "id": "affirm",
+      "label": "肯定",
+      "hostLine": "受用不丢人。想被人当自己人，谁都想。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……你这句，比他半年说的都实在。" }
+      ]
+    },
+    {
+      "id": "accompany",
+      "label": "陪伴",
+      "hostLine": "群里的事不急。想不好，就来节目里想。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "行。想不好我就再打。" }
+      ]
+    }
+  ],
   "storyInterludeRecap": "培训页证明店里教话术；排班表又把办卡、带客和投店排在甜话后面。",
   "followupTwist": "后续回拨里，那位女生又来了消息：她在拉群，已经有四个人，要来电人进群带头，把事情闹到店里去。来电人回了一句\"让我想想\"。到这里，两个受害者已经不同路了——一个要说法，一个想止损，谁也说服不了谁。",
   "dailyShareTitle": "“自己人”，是关系还是销售位置？",

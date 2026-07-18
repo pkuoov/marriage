@@ -24,6 +24,7 @@ import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, 
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
 import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatTriggerMet, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtime/storyInterludeModel.js?v=0.20.68";
+import { CARE_CHOICE_IDS, careChoiceById, careChoiceIsComplete, careChoiceLines } from "../src/runtime/careChoiceModel.js?v=0.24.3";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js?v=0.20.68";
 import { audioSettingsPanelHtml } from "../src/ui/audioSettingsView.js?v=0.22.0";
@@ -39,6 +40,7 @@ import { focusedQuestionOptions, playerQuestionLabel, sceneDialogueOptions, scen
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.21.1";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.20.68";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "../src/ui/caseTransitionView.js?v=0.20.96";
+import { careChoiceContinueHtml, careChoiceHtml } from "../src/ui/careChoiceView.js?v=0.24.3";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "../src/ui/titleView.js?v=0.20.68";
 import { readFileSync } from "node:fs";
@@ -180,6 +182,25 @@ test("TEXTURE-005", "declared night-A to night-B tic arcs reject late tic leakag
   packet.sceneVersions[1].version = "到第二晚了。";
   const clean = dialogueTextureMetrics(packet);
   assert(!clean.errors.some((message) => message.includes("夜 B 口癖未消失")), "口癖只落在夜 A 时弧线检查必须通过");
+});
+
+test("CARE-001", "closing care choices are complete, non-scored, and render authored pauses", () => {
+  const packets = ["01-credit", "02-tony", "03-profile", "04-workplace"].map((caseId) => JSON.parse(readFileSync(new URL(`../content/packs/steam-demo-01/cases/${caseId}.json`, import.meta.url), "utf8")));
+  packets.forEach((packet) => {
+    assert(careChoiceIsComplete(packet), `${packet.caseId} 必须各有 pragmatic/affirm/accompany 三种关怀选择`);
+    assertEqual(packet.careChoices.map((choice) => choice.id).join("|"), CARE_CHOICE_IDS.join("|"), `${packet.caseId} 关怀选择顺序必须固定`);
+    assert(packet.careChoices.every((choice) => !("score" in choice) && !("correct" in choice)), `${packet.caseId} 关怀选择不得计分或标正确项`);
+    assert(packet.careChoices.every((choice) => !JSON.stringify(choice).includes("(拍)")), `${packet.caseId} 停顿必须是独立拍，不能把(拍)写进台词`);
+  });
+  assertEqual(careChoiceById(packets[0], "affirm")?.label, "肯定", "关怀选择必须可按 id 读取");
+  assert(careChoiceLines(careChoiceById(packets[0], "pragmatic")).some((line) => line.role === "pause"), "务实支线必须保留独立停顿拍");
+  assert(!JSON.stringify(packets[2].careChoices).includes("唉"), "案 3 关怀支线不得污染 oneTimeTic 唯一性");
+  assertIncludes(packets[3].careChoices[0].lines[0].text, "呃", "案 4 务实支线必须保留陈的口癖");
+  const choiceHtml = careChoiceHtml({ choices: packets[0].careChoices });
+  assertIncludes(choiceHtml, "data-care-choice=\"pragmatic\"", "未选择时必须渲染三种关怀动词");
+  const selectedHtml = careChoiceHtml({ selectedChoice: packets[0].careChoices[0] });
+  assertIncludes(selectedHtml, "care-choice-pause", "选择后必须渲染停顿拍");
+  assertIncludes(careChoiceContinueHtml({ finalCase: true }), "听完这夜", "最后一案关怀拍必须能进入整夜尾声");
 });
 
 function test(id, name, fn) {

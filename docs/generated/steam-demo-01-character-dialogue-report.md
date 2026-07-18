@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：33
-- 收录台词／玩家可见人物材料：772
+- 收录台词／玩家可见人物材料：804
 - 本包实际出声人物：32
 - 句长节奏人工复核提示：23
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -162,6 +162,9 @@
 
 ### 其他出声面
 
+- `$case.careChoices[0].hostLine` 回去先把转账页关了。饭吃了吗？没吃煮个面。
+- `$case.careChoices[1].hostLine` 今晚你没做错什么。八万的事，不是你把日子过坏了。
+- `$case.careChoices[2].hostLine` 不急着决定。热线明晚还开，我们都在。
 - `$case.overnightStructure.liveCounterBeats[0].lines[3]` 让他听。
 - `$case.overnightStructure.returnBeat.lines[1]` 清楚。
 
@@ -300,6 +303,10 @@
 
 ### 其他出声面
 
+- `$case.careChoices[0].lines[0]` ……嗯。我现在就关。
+- `$case.careChoices[0].lines[2]` 面看心情。
+- `$case.careChoices[1].lines[0]` ……这句我存下了。语音的那种存。
+- `$case.careChoices[2].lines[0]` 明晚……明晚我大概不打了。但我会听。
 - `$case.overnightStructure.liveCounterBeats[0].lines[0]` 等等——他刚发我消息。
 - `$case.overnightStructure.liveCounterBeats[0].lines[2]` 一张截图。是这个直播间，你们现在的画面。他在听。
 - `$case.overnightStructure.returnBeat.lines[0]` 今晚信号好像不太好，我换了个房间。你那边听得清吧?
@@ -516,6 +523,12 @@
 - `$case.stageJudgement` 这案卡在两层：话术和维护表是店里教的没错，可培训页里没有“下一次推进”；她说自己只是心软，可免费剪发、插号和带客折扣，她都收过。
 - `$case.caseClosing.verdict` 林旭阳没有替她给这段关系定性，只把“自己人”后面接着的办卡、带客和投店拆开了。
 
+### 其他出声面
+
+- `$case.careChoices[0].hostLine` 年卡别办，号先留着。头发该剪还得剪——换家店。
+- `$case.careChoices[1].hostLine` 受用不丢人。想被人当自己人，谁都想。
+- `$case.careChoices[2].hostLine` 群里的事不急。想不好，就来节目里想。
+
 ## 案二咨询者·何
 
 - **固定性格：** 渴望特殊性的社交型人格
@@ -623,6 +636,10 @@
 
 ### 其他出声面
 
+- `$case.careChoices[0].lines[0]` ……嗯。楼下新开了家，十五块快剪。就是不聊天。
+- `$case.careChoices[0].lines[2]` 不聊挺好。
+- `$case.careChoices[1].lines[0]` ……你这句，比他半年说的都实在。
+- `$case.careChoices[2].lines[0]` 行。想不好我就再打。
 - `$case.overnightStructure.returnBeat.lines[0]` 我妈屋里电视还开着，吵的话你说一声。
 - `$case.overnightStructure.liveCounterBeats[0].lines[0]` 等会儿。刚那条弹幕我看见了——『收了好处装什么受害者』。
 - `$case.overnightStructure.liveCounterBeats[0].lines[2]` 谁装了?!我免单那次是他硬免的!你们倒是来一个人剪头试试啊!
@@ -854,6 +871,13 @@
 - `$case.stageJudgement` 真图归真图，真图能证明什么是另一回事。他把本科和持续收入留在图外，她把流水的起头人留在话外；介绍人再给两边各垫一句好听的，这顿饭才走到今天。
 - `$case.caseClosing.verdict` 林旭阳把资料的真和资料的全分开：校名、项目和余额都能是真的，仍不足以替谁承诺长期收入和婚后安排。
 
+### 其他出声面
+
+- `$case.careChoices[0].hostLine` 两个人谈的时候，把你那张表带上。别念，放包里就行。
+- `$case.careChoices[0].lines[1]` 放包里，不是放台上。
+- `$case.careChoices[1].hostLine` 你查得不过分。想看清楚一个人，不丢人。
+- `$case.careChoices[2].hostLine` 谈完什么结果，都可以来说一声。不用带材料。
+
 ## 案三咨询者·林
 
 - **固定性格：** 数字化自保的理性派
@@ -955,6 +979,11 @@
 
 ### 其他出声面
 
+- `$case.careChoices[0].lines[0]` 带表……你不是让我别发后台吗。
+- `$case.careChoices[0].lines[2]` ……嗯。
+- `$case.careChoices[1].lines[0]` ……谢谢。这句，我妈应该听听。
+- `$case.careChoices[2].lines[0]` 不带材料。
+- `$case.careChoices[2].lines[2]` 好。我试试。
 - `$case.overnightStructure.returnBeat.lines[0]` 楼上不知道在装修还是怎么，有电钻声。你听不到就行，那是我这边的事。
 - `$case.overnightStructure.liveCounterBeats[0].lines[0]` 等一下。那页群聊，是我表妹拍给你们的?
 - `$case.overnightStructure.liveCounterBeats[0].lines[2]` 她拍我家的群。给一个直播间。
@@ -1169,6 +1198,9 @@
 
 ### 其他出声面
 
+- `$case.careChoices[0].hostLine` 明天上班，先补报备，再提回单号。一件一件来。
+- `$case.careChoices[1].hostLine` 想要主责没错。错的不是这个。
+- `$case.careChoices[2].hostLine` 周一归档前，有事随时打。夜里也开。
 - `$case.overnightStructure.liveCounterBeats[1].lines[1]` 月底，在归档以后。
 
 ## 案四咨询者·陈
@@ -1283,6 +1315,12 @@
 
 ### 其他出声面
 
+- `$case.careChoices[0].lines[0]` 呃，我记下了。报备，回单。
+- `$case.careChoices[0].lines[2]` 像考试划重点。
+- `$case.careChoices[1].lines[0]` ……嗯。
+- `$case.careChoices[1].lines[2]` 这句我想哭。忍住了。
+- `$case.careChoices[2].lines[0]` 夜里也开……
+- `$case.careChoices[2].lines[2]` 你们也早点睡吧。
 - `$case.overnightStructure.returnBeat.lines[0]` 我这边空调滴水，滴在纸箱上，咚，咚的。你听见了别管。
 - `$case.overnightStructure.liveCounterBeats[0].lines[0]` 那条『你蠢』的，呃，我看见了。
 - `$case.overnightStructure.liveCounterBeats[0].lines[2]` 对，我蠢。入职八个月，我请全组喝过三次奶茶，一次三百多。我蠢得可有规律了。

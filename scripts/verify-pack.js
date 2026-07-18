@@ -136,6 +136,20 @@ function assertCaseClosing(closing, label) {
   ["beats", "confirmed", "unresolved"].forEach((field) => assertArrayMin(closing[field], 1, `${label}.caseClosing.${field} 不能为空`));
 }
 
+function assertCareChoices(choices, label) {
+  assertArrayMin(choices, 3, `${label}.careChoices 必须有三项`);
+  const expectedIds = ["pragmatic", "affirm", "accompany"];
+  assert(choices.length === expectedIds.length, `${label}.careChoices 只能有三项`);
+  choices.forEach((choice, index) => {
+    assert(choice?.id === expectedIds[index], `${label}.careChoices[${index}] id 必须是 ${expectedIds[index]}`);
+    assertNonEmptyString(choice.label, `${label}.careChoices[${index}].label 不能为空`);
+    assertNonEmptyString(choice.hostLine, `${label}.careChoices[${index}].hostLine 不能为空`);
+    assertArrayMin(choice.lines, 1, `${label}.careChoices[${index}].lines 不能为空`);
+    assert(!("score" in choice) && !("correct" in choice), `${label}.careChoices[${index}] 不得判分`);
+    assert(!JSON.stringify(choice).includes("(拍)"), `${label}.careChoices[${index}] 必须用独立 pause 拍`);
+  });
+}
+
 function assertCaseTitle(title, label) {
   assert(title && typeof title === "object", `${label} 缺少正式 caseTitle`);
   ["title", "subtitle", "intro"].forEach((field) => assertNonEmptyString(title[field], `${label}.caseTitle 缺少 ${field}`));
@@ -966,6 +980,7 @@ test("PACK-003", "case pressure packets are complete", () => {
         assertNonEmptyString(comment, `${casePacket.caseId} routeAxisComments[${commentIndex}] 不能为空`);
       });
       if (index <= 2) assertCaseClosing(casePacket.caseClosing, casePacket.caseId);
+      assertCareChoices(casePacket.careChoices, casePacket.caseId);
       if (index >= 1) assertCaseTitle(casePacket.caseTitle, casePacket.caseId);
       assertHostIdentity(casePacket, casePacket.caseId);
     }

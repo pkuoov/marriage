@@ -162,14 +162,14 @@ function renderScript() {
     add("");
 
     add("## 收束与结案", "");
-    for (const key of ["hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"]) {
+    for (const key of ["hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "careChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"]) {
       if (packet[key] !== undefined) renderNode(lines, packet[key], key, 3);
     }
     add("");
 
     add("## 【编剧资料】事实边界与运行规则", "");
     const alreadyRendered = new Set([
-      "caseId", "plotId", "label", "storyArcTitle", "caseTitle", "dramaticAnchor", "whyTonight", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject", "openingComplaint", "openingDialogue", "sceneVersions", "nightStructure", "overnightStructure", "stanceSnapshot", "delegation", "evidenceCards", "evidenceChecks", "investigationHooks", "documents", "advisorNotes", "respondentNote", "lurkerNote", "crossCaseEchoes", "hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"
+      "caseId", "plotId", "label", "storyArcTitle", "caseTitle", "dramaticAnchor", "whyTonight", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject", "openingComplaint", "openingDialogue", "sceneVersions", "nightStructure", "overnightStructure", "stanceSnapshot", "delegation", "evidenceCards", "evidenceChecks", "investigationHooks", "documents", "advisorNotes", "respondentNote", "lurkerNote", "crossCaseEchoes", "hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "careChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"
     ]);
     for (const [key, value] of Object.entries(packet)) {
       if (!alreadyRendered.has(key)) renderNode(lines, value, key, 3);
@@ -293,6 +293,7 @@ function renderDirectorScript() {
     }
     if (packet.respondentNote?.text) lines.push(`【对方后台留言，不可追问】${packet.respondentNote.text}`, "");
     if (packet.stageJudgement) lines.push(`**林旭阳：** ${packet.stageJudgement}`, "");
+    renderDirectorCareChoices(lines, packet.careChoices);
     renderDirectorClosing(lines, packet.caseClosing);
     const interlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === packet.caseId);
     if (interlude) {
@@ -335,6 +336,15 @@ function renderDirectorScene(lines, scene, label) {
   for (const line of scene.sceneCloser?.lines ?? []) renderDirectorSpoken(lines, line);
   if (scene.revisedVersion) lines.push(`【材料触发后的重述】**${scene.speaker ?? "咨询者"}：** ${scene.revisedVersion}`, "");
   if (scene.afterScene?.line) lines.push(`【段后】${scene.afterScene.line}`, "");
+}
+
+function renderDirectorCareChoices(lines, choices = []) {
+  if (!choices.length) return;
+  lines.push("### 今晚最后一句（三选一，不判分）", "");
+  for (const choice of choices) {
+    lines.push(`#### ${choice.label}`, "", `**林旭阳：** ${choice.hostLine}`, "");
+    for (const line of choice.lines ?? []) renderDirectorSpoken(lines, line);
+  }
 }
 
 function renderDirectorSpoken(lines, line) {
@@ -590,7 +600,7 @@ function humanLabel(key) {
     hangupAnchor: "收麦锚点", hangupLine: "收麦舞台", hostHoldLine: "主播留话", dayIntro: "白天开场", dayBudget: "白天行动预算", minDayScenes: "最少白天场景", dayScenes: "白天场景", callbackOpeners: "带回物开场", callbackFallback: "兜底开场", postures: "回拨立场", callerQuestion: "来电人反问", interludeEarnedItemMap: "幕间物件映射",
     backdropClass: "舞台背景", body: "场景正文", beats: "场景节拍", choice: "场景选择", earnedItemId: "获得物件", grantsEarnedItemId: "授予物件", grantsInventory: "授予库存", resultBeats: "选择后节拍", resultText: "选择后正文", firstConflict: "回拨首次冲突", hostLine: "主播台词", callerLine: "咨询者台词",
     delegation: "证据委托", moment: "发生时机", outcomes: "顾问结果", advisorId: "顾问 ID", advisorLine: "顾问台词", tone: "口气", report: "报告",
-    caseClosing: "正式结案", verdict: "结论", confirmed: "已确认", unresolved: "未决", nextStep: "下一步", dailyShareTitle: "分享卡标题", dailyShareBody: "分享卡正文", dailyShareQuestion: "分享题", truth: "作者真相",
+    careChoices: "今晚最后一句", caseClosing: "正式结案", verdict: "结论", confirmed: "已确认", unresolved: "未决", nextStep: "下一步", dailyShareTitle: "分享卡标题", dailyShareBody: "分享卡正文", dailyShareQuestion: "分享题", truth: "作者真相",
     commentSeeds: "评论种子", themeId: "主题 ID", hiddenThread: "暗线", label: "标签", reveal: "完整揭示", lowReveal: "低揭示", comment: "评论"
   };
   return labels[key] ?? key.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/[-_]/g, " ");

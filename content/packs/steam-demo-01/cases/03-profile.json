@@ -1095,6 +1095,36 @@
     ],
     "nextStep": "饭局前把学历口径、收入周期和钱如何安排说成完整句；不拿单张图替代长期承诺。"
   },
+  "careChoices": [
+    {
+      "id": "pragmatic",
+      "label": "务实",
+      "hostLine": "两个人谈的时候，把你那张表带上。别念，放包里就行。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "带表……你不是让我别发后台吗。" },
+        { "role": "host", "speaker": "林旭阳", "text": "放包里，不是放台上。" },
+        { "role": "caller", "speaker": "咨询者", "text": "……嗯。" }
+      ]
+    },
+    {
+      "id": "affirm",
+      "label": "肯定",
+      "hostLine": "你查得不过分。想看清楚一个人，不丢人。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……谢谢。这句，我妈应该听听。" }
+      ]
+    },
+    {
+      "id": "accompany",
+      "label": "陪伴",
+      "hostLine": "谈完什么结果，都可以来说一声。不用带材料。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "不带材料。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "好。我试试。" }
+      ]
+    }
+  ],
   "storyInterludeRecap": "学校图没改像素，家里群却改了主语。",
   "conclusionWhenCleared": {
     "summary": "校名、MBA 项目、当日余额和单月到账都是真的。没放在一起的是本科、学制、连续收入；没说在前面的是流水由她先开口。",

@@ -1074,6 +1074,38 @@
     "note": "主责利益没有消失，但她第一次给出愿意承担代价的行动。"
   },
   "stageJudgement": "想要主责归想要主责，替公司垫款是另一回事。她回过“收到”，也回过“我来扛”，这部分不能抹；可审批页没有付款，返款又写给对接人，这两条也不能拿她的野心抵掉。",
+  "careChoices": [
+    {
+      "id": "pragmatic",
+      "label": "务实",
+      "hostLine": "明天上班，先补报备，再提回单号。一件一件来。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "呃，我记下了。报备，回单。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "像考试划重点。" }
+      ]
+    },
+    {
+      "id": "affirm",
+      "label": "肯定",
+      "hostLine": "想要主责没错。错的不是这个。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……嗯。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "这句我想哭。忍住了。" }
+      ]
+    },
+    {
+      "id": "accompany",
+      "label": "陪伴",
+      "hostLine": "周一归档前，有事随时打。夜里也开。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "夜里也开……" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "你们也早点睡吧。" }
+      ]
+    }
+  ],
   "storyInterludeRecap": "主责挂在报告上，流程样本在群里，垫款却实打实从自己卡里划走了。",
   "followupTwist": "回拨前，赵律师、周会计和小林老师同时进后台：一个要求遮住公司名，一个只认付款回单，一个只拆“主责”这个词。玩家先采哪套，第二夜就从哪一处开口。",
   "dailyShareTitle": "报销截图都发了，钱为什么还没回来？",

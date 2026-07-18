@@ -14,6 +14,7 @@ import { livePressureProfile, materialPressureReaction, materialPressureSignal, 
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
+import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.20.69";
@@ -31,6 +32,7 @@ import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } f
 import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.21.1";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
+import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js?v=0.24.3";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
 import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.23.0";
@@ -148,6 +150,7 @@ function normalizeDailyState(saved) {
     accusationHistory: Array.isArray(saved?.accusationHistory) ? saved.accusationHistory : [],
     solvedCaseIds: Array.isArray(saved?.solvedCaseIds) ? saved.solvedCaseIds : [],
     caseInterludes: saved?.caseInterludes ?? {},
+    careChoices: saved?.careChoices ?? {},
     lastReaction: saved?.lastReaction ?? null,
     lastPressureSignal: saved?.lastPressureSignal ?? null,
     lastPressureAxis: saved?.lastPressureAxis ?? null,
@@ -311,6 +314,7 @@ function renderDailyCase() {
   if (state.scene === "accusation") return renderAccusation(brief);
   if (state.scene === "patienceLost") return renderPatienceLost(brief);
   if (state.scene === "caseSolved") return renderSolved(brief);
+  if (state.scene === "careChoice") return renderCareChoice(brief);
   if (state.scene === "caseClosure") return renderCaseClosure(brief);
   if (state.scene === "storyInterlude") return renderStoryInterlude(brief);
   if (state.scene === "caseTitle") return renderCaseTitle(brief);
@@ -2073,17 +2077,45 @@ function renderSolved(brief) {
   });
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
   bind("[data-after-recap]", () => {
-    if (isStoryPackMode() && !isFinalStoryPackCase()) {
-      state.scene = "caseClosure";
-      saveState();
-      return render();
-    }
-    if (isStoryPackMode() && nightShellForBrief(brief)?.epilogue) {
-      state.scene = "nightShellEpilogue";
+    if (isStoryPackMode() && careChoicesFor(brief).length) {
+      state.scene = "careChoice";
       saveState();
       return render();
     }
     moveScene("runComplete");
+  });
+  bindSceneButtons();
+}
+
+function renderCareChoice(brief) {
+  const key = caseKey(brief);
+  const selectedId = state.careChoices?.[key] ?? "";
+  const selectedChoice = careChoiceById(brief, selectedId);
+  const finalCase = isFinalStoryPackCase();
+  frame({
+    brief,
+    mood: "listening",
+    label: "今晚最后一句",
+    chapter: liveChapterTitle(brief),
+    showCaseHud: false,
+    visualHud: "",
+    screenClass: "care-choice-screen",
+    text: careChoiceHtml({ choices: careChoicesFor(brief), selectedChoice }),
+    choices: selectedChoice ? flowGroupHtml(careChoiceContinueHtml({ finalCase })) : ""
+  });
+  document.querySelectorAll("[data-care-choice]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const choiceId = button.getAttribute("data-care-choice") ?? "";
+      if (!careChoiceById(brief, choiceId)) return;
+      state.careChoices = { ...(state.careChoices ?? {}), [key]: choiceId };
+      saveState();
+      render();
+    });
+  });
+  bind("[data-care-choice-continue]", () => {
+    state.scene = finalCase && nightShellForBrief(brief)?.epilogue ? "nightShellEpilogue" : "caseClosure";
+    saveState();
+    render();
   });
   bindSceneButtons();
 }

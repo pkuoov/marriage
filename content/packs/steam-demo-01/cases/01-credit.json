@@ -1116,6 +1116,34 @@
     ],
     "nextStep": "把共同消费和个人债务分开列；任何转账都等账户归属、借款凭据和还款安排说清再谈。"
   },
+  "careChoices": [
+    {
+      "id": "pragmatic",
+      "label": "务实",
+      "hostLine": "回去先把转账页关了。饭吃了吗？没吃煮个面。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……嗯。我现在就关。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "面看心情。" }
+      ]
+    },
+    {
+      "id": "affirm",
+      "label": "肯定",
+      "hostLine": "今晚你没做错什么。八万的事，不是你把日子过坏了。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……这句我存下了。语音的那种存。" }
+      ]
+    },
+    {
+      "id": "accompany",
+      "label": "陪伴",
+      "hostLine": "不急着决定。热线明晚还开，我们都在。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "明晚……明晚我大概不打了。但我会听。" }
+      ]
+    }
+  ],
   "storyInterludeRecap": "收麦后，她把近五个月流水补到后台：工资停掉以后，账上还有两笔王姓转账和一笔五万贷款。",
   "followupTwist": "她交出的流水显示：四月八号后工资停了，五月和六月各有一笔王姓私人转账，七月五日新阳信贷五万入账，七月十九日近全额转出至尾号 3301。",
   "dailyShareTitle": "8 万信用卡，到底该不该帮 TA 还？",
