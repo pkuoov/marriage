@@ -25,6 +25,8 @@ try {
   } else if (smokeTarget === "case2-transition") {
     await runCase2DayMap();
     await runCaseTransition();
+  } else if (smokeTarget === "portrait-viewports") {
+    await runPortraitViewports();
   } else {
     for (const route of routes) {
       await runRoute(route);
@@ -33,6 +35,7 @@ try {
     await runCase3DayRoutes();
     await runCase4AdvisorConflict();
     await runCaseTransition();
+    await runPortraitViewports();
   }
 } finally {
   await browser.close();
@@ -44,6 +47,8 @@ console.log(smokeTarget === "case34"
     ? "Browser replay smoke passed: gamepad-restaurant-document"
     : smokeTarget === "case2-transition"
       ? "Browser replay smoke passed: case2-day-map, case-transition"
+      : smokeTarget === "portrait-viewports"
+        ? "Browser replay smoke passed: portrait layouts at 390x844, 1366x768, 1280x800"
     : `Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition"].join(", ")}`);
 
 async function assertAudioSettings(page) {
@@ -699,6 +704,44 @@ async function runCaseTransition() {
     await page.locator('[data-scene="sceneReview"]').waitFor({ state: "visible" });
   } finally {
     await context.close();
+  }
+}
+
+async function runPortraitViewports() {
+  for (const viewport of [
+    { width: 390, height: 844, label: "mobile" },
+    { width: 1366, height: 768, label: "desktop" },
+    { width: 1280, height: 800, label: "deck-css" }
+  ]) {
+    const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    page.setDefaultTimeout(8000);
+    try {
+      await page.goto(`${playableUrl}?playtest=portrait-${viewport.label}-${Date.now()}&storyKey=steam-demo-01`);
+      await click(page, "[data-start-story]");
+      if (await page.locator("[data-enter-first-case]").count()) await click(page, "[data-enter-first-case]");
+      await assertPixelPortrait(page, 1);
+      const layout = await page.evaluate(() => {
+        const shell = document.querySelector(".case-vn-grid");
+        const portraitLayer = document.querySelector(".case-duel-portraits");
+        const portrait = document.querySelector(".case-portrait.art-pixel img:not([hidden])");
+        const rect = portrait?.getBoundingClientRect();
+        return {
+          shellOverflow: shell ? shell.scrollWidth - shell.clientWidth : 999,
+          pointerEvents: portraitLayer ? getComputedStyle(portraitLayer).pointerEvents : "missing",
+          imageRendering: portrait ? getComputedStyle(portrait).imageRendering : "missing",
+          rect: rect ? { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width } : null
+        };
+      });
+      if (!layout.rect) throw new Error(`${viewport.label} portrait layout is missing`);
+      if (layout.shellOverflow > 2) throw new Error(`${viewport.label} portrait shell overflows horizontally by ${layout.shellOverflow}px`);
+      if (layout.pointerEvents !== "none") throw new Error(`${viewport.label} portrait layer must not block dialogue or choices`);
+      if (layout.imageRendering !== "pixelated") throw new Error(`${viewport.label} portrait must keep nearest-neighbor rendering`);
+      if (layout.rect.left < -1 || layout.rect.right > viewport.width + 1) throw new Error(`${viewport.label} portrait escapes the viewport horizontally`);
+      if (layout.rect.width > Math.min(viewport.width * 0.5, 320)) throw new Error(`${viewport.label} portrait is too wide for dialogue-safe staging`);
+    } finally {
+      await context.close();
+    }
   }
 }
 

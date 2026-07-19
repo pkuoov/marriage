@@ -8,7 +8,8 @@ This document is the release checklist for turning the offline playable into a S
 - `npm run build:desktop` builds `dist/desktop-electron` with `main.cjs`, `preload.cjs`, `package.json`, and the offline playable.
 - `npm run smoke:desktop` verifies that desktop staging has no dev-server dependency and exposes the desktop bridge.
 - `npm run smoke:browser` opens the offline playable in Chromium and replays click, keyboard, and simulated Gamepad API routes.
-- `npm run package:win` is the Windows portable package entry. Electron 43 requires Node `>=22.12`; Node 18 can run staging smoke but cannot be the final packaging runtime.
+- `npm run package:win` is the Windows-native portable package entry. It intentionally fails on Mac/Linux. Electron 43 requires Node `>=22.12`; non-Windows hosts may run staging smoke but may not produce an accepted release executable.
+- `.github/workflows/windows-package.yml` is the canonical packaging environment: Windows runner, Node 22.12, locked dependencies, source checks, portable packaging, PE/checksum validation, and a real packaged-runtime launch.
 
 ## Release Commands
 
@@ -23,17 +24,35 @@ npm run smoke:desktop
 npm run steam:preflight
 ```
 
-On a Node `>=22.12` Windows packaging machine:
+On a Node `>=22.12` Windows packaging machine, or through the **Windows Portable Package** GitHub workflow:
 
 ```bash
 npm run package:win
+npm run verify:win-package
 ```
 
 Expected artifact:
 
 ```text
 dist/steam/LivestreamDetectiveDemo-0.1.0-x64.exe
+dist/steam/LivestreamDetectiveDemo-0.1.0-x64.exe.sha256
+dist/steam/windows-package-report.json
+dist/steam/windows-runtime-smoke.json
 ```
+
+Do not run `electron-builder --win` directly on macOS and treat the result as release evidence. Mac is approved for `build:desktop`, `smoke:desktop`, browser replay, and `steam:preflight`; Windows is the authority for the executable and packaged-runtime report.
+
+## Automated Windows Runtime Gate
+
+The Windows workflow launches the generated portable executable with a hidden release-smoke argument. During that run it:
+
+1. blocks external hostname resolution;
+2. loads the playable from `file:` and confirms the title screen exists;
+3. confirms the desktop bridge is exposed through preload;
+4. writes, reads, lists, prepares Cloud export for, and removes a temporary file save;
+5. exits non-zero if any step fails and uploads the JSON report with the package.
+
+This closes build reproducibility and basic offline startup/save behavior. It does not replace SmartScreen, real-controller, suspend/resume, audio-device, or Steam overlay checks on physical hardware.
 
 ## Steam Cloud Contract
 
@@ -53,7 +72,7 @@ Cloud setup in Steamworks should target the app's user-data save directory. Do n
 
 ## Windows Smoke
 
-After `npm run package:win`:
+After downloading a workflow artifact or running `npm run package:win` on Windows:
 
 1. Launch the portable exe with network disabled.
 2. Start a new run and reach the first current-node question.
@@ -85,11 +104,10 @@ Required before public Steam release:
 - Store capsule/screenshots generated from the desktop build, not the dev server.
 - Privacy note: no AI server, no account system, no telemetry in the offline demo unless explicitly added later.
 
-## Blockers That Cannot Be Cleared Locally
+## External Release Gates
 
-- Real Windows portable packaging on Node `>=22.12`.
+- Clean physical Windows launch, SmartScreen behavior, audio-device output, and crash-log inspection.
 - Windows SmartScreen/signing behavior.
 - Steam Cloud configuration in Steamworks.
 - Steam Deck controller feel and suspend/resume.
 - Steam overlay behavior.
-

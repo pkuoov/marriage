@@ -2,24 +2,30 @@
 
 这份清单记录《直播间大侦探》从当前可玩原型走到 Steam 试玩版、再到正式章节式案件包发版还缺什么。它不是灵感池，而是每轮继续优化前要先看的工作台。
 
-## 2026-07-19 当前可执行 TODO
+## 2026-07-19 收尾状态
 
-以下是从现有长清单中重新清点出的剩余工作；已完成的四案剧情重写、三态像素立绘、按钮代价、首批声音和三份台本不再重复立项。
+本轮已完成所有当前可在仓库与自动化环境内闭环的发布工程。真人盲测按用户要求不执行；它仍是内容判断门，不得用机器回放冒充。剩余项只保留需要演员、真实设备或 Steamworks 权限的外部验收。
 
-### P0｜试玩发布前必须完成
+### 已完成｜仓库与自动化
 
-- 完成四案真人盲测并归档报告：至少覆盖一轮完整夜 A→白天→夜 B→结案，记录每案时长、卡点、错读材料与 V哥求助次数。
-- 在 `390×844`、`1366×768` 与真实 Steam Deck 上验收暖色侧脸三态：人物不能压对白、材料板或代价标签；匿名感不足时只调侧脸角度和眼睛细节，不恢复遮罩。
-- 将案 2 “吹风机回放”的系统声线替换为定向真人录音；正式录音前始终保留可见逐字稿。
-- 在 Node 22.12+ Windows 环境执行 portable 打包、离线启动、存档恢复与崩溃日志验收；在真实控制器 / Steam Deck 上走通键盘手柄全流程。
-- 完成 Steam 发布侧外部验收：Cloud/overlay 配置、签名、安装包与干净机器验包。它们不是当前源码缺口，但属于发版门。
+- Windows 正式打包改为原生 `windows-latest` 工作流，固定 Node 22.12；Mac/Linux 上的 `package:win` 会明确拒绝执行，避免跨平台产物冒充 Windows 验收。
+- Windows 工作流会验证 portable `.exe` 的文件名、体积、MZ/PE 文件头和 SHA-256，并实际启动打包后的应用：封锁外部域名解析，从 `file:` 进入标题页，再通过正式 preload/IPC 完成文件存档写、读、导出与删除。
+- 立绘自动布局门覆盖 `390×844`、`1366×768`、`1280×800`：检查最近邻渲染、横向溢出、最大宽度和人物层不拦截操作。真实屏幕观感仍归设备验收。
+- 案 1 灯架拖地拟音已交付并接为 `ready`；案 2/3/4 等 7 条语音已建立逐字稿、角色口气、表演方向、停顿、目标路径与生产状态校验，见 `docs/audio-recording-handoff.md`。
+- 轻微信号断帧只出现在新案接通、第二晚回拨、断线和换线瞬间；常驻立绘扫描层已删除，`prefers-reduced-motion` 会直接关闭过场动画。
 
-### P1｜真人试玩报告确认后推进
+### 外部发布门｜当前无法由仓库替代
 
-- 按收益补正式声音：案 1 灯架拖地、案 3 饭局停顿、案 4 垫款与供应商语音；再决定是否制作其余章节 BGM 和地点环境底。
-- 只在接通、断线等瞬间过场尝试轻微信号断帧；常驻立绘不叠扫描错位。若手机或 Steam Deck 上抢字，直接取消。
-- 根据真实计时决定是否调整案 3 的开场厚度、白天地点卡舞台感和材料阅读节奏；没有 playtest 证据时不继续加戏。
-- 继续拆 `src/app.js` 只接受可复现缺口驱动，不为重构而重构；新增页面状态优先进入现有 runtime/UI 模块。
+- **真人盲测（本轮明确跳过）**：完整夜 A→白天→夜 B→结案，记录每案时长、卡点、错读材料与 V哥求助次数。
+- **真人录音**：先替换案 2 系统声线，再录案 3 饭局、案 4 垫款与供应商；收件与验收流程已就绪，录音前始终保留可见逐字稿。
+- **真实设备**：在手机、Windows 干净机器、控制器和 Steam Deck 上确认手感、字体、暂停恢复、窗口状态与崩溃日志。自动 viewport/Gamepad smoke 只能做回退门。
+- **Steamworks 权限项**：Cloud、overlay、app id/depot、签名或明确的不签名决策、内部测试分支与上传验包。
+
+### 只接受证据后再动
+
+- 案 3 开场厚度、白天地点卡舞台感和材料阅读节奏，只按真人计时/错读记录调整。
+- `src/app.js` 只按可复现缺口继续拆，不做无收益重构。
+- 其余 planned BGM、地点环境底和非关键语音不阻塞试玩；先听真人录音与真机混音结果再排产。
 
 ### P2｜试玩稳定后的扩展
 
@@ -34,9 +40,7 @@
 
 ## 当前唯一优化主线
 
-**内容冻结中:等待四案完整真人 playtest 报告。冻结期内只接受 bug 修复与 playtest 报告驱动的改动,拒绝一切新内容提案。**
-
-竞品参考、工程改造和剧情扩容都已收束到冻结基线；后续只能按真人 playtest 报告处理 bug、阻塞点和可复现的体验问题。
+**内容继续冻结；允许发布工程、真实资产替换与可复现 bug 修复。新的剧情扩写、机制扩容和节奏改写等待真人 playtest 证据。**
 
 2026-07-01 已完成的支撑项：
 
@@ -129,18 +133,18 @@
 - 现在已经有 `build:playable`、Windows 双击脚本、`saveStore` 抽象、桌面文件存档桥接口，以及 `desktop/electron/` 桌面壳源码。
 - 已先选 Electron 骨架验证静态 H5 结构：`build:desktop` 会生成 `dist/desktop-electron`，包含 `main.cjs`、`preload.cjs`、桌面壳 `package.json` 和离线 playable。
 - 已有 preload 文件存档 IPC，运行时通过 `platformRuntime.saveFiles` 写入用户数据目录。
-- 已补 Electron / electron-builder devDependencies 和 `package:win` Windows portable 打包入口；Electron 43 打包环境需要 Node 22.12 或更高版本，当前仍需在有依赖和目标平台的环境里实际跑一次打包验收。
+- 已补 Electron / electron-builder devDependencies 和 Windows 原生 `package:win` portable 入口；Electron 43 打包固定 Node 22.12，Mac/Linux 调用会被 guard 拒绝。
 - 已补桌面窗口状态保存、全屏/缩放快捷键、单实例锁和 crash log 文件输出。
 - 桌面 staging 构建已改成同脚本生成 playable + desktop，并使用临时目录和锁目录，避免 `build:steam` / `smoke:desktop` 并发时互相踩 `dist/playable` 或 `dist/desktop-electron/playable`。
 - 已补 `docs/desktop-steam-build-plan.md` 和 `npm run steam:preflight`：本地可检查 package 入口、electron-builder 输出目录、portable x64、desktop staging、文件存档桥、crash log 和 Node/Electron 打包版本要求。
 - 源码侧 P0 已收口到可构建/可预检形态；Steam Cloud 配置、overlay、签名、真实 Windows 和 Steam Deck 验包属于发行外部验收门，记录在 `docs/desktop-steam-build-plan.md`，不再当作当前代码 backlog。
-- 2026-07-16 全套回归再次通过：`npm run check`、完整浏览器回放和桌面 smoke 均为绿；`steam:preflight` 仅提示当前 Node 18.15.0 不能承担 Electron 43 最终 Windows 打包，仍按 Node 22.12+ 实机门处理。
+- 2026-07-19 已新增 Windows 原生 CI：打包后校验 PE/体积/SHA-256，并启动 portable 验证离线标题页和文件存档 round-trip；Mac 上的 `steam:preflight` 只报告本机不是正式打包 host，不再尝试跨平台出包。
 
 验收：
 
-- Windows 双击启动进入离线包。源码侧已提供 portable 打包入口，待 Node 22.12+ Windows 机执行 `npm run package:win` 实机确认。
+- Windows 双击启动进入离线包。Windows CI 会实际启动打包产物并生成 `windows-runtime-smoke.json`；干净物理机与 SmartScreen 仍在发行外部门确认。
 - 无网络也能进入完整试玩。`smoke:desktop` / `smoke:browser` 覆盖离线 staging，实机仍按 release checklist 复验。
-- 存档写入本地文件，能重启恢复。当前源码和 IPC 已具备，待 Electron 运行时/打包验证。
+- 存档写入本地文件，能重启恢复。打包运行 smoke 已覆盖 write/read/list/export/remove；跨进程重启、Steam Cloud 与暂停恢复由真实设备验收。
 - 窗口状态、缩放和崩溃日志有桌面 smoke/源码校验；真实桌面运行确认进入发行验收门。
 - 构建产物里没有开发服务器依赖。`build:desktop` 已生成离线桌面目录，`package:win` 会把它打到 `dist/steam`，实机验包按 `docs/desktop-steam-build-plan.md` 执行。
 
@@ -160,9 +164,9 @@
 ### 声音资产
 
 - 2026-07-17 已交付首批 5 条可随离线包分发的 OGG 交互音效：热线接通、热线挂断、ON AIR、后台来信、材料标记；均已接到真实事件，并由 `npm run verify:audio` 校验文件头、体积、目录状态和运行时引用。它们是试玩 foley，不替代后续正式混音验收。
-- 2026-07-18 P1 声音批次再交付 5 条：标题夜班 BGM、低忍耐压力层、直播棚底噪、白天城市底噪与案 2 吹风机回放；当前共有 14 个 `ready` cue 和 24 个 `planned` cue。四条声场可由仓库脚本复建，吹风机语音是系统声线试玩母版，商业发布前仍需定向真人录音替换。
+- 2026-07-19 案 1 灯架拖地原创拟音交付；当前共有 15 个 `ready` cue 和 23 个 `planned` cue。四条声场与六条 SFX 可由仓库脚本复建，吹风机语音是系统声线试玩母版，商业发布前仍需定向真人录音替换。
 - 仍未完成的是其余制作型资产：直播连线、收麦调查、白天调查、回拨、终局追问、回看与天亮前 BGM；热线、餐厅、咖啡厅、茶馆、楼道、办公室、档案室与材料台环境底；以及尚未录制的关键原话语音。未交付 cue 不显示伪播放入口。
-- 下一批声音按发布收益排序：案 2 真人重录 → 案 1 灯架拖地 → 案 3 饭局停顿 → 案 4 垫款与供应商两段语音。其余 planned BGM/环境音不阻塞当前试玩。
+- 下一批声音按发布收益排序：案 2 真人重录 → 案 3 饭局停顿 → 案 4 垫款与供应商两段语音。演员录音单和校验合同已落到 `assets/audio/voice/recording-manifest.json`；其余 planned BGM/环境音不阻塞当前试玩。
 
 验收：
 
