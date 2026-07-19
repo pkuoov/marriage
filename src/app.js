@@ -2480,13 +2480,13 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
 
 function pixelTransitionForCurrentScene(brief = {}) {
   const transition = {
-    nightShellPrologue: { eyebrow: "NIGHT 01", label: "深夜档开麦" },
-    overnightPostLive: { eyebrow: "SIGNAL LOST", label: "挂断以后" },
-    dayActOpening: { eyebrow: "DAY SHIFT", label: "白天调查" },
-    overnightCallback: { eyebrow: "CALLBACK", label: "第二晚回拨" },
-    storyInterlude: { eyebrow: "LINE CLOSED", label: "换下一通热线" },
-    caseTitle: { eyebrow: `CALL ${String(state.chapter ?? 1).padStart(2, "0")}`, label: "新案接入" },
-    nightShellEpilogue: { eyebrow: "OFF AIR", label: "天亮前" }
+    nightShellPrologue: { kind: "scene", eyebrow: "NIGHT 01", label: "深夜档开麦" },
+    overnightPostLive: { kind: "signal-disconnect", eyebrow: "SIGNAL LOST", label: "挂断以后" },
+    dayActOpening: { kind: "scene", eyebrow: "DAY SHIFT", label: "白天调查" },
+    overnightCallback: { kind: "signal-connect", eyebrow: "CALLBACK", label: "第二晚回拨" },
+    storyInterlude: { kind: "signal-disconnect", eyebrow: "LINE CLOSED", label: "换下一通热线" },
+    caseTitle: { kind: "signal-connect", eyebrow: `CALL ${String(state.chapter ?? 1).padStart(2, "0")}`, label: "新案接入" },
+    nightShellEpilogue: { kind: "scene", eyebrow: "OFF AIR", label: "天亮前" }
   }[state.scene];
   if (!transition) return null;
   const key = `${caseKey(brief)}:${state.scene}`;

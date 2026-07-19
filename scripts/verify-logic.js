@@ -1325,7 +1325,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(frameHtml, "data-material-close", "材料模态必须提供明确关闭操作");
   assertIncludes(frameHtml, "aria-expanded=\"false\"", "材料入口必须向辅助技术报告展开状态");
   assertIncludes(liveFrameHtml({ text: "<p>正文</p>", screenEffect: "patience-drop" }), "screen-effect-patience-drop", "耐心扣除必须能渲染一次性红色暗角层");
-  assertIncludes(liveFrameHtml({ text: "<p>正文</p>", pixelTransition: { eyebrow: "DAY SHIFT", label: "白天调查" } }), "pixel-transition", "大切点必须能渲染像素风过场层");
+  assertIncludes(liveFrameHtml({ text: "<p>正文</p>", pixelTransition: { eyebrow: "DAY SHIFT", label: "白天调查" } }), "pixel-transition-scene", "大切点必须能渲染像素风过场层");
+  assertIncludes(liveFrameHtml({ text: "<p>正文</p>", pixelTransition: { kind: "signal-connect", eyebrow: "CALL", label: "新案接入" } }), "pixel-transition-signal-connect", "接通瞬间必须能渲染轻微信号断帧");
   assertIncludes(stylesSource, "@keyframes pixel-transition-out", "像素风过场必须由短促分步动画控制");
   assertIncludes(stylesSource, "prefers-reduced-motion: reduce", "像素风过场必须尊重减少动态效果设置");
   assertIncludes(stylesSource, ".screen-effect-material-hit", "材料命中必须有全屏 CRT 扫描反馈层");
@@ -1380,7 +1381,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(stylesSource, "button:focus-visible", "键盘和手柄焦点必须有可见焦点环");
   assertIncludes(stylesSource, "focusCurrent", "键盘和手柄焦点必须有呼吸灯动画，便于小屏和大屏识别");
   assertIncludes(stylesSource, ".call-log-drawer-body", "上一问回看必须有抽屉式通话记录样式");
-  assertIncludes(stylesSource, ".case-portrait::after", "立绘层必须有直播流扫描线/压缩感滤镜");
+  assert(!stylesSource.includes(".case-portrait::after"), "常驻立绘不能叠扫描线或信号错位层");
+  assertIncludes(stylesSource, ".pixel-transition-signal", "信号断帧只能作为短促过场变体存在");
   assertIncludes(stylesSource, "portraitCrossFade", "立绘表情/状态切换必须有淡入过渡样式");
   assertIncludes(stylesSource, "expressionShiftFloat", "立绘表情气泡必须有分状态微动效，避免所有反应都像同一个贴片");
   assertIncludes(stylesSource, "expressionPauseFloat", "停顿类表情必须和普通眨眼气泡有不同节奏");

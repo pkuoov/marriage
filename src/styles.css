@@ -1421,20 +1421,6 @@ button:active:not(:disabled) {
   filter: blur(2px);
 }
 
-.case-portrait::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: 14px;
-  background:
-    repeating-linear-gradient(180deg, rgba(237, 241, 238, .055) 0, rgba(237, 241, 238, .055) 1px, transparent 1px, transparent 4px),
-    linear-gradient(90deg, rgba(101, 214, 194, .08), transparent 18%, transparent 82%, rgba(239, 138, 117, .07));
-  opacity: .26;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
 .call-expression {
   position: absolute;
   left: 50%;
@@ -5410,6 +5396,44 @@ button.evidence-target {
   letter-spacing: .08em;
 }
 
+.pixel-transition-signal {
+  place-items: center;
+  background: rgba(7, 16, 15, .16);
+  animation: signal-transition-out 440ms steps(3, end) forwards;
+}
+
+.pixel-transition-signal .pixel-transition-grid {
+  inset: 0;
+  opacity: .28;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 7px, rgba(139, 228, 212, .34) 7px 8px, transparent 8px 15px),
+    linear-gradient(90deg, rgba(101, 214, 194, .18), transparent 34%, rgba(239, 138, 117, .12));
+  clip-path: polygon(0 22%, 100% 22%, 100% 31%, 0 31%, 0 64%, 100% 64%, 100% 72%, 0 72%);
+  animation: signal-grid-break 320ms steps(3, end) both;
+}
+
+.pixel-transition-signal p {
+  min-width: 0;
+  gap: 2px;
+  padding: 8px 13px;
+  border-width: 1px;
+  background: rgba(5, 12, 12, .82);
+  box-shadow: 4px 3px 0 rgba(212, 180, 106, .2);
+  animation: signal-label-break 320ms steps(3, end) both;
+}
+
+.pixel-transition-signal small {
+  font-size: 9px;
+}
+
+.pixel-transition-signal b {
+  font-size: clamp(15px, 3.3vw, 21px);
+}
+
+.pixel-transition-signal-disconnect p {
+  border-color: rgba(239, 138, 117, .72);
+}
+
 @keyframes pixel-grid-shift {
   from { transform: translate(-32px, 32px) scale(1.08); }
   to { transform: translate(0, 0) scale(1); }
@@ -5417,6 +5441,23 @@ button.evidence-target {
 
 @keyframes pixel-transition-out {
   0%, 56% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes signal-grid-break {
+  0% { transform: translateX(-10px); }
+  34% { transform: translateX(8px); }
+  67%, 100% { transform: translateX(0); }
+}
+
+@keyframes signal-label-break {
+  0% { transform: translateX(-3px); opacity: .72; }
+  34% { transform: translateX(3px); opacity: 1; }
+  67%, 100% { transform: translateX(0); opacity: .86; }
+}
+
+@keyframes signal-transition-out {
+  0%, 46% { opacity: 1; visibility: visible; }
   100% { opacity: 0; visibility: hidden; }
 }
 

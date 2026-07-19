@@ -681,10 +681,12 @@ async function runCaseTransition() {
     await assertVisibleText(page, "今晚不替人定", "closure should preserve unresolved facts");
     await click(page, "[data-enter-story-interlude]");
     await assertVisibleText(page, "广告间隙", "closure should move into a short program interlude");
+    if (await page.locator(".pixel-transition-signal-disconnect").count() !== 1) throw new Error("program interlude should use one short disconnect signal transition");
     await click(page, "[data-enter-next-case]");
     await assertVisibleText(page, "试玩连线 · 第 02 案", "second case must open on a numbered title card");
     await assertVisibleText(page, "理发店排班表", "second case title card should name the case");
     await assertVisibleText(page, "自己人", "second case title card should frame the central question");
+    if (await page.locator(".pixel-transition-signal-connect").count() !== 1) throw new Error("case title should use one short connect signal transition");
     const titleAnimations = await page.evaluate(() => document.getAnimations()
       .filter((animation) => animation.playState === "running")
       .map((animation) => animation.animationName)
