@@ -3,6 +3,11 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 let mainWindow = null;
+const releaseSmokeReportPath = process.argv.find((argument) => argument.startsWith("--release-smoke-report="))?.slice("--release-smoke-report=".length) ?? "";
+
+if (releaseSmokeReportPath) {
+  app.commandLine.appendSwitch("host-resolver-rules", "MAP * 0.0.0.0");
+}
 
 const CHANNELS = {
   read: "livestream-detective:save-read",
@@ -224,10 +229,70 @@ function createWindow() {
   registerWindowControls(window);
   registerCrashLogging(window);
   window.once("ready-to-show", () => {
-    window.show();
+    if (!releaseSmokeReportPath) window.show();
   });
+  if (releaseSmokeReportPath) {
+    window.webContents.once("did-finish-load", () => {
+      runReleaseSmoke(window, releaseSmokeReportPath);
+    });
+  }
   window.loadFile(path.join(__dirname, "playable", "index.html"));
   return window;
+}
+
+async function runReleaseSmoke(window, reportPath) {
+  const report = {
+    platform: process.platform,
+    arch: process.arch,
+    electron: process.versions.electron,
+    offlineResolverBlocked: true,
+    renderer: null,
+    saveBridge: null,
+    error: null
+  };
+  try {
+    report.renderer = await window.webContents.executeJavaScript(`({
+      title: document.title,
+      protocol: location.protocol,
+      startButton: Boolean(document.querySelector("[data-start-story]")),
+      desktopBridge: typeof window.livestreamDetectiveDesktop?.saveFiles?.write === "function"
+    })`);
+    report.saveBridge = await window.webContents.executeJavaScript(`(() => {
+      const key = "__windows_release_smoke__";
+      const value = JSON.stringify({ marker: "portable-save-roundtrip", at: Date.now() });
+      const bridge = window.livestreamDetectiveDesktop?.saveFiles;
+      bridge.write(key, value);
+      const readBack = bridge.read(key);
+      const listed = bridge.list();
+      const exported = bridge.exportForCloud([key]);
+      bridge.remove(key);
+      return {
+        roundTrip: readBack === value,
+        listed: Array.isArray(listed) && listed.length > 0,
+        exported: exported?.[key] === value,
+        removed: bridge.read(key) === null
+      };
+    })()`);
+  } catch (error) {
+    report.error = error?.stack ?? error?.message ?? String(error);
+  }
+
+  try {
+    fs.mkdirSync(path.dirname(reportPath), { recursive: true });
+    fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+  } catch (error) {
+    writeCrashLog("release-smoke-report", error);
+    app.exit(1);
+    return;
+  }
+
+  const ok = !report.error
+    && report.platform === "win32"
+    && report.renderer?.protocol === "file:"
+    && report.renderer?.startButton
+    && report.renderer?.desktopBridge
+    && Object.values(report.saveBridge ?? {}).every(Boolean);
+  app.exit(ok ? 0 : 1);
 }
 
 const gotSingleInstanceLock = app.requestSingleInstanceLock();

@@ -35,6 +35,15 @@ jobs:
       - name: Verify PE artifact and checksum
         run: npm run verify:win-package
 
+      - name: Launch packaged app and verify offline save bridge
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem dist/steam/*.exe | Select-Object -First 1
+          $report = Join-Path (Resolve-Path dist/steam) "windows-runtime-smoke.json"
+          $process = Start-Process -FilePath $exe.FullName -ArgumentList "--release-smoke-report=$report" -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Packaged runtime smoke exited with code $($process.ExitCode)" }
+          npm run verify:win-runtime-smoke
+
       - name: Upload verified package
         uses: actions/upload-artifact@v6
         with:
@@ -43,5 +52,6 @@ jobs:
             dist/steam/*.exe
             dist/steam/*.sha256
             dist/steam/windows-package-report.json
+            dist/steam/windows-runtime-smoke.json
           if-no-files-found: error
           retention-days: 14

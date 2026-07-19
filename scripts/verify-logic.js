@@ -1041,6 +1041,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(packageSource, "\"package:win\"", "Steam/Windows 发版必须有 exe/portable 打包入口");
   assertIncludes(packageSource, "assert-windows-package-env.js", "Windows 正式打包必须拒绝 Mac/Linux 跨平台冒充验收");
   assertIncludes(packageSource, "\"verify:win-package\"", "Windows 产物必须有 PE 文件头、体积和校验和验证入口");
+  assertIncludes(packageSource, "\"verify:win-runtime-smoke\"", "Windows 产物必须在目标系统实际启动并验证文件存档");
   assertIncludes(packageSource, "\"steam:preflight\"", "Steam 发版必须有本地 preflight 检查入口");
   assertIncludes(packageSource, "\"smoke:desktop\"", "桌面 staging 必须有不启动 Electron 的文件烟测");
   assertIncludes(packageSource, "\"smoke:browser\"", "大测试必须有真实浏览器回放 smoke 入口");
@@ -1050,6 +1051,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(packageSource, "scripts/smoke-browser-replay.js", "check 必须语法检查浏览器回放脚本");
   assertIncludes(packageSource, "scripts/steam-preflight.js", "check 必须语法检查 Steam preflight 脚本");
   assertIncludes(packageSource, "scripts/verify-windows-package.js", "check 必须语法检查 Windows 产物验证脚本");
+  assertIncludes(packageSource, "scripts/verify-windows-runtime-smoke.js", "check 必须语法检查 Windows 运行报告验证脚本");
   assertIncludes(packageSource, "scripts/build-desktop.js", "桌面构建必须生成 Electron 壳目录");
   assertIncludes(packageSource, "\"content:index\"", "构建前必须生成 content 运行时索引");
   assertIncludes(packageSource, "\"dev\": \"node scripts/dev-server.js\"", "开发入口必须使用项目开发服务，不能退回裸 Python 静态服务");

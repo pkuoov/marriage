@@ -44,6 +44,9 @@ assert(mainSource.includes("setZoomFactor"), "Electron main must support zoom fa
 assert(mainSource.includes("crash-logs"), "Electron main must write crash logs under userData");
 assert(mainSource.includes("render-process-gone"), "Electron main must capture renderer crashes");
 assert(mainSource.includes("requestSingleInstanceLock"), "Electron main must keep a single desktop instance");
+assert(mainSource.includes("--release-smoke-report="), "Electron main must expose the hidden Windows release smoke entry");
+assert(mainSource.includes("offlineResolverBlocked"), "Windows release smoke must block external host resolution");
+assert(mainSource.includes("portable-save-roundtrip"), "Windows release smoke must exercise the real file-save bridge");
 assert(preloadSource.includes("livestreamDetectiveDesktop"), "Preload must expose the desktop bridge");
 assert(!/localhost|127\.0\.0\.1|http\.server/i.test(`${indexHtml}\n${mainSource}`), "Desktop smoke found dev-server dependency");
 

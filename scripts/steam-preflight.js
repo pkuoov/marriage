@@ -37,6 +37,7 @@ record("portable x64 target", builderConfig.win?.target?.some((target) => target
 record("desktop staging", await exists(resolve(root, "dist", "desktop-electron", "playable", "index.html")), "Run npm run build:steam before final packaging");
 record("file save bridge", mainSource.includes("userData") && preloadSource.includes("saveFiles"), "Desktop saves go through userData file bridge");
 record("crash logs", mainSource.includes("crash-logs") && mainSource.includes("render-process-gone"), "Renderer crash logging is wired");
+record("packaged runtime smoke", mainSource.includes("--release-smoke-report=") && windowsWorkflow.includes("verify:win-runtime-smoke"), "Windows CI launches the packaged app and exercises offline file saves");
 record("node packaging runtime", nodeSupportsElectronPackaging(), `Current Node ${process.versions.node}; Electron 43 packaging needs >=22.12`);
 record("official packaging host", process.platform === "win32", `Current host ${process.platform}; Mac/Linux are preflight and staging hosts only`);
 
