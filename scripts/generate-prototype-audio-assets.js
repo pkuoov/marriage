@@ -56,6 +56,17 @@ const assets = [
       "anoisesrc=color=brown:sample_rate=48000:duration=0.30:amplitude=0.18"
     ],
     filter: "[0:a]highpass=f=1250,lowpass=f=6500,tremolo=f=27:d=0.62,volume=0.12,afade=t=in:st=0:d=0.025,afade=t=out:st=0.22:d=0.12[s];[1:a]highpass=f=180,lowpass=f=1050,volume=0.045,afade=t=out:st=0.18:d=0.12[p];[s][p]amix=inputs=2:normalize=0,volume=13,alimiter=limit=0.5[out]"
+  },
+  {
+    file: "case1-lamp-drag.ogg",
+    title: "Case 1 metal lamp stand drag",
+    inputs: [
+      "anoisesrc=color=brown:sample_rate=48000:duration=1.75:amplitude=0.32",
+      "anoisesrc=color=white:sample_rate=48000:duration=1.75:amplitude=0.14",
+      "sine=frequency=118:sample_rate=48000:duration=1.75",
+      "sine=frequency=690:sample_rate=48000:duration=0.16"
+    ],
+    filter: "[0:a]highpass=f=95,lowpass=f=1550,tremolo=f=19:d=0.72,volume=0.14,afade=t=in:st=0:d=0.05,afade=t=out:st=1.28:d=0.47[body];[1:a]highpass=f=1250,lowpass=f=5100,tremolo=f=31:d=0.84,volume=0.06,afade=t=in:st=0:d=0.04,afade=t=out:st=1.12:d=0.58[scrape];[2:a]lowpass=f=260,tremolo=f=8:d=0.74,volume=0.055,afade=t=out:st=1.25:d=0.50[resonance];[3:a]volume=0.10,adelay=35|35,afade=t=out:st=0.10:d=0.06[contact];[body][scrape][resonance][contact]amix=inputs=4:normalize=0,volume=9.2,alimiter=limit=0.52[out]"
   }
 ];
 

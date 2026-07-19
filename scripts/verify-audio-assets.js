@@ -7,6 +7,7 @@ const ROOT_URL = new URL("../", import.meta.url);
 const CONTENT_URL = new URL("../content/packs/steam-demo-01/", import.meta.url);
 const errors = [];
 const references = [];
+const voiceProduction = JSON.parse(await readFile(new URL("../assets/audio/voice/recording-manifest.json", import.meta.url), "utf8"));
 
 for (const fileUrl of await jsonFiles(CONTENT_URL)) {
   const document = JSON.parse(await readFile(fileUrl, "utf8"));
@@ -61,7 +62,8 @@ const requiredReadyP1 = [
   "bgm.pressure-stem",
   "ambience.studio-room",
   "ambience.city-afternoon",
-  "voice.case2.dryer-message"
+  "voice.case2.dryer-message",
+  "sfx.case1.lamp-drag"
 ];
 for (const cueId of requiredReadySfx) {
   if (AUDIO_CUES[cueId]?.status !== "ready") fail(`${cueId}: demo-critical SFX must be ready`);
@@ -72,6 +74,24 @@ for (const cueId of requiredReadyP1) {
 const referencedCueIds = new Set(references.map(({ cueId }) => cueId));
 for (const cueId of requiredContentCues) {
   if (!referencedCueIds.has(cueId)) fail(`${cueId}: required semantic moment is not wired into content`);
+}
+
+const voiceEntries = new Map((voiceProduction.entries ?? []).map((entry) => [entry.cueId, entry]));
+for (const [cueId, cue] of Object.entries(AUDIO_CUES).filter(([, item]) => item.bus === "voice")) {
+  const entry = voiceEntries.get(cueId);
+  if (!entry) {
+    fail(`${cueId}: voice production manifest entry is required`);
+    continue;
+  }
+  if (entry.targetPath !== cue.src) fail(`${cueId}: recording target path must match the audio catalog`);
+  if (entry.transcript !== cue.transcript) fail(`${cueId}: recording transcript must match the player-visible catalog transcript`);
+  if (!entry.speaker?.trim() || !entry.direction?.trim() || !entry.editNotes?.trim()) fail(`${cueId}: speaker, direction, and editNotes are required`);
+  if (!voiceProduction.statuses?.includes(entry.status)) fail(`${cueId}: unknown production status ${entry.status}`);
+  if (entry.status === "actor-required" && cue.status !== "planned") fail(`${cueId}: actor-required voice must stay planned`);
+  if (["temporary-system-master", "approved-actor-master"].includes(entry.status) && cue.status !== "ready") fail(`${cueId}: delivered voice master must be ready`);
+}
+for (const cueId of voiceEntries.keys()) {
+  if (AUDIO_CUES[cueId]?.bus !== "voice") fail(`${cueId}: recording manifest references a missing/non-voice cue`);
 }
 
 for (const sample of [
