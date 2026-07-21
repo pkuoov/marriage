@@ -62,7 +62,7 @@ const DAILY_PLOT_DEFINITIONS = {
     premeditated: false,
     premeditatedActorRole: null,
     accusationChoices: [
-      { label: "“他一直说名校毕业，细问才说是 MBA。”", accuseRole: "respondent", response: "学校不是假的，但这句话让别人往更好听的方向理解了。" },
+      { label: "“也算吧，MBA。”", accuseRole: "respondent", response: "学校不是假的，但这句话让别人往更好听的方向理解了。" },
       { label: "“我只说他学校那边确实是真的。”", accuseRole: "complainant", response: "你这句也没说全。前面话说满了，后面就很难自己拆台。" },
       { label: "“再问下去，是不是工资卡也要交出来？”", accuse: "both", response: "这句刺耳，但它碰到的不是学历，是婚后钱怎么管。" },
       { label: "“结婚以后钱最好放一起管。”", accuseRole: "complainant", response: "这句才是流水后面那半句话。不是只验真假，是在试婚后钱归谁管。" }
@@ -840,12 +840,12 @@ function dailyFakeProfileTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "后来我细问才发现，他一直说名校毕业，细问才说是 MBA，具体是读过一个名校 MBA 项目。他之前本科很普通，这段他一开始没主动说。我只说他学校那边确实是真的，本科的事，我没提。",
+        version: "我家一直按“名校毕业”理解。真问本科，他说：“也算吧，MBA。”后来才说清，是那所学校的 MBA 项目，本科不是那儿的。我只跟家里说学校是真的，本科没提。",
         doubt: "名校这句有真东西，但别人听到的可能是另一层意思。",
         contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
         reliability: "partial",
         questionOptions: [
-          { question: "那张学校图少了哪一边，少的是本科、项目还是学制？", answer: "校名和项目是真的。可他一直说名校毕业，细问才说是 MBA。普通人听着就是本科一路读那儿，学制、本科这些，是我追着问才一点点出来的。", contradiction: "男方用真标签保留了别人误会的空间。", correct: true },
+          { question: "那张学校图少了哪一边，少的是本科、项目还是学制？", answer: "校名和项目是真的。本科、项目性质和学制没写在图上。名校毕业是我回家说满的，他那句“也算吧，MBA”也确实没把本科说明白。", contradiction: "男方用真标签保留了别人误会的空间。", correct: true },
           { question: "本科这件事，你后来跟家里提过吗？", answer: "提不了啊。“名校毕业”已经讲出去了，再补一句本科很普通，我妈立刻就得变脸。我想着流水那关要是过了，这事就当没发生过。", correct: false }
         ]
       },

@@ -13,16 +13,6 @@
   },
   "entries": [
     {
-      "cueId": "voice.broadcast.countdown",
-      "priority": 3,
-      "status": "actor-required",
-      "targetPath": "./assets/audio/voice/broadcast-countdown.ogg",
-      "speaker": "导播，成年女性或男性，不公开身份",
-      "transcript": "三、二、一。ON AIR。",
-      "direction": "职业化、短、稳，像真正在控倒计时；不要喊口号，不要综艺腔。",
-      "editNotes": "三与二之间约 500 ms，二与一之间约 500 ms；ON AIR 前留 250 ms。"
-    },
-    {
       "cueId": "voice.case1.loyalty-message",
       "priority": 2,
       "status": "actor-required",
@@ -57,7 +47,7 @@
       "priority": 1,
       "status": "actor-required",
       "targetPath": "./assets/audio/voice/case4-pad-message.ogg",
-      "speaker": "林旭阳，项目负责人，理性、忙、习惯用机会语言压缩别人的判断时间",
+      "speaker": "案4项目负责人，理性、忙、习惯用机会语言压缩别人的判断时间",
       "transcript": "你先顶上，复盘材料里可以写你主责。",
       "direction": "像在赶进度，不觉得自己在威胁；“先顶上”快，“可以写你主责”略放慢，像给补偿。",
       "editNotes": "不要加笑声、叹气或反派停顿；保留手机语音的近讲感，线路滤波在混音阶段处理。"

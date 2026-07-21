@@ -124,7 +124,7 @@ function validateFlow(flow) {
   check(flow.scenes.every((scene) => scene.speaker === "咨询者"), "CALLER_SCENE_ONLY", "每日 sceneReview 的材料必须由咨询者说出，不能由后台/回拨/系统段落直接插入。");
   check(!hasRealNpcName(allText), "NO_REAL_NAMES", "直播间单案文本不能出现 NPC 真名。");
   check(!hasCallerPerspectiveLeak(allText), "CALLER_PERSPECTIVE", "咨询者语境下的反馈应使用第一人称或直接引语，不能写成第三人称旁白。");
-  check(Boolean(flow.opening.length >= 2 && flow.opening.length <= 5), "OPENING_LENGTH", "开场应控制在 2-5 句，适合手机首屏。");
+  check(Boolean(flow.opening.length >= 2 && flow.opening.length <= 9), "OPENING_LENGTH", "开场应控制在 2-9 句，并按一问一答分屏呈现。");
   check(flow.opening[0]?.speaker === "咨询者", "CALLER_FIRST", "第一句必须由咨询者开口。");
   check(flow.opening.some((line) => line.speaker === "你"), "HOST_AFTER_CALLER", "开场必须有主播接话，但不能抢在咨询者之前。");
   check(!renderedOpeningEndsOnHost(flow.opening), "OPENING_DANGLING_HOST", "首屏开场不能停在主播问句上，必须让咨询者答完再进入通话推进。");
@@ -244,7 +244,7 @@ function hasRiskIfExposed(text) {
 }
 
 function isHostLikeQuestion(question) {
-  return /你|他|她|TA|对方|这|那|怎么|为什么|哪|有没有|是不是|先|说|问|补全|原话|发来|算什么|见父母|钱|图|饭局|还贷|账|审批|报销|付款|收款|供应商|返款|垫款|署名/.test(question);
+  return /你|他|她|谁|TA|对方|这|那|怎么|为什么|哪|有没有|是不是|先|说|问|补全|原话|发来|算什么|见父母|钱|图|饭局|还贷|账|审批|报销|付款|收款|供应商|返款|垫款|署名/.test(question);
 }
 
 function isNoClickChoice(question) {
@@ -278,7 +278,7 @@ function renderedOpeningEndsOnHost(opening) {
 function compactOpeningLines(lines) {
   const normalized = (lines ?? []).filter((line) => line?.text);
   const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
-  return normalized.slice(0, totalLength > 170 ? 2 : 4);
+  return normalized.slice(0, totalLength > 220 ? 2 : 5);
 }
 
 function hasOpeningTurnMismatch(opening) {

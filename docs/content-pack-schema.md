@@ -28,7 +28,7 @@ content/packs/<pack-id>/
 - `caseLabels`：案内可见称呼，当前统一为 `匿名来电`。
 - `sequence`：案件顺序，每项包含 `caseId`、`plotId`、`sceneId`、`complainantId`、`respondentId`、`castProfileIds`、`act`、`objectLabel`、`backdropClass`、`bridge`。
 
-`castProfileIds` 必须列出本案所有逐案角色卡，引用 `content/characters/cast.json`。写台词时以 `caseId + surfaceNames` 解析说话人；`complainantId`、`respondentId` 是运行时演员槽位，不表示不同案件里的同名 ID 是同一个角色。常驻主播、顾问、导播和 V哥使用 `caseIds: ["*"]` 的全局卡。
+`castProfileIds` 必须列出本案所有逐案角色卡，引用 `content/characters/cast.json`。写台词时以 `caseId + surfaceNames` 解析说话人；`complainantId`、`respondentId` 是运行时演员槽位，不表示不同案件里的同名 ID 是同一个角色。常驻主播、顾问和 V哥使用 `caseIds: ["*"]` 的全局卡。当前节目是个人直播，不设置导播角色。
 
 通话流程内不能直接显示 `act`、`title` 或 `1/4` 这类目录结构。案间页可以使用 `objectLabel` 做下一通钩子。
 
@@ -89,6 +89,16 @@ content/packs/<pack-id>/
 - `dailyShareTitle`、`dailyShareBody`、`dailyShareQuestion`：单案分享卡文案。
 - `conclusionWhenCleared` / `conclusionBranches`：可选。用于把某案的特殊结论从代码迁到 JSON；分支条件写成已揭示矛盾或最终原话，不写 `plotId` 特判。
 - `advisorNotes` / `respondentNote`：麦外声音。`advisorNotes` 每案最多两条；`respondentNote` 兼容旧对象写法，也可写数组，扩容包每案最多两条。所有麦外声音只能进入材料、回流、留言、顾问单等合法表面，不能替玩家点圈点位置。
+
+### 行级 documents
+
+每个试玩案件至少要有一份可圈行的 `documents`，把表格或记录本身交给玩家，而不是只用 `evidenceChecks.material` 复述材料。基础字段为 `id`、`title`、`intro`、`rows`、`rowQuestions`、`crossQuestions`、`markLimit`。
+
+- 银行流水可沿用默认五列：`date / kind / amount / party / memo`。日期用 `MM-DD`，行按日期升序，`kind` 使用 `入账 / 支出 / 提醒 / 空行`。
+- 非银行文档应显式写 `columns: [{ "key": "date", "label": "时间" }, ...]`。每一行都必须为每个已声明列提供非空值；运行时和阅读版会按这些列渲染。
+- 只有相对时间来源时写 `dateMode: "relative"`，保留 `前一天 14:22`、`九天后`、`截至第二晚` 等原始表达。不得为了通过银行流水校验伪造具体月日，也不得把“九天后”机械改成容易产生基准歧义的 `D+9`。
+- `rowQuestions` 以 `rowId` 为键；`crossQuestions[].rows` 至少引用两行。当前正式字段是 `crossQuestions / rows / markLimit`，不是旧草案里的 `crossRowQuestions / rowIds / maxMarks`。
+- 每个追问只能说材料能证明的内容。需要从当事人口中补出的事实放在 `answer` 与 `logicContract.answerAdds`；`sourceDoesNotProve` 必须保留账户归属、是否到账、是否故意等尚未成立的边界。
 
 ### pass 11 扩容配额字段
 

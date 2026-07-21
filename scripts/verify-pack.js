@@ -57,6 +57,25 @@ function assertArrayMin(value, minLength, message) {
   assert(Array.isArray(value) && value.length >= minLength, message);
 }
 
+function assertSingleQuestionTurn(value, label) {
+  if (typeof value !== "string") return;
+  const questionMarks = value.match(/[？?]/g) ?? [];
+  assert(questionMarks.length <= 1, `${label} 同一话轮只能问一件事，不能塞入多个问号`);
+}
+
+function assertSingleQuestionTurns(value, label) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => assertSingleQuestionTurns(item, `${label}[${index}]`));
+    return;
+  }
+  if (!value || typeof value !== "object") return;
+  Object.entries(value).forEach(([key, child]) => {
+    const childLabel = `${label}.${key}`;
+    if (["question", "hostLine", "prompt"].includes(key)) assertSingleQuestionTurn(child, childLabel);
+    assertSingleQuestionTurns(child, childLabel);
+  });
+}
+
 function assertBeatLines(lines, label) {
   assertArrayMin(lines, 1, `${label} 至少需要一拍`);
   lines.forEach((line, lineIndex) => {
@@ -81,6 +100,137 @@ function assertThrows(fn, pattern, message) {
 
 function assertAtLeastOneCorrect(options, message) {
   assert((options ?? []).some((option) => option.correct === true), message);
+}
+
+const MICRO_LOGIC_SOURCE_KINDS = new Set([
+  "caller-statement",
+  "quoted-message",
+  "document-readout",
+  "audio-playback",
+  "host-calculation",
+  "confirmed-followup"
+]);
+
+const SPOKEN_NARRATOR_LEAK = /我看窗外[，,；; ]*他看酒|现在那两个字卡在这儿|一个把我写成.{0,18}手上怎么能|镜头(?:切|推|拉|给|对准)|画面(?:切|定格|推|拉)|特写(?:给|在|：)|旁白[：:]/;
+
+function sceneInvariantText(scene = {}) {
+  return [
+    ...(scene.beforeVersion?.lines ?? []).filter((line) => line?.role !== "stage" && line?.role !== "pause").map((line) => line.text),
+    scene.version,
+    ...(scene.afterVersion?.lines ?? []).filter((line) => line?.role !== "stage" && line?.role !== "pause").map((line) => line.text)
+  ].filter(Boolean).join("\n");
+}
+
+function assertMicroLogicContract(option, scene, label) {
+  const contract = option.logicContract;
+  assert(contract && typeof contract === "object" && !Array.isArray(contract), `${label} 核心追问缺少 logicContract`);
+  ["premiseAnchor", "sourceKind", "sourceProves", "sourceDoesNotProve", "answerAnchor", "answerAdds", "nextLegalQuestion"].forEach((field) => {
+    assertNonEmptyString(contract[field], `${label}.logicContract.${field} 不能为空`);
+  });
+  assert(MICRO_LOGIC_SOURCE_KINDS.has(contract.sourceKind), `${label}.logicContract.sourceKind 不合法: ${contract.sourceKind}`);
+  assert(sceneInvariantText(scene).includes(contract.premiseAnchor), `${label}.logicContract.premiseAnchor 未命中本场固定前提: ${contract.premiseAnchor}`);
+  assert(String(option.answer ?? "").includes(contract.answerAnchor), `${label}.logicContract.answerAnchor 未命中正常回答: ${contract.answerAnchor}`);
+  assert(contract.sourceProves !== contract.sourceDoesNotProve, `${label}.logicContract 必须区分材料能证明与不能证明的范围`);
+  assert(contract.answerAdds.length >= 8, `${label}.logicContract.answerAdds 必须写清回答新增事实或拒答边界`);
+  assert(contract.nextLegalQuestion.length >= 8, `${label}.logicContract.nextLegalQuestion 必须写清下一问上限`);
+}
+
+function loadBearingCloserLines(scene = {}) {
+  return (scene.sceneCloser?.lines ?? []).filter((line) => !["stage", "pause"].includes(line?.role) && line?.nonLoadBearing !== true && line?.text);
+}
+
+function cumulativeInvariantText(packet = {}, sceneIndex = 0) {
+  const chunks = (packet.openingDialogue ?? []).map((line) => line.text).filter(Boolean);
+  (packet.sceneVersions ?? []).slice(0, sceneIndex + 1).forEach((scene, index) => {
+    chunks.push(sceneInvariantText(scene));
+    if (index < sceneIndex) chunks.push(...(scene.sceneCloser?.lines ?? []).filter((line) => !["stage", "pause"].includes(line?.role)).map((line) => line.text));
+  });
+  return chunks.filter(Boolean).join("\n");
+}
+
+function assertClosureContract(packet, scene, sceneIndex, label) {
+  const closerLines = loadBearingCloserLines(scene);
+  if (!closerLines.length) {
+    assert(scene.closureContract === undefined, `${label}.closureContract 只能用于承重场尾`);
+    return;
+  }
+  const contract = scene.closureContract;
+  assert(contract && typeof contract === "object" && !Array.isArray(contract), `${label} 承重 sceneCloser 缺少 closureContract`);
+  ["entryAnchor", "closerAnchor", "adds", "openEdge"].forEach((field) => {
+    assertNonEmptyString(contract[field], `${label}.closureContract.${field} 不能为空`);
+  });
+  assertEqual(contract.routeIndependent, true, `${label}.closureContract.routeIndependent 必须为 true`);
+  const closerText = closerLines.map((line) => line.text).join("\n");
+  assert(closerText.includes(contract.closerAnchor), `${label}.closureContract.closerAnchor 未命中承重场尾`);
+  const available = `${cumulativeInvariantText(packet, sceneIndex)}\n${closerText}`;
+  assert(available.includes(contract.entryAnchor), `${label}.closureContract.entryAnchor 未命中固定上下文或场尾中的可听见打断`);
+  assert(contract.adds.length >= 8, `${label}.closureContract.adds 必须写清场尾新增或恢复的线程`);
+  assert(contract.openEdge.length >= 6, `${label}.closureContract.openEdge 必须留下一个明确未决问题`);
+}
+
+function spokenSurfaceEntries(packet = {}) {
+  const entries = [];
+  const add = (path, text) => {
+    if (typeof text === "string" && text.trim()) entries.push({ path, text });
+  };
+  const addLines = (path, lines = []) => lines.forEach((line, index) => {
+    if (!["stage", "pause"].includes(line?.role)) add(`${path}[${index}]`, line?.text);
+  });
+  (packet.openingDialogue ?? []).forEach((line, index) => add(`openingDialogue[${index}]`, line.text));
+  (packet.sceneVersions ?? []).forEach((scene, sceneIndex) => {
+    const base = `sceneVersions[${sceneIndex}]`;
+    add(`${base}.version`, scene.version);
+    add(`${base}.revisedVersion`, scene.revisedVersion);
+    addLines(`${base}.beforeVersion.lines`, scene.beforeVersion?.lines);
+    addLines(`${base}.afterVersion.lines`, scene.afterVersion?.lines);
+    addLines(`${base}.sceneCloser.lines`, scene.sceneCloser?.lines);
+    for (const group of ["casualQuestions", "dialogueOptions", "questionOptions"]) {
+      (scene[group] ?? []).forEach((option, optionIndex) => {
+        const optionPath = `${base}.${group}[${optionIndex}]`;
+        add(`${optionPath}.question`, option.question);
+        add(`${optionPath}.answer`, option.answer);
+        add(`${optionPath}.guardedAnswer`, option.guardedAnswer);
+        addLines(`${optionPath}.lines`, option.lines);
+        addLines(`${optionPath}.resistanceBeat.lines`, option.resistanceBeat?.lines);
+      });
+    }
+  });
+  add("deepFollowup.question", packet.deepFollowup?.question);
+  add("deepFollowup.answer", packet.deepFollowup?.answer);
+  addLines("deepFollowup.resistanceBeat.lines", packet.deepFollowup?.resistanceBeat?.lines);
+  Object.entries(packet.overnightStructure?.callbackOpeners ?? {}).forEach(([openerId, opener]) => {
+    add(`overnightStructure.callbackOpeners.${openerId}.line`, opener?.line);
+    add(`overnightStructure.callbackOpeners.${openerId}.firstConflict.hostLine`, opener?.firstConflict?.hostLine);
+    add(`overnightStructure.callbackOpeners.${openerId}.firstConflict.callerLine`, opener?.firstConflict?.callerLine);
+    add(`overnightStructure.callbackOpeners.${openerId}.firstConflict.callerFollowupLine`, opener?.firstConflict?.callerFollowupLine);
+  });
+  (packet.overnightStructure?.liveCounterBeats ?? []).forEach((beat, beatIndex) => {
+    addLines(`overnightStructure.liveCounterBeats[${beatIndex}].lines`, beat.lines);
+    (beat.choices ?? []).forEach((choice, choiceIndex) => {
+      add(`overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}].label`, choice.label);
+      addLines(`overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}].lines`, choice.lines);
+    });
+  });
+  (packet.overnightStructure?.dayScenes ?? []).forEach((dayScene, sceneIndex) => {
+    (dayScene.body?.beats ?? []).forEach((beat, beatIndex) => add(`overnightStructure.dayScenes[${sceneIndex}].body.beats[${beatIndex}]`, beat?.text));
+    (dayScene.body?.choice?.options ?? []).forEach((option, optionIndex) => {
+      (option.resultBeats ?? []).forEach((beat, beatIndex) => add(`overnightStructure.dayScenes[${sceneIndex}].body.choice.options[${optionIndex}].resultBeats[${beatIndex}]`, beat?.text));
+    });
+  });
+  (packet.nightStructure?.interlude?.actions ?? []).forEach((action, actionIndex) => {
+    add(`nightStructure.interlude.actions[${actionIndex}].text`, action.text);
+    (action.options ?? []).forEach((option, optionIndex) => add(`nightStructure.interlude.actions[${actionIndex}].options[${optionIndex}].advisorLine`, option.advisorLine));
+  });
+  (packet.careChoices ?? []).forEach((choice, index) => {
+    add(`careChoices[${index}].hostLine`, choice.hostLine);
+    addLines(`careChoices[${index}].lines`, choice.lines);
+  });
+  return entries;
+}
+
+function assertNoSpokenNarratorLeak(packet, label) {
+  const leaks = spokenSurfaceEntries(packet).filter((entry) => SPOKEN_NARRATOR_LEAK.test(entry.text));
+  assert(leaks.length === 0, `${label} 人物台词混入第三方镜头、旁白或作者题眼: ${leaks.slice(0, 3).map((entry) => entry.path).join("、")}`);
 }
 
 function assertEvidenceOperation(operation, label, { requireMaterialRows = false } = {}) {
@@ -200,7 +350,12 @@ function ungatedSurfaceText(packet = {}) {
   return collectTextFrom([
     packet.openingComplaint,
     packet.openingDialogue?.map((line) => line.text),
-    packet.sceneVersions?.map((scene) => scene.version),
+    packet.sceneVersions?.map((scene) => [
+      scene.version,
+      scene.beforeVersion?.lines?.map((line) => line.text),
+      scene.afterVersion?.lines?.map((line) => line.text),
+      scene.sceneCloser?.lines?.map((line) => line.text)
+    ]),
     packet.evidenceCards?.map((card) => [card.title, card.front, card.detail]),
     packet.evidenceChecks?.map((check) => [check.title, check.material, check.prompt]),
     packet.investigationHooks?.map((hook) => [hook.surface, hook.appearsNowBecause, hook.title, hook.material, hook.prompt])
@@ -576,8 +731,12 @@ function assertOvernightStructure(packet = {}, label = "") {
     assert(opener.firstConflict && typeof opener.firstConflict === "object" && !Array.isArray(opener.firstConflict), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 必须是对象`);
     const firstConflictHostLine = opener.firstConflict.hostLine ?? opener.firstConflict.lines?.find((line) => line.role === "host")?.text;
     assertNonEmptyString(firstConflictHostLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict 必须有主播起手句`);
-    if (opener.firstConflict.lines !== undefined) assertBeatLines(opener.firstConflict.lines, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.lines`);
-    assertNonEmptyString(opener.firstConflict.callerLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerLine 不能为空`);
+    if (opener.firstConflict.lines !== undefined) {
+      assertBeatLines(opener.firstConflict.lines, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.lines`);
+      assert(opener.firstConflict.lines.some((line) => line.role === "caller" && line.text), `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.lines 必须有咨询者回答`);
+    } else {
+      assertNonEmptyString(opener.firstConflict.callerLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerLine 不能为空`);
+    }
     if (opener.firstConflict.callerFollowupLine !== undefined) {
       assertNonEmptyString(opener.firstConflict.callerFollowupLine, `${label} overnightStructure.callbackOpeners.${earnedId}.firstConflict.callerFollowupLine 不能为空`);
       assertEqual(opener.firstConflict.pauseAfterCallerLine, true, `${label} firstConflict 分拍续句前必须声明 pauseAfterCallerLine`);
@@ -644,18 +803,38 @@ function assertDocuments(packet = {}, label = "") {
     assertNonEmptyString(document.intro, `${label} documents[${documentIndex}] 缺少 intro`);
     assert(Number.isInteger(document.markLimit) && document.markLimit > 0, `${label} documents[${documentIndex}].markLimit 必须是正整数`);
     assertArrayMin(document.rows, 2, `${label} documents[${documentIndex}].rows 至少两行`);
+    const configuredColumns = Array.isArray(document.columns) && document.columns.length
+      ? document.columns
+      : null;
+    if (configuredColumns) {
+      assertArrayMin(configuredColumns, 2, `${label} documents[${documentIndex}].columns 至少两列`);
+      const columnKeys = new Set();
+      configuredColumns.forEach((column, columnIndex) => {
+        assertNonEmptyString(column.key, `${label} documents[${documentIndex}].columns[${columnIndex}] 缺少 key`);
+        assertNonEmptyString(column.label, `${label} documents[${documentIndex}].columns[${columnIndex}] 缺少 label`);
+        assert(!columnKeys.has(column.key), `${label} documents[${documentIndex}].columns key 重复: ${column.key}`);
+        columnKeys.add(column.key);
+      });
+    }
+    if (document.dateMode !== undefined) {
+      assert(document.dateMode === "relative", `${label} documents[${documentIndex}].dateMode 目前只支持 relative`);
+    }
     const rowIds = new Set();
     let previousDateValue = -1;
     document.rows.forEach((row, rowIndex) => {
       assertNonEmptyString(row.rowId, `${label} documents[${documentIndex}].rows[${rowIndex}] 缺少 rowId`);
       assert(!rowIds.has(row.rowId), `${label} documents[${documentIndex}] rowId 重复: ${row.rowId}`);
       rowIds.add(row.rowId);
-      assert(/^\d{2}-\d{2}$/.test(row.date ?? ""), `${label} documents[${documentIndex}].rows[${rowIndex}].date 必须是 MM-DD`);
-      const dateValue = Number(String(row.date).replace("-", ""));
-      assert(dateValue >= previousDateValue, `${label} documents[${documentIndex}].rows 日期必须升序`);
-      previousDateValue = dateValue;
-      assert(["入账", "支出", "提醒", "空行"].includes(row.kind), `${label} documents[${documentIndex}].rows[${rowIndex}].kind 不合法`);
-      ["amount", "party", "memo"].forEach((field) => assertNonEmptyString(row[field], `${label} documents[${documentIndex}].rows[${rowIndex}].${field} 不能为空`));
+      if (configuredColumns) {
+        configuredColumns.forEach((column) => assertNonEmptyString(row[column.key], `${label} documents[${documentIndex}].rows[${rowIndex}].${column.key} 不能为空`));
+      } else {
+        assert(/^\d{2}-\d{2}$/.test(row.date ?? ""), `${label} documents[${documentIndex}].rows[${rowIndex}].date 必须是 MM-DD`);
+        const dateValue = Number(String(row.date).replace("-", ""));
+        assert(dateValue >= previousDateValue, `${label} documents[${documentIndex}].rows 日期必须升序`);
+        previousDateValue = dateValue;
+        assert(["入账", "支出", "提醒", "空行"].includes(row.kind), `${label} documents[${documentIndex}].rows[${rowIndex}].kind 不合法`);
+        ["amount", "party", "memo"].forEach((field) => assertNonEmptyString(row[field], `${label} documents[${documentIndex}].rows[${rowIndex}].${field} 不能为空`));
+      }
     });
     Object.entries(document.rowQuestions ?? {}).forEach(([rowId, questions]) => {
       assert(rowIds.has(rowId), `${label} documents[${documentIndex}].rowQuestions 引用不存在 rowId: ${rowId}`);
@@ -979,7 +1158,7 @@ test("PACK-003", "case pressure packets are complete", () => {
       axisCommentValues.forEach((comment, commentIndex) => {
         assertNonEmptyString(comment, `${casePacket.caseId} routeAxisComments[${commentIndex}] 不能为空`);
       });
-      if (index <= 2) assertCaseClosing(casePacket.caseClosing, casePacket.caseId);
+      assertCaseClosing(casePacket.caseClosing, casePacket.caseId);
       assertCareChoices(casePacket.careChoices, casePacket.caseId);
       if (index >= 1) assertCaseTitle(casePacket.caseTitle, casePacket.caseId);
       assertHostIdentity(casePacket, casePacket.caseId);
@@ -1017,6 +1196,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertNonEmptyString(casePacket.label, `${casePacket.caseId} label 不能为空`);
       assertNonEmptyString(casePacket.openingComplaint, `${casePacket.caseId} openingComplaint 不能为空`);
       assertArrayMin(casePacket.openingDialogue, 2, `${casePacket.caseId} openingDialogue 至少要有来回两句`);
+      assertSingleQuestionTurns(casePacket, casePacket.caseId);
       casePacket.openingDialogue.forEach((line, lineIndex) => {
         assertNonEmptyString(line.role, `${casePacket.caseId} openingDialogue[${lineIndex}] 缺少 role`);
         assertNonEmptyString(line.text, `${casePacket.caseId} openingDialogue[${lineIndex}] 缺少 text`);
@@ -1041,11 +1221,14 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assert(["mixed", "partial", "guarded", "clear"].includes(scene.reliability), `${casePacket.caseId} sceneVersions[${sceneIndex}] reliability 不合法`);
         assertNonEmptyString(scene.pressureHint?.intentHook, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 pressureHint.intentHook`);
         assert(["guarded", "tense", "listening"].includes(scene.pressureHint?.callerGuard), `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.callerGuard 不合法`);
-        assert(["blink", "pause", "shift"].includes(scene.pressureHint?.expression?.kind), `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.expression.kind 不合法`);
-        assertNonEmptyString(scene.pressureHint?.expression?.text, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 pressureHint.expression.text`);
+        if (scene.pressureHint?.expression !== undefined) {
+          assert(["blink", "pause", "shift"].includes(scene.pressureHint.expression?.kind), `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.expression.kind 不合法`);
+          assertNonEmptyString(scene.pressureHint.expression?.text, `${casePacket.caseId} sceneVersions[${sceneIndex}] pressureHint.expression.text 不能为空`);
+        }
         for (const beatField of ["beforeVersion", "afterVersion", "sceneCloser"]) {
           if (scene[beatField] !== undefined) assertBeatLines(scene[beatField]?.lines, `${casePacket.caseId} sceneVersions[${sceneIndex}].${beatField}.lines`);
         }
+        assertClosureContract(casePacket, scene, sceneIndex, `${casePacket.caseId} sceneVersions[${sceneIndex}]`);
         if (scene.showsCard !== undefined) {
           assertNonEmptyString(scene.showsCard, `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 不能为空`);
           assert(evidenceCardIds.has(scene.showsCard), `${casePacket.caseId} sceneVersions[${sceneIndex}].showsCard 指向不存在的 evidenceCards id: ${scene.showsCard}`);
@@ -1096,7 +1279,10 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
           }
           assertNonEmptyString(option.routeAxis, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeAxis`);
           assertNonEmptyString(option.routeTone, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 缺少 routeTone`);
-          if (option.correct) assertNonEmptyString(option.contradiction, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 核心追问缺少 contradiction`);
+          if (option.correct) {
+            assertNonEmptyString(option.contradiction, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}] 核心追问缺少 contradiction`);
+            assertMicroLogicContract(option, scene, `${casePacket.caseId} sceneVersions[${sceneIndex}].questionOptions[${optionIndex}]`);
+          }
         });
       });
 
@@ -1151,6 +1337,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertDelegation(casePacket, casePacket.caseId);
       assertLurkerNote(casePacket, casePacket.caseId);
       assertDialogueTexture(casePacket);
+      assertNoSpokenNarratorLeak(casePacket, casePacket.caseId);
       const spokenPunctuation = spokenPunctuationLeaks(casePacket);
       assert(
         spokenPunctuation.length === 0,
@@ -1330,30 +1517,143 @@ test("PACK-012", "epilogue unread callbacks stay typed, attributed, and non-evid
   });
 });
 
-test("PACK-013", "warmth props close their arcs and the director breaks voice exactly once", () => {
+test("PACK-013", "warmth props close their arcs and the personal livestream stays solo", () => {
+  const hostProfile = castRegistry.cast?.find((profile) => profile.id === "host-lin-xuyang");
+  assertEqual(hostProfile?.gender, "男", "主播性别背景必须固定");
+  assertEqual(hostProfile?.age, 33, "主播年龄背景必须固定为三十三岁");
+  assertEqual(hostProfile?.formerOccupation, "互联网大厂法务", "主播前职业不得退回媒体机构从业者");
+  assertEqual(hostProfile?.streamerTenure, "两年半", "主播年限必须固定为两年半");
+  const backgroundLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "background");
+  assertEqual(backgroundLine?.speaker, "林旭阳", "主播履历必须由本人第一人称介绍");
+  assert(backgroundLine?.text?.includes("互联网大厂做法务") && backgroundLine?.text?.includes("两年半"), "开篇必须交代前职业、失业转折和主播年限");
   const prologueText = manifest.nightShell?.prologue?.lines?.find((line) => line.speaker === "赵律师（消息）")?.text ?? "";
   const caseThreeInterlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === "03-profile");
   const epilogue = manifest.nightShell?.epilogue ?? {};
   assert(prologueText.includes("汤在冰箱"), "汤弧线缺少序章留下拍");
   assert(caseThreeInterlude?.afterLines?.some((line) => line.text?.includes("热过的汤")), "汤弧线缺少案间在场拍");
   assert(epilogue.home?.includes("保温盒空了。他顺手洗了"), "汤弧线缺少回家收尾拍");
-  assert(epilogue.close?.includes("你当年没问完的那通"), "案卷便签没有形成正式版主线钩子");
-  assert(!epilogue.close?.includes("留给后续正式内容"), "玩家可见案卷不得夹带编剧说明");
-  const directorLines = [];
-  const visit = (value) => {
-    if (Array.isArray(value)) return value.forEach(visit);
-    if (!value || typeof value !== "object") return;
-    if ((value.speaker === "导播" || value.speaker === "导播（耳机）" || value.speakerProfileId === "director") && typeof value.text === "string") directorLines.push(value.text);
-    Object.values(value).forEach(visit);
-  };
-  visit(manifest);
-  caseFiles.forEach(visit);
-  const chineseLength = (text) => (String(text).match(/[\u3400-\u9fff]/g) ?? []).length;
-  const longLines = directorLines.filter((line) => chineseLength(line) > 6);
-  assertEqual(longLines.length, 1, "导播全包只能有一次超过六字的声纹破例");
-  assertEqual(longLines[0], "……老林，喝口水。三十秒，不着急。", "导播唯一破例台词不符");
+  assert(prologueText.includes("有个东西我塞你包里了"), "赵律师序章留言必须像恋人托放东西，不得写成材料交接");
+  assert(!prologueText.includes("案卷") && !prologueText.includes("收播后再看"), "赵律师私下留言不得使用案卷交接腔");
+  assert(epilogue.close?.includes("从包里拿出那个牛皮纸文件袋"), "文件袋必须回收序章的生活化托放动作");
+  assert(epilogue.close?.includes("你当年没问完的那通"), "文件袋便签没有形成正式版主线钩子");
+  assert(!epilogue.close?.includes("留给后续正式内容"), "玩家可见文件袋不得夹带编剧说明");
+  const goLiveLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "stage" && line.text?.includes("开始直播"));
+  const streamStartLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "narration" && line.text?.includes("林旭阳推开直播间的门"));
+  assert(streamStartLine?.text?.startsWith("晚上八点"), "普通情感连麦必须从晚上八点开播，不能设在凌晨一点");
+  assert(!collectTextFrom(manifest.nightShell?.prologue).includes("凌晨一点"), "序幕不得残留凌晨一点开播设定");
+  assertEqual(goLiveLine?.speaker, "旁白", "个人主播开播倒计时必须写成舞台动作，不得成为工作人员台词");
+  assertEqual(goLiveLine?.audioCueId, "sfx.broadcast.on-air", "个人主播开播只允许平台提示音，不得使用人声倒数");
+  const authoredContent = JSON.stringify({ manifest, caseFiles });
+  assert(!authoredContent.includes("导播"), "个人主播内容包不得出现导播角色或导播动作");
+  assert(!authoredContent.includes("三、二、一"), "个人主播内容包不得出现电视台式人声倒数");
+  assert(!authoredContent.includes('"role":"director"') && !authoredContent.includes('"speakerProfileId":"director"'), "个人主播内容包不得保留导播运行时角色");
   const caseThree = caseFiles.find((packet) => packet.caseId === "03-profile");
   assertEqual(assertDialogueTexture(caseThree).metrics.oneTimeCallerCount, 1, "案 3 oneTimeTic 必须维持唯一");
+});
+
+test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retroactive boundary", () => {
+  const entities = manifest.fictionalEntities ?? [];
+  const entitiesById = new Map(entities.map((entity) => [entity.id, entity]));
+  assertEqual(entitiesById.size, entities.length, "虚构机构 id 不得重复");
+  entities.forEach((entity, index) => {
+    assertNonEmptyString(entity.id, `fictionalEntities[${index}].id 不能为空`);
+    assertNonEmptyString(entity.displayName, `fictionalEntities[${index}].displayName 不能为空`);
+    assertEqual(entity.fictional, true, `${entity.id} 必须明确标记为虚构机构`);
+  });
+
+  const sequenceIndex = new Map(manifest.sequence.map((item, index) => [item.caseId, index]));
+  const interludesByCaseId = new Map((manifest.nightShell?.interludes ?? []).map((item) => [item.afterCaseId, item]));
+  for (const promise of manifest.crossCasePromises ?? []) {
+    const entity = entitiesById.get(promise.entityId);
+    assert(entity, `${promise.id} 指向不存在的虚构机构`);
+    assertEqual(promise.status, "paid-off", `${promise.id} 必须明确登记回收状态`);
+    const seedCase = caseFiles.find((packet) => packet.caseId === promise.seed?.caseId);
+    const seedDocument = seedCase?.documents?.find((document) => document.id === promise.seed?.documentId);
+    const seedRows = new Set((seedDocument?.rows ?? []).map((row) => row.rowId));
+    assert(seedCase && seedDocument, `${promise.id} 的种子案件或材料不存在`);
+    for (const rowId of promise.seed?.rowIds ?? []) assert(seedRows.has(rowId), `${promise.id} 的种子行 ${rowId} 不存在`);
+    assert(sequenceIndex.get(promise.payoff?.afterCaseId) > sequenceIndex.get(promise.seed?.caseId), `${promise.id} 必须在后案回收，不能当场宣布结果`);
+
+    const reinforcement = interludesByCaseId.get(promise.reinforcement?.afterCaseId);
+    assert(JSON.stringify(reinforcement ?? {}).includes(entity.displayName), `${promise.id} 的案尾加固没有提到 ${entity.displayName}`);
+    const payoffInterlude = interludesByCaseId.get(promise.payoff?.afterCaseId);
+    const worldEcho = payoffInterlude?.worldEcho;
+    assertEqual(worldEcho?.id, promise.payoff?.worldEchoId, `${promise.id} 的世界回声 id 不匹配`);
+    assertEqual(worldEcho?.promiseId, promise.id, `${promise.id} 的世界回声没有反向登记承诺`);
+    ["kicker", "actionLabel", "headline", "body", "proves", "doesNotProve"].forEach((field) => {
+      assertNonEmptyString(worldEcho?.[field], `${promise.id}.worldEcho.${field} 不能为空`);
+    });
+    assert(worldEcho.doesNotProve.includes("不能"), `${promise.id} 必须明写不能倒推的事实边界`);
+    assert(worldEcho.proves !== worldEcho.doesNotProve, `${promise.id} 必须区分公共事件与个案证明力`);
+  }
+
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const bankFlow = caseOne.documents.find((document) => document.id === "case1-bank-flow");
+  const rowsById = new Map(bankFlow.rows.map((row) => [row.rowId, row]));
+  assertEqual(rowsById.get("r13")?.amount, "¥200,000", "案一必须有二十万金融服务借款入账");
+  assertEqual(rowsById.get("r14")?.amount, "¥100,000", "案一必须有第一笔十万信托认购");
+  assertEqual(rowsById.get("r15")?.amount, "¥100,000", "案一必须有第二笔十万信托认购");
+  assert(bankFlow.rowQuestions?.r13?.length && bankFlow.rowQuestions?.r14?.length && bankFlow.rowQuestions?.r15?.length, "三条资金行必须各有玩家可选追问");
+  for (const rowId of ["r13", "r14", "r15"]) {
+    for (const [index, question] of (bankFlow.rowQuestions?.[rowId] ?? []).entries()) {
+      const contract = question.logicContract;
+      assert(contract?.sourceRows?.includes(rowId), `${rowId} 追问 ${index} 必须登记自己的材料来源`);
+      ["sourceProves", "sourceDoesNotProve", "answerAnchor", "answerAdds", "nextLegalQuestion"].forEach((field) => {
+        assertNonEmptyString(contract?.[field], `${rowId} 追问 ${index}.logicContract.${field} 不能为空`);
+      });
+      assert(question.answer.includes(contract.answerAnchor), `${rowId} 追问 ${index} 的回答没有落到合同锚点`);
+      assert(contract.sourceProves !== contract.sourceDoesNotProve, `${rowId} 追问 ${index} 必须区分材料能证明和不能证明的内容`);
+    }
+  }
+  const trustCrossQuestion = bankFlow.crossQuestions?.find((question) => ["r13", "r14", "r15"].every((rowId) => question.rows?.includes(rowId)));
+  assert(trustCrossQuestion, "三条信托资金行必须有跨行追问");
+  assertDeepEqual(trustCrossQuestion.logicContract?.sourceRows, ["r13", "r14", "r15"], "信托跨行追问必须登记完整来源");
+  assert(trustCrossQuestion.answer.includes(trustCrossQuestion.logicContract?.answerAnchor), "信托跨行追问回答必须守住资金同一性边界");
+  assert(caseOne.respondentNote?.text?.includes("从澄川借的") && caseOne.respondentNote?.text?.includes("买了宸直的产品"), "流水只给相邻关系后，必须由当事人补足资金用途的第二来源");
+  assert(caseOne.respondentNote?.text?.includes("能翻倍"), "超额收益动机必须通过当事人原话落地");
+});
+
+test("PACK-015", "case 4 exposes a seven-row relative-time payment document", () => {
+  const caseFour = caseFiles.find((packet) => packet.caseId === "04-workplace");
+  const paymentLedger = caseFour?.documents?.find((document) => document.id === "case4-payment-ledger");
+  assert(paymentLedger, "案四必须新增报销与返款流转记录");
+  assertEqual(paymentLedger.dateMode, "relative", "案四文档必须显式声明相对时间，不能伪造月日");
+  assertEqual(paymentLedger.rows?.length, 7, "案四流转记录必须有七行");
+  assertEqual(paymentLedger.columns?.length, 4, "案四流转记录必须显式定义四个玩家可见字段");
+  assertEqual(paymentLedger.rows?.find((row) => row.rowId === "q05")?.date, "九天后", "财务延后通知必须写成九天后，不能写歧义 D+9");
+  ["q02", "q04", "q06"].forEach((rowId) => {
+    assert(paymentLedger.rowQuestions?.[rowId]?.length, `案四 ${rowId} 必须有行级追问`);
+  });
+  assertEqual(paymentLedger.crossQuestions?.length, 2, "案四必须有两组跨行追问");
+  assert(paymentLedger.crossQuestions?.some((question) => ["q01", "q02"].every((rowId) => question.rows?.includes(rowId))), "案四必须比较公开流程与十七分钟后的私聊");
+  assert(paymentLedger.crossQuestions?.some((question) => ["q04", "q06"].every((rowId) => question.rows?.includes(rowId))), "案四必须比较审批页与供应商返款备注");
+  const dayScene = caseFour?.overnightStructure?.dayScenes?.find((scene) => scene.id === "day-work-payment-ledger");
+  assertEqual(dayScene?.body?.documentId, paymentLedger.id, "案四白天文档场景必须接到新增流转记录");
+  assertEqual(dayScene?.body?.earnedItemId, "报销流转记录圈注", "案四文档场景必须授予同名回拨物");
+  assert(caseFour?.overnightStructure?.callbackOpeners?.["报销流转记录圈注"]?.firstConflict, "案四新增圈注必须有第一轮冲突");
+});
+
+test("PACK-016", "case 1 keeps two anonymous money edges and one institutional payoff", () => {
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const visibleCaseText = JSON.stringify(caseOne);
+  assert(!visibleCaseText.includes("王**是谁"), "案一不得再把流水半姓写成独立猜人题");
+  assert(!visibleCaseText.includes("王**的具体身份"), "案一未知清单不得把半姓另计一条身份线");
+  assert(caseOne?.truthBoundary?.unknown?.some((item) => item.includes("每月 8 号") && item.includes("七月中断")), "案一未知清单必须把王姓转账并回 8 号供血规律");
+  assert(caseOne?.truthBoundary?.unknown?.some((item) => item.includes("尾号 3301")), "案一必须保留 3301 私人尾号线");
+  assert(caseOne?.truthBoundary?.unknown?.some((item) => item.includes("宸直信托") && item.includes("兑付状态")), "案一必须把宸直保留为机构结果线");
+  const flowRows = caseOne?.documents?.find((document) => document.id === "case1-bank-flow")?.rows ?? [];
+  assert(flowRows.some((row) => row.party?.includes("王**")), "案一流水行必须保留王姓半姓原始字段");
+  assert(flowRows.some((row) => row.party === "宸直信托有限公司"), "案一不得删除宸直种子行");
+  const timelineOpener = caseOne?.overnightStructure?.callbackOpeners?.["周会计的时间线"]?.line ?? "";
+  assert(timelineOpener.includes("七月 8 号却空着") && timelineOpener.includes("别猜转账的人"), "周会计时间线回拨必须钉住断流，不追猜王姓身份");
+});
+
+test("PACK-017", "case 1 does not overcue the ordinary bonus excuse", () => {
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const layoffScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-layoff-gap");
+  assert(layoffScene, "案一必须保留失业时间差场景");
+  assert(layoffScene.pressureHint?.expression === undefined, "奖金晚发首次出现时不需要额外表演标记替玩家画重点");
+  assert(!JSON.stringify(caseOne).includes("把“奖金晚发”四个字记在纸上"), "案一不得恢复记纸条式强调动作");
 });
 
 const failed = results.filter((result) => !result.ok);

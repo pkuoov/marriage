@@ -101,7 +101,6 @@ function collectCaseDialogue(packet) {
     add(advisorId, "backstage", `$case.delegation.outcomes.${advisorId}.text`, outcome.text);
   }
 
-  add(callerId, "nightA", "$case.openingComplaint", packet.openingComplaint, "咨询者");
   for (const [sceneIndex, scene] of (packet.sceneVersions ?? []).entries()) {
     const phase = scenePhase(sceneIndex, packet);
     const speakerId = resolveSurface(scene.speaker ?? "咨询者", `$case.sceneVersions[${sceneIndex}].speaker`);
@@ -156,7 +155,6 @@ function collectCaseDialogue(packet) {
       if (line.role === "caller") add(callerId, "ending", `$case.careChoices[${choiceIndex}].lines[${lineIndex}]`, line.text, line.speaker ?? "咨询者");
     }
   }
-  add(hostId, "ending", "$case.caseClosing.verdict", packet.caseClosing?.verdict, "林旭阳");
   if (respondentId) add(respondentId, "backstage", "$case.respondentNote.text", packet.respondentNote?.text, "对方后台留言");
 }
 

@@ -43,7 +43,6 @@ for (const reference of references) {
 }
 
 const requiredContentCues = [
-  "voice.broadcast.countdown",
   "sfx.case1.lamp-drag",
   "voice.case2.dryer-message",
   "voice.case3.dinner-pause",

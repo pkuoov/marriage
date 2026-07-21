@@ -36,31 +36,110 @@ export function splitDialogueSentences(value = "") {
   return rows;
 }
 
-export function dialoguePagesFrom(root) {
-  return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line") ?? []).flatMap((line) => {
-    const speaker = line.querySelector("b")?.textContent?.trim() || "咨询者";
-    const role = line.classList.contains("host") || line.classList.contains("shell-host") ? "host" : "caller";
-    return splitDialogueSentences(line.querySelector("p")?.textContent ?? "").map((text) => ({ speaker, role, text }));
+export function dialogueTurnsFrom(root, { maxTurnChars = 92 } = {}) {
+  return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction") ?? []).flatMap((line) => {
+    const isStage = line.classList.contains("call-stage-direction");
+    const speaker = isStage ? "现场" : line.querySelector("b")?.textContent?.trim() || "咨询者";
+    const role = isStage ? "stage" : line.classList.contains("host") || line.classList.contains("shell-host") ? "host" : "caller";
+    const text = isStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
+    return chunkDialogueTurn({ speaker, role, text }, maxTurnChars);
   });
+}
+
+export function dialoguePagesFrom(root, options = {}) {
+  return groupDialogueTurns(dialogueTurnsFrom(root, options), options);
+}
+
+export function chunkDialogueTurn(turn = {}, maxChars = 92) {
+  const sentences = splitDialogueSentences(turn.text ?? "");
+  const chunks = [];
+  let current = "";
+  for (const sentence of sentences.flatMap((item) => splitLongSentence(item, maxChars))) {
+    if (current && current.length + sentence.length > maxChars) {
+      chunks.push(current);
+      current = sentence;
+    } else {
+      current += sentence;
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks.map((text, index) => ({
+    speaker: turn.speaker ?? "咨询者",
+    role: turn.role ?? "caller",
+    text,
+    continuation: chunks.length > 1 && index > 0
+  }));
+}
+
+export function groupDialogueTurns(turns = [], { maxPageChars = 156 } = {}) {
+  const pages = [];
+  let index = 0;
+  while (index < turns.length) {
+    const current = turns[index];
+    const next = turns[index + 1];
+    if (current.role === "host" && next?.role === "caller" && pageLength([current, next]) <= maxPageChars) {
+      pages.push({ lines: [current, next] });
+      index += 2;
+      continue;
+    }
+    if (current.role === "caller" && next?.role === "host" && /[？?]$/.test(current.text) && pageLength([current, next]) <= maxPageChars) {
+      pages.push({ lines: [current, next] });
+      index += 2;
+      continue;
+    }
+    pages.push({ lines: [current] });
+    index += 1;
+  }
+  return pages;
+}
+
+function splitLongSentence(value = "", maxChars = 92) {
+  const chunks = [];
+  let remaining = String(value ?? "").trim();
+  while (remaining.length > maxChars) {
+    const window = remaining.slice(0, maxChars + 1);
+    const breakAt = Math.max(window.lastIndexOf("，"), window.lastIndexOf("；"), window.lastIndexOf("："), window.lastIndexOf("、"));
+    const index = breakAt >= Math.floor(maxChars * 0.45) ? breakAt + 1 : maxChars;
+    chunks.push(remaining.slice(0, index).trim());
+    remaining = remaining.slice(index).trim();
+  }
+  if (remaining) chunks.push(remaining);
+  return chunks;
+}
+
+function pageLength(lines = []) {
+  return lines.reduce((sum, line) => sum + String(line?.text ?? "").length, 0);
 }
 
 export function mountDialoguePresentation(root, options = {}) {
   const card = root?.querySelector?.(".dialogue-card");
-  const source = Array.from(card?.querySelectorAll?.(".call-dialogue, .night-shell-card") ?? [])
-    .find((candidate) => !candidate.closest("details:not([open])"));
-  const pages = dialoguePagesFrom(source);
-  if (!card || !source || !pages.length) return null;
+  const sources = Array.from(card?.querySelectorAll?.(".call-dialogue, .night-shell-card") ?? [])
+    .filter((candidate) => !candidate.closest("details:not([open])"));
+  const pages = groupDialogueTurns(sources.flatMap((source) => dialogueTurnsFrom(source, options)), options);
+  if (!card || !sources.length || !pages.length) return null;
   const box = document.createElement("section");
   box.className = "avg-textbox";
   box.tabIndex = 0;
   box.dataset.dialogueAdvance = "true";
-  box.innerHTML = `<b class="avg-nameplate"></b><p class="avg-line"></p><i class="avg-continue" aria-label="继续">▼</i>`;
-  source.after(box);
+  box.innerHTML = `<div class="avg-page-lines"></div><i class="avg-continue" aria-label="继续">▼</i>`;
+  sources.at(-1).after(box);
   const choices = root?.querySelector?.(".choices");
   if (choices) choices.hidden = true;
-  source.hidden = true;
+  const inlineChoiceRegions = Array.from(card.querySelectorAll(".day-followup, .reply-choice-grid"))
+    .filter((region) => region.querySelector("button"));
+  inlineChoiceRegions.forEach((region) => { region.hidden = true; });
+  sources.forEach((source) => { source.hidden = true; });
   card.classList.add("avg-dialogue-active");
-  const controller = createDialogueController({ box, pages, choices, ...options });
+  const controller = createDialogueController({
+    box,
+    pages,
+    choices,
+    ...options,
+    onChoicesShown: (shownChoices) => {
+      inlineChoiceRegions.forEach((region) => { region.hidden = false; });
+      options.onChoicesShown?.(shownChoices);
+    }
+  });
   box.addEventListener("click", () => controller.advance());
   controller.start();
   return controller;
@@ -73,8 +152,7 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
   let lastAt = 0;
   let complete = false;
   const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-  const line = box.querySelector(".avg-line");
-  const nameplate = box.querySelector(".avg-nameplate");
+  const pageLines = box.querySelector(".avg-page-lines");
   const indicator = box.querySelector(".avg-continue");
   const delays = { slow: 54, normal: 34, fast: 18, instant: 0 };
   const baseDelay = delays[speed] ?? delays.normal;
@@ -82,12 +160,17 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
   function showPage() {
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
+    const lines = normalizedPageLines(page);
     visibleCount = 0;
     complete = false;
-    box.classList.toggle("speaker-host", page.role === "host");
+    box.classList.toggle("speaker-host", lines[0]?.role === "host");
     box.classList.toggle("reduced-fade", reduceMotion);
-    nameplate.textContent = page.role === "host" ? "你" : page.speaker;
-    line.textContent = "";
+    pageLines.innerHTML = lines.map((entry) => `
+      <div class="avg-page-line speaker-${entry.role === "host" ? "host" : entry.role === "stage" ? "stage" : "caller"}">
+        <b>${escapeHtml(entry.role === "host" ? "林旭阳" : entry.speaker)}</b>
+        <p class="avg-line"></p>
+      </div>
+    `).join("");
     indicator.hidden = true;
     if (reduceMotion || baseDelay === 0) return finishPage();
     lastAt = performance.now();
@@ -96,25 +179,37 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
 
   function typeFrame(now) {
     const page = pages[pageIndex];
-    const previous = page.text[Math.max(0, visibleCount - 1)] ?? "";
+    const fullText = normalizedPageLines(page).map((entry) => entry.text).join("");
+    const previous = fullText[Math.max(0, visibleCount - 1)] ?? "";
     const punctuationDelay = /[、，,]/.test(previous) ? 90 : /[—]/.test(previous) ? 120 : 0;
     if (now - lastAt >= baseDelay + punctuationDelay) {
       visibleCount += 1;
-      line.textContent = page.text.slice(0, visibleCount);
+      applyVisibleText(page, visibleCount);
       lastAt = now;
     }
-    if (visibleCount >= page.text.length) finishPage();
+    if (visibleCount >= fullText.length) finishPage();
     else frameId = requestAnimationFrame(typeFrame);
   }
 
   function finishPage() {
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
-    line.textContent = page.text;
-    visibleCount = page.text.length;
+    visibleCount = normalizedPageLines(page).reduce((sum, entry) => sum + entry.text.length, 0);
+    applyVisibleText(page, visibleCount);
     complete = true;
     indicator.hidden = false;
     onShown(page, pageIndex);
+  }
+
+  function applyVisibleText(page, count) {
+    let remaining = count;
+    const lines = normalizedPageLines(page);
+    Array.from(pageLines.querySelectorAll(".avg-line")).forEach((element, index) => {
+      const text = lines[index]?.text ?? "";
+      const visible = Math.max(0, Math.min(text.length, remaining));
+      element.textContent = text.slice(0, visible);
+      remaining -= visible;
+    });
   }
 
   function advance() {
@@ -132,4 +227,18 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
   }
 
   return { start: showPage, advance, finish: finishPage, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
+}
+
+function normalizedPageLines(page = {}) {
+  if (Array.isArray(page.lines)) return page.lines;
+  return page.text ? [page] : [];
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }

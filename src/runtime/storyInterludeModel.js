@@ -8,3 +8,9 @@ export function storyInterludeNextLine(brief = {}) {
   if (bridge) return bridge;
   return "后台又亮了一路麦。";
 }
+
+export function storyInterludeCaseId(pack = {}, brief = {}) {
+  if (brief.caseId) return brief.caseId;
+  const spec = (pack.sequence ?? []).find((item) => item.plotId === brief.plotId);
+  return spec?.caseId ?? brief.id ?? "";
+}

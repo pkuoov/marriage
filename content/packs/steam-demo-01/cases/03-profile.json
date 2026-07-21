@@ -78,19 +78,19 @@
     "outcomes": {
       "zhang-forensic": {
         "tone": "strong",
-        "text": "哥们的忙照帮，检测费照记。图是原图，像素没动过——她验得对。但鉴定书只管图，不管图外之意：这类项目学位，学信网三分钟能验真伪。真问题从来不是图的真假，是口径——像素没动过，不等于话没动过。链条不全，报告就是纸。"
+        "text": "哥们的忙照帮，检测费照记。图没改过，这一点她验对了。可鉴定书到这儿就停。这个项目算什么学历，去学信网查；他拿这张图跟人怎么说，也得问当事人。材料没齐，我不签后面的结论。"
       },
       "zhao-lawyer": {
         "tone": "partial",
-        "text": "恋爱里把 MBA 说成名校毕业，不犯法；婚姻登记处也不查学历。法律管骗婚财，不管吹牛皮——所以这事只能在饭桌上算，算之前先把话留好底。"
+        "text": "MBA 说成“名校毕业”，单看这句话，不能直接推出骗婚。婚姻登记也不会替两个人核学历。真要谈责任，先把谁说过哪句、有没有因此发生财产处分留好。"
       },
       "lin-matchmaker": {
         "tone": "partial",
-        "text": "“名校毕业”这四个字在相亲市场上有牌价。他这么说，介绍人这么传，女方家这么听——三方都没吃亏，直到有人当真。行里的话，得翻译着听。"
+        "text": "“名校毕业”不是材料上的原话。介绍人只说学校好，她回家又顺成了名校毕业。每个人都往好听里加了一点，饭局真问本科，差别就出来了。"
       },
       "zhou-accountant": {
         "tone": "offDomain",
-        "text": "图我不看。要看看流水——收入这种事，纸上写的都是形容词，到账的才是名词。"
+        "text": "收入证明写的是一个月。真要看稳不稳，就把连续几个月的实际到账摆出来。"
       }
     }
   },
@@ -153,36 +153,36 @@
   },
   "selfServingOmission": "咨询者嘴上说家里想看稳定，实际最卡的是对方一个月到底赚多少、够不够花。",
   "quotePickCandidates": [
-    "他一直说名校毕业，细问才说是 MBA",
+    "也算吧，MBA",
     "我只说他学校那边确实是真的",
     "再问下去，是不是工资卡也要交出来？",
     "两分钟后，我妈才说婚后管钱"
   ],
   "accusationChoices": [
     {
-      "label": "“他一直说名校毕业，细问才说是 MBA。”",
-      "quoteSourceSceneId": "profile-mba-wording",
+      "label": "“也算吧，MBA。”",
+      "quoteSourceSceneId": "profile-dinner-pause",
       "accuseRole": "respondent",
-      "response": "学校不是假的，但这句话让别人往更好听的方向理解了。"
+      "response": "学校和项目都是真的。可他回“也算吧”的时候，没有把本科不在那儿说出来。"
     },
     {
       "label": "“我只说他学校那边确实是真的。”",
       "quoteSourceSceneId": "profile-caller-repeats-label",
       "accuseRole": "complainant",
-      "response": "你这句也没说全。前面话说满了，后面就很难自己拆台。"
+      "response": "你只回“学校是真的”，家里听到的“名校毕业”就还留着。"
     },
     {
       "label": "“再问下去，是不是工资卡也要交出来？”",
       "quoteSourceSceneId": "profile-income-and-card",
       "accuse": "both",
-      "response": "这句刺耳，但它碰到的不是学历，是婚后钱怎么管。"
+      "response": "他这句已经不只在谈学历了，还在问婚后谁管钱。"
     },
     {
       "label": "“两分钟后，我妈才说婚后管钱。”",
       "quoteSourceSceneId": "profile-family-chat-origin",
       "requiresRevisedSceneId": "profile-family-chat-origin",
       "accuseRole": "complainant",
-      "response": "这句才是流水后面那半句话。不是只验真假，是在试婚后钱归谁管。"
+      "response": "流水是谁先提的，和婚后谁管钱，是两件连着的事。时间顺序不能删。"
     }
   ],
   "label": "存款证明",
@@ -196,24 +196,48 @@
   "storyArcSummary": "材料会越要越细，男方有话没说全，女方也有话没跟家里说，介绍链还在两头抬价。",
   "storySuspense": "几张图都挺像真的，问题是它们刚好少了最容易吵起来的部分；几句介绍也都像好心，偏偏都挑好听的说。",
   "storyClueObject": "资料截图、存款证明、饭局问答和介绍链原话",
-  "openingComplaint": "咨询者连线说：“我们周末要见父母。他发来的图都是真的，可那张没人问过的存款证明，我越看越不敢把饭局定死。”",
+  "openingComplaint": "周末原本要见父母。对方发来的图都是真的，可那张没人问过的存款证明，让她不敢把饭局定死。",
   "openingDialogue": [
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "林旭阳，我这边是相亲。那些图，单看都是真的。可这个周末要见父母，我反而不敢带他去。",
+      "text": "主播你好，我想问一件相亲的事。",
       "mood": "thinking"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "见了几次？还有，先开口要材料的是谁？",
+      "text": "你好。你们认识多久了？",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "四次。这个周末要见父母。我先跟家里说，他名校毕业，收入也不错。又跟他提了一嘴，我妈会问学校和工作。第二天，三张图一起发过来。我还没问完，晚上又来一张存款证明。那张没人要过。",
+      "text": "见过四次，这个周末本来要见父母。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "本来？现在不想带他去了？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "我不敢。之前我跟家里说，他名校毕业，收入也不错。后来他发了几张材料给我，单看都是真的，可我越看越觉得哪里接不上。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "这些材料是你开口要的吗？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "我只跟他说，我妈可能会问学校和工作。第二天他发来三张图，晚上又补了一张存款证明。最后那张，没人跟他要。",
       "mood": "thinking"
     }
   ],
@@ -250,27 +274,45 @@
       ],
       "questionOptions": [
         {
-          "question": "你到底让他准备了什么？",
-          "suspicionLabel": "她见父母前说过的原话",
-          "answer": "原话是：“我妈可能会问学校和工作，你别被问住。”没提收入，更没提存款。可这话递过去，就是告诉他，这顿饭要看条件。他全备了。",
-          "guardedAnswer": "只说学校和工作。收入、存款不是我开口要的。",
+          "question": "四张图发过来时，他有没有解释，为什么连收入和存款也一起发？",
+          "suspicionLabel": "收入和存款是谁加进材料的",
+          "answer": "只说省得饭桌上解释。我之前只提过学校和工作，收入和存款都是他自己加的。我那时没追问。",
+          "guardedAnswer": "只说省得饭桌上解释。收入和存款不是我开口要的。",
+          "logicContract": {
+            "premiseAnchor": "收入和存款，我都没问",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者只提前提过学校和工作，没有索要收入与存款材料。",
+            "sourceDoesNotProve": "没有索要不能证明对方主动补材料的真实动机。",
+            "answerAnchor": "省得饭桌上解释",
+            "answerAdds": "对方只用省去饭桌解释来说明额外材料，咨询者当时没有追问。",
+            "nextLegalQuestion": "可以检查每张材料的证明期限，不能把主动发送直接判成造假。"
+          },
           "contradiction": "咨询者先把见父母变成条件关口，对方随后用材料抢答。",
           "correct": true,
           "routeAxis": "money-flow",
           "routeTone": "trust-but-verify"
         },
         {
-          "question": "没问的存款来了，你第一反应是怀疑吗？",
+          "question": "你没问存款，他却主动发了。你当时起疑了吗？",
           "suspicionLabel": "存款证明为什么主动发来",
-          "answer": "不是，是省事。饭桌上不用替他圆。我妈前一天还在催，说多知道一点没坏处。过了半天我才反应过来：没人问，他为什么先答？",
+          "answer": "没有。我当时只觉得省事，饭桌上不用替他圆。我妈前一天还在催，说多知道一点没坏处。过了半天我才反应过来：没人问，他为什么先答？",
           "correct": false,
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
         },
         {
           "question": "那张存款证明，究竟能证明多久？",
-          "suspicionLabel": "存款证明只对应哪一天",
+          "suspicionLabel": "存款证明能管多久",
           "answer": "一天。只证明开出来那天，账上有二十八万六。前一天呢？下个月呢？看不出来。我做审计的，天天挑这种毛病。可那天看到这个数，我先松了口气。",
+          "logicContract": {
+            "premiseAnchor": "二十八万六的存款证明",
+            "sourceKind": "document-readout",
+            "sourceProves": "证明开具当天账户余额为二十八万六。",
+            "sourceDoesNotProve": "单日余额不能证明持续收入、资金来源或下月余额。",
+            "answerAnchor": "只证明开出来那天",
+            "answerAdds": "咨询者明确承认材料的有效范围只有开具当日。",
+            "nextLegalQuestion": "可以转去看流水和连续收入，不能把当天余额称作稳定收入。"
+          },
           "contradiction": "没人索要，TA 先开好当日存款证明补位。",
           "correct": true,
           "routeAxis": "document-edge",
@@ -282,7 +324,7 @@
         "callerGuard": "guarded",
         "expression": {
           "kind": "blink",
-          "text": "笑了一下又停住"
+          "text": "报出二十八万六时，她把最后一个“六”字说得很轻"
         }
       }
     },
@@ -311,7 +353,7 @@
       },
       "casualQuestions": [
         {
-          "question": "那顿饭是谁约的地方？",
+          "question": "介绍人为什么推荐那家店？",
           "answer": "介绍人推荐的，说那家包间安静，适合第一次正式聊。最后没有坐包间，坐了窗边那桌。"
         },
         {
@@ -324,6 +366,15 @@
           "question": "他说“也算吧”，你下一句问了什么？",
           "answer": "没问。本来该问本科在哪儿读。我听出不对了，可“名校毕业”是我先跟家里说的。一追，先露怯的是我。",
           "guardedAnswer": "他只说“读过”。我没把本科那句逼出来，服务员一来就算了。",
+          "logicContract": {
+            "premiseAnchor": "也算吧，MBA",
+            "sourceKind": "quoted-message",
+            "sourceProves": "被问本科时，对方用MBA作了含混回答。",
+            "sourceDoesNotProve": "停顿和含混回答不能单独证明学历造假。",
+            "answerAnchor": "没问",
+            "answerAdds": "咨询者没有继续追本科，因为名校毕业的说法也由她转述给家里。",
+            "nextLegalQuestion": "可以核对学校图具体字段，不能直接把MBA项目说成假学历。"
+          },
           "contradiction": "第一次饭局上问到资料时冷场了十几秒。",
           "correct": true,
           "routeAxis": "identity-wording",
@@ -338,7 +389,7 @@
         },
         {
           "question": "那顿饭谁结的账？",
-          "answer": "他付的，用了团购券和积分。一百多块停车费问我 AA。每一笔都说得过去；只是跟他嘴里的收入放在一起，我后来总想起那张券。",
+          "answer": "他付的，用了团购券和积分。停车费一百多，他问我要不要 AA。单看都没问题。后来再想他的收入，我总会想起那张券。",
           "correct": false,
           "routeAxis": "money-flow",
           "routeTone": "detour"
@@ -375,14 +426,23 @@
         },
         {
           "question": "“家里省心”这话你怎么理解？",
-          "answer": "就是独生子、爸妈有退休金、不用他贴钱。相亲市场上这四个字值钱。"
+          "answer": "就是独生子，爸妈有退休金，平时不用他贴钱。我妈一听这四个字，后面都没细问。"
         }
       ],
       "questionOptions": [
         {
           "question": "你为什么只回“学校是真的”？",
-          "answer": "因为改口难看。介绍人说学校好，我顺成名校毕业，我妈又跟亲戚夸了。我再补“本科不是那所”，先承认的是我自己没问清。",
+          "answer": "因为改口难看。介绍人只说学校好，是我回家说成了名校毕业。我妈又跟亲戚夸了。我再补“本科不是那所”，先承认的是我自己没问清。",
           "guardedAnswer": "校名是真的。别的，我当时不想拆。",
+          "logicContract": {
+            "premiseAnchor": "我只说他学校那边确实是真的",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者向家里只确认了学校相关材料为真。",
+            "sourceDoesNotProve": "确认校名和项目不能维持“本科名校毕业”的完整含义。",
+            "answerAnchor": "因为改口难看",
+            "answerAdds": "她为了避免承认自己没问清，保留了家里已经听见的更好版本。",
+            "nextLegalQuestion": "可以追问她省略了哪些限定，不能把所有修剪只归给男方。"
+          },
           "contradiction": "咨询者为保住自己报给家里的版本，继续省略本科口径。",
           "correct": true,
           "routeAxis": "identity-wording",
@@ -390,7 +450,7 @@
         },
         {
           "question": "你妈看到原图，没问本科？",
-          "answer": "没问。她看见校名就放心了，我也没提醒。她都夸出去了，我怎么再说，妈，不是你以为的那种名校？那晚我们母女俩，挑的是同一块好看的。",
+          "answer": "没问。她看见校名就放心了，我也没提醒。她都跟亲戚夸出去了，我再说本科不是那所，她肯定要问我之前怎么没搞清楚。",
           "correct": false,
           "routeAxis": "caller-credibility",
           "routeTone": "caller-skeptical"
@@ -415,7 +475,7 @@
       ],
       "speakerId": "lin",
       "speaker": "咨询者",
-      "version": "后来我妈在群里说介绍人偏男方。她直接甩来两张长截图，语音说得很快：“我偏谁？给你家是学校好、收入稳、家里省心；给他家是女生稳定、家里不折腾、对学历不太计较。两边原话都在，别只截顺耳的。”她两头都挑顺耳的说，就想把这事做成。",
+      "version": "后来我妈在群里说介绍人偏男方。她直接甩来两张长截图，语音说得很快：“我偏谁？给你家是学校好、收入稳、家里省心；给他家是女生稳定、家里不折腾、对学历不太计较。两边原话都在，别只截顺耳的。”她两头都挑顺耳的说。我看完那两张图，反而说不准她到底偏哪边了。",
       "helperHint": "介绍人的两边话术都在减轻阻力。先问她的收益是什么，不必先判她撒谎。",
       "doubt": "介绍人不是单纯夸男方，她在两边都把短处说轻。",
       "contradiction": "介绍人对两边都抬高好处、压低短处，条件版本被介绍链共同加工。",
@@ -436,7 +496,7 @@
         },
         {
           "question": "你当时觉得介绍人偏谁？",
-          "answer": "她偏自己那桩媒。饭能约成就行。"
+          "answer": "她偏她自己。先把这顿饭约成，别的以后再说。"
         }
       ],
       "questionOptions": [
@@ -444,6 +504,15 @@
           "question": "她为什么把两边都说得那么省心？",
           "answer": "她欠男方家一个人情，也想把这事做成。被我妈追着问，她语速更快：“相亲谁不先报个好价？我两边都报了。”两家听完，都觉得自己捡着了。",
           "guardedAnswer": "她说两边都省心。具体怎么跟他家讲的，我不知道。",
+          "logicContract": {
+            "premiseAnchor": "两边原话都在",
+            "sourceKind": "document-readout",
+            "sourceProves": "两组截图显示介绍人分别给两家说了更顺耳的版本。",
+            "sourceDoesNotProve": "双边话术本身不能证明她偏向哪一家或收了什么利益。",
+            "answerAnchor": "欠男方家一个人情",
+            "answerAdds": "咨询者补充介绍人与男方家的旧人情，并转述介绍人承认两边都报好价。",
+            "nextLegalQuestion": "可以分开核对她给两家的原话，不能替她证明男方收入稳定。"
+          },
           "contradiction": "介绍人对两边都说过更好听的版本。",
           "correct": true,
           "routeAxis": "process-control",
@@ -457,8 +526,17 @@
           "routeTone": "trust-but-verify"
         },
         {
-          "question": "你回家时，又多说了哪两个词？",
-          "answer": "“名校毕业、条件不错。”介绍人只说学校好，是我往前顺了一步。我妈一听，就开始催见父母。",
+          "question": "你回家以后，原话是怎么跟你妈说的？",
+          "answer": "“名校毕业，条件不错。”介绍人只说学校好，后面这些是我自己加的。我妈一听，就开始催见父母。",
+          "logicContract": {
+            "premiseAnchor": "给你家是学校好",
+            "sourceKind": "quoted-message",
+            "sourceProves": "介绍人给女方家的原话只到“学校好”。",
+            "sourceDoesNotProve": "“学校好”不能自动等同于本科名校毕业或整体条件不错。",
+            "answerAnchor": "名校毕业，条件不错",
+            "answerAdds": "咨询者承认回家转述时又增加了两个更强的判断。",
+            "nextLegalQuestion": "可以核对男方材料和她的转述各自加了什么，不能把介绍链写成单方撒谎。"
+          },
           "contradiction": "介绍人、男方和咨询者都参与放大了体面标签，完整信息被层层修剪。",
           "correct": true,
           "routeAxis": "caller-credibility",
@@ -485,15 +563,30 @@
       ],
       "speakerId": "lin",
       "speaker": "咨询者",
-      "version": "他一直说名校毕业，细问才说是 MBA。再问，才变成读过名校的 MBA 项目。本科很普通，这段一开始没有。我把学校图放大三遍：校名是真的，项目也是真的。本科和学制没跟校名摆在一起，项目性质也没有。我跟家里只回“学校是真的”。本科那句，还是没说。",
+      "version": "我家一直按“名校毕业”理解。真问到本科，他先说：“也算吧，MBA。”后来再问，他才说自己读过那所学校的 MBA 项目，本科不是那儿的。我把学校图放大三遍：校名是真的，项目也是真的。可这张图跟“名校毕业”不是一回事。我跟家里只回“学校是真的”。本科那句，还是没说。",
       "helperHint": "校名、项目、本科是三件事。别让一张图替三件事一起作证。",
       "doubt": "名校这句有真东西，但别人听到的可能是另一层意思。",
       "contradiction": "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。",
       "reliability": "partial",
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "家里群还在往下问。有人提了一句，要不要把流水也问了。我一直跟他说，是我妈想看。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "家里群还在往下问",
+        "closerAnchor": "要不要把流水也问了",
+        "adds": "咨询者主动引入家里群中的流水追问，但暂时不说最先发问的人。",
+        "openEdge": "流水要求最先由谁提出。",
+        "routeIndependent": true
+      },
       "casualQuestions": [
         {
           "question": "他解释 MBA 的时候，语气什么样？",
-          "answer": "不躲。就是说得很顺，顺得像回答过很多遍。"
+          "answer": "校名和项目名，他一口气就说完了。问到本科，他才停了一下。"
         },
         {
           "question": "你自己学历怎么样？",
@@ -502,16 +595,25 @@
       ],
       "questionOptions": [
         {
-          "question": "那张学校图，哪三样没放在一起？",
-          "answer": "本科、项目性质、学制。校名和项目都真，可“名校毕业”听起来像本科就在那儿读。剩下的，是我追问才一点点出来。",
-          "guardedAnswer": "本科、项目、学制。我后来才补问。",
+          "question": "那张图上到底写了什么，没写什么？",
+          "answer": "写了校名和项目。没写本科、项目性质和学制。可“名校毕业”听起来像本科就在那儿读，没写的那些，是我后来追问才一点点出来的。",
+          "guardedAnswer": "写了校名和项目。本科、项目性质和学制，我后来才补问。",
+          "logicContract": {
+            "premiseAnchor": "校名是真的，项目也是真的",
+            "sourceKind": "document-readout",
+            "sourceProves": "学校图能确认校名和MBA项目存在。",
+            "sourceDoesNotProve": "该图没有同时证明本科院校、项目性质和学制。",
+            "answerAnchor": "没写本科、项目性质和学制",
+            "answerAdds": "咨询者明确列出图片缺失的三个限定字段。",
+            "nextLegalQuestion": "可以问这些限定是否转告家里，不能把真图直接称作假证。"
+          },
           "contradiction": "男方用真标签保留了别人误会的空间。",
           "correct": true,
           "routeAxis": "identity-wording",
           "routeTone": "pressure-point"
         },
         {
-          "question": "这三样，你补给家里了吗？",
+          "question": "后来补问出来的那些信息，你告诉家里了吗？",
           "answer": "没有。只说学校是真的。“名校毕业”已经讲出去了，再说本科普通，我妈当场得变脸。我当时想，流水要是稳，这一截就算了。",
           "correct": false,
           "routeAxis": "caller-credibility",
@@ -523,7 +625,7 @@
         "callerGuard": "guarded",
         "expression": {
           "kind": "shift",
-          "text": "把话咽回去半秒"
+          "text": "她把校名那一栏放大，又缩回去"
         }
       }
     },
@@ -537,8 +639,8 @@
       ],
       "speakerId": "lin",
       "speaker": "咨询者",
-      "version": "我开始不踏实，是他嘴上收入不错，花钱又每一笔都算。不是没钱，就是……团购、积分，停车费再 AA。我妈在群里问见父母定哪天，往上翻，还有半页在吵流水。谁先提的……先放一放。你们先问他的图。",
-      "helperHint": "先找聊天记录里的第一主语：流水是谁先提，妈妈又是在什么时候接上的。",
+      "version": "我后来开始不踏实。他嘴上说收入不错，花钱却每一笔都算：团购、积分，停车费再 AA。我妈在群里问见父母定哪天，往上翻就是我们吵流水。群里还聊过一句，结婚以后钱最好一起管。我一直跟他说，是我妈想看流水。你先别问我，先看他的图。",
+      "helperHint": "把群聊按发送时间往上读。别只看谁把话说得更重。",
       "revisedVersion": "……整页我看见了。流水是我先提的。两分钟后，我妈才说婚后管钱。这个顺序，我一直没讲。",
       "revisedVersionTriggers": {
         "documentRows": [
@@ -583,25 +685,34 @@
       "reliability": "partial",
       "casualQuestions": [
         {
-          "question": "团购那顿饭，最后谁付的？",
-          "answer": "他。用了券，又用了会员积分。他算得很快，我坐对面看着，有点走神。"
+          "question": "那顿饭，他算钱时会跟你解释吗？",
+          "answer": "会。券怎么用、积分抵了多少、停车费怎么 AA，他都说得很清楚。我当时觉得这叫会过日子。"
         },
         {
           "question": "你妈见过他照片吗？",
           "answer": "见过。第一句问的是“个子多高”，第二句就是“做什么的”。"
         },
         {
-          "question": "你妈现在什么态度?",
+          "question": "你妈现在什么态度？",
           "answer": "就一句：『过了年你就 29 了，先别把人得罪死。』……这话她今年说了四回。我记着次数呢。你看，职业病。"
         }
       ],
       "questionOptions": [
         {
           "question": "为什么一直说是你妈想看流水？",
-          "suspicionLabel": "借妈妈的口问流水",
-          "answer": "我不想显得只看钱。拿我妈挡着，随时还能往后退。可最先想知道他每月到底赚多少的人，是我。",
+          "suspicionLabel": "流水到底是谁先提的",
+          "answer": "我自己问，听着像只盯钱。我妈问，我就能说是家里谨慎；他要是不高兴，我也能往回收。可流水最先是我提的，这句没法再推给她。",
           "guardedAnswer": "流水是我先提。后面那句，才是我妈接的。",
           "answerRequiresRevisedVersion": true,
+          "logicContract": {
+            "premiseAnchor": "一直跟他说，是我妈想看",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者长期把流水要求归到母亲名下。",
+            "sourceDoesNotProve": "这种转述不能证明母亲是最先提出流水的人。",
+            "answerAnchor": "流水最先是我提的",
+            "answerAdds": "咨询者承认最先想查每月收入的人是自己。",
+            "nextLegalQuestion": "可以核对群聊先后和婚后管钱要求，不能据此判断男方收入有假。"
+          },
           "contradiction": "咨询者追流水，也在确认真实收入和婚后钱怎么落地。",
           "correct": true,
           "routeAxis": "money-flow",
@@ -621,7 +732,7 @@
         "callerGuard": "guarded",
         "expression": {
           "kind": "pause",
-          "text": "指尖停在屏幕上"
+          "text": "新存款证明还亮着，她没点保存"
         }
       }
     },
@@ -642,8 +753,8 @@
       "reliability": "partial",
       "casualQuestions": [
         {
-          "question": "工资卡那句，他说完你们冷场了多久？",
-          "answer": "十几秒吧。后来是服务员来加水解的围。"
+          "question": "工资卡那句发来以后，你多久没回？",
+          "answer": "那晚一直没回。聊天框开了几次，最后还是关了。"
         },
         {
           "question": "你身边有婚后一起管钱的例子吗？",
@@ -651,7 +762,7 @@
           "answer": "我表姐。管得挺好，但她挣得比姐夫多。多百分之三十几吧，具体没算过——不对，我算过。百分之三十七。你看，我就是这样的人。这话我没跟我妈说过。我们家饭桌上，账是不能上桌的。"
         },
         {
-          "question": "他现在还给你发消息吗?",
+          "question": "他现在还给你发消息吗？",
           "answer": "发。间隔很规律。",
           "lines": [
             {
@@ -668,7 +779,7 @@
           ]
         },
         {
-          "question": "周末那顿饭，你还想见吗?",
+          "question": "周末那顿饭，你还想见吗？",
           "answer": "不知道。"
         }
       ],
@@ -676,7 +787,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "材料就对到这儿。"
+            "text": "这几张图，今晚先看到这儿。"
           },
           {
             "role": "caller",
@@ -694,7 +805,7 @@
           },
           {
             "role": "caller",
-            "text": "冷场秒数。打出这五个字，我自己都觉得有病。可我停不下来。"
+            "text": "冷场秒数。打出这四个字，我自己都觉得有病。可我停不下来。"
           },
           {
             "role": "host",
@@ -702,11 +813,27 @@
           }
         ]
       },
+      "closureContract": {
+        "entryAnchor": "还有一份",
+        "closerAnchor": "冷场秒数",
+        "adds": "咨询者主动披露自己为四次见面制作了私人统计表。",
+        "openEdge": "她为什么需要把关系中的花销和冷场都量化。",
+        "routeIndependent": true
+      },
       "questionOptions": [
         {
           "question": "他问工资卡，你怎么回的？",
           "answer": "我说：“你别把话说那么难听，我只是想看稳定。”钱以后放不放一起，我没接。那才是我们一直没谈的。",
           "guardedAnswer": "我只说想看稳定。钱以后怎么管，我没敢接。",
+          "logicContract": {
+            "premiseAnchor": "是不是工资卡也要交出来",
+            "sourceKind": "quoted-message",
+            "sourceProves": "男方已经把流水争执理解到婚后工资卡管理。",
+            "sourceDoesNotProve": "这句反问不能证明他收入造假，也不能证明女方已正式要求上交工资卡。",
+            "answerAnchor": "我只是想看稳定",
+            "answerAdds": "咨询者只回应稳定性，没有正面谈婚后工资如何管理。",
+            "nextLegalQuestion": "可以追问双方是否愿意谈钱的边界，不能用团购和AA替代收入证据。"
+          },
           "contradiction": "咨询者把工资管理的要求包装成了确认稳定。",
           "correct": true,
           "routeAxis": "caller-credibility",
@@ -725,7 +852,7 @@
         "callerGuard": "tense",
         "expression": {
           "kind": "blink",
-          "text": "连眨了两下"
+          "text": "说到工资卡，她把那段聊天重新点开，又立刻按灭屏幕"
         }
       }
     }
@@ -1034,7 +1161,7 @@
     {
       "advisorId": "lin-matchmaker",
       "appearsNowBecause": "收麦后，那位婚介听友又留了话。",
-      "text": "介绍人抬话是行规，“学校好条件好”你听七成就行。真要提醒一句：相亲里最该聊清楚的不是流水，是钱以后怎么管——这话两边都没先说，倒都去查对方的图了。行里人说句公道话，这不怪介绍人。"
+      "text": "介绍人抬话是行规，不等于添的话就不用认。流水问得再细，最后还得说清以后钱谁管、怎么放。你们两边都没先说这句，倒都去查对方的图了。"
     }
   ],
   "crossCaseEchoes": [
@@ -1045,12 +1172,12 @@
   ],
   "hostDisclosure": {
     "anchor": "beforeDeepFollowup",
-    "text": "接下来这个问题有点冒犯。我先说一句：当年有人这么问过我，我恼了半年，后来谢了人家。"
+    "text": "这问题难听。我以前被人这么问过，当场把门摔了。后来有半年，我每次算房租都会想起这句话。"
   },
   "hostWoundHook": "相亲市场都这样，别只骂一方",
   "deepFollowup": {
     "question": "你要看他的收入和工资卡。那你自己的工资，一个月到底多少？",
-    "answer": "唉。……一万出头。忙季多一点，不稳定。所以三万一那张图，我盯了很久。不是只怕被骗，是怕以后两个人都扛不住。",
+    "answer": "唉。……一万出头。忙季多一点，不稳定。所以三万一那张图，我盯了很久。我怕被骗，也怕真在一起以后，两个人都扛不住。",
     "resistanceBeat": {
       "lines": [
         {
@@ -1065,7 +1192,7 @@
     },
     "note": "她报出自己的数字后，流水要求第一次不再躲在母亲后面。"
   },
-  "stageJudgement": "真图归真图，真图能证明什么是另一回事。他把本科和持续收入留在图外，她把流水的起头人留在话外；介绍人再给两边各垫一句好听的，这顿饭才走到今天。",
+  "stageJudgement": "学校图和存款证明都是真的。图里没放本科和持续收入，她也没说流水最早是自己提的。介绍人又给两边各添一句。这顿饭先停，省得三家继续猜。",
   "caseClosing": {
     "title": "没放在一起的三样",
     "verdict": "林旭阳把资料的真和资料的全分开：校名、项目和余额都能是真的，仍不足以替谁承诺长期收入和婚后安排。",
@@ -1109,7 +1236,7 @@
     {
       "id": "affirm",
       "label": "肯定",
-      "hostLine": "你查得不过分。想看清楚一个人，不丢人。",
+      "hostLine": "想把条件问清楚不丢人。下次别借你妈的嘴，自己问。",
       "lines": [
         { "role": "caller", "speaker": "咨询者", "text": "……谢谢。这句，我妈应该听听。" }
       ]
@@ -1198,7 +1325,7 @@
       "rowQuestions": {
         "p01": [
           {
-            "question": "核验页确认的是毕业学历，还是项目经历？",
+            "question": "这张查询页写的是毕业学历，还是项目经历？",
             "answer": "项目经历。校名和项目都对，本科没在这一页。我以前把这页直接念成名校毕业。",
             "contradiction": "真实项目经历被概括成更宽的学历标签。",
             "routeAxis": "identity-wording"
@@ -1252,8 +1379,8 @@
     "hangup": {
       "afterSceneIndex": 4,
       "speaker": "咨询者",
-      "line": "家里群还在 @ 我。最上面那句是谁先发的，我今晚说不清。白天把整页原话和材料对完，明晚再打进来。",
-      "hostLine": "去。群聊主语先留在台上；白天对原话，别拿谁想看代替谁先开口。",
+      "line": "家里群还在 @ 我。我现在不敢往上翻。白天我把整页聊天和那几张材料重新看一遍，明晚再打进来。",
+      "hostLine": "好，今晚先到这儿。白天把群聊整页找出来，别只截后半段。明晚回来，咱们把流水这句话是谁先说的问清楚。",
       "stageDirection": "电话里只剩忙音。家里群最上面那句，还挂着未读。",
       "audioCueId": "sfx.phone.busy"
     },
@@ -1276,7 +1403,7 @@
           "script": {
             "audioCueId": "voice.advisor.zhang-closed",
             "open": "学校图还能不能替她往下验？",
-            "reply": "不能。像素真假我答过了，学历口径让当事人自己去学信网核。别拿复印件替人作证。……行了，今天真收了。我家那位喊我对发票呢。你说这日子。"
+            "reply": "不能。图有没有改，我已经答了。这个项目到底算什么学历，让他们自己去学信网查。别拿一张复印件让我替人作证。……行了，今天真收了。我家那位喊我对发票呢。你说这日子。"
           }
         },
         {
@@ -1323,10 +1450,10 @@
     }
   },
   "overnightStructure": {
-    "hangupAnchor": "本科和学制",
+    "hangupAnchor": "本科那句",
     "hangupLine": "电话里只剩忙音。家里群最上面那句，还挂着未读。",
     "hangupAudioCueId": "sfx.phone.busy",
-    "hostHoldLine": "去。群聊主语先留在台上；白天对原话，别拿谁想看代替谁先开口。",
+    "hostHoldLine": "好，今晚先到这儿。白天把群聊整页找出来，别只截后半段。明晚回来，咱们把流水这句话是谁先说的问清楚。",
     "returnBeat": {
       "lines": [
         {
@@ -1359,7 +1486,7 @@
         "lines": [
           {
             "role": "caller",
-            "text": "等一下。那页群聊，是我表妹拍给你们的?"
+            "text": "等一下。那页群聊，是我表妹拍给你们的？"
           },
           {
             "role": "pause"
@@ -1379,11 +1506,11 @@
         "choices": [
           {
             "id": "soothe",
-            "label": "先别打。她也是看你困在里面。",
+            "label": "先把话说完。她为什么发，等你自己问她。",
             "lines": [
               {
                 "role": "caller",
-                "text": "……困不困的，轮不到她替我拍板。"
+                "text": "……她凭什么替我把家里的话发出来。"
               },
               {
                 "role": "pause"
@@ -1441,7 +1568,7 @@
           {
             "role": "caller",
             "speaker": "介绍人",
-            "text": "男方家刚跟我说，周末的饭先不吃了。他们也看了直播。……你们要的清楚，先把饭吃没了。"
+            "text": "男方家刚跟我说，周末的饭先不吃了。他们也看了直播。……这下够清楚了吧？饭也没了。"
           },
           {
             "role": "caller",
@@ -1602,11 +1729,11 @@
         "line": "「表姐没让进门。隔着门只说，资料是家里一起挑的。收入，她不答；学费，也不答。」",
         "firstConflict": {
           "hostLine": "门里那句是“家里一起挑的”。你昨晚把这几张图全算在谁头上？",
-          "callerLine": "我原先把主语全放在他身上。现在得改：材料是他们家一起挑的。"
+          "callerLine": "我原先一直说，这些图是他自己准备的。现在得改口：姑姑、表姐和他都挑过。"
         }
       },
       "双份材料圈注": {
-        "line": "「核验页管项目，存款证明管那一天。我把两张纸摆一起看了很久。‘学历好、收入稳’……纸上没有这整句。」",
+        "line": "「这张页面只写了项目，存款证明也只看得出那一天。我把两张纸放在一起看了很久。可我跟家里说的那句‘学历好、收入稳’，哪张纸上都没有。」",
         "firstConflict": {
           "hostLine": "你把两张纸接成一句话，最先拿去说给谁听？",
           "callerLine": "我妈。说得特别顺，像我早问清了。"
@@ -1622,7 +1749,7 @@
       "饭局停顿回放": {
         "line": "「饭局那十几秒，我又听了一遍。我问本科，他没答，转头去算停车费。那时候我就觉得卡住了，可下一句没追。」",
         "firstConflict": {
-          "hostLine": "你没追本科。怕什么，自己说。",
+          "hostLine": "你当时没再问本科。是怕饭局难看，还是怕自己先前跟家里说错了？",
           "callerLine": "后一个。‘名校毕业’是我先说给家里听的。"
         }
       }

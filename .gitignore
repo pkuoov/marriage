@@ -14,3 +14,4 @@ assets/generated/**/contact_sheet.png
 *.log
 node_modules/
 dist/
+assets/audio/source/

@@ -2,6 +2,41 @@
   "id": "steam-demo-01",
   "title": "Steam 试玩版",
   "size": 4,
+  "fictionalEntities": [
+    {
+      "id": "chengchuan-financial",
+      "displayName": "澄川金融服务",
+      "kind": "consumer-credit-provider",
+      "fictional": true
+    },
+    {
+      "id": "chenzhi-trust",
+      "displayName": "宸直信托",
+      "kind": "trust-company",
+      "fictional": true
+    }
+  ],
+  "crossCasePromises": [
+    {
+      "id": "chenzhi-trust-payment-crisis",
+      "entityId": "chenzhi-trust",
+      "status": "paid-off",
+      "seed": {
+        "caseId": "01-credit",
+        "documentId": "case1-bank-flow",
+        "rowIds": ["r13", "r14", "r15"]
+      },
+      "reinforcement": {
+        "afterCaseId": "01-credit",
+        "surface": "case-tail"
+      },
+      "payoff": {
+        "afterCaseId": "02-tony",
+        "worldEchoId": "world-echo-chenzhi-payment-crisis"
+      },
+      "revalues": "机构后来出现大面积兑付纠纷，扩大案一投资风险的社会背景；不倒推证明案一每一笔钱的归属，也不替当事人的借款决定免责。"
+    }
+  ],
   "theme": {
     "id": "identity-cost-demo",
     "title": "好听的身份，最后让谁买单",
@@ -164,6 +199,11 @@
     "prologue": {
       "lines": [
         {
+          "speaker": "林旭阳",
+          "type": "background",
+          "text": "我叫林旭阳，三十三岁。以前在一家互联网大厂做法务。失业以后，阴差阳错开了这个直播间。不温不火，也做了两年半。"
+        },
+        {
           "speaker": "运营 · 老方（工作消息）",
           "type": "notice",
           "text": "深夜档这个月再不达标，就并进娱乐区。改版方案，下周一前给我。"
@@ -171,55 +211,172 @@
         {
           "speaker": "旁白",
           "type": "narration",
-          "text": "凌晨一点，林旭阳推开直播间的门。走廊坏着半截灯，控台的显示器还亮着。"
+          "text": "晚上八点，林旭阳推开直播间的门。走廊坏着半截灯，桌上的显示器还亮着。"
         },
         {
           "speaker": "赵律师（消息）",
           "type": "message",
-          "text": "吃饭没有?你的包在椅背上。汤在冰箱,是给你热的,不是给你放过期的。案卷也在包里,收播后再看。"
+          "text": "吃饭没有？汤在冰箱，记得热。还有个东西我塞你包里了，忙完再看。"
         },
         {
-          "speaker": "导播",
-          "type": "countdown",
-          "text": "三、二、一。ON AIR。",
-          "audioCueId": "voice.broadcast.countdown"
+          "speaker": "旁白",
+          "type": "stage",
+          "text": "林旭阳点下“开始直播”。屏幕上的三秒倒计时归零，开播提示音响了一声。",
+          "audioCueId": "sfx.broadcast.on-air"
         }
       ],
       "hostLine": {
         "speaker": "主播·林旭阳",
         "type": "host",
-        "text": "这里是《深夜热线》，我是林旭阳。先听完，账和话一件件对。第一通，接进来。"
+        "text": "开播了哈，今天继续连麦。"
       }
     },
     "interludes": [
       {
         "afterCaseId": "01-credit",
+        "kicker": "第一案 · 小尾声",
         "lines": [
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "你今天直播里提到的宸直信托，我知道。最近我手上就有好几起跟他们有关的兑付纠纷。"
+          },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "有位朋友问……『九块九三支的眉笔靠谱吗』。这位朋友,你走错直播间了。下一通。"
+            "text": "所以那二十万未必拿得回来？"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "我只说有纠纷，没说一定拿不回来。你刚下播就替我结案？"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "行，我收回。"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "那我问个不用证据的。我要是也这么爱面子、花钱没数，你会不会什么都给我买？"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "真那样的话，我们俩大概一开始就看不上对方。"
           }
         ],
-        "line": "老方：“第一通不错，就这个劲儿。”——他从不夸人，除非想让你答应什么。"
-      },
-      {
-        "afterCaseId": "02-tony",
-        "line": "老方发来一张竞品截图：同时段，情感调解，判官式收麦，数据是你的三倍。你没回。"
-      },
-      {
-        "afterCaseId": "03-profile",
-        "line": "赵：“包里的案卷，想好了吗。”你还是没翻。",
+        "line": "林旭阳笑了一下。赵律师把一杯热水推到他手边。",
         "afterLines": [
           {
             "role": "stage",
-            "text": "导播把一盒热过的汤放上控台，晃了晃手机屏幕：赵律师十二点发的消息，「让他喝汤」。"
+            "text": "监听音箱里的音乐慢慢起来。第一案完。"
+          }
+        ]
+      },
+      {
+        "afterCaseId": "02-tony",
+        "kicker": "第二案 · 小尾声",
+        "lines": [
+          {
+            "speaker": "老方（语音）",
+            "role": "production",
+            "text": "他店里那个六折，我现在去还算数吗？"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "你真想剪就正常约。别为了六折，顺便认个自己人。"
+          },
+          {
+            "speaker": "老方（语音）",
+            "role": "production",
+            "text": "那算了。别把我加群里。"
+          }
+        ],
+        "line": "老方撤回一张预约截图，像是什么都没问过。",
+        "afterLines": [
+          {
+            "role": "stage",
+            "text": "广告音乐换成一段轻一点的钢琴。第二案完。"
+          }
+        ],
+        "worldEcho": {
+          "id": "world-echo-chenzhi-payment-crisis",
+          "promiseId": "chenzhi-trust-payment-crisis",
+          "kicker": "次日中午 · 午间新闻",
+          "actionLabel": "把午间新闻听完",
+          "headline": "宸直信托旗下两款产品暂停兑付",
+          "body": "工作室食堂的电视只播了二十几秒。画面里，投资人拿着合同在登记；新闻说监管部门已经介入，具体兑付方案还没有公布。林旭阳夹菜的手停了一下。",
+          "proves": "宸直信托后来出现公开的产品兑付危机。",
+          "doesNotProve": "不能倒推案一的两笔转账已经全部损失，不能证明其具体产品、资金归属或可追回金额。"
+        }
+      },
+      {
+        "afterCaseId": "03-profile",
+        "kicker": "第三案 · 小尾声",
+        "lines": [
+          {
+            "speaker": "赵律师（语音）",
+            "role": "advisor",
+            "text": "第一次去我家，我妈也问过你存款。你当时怎么没走？"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "你在桌子底下踢了我一脚。"
+          },
+          {
+            "speaker": "赵律师（语音）",
+            "role": "advisor",
+            "text": "我那是让你别报数。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "所以我没报。饭还是吃完了。"
+          }
+        ],
+        "line": "语音停了，林旭阳把保温盒重新扣好。",
+        "afterLines": [
+          {
+            "role": "stage",
+            "text": "热过的汤又凉了。塑料盖轻轻响了一声。第三案完。"
+          }
+        ]
+      },
+      {
+        "afterCaseId": "04-workplace",
+        "kicker": "第四案 · 小尾声",
+        "lines": [
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "今晚这些杯子，谁主责？"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "我洗。你复核。"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "我不复核。我在门口等你。"
+          }
+        ],
+        "line": "林旭阳把备用线缠好，收进桌下的盒子，又端起桌上的杯子。",
+        "afterLines": [
+          {
+            "role": "stage",
+            "text": "屏幕右上角的“直播中”灭了。第四案完。"
           }
         ]
       }
     ],
     "epilogue": {
-      "opening": "ON AIR 灯灭了。耳机放下的声音，比想象里响。",
+      "opening": "屏幕右上角的“直播中”灭了。他摘下耳机，房间一下安静下来。",
       "unreadMessages": [
         {
           "id": "case1-callback",
@@ -254,7 +411,7 @@
           "attachment": {
             "kind": "image-placeholder",
             "label": "退卡互助(5)",
-            "alt": "群名片,群名为退卡互助,五人"
+            "alt": "群名片，群名为退卡互助，五人"
           }
         },
         {
@@ -293,7 +450,7 @@
       "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息，至少今晚是。",
       "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。下周，方案还是要交。",
       "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。保温盒空了。他顺手洗了，倒扣在水池边。你把她的合同挪开，把自己的手机放远了点。",
-      "close": "林旭阳拿起牛皮纸案卷。封口贴着一张便签，赵的字：『你当年没问完的那通，我帮你找到了后续。』便签下露出一角日期：2019-11-08，『已撤回的账单』。"
+      "close": "林旭阳从包里拿出那个牛皮纸文件袋。封口贴着一张便签，赵的字：『你当年没问完的那通，我帮你找到了后续。』便签下露出一角日期：2019-11-08，『已撤回的账单』。"
     }
   }
 }

@@ -2,7 +2,7 @@ import { generateCasesForMode } from "./caseModes.js?v=0.20.87";
 import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
 import { getAudioSettings, playAudioCueOnce, playSfx, resetAudioCueHistory } from "./sound.js?v=0.22.0";
 import { audioCueView } from "./audioCatalog.js?v=0.22.0";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.20.78";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.26.2";
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 import { NPCS } from "./story.js?v=0.20.68";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
@@ -13,12 +13,12 @@ import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyR
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.21.1";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
-import { storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.20.96";
+import { storyInterludeCaseId, storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.26.1";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js?v=0.24.3";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js?v=0.25.0";
-import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.21.5";
+import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.26.0";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.25.0";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
@@ -33,7 +33,7 @@ import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } f
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.21.3";
 import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.21.1";
-import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.20.68";
+import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.26.2";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js?v=0.24.3";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js?v=0.24.3";
@@ -154,6 +154,7 @@ function normalizeDailyState(saved) {
     accusationHistory: Array.isArray(saved?.accusationHistory) ? saved.accusationHistory : [],
     solvedCaseIds: Array.isArray(saved?.solvedCaseIds) ? saved.solvedCaseIds : [],
     caseInterludes: saved?.caseInterludes ?? {},
+    storyWorldEchoes: saved?.storyWorldEchoes ?? {},
     careChoices: saved?.careChoices ?? {},
     epilogueUnreadStep: Number(saved?.epilogueUnreadStep ?? 0),
     lastReaction: saved?.lastReaction ?? null,
@@ -345,8 +346,9 @@ function nightShellForBrief(brief = {}) {
 }
 
 function nightShellInterludeForBrief(brief = {}) {
-  const shell = nightShellForBrief(brief);
-  return (shell?.interludes ?? []).find((item) => item.afterCaseId === brief.id || item.afterCaseId === brief.caseId) ?? null;
+  const pack = storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl());
+  const caseId = storyInterludeCaseId(pack, brief);
+  return (pack?.nightShell?.interludes ?? []).find((item) => item.afterCaseId === caseId) ?? null;
 }
 
 function nightShellGoodEnding() {
@@ -1152,6 +1154,8 @@ function quietDayChapter(dayKind = "") {
 function documentViewerHtml({ document = {}, markedRows = [] } = {}) {
   const marked = new Set(markedRows ?? []);
   const limit = Number(document.markLimit ?? 3);
+  const columns = documentTableColumns(document);
+  const gridStyle = `grid-template-columns: 56px repeat(${columns.length}, minmax(110px, 1fr));`;
   return `
     <section class="document-viewer-card">
       <span class="source-badge">文档呈堂</span>
@@ -1159,20 +1163,16 @@ function documentViewerHtml({ document = {}, markedRows = [] } = {}) {
       <p>${escapeHtml(document.intro ?? "")}</p>
       <div class="document-mark-limit"><b>已圈 ${marked.size}/${limit}</b><span>圈行后，夜里可逐条对账。</span></div>
       <div class="bank-flow-table" role="table" aria-label="${escapeHtml(document.title ?? "流水单")}">
-        <div class="bank-flow-head" role="row">
-          <span>行</span><span>日期</span><span>类别</span><span>金额</span><span>对手方</span><span>备注</span>
+        <div class="bank-flow-head" role="row" style="${gridStyle}">
+          <span>行</span>${columns.map((column) => `<span>${escapeHtml(column.label)}</span>`).join("")}
         </div>
         ${(document.rows ?? []).map((row) => {
           const selected = marked.has(row.rowId);
           const disabled = !selected && marked.size >= limit;
           return `
-            <button class="bank-flow-row ${selected ? "marked" : ""}" data-document-row="${escapeHtml(row.rowId ?? "")}" ${disabled || selected ? "disabled" : ""} type="button" role="row">
+            <button class="bank-flow-row ${selected ? "marked" : ""}" data-document-row="${escapeHtml(row.rowId ?? "")}" ${disabled || selected ? "disabled" : ""} type="button" role="row" style="${gridStyle}">
               <span>${escapeHtml(row.rowId ?? "")}</span>
-              <span>${escapeHtml(row.date ?? "")}</span>
-              <span>${escapeHtml(row.kind ?? "")}</span>
-              <span>${escapeHtml(row.amount ?? "")}</span>
-              <span>${escapeHtml(row.party ?? "")}</span>
-              <span>${escapeHtml(row.memo ?? "")}</span>
+              ${columns.map((column) => `<span>${escapeHtml(row[column.key] ?? "")}</span>`).join("")}
             </button>
           `;
         }).join("")}
@@ -1180,6 +1180,17 @@ function documentViewerHtml({ document = {}, markedRows = [] } = {}) {
       ${documentEarnedPreviewHtml(document, markedRows)}
     </section>
   `;
+}
+
+function documentTableColumns(document = {}) {
+  if (Array.isArray(document.columns) && document.columns.length) return document.columns;
+  return [
+    { key: "date", label: "日期" },
+    { key: "kind", label: "类别" },
+    { key: "amount", label: "金额" },
+    { key: "party", label: "对手方" },
+    { key: "memo", label: "备注" }
+  ];
 }
 
 function documentEarnedPreviewHtml(document = {}, markedRows = []) {
@@ -1291,7 +1302,7 @@ function markDocumentRow(brief, dayScene = {}, document = {}, rowId = "") {
   playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:document:${document.id}:${rowId}`);
   recordRouteChoice(brief, overnightRouteIndexFor(brief, dayScene) + markedRows.length / 1000, {
     question: `圈行 ${rowId}`,
-    answer: documentRowSummary(documentRowById(document, rowId)),
+    answer: documentRowSummary(documentRowById(document, rowId), document),
     routeAxis: "document-edge",
     routeTone: "document-row"
   }, { version: document.title ?? "" });
@@ -1305,8 +1316,8 @@ function mergeDocumentQuestions(current = [], next = []) {
   return [...byId.values()];
 }
 
-function documentRowSummary(row = {}) {
-  return [row.date, row.kind, row.amount, row.party, row.memo].filter(Boolean).join(" / ");
+function documentRowSummary(row = {}, document = {}) {
+  return documentTableColumns(document).map((column) => row[column.key]).filter(Boolean).join(" / ");
 }
 
 function pendingDocumentQuestions(brief) {
@@ -2129,7 +2140,7 @@ function renderCareChoice(brief) {
     });
   });
   bind("[data-care-choice-continue]", () => {
-    state.scene = finalCase && nightShellForBrief(brief)?.epilogue ? "nightShellEpilogue" : "caseClosure";
+    state.scene = "caseClosure";
     saveState();
     render();
   });
@@ -2269,21 +2280,37 @@ function overnightCallerQuestionAftertasteHtml(brief = {}) {
 function renderStoryInterlude(brief) {
   const nextBrief = state.caseBriefs?.[Number(state.chapter ?? 1)] ?? null;
   const interlude = nightShellInterludeForBrief(brief);
+  const finalCase = isFinalStoryPackCase();
+  const interludeCaseId = storyInterludeCaseId(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
+  const worldEchoRevealed = !interlude?.worldEcho || Boolean(state.storyWorldEchoes?.[interludeCaseId]);
   frame({
     brief,
     mood: "focused",
     label: "案间过渡",
     chapter: "案间",
     text: storyInterludeHtml({
+      kicker: interlude?.kicker ?? "案后小尾声",
       nextObjectLabel: storyInterludeObjectLabel(nextBrief),
       nextLine: storyInterludeNextLine(nextBrief),
       shellLine: interlude?.line ?? "",
       shellLines: interlude?.lines ?? [],
-      shellAfterLines: interlude?.afterLines ?? []
+      shellAfterLines: interlude?.afterLines ?? [],
+      worldEcho: worldEchoRevealed ? interlude?.worldEcho ?? null : null,
+      finalCase
     }),
-    choices: flowGroupHtml(storyInterludeChoicesHtml())
+    choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed }))
+  });
+  bind("[data-reveal-world-echo]", () => {
+    state.storyWorldEchoes = { ...(state.storyWorldEchoes ?? {}), [interludeCaseId]: interlude.worldEcho.id };
+    saveState();
+    render();
   });
   bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
+  bind("[data-enter-night-epilogue]", () => {
+    state.scene = nightShellForBrief(brief)?.epilogue ? "nightShellEpilogue" : "runComplete";
+    saveState();
+    render();
+  });
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
   bindSceneButtons();
 }
@@ -2503,7 +2530,8 @@ function mountCurrentDialogue() {
   controller = mountDialoguePresentation(app, {
     speed: state.settings?.textSpeed ?? "normal",
     onShown: (page) => {
-      state.dialogueBacklog = [...(state.dialogueBacklog ?? []), page].slice(-500);
+      const shownLines = Array.isArray(page?.lines) ? page.lines : [page];
+      state.dialogueBacklog = [...(state.dialogueBacklog ?? []), ...shownLines].filter((line) => line?.text).slice(-500);
       saveState();
       if (state.settings?.autoMode) setTimeout(() => controller?.advance(), Math.max(1, Number(state.settings.autoDelay ?? 2)) * 500);
     },
@@ -2571,7 +2599,7 @@ function caseBackdropClass(brief = {}) {
 function compactDialogueLines(lines) {
   const normalized = (lines ?? []).filter((line) => line?.text);
   const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
-  return normalized.slice(0, totalLength > 170 ? 2 : 4);
+  return normalized.slice(0, totalLength > 220 ? 2 : 5);
 }
 
 function bind(selector, handler) {

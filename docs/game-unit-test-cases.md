@@ -40,6 +40,7 @@ npm run smoke:desktop
 | DAILY-005 | Rotation completeness | Eight-day rotation produces complete, playable cases and avoids repeating the same plot/role combination. | Structural gaps or direct same-case repeats in the current limited template set. |
 | DAILY-006 | Choice quality | Daily choices reject no-click throwaway options. | Fake choices like "just believe it" returning. |
 | DAILY-006B | Host question voice | Host questions avoid leading caller psychology labels and edited-outline phrasing; they ask concrete live-call follow-ups. | `你是不是先心疼/你是不是也怕/关系一直没说死` 这类不像主播问出口的选项回流。 |
+| DAILY-006C | One-question turn | Player-facing `question` / `hostLine` / `prompt` fields contain at most one question mark, so one page asks one thing before the caller answers. | 同一屏连续追问两件事，来电人只能选择性回答，或台词重新出现赶工式信息堆叠。 |
 | DAILY-007 | Case 4 structure | "三张截图" keeps motive chain and `halfTruth` stance. | Regressing to abrupt screenshots or one-sided victim framing. |
 | DAILY-008 | Livestream contract | Daily cases stay anonymous and single-caller; every scene beat and deep follow-up answer is spoken by the caller, with materials only retold or read aloud. | Real names, system-inserted evidence beats, or two-sided confrontation leaking back into the live room. |
 | DAILY-009 | Drama and gray zone | Every daily case has a concrete dramatic object/quote and at least one unclear initiator or shared face-saving pressure. | Future generated cases becoming flat “check the clue” exercises with obvious villains. |

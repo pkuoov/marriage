@@ -27,6 +27,20 @@ Two targets must hold at the same time, and they fail differently:
 - 口语化: the line sounds spoken, not composed. This lives in syntax and rhythm, not in exclamation.
 - 语意连贯: every line hooks the previous one. A line can be perfectly colloquial and still answer nothing; a line can connect logically and still sound like an essay. Write for both, audit for both.
 
+真人口语门禁（禁会议纪要腔）:
+- 审查所有玩家可见的说话面时，先问：这个具体人物在这个场合、对这个听众、不打草稿会这样说吗？像复盘纪要、办案记录、产品需求或作者批注的句子，即使语法正确也必须改。
+- `核/核验/复盘/推进/承接/落点/口径/路径/兑现/对齐/闭环/归因/交付/复现` 是候选警报，不是无条件禁词。职业角色谈本职对象时可以用；主播和普通咨询者谈日常问题时，优先说 `看一下/对一遍/查到哪儿/接着聊/问清楚/又听见`。先看说话人和对象，再决定留不留专业词。
+- 禁止把多个操作压成一句，如「能核的先核清」「把路径对齐后回来谈」。真人通常会拆成具体动作：「我先去找回单，再把那几栏对一遍」「明晚接着聊」。
+- 不做逐词替换。一个书面词往往会带出整句的公文节奏；替换后必须重读前后两句，把连接词、名词化表达和收尾一起改顺。
+- 主播不能用审讯命令、结案判断或工作流短语抢跑。先接住上一句，再问一个具体的人、钱、物件或动作；咨询者的回答要回应这个问题，或让闪躲本身清楚可闻。
+- 每次修改同时检查重复源字段、opener/hangup 镜像和生成阅读版。旧句不得只在某个副本里残留。
+
+口语形状与反例见 [spoken-corpus-patterns.md](references/spoken-corpus-patterns.md)。词表只能找候选，最终判定必须靠角色声纹、相邻话轮和朗读。
+
+Canonical repair:
+- Bad: 「流水我会先核，但那五万的去向，明晚我们还得回来谈。」
+- Good: 「流水我先看一下。那五万到底去了哪儿，明晚我们还得接着聊。」
+
 Caller vocabulary:
 - No clinical or jargon speech in the caller's mouth: `核心风险`, `成本转移`, `转嫁债务`, `信用背书`, `认知偏差`, `流程空挡`, `洗房边界`. Callers argue in `钱`, `面子`, `责任`, `吃亏`, `谁占便宜`.
 - No machine clichés: `心里咯噔一下`, `不由得倒吸一口凉气`, `不得不承认`, `听到这里`, `真正…的不是…而是…`. These are already banned mechanically; do not reintroduce them through paraphrase.
@@ -38,7 +52,7 @@ Spoken syntax (口语感靠句法，不靠感叹):
 - Afterthought placement (追补句): real speakers finish the point first and patch the frame after — 「挺吓人的，那张表。」「我没答应，当场就没答应。」 Use 1-2 per case at high-pressure moments; it reads as thinking-while-talking.
 - Lopsided recall instead of neat lists: a caller remembers one vivid item and trails off — 「他就总说店里压力大，别的……反正就那些。」 Never let a caller enumerate in tidy triples (「他会说A、说B、还说C」); inventory speech is essay speech.
 - Vary sentence length hard: a three-character burst next to a long rambling clause. Uniform medium-length sentences are the strongest single AI tell in dialogue.
-- One visible self-repair per case at most, and it must do work — either characterization or a clue (the cognitive-dissonance slip in Clue Insertion Techniques). Repair as a verbal tic is noise.
+- Self-repair now serves two different jobs and must not be conflated when counting: (1) a caller's dramatic self-repair that does clue or characterization work — the cognitive-dissonance slip — stays capped at one per case; stacking more collapses back into a verbal tic. (2) The 语言噪声律 texture minimum (≥1 factual misstatement corrected mid-sentence, e.g. 「七万九……不对，八万」) and the host's own 主播狼狈配额 corrections are texture noise, not characterization payload, and are not bound by the one-per-case cap — a case can legally contain one caller clue-repair plus one host date-correction plus one caller number-correction without violating this rule. Tag every self-repair beat with which job it is doing before counting it against either rule.
 - Keep object names stable per character: pick what this caller would call the thing (「那张表」) and hold it. Cycling synonyms (表格/资源表/排班表/名单) inside one speech is elegant-variation slop — a label change must mean something, like the pronominal shift.
 
 Coherence (连贯靠接话头，不靠连接词):
@@ -47,6 +61,72 @@ Coherence (连贯靠接话头，不靠连接词):
 - Anchor by repetition, not pronouns: when a referent could blur across turns, a stressed caller repeats the object — 「那八万」「那张表」 — instead of 「它」「这个事」. This is simultaneously more spoken and more coherent; it is the cheap trick that resolves the 口语化-vs-连贯 tension.
 - Discourse markers (`后来`, `反正`, `就是`, `要不`) are structural signals, at most one per turn: `后来` returns to the timeline, `反正` closes an argument the speaker refuses to itemize, `要不` raises an option they are half-committed to. Never use them as sentence lubricant.
 - Do not polish lines in isolation. A pass that makes each line individually colloquial but breaks who-answers-what is a regression. Coherence is audited at transcript level — see the pickup audit in the writing workflow.
+
+### Dialogue Humanization Closure (双层人话闭环)
+
+Run these passes in order on every changed spoken line. Both must pass: deleting a summary is not the same as making speech colloquial, and adding particles is not the same as removing authorial summary.
+
+1. **Summary-removal pass (删总结)**: remove conclusions, theme lines, camera captions, retrospective labels, and tidy psychological diagnoses that the character would not volunteer in that moment. Keep the concrete action, quotation, amount, object, or sensory fact that lets the listener reach the conclusion. Move genuine blocking to `stage`; delete a sentence whose only job is to tell the audience what the scene means.
+2. **Spoken-realization pass (口语复述)**: after the deletion, make the remaining event sound like a person recalling it rather than a case-note timeline. When a past action crosses a sentence boundary, restore only the time or sequence marker the listener needs (`当时`, `那会儿`, `后来`, `然后`, `结果`) and repeat the actor or object when its reference would otherwise float. Do not sprinkle markers as decoration.
+3. **Five-turn read**: read the changed turn with the two spoken turns before and after it. Each question must arise from a word or fact already available; each answer must answer, resist, or audibly dodge that exact question; the last turn must leave one identifiable open edge.
+4. **Surface sync**: update normal and guarded answers, runtime `lines`, openers/closers, adjacency anchors, source treatment, and generated reading scripts. Search for the rejected wording across the whole repository; a cleaner primary field with a stale shadow copy is a failed repair.
+5. **Mechanical closure**: run the content builders and `npm run check`. If the edit changes scene order, paging, choices, or runtime rendering, also run the production build and browser replay smoke test.
+
+Canonical compressed-retelling repair:
+- Bad: 「问过一次。他愣了一下，说‘反正不是乱来的钱’。我再问，他就把话岔开了。」
+- Good: 「问过一次。他当时愣了一下，说‘反正不是乱来的钱’。然后我再问，他就把话岔开了。」
+
+The extra words are not filler: `当时` separates remembered event-time from the caller's present narration, and `然后` makes the second question a consequence in the same recalled exchange. More summary-removal and retelling shapes live in [spoken-corpus-patterns.md](references/spoken-corpus-patterns.md).
+
+### Human Causality and Evidence Gate (逐句人类因果与证据来源门禁)
+
+Apply this gate to every player-visible spoken surface, not only the mainline. Audit `openingDialogue`, fixed scene lines, every free/key option, normal and guarded answers, closers, materials, callback openers, advisor/NPC speech, recap quotes, and generated reading scripts.
+
+- **Referent before interpretation**: name the concrete person, object, purchase, message, or event before discussing its nickname, meaning, emotion, or motive. A caller must say what the 12,000 yuan bought before explaining why someone called it an “investment”. An isolated conclusion whose object arrives later is reversed causality.
+- **Speaker-view only**: spoken dialogue contains what this person would naturally remember, notice, say, refuse, or infer in the moment. Delete camera blocking, balanced literary montage, author captions, and after-the-fact taglines from a character's mouth. 「我看窗外，他看酒」 and 「那两个字卡在这儿，投资」 belong to a director or essayist, not a caller.
+- **Evidence-source ledger**: for every factual host premise, name the exact visible source: caller statement, bill row, screenshot, audio, public post, prior confirmed answer, or professional common knowledge. A bill proves merchant, amount, and date only if those fields are present; it does not magically contain booking membership, motive, ownership, or off-screen history. Material copy says only what the artifact visibly contains.
+- **Row-identity conservation**: adjacent dates and similar amounts do not prove that the same money moved from one row to another. State each row with its date, direction, amount, and counterparty before drawing an inference. Write 「7 月 5 号信贷放款五万；7 月 19 号向 3301 转出 49,800」 unless the material can truly prove 「这五万转去了 3301」. Keep temporal proximity separate from fund identity.
+- **Amount-bucket conservation**: before a character or recap assigns moral responsibility for a bill, divide the total by visible use and beneficiary: shared/relationship spending, one party's personal spending, and still-unexplained remainder. Every bucket needs itemized support, and the arithmetic must survive the total. Do not compress restaurant booking, social posting, and a content account into three separate accusations when they are one social-performance event; do not call the whole bill “spent on her” when rows also show his personal vanity. Ask the person to confirm or dispute one bucket, then discuss responsibility.
+- **Unresolved-identity budget**: count every distinct "who received/sent this and we don't know" thread in a case — unknown payee, unknown account, unnamed institution, unconfirmed relative. A tier-1/opener case should carry at most two; a later or capstone case may carry more only if it is the pack's deliberate density peak. Two threads that share the same shape (an opaque lump-sum transfer to an unnamed recipient, repeated with different numbers and institution names) read as one puzzle wearing two costumes unless the case gives them visibly different textures, stakes, or resolution paths — collapse or clearly differentiate them before shipping, and never stack a new cross-case seed thread onto a case that is already at budget.
+- A named institution already registered in `crossCasePromises` is an institution-result thread, not another anonymous identity. Its remaining questions are limited to product, payment status, contract terms, and recoverability. Do not restage it as a third “who received the money” mystery.
+- A masked surname that only labels one recurring date pattern belongs to that supply line. Count the broken pattern once; do not turn “王**” and “每月 8 号” into two separate unknown people. Tier-1 and opener-facing anonymous identity threads still stay at two or fewer. For case 1 they are the 8th-day supply pattern and account suffix 3301; 宸直 remains a named institutional payoff thread.
+- **Speaker-and-evidence conservation**: keep every fact attached to the person or artifact that actually supplied it. A third party's refusal to confirm proves only that they refused; the host may not compress it into a quoted shorthand such as 「店里不肯说」 and then speak a conclusion on the third party's behalf. Name the carried item after the observed boundary (`餐厅拒绝核对`), not the hoped-for fact (`她的会员号`). Promote the fact only when its owner, a visible document, or another valid source confirms it later.
+- **Observation → hypothesis → confirmation → derived question**: when the source supports only an inference, the host asks it as a hypothesis. The caller or material must confirm it before the host asks a question that presupposes it. Example: hard-to-book seat → “Are either of you a long-time member?” → caller admits membership → only then ask about earlier visits and spending power.
+- **No redundant interrogation**: once invariant dialogue has already named who booked, who ordered, what was bought, or who posted, the next host turn may not ask the same fact again. Ask the next unresolved edge: destination, payer, prior pattern, timing, or why it was withheld.
+- **No plot-scheduled withholding**: a caller may refuse only when the audience can hear the human cost of answering: shame, money, safety, status, or fear of being blamed. Do not use lines such as 「今晚还不想说」「先让我把账算完」「后面再讲」merely to save a known fact for a later scene. When directly asked about an object the caller knows, let them answer with their self-serving interpretation (for example, 「东西在我这儿，但我当时以为是他买来送我的」); a later beat should deepen the action or responsibility, not reveal the same ownership fact after an artificial delay.
+- **Complete action before reaction**: a social reaction needs its triggering action and subject in the same local chain. Do not drop 「照片是我发的」 as a floating answer. Say who posted, who did not, and only then what friends saw or said.
+- **One inferential step per turn**: a host turn asks one question. Do not bundle identity, ownership, motive, history, and affordability into one leap. If the answer creates a new premise, put the derived question in the next turn or fixed follow-up exchange.
+- **Responsibility question before judgement**: the key moral question must be spoken, not left for recap copy to imply. Once the bill buckets are visible, the host may state the narrow calculation and ask the caller which item in the caller-related bucket is actually unrelated to them. The caller must be allowed to dispute the premise, admit benefit without accepting another person's whole debt, or visibly refuse. Only after that exchange may the host separate shared spending, personal display, and unexplained money in `stageJudgement`.
+- **Branch independence**: fixed follow-ups and `sceneCloser` lines may use only invariant facts or facts established on every route. A branch answer cannot secretly become the premise of a later fixed question.
+- **Local-chain repair**: after changing one line, reread at least the two preceding and two following spoken turns, then update doubt/contradiction metadata, materials, adjacency anchors, and generated scripts. A clean sentence inside a broken five-turn chain is still a failed edit.
+
+For each factual host question, write a private five-column audit before shipping: `spoken premise | exact source | source proves | source does not prove | next legal question`. If the exact source cell is blank, move or rewrite the question. Concrete before/after shapes live in [spoken-corpus-patterns.md](references/spoken-corpus-patterns.md).
+
+### Micro-Logic Closure Contract (剧本小逻辑闭环合同)
+
+Treat each load-bearing choice as a typed state transition, not a good-sounding question. Every `questionOptions[]` item with `correct: true` must carry a `logicContract`:
+
+```json
+{
+  "premiseAnchor": "an exact phrase already spoken in this scene",
+  "sourceKind": "caller-statement | quoted-message | document-readout | audio-playback | host-calculation | confirmed-followup",
+  "sourceProves": "the narrow fact now available",
+  "sourceDoesNotProve": "the tempting conclusion still unavailable",
+  "answerAnchor": "an exact phrase in the normal answer",
+  "answerAdds": "the new fact or admitted boundary",
+  "nextLegalQuestion": "the furthest follow-up now licensed"
+}
+```
+
+- `premiseAnchor` must exist in invariant `beforeVersion + version + afterVersion`, never in a sibling option.
+- `answerAnchor` must exist in the answer. A refusal still adds a boundary: what the caller will not yet say.
+- `sourceProves` and `sourceDoesNotProve` must describe different scopes. If the latter is empty, the question is probably smuggling in a conclusion.
+- `nextLegalQuestion` is a ceiling, not mandatory dialogue. Any later fixed line that goes beyond it needs a new source or confirmation.
+- Any load-bearing `sceneCloser` also needs `closureContract: { entryAnchor, closerAnchor, adds, openEdge, routeIndependent: true }`. `entryAnchor` names the invariant thread or the caller's audible interruption; `closerAnchor` must occur in the fixed closer; `adds` states what changed; `openEdge` names the one question deliberately left alive. A closer that depends on a chosen answer cannot declare route independence.
+- Scan all spoken roles for camera terms, external body-language captions, balanced montage, and author taglines. Move genuine blocking to `role: stage`; convert knowable content to first-person action or direct quotation; delete the rest. Never replace a deleted narrator line with another summary line.
+- After a deletion, rebuild the five-turn window: two turns before, the changed turn, and two turns after. The window passes only when every question has a premise, every answer responds or visibly refuses, and the last turn leaves one identifiable open edge.
+
+Run the pack validator and generated micro-logic table. A missing contract, stale anchor, narration leak, or unsupported fixed follow-up blocks shipping.
 
 Voice fingerprint:
 - Plan 2-3 speech fingerprints per caller in the story packet and hold them for the whole call: a pet filler, a sentence-length habit, what they call the other party (and where that label shifts), and which topic makes them go short.
@@ -77,13 +157,13 @@ Doubt points are not invented; they are computed. Run this method between the pr
 
 ### The Truth Ledger with Numbers (真相账本)
 
-Before any dialogue, write the B story's full accounting — every amount, every date, every money path, every object's history — **including the parts that will never appear on screen**. The demo's best turn (五万缺口) only became findable when 八万 was decomposed into itemized spending; its second turn (每月 8 号还入) only existed because someone wrote the debt's repayment history that no scene had ever needed. The unstated ledger is where turns hide. A case whose B story is only prose has no turns to find.
+Before any dialogue, write the B story's full accounting — every amount, every date, every money path, every object's history — **including the parts that will never appear on screen**. The demo's best turn only became findable when 八万 was decomposed into three buckets: 不到三万的共同消费、约一万五的男方男装、至少三万五未说明; its second turn (每月 8 号还入) only existed because someone wrote the debt's repayment history that no scene had ever needed. The unstated ledger is where turns hide. A case whose B story is only prose has no turns to find.
 
 ### The Six Operations (六种运算)
 
 Run each operation over the case's own objects. Any operation whose output contradicts the A story is a candidate turn:
 
-1. 加总 — do the stated parts sum to the stated whole? (八万里可见消费不到三万)
+1. 加总 — do the stated parts sum to the stated whole, and have they been grouped by actual beneficiary? (八万里共同消费不到三万，男方男装约一万五，至少三万五仍未说明)
 2. 日期差 — subtract any two dates, but publish the quantity only when both endpoints exist in the same evidence ledger. Prefer the row dates themselves when the case date is not explicit. (工资停发早于贷款入账；供血停止早于开口)
 3. 往前翻 — every object has history pages: last month's bill, older chat logs, the schedule before this one. (往期账单上的交往前同款消费)
 4. 主语核对 — for each action, who actually performed it? (订座的会员号是她的；群里"要不要问流水"是她先发的)
@@ -95,7 +175,7 @@ Hidden-in-plain-sight rule (藏在明处守则): prefer operations the player co
 ### The Processing Chain (疑点 → 问题点 → 转折点)
 
 - 疑点 is the perceivable form of an unexecuted operation: the caller can report it without interpreting it (「他非要我当晚转，我就开始不踏实了」 is the perceivable form of a date subtraction nobody has done yet).
-- 问题点 is the one natural question that names the operation (「剩下那五万多，你问过是什么吗？」 names the 加总). Every 疑点 must own exactly one askable question — a 疑点 without its question is an unfired gun; a question without its 疑点 is unfair. Question points become key options; the answer either converts an A-piece or dodges visibly.
+- 问题点 is the one natural question that names the operation (「跟你们有关的不到三万，他自己的男装一万五左右，剩下那三万五你问过是什么吗？」 names the 分桶加总). Every 疑点 must own exactly one askable question — a 疑点 without its question is an unfired gun; a question without its 疑点 is unfair. Question points become key options; the answer either converts an A-piece or dodges visibly.
 - 转折点 is the operation executed on screen, and its output must change the case's **subject, nature, coverage, or timeline — never merely its weight**. The escalation test: if the player's verdict sentence survives with a bigger adjective (「他更渣了」), you wrote escalation; if the sentence's subject or predicate changes (「这不是消费债，是旧洞借恋爱叙事递账」), you wrote a turn.
 
 ### The Four Flip Axes and Two Closure Types
@@ -103,7 +183,7 @@ Hidden-in-plain-sight rule (藏在明处守则): prefer operations the player co
 A real turn flips one of four axes:
 - 主语翻转 — who benefited or initiated (分期的受益账号是她的)
 - 性质翻转 — what kind of case this is (消费债 → 旧洞包装)
-- 覆盖翻转 — the excuse covers less than claimed (延后通知只盖一条钱路；八万里只有三万可见)
+- 覆盖翻转 — the excuse covers less than claimed (延后通知只盖一条钱路；八万里共同消费不到三万，另有个人男装与未说明金额)
 - 时间线翻转 — the story started earlier than told (交往之前的同款消费)
 
 And closes in one of two ways:
@@ -115,7 +195,7 @@ And closes in one of two ways:
 - 疑点 land early and must split between hypotheses — some feed the false solution, or the case becomes a confirmation march (the polarity rule).
 - 问题点 occupy the mid-case key options.
 - 转折点 land after the midpoint, with all operation inputs pre-shown.
-- The ending is the question the turn opens but tonight cannot close. 留白必须有形状: "那五万多是什么" is dust; "每月 8 号那笔是谁的" is a blade — a shaped unknown names exactly what we now know we don't know.
+- The ending is the question the turn opens but tonight cannot close. 留白必须有形状: "他还有问题" is dust; "信用卡里至少三万五由哪些消费构成" and "每月 8 号的入账为什么在七月断了" are shaped unknowns — they name exactly what we now know we don't know, while keeping the two documents separate.
 
 ## Writing Workflow
 
@@ -190,6 +270,9 @@ Material board writing:
 - Good: "资料里有一张当日存款证明，余额停在 28.6 万；另一张收入截图只露出本月到账和公司抬头." The player then chooses whether the missing flow, sender, timestamp, or account edge matters.
 - A material board is strongest when every miss is genuinely suspicious but less load-bearing than the correct mark.
 - Every case needs at least one **实物-言语死锁**: a material-board detail must contradict, limit, or reframe a spoken claim so tightly that neither side can talk around it. Examples: a bill date that outlives the "I had no choice tonight" line, a missing payment page that breaks "approval passed", a private "next push" column that breaks "store template", or a group-chat top line that breaks "my mom asked". Do not let the host solve the case through oral questioning alone.
+- A prose-only `evidenceChecks` board does not satisfy 呈堂律/行派生律 by itself. Every case in a demo pack must also ship at least one interactive row-level `documents` entry (dated rows with `rowQuestions`/cross-row questions the player can mark) — the row IS the clue, not a paragraph describing what the row would say. Before closing a content pass, check `documents` presence per case id; a case with an `evidenceChecks` board but zero `documents` rows is under-built regardless of how many material boards it has.
+- Row-level documents are not limited to bank statements. For approvals, chats, medical records, booking logs, or process timelines, define explicit player-visible `columns` and use `dateMode: "relative"` when the source only establishes relative time. Do not invent an `MM-DD` date to satisfy a bank-statement schema. Preserve the source's own time language (`前一天 14:22`, `九天后`, `截至第二晚`) and validate each row against the established evidence.
+- An execution prompt's proposed dialogue is still draft material, even when it says “逐字使用”. Before inserting it, run the same adjacent-turn and human-speech checks as every other line. Rewrite author shorthand such as “旧洞 / 新洞 / 压的注 / 两条都要问” into a concrete question-and-answer exchange that names the visible dates and lets the caller agree to the next question.
 
 Runtime-length plan hygiene:
 - `runtimeLengthPlan` is not decorative metadata. When it exists, review must compare it against actual JSON counts: live beats, material boards, backflow items, truth-boundary prompts, and what the player does besides reading.
@@ -265,6 +348,30 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - Ask: did this sentence change who pushed the dramatic object into the call?
    - Ask: did this sentence make an earlier option or later conclusion incoherent?
    - If yes, update the whole affected chain, not just the sentence.
+
+### Adjacent-Turn Contract (逐话轮承接合同)
+
+整体因果成立，不代表电话听起来成立。字段拆分完成后，必须按运行时真实顺序再审一次相邻话轮，不得拿大纲解释句间跳跃。
+
+For every player-visible question and answer, record four concrete items in the pack's `dialogue-adjacency-review.json`:
+
+1. `contextAnchor`: the exact word, object, amount, action, or claim already present in invariant dialogue. It may come from the opening or an earlier fixed scene, but never from an optional sibling answer the player may not have heard.
+2. `questionAnchor`: the exact phrase in the host's question that picks up or deliberately resumes that context.
+3. `answerAnchor`: the exact phrase that answers the question, refuses it, corrects its premise, or visibly dodges it. `guardedAnswer` needs its own anchor because pressure can change the rendered answer.
+4. `relation`: one plain sentence explaining the cause-and-response link. Labels such as `承接上文`, `回应问题`, `自然过渡`, and `继续追问` do not count.
+
+Local rules:
+
+- After a life-noise aside, pause, playback, or stage direction, the next host line must name the thread it is resuming. The audience should not have to remember which JSON field came before the interruption.
+- Optional free questions can be chosen in any order. Each one must re-enter through invariant scene context and may not depend on another free answer.
+- A question may introduce a topic only by asking whether it exists. It may not quote a phrase, person, motive, or action that no invariant line has disclosed yet.
+- A caller answer can refuse, but it must refuse the asked thing. Changing subjects without a visible dodge line is missing dialogue, not characterization.
+- `sceneCloser` is rendered after every committed option. It must make sense after every possible answer and guarded answer; a closer may not assume the player selected the core route.
+- When an option carries both `answer` and authored `lines`, runtime displays `lines`. Treat `answer` as a shadow copy: update both in the same patch or remove the stale copy. A clean `answer` field does not count if the player still hears an older fact from `lines`.
+- A cross-scene jump must be labeled `continue`, `resumed-thread`, or `interrupt`. `resumed-thread` names the older unresolved thread in the spoken line. `interrupt` needs an in-scene event such as a new message, a person entering, or the call dropping.
+- Read the generated adjacency table vertically and aloud. If a relation needs author-only facts to sound plausible, rewrite the dialogue rather than expanding the note.
+
+Run `npm run content:adjacency-report` after dialogue changes. `npm run check` rejects stale reports, missing reviewed scenes, stale anchors, unreviewed guarded answers, and route-dependent closers in cases already marked as reviewed. The report does not claim to understand semantics; a human still approves each `relation`.
 
 Hard rule: a daily case is not assembled from interchangeable good-sounding lines. It is a small pressure system. Every question, answer, option, and recap must preserve the same pressure system.
 
@@ -414,7 +521,8 @@ For the main playable beat, use a linear call loop:
 - Offer 2-3 plausible host angles for that statement. None should be completely wrong; they differ by how close they get to the core issue.
 - The caller answer should reveal a new detail, a softened responsibility, or a pressure shift. It should not tell the player the lesson.
 - The player may choose exactly one angle per statement. After that answer, the route moves forward; do not allow sweeping the remaining options on the same node.
-- Each on-screen exchange should be at most two back-and-forth turns. If the text is long, collapse it to one host question and one caller answer.
+- Each display page carries at most one host question and one caller answer. Never pack two host questions into one turn just to move faster. If an opening needs relationship stage, trigger, and material source, add alternating turns and let each answer make the next question possible.
+- When one answer is too long for a page, split it across consecutive caller pages at a breath, self-correction, or detail shift. Do not shrink the scene or raise information density to satisfy pagination.
 - If every core node is hit, insert exactly one non-choice "深入一问" before the final "选一句往下追" moment. This question should surface the caller's own stake, cost, family pressure, money position, or hidden ask.
 - If the player misses one or more core nodes, skip the deep question and move to the final quote-pick after all statements have received one choice.
 - Avoid "上一句", "后来呢", and player-like transport controls in the main route. The flow should feel like a call progressing, not a menu being managed.
@@ -465,6 +573,7 @@ Opening:
   - **Caller openings must be conversational and progressive**: Instead of keyword-heavy statements like `“我们谈了半年，之前约会一直挺体面。前几天他突然说信用卡要周转...”` (abrupt and robotic), write it with natural spoken transitions: `“我们谈了半年多，平时约会消费什么的都挺体面的，我也没觉得有什么问题。结果前几天他突然跟我说信用卡需要周转，想让我先帮他顶一下。”` (colloquial, natural pace).
   - **Host transitions must be warm and inquiry-based**: Instead of abrupt commands like `“先说第一次提钱，他原话怎么讲？”` (sounds like an interrogator), write it as an empathetic inquiry: `“晚上好。我想问一下，他提钱的时候，原话是怎么讲的？”` (natural hosting transition).
   - Avoid any Host or Caller lines that sound like system placeholders or prompt labels.
+  - **Pack-level opening variance**: a story pack must not let its opening first caller line collapse into one shared template with only the topic noun swapped (「主播你好，我想问一段...的事」×4). Vary the entry energy per caller: one blurts the number before the greeting, one apologizes for calling this late, one has clearly rehearsed a neutral line, one gets interrupted by the host before finishing a sentence. Read all four openings back to back before shipping — if you can predict word six of case 3's opening from case 1's template, rewrite it.
 - Do not pack relationship source, relationship stage, family reaction, suspicious material, and caller doubt into the first caller line. Split them into beats:
   - caller: call reason only
   - host: how did you meet / where has it progressed
@@ -713,7 +822,7 @@ The host is a person (design: `docs/host-character-design.md`):
 
 #### 6. 主播狼狈配额
 
-每晚(整包)≥2 次主播的小事故:念错日期被导播纠正、把广告弹幕当提问念出来、打翻水。主播的权威从"不会错"改为"错了就当场认"。
+每晚(整包)≥2 次主播的小事故：念错日期后自己看回材料并改口、把广告弹幕当提问念出来、打翻水。主播的权威从“不会错”改为“错了就当场认”。当前节目是个人直播，不得用导播、耳返或控制室工作人员替他纠错。
 
 #### 7. 情商地板律
 
@@ -740,6 +849,7 @@ The host is a person (design: `docs/host-character-design.md`):
 - **噪声弧线律**:不流畅必须有分布设计并随 `voiceTics` 注明弧线(例:沈=夜 A 密、夜 B 干净;陈=全程密、最后一句干净)。均匀撒噪声视同未做。
 - **补救物即人物律**:廉价补救必须出自对方的职业或人格域——补救物是人物测验(理发师=券,材料型相亲对象=新开的存款证明,老油条同事=群红包)。
 - **自纠方向条款**:口误自纠的方向也是指纹——沈:说错改对;林(审计):模糊改精确(「百分之三十几……不对,三十七」)。
+- **呼吸差异律**:省略号/停顿(……)不是全员通用的呼吸方式——配额机械执行后最容易长出的新齐整感,就是每个角色都在用同一个符号换气。每案至少安排一位角色几乎不停顿、语速直给(常见于职业角色:财务经办/仓库管理员/前台/顾问),用密不透风的短句或专业术语的连续性反衬其他角色的停顿;停顿本身也要分快慢——惊慌的停顿短而破碎,盘算的停顿长而完整,不能所有停顿都是同一个长度、同一种情绪。
 
 ### 主题松绑(两轴共用)
 
@@ -766,7 +876,7 @@ Design source: `docs/multi-scene-rashomon-design.md`. The show is titled for the
 - Every day location still obeys bring-back law: `earnedItemId` must unlock a distinct `callbackOpeners` line the player could not have gotten from the console alone.
 - Keep the interlude short and the city day long: when both surfaces exist, spend interlude budget on one or two console-scale actions and put walking, observing, doorstep refusals, and document visits in `dayScenes`.
 - With `overnightStructure`, write night-B openings only in `overnightStructure.callbackOpeners`. Any interlude result intended to change that opening must be copied into `earnedItems` by the same id or an explicit inventory map; never leave a player-facing "carried" item outside the opener pool.
-- Every night-B `callbackOpeners` entry must carry `firstConflict.hostLine` and `firstConflict.callerLine`. The earned item changes the first confrontation, not only the greeting: two different carried items may not collapse into the same host question with nouns swapped.
+- Every night-B `callbackOpeners` entry must carry either `firstConflict.hostLine + callerLine` or an alternating `firstConflict.lines` sequence containing both roles. Use `lines` when a material needs several short questions; each host turn still asks one thing. The earned item changes the first confrontation, not only the greeting: two different carried items may not collapse into the same host question with nouns swapped.
 - Do not write parallel hangup or opener prose for `nightStructure` and `overnightStructure`. Align the hangup seam and maintain one callback-opening source of truth.
 - When the interlude continues into a daytime map, `continueLabel` must say that the player is entering daytime investigation, never imply an immediate callback. Keep the duplicated hangup seam byte-for-byte aligned: `nightStructure.hangup.stageDirection === overnightStructure.hangupLine` and `nightStructure.hangup.hostLine === overnightStructure.hostHoldLine`.
 - Give at least one off-console scene per case a consequential `choice`: different branches grant different information state, route state, or `grantsEarnedItemId`; cosmetic branch labels do not satisfy the scene.
@@ -778,7 +888,16 @@ Design source: `docs/multi-scene-rashomon-design.md`. The show is titled for the
 - **回访律**:结案不等于人物结束。尾声必须让每案传回一条非案件信息(未读),内容只许生活与关系,不许携带新事实、新证据、新指认。
 - **关怀动词律**:玩家每案至少一个非侦探动词(最后一句三选),不判分,但必须有回声——未读措辞随选择变化。没有回声的关怀选项视同装饰,不许写。
 - **破例即温情条款**:声纹破例是最强温情载体,每包 ≤1 次,破例者须是全包声纹最窄的角色;破例后立刻回归原声纹。
-- **活性尾巴律**:钩子=再来动因+信物+兑现形态,三件齐才算;只进未决清单的不算钩子。每包 ≥3 根活性尾巴 + 1 根主线尾巴(案卷级)。尾巴只约定形态(专场/再谈/再打),不约定未设计的答案;不许为悬念透支未来案件的真相。
+- **活性尾巴律**:钩子=再来动因+信物+兑现形态,三件齐才算;只进未决清单的不算钩子。每包 ≥3 根活性尾巴 + 1 根主线尾巴（文件袋级）。尾巴只约定形态(专场/再谈/再打),不约定未设计的答案;不许为悬念透支未来案件的真相。
+
+## 结构性冲击与个人选择
+
+- 信托兑付、房屋停工、保健品机构卷款等公共事件可以串联多案，但先在个案里留下可见种子，再由职业见闻加固，最后才用新闻或公告回收。不得让新闻按作者日程自动到场；玩家至少执行一次“听 / 看 / 读”的动作。
+- 机构的违法、误导或违约责任，与当事人的借款、加杠杆和追求超额收益必须分开写。人物的贪念不用主播贴“贪婪”标签，而用他实际借了多少、期待多少收益、拒绝一般回报的原话和押注动作让玩家自己判断。
+- 禁止写成“因为他贪，所以被骗活该”。合格结案要同时保留两句意思：借钱追高收益是他的决定；机构若误导或违约，责任仍归机构。后来的公开危机不能把旧案每一笔损失自动坐实，也不能替他的借款决定免责。
+- 同一个公共事件进入不同案件时，只能充当共同压力源，不能复制同一条因果链。烂尾房要有购房合同、交付节点和家庭决定；保健品卷款要有付款、承诺、老人现金缺口与婚事冲突；缺少各自材料链时只登记未来承诺，不写进现有正文。
+- 跨案伏笔也要逐句过小逻辑合同。每条种子流水都要有本行追问，登记 `sourceRows / sourceProves / sourceDoesNotProve / answerAnchor / answerAdds / nextLegalQuestion`；跨行问题必须先说清“相邻不等于同一笔”，再允许人物补充自己亲耳听过的原话。
+- 带回物只重开一个时间块。若玩家带回三月借款与信托认购，第二夜就按“借款有没有提过 -> 两笔认购什么时候看到 -> 机构和收益期待是否听过”分成短问答；不得顺便在同一句重念五月、六月、七月和其他账户。
 
 ## Theatrical License (戏剧性特许)
 

@@ -8,10 +8,11 @@ const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html"
 const routes = [
   { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-rotation" }, dayChoiceText: { "day-restaurant": "位置难订是真的" }, opener: "常客的轮订规律", openerText: "他只说提前订了", callerQuestion: "not-your-debt", callerQuestionHost: "soothe" },
   { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "六月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
-  { name: "restaurant-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, dayChoiceText: { "day-restaurant": "会员号不能给" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "会员号在你手上", callerQuestion: "dont-answer-for-her" },
+  { name: "document-trust-rows", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r13", "r14", "r15"], opener: "流水圈注", openerText: "这二十万，他以前跟你提过吗", callerQuestion: "dont-answer-for-her" },
+  { name: "restaurant-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, dayChoiceText: { "day-restaurant": "不能替客人作证" }, documentRows: ["r08", "r11"], opener: "餐厅拒绝核对", openerText: "那晚的座是你订的", callerQuestion: "dont-answer-for-her" },
   { name: "material-miss-accounting-restaurant", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "六月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
   { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "六月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
-  { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, documentRows: ["r08", "r11"], opener: "她的会员号", openerText: "会员号在你手上", callerQuestion: "dont-answer-for-her" }
+  { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, documentRows: ["r08", "r11"], opener: "餐厅拒绝核对", openerText: "那晚的座是你订的", callerQuestion: "dont-answer-for-her" }
 ];
 const smokeTarget = process.env.SMOKE_TARGET ?? "all";
 
@@ -136,10 +137,11 @@ async function runRoute(route) {
       if (pointerEvents !== "none") throw new Error("pixel transition must never block player input");
     }
     if (await page.locator("[data-enter-first-case]").count()) {
-      await assertVisibleText(page, "先听完，账和话一件件对。", "night shell prologue should establish the host and show premise");
+      await drainDialogue(page, route);
+      await assertVisibleText(page, "开播了哈，今天继续连麦。", "night shell prologue should sound like a returning personal streamer");
       await assertNoPageText(page, "试玩已收麦", "night shell prologue must not display the story-pack completion HUD");
-      if (await page.locator(".night-shell-line.shell-notice, .night-shell-line.shell-message, .night-shell-line.shell-countdown, .night-shell-line.shell-host").count() !== 4) {
-        throw new Error("night shell prologue should distinguish notice, message, countdown, and host opening");
+      if (await page.locator(".night-shell-line.shell-notice, .night-shell-line.shell-message, .night-shell-line.shell-stage, .night-shell-line.shell-host").count() !== 4) {
+        throw new Error("night shell prologue should distinguish work notice, personal message, solo go-live action, and host opening");
       }
       await activate(page, route, "[data-enter-first-case]");
     }
@@ -168,7 +170,7 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-enter-post-live]").count()) {
-        await assertVisibleText(page, "电话断了。后台那张流水还亮着", "overnight route should show the authored hangup line before the show ends");
+        await assertVisibleText(page, "电话断了。后台那张信用卡账单还亮着，至少三万五没有说明", "overnight route should show the authored three-bucket hangup line before the show ends");
         await assertNoPageText(page, "账单、到期日、她要垫多少", "Zhao's private call must not happen while the show is still live");
         await activate(page, route, "[data-enter-post-live]");
         continue;
@@ -196,7 +198,10 @@ async function runRoute(route) {
         if (route.dayScenes.length === 0) {
           await assertVisibleText(page, "我想了一晚上，还是得把话说完——你接着问吧。", "zero-location route should use fallback opener");
         }
-        if (route.openerText) await assertVisibleText(page, route.openerText, `${route.name} should render the selected opener and its first conflict`);
+        const openerTranscript = await drainDialogue(page, route);
+        if (route.openerText && !openerTranscript.includes(route.openerText)) {
+          throw new Error(`${route.name} should render the selected opener and its first conflict`);
+        }
         await activate(page, route, "[data-enter-overnight-night2]");
         continue;
       }
@@ -218,9 +223,15 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-continue-live-counter]").count()) {
+        const liveCounterTranscript = await drainDialogue(page, route);
         if (route.name === "accounting-restaurant") {
-          await assertVisibleText(page, "他在听。", "night-B counter-pressure should interrupt between two live scenes");
-          await assertVisibleText(page, "让他听。", "the host must answer the relayed counter-pressure without putting the other party on mic");
+          if (!liveCounterTranscript.includes("他在听。")) {
+            throw new Error("night-B counter-pressure should interrupt between two live scenes");
+          }
+          const hostReply = page.locator("[data-dialogue-advance]:visible .avg-page-line.speaker-host .avg-line").first();
+          if (!await hostReply.isVisible().catch(() => false) || !(await hostReply.textContent())?.trim()) {
+            throw new Error("the host must answer the relayed counter-pressure without putting the other party on mic");
+          }
         }
         await activate(page, route, "[data-continue-live-counter]");
         continue;
@@ -274,15 +285,18 @@ async function runRoute(route) {
         : "";
       await activate(page, route, "[data-scene-question]", questionIndex);
       if (directionLabel && !directionChoiceChecked) {
-        const expectedSpokenQuestion = {
-          "八万里的五万缺口": "剩下那五万多，你问过他是什么吗？",
-          "账单日期和交往时间": "这些账单上的日子，你们当时在一起吗？"
-        }[directionLabel];
-        if (expectedSpokenQuestion) await assertVisibleText(page, expectedSpokenQuestion, "direction choice should turn into Lin Xuyang's authored spoken question");
+        const spokenQuestion = page.locator("[data-dialogue-advance]:visible .avg-page-line.speaker-host .avg-line").first();
+        await spokenQuestion.waitFor({ state: "visible" });
+        await page.locator("[data-dialogue-advance]:visible").first().evaluate((element) => element.click());
+        const spokenText = (await spokenQuestion.textContent())?.trim() ?? "";
+        if (!spokenText || spokenText === directionLabel || !/[？?]$/.test(spokenText)) {
+          throw new Error("direction choice should turn into Lin Xuyang's authored spoken question");
+        }
         await assertNoPageText(page, `林旭阳\n${directionLabel}`, "direction label must not replace the protagonist's spoken line");
         directionChoiceChecked = true;
       }
-      await advanceSceneBeat(page, route);
+      await drainDialogue(page, route);
+      continue;
     }
 
     await page.locator("[data-evidence-check]").first().waitFor({ state: "visible" });
@@ -366,7 +380,7 @@ async function runCase3DayRoutes() {
       { id: "day-profile-teahouse", text: "两段聊天都调出来" }
     ],
     opener: "双份材料圈注",
-    openerText: "‘学历好、收入稳’……纸上没有这整句",
+    openerText: "哪张纸上都没有",
     reactionText: "她拍我家的群。给一个直播间。",
     reactionChoice: "push-back",
     reactionResponse: "……行。播完的。"
@@ -380,16 +394,22 @@ async function runCase4AdvisorConflict() {
     interludeAction: "zhao-zhou-work",
     interludeChoice: "work-frame-lin",
     interludeText: "赵律师站在控制室门口",
+    expectedDaySceneCount: 4,
     dayScenes: [
-      { id: "day-work-finance-window", text: "核付款，报回单号" },
-      { id: "day-work-breakroom-observe", text: "这三页我给你并着看" }
+      {
+        id: "day-work-payment-ledger",
+        text: "报销与返款流转记录",
+        rows: ["q01", "q02", "q04"],
+        questionText: "公开流程和这条私聊只隔十七分钟"
+      },
+      { id: "day-work-finance-window", text: "真付了，就让他们报回单号" }
     ],
-    opener: "小林主责框架",
-    openerText: "位置，是我想要的",
-    conflictText: "你认‘我来扛’",
-    reactionText: "我蠢得可有规律了",
+    opener: "报销流转记录圈注",
+    openerText: "财务通知是九天以后",
+    conflictText: "财务那时还没说延后",
+    reactionText: "弹幕里有人说我蠢。我看见了。",
     reactionChoice: "silence",
-    reactionResponse: "没蠢过的举手",
+    reactionResponse: "行，继续。",
     nextCounterText: "陈垫的钱月底统一走"
   });
 }
@@ -554,25 +574,41 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     if (await page.locator("[data-enter-overnight-callback]").count()) throw new Error(`${name} must require two daytime locations`);
     for (const [index, scene] of dayScenes.entries()) {
       await click(page, `[data-day-scene="${scene.id}"]`);
+      const dayEntryTranscript = await drainDialogue(page, {});
       await assertNoPageText(page, "ON AIR", `${scene.id} must stay off air`);
-      await assertVisibleText(page, scene.text, `${scene.id} must render its own location material`);
+      if (!dayEntryTranscript.includes(scene.text)) {
+        await assertVisibleText(page, scene.text, `${scene.id} must render its own location material`);
+      }
       for (const rowId of scene.rows ?? []) await click(page, `[data-document-row="${rowId}"]`);
+      if (scene.questionText) await assertVisibleText(page, scene.questionText, `${scene.id} must unlock its cross-row question after marking the required rows`);
       if (await page.locator("[data-day-choice]").count()) await click(page, scene.choice ? `[data-day-choice="${scene.choice}"]` : "[data-day-choice]");
-      if (scene.choiceText) await assertVisibleText(page, scene.choiceText, `${scene.id} must reveal only the selected branch result`);
+      const daySceneTranscript = await drainDialogue(page, {});
+      if (scene.choiceText && !daySceneTranscript.includes(scene.choiceText)) {
+        throw new Error(`${scene.id} must reveal only the selected branch result`);
+      }
       await click(page, "[data-complete-day-scene]");
       if (index === 0 && await page.locator("[data-enter-overnight-callback]").count()) throw new Error(`${name} unlocked callback after only one location`);
     }
     await click(page, "[data-enter-overnight-callback]");
     await click(page, `[data-overnight-opener="${opener}"]`);
-    await assertVisibleText(page, openerText, `${name} must use the selected daytime item in the second-night opener`);
-    if (conflictText) await assertVisibleText(page, conflictText, `${name} must render the selected item's first night-B confrontation`);
+    let callbackTranscript = await drainDialogue(page, {});
+    for (const selector of ["[data-enter-overnight-night2]", "[data-enter-overnight-night2-direct]"]) {
+      if (!await page.locator(selector).count()) continue;
+      await click(page, selector);
+      callbackTranscript += `\n${await drainDialogue(page, {})}`;
+      break;
+    }
+    if (!callbackTranscript.includes(openerText)) throw new Error(`${name} must use the selected daytime item in the second-night opener`);
+    if (conflictText && !callbackTranscript.includes(conflictText)) throw new Error(`${name} must render the selected item's first night-B confrontation`);
     if (reactionText) {
       await advanceToReactionBeat(page, reactionText, name);
       await click(page, `[data-live-counter-choice="${reactionChoice}"]`);
-      await assertVisibleText(page, reactionResponse, `${name} must render the selected humanization response`);
+      const reactionTranscript = await drainDialogue(page, {});
+      if (!reactionTranscript.includes(reactionResponse)) throw new Error(`${name} must render the selected humanization response`);
       if (nextCounterText) {
         await click(page, "[data-continue-live-counter]");
-        await assertVisibleText(page, nextCounterText, `${name} must queue the next scene-tail counter beat instead of skipping it`);
+        const nextCounterTranscript = await drainDialogue(page, {});
+        if (!nextCounterTranscript.includes(nextCounterText)) throw new Error(`${name} must queue the next scene-tail counter beat instead of skipping it`);
       }
     }
     await assertNoPageText(page, "undefined", `${name} rendered undefined text`);
@@ -588,8 +624,10 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
 }
 
 async function advanceToReactionBeat(page, expectedText, name) {
+  let transcript = "";
   for (let step = 0; step < 48; step += 1) {
-    if (await page.getByText(expectedText, { exact: false }).count()) return;
+    transcript += `\n${await drainDialogue(page, {})}`;
+    if (transcript.includes(expectedText)) return;
     for (const selector of [
       "[data-enter-overnight-night2]",
       "[data-enter-overnight-night2-direct]",
@@ -623,6 +661,7 @@ async function completeOvernightDay(page, route) {
   }
   for (const sceneId of route.dayScenes) {
     await activate(page, route, `[data-day-scene="${sceneId}"]`);
+    await drainDialogue(page, route);
     await assertNoPageText(page, "ON AIR", `${sceneId} must hide ON AIR`);
     await assertNoPageText(page, "听众耐心", `${sceneId} must hide patience HUD`);
     if (sceneId === "day-accounting") {
@@ -642,15 +681,22 @@ async function completeOvernightDay(page, route) {
       for (const rowId of route.documentRows ?? ["r08", "r11"]) {
         await activate(page, route, `[data-document-row="${rowId}"]`);
       }
-      await assertVisibleText(page, "七月五日五万进，七月十九日四万九千八出——这算周转吗？", "document route should unlock the r08/r11 cross question");
+      const crossQuestion = (route.documentRows ?? []).includes("r13")
+        ? "流水没写后面转出的就是那二十万"
+        : "七月五日五万进，七月十九日四万九千八出——这算周转吗？";
+      await assertVisibleText(page, crossQuestion, "document route should unlock the cross question for the selected rows");
     }
     if (await page.locator("[data-day-choice]").count()) {
       await assertVisibleText(page, "现场判断 · 选后锁定", "day choices must disclose their lock before activation");
       const choiceId = route.dayChoices?.[sceneId];
-      await activate(page, route, choiceId ? `[data-day-choice="${choiceId}"]` : "[data-day-choice]");
-      if (route.dayChoiceText?.[sceneId]) {
-        await assertVisibleText(page, route.dayChoiceText[sceneId], `${sceneId} must reveal only the selected branch result`);
-      }
+      const choiceSelector = choiceId ? `[data-day-choice="${choiceId}"]` : "[data-day-choice]";
+      const choiceButton = page.locator(choiceSelector).first();
+      const selectedLabel = await choiceButton.locator(".choice-text").count()
+        ? (await choiceButton.locator(".choice-text").innerText()).trim()
+        : (await choiceButton.innerText()).split("\n")[0].trim();
+      await activate(page, route, choiceSelector);
+      await drainDialogue(page, route);
+      await assertVisibleText(page, selectedLabel, `${sceneId} must reveal the selected branch result`);
     }
     await activate(page, route, "[data-complete-day-scene]");
   }
@@ -685,7 +731,11 @@ async function runCaseTransition() {
     await assertVisibleText(page, "今晚能确认", "closure should distinguish confirmed facts from a raw evidence pile");
     await assertVisibleText(page, "今晚不替人定", "closure should preserve unresolved facts");
     await click(page, "[data-enter-story-interlude]");
-    await assertVisibleText(page, "广告间隙", "closure should move into a short program interlude");
+    await page.getByText("第一案 · 小尾声").first().waitFor({ state: "visible" }).catch(async () => {
+      throw new Error(`first case tail did not render after closure:\n${await page.locator("body").innerText()}`);
+    });
+    await assertVisibleText(page, "第一案 · 小尾声", "closure should move into the first case's lived epilogue");
+    await assertVisibleText(page, "我们俩大概一开始就看不上对方", "first case epilogue should establish Lin and Zhao as a couple through dialogue");
     if (await page.locator(".pixel-transition-signal-disconnect").count() !== 1) throw new Error("program interlude should use one short disconnect signal transition");
     await click(page, "[data-enter-next-case]");
     await assertVisibleText(page, "试玩连线 · 第 02 案", "second case must open on a numbered title card");
@@ -702,6 +752,44 @@ async function runCaseTransition() {
     await click(page, "[data-enter-case-live]");
     await drainDialogue(page, {});
     await page.locator('[data-scene="sceneReview"]').waitFor({ state: "visible" });
+
+    await page.evaluate(() => {
+      const key = "livestream-detective-save-v1";
+      const save = JSON.parse(window.localStorage.getItem(key) ?? "{}");
+      save.chapter = 2;
+      save.caseBrief = save.caseBriefs?.[1] ?? null;
+      save.scene = "caseClosure";
+      save.storyWorldEchoes = {};
+      window.localStorage.setItem(key, JSON.stringify(save));
+    });
+    await page.reload();
+    await click(page, "[data-enter-story-interlude]");
+    await assertVisibleText(page, "第二案 · 小尾声", "second case must close before the delayed world echo");
+    if (await page.getByText("宸直信托旗下两款产品暂停兑付").count()) throw new Error("world echo must not appear before player action");
+    await assertVisibleText(page, "把午间新闻听完", "world echo must be offered as a player action");
+    await click(page, "[data-reveal-world-echo]");
+    await assertVisibleText(page, "宸直信托旗下两款产品暂停兑付", "world echo must pay off the case-one trust seed after case two");
+    await assertVisibleText(page, "具体兑付方案还没有公布", "world echo must preserve the unresolved recovery boundary");
+    await click(page, "[data-enter-next-case]");
+    await assertVisibleText(page, "试玩连线 · 第 03 案", "world echo must return to the normal case transition");
+
+    await page.evaluate(() => {
+      const key = "livestream-detective-save-v1";
+      const save = JSON.parse(window.localStorage.getItem(key) ?? "{}");
+      save.chapter = 4;
+      save.caseBrief = save.caseBriefs?.[3] ?? null;
+      save.scene = "caseClosure";
+      window.localStorage.setItem(key, JSON.stringify(save));
+    });
+    await page.reload();
+    await assertVisibleText(page, "案件结案", "final case must still enter its dedicated closure page");
+    await click(page, "[data-enter-story-interlude]");
+    await page.getByText("第四案 · 小尾声").first().waitFor({ state: "visible" });
+    await assertVisibleText(page, "第四案 · 小尾声", "final case must have its own lived epilogue");
+    await assertVisibleText(page, "第四案完", "final case tail must close before the whole-night epilogue");
+    if (await page.getByText("下一通 · 材料先到").count()) throw new Error("final case tail must not show a nonexistent next case");
+    await click(page, "[data-enter-night-epilogue]");
+    await assertVisibleText(page, "直播中", "whole-night epilogue should begin only after the fourth case tail");
   } finally {
     await context.close();
   }
@@ -773,14 +861,22 @@ async function advanceToAccusation(page, route) {
       if (!await third.isEnabled()) throw new Error("Zhao's proactive call should keep the non-directive answer available on every route");
       await activate(page, route, `[data-caller-question="${route.callerQuestion}"]`);
       if (route.callerQuestion === "dont-answer-for-her") {
-        await assertVisibleText(page, "说完，我自己选。", "process-control answer should return the choice to the caller");
+        const callerQuestionTranscript = await drainDialogue(page, route);
+        if (!callerQuestionTranscript.includes("先问他三月为什么借了二十万") || !callerQuestionTranscript.includes("我先不转")) {
+          throw new Error("process-control answer should stop the transfer and return the trust-loan question to the respondent");
+        }
       }
       continue;
     }
     if (await page.locator("[data-caller-question-host]").count()) {
       const hostChoice = route.callerQuestionHost ?? "soothe";
       await activate(page, route, `[data-caller-question-host="${hostChoice}"]`);
-      if (hostChoice === "soothe") await assertVisibleText(page, "水在手边放凉一晚上了", "humanization branch must render the chosen emotional-labor response");
+      if (hostChoice === "soothe") {
+        const hostChoiceTranscript = await drainDialogue(page, route);
+        if (!hostChoiceTranscript.includes("水在手边放凉一晚上了")) {
+          throw new Error("humanization branch must render the chosen emotional-labor response");
+        }
+      }
       continue;
     }
     if (await page.locator("[data-after-caller-question]").count()) {
@@ -851,16 +947,12 @@ async function exerciseTruthBoundary(page, route) {
   if (finalBody.includes("灯是我真心买的")) {
     assertTextOrder(finalBody, [
       "收麦后，对方给后台留了一段文字，说不上麦。",
-      "失业是真的，账单也是真的。",
+      "三月那二十万是我从澄川借的",
       "灯是我真心买的"
     ], "麦外来信 should show respondent note before lurker");
   }
   await page.locator(".truth-boundary-reveal").waitFor({ state: "visible" });
   await assertVisibleText(page, "归到了", "Truth boundary reveal should show where an early placement landed");
-}
-
-async function advanceSceneBeat(page, route) {
-  await activate(page, route, "[data-next-scene-stage], button[data-scene]");
 }
 
 async function activate(page, route, selector, index = 0) {
@@ -877,13 +969,19 @@ async function activate(page, route, selector, index = 0) {
 }
 
 async function drainDialogue(page, route) {
+  const shownText = new Set();
   for (let line = 0; line < 80; line += 1) {
     const box = page.locator("[data-dialogue-advance]:not([data-dialogue-done]):visible").first();
-    if (!await box.count()) return;
+    if (!await box.count()) return [...shownText].join("\n");
+    await assertDialoguePageDensity(box);
+    const currentPageText = (await box.locator(".avg-line").allTextContents()).join("\n").trim();
+    if (currentPageText) shownText.add(currentPageText);
     if (route.inputMode === "keyboard") await page.keyboard.press("Enter");
     else if (route.inputMode === "gamepad") await gamepadPress(page, 0);
     else await box.evaluate((element) => element.click());
     await page.waitForTimeout(20);
+    const pageText = (await box.locator(".avg-line").allTextContents()).join("\n").trim();
+    if (pageText) shownText.add(pageText);
   }
   throw new Error("per-line dialogue did not finish within 80 advances");
 }
@@ -891,14 +989,29 @@ async function drainDialogue(page, route) {
 async function assertDialoguePresentation(page) {
   const box = page.locator("[data-dialogue-advance]");
   await box.waitFor({ state: "visible" });
-  const before = await box.locator(".avg-line").textContent();
+  await assertDialoguePageDensity(box);
+  const before = await box.locator(".avg-line").first().textContent();
   await box.click();
-  const completed = await box.locator(".avg-line").textContent();
+  const completed = await box.locator(".avg-line").first().textContent();
   if ((completed?.length ?? 0) < (before?.length ?? 0)) throw new Error("typing click must complete the current sentence");
   if (!await box.locator(".avg-continue").isVisible()) throw new Error("completed sentence must show continue indicator");
   await page.locator("[data-record-open]").click();
   await page.locator(".court-record:not([hidden])").waitFor({ state: "visible" });
   await page.locator("[data-record-close]").click();
+}
+
+async function assertDialoguePageDensity(box) {
+  const lines = box.locator(".avg-page-line");
+  const count = await lines.count();
+  if (count < 1 || count > 2) {
+    throw new Error(`dialogue page must contain one turn or one question-answer pair, got ${count}`);
+  }
+  if (count === 2) {
+    const roles = await lines.evaluateAll((items) => items.map((item) => (
+      item.classList.contains("speaker-host") ? "host" : "caller"
+    )));
+    if (roles[0] === roles[1]) throw new Error("two-line dialogue page must contain two different speakers");
+  }
 }
 
 async function click(page, selector, index = 0) {
@@ -1016,9 +1129,11 @@ async function moveFocusTo(page, selector, index = 0, moveNext, label) {
 }
 
 async function assertVisibleText(page, text, message) {
-  if (!await page.getByText(text).first().isVisible().catch(() => false)) {
-    throw new Error(message);
+  const matches = page.getByText(text);
+  for (let index = 0; index < await matches.count(); index += 1) {
+    if (await matches.nth(index).isVisible().catch(() => false)) return;
   }
+  throw new Error(message);
 }
 
 async function assertNoPageText(page, text, message) {
