@@ -71,7 +71,7 @@ function assertSingleQuestionTurns(value, label) {
   if (!value || typeof value !== "object") return;
   Object.entries(value).forEach(([key, child]) => {
     const childLabel = `${label}.${key}`;
-    if (["question", "hostLine", "prompt"].includes(key)) assertSingleQuestionTurn(child, childLabel);
+    if (["question", "hostLine", "prompt", "entryQuestion"].includes(key)) assertSingleQuestionTurn(child, childLabel);
     assertSingleQuestionTurns(child, childLabel);
   });
 }
@@ -116,6 +116,7 @@ const SPOKEN_NARRATOR_LEAK = /我看窗外[，,；; ]*他看酒|现在那两个�
 function sceneInvariantText(scene = {}) {
   return [
     ...(scene.beforeVersion?.lines ?? []).filter((line) => line?.role !== "stage" && line?.role !== "pause").map((line) => line.text),
+    scene.entryQuestion,
     scene.version,
     ...(scene.afterVersion?.lines ?? []).filter((line) => line?.role !== "stage" && line?.role !== "pause").map((line) => line.text)
   ].filter(Boolean).join("\n");
@@ -179,6 +180,7 @@ function spokenSurfaceEntries(packet = {}) {
   (packet.openingDialogue ?? []).forEach((line, index) => add(`openingDialogue[${index}]`, line.text));
   (packet.sceneVersions ?? []).forEach((scene, sceneIndex) => {
     const base = `sceneVersions[${sceneIndex}]`;
+    add(`${base}.entryQuestion`, scene.entryQuestion);
     add(`${base}.version`, scene.version);
     add(`${base}.revisedVersion`, scene.revisedVersion);
     addLines(`${base}.beforeVersion.lines`, scene.beforeVersion?.lines);
@@ -595,7 +597,7 @@ function assertOvernightStructure(packet = {}, label = "") {
   if (structure === undefined) return;
   assert(structure && typeof structure === "object" && !Array.isArray(structure), `${label} overnightStructure 必须是对象`);
   assertNonEmptyString(structure.hangupAnchor, `${label} overnightStructure.hangupAnchor 不能为空`);
-  const anchorIndex = (packet.sceneVersions ?? []).findIndex((scene) => String(scene?.version ?? "").includes(structure.hangupAnchor));
+  const anchorIndex = (packet.sceneVersions ?? []).findIndex((scene) => collectTextFrom(scene).includes(structure.hangupAnchor));
   assert(anchorIndex >= 0, `${label} overnightStructure.hangupAnchor 未命中任何 sceneVersions`);
   assertNonEmptyString(structure.hangupLine, `${label} overnightStructure.hangupLine 不能为空`);
   if (structure.postHangupContact !== undefined) {
@@ -1213,6 +1215,9 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       const evidenceCheckIds = new Set((casePacket.evidenceChecks ?? []).map((check) => check.id).filter(Boolean));
       casePacket.sceneVersions.forEach((scene, sceneIndex) => {
         assertNonEmptyString(scene.speakerId, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 speakerId`);
+        const hasAuthoredLead = typeof scene.entryQuestion === "string" && scene.entryQuestion.trim().length > 0;
+        const hasHostLead = (scene.beforeVersion?.lines ?? []).some((line) => line?.role === "host");
+        assert(hasAuthoredLead || hasHostLead, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少自然入场问句，正文不能以孤立独白开页`);
         assertNonEmptyString(scene.version, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 version`);
         assertNonEmptyString(scene.helperHint, `${casePacket.caseId} sceneVersions[${sceneIndex}] 缺少 helperHint，V哥必须能在每段被主动求助`);
         assert(!/(正确答案|答案是|选第|路线轴|money-flow|document-edge|process-control)/i.test(scene.helperHint), `${casePacket.caseId} sceneVersions[${sceneIndex}].helperHint 不能点答案或后台路线`);
@@ -1611,6 +1616,48 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(trustCrossQuestion.answer.includes(trustCrossQuestion.logicContract?.answerAnchor), "信托跨行追问回答必须守住资金同一性边界");
   assert(caseOne.respondentNote?.text?.includes("从澄川借的") && caseOne.respondentNote?.text?.includes("买了宸直的产品"), "流水只给相邻关系后，必须由当事人补足资金用途的第二来源");
   assert(caseOne.respondentNote?.text?.includes("能翻倍"), "超额收益动机必须通过当事人原话落地");
+
+  const trustPromise = (manifest.crossCasePromises ?? []).find((promise) => promise.id === "chenzhi-trust-payment-crisis");
+  assertEqual(trustPromise?.secondarySeed?.caseId, "02-tony", "宸直线第二个案内种子必须登记在案二");
+  assertDeepEqual(trustPromise?.secondarySeed?.anchors, ["警笛", "敲门", "十万", "宸直信托"], "案二种子必须登记警笛、敲门、金额和机构四个锚点");
+  assertEqual(trustPromise?.payoff?.afterCaseId, "04-workplace", "宸直线必须到案四结尾才正式爆发");
+
+  const firstTailText = JSON.stringify(interludesByCaseId.get("01-credit") ?? {});
+  assert(firstTailText.includes("收益写得很高"), "案一小尾声必须由赵律师补入高收益合同风险");
+  assert(firstTailText.includes("一轮一轮往外融"), "案一小尾声必须说明大盘子对外部融资的依赖");
+
+  const caseTwo = caseFiles.find((packet) => packet.caseId === "02-tony");
+  const sirenScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-roster-function-notes");
+  const sirenLines = sirenScene?.sceneCloser?.lines ?? [];
+  const sirenText = sirenLines.map((line) => line.text ?? "").join(" ");
+  assert(sirenText.includes("警笛") && sirenText.includes("门外有人敲门") && sirenText.includes("你先去看看"), "案二第一夜必须用警笛、敲门和主播应答造成被迫中断");
+  assert(sirenLines.every((line) => !/警笛|敲门/.test(line.text ?? "") || line.nonLoadBearing !== true), "被人物注意的警笛与敲门不得伪装成生活噪声");
+  assertEqual(sirenScene?.closureContract?.openEdge, "深夜来敲门的人是谁，为什么会在警笛停下后找上她。", "案二警笛场尾必须登记明确开放边");
+  assert(caseTwo?.nightStructure?.hangup?.line?.includes("突然有事") && !caseTwo?.nightStructure?.hangup?.line?.includes("他一直打电话"), "案二第一夜必须由眼前的敲门中断，不能退回陌生来电解释");
+  assert(caseTwo?.overnightStructure?.hangupLine?.includes("电话断得很快"), "案二隔夜结构必须保留突然断线的动作结果");
+
+  const returnLines = caseTwo?.overnightStructure?.returnBeat?.lines ?? [];
+  const returnText = returnLines.map((line) => line.text ?? "").join(" ");
+  assert(returnText.includes("门外是民警") && returnText.includes("民警具体问了你什么"), "案二第二夜必须由主播逐步问出民警上门与盘问内容");
+  assert(returnText.includes("新店入股") && returnText.includes("宸直信托"), "案二警笛回收必须带出投店款与同机构理财种子");
+  assert(returnText.includes("转来的图") && returnText.includes("原件她交给民警了"), "案二必须在对白中区分转发截图与警方持有的原件");
+  assert(caseTwo?.truthBoundary?.unknown?.some((item) => item.includes("实际资金路径") && item.includes("警方")), "案二必须把截图的资金同一性留给警方核对");
+
+  const openingText = JSON.stringify(caseTwo?.openingDialogue ?? {});
+  const exclusiveText = JSON.stringify(caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-exclusive-voice") ?? {});
+  const benefitsText = JSON.stringify(caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-caller-benefits") ?? {});
+  const callerProfile = castRegistry.cast.find((profile) => profile.id === "case2-caller-he");
+  assert(openingText.includes("夜店做订台") && openingText.includes("气氛组") && openingText.includes("头发隔一阵就得弄"), "案二必须让职业直接造成高频美发需求，不得只写进人物小传");
+  assert(exclusiveText.includes("她靠自己拿提成") && exclusiveText.includes("最晚一档"), "Tony 的情绪价值必须落成当面维护与具体照顾");
+  assert(benefitsText.includes("提成有时当天结") && benefitsText.includes("染发加护理"), "案二必须交代快钱如何转成高频美发消费");
+  assert(caseTwo?.stageJudgement?.includes("这些我不抹"), "案二结案不得因销售动机倒销 Tony 真实发生过的照顾");
+  assert(callerProfile?.background?.includes("夜店") && callerProfile?.background?.includes("提成"), "案二来电人的固定角色档案必须登记职业与结算方式");
+
+  const caseTwoInterlude = interludesByCaseId.get("02-tony");
+  const caseFourInterlude = interludesByCaseId.get("04-workplace");
+  assertEqual(caseTwoInterlude?.worldEcho, undefined, "案二结尾不得提前宣布宸直全面兑付危机");
+  assert(caseFourInterlude?.worldEcho?.headline?.includes("全部产品暂停兑付"), "案四结尾必须回收宸直全面兑付危机");
+  assert(caseFourInterlude?.worldEcho?.doesNotProve?.includes("案二女客"), "案四公共事件必须保留案二十万元的资金同一性边界");
 });
 
 test("PACK-015", "case 4 exposes a seven-row relative-time payment document", () => {

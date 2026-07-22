@@ -126,6 +126,20 @@ Treat each load-bearing choice as a typed state transition, not a good-sounding 
 - Scan all spoken roles for camera terms, external body-language captions, balanced montage, and author taglines. Move genuine blocking to `role: stage`; convert knowable content to first-person action or direct quotation; delete the rest. Never replace a deleted narrator line with another summary line.
 - After a deletion, rebuild the five-turn window: two turns before, the changed turn, and two turns after. The window passes only when every question has a premise, every answer responds or visibly refuses, and the last turn leaves one identifiable open edge.
 
+#### Ambient Promise Closure（偶发细节闭环）
+
+声音、物件、陌生来电、地点变化和被打断的话，只要被角色单独注意，就不再是用来占时长的气氛句。落笔前必须把它分进三类之一：
+
+1. `disposable texture`：一次性的普通生活声，不停、不回头、不改变人物动作；可以标 `nonLoadBearing: true`。
+2. `local promise`：本案内被注意的异常，必须登记 `plant -> openEdge -> payoff -> proves / doesNotProve`，并在材料、回拨或结案中回收。
+3. `cross-case promise`：会在后案改变理解的公共事件，进入包级承诺账本，按“个案种子 -> 职业见闻加固 -> 后案玩家动作 -> 公共结果”推进。
+
+- 警笛只是远处掠过，可以是生活噪声；警笛靠近、停在楼下，紧接着有人敲门并迫使连线中断，就已经让人物和玩家产生问题，禁止再标 `nonLoadBearing`。
+- 第一夜只种动作，不许当场自解。敲门导致挂断时，咨询者只能说“突然有事”；第二夜由主播先问为何挂断、来人是谁，再逐步问出对方问了什么。不要让旁白说“原来昨天那声就是……”。
+- 回收优先通过可见变化触发：第二夜换了地点、人物承认昨晚被问话、桌上多出一张回单。让主播顺着变化问，不让咨询者无缘无故提交完整答案。
+- 回收只回答原先留下的那条开放边。新材料若只证明“转账、聊天、同额回单先后出现”，不得因为戏剧上顺滑就写成“同一笔钱已经坐实”。
+- 若一个被强调的偶发细节既不改变人物决定，也没有回收价值，降成不被注意的普通环境声，或直接删除。
+
 Run the pack validator and generated micro-logic table. A missing contract, stale anchor, narration leak, or unsupported fixed follow-up blocks shipping.
 
 Voice fingerprint:
@@ -850,6 +864,9 @@ The host is a person (design: `docs/host-character-design.md`):
 - **补救物即人物律**:廉价补救必须出自对方的职业或人格域——补救物是人物测验(理发师=券,材料型相亲对象=新开的存款证明,老油条同事=群红包)。
 - **自纠方向条款**:口误自纠的方向也是指纹——沈:说错改对;林(审计):模糊改精确(「百分之三十几……不对,三十七」)。
 - **呼吸差异律**:省略号/停顿(……)不是全员通用的呼吸方式——配额机械执行后最容易长出的新齐整感,就是每个角色都在用同一个符号换气。每案至少安排一位角色几乎不停顿、语速直给(常见于职业角色:财务经办/仓库管理员/前台/顾问),用密不透风的短句或专业术语的连续性反衬其他角色的停顿;停顿本身也要分快慢——惊慌的停顿短而破碎,盘算的停顿长而完整,不能所有停顿都是同一个长度、同一种情绪。
+- **生活噪声不得伪装伏笔**：只有“掠过且无人追问”的救护车、咳嗽、喝水等能计入不承重配额。声音靠近后停住、紧接敲门并导致人物换地点或中断行动时，必须撤掉 `nonLoadBearing`，登记偶发细节闭环并回收。
+- **职业因果律**：非固定坐班、夜场、零工或其他容易被污名化的职业，正文只写角色具体做什么、怎么结算、身体或外形要付出什么成本。禁止由主播或旁白贴“不正经”标签。职业至少推动两项可见行动，例如必须约晚档、频繁补染、提成到账后消费；所谓“情绪价值”至少落成一句原话或一次动作，例如替她挡住职业玩笑，不能只写进人物小传。
+- **真实照顾不得倒销**：后续发现销售动机或私表，不得把先前真实发生的维护和尊重全部改判为假。结案应同时保留照顾确实发生、照顾后来被接入消费推进这两层事实。
 
 ### 主题松绑(两轴共用)
 
@@ -897,6 +914,7 @@ Design source: `docs/multi-scene-rashomon-design.md`. The show is titled for the
 - 禁止写成“因为他贪，所以被骗活该”。合格结案要同时保留两句意思：借钱追高收益是他的决定；机构若误导或违约，责任仍归机构。后来的公开危机不能把旧案每一笔损失自动坐实，也不能替他的借款决定免责。
 - 同一个公共事件进入不同案件时，只能充当共同压力源，不能复制同一条因果链。烂尾房要有购房合同、交付节点和家庭决定；保健品卷款要有付款、承诺、老人现金缺口与婚事冲突；缺少各自材料链时只登记未来承诺，不写进现有正文。
 - 跨案伏笔也要逐句过小逻辑合同。每条种子流水都要有本行追问，登记 `sourceRows / sourceProves / sourceDoesNotProve / answerAnchor / answerAdds / nextLegalQuestion`；跨行问题必须先说清“相邻不等于同一笔”，再允许人物补充自己亲耳听过的原话。
+- 同一机构第二次进入别案时，必须产生不同的本地冲突，并登记为 `secondarySeed` 或等价账目。它可以让旧线变重，不能抢走当前案件的主物件；案尾公开冲击要同时写明它对每个旧案“重新说明了什么”和“仍不能证明什么”。
 - 带回物只重开一个时间块。若玩家带回三月借款与信托认购，第二夜就按“借款有没有提过 -> 两笔认购什么时候看到 -> 机构和收益期待是否听过”分成短问答；不得顺便在同一句重念五月、六月、七月和其他账户。
 
 ## Theatrical License (戏剧性特许)

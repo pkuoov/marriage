@@ -3,22 +3,22 @@ import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapTex
 import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "../src/caseRuntime.js?v=0.20.68";
 import { requiredContradictionsForCase, truthBoundaryPromptLimitForCase } from "../src/difficulty.js?v=0.20.68";
 import { migrateState } from "../src/state.js?v=0.20.68";
-import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.23.0";
+import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.23.1";
 import { DEFAULT_STORY_PACK_KEY, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js?v=0.20.68";
 import { NPCS } from "../src/story.js?v=0.20.68";
 import { dailyAccusationChoices } from "../src/dailyChoices.js?v=0.20.68";
-import { AUDIO_CUES, audioCueView } from "../src/audioCatalog.js?v=0.22.0";
+import { AUDIO_CUES, audioCueView } from "../src/audioCatalog.js?v=0.22.1";
 import { platformRuntime } from "../src/platformRuntime.js?v=0.20.68";
 import { createSaveStore } from "../src/platform/saveStore.js?v=0.20.68";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js?v=0.20.68";
 import { audioBusGain, normalizeAudioSettings, updateAudioBusVolume } from "../src/runtime/audioModel.js?v=0.22.0";
-import { ambienceCueForBackdrop, audioScenePlan } from "../src/runtime/audioSceneModel.js?v=0.22.0";
+import { ambienceCueForBackdrop, audioScenePlan } from "../src/runtime/audioSceneModel.js?v=0.22.1";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js?v=0.20.68";
 import { actionDoneForState, answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedEvidencePicksForState, selectedInvestigationPicksForState, selectedScenePickForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "../src/runtime/caseStateSelectors.js?v=0.20.68";
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyHiddenThreadProfile, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "../src/runtime/livePressure.js?v=0.21.1";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js?v=0.20.68";
-import { chunkDialogueTurn, groupDialogueTurns, splitDialogueSentences } from "../src/runtime/dialoguePresentation.js?v=0.26.0";
+import { chunkDialogueTurn, groupDialogueTurns, splitDialogueSentences } from "../src/runtime/dialoguePresentation.js?v=0.26.2";
 import { assertDialogueTexture, dialogueTextureMetrics, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js?v=0.22.0";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
@@ -40,13 +40,13 @@ import { liveControlDeckHtml, liveFrameHtml } from "../src/ui/liveFrameView.js?v
 import { finalQuoteComparisonHtml, offMicLettersHtml, solvedRecapFlowView, solvedRecapPagesHtml, truthBoundaryPlaced, truthBoundaryReviewHtml } from "../src/ui/recapView.js?v=0.20.68";
 import { routeTrailHtml } from "../src/ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, playerQuestionLabel, sceneDialogueOptions, sceneQuestionChoicesHtml, sceneQuestionMenuHtml } from "../src/ui/sceneQuestions.js?v=0.23.0";
-import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.21.1";
+import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml } from "../src/ui/sceneReviewView.js?v=0.21.2";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "../src/ui/storyInterludeView.js?v=0.26.2";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "../src/ui/caseTransitionView.js?v=0.20.96";
 import { careChoiceContinueHtml, careChoiceHtml } from "../src/ui/careChoiceView.js?v=0.24.3";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "../src/ui/epilogueUnreadView.js?v=0.24.3";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js?v=0.20.68";
-import { titleScreenHtml } from "../src/ui/titleView.js?v=0.20.68";
+import { titleScreenHtml } from "../src/ui/titleView.js?v=0.20.70";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -58,15 +58,19 @@ test("AVG-001", "render-layer sentence splitting preserves quoted sentences and 
 });
 
 test("AVG-002", "dialogue pages keep one short question-answer exchange and split long replies", () => {
+  const audioChunks = chunkDialogueTurn({ role: "stage", speaker: "旁白", text: "开播提示音响了一声。", audioCueId: "sfx.broadcast.on-air" }, 56);
+  assertEqual(audioChunks[0].audioCueId, "sfx.broadcast.on-air", "对白分页不能丢掉随台词触发的语义音效");
+
   const openingPages = groupDialogueTurns([
     { role: "caller", speaker: "咨询者", text: "主播你好，我想咨询一件事。" },
-    { role: "host", speaker: "林旭阳", text: "你好，最近发生什么了？" },
+    { role: "host", speaker: "林旭阳", text: "你好，你慢慢说。" },
+    { role: "host", speaker: "林旭阳", text: "最近发生什么了？" },
     { role: "caller", speaker: "咨询者", text: "男朋友突然找我借钱。" },
     { role: "host", speaker: "林旭阳", text: "他想借多少？" },
     { role: "caller", speaker: "咨询者", text: "八万。" }
   ]);
-  assertEqual(openingPages.length, 3, "五轮开场应拆成问候一页和两组问答");
-  assertEqual(openingPages[0].lines.length, 1, "问候不能和下一轮未回答的问题挤在同页");
+  assertEqual(openingPages.length, 3, "六轮开场应拆成问候回应和两组问答");
+  assertEqual(openingPages[0].lines.map((line) => line.role).join(","), "caller,host", "来电问候与主播礼貌回应应同页成组");
   assertEqual(openingPages[1].lines.map((line) => line.role).join(","), "host,caller", "短问答必须同页成组");
   assertEqual(openingPages[2].lines.map((line) => line.role).join(","), "host,caller", "金额问答必须同页成组");
 
@@ -77,7 +81,16 @@ test("AVG-002", "dialogue pages keep one short question-answer exchange and spli
   ]);
   assert(longPages.length >= 2, "长回答必须拆出续页，不能把整段压进一屏");
   assertEqual(longPages[0].lines[0].role, "host", "长问答首屏必须保留主播问题");
-  assert(longPages.every((page) => page.lines.length <= 2), "任一页最多只能有一问一答两轮台词");
+  assert(longPages.every((page) => page.lines.map((line) => line.role).join(",") === "host,caller"), "长回答的每个续页都必须保留上一问和本段回答");
+  assert(longPages.slice(1).every((page) => page.lines[0].repeatedContext), "长回答续页必须把上一问作为弱化上下文重复显示");
+
+  const oversizedPairPages = groupDialogueTurns([
+    { role: "host", speaker: "林旭阳", text: `${"我把账单重新分了一遍，前面这些都已经能对应到具体消费，".repeat(2)}最后还有一笔没有说清。你先告诉我，这笔钱当时为什么没有继续问？` },
+    { role: "caller", speaker: "咨询者", text: `${"我问过一次，他当时把话岔开了。我怕继续问下去，两个人连表面那点体面都保不住。".repeat(2)}所以后来一直拖着。` }
+  ]);
+  assert(oversizedPairPages.length >= 2, "超出单页容量的完整问答必须拆页");
+  assert(oversizedPairPages.every((page) => page.lines.length === 2), "超长问答拆页后不能退回孤立问题页或孤立回答页");
+  assert(oversizedPairPages.slice(1).every((page) => page.lines[0].repeatedContext), "超长问答续页必须保留上一问上下文");
 
   const stagePages = groupDialogueTurns([
     { role: "caller", speaker: "咨询者", text: "我看见那条弹幕了。" },
@@ -442,19 +455,25 @@ test("AUDIO-001", "audio buses clamp, persist independently, and duck scene beds
 
 test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   assertEqual(audioScenePlan({ scene: "title" }).bgmCueId, "bgm.title-nightshift", "标题页必须有稳定 BGM cue");
-  assertEqual(audioScenePlan({ scene: "nightShellPrologue" }).enterSfxCueId, "sfx.broadcast.on-air", "首夜开播必须触发真实 ON AIR 音效");
+  assertEqual(audioScenePlan({ scene: "nightShellPrologue" }).enterSfxCueId, undefined, "进入直播间时不能提前播放 ON AIR；提示音必须跟着倒计时台词出现");
   assertEqual(audioScenePlan({ scene: "caseOpen" }).enterSfxCueId, "sfx.phone.connect", "案件接线必须触发真实接通音效");
   assertEqual(audioScenePlan({ scene: "sceneReview", pressureLevel: "low" }).bgmCueId, "bgm.pressure-stem", "耐心偏低时必须切到压力层");
   assertEqual(audioScenePlan({ scene: "overnightCallback" }).bgmCueId, "bgm.callback-return", "第二夜回拨必须使用回拨 cue");
+  assertEqual(audioScenePlan({ scene: "overnightNight2" }).bgmCueId, "bgm.callback-return", "进入第二夜连续对白后不得切回第一夜 BGM");
+  assertEqual(audioScenePlan({ scene: "documentReconcile" }).bgmCueId, "bgm.callback-return", "第二夜核对材料时必须保持回拨 BGM");
+  assertEqual(audioScenePlan({ scene: "liveCounterBeat" }).bgmCueId, "bgm.callback-return", "第二夜实时反压必须保持回拨 BGM");
+  assertEqual(audioScenePlan({ scene: "overnightNight2", pressureLevel: "low" }).bgmCueId, "bgm.pressure-stem", "第二夜耐心偏低时仍允许压力层覆盖回拨底乐");
+  assertEqual(audioScenePlan({ scene: "careChoice" }).bgmCueId, "bgm.recap-afterhours", "结案关怀选择必须留在单案回看音乐段");
   assertEqual(audioScenePlan({ scene: "liveCounterBeat" }).ambienceCueId, "ambience.studio-line", "实时反压仍在直播中，不能误切到收麦后台声场");
   assertEqual(ambienceCueForBackdrop("day-restaurant"), "ambience.restaurant", "餐厅背景必须映射餐厅环境音");
   assertEqual(ambienceCueForBackdrop("day-studio"), "ambience.archive-studio", "工作室背景必须映射室内工作环境音");
   ["sfx.case1.lamp-drag", "voice.case2.dryer-message", "voice.case3.dinner-pause", "voice.case4.pad-message", "voice.case4.supplier-message"].forEach((cueId) => {
     assert(AUDIO_CUES[cueId], `必要剧情 cue 不得从目录消失: ${cueId}`);
   });
-  ["bgm.title-nightshift", "bgm.pressure-stem", "ambience.studio-room", "ambience.city-afternoon", "voice.case2.dryer-message"].forEach((cueId) => {
+  ["bgm.title-nightshift", "bgm.live-call", "bgm.pressure-stem", "bgm.offair-desk", "bgm.day-investigation", "bgm.callback-return", "ambience.studio-room", "ambience.city-afternoon", "voice.case2.dryer-message"].forEach((cueId) => {
     assertEqual(audioCueView(cueId)?.available, true, `P1 关键声轨必须有可播放资产: ${cueId}`);
   });
+  assertEqual(AUDIO_CUES["bgm.title-nightshift"]?.src, "./assets/audio/bgm/title-neon-rain.ogg", "标题槽位必须使用已完成的霓虹雨夜正式母版");
   ["sfx.phone.connect", "sfx.phone.disconnect", "sfx.broadcast.on-air", "sfx.message.notification", "sfx.document.mark"].forEach((cueId) => {
     assertEqual(audioCueView(cueId)?.available, true, `试玩关键音效必须有可播放资产: ${cueId}`);
   });
@@ -1269,10 +1288,11 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(activeSceneHtml, "第 2 句", "当前对话回合正文必须可由纯 UI 模块渲染");
   assertIncludes(activeSceneHtml, "咨询者：账单我发过来了。", "当前对话回合必须渲染传入的来电内容");
   const activeExchange = activeSceneExchangeHtml({
-    scene: { version: "他说只是周转两天。" },
+    scene: { entryQuestion: "那八万是怎么提出来的？", version: "他说只是周转两天。" },
     dialoguePicks: [{ question: "你当时怎么回的？", answer: "我说先看账单。" }]
   });
   assertIncludes(activeExchange, "咨询者", "当前对话气泡组装必须保留来电人 speaker");
+  assert(activeExchange.indexOf("那八万是怎么提出来的？") < activeExchange.indexOf("他说只是周转两天。"), "场景入场问句必须紧挨正文回答之前渲染");
   assertIncludes(activeExchange, "你当时怎么回的？", "当前对话气泡组装必须保留外围追问来回");
   const completedExchange = completedSceneExchangeHtml({
     scene: { version: "账单发来以后，我发现只有消费页。", questionOptions: [{ question: "少了哪一页？", contradiction: "少了还款来源。" }] },
@@ -1354,12 +1374,23 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(summary.objectProfile.line, "账单", "故事集物件 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(summary.hiddenThreadProfile.line, "成本", "故事集暗线 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(appSource, "./ui/titleView.js", "标题页 HTML 必须从 app.js 拆到 ui/titleView");
-  const titleHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, title: "Steam 试玩版", hook: "热线已经接进来。资料在后台。", object: "热线已接入" });
+  const titleHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, title: "Steam 试玩版", hook: "第一通匿名来电还在等待接入。", object: "今晚 20:00 · 开播前" });
   assertIncludes(titleHtml, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
   assertIncludes(titleHtml, "林旭阳", "标题页必须交代固定主播角色");
-  assertIncludes(titleHtml, "热线已接入", "标题页必须像热线接入，不提前列目录");
+  assertIncludes(titleHtml, "等待开播", "标题页必须明确仍在开播前，不能先写已接通再倒退进序章");
+  assertIncludes(titleHtml, "data-start-story", "无存档时标题页必须提供新游戏入口");
+  assertIncludes(titleHtml, "新游戏", "无存档时标题页必须用标准游戏入口文案");
   assertIncludes(titleHtml, "data-audio-settings", "标题页必须能在开始前调声音");
   assert(!/四案|4\s*案|故事集目录|第一案|第二案|第三案|第四案|主题论点/.test(titleHtml), "标题页不能提前暴露案数、目录或主题论点");
+  const resumeTitleHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, canContinue: true, resumeLabel: "上次停在：白天调查" });
+  assertIncludes(resumeTitleHtml, "data-continue-story", "有存档时标题页必须提供继续入口");
+  assertIncludes(resumeTitleHtml, "继续上次直播", "继续入口必须使用玩家能立即理解的存档文案");
+  assertIncludes(resumeTitleHtml, "上次停在：白天调查", "继续入口必须提示存档所在阶段，但不剧透案件目录");
+  assertIncludes(resumeTitleHtml, "data-request-new-game", "有存档时仍必须保留新游戏入口");
+  const confirmNewGameHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, canContinue: true, confirmNewGame: true });
+  assertIncludes(confirmNewGameHtml, "新游戏会覆盖当前进度", "覆盖存档前必须有明确二次确认");
+  assertIncludes(confirmNewGameHtml, "data-confirm-new-game", "新游戏二次确认必须有明确确认按钮");
+  assertIncludes(confirmNewGameHtml, "data-cancel-new-game", "新游戏二次确认必须允许保留当前进度");
   assertIncludes(liveFrameViewSource, "liveControlDeckHtml", "案内 UI 必须由直播控场台纯 UI 模块统一生成");
   assertIncludes(liveFrameViewSource, "liveFrameHtml", "案内主舞台 HTML 必须由纯 UI 模块生成");
   assert(!appSource.includes("class=\"control-deck\""), "控场台 DOM 不能继续写在 app.js");
@@ -1394,6 +1425,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(liveFrameHtml({ text: "<p>正文</p>", screenEffect: "patience-drop" }), "screen-effect-patience-drop", "耐心扣除必须能渲染一次性红色暗角层");
   assertIncludes(liveFrameHtml({ text: "<p>正文</p>", pixelTransition: { eyebrow: "DAY SHIFT", label: "白天调查" } }), "pixel-transition-scene", "大切点必须能渲染像素风过场层");
   assertIncludes(liveFrameHtml({ text: "<p>正文</p>", pixelTransition: { kind: "signal-connect", eyebrow: "CALL", label: "新案接入" } }), "pixel-transition-signal-connect", "接通瞬间必须能渲染轻微信号断帧");
+  assertIncludes(liveFrameHtml({ text: "<p>正文</p>", pixelTransition: { kind: "soft-fade", eyebrow: "20:00", label: "开播前" } }), "pixel-transition-soft-fade", "首页入场必须能使用柔和过渡，不得强制套用硬像素断帧");
+  assertIncludes(stylesSource, "soft-scene-transition-out 2400ms", "开播前过场必须保留足够阅读时间，不能再次短闪");
   assertIncludes(stylesSource, "@keyframes pixel-transition-out", "像素风过场必须由短促分步动画控制");
   assertIncludes(stylesSource, "prefers-reduced-motion: reduce", "像素风过场必须尊重减少动态效果设置");
   assertIncludes(stylesSource, ".screen-effect-material-hit", "材料命中必须有全屏 CRT 扫描反馈层");
@@ -1549,7 +1582,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   });
   assertIncludes(a[0].storyThemeTitle, "好听的身份", "当前 demo 包必须共享同一主题");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
-  assertIncludes(appSource, "storyThemeIntro", "标题页必须优先使用故事集开场引子，而不是主题论点");
+  assertIncludes(appSource, "第一通匿名来电，还在等待接入", "标题页必须从开播前进入，不能把热线写成已经接通");
   assert(!/const hook = storyPack \? preview\?\.storyThemeThesis/.test(appSource), "标题页不能直接把主题论点当开场 hook");
   const oldPreviewListClass = `${"weekly"}-${"preview"}-${"list"}`;
   const oldStartButton = `${"开始"}${"四案"}${"故事集"}`;
@@ -1685,7 +1718,7 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(byPlot["lost-job-hidden-credit"], "是我。我没跟他在一起的时候就办了会员", "案一必须等咨询者确认会员身份后再追过去消费");
   assertIncludes(byPlot["lost-job-hidden-credit"], "送到我这儿了，东西也一直是我在用", "案一被直接问设备去向时必须说出事实并给出人物自己的责任解释，不能为排剧情硬拒答");
   assertIncludes(byPlot["lost-job-hidden-credit"], "我真以为那是他全款买来送我的", "案一必须让咨询者用当时的赠礼理解解释行为，而不是用作者式总结拖延揭示");
-  assertIncludes(byPlot["tony-multi-dating"], "我们先不看表，你跟我说说", "案二开场必须先补关系背景再进入表格");
+  assertIncludes(byPlot["tony-multi-dating"], "你们平时到底怎么相处", "案二第一段必须先补关系背景再进入表格");
   assertIncludes(byPlot["tony-multi-dating"], "最后分别要人做什么", "案二最后一列必须追问三行各自要求的行动，不能复述表面答案");
   assertIncludes(byPlot["education-income-fake-profile"], "那张图上到底写了什么，没写什么", "案三必须先核图片字段再讨论名校标签");
   assertIncludes(byPlot["education-income-fake-profile"], "后来补问出来的那些信息", "案三各选项不得引用只在兄弟分支出现的‘这三样’");
@@ -2534,6 +2567,9 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   const nightStructure = nightStructureFor(brief);
   assert(nightStructure, "案 2 必须保留两段连线结构");
   assert(shouldEnterHangupAfterScene(brief, 3), "案 2 第四段材料结束后必须真正进入跨夜挂断");
+  assertEqual(overnightAnchorSceneIndex(brief), 3, "案 2 的隔夜锚点必须能命中第四段场尾的敲门，不得要求把动作硬塞进陈述正文");
+  assert(shouldEnterOvernightHangupAfterScene(brief, 3), "案 2 敲门场尾结束后必须进入隔夜挂断");
+  assertEqual(overnightFirstNight2SceneIndex(brief), 4, "案 2 第二夜必须从敲门后的下一段开始，不能重播第一夜场尾");
   assertEqual(nightStructure.interlude?.budget, 1, "案 2 短幕间最多支出一步");
   assertEqual(nightStructure.interlude?.maxActions, 1, "案 2 短幕间不能和白天地图库叠满");
   assert(!(nightStructure.callbackOpeners ?? []).length, "案 2 存在 overnightStructure 时不得保留第二套 opener 表");
@@ -2792,6 +2828,10 @@ test("DOCS-003", "case writing law requires audited adjacent-turn causality", ()
   assertIncludes(scriptwritingSkill, "Row-identity conservation", "案本 skill 必须禁止把相邻流水行压成未经证明的同一笔钱路");
   assertIncludes(scriptwritingSkill, "A named institution already registered in `crossCasePromises`", "案本 skill 必须把跨案具名机构与匿名收款人预算分开");
   assertIncludes(scriptwritingSkill, "A masked surname that only labels one recurring date pattern", "案本 skill 必须把半姓并回日期供血线，不能另造一张身份谜面");
+  assertIncludes(scriptwritingSkill, "Ambient Promise Closure", "案本 skill 必须把被注意的偶发声响纳入闭环合同");
+  assertIncludes(scriptwritingSkill, "警笛靠近、停在楼下", "警笛从普通噪声升级为承重伏笔的边界必须写清");
+  assertIncludes(scriptwritingSkill, "职业因果律", "剧本 skill 必须要求职业设定推动可见行动");
+  assertIncludes(scriptwritingSkill, "真实照顾不得倒销", "剧本 skill 必须保留反转前真实发生的照顾");
   assertIncludes(continuityAudit, "双层人话开发闭环", "连贯性审查必须登记删总结与口语化的一般开发闭环");
   assertIncludes(continuityAudit, "定位原句及所有副本", "一般开发闭环必须从真源和所有副本开始");
   assertIncludes(continuityAudit, "第三方拒答必须保持原说话人和原证据强度", "连贯性审查必须禁止主播代述第三方证词");
@@ -2802,7 +2842,7 @@ test("DOCS-003", "case writing law requires audited adjacent-turn causality", ()
   assertEqual(coreOptions.length, 31, "当前四案承重追问数量变化时必须重新审查微因果合同");
   assert(coreOptions.every((option) => option.logicContract?.premiseAnchor && option.logicContract?.sourceDoesNotProve && option.logicContract?.nextLegalQuestion), "四案所有承重追问必须登记前提、证据边界和下一问上限");
   const loadBearingClosers = briefs.flatMap((brief) => (brief.sceneVersions ?? []).filter((scene) => (scene.sceneCloser?.lines ?? []).some((line) => !["stage", "pause"].includes(line?.role) && line?.nonLoadBearing !== true && line?.text)));
-  assertEqual(loadBearingClosers.length, 6, "当前四案承重场尾数量变化时必须重新审查路线独立闭环");
+  assertEqual(loadBearingClosers.length, 7, "当前四案承重场尾数量变化时必须重新审查路线独立闭环");
   assert(loadBearingClosers.every((scene) => scene.closureContract?.routeIndependent === true && scene.closureContract?.openEdge), "四案所有承重场尾必须登记路线独立合同和唯一未决问题");
 });
 
@@ -2818,6 +2858,7 @@ test("DETECTIVE-001", "detective plot coupling method stays explicit", () => {
   assertIncludes(detectiveSkill, "No reveal may depend on a fact the player could not have noticed", "侦探结构 skill 必须守住公平揭示");
   assertIncludes(detectiveSkill, "实物-言语死锁", "侦探结构 skill 必须要求材料边缘和口头说法互相卡死");
   assertIncludes(detectiveSkill, "No pristine victims", "侦探结构 skill 必须禁止无瑕受害者");
+  assertIncludes(detectiveSkill, "Ambient promises count too", "侦探结构 skill 必须把被强调的声音、来电和地点变化登记进承诺账本");
   assertIncludes(scriptwritingSkill, "绝不提供“无瑕受害者”", "案本 skill 必须在写作规则中禁止无瑕受害者");
   assertIncludes(scriptwritingSkill, "实物-言语死锁", "案本 skill 必须要求材料板物理疑点锁住口头谎言");
   assertIncludes(patternReference, "Sherlock Holmes", "侦探模式参考必须包含经典可见线索模型");

@@ -13,7 +13,12 @@
         {
           "fromAnchor": "咨询一下感情上的事",
           "toAnchor": "你慢慢说",
-          "relation": "主播回应来意，再请她讲最近发生的事。"
+          "relation": "主播先回应来意，让她按自己的节奏开口。"
+        },
+        {
+          "fromAnchor": "你慢慢说",
+          "toAnchor": "最近发生什么事",
+          "relation": "问候回应结束后，主播另起一问，请她交代最近的直接异常。"
         },
         {
           "fromAnchor": "最近发生什么事",
@@ -348,20 +353,20 @@
     "02-tony": {
       "reviewedAt": "2026-07-20",
       "opening": [
-        { "fromAnchor": "相亲认识的关系", "toAnchor": "认识多久", "relation": "主播先接住相亲来意，只问两人认识了多长时间。" },
+        { "fromAnchor": "相亲认识的关系", "toAnchor": "你慢慢说", "relation": "主播先接住相亲来意，让她慢慢讲。" },
+        { "fromAnchor": "你慢慢说", "toAnchor": "认识多久", "relation": "问候回应结束后，主播另起一问，只问两人认识了多长时间。" },
         { "fromAnchor": "认识多久", "toAnchor": "几个月", "relation": "咨询者先回答时长，再补充两人从顾客变得亲近。" },
         { "fromAnchor": "不太像普通顾客", "toAnchor": "怎么个不太像", "relation": "主播沿她自己的判断，请她说出具体相处方式。" },
-        { "fromAnchor": "怎么个不太像", "toAnchor": "插号", "relation": "咨询者用插号、免单和单独吃饭回答亲近体现在哪里。" },
+        { "fromAnchor": "怎么个不太像", "toAnchor": "最晚那档", "relation": "咨询者用留晚档、临时补发根、免单和单独吃饭回答亲近体现在哪里。" },
         { "fromAnchor": "关系说清楚", "toAnchor": "为什么今天", "relation": "关系长期含混后，主播询问今天促使她来电的直接事件。" },
-        { "fromAnchor": "为什么今天", "toAnchor": "发来一张店里的表", "relation": "咨询者用昨晚误发表格回答来电为何发生在今天。" },
-        { "fromAnchor": "越看越不对", "toAnchor": "平时是怎么相处", "relation": "主播暂存尚未展开的表格，先补足表格出现前的相处基础。" }
+        { "fromAnchor": "为什么今天", "toAnchor": "发来一张店里的表", "relation": "咨询者用昨晚误发表格回答来电为何发生在今天。" }
       ],
       "scenes": {
         "tony-exclusive-voice": {
-          "entry": { "mode": "continue", "fromAnchor": "平时是怎么相处", "toAnchor": "一下班就找我", "relation": "咨询者从主播所问的日常相处说起，先交代专属感从哪里来。" },
+          "entry": { "mode": "continue", "fromAnchor": "越看越不对", "toAnchor": "平时到底怎么相处", "relation": "表格的含义还不能抢答；主播先补问两人平时如何相处，咨询者再交代专属感从哪里来。" },
           "questionOptions": [
-            { "contextAnchor": "没正式说在一起", "questionAnchor": "说没说过在一起", "answerAnchor": "没有", "guardedAnswerAnchor": "慢慢来", "relation": "主播把她所说的未正式确认问实，回答给出对方回避定义的原话。" },
-            { "contextAnchor": "没正式说在一起", "questionAnchor": "没再问清楚", "answerAnchor": "万一他说我就是顾客", "relation": "关系未确认却持续等待，回答落到她害怕听见普通顾客这一答案。" }
+            { "contextAnchor": "没正式在一起", "questionAnchor": "说没说过在一起", "answerAnchor": "没有", "guardedAnswerAnchor": "慢慢来", "relation": "主播把她所说的未正式确认问实，回答给出对方回避定义的原话。" },
+            { "contextAnchor": "没正式在一起", "questionAnchor": "没再问清楚", "answerAnchor": "万一他说我就是顾客", "relation": "关系未确认却持续等待，回答落到她害怕听见普通顾客这一答案。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "店里剪头", "questionAnchor": "剪了多久", "answerAnchor": "一年多", "relation": "从店里剪头的既有关系补问成为固定顾客的时长。" },
@@ -370,7 +375,7 @@
           ]
         },
         "tony-emotion-to-sales": {
-          "entry": { "mode": "continue", "fromAnchor": "替他转过几次活动", "toAnchor": "往回翻", "relation": "上一段已经提到替他转活动，本段回看亲密语音与转活动的先后。" },
+          "entry": { "mode": "continue", "fromAnchor": "愿意替他转", "toAnchor": "往回翻", "relation": "上一段已经提到替他转活动，本段回看亲密语音与转活动的先后。" },
           "questionOptions": [
             { "contextAnchor": "我一心软，他就让我帮忙转活动", "questionAnchor": "下一句通常是什么", "answerAnchor": "先让我转活动", "guardedAnswerAnchor": "活动、剪头", "relation": "主播沿她已经说出的语音后行动追问，回答补出活动、带客和年卡的次序。" },
             { "contextAnchor": "帮忙转活动", "questionAnchor": "觉得自己是在帮谁", "answerAnchor": "帮“我们以后”", "relation": "从她实际执行的转发动作追问当时在帮谁，回答说明她把店务当成共同未来。" }
@@ -402,7 +407,7 @@
             { "contextAnchor": "我先截图", "questionAnchor": "存下来了吗", "answerAnchor": "截了", "relation": "她已经说先截图，补问确认材料是否留下以及后来发给谁。" },
             { "contextAnchor": "稳情绪", "questionAnchor": "第一眼什么感觉", "answerAnchor": "平时哄我", "relation": "沿她那栏的原词问主观感受，回答只说她如何联想到既往相处。" }
           ],
-          "closer": { "anchor": "去拿件外套", "routeIndependent": true, "relation": "降温取外套只是生活停顿，不依赖任何问题答案，也不提前解释后续老板娘原话。" }
+          "closer": { "anchor": "你先去看看", "routeIndependent": true, "relation": "表格刚露出投店对象，警笛便停在楼下，紧接着的敲门迫使连线中断；第一夜不解释来人身份，第二夜再由主播追问突然挂断的原因。" }
         },
         "tony-future-title": {
           "entry": { "mode": "interrupt", "fromAnchor": "昨天那张表", "toAnchor": "凌晨发来一张券", "relation": "对方的新优惠券打断表格讨论，并直接触发咨询者拿表质问他的后续。" },
@@ -417,13 +422,13 @@
           ]
         },
         "tony-caller-benefits": {
-          "entry": { "mode": "continue", "fromAnchor": "年卡、投一点", "toAnchor": "不是一点便宜没拿", "relation": "商业要求已出现后，咨询者主动补上自己从特殊位置得到的折扣和免单。" },
+          "entry": { "mode": "continue", "fromAnchor": "年卡、投一点", "toAnchor": "我在他店里也花过钱", "relation": "商业要求已出现后，咨询者主动交代自己的消费，也补上从特殊位置得到的折扣和免单。" },
           "questionOptions": [
             { "contextAnchor": "朋友多，带客", "questionAnchor": "为什么愿意给", "answerAnchor": "当时就觉得他给我面子", "guardedAnswerAnchor": "有折扣", "relation": "主播从表内带客备注回看六折原因，回答先说当时感受，再承认如今无法只把折扣当人情。" },
             { "contextAnchor": "闺蜜一出门就说", "questionAnchor": "知道你们没确认关系", "answerAnchor": "知道一点", "relation": "沿闺蜜当场评价补问她掌握多少关系事实，回答承认咨询者没有纠正。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "带闺蜜去剪头", "questionAnchor": "后来还去过", "answerAnchor": "去过一次", "relation": "从闺蜜曾到店补问是否形成后续消费，回答落到再次询价。" },
+            { "contextAnchor": "带闺蜜去那次", "questionAnchor": "后来还去过", "answerAnchor": "去过一次", "relation": "从闺蜜曾到店补问是否形成后续消费，回答落到再次询价。" },
             { "contextAnchor": "他给她六折", "questionAnchor": "谁主动说", "answerAnchor": "他主动", "relation": "沿六折事实核对折扣由谁提出，回答也限定店长只在旁点头。" }
           ]
         },
@@ -436,7 +441,7 @@
           "freeQuestions": [
             { "contextAnchor": "昨天那张表", "questionAnchor": "还去那家店", "answerAnchor": "人没去", "relation": "表格冲突发生后补问她是否继续到店，回答区分预约仍留与人未到。" },
             { "contextAnchor": "开过店的大学室友", "questionAnchor": "怎么认识", "answerAnchor": "大学室友", "relation": "沿此前出现的开店朋友补足关系来源和行业经验。" },
-            { "contextAnchor": "号满了也给我插", "questionAnchor": "为什么一直没退", "answerAnchor": "预约页打开过好几次", "relation": "回到早先反复出现的预约号追问为何未退，回答用多次打开却没点击表现迟疑。" }
+            { "contextAnchor": "号满了照样插", "questionAnchor": "为什么一直没退", "answerAnchor": "预约页打开过好几次", "relation": "回到早先反复出现的预约号追问为何未退，回答用多次打开却没点击表现迟疑。" }
           ],
           "closer": { "anchor": "上礼拜他还给我修过刘海", "routeIndependent": true, "relation": "表格念完后咨询者主动补回一次真实的细致服务，任何路线下都保留她无法把好手艺与伤害简单互相抹掉的未决感。" }
         }
@@ -445,7 +450,8 @@
     "03-profile": {
       "reviewedAt": "2026-07-20",
       "opening": [
-        { "fromAnchor": "相亲的事", "toAnchor": "认识多久", "relation": "主播先回应相亲来意，只问两人认识时间。" },
+        { "fromAnchor": "相亲的事", "toAnchor": "你慢慢说", "relation": "主播先回应相亲来意，让她慢慢讲。" },
+        { "fromAnchor": "你慢慢说", "toAnchor": "认识多久", "relation": "问候回应结束后，主播另起一问，只问两人认识时间。" },
         { "fromAnchor": "认识多久", "toAnchor": "见过四次", "relation": "咨询者用见面次数回答关系进度，并带出原定见父母。" },
         { "fromAnchor": "本来要见父母", "toAnchor": "现在不想带他去", "relation": "主播听见计划被说成“本来”，确认她是否已经动摇。" },
         { "fromAnchor": "现在不想带他去", "toAnchor": "我不敢", "relation": "咨询者直接回答不敢，再说明家里已经听到的条件版本。" },
@@ -545,7 +551,8 @@
     "04-workplace": {
       "reviewedAt": "2026-07-20",
       "opening": [
-        { "fromAnchor": "公司里的事", "toAnchor": "跟同事有关吗", "relation": "主播回应公司问题，并先确认涉及的是不是同事。" },
+        { "fromAnchor": "公司里的事", "toAnchor": "你慢慢说", "relation": "主播回应公司问题，让她慢慢讲。" },
+        { "fromAnchor": "你慢慢说", "toAnchor": "跟同事有关吗", "relation": "问候回应结束后，主播另起一问，先确认涉及的是不是同事。" },
         { "fromAnchor": "跟同事有关吗", "toAnchor": "部门办客户答谢会", "relation": "咨询者确认后交代活动费用刷个人卡这一异常。" },
         { "fromAnchor": "钱一直没回来", "toAnchor": "怎么会刷到你自己的卡上", "relation": "费用未返后，主播先问部门支出进入个人卡的直接经过。" },
         { "fromAnchor": "怎么会刷到你自己的卡上", "toAnchor": "私聊我", "relation": "咨询者用同事私聊和流程来不及回答个人垫款如何发生。" }

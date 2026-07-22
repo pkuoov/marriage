@@ -266,6 +266,7 @@ function narratorLeakEntries(packet) {
   };
   (packet.openingDialogue ?? []).forEach((line, index) => add(`openingDialogue[${index}]`, line.text));
   (packet.sceneVersions ?? []).forEach((scene, sceneIndex) => {
+    add(`sceneVersions[${sceneIndex}].entryQuestion`, scene.entryQuestion);
     add(`sceneVersions[${sceneIndex}].version`, scene.version);
     add(`sceneVersions[${sceneIndex}].revisedVersion`, scene.revisedVersion);
     for (const field of ["beforeVersion", "afterVersion", "sceneCloser"]) {
@@ -304,6 +305,7 @@ function renderOptionRows(lines, type, options, audits) {
 function sceneSetupText(scene = {}) {
   return [
     ...spokenLines(scene.beforeVersion?.lines),
+    scene.entryQuestion ?? "",
     scene.version ?? "",
     ...spokenLines(scene.afterVersion?.lines)
   ].filter(Boolean).join("\n");

@@ -30,11 +30,16 @@
         "afterCaseId": "01-credit",
         "surface": "case-tail"
       },
+      "secondarySeed": {
+        "caseId": "02-tony",
+        "surface": "overnight-return",
+        "anchors": ["警笛", "敲门", "十万", "宸直信托"]
+      },
       "payoff": {
-        "afterCaseId": "02-tony",
+        "afterCaseId": "04-workplace",
         "worldEchoId": "world-echo-chenzhi-payment-crisis"
       },
-      "revalues": "机构后来出现大面积兑付纠纷，扩大案一投资风险的社会背景；不倒推证明案一每一笔钱的归属，也不替当事人的借款决定免责。"
+      "revalues": "机构最后出现全面兑付危机，既扩大案一投资风险的社会背景，也让案二那张十万元回单重新变重；不倒推证明任何一笔钱已经全部损失，也不替当事人的借款或挪用决定免责。"
     }
   ],
   "theme": {
@@ -244,12 +249,32 @@
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "所以那二十万未必拿得回来？"
+            "text": "已经兑不出来了？"
           },
           {
             "speaker": "赵律师",
             "role": "advisor",
-            "text": "我只说有纠纷，没说一定拿不回来。你刚下播就替我结案？"
+            "text": "有纠纷，不等于全线违约。不过我看过几份合同，收益写得很高，钱又去了商场、地产，还有几家关联公司。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "我记得这家公司什么都做，盘子也很大。"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "老板路子很广，业务铺得也开。可盘子大，不等于自己的钱多。至少我经手的几个项目，主要靠一轮一轮往外融。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "那今天这二十万呢？"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "产品、合同、到期日都没看见。现在只能说风险高，你别先替人宣布拿不回。"
           },
           {
             "speaker": "林旭阳",
@@ -301,17 +326,7 @@
             "role": "stage",
             "text": "广告音乐换成一段轻一点的钢琴。第二案完。"
           }
-        ],
-        "worldEcho": {
-          "id": "world-echo-chenzhi-payment-crisis",
-          "promiseId": "chenzhi-trust-payment-crisis",
-          "kicker": "次日中午 · 午间新闻",
-          "actionLabel": "把午间新闻听完",
-          "headline": "宸直信托旗下两款产品暂停兑付",
-          "body": "工作室食堂的电视只播了二十几秒。画面里，投资人拿着合同在登记；新闻说监管部门已经介入，具体兑付方案还没有公布。林旭阳夹菜的手停了一下。",
-          "proves": "宸直信托后来出现公开的产品兑付危机。",
-          "doesNotProve": "不能倒推案一的两笔转账已经全部损失，不能证明其具体产品、资金归属或可追回金额。"
-        }
+        ]
       },
       {
         "afterCaseId": "03-profile",
@@ -372,7 +387,17 @@
             "role": "stage",
             "text": "屏幕右上角的“直播中”灭了。第四案完。"
           }
-        ]
+        ],
+        "worldEcho": {
+          "id": "world-echo-chenzhi-payment-crisis",
+          "promiseId": "chenzhi-trust-payment-crisis",
+          "kicker": "收播后 · 新闻推送",
+          "actionLabel": "把新闻推送点开",
+          "headline": "宸直信托全部产品暂停兑付，实控人失联",
+          "body": "赵律师的手机连续震了两下。新闻客户端刚发出通报：宸直信托全部产品暂停兑付，多处关联项目停摆，实控人暂时无法联系，监管部门和警方已经介入。公告没有公布清偿顺序。",
+          "proves": "宸直信托已经出现全面兑付危机，关联项目也受到波及。",
+          "doesNotProve": "不能倒推案一的两笔认购已经全部损失，也不能证明案二女客的十万元就是 Tony 回单里的同一笔资金；具体产品、资金去向和可追回金额仍要分别核对。"
+        }
       }
     ],
     "epilogue": {

@@ -46,6 +46,7 @@ export function stanceSnapshotHtml(snapshot = {}, pick = null) {
 export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {}) {
   return [
     sceneBeatLinesHtml(scene.beforeVersion),
+    sceneEntryQuestionHtml(scene),
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
     sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard),
@@ -59,6 +60,7 @@ export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {})
 export function scenePromptExchangeHtml({ scene = {} } = {}) {
   return [
     sceneBeatLinesHtml(scene.beforeVersion),
+    sceneEntryQuestionHtml(scene),
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
     sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard)
@@ -80,6 +82,7 @@ export function sceneQuestionAnswerHtml({ question = "", answer = "", lines = nu
 export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pick = {}, fallbackAnswer = "" } = {}) {
   return [
     sceneBeatLinesHtml(scene.beforeVersion),
+    sceneEntryQuestionHtml(scene),
     callLineHtml({ ...scene, text: scene.version, role: "caller" }),
     sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard),
@@ -109,6 +112,12 @@ function resistanceBeatLinesHtml(resistanceBeat = null) {
 
 function sceneBeatLinesHtml(beat = null) {
   return (beat?.lines ?? []).map((line) => callLineHtml(line)).join("");
+}
+
+function sceneEntryQuestionHtml(scene = {}) {
+  return scene.entryQuestion
+    ? callLineHtml({ role: "host", text: scene.entryQuestion })
+    : "";
 }
 
 function dialogueAnswerHtml(pick = {}) {

@@ -24,14 +24,22 @@ const OFF_AIR_SCENES = new Set([
 ]);
 
 const DAY_SCENES = new Set(["dayActOpening", "dayMap", "dayScene"]);
-const RECAP_SCENES = new Set(["caseSolved", "caseClosure", "storyInterlude", "caseTitle"]);
+const RECAP_SCENES = new Set(["caseSolved", "careChoice", "caseClosure", "storyInterlude", "caseTitle"]);
+const NIGHT_B_SCENES = new Set([
+  "overnightCallback",
+  "callbackOpener",
+  "callbackOpenerBeat",
+  "overnightNight2",
+  "documentReconcile",
+  "liveCounterBeat",
+  "callerQuestion"
+]);
 
 export function audioScenePlan({ scene = "title", backdropClass = "", pressureLevel = "" } = {}) {
   if (scene === "title" || scene === "nightShellPrologue") {
     return {
       bgmCueId: "bgm.title-nightshift",
-      ambienceCueId: "ambience.studio-room",
-      enterSfxCueId: scene === "nightShellPrologue" ? "sfx.broadcast.on-air" : ""
+      ambienceCueId: "ambience.studio-room"
     };
   }
   if (scene === "nightShellEpilogue" || scene === "runComplete") {
@@ -57,7 +65,7 @@ export function audioScenePlan({ scene = "title", backdropClass = "", pressureLe
     return {
       bgmCueId: pressureLevel === "low"
         ? "bgm.pressure-stem"
-        : scene === "overnightCallback" || scene === "callbackOpener" || scene === "callbackOpenerBeat"
+        : NIGHT_B_SCENES.has(scene)
           ? "bgm.callback-return"
           : "bgm.live-call",
       ambienceCueId: "ambience.studio-line",

@@ -339,7 +339,10 @@ export function overnightAnchorSceneIndex(brief = {}) {
   const structure = overnightStructureFor(brief);
   const anchor = String(structure?.hangupAnchor ?? "").trim();
   if (!anchor) return -1;
-  return (brief.sceneVersions ?? []).findIndex((scene) => String(scene?.version ?? "").includes(anchor));
+  return (brief.sceneVersions ?? []).findIndex((scene) => [
+    scene?.version,
+    ...(scene?.sceneCloser?.lines ?? []).map((line) => line?.text)
+  ].filter(Boolean).join("\n").includes(anchor));
 }
 
 export function overnightFirstNight2SceneIndex(brief = {}) {

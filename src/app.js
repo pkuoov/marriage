@@ -1,7 +1,7 @@
 import { generateCasesForMode } from "./caseModes.js?v=0.20.87";
 import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
-import { getAudioSettings, playAudioCueOnce, playSfx, resetAudioCueHistory } from "./sound.js?v=0.22.0";
-import { audioCueView } from "./audioCatalog.js?v=0.22.0";
+import { getAudioSettings, playAudioCueOnce, playSfx, resetAudioCueHistory } from "./sound.js?v=0.22.1";
+import { audioCueView } from "./audioCatalog.js?v=0.22.1";
 import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.26.2";
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 import { NPCS } from "./story.js?v=0.20.68";
@@ -18,28 +18,28 @@ import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js?v=0.24.3";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js?v=0.25.0";
-import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.26.0";
+import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.26.2";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
 import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.25.0";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
 import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.21.3";
-import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js?v=0.24.1";
+import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js?v=0.24.2";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.21.4";
 import { liveCounterBeatHtml } from "./ui/liveCounterBeatView.js?v=0.24.2";
-import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.21.3";
+import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.21.4";
 import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js?v=0.21.3";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.21.3";
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.21.3";
-import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.21.1";
+import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.21.2";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.26.2";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js?v=0.24.3";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js?v=0.24.3";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
-import { titleScreenHtml } from "./ui/titleView.js?v=0.20.68";
-import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.23.0";
+import { titleScreenHtml } from "./ui/titleView.js?v=0.20.70";
+import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.23.1";
 import { storyPackForKey } from "./storyPacks.js?v=0.20.87";
 import { HOST_PROFILE } from "./hostProfile.js?v=0.20.95";
 
@@ -50,12 +50,15 @@ const SCENE_HELPER = CONTENT_HELPER_NPCS["v-bro"] ?? null;
 
 const startsFresh = hasFreshStartParam();
 if (startsFresh) clearStateSnapshot();
-let state = normalizeDailyState(startsFresh ? structuredClone(baseState) : loadState() ?? structuredClone(baseState));
+const loadedState = startsFresh ? null : loadState();
+let state = normalizeDailyState(loadedState ?? structuredClone(baseState));
+if (!startsFresh && loadedState?.screen === "chapter" && state.caseBriefs.length) state.screen = "title";
 let meta = loadMeta();
 let gamepadPollingStarted = false;
 let gamepadPreviousButtons = {};
 let lastGamepadMoveAt = 0;
 let shownPixelTransitions = new Set();
+let titleNewGameConfirmation = false;
 
 watchAudioPlaybackControls({ getRoot: () => app });
 
@@ -63,6 +66,7 @@ document.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button || button.disabled) return;
   if (button.hasAttribute("data-audio-mute")) return;
+  if (button.matches("[data-start-story], [data-continue-story], [data-request-new-game], [data-confirm-new-game], [data-cancel-new-game], [data-enter-first-case]")) return;
   if (button.matches("[data-evidence-check], [data-document-row]")) return;
   playSfx(button.classList.contains("primary") || button.dataset.accuse ? "confirm" : "click");
 });
@@ -217,6 +221,7 @@ function hasFreshStartParam() {
 }
 
 function startStoryPack() {
+  titleNewGameConfirmation = false;
   resetAudioCueHistory();
   shownPixelTransitions = new Set();
   const mode = modeFromUrl();
@@ -252,8 +257,24 @@ function storyPreviewBriefs() {
   }
 }
 
+function continueStoryPack() {
+  if (!canContinueJourney()) return startStoryPack();
+  titleNewGameConfirmation = false;
+  state.screen = "chapter";
+  saveState();
+  render();
+}
+
+function returnToTitle() {
+  titleNewGameConfirmation = false;
+  shownPixelTransitions = new Set();
+  state.screen = "title";
+  render();
+}
+
 function resetToTitle() {
   clearStateSnapshot();
+  titleNewGameConfirmation = false;
   shownPixelTransitions = new Set();
   state = normalizeDailyState(structuredClone(baseState));
   state.screen = "title";
@@ -273,13 +294,51 @@ function renderTitle() {
   const preview = previews[0] ?? null;
   const storyPack = modeFromUrl() !== "daily";
   const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
-  const hook = storyPack ? preview?.storyThemeIntro ?? preview?.weeklyThemeIntro ?? "热线已经接进来。资料在后台，她已经开口了。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
-  const object = storyPack ? "热线已接入" : preview?.storyClueObject ?? "今日通话摘录";
-  app.innerHTML = titleScreenHtml({ productName: PRODUCT_NAME, storyPack, title, hook, object, host: HOST_PROFILE, audioSettings: getAudioSettings() });
+  const hook = storyPack ? "晚上八点，林旭阳推开直播间的门。第一通匿名来电，还在等待接入。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
+  const object = storyPack ? "今晚 20:00 · 开播前" : preview?.storyClueObject ?? "今日通话摘录";
+  const canContinue = canContinueJourney();
+  app.innerHTML = titleScreenHtml({
+    productName: PRODUCT_NAME,
+    storyPack,
+    title,
+    hook,
+    object,
+    host: HOST_PROFILE,
+    audioSettings: getAudioSettings(),
+    canContinue,
+    resumeLabel: resumeStageLabel(),
+    confirmNewGame: canContinue && titleNewGameConfirmation
+  });
   bind("[data-start-story]", startStoryPack);
+  bind("[data-continue-story]", continueStoryPack);
+  bind("[data-request-new-game]", () => {
+    titleNewGameConfirmation = true;
+    renderTitle();
+  });
+  bind("[data-confirm-new-game]", startStoryPack);
+  bind("[data-cancel-new-game]", () => {
+    titleNewGameConfirmation = false;
+    renderTitle();
+  });
   bindAudioControls({ root: app, onToggleSound: render });
   syncSceneAudio({ scene: "title" });
   queueDefaultFocus();
+}
+
+function canContinueJourney() {
+  return Boolean(state.caseBriefs?.length && activeCaseBrief());
+}
+
+function resumeStageLabel() {
+  const scene = state.scene ?? "caseOpen";
+  if (scene === "nightShellPrologue") return "上次停在：开播前";
+  if (["dayActOpening", "dayMap", "dayScene"].includes(scene)) return "上次停在：白天调查";
+  if (["overnightCallback", "callbackOpener", "callbackOpenerBeat", "overnightNight2", "documentReconcile", "liveCounterBeat"].includes(scene)) return "上次停在：第二晚回拨";
+  if (["hangupBeat", "overnightHangup", "overnightPostLive", "interludeDesk"].includes(scene) || scene.startsWith("interlude")) return "上次停在：收麦调查台";
+  if (scene === "accusation") return "上次停在：最终追问";
+  if (["caseSolved", "careChoice", "caseClosure", "storyInterlude", "caseTitle"].includes(scene)) return "上次停在：收麦回看";
+  if (["nightShellEpilogue", "runComplete"].includes(scene)) return "上次停在：天亮前";
+  return "上次停在：直播连线";
 }
 
 function renderDailyCase() {
@@ -379,15 +438,13 @@ function renderNightShellPrologue(brief) {
   frame({
     brief,
     mood: "focused",
-    label: "夜班序章",
-    chapter: "深夜档",
+    label: "开播前",
+    chapter: "晚间热线",
     showCaseHud: false,
     visualHud: "",
     text: nightShellHtml(lines),
     choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">开始接线</button>`)
   });
-  const countdownCueId = (prologue.lines ?? []).find((line) => line.audioCueId)?.audioCueId ?? "";
-  playAudioCueOnce(countdownCueId, `${caseKey(brief)}:night-shell-countdown`);
   bind("[data-enter-first-case]", () => {
     state.scene = "caseOpen";
     saveState();
@@ -431,8 +488,9 @@ function nightShellHtml(lines = []) {
     <section class="night-shell-card">
       ${lines.map((line) => {
         const entry = typeof line === "string" ? { text: line } : line ?? {};
+        const audioCueAttribute = entry.audioCueId ? ` data-audio-cue-id="${escapeHtml(entry.audioCueId)}"` : "";
         return `
-          <div class="night-shell-line shell-${escapeHtml(entry.type ?? "plain")}">
+          <div class="night-shell-line shell-${escapeHtml(entry.type ?? "plain")}"${audioCueAttribute}>
             ${entry.speaker ? `<b>${escapeHtml(entry.speaker)}</b>` : ""}
             <p>${escapeHtml(entry.text ?? "")}</p>
           </div>
@@ -2352,7 +2410,7 @@ function renderRunComplete(brief) {
     }
     render();
   });
-  bind('[data-action="title"]', resetToTitle);
+  bind('[data-action="title"]', returnToTitle);
   postDailySharePayload(brief, route, result);
 }
 
@@ -2414,7 +2472,7 @@ function renderStoryPackComplete() {
     }
     render();
   });
-  bind('[data-action="title"]', resetToTitle);
+  bind('[data-action="title"]', returnToTitle);
 }
 
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", audioEnterCueId = "", keepVoiceCueId = "" }) {
@@ -2470,7 +2528,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
   } else if (pressure.pityKey) {
     saveState();
   }
-  bind('[data-action="title"]', resetToTitle);
+  bind('[data-action="title"]', returnToTitle);
   bind('[data-action="reset"]', resetToTitle);
   bindAudioControls({ root: app, onToggleSound: render });
   syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, pressureLevel: pressure.level, audioEnterCueId, keepVoiceCueId });
@@ -2496,7 +2554,7 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
     pixelTransition: pixelTransitionForCurrentScene(brief),
     controlDeckHtml: ""
   });
-  bind('[data-action="title"]', resetToTitle);
+  bind('[data-action="title"]', returnToTitle);
   bind('[data-action="reset"]', resetToTitle);
   bindAudioControls({ root: app, onToggleSound: render });
   syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, audioEnterCueId, keepVoiceCueId });
@@ -2507,7 +2565,7 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
 
 function pixelTransitionForCurrentScene(brief = {}) {
   const transition = {
-    nightShellPrologue: { kind: "scene", eyebrow: "NIGHT 01", label: "深夜档开麦" },
+    nightShellPrologue: { kind: "soft-fade", eyebrow: "20:00", label: "开播前" },
     overnightPostLive: { kind: "signal-disconnect", eyebrow: "SIGNAL LOST", label: "挂断以后" },
     dayActOpening: { kind: "scene", eyebrow: "DAY SHIFT", label: "白天调查" },
     overnightCallback: { kind: "signal-connect", eyebrow: "CALLBACK", label: "第二晚回拨" },
@@ -2529,6 +2587,14 @@ function mountCurrentDialogue() {
   let controller = null;
   controller = mountDialoguePresentation(app, {
     speed: state.settings?.textSpeed ?? "normal",
+    onPageStart: (page) => {
+      const pageLines = Array.isArray(page?.lines) ? page.lines : [page];
+      pageLines.forEach((line) => {
+        const cueId = line?.audioCueId ?? "";
+        if (!cueId) return;
+        playAudioCueOnce(cueId, `${caseKey(activeCaseBrief())}:${state.scene}:dialogue:${cueId}`);
+      });
+    },
     onShown: (page) => {
       const shownLines = Array.isArray(page?.lines) ? page.lines : [page];
       state.dialogueBacklog = [...(state.dialogueBacklog ?? []), ...shownLines].filter((line) => line?.text).slice(-500);
@@ -2597,9 +2663,7 @@ function caseBackdropClass(brief = {}) {
 }
 
 function compactDialogueLines(lines) {
-  const normalized = (lines ?? []).filter((line) => line?.text);
-  const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
-  return normalized.slice(0, totalLength > 220 ? 2 : 5);
+  return (lines ?? []).filter((line) => line?.text);
 }
 
 function bind(selector, handler) {

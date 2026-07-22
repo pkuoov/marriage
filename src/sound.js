@@ -1,4 +1,4 @@
-import { audioCueAvailable, audioCueById } from "./audioCatalog.js?v=0.22.0";
+import { audioCueAvailable, audioCueById } from "./audioCatalog.js?v=0.22.1";
 import { audioBusGain, normalizeAudioSettings, updateAudioBusVolume } from "./runtime/audioModel.js?v=0.22.0";
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 
@@ -155,8 +155,7 @@ function getContext() {
 function playSynth(kind = "click") {
   if (!settings.enabled) return;
   if (kind === "confirm") {
-    tone({ frequency: 520, duration: 0.09, type: "triangle", gain: 0.045, slideTo: 780 });
-    setTimeout(() => tone({ frequency: 880, duration: 0.08, type: "triangle", gain: 0.035 }), 70);
+    tone({ frequency: 340, duration: 0.075, type: "sine", gain: 0.019, slideTo: 430 });
     return;
   }
   if (kind === "warning") {
@@ -164,7 +163,7 @@ function playSynth(kind = "click") {
     return;
   }
   if (kind === "page") {
-    tone({ frequency: 330, duration: 0.05, type: "square", gain: 0.018, slideTo: 420 });
+    tone({ frequency: 300, duration: 0.05, type: "sine", gain: 0.012, slideTo: 360 });
     return;
   }
   tone({ frequency: 440, duration: 0.055, type: "sine", gain: 0.026, slideTo: 520 });

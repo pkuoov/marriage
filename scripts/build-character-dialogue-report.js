@@ -104,6 +104,7 @@ function collectCaseDialogue(packet) {
   for (const [sceneIndex, scene] of (packet.sceneVersions ?? []).entries()) {
     const phase = scenePhase(sceneIndex, packet);
     const speakerId = resolveSurface(scene.speaker ?? "咨询者", `$case.sceneVersions[${sceneIndex}].speaker`);
+    add(hostId, phase, `$case.sceneVersions[${sceneIndex}].entryQuestion`, scene.entryQuestion, "林旭阳");
     if (speakerId) {
       add(speakerId, phase, `$case.sceneVersions[${sceneIndex}].version`, scene.version, scene.speaker ?? "咨询者");
       add(speakerId, phase, `$case.sceneVersions[${sceneIndex}].revisedVersion`, scene.revisedVersion, scene.speaker ?? "咨询者");

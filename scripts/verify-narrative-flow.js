@@ -276,9 +276,7 @@ function renderedOpeningEndsOnHost(opening) {
 }
 
 function compactOpeningLines(lines) {
-  const normalized = (lines ?? []).filter((line) => line?.text);
-  const totalLength = normalized.reduce((sum, line) => sum + String(line.text ?? "").length, 0);
-  return normalized.slice(0, totalLength > 220 ? 2 : 5);
+  return (lines ?? []).filter((line) => line?.text);
 }
 
 function hasOpeningTurnMismatch(opening) {

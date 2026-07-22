@@ -36,13 +36,15 @@ export function splitDialogueSentences(value = "") {
   return rows;
 }
 
-export function dialogueTurnsFrom(root, { maxTurnChars = 92 } = {}) {
+export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxPageChars = 156 } = {}) {
   return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction") ?? []).flatMap((line) => {
     const isStage = line.classList.contains("call-stage-direction");
     const speaker = isStage ? "现场" : line.querySelector("b")?.textContent?.trim() || "咨询者";
     const role = isStage ? "stage" : line.classList.contains("host") || line.classList.contains("shell-host") ? "host" : "caller";
     const text = isStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
-    return chunkDialogueTurn({ speaker, role, text }, maxTurnChars);
+    const audioCueId = line.getAttribute?.("data-audio-cue-id") ?? "";
+    const turnLimit = /[？?]$/.test(text.trim()) ? Math.max(maxTurnChars, maxPageChars) : maxTurnChars;
+    return chunkDialogueTurn({ speaker, role, text, audioCueId }, turnLimit);
   });
 }
 
@@ -64,33 +66,65 @@ export function chunkDialogueTurn(turn = {}, maxChars = 92) {
   }
   if (current) chunks.push(current);
   return chunks.map((text, index) => ({
+    ...turn,
     speaker: turn.speaker ?? "咨询者",
     role: turn.role ?? "caller",
     text,
-    continuation: chunks.length > 1 && index > 0
+    continuation: chunks.length > 1 && index > 0,
+    continues: chunks.length > 1 && index < chunks.length - 1
   }));
 }
 
 export function groupDialogueTurns(turns = [], { maxPageChars = 156 } = {}) {
   const pages = [];
   let index = 0;
+  let carriedQuestion = null;
   while (index < turns.length) {
     const current = turns[index];
     const next = turns[index + 1];
-    if (current.role === "host" && next?.role === "caller" && pageLength([current, next]) <= maxPageChars) {
-      pages.push({ lines: [current, next] });
+    if (current.role === "host" && next?.role === "caller") {
+      pages.push(...questionAnswerPages(current, next, { maxPageChars }));
+      carriedQuestion = next.continues ? current : null;
       index += 2;
       continue;
     }
-    if (current.role === "caller" && next?.role === "host" && /[？?]$/.test(current.text) && pageLength([current, next]) <= maxPageChars) {
-      pages.push({ lines: [current, next] });
+    if (current.role === "caller" && next?.role === "host" && (/[？?]$/.test(current.text) || !/[？?]$/.test(next.text))) {
+      pages.push(...questionAnswerPages(current, next, { maxPageChars }));
+      carriedQuestion = next.continues ? current : null;
       index += 2;
+      continue;
+    }
+    if (carriedQuestion && current.continuation && current.role !== "stage") {
+      pages.push(...questionAnswerPages(carriedQuestion, current, { maxPageChars, repeatQuestion: true }));
+      carriedQuestion = current.continues ? carriedQuestion : null;
+      index += 1;
       continue;
     }
     pages.push({ lines: [current] });
+    carriedQuestion = null;
     index += 1;
   }
   return pages;
+}
+
+function questionAnswerPages(question = {}, answer = {}, { maxPageChars = 156, repeatQuestion = false } = {}) {
+  const availableAnswerChars = Math.max(36, maxPageChars - String(question.text ?? "").length);
+  const answerChunks = chunkDialogueTurn(answer, availableAnswerChars);
+  return answerChunks.map((answerChunk, index) => ({
+    lines: [
+      {
+        ...question,
+        repeatedContext: repeatQuestion || index > 0,
+        continuation: false,
+        continues: false
+      },
+      {
+        ...answerChunk,
+        continuation: Boolean(answer.continuation || index > 0),
+        continues: Boolean(answer.continues || index < answerChunks.length - 1)
+      }
+    ]
+  }));
 }
 
 function splitLongSentence(value = "", maxChars = 92) {
@@ -105,10 +139,6 @@ function splitLongSentence(value = "", maxChars = 92) {
   }
   if (remaining) chunks.push(remaining);
   return chunks;
-}
-
-function pageLength(lines = []) {
-  return lines.reduce((sum, line) => sum + String(line?.text ?? "").length, 0);
 }
 
 export function mountDialoguePresentation(root, options = {}) {
@@ -145,7 +175,7 @@ export function mountDialoguePresentation(root, options = {}) {
   return controller;
 }
 
-export function createDialogueController({ box, pages, choices, speed = "normal", onShown = () => {}, onChoicesShown = () => {} } = {}) {
+export function createDialogueController({ box, pages, choices, speed = "normal", onPageStart = () => {}, onShown = () => {}, onChoicesShown = () => {} } = {}) {
   let pageIndex = 0;
   let visibleCount = 0;
   let frameId = 0;
@@ -166,11 +196,13 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
     box.classList.toggle("speaker-host", lines[0]?.role === "host");
     box.classList.toggle("reduced-fade", reduceMotion);
     pageLines.innerHTML = lines.map((entry) => `
-      <div class="avg-page-line speaker-${entry.role === "host" ? "host" : entry.role === "stage" ? "stage" : "caller"}">
-        <b>${escapeHtml(entry.role === "host" ? "林旭阳" : entry.speaker)}</b>
+      <div class="avg-page-line speaker-${entry.role === "host" ? "host" : entry.role === "stage" ? "stage" : "caller"}${entry.repeatedContext ? " context-repeat" : ""}">
+        <b>${entry.repeatedContext ? "上一问 · " : ""}${escapeHtml(entry.role === "host" ? "林旭阳" : entry.speaker)}</b>
         <p class="avg-line"></p>
       </div>
     `).join("");
+    onPageStart(page, pageIndex);
+    applyVisibleText(page, 0);
     indicator.hidden = true;
     if (reduceMotion || baseDelay === 0) return finishPage();
     lastAt = performance.now();
@@ -179,7 +211,7 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
 
   function typeFrame(now) {
     const page = pages[pageIndex];
-    const fullText = normalizedPageLines(page).map((entry) => entry.text).join("");
+    const fullText = typeablePageLines(page).map((entry) => entry.text).join("");
     const previous = fullText[Math.max(0, visibleCount - 1)] ?? "";
     const punctuationDelay = /[、，,]/.test(previous) ? 90 : /[—]/.test(previous) ? 120 : 0;
     if (now - lastAt >= baseDelay + punctuationDelay) {
@@ -194,7 +226,7 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
   function finishPage() {
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
-    visibleCount = normalizedPageLines(page).reduce((sum, entry) => sum + entry.text.length, 0);
+    visibleCount = typeablePageLines(page).reduce((sum, entry) => sum + entry.text.length, 0);
     applyVisibleText(page, visibleCount);
     complete = true;
     indicator.hidden = false;
@@ -206,6 +238,10 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
     const lines = normalizedPageLines(page);
     Array.from(pageLines.querySelectorAll(".avg-line")).forEach((element, index) => {
       const text = lines[index]?.text ?? "";
+      if (lines[index]?.repeatedContext) {
+        element.textContent = text;
+        return;
+      }
       const visible = Math.max(0, Math.min(text.length, remaining));
       element.textContent = text.slice(0, visible);
       remaining -= visible;
@@ -232,6 +268,10 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
 function normalizedPageLines(page = {}) {
   if (Array.isArray(page.lines)) return page.lines;
   return page.text ? [page] : [];
+}
+
+function typeablePageLines(page = {}) {
+  return normalizedPageLines(page).filter((line) => !line.repeatedContext);
 }
 
 function escapeHtml(value) {

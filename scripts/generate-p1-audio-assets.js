@@ -18,28 +18,6 @@ mkdirSync(scratchDir, { recursive: true });
 
 const loops = [
   {
-    file: "bgm/title-nightshift.ogg",
-    title: "Night Shift title bed",
-    inputs: [
-      "sine=frequency=55:sample_rate=48000:duration=20",
-      "sine=frequency=82.407:sample_rate=48000:duration=20",
-      "sine=frequency=110:sample_rate=48000:duration=20",
-      "anoisesrc=color=brown:sample_rate=48000:duration=20:amplitude=0.04"
-    ],
-    filter: "[0:a]volume=0.12,tremolo=f=0.10:d=0.18[a0];[1:a]volume=0.065,tremolo=f=0.10:d=0.12[a1];[2:a]volume=0.025,tremolo=f=0.20:d=0.22[a2];[3:a]lowpass=f=900,highpass=f=70,volume=0.026[n];[a0][a1][a2][n]amix=inputs=4:normalize=0,volume=2.7,alimiter=limit=0.55[out]"
-  },
-  {
-    file: "bgm/pressure-stem.ogg",
-    title: "Live pressure stem",
-    inputs: [
-      "sine=frequency=48:sample_rate=48000:duration=16",
-      "sine=frequency=96:sample_rate=48000:duration=16",
-      "sine=frequency=192:sample_rate=48000:duration=16",
-      "anoisesrc=color=pink:sample_rate=48000:duration=16:amplitude=0.05"
-    ],
-    filter: "[0:a]volume=0.16,tremolo=f=1.5:d=0.78[a0];[1:a]volume=0.06,tremolo=f=3:d=0.64[a1];[2:a]volume=0.018,tremolo=f=6:d=0.72[a2];[3:a]highpass=f=150,lowpass=f=2600,tremolo=f=1.5:d=0.55,volume=0.025[n];[a0][a1][a2][n]amix=inputs=4:normalize=0,volume=3.1,alimiter=limit=0.52[out]"
-  },
-  {
     file: "ambience/studio-room.ogg",
     title: "Late-night studio room tone",
     inputs: [

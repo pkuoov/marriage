@@ -1,13 +1,14 @@
 import { access, readFile, readdir, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { AUDIO_CUES, AUDIO_CUE_BUSES, AUDIO_CUE_STATUSES } from "../src/audioCatalog.js?v=0.22.0";
-import { audioScenePlan } from "../src/runtime/audioSceneModel.js?v=0.22.0";
+import { audioScenePlan } from "../src/runtime/audioSceneModel.js?v=0.22.1";
 
 const ROOT_URL = new URL("../", import.meta.url);
 const CONTENT_URL = new URL("../content/packs/steam-demo-01/", import.meta.url);
 const errors = [];
 const references = [];
 const voiceProduction = JSON.parse(await readFile(new URL("../assets/audio/voice/recording-manifest.json", import.meta.url), "utf8"));
+const bgmProduction = JSON.parse(await readFile(new URL("../assets/audio/bgm-production.json", import.meta.url), "utf8"));
 
 for (const fileUrl of await jsonFiles(CONTENT_URL)) {
   const document = JSON.parse(await readFile(fileUrl, "utf8"));
@@ -58,7 +59,11 @@ const requiredReadySfx = [
 ];
 const requiredReadyP1 = [
   "bgm.title-nightshift",
+  "bgm.live-call",
   "bgm.pressure-stem",
+  "bgm.offair-desk",
+  "bgm.day-investigation",
+  "bgm.callback-return",
   "ambience.studio-room",
   "ambience.city-afternoon",
   "voice.case2.dryer-message",
@@ -69,6 +74,19 @@ for (const cueId of requiredReadySfx) {
 }
 for (const cueId of requiredReadyP1) {
   if (AUDIO_CUES[cueId]?.status !== "ready") fail(`${cueId}: P1 demo audio must be ready`);
+}
+const approvedBgmRecipes = Object.values(bgmProduction.recipes ?? {}).filter((recipe) => recipe.status === "approved");
+const approvedBgmCueIds = new Set(approvedBgmRecipes.map((recipe) => recipe.cueId));
+for (const recipe of approvedBgmRecipes) {
+  const cue = AUDIO_CUES[recipe.cueId];
+  if (cue?.status !== "ready") fail(`${recipe.cueId}: approved BGM recipe must map to a ready cue`);
+  if (cue?.src !== `./${recipe.output}`) fail(`${recipe.cueId}: approved recipe output must match audio catalog source`);
+}
+for (const cueId of ["bgm.live-call", "bgm.pressure-stem", "bgm.offair-desk", "bgm.day-investigation", "bgm.callback-return"]) {
+  if (!approvedBgmCueIds.has(cueId)) fail(`${cueId}: ready Udio loop requires an approved reproducible recipe`);
+}
+for (const cueId of ["bgm.accusation", "bgm.recap-afterhours", "bgm.epilogue-dawn"]) {
+  if (AUDIO_CUES[cueId]?.status !== "planned") fail(`${cueId}: missing source music must stay planned instead of using a false placeholder`);
 }
 const referencedCueIds = new Set(references.map(({ cueId }) => cueId));
 for (const cueId of requiredContentCues) {
@@ -101,6 +119,8 @@ for (const sample of [
   { scene: "overnightPostLive", backdropClass: "day-document" },
   { scene: "dayScene", backdropClass: "day-restaurant" },
   { scene: "overnightCallback" },
+  { scene: "overnightNight2" },
+  { scene: "liveCounterBeat" },
   { scene: "accusation" },
   { scene: "solvedRecap" },
   { scene: "runComplete" }

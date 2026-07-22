@@ -10,13 +10,13 @@ const ffmpeg = process.env.FFMPEG_BIN || "ffmpeg";
 const assets = [
   {
     file: "phone-connect.ogg",
-    title: "Hotline connect",
+    title: "Soft hotline connect",
     inputs: [
-      "sine=frequency=520:sample_rate=48000:duration=0.18",
-      "sine=frequency=820:sample_rate=48000:duration=0.20",
-      "anoisesrc=color=pink:sample_rate=48000:duration=0.40:amplitude=0.08"
+      "sine=frequency=360:sample_rate=48000:duration=0.30",
+      "sine=frequency=480:sample_rate=48000:duration=0.26",
+      "anoisesrc=color=pink:sample_rate=48000:duration=0.34:amplitude=0.03"
     ],
-    filter: "[0:a]volume=0.20,afade=t=out:st=0.11:d=0.07[a0];[1:a]volume=0.14,adelay=130|130,afade=t=out:st=0.25:d=0.07[a1];[2:a]highpass=f=2200,lowpass=f=6500,volume=0.025,afade=t=out:st=0.30:d=0.10[n];[a0][a1][n]amix=inputs=3:normalize=0,volume=14,alimiter=limit=0.5[out]"
+    filter: "[0:a]volume=0.11,afade=t=in:st=0:d=0.02,afade=t=out:st=0.13:d=0.17[a0];[1:a]volume=0.07,adelay=70|70,afade=t=in:st=0:d=0.02,afade=t=out:st=0.15:d=0.11[a1];[2:a]highpass=f=500,lowpass=f=1800,volume=0.012,afade=t=out:st=0.20:d=0.14[n];[a0][a1][n]amix=inputs=3:normalize=0,lowpass=f=1600,volume=4.5,alimiter=limit=0.28[out]"
   },
   {
     file: "phone-disconnect.ogg",
@@ -30,13 +30,13 @@ const assets = [
   },
   {
     file: "broadcast-on-air.ogg",
-    title: "ON AIR relay",
+    title: "Soft ON AIR relay",
     inputs: [
-      "anoisesrc=color=white:sample_rate=48000:duration=0.10:amplitude=0.45",
-      "sine=frequency=95:sample_rate=48000:duration=0.22",
-      "sine=frequency=1550:sample_rate=48000:duration=0.05"
+      "anoisesrc=color=brown:sample_rate=48000:duration=0.16:amplitude=0.12",
+      "sine=frequency=240:sample_rate=48000:duration=0.28",
+      "sine=frequency=480:sample_rate=48000:duration=0.18"
     ],
-    filter: "[0:a]highpass=f=1200,lowpass=f=7200,volume=0.18,afade=t=out:st=0.025:d=0.075[c];[1:a]volume=0.16,afade=t=in:st=0:d=0.012,afade=t=out:st=0.08:d=0.14[t];[2:a]volume=0.10,adelay=65|65,afade=t=out:st=0.085:d=0.03[r];[c][t][r]amix=inputs=3:normalize=0,volume=4.5,alimiter=limit=0.5[out]"
+    filter: "[0:a]highpass=f=90,lowpass=f=1200,volume=0.035,afade=t=out:st=0.045:d=0.115[c];[1:a]volume=0.09,afade=t=in:st=0:d=0.018,afade=t=out:st=0.10:d=0.18[t];[2:a]volume=0.045,adelay=55|55,afade=t=in:st=0:d=0.012,afade=t=out:st=0.09:d=0.09[r];[c][t][r]amix=inputs=3:normalize=0,lowpass=f=1400,volume=4.2,alimiter=limit=0.25[out]"
   },
   {
     file: "message-notification.ogg",
@@ -77,7 +77,14 @@ if (version.status !== 0) {
 }
 
 mkdirSync(outputDir, { recursive: true });
-for (const asset of assets) {
+const requestedFiles = new Set(process.argv.slice(2));
+const selectedAssets = requestedFiles.size ? assets.filter((asset) => requestedFiles.has(asset.file)) : assets;
+const unknownFiles = [...requestedFiles].filter((file) => !assets.some((asset) => asset.file === file));
+if (unknownFiles.length) {
+  console.error(`Unknown prototype audio asset: ${unknownFiles.join(", ")}`);
+  process.exit(1);
+}
+for (const asset of selectedAssets) {
   const args = ["-hide_banner", "-loglevel", "error", "-y"];
   asset.inputs.forEach((input) => args.push("-f", "lavfi", "-i", input));
   args.push(

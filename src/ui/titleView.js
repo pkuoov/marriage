@@ -7,7 +7,10 @@ export function titleScreenHtml({
   hook = "",
   object = "",
   host = {},
-  audioSettings = {}
+  audioSettings = {},
+  canContinue = false,
+  resumeLabel = "上次停在：直播连线",
+  confirmNewGame = false
 } = {}) {
   return `
     <main>
@@ -17,9 +20,9 @@ export function titleScreenHtml({
           <h1>${escapeHtml(productName)}</h1>
           <p>${escapeHtml(title)}</p>
           <div class="title-console-strip" aria-hidden="true">
-            <span><b>ON AIR</b><small>热线待接</small></span>
+            <span><b>STANDBY</b><small>等待开播</small></span>
             <span><b>REC</b><small>后台留档</small></span>
-            <span><b>LIVE</b><small>弹幕入场</small></span>
+            <span><b>LINE</b><small>热线待接</small></span>
           </div>
           ${storyPack ? `
             <section class="title-host-card">
@@ -31,11 +34,37 @@ export function titleScreenHtml({
           <div class="quick-play-card case-file-ledger daily-hook-card">
             <span>${escapeHtml(object)}</span>
             <b>${escapeHtml(hook)}</b>
-            <small>${storyPack ? "麦已经亮了。" : "同一天同一通电话。你接哪句，朋友进来就能对答案。"}</small>
+            <small>${storyPack ? "先进去。开播以后，再接第一通线。" : "同一天同一通电话。你接哪句，朋友进来就能对答案。"}</small>
           </div>
           <div class="title-actions">
-            <button class="primary" data-start-story type="button">${storyPack ? "接通" : "我来接一句"}</button>
-            ${audioSettingsPanelHtml(audioSettings, { placement: "title" })}
+            <div class="title-journey-menu">
+              ${canContinue ? `
+                <button class="primary title-journey-action title-journey-continue" data-continue-story type="button">
+                  <span>CONTINUE</span>
+                  <b>继续上次直播</b>
+                  <small>${escapeHtml(resumeLabel)}</small>
+                </button>
+                <button class="title-journey-action title-journey-new" data-request-new-game type="button">
+                  <span>NEW GAME</span>
+                  <b>新游戏</b>
+                  <small>从开播前重新开始</small>
+                </button>
+              ` : `
+                <button class="primary title-journey-action title-journey-new title-journey-new-only" data-start-story type="button">
+                  <span>NEW GAME</span>
+                  <b>${storyPack ? "新游戏" : "开始今日来电"}</b>
+                  <small>${storyPack ? "从今晚 20:00 的开播前开始" : "接入今天这通匿名来电"}</small>
+                </button>
+              `}
+            </div>
+            ${confirmNewGame ? `
+              <section class="title-new-game-confirm" aria-live="polite">
+                <div><b>要从头开始吗？</b><small>新游戏会覆盖当前进度。</small></div>
+                <button data-cancel-new-game type="button">保留进度</button>
+                <button class="primary" data-confirm-new-game type="button">确认新游戏</button>
+              </section>
+            ` : ""}
+            <div class="title-utility-row">${audioSettingsPanelHtml(audioSettings, { placement: "title" })}</div>
           </div>
         </div>
       </section>

@@ -28,6 +28,8 @@ npm run smoke:desktop
 | BROWSER-SMOKE | Playable route replay | `npm run smoke:browser` opens the offline playable and replays perfect, outer-only, material-miss, keyboard-perfect, and gamepad-perfect routes to the recap. | 离线包语法能过但真实按钮无响应、import alias 丢失、后台回流页崩溃、外围追问无法线性推进、材料误圈路线死路，或键盘/手柄焦点无法实际通关。 |
 | UI-001 | Choice UI contract | Current-node questions render in one panel without explainer tags; buttons are host questions, not route labels, same-panel buttons have equal visual weight, the material inspection stage remains in the runtime, and recap/interlude copy avoids scoring slang. | `顺着问`、`按住问`、路线轴提示、双分组单按钮、核心追问高亮、`半口瓜`、`闻到味`、`主播倾向`、`接入下一通` 等设计稿或评分腔残留回到玩家界面，或玩法退回纯问答。 |
 | UI-002 | Broadcast identity | Title and live-call screens preserve a livestream control-desk shell: signal strip, ON AIR state, host monitor, audience patience, current call segment, background material panel, scene evidence props, and caller expression motion. | UI 退回普通文字剧情游戏：一张背景图、一块对话卡、没有直播间控场职业感，案情物件只剩文字，或玩家作为主播的视觉存在消失。 |
+| AUDIO-002 | Entry audio timing | The title is a quiet pre-show state; entering the studio does not stack a generic confirmation tone with story SFX. The ON AIR cue plays once on the countdown page, and the phone-connect cue waits for the actual call. | 首页按钮尖锐叠音、刚进直播间就提前开播、开播音重复播放，或还没接线便响电话接通音。 |
+| AVG-002 | Dialogue page density | A normal dialogue page presents one conversational exchange: usually one question with its answer, with the opening greeting paired to the host’s greeting. When an answer needs another page, the continuation repeats a visually weakened “上一问” for context. Stage directions, pauses, and deliberate life-noise beats may stand alone. | 台词被拆成孤立的一问或一答、开场问候悬空、续页忘记问题、单页重新塞回多个问答，或为了合页把动作和停顿误写成口头台词。 |
 | EPISODE-001 | Story pack contract | A `storyKey` deterministically generates four live-call cases with stable order, visible in-run progress, one shared theme, a non-spoiler title intro, per-case bridge text, at least one material inspection node per case, and a post-run hidden thread sourced from manifest theme data. | 故事集变成随机拼盘、乱序、重复题材、标题页剧透目录、开场说教、无主题、无法回放同一集、缺少可操作材料，或串案暗线硬写在 UI 里。 |
 | EPISODE-001B | Story interlude contract | Story-pack interludes should summarize the previous call from the played route and introduce the next call through a dramatic object, not a directory title. | 案间页退回“上一通记下 / 下一案 / 下一通来电”这种模板感。 |
 | EPISODE-001A | In-run spoiler guard | Story-pack live screens use neutral call labels instead of act names, case titles, `1/4` package progress, or "next case" copy. | 首页刚清干净，玩家一进第一通又看到目录式剧透。 |
@@ -47,6 +49,8 @@ npm run smoke:desktop
 | DAILY-009B | Value baseline | Case copy avoids gender-war labels and group attacks while allowing concrete mutual harm. | 用性别对立收割流量，或把双方互害偷换成男女群体攻击。 |
 | DAILY-009C | Copy voice | Playable case and share copy avoids stock AI-summary phrasing, including essay-like `让我……的是/不是……` result-card sentences. | 结果卡和来电台词退回作文式心理总结、二元转折、教程腔或 AI 复盘腔。 |
 | DETECTIVE-001 | Detective plot coupling | The project keeps a detective-structure skill and improvement plan with false solution, missing edge, fair-play reveal, clue ledger, truth boundary, and quote payoff requirements. | 剧情优化退回单句润色、临时反转、作者讲道理，或串案暗线没有线索/误导/回收结构。 |
+| DETECTIVE-002 | Ambient promise closure | Any singled-out sound, knock, object, location change, or interruption is classified as disposable texture, a local promise, or a cross-case promise; load-bearing signals have a later payoff and a `proves / doesNotProve` boundary. | 警笛、敲门等承重细节只负责制造气氛，第二夜没有因果回收；或回收时把相邻截图偷写成同一笔资金。 |
+| CHARACTER-003 | Occupation causes behavior | A stigmatized or irregular job is written through concrete tasks, pay cadence, and bodily/appearance costs; it causes at least two visible actions, while genuine respect from another character is shown in dialogue or action and remains true after the reveal. | 主播或旁白直接贴“不正经”标签；职业只写在人物小传；用“提供情绪价值”代替具体行为；发现销售动机后把所有真实照顾倒判成假。 |
 | DAILY-010 | Scene question shape | Each daily scene beat has exactly one core issue question; other options are plausible outer angles. | Strong clue angles disappearing because several buttons all reveal the same core point. |
 | DAILY-011 | Quote-pick accusation | Case 4's final beat uses quoted-line choices; the gray-zone answer is not the first button. | Players passing by position or reading abstract conclusions instead of listening to the call. |
 | DAILY-015 | Content breadth | Daily engine supports non-romance public incident cases such as workplace reimbursement screenshots. | Product scope collapsing back into marriage-only cases. |
@@ -73,27 +77,30 @@ Automated tests do not replace one short browser replay after large narrative/UI
 1. Open `http://localhost:5174/?ui=<new>&storyKey=steam-demo-01`.
 2. For a large pass, fill `docs/playtest-report-template.md` while playing instead of summarizing from memory.
 3. Confirm the title card does not reveal there are four cases, list case titles, or show the story-pack thesis.
-4. Start a fresh run and confirm in-run progress appears only after the first call is entered, and that the live screen does not show case names, act labels, `1/4`, or "下一案".
-5. Confirm the opening explains why suspicious materials exist.
-6. Confirm only "你" and "咨询者" are present in the live room; no real NPC names or second-party portrait/mic appears.
-7. Confirm recap/deep-followup wording matches the assigned caller and respondent, or uses role terms such as "咨询者 / 同事 / 对方" instead of fragile gender pronouns.
-8. On at least three current-node choice panels, confirm there is one panel and every button is a host question, not a route label or UI explainer.
-9. Confirm same-panel current-node buttons have equal color, border, card treatment, and emphasis; no button should look recommended by UI priority.
-10. Confirm the page does not show "how to play" hints, route axes, or designer shorthand inside the live-call choice area.
-11. Confirm the first live-call screen reads as a livestream control desk: visible ON AIR state, host monitor/mic control, current segment, audience patience, scene evidence props, and backend material panel before it reads as a generic visual-novel text box.
-12. Pick one core issue question and one tempting outer-angle question.
-13. Confirm outer-angle feedback is in-character and live comments react.
-14. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
-15. After the last scene, enter material inspection; confirm the material appears as a document/table/screenshot board, not a paragraph above ordinary choice buttons.
-16. Pick one material target and confirm the selected area gets a visible circle/annotation inside the board.
-17. Confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
-18. Confirm material hit feedback appears once, not again as a separate reaction line.
-19. Solve the first case and confirm the recap shows the hidden route map.
-20. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
-21. Confirm the recap does not use scoring slang such as "半口瓜", "闻到味", "瓜心", "主播倾向", "最佳答案", or "结论更锋利".
-22. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
-23. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
-24. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
+4. Confirm the title says the studio is still waiting to go live, and that “进入直播间” uses a soft fade instead of a hard pixel-grid cut.
+5. Enter the studio with sound on: there should be no stacked confirmation chirp; the ON AIR cue should play once only when the countdown page appears, and the phone-connect cue only after “开始接线”.
+6. Start a fresh run and confirm in-run progress appears only after the first call is entered, and that the live screen does not show case names, act labels, `1/4`, or "下一案".
+7. Confirm the opening explains why suspicious materials exist.
+8. Confirm only "你" and "咨询者" are present in the live room; no real NPC names or second-party portrait/mic appears.
+9. Confirm recap/deep-followup wording matches the assigned caller and respondent, or uses role terms such as "咨询者 / 同事 / 对方" instead of fragile gender pronouns.
+10. On at least three current-node choice panels, confirm there is one panel and every button is a host question, not a route label or UI explainer.
+11. On at least three dialogue pages, confirm each normal page contains one host question and its caller answer; if an answer continues, the next page repeats the dimmed “上一问”, while stage directions and pauses may remain independent beats.
+12. Confirm same-panel current-node buttons have equal color, border, card treatment, and emphasis; no button should look recommended by UI priority.
+13. Confirm the page does not show "how to play" hints, route axes, or designer shorthand inside the live-call choice area.
+14. Confirm the first live-call screen reads as a livestream control desk: visible ON AIR state, host monitor/mic control, current segment, audience patience, scene evidence props, and backend material panel before it reads as a generic visual-novel text box.
+15. Pick one core issue question and one tempting outer-angle question.
+16. Confirm outer-angle feedback is in-character and live comments react.
+17. Confirm a correct core issue question keeps audience patience unchanged, while an outer-angle question can consume it.
+18. After the last scene, enter material inspection; confirm the material appears as a document/table/screenshot board, not a paragraph above ordinary choice buttons.
+19. Pick one material target and confirm the selected area gets a visible circle/annotation inside the board.
+20. Confirm a correct material pick keeps audience patience unchanged and wrong material picks consume it.
+21. Confirm material hit feedback appears once, not again as a separate reaction line.
+22. Solve the first case and confirm the recap shows the hidden route map.
+23. Confirm the route map marks material inspection as material, not as a fake sixth dialogue beat.
+24. Confirm the recap does not use scoring slang such as "半口瓜", "闻到味", "瓜心", "主播倾向", "最佳答案", or "结论更锋利".
+25. Continue to the interlude. Confirm the previous-card copy references the played case or route, and the next-card title is a dramatic object such as "表格", not "下一通来电".
+26. Enter the second case, then finish or jump through enough flow to confirm the final story-pack summary can aggregate case routes.
+27. Confirm the story-pack summary shows the story theme and a comment-wall block tied to the route.
 
 ## Maintenance Rules
 

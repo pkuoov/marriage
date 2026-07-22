@@ -1,5 +1,5 @@
-import { seekVoiceCue, setAudioBusVolume, subscribeAudioState, syncAudioScene, toggleSound, toggleVoiceCue } from "../sound.js?v=0.22.0";
-import { audioScenePlan } from "../runtime/audioSceneModel.js?v=0.22.0";
+import { seekVoiceCue, setAudioBusVolume, subscribeAudioState, syncAudioScene, toggleSound, toggleVoiceCue } from "../sound.js?v=0.22.1";
+import { audioScenePlan } from "../runtime/audioSceneModel.js?v=0.22.1";
 
 export function bindAudioControls({ root = defaultRoot(), onToggleSound = () => {} } = {}) {
   if (!root) return;

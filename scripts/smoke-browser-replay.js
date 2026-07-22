@@ -104,8 +104,6 @@ async function runRoute(route) {
     reducedMotion: route.name === "accounting-restaurant" ? "no-preference" : "reduce"
   });
   await context.addInitScript(() => {
-    window.localStorage?.clear();
-    window.sessionStorage?.clear();
     window.__smokeGamepad = {
       connected: false,
       index: 0,
@@ -135,6 +133,8 @@ async function runRoute(route) {
       if (await page.locator(".pixel-transition").count() !== 1) throw new Error("night shell should mount one pixel transition overlay");
       const pointerEvents = await page.locator(".pixel-transition").evaluate((element) => getComputedStyle(element).pointerEvents);
       if (pointerEvents !== "none") throw new Error("pixel transition must never block player input");
+      const transitionDuration = await page.locator(".pixel-transition-soft-fade").evaluate((element) => getComputedStyle(element).animationDuration);
+      if (transitionDuration !== "2.4s") throw new Error(`pre-show transition should hold for 2.4s, got ${transitionDuration}`);
     }
     if (await page.locator("[data-enter-first-case]").count()) {
       await drainDialogue(page, route);
@@ -146,6 +146,12 @@ async function runRoute(route) {
       await activate(page, route, "[data-enter-first-case]");
     }
     if (route.name === "accounting-restaurant") {
+      await activate(page, route, '[data-action="title"]');
+      await assertVisibleText(page, "继续上次直播", "returning to title should preserve a continue entry");
+      await assertVisibleText(page, "新游戏", "title menu should keep a separate new-game entry");
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await assertVisibleText(page, "继续上次直播", "reloading with a save should stay on the title menu instead of auto-resuming");
+      await activate(page, route, "[data-continue-story]");
       await assertDialoguePresentation(page);
       await assertPixelPortrait(page, 1);
     }
@@ -429,6 +435,7 @@ async function openCaseAtChapter(page, chapter, name) {
     window.localStorage.setItem(key, JSON.stringify(save));
   }, chapter);
   await page.reload();
+  await click(page, "[data-continue-story]");
   await click(page, '[data-scene="sceneReview"]');
 }
 
@@ -726,6 +733,7 @@ async function runCaseTransition() {
       window.localStorage.setItem(key, JSON.stringify(save));
     });
     await page.reload();
+    await click(page, "[data-continue-story]");
     await assertVisibleText(page, "案件结案", "first case should enter a dedicated closure page before the next case");
     await assertVisibleText(page, "账单里的八万", "first case closure should carry a case-specific title");
     await assertVisibleText(page, "今晚能确认", "closure should distinguish confirmed facts from a raw evidence pile");
@@ -763,15 +771,12 @@ async function runCaseTransition() {
       window.localStorage.setItem(key, JSON.stringify(save));
     });
     await page.reload();
+    await click(page, "[data-continue-story]");
     await click(page, "[data-enter-story-interlude]");
-    await assertVisibleText(page, "第二案 · 小尾声", "second case must close before the delayed world echo");
-    if (await page.getByText("宸直信托旗下两款产品暂停兑付").count()) throw new Error("world echo must not appear before player action");
-    await assertVisibleText(page, "把午间新闻听完", "world echo must be offered as a player action");
-    await click(page, "[data-reveal-world-echo]");
-    await assertVisibleText(page, "宸直信托旗下两款产品暂停兑付", "world echo must pay off the case-one trust seed after case two");
-    await assertVisibleText(page, "具体兑付方案还没有公布", "world echo must preserve the unresolved recovery boundary");
+    await assertVisibleText(page, "第二案 · 小尾声", "second case must close without prematurely paying off the trust thread");
+    if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await click(page, "[data-enter-next-case]");
-    await assertVisibleText(page, "试玩连线 · 第 03 案", "world echo must return to the normal case transition");
+    await assertVisibleText(page, "试玩连线 · 第 03 案", "case two tail must return to the normal case transition");
 
     await page.evaluate(() => {
       const key = "livestream-detective-save-v1";
@@ -782,12 +787,18 @@ async function runCaseTransition() {
       window.localStorage.setItem(key, JSON.stringify(save));
     });
     await page.reload();
+    await click(page, "[data-continue-story]");
     await assertVisibleText(page, "案件结案", "final case must still enter its dedicated closure page");
     await click(page, "[data-enter-story-interlude]");
     await page.getByText("第四案 · 小尾声").first().waitFor({ state: "visible" });
     await assertVisibleText(page, "第四案 · 小尾声", "final case must have its own lived epilogue");
     await assertVisibleText(page, "第四案完", "final case tail must close before the whole-night epilogue");
     if (await page.getByText("下一通 · 材料先到").count()) throw new Error("final case tail must not show a nonexistent next case");
+    if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("final world echo must not appear before player action");
+    await assertVisibleText(page, "把新闻推送点开", "final world echo must be offered as a player action");
+    await click(page, "[data-reveal-world-echo]");
+    await assertVisibleText(page, "宸直信托全部产品暂停兑付，实控人失联", "final world echo must pay off the case-one and case-two trust seeds");
+    await assertVisibleText(page, "公告没有公布清偿顺序", "final world echo must preserve the unresolved recovery boundary");
     await click(page, "[data-enter-night-epilogue]");
     await assertVisibleText(page, "直播中", "whole-night epilogue should begin only after the fourth case tail");
   } finally {
@@ -1011,6 +1022,15 @@ async function assertDialoguePageDensity(box) {
       item.classList.contains("speaker-host") ? "host" : "caller"
     )));
     if (roles[0] === roles[1]) throw new Error("two-line dialogue page must contain two different speakers");
+  }
+  const repeatedContext = box.locator(".avg-page-line.context-repeat");
+  const repeatedCount = await repeatedContext.count();
+  if (repeatedCount > 1 || (repeatedCount === 1 && count !== 2)) {
+    throw new Error("continued answer page must keep exactly one previous-question context and one answer");
+  }
+  if (repeatedCount === 1) {
+    const contextLabel = await repeatedContext.locator("b").textContent();
+    if (!contextLabel?.includes("上一问")) throw new Error("continued answer context must be visibly labeled as the previous question");
   }
 }
 

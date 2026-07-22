@@ -3,13 +3,18 @@
 日期:2026-07-19
 规则:任何一首曲子在生成前必须先填完整 brief,再从 brief 压缩出平台 prompt;每次迭代只动一个变量轴,并记录版本诊断。泛风格标签(lo-fi/melancholic 单飞)禁止直接投喂。
 
+完整 brief 是给人和工程流程看的，不等于要把全部内容交给生成模型。曲 2 的首轮失败已经证明：过长 Describe 会把每项约束变成一个新的音乐事件。正式投喂 Udio 时，Describe 只保留用途、核心音色、情绪和节奏行为，约 30–50 个英文词；Style Reduction 只保留 6–8 个直接失败模式。循环、低通、响度、峰值、淡入淡出与转码由 `scripts/process-bgm.js` 处理，不写进音乐描述。
+
+当前 Udio 执行单：[udio-bgm-production-prompts-v2.md](udio-bgm-production-prompts-v2.md)。它已经按实际 `audioCatalog` 九个 BGM 槽位重排；本文件后面的旧示例只用于说明 brief 方法，其中的长平台 Prompt 属于历史示例，不可直接复制生成。
+
 ## Brief 模板(六栏,缺一不填不许生成)
 
 ```text
 【定位】游戏内角色 + 市场对标(同类作品的 OST 参照,给平台听得懂的描述而非人名)
 【风格】流派 + 年代 + 制作质感(录音介质/瑕疵美学)
 【表现形式】配器清单 | 段落编排计划(几秒进什么) | motif 要求 | 混音视角(近/远/干/湿)
-【技术规格】BPM | 调性倾向 | 目标时长 | 纯器乐 | 循环意图(哪段做 loop) | 交付后处理(LUFS/低通)
+【技术规格】BPM | 调性倾向 | 工作母版目标时长 | 运行时循环的小节数与时长 | 纯器乐 | 交付后处理(LUFS/低通)
+【Udio 执行参数】Clip Timing | Song Length | Prompt Strength | Lyrics Strength | Clarity | Generation Quality
 【场景挂载与禁忌】在哪响、和什么声音共存、必须不像什么
 【迭代轴】v1 先验证什么;若 X 失败,v2 只改什么
 ```
@@ -75,4 +80,5 @@ minimal ambient jazz bed, sparse warm Rhodes chords with long silences between, 
 1. 每版生成后按曲目的【迭代轴】验收,诊断写一行(如"v1:质感对,motif 太弱");
 2. 下一版 prompt 只改诊断指向的那一个变量,其余字词原样保留(平台对 prompt 变动敏感,多变量一起动等于重开盲盒);
 3. 三版仍不合格→换平台(Mureka↔Udio)或改用已合格曲目 remix 派生;
-4. 合格曲目立即登记到本文件「已定资产状态」,并交 ffmpeg 后处理(响度归一/循环剪辑/低通)进 `assets/audio/`,命名对齐 `audioCatalog`(bgm.title / bgm.night-a.listen / sting.interrupt 等)。
+4. Udio Remix 输出按 32 秒短曲处理，当前只用于最终追问；压力层直接剪辑曲 2 同轮生成的紧张版本，其他长曲直接新生成 2:10，再按整小节裁运行时循环;
+5. 合格曲目立即登记到本文件「已定资产状态」,并交 ffmpeg 后处理(响度归一/循环剪辑/低通)进 `assets/audio/`,命名对齐 `audioCatalog`(bgm.title / bgm.night-a.listen / sting.interrupt 等)。

@@ -442,6 +442,7 @@ function renderContinuousStoryScript() {
 function renderContinuousScene(lines, scene, { includeHelper = false } = {}) {
   if (!scene) return;
   for (const line of scene.beforeVersion?.lines ?? []) renderContinuousSpoken(lines, line);
+  if (scene.entryQuestion) lines.push(`**林旭阳：** ${scene.entryQuestion}`, "");
   if (scene.version) lines.push(`**${scene.speaker ?? "咨询者"}：** ${scene.version}`, "");
   for (const line of scene.afterVersion?.lines ?? []) renderContinuousSpoken(lines, line);
   if (scene.pressureHint?.expression?.text) lines.push(`【${scene.pressureHint.expression.text}】`, "");
@@ -571,6 +572,7 @@ function renderPureStoryScene(lines, scene, label) {
   if (!scene) return;
   lines.push(`### ${label}`, "");
   for (const line of scene.beforeVersion?.lines ?? []) renderDirectorSpoken(lines, line);
+  if (scene.entryQuestion) lines.push(`**林旭阳：** ${scene.entryQuestion}`, "");
   if (scene.version) lines.push(`**${scene.speaker ?? "咨询者"}：** ${scene.version}`, "");
   for (const line of scene.afterVersion?.lines ?? []) renderDirectorSpoken(lines, line);
   if (scene.pressureHint?.expression?.text) lines.push(`【${scene.pressureHint.expression.text}】`, "");
@@ -894,6 +896,7 @@ function renderDirectorScene(lines, scene, label) {
   if (!scene) return;
   lines.push(`### ${label}｜${scene.id ?? "未命名场"}`, "");
   for (const line of scene.beforeVersion?.lines ?? []) renderDirectorSpoken(lines, line);
+  if (scene.entryQuestion) lines.push(`**林旭阳：** ${scene.entryQuestion}`, "");
   if (scene.version) lines.push(`**${scene.speaker ?? "咨询者"}：** ${scene.version}`, "");
   for (const line of scene.afterVersion?.lines ?? []) renderDirectorSpoken(lines, line);
   if (scene.pressureHint?.expression?.text) lines.push(`【受压动作】${scene.pressureHint.expression.text}`, "");
@@ -1059,11 +1062,12 @@ function advisorName(advisorId) {
 function renderScene(lines, scene, sourceIndex, label) {
   if (!scene) return;
   lines.push(`### ${label}｜${scene.id ?? `场景 ${sourceIndex + 1}`}`, "");
+  if (scene.entryQuestion) lines.push(`**林旭阳：** ${scene.entryQuestion}`, "");
   if (scene.version) lines.push(`**${scene.speaker ?? "咨询者"}：** ${scene.version}`, "");
   if (scene.revisedVersion) lines.push(`【材料触发后的重述】 **${scene.speaker ?? "咨询者"}：** ${scene.revisedVersion}`, "");
   if (scene.helperHint) lines.push(`【主动求助·V哥】 ${scene.helperHint}`, "");
   for (const [key, value] of Object.entries(scene)) {
-    if (["id", "speaker", "version", "revisedVersion", "helperHint"].includes(key)) continue;
+    if (["id", "speaker", "entryQuestion", "version", "revisedVersion", "helperHint"].includes(key)) continue;
     renderNode(lines, value, key, 4);
   }
 }

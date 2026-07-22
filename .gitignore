@@ -15,3 +15,5 @@ assets/generated/**/contact_sheet.png
 node_modules/
 dist/
 assets/audio/source/
+assets/audio/review/
+assets/audio/reports/

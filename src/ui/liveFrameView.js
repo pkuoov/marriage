@@ -156,7 +156,7 @@ export function liveFrameHtml({
 
 export function pixelTransitionHtml(transition = null) {
   if (!transition?.label) return "";
-  const kind = ["scene", "signal-connect", "signal-disconnect"].includes(transition.kind) ? transition.kind : "scene";
+  const kind = ["scene", "soft-fade", "signal-connect", "signal-disconnect"].includes(transition.kind) ? transition.kind : "scene";
   const signalClass = kind.startsWith("signal-") ? " pixel-transition-signal" : "";
   return `
     <div class="pixel-transition pixel-transition-${kind}${signalClass}" data-transition-kind="${kind}" aria-hidden="true">
