@@ -74,6 +74,31 @@
       "durationSeconds": 90.35,
       "crossfadeSeconds": 4,
       "notes": "曲 6 首选。约 63.75 BPM，低频重于普通连麦但保持稳定，不采用灵异感明显的 music_6_1。"
+    },
+    "accusation-v2": {
+      "status": "approved",
+      "cueId": "bgm.accusation",
+      "title": "Accusation v2 runtime loop",
+      "input": "assets/audio/unchanged/b8ab6093-e42b-4b0e-93b8-07c89763d584.wav",
+      "output": "assets/audio/bgm/accusation.ogg",
+      "report": "assets/audio/reports/accusation-v2.json",
+      "startSeconds": 56,
+      "durationSeconds": 30,
+      "crossfadeSeconds": 4,
+      "notes": "曲 7 v2 两个可用版本中选择动态更稳的 b8ab6093；用于最终追问和玩家停留选择。"
+    },
+    "recap-afterhours-v4": {
+      "status": "approved",
+      "cueId": "bgm.recap-afterhours",
+      "title": "Recap Afterhours v4 runtime loop",
+      "input": "assets/audio/unchanged/c077d327-3120-404e-9fe0-4bd48f7841be.wav",
+      "output": "assets/audio/bgm/recap-afterhours.ogg",
+      "report": "assets/audio/reports/recap-afterhours-v4.json",
+      "startSeconds": 43.25,
+      "durationSeconds": 46,
+      "crossfadeSeconds": 8,
+      "lowpassHz": 13500,
+      "notes": "曲 8 v4 人工选定第一首。取中后段制作 46 秒自由速度循环；Prompt 冻结，不再生成。"
     }
   }
 }

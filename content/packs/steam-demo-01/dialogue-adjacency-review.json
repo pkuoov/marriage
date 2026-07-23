@@ -8,32 +8,22 @@
   ],
   "cases": {
     "01-credit": {
-      "reviewedAt": "2026-07-20",
+      "reviewedAt": "2026-07-23",
       "opening": [
         {
-          "fromAnchor": "咨询一下感情上的事",
-          "toAnchor": "你慢慢说",
-          "relation": "主播先回应来意，让她按自己的节奏开口。"
+          "fromAnchor": "没敢转",
+          "toAnchor": "八万不是随手帮个忙",
+          "relation": "来电人先报反常金额并担心自己多疑，主播先确认谨慎有理由，不立刻追问。"
         },
         {
-          "fromAnchor": "你慢慢说",
-          "toAnchor": "最近发生什么事",
-          "relation": "问候回应结束后，主播另起一问，请她交代最近的直接异常。"
+          "fromAnchor": "别怪自己多想",
+          "toAnchor": "在一起多久",
+          "relation": "回应她对自己的怀疑后，主播另起一问，追两人的关系和借钱原话。"
         },
         {
-          "fromAnchor": "最近发生什么事",
-          "toAnchor": "信用卡要周转",
-          "relation": "来电人回答最近发生的具体异常。"
-        },
-        {
-          "fromAnchor": "先垫一笔",
-          "toAnchor": "垫多少",
-          "relation": "主播听见借钱请求后追问金额。"
-        },
-        {
-          "fromAnchor": "垫多少",
-          "toAnchor": "八万",
-          "relation": "来电人直接回答金额，不抢跑解释。"
+          "fromAnchor": "怎么开口",
+          "toAnchor": "奖金晚发",
+          "relation": "咨询者先回答交往时长，再复述对方用奖金晚发解释信用卡周转。"
         }
       ],
       "scenes": {
@@ -229,22 +219,22 @@
           "entry": {
             "mode": "continue",
             "fromAnchor": "账单往下翻",
-            "toAnchor": "我又算了一遍",
-            "relation": "主播提出继续翻账单，来电人随即把共同消费、男方男装和未说明金额拆成三块。"
+            "toAnchor": "我昨晚拿计算器",
+            "relation": "主播提出继续翻账单，来电人回答自己重新计算后的缺口和催款时间变化。"
           },
           "questionOptions": [
             {
-              "contextAnchor": "还剩至少三万五没说明",
-              "questionAnchor": "还剩至少三万五",
+              "contextAnchor": "离八万还差至少三万五",
+              "questionAnchor": "加完还差至少三万五",
               "answerAnchor": "问过一次",
               "guardedAnswerAnchor": "问过",
               "relation": "复述账单里已经拆出的未说明金额，询问她是否问过具体用途。"
             },
             {
-              "contextAnchor": "社保停了以后",
+              "contextAnchor": "餐厅、酒店、礼物",
               "questionAnchor": "账单上的日子",
               "answerAnchor": "近几个月能对上",
-              "relation": "沿她按断缴后消费做的汇总，核对账单日期是否落在交往期。"
+              "relation": "沿她承认的共同消费项目，核对账单日期是否落在交往期。"
             }
           ],
           "freeQuestions": [
@@ -351,11 +341,11 @@
       }
     },
     "02-tony": {
-      "reviewedAt": "2026-07-20",
+      "reviewedAt": "2026-07-23",
       "opening": [
-        { "fromAnchor": "相亲认识的关系", "toAnchor": "你慢慢说", "relation": "主播先接住相亲来意，让她慢慢讲。" },
-        { "fromAnchor": "你慢慢说", "toAnchor": "认识多久", "relation": "问候回应结束后，主播另起一问，只问两人认识了多长时间。" },
-        { "fromAnchor": "认识多久", "toAnchor": "几个月", "relation": "咨询者先回答时长，再补充两人从顾客变得亲近。" },
+        { "fromAnchor": "一晚上没睡", "toAnchor": "先缓口气", "relation": "咨询者先说误发表格令她失眠，主播确认听得清并让她先把呼吸缓下来。" },
+        { "fromAnchor": "先缓口气", "toAnchor": "谁发的", "relation": "接住她的急促后，主播另起一问，只追表格来源和两人关系。" },
+        { "fromAnchor": "什么关系", "toAnchor": "相亲认识的理发师", "relation": "咨询者直接回答对方身份和认识时长，再交代自己为何频繁去理发店。" },
         { "fromAnchor": "不太像普通顾客", "toAnchor": "怎么个不太像", "relation": "主播沿她自己的判断，请她说出具体相处方式。" },
         { "fromAnchor": "怎么个不太像", "toAnchor": "最晚那档", "relation": "咨询者用留晚档、临时补发根、免单和单独吃饭回答亲近体现在哪里。" },
         { "fromAnchor": "关系说清楚", "toAnchor": "为什么今天", "relation": "关系长期含混后，主播询问今天促使她来电的直接事件。" },
@@ -448,11 +438,11 @@
       }
     },
     "03-profile": {
-      "reviewedAt": "2026-07-20",
+      "reviewedAt": "2026-07-23",
       "opening": [
-        { "fromAnchor": "相亲的事", "toAnchor": "你慢慢说", "relation": "主播先回应相亲来意，让她慢慢讲。" },
-        { "fromAnchor": "你慢慢说", "toAnchor": "认识多久", "relation": "问候回应结束后，主播另起一问，只问两人认识时间。" },
-        { "fromAnchor": "认识多久", "toAnchor": "见过四次", "relation": "咨询者用见面次数回答关系进度，并带出原定见父母。" },
+        { "fromAnchor": "不敢带他见父母", "toAnchor": "见父母这件事先停一下", "relation": "咨询者先交代四张图带来的直接后果，主播先允许她暂停饭局，不急着判断材料。" },
+        { "fromAnchor": "不急着替那四张图下结论", "toAnchor": "见过几次", "relation": "暂缓材料结论后，主播另起一问，确认关系进度和见父母日期。" },
+        { "fromAnchor": "什么时候见父母", "toAnchor": "这个周末", "relation": "咨询者直接回答见面次数和原定日期。" },
         { "fromAnchor": "本来要见父母", "toAnchor": "现在不想带他去", "relation": "主播听见计划被说成“本来”，确认她是否已经动摇。" },
         { "fromAnchor": "现在不想带他去", "toAnchor": "我不敢", "relation": "咨询者直接回答不敢，再说明家里已经听到的条件版本。" },
         { "fromAnchor": "几张材料", "toAnchor": "你开口要的吗", "relation": "材料令她动摇后，主播先核对这些材料由谁提出。" },
@@ -549,13 +539,11 @@
       }
     },
     "04-workplace": {
-      "reviewedAt": "2026-07-20",
+      "reviewedAt": "2026-07-23",
       "opening": [
-        { "fromAnchor": "公司里的事", "toAnchor": "你慢慢说", "relation": "主播回应公司问题，让她慢慢讲。" },
-        { "fromAnchor": "你慢慢说", "toAnchor": "跟同事有关吗", "relation": "问候回应结束后，主播另起一问，先确认涉及的是不是同事。" },
-        { "fromAnchor": "跟同事有关吗", "toAnchor": "部门办客户答谢会", "relation": "咨询者确认后交代活动费用刷个人卡这一异常。" },
-        { "fromAnchor": "钱一直没回来", "toAnchor": "怎么会刷到你自己的卡上", "relation": "费用未返后，主播先问部门支出进入个人卡的直接经过。" },
-        { "fromAnchor": "怎么会刷到你自己的卡上", "toAnchor": "私聊我", "relation": "咨询者用同事私聊和流程来不及回答个人垫款如何发生。" }
+        { "fromAnchor": "主责也一起丢了", "toAnchor": "先别发消息", "relation": "咨询者先报垫款金额和职场顾虑，主播让她暂缓发消息，不预判是否上报。" },
+        { "fromAnchor": "得先问清楚", "toAnchor": "是谁让你垫的", "relation": "暂缓行动后，主播另起一问，追垫款发起人与流程承诺。" },
+        { "fromAnchor": "什么流程", "toAnchor": "同事私聊我", "relation": "咨询者直接回答同事私聊、报销承诺与主责交换是如何同时出现的。" }
       ],
       "scenes": {
         "work-title-for-advance": {

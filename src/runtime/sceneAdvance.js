@@ -398,6 +398,22 @@ export function snapshotEchoFor(brief = {}, snapshotPick = null) {
   return overnightStructureFor(brief)?.snapshotEcho?.[optionId] ?? "";
 }
 
+export function overnightCallbackDialogueLines(brief = {}, { stanceLine = "", opener = {}, snapshotEcho = "" } = {}) {
+  const structure = overnightStructureFor(brief) ?? {};
+  const firstConflict = opener.firstConflict ?? {};
+  return [
+    ...(stanceLine ? [{ role: "caller", text: stanceLine }] : []),
+    ...(structure.returnLead?.lines ?? []),
+    ...(opener.line ? [{ role: "caller", text: opener.line }] : []),
+    ...(firstConflict.lines ?? (firstConflict.hostLine ? [{ role: "host", text: firstConflict.hostLine }] : [])),
+    ...(firstConflict.callerLine ? [{ role: "caller", text: firstConflict.callerLine }] : []),
+    ...(firstConflict.pauseAfterCallerLine ? [{ role: "pause" }] : []),
+    ...(firstConflict.callerFollowupLine ? [{ role: "caller", text: firstConflict.callerFollowupLine }] : []),
+    ...(snapshotEcho ? [{ role: "caller", text: snapshotEcho }] : []),
+    ...(structure.returnBeat?.lines ?? [])
+  ];
+}
+
 export function liveCounterBeatsFor(brief = {}) {
   const beats = overnightStructureFor(brief)?.liveCounterBeats;
   return Array.isArray(beats) ? beats : [];

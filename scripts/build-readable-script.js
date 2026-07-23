@@ -200,6 +200,7 @@ function renderScript() {
     renderNode(lines, overnight.callbackOpeners, "带回物开场（全部分支）", 3);
     renderNode(lines, overnight.callbackFallback, "无带回物兜底开场", 3);
     renderNode(lines, overnight.postures, "回拨立场", 3);
+    renderNode(lines, overnight.returnLead, "回拨先行拍", 3);
     renderNode(lines, overnight.returnBeat, "回拨后的生活拍", 3);
     renderNode(lines, overnight.snapshotEcho, "立场快照回应拍", 3);
     renderNode(lines, overnight.callerQuestion, "来电人反问", 3);
@@ -304,8 +305,9 @@ function renderPureStoryScript() {
     lines.push("## 第二夜｜回拨", "");
     if (overnight.hangupLine) lines.push(`【${overnight.hangupLine}】`, "");
     if (overnight.hostHoldLine) lines.push(`**林旭阳：** ${overnight.hostHoldLine}`, "");
-    renderPureStoryCallbackOpeners(lines, overnight.callbackOpeners, overnight.callbackFallback);
     renderPureStoryCallerVariants(lines, "来电人的回拨立场", overnight.postures);
+    for (const line of overnight.returnLead?.lines ?? []) renderDirectorSpoken(lines, line);
+    renderPureStoryCallbackOpeners(lines, overnight.callbackOpeners, overnight.callbackFallback);
     renderPureStoryCallerVariants(lines, "她对昨夜判断的回应", overnight.snapshotEcho);
     for (const line of overnight.returnBeat?.lines ?? []) renderDirectorSpoken(lines, line);
 
@@ -395,6 +397,7 @@ function renderContinuousStoryScript() {
     lines.push("## 第二夜｜回拨", "");
     if (packet.overnightStructure?.hangupLine) lines.push(`【${packet.overnightStructure.hangupLine}】`, "");
     renderContinuousCallerVariant(lines, packet.overnightStructure?.postures, route.posture);
+    for (const line of packet.overnightStructure?.returnLead?.lines ?? []) renderContinuousSpoken(lines, line);
     renderContinuousCallback(lines, packet, route.callbackEarnedItem);
     renderContinuousCallerVariant(lines, packet.overnightStructure?.snapshotEcho, route.snapshot);
     for (const line of packet.overnightStructure?.returnBeat?.lines ?? []) renderContinuousSpoken(lines, line);
@@ -819,6 +822,15 @@ function renderDirectorScript() {
     lines.push("## 夜 B｜把省略问回来", "");
     if (overnight.hangupLine) lines.push(`【回拨前】${overnight.hangupLine}`, "");
     if (overnight.hostHoldLine) lines.push(`**林旭阳：** ${overnight.hostHoldLine}`, "");
+    if (packet.nightStructure?.returnStance?.lines) {
+      lines.push("### 回拨时的咨询者立场", "");
+      for (const [stance, line] of Object.entries(packet.nightStructure.returnStance.lines)) lines.push(`- **${humanLabel(stance)}：** ${line}`);
+      lines.push("");
+    }
+    if (overnight.returnLead?.lines?.length) {
+      lines.push("### 回拨先行拍", "");
+      for (const line of overnight.returnLead.lines) renderDirectorSpoken(lines, line);
+    }
     lines.push("### 带回物开场", "");
     for (const [earnedItem, opener] of Object.entries(overnight.callbackOpeners ?? {})) {
       lines.push(`#### ${earnedItem}`, "", `**咨询者：** ${opener.line ?? ""}`, "");
@@ -829,11 +841,6 @@ function renderDirectorScript() {
       if (opener.firstConflict?.callerFollowupLine) lines.push(`**咨询者：** ${opener.firstConflict.callerFollowupLine}`, "");
     }
     if (overnight.callbackFallback?.line) lines.push("#### 没带回关键物件", "", `**咨询者：** ${overnight.callbackFallback.line}`, "");
-    if (packet.nightStructure?.returnStance?.lines) {
-      lines.push("### 回拨时的咨询者立场", "");
-      for (const [stance, line] of Object.entries(packet.nightStructure.returnStance.lines)) lines.push(`- **${humanLabel(stance)}：** ${line}`);
-      lines.push("");
-    }
     if (overnight.snapshotEcho) {
       lines.push("### 中段立场回应拍", "");
       for (const [optionId, line] of Object.entries(overnight.snapshotEcho)) lines.push(`- **${optionId}：** ${line}`);
@@ -1190,7 +1197,7 @@ function humanLabel(key) {
     clueRole: "线索职能", falseFrame: "错误框架", payoffFor: "回收目标", speakerId: "说话人 ID", doubt: "现场疑点", contradiction: "矛盾", reliability: "可靠度", showsCard: "展示卡片",
     casualQuestions: "自由追问", questionOptions: "关键追问", dialogueOptions: "补充对话", question: "主播问句", answer: "咨询者回答", guardedAnswer: "防备回答", suspicionLabel: "玩家所选怀疑方向", correct: "是否核心项", routeAxis: "路线轴", routeTone: "路线口气",
     pressureHint: "压力表演", intentHook: "意图钩子", callerGuard: "防备状态", expression: "表情/听感", helperHint: "V哥提示",
-    afterScene: "段后触发", beforeVersion: "正文前节拍", afterVersion: "正文后节拍", sceneCloser: "场尾自动拍", returnBeat: "回拨后的生活拍", hostChoices: "主播应对选择", stanceNudge: "立场变化", nonLoadBearing: "生活噪声标记", silent: "不出声", kind: "类型", checkId: "材料检视 ID", revisedVersion: "材料触发后的重述",
+    afterScene: "段后触发", beforeVersion: "正文前节拍", afterVersion: "正文后节拍", sceneCloser: "场尾自动拍", returnLead: "回拨先行拍", returnBeat: "回拨后的生活拍", hostChoices: "主播应对选择", stanceNudge: "立场变化", nonLoadBearing: "生活噪声标记", silent: "不出声", kind: "类型", checkId: "材料检视 ID", revisedVersion: "材料触发后的重述",
     title: "标题", subtitle: "副标题", intro: "引子", text: "正文", line: "台词", role: "角色职能", type: "表现类型", audioCueId: "音频提示",
     opening: "开场", good: "数据较好分支", bad: "数据较差分支", home: "回家", close: "收束",
     true: "能确认", edited: "被修剪", unknown: "今晚定不了", offlineSitIn: "同席特许事实", truthBoundary: "事实边界",

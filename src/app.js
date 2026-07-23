@@ -12,7 +12,7 @@ import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialogu
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.21.1";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
-import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeCaseId, storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.26.1";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
@@ -1011,7 +1011,6 @@ function renderOvernightCallback(brief) {
   const snapshotPick = stanceSnapshotPickForState(brief);
   const posture = overnightReturnPostureFor(snapshotPick, stanceNudge);
   const stanceLine = structure.postures?.[posture] ?? "";
-  const firstConflict = opener.firstConflict ?? {};
   const snapshotEcho = snapshotEchoFor(brief, snapshotPick);
   frame({
     brief,
@@ -1021,16 +1020,7 @@ function renderOvernightCallback(brief) {
     text: `
       <section class="callback-opener-card">
         <span class="source-badge">第二夜</span>
-        ${callDialogueHtml([
-          ...(stanceLine ? [{ role: "caller", text: stanceLine }] : []),
-          { role: "caller", text: opener.line ?? "" },
-          ...(firstConflict.lines ?? (firstConflict.hostLine ? [{ role: "host", text: firstConflict.hostLine }] : [])),
-          ...(firstConflict.callerLine ? [{ role: "caller", text: firstConflict.callerLine }] : []),
-          ...(firstConflict.pauseAfterCallerLine ? [{ role: "pause" }] : []),
-          ...(firstConflict.callerFollowupLine ? [{ role: "caller", text: firstConflict.callerFollowupLine }] : []),
-          ...(snapshotEcho ? [{ role: "caller", text: snapshotEcho }] : []),
-          ...(structure.returnBeat?.lines ?? [])
-        ])}
+        ${callDialogueHtml(overnightCallbackDialogueLines(brief, { stanceLine, opener, snapshotEcho }))}
       </section>
     `,
     choices: flowGroupHtml(`<button class="primary" data-enter-overnight-night2 type="button">继续追问</button>`)

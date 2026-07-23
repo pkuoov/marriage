@@ -13,8 +13,8 @@ export const AUDIO_CUES = Object.freeze({
   "bgm.offair-desk": readyLoop("收麦调查台", "bgm", "./assets/audio/bgm/offair-desk.ogg", 0.62),
   "bgm.day-investigation": readyLoop("白天调查", "bgm", "./assets/audio/bgm/day-investigation.ogg", 0.64),
   "bgm.callback-return": readyLoop("夜间回拨", "bgm", "./assets/audio/bgm/callback-return.ogg", 0.68),
-  "bgm.accusation": plannedLoop("最终追问", "bgm", "./assets/audio/bgm/accusation.ogg", 0.7),
-  "bgm.recap-afterhours": plannedLoop("收麦回看", "bgm", "./assets/audio/bgm/recap-afterhours.ogg", 0.58),
+  "bgm.accusation": readyLoop("最终追问", "bgm", "./assets/audio/bgm/accusation.ogg", 0.7),
+  "bgm.recap-afterhours": readyLoop("收麦回看", "bgm", "./assets/audio/bgm/recap-afterhours.ogg", 0.58),
   "bgm.epilogue-dawn": plannedLoop("天亮前", "bgm", "./assets/audio/bgm/epilogue-dawn.ogg", 0.62),
 
   "ambience.studio-room": readyLoop("直播棚室内底噪", "ambience", "./assets/audio/ambience/studio-room.ogg", 0.46),

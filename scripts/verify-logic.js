@@ -22,7 +22,7 @@ import { chunkDialogueTurn, groupDialogueTurns, splitDialogueSentences } from ".
 import { assertDialogueTexture, dialogueTextureMetrics, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js?v=0.22.0";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js?v=0.20.68";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js?v=0.20.68";
-import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, earnedDocumentQuestionsFor, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatTriggerMet, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.22.0";
+import { answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, earnedDocumentQuestionsFor, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatTriggerMet, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeCaseId, storyInterludeNextLine, storyInterludeObjectLabel } from "../src/runtime/storyInterludeModel.js?v=0.26.1";
 import { CARE_CHOICE_IDS, careChoiceById, careChoiceIsComplete, careChoiceLines } from "../src/runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadMessages, epilogueUnreadStage } from "../src/runtime/epilogueUnreadModel.js?v=0.24.3";
@@ -110,6 +110,19 @@ test("AVG-002", "dialogue pages keep one short question-answer exchange and spli
     { role: "host", speaker: "林旭阳", text: "他第一次催你是在什么时候？" }
   ]);
   assertEqual(statementThenQuestion.length, 2, "咨询者陈述后接主播新问题时必须换页，不能伪装成问答组");
+});
+
+test("AVG-003", "all four authored openings render as complete exchanges instead of adjacent questions", () => {
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  briefs.forEach((brief) => {
+    const turns = (brief.openingDialogue ?? []).flatMap((line) => chunkDialogueTurn(line, 92));
+    const pages = groupDialogueTurns(turns, { maxPageChars: 156 });
+    assert(pages.length >= 2, `${brief.runtimeContentCaseId} 开场至少需要两页完整交流`);
+    assert(
+      pages.every((page) => ["caller,host", "host,caller"].includes(page.lines.map((line) => line.role).join(","))),
+      `${brief.runtimeContentCaseId} 开场不得留下孤立问题、孤立回答或同角色双句`
+    );
+  });
 });
 
 test("TEXTURE-001", "humanization texture metrics are gated, measurable, and enforced", () => {
@@ -2525,19 +2538,26 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assertIncludes(sharedPerformanceEcho, "剩下三万五也不能混在一起", "共同参与路线必须自然接回信用卡三桶");
   assert(!sharedPerformanceEcho.includes("还能留着"), "立场回应不能用指代不明的作者摘要连接两晚剧情");
   assert(overnightCallbackOpenerById(brief, "他对三万五的沉默")?.firstConflict?.callerLine, "旁听提前离开必须改变夜 B 第一轮回答");
-  assertIncludes(brief.stageJudgement, "一万五左右的男装是他自己的", "案一结论必须保留男方个人排场消费");
-  assertIncludes(brief.stageJudgement, "银行流水要另算", "案一结论必须把银行贷款与转账同信用卡缺口分开");
-  assertIncludes(brief.stageJudgement, "那是他的决定", "案一结论必须明确个人投机决定不能转成伴侣债务");
+  assertIncludes(brief.stageJudgement, "他自己的消费", "案一结论必须保留男方个人排场消费");
+  assertIncludes(brief.stageJudgement, "七月那笔钱转给谁", "案一结论必须把未知转账同信用卡缺口分开");
+  assertIncludes(brief.stageJudgement, "是他自己的决定", "案一结论必须明确个人投机决定不能转成伴侣债务");
   assertIncludes(JSON.stringify(sitIn?.body?.choice?.options ?? []), "灯是我真心买的", "同席原句必须保留，供麦外来信精确回声");
   assertEqual(brief.lurkerNote?.deletedFragment, "灯是我真心买的", "lurker 只能复现同席已经当面说过的原句");
   const deviceSeed = brief.sceneVersions.find((scene) => scene.id === "credit-device-benefit");
   const deviceReveal = brief.sceneVersions.find((scene) => scene.id === "credit-bank-flow");
+  const loyaltyPayoff = brief.sceneVersions.find((scene) => scene.id === "credit-loyalty-test");
   assert(deviceSeed, "案 1 夜 A 必须保留设备受益种子");
   assert(deviceReveal, "案 1 夜 B 必须保留设备受益揭示");
+  assert(loyaltyPayoff, "案 1 夜 B 必须保留催款消息回收");
   assertIncludes(deviceSeed.version, "投资", "案 1 夜 A 只能先种下投资话术");
   const deviceResistance = JSON.stringify(deviceReveal?.questionOptions?.[0]?.resistanceBeat?.lines ?? []);
   assertIncludes(deviceResistance, "这笔分期就该算在我头上", "设备追问的抵抗拍必须表现咨询者对归责的防御性误解");
+  assertIncludes(deviceResistance, "主播，你问这个", "案 1 咨询者必须沿用全案对主播的称呼");
+  assert(!deviceResistance.includes("林老师"), "案 1 不能用一次性称呼混淆林旭阳与小林老师");
   assert(!deviceResistance.includes("弹幕就好看"), "咨询者不能替导演评价声音证据带来的节目效果");
+  const loyaltyLead = JSON.stringify(loyaltyPayoff.beforeVersion?.lines ?? []);
+  assertIncludes(loyaltyLead, "前面还是『抱抱』，后面就变成还款日了", "案 1 催款回收必须比较本轮玩家已经听见的两条消息");
+  assert(!/跟上回|跟上次|又是老样子/.test(loyaltyLead), "案 1 不得用玩家从未听过的过去事件补足催款模式");
   assert(!deviceSeed.version.includes("灯架和稳定器一直在我屋里"), "案 1 夜 A 不得抢先说完设备实际受益");
   assert(!(deviceSeed.questionOptions ?? []).some((option) => /实际服务过咨询者账号|收了设备/.test(option.contradiction ?? "")), "案 1 夜 A 的矛盾入账不得提前公布设备受益结论");
   assertEqual(brief.callMedium, "voice", "案 1 必须保持纯语音连线");
@@ -2604,6 +2624,21 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   const dryerEarned = interludeEarnedItemsForOvernight(brief, ["吹风机回放"]);
   assert(dryerEarned.includes("吹风机回放"), "案 2 同名吹风机回放必须显式同步进 overnight earnedItems");
   assert(availableOvernightCallbackOpeners(brief, dryerEarned).some((opener) => opener.id === "吹风机回放"), "案 2 吹风机回放必须能改变第二夜第一句");
+  const callbackOpener = overnightCallbackOpenerById(brief, "吹风机回放");
+  const callbackLines = overnightCallbackDialogueLines(brief, {
+    stanceLine: structure.postures.withCaller,
+    opener: callbackOpener,
+    snapshotEcho: snapshotEchoFor(brief, { id: "respondent-problem" })
+  });
+  const callbackTexts = callbackLines.map((line) => line.text ?? "");
+  const policeIndex = callbackTexts.findIndex((text) => text.includes("门外是民警"));
+  const policeResponseIndex = callbackTexts.findIndex((text) => text.includes("先在你妈家待着"));
+  const openerIndex = callbackTexts.indexOf(callbackOpener.line);
+  assert(policeIndex >= 0 && policeIndex < openerIndex, "案 2 实际回拨拼装必须先回收民警敲门，再进入带回物 opener");
+  assert(policeResponseIndex === policeIndex + 1, "案 2 主播必须在民警揭露后的下一轮先接住咨询者的安全处境");
+  assertIncludes(brief.hostDisclosure?.text ?? "", "民警找到你", "案 2 结案口播必须回应警情本身");
+  assertIncludes(brief.hostDisclosure?.text ?? "", "不能替那十万下结论", "案 2 警情口播必须保留十万元资金路径边界");
+  assert(!callbackTexts.slice(0, openerIndex).some((text) => text.includes("宸直")), "案 2 带回物 opener 之前不得出现宸直");
   const otherCallerAction = nightActionById(brief, "other-caller-dm");
   const otherCallerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");
   assert(otherCallerAction, "案 2 幕间必须保留回女客私信动作");
@@ -2627,8 +2662,13 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   const managerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-manager-training-note");
   assert(!managerHook?.material?.includes("“下一次推进”不是店里模板"), "店长后台说明不得重复培训页的承重结论");
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const sceneAdvanceSource = readFileSync(new URL("../src/runtime/sceneAdvance.js", import.meta.url), "utf8");
+  const caseScriptwritingSkill = readFileSync(new URL("../project-skills/case-scriptwriting/SKILL.md", import.meta.url), "utf8");
   assertIncludes(appSource, "先圈一行", "流水调查必须要求玩家实际圈行，不能空手记下离开");
-  assertIncludes(appSource, "firstConflict.hostLine", "隔夜 opener 后必须渲染路线专属第一轮冲突");
+  assertIncludes(appSource, "overnightCallbackDialogueLines", "隔夜回拨必须通过统一拼装器保持先行拍顺序");
+  assertIncludes(sceneAdvanceSource, "firstConflict.hostLine", "隔夜 opener 后必须渲染路线专属第一轮冲突");
+  assertIncludes(caseScriptwritingSkill, "悬时校验律", "剧本 skill 必须阻止首次玩家无法解析的悬空回溯");
+  assertIncludes(caseScriptwritingSkill, "顶重反应律", "剧本 skill 必须要求口播回应警情与人身安全等顶重事件");
 });
 
 test("RUNTIME-008B", "night-B snapshot echoes and live counter beats are selected by pure helpers", () => {
@@ -2671,7 +2711,12 @@ test("RUNTIME-008C", "conditional reaction beats trigger from either a marked ro
 
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const case2 = briefs.find((item) => item.runtimeContentCaseId === "02-tony");
-  assertEqual(liveCounterBeatBeforeScene(case2, 5, () => false)?.id, "tony-comment-benefit-blowup", "案 2 评论区爆句必须在下一段辩解前出现");
+  assertEqual(liveCounterBeatBeforeScene(case2, 5, () => false)?.id, "tony-trust-screenshot-followup", "案 2 必须在第一段夜 B 追问后独立归还宸直截图");
+  assertEqual(
+    liveCounterBeatBeforeScene(case2, 5, (key) => key === "liveCounterBeat:tony-trust-screenshot-followup")?.id,
+    "tony-comment-benefit-blowup",
+    "案 2 宸直截图播完后，评论区爆句仍须在下一段辩解前出现"
+  );
   const case3 = briefs.find((item) => item.runtimeContentCaseId === "03-profile");
   assertEqual(
     liveCounterBeatAfterScene(case3, 5, () => false, { documentMarks: { "case3-credential-balance": ["p04"] } })?.id,

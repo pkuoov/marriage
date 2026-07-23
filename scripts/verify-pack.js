@@ -206,6 +206,8 @@ function spokenSurfaceEntries(packet = {}) {
     add(`overnightStructure.callbackOpeners.${openerId}.firstConflict.callerLine`, opener?.firstConflict?.callerLine);
     add(`overnightStructure.callbackOpeners.${openerId}.firstConflict.callerFollowupLine`, opener?.firstConflict?.callerFollowupLine);
   });
+  addLines("overnightStructure.returnLead.lines", packet.overnightStructure?.returnLead?.lines);
+  addLines("overnightStructure.returnBeat.lines", packet.overnightStructure?.returnBeat?.lines);
   (packet.overnightStructure?.liveCounterBeats ?? []).forEach((beat, beatIndex) => {
     addLines(`overnightStructure.liveCounterBeats[${beatIndex}].lines`, beat.lines);
     (beat.choices ?? []).forEach((choice, choiceIndex) => {
@@ -774,6 +776,7 @@ function assertOvernightStructure(packet = {}, label = "") {
   assertNonEmptyString(structure.callbackFallback?.line, `${label} overnightStructure.callbackFallback.line 不能为空`);
   assertNonEmptyString(structure.postures?.againstCaller, `${label} overnightStructure.postures.againstCaller 不能为空`);
   assertNonEmptyString(structure.postures?.withCaller, `${label} overnightStructure.postures.withCaller 不能为空`);
+  if (structure.returnLead !== undefined) assertBeatLines(structure.returnLead?.lines, `${label} overnightStructure.returnLead.lines`);
   if (structure.returnBeat !== undefined) assertBeatLines(structure.returnBeat?.lines, `${label} overnightStructure.returnBeat.lines`);
   if (structure.callerQuestion !== undefined) {
     assertNonEmptyString(structure.callerQuestion.prompt, `${label} overnightStructure.callerQuestion.prompt 不能为空`);
@@ -1636,11 +1639,22 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(caseTwo?.nightStructure?.hangup?.line?.includes("突然有事") && !caseTwo?.nightStructure?.hangup?.line?.includes("他一直打电话"), "案二第一夜必须由眼前的敲门中断，不能退回陌生来电解释");
   assert(caseTwo?.overnightStructure?.hangupLine?.includes("电话断得很快"), "案二隔夜结构必须保留突然断线的动作结果");
 
-  const returnLines = caseTwo?.overnightStructure?.returnBeat?.lines ?? [];
-  const returnText = returnLines.map((line) => line.text ?? "").join(" ");
-  assert(returnText.includes("门外是民警") && returnText.includes("民警具体问了你什么"), "案二第二夜必须由主播逐步问出民警上门与盘问内容");
-  assert(returnText.includes("新店入股") && returnText.includes("宸直信托"), "案二警笛回收必须带出投店款与同机构理财种子");
-  assert(returnText.includes("转来的图") && returnText.includes("原件她交给民警了"), "案二必须在对白中区分转发截图与警方持有的原件");
+  const returnLeadLines = caseTwo?.overnightStructure?.returnLead?.lines ?? [];
+  const returnLeadText = returnLeadLines.map((line) => line.text ?? "").join(" ");
+  const returnPoliceIndex = returnLeadLines.findIndex((line) => line.role === "caller" && line.text?.includes("门外是民警"));
+  const returnHostResponseIndex = returnLeadLines.findIndex((line) => line.role === "host" && /民警为什么会找到你/.test(line.text ?? ""));
+  const returnCauseIndex = returnLeadLines.findIndex((line) => line.role === "caller" && line.text?.includes("入股新店"));
+  assert(returnPoliceIndex >= 0 && returnHostResponseIndex === returnPoliceIndex + 1 && returnCauseIndex === returnHostResponseIndex + 1, "案二第二夜必须按民警揭露、主播回应追问、上门原因的顺序逐步回收警情");
+  assert(returnLeadLines[returnHostResponseIndex]?.text?.includes("先在你妈家待着"), "案二主播追问警情前必须先接住咨询者当下的安全处境");
+  assert(returnLeadText.includes("入股新店") && returnLeadText.includes("联络人写的是我"), "案二回拨先行拍必须先让玩家听懂十万元与联络人风险");
+  assert(!returnLeadText.includes("宸直"), "案二回拨先行拍不得提前塞入宸直");
+
+  const trustBeat = caseTwo?.overnightStructure?.liveCounterBeats?.find((beat) => beat.id === "tony-trust-screenshot-followup");
+  const trustText = (trustBeat?.lines ?? []).map((line) => line.text ?? "").join(" ");
+  assert(trustBeat?.beforeSceneIndex > caseTwo?.nightStructure?.segment2SceneIndexes?.[0], "案二宸直补充材料必须晚于首个夜 B 正式场景");
+  assert(trustText.includes("宸直") && trustText.includes("认购回单"), "案二后段独立拍必须带出同机构理财种子");
+  assert(trustText.includes("只有她转来的图") && trustText.includes("原件已经交给民警"), "案二必须在对白中区分转发截图与警方持有的原件");
+  assert(trustText.includes("不能") && trustText.includes("是不是同一笔钱"), "案二必须由咨询者承认两笔十万元的资金同一性尚未确认");
   assert(caseTwo?.truthBoundary?.unknown?.some((item) => item.includes("实际资金路径") && item.includes("警方")), "案二必须把截图的资金同一性留给警方核对");
 
   const openingText = JSON.stringify(caseTwo?.openingDialogue ?? {});

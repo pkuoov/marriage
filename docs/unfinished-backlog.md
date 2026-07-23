@@ -6,9 +6,9 @@
 
 试玩流程证明仅有占位底噪不足以支撑首页、普通连线、压力、收麦调查、白天走访、第二晚回拨、最终追问、单案回看和天亮前九种节拍。**九个运行时 BGM 槽位现改为 P0 声音资产门**，不再写作“可延后、不阻塞试玩”。
 
-- 标题槽位已经改用正式母版 `title-neon-rain`；夜 A、压力层、收麦调查、白天调查和夜 B 回拨也已从入选 WAV 裁成正式 OGG 并接入运行时。
-- `live-call / pressure-stem / offair-desk / day-investigation / callback-return` 均由 `assets/audio/bgm-production.json` 的 approved 配方复建，原始 WAV 保持不动。
-- 仍需 Udio 制作的只剩 `accusation / recap-afterhours / epilogue-dawn`；曲 7 的首轮两份噪乱素材明确淘汰，不进入游戏。
+- 标题槽位已经改用正式母版 `title-neon-rain`；夜 A、压力层、收麦调查、白天调查、夜 B 回拨、最终追问和单案回看也已从入选 WAV 裁成正式 OGG 并接入运行时。
+- `live-call / pressure-stem / offair-desk / day-investigation / callback-return / accusation / recap-afterhours` 均由 `assets/audio/bgm-production.json` 的 approved 配方复建，原始 WAV 保持不动。
+- 仍需制作的 BGM 只剩尚无源资产的 `epilogue-dawn`；`accusation` 已从曲 7 v2 的稳定版本接入，`recap-afterhours` 已从曲 8 v4 第一首接入并冻结 Prompt。曲 7 的首轮两份噪乱素材明确淘汰，不进入游戏。
 - Udio 制作单已按实际页面列出两个文本区及 BPM、Clip Timing、Song Length、Prompt Strength、Lyrics Strength、Clarity、Generation Quality 七项参数；逐首填写值、2:10 上限、32 秒 Remix 用途和交付路径统一见 `docs/udio-bgm-production-prompts-v2.md`。
 - Udio Remix 的 32 秒结果只作局部方向验收，不是统一曲长；各槽位按场景停留时间分别交付 16、32 或 48 小节循环，完整时长表见同一制作单。
 - 地点环境底和非关键语音仍可按实听收益排产，但不能再用环境底替代缺失 BGM。
@@ -176,8 +176,8 @@
 ### 声音资产
 
 - 2026-07-17 已交付首批 5 条可随离线包分发的 OGG 交互音效：热线接通、热线挂断、ON AIR、后台来信、材料标记；均已接到真实事件，并由 `npm run verify:audio` 校验文件头、体积、目录状态和运行时引用。它们是试玩 foley，不替代后续正式混音验收。
-- 2026-07-22 六个 BGM 槽位已成为 `ready`：标题、直播连线、压力层、收麦调查、白天调查和夜间回拨。吹风机语音仍是系统声线试玩母版，商业发布前需要定向真人录音替换。
-- BGM 只剩终局追问、单案回看与天亮前三首；此外仍缺热线、餐厅、咖啡厅、茶馆、楼道、办公室、档案室与材料台环境底，以及尚未录制的关键原话语音。未交付 cue 不显示伪播放入口。
+- 2026-07-23 八个 BGM 槽位已成为 `ready`：标题、直播连线、压力层、收麦调查、白天调查、夜间回拨、最终追问和单案回看。吹风机语音仍是系统声线试玩母版，商业发布前需要定向真人录音替换。
+- BGM 只剩尚无源资产的天亮前尾声；此外仍缺热线、餐厅、咖啡厅、茶馆、楼道、办公室、档案室与材料台环境底，以及尚未录制的关键原话语音。未交付 cue 不显示伪播放入口。
 - 当前声音双线并行：Udio 先按制作单完成九槽位 BGM 家族；真人录音仍按案 2 → 案 3 → 案 4 排序。演员录音单和校验合同已落到 `assets/audio/voice/recording-manifest.json`；地点环境底继续排在 BGM 之后。
 
 验收：

@@ -1,6 +1,6 @@
-# Udio BGM 全套制作单 v2.9（六槽位已接入）
+# Udio BGM 全套制作单 v3.4（曲 7、8 已接入）
 
-日期：2026-07-22
+日期：2026-07-23
 
 用途：按当前运行时的九个 BGM 槽位制作正式音乐。旧九曲表只作历史记录，本文件是下一轮 Udio 生成的执行真源。
 
@@ -12,7 +12,11 @@
 - 新生成曲最长 2:10。`pressure-stem` 直接剪辑同轮生成的紧张版，只有 `accusation` 使用 32 秒 Remix；其余曲目直接新生成完整曲，不再假设可以 Extend。
 - 所有环境声继续走 ambience 总线。BGM 内禁止烘焙雨声、车流、鸟叫、电话铃、纸张声和人声广播。
 - 除标题曲外，BGM 的首要任务是托住中文对白。任何会让人停下来听旋律的 take，都不适合作为案内底垫。
-- 曲 2 已验证：Describe 过长会让 Udio 把每条要求都变成一个音乐事件。剩余曲 7–9 继续使用短 Describe；工程规格不再塞进生成文本。
+- 曲 2 已验证：Describe 过长会让 Udio 把每条要求都变成一个音乐事件。尚未定稿的曲 9 继续使用短 Describe；工程规格不再塞进生成文本。
+- 曲 8 再次验证：即使 Describe 很短，只要同时要求低音运动、短动机和“稳定底纹”，Udio 仍可能把三者各写成一层节奏。对白底乐一次只保留一个运动主体；回看曲本轮不设运动主体。
+- 曲 8 v2 又验证了另一个极端：完全取消运动主体会随机得到“没有曲调”的纯底色，另一个结果则可能用规则脉冲填补空缺。v3 只允许稀疏 Rhodes 旋律运动，Pad、低音和质感层都不承担节奏。
+- 曲 8 v3 仍会把“旋律 + 持续 Pad + 68 BPM”组织成满篇规则脉冲。v4 改做自由速度的独奏 Rhodes，先得到干净的旋律源；空间感和循环由工程端补，不再交给 Udio 编排。
+- 曲 8 v4 已按人工听感选定第一首并完成工程接入。到此冻结 Prompt；不再用参数迭代推翻已经可用的音乐。
 
 ## 与代码一致的九个槽位
 
@@ -24,9 +28,9 @@
 | 4 | `bgm.offair-desk` | 挂断后、幕间、后台审材料 | **ready**：`music_4_3` 的 90 秒循环 | 已接入 |
 | 5 | `bgm.day-investigation` | 白天走访、查材料 | **ready**：`music_5_2` 的 43.34 秒循环 | 已接入 |
 | 6 | `bgm.callback-return` | 第二晚回拨与连续追问 | **ready**：`music_6_2` 的 90.35 秒循环 | 已接入完整夜 B |
-| 7 | `bgm.accusation` | 最终追问 | **待生成 v2**；v1 两份均淘汰 | 用压力层做 32 秒减法 Remix |
-| 8 | `bgm.recap-afterhours` | 单案回看、案间、下一通标题 | **待生成** | 新生成，使用克制四音型 |
-| 9 | `bgm.epilogue-dawn` | 全部收麦、天亮前 | **待生成** | 新生成，复用同一四音型 |
+| 7 | `bgm.accusation` | 最终追问 | **ready**：v2 `b8ab6093…` 的 30 秒循环 | 已接入 |
+| 8 | `bgm.recap-afterhours` | 单案回看、案间、下一通标题 | **ready**：v4 第一首的 46 秒循环 | 已接入，Prompt 冻结 |
+| 9 | `bgm.epilogue-dawn` | 全部收麦、天亮前 | **待生成** | 延续曲 8 的音色，不复用节奏动机 |
 
 旧表里的“材料板”归入 `offair-desk`；“sting 组”仍属于 SFX，不再占一个 BGM 槽位。旧表缺少的“最终追问”和“单案回看”已经补回。
 
@@ -54,7 +58,7 @@
 - Clarity 的官方公开文档没有给出固定甜点位。本项目的低值用于保留磁带和 Rhodes 的温度，白天与材料曲稍高，下面的百分比是首轮经验起点。
 - Generation Quality 正式生产统一设为最高。不要先用低质量选 take 再期待高质量重生成能得到同一首。
 
-除标题曲外，长曲使用 2:10；最终追问和独立 Outro 使用 0:32。压力层不再生成，直接从 `music_2_1.wav` 工程剪辑。每轮生成两个结果，保留原始 WAV。返工时只改一项参数或两个文本区中的一个短语。
+除标题曲外，常规长曲使用 2:10；曲 8 v4 为避免模型自行扩写段落，例外缩到约 1:20；最终追问和独立 Outro 使用 0:32。压力层不再生成，直接从 `music_2_1.wav` 工程剪辑。每轮生成两个结果，保留原始 WAV。返工时只改一项参数或两个文本区中的一个短语。
 
 下载 WAV，保持平台原始采样率与位深，不先转 MP3。若生成结果出现人声，把 `vocals, singing, humming, spoken word` 放到 Style Reduction 最前面重新生成。
 
@@ -77,8 +81,8 @@ Udio 的 32 秒 Remix 是局部改写结果，不是所有游戏曲目的目标�
 | `bgm.offair-desk` | 挂断后看材料、幕间行动 | 新生成 2:10 | 32 小节，约 1:36-1:44 |
 | `bgm.day-investigation` | 多地点连续走访 | `music_5_2.wav` 完整母版 | 约 16 小节、43.34 秒稳定循环；不跨母版换段 |
 | `bgm.callback-return` | 第二晚连续回拨 | 新生成 2:10 | 24 小节，约 1:28-1:32 |
-| `bgm.accusation` | 最终选择与追问 | Remix 固定 32 秒 | 8 小节，约 29-31 秒 |
-| `bgm.recap-afterhours` | 单案回看、案间衔接 | 新生成 2:10 | 32 小节，约 1:48-1:58 |
+| `bgm.accusation` | 最终选择与追问 | v2 `b8ab6093…` 2:12.89 | 30 秒循环，已接入 |
+| `bgm.recap-afterhours` | 单案回看、案间衔接 | v4 第一首 1:38.50 | 46 秒自由速度循环，已接入 |
 | `bgm.epilogue-dawn` | 全部收麦后的阅读段 | 新生成 2:10 | 24 小节，约 1:34-1:38；Outro 另生成 20-35 秒 |
 
 ### 参数总表
@@ -91,7 +95,7 @@ Udio 的 32 秒 Remix 是局部改写结果，不是所有游戏曲目的目标�
 | `bgm.day-investigation` | 88 | 40% | 2:10 | 66% | 0% | 40% | Highest |
 | `bgm.callback-return` | 64 | 55% | 2:10 | 72% | 0% | 28% | Highest |
 | `bgm.accusation` | 64 | 60% | 0:32 | 58% | 0% | 24% | Highest |
-| `bgm.recap-afterhours` | 68 | 65% | 2:10 | 68% | 0% | 30% | Highest |
+| `bgm.recap-afterhours` | 60 | 50% | 1:20 | 66% | 0% | 18% | Highest |
 | `bgm.epilogue-dawn` | 60 | 70% | 2:10 | 68% | 0% | 26% | Highest |
 | `epilogue-dawn` 独立 Outro | 60 | 90% | 0:32 | 75% | 0% | 30% | Highest |
 
@@ -448,6 +452,13 @@ Remix 源使用 `assets/audio/unchanged/music_2_1.wav` 的约 `00:11.9–00:43.9
 - 对照压力母版 `music_2_1.wav`，两首都没有保住原曲的小织体：A 把频谱活动向上扩散，B 把能量和层次一起堆高。因此不能靠低通或压响度抢救，继续淘汰。
 - v2 改用减法描述，并在 Style Reduction 直接禁止新乐器、强瞬态、噪声纹理和发展段。Prompt Strength 与 Clarity 同时下调，让 Remix 更依赖源曲而不是重新编曲。
 
+### v2 封版
+
+- `b8ab6093-e42b-4b0e-93b8-07c89763d584.wav` 与 `333133c7-66fc-4e5d-a666-72662ea6b83d.wav` 均通过人工初听。
+- 工程选择动态和段落更稳定的 `b8ab6093…`：从 56 秒开始输出 30 秒循环，使用 4 秒环形交叉淡化、15 kHz 低通和 -20 LUFS 归一化。
+- 成品 LRA 约 2.0 LU，接缝两端能量差约 0.43 dB，通过自动验收；正式文件为 `assets/audio/bgm/accusation.ogg`，配方为 `accusation-v2`。
+- 曲 7 不再生成。另一份 v2 只作可用备选留档，不覆盖正式循环。
+
 ```text
 BPM: 64
 Clip Timing: 60%
@@ -476,46 +487,77 @@ vocals, percussion, bright transients, distortion, noisy texture, arpeggios, cin
 - 停在最终选项一分钟仍然能忍受，没有不断上升的 riser。
 - 不能在末尾解决和弦，否则循环会像重复宣布结论。
 
-### 单变量返工
+### 冻结裁定
 
-- v2 仍有高频毛刺：其他不动，只把 Clarity 从 24% 降到 16%。
-- v2 不噪但仍然太满：其他不动，只把 Prompt Strength 从 58% 降到 48%。
-- v2 太像曲 3、差异不足：先接受，不额外加乐器；最终追问可以靠运行时音量、低通和场景切入方式完成区分。
-- v2 再次同时出现噪与乱：停止 Udio 重抽，直接用工程程序从正式压力层派生较暗版本。
+- 上述 Prompt 只作为 v2 生成记录保留，不再执行。
+- 后续若最终选项页显得过响或过紧，只改 cue gain 或工程裁切，不重新生成。
 
 ## 曲 8：单案回看 / 案间 `bgm.recap-afterhours`
 
 这首既要收住上一案，又要能托住下一通标题，所以不能写成全剧大结局。
 
-生成方式：新生成，时长选择 2:10。柔和四音型和收麦后的克制感直接写进描述。工程目标是裁出约 1:53 的 32 小节循环。
+### v1 淘汰结论
+
+首轮文件为：
+
+- `98386987-dbbd-4468-ae03-ff7ecebf9edb.wav`
+- `10bff78d-d89c-4b3e-ae5a-ccb809b2666a.wav`
+
+两首都不进入游戏。第一首约 52 秒后突然进入密集脉冲，第二首几乎全程都有规则瞬态，中间又另做一次拆段。它们的总响度范围只有约 3–4 LU，但听感仍然杂乱，说明问题不是简单的音量起伏，而是低音、四音型和底纹形成了多个互不相让的节奏层。
+
+v2 不再要求四音型，也不再单列运动低音。结果出现了两个极端：一份完全没有曲调；另一份 `bf9c2027-6025-493c-9aab-98e8f5a6d8f1.wav` 有可辨旋律，但仍用规则脉冲填满了大部分段落。
+
+`bf9c2027…` 保留为兜底候选，不接入游戏：文件长 132.52 秒，约 -12.0 LUFS，LRA 2.9 LU，真峰值 -0.4 dBFS。动态本身稳定，但规则瞬态贯穿大部分曲子，且存在数个不同能量块；若 v4 仍失败，才从中选择最不抢对白的一段制作游戏内试听版。
+
+v3 恢复了一条明确但稀疏的 Rhodes 旋律，仍未解决问题：
+
+- v3 A `5c95284e-4137-4ab4-ab9a-6fd35c66979e.wav`：淘汰。整首约 -10.1 LUFS，真峰值达到 +0.3 dBFS；宽频规则瞬态几乎贯穿全曲，高频活动也明显高于 B，人工听感“太燥”。
+- v3 B `e6c431e7-db5a-43a0-8745-60b14754d136.wav`：第二兜底。约 -11.1 LUFS、LRA 3.2 LU、真峰值 -0.4 dBFS，高频比 A 低约 6.5 LU；但前约 100 秒仍是连续规则脉冲，只有末段稍松，不能作为正式长循环。
+
+v4 不再同时生成旋律与伴奏，改做自由速度的独奏 Rhodes。Udio 只负责给出有自然衰减和留白的音符，工程端再做低通、空间感、响度和循环。工作母版缩为约 1:20，减少模型为了填满 2:10 自动增加段落的机会；页面无法精确选择时，取最接近的 1:20–1:30。
+
+v4 最终结果：
+
+- v4 A `c077d327-3120-404e-9fe0-4bd48f7841be.wav`：人工确认可用，入选。
+- v4 B `85d90004-e44e-4d2b-b34d-8beacbc3d7c2.wav`：人工确认不可用，淘汰。
+- 正式循环从 A 的 43.25 秒开始，输出 46 秒，使用 8 秒环形交叉淡化、13.5 kHz 低通和 -20 LUFS 归一化。接缝两端能量差约 1.31 dB，通过工程验收。
+- 成品为 `assets/audio/bgm/recap-afterhours.ogg`；可复现配方为 `recap-afterhours-v4`。
 
 ```text
-BPM: 68
-Clip Timing: 65%
-Song Length: 2:10
-Prompt Strength: 68%
+BPM: 60
+Clip Timing: 50%
+Song Length: 1:20
+Prompt Strength: 66%
 Lyrics Strength: 0%
-Clarity: 30%
+Clarity: 18%
 Generation Quality: 100% / Highest
 ```
 
 ### Describe your song
 
 ```text
-Reflective after-call underscore, instrumental, 68 BPM. Soft Rhodes and quiet rounded bass with a restrained four-note phrase appearing occasionally. Warm, clear-eyed and unresolved, with a small steady texture for reading.
+Sparse free-time solo Rhodes instrumental for a quiet after-call reflection. Play a few warm slow notes with natural decay, then leave silence. No accompaniment and no repeating rhythm. Intimate, clear-eyed and unresolved.
 ```
 
 ### Style Reduction
 
 ```text
-vocals, drums, lead solo, lush strings, music box, cinematic swell, final cadence
+vocals, drums, percussion, bass, pads, arpeggios, ostinato, tremolo
 ```
 
 ### 选片标准
 
 - 能回味上一案，也能接下一通，不能有“今晚结束了”的封口感。
-- 四音型只负责节目辨识度，不负责替剧情作总结。
+- 旋律存在，但全曲只有 Rhodes；音符之间必须真的留白，并能听见自然衰减。
+- 没有伴奏、可跟拍的规律、门控音色或颤音脉冲；玩家不该注意到“它在打几拍”。
 - 结算文字较多，旋律密度必须明显低于标题曲。
+- 前后段必须像同一块静止底色；若 30 秒后开始加层，即使前半段好听也淘汰。
+
+### 冻结裁定
+
+- 上述 v4 参数与 Prompt 只作为生成记录保留，不再执行新一轮生成。
+- 后续若游戏内听感需要调整，只改播放增益、低通、裁切点或交叉淡化，不改曲调，不回到 Udio 抽卡。
+- v1–v3 和 v4 B 只作失败样本留档，不能替换正式循环。
 
 ## 曲 9：天亮前 / 全部收麦 `bgm.epilogue-dawn`
 
@@ -536,13 +578,13 @@ Generation Quality: 100% / Highest
 ### Describe your song（循环底垫）
 
 ```text
-Pre-dawn epilogue underscore, instrumental, 60 BPM. Soft Rhodes, felt piano and a faint analog pad. Tired and gently warming, with long gaps and a small incomplete four-note phrase. Keep the texture sparse.
+Pre-dawn epilogue underscore. Long-held Rhodes chords, faint felt-piano single notes and a soft analog pad, separated by broad silences. Tired, gently warming, sparse and without a steady pulse.
 ```
 
 ### Style Reduction
 
 ```text
-vocals, birds, rain, music box, lullaby, lush strings, inspirational anthem
+vocals, birds, rain, drums, percussion, bass groove, arpeggios, ostinato
 ```
 
 ### 可选 Outro 的 Describe your song
@@ -560,7 +602,7 @@ Generation Quality: 100% / Highest
 ```
 
 ```text
-Short understated instrumental outro, 60 BPM, with felt piano and warm Rhodes. Play the four-note figure once, then settle on a warm slightly open chord and stop gently.
+Short understated instrumental outro with warm Rhodes and felt piano. Let one slow unfinished piano phrase settle into a warm open chord, then stop gently.
 ```
 
 ### 选片标准
@@ -571,11 +613,7 @@ Short understated instrumental outro, 60 BPM, with felt piano and warm Rhodes. P
 
 ## 剩余制作顺序
 
-现在只剩三首，按依赖关系生成：
-
-1. 曲 7 `accusation`：从已经接入的曲 3 稳定区间做 32 秒 Remix，只做减法。
-2. 曲 8 `recap-afterhours`：新生成，先确定回看与尾声共用的克制四音型。
-3. 曲 9 `epilogue-dawn`：新生成，复用曲 8 的四音型完成全局收束；可选 Outro 等循环版入选后再做。
+现在只剩曲 9 `epilogue-dawn` 尚无源资产：参考曲 8 的 Rhodes 音色完成全局收束，不复用节奏动机；可选 Outro 等循环版入选后再做。
 
 ## 每轮只记录这张表
 

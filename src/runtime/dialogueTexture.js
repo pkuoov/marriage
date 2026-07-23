@@ -138,7 +138,13 @@ export function collectDialogueTextureSpeech(packet = {}) {
   });
   add("caller", overnight.callbackFallback?.line, "overnightStructure.callbackFallback.line");
   Object.entries(overnight.postures ?? {}).forEach(([id, text]) => add("caller", text, `overnightStructure.postures.${id}`));
+  for (const [index, line] of (overnight.returnLead?.lines ?? []).entries()) {
+    if (!["stage", "pause"].includes(line?.role)) add(line.role === "caller" ? "caller" : "other", line?.text, `overnightStructure.returnLead.lines[${index}]`);
+  }
   Object.entries(overnight.snapshotEcho ?? {}).forEach(([id, text]) => add("caller", text, `overnightStructure.snapshotEcho.${id}`));
+  for (const [index, line] of (overnight.returnBeat?.lines ?? []).entries()) {
+    if (!["stage", "pause"].includes(line?.role)) add(line.role === "caller" ? "caller" : "other", line?.text, `overnightStructure.returnBeat.lines[${index}]`);
+  }
   const callerQuestion = overnight.callerQuestion ?? {};
   add("caller", callerQuestion.prompt, "overnightStructure.callerQuestion.prompt");
   (callerQuestion.options ?? []).forEach((option, optionIndex) => {

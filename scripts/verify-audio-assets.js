@@ -64,6 +64,8 @@ const requiredReadyP1 = [
   "bgm.offair-desk",
   "bgm.day-investigation",
   "bgm.callback-return",
+  "bgm.accusation",
+  "bgm.recap-afterhours",
   "ambience.studio-room",
   "ambience.city-afternoon",
   "voice.case2.dryer-message",
@@ -82,10 +84,10 @@ for (const recipe of approvedBgmRecipes) {
   if (cue?.status !== "ready") fail(`${recipe.cueId}: approved BGM recipe must map to a ready cue`);
   if (cue?.src !== `./${recipe.output}`) fail(`${recipe.cueId}: approved recipe output must match audio catalog source`);
 }
-for (const cueId of ["bgm.live-call", "bgm.pressure-stem", "bgm.offair-desk", "bgm.day-investigation", "bgm.callback-return"]) {
+for (const cueId of ["bgm.live-call", "bgm.pressure-stem", "bgm.offair-desk", "bgm.day-investigation", "bgm.callback-return", "bgm.accusation", "bgm.recap-afterhours"]) {
   if (!approvedBgmCueIds.has(cueId)) fail(`${cueId}: ready Udio loop requires an approved reproducible recipe`);
 }
-for (const cueId of ["bgm.accusation", "bgm.recap-afterhours", "bgm.epilogue-dawn"]) {
+for (const cueId of ["bgm.epilogue-dawn"]) {
   if (AUDIO_CUES[cueId]?.status !== "planned") fail(`${cueId}: missing source music must stay planned instead of using a false placeholder`);
 }
 const referencedCueIds = new Set(references.map(({ cueId }) => cueId));
