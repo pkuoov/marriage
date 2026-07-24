@@ -1,8 +1,8 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.88";
+import { generateCasesForMode } from "./caseModes.js?v=0.27.0";
 import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
 import { getAudioSettings, playAudioCueOnce, playSfx, resetAudioCueHistory } from "./sound.js?v=0.22.1";
 import { audioCueView } from "./audioCatalog.js?v=0.22.1";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.26.3";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.27.0";
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
 import { NPCS } from "./story.js?v=0.20.69";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
@@ -13,7 +13,7 @@ import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyR
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.21.1";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.69";
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
-import { storyInterludeCaseId, storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.26.1";
+import { storyInterludeCaseId } from "./runtime/storyInterludeModel.js?v=0.26.1";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js?v=0.24.3";
@@ -24,7 +24,7 @@ import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHt
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
 import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.21.3";
-import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js?v=0.24.2";
+import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js?v=0.27.0";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.21.4";
 import { liveCounterBeatHtml } from "./ui/liveCounterBeatView.js?v=0.24.3";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.21.6";
@@ -33,14 +33,14 @@ import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } f
 import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.69";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.21.3";
 import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.21.2";
-import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.26.2";
-import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
+import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.27.0";
+import { caseBridgeChoicesHtml, caseBridgeHtml, caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.27.0";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js?v=0.24.3";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js?v=0.24.4";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
-import { titleScreenHtml } from "./ui/titleView.js?v=0.20.70";
-import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.23.1";
-import { storyPackForKey } from "./storyPacks.js?v=0.20.87";
+import { titleScreenHtml } from "./ui/titleView.js?v=0.27.0";
+import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.27.0";
+import { storyPackForKey } from "./storyPacks.js?v=0.27.0";
 import { HOST_PROFILE } from "./hostProfile.js?v=0.20.95";
 
 const app = document.querySelector("#app");
@@ -293,6 +293,7 @@ function renderTitle() {
   const previews = storyPreviewBriefs();
   const preview = previews[0] ?? null;
   const storyPack = modeFromUrl() !== "daily";
+  const pack = storyPack ? storyPackForKey(storyKeyFromUrl()) : null;
   const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
   const hook = storyPack ? "晚上八点，林旭阳推开直播间的门。第一通匿名来电，还在等待接入。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
   const object = storyPack ? "今晚 20:00 · 开播前" : preview?.storyClueObject ?? "今日通话摘录";
@@ -303,6 +304,8 @@ function renderTitle() {
     title,
     hook,
     object,
+    themeTitle: pack?.theme?.title ?? "",
+    acts: pack?.sequence ?? [],
     host: HOST_PROFILE,
     audioSettings: getAudioSettings(),
     canContinue,
@@ -336,7 +339,9 @@ function resumeStageLabel() {
   if (["overnightCallback", "callbackOpener", "callbackOpenerBeat", "overnightNight2", "documentReconcile", "liveCounterBeat"].includes(scene)) return "上次停在：第二晚回拨";
   if (["hangupBeat", "overnightHangup", "overnightPostLive", "interludeDesk"].includes(scene) || scene.startsWith("interlude")) return "上次停在：收麦调查台";
   if (scene === "accusation") return "上次停在：最终追问";
-  if (["caseSolved", "careChoice", "caseClosure", "storyInterlude", "caseTitle"].includes(scene)) return "上次停在：收麦回看";
+  if (scene === "caseBridge") return "上次停在：幕间引页";
+  if (scene === "caseTitle") return "上次停在：幕标题";
+  if (["caseSolved", "careChoice", "caseClosure", "storyInterlude"].includes(scene)) return "上次停在：收麦回看";
   if (["nightShellEpilogue", "runComplete"].includes(scene)) return "上次停在：天亮前";
   return "上次停在：直播连线";
 }
@@ -382,6 +387,7 @@ function renderDailyCase() {
   if (state.scene === "careChoice") return renderCareChoice(brief);
   if (state.scene === "caseClosure") return renderCaseClosure(brief);
   if (state.scene === "storyInterlude") return renderStoryInterlude(brief);
+  if (state.scene === "caseBridge") return renderCaseBridge(brief);
   if (state.scene === "caseTitle") return renderCaseTitle(brief);
   if (state.scene === "runComplete") return renderRunComplete(brief);
   return renderCaseOpen(brief);
@@ -443,10 +449,10 @@ function renderNightShellPrologue(brief) {
     showCaseHud: false,
     visualHud: "",
     text: nightShellHtml(lines),
-    choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">开始接线</button>`)
+    choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">进入第一幕</button>`)
   });
   bind("[data-enter-first-case]", () => {
-    state.scene = "caseOpen";
+    state.scene = "caseTitle";
     saveState();
     render();
   });
@@ -2245,7 +2251,7 @@ function renderCaseTitle(brief) {
     showCaseHud: false,
     visualHud: "",
     screenClass: "case-title-screen",
-    text: caseTitleHtml({ caseNumber: Number(state.chapter ?? 1), brief }),
+    text: caseTitleHtml({ caseNumber: Number(state.chapter ?? 1), totalCases: state.caseBriefs?.length ?? 4, brief }),
     choices: flowGroupHtml(caseTitleChoicesHtml(Number(state.chapter ?? 1)))
   });
   bind("[data-enter-case-live]", () => {
@@ -2337,7 +2343,6 @@ function overnightCallerQuestionAftertasteHtml(brief = {}) {
 }
 
 function renderStoryInterlude(brief) {
-  const nextBrief = state.caseBriefs?.[Number(state.chapter ?? 1)] ?? null;
   const interlude = nightShellInterludeForBrief(brief);
   const finalCase = isFinalStoryPackCase();
   const interludeCaseId = storyInterludeCaseId(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
@@ -2349,13 +2354,10 @@ function renderStoryInterlude(brief) {
     chapter: "案间",
     text: storyInterludeHtml({
       kicker: interlude?.kicker ?? "案后小尾声",
-      nextObjectLabel: storyInterludeObjectLabel(nextBrief),
-      nextLine: storyInterludeNextLine(nextBrief),
       shellLine: interlude?.line ?? "",
       shellLines: interlude?.lines ?? [],
       shellAfterLines: interlude?.afterLines ?? [],
-      worldEcho: worldEchoRevealed ? interlude?.worldEcho ?? null : null,
-      finalCase
+      worldEcho: worldEchoRevealed ? interlude?.worldEcho ?? null : null
     }),
     choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed }))
   });
@@ -2364,13 +2366,45 @@ function renderStoryInterlude(brief) {
     saveState();
     render();
   });
-  bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
+  bind("[data-enter-case-bridge]", () => {
+    state.scene = "caseBridge";
+    saveState();
+    render();
+  });
   bind("[data-enter-night-epilogue]", () => {
     state.scene = nightShellForBrief(brief)?.epilogue ? "nightShellEpilogue" : "runComplete";
     saveState();
     render();
   });
   bind("[data-retry-case]", () => resetCaseAttempt(brief));
+  bindSceneButtons();
+}
+
+function renderCaseBridge(brief) {
+  const fromCaseNumber = Number(state.chapter ?? 1);
+  const toCaseNumber = fromCaseNumber + 1;
+  const nextBrief = state.caseBriefs?.[fromCaseNumber] ?? null;
+  const interlude = nightShellInterludeForBrief(brief);
+  if (!nextBrief || !interlude?.transitionQuote) return advanceToNextStoryPackCase();
+  frame({
+    brief,
+    mood: "focused",
+    label: "幕间引页",
+    chapter: "下一幕",
+    showCaseHud: false,
+    visualHud: "",
+    screenClass: "case-bridge-screen",
+    text: caseBridgeHtml({
+      fromCaseNumber,
+      toCaseNumber,
+      fromAct: brief.storyAct,
+      nextAct: nextBrief.storyAct,
+      quote: interlude.transitionQuote,
+      nextBrief
+    }),
+    choices: flowGroupHtml(caseBridgeChoicesHtml(toCaseNumber))
+  });
+  bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
   bindSceneButtons();
 }
 
@@ -2571,6 +2605,7 @@ function pixelTransitionForCurrentScene(brief = {}) {
     dayActOpening: { kind: "scene", eyebrow: "DAY SHIFT", label: "白天调查" },
     overnightCallback: { kind: "signal-connect", eyebrow: "CALLBACK", label: "第二晚回拨" },
     storyInterlude: { kind: "signal-disconnect", eyebrow: "LINE CLOSED", label: "换下一通热线" },
+    caseBridge: { kind: "soft-fade", eyebrow: "INTERMISSION", label: "下一幕" },
     caseTitle: { kind: "signal-connect", eyebrow: `CALL ${String(state.chapter ?? 1).padStart(2, "0")}`, label: "新案接入" },
     nightShellEpilogue: { kind: "scene", eyebrow: "OFF AIR", label: "天亮前" }
   }[state.scene];

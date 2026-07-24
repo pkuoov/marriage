@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.68";
 import { assertDialogueTexture, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js?v=0.22.0";
-import { STORY_PACKS } from "../src/storyPacks.js?v=0.20.68";
-import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.24.0";
+import { STORY_PACKS } from "../src/storyPacks.js?v=0.27.0";
+import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.27.0";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
@@ -1040,6 +1040,23 @@ const routeArchetypes = await readJson(`content/packs/${packId}/route-archetypes
 const advisorRegistry = await readJson("content/characters/advisors.json").catch(() => ({ advisors: [] }));
 const helperRegistry = await readJson("content/characters/helper-npcs.json").catch(() => ({ helpers: [] }));
 const castRegistry = await readJson("content/characters/cast.json").catch(() => ({ cast: [] }));
+const storyProjectPaths = [
+  "story.md",
+  "characters/_index.md",
+  "worldbuilding/_index.md",
+  "plot/_index.md",
+  "plot/timeline.md",
+  "chapters/_index.md",
+  "scenes/_index.md",
+  "continuity/state.md",
+  "continuity/questions/_index.md",
+  "continuity/promises/_index.md",
+  "glossary/_index.md"
+];
+const storyProjectFiles = new Map(await Promise.all(storyProjectPaths.map(async (path) => [
+  path,
+  await readFile(resolve(root, path), "utf8").catch(() => null)
+])));
 const callerArtPaths = [...new Set(manifest.sequence.flatMap((item) => [
   item.callerArt,
   ...Object.values(item.callerArtVariants ?? {})
@@ -1165,7 +1182,7 @@ test("PACK-003", "case pressure packets are complete", () => {
       });
       assertCaseClosing(casePacket.caseClosing, casePacket.caseId);
       assertCareChoices(casePacket.careChoices, casePacket.caseId);
-      if (index >= 1) assertCaseTitle(casePacket.caseTitle, casePacket.caseId);
+      assertCaseTitle(casePacket.caseTitle, casePacket.caseId);
       assertHostIdentity(casePacket, casePacket.caseId);
     }
     ["true", "edited", "unknown"].forEach((field) => {
@@ -1182,6 +1199,14 @@ test("PACK-003", "case pressure packets are complete", () => {
       assert(choice.accuse || choice.accuseRole, `${casePacket.caseId} 第 ${choiceIndex + 1} 句最终收麦缺少责任指向`);
       assert(choice.response, `${casePacket.caseId} 第 ${choiceIndex + 1} 句最终收麦缺少主播回应`);
     });
+  });
+  const transitionInterludes = (manifest.nightShell?.interludes ?? []).slice(0, -1);
+  assertEqual(transitionInterludes.length, Math.max(0, manifest.sequence.length - 1), "每两案之间必须有一张名言引页");
+  transitionInterludes.forEach((interlude, index) => {
+    const quote = interlude.transitionQuote;
+    assert(quote && typeof quote === "object", `第 ${index + 1} 张案间引页缺少 transitionQuote`);
+    ["text", "source", "bridge"].forEach((field) => assertNonEmptyString(quote[field], `第 ${index + 1} 张案间引页缺少 ${field}`));
+    assert(!quote.text.startsWith("“") && !quote.text.endsWith("”"), `第 ${index + 1} 张案间引页原文不应自带外层引号`);
   });
 });
 
@@ -1717,6 +1742,37 @@ test("PACK-017", "case 1 does not overcue the ordinary bonus excuse", () => {
   assert(layoffScene, "案一必须保留失业时间差场景");
   assert(layoffScene.pressureHint?.expression === undefined, "奖金晚发首次出现时不需要额外表演标记替玩家画重点");
   assert(!JSON.stringify(caseOne).includes("把“奖金晚发”四个字记在纸上"), "案一不得恢复记纸条式强调动作");
+});
+
+test("PACK-018", "structured story project stays connected to runtime canon", () => {
+  for (const [path, contents] of storyProjectFiles) {
+    assertNonEmptyString(contents, `故事工程缺少 ${path}`);
+  }
+
+  const storyBible = storyProjectFiles.get("story.md");
+  assert(storyBible.includes("schema-version: 2"), "story.md 必须使用 Story Skills schema v2");
+  assert(storyBible.includes("status: revising"), "试玩仍在改稿期，story.md 状态必须是 revising");
+  assert(storyBible.includes("content/packs/steam-demo-01/manifest.json"), "story.md 必须链接运行时故事包真源");
+  assert(storyBible.includes("content/characters/cast.json"), "story.md 必须链接角色声纹真源");
+  assert(storyBible.includes("docs/generated/") && storyBible.includes("禁止直接改稿"), "story.md 必须声明生成稿不可直接修改");
+
+  const chapterIndex = storyProjectFiles.get("chapters/_index.md");
+  const sceneIndex = storyProjectFiles.get("scenes/_index.md");
+  manifest.sequence.forEach((item, index) => {
+    const chapterId = `chapter-${String(index + 1).padStart(2, "0")}`;
+    assert(chapterIndex.includes(`](${chapterId}.md)`), `章节注册表缺少 ${chapterId}`);
+    assert((sceneIndex.match(new RegExp(`${chapterId}-scene-`, "g")) ?? []).length === 4, `${chapterId} 必须登记夜 A、白天、夜 B、案后四个宏场景`);
+  });
+
+  const characterIndex = storyProjectFiles.get("characters/_index.md");
+  ["host-lin-xuyang", "zhao-lawyer", "v-bro", "case1-caller-shen", "case2-caller-he", "case3-caller-lin", "case4-caller-chen"].forEach((profileId) => {
+    assert(characterIndex.includes(`](${profileId}.md)`), `角色注册表缺少核心人物 ${profileId}`);
+  });
+
+  const promiseIndex = storyProjectFiles.get("continuity/promises/_index.md");
+  assert(promiseIndex.includes("chenzhi-trust-crisis.md"), "跨案信托暗线必须进入故事工程伏笔注册表");
+  const questionIndex = storyProjectFiles.get("continuity/questions/_index.md");
+  assert(questionIndex.includes("case1-unknown-money.md") && questionIndex.includes("case4-repayment-gap.md"), "案件有意未决项必须进入连续性问题注册表");
 });
 
 const failed = results.filter((result) => !result.ok);

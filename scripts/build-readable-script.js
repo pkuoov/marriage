@@ -146,7 +146,7 @@ function renderScript() {
     const item = sequenceByCaseId.get(packet.caseId) ?? {};
     const caseNumber = chineseNumber(caseIndex + 1);
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? packet.caseId;
-    add(`# 第${caseNumber}案：${title}`, "");
+    add(`# 第${caseNumber}幕：${title}`, "");
     add(`> ${item.bridge ?? packet.publicHook ?? ""}`, "");
     add(`- **案件 ID：** ${packet.caseId}`);
     add(`- **剧情 ID：** ${packet.plotId}`);
@@ -249,6 +249,7 @@ function renderScript() {
       for (const line of interlude.lines ?? []) renderSpokenLine(lines, line);
       if (interlude.line) add(interlude.line, "");
       for (const line of interlude.afterLines ?? []) renderSpokenLine(lines, line);
+      renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, true);
     }
   });
@@ -280,7 +281,7 @@ function renderPureStoryScript() {
   casePackets.forEach((packet, caseIndex) => {
     const item = sequenceByCaseId.get(packet.caseId) ?? {};
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? `第${caseIndex + 1}案`;
-    lines.push(`# 第${chineseNumber(caseIndex + 1)}案｜${title}`, "");
+    lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
     if (item.bridge) lines.push(`【转场】${item.bridge}`, "");
     if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
@@ -338,6 +339,7 @@ function renderPureStoryScript() {
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
+      renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho);
     }
   });
@@ -368,7 +370,7 @@ function renderContinuousStoryScript() {
     if (!route) throw new Error(`${packet.caseId} 缺少连续阅读路线`);
     const title = continuousCaseTitle(packet, caseIndex);
 
-    lines.push(`# 第${chineseNumber(caseIndex + 1)}案｜${title}`, "");
+    lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
     if (item.bridge) lines.push(`【转场】${item.bridge}`, "");
     if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
@@ -434,6 +436,7 @@ function renderContinuousStoryScript() {
       for (const line of interlude.lines ?? []) renderContinuousSpoken(lines, line);
       if (interlude.line) lines.push(`【${continuousStageText(interlude.line)}】`, "");
       for (const line of interlude.afterLines ?? []) renderContinuousSpoken(lines, line);
+      renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, false, false);
     }
   });
@@ -617,6 +620,12 @@ function renderWorldEcho(lines, worldEcho, includeBoundary = false, includeActio
   if (includeBoundary && worldEcho.doesNotProve) lines.push(`【不能倒推】${worldEcho.doesNotProve}`, "");
 }
 
+function renderTransitionQuote(lines, quote) {
+  if (!quote?.text) return;
+  lines.push("### 幕间引页", "", `> “${quote.text}”`, ">", `> ${quote.source ?? ""}`, "");
+  if (quote.bridge) lines.push(`【承接下一幕】${quote.bridge}`, "");
+}
+
 function renderPureStoryInterlude(lines, interlude) {
   if (!interlude) return;
   if (interlude.kicker) lines.push(`【${interlude.kicker}】`, "");
@@ -783,7 +792,7 @@ function renderDirectorScript() {
   casePackets.forEach((packet, caseIndex) => {
     const item = sequenceByCaseId.get(packet.caseId) ?? {};
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? packet.caseId;
-    lines.push(`# 第${chineseNumber(caseIndex + 1)}案｜${title}`, "");
+    lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
     if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
     lines.push(`【场景目标】${packet.dramaticAnchor ?? ""}`, "");
@@ -875,6 +884,7 @@ function renderDirectorScript() {
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
+      renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, true);
     }
   });

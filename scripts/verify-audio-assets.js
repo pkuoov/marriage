@@ -1,7 +1,7 @@
 import { access, readFile, readdir, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { AUDIO_CUES, AUDIO_CUE_BUSES, AUDIO_CUE_STATUSES } from "../src/audioCatalog.js?v=0.22.0";
-import { audioScenePlan } from "../src/runtime/audioSceneModel.js?v=0.22.1";
+import { audioScenePlan } from "../src/runtime/audioSceneModel.js?v=0.27.0";
 
 const ROOT_URL = new URL("../", import.meta.url);
 const CONTENT_URL = new URL("../content/packs/steam-demo-01/", import.meta.url);

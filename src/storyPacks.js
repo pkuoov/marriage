@@ -1,4 +1,4 @@
-import { CONTENT_CASES, CONTENT_PACKS, DEFAULT_CONTENT_PACK_KEY } from "./generated/contentPackIndex.js?v=0.20.87";
+import { CONTENT_CASES, CONTENT_PACKS, DEFAULT_CONTENT_PACK_KEY } from "./generated/contentPackIndex.js?v=0.27.0";
 import { isRuntimeLoadedCaseContent } from "./runtime/contentCase.js?v=0.20.68";
 
 export const DEFAULT_STORY_PACK_KEY = DEFAULT_CONTENT_PACK_KEY;

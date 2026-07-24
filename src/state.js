@@ -1,4 +1,4 @@
-import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.88";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.27.0";
 import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.68";
 import { routeAxisForChoice } from "./runtime/routeLog.js?v=0.20.69";
 

@@ -78,7 +78,7 @@
 - `$manifest.nightShell.interludes[3].lines[0]` 今晚这些杯子，谁主责？
 - `$manifest.nightShell.interludes[3].lines[2]` 我不复核。我在门口等你。
 
-# 今日来电：8 万信用卡周转
+# 账单里的八万
 
 ## 林旭阳
 

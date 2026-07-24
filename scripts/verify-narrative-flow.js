@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { generateCasesForMode } from "../src/caseModes.js?v=0.20.88";
+import { generateCasesForMode } from "../src/caseModes.js?v=0.27.0";
 import { explanationForExpected } from "../src/caseNarration.js?v=0.20.69";
 import { expectedAccusationForCase } from "../src/caseRuntime.js?v=0.20.68";
 import { NPCS } from "../src/story.js?v=0.20.69";

@@ -24,7 +24,7 @@ const OFF_AIR_SCENES = new Set([
 ]);
 
 const DAY_SCENES = new Set(["dayActOpening", "dayMap", "dayScene"]);
-const RECAP_SCENES = new Set(["caseSolved", "careChoice", "caseClosure", "storyInterlude", "caseTitle"]);
+const RECAP_SCENES = new Set(["caseSolved", "careChoice", "caseClosure", "storyInterlude", "caseBridge", "caseTitle"]);
 const NIGHT_B_SCENES = new Set([
   "overnightCallback",
   "callbackOpener",

@@ -144,6 +144,9 @@ async function runRoute(route) {
         throw new Error("night shell prologue should distinguish work notice, personal message, solo go-live action, and host opening");
       }
       await activate(page, route, "[data-enter-first-case]");
+      await assertVisibleText(page, "第一幕", "first case must enter through the same act title treatment as later cases");
+      await assertVisibleText(page, "账单里的八万", "first act title must state its case hook before the call connects");
+      await activate(page, route, "[data-enter-case-live]");
     }
     if (route.name === "accounting-restaurant") {
       await activate(page, route, '[data-action="title"]');
@@ -745,8 +748,13 @@ async function runCaseTransition() {
     await assertVisibleText(page, "第一案 · 小尾声", "closure should move into the first case's lived epilogue");
     await assertVisibleText(page, "我们俩大概一开始就看不上对方", "first case epilogue should establish Lin and Zhao as a couple through dialogue");
     if (await page.locator(".pixel-transition-signal-disconnect").count() !== 1) throw new Error("program interlude should use one short disconnect signal transition");
+    await click(page, "[data-enter-case-bridge]");
+    await assertVisibleText(page, "祸莫大于不知足，咎莫大于欲得", "case one and case two must be joined by the authored classic quote");
+    await assertVisibleText(page, "老子 ·《道德经》第四十六章", "inter-case quote must display its source");
+    await assertVisibleText(page, "账单，下一通把“自己人”写进排班表", "inter-case quote must bridge the finished case to the next one");
     await click(page, "[data-enter-next-case]");
-    await assertVisibleText(page, "试玩连线 · 第 02 案", "second case must open on a numbered title card");
+    await assertVisibleText(page, "第二幕", "second case must open on a numbered act title card");
+    await assertVisibleText(page, "02 / 04", "second act title must show its position in the four-act night");
     await assertVisibleText(page, "理发店排班表", "second case title card should name the case");
     await assertVisibleText(page, "自己人", "second case title card should frame the central question");
     if (await page.locator(".pixel-transition-signal-connect").count() !== 1) throw new Error("case title should use one short connect signal transition");
@@ -775,8 +783,10 @@ async function runCaseTransition() {
     await click(page, "[data-enter-story-interlude]");
     await assertVisibleText(page, "第二案 · 小尾声", "second case must close without prematurely paying off the trust thread");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
+    await click(page, "[data-enter-case-bridge]");
+    await assertVisibleText(page, "巧言令色，鲜矣仁", "case two and case three must use the authored quote transition");
     await click(page, "[data-enter-next-case]");
-    await assertVisibleText(page, "试玩连线 · 第 03 案", "case two tail must return to the normal case transition");
+    await assertVisibleText(page, "第三幕", "case two tail must return to the normal act transition");
 
     await page.evaluate(() => {
       const key = "livestream-detective-save-v1";
@@ -818,7 +828,10 @@ async function runPortraitViewports() {
     try {
       await page.goto(`${playableUrl}?playtest=portrait-${viewport.label}-${Date.now()}&storyKey=steam-demo-01`);
       await click(page, "[data-start-story]");
-      if (await page.locator("[data-enter-first-case]").count()) await click(page, "[data-enter-first-case]");
+      if (await page.locator("[data-enter-first-case]").count()) {
+        await click(page, "[data-enter-first-case]");
+        await click(page, "[data-enter-case-live]");
+      }
       await assertPixelPortrait(page, 1);
       const layout = await page.evaluate(() => {
         const shell = document.querySelector(".case-vn-grid");

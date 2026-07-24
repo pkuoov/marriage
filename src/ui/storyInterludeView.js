@@ -1,12 +1,9 @@
 export function storyInterludeHtml({
   kicker = "广告间隙",
-  nextObjectLabel = "",
-  nextLine = "",
   shellLine = "",
   shellLines = [],
   shellAfterLines = [],
-  worldEcho = null,
-  finalCase = false
+  worldEcho = null
 } = {}) {
   return `
     <section class="story-interlude-card shell">
@@ -20,11 +17,6 @@ export function storyInterludeHtml({
       <b>${escapeHtml(worldEcho.headline ?? "")}</b>
       <p>${escapeHtml(worldEcho.body ?? "")}</p>
     </section>` : ""}
-    ${finalCase ? "" : `<section class="story-interlude-card next">
-      <span>下一通 · 材料先到</span>
-      <b>${escapeHtml(nextObjectLabel)}</b>
-      <p>${escapeHtml(nextLine)}</p>
-    </section>`}
   `;
 }
 
@@ -34,7 +26,7 @@ export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null,
   }
   const primary = finalCase
     ? `<button class="primary" data-enter-night-epilogue type="button">查看今晚尾声</button>`
-    : `<button class="primary" data-enter-next-case type="button">接下一路麦</button>`;
+    : `<button class="primary" data-enter-case-bridge type="button">走进下一幕</button>`;
   return `${primary}<button data-retry-case type="button">回看这通</button>`;
 }
 
