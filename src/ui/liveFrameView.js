@@ -30,7 +30,7 @@ export function liveControlDeckHtml({
           <em><i></i><i></i><i></i><i></i></em>
         </div>
         <div class="deck-live-metrics" aria-hidden="true">
-          <i>LIVE 01:24:55</i>
+          <i>LIVE</i>
           <i>${viewerCountForPressure(pressure)}</i>
         </div>
         <div class="deck-monitor-strip" aria-hidden="true">
@@ -116,8 +116,12 @@ export function liveFrameHtml({
   pixelTransition = null
 } = {}) {
   const materialKind = materialKindForLabel(material);
-  const choicesAreFlow = String(choices ?? "").includes("flow-group");
-  const choiceLayer = `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choices}</div>`;
+  const choiceMarkup = String(choices ?? "");
+  const hasChoices = Boolean(choiceMarkup.trim());
+  const choicesAreFlow = hasChoices && choiceMarkup.includes("flow-group");
+  const choiceLayer = hasChoices
+    ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choiceMarkup}</div>`
+    : "";
   return `
     <main>
       ${pixelTransitionHtml(pixelTransition)}

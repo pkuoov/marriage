@@ -28,7 +28,7 @@ export const NPCS = [
     name: "许照",
     gender: "male",
     archetype: "富裕浪漫型",
-    familyProfile: "受宠家庭脚本，父母重视体面和圈层，TA 容易把被满足当成默认配置。",
+    familyProfile: "受宠家庭脚本，父母重视体面和圈层，对方 容易把被满足当成默认配置。",
     tags: ["创业", "家境好", "浪漫", "消费高"],
     intro: "他能给你很多，但你要确认那是不是礼物。",
     motiveWeights: ["display", "control", "cover", "emotionalSupply"],
@@ -54,7 +54,7 @@ export const NPCS = [
     archetype: "理性边界型",
     familyProfile: "规则型家庭，父母表面尊重边界，但会反复评估协议、资产和未来风险。",
     tags: ["律师", "独立", "边界清楚", "理性"],
-    intro: "和 TA 在一起，爱情也要有条款。",
+    intro: "和 对方 在一起，爱情也要有条款。",
     motiveWeights: ["cover", "classJump", "kpi", "control"],
     yellow: "“我们先把规则说清楚。”",
     red: "“感情不能替代协议。”"
@@ -66,7 +66,7 @@ export const NPCS = [
     archetype: "精致内容型",
     familyProfile: "有弟弟与彩礼压力脚本，家庭容易把婚礼和彩礼说成“给家里一个交代”。",
     tags: ["博主", "审美好", "情绪价值", "精致"],
-    intro: "TA 很懂浪漫，也很懂观众。",
+    intro: "对方 很懂浪漫，也很懂观众。",
     motiveWeights: ["content", "display", "money", "emotionalSupply"],
     yellow: "“这个瞬间太适合拍下来。”",
     red: "“我们吵架这件事，我想做一期匿名内容。”"

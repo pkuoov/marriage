@@ -1,4 +1,4 @@
-import { NPCS } from "./story.js?v=0.20.68";
+import { NPCS } from "./story.js?v=0.20.69";
 import { structuralExpectedAccusationForCase } from "./caseRuntime.js?v=0.20.68";
 
 export function caseAccusationHint(brief) {
@@ -16,8 +16,8 @@ export function accusationLabel(brief, value) {
 
 export function explanationForExpected(brief, expected) {
   if (expected === "platform") return "第二套别再只在两名当事人里挑坏人。平台把痛苦拆成测评、报告、合同、榜单和陪伴服务，又反过来推着人做选择。";
-  if (expected === "thirdParty") return "最别扭的地方在第三个人手里。TA 不一定直接上桌，却能靠话术、节点和信息差把两边都带歪。";
-  if (expected === brief.complainantId) return "先诉苦者的版本还没讲完整：TA 先占据受害者位置，但关键几句没有落到具体事情上。";
+  if (expected === "thirdParty") return "最别扭的地方在第三个人手里。对方 不一定直接上桌，却能靠话术、节点和信息差把两边都带歪。";
+  if (expected === brief.complainantId) return "先诉苦者的版本还没讲完整：对方 先占据受害者位置，但关键几句没有落到具体事情上。";
   if (expected === brief.respondentId) return "另一方的风险更大。来电人的委屈可以成立，但还得拿原话和细节继续对。";
   if (expected === "both") return "今晚最有意思的是，两边的话都不是全假的，可要紧处都停了一下。";
   return "核心更像沟通、性格和家庭压力叠加，直接按预谋处理会过度推断。";

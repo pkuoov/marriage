@@ -30,7 +30,7 @@ export function solvedRecapPagesHtml({
         </div>
         <p>${escapeHtml(issueLineText)}</p>
         <div class="route-map-card">
-          <span>本案路线</span>
+          <span>你的追问习惯</span>
           <b>${escapeHtml(route.label)}</b>
           <small>${escapeHtml(route.summary)}</small>
           ${routeTrail}
@@ -228,7 +228,11 @@ function recapFlowChoicesHtml({ index = 0, pageCount = 1, canLeaveBoundary = tru
 }
 
 function flowGroup(content) {
-  return `<div class="choice-flow">${content}</div>`;
+  return `
+    <section class="choice-group flow-group recap-flow-group">
+      <div class="choice-stack">${content}</div>
+    </section>
+  `;
 }
 
 function truthBoundaryChoiceLabel(review, key) {

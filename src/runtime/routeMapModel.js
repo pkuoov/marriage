@@ -1,4 +1,4 @@
-import { compactRouteQuestion, routeAxisLabel } from "./routeLog.js?v=0.20.68";
+import { compactRouteQuestion, routeAxisLabel } from "./routeLog.js?v=0.20.69";
 
 export function routeTrailModel({
   choices = [],

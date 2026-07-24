@@ -1,7 +1,7 @@
 import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.68";
 import { truthBoundaryPromptLimitForCase } from "../difficulty.js?v=0.20.68";
 import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.68";
-import { routeAxisLabel } from "./routeLog.js?v=0.20.68";
+import { routeAxisLabel } from "./routeLog.js?v=0.20.69";
 
 const TRUTH_BOUNDARY_PROMPT_LIMIT = 5;
 
@@ -308,8 +308,8 @@ export function storyPackAxes(routeProfiles = []) {
 }
 
 export function storyPackBestAxis(avgPercent = 0, axes = []) {
-  const best = axes[0] ?? { axis: "live-instinct", label: "现场听感线", count: 0 };
-  if (Number(avgPercent) < 40) return { axis: "live-instinct", count: best.count, label: "外围听感线" };
+  const best = axes[0] ?? { axis: "live-instinct", label: "现场直觉", count: 0 };
+  if (Number(avgPercent) < 40) return { axis: "live-instinct", count: best.count, label: "外围印象" };
   return best;
 }
 

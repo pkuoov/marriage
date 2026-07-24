@@ -292,11 +292,11 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "又来了一条语音",
+              "contextAnchor": "自己想的，不是他说的",
               "questionAnchor": "刚才那条语音里",
               "answerAnchor": "怕你离开",
               "guardedAnswerAnchor": "他说怕我走",
-              "relation": "在她承认体面参与后明确回到语音与还款金额的相邻顺序。"
+              "relation": "她先分清结婚担忧来自自己的联想，主播再回到语音与还款金额的相邻顺序。"
             },
             {
               "contextAnchor": "自己其实很吃那种体面",
@@ -529,7 +529,7 @@
             { "contextAnchor": "团购是真的", "questionAnchor": "能证明收入有问题吗", "answerAnchor": "不敢这么说", "relation": "从她用于怀疑收入的小额消费问证据边界，回答撤回以消费习惯证明收入的推断。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "工资卡也要交出来", "questionAnchor": "多久没回", "answerAnchor": "那晚一直没回", "relation": "沿这条微信补问实际沉默时长，回答限定为当晚未回复。" },
+            { "contextAnchor": "工资卡也要交出来", "questionAnchor": "多久没正面回", "answerAnchor": "那晚都没正面回", "relation": "沿这条微信补问她回避正面回答的时长，回答限定为当晚只谈稳定、没有接工资卡管理。" },
             { "contextAnchor": "结婚以后钱最好一起管", "questionAnchor": "一起管钱的例子", "answerAnchor": "我表姐", "relation": "从母亲提出的共同管钱补问她现实参照，回答也暴露她习惯精确计算。" },
             { "contextAnchor": "他发微信", "questionAnchor": "现在还给你发消息", "answerAnchor": "间隔很规律", "relation": "从仍在进行的微信争执补问目前是否保持联系。" },
             { "contextAnchor": "这个周末本来要见父母", "questionAnchor": "还想见吗", "answerAnchor": "不知道", "relation": "回扣开场被搁置的周末饭局，回答保留她尚未决定。" }
@@ -594,7 +594,7 @@
           ]
         },
         "work-supplier-route": {
-          "entry": { "mode": "resumed-thread", "fromAnchor": "流程在走", "toAnchor": "第二晚", "relation": "审批页只能说流程在走，第二晚咨询者带来供应商报价单继续找另一条钱路。" },
+          "entry": { "mode": "resumed-thread", "fromAnchor": "流程在走", "toAnchor": "今天下午", "relation": "审批页只能说流程在走；白天补来的供应商报价单让第二夜继续核对另一条钱路。" },
           "questionOptions": [
             { "contextAnchor": "对接人栏，是他", "questionAnchor": "最后收钱的账户", "answerAnchor": "最后进哪个账户，单子没写", "guardedAnswerAnchor": "账户没写", "relation": "主播承认报价单只确认对接人，再问账户字段，回答守住不能据此认定个人收款的边界。" },
             { "contextAnchor": "正常费用", "questionAnchor": "查过这项收费", "answerAnchor": "查过", "relation": "沿同事对服务协调费的解释补问行业情况，回答说明收费本身不足以指认拿钱者。" }

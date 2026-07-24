@@ -1,6 +1,6 @@
-import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.68";
+import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js?v=0.20.88";
 import { activeSaveSlot, saveStore } from "./platform/saveStore.js?v=0.20.68";
-import { routeAxisForChoice } from "./runtime/routeLog.js?v=0.20.68";
+import { routeAxisForChoice } from "./runtime/routeLog.js?v=0.20.69";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";

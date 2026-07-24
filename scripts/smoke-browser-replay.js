@@ -389,7 +389,7 @@ async function runCase3DayRoutes() {
     openerText: "哪张纸上都没有",
     reactionText: "她拍我家的群。给一个直播间。",
     reactionChoice: "push-back",
-    reactionResponse: "……行。播完的。"
+    reactionResponse: "你先让我把这段说完。"
   });
 }
 
@@ -1077,7 +1077,9 @@ async function keyboardActivate(page, selector, index = 0) {
   await target.waitFor({ state: "visible" });
   await page.waitForTimeout(120);
   await target.focus();
-  await page.keyboard.press("Enter");
+  const focused = await target.evaluate((element) => document.activeElement === element);
+  if (!focused) throw new Error(`keyboard target did not keep focus: ${selector}`);
+  await target.press("Enter");
 }
 
 async function gamepadActivate(page, selector, index = 0) {

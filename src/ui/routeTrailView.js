@@ -1,4 +1,4 @@
-import { routeTrailModel } from "../runtime/routeMapModel.js?v=0.20.68";
+import { routeTrailModel } from "../runtime/routeMapModel.js?v=0.20.69";
 
 export function routeTrailHtml({
   choices = [],
@@ -18,8 +18,7 @@ function routeTrailItemHtml(item) {
   return `
     <span>
       <em>${escapeHtml(item.mark)}</em>
-      <b>${escapeHtml(item.label)}</b>
-      ${item.question ? `<small>${escapeHtml(item.question)}</small>` : ""}
+      <b>${escapeHtml(item.question || item.label)}</b>
     </span>
   `;
 }

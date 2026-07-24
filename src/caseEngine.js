@@ -1,6 +1,6 @@
 import { applyDifficultyProfile } from "./difficulty.js?v=0.20.68";
 import { applyRuntimeCaseContent } from "./runtime/contentCase.js?v=0.20.68";
-import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
+import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.69";
 import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseContentForPlot, storyPackCaseCount, storyPackForKey } from "./storyPacks.js?v=0.20.87";
 
 const DAILY_PLOT_DEFINITIONS = {
@@ -46,7 +46,7 @@ const DAILY_PLOT_DEFINITIONS = {
     premeditated: true,
     premeditatedActorRole: "respondent",
     accusationChoices: [
-      { label: "“只有我能接住 TA 的情绪。”", accuseRole: "respondent", response: "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。" },
+      { label: "“只有我能接住 对方 的情绪。”", accuseRole: "respondent", response: "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。" },
       { label: "“他说我像店里自己人。”", accuseRole: "complainant", response: "这句要承认。她不是错在帮忙，是她也不想太早拆穿那个位置到底算不算关系。" },
       { label: "“我从来没说只有你一个。”", accuse: "noPremeditated", response: "他确实留了口子，但“老板娘”这种话也不是随便听听就算了。" },
       { label: "“以后店开起来，你就是老板娘。”", accuse: "both", response: "这句甜不甜先放一边，后面有没有接办卡、投店，才是关键。" }
@@ -104,7 +104,7 @@ function runtimeContentForDailyCase(options, plotId) {
   return storyPackCaseContentForPlot(storyKey, plotId);
 }
 
-const DAILY_ROTATION = [
+const DAILY_RO对方TION = [
   {
     plotId: "lost-job-hidden-credit",
     caseMode: "daily",
@@ -169,7 +169,7 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
     throw new Error(`Daily case plot is not templated: ${options.plotId}`);
   }
   const dailyKey = options.dailyKey ?? dailyCaseKey(options.now);
-  const dailySpec = options.plotId ? null : DAILY_ROTATION[dailyHash(dailyKey) % DAILY_ROTATION.length];
+  const dailySpec = options.plotId ? null : DAILY_RO对方TION[dailyHash(dailyKey) % DAILY_RO对方TION.length];
   const plotId = options.plotId ?? dailySpec?.plotId ?? DAILY_TEMPLATE_PLOT_IDS[0];
   const plot = DAILY_PLOT_DEFINITIONS[plotId];
   if (!plot) throw new Error(`Daily case plot not found: ${plotId}`);
@@ -386,7 +386,7 @@ function dailyLostJobCreditTemplate(brief, names) {
   return dailyBaseBrief(brief, names, {
     label: "8 万信用卡周转",
     storyArcTitle: "今日来电：8 万信用卡周转",
-    publicHook: "TA 一直维持体面恋爱消费，突然让你先垫 8 万信用卡。是困难，还是化债？",
+    publicHook: "对方 一直维持体面恋爱消费，突然让你先垫 8 万信用卡。是困难，还是化债？",
     storyArcSummary: "账单摊开：钱什么时候花的、花在哪、现在谁被叫去补洞。",
     storySuspense: "这案一不小心就吵成“你嫌我穷”。账单日期比委屈更诚实。",
     storyClueObject: "信用卡账单与社保断缴截图",
@@ -401,7 +401,7 @@ function dailyLostJobCreditTemplate(brief, names) {
         speaker: name,
         version: "他先说：“奖金晚发，帮我挡几天。”我真当成手头紧。后来他发了张办材料的截图，我瞄见社保那栏，停了两个多月——那张图还是他上个月办材料时截的。可他每天还跟我说加班。那张图我盯了半天，没回他。",
         doubt: "说是奖金晚发，可社保已经断缴两个月。",
-        contradiction: "TA 一边说奖金延迟，一边在失业后继续刷体面消费，说明资金缺口不是临时才出现。",
+        contradiction: "对方 一边说奖金延迟，一边在失业后继续刷体面消费，说明资金缺口不是临时才出现。",
         reliability: "mixed",
         questionOptions: [
           { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。他之前一直说最近忙、加班多。要不是那张截图，我还以为他每天真在公司耗着。", contradiction: "社保断缴早于借钱，失业不是突然发生。", correct: true },
@@ -420,7 +420,7 @@ function dailyLostJobCreditTemplate(brief, names) {
         contradiction: "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事；短视频分期的受益人还没说清。",
         reliability: "partial",
         questionOptions: [
-          { question: "这几笔账，哪些是在他没工作以后花的？", answer: "纪念日晚餐、礼物分期、两次酒店，都在断缴之后。那几天我还在朋友圈夸他会安排。那笔一万二的分期也是断缴以后开的，具体买了什么我说不上来。", contradiction: "TA 失业后仍继续制造高消费恋爱场景，短视频分期也在断缴后开通。", correct: true },
+          { question: "这几笔账，哪些是在他没工作以后花的？", answer: "纪念日晚餐、礼物分期、两次酒店，都在断缴之后。那几天我还在朋友圈夸他会安排。那笔一万二的分期也是断缴以后开的，具体买了什么我说不上来。", contradiction: "对方 失业后仍继续制造高消费恋爱场景，短视频分期也在断缴后开通。", correct: true },
           { question: "短视频平台分期这一项，是不是也不对劲？", answer: "我当时也觉得怪。但它写得很含糊，我没往自己身上想。反正那会儿我先盯着餐厅和酒店。", correct: false, routeAxis: "document-edge", routeTone: "trust-but-verify" },
           { question: "有没有可能这些消费是他在硬撑？", answer: "可能。所以我才难受。他硬撑的时候，我也没少享受。账压过来以后，我才发现自己也在那场体面里。", correct: false }
         ],
@@ -434,10 +434,10 @@ function dailyLostJobCreditTemplate(brief, names) {
         speaker: name,
         version: "我后来又对了一遍日期。他第一次说周转那天，账单还有三天才到期。他先催我“今晚就要”，后面又改成“这几天都行”。我问急什么，他回我一句：“我只是怕你知道我失业后就离开我。”说完，紧接着把最低还款金额发了过来。",
         doubt: "时间被说急了，咨询者更容易先转钱。",
-        contradiction: "TA 把还款截止时间说急，制造咨询者当晚转钱的压力。",
+        contradiction: "对方 把还款截止时间说急，制造咨询者当晚转钱的压力。",
         reliability: "partial",
         questionOptions: [
-          { question: "他为什么把三天后的期限说成今晚？", answer: "我问过。他说怕我拖着不管。可账单还有三天，他非要我当晚转，我手都按在转账页上了，越看越不舒服。", contradiction: "TA 放大还款期限，减少咨询者检查账单的时间。", correct: true },
+          { question: "他为什么把三天后的期限说成今晚？", answer: "我问过。他说怕我拖着不管。可账单还有三天，他非要我当晚转，我手都按在转账页上了，越看越不舒服。", contradiction: "对方 放大还款期限，减少咨询者检查账单的时间。", correct: true },
           { question: "有没有可能他自己也慌了，才把时间说乱？", answer: "可能他真是手头太紧，慌了神吧。你想，他平时那么要面子，能开口求我，我第一反应也不是怀疑，是觉得他可能真撑不住了。就是后来我自己想，账单还差两三天，他怎么会急成那样。", correct: false }
         ],
         dialogueOptions: [
@@ -450,10 +450,10 @@ function dailyLostJobCreditTemplate(brief, names) {
         speaker: name,
         version: "主播，还有笔账我得说清楚。你们弹幕一直在问那个一万二的分期。那个……是一套拍视频的灯和稳定器，还有平台的推广套餐。东西，在我这儿。",
         doubt: "她说“没细看”的那笔分期，设备一直摆在她屋里。",
-        contradiction: "TA 失业后开通的分期，买的是给咨询者做账号用的设备和推广。",
+        contradiction: "对方 失业后开通的分期，买的是给咨询者做账号用的设备和推广。",
         reliability: "mixed",
         questionOptions: [
-          { question: "设备在你这儿，当时分期是谁提出来开的？", answer: "他提的。我那阵子想做探店号，跟他念叨过好几次。他说“我来投资你”，第二天就把分期开了。我要说完全没心动，是假话。", contradiction: "TA 用“投资你”把她的心愿变成自己账单上的分期。", correct: true, routeAxis: "money-flow", routeTone: "pressure-point" },
+          { question: "设备在你这儿，当时分期是谁提出来开的？", answer: "他提的。我那阵子想做探店号，跟他念叨过好几次。他说“我来投资你”，第二天就把分期开了。我要说完全没心动，是假话。", contradiction: "对方 用“投资你”把她的心愿变成自己账单上的分期。", correct: true, routeAxis: "money-flow", routeTone: "pressure-point" },
           { question: "这笔分期，你为什么开场没提？", answer: "……我怕说了，直播间就不站我了。他瞒失业是真的，让我垫八万也是真的，我不想这两件事被一笔分期搅浑。", correct: false, routeAxis: "caller-credibility", routeTone: "caller-skeptical" }
         ],
         dialogueOptions: [
@@ -466,10 +466,10 @@ function dailyLostJobCreditTemplate(brief, names) {
         speaker: name,
         version: "还有一句我没好意思说：他提过如果我这次不帮，以后他可能就不敢跟我谈结婚了，说自己会一直觉得低我一头。我前面也没说全。那周我们刚吃过很贵的纪念日晚餐，店是我用会员号订的，朋友圈也是我发的。我跟朋友一直把他讲得挺体面，也没想承认自己很吃那种体面。真说出来，我也怕别人觉得我找了个撑不住场面的人，像是我自己看走眼。",
         doubt: "借钱这件事开始被说成尊严和结婚态度。",
-        contradiction: "TA 把个人债务转成关系忠诚测试，咨询者也不愿承认自己被体面吸引。",
+        contradiction: "对方 把个人债务转成关系忠诚测试，咨询者也不愿承认自己被体面吸引。",
         reliability: "partial",
         questionOptions: [
-          { question: "他把你不垫钱和结婚联系起来，是怎么说的？", answer: "他说最难的时候我都不站在他这边，以后结婚他也抬不起头。我听完很难受，好像不转这笔钱，就成了我不爱他。", contradiction: "TA 把个人债务转成关系忠诚测试。", correct: true },
+          { question: "他把你不垫钱和结婚联系起来，是怎么说的？", answer: "他说最难的时候我都不站在他这边，以后结婚他也抬不起头。我听完很难受，好像不转这笔钱，就成了我不爱他。", contradiction: "对方 把个人债务转成关系忠诚测试。", correct: true },
           { question: "你一直说要看账单，那句不好说出口的话是什么？", answer: "我怕的是背这笔债，但那话说不出口。我怕一拒绝就被说嫌贫爱富。刚才那句都说出口了……前面我把他夸得那么体面，现在改口，我自己也挂不住。所以我才一直说要看账单，先拖着。", correct: false }
         ]
       }
@@ -520,9 +520,9 @@ function dailyLostJobCreditTemplate(brief, names) {
     },
     stageJudgement: "这通麦别急着站队。他社保停了没说，卡照刷，期限说急，最后一句“怕你离开”接一个还款金额；她开口说“他带我消费”，可订座的会员号、探店的账号，都是她自己的。",
     followupTwist: "后续回拨里，对方承认失业和账单都是真的，也认了那句“投资你”是想把她留住。他问了一句：她收灯的时候挺高兴的，怎么上麦就成了“他手机上弄的”？",
-    dailyShareTitle: "8 万信用卡，到底该不该帮 TA 还？",
+    dailyShareTitle: "8 万信用卡，到底该不该帮 对方 还？",
     dailyShareBody: "手头紧可以理解，可社保早已断缴，约会账单还在往上堆。",
-    dailyShareQuestion: "你会先问失业时间，还是先问 TA 为什么借钱？",
+    dailyShareQuestion: "你会先问失业时间，还是先问 对方 为什么借钱？",
     truth: "两条账分开算。他的：失业早已发生，断缴后照样刷吃住玩，三天的期限说成今晚，最后拿感情递账单。这四步一步比一步重，八万的主体是他的债，递不到她手里。她的：店多半是她挑的，人设是她发的，一万二的分期她收了东西还说没细看。这三步不欠他钱，但欠今晚的直播间半个真相。定不了的今晚就不定：他失业前的旧债从哪来的，这两个人往后还过不过，弹幕替谁着急都没用。"
   });
 }
@@ -533,20 +533,20 @@ function dailyHouseBoundaryTemplate(brief, names) {
   return dailyBaseBrief(brief, names, {
     label: "婚前房与共同还贷",
     storyArcTitle: "今日来电：婚前房与共同还贷",
-    publicHook: "婚前房写在 TA 父母名下，却要你婚后一起还贷。你提份额协议，TA 说你太算计。",
+    publicHook: "婚前房写在 对方 父母名下，却要你婚后一起还贷。你提份额协议，对方 说你太算计。",
     storyArcSummary: "别先吵加名，先问房本、还贷、分开以后钱怎么认。",
     storySuspense: "“你不信任我”这句话很好用，但它不能替共同还贷签字。",
     storyClueObject: "购房合同、父母转账与协议草稿",
-    openingComplaint: `${name}连线说：“TA 家婚前买房写父母名下，说婚后我们一起还贷。我提能不能写清份额和退出机制，TA 说我还没结婚就想着离。”`,
+    openingComplaint: `${name}连线说：“对方 家婚前买房写父母名下，说婚后我们一起还贷。我提能不能写清份额和退出机制，对方 说我还没结婚就想着离。”`,
     openingDialogue: [
-      { speaker: name, role: "caller", text: "主播你好，我不是非要房子。婚前房写 TA 父母名下，可婚后又说我们一起还贷才像一家人。", mood: "anxious" },
+      { speaker: name, role: "caller", text: "主播你好，我不是非要房子。婚前房写 对方 父母名下，可婚后又说我们一起还贷才像一家人。", mood: "anxious" },
       { speaker: "你", role: "host", text: "晚上好。合同上写谁、家里怎么说还贷，你从这两处讲。", mood: "listening" }
     ],
     sceneVersions: [
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "我不是非要加名，我只是想知道我婚后还进去的钱算什么。可 TA 一直说，正常夫妻不会算这么细。",
+        version: "我不是非要加名，我只是想知道我婚后还进去的钱算什么。可 对方 一直说，正常夫妻不会算这么细。",
         doubt: "不加名可以理解，但婚后还贷不能含糊。",
         contradiction: "房产登记和还贷安排被拆成两套说法：权属归父母，现金流要小家庭承担。",
         reliability: "mixed",
@@ -584,7 +584,7 @@ function dailyHouseBoundaryTemplate(brief, names) {
         speaker: name,
         version: "我提过一个很轻的方案：不加名，只把婚后还贷和装修按流水留个确认。但我没说全，这个说法是我妈帮我改过的。她原话是“最好能有个位置”，怕我直接说加名太难听，才让我先说投入确认。他说这比加名还伤感情，因为说明我随时准备撤。",
         doubt: "连最轻的投入确认，也被说成准备分手。",
-        contradiction: "咨询者把“最好能有个位置”的诉求包装成投入确认；TA 连不加名的投入确认也拒绝。",
+        contradiction: "咨询者把“最好能有个位置”的诉求包装成投入确认；对方 连不加名的投入确认也拒绝。",
         reliability: "partial",
         questionOptions: [
           { question: "你提的是加名，还是只确认婚后投入？", answer: "我嘴上只说确认投入，还特意说不碰他们家的首付和产权。可我妈那句“最好能有个位置”确实在我心里，我没有直接说出来。", contradiction: "咨询者没有直接说出“最好能有个位置”的诉求。", correct: true },
@@ -596,7 +596,7 @@ function dailyHouseBoundaryTemplate(brief, names) {
         speaker: name,
         version: "我把他后来那句也念一下：“房子放父母名下是家里安排，不影响我们过日子。不写才像一家人，你要协议，就是不信我。”",
         doubt: "“不写才像一家人”听着亲，但钱已经开始往外走了。",
-        contradiction: "TA 把投入确认说成不信任，回避了共同还贷如何被确认的问题。",
+        contradiction: "对方 把投入确认说成不信任，回避了共同还贷如何被确认的问题。",
         reliability: "partial",
         questionOptions: [
           { question: "不写清楚的话，你还进去的钱算什么？", answer: "我就卡在这里。如果不写清楚，那我婚后还进去的贷款，以后到底算我一起买房，还是算我白替他们家供了一段？", contradiction: "对方无法说明共同还贷的钱最后怎么算。", correct: true },
@@ -675,9 +675,9 @@ function dailyTonyMultiDatingTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "TA 每次下班后都陪我聊天，说只有我能接住 TA 的情绪，还说别人都不懂。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。",
+        version: "对方 每次下班后都陪我聊天，说只有我能接住 对方 的情绪，还说别人都不懂。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。",
         doubt: "没有确认关系，但对方一直给排他式的亲近感。",
-        contradiction: "TA 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
+        contradiction: "对方 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
         reliability: "mixed",
         questionOptions: [
           { question: "他有没有说过你们现在到底算什么关系？", answer: "没有。他会说“你跟别人不一样”，但真问到关系，他就说慢慢来。", contradiction: "亲密感很满，关系承诺却一直悬着。", correct: true },
@@ -689,7 +689,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         speaker: name,
         version: "后来我翻聊天，发现一个节奏特别明显。他先说“店里压力大”“今晚又被店长说了”，还说这些只跟我讲。我跟朋友复述的时候都说：“他说我像店里自己人。”我一心软，他就接让我帮忙发活动、带朋友去剪头，或者问我下次要不要直接办年卡。",
         doubt: "情绪求助后面开始接店里的经营目标。",
-        contradiction: "TA 把亲密聊天接到办卡、带客和朋友圈推广上。",
+        contradiction: "对方 把亲密聊天接到办卡、带客和朋友圈推广上。",
         reliability: "partial",
         questionOptions: [
           { question: "他说压力大之后，最常接什么请求？", answer: "不只是安慰。说着说着就会拐到店里活动，让我转一下，或者问我朋友要不要来剪头。", contradiction: "情绪求助后接商业转化请求。", correct: true },
@@ -701,7 +701,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         speaker: name,
         version: "昨天他发错那张表，我才把前面的事串起来。表头写的是预约，可备注没写“烫发”“修刘海”，写的是“情绪稳定”“办卡意向强”“朋友多”。我那一行后面写着“稳情绪”。",
         doubt: "那张表不像普通客户备注，更像在写每个人能带来什么。",
-        contradiction: "TA 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
+        contradiction: "对方 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
         reliability: "partial",
         questionOptions: [
           { question: "这张表是在记发型需求，还是在记你们能带来什么？", answer: "他写的不是我想剪什么头，备注里全是我能不能安抚、会不会办卡、能不能带朋友。发型那栏反而空着。", contradiction: "预约表实际在记录对象可转化的资源。", correct: true },
@@ -713,7 +713,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         speaker: name,
         version: "我拿表问他，他回我：“我从来没说只有你一个。”可我翻聊天，他发过“以后店开起来，你就是老板娘”。这句话不是求婚，可听完以后，他再说办年卡、以后投一点，我就没那么防备。",
         doubt: "没说“只有你”，不代表没有让人往那个方向想。",
-        contradiction: "TA 用未来身份暗示制造排他期待，同时保留口头退路。",
+        contradiction: "对方 用未来身份暗示制造排他期待，同时保留口头退路。",
         reliability: "partial",
         questionOptions: [
           { question: "他说老板娘之后，有没有马上让你办卡或投店？", answer: "有。那晚没过多久就聊年卡，说我以后常来店里方便。后来还提过店要是扩大，我可以先投一点。", contradiction: "未来身份暗示后紧接着出现办卡和投店话题。", correct: true },
@@ -725,7 +725,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         speaker: name,
         version: "我后来盯着最后那列看了很久：“下一次推进”。我那行写“年卡已聊，可稳情绪”；另一个女生写“能投店，约饭再谈”；还有一个写“朋友多，带客”。看到那儿，我才知道不是我一个人在自作多情。",
         doubt: "表格不只是备注，还写了下一步怎么把人往店里推进。",
-        contradiction: "TA 把不同暧昧对象按可推进资源分层管理。",
+        contradiction: "对方 把不同暧昧对象按可推进资源分层管理。",
         reliability: "partial",
         questionOptions: [
           { question: "这张表是在排员工，还是在排你们这些人下一步怎么推进？", answer: "那不是排班。我的名字后面是“年卡已聊、稳情绪”；另一个也不是班次，是“能投店”“能带客”。", contradiction: "排班表实为暧昧对象资源分层表。", correct: true },
@@ -745,7 +745,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         prompt: "这张表里哪一列不像预约表？",
         material: "表头写预约，备注却写着“情绪稳定”“办卡意向强”“朋友多”，最后一列还有“下一次推进”。",
         options: [
-          { label: "备注和下一次推进", correct: true, contradiction: "TA 把不同对象按可推进资源分层管理。", feedback: "这不是剪头需求，是把人按能带来什么往下排。", routeAxis: "process-control" },
+          { label: "备注和下一次推进", correct: true, contradiction: "对方 把不同对象按可推进资源分层管理。", feedback: "这不是剪头需求，是把人按能带来什么往下排。", routeAxis: "process-control" },
           { label: "预约时间", correct: false, feedback: "预约时间本身没问题，刺眼的是备注里的功能标签。", routeAxis: "document-edge" },
           { label: "店员名字", correct: false, feedback: "名字不够要紧，后面那些“稳情绪”“能投店”才让这张表变了性质。", routeAxis: "outer-thread" }
         ]
@@ -768,7 +768,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         source: "dm",
         surface: "后台进来一条私信",
         title: "另一份同款表",
-        triggerContradiction: "TA 把不同对象按可推进资源分层管理。",
+        triggerContradiction: "对方 把不同对象按可推进资源分层管理。",
         appearsNowBecause: "收麦后，另一个女生把她收到的那张表也发了过来。",
         prompt: "这张同款表里，哪处最该圈？",
         material: "她那栏写着“能投店”，后面跟着“约见朋友、聊分红”。另一栏写“情绪稳住，年卡下次推”。",
@@ -789,7 +789,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
     },
     stageJudgement: "这不是普通多聊几个人。那张表里有“稳情绪”“年卡已聊”“能投店”“带客”，甜话后面接的是店里的下一步。",
     followupTwist: "后续回拨里，另一位女生也发来私信，说她那栏写着“能投店”。到这里，“排班表”三个字已经挂不住了。",
-    dailyShareTitle: "你会从哪一句看出 TA 在养鱼？",
+    dailyShareTitle: "你会从哪一句看出 对方 在养鱼？",
     dailyShareBody: "几句暧昧聊天还能解释，排班表里那几栏解释不了：情绪稳定、能投店、能带客。",
     dailyShareQuestion: "你觉得“你和别人不一样”算锤吗？",
     truth: "会聊天不等于有问题。可同一套“你最懂我”分别发给几个人，后面又接办卡、带客、投店，那就不只是暧昧了。"

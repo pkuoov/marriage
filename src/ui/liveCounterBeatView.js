@@ -13,7 +13,10 @@ export function liveCounterBeatHtml(beat = {}, pick = null) {
           ${choices.map((choice) => counterChoiceHtml(choice, pick)).join("")}
         </div>
       ` : ""}
-      ${selectedChoice?.lines?.length ? callDialogueHtml(selectedChoice.lines, "live-counter-response") : ""}
+      ${selectedChoice ? callDialogueHtml([
+        ...(selectedChoice.silent ? [] : [{ role: "host", text: selectedChoice.label ?? "" }]),
+        ...(selectedChoice.lines ?? [])
+      ], "live-counter-response") : ""}
     </section>
   `;
 }

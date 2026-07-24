@@ -30,10 +30,10 @@ export function epilogueUnreadContinueHtml({ visibleCount = 0, total = 0 } = {})
 
 function attachmentPlaceholderHtml(attachment = {}) {
   return `
-    <div class="epilogue-attachment-placeholder" role="img" aria-label="${escapeHtml(attachment.alt ?? attachment.label ?? "图片占位")}">
+    <div class="epilogue-attachment-placeholder" role="img" aria-label="${escapeHtml(attachment.alt ?? attachment.label ?? "图片附件")}">
       <span aria-hidden="true">▧</span>
-      <b>${escapeHtml(attachment.label ?? "图片待补")}</b>
-      <small>试玩素材占位</small>
+      <b>${escapeHtml(attachment.label ?? "图片附件")}</b>
+      <small>图片附件</small>
     </div>
   `;
 }

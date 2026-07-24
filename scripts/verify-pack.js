@@ -1636,8 +1636,10 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(sirenText.includes("警笛") && sirenText.includes("门外有人敲门") && sirenText.includes("你先去看看"), "案二第一夜必须用警笛、敲门和主播应答造成被迫中断");
   assert(sirenLines.every((line) => !/警笛|敲门/.test(line.text ?? "") || line.nonLoadBearing !== true), "被人物注意的警笛与敲门不得伪装成生活噪声");
   assertEqual(sirenScene?.closureContract?.openEdge, "深夜来敲门的人是谁，为什么会在警笛停下后找上她。", "案二警笛场尾必须登记明确开放边");
-  assert(caseTwo?.nightStructure?.hangup?.line?.includes("突然有事") && !caseTwo?.nightStructure?.hangup?.line?.includes("他一直打电话"), "案二第一夜必须由眼前的敲门中断，不能退回陌生来电解释");
-  assert(caseTwo?.overnightStructure?.hangupLine?.includes("电话断得很快"), "案二隔夜结构必须保留突然断线的动作结果");
+  const caseTwoHangupLine = caseTwo?.nightStructure?.hangup?.line ?? "";
+  assert(caseTwoHangupLine.includes("警笛停在楼下") && caseTwoHangupLine.includes("门外有人敲门"), "案二挂断页必须把眼前的警笛和敲门呈现给玩家，不能退回含糊的“突然有事”");
+  assert(!/民警|警察|报案/.test(caseTwoHangupLine), "案二第一夜只能播下警笛与敲门，不能提前揭晓来人身份");
+  assert(/电话.*断/.test(caseTwo?.overnightStructure?.hangupLine ?? ""), "案二隔夜结构必须保留突然断线的动作结果");
 
   const returnLeadLines = caseTwo?.overnightStructure?.returnLead?.lines ?? [];
   const returnLeadText = returnLeadLines.map((line) => line.text ?? "").join(" ");

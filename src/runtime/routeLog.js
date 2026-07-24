@@ -29,7 +29,7 @@ export function routeAxisProfileFromChoices(choices = []) {
     if (skeptical > softening && skeptical >= 2) summary = "你不急着相信来电人的版本，会先追她自己没说全的利益和压力。";
     else if (softening > skeptical && softening >= 2) summary = "你会先给双方留余地，再等材料和后面的话补上。";
     else if (coreHits === choices.length) summary = "你每段都问到了，后面的话就没那么容易散。";
-    else summary = `你主要盯着${label}问，中间也听了几句外围解释。`;
+    else summary = `你最常追的是“${label}”，中间也听了几句外围解释。`;
   }
   return { axis, label, count, summary, coreHits, total: choices.length };
 }
@@ -63,18 +63,18 @@ export function routeToneForChoice(option = {}, scene = {}, sceneIndex = null) {
 
 export function routeAxisLabel(axis) {
   const labels = {
-    "money-flow": "钱流结构线",
-    "document-edge": "材料缺口线",
-    "identity-wording": "身份话术线",
-    "process-control": "入口控制线",
-    "caller-credibility": "来电人可信度线",
-    "counterparty-credibility": "对方叙事线",
-    "external-corroboration": "回流佐证线",
-    "core-thread": "核心矛盾线",
-    "outer-thread": "外围试探线",
-    "live-instinct": "现场听感线"
+    "money-flow": "钱去了哪儿",
+    "document-edge": "材料少了什么",
+    "identity-wording": "称呼是怎么变的",
+    "process-control": "谁握着办事入口",
+    "caller-credibility": "来电人没说全的部分",
+    "counterparty-credibility": "对方的说法",
+    "external-corroboration": "外部消息",
+    "core-thread": "关键矛盾",
+    "outer-thread": "顺手追问",
+    "live-instinct": "现场直觉"
   };
-  return labels[axis] ?? "现场听感线";
+  return labels[axis] ?? "现场直觉";
 }
 
 export function compactRouteQuestion(question = "") {

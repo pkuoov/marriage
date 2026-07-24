@@ -38,10 +38,14 @@ export function splitDialogueSentences(value = "") {
 
 export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxPageChars = 156 } = {}) {
   return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction") ?? []).flatMap((line) => {
-    const isStage = line.classList.contains("call-stage-direction");
-    const speaker = isStage ? "现场" : line.querySelector("b")?.textContent?.trim() || "咨询者";
+    const isCallStage = line.classList.contains("call-stage-direction");
+    const isNarration = line.classList.contains("shell-narration") || line.classList.contains("shell-stage");
+    const isStage = isCallStage || isNarration;
+    const speaker = isCallStage
+      ? "现场"
+      : line.querySelector("b")?.textContent?.trim() || (isNarration ? "旁白" : "咨询者");
     const role = isStage ? "stage" : line.classList.contains("host") || line.classList.contains("shell-host") ? "host" : "caller";
-    const text = isStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
+    const text = isCallStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
     const audioCueId = line.getAttribute?.("data-audio-cue-id") ?? "";
     const turnLimit = /[？?]$/.test(text.trim()) ? Math.max(maxTurnChars, maxPageChars) : maxTurnChars;
     return chunkDialogueTurn({ speaker, role, text, audioCueId }, turnLimit);

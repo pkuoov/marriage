@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：34
-- 收录台词／玩家可见人物材料：900
+- 收录台词／玩家可见人物材料：899
 - 本包实际出声人物：33
 - 句长节奏人工复核提示：23
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -142,7 +142,7 @@
 
 - `$case.sceneVersions[5].beforeVersion.lines[0]` 昨晚那笔一万二，你说设备送到了你那里，也一直是你在用。开箱那晚呢？你们做了什么？
 - `$case.sceneVersions[6].beforeVersion.lines[3]` 你先别回。他后面还有消息吗？
-- `$case.sceneVersions[6].afterVersion.lines[0]` 昨晚你还提到，有一句关于结婚的话其实是你自己说的。是哪一句？
+- `$case.sceneVersions[6].afterVersion.lines[0]` 他把失业、怕你离开和还款金额连在一起。你听完，最先想到的是什么？
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[0]` 六月 8 号那笔没来，八万就开口了。你昨晚——
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[2]` ……对，七月，我念岔了。你昨晚为什么只说『奖金晚发』？
 - `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.firstConflict.hostLine` 那晚的座是你订的。你开场那句“都是他安排的”，还算数吗？
@@ -265,7 +265,7 @@
 - `$case.sceneVersions[6].beforeVersion.lines[2]` 他知道这是直播。他知道你们都看着。
 - `$case.sceneVersions[6].beforeVersion.lines[4]` 有。十二点四十，又来了一条。
 - `$case.sceneVersions[6].beforeVersion.lines[6]` ……跟着又来一句：『账单 26 号出』。前面还是『抱抱』，后面就变成还款日了。
-- `$case.sceneVersions[6].afterVersion.lines[1]` “以后他可能就不敢跟我谈结婚了。”这句是我说的。纪念日的座也是我用会员号订的，照片也是我发的。我也怕别人觉得我找了个撑不住场面的人。我更怕承认，自己其实很吃那种体面。
+- `$case.sceneVersions[6].afterVersion.lines[1]` 我第一反应是：“以后他可能就不敢跟我谈结婚了。”可这句是我自己想的，不是他说的。纪念日的座也是我用会员号订的，照片也是我发的。我也怕别人觉得我找了个撑不住场面的人。我更怕承认，自己其实很吃那种体面。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.callerLine` ……说成断了，话就重了。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[1]` 七月。六月是有的。
 - `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.firstConflict.callerLine` 不算全。酒是他点的，座是我订的。那晚好不好看，我也出了力。
@@ -305,17 +305,17 @@
 - `$case.sceneVersions[6].questionOptions[0].answer` 那句“怕你离开”，我听了三遍。下一条就是最低还款金额。我盯着那行数字，手已经点进转账页了。
 - `$case.sceneVersions[6].questionOptions[0].guardedAnswer` 他说怕我走。后面跟着什么，我现在不想再念了；我一念，就像又在替那句话找理由。
 - `$case.sceneVersions[6].questionOptions[1].answer` 我。怕它最后成了我的债。这句我一直说不出口。一拒绝，像我嫌他穷；前面又把他夸得那么好，现在改口，我自己也挂不住。于是我拖，反复说先看账单。
-- `$case.overnightStructure.callbackOpeners.周会计的时间线.line` 「周会计那张时间线，我看了。五月和六月都是 8 号进一万，七月 8 号却空着。今晚先问为什么断，别猜转账的人。」
-- `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.line` 「你下午是不是去过餐厅？算了，别让店员为难。我自己说：订座短信在我手机里，号……是我的。昨晚我把这几个字吞了。」
-- `$case.overnightStructure.callbackOpeners.常客的轮订规律.line` 「靠窗那排，常客也会轮着订。提前两周是真的。‘只为我’这三个字……是我自己往里加的。」
-- `$case.overnightStructure.callbackOpeners.旁听记下的两句.line` 「他在隔壁说，号是我的，灯是真心买的。听见‘真心’那两个字，我还是……算了，账单里那三万五他没说。」
-- `$case.overnightStructure.callbackOpeners.他对三万五的沉默.line` 「隔壁那通话绕了半天，账单里那三万五还是没说清。我不拿灯挡了。他不说，我就不转。」
-- `$case.overnightStructure.callbackOpeners.流水圈注.line` 「我把流水从头翻了一遍。三月十一号，澄川金融打进来二十万，备注写的是借款。」
-- `$case.overnightStructure.callbackOpeners.顾问回单.line` 「回单上没写‘骗’。就几个日子，一条钱路。我本来盼着它替我把话说死的。」
-- `$case.overnightStructure.callbackOpeners.性质框架.line` 「赵律师不肯给那笔钱起名字。借的、送的，她说都得有东西落下来。我手里没有。」
-- `$case.overnightStructure.callbackOpeners.路径框架.line` 「周会计把人情话都划掉了，只留日期。我照着重新看了一遍。五月和六月的 8 号，王姓的人各转来一万。到了七月，5 号是新阳信贷放款五万，8 号没有王姓转账，19 号账户向 3301 转出 49,800。」
-- `$case.overnightStructure.callbackOpeners.闺蜜删掉的那条评论.line` 「闺蜜把删掉的评论发回来了。我看着那句‘这才像被认真对待’，脸有点烫。那场面，我也撑过。」
-- `$case.overnightStructure.callbackFallback.line` 「我想了一晚上，还是得把话说完——你接着问吧。」
+- `$case.overnightStructure.callbackOpeners.周会计的时间线.line` 周会计那张时间线，我看了。五月和六月都是 8 号进一万，七月 8 号却空着。今晚先问为什么断，别猜转账的人。
+- `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.line` 你下午是不是去过餐厅？算了，别让店员为难。我自己说：订座短信在我手机里，号……是我的。昨晚我把这几个字吞了。
+- `$case.overnightStructure.callbackOpeners.常客的轮订规律.line` 靠窗那排，常客也会轮着订。提前两周是真的。‘只为我’这三个字……是我自己往里加的。
+- `$case.overnightStructure.callbackOpeners.旁听记下的两句.line` 他在隔壁说，号是我的，灯是真心买的。听见‘真心’那两个字，我还是……算了，账单里那三万五他没说。
+- `$case.overnightStructure.callbackOpeners.他对三万五的沉默.line` 隔壁那通话绕了半天，账单里那三万五还是没说清。我不拿灯挡了。他不说，我就不转。
+- `$case.overnightStructure.callbackOpeners.流水圈注.line` 我把流水从头翻了一遍。三月十一号，澄川金融打进来二十万，备注写的是借款。
+- `$case.overnightStructure.callbackOpeners.顾问回单.line` 回单上没写‘骗’。就几个日子，一条钱路。我本来盼着它替我把话说死的。
+- `$case.overnightStructure.callbackOpeners.性质框架.line` 赵律师不肯给那笔钱起名字。借的、送的，她说都得有东西落下来。我手里没有。
+- `$case.overnightStructure.callbackOpeners.路径框架.line` 周会计把人情话都划掉了，只留日期。我照着重新看了一遍。五月和六月的 8 号，王姓的人各转来一万。到了七月，5 号是新阳信贷放款五万，8 号没有王姓转账，19 号账户向 3301 转出 49,800。
+- `$case.overnightStructure.callbackOpeners.闺蜜删掉的那条评论.line` 闺蜜把删掉的评论发回来了。我看着那句‘这才像被认真对待’，脸有点烫。那场面，我也撑过。
+- `$case.overnightStructure.callbackFallback.line` 我想了一晚上，还是得把话说完——你接着问吧。
 - `$case.overnightStructure.postures.againstCaller` 我差点不打回来。刚才弹幕……我都听到了。你要是也觉得是我贪体面，这通我讲不下去。
 - `$case.overnightStructure.postures.withCaller` 我回来了。八万的事，你继续问。我把白天重新看过的流水也带来了。
 - `$case.nightStructure.returnStance.lines.defensive` 我差点不打回来。弹幕说我贪体面……我认过探店，可八万我不替他还。
@@ -488,7 +488,7 @@
 - `$case.openingDialogue[4]` 怎么个不太像？
 - `$case.openingDialogue[6]` 那你为什么今天打进来？
 - `$case.sceneVersions[3].sceneCloser.lines[2]` 这个点？你先去看看。
-- `$case.nightStructure.hangup.hostLine` 好，先处理你的事。
+- `$case.nightStructure.hangup.hostLine` 这个点？好，你先去看看。
 - `$case.sceneVersions[0].entryQuestion` 你们平时到底怎么相处？
 - `$case.sceneVersions[0].casualQuestions[0].question` 你在他们店剪了多久头发？
 - `$case.sceneVersions[0].casualQuestions[1].question` 相亲那次是谁牵的线？
@@ -588,7 +588,7 @@
 - `$case.sceneVersions[0].casualQuestions[2].lines[2]` 说的。
 - `$case.sceneVersions[1].sceneCloser.lines[0]` ……等下，我外卖到了，搁门口就行——嗯，你继续。
 - `$case.sceneVersions[3].sceneCloser.lines[1]` 等一下。门外有人敲门。
-- `$case.nightStructure.hangup` ……我这边突然有事。先挂了，明晚我再打。
+- `$case.nightStructure.hangup` 等一下。刚才那阵警笛停在楼下了，门外有人敲门。……我得去看看，先挂了。明晚我再打。
 - `$case.sceneVersions[0].version` 我这工作，别人听见夜店两个字，有时候说话就不好听。有回店里一个客人拿我开玩笑，他当场回了一句：“她靠自己拿提成，关你什么事。”从那以后，我就在他店里剪头，染发护理也只找他。他知道我下午才醒，总给我留最晚一档。晚上我收工，他也会发语音，说店长又骂他了，末了总有一句：“只有你能接住我。”我听久了，真觉得只有我能接住他。我们没正式在一起，可我就是觉得，他至少不嫌我。店里有活动，我也愿意替他转。
 - `$case.sceneVersions[0].revisedVersion` ……“只有你能接住我”，我当宝贝存了半年。看见那张表以后，我再听，像店里一键发出去的。
 - `$case.sceneVersions[0].casualQuestions[0].answer` 一年多。最早是同事推荐的，后来就只找他。
@@ -656,20 +656,20 @@
 - `$case.sceneVersions[6].questionOptions[0].answer` 办年卡、投店、带客。每个人的写法不一样，可没有一行是在安排发型或者班次。
 - `$case.sceneVersions[6].questionOptions[0].guardedAnswer` 都不是发型和班次。再往下我不想替他念。
 - `$case.sceneVersions[6].questionOptions[1].answer` 只有我一个，我还能这么骗。可每个人后面都有一个用处，还有下一步。我骗不下去了。
-- `$case.overnightStructure.callbackOpeners.店外称呼观察.line` 「门边那句我听见了。他也叫别人‘自己人’。我昨晚只抓住这三个字，后面那句续护理，像没进耳朵。」
-- `$case.overnightStructure.callbackOpeners.店外服务序列.line` 「隔着玻璃，只看见他插位，转头又登记会员。没听见称呼。两个动作挨得太近，我看着不舒服。」
-- `$case.overnightStructure.callbackOpeners.培训页圈注.line` 「店里的培训页有办卡，也有下次预约。翻到最后，我又看了一遍。‘下一次推进’真没有。」
-- `$case.overnightStructure.callbackOpeners.顾问回单.line` 「顾问只肯认表是真的。至于他对谁真，我拿着那张表也问不出来。」
-- `$case.overnightStructure.callbackOpeners.吹风机回放.line` 「吹风机那段，我听清了。那晚他还在店里。背景一直没消失，是我把它剪掉，只留了‘只有你能接住我’。」
-- `$case.overnightStructure.callbackOpeners.女客拉群立场.line` 「她要拉群，还要去店里。我不去。我先退卡，把带过去的朋友叫回来……那张表，她要留就留。」
-- `$case.overnightStructure.callbackOpeners.咨询者止损立场.line` 「我劝她先退卡，别去堵门。他的电话我也没接。可我没让她删表，这事他得自己说。」
-- `$case.overnightStructure.callbackOpeners.培训模板说明.line` 「培训页我来回看了三遍。店里会教人办卡，这是真的。可‘下一次推进’……没有。我昨晚拿前半张纸给自己垫台阶。」
-- `$case.overnightStructure.callbackOpeners.店里的标准表.line` 「两张表摆一起，旧表只记项目、时间和服务备注。那张私表多出的几列，写的是谁好哄、谁能办卡、谁能带客。」
-- `$case.overnightStructure.callbackOpeners.那次六折.line` 「六折那次我记得。她们都夸我有面子，我也没说这是店里活动。好处我拿了。」
-- `$case.overnightStructure.callbackOpeners.店长门口拒答.line` 「店长把门挡着，只认维护、办卡。完整私表，他说没见过。再问，他就不说了。」
-- `$case.overnightStructure.callbackFallback.line` 「我回来了。那张表我又看了一遍。你白天先查了哪一处？」
-- `$case.overnightStructure.postures.againstCaller` 「插号、免单、朋友六折，我都认。可我没答应被写成下一步生意。」
-- `$case.overnightStructure.postures.withCaller` 「我没接他的电话。你白天去了哪里，先说给我听。」
+- `$case.overnightStructure.callbackOpeners.店外称呼观察.line` 门边那句我听见了。他也叫别人‘自己人’。我昨晚只抓住这三个字，后面那句续护理，像没进耳朵。
+- `$case.overnightStructure.callbackOpeners.店外服务序列.line` 隔着玻璃，只看见他插位，转头又登记会员。没听见称呼。两个动作挨得太近，我看着不舒服。
+- `$case.overnightStructure.callbackOpeners.培训页圈注.line` 店里的培训页有办卡，也有下次预约。翻到最后，我又看了一遍。‘下一次推进’真没有。
+- `$case.overnightStructure.callbackOpeners.顾问回单.line` 顾问只肯认表是真的。至于他对谁真，我拿着那张表也问不出来。
+- `$case.overnightStructure.callbackOpeners.吹风机回放.line` 吹风机那段，我听清了。那晚他还在店里。背景一直没消失，是我把它剪掉，只留了‘只有你能接住我’。
+- `$case.overnightStructure.callbackOpeners.女客拉群立场.line` 她要拉群，还要去店里。我不去。我先退卡，把带过去的朋友叫回来……那张表，她要留就留。
+- `$case.overnightStructure.callbackOpeners.咨询者止损立场.line` 我劝她先退卡，别去堵门。他的电话我也没接。可我没让她删表，这事他得自己说。
+- `$case.overnightStructure.callbackOpeners.培训模板说明.line` 培训页我来回看了三遍。店里会教人办卡，这是真的。可‘下一次推进’……没有。我昨晚拿前半张纸给自己垫台阶。
+- `$case.overnightStructure.callbackOpeners.店里的标准表.line` 两张表摆一起，旧表只记项目、时间和服务备注。那张私表多出的几列，写的是谁好哄、谁能办卡、谁能带客。
+- `$case.overnightStructure.callbackOpeners.那次六折.line` 六折那次我记得。她们都夸我有面子，我也没说这是店里活动。好处我拿了。
+- `$case.overnightStructure.callbackOpeners.店长门口拒答.line` 店长把门挡着，只认维护、办卡。完整私表，他说没见过。再问，他就不说了。
+- `$case.overnightStructure.callbackFallback.line` 我回来了。那张表我又看了一遍。你白天先查了哪一处？
+- `$case.overnightStructure.postures.againstCaller` 插号、免单、朋友六折，我都认。可我没答应被写成下一步生意。
+- `$case.overnightStructure.postures.withCaller` 我没接他的电话。你白天去了哪里，先说给我听。
 - `$case.nightStructure.returnStance.lines.defensive` 我差点不打回来。弹幕说我也有份……我自己人那点儿好处，我又没否认。可那列推进，不是我自己写上去的。
 - `$case.nightStructure.returnStance.lines.open` 我回来了。表的事你继续问——这回我不替行业开脱。
 - `$case.nightStructure.returnStance.lines.neutral` 我回来了。隔了一天再看，那一列还在。
@@ -916,7 +916,7 @@
 - `$case.sceneVersions[5].questionOptions[0].question` 为什么一直说是你妈想看流水？
 - `$case.sceneVersions[5].questionOptions[1].question` “以后钱一起管”，你原样告诉他了吗？
 - `$case.sceneVersions[6].entryQuestion` 他问到工资卡以后呢？
-- `$case.sceneVersions[6].casualQuestions[0].question` 工资卡那句发来以后，你多久没回？
+- `$case.sceneVersions[6].casualQuestions[0].question` 工资卡那句发来以后，你多久没正面回？
 - `$case.sceneVersions[6].casualQuestions[1].question` 你身边有婚后一起管钱的例子吗？
 - `$case.sceneVersions[6].casualQuestions[2].question` 他现在还给你发消息吗？
 - `$case.sceneVersions[6].casualQuestions[3].question` 周末那顿饭，你还想见吗？
@@ -1012,23 +1012,23 @@
 - `$case.sceneVersions[5].questionOptions[0].answer` 我自己问，听着像只盯钱。我妈问，我就能说是家里谨慎；他要是不高兴，我也能往回收。可流水最先是我提的，这句没法再推给她。
 - `$case.sceneVersions[5].questionOptions[0].guardedAnswer` 流水是我先提。后面那句，才是我妈接的。
 - `$case.sceneVersions[5].questionOptions[1].answer` 没有。我只说家里想确认稳定。真把那句原样递过去，这顿饭可能当场就散。连我自己听着都重。
-- `$case.sceneVersions[6].version` 团购是真的，积分也是真的。停车 AA，也是真的。我当时盯的都是这些小钱。饭后他发微信：“再问下去，是不是工资卡也要交出来？”我没回。因为我妈真说过，结婚以后钱最好一起管，至少得透明，最好交一部分。这半句，我没递给他。
-- `$case.sceneVersions[6].casualQuestions[0].answer` 那晚一直没回。聊天框开了几次，最后还是关了。
+- `$case.sceneVersions[6].version` 团购是真的，积分也是真的。停车 AA，也是真的。我当时盯的都是这些小钱。饭后他发微信：“再问下去，是不是工资卡也要交出来？”我没有正面回那句。因为我妈真说过，结婚以后钱最好一起管，至少得透明，最好交一部分。这半句，我没递给他。
+- `$case.sceneVersions[6].casualQuestions[0].answer` 那晚都没正面回。聊天框开了几次，我最后只发了一句关于稳定的话。
 - `$case.sceneVersions[6].casualQuestions[1].answer` 我表姐。管得挺好，但她挣得比姐夫多。多百分之三十几吧，具体没算过——不对，我算过。百分之三十七。你看，我就是这样的人。这话我没跟我妈说过。我们家饭桌上，账是不能上桌的。
 - `$case.sceneVersions[6].casualQuestions[3].answer` 不知道。
 - `$case.sceneVersions[6].questionOptions[0].answer` 我说：“你别把话说那么难听，我只是想看稳定。”钱以后放不放一起，我没接。那才是我们一直没谈的。
 - `$case.sceneVersions[6].questionOptions[0].guardedAnswer` 我只说想看稳定。钱以后怎么管，我没敢接。
 - `$case.sceneVersions[6].questionOptions[1].answer` 我现在不敢这么说。见父母前就问流水、问工资怎么管，换谁都不舒服。我拿团购和停车费往收入上猜，是在给自己找证据。
-- `$case.overnightStructure.callbackOpeners.介绍人双边记录.line` 「介绍人把两边的记录摊开了。‘收入稳’，她给我家加的；‘不计较学历’，她给他家加的。我妈说名校的时候，我也没拦。」
-- `$case.overnightStructure.callbackOpeners.介绍人添话标记.line` 「纸上就多了两句。她把他往高了说，也把我往好说。我看见以后第一反应……居然是，难怪这顿饭约得这么顺。」
-- `$case.overnightStructure.callbackOpeners.表姐门口口供.line` 「表姐没让进门。隔着门只说，资料是家里一起挑的。收入，她不答；学费，也不答。」
-- `$case.overnightStructure.callbackOpeners.双份材料圈注.line` 「这张页面只写了项目，存款证明也只看得出那一天。我把两张纸放在一起看了很久。可我跟家里说的那句‘学历好、收入稳’，哪张纸上都没有。」
-- `$case.overnightStructure.callbackOpeners.家里群原话.line` 「群里最上面那句，是我发的：‘要不要把流水也问了？’两分钟后我妈才回。昨晚我把这两分钟藏了。」
-- `$case.overnightStructure.callbackOpeners.饭局停顿回放.line` 「饭局那十几秒，我又听了一遍。我问本科，他没答，转头去算停车费。那时候我就觉得卡住了，可下一句没追。」
-- `$case.overnightStructure.callbackFallback.line` 「我回来了。群里还在吵。你白天先去了哪一处？」
-- `$case.overnightStructure.postures.againstCaller` 「流水是我先问的。今晚我不再拿我妈挡这句话。」
-- `$case.overnightStructure.postures.withCaller` 「我把家里群留着没删。你查到哪一截，就从哪一截问。」
-- `$case.nightStructure.returnStance.lines.defensive` 我差点不打回来。弹幕说我妈查太深……可查太深那半句，流水是我先开的口。
+- `$case.overnightStructure.callbackOpeners.介绍人双边记录.line` 介绍人把两边的记录摊开了。‘收入稳’，她给我家加的；‘不计较学历’，她给他家加的。我妈说名校的时候，我也没拦。
+- `$case.overnightStructure.callbackOpeners.介绍人添话标记.line` 纸上就多了两句。她把他往高了说，也把我往好说。我看见以后第一反应……居然是，难怪这顿饭约得这么顺。
+- `$case.overnightStructure.callbackOpeners.表姐门口口供.line` 表姐没让进门。隔着门只说，资料是家里一起挑的。收入，她不答；学费，也不答。
+- `$case.overnightStructure.callbackOpeners.双份材料圈注.line` 这张页面只写了项目，存款证明也只看得出那一天。我把两张纸放在一起看了很久。可我跟家里说的那句‘学历好、收入稳’，哪张纸上都没有。
+- `$case.overnightStructure.callbackOpeners.家里群原话.line` 群里最上面那句，是我发的：‘要不要把流水也问了？’两分钟后我妈才回。昨晚我把这两分钟藏了。
+- `$case.overnightStructure.callbackOpeners.饭局停顿回放.line` 饭局那十几秒，我又听了一遍。我问本科，他没答，转头去算停车费。那时候我就觉得卡住了，可下一句没追。
+- `$case.overnightStructure.callbackFallback.line` 我回来了。群里还在吵。你白天先去了哪一处？
+- `$case.overnightStructure.postures.againstCaller` 流水是我先问的。今晚我不再拿我妈挡这句话。
+- `$case.overnightStructure.postures.withCaller` 我把家里群留着没删。你查到哪一截，就从哪一截问。
+- `$case.nightStructure.returnStance.lines.defensive` 我差点不打回来。弹幕说我妈查太深……这话我听见了。今晚把群聊摊开，你们再判断。
 - `$case.nightStructure.returnStance.lines.open` 我回来了。他的图你继续拆——介绍人那边我也摊。
 - `$case.nightStructure.returnStance.lines.neutral` 我回来了。群里吵完，我自己也把那几张图又翻了一遍。
 
@@ -1048,10 +1048,9 @@
 - `$case.overnightStructure.liveCounterBeats[0].lines[0]` 等一下。那页群聊，是我表妹拍给你们的？
 - `$case.overnightStructure.liveCounterBeats[0].lines[2]` 她拍我家的群。给一个直播间。
 - `$case.overnightStructure.liveCounterBeats[0].lines[4]` 你们等我一下，我要先给她打个电话。
-- `$case.overnightStructure.liveCounterBeats[0].choices[0].lines[0]` ……她凭什么替我把家里的话发出来。
-- `$case.overnightStructure.liveCounterBeats[0].choices[0].lines[2]` 算了。继续。
-- `$case.overnightStructure.liveCounterBeats[0].choices[1].lines[0]` ……行。播完的。
-- `$case.overnightStructure.liveCounterBeats[0].choices[2].lines[1]` ……不打了。打了也是我妈接。
+- `$case.overnightStructure.liveCounterBeats[0].choices[0].lines[0]` 先别停。你先撤，我把话说完。播完我再找她。
+- `$case.overnightStructure.liveCounterBeats[0].choices[1].lines[0]` 先不打了。她多半跟我妈在一块儿，我现在打过去，最后还是我妈接。你先让我把这段说完。
+- `$case.overnightStructure.liveCounterBeats[0].choices[2].lines[1]` 继续吧。截图先撤下来，别让弹幕再转。
 - `$case.overnightStructure.liveCounterBeats[1].lines[1]` ……知道了。
 - `$case.overnightStructure.liveCounterBeats[1].lines[3]` 你接着问吧。饭没了，话还没对完。
 
@@ -1268,7 +1267,7 @@
 - `$case.careChoices[0].hostLine` 明天上班，先补报备，再提回单号。一件一件来。
 - `$case.careChoices[1].hostLine` 想要主责没错。别因为想出头，就把六万八也一起忍了。
 - `$case.careChoices[2].hostLine` 周一归档前，有事随时打。夜里也开。
-- `$case.overnightStructure.liveCounterBeats[1].lines[1]` 可下周一就要归档，月底还在后面。
+- `$case.overnightStructure.liveCounterBeats[1].lines[1]` 他说月底统一走。那你们这份复盘到底哪天归档？
 
 ## 案四咨询者·陈
 
@@ -1336,7 +1335,7 @@
 - `$case.overnightStructure.callbackOpeners.领导批注.firstConflict.callerLine` 没有。我先截图发给朋友了。
 - `$case.overnightStructure.callbackOpeners.顾问回单.firstConflict.callerLine` 不觉得。没有回单，我就说没有。
 - `$case.overnightStructure.callbackOpeners.垫款回放.firstConflict.callerLine` 是。我接的是活。六万八算不算进去，我当时没敢问。
-- `$case.sceneVersions[4].version` 第二晚，我把供应商报价单翻到最后一页。礼品下面多一项“服务协调费”。他说是正常费用。可备注还有一句：“按老规矩返给对接人。”对接人栏，是他。别的页我没拿到。划到这行，我不敢再往下猜。
+- `$case.sceneVersions[4].version` 今天下午，我把供应商报价单补到了后台。礼品下面多一项“服务协调费”。他说是正常费用。可备注还有一句：“按老规矩返给对接人。”对接人栏，是他。别的页我没拿到。划到这行，我不敢再往下猜。
 - `$case.sceneVersions[4].casualQuestions[0].answer` 我查过。有的有，有的没有，查完更乱了。
 - `$case.sceneVersions[4].casualQuestions[1].answer` 他定的，说合作过。我连对接人微信都没有。
 - `$case.sceneVersions[4].questionOptions[0].answer` 没有。单上只写“返给对接人”，这个活动的对接人是他。最后进哪个账户，单子没写。
@@ -1356,23 +1355,23 @@
 - `$case.sceneVersions[6].questionOptions[0].answer` 执行主责。那一栏写的是我。可付款对接和供应商确认都写他；出了事先找我，问钱还得找他。
 - `$case.sceneVersions[6].questionOptions[0].guardedAnswer` 执行主责写的是我。付款对接写的是他。
 - `$case.sceneVersions[6].questionOptions[1].answer` “个人垫款未返。”我怕别人顺着问：你私下垫的钱，流程怎么走的？写上去，先挨问的是我。不写，卡账单还是我的。
-- `$case.overnightStructure.callbackOpeners.报销流转记录圈注.line` 「那张流转记录我看完了。14：05 是公开流程，14：22 他就让我别在群里问。财务通知是九天以后。」
-- `$case.overnightStructure.callbackOpeners.财务窗口回单要求.line` 「财务窗口问我回单号。我张不开口。三张一模一样的审批图，回单号一张都没有。」
-- `$case.overnightStructure.callbackOpeners.财务窗口账户拒查.line` 「窗口不肯查账户。说我没有回单号，也没有账户后四位。那扇窗一关，我差点又想怪财务。」
-- `$case.overnightStructure.callbackOpeners.供应商对接补话.line` 「供应商那句语音很短：‘按老规矩返给对接人。’就这一句。账户没说，我不往后接。」
-- `$case.overnightStructure.callbackOpeners.供应商对接人栏.line` 「报价单的对接栏写他。翻到付款那页，没有收款账户。我盯着那个名字看了半天，还是不敢把两处接上。」
-- `$case.overnightStructure.callbackOpeners.茶水间回单缺口.line` 「助理把三页摊开：私聊叫我别问，批注写我主责，审批页停在通过。回单号？没有。」
-- `$case.overnightStructure.callbackOpeners.茶水间责任对照.line` 「我先留下那句‘别在群里问’，又看见领导只写我主责。至于谁催付款……两页都空着。」
-- `$case.overnightStructure.callbackOpeners.赵律师边界框架.line` 「赵律师先问：留屏没有，欠条有没有。留屏有。欠条……没有。我当时觉得一提欠条，太难看。」
-- `$case.overnightStructure.callbackOpeners.周会计钱路框架.line` 「周会计只问回单号。我报不出来。审批图倒有三张，像复制粘贴。」
-- `$case.overnightStructure.callbackOpeners.小林主责框架.line` 「小林老师问我，‘我来扛’到底答应了什么。我想要的是主责，可他开口时，垫款就跟在后面，我没把两件事分开。」
-- `$case.overnightStructure.callbackOpeners.预算时间线复核.line` 「时间线对完了。他说‘来不及’那天，财务还没发延后通知。我昨晚把后来的通知挪到前面，替他圆了。」
-- `$case.overnightStructure.callbackOpeners.领导批注.line` 「领导那条批注，我又看了。只写我主责，一个钱字都没有。我当时高兴，是真的。账也还在。」
-- `$case.overnightStructure.callbackOpeners.顾问回单.line` 「顾问回得很短，只说审批确实过了。至于钱付没付、返到谁的账户，他一个字都没替我补。」
-- `$case.overnightStructure.callbackOpeners.垫款回放.line` 「那句私聊我重新放了。‘你先顶上，复盘可以写你主责。’主责在前，刷卡在后。我听见前半句，就回了‘我来扛’。」
-- `$case.overnightStructure.callbackFallback.line` 「我回来了。新批注还在手机里。你白天先看了哪份材料？」
-- `$case.overnightStructure.postures.againstCaller` 「主责是我先要的，我来扛也是我回的。可这两句不能替付款回单。」
-- `$case.overnightStructure.postures.withCaller` 「我把三张审批图都留着。你查到哪一页，就从哪一页问。」
+- `$case.overnightStructure.callbackOpeners.报销流转记录圈注.line` 那张流转记录我看完了。14：05 是公开流程，14：22 他就让我别在群里问。财务通知是九天以后。
+- `$case.overnightStructure.callbackOpeners.财务窗口回单要求.line` 财务窗口问我回单号。我张不开口。三张一模一样的审批图，回单号一张都没有。
+- `$case.overnightStructure.callbackOpeners.财务窗口账户拒查.line` 窗口不肯查账户。说我没有回单号，也没有账户后四位。那扇窗一关，我差点又想怪财务。
+- `$case.overnightStructure.callbackOpeners.供应商对接补话.line` 供应商那句语音很短：‘按老规矩返给对接人。’就这一句。账户没说，我不往后接。
+- `$case.overnightStructure.callbackOpeners.供应商对接人栏.line` 报价单的对接栏写他。翻到付款那页，没有收款账户。我盯着那个名字看了半天，还是不敢把两处接上。
+- `$case.overnightStructure.callbackOpeners.茶水间回单缺口.line` 助理把三页摊开：私聊叫我别问，批注写我主责，审批页停在通过。回单号？没有。
+- `$case.overnightStructure.callbackOpeners.茶水间责任对照.line` 我先留下那句‘别在群里问’，又看见领导只写我主责。至于谁催付款……两页都空着。
+- `$case.overnightStructure.callbackOpeners.赵律师边界框架.line` 赵律师先问：留屏没有，欠条有没有。留屏有。欠条……没有。我当时觉得一提欠条，太难看。
+- `$case.overnightStructure.callbackOpeners.周会计钱路框架.line` 周会计只问回单号。我报不出来。审批图倒有三张，像复制粘贴。
+- `$case.overnightStructure.callbackOpeners.小林主责框架.line` 小林老师问我，‘我来扛’到底答应了什么。我想要的是主责，可他开口时，垫款就跟在后面，我没把两件事分开。
+- `$case.overnightStructure.callbackOpeners.预算时间线复核.line` 时间线对完了。他说‘来不及’那天，财务还没发延后通知。我昨晚把后来的通知挪到前面，替他圆了。
+- `$case.overnightStructure.callbackOpeners.领导批注.line` 领导那条批注，我又看了。只写我主责，一个钱字都没有。我当时高兴，是真的。账也还在。
+- `$case.overnightStructure.callbackOpeners.顾问回单.line` 顾问回得很短，只说审批确实过了。至于钱付没付、返到谁的账户，他一个字都没替我补。
+- `$case.overnightStructure.callbackOpeners.垫款回放.line` 那句私聊我重新放了。‘你先顶上，复盘可以写你主责。’主责在前，刷卡在后。我听见前半句，就回了‘我来扛’。
+- `$case.overnightStructure.callbackFallback.line` 我回来了。新批注还在手机里。你白天先看了哪份材料？
+- `$case.overnightStructure.postures.againstCaller` 主责是我先要的，我来扛也是我回的。可这两句不能替付款回单。
+- `$case.overnightStructure.postures.withCaller` 我把三张审批图都留着。你查到哪一页，就从哪一页问。
 - `$case.nightStructure.returnStance.lines.defensive` 我差点不打回来。弹幕说我也想要主责……我是想要。可钱不能一直卡在他手里。
 - `$case.nightStructure.returnStance.lines.open` 我回来了。流程和截图你继续问——这回我不替财务慢开脱。
 - `$case.nightStructure.returnStance.lines.neutral` 我回来了。批注截完，我自己又把审批图看了一眼。少的那页还在。
@@ -1582,20 +1581,20 @@
 - 01-credit／林旭阳／nightB：19、18、20 字（$case.sceneVersions[6].casualQuestions[1].question；$case.sceneVersions[6].casualQuestions[2].question；$case.sceneVersions[6].casualQuestions[3].question）
 - 01-credit／林旭阳／nightB：19、18、18 字（$case.overnightStructure.callerQuestion.options[0].hostChoices[1].label；$case.overnightStructure.callerQuestion.options[1].label；$case.overnightStructure.callerQuestion.options[2].label）
 - 01-credit／案一咨询者·沈／nightB：21、25、22 字（$case.overnightStructure.callbackOpeners.他对三万五的沉默.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[1]；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[3]）
-- 01-credit／案一咨询者·沈／nightB：38、36、38 字（$case.overnightStructure.callbackOpeners.流水圈注.line；$case.overnightStructure.callbackOpeners.顾问回单.line；$case.overnightStructure.callbackOpeners.性质框架.line）
+- 01-credit／案一咨询者·沈／nightB：36、34、36 字（$case.overnightStructure.callbackOpeners.流水圈注.line；$case.overnightStructure.callbackOpeners.顾问回单.line；$case.overnightStructure.callbackOpeners.性质框架.line）
 - 01-credit／林旭阳／day：23、20、21 字（$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[0]；$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[2]；$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[0]）
 - 01-credit／V哥／nightA：35、32、36 字（$case.sceneVersions[0].helperHint；$case.sceneVersions[1].helperHint；$case.sceneVersions[2].helperHint）
 - 02-tony／案二咨询者·何／nightB：22、18、20 字（$case.overnightStructure.callbackOpeners.店外称呼观察.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.店外服务序列.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.培训页圈注.firstConflict.callerLine）
 - 02-tony／林旭阳／nightB：26、25、27 字（$case.overnightStructure.callbackOpeners.店外称呼观察.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.店外服务序列.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.培训页圈注.firstConflict.hostLine）
 - 02-tony／V哥／nightA：31、31、33 字（$case.sceneVersions[0].helperHint；$case.sceneVersions[1].helperHint；$case.sceneVersions[2].helperHint）
 - 03-profile／案三咨询者·林／nightB：28、28、28 字（$case.sceneVersions[6].sceneCloser.lines[3]；$case.sceneVersions[6].sceneCloser.lines[5]；$case.overnightStructure.callbackOpeners.介绍人双边记录.firstConflict.callerLine）
-- 03-profile／案三咨询者·林／nightB：23、23、26 字（$case.overnightStructure.callbackFallback.line；$case.overnightStructure.postures.againstCaller；$case.overnightStructure.postures.withCaller）
+- 03-profile／案三咨询者·林／nightB：21、21、24 字（$case.overnightStructure.callbackFallback.line；$case.overnightStructure.postures.againstCaller；$case.overnightStructure.postures.withCaller）
 - 03-profile／案三介绍人／day：37、37、35 字（$case.overnightStructure.dayScenes[0].body.beats[4]；$case.overnightStructure.dayScenes[0].body.choice.options[0].resultBeats[1]；$case.overnightStructure.dayScenes[0].body.choice.options[1].resultBeats[1]）
 - 03-profile／V哥／nightA：29、31、29 字（$case.sceneVersions[0].helperHint；$case.sceneVersions[1].helperHint；$case.sceneVersions[2].helperHint）
 - 03-profile／V哥／nightA：31、29、33 字（$case.sceneVersions[1].helperHint；$case.sceneVersions[2].helperHint；$case.sceneVersions[3].helperHint）
 - 04-workplace／案四咨询者·陈／nightB：23、20、23 字（$case.sceneVersions[6].sceneCloser.lines[5]；$case.overnightStructure.callbackOpeners.报销流转记录圈注.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.财务窗口回单要求.firstConflict.callerLine）
-- 04-workplace／案四咨询者·陈／nightB：38、42、40 字（$case.overnightStructure.callbackOpeners.财务窗口回单要求.line；$case.overnightStructure.callbackOpeners.财务窗口账户拒查.line；$case.overnightStructure.callbackOpeners.供应商对接补话.line）
-- 04-workplace／案四咨询者·陈／nightB：27、31、27 字（$case.overnightStructure.callbackFallback.line；$case.overnightStructure.postures.againstCaller；$case.overnightStructure.postures.withCaller）
+- 04-workplace／案四咨询者·陈／nightB：36、40、38 字（$case.overnightStructure.callbackOpeners.财务窗口回单要求.line；$case.overnightStructure.callbackOpeners.财务窗口账户拒查.line；$case.overnightStructure.callbackOpeners.供应商对接补话.line）
+- 04-workplace／案四咨询者·陈／nightB：25、29、25 字（$case.overnightStructure.callbackFallback.line；$case.overnightStructure.postures.againstCaller；$case.overnightStructure.postures.withCaller）
 - 04-workplace／林旭阳／day：21、25、21 字（$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[0]；$case.overnightStructure.dayScenes[2].body.choice.options[0].resultBeats[1]；$case.overnightStructure.dayScenes[2].body.choice.options[1].resultBeats[1]）
 - 04-workplace／案四供应商项目员／day：24、25、24 字（$case.overnightStructure.dayScenes[1].body.beats[0]；$case.overnightStructure.dayScenes[1].body.beats[2]；$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[1]）
 - 04-workplace／案四供应商项目员／day：25、24、22 字（$case.overnightStructure.dayScenes[1].body.beats[2]；$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[1]；$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[1]）

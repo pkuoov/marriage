@@ -1,42 +1,42 @@
-import { generateCasesForMode } from "./caseModes.js?v=0.20.87";
+import { generateCasesForMode } from "./caseModes.js?v=0.20.88";
 import { calculateCaseBudgetMax, calculateCaseOutcome, calculateIssueCompletion, expectedAccusationForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase } from "./caseRuntime.js?v=0.20.68";
 import { getAudioSettings, playAudioCueOnce, playSfx, resetAudioCueHistory } from "./sound.js?v=0.22.1";
 import { audioCueView } from "./audioCatalog.js?v=0.22.1";
-import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.26.2";
+import { CHARACTER_ART, baseState, clearStateSnapshot, loadMeta, loadState, saveMetaSnapshot, saveStateSnapshot } from "./state.js?v=0.26.3";
 import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
-import { NPCS } from "./story.js?v=0.20.68";
+import { NPCS } from "./story.js?v=0.20.69";
 import { dailyAccusationChoices } from "./dailyChoices.js?v=0.20.68";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js?v=0.20.68";
 import { materialOperationOutcome } from "./runtime/materialOperation.js?v=0.20.87";
-import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedDelegationPickForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js?v=0.20.68";
-import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.68";
+import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedDelegationPickForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js?v=0.20.69";
+import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js?v=0.20.69";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js?v=0.21.1";
-import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.68";
+import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js?v=0.20.69";
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js?v=0.22.0";
 import { storyInterludeCaseId, storyInterludeNextLine, storyInterludeObjectLabel } from "./runtime/storyInterludeModel.js?v=0.26.1";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js?v=0.24.3";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js?v=0.24.3";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js?v=0.24.3";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js?v=0.25.0";
-import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.26.2";
-import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.68";
+import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js?v=0.26.3";
+import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js?v=0.20.69";
 import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js?v=0.25.0";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js?v=0.20.68";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js?v=0.20.87";
 import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js?v=0.21.3";
 import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js?v=0.24.2";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js?v=0.21.4";
-import { liveCounterBeatHtml } from "./ui/liveCounterBeatView.js?v=0.24.2";
-import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.21.4";
+import { liveCounterBeatHtml } from "./ui/liveCounterBeatView.js?v=0.24.3";
+import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js?v=0.21.6";
 import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js?v=0.21.3";
-import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.21.3";
-import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.68";
+import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js?v=0.21.5";
+import { routeTrailHtml } from "./ui/routeTrailView.js?v=0.20.69";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionMenuHtml } from "./ui/sceneQuestions.js?v=0.21.3";
 import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js?v=0.21.2";
 import { storyInterludeChoicesHtml, storyInterludeHtml } from "./ui/storyInterludeView.js?v=0.26.2";
 import { caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js?v=0.20.96";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js?v=0.24.3";
-import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js?v=0.24.3";
+import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js?v=0.24.4";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js?v=0.20.68";
 import { titleScreenHtml } from "./ui/titleView.js?v=0.20.70";
 import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js?v=0.23.1";
@@ -487,7 +487,9 @@ function nightShellHtml(lines = []) {
   return `
     <section class="night-shell-card">
       ${lines.map((line) => {
-        const entry = typeof line === "string" ? { text: line } : line ?? {};
+        const entry = typeof line === "string"
+          ? { type: "narration", speaker: "旁白", text: line }
+          : line ?? {};
         const audioCueAttribute = entry.audioCueId ? ` data-audio-cue-id="${escapeHtml(entry.audioCueId)}"` : "";
         return `
           <div class="night-shell-line shell-${escapeHtml(entry.type ?? "plain")}"${audioCueAttribute}>
@@ -668,6 +670,14 @@ function renderOvernightHangup(brief) {
     saveState();
     return renderSceneReview(brief);
   }
+  const authoredHangup = nightStructureFor(brief)?.hangup ?? {};
+  const hangupDialogue = [
+    ...(authoredHangup.line ? [{ role: "caller", text: authoredHangup.line }] : []),
+    ...((structure.hostHoldLine ?? authoredHangup.hostLine) ? [{
+      role: "host",
+      text: structure.hostHoldLine ?? authoredHangup.hostLine
+    }] : [])
+  ];
   frame({
     brief,
     mood: "tense",
@@ -675,8 +685,8 @@ function renderOvernightHangup(brief) {
     chapter: "第一夜",
     text: `
       <section class="hangup-beat-card">
+        ${callDialogueHtml(hangupDialogue)}
         <span>${escapeHtml(structure.hangupLine ?? "")}</span>
-        ${callDialogueHtml([{ role: "host", text: structure.hostHoldLine ?? "" }])}
       </section>
     `,
     choices: flowGroupHtml(`<button class="primary" data-enter-post-live type="button">收麦，离开直播台</button>`),
@@ -1212,14 +1222,14 @@ function documentViewerHtml({ document = {}, markedRows = [] } = {}) {
       <div class="document-mark-limit"><b>已圈 ${marked.size}/${limit}</b><span>圈行后，夜里可逐条对账。</span></div>
       <div class="bank-flow-table" role="table" aria-label="${escapeHtml(document.title ?? "流水单")}">
         <div class="bank-flow-head" role="row" style="${gridStyle}">
-          <span>行</span>${columns.map((column) => `<span>${escapeHtml(column.label)}</span>`).join("")}
+          <span>序号</span>${columns.map((column) => `<span>${escapeHtml(column.label)}</span>`).join("")}
         </div>
-        ${(document.rows ?? []).map((row) => {
+        ${(document.rows ?? []).map((row, index) => {
           const selected = marked.has(row.rowId);
           const disabled = !selected && marked.size >= limit;
           return `
             <button class="bank-flow-row ${selected ? "marked" : ""}" data-document-row="${escapeHtml(row.rowId ?? "")}" ${disabled || selected ? "disabled" : ""} type="button" role="row" style="${gridStyle}">
-              <span>${escapeHtml(row.rowId ?? "")}</span>
+              <span>${String(index + 1).padStart(2, "0")}</span>
               ${columns.map((column) => `<span>${escapeHtml(row[column.key] ?? "")}</span>`).join("")}
             </button>
           `;
@@ -1281,7 +1291,7 @@ function documentReconcileHtml({ active = null, pending = [] } = {}) {
 }
 
 function questionLabel(question = {}) {
-  return question.kind === "cross" ? `交叉 ${question.rows?.join(" × ")}` : `行 ${question.rows?.join(" / ")}`;
+  return question.kind === "cross" ? "跨行对照" : "单行追问";
 }
 
 function selectTimelineCard(brief, dayScene = {}, card = "") {
@@ -1331,7 +1341,8 @@ function submitTimelineSort(brief, dayScene = {}) {
 }
 
 function markDocumentRow(brief, dayScene = {}, document = {}, rowId = "") {
-  if (!documentRowById(document, rowId)) return;
+  const row = documentRowById(document, rowId);
+  if (!row) return;
   const overnight = ensureOvernight(brief);
   const previous = overnight.documentMarks?.[document.id] ?? [];
   if (previous.includes(rowId)) return;
@@ -1349,8 +1360,8 @@ function markDocumentRow(brief, dayScene = {}, document = {}, rowId = "") {
   markAction(brief, `document:${document.id}:${rowId}`);
   playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:document:${document.id}:${rowId}`);
   recordRouteChoice(brief, overnightRouteIndexFor(brief, dayScene) + markedRows.length / 1000, {
-    question: `圈行 ${rowId}`,
-    answer: documentRowSummary(documentRowById(document, rowId), document),
+    question: `圈出：${row.date ?? row.kind ?? "这一行"}`,
+    answer: documentRowSummary(row, document),
     routeAxis: "document-edge",
     routeTone: "document-row"
   }, { version: document.title ?? "" });
@@ -1365,7 +1376,7 @@ function mergeDocumentQuestions(current = [], next = []) {
 }
 
 function documentRowSummary(row = {}, document = {}) {
-  return documentTableColumns(document).map((column) => row[column.key]).filter(Boolean).join(" / ");
+  return documentTableColumns(document).map((column) => row[column.key]).filter(Boolean).join("；");
 }
 
 function pendingDocumentQuestions(brief) {
@@ -2685,6 +2696,8 @@ function queueDefaultFocus() {
 }
 
 function setupDefaultFocus() {
+  const active = document.activeElement;
+  if (active && active !== document.body && isVisibleElement(active)) return;
   focusButton(preferredDefaultButton());
 }
 
