@@ -129,10 +129,10 @@
               "relation": "她先承认自己交往前就是老会员，主播再问过去的高消费与收入是否匹配；回答说明会员等级主要由此前交往对象买单积累。"
             },
             {
-              "contextAnchor": "手头已经那么紧了",
+              "contextAnchor": "我说太贵了",
               "questionAnchor": "手头紧",
               "answerAnchor": "没有",
-              "relation": "她事后才知道男方当时手头紧，主播继续核对男方在那晚是否主动透露过财务压力。"
+              "relation": "她已经说过自己嫌酒贵，主播继续核对男方当时有没有借这个机会透露手头紧。"
             },
             {
               "contextAnchor": "身边朋友都挺羡慕我的",
@@ -155,7 +155,7 @@
               "relation": "她已经说出只有自己发了朋友圈，主播继续问她当时是否留意过男方没有发布。"
             },
             {
-              "contextAnchor": "当天只有我发了朋友圈",
+              "contextAnchor": "当天只有我发朋友圈",
               "questionAnchor": "照片删了吗",
               "answerAnchor": "没删",
               "relation": "沿她主动发照片的动作询问如今是否保留。"

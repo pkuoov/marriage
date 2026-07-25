@@ -229,7 +229,7 @@
 - `$case.sceneVersions[1].questionOptions[1].answer` 我第一反应是，他是不是一直在硬撑。可那时候我只觉得他肯花心思。账单到我手里，才发现我坐过的那些店，一笔没少。
 - `$case.sceneVersions[1].dialogueOptions[0].answer` 先看到最低还款。八千多，我手都停了一下。再往下翻，才看到那些消费明细。
 - `$case.sceneVersions[1].dialogueOptions[1].answer` 他一开始没发完整的。我说要看明细，他才补。补出来以后，我就有点不想看了。
-- `$case.sceneVersions[2].version` 对，就是纪念日那晚。坐的是店里最好的靠窗位，他说提前两周才订到。那笔特别高，主要是酒。他把酒单推到我面前，说：“都纪念日了，总不能太寒酸。”酒是他点的，我当时也没拦，根本没想到他那时候手头已经那么紧了。当天只有我发了朋友圈，他没发。身边朋友都挺羡慕我的。
+- `$case.sceneVersions[2].version` 对。那晚坐的是靠窗位，他说两周前订的。主要贵在酒。他看中一瓶，我说太贵了。他说：“都纪念日了，总不能太寒酸。”他还是点了，我没再拦。当天只有我发朋友圈，他没发，身边朋友都挺羡慕我的。
 - `$case.sceneVersions[2].casualQuestions[0].answer` 没有。不是约会就是朋友聚餐，我自己不会订靠窗那排。
 - `$case.sceneVersions[2].casualQuestions[1].answer` 问过。他说自己不爱发这些，叫我发就好。我那时候没多想。
 - `$case.sceneVersions[2].questionOptions[0].answer` 我自己不会这么吃。认识他以前，我跟前任也来过几次，基本都是对方结账。会员等级也是那时候慢慢攒起来的。我当时觉得，约会不都这样吗。

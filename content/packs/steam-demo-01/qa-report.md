@@ -213,7 +213,7 @@ Cases that opt into the new detective authoring ledger must keep every scene's `
 | --- | ---: | ---: | ---: | --- |
 | credit-layoff-gap | 0→1 | 2→2 | 1→2 | 恢复“奖金晚发，帮我挡几天”和看到断缴后的发懵。 |
 | credit-eight-wan-bill | 0→0 | 0→0 | 0→1 | 保留藏主语的“都是他安排的那种店”；“没细看 / 反正”承担自我遮掩。 |
-| credit-anniversary-agency | 0→1 | 0→1 | 0→1 | 前夜不公开订座、发圈主语，只让酒单、窗外和回避留下缝。 |
+| credit-anniversary-agency | 0→1 | 0→1 | 0→1 | 前夜不公开订座主语；按看酒、嫌贵、仍下单、发圈的顺序保留双方动作。 |
 | credit-device-benefit | 1→2 | 1→3 | 1→2 | 先恢复“投资你”的受用，不在前夜交代开箱主语。 |
 | credit-five-wan-gap | 0→2 | 0→2 | 0→4 | 将信用卡拆为共同消费、男方男装和至少三万五未说明，并以该缺口挂断、约定回拨、交文件。 |
 | credit-bank-flow | 0→1 | 1→1 | 0→2 | 第二夜不口播银行行；改为补认灯、稳定器和开箱夜。 |

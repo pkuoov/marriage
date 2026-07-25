@@ -1757,6 +1757,16 @@ test("PACK-017", "case 1 does not overcue the ordinary bonus excuse", () => {
   assert(!JSON.stringify(caseOne).includes("把“奖金晚发”四个字记在纸上"), "案一不得恢复记纸条式强调动作");
 });
 
+test("PACK-017B", "case 1 wine-ordering actions stay causal and fit one reply page", () => {
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const anniversaryScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-anniversary-agency");
+  assert(anniversaryScene, "案一必须保留纪念日晚餐场景");
+  assert(anniversaryScene.version.includes("他看中一瓶，我说太贵了"), "酒水段必须先交代男方看中、咨询者反对，再落到最终下单");
+  assert(anniversaryScene.version.includes("他还是点了") && anniversaryScene.version.includes("我没再拦"), "酒水段必须写清最终动作和咨询者的选择");
+  assert(!anniversaryScene.version.includes("他把酒单推到我面前"), "不得用推酒单制造选酒主语，再突然改口“酒是他点的”");
+  assert(anniversaryScene.version.length <= 92, "纪念日晚餐回答必须留在一个回答分页内，不能把动作因果拆断");
+});
+
 test("PACK-018", "structured story project stays connected to runtime canon", () => {
   for (const [path, contents] of storyProjectFiles) {
     assertNonEmptyString(contents, `故事工程缺少 ${path}`);
