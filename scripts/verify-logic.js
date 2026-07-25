@@ -379,7 +379,8 @@ test("CARE-003", "soup arc, solo-host pause, and case-file hook keep their autho
   const manifest = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/manifest.json", import.meta.url), "utf8"));
   const caseThree = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/cases/03-profile.json", import.meta.url), "utf8"));
   const caseFour = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/cases/04-workplace.json", import.meta.url), "utf8"));
-  const zhaoPrologueMessage = manifest.nightShell.prologue.lines.find((line) => line.speaker === "赵律师（消息）");
+  const zhaoPrologueMessage = manifest.nightShell.prologue.lines.find((line) => line.speaker === "领导（老婆爱称）");
+  assertEqual(zhaoPrologueMessage?.speaker, "领导（老婆爱称）", "序章私人消息必须先让玩家看见两人的夫妻关系");
   assertIncludes(zhaoPrologueMessage?.text, "汤在冰箱", "序章必须留下汤");
   assertIncludes(zhaoPrologueMessage?.text, "有个东西我塞你包里了", "赵律师的私下留言必须先成立为恋人间的生活话");
   assert(!zhaoPrologueMessage?.text.includes("案卷"), "赵律师不得在恋人留言里使用案卷交接腔");

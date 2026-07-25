@@ -1,6 +1,6 @@
 ---
 type: promise-registry
-story: livestream-detective
+story: midnight-hotline-livestream-detective
 ---
 
 # Promises And Payoffs

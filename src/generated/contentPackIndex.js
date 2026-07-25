@@ -212,7 +212,7 @@ export const CONTENT_CAST = {
     ],
     "surfaceNames": [
       "赵律师",
-      "赵律师（消息）",
+      "领导（老婆爱称）",
       "赵律师（语音）",
       "赵"
     ],
@@ -1657,7 +1657,7 @@ export const CONTENT_PACKS = {
             "text": "晚上八点，林旭阳推开直播间的门。走廊坏着半截灯，桌上的显示器还亮着。"
           },
           {
-            "speaker": "赵律师（消息）",
+            "speaker": "领导（老婆爱称）",
             "type": "message",
             "text": "吃饭没有？汤在冰箱，记得热。还有个东西我塞你包里了，忙完再看。"
           },

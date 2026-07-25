@@ -1,6 +1,6 @@
 ---
 type: plot-registry
-story: livestream-detective
+story: midnight-hotline-livestream-detective
 structure: kishotenketsu-four-act
 ---
 

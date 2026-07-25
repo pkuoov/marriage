@@ -1,6 +1,6 @@
 ---
 type: timeline
-story: livestream-detective
+story: midnight-hotline-livestream-detective
 ---
 
 # Story Timeline

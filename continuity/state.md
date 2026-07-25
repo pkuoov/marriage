@@ -1,6 +1,6 @@
 ---
 type: continuity-state
-story: livestream-detective
+story: midnight-hotline-livestream-detective
 current-chapter: 4
 character-state: []
 object-state: []

@@ -62,7 +62,7 @@
       "kind": "advisor",
       "caseIds": ["*"],
       "relationships": [{ "with": "host-lin-xuyang", "type": "伴侣", "publicLabel": "男友", "dynamic": "她会当场纠正他的越界，也会记得给他留汤；亲密不取消专业分歧。" }],
-      "surfaceNames": ["赵律师", "赵律师（消息）", "赵律师（语音）", "赵"],
+      "surfaceNames": ["赵律师", "领导（老婆爱称）", "赵律师（语音）", "赵"],
       "personality": { "core": "锋利的理性派", "secondary": ["急性子", "负责", "边界感强"], "stressResponse": "听见无证据定性会立刻打断，并补适用条件。" },
       "motivation": "把口头说法压回法律后果和书面证据。",
       "fear": "情绪化定罪再次毁掉无辜者。",
