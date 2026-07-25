@@ -1,5 +1,5 @@
-import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
-import { choiceButtonBodyHtml } from "./callFlowView.js?v=0.25.0";
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
+import { choiceButtonBodyHtml } from "./callFlowView.js";
 
 export function careChoiceHtml({ choices = [], selectedChoice = null } = {}) {
   return `

@@ -78,7 +78,7 @@ button:active:not(:disabled) {
     linear-gradient(90deg, rgba(237, 241, 238, .055) 1px, transparent 1px),
     linear-gradient(180deg, rgba(237, 241, 238, .04) 1px, transparent 1px),
     linear-gradient(135deg, rgba(9, 10, 8, .74), rgba(18, 21, 17, .52)),
-    url("../assets/generated/backgrounds/livestream_studio_v2.png?v=0.19.55") center / cover;
+    url("../assets/generated/backgrounds/livestream_studio_v2.png") center / cover;
   background-size: 28px 28px, 28px 28px, auto, auto;
 }
 
@@ -389,7 +389,7 @@ button:active:not(:disabled) {
     linear-gradient(180deg, rgba(237, 241, 238, .04) 1px, transparent 1px),
     radial-gradient(circle at 18% 24%, rgba(101, 214, 194, .11), transparent 34%),
     linear-gradient(110deg, rgba(7, 10, 9, .94) 0 43%, rgba(10, 14, 13, .76) 61%, rgba(7, 9, 8, .68)),
-    url("../assets/generated/backgrounds/livestream_studio_v2.png?v=0.19.55") center / cover;
+    url("../assets/generated/backgrounds/livestream_studio_v2.png") center / cover;
   background-size: 32px 32px, 32px 32px, auto, auto, auto;
 }
 
@@ -1634,57 +1634,57 @@ button:active:not(:disabled) {
 .backdrop-office {
   background:
     linear-gradient(180deg, rgba(24, 42, 54, .16), rgba(7, 11, 16, .42)),
-    url("../assets/generated/backgrounds/livestream_studio_v2.png?v=0.18.7") center / cover;
+    url("../assets/generated/backgrounds/livestream_studio_v2.png") center / cover;
 }
 
 .backdrop-credit {
   background:
     linear-gradient(180deg, rgba(24, 42, 54, .14), rgba(7, 11, 16, .56)),
-    url("../assets/generated/backgrounds/credit_bill_room.png?v=0.20.70") center / cover;
+    url("../assets/generated/backgrounds/credit_bill_room.png") center / cover;
 }
 
 .backdrop-house {
   background:
     linear-gradient(180deg, rgba(38, 38, 25, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.53") center / cover;
+    url("../assets/generated/backgrounds/housing_sales.png") center / cover;
 }
 
 .backdrop-profile {
   background:
     linear-gradient(180deg, rgba(39, 28, 34, .15), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/profile_verification_desk.png?v=0.20.70") center / cover;
+    url("../assets/generated/backgrounds/profile_verification_desk.png") center / cover;
 }
 
 .backdrop-work {
   background:
     linear-gradient(180deg, rgba(22, 38, 36, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/office_finance_reimbursement.png?v=0.20.70") center / cover;
+    url("../assets/generated/backgrounds/office_finance_reimbursement.png") center / cover;
 }
 
 .backdrop-tony {
   background:
     linear-gradient(180deg, rgba(32, 32, 42, .14), rgba(7, 11, 16, .58)),
-    url("../assets/generated/backgrounds/salon_counter_schedule.png?v=0.20.70") center / cover;
+    url("../assets/generated/backgrounds/salon_counter_schedule.png") center / cover;
 }
 
 .day-city {
   background:
     linear-gradient(180deg, rgba(112, 152, 148, .10), rgba(10, 19, 22, .58)),
-    url("../assets/generated/backgrounds/school_gate_year10.png?v=0.21.2") center / cover;
+    url("../assets/generated/backgrounds/school_gate_year10.png") center / cover;
   filter: saturate(.72) brightness(.90) contrast(1.04);
 }
 
 .day-lab {
   background:
     linear-gradient(180deg, rgba(180, 205, 190, .14), rgba(8, 18, 17, .64)),
-    url("../assets/generated/backgrounds/credit_bill_room.png?v=0.21.2") center / cover;
+    url("../assets/generated/backgrounds/credit_bill_room.png") center / cover;
   filter: saturate(.62) brightness(.84) contrast(1.08);
 }
 
 .day-document {
   background:
     linear-gradient(180deg, rgba(132, 159, 174, .12), rgba(10, 15, 22, .68)),
-    url("../assets/generated/backgrounds/profile_verification_desk.png?v=0.21.2") center / cover;
+    url("../assets/generated/backgrounds/profile_verification_desk.png") center / cover;
   filter: saturate(.68) brightness(.82) contrast(1.07);
 }
 
@@ -1692,21 +1692,21 @@ button:active:not(:disabled) {
 .day-cafe {
   background:
     linear-gradient(180deg, rgba(118, 78, 44, .06), rgba(20, 12, 8, .62)),
-    url("../assets/generated/backgrounds/cafe_date.png?v=0.21.2") center / cover;
+    url("../assets/generated/backgrounds/cafe_date.png") center / cover;
   filter: saturate(.74) brightness(.84) contrast(1.04);
 }
 
 .day-studio {
   background:
     linear-gradient(180deg, rgba(49, 92, 104, .08), rgba(4, 10, 16, .70)),
-    url("../assets/generated/backgrounds/livestream_studio_v2.png?v=0.21.2") center / cover;
+    url("../assets/generated/backgrounds/livestream_studio_v2.png") center / cover;
   filter: saturate(.76) brightness(.78) contrast(1.09);
 }
 
 .day-office {
   background:
     linear-gradient(180deg, rgba(154, 116, 76, .06), rgba(19, 14, 12, .66)),
-    url("../assets/generated/backgrounds/agency_office.png?v=0.21.2") center / cover;
+    url("../assets/generated/backgrounds/agency_office.png") center / cover;
   filter: saturate(.66) brightness(.80) contrast(1.05);
 }
 
@@ -1739,13 +1739,13 @@ button:active:not(:disabled) {
 .day-home {
   background:
     linear-gradient(180deg, rgba(229, 232, 215, .20), rgba(13, 16, 13, .40)),
-    url("../assets/generated/backgrounds/housing_sales.png?v=0.20.53") center / cover;
+    url("../assets/generated/backgrounds/housing_sales.png") center / cover;
 }
 
 .day-matchmaking {
   background:
     linear-gradient(180deg, rgba(240, 218, 198, .18), rgba(24, 14, 18, .48)),
-    url("../assets/generated/backgrounds/profile_verification_desk.png?v=0.20.70") center / cover;
+    url("../assets/generated/backgrounds/profile_verification_desk.png") center / cover;
   filter: saturate(.82) brightness(.96);
 }
 

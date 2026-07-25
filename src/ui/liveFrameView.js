@@ -1,4 +1,4 @@
-import { audioSettingsPanelHtml } from "./audioSettingsView.js?v=0.22.0";
+import { audioSettingsPanelHtml } from "./audioSettingsView.js";
 
 export function liveControlDeckHtml({
   onAirLabel = "匿名热线",

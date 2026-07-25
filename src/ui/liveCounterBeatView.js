@@ -1,4 +1,4 @@
-import { callDialogueHtml } from "./callFlowView.js?v=0.20.69";
+import { callDialogueHtml } from "./callFlowView.js";
 
 export function liveCounterBeatHtml(beat = {}, pick = null) {
   const choices = beat.choices ?? [];

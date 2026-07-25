@@ -1,4 +1,4 @@
-import { routeTrailModel } from "../runtime/routeMapModel.js?v=0.20.69";
+import { routeTrailModel } from "../runtime/routeMapModel.js";
 
 export function routeTrailHtml({
   choices = [],

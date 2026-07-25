@@ -1,7 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { RUNTIME_CASE_CONTENT_FIELDS, RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS, runtimeCaseContentSummary } from "../src/runtime/contentCase.js?v=0.20.68";
+import { RUNTIME_CASE_CONTENT_FIELDS, RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS, runtimeCaseContentSummary } from "../src/runtime/contentCase.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packsDir = resolve(root, "content", "packs");
@@ -23,7 +23,9 @@ for (const pack of Object.values(contentPacks)) {
     }
   }
 }
-const source = renderContentIndex(contentPacks, contentCases, contentAdvisors, contentHelperNpcs, contentCast);
+const source = stripManualCacheTokens(
+  renderContentIndex(contentPacks, contentCases, contentAdvisors, contentHelperNpcs, contentCast)
+);
 
 if (checkOnly) {
   const current = await readFile(outputPath, "utf8").catch(() => "");
@@ -140,6 +142,10 @@ export const CONTENT_PACKS = ${JSON.stringify(packs, null, 2)};
 
 export const CONTENT_CASES = ${JSON.stringify(cases, null, 2)};
 `;
+}
+
+function stripManualCacheTokens(source) {
+  return source.replace(/\?v=\d+(?:\.\d+)+/g, "");
 }
 
 function assert(condition, message) {

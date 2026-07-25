@@ -6,13 +6,13 @@ import {
   evidenceChecksFor,
   investigationAnswerKey,
   unlockedInvestigationEntries
-} from "./sceneAdvance.js?v=0.20.68";
+} from "./sceneAdvance.js";
 import {
   routeAxisForChoice,
   routeAxisProfileFromChoices,
   routeChoicesFromPicks,
   routeToneForChoice
-} from "./routeLog.js?v=0.20.69";
+} from "./routeLog.js";
 
 export function actionDoneForState(state = {}, brief = {}, actionKey = "") {
   return Boolean(state.caseActionLog?.[caseKey(brief)]?.[actionKey]);

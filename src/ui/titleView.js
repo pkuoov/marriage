@@ -1,4 +1,4 @@
-import { audioSettingsPanelHtml } from "./audioSettingsView.js?v=0.22.0";
+import { audioSettingsPanelHtml } from "./audioSettingsView.js";
 
 export function titleScreenHtml({
   productName = "直播间大侦探",

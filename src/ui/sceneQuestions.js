@@ -1,4 +1,4 @@
-import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 
 export function focusedQuestionOptions(options = []) {
   return (options ?? []).filter(Boolean);

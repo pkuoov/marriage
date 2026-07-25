@@ -1,4 +1,4 @@
-import { HOST_NAME } from "../hostProfile.js?v=0.20.95";
+import { HOST_NAME } from "../hostProfile.js";
 
 export function sceneReviewHtml({
   index = 0,

@@ -1,7 +1,7 @@
-import { dailyAccusationChoices } from "../dailyChoices.js?v=0.20.68";
-import { truthBoundaryPromptLimitForCase } from "../difficulty.js?v=0.20.68";
-import { expectedAccusationForCase } from "../caseRuntime.js?v=0.20.68";
-import { routeAxisLabel } from "./routeLog.js?v=0.20.69";
+import { dailyAccusationChoices } from "../dailyChoices.js";
+import { truthBoundaryPromptLimitForCase } from "../difficulty.js";
+import { expectedAccusationForCase } from "../caseRuntime.js";
+import { routeAxisLabel } from "./routeLog.js";
 
 const TRUTH_BOUNDARY_PROMPT_LIMIT = 5;
 

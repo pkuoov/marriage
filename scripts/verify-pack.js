@@ -2,10 +2,10 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js?v=0.20.68";
-import { assertDialogueTexture, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js?v=0.22.0";
-import { STORY_PACKS } from "../src/storyPacks.js?v=0.27.0";
-import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js?v=0.27.0";
+import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js";
+import { assertDialogueTexture, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js";
+import { STORY_PACKS } from "../src/storyPacks.js";
+import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
@@ -1030,7 +1030,11 @@ async function readJson(path) {
   return JSON.parse(await readFile(resolve(root, path), "utf8"));
 }
 
-const manifest = await readJson(`content/packs/${packId}/manifest.json`);
+function stripManualCacheTokens(value) {
+  return JSON.parse(JSON.stringify(value).replace(/\?v=\d+(?:\.\d+)+/g, ""));
+}
+
+const manifest = stripManualCacheTokens(await readJson(`content/packs/${packId}/manifest.json`));
 const runtimePack = STORY_PACKS[packId];
 const caseFiles = await Promise.all(
   manifest.sequence.map((item) => readJson(`content/packs/${packId}/cases/${item.caseId}.json`))
@@ -1104,12 +1108,12 @@ test("PACK-002", "manifest keeps distinct playable cases", () => {
     if (index > 0) {
       assert(item.difficultyProfile.tier >= manifest.sequence[index - 1].difficultyProfile.tier, `第 ${index + 1} 案 difficultyProfile.tier 不能倒退`);
     }
-    assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png(\?v=[\w.-]+)?$/.test(item.callerArt), `第 ${index + 1} 案 callerArt 必须指向匿名来电人 PNG`);
+    assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png$/.test(item.callerArt), `第 ${index + 1} 案 callerArt 必须指向不带手写缓存戳的匿名来电人 PNG`);
     assert(callerArtFiles.get(item.callerArt), `第 ${index + 1} 案 callerArt 文件不存在`);
     assert(pngHasAlpha(callerArtFiles.get(item.callerArt)), `第 ${index + 1} 案 callerArt 必须是真透明 PNG，不能使用烘入棋盘格的 RGB 图`);
     Object.entries(item.callerArtVariants ?? {}).forEach(([kind, artPath]) => {
       assert(["neutral", "guarded", "pause"].includes(kind), `第 ${index + 1} 案 callerArtVariants 不支持 ${kind}`);
-      assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png(\?v=[\w.-]+)?$/.test(artPath), `第 ${index + 1} 案 ${kind} 立绘必须指向匿名 callers PNG`);
+      assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png$/.test(artPath), `第 ${index + 1} 案 ${kind} 立绘必须指向不带手写缓存戳的匿名 callers PNG`);
       assert(callerArtFiles.get(artPath), `第 ${index + 1} 案 ${kind} 立绘文件不存在`);
       assert(pngHasAlpha(callerArtFiles.get(artPath)), `第 ${index + 1} 案 ${kind} 立绘必须含真实 alpha 通道`);
     });

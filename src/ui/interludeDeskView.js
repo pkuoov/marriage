@@ -1,6 +1,6 @@
-import { HOST_NAME } from "../hostProfile.js?v=0.20.95";
-import { CHOICE_COST_META } from "../runtime/choiceCostModel.js?v=0.25.0";
-import { choiceButtonBodyHtml } from "./callFlowView.js?v=0.25.0";
+import { HOST_NAME } from "../hostProfile.js";
+import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
+import { choiceButtonBodyHtml } from "./callFlowView.js";
 
 export function hangupBeatHtml(hangup = {}) {
   return `

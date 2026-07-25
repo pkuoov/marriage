@@ -1,4 +1,4 @@
-import { AUDIO_BUS_IDS, audioVolumePercent, normalizeAudioSettings } from "../runtime/audioModel.js?v=0.22.0";
+import { AUDIO_BUS_IDS, audioVolumePercent, normalizeAudioSettings } from "../runtime/audioModel.js";
 
 const BUS_LABELS = Object.freeze({
   master: "主音量",

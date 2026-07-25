@@ -1,6 +1,6 @@
-import { audioCueAvailable, audioCueById } from "./audioCatalog.js?v=0.22.1";
-import { audioBusGain, normalizeAudioSettings, updateAudioBusVolume } from "./runtime/audioModel.js?v=0.22.0";
-import { platformRuntime } from "./platformRuntime.js?v=0.20.68";
+import { audioCueAvailable, audioCueById } from "./audioCatalog.js";
+import { audioBusGain, normalizeAudioSettings, updateAudioBusVolume } from "./runtime/audioModel.js";
+import { platformRuntime } from "./platformRuntime.js";
 
 const LEGACY_SOUND_KEY = "marriage-detective-agency-sound";
 const LEGACY_SOUND_KEY_V2 = "livestream-detective-sound";

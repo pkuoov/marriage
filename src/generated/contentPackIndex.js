@@ -1975,12 +1975,12 @@ export const CONTENT_PACKS = {
         "act": "体面",
         "objectLabel": "账单",
         "backdropClass": "backdrop-credit",
-        "callerArt": "./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.26.0",
+        "callerArt": "./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png",
         "callerArtStyle": "pixel",
         "callerArtVariants": {
-          "neutral": "./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png?v=0.26.0",
-          "guarded": "./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png?v=0.26.0",
-          "pause": "./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.26.0"
+          "neutral": "./assets/generated/callers/pixel-case01/caller_credit_neutral_pixel.png",
+          "guarded": "./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png",
+          "pause": "./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png"
         },
         "difficultyProfile": {
           "tier": 1,
@@ -2008,12 +2008,12 @@ export const CONTENT_PACKS = {
         "act": "自己人",
         "objectLabel": "店表",
         "backdropClass": "backdrop-tony",
-        "callerArt": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0",
+        "callerArt": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png",
         "callerArtStyle": "pixel",
         "callerArtVariants": {
-          "neutral": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0",
-          "guarded": "./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png?v=0.26.0",
-          "pause": "./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.26.0"
+          "neutral": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png",
+          "guarded": "./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png",
+          "pause": "./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png"
         },
         "difficultyProfile": {
           "tier": 2,
@@ -2039,12 +2039,12 @@ export const CONTENT_PACKS = {
         "act": "条件",
         "objectLabel": "资料图",
         "backdropClass": "backdrop-profile",
-        "callerArt": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0",
+        "callerArt": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png",
         "callerArtStyle": "pixel",
         "callerArtVariants": {
-          "neutral": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0",
-          "guarded": "./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.26.0",
-          "pause": "./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.26.0"
+          "neutral": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png",
+          "guarded": "./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png",
+          "pause": "./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png"
         },
         "difficultyProfile": {
           "tier": 3,
@@ -2073,12 +2073,12 @@ export const CONTENT_PACKS = {
         "act": "主责",
         "objectLabel": "审批截图",
         "backdropClass": "backdrop-work",
-        "callerArt": "./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.26.0",
+        "callerArt": "./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png",
         "callerArtStyle": "pixel",
         "callerArtVariants": {
-          "neutral": "./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png?v=0.26.0",
-          "guarded": "./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png?v=0.26.0",
-          "pause": "./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.26.0"
+          "neutral": "./assets/generated/callers/pixel-case04/caller_work_neutral_pixel.png",
+          "guarded": "./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png",
+          "pause": "./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png"
         },
         "difficultyProfile": {
           "tier": 4,
@@ -3198,7 +3198,7 @@ export const CONTENT_CASES = {
             "postedAt": "纪念日晚餐当晚",
             "location": "她常去的那家店",
             "caption": "终于有人把日子过得体面一点。",
-            "imageSrc": "./assets/generated/backgrounds/cafe_date.png?v=0.20.95",
+            "imageSrc": "./assets/generated/backgrounds/cafe_date.png",
             "imageAlt": "窗边晚餐照片",
             "commentAuthor": "闺蜜",
             "comment": "这才像被认真对待",
