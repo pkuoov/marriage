@@ -954,11 +954,13 @@ function renderDirectorSpoken(lines, line) {
   }
   if (line.role === "stage") {
     lines.push(`【${line.text ?? ""}】`, "");
+    if (line.audioCueId) lines.push(`【音效：${line.audioCueId}】`, "");
     return;
   }
   const speaker = line.speaker ?? roleLabel(line.role) ?? "台词";
   const spoken = line.text ?? line.line;
   if (spoken) lines.push(`**${speaker}：** ${spoken}`, "");
+  if (line.audioCueId) lines.push(`【音效：${line.audioCueId}】`, "");
 }
 
 function renderDirectorCallerQuestion(lines, question = null) {
@@ -1097,6 +1099,7 @@ function renderSpokenLine(lines, line) {
   }
   if (line.role === "stage") {
     lines.push(`【${line.text ?? ""}】`, "");
+    if (line.audioCueId) lines.push(`【音效：${line.audioCueId}】`, "");
     return;
   }
   const speaker = line.speaker ?? roleLabel(line.role) ?? "台词";
@@ -1258,11 +1261,12 @@ function continuousStageText(value) {
 
 function renderContinuousSpoken(lines, line) {
   if (!line) return;
+  const readableLine = line.audioCueId ? { ...line, audioCueId: undefined } : line;
   if (line.speaker === "你" || line.role === "player") {
-    renderDirectorSpoken(lines, { ...line, speaker: "林旭阳" });
+    renderDirectorSpoken(lines, { ...readableLine, speaker: "林旭阳" });
     return;
   }
-  renderDirectorSpoken(lines, line);
+  renderDirectorSpoken(lines, readableLine);
 }
 
 function assertContinuousStory(markdown, packets) {

@@ -61,12 +61,21 @@ const assets = [
     file: "case1-lamp-drag.ogg",
     title: "Case 1 metal lamp stand drag",
     inputs: [
-      "anoisesrc=color=brown:sample_rate=48000:duration=1.75:amplitude=0.32",
-      "anoisesrc=color=white:sample_rate=48000:duration=1.75:amplitude=0.14",
-      "sine=frequency=118:sample_rate=48000:duration=1.75",
-      "sine=frequency=690:sample_rate=48000:duration=0.16"
+      "anoisesrc=color=brown:sample_rate=48000:duration=0.92:amplitude=0.30",
+      "anoisesrc=color=white:sample_rate=48000:duration=0.82:amplitude=0.10",
+      "sine=frequency=104:sample_rate=48000:duration=0.92"
     ],
-    filter: "[0:a]highpass=f=95,lowpass=f=1550,tremolo=f=19:d=0.72,volume=0.14,afade=t=in:st=0:d=0.05,afade=t=out:st=1.28:d=0.47[body];[1:a]highpass=f=1250,lowpass=f=5100,tremolo=f=31:d=0.84,volume=0.06,afade=t=in:st=0:d=0.04,afade=t=out:st=1.12:d=0.58[scrape];[2:a]lowpass=f=260,tremolo=f=8:d=0.74,volume=0.055,afade=t=out:st=1.25:d=0.50[resonance];[3:a]volume=0.10,adelay=35|35,afade=t=out:st=0.10:d=0.06[contact];[body][scrape][resonance][contact]amix=inputs=4:normalize=0,volume=9.2,alimiter=limit=0.52[out]"
+    filter: "[0:a]highpass=f=70,lowpass=f=820,volume=0.12,afade=t=in:st=0:d=0.025,afade=t=out:st=0.48:d=0.44[body];[1:a]highpass=f=900,lowpass=f=2400,volume=0.025,afade=t=in:st=0:d=0.02,afade=t=out:st=0.42:d=0.40[scrape];[2:a]lowpass=f=190,volume=0.045,afade=t=out:st=0.45:d=0.47[resonance];[body][scrape][resonance]amix=inputs=3:normalize=0,volume=8.0,alimiter=limit=0.38[out]"
+  },
+  {
+    file: "case2-distant-siren.ogg",
+    title: "Case 2 distant police siren arrival",
+    inputs: [
+      "sine=frequency=610:sample_rate=48000:duration=4.2",
+      "sine=frequency=790:sample_rate=48000:duration=4.2",
+      "anoisesrc=color=pink:sample_rate=48000:duration=4.2:amplitude=0.025"
+    ],
+    filter: "[0:a]tremolo=f=0.72:d=0.90,volume=0.035,afade=t=in:st=0:d=0.8,afade=t=out:st=3.1:d=1.1[low];[1:a]tremolo=f=0.72:d=0.90,adelay=690|690,volume=0.022,afade=t=in:st=0.69:d=0.8,afade=t=out:st=3.0:d=1.2[high];[2:a]highpass=f=90,lowpass=f=900,volume=0.015,afade=t=in:st=0:d=0.6,afade=t=out:st=3.0:d=1.2[street];[low][high][street]amix=inputs=3:normalize=0,lowpass=f=1800,aecho=0.7:0.25:120|260:0.10|0.06,volume=70,alimiter=limit=0.28[out]"
   }
 ];
 

@@ -556,7 +556,7 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   assertEqual(audioScenePlan({ scene: "liveCounterBeat" }).ambienceCueId, "ambience.studio-line", "实时反压仍在直播中，不能误切到收麦后台声场");
   assertEqual(ambienceCueForBackdrop("day-restaurant"), "ambience.restaurant", "餐厅背景必须映射餐厅环境音");
   assertEqual(ambienceCueForBackdrop("day-studio"), "ambience.archive-studio", "工作室背景必须映射室内工作环境音");
-  ["sfx.case1.lamp-drag", "voice.case2.dryer-message", "voice.case3.dinner-pause", "voice.case4.pad-message", "voice.case4.supplier-message"].forEach((cueId) => {
+  ["sfx.case1.lamp-drag", "sfx.case2.distant-siren", "voice.case2.dryer-message", "voice.case3.dinner-pause", "voice.case4.pad-message", "voice.case4.supplier-message"].forEach((cueId) => {
     assert(AUDIO_CUES[cueId], `必要剧情 cue 不得从目录消失: ${cueId}`);
   });
   ["bgm.title-nightshift", "bgm.live-call", "bgm.pressure-stem", "bgm.offair-desk", "bgm.day-investigation", "bgm.callback-return", "ambience.studio-room", "ambience.city-afternoon", "voice.case2.dryer-message"].forEach((cueId) => {

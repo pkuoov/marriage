@@ -35,7 +35,8 @@ export const AUDIO_CUES = Object.freeze({
   "sfx.broadcast.on-air": readyOneShot("开播提示音", "./assets/audio/sfx/broadcast-on-air.ogg", 0.34),
   "sfx.message.notification": readyOneShot("后台消息", "./assets/audio/sfx/message-notification.ogg", 0.48),
   "sfx.document.mark": readyOneShot("材料圈点", "./assets/audio/sfx/document-mark.ogg", 0.46),
-  "sfx.case1.lamp-drag": readyOneShot("灯架拖地", "./assets/audio/sfx/case1-lamp-drag.ogg", 0.82),
+  "sfx.case1.lamp-drag": readyOneShot("灯架拖地", "./assets/audio/sfx/case1-lamp-drag.ogg", 0.62),
+  "sfx.case2.distant-siren": readyOneShot("远处警笛停近", "./assets/audio/sfx/case2-distant-siren.ogg", 0.34),
 
   "voice.case1.loyalty-message": plannedVoice("案1·怕你离开", "./assets/audio/voice/case1-loyalty-message.ogg", "我只是怕你知道我失业后就离开我。"),
   "voice.case2.dryer-message": readyVoice("案2·吹风机回放", "./assets/audio/voice/case2-dryer-message.ogg", "今晚又被店长说了，只有你能接住我。"),

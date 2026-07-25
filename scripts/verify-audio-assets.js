@@ -45,6 +45,7 @@ for (const reference of references) {
 
 const requiredContentCues = [
   "sfx.case1.lamp-drag",
+  "sfx.case2.distant-siren",
   "voice.case2.dryer-message",
   "voice.case3.dinner-pause",
   "voice.case4.pad-message",
@@ -69,7 +70,8 @@ const requiredReadyP1 = [
   "ambience.studio-room",
   "ambience.city-afternoon",
   "voice.case2.dryer-message",
-  "sfx.case1.lamp-drag"
+  "sfx.case1.lamp-drag",
+  "sfx.case2.distant-siren"
 ];
 for (const cueId of requiredReadySfx) {
   if (AUDIO_CUES[cueId]?.status !== "ready") fail(`${cueId}: demo-critical SFX must be ready`);
@@ -155,6 +157,15 @@ if (!dryerAction?.grantsInventory?.includes("吹风机回放")) {
   fail("listen-dryer must grant the player-visible 吹风机回放 item");
 }
 if (!dryerAction?.script?.clipLine) fail("listen-dryer must retain a visible transcript fallback");
+const case2SirenScene = findById(case2, "tony-roster-function-notes");
+const case2SirenLine = case2SirenScene?.sceneCloser?.lines?.find((line) => line.text?.includes("警笛"));
+if (case2SirenLine?.audioCueId !== "sfx.case2.distant-siren") {
+  fail("the police siren cue must be attached only to the case 2 siren stage line");
+}
+const case1 = JSON.parse(await readFile(new URL("../content/packs/steam-demo-01/cases/01-credit.json", import.meta.url), "utf8"));
+if (JSON.stringify(case1).includes("sfx.case2.distant-siren") || JSON.stringify(case1).includes("警笛")) {
+  fail("case 1 must not contain the case 2 siren cue or siren copy");
+}
 
 if (errors.length) {
   console.error(`Audio validation failed (${errors.length})`);

@@ -741,7 +741,6 @@
     },
     {
       "id": "credit-bank-flow",
-      "audioCueId": "sfx.case1.lamp-drag",
       "clueRole": "missing-edge",
       "falseFrame": "分期由对方操作，所以设备收益也与咨询者无关。",
       "payoffFor": [
@@ -761,7 +760,8 @@
           },
           {
             "role": "stage",
-            "text": "她离开麦克风，墙边传来一阵金属灯架摩擦地面的声音。"
+            "text": "她离开麦克风，墙边传来一阵金属灯架摩擦地面的声音。",
+            "audioCueId": "sfx.case1.lamp-drag"
           }
         ]
       },

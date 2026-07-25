@@ -1662,7 +1662,14 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const sirenScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-roster-function-notes");
   const sirenLines = sirenScene?.sceneCloser?.lines ?? [];
   const sirenText = sirenLines.map((line) => line.text ?? "").join(" ");
+  const sirenLine = sirenLines.find((line) => line.text?.includes("警笛"));
   assert(sirenText.includes("警笛") && sirenText.includes("门外有人敲门") && sirenText.includes("你先去看看"), "案二第一夜必须用警笛、敲门和主播应答造成被迫中断");
+  assertEqual(sirenLine?.audioCueId, "sfx.case2.distant-siren", "真正的警笛音效必须只跟随案二警笛舞台句播放");
+  assert(!JSON.stringify(caseOne).includes("警笛") && !JSON.stringify(caseOne).includes("sfx.case2.distant-siren"), "案一不得出现警笛文字或案二专属警笛音效");
+  const caseOneLampScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-bank-flow");
+  const caseOneLampLine = caseOneLampScene?.beforeVersion?.lines?.find((line) => line.text?.includes("金属灯架"));
+  assertEqual(caseOneLampScene?.audioCueId, undefined, "案一灯架音效不得在整段场景进入时提前播放");
+  assertEqual(caseOneLampLine?.audioCueId, "sfx.case1.lamp-drag", "案一灯架音效必须只跟随拖灯动作播放");
   assert(sirenLines.every((line) => !/警笛|敲门/.test(line.text ?? "") || line.nonLoadBearing !== true), "被人物注意的警笛与敲门不得伪装成生活噪声");
   assertEqual(sirenScene?.closureContract?.openEdge, "深夜来敲门的人是谁，为什么会在警笛停下后找上她。", "案二警笛场尾必须登记明确开放边");
   const caseTwoHangupLine = caseTwo?.nightStructure?.hangup?.line ?? "";
@@ -1692,11 +1699,13 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const exclusiveText = JSON.stringify(caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-exclusive-voice") ?? {});
   const benefitsText = JSON.stringify(caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-caller-benefits") ?? {});
   const callerProfile = castRegistry.cast.find((profile) => profile.id === "case2-caller-he");
-  assert(openingText.includes("夜店做订台") && openingText.includes("气氛组") && openingText.includes("头发隔一阵就得弄"), "案二必须让职业直接造成高频美发需求，不得只写进人物小传");
+  assert(openingText.includes("今天轮休") && openingText.includes("在家"), "案二第一夜必须交代咨询者为何在晚间待在家中");
+  assert(openingText.includes("酒吧做营销") && openingText.includes("订台") && openingText.includes("照看桌台") && openingText.includes("头发隔一阵就得弄"), "案二必须用职责一致的酒吧营销工作造成高频美发需求");
+  assert(!openingText.includes("气氛组") && !JSON.stringify(caseTwo).includes("客服主管"), "案二不得再把两个岗位拼成方便剧情的混合职业");
   assert(exclusiveText.includes("她靠自己拿提成") && exclusiveText.includes("最晚一档"), "Tony 的情绪价值必须落成当面维护与具体照顾");
   assert(benefitsText.includes("提成有时当天结") && benefitsText.includes("染发加护理"), "案二必须交代快钱如何转成高频美发消费");
   assert(caseTwo?.stageJudgement?.includes("这些我不抹"), "案二结案不得因销售动机倒销 Tony 真实发生过的照顾");
-  assert(callerProfile?.background?.includes("夜店") && callerProfile?.background?.includes("提成"), "案二来电人的固定角色档案必须登记职业与结算方式");
+  assert(callerProfile?.background?.includes("酒吧做营销") && callerProfile?.background?.includes("提成") && callerProfile?.background?.includes("轮休在家"), "案二来电人的固定角色档案必须登记职业、结算方式和连麦地点");
 
   const caseTwoInterlude = interludesByCaseId.get("02-tony");
   const caseFourInterlude = interludesByCaseId.get("04-workplace");
