@@ -11,6 +11,7 @@ import { AUDIO_CUES, audioCueView } from "../src/audioCatalog.js";
 import { platformRuntime } from "../src/platformRuntime.js";
 import { createSaveStore } from "../src/platform/saveStore.js";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js";
+import { unlockedMaterialProfile } from "../src/runtime/materialVisibility.js";
 import { audioBusGain, normalizeAudioSettings, updateAudioBusVolume } from "../src/runtime/audioModel.js";
 import { ambienceCueForBackdrop, audioScenePlan } from "../src/runtime/audioSceneModel.js";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js";
@@ -924,6 +925,44 @@ test("MATERIAL-004", "scene dialogue can reveal read-only evidence cards", () =>
   assertIncludes(activeHtml, "短视频平台分期 1.2 万", "场景内材料卡必须显示 evidenceCard.front");
   assertIncludes(completedHtml, "scene-evidence-card", "完成后的对话回看仍需保留只读材料卡");
   assert(!activeHtml.includes("button"), "场景内材料卡必须是只读展示，不能变成可点击材料板");
+});
+
+test("MATERIAL-005", "material toolbar unlocks only after the player has actually received a document", () => {
+  const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const unopened = unlockedMaterialProfile({ state: {}, brief });
+  assertEqual(unopened.count, 0, "来电开场不能提前出现“材料 1”");
+  assertEqual(unopened.label, "", "未收到材料时不能提前泄露本案核心材料名");
+
+  const afterFirstExchange = {
+    caseActionLog: {
+      [brief.id]: {
+        "version:0": true
+      }
+    }
+  };
+  const firstReceived = unlockedMaterialProfile({ state: afterFirstExchange, brief });
+  assertEqual(firstReceived.count, 1, "第一段相关问答完成后才应解锁第一份随麦材料");
+  assertEqual(firstReceived.label, "社保断缴时间", "材料栏必须显示玩家刚听到的截图，不能提前显示完整银行流水");
+
+  const hiddenOutsideCase = unlockedMaterialProfile({ state: afterFirstExchange, brief, visible: false });
+  assertEqual(hiddenOutsideCase.count, 0, "序章、案名页和收束页必须隐藏案件材料栏");
+
+  const afterHangup = {
+    ...afterFirstExchange,
+    caseNights: {
+      [brief.id]: {
+        hangupDone: true
+      }
+    }
+  };
+  const fullFlowReceived = unlockedMaterialProfile({ state: afterHangup, brief });
+  assertEqual(fullFlowReceived.count, 2, "挂断后补发的完整流水必须在真正收到后加入材料栏");
+  assertEqual(fullFlowReceived.label, brief.storyClueObject, "挂断前不能把后补的完整流水冒充开场材料");
+
+  const emptyDeck = liveControlDeckHtml({ material: "", materialCount: 0 });
+  assertIncludes(emptyDeck, "尚未收到", "材料未送达时控台必须明确显示空状态");
+  assert(!liveFrameHtml({ material: "", materialCount: 0 }).includes("data-material-open"), "未收到材料时不能渲染“材料 1”入口");
+  assertIncludes(liveFrameHtml({ material: "社保断缴时间", materialCount: 1 }), "<b>1</b>", "第一份材料收到后才显示材料数量");
 });
 
 test("INVESTIGATION-001", "host investigation backflow is fixed material, not freeform facts", () => {

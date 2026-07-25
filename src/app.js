@@ -8,6 +8,7 @@ import { NPCS } from "./story.js";
 import { dailyAccusationChoices } from "./dailyChoices.js";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "./runtime/inputNavigation.js";
 import { materialOperationOutcome } from "./runtime/materialOperation.js";
+import { unlockedMaterialProfile } from "./runtime/materialVisibility.js";
 import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialoguePicksForState, completedSceneExchangeForState, contradictionsForState, latestChoiceReviewRowsForState, routeAxisProfileForState, routeChoicesForState, selectedDelegationPickForState, selectedEvidencePickForState, selectedEvidencePicksForState, selectedInvestigationPickForState, selectedInvestigationPicksForState, selectedScenePickForState, selectedScenePicksForState, truthBoundaryMissesForState, truthBoundaryPicksForState, unlockedInvestigationEntriesForState } from "./runtime/caseStateSelectors.js";
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js";
@@ -727,8 +728,8 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     ? `${caseProgressStrip(brief)}${audiencePatienceHud(pressure)}${liveCommentStrip(pressure)}${portraitLayer(brief, mood)}`
     : storyPackSummaryHud());
   const total = Math.max(1, keyQuestionLimit(brief));
-  const firstMaterial = evidenceChecksFor(brief)[0] ?? {};
-  const currentMaterial = brief.storyClueObject ?? brief.clueObject ?? firstMaterial.title ?? "通话摘录";
+  const materialProfile = unlockedMaterialProfile({ state, brief, visible: showCaseHud });
+  const currentMaterial = materialProfile.label;
   app.innerHTML = liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel,
@@ -741,6 +742,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     choices,
     visualHud,
     material: currentMaterial,
+    materialCount: materialProfile.count,
     screenEffect: state.lastScreenEffect ?? "",
     pixelTransition: pixelTransitionForCurrentScene(brief),
     screenClass: `${screenClass} ${showCaseHud ? liveSceneClass(brief, mood) : ""}`.trim(),
@@ -751,7 +753,8 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
           segment: answeredSceneCountForState(state, brief) + 1,
           total,
           pressure,
-          material: currentMaterial
+          material: currentMaterial,
+          materialCount: materialProfile.count
         })
       : ""
   });
@@ -782,6 +785,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
 }
 
 function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-city", audioEnterCueId = "", keepVoiceCueId = "" }) {
+  const materialProfile = unlockedMaterialProfile({ state, brief });
   app.innerHTML = liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel: "白天调查",
@@ -793,7 +797,8 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
     reactionHtml: "",
     choices,
     visualHud: "",
-    material: label,
+    material: materialProfile.label,
+    materialCount: materialProfile.count,
     screenEffect: "",
     pixelTransition: pixelTransitionForCurrentScene(brief),
     controlDeckHtml: ""

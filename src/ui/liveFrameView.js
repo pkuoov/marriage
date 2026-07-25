@@ -6,7 +6,8 @@ export function liveControlDeckHtml({
   segment = 1,
   total = 1,
   pressure = {},
-  material = "通话摘录"
+  material = "",
+  materialCount = 1
 } = {}) {
   const safeTotal = Math.max(1, Number(total ?? 1));
   const safeSegment = Math.max(1, Math.min(safeTotal, Number(segment ?? 1)));
@@ -14,6 +15,7 @@ export function liveControlDeckHtml({
   const pressureMax = Number(pressure.max ?? 0);
   const showPatienceHint = safeSegment === 1 && pressureMax > 0 && pressureRemaining === pressureMax;
   const materialKind = materialKindForLabel(material);
+  const hasMaterial = Boolean(material && Number(materialCount) > 0);
   const hostState = hostMonitorStateForPressure(pressure);
   return `
     <aside class="control-deck" aria-label="直播控场台">
@@ -52,12 +54,21 @@ export function liveControlDeckHtml({
       </section>
       <section class="deck-card deck-card-material">
         <span>后台材料</span>
-        <div class="deck-material-preview material-${escapeHtml(materialKind)}" aria-hidden="true">
-          <i>${escapeHtml(materialGlyph(materialKind))}</i>
-          <em></em>
-        </div>
-        <b>${escapeHtml(material)}</b>
-        <small>先放在台面边上。</small>
+        ${hasMaterial ? `
+          <div class="deck-material-preview material-${escapeHtml(materialKind)}" aria-hidden="true">
+            <i>${escapeHtml(materialGlyph(materialKind))}</i>
+            <em></em>
+          </div>
+          <b>${escapeHtml(material)}</b>
+          <small>已收到 ${Number(materialCount)} 份。</small>
+        ` : `
+          <div class="deck-material-preview material-empty" aria-hidden="true">
+            <i>—</i>
+            <em></em>
+          </div>
+          <b>尚未收到</b>
+          <small>来电人发来后会出现在这里。</small>
+        `}
       </section>
     </aside>
   `;
@@ -111,6 +122,7 @@ export function liveFrameHtml({
   visualHud = "",
   controlDeckHtml = "",
   material = "",
+  materialCount = 1,
   screenEffect = "",
   screenClass = "",
   pixelTransition = null
@@ -144,7 +156,7 @@ export function liveFrameHtml({
           <div class="dialogue-card" aria-live="polite">
             <div class="dialogue-toolbar">
               <p class="eyebrow">${escapeHtml(chapter)}</p>
-              ${material ? `<button class="avg-material-card" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="打开材料板：${escapeHtml(material)}" type="button"><small>材料</small><b>1</b></button>` : ""}
+              ${material ? `<button class="avg-material-card" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="打开材料板：${escapeHtml(material)}" type="button"><small>材料</small><b>${Math.max(1, Number(materialCount) || 1)}</b></button>` : ""}
             </div>
             ${text}
             ${reactionHtml}
