@@ -1,5 +1,4 @@
 export function createRecapScreens(ctx) {
-  const state = ctx.getState();
   const {
     contradictionsForState,
     routeAxisProfileForState,
@@ -97,6 +96,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderNightShellPrologue(brief) {
+    const state = ctx.getState();
     const prologue = nightShellForBrief(brief)?.prologue ?? {};
     const lines = [...(prologue.lines ?? []), prologue.hostLine].filter(Boolean);
     frame({
@@ -118,6 +118,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderNightShellEpilogue(brief) {
+    const state = ctx.getState();
     const epilogue = nightShellForBrief(brief)?.epilogue ?? {};
     const resultLine = nightShellGoodEnding() ? epilogue.good : epilogue.bad;
     const stage = epilogueUnreadStage(epilogue, state.careChoices, state.epilogueUnreadStep);
@@ -167,6 +168,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderSolved(brief) {
+    const state = ctx.getState();
     const result = normalizedDailyResult(brief);
     const step = Number(state.recapStep ?? 0);
     const issue = issueCompletion(brief);
@@ -266,6 +268,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderCareChoice(brief) {
+    const state = ctx.getState();
     const key = caseKey(brief);
     const selectedId = state.careChoices?.[key] ?? "";
     const selectedChoice = careChoiceById(brief, selectedId);
@@ -299,6 +302,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderCaseClosure(brief) {
+    const state = ctx.getState();
     const boundary = truthBoundaryReview(brief);
     frame({
       brief,
@@ -329,6 +333,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderCaseTitle(brief) {
+    const state = ctx.getState();
     frame({
       brief,
       mood: "focused",
@@ -421,6 +426,7 @@ export function createRecapScreens(ctx) {
   }
 
   function overnightCallerQuestionAftertasteHtml(brief = {}) {
+    const state = ctx.getState();
     const overnight = state.caseOvernights?.[caseKey(brief)] ?? null;
     const question = overnightCallerQuestionFor(brief);
     const choice = (question?.options ?? []).find((option) => option.id === overnight?.callerQuestionChoiceId);
@@ -429,6 +435,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderStoryInterlude(brief) {
+    const state = ctx.getState();
     const interlude = nightShellInterludeForBrief(brief);
     const finalCase = isFinalStoryPackCase();
     const interludeCaseId = storyInterludeCaseId(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
@@ -467,6 +474,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderCaseBridge(brief) {
+    const state = ctx.getState();
     const fromCaseNumber = Number(state.chapter ?? 1);
     const toCaseNumber = fromCaseNumber + 1;
     const nextBrief = state.caseBriefs?.[fromCaseNumber] ?? null;
@@ -495,6 +503,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderRunComplete(brief) {
+    const state = ctx.getState();
     if (isStoryPackMode()) return renderStoryPackComplete();
     const result = normalizedDailyResult(brief);
     const route = routeProfileForBrief(brief, result);
@@ -536,6 +545,7 @@ export function createRecapScreens(ctx) {
   }
 
   function renderStoryPackComplete() {
+    const state = ctx.getState();
     const briefs = state.caseBriefs ?? [];
     const results = briefs.map((brief) => normalizedDailyResult(brief));
     const solved = results.filter((result) => result.accused).length;

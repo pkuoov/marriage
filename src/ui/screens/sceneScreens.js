@@ -1,5 +1,4 @@
 export function createSceneScreens(ctx) {
-  const state = ctx.getState();
   const {
     playAudioCueOnce,
     dailyAccusationChoices,
@@ -79,6 +78,7 @@ export function createSceneScreens(ctx) {
   } = ctx;
 
   function renderSceneReview(brief) {
+    const state = ctx.getState();
     const currentSceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     if (enterLiveCounterBeatBeforeScene(brief, currentSceneIndex)) return;
     const review = sceneReviewModel({
@@ -118,6 +118,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderSceneQuestionMenu(brief) {
+    const state = ctx.getState();
     const index = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
     const dialoguePicks = askedDialoguePicksForState(state, brief, index);
@@ -141,6 +142,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderSceneQuestionAnswer(brief) {
+    const state = ctx.getState();
     const index = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     const focus = sceneQuestionFocusFor(brief, index);
     if (!focus) return closeSceneQuestionMenu(brief);
@@ -172,6 +174,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderStanceSnapshot(brief) {
+    const state = ctx.getState();
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     let snapshot = stanceSnapshotForScene(brief, sceneIndex, (key) => actionDone(brief, key));
     const pick = stanceSnapshotPickForState(brief);
@@ -215,6 +218,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderHangupBeat(brief) {
+    const state = ctx.getState();
     const structure = nightStructureFor(brief);
     if (!structure?.hangup) {
       state.scene = "sceneReview";
@@ -240,6 +244,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderCallerQuestion(brief) {
+    const state = ctx.getState();
     const question = overnightCallerQuestionFor(brief);
     const overnight = ensureOvernight(brief);
     if (!question || actionDone(brief, "overnight:callerQuestion") && !overnight.callerQuestionChoiceId) {
@@ -284,6 +289,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderDeepFollowup(brief) {
+    const state = ctx.getState();
     const issue = issueCompletion(brief);
     if (!issue.badge || !hasDeepFollowup(brief)) {
       state.scene = "accusation";
@@ -333,6 +339,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderAccusation(brief) {
+    const state = ctx.getState();
     const readiness = accusationReadinessForBrief(brief);
     if (!readiness.ready) {
       state.lastReaction = readiness.message;
@@ -374,6 +381,7 @@ export function createSceneScreens(ctx) {
   }
 
   function handleSceneQuestionButton(button) {
+    const state = ctx.getState();
     const [sceneIndex, optionIndex] = button.dataset.sceneQuestion.split(":").map(Number);
     const { brief, scene, options } = sceneChoiceContext(sceneIndex);
     const option = options[optionIndex] ?? options[0];
@@ -426,6 +434,7 @@ export function createSceneScreens(ctx) {
   }
 
   function revealSceneHelperHint(brief, sceneIndex, scene = {}) {
+    const state = ctx.getState();
     if (!SCENE_HELPER?.id || !String(scene.helperHint ?? "").trim()) return;
     const key = answerKey(brief, sceneIndex);
     state.helperHintPicks = {
@@ -440,6 +449,7 @@ export function createSceneScreens(ctx) {
   }
 
   function handleSceneDialogueButton(button) {
+    const state = ctx.getState();
     const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
     const { brief, scene, options } = sceneChoiceContext(sceneIndex);
     const dialogueRows = sceneDialogueOptions(scene, options);
@@ -474,6 +484,7 @@ export function createSceneScreens(ctx) {
   }
 
   function openSceneQuestionMenu(brief, sceneIndex) {
+    const state = ctx.getState();
     state.sceneQuestionFocus = null;
     state.scene = "sceneQuestionMenu";
     setIndexValue(brief, "sceneReview", sceneIndex);
@@ -482,6 +493,7 @@ export function createSceneScreens(ctx) {
   }
 
   function closeSceneQuestionMenu(brief) {
+    const state = ctx.getState();
     state.sceneQuestionFocus = null;
     state.scene = "sceneReview";
     saveState();
@@ -489,6 +501,7 @@ export function createSceneScreens(ctx) {
   }
 
   function sceneQuestionFocusFor(brief, sceneIndex) {
+    const state = ctx.getState();
     const focus = state.sceneQuestionFocus;
     if (!focus || focus.caseId !== caseKey(brief) || Number(focus.sceneIndex) !== Number(sceneIndex)) return null;
     return focus;
@@ -505,6 +518,7 @@ export function createSceneScreens(ctx) {
   }
 
   function recordStanceSnapshot(brief, snapshot = {}, optionIndex = 0) {
+    const state = ctx.getState();
     const option = snapshot.options?.[optionIndex] ?? snapshot.options?.[0] ?? null;
     if (!option) return;
     const key = caseKey(brief);
@@ -528,6 +542,7 @@ export function createSceneScreens(ctx) {
   }
 
   function continueAfterSceneReview(brief, sceneIndex = 0) {
+    const state = ctx.getState();
     state.sceneQuestionFocus = null;
     if (enterLiveCounterBeatAfterScene(brief, sceneIndex)) return;
     if (shouldEnterOvernightHangupAfterScene(brief, sceneIndex)) {
@@ -573,6 +588,7 @@ export function createSceneScreens(ctx) {
   }
 
   function completeCallerQuestionChoice(brief, question = {}, choice = {}, hostChoice = null) {
+    const state = ctx.getState();
     markAction(brief, "overnight:callerQuestion");
     recordRouteChoice(brief, keyQuestionLimit(brief) + evidenceChecksFor(brief).length + 0.8, {
       question: question.prompt ?? "她的那一问",

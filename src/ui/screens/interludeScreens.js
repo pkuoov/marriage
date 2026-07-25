@@ -1,5 +1,4 @@
 export function createInterludeScreens(ctx) {
-  const state = ctx.getState();
   const {
     playAudioCueOnce,
     audioCueView,
@@ -85,6 +84,7 @@ export function createInterludeScreens(ctx) {
   } = ctx;
 
   function renderInterludeDesk(brief) {
+    const state = ctx.getState();
     const structure = nightStructureFor(brief);
     if (!structure) {
       state.scene = "sceneReview";
@@ -145,6 +145,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function renderInterludeDelegation(brief, action) {
+    const state = ctx.getState();
     const delegation = delegationFor(brief);
     const pick = selectedDelegationPickForState(state, brief);
     if (!delegation) return completeInterludeAction(brief, action);
@@ -169,6 +170,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function renderInterludeEvidence(brief, action) {
+    const state = ctx.getState();
     const checkIndex = evidenceChecksFor(brief).findIndex((check) => action.focusCheckIds?.includes(check.id));
     const safeIndex = checkIndex >= 0 ? checkIndex : 0;
     const check = evidenceChecksFor(brief)[safeIndex] ?? null;
@@ -195,6 +197,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function renderInterludeBackflow(brief, action) {
+    const state = ctx.getState();
     const hookIndex = (brief.investigationHooks ?? []).findIndex((hook) => hook.id === action.hookId);
     const hook = brief.investigationHooks?.[hookIndex] ?? null;
     const pick = selectedInvestigationPickForState(state, brief, hookIndex);
@@ -316,6 +319,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function renderAfterSceneEvidence(brief) {
+    const state = ctx.getState();
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     const afterScene = afterSceneEvidenceFor(brief, sceneIndex, (key) => actionDone(brief, key));
     if (!afterScene?.check) {
@@ -346,6 +350,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function renderEvidenceCheck(brief) {
+    const state = ctx.getState();
     const index = currentIndex(brief, "evidenceCheck", evidenceChecksFor(brief).length || 1);
     const model = evidenceCheckModel({
       brief,
@@ -389,6 +394,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function renderInvestigationBackflow(brief) {
+    const state = ctx.getState();
     const model = investigationBackflowModel({
       entries: unlockedInvestigationEntriesForState(state, brief),
       selectedPick: (index) => selectedInvestigationPickForState(state, brief, index)
@@ -423,6 +429,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function renderDelegation(brief) {
+    const state = ctx.getState();
     const delegation = delegationFor(brief);
     const pick = selectedDelegationPickForState(state, brief);
     if (!delegation || !delegation.material || actionDone(brief, "delegation") && !pick) {
@@ -461,6 +468,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function bindEvidenceCheckButtons(brief, check = {}, context = {}) {
+    const state = ctx.getState();
     document.querySelectorAll("[data-evidence-check]").forEach((button) => {
       button.addEventListener("click", () => {
         const [checkIndex, optionIndex] = button.dataset.evidenceCheck.split(":").map(Number);
@@ -505,6 +513,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function continueAfterSceneEvidence(brief, sceneIndex = 0) {
+    const state = ctx.getState();
     markAction(brief, `afterScene:${sceneIndex}`);
     if (enterLiveCounterBeatAfterScene(brief, sceneIndex)) return;
     if (shouldEnterOvernightHangupAfterScene(brief, sceneIndex)) {
@@ -539,6 +548,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function bindInvestigationButtons(brief, hook = {}, hookIndex = 0, context = {}) {
+    const state = ctx.getState();
     document.querySelectorAll("[data-evidence-check]").forEach((button) => {
       button.addEventListener("click", () => {
         const optionIndex = Number(button.dataset.evidenceCheck.split(":")[1] ?? 0);
@@ -598,6 +608,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function recordDelegationPick(brief, delegation = {}, advisorId = "", context = {}) {
+    const state = ctx.getState();
     const outcome = delegationOutcomeFor(delegation, advisorId);
     const advisor = CONTENT_ADVISORS[advisorId] ?? {};
     if (!outcome || !advisor.id) return;
@@ -632,6 +643,7 @@ export function createInterludeScreens(ctx) {
   }
 
   function skipDelegation(brief) {
+    const state = ctx.getState();
     const key = caseKey(brief);
     state.delegationPicks = {
       ...(state.delegationPicks ?? {}),

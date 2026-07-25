@@ -48,6 +48,7 @@ import { careChoiceContinueHtml, careChoiceHtml } from "../src/ui/careChoiceView
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "../src/ui/epilogueUnreadView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "../src/ui/titleView.js";
+import { createRecapScreens } from "../src/ui/screens/recapScreens.js";
 import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -69,11 +70,44 @@ test("ARCH-001", "screen modules depend on an injected context instead of app.js
   screenSources.forEach((source, index) => {
     assert(!/from\s+["'][^"']*app\.js["']/.test(source), `${screenSourcePaths[index]} 不能反向 import app.js`);
     assertIncludes(source, "ctx.getState()", `${screenSourcePaths[index]} 必须通过 ctx 读取当前状态`);
+    assert(!/export function create\w+Screens\(ctx\) \{\s*const state = ctx\.getState\(\);/.test(source), `${screenSourcePaths[index]} 不得在工厂作用域捕获 state`);
   });
   assertIncludes(appSource, "createDailyScreenRenderers", "app.js 必须只负责组装屏幕依赖与分发");
   assert(!appSource.includes("function renderSceneReview("), "sceneReview 屏幕不能重新回到 app.js");
   assert(!appSource.includes("function renderInterludeDesk("), "interludeDesk 屏幕不能重新回到 app.js");
   assert(!appSource.includes("function renderSolved("), "recap 屏幕不能重新回到 app.js");
+});
+
+test("ARCH-002", "memoized screen factories follow whole-state replacement", () => {
+  let currentState = { chapter: 1, caseBriefs: [{}], scene: "caseTitle" };
+  const originalState = currentState;
+  let latestFrame = null;
+  let enterCase = null;
+  const screens = createRecapScreens({
+    getState: () => currentState,
+    frame: (frame) => {
+      latestFrame = frame;
+    },
+    caseTitleHtml: ({ caseNumber, totalCases }) => `${caseNumber}/${totalCases}`,
+    caseTitleChoicesHtml: () => "",
+    flowGroupHtml: (html) => html,
+    bind: (selector, handler) => {
+      if (selector === "[data-enter-case-live]") enterCase = handler;
+    },
+    saveState: () => {},
+    render: () => {},
+    bindSceneButtons: () => {}
+  });
+
+  screens.renderCaseTitle({});
+  assertEqual(latestFrame?.text, "1/1", "首次渲染必须读取初始 state");
+
+  currentState = { chapter: 2, caseBriefs: [{}, {}], scene: "caseTitle" };
+  screens.renderCaseTitle({});
+  assertEqual(latestFrame?.text, "2/2", "复用同一工厂后必须读取整体替换的新 state");
+  enterCase?.();
+  assertEqual(currentState.scene, "caseOpen", "重绑后的屏幕事件必须写入新 state");
+  assertEqual(originalState.scene, "caseTitle", "旧 state 不得被复用工厂继续改写");
 });
 
 test("AVG-001", "render-layer sentence splitting preserves quoted sentences and ellipses", () => {

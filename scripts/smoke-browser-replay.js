@@ -28,6 +28,8 @@ try {
     await runCaseTransition();
   } else if (smokeTarget === "portrait-viewports") {
     await runPortraitViewports();
+  } else if (smokeTarget === "state-replacement") {
+    await runStateReplacementRoutes();
   } else {
     for (const route of routes) {
       await runRoute(route);
@@ -37,6 +39,7 @@ try {
     await runCase4AdvisorConflict();
     await runCaseTransition();
     await runPortraitViewports();
+    await runStateReplacementRoutes();
   }
 } finally {
   await browser.close();
@@ -50,7 +53,9 @@ console.log(smokeTarget === "case34"
       ? "Browser replay smoke passed: case2-day-map, case-transition"
       : smokeTarget === "portrait-viewports"
         ? "Browser replay smoke passed: portrait layouts at 390x844, 1366x768, 1280x800"
-    : `Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition"].join(", ")}`);
+        : smokeTarget === "state-replacement"
+          ? "Browser replay smoke passed: new-game-reset, patience-retry"
+    : `Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition", "new-game-reset", "patience-retry"].join(", ")}`);
 
 async function assertAudioSettings(page) {
   await page.locator("[data-audio-settings] > summary").click();
@@ -95,6 +100,93 @@ async function fileExists(path) {
     return true;
   } catch {
     return false;
+  }
+}
+
+async function runStateReplacementRoutes() {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce"
+  });
+  const page = await context.newPage();
+  page.setDefaultTimeout(8000);
+  try {
+    await page.goto(`${playableUrl}?playtest=browser-smoke-state-replacement-${Date.now()}&storyKey=steam-demo-01`);
+    await click(page, "[data-start-story]");
+    if (await page.locator("[data-enter-first-case]").count()) {
+      await drainDialogue(page, {});
+      await click(page, "[data-enter-first-case]");
+      await click(page, "[data-enter-case-live]");
+    }
+    await drainDialogue(page, {});
+    await click(page, '[data-scene="sceneReview"]');
+    await click(page, "[data-open-question-menu]");
+    await click(page, "[data-scene-helper]");
+    const oldHelpCount = await page.evaluate(() => {
+      const save = JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}");
+      return Object.keys(save.helperHintPicks ?? {}).length;
+    });
+    if (oldHelpCount !== 1) throw new Error("new-game reset setup must leave one old helper record");
+    await click(page, "[data-close-question-menu]");
+    await click(page, '[data-action="title"]');
+    await click(page, "[data-request-new-game]");
+    await click(page, "[data-confirm-new-game]");
+    const freshState = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
+    if (freshState.chapter !== 1 || freshState.scene !== "nightShellPrologue") {
+      throw new Error(`new game must replace the old run state: ${JSON.stringify({ chapter: freshState.chapter, scene: freshState.scene })}`);
+    }
+    if (Object.keys(freshState.helperHintPicks ?? {}).length) {
+      throw new Error("new game must not retain helper records from the old state");
+    }
+    await drainDialogue(page, {});
+    await click(page, "[data-enter-first-case]");
+    await assertVisibleText(page, "第一幕", "memoized screens must render the first case from the new state");
+    await click(page, "[data-enter-case-live]");
+
+    await page.evaluate(() => {
+      const storageKey = "livestream-detective-save-v1";
+      const save = JSON.parse(localStorage.getItem(storageKey) ?? "{}");
+      const brief = save.caseBriefs?.[0] ?? {};
+      const caseId = brief.id;
+      const answerKey = `${caseId}:scene:0`;
+      save.screen = "chapter";
+      save.chapter = 1;
+      save.caseBrief = brief;
+      save.scene = "patienceLost";
+      save.patienceLostContext = {
+        caseId,
+        area: "sceneReview",
+        index: 0,
+        answerKey,
+        actionKeys: [],
+        spent: true,
+        removeQuestionPick: true
+      };
+      save.sceneQuestionPicks = { ...(save.sceneQuestionPicks ?? {}), [answerKey]: { marker: "old-state" } };
+      save.sceneAnswers = { ...(save.sceneAnswers ?? {}), [answerKey]: "old-state" };
+      save.caseBudgets = { ...(save.caseBudgets ?? {}), [caseId]: { max: 7, remaining: 0, used: 7 } };
+      localStorage.setItem(storageKey, JSON.stringify(save));
+    });
+    await page.reload();
+    await click(page, "[data-continue-story]");
+    await assertVisibleText(page, "这通断了", "seeded patience loss must render before retry");
+    await click(page, "[data-retry-lost-step]");
+    await drainDialogue(page, {});
+    await page.locator("[data-open-question-menu]").waitFor({ state: "visible" });
+    const retriedState = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
+    const retriedCaseId = retriedState.caseBriefs?.[0]?.id;
+    const retriedAnswerKey = `${retriedCaseId}:scene:0`;
+    if (retriedState.scene !== "sceneReview" || retriedState.patienceLostContext !== null) {
+      throw new Error("patience retry must render from the replacement state and clear its retry context");
+    }
+    if (retriedState.sceneQuestionPicks?.[retriedAnswerKey] || retriedState.sceneAnswers?.[retriedAnswerKey]) {
+      throw new Error("patience retry must remove the failed question from the replacement state");
+    }
+    if (retriedState.caseBudgets?.[retriedCaseId]?.remaining !== 1) {
+      throw new Error("patience retry must refund one point on the replacement state");
+    }
+  } finally {
+    await context.close();
   }
 }
 

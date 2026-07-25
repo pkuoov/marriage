@@ -1,5 +1,4 @@
 export function createOvernightScreens(ctx) {
-  const state = ctx.getState();
   const {
     playAudioCueOnce,
     audioCueView,
@@ -58,6 +57,7 @@ export function createOvernightScreens(ctx) {
   } = ctx;
 
   function renderOvernightHangup(brief) {
+    const state = ctx.getState();
     const structure = overnightStructureFor(brief);
     if (!structure) {
       state.scene = "sceneReview";
@@ -123,6 +123,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function enterOvernightInterludeOrDay(brief) {
+    const state = ctx.getState();
     const interlude = nightStructureFor(brief)?.interlude;
     if ((interlude?.actions ?? []).length) {
       updateNight(brief, { segment: "interlude", hangupDone: true });
@@ -135,6 +136,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderDayActOpening(brief) {
+    const state = ctx.getState();
     const structure = overnightStructureFor(brief);
     if (!structure) {
       state.scene = "dayMap";
@@ -167,6 +169,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderDayMap(brief) {
+    const state = ctx.getState();
     const structure = overnightStructureFor(brief);
     if (!structure) {
       state.scene = "sceneReview";
@@ -233,6 +236,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderDayScene(brief) {
+    const state = ctx.getState();
     const structure = overnightStructureFor(brief);
     const overnight = ensureOvernight(brief);
     const dayScene = daySceneById(brief, overnight.activeDaySceneId);
@@ -371,6 +375,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderOvernightCallback(brief) {
+    const state = ctx.getState();
     const structure = overnightStructureFor(brief);
     if (!structure) {
       state.scene = "sceneReview";
@@ -440,6 +445,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderLiveCounterBeat(brief) {
+    const state = ctx.getState();
     const beat = liveCounterBeatById(brief, state.activeLiveCounterBeatId)
       ?? liveCounterBeatBeforeScene(
         brief,
@@ -479,6 +485,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderDocumentDayScene(brief, dayScene = {}) {
+    const state = ctx.getState();
     const document = documentById(brief, dayScene.body?.documentId);
     if (!document) {
       state.scene = "dayMap";
@@ -809,6 +816,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function enterOvernightNight2(brief) {
+    const state = ctx.getState();
     setIndexValue(brief, "sceneReview", overnightFirstNight2SceneIndex(brief));
     state.scene = "overnightNight2";
     saveState();
@@ -816,6 +824,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function completeDayScene(brief, dayScene = {}, { renderNow = true, stayActive = false } = {}) {
+    const state = ctx.getState();
     const overnight = ensureOvernight(brief);
     const alreadyDone = (overnight.dayScenesDone ?? []).includes(dayScene.id);
     const budget = overnight.dayBudget ?? { max: 0, remaining: 0, used: 0 };
@@ -855,6 +864,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderCallbackOpener(brief) {
+    const state = ctx.getState();
     const night = ensureNight(brief);
     const openers = availableCallbackOpeners(brief, night.inventory, night.interludeChoicesDone);
     frame({
@@ -881,6 +891,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function renderCallbackOpenerBeat(brief) {
+    const state = ctx.getState();
     const night = ensureNight(brief);
     const structure = nightStructureFor(brief);
     const opener = callbackOpenerById(brief, night.callbackOpenerId) ?? availableCallbackOpeners(brief, night.inventory, night.interludeChoicesDone)[0] ?? {};
@@ -904,6 +915,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function enterLiveCounterBeatBeforeScene(brief = {}, sceneIndex = 0) {
+    const state = ctx.getState();
     const beat = liveCounterBeatBeforeScene(
       brief,
       sceneIndex,
@@ -919,6 +931,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function enterLiveCounterBeatAfterScene(brief = {}, sceneIndex = 0) {
+    const state = ctx.getState();
     const beat = liveCounterBeatAfterScene(brief, sceneIndex, (key) => actionDone(brief, key), ensureOvernight(brief));
     if (!beat) return false;
     state.activeLiveCounterBeatId = beat.id;
@@ -929,6 +942,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function recordLiveCounterChoice(brief = {}, beat = {}, choiceId = "") {
+    const state = ctx.getState();
     const choice = (beat.choices ?? []).find((item) => item.id === choiceId) ?? null;
     if (!choice) return;
     state.liveCounterPicks = {
@@ -956,6 +970,7 @@ export function createOvernightScreens(ctx) {
   }
 
   function continueAfterLiveCounterBeat(brief = {}, beat = {}) {
+    const state = ctx.getState();
     if ((beat.choices ?? []).length && !liveCounterPickForState(brief, beat.id)) return;
     markAction(brief, `liveCounterBeat:${beat.id}`);
     state.activeLiveCounterBeatId = null;
