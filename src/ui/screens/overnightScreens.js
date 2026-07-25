@@ -83,7 +83,10 @@ export function createOvernightScreens(ctx) {
           <span>${escapeHtml(structure.hangupLine ?? "")}</span>
         </section>
       `,
-      choices: flowGroupHtml(`<button class="primary" data-enter-post-live type="button">收麦，离开直播台</button>`),
+      choices: flowGroupHtml(
+        `<button class="primary" data-enter-post-live type="button">收麦，离开直播台</button>`,
+        { label: "第一夜到这里", note: "先把刚才听到的内容带下直播台。" }
+      ),
       audioEnterCueId: structure.hangupAudioCueId
     });
     bind("[data-enter-post-live]", () => {
@@ -114,7 +117,10 @@ export function createOvernightScreens(ctx) {
           ${callDialogueHtml(contact.lines)}
         </section>
       `,
-      choices: flowGroupHtml(`<button class="primary" data-enter-day-act type="button">进入第二幕</button>`)
+      choices: flowGroupHtml(
+        `<button class="primary" data-enter-day-act type="button">到第二天下午</button>`,
+        { label: "时间推进", note: "离开直播间，继续查能落到纸面上的东西。" }
+      )
     });
     bind("[data-enter-day-act]", () => {
       enterOvernightInterludeOrDay(brief);
@@ -157,7 +163,10 @@ export function createOvernightScreens(ctx) {
           <small>没有弹幕替你接话。现在去找人，也去找原件。</small>
         </section>
       `,
-      choices: flowGroupHtml(`<button class="primary" data-enter-day-map type="button">开始走访</button>`)
+      choices: flowGroupHtml(
+        `<button class="primary" data-enter-day-map type="button">开始走访</button>`,
+        { label: "白天调查", note: "选择去处会花掉一格下午时间。" }
+      )
     });
     bind("[data-enter-day-map]", () => {
       updateOvernight(brief, { segment: "day", hangupDone: true });

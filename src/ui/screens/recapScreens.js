@@ -90,7 +90,10 @@ export function createRecapScreens(ctx) {
       label: "直播连线",
       chapter: liveChapterTitle(brief),
       text: callDialogueHtml(lines),
-      choices: flowGroupHtml(`<button class="primary" data-scene="sceneReview" type="button">继续</button>`)
+      choices: flowGroupHtml(
+        `<button class="primary" data-scene="sceneReview" type="button">听她接着说</button>`,
+        { label: "来电已接通", note: "先让咨询者把事情从头说清楚。" }
+      )
     });
     bindSceneButtons();
   }
@@ -108,7 +111,10 @@ export function createRecapScreens(ctx) {
       visualHud: "",
       screenClass: "night-shell-prologue-screen",
       text: nightShellHtml(lines),
-      choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">进入第一幕</button>`)
+      choices: flowGroupHtml(
+        `<button class="primary" data-enter-first-case type="button">接入第一通来电</button>`,
+        { label: "直播已经开始", note: "第一位咨询者正在等待接通。" }
+      )
     });
     bind("[data-enter-first-case]", () => {
       state.scene = "caseTitle";

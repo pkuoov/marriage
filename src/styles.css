@@ -4054,9 +4054,38 @@ button.evidence-target {
 }
 
 .flow-group {
-  padding: 8px;
-  border-color: rgba(237, 241, 238, .08);
-  background: rgba(255, 255, 255, .018);
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 14px;
+  border-color: rgba(101, 214, 194, .18);
+  background:
+    linear-gradient(90deg, rgba(101, 214, 194, .07), transparent 48%),
+    rgba(7, 12, 11, .92);
+  box-shadow:
+    inset 3px 0 0 rgba(101, 214, 194, .54),
+    0 12px 28px rgba(0, 0, 0, .22);
+}
+
+.flow-group-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.flow-group-copy span {
+  color: rgba(139, 228, 212, .92);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.flow-group-copy small {
+  color: rgba(237, 241, 238, .58);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .flow-group .choice-stack {
@@ -6400,7 +6429,7 @@ button.evidence-target {
 .avg-choice-overlay:not([hidden]) .choice-stack { display: flex; flex-direction: column; gap: .75rem; }
 .avg-choice-overlay:not([hidden]) button { min-height: 3.5rem; font-size: 1.05rem; }
 .avg-choice-overlay.inline-choice-flow:not([hidden]) { position: relative; z-index: 20; inset: auto; display: flex; align-items: center; justify-content: center; margin: 0 1rem 1rem; padding: 0; overflow: visible; scroll-margin-block: 1rem; background: transparent; backdrop-filter: none; }
-.avg-choice-overlay.inline-choice-flow:not([hidden]) .choice-group { width: auto; max-height: none; overflow: visible; padding: 0; background: transparent; border: 0; box-shadow: none; }
+.avg-choice-overlay.inline-choice-flow:not([hidden]) .choice-group { width: 100%; max-height: none; overflow: visible; }
 .avg-choice-overlay.inline-choice-flow:not([hidden]) button {
   flex: 0 0 auto;
   width: auto;
@@ -6473,6 +6502,11 @@ button.evidence-target {
   .avg-choice-overlay:not([hidden]) button { min-height: 50px; font-size: 15px; }
   .avg-choice-overlay.inline-choice-flow:not([hidden]) { margin: 0 8px calc(8px + env(safe-area-inset-bottom)); padding: 0; }
   .avg-choice-overlay.inline-choice-flow:not([hidden]) .choice-group { width: 100%; padding: 0; }
+  .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
   .avg-choice-overlay.inline-choice-flow:not([hidden]) button { width: 100%; min-width: 0; }
   .avg-material-modal { align-items: end; padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
   .avg-material-panel { width: 100%; max-height: calc(100dvh - 5rem); padding: 12px; }
@@ -6580,9 +6614,8 @@ button.evidence-target {
 
 .case-title-screen .avg-choice-overlay.inline-choice-flow .choice-group,
 .case-bridge-screen .avg-choice-overlay.inline-choice-flow .choice-group {
-  width: auto;
+  width: 100%;
   height: auto;
-  display: block;
 }
 
 @media (max-width: 860px) {

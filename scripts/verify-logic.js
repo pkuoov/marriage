@@ -1374,6 +1374,12 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assert(!appSource.includes("选关键原话"), "最终原话选择不能写“关键”这种替玩家评估的设计词");
   assertIncludes(appSource, "下面哪句最该继续追？", "最终原话选择页必须明确玩家在选下一句追问对象");
   assertIncludes(flowGroupHtml("<button>继续</button>"), "flow-group", "流程按钮组必须可由纯 UI 模块渲染");
+  assertIncludes(flowGroupHtml("<button>继续</button>"), "下一步", "独立流程按钮必须带承接标签，不能空荡荡地悬在舞台下方");
+  assertIncludes(
+    flowGroupHtml("<button>接入</button>", { label: "直播已经开始", note: "第一位咨询者正在等待接通。" }),
+    "第一位咨询者正在等待接通。",
+    "关键过场的流程按钮必须说明按下后会去哪里"
+  );
   const hostDialogueHtml = callDialogueHtml([{ role: "host", text: "你当时怎么回的？" }, { role: "caller", text: "我说先看账单。" }]);
   assertIncludes(hostDialogueHtml, "你当时怎么回的？", "通话气泡必须可由纯 UI 模块渲染");
   assertIncludes(hostDialogueHtml, "林旭阳", "主持人对话框必须使用固定角色名");

@@ -13,10 +13,16 @@ export function choiceGroupHtml(label, content, className = "", note = "") {
   `;
 }
 
-export function flowGroupHtml(content) {
+export function flowGroupHtml(content, { label = "下一步", note = "" } = {}) {
   if (!content?.trim()) return "";
   return `
     <section class="choice-group flow-group">
+      ${label || note ? `
+        <div class="flow-group-copy">
+          ${label ? `<span>${escapeHtml(label)}</span>` : ""}
+          ${note ? `<small>${escapeHtml(note)}</small>` : ""}
+        </div>
+      ` : ""}
       <div class="choice-stack">${content}</div>
     </section>
   `;
