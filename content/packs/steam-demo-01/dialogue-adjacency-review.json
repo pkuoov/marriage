@@ -8,7 +8,7 @@
   ],
   "cases": {
     "01-credit": {
-      "reviewedAt": "2026-07-23",
+      "reviewedAt": "2026-07-26",
       "opening": [
         {
           "fromAnchor": "没敢转",
@@ -101,9 +101,9 @@
             },
             {
               "contextAnchor": "一万二的短视频平台分期",
-              "questionAnchor": "短视频平台的分期",
-              "answerAnchor": "分期在他手机上开的",
-              "relation": "沿账单里的分期项目询问来源，回答明确回避去向。"
+              "questionAnchor": "先注意到什么",
+              "answerAnchor": "先盯着“从他手机上开的”",
+              "relation": "沿账单里的分期项目询问她当时把注意力放在哪里；回答承认自己抓住开户手机，回避思考实际收货方。"
             },
             {
               "contextAnchor": "八万出头",
@@ -292,11 +292,11 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "自己想的，不是他说的",
-              "questionAnchor": "刚才那条语音里",
-              "answerAnchor": "怕你离开",
-              "guardedAnswerAnchor": "他说怕我走",
-              "relation": "她先分清结婚担忧来自自己的联想，主播再回到语音与还款金额的相邻顺序。"
+              "contextAnchor": "我又把转账页点开了",
+              "questionAnchor": "为什么还想转",
+              "answerAnchor": "我一拒绝，就像在证明他说对了",
+              "guardedAnswerAnchor": "账单还没到期",
+              "relation": "咨询者已经说出再次打开转账页，主播再问明知尚未到期却仍想转的原因；回答落到她把拒绝转账误听成拒绝感情。"
             },
             {
               "contextAnchor": "自己其实很吃那种体面",
@@ -341,7 +341,7 @@
       }
     },
     "02-tony": {
-      "reviewedAt": "2026-07-23",
+      "reviewedAt": "2026-07-26",
       "opening": [
         { "fromAnchor": "一晚上没睡", "toAnchor": "先缓口气", "relation": "咨询者先说误发表格令她失眠，主播确认听得清并让她先把呼吸缓下来。" },
         { "fromAnchor": "先缓口气", "toAnchor": "谁发的", "relation": "接住她的急促后，主播另起一问，只追表格来源和两人关系。" },
@@ -367,7 +367,7 @@
         "tony-emotion-to-sales": {
           "entry": { "mode": "continue", "fromAnchor": "愿意替他转", "toAnchor": "往回翻", "relation": "上一段已经提到替他转活动，主播把已经出现的诉苦和转发并列询问；咨询者再说明自己回看记录后发现的先后。" },
           "questionOptions": [
-            { "contextAnchor": "我一心软，他就让我帮忙转活动", "questionAnchor": "下一句通常是什么", "answerAnchor": "先让我转活动", "guardedAnswerAnchor": "活动、剪头", "relation": "主播沿她已经说出的语音后行动追问，回答补出活动、带客和年卡的次序。" },
+            { "contextAnchor": "我一心软，他就让我帮忙转活动", "questionAnchor": "每次都挨得这么紧吗", "answerAnchor": "不是每次", "guardedAnswerAnchor": "不是每次都挨着", "relation": "主播不再重复已经说出的转活动，而是核对这种顺序是否每次紧邻；回答修正频率，同时保留请求反复落到店务这一模式。" },
             { "contextAnchor": "帮忙转活动", "questionAnchor": "觉得自己是在帮谁", "answerAnchor": "帮“我们以后”", "relation": "从她实际执行的转发动作追问当时在帮谁，回答说明她把店务当成共同未来。" }
           ],
           "freeQuestions": [
@@ -414,7 +414,7 @@
         "tony-caller-benefits": {
           "entry": { "mode": "continue", "fromAnchor": "年卡、投一点", "toAnchor": "我在他店里也花过钱", "relation": "商业要求和攻击性弹幕都已出现，主播先拒绝弹幕的定性，再按此前已经说出的免单与插号询问她实际得到过哪些照顾。" },
           "questionOptions": [
-            { "contextAnchor": "朋友多，带客", "questionAnchor": "为什么愿意给", "answerAnchor": "当时就觉得他给我面子", "guardedAnswerAnchor": "有折扣", "relation": "主播从表内带客备注回看六折原因，回答先说当时感受，再承认如今无法只把折扣当人情。" },
+            { "contextAnchor": "朋友多，带客", "questionAnchor": "有没有明说", "answerAnchor": "没有明说", "guardedAnswerAnchor": "没有明说", "relation": "主播把表内带客备注与六折并列，但只问对方是否明说交换；回答确认后来有带客询问，同时拒绝把折扣直接定成交易。" },
             { "contextAnchor": "闺蜜一出门就说", "questionAnchor": "知道你们没确认关系", "answerAnchor": "知道一点", "relation": "沿闺蜜当场评价补问她掌握多少关系事实，回答承认咨询者没有纠正。" }
           ],
           "freeQuestions": [
@@ -438,7 +438,7 @@
       }
     },
     "03-profile": {
-      "reviewedAt": "2026-07-23",
+      "reviewedAt": "2026-07-26",
       "opening": [
         { "fromAnchor": "不敢带他见父母", "toAnchor": "见父母这件事先停一下", "relation": "咨询者先交代四张图带来的直接后果，主播先允许她暂停饭局，不急着判断材料。" },
         { "fromAnchor": "不急着替那四张图下结论", "toAnchor": "见过几次", "relation": "暂缓材料结论后，主播另起一问，确认关系进度和见父母日期。" },
@@ -488,7 +488,7 @@
         "profile-introducer-two-prices": {
           "entry": { "mode": "continue", "fromAnchor": "介绍人", "toAnchor": "介绍人偏男方", "relation": "上一段已经追到介绍人的转述，本段进入两家围绕她是否偏袒的争执。" },
           "questionOptions": [
-            { "contextAnchor": "两边原话都在", "questionAnchor": "为什么把两边都说得那么省心", "answerAnchor": "也想把这事做成", "guardedAnswerAnchor": "两边都省心", "relation": "两份原话显示两边都被说轻后，回答补出旧人情和促成相亲的利益。" },
+            { "contextAnchor": "两边原话都在", "questionAnchor": "为什么把两边都说得那么省心", "answerAnchor": "也想把这事做成", "guardedAnswerAnchor": "两边都挑好听的", "relation": "两份原话显示两边都被说轻后，回答补出旧人情和促成相亲的利益；防备回答只承认双边添话，不假装没看过男方家的截图。" },
             { "contextAnchor": "收入稳", "questionAnchor": "替他的收入作过证", "answerAnchor": "没有", "relation": "从介绍人使用的收入标签核对证据范围，回答明确她没有金额或来源。" },
             { "contextAnchor": "给你家是学校好", "questionAnchor": "原话是怎么跟你妈说", "answerAnchor": "名校毕业，条件不错", "relation": "主播先抓介绍人对女方家的原话，再让咨询者复述自己回家加上的完整版本。" }
           ],
@@ -539,7 +539,7 @@
       }
     },
     "04-workplace": {
-      "reviewedAt": "2026-07-23",
+      "reviewedAt": "2026-07-26",
       "opening": [
         { "fromAnchor": "主责也一起丢了", "toAnchor": "先别发消息", "relation": "咨询者先报垫款金额和职场顾虑，主播让她暂缓发消息，不预判是否上报。" },
         { "fromAnchor": "得先问清楚", "toAnchor": "是谁让你垫的", "relation": "暂缓行动后，主播另起一问，追垫款发起人与流程承诺。" },
@@ -588,9 +588,9 @@
             { "contextAnchor": "财务群真发了延后通知", "questionAnchor": "有付款回单吗", "answerAnchor": "没有", "relation": "从后来确有延后通知追到当前持有材料，回答确认同事始终只回同一张审批页。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "占了你信用卡多少额度", "answerAnchor": "大半额度", "relation": "金额和卡种在开场已经确认，主播只补问额度压力；回答说明这笔钱占去她唯一一张信用卡的大半额度。" },
+            { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "账单出来以后", "answerAnchor": "还没想好", "relation": "金额和卡种在开场已经确认，主播不再重复问信用卡额度，而是询问账单到来后的现实压力。" },
             { "contextAnchor": "财务群", "questionAnchor": "认识人吗", "answerAnchor": "不认识", "relation": "从后续财务通知补问她是否有独立询问渠道，回答说明仍依赖同事。" },
-            { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "刷的是信用卡", "answerAnchor": "信用卡", "relation": "主播沿开场已经说出的信用卡确认账户数量，回答说明只有一张信用卡且额度大多被占。" }
+            { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "以前用个人信用卡垫过", "answerAnchor": "没有", "relation": "沿本次个人信用卡垫款补问她是否有过同类经验；回答说明过去只垫过可迅速报销的小额打车费。" }
           ]
         },
         "work-supplier-route": {
