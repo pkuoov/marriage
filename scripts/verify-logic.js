@@ -965,6 +965,20 @@ test("MATERIAL-005", "material toolbar unlocks only after the player has actuall
   assertIncludes(liveFrameHtml({ material: "社保断缴时间", materialCount: 1 }), "<b>1</b>", "第一份材料收到后才显示材料数量");
 });
 
+test("UI-004", "inline transition buttons keep a normal CTA shape", () => {
+  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const recapScreenSource = readFileSync(new URL("../src/ui/screens/recapScreens.js", import.meta.url), "utf8");
+  const inlineFlowRule = stylesSource.slice(
+    stylesSource.indexOf(".avg-choice-overlay.inline-choice-flow:not([hidden]) button {"),
+    stylesSource.indexOf(".evidence-screen, .investigation-screen")
+  );
+  assertIncludes(inlineFlowRule, "flex: 0 0 auto", "过场按钮必须清掉普通 flow button 的 150px flex-basis，不能被拉成竖方块");
+  assertIncludes(inlineFlowRule, "height: auto", "“进入第一幕”等过场按钮必须按文字高度排版");
+  assertIncludes(inlineFlowRule, "min-height: 3rem", "过场按钮仍需保留清晰、可点击的最小高度");
+  assertIncludes(recapScreenSource, "night-shell-prologue-screen", "开播前页面必须有独立布局类，避免入口按钮被长对白挤出首屏");
+  assertIncludes(stylesSource, ".night-shell-prologue-screen .vn-stage", "开播前舞台必须给入口按钮预留一行");
+});
+
 test("INVESTIGATION-001", "host investigation backflow is fixed material, not freeform facts", () => {
   const appSource = runtimeSource;
   const stateSource = readFileSync(new URL("../src/state.js", import.meta.url), "utf8");

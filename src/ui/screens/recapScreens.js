@@ -106,6 +106,7 @@ export function createRecapScreens(ctx) {
       chapter: "晚间热线",
       showCaseHud: false,
       visualHud: "",
+      screenClass: "night-shell-prologue-screen",
       text: nightShellHtml(lines),
       choices: flowGroupHtml(`<button class="primary" data-enter-first-case type="button">进入第一幕</button>`)
     });

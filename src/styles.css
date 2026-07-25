@@ -6401,7 +6401,25 @@ button.evidence-target {
 .avg-choice-overlay:not([hidden]) button { min-height: 3.5rem; font-size: 1.05rem; }
 .avg-choice-overlay.inline-choice-flow:not([hidden]) { position: relative; z-index: 20; inset: auto; display: flex; align-items: center; justify-content: flex-end; margin: 0 1rem 1rem; padding: 0; overflow: visible; background: transparent; backdrop-filter: none; }
 .avg-choice-overlay.inline-choice-flow:not([hidden]) .choice-group { width: auto; max-height: none; overflow: visible; padding: 0; background: transparent; border: 0; box-shadow: none; }
-.avg-choice-overlay.inline-choice-flow:not([hidden]) button { min-width: 10rem; }
+.avg-choice-overlay.inline-choice-flow:not([hidden]) button {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 10rem;
+  min-height: 3rem;
+  height: auto;
+}
+
+@media (min-width: 861px) {
+  .night-shell-prologue-screen .vn-stage {
+    grid-template-rows: 28px minmax(300px, 44dvh) auto auto;
+  }
+
+  .night-shell-prologue-screen .vn-stage .visual-scene {
+    min-height: 0;
+    height: 100%;
+  }
+}
+
 .evidence-screen, .investigation-screen, .delegation-screen { animation: avg-panel-in 200ms ease-out; }
 @keyframes avg-card-in { from { opacity: 0; transform: translateY(14px); } }
 @keyframes avg-panel-in { from { opacity: 0; } }
