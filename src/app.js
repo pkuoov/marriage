@@ -56,6 +56,8 @@ const startsFresh = hasFreshStartParam();
 if (startsFresh) clearStateSnapshot();
 const loadedState = startsFresh ? null : loadState();
 let state = normalizeDailyState(loadedState ?? structuredClone(baseState));
+// Screen handlers read ctx.getState() when invoked; cache the factory, never the state object.
+let dailyScreenRenderers = null;
 if (!startsFresh && loadedState?.screen === "chapter" && state.caseBriefs.length) state.screen = "title";
 let meta = loadMeta();
 let gamepadPollingStarted = false;
@@ -234,6 +236,7 @@ function startStoryPack() {
     storyKey: storyKeyFromUrl(),
     runNumber: meta.runs ?? 0
   });
+  // Replace the whole state object; memoized screen handlers follow through ctx.getState().
   state = normalizeDailyState({
     ...structuredClone(baseState),
     screen: "chapter",
@@ -280,6 +283,7 @@ function resetToTitle() {
   clearStateSnapshot();
   titleNewGameConfirmation = false;
   shownPixelTransitions = new Set();
+  // Replace the whole state object; memoized screen handlers follow through ctx.getState().
   state = normalizeDailyState(structuredClone(baseState));
   state.screen = "title";
   saveState();
@@ -569,9 +573,14 @@ function createDailyScreenRenderers() {
   return screens;
 }
 
+function dailyScreenRenderersForRender() {
+  dailyScreenRenderers ??= createDailyScreenRenderers();
+  return dailyScreenRenderers;
+}
+
 function renderDailyCase() {
   const brief = activeCaseBrief();
-  const screens = createDailyScreenRenderers();
+  const screens = dailyScreenRenderersForRender();
   if (state.scene === "sceneQuestionMenu") return screens.renderSceneQuestionMenu(brief);
   if (state.scene === "sceneQuestionAnswer") return screens.renderSceneQuestionAnswer(brief);
   if (isSceneReviewScene(state.scene)) return screens.renderSceneReview(brief);
@@ -1324,6 +1333,7 @@ function advanceToNextStoryPackCase(message = "新的来电接进来，上一通
 
 function retryPatienceLostStep(brief) {
   const context = state.patienceLostContext ?? {};
+  // Replace the whole state object; memoized screen handlers follow through ctx.getState().
   state = retryPatienceLostState({
     state,
     brief,
@@ -1410,6 +1420,7 @@ function audiencePatienceLost(brief, context = {}) {
 }
 
 function recordPatienceLost(brief, context = {}) {
+  // Replace the whole state object; memoized screen handlers follow through ctx.getState().
   state = recordPatienceLostState({ state, brief, context });
   saveState();
   render();

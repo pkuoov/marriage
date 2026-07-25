@@ -73,6 +73,7 @@ test("ARCH-001", "screen modules depend on an injected context instead of app.js
     assert(!/export function create\w+Screens\(ctx\) \{\s*const state = ctx\.getState\(\);/.test(source), `${screenSourcePaths[index]} 不得在工厂作用域捕获 state`);
   });
   assertIncludes(appSource, "createDailyScreenRenderers", "app.js 必须只负责组装屏幕依赖与分发");
+  assertIncludes(appSource, "dailyScreenRenderers ??= createDailyScreenRenderers()", "屏幕工厂必须只创建一次并复用");
   assert(!appSource.includes("function renderSceneReview("), "sceneReview 屏幕不能重新回到 app.js");
   assert(!appSource.includes("function renderInterludeDesk("), "interludeDesk 屏幕不能重新回到 app.js");
   assert(!appSource.includes("function renderSolved("), "recap 屏幕不能重新回到 app.js");
