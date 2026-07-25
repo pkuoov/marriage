@@ -2849,7 +2849,7 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "shen",
           "speaker": "咨询者",
-          "entryQuestion": "这条语音里，他说了什么？",
+          "entryQuestion": "接着呢？",
           "beforeVersion": {
             "lines": [
               {
@@ -2865,7 +2865,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "你先别回。他后面还有消息吗？"
+                "text": "他挑这个时候发抱抱。先看他后面还说什么。"
               },
               {
                 "role": "caller",

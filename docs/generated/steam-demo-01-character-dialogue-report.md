@@ -141,7 +141,7 @@
 ### 夜 B
 
 - `$case.sceneVersions[5].beforeVersion.lines[0]` 昨晚那笔一万二，你说设备送到了你那里，也一直是你在用。开箱那晚呢？你们做了什么？
-- `$case.sceneVersions[6].beforeVersion.lines[3]` 你先别回。他后面还有消息吗？
+- `$case.sceneVersions[6].beforeVersion.lines[3]` 他挑这个时候发抱抱。先看他后面还说什么。
 - `$case.sceneVersions[6].afterVersion.lines[0]` 他把失业、怕你离开和还款金额连在一起。你听完，最先想到的是什么？
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[0]` 六月 8 号那笔没来，八万就开口了。你昨晚——
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[2]` ……对，七月，我念岔了。你昨晚为什么只说『奖金晚发』？
@@ -162,7 +162,7 @@
 - `$case.sceneVersions[5].questionOptions[0].question` 昨晚你已经说了，设备在你家，也是你在用。为什么没告诉我们，开箱那晚你们就一起拍了第一条视频？
 - `$case.sceneVersions[5].questionOptions[1].question` 设备进你家，一万二就该算你的债吗？
 - `$case.sceneVersions[5].dialogueOptions[0].question` 他说投资你的时候，你怎么回的？
-- `$case.sceneVersions[6].entryQuestion` 这条语音里，他说了什么？
+- `$case.sceneVersions[6].entryQuestion` 接着呢？
 - `$case.sceneVersions[6].casualQuestions[0].question` 你朋友现在知道多少？
 - `$case.sceneVersions[6].casualQuestions[1].question` 他以前有没有说过，怕失业以后配不上你？
 - `$case.sceneVersions[6].casualQuestions[2].question` “怕你离开”那句，他是打字还是语音？
