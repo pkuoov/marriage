@@ -3,7 +3,7 @@ name: 赵律师
 role: deuteragonist
 status: alive
 aliases:
-  - 领导（老婆爱称）
+  - 领导（老婆）
   - 赵律师（语音）
 tags:
   - recurring

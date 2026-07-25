@@ -1563,7 +1563,7 @@ test("PACK-013", "warmth props close their arcs and the personal livestream stay
   const backgroundLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "background");
   assertEqual(backgroundLine?.speaker, "林旭阳", "主播履历必须由本人第一人称介绍");
   assert(backgroundLine?.text?.includes("互联网大厂做法务") && backgroundLine?.text?.includes("两年半"), "开篇必须交代前职业、失业转折和主播年限");
-  const prologueText = manifest.nightShell?.prologue?.lines?.find((line) => line.speaker === "领导（老婆爱称）")?.text ?? "";
+  const prologueText = manifest.nightShell?.prologue?.lines?.find((line) => line.speaker === "领导（老婆）")?.text ?? "";
   const caseThreeInterlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === "03-profile");
   const epilogue = manifest.nightShell?.epilogue ?? {};
   assert(prologueText.includes("汤在冰箱"), "汤弧线缺少序章留下拍");
