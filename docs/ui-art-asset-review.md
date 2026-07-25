@@ -136,7 +136,7 @@ Action:
 
 ## Prompt Direction
 
-Use the existing `docs/background-prompts.txt` and `docs/character-prompts.txt`, but update the emphasis:
+新图只使用 [pixel-art-transition-and-portrait-direction.md](pixel-art-transition-and-portrait-direction.md) 的现行标准。旧的写实全身、半剪影和眼部光带 Prompt 已删除，不得从 Git 历史复制回生产流程。
 
 - Less dating venue, more live-room evidence handling.
 - Less fashion full-body character sheet, more anonymous caller pressure state.

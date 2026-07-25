@@ -49,7 +49,7 @@ import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "../src/ui/epilog
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "../src/ui/titleView.js";
 import { createRecapScreens } from "../src/ui/screens/recapScreens.js";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const results = [];
@@ -3029,6 +3029,19 @@ test("DOCS-003", "case writing law requires audited adjacent-turn causality", ()
   const loadBearingClosers = briefs.flatMap((brief) => (brief.sceneVersions ?? []).filter((scene) => (scene.sceneCloser?.lines ?? []).some((line) => !["stage", "pause"].includes(line?.role) && line?.nonLoadBearing !== true && line?.text)));
   assertEqual(loadBearingClosers.length, 7, "当前四案承重场尾数量变化时必须重新审查路线独立闭环");
   assert(loadBearingClosers.every((scene) => scene.closureContract?.routeIndependent === true && scene.closureContract?.openEdge), "四案所有承重场尾必须登记路线独立合同和唯一未决问题");
+});
+
+test("DOCS-004", "top-level docs keep only current production material", () => {
+  const docsEntry = readFileSync(new URL("../docs/README.md", import.meta.url), "utf8");
+  const topLevelDocs = readdirSync(new URL("../docs/", import.meta.url), { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+    .map((entry) => entry.name)
+    .sort();
+  const promptDocs = topLevelDocs.filter((name) => name.includes("prompt"));
+  const oneOffDocs = topLevelDocs.filter((name) => /(?:^|-)pass-\d+|(?:exec|fix)-prompt|rereview|suggestions-review|script-feel-polish/.test(name));
+  assertEqual(JSON.stringify(promptDocs), JSON.stringify(["udio-bgm-production-prompts-v2.md"]), "docs 顶层只能保留仍在生产的 Udio Prompt");
+  assertEqual(oneOffDocs.length, 0, "已执行批次、一次性修复单和外部复审不能重新堆回 docs 顶层");
+  assertIncludes(docsEntry, "一次性评审意见执行后应转成代码、测试、skill 或 backlog 条目", "文档入口必须写明一次性评审的退出机制");
 });
 
 test("DETECTIVE-001", "detective plot coupling method stays explicit", () => {

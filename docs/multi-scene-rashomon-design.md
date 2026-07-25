@@ -2,7 +2,7 @@
 
 日期：2026-07-14  
 性质：场景语法立法 + 四案线下地图（非一次性全引擎交付）。  
-关联：[demo2-rebuild-blueprint.md](demo2-rebuild-blueprint.md)、[two-call-night-design.md](two-call-night-design.md)、[offline-rashomon-pass-17-prompt.md](offline-rashomon-pass-17-prompt.md)
+关联：[demo2-rebuild-blueprint.md](demo2-rebuild-blueprint.md)、[two-call-night-design.md](two-call-night-design.md)
 
 ## 默认边界
 
@@ -146,7 +146,6 @@
 - 回拨第一句能明显来自日间地点。
 - 直播单连线人契约 playtest 仍成立。
 
-## 实施切分
+## 实施状态
 
-- 已完成基线：[offline-rashomon-pass-17-prompt.md](offline-rashomon-pass-17-prompt.md)（17-engine + 17a 案 1）
-- 后续执行（案 2–4 改码 + 剧情评审→skill）：[offline-rashomon-exec-prompts.md](offline-rashomon-exec-prompts.md)
+四案白天地图、带回物与特许同席均已进入内容包和校验。后续修改直接更新结构化故事工程、案件 JSON 与项目 skill，不再维护一次性执行单。

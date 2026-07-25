@@ -1,6 +1,6 @@
 # steam-demo-01 QA Report
 
-> 2026-07-12 玩法与剧情复审及本轮改动见 [gameplay-story-rereview-2026-07-12.md](../../../docs/gameplay-story-rereview-2026-07-12.md)。
+> 本文件保留内容包的重要验收决策；当前可玩文本以案件 JSON、生成阅读稿和自动校验结果为准。
 
 ## 2026-07-22 案二职业因果与警笛挂断复审
 

@@ -1,7 +1,7 @@
 # BGM 生成日志·全量 Prompt 存档(标题曲战役)
 
 日期:2026-07-19
-姊妹文档:[bgm-brief-and-prompts.md](bgm-brief-and-prompts.md)(Brief 模板与迭代规范——写新 prompt 前先读它)
+制作参数与当前可用 Prompt：[udio-bgm-production-prompts-v2.md](udio-bgm-production-prompts-v2.md)
 成品:`assets/audio/bgm/title-neon-rain.ogg`(2:22,opus 160k;源档见 `assets/audio/source/bgm-title-neon-rain/`,已 gitignore)
 
 > 2026-07-21 更新：下面的“九曲家族总表”保留为历史记录。当前运行时九槽位和可直接投喂 Udio 的细化参数，以 [udio-bgm-production-prompts-v2.md](udio-bgm-production-prompts-v2.md) 为准。

@@ -175,11 +175,11 @@ npm run smoke:desktop
 ├── package.json
 ├── README.md
 ├── docs/
+│   ├── README.md
 │   ├── game-philosophy.md
 │   ├── weekly-livestream-design-bible.md
 │   ├── script-generation-agent-playbook.md
 │   ├── case-library-sources.md
-│   ├── marriage-agency-avg-design.md
 │   ├── roadmap.md
 │   └── content-pack-schema.md
 ├── content/
@@ -233,10 +233,7 @@ npm run build:playable
 
 ## 后续路线
 
-- 按 Steam demo 商品级标准拆架构：内容包、运行时、UI、平台存档、桌面壳和输入导航分层推进，详见 `docs/steam-architecture-review.md`。
-- 把当前 4 个首发试玩案升级为可变长度内容包；后续每次发版都是一个独立章节式案件包，不固定案数。
-- 把案件包内容拆成数据包，支持 Steam 发版内容包和旧集回看。
+- 当前工程状态、发布门与下一步只以 `docs/roadmap.md` 和 `docs/unfinished-backlog.md` 为准。
+- 后续每次发版都是一个独立章节式案件包，不固定案数；当前四案试玩包已完成数据化。
 - AI 问答采用受控方案：玩家可以用自然语言追问，但系统只把它映射到当前已写好的追问意图，不让 AI 生成新事实，详见 `docs/ai-question-mode-design.md`。
-- 继续打磨“选一句原话”的爽点，让玩家不是随便点到结论。
-- 分享卡继续根据玩家实际抓到的关键句生成。
-- 为小程序准备原生 view model，逐步减少 `innerHTML` 字符串渲染。
+- 真人盲测、真人录音、真实设备与 Steamworks 权限项是当前发行门；没有实测证据不继续扩写剧情。
