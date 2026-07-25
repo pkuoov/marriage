@@ -133,7 +133,14 @@ for (const sample of [
   }
 }
 
-const appSource = await readFile(new URL("../src/app.js", import.meta.url), "utf8");
+const screenSourceUrl = new URL("../src/ui/screens/", import.meta.url);
+const screenSourceFiles = (await readdir(screenSourceUrl, { withFileTypes: true }))
+  .filter((entry) => entry.isFile() && entry.name.endsWith(".js"))
+  .map((entry) => new URL(entry.name, screenSourceUrl));
+const appSource = (await Promise.all([
+  readFile(new URL("../src/app.js", import.meta.url), "utf8"),
+  ...screenSourceFiles.map((fileUrl) => readFile(fileUrl, "utf8"))
+])).join("\n");
 for (const cueId of ["sfx.message.notification", "sfx.document.mark"]) {
   if (!appSource.includes(cueId)) fail(`${cueId}: ready interaction SFX is not wired into app events`);
 }

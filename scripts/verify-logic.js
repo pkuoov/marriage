@@ -52,6 +52,29 @@ import { readFileSync } from "node:fs";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const results = [];
+const screenSourcePaths = [
+  "../src/ui/screens/overnightScreens.js",
+  "../src/ui/screens/interludeScreens.js",
+  "../src/ui/screens/sceneScreens.js",
+  "../src/ui/screens/recapScreens.js"
+];
+const screenSources = screenSourcePaths.map((path) => readFileSync(new URL(path, import.meta.url), "utf8"));
+const runtimeSource = [
+  readFileSync(new URL("../src/app.js", import.meta.url), "utf8"),
+  ...screenSources
+].join("\n");
+
+test("ARCH-001", "screen modules depend on an injected context instead of app.js", () => {
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  screenSources.forEach((source, index) => {
+    assert(!/from\s+["'][^"']*app\.js["']/.test(source), `${screenSourcePaths[index]} 不能反向 import app.js`);
+    assertIncludes(source, "ctx.getState()", `${screenSourcePaths[index]} 必须通过 ctx 读取当前状态`);
+  });
+  assertIncludes(appSource, "createDailyScreenRenderers", "app.js 必须只负责组装屏幕依赖与分发");
+  assert(!appSource.includes("function renderSceneReview("), "sceneReview 屏幕不能重新回到 app.js");
+  assert(!appSource.includes("function renderInterludeDesk("), "interludeDesk 屏幕不能重新回到 app.js");
+  assert(!appSource.includes("function renderSolved("), "recap 屏幕不能重新回到 app.js");
+});
 
 test("AVG-001", "render-layer sentence splitting preserves quoted sentences and ellipses", () => {
   assertEqual(splitDialogueSentences("她说：「等等。别走！」然后停了……我没回。 ").join("|"), "她说：「等等。别走！」|然后停了……|我没回。", "引号内标点不得拆句，省略号必须保留");
@@ -613,7 +636,7 @@ test("STATE-SELECTOR-001", "case state selectors read picks and route profile ou
   assert(unlockedInvestigationEntriesForState(selectorState, brief).length >= 1, "回流解锁必须能脱离 app.js 计算");
   assertEqual(routeChoicesForState(selectorState, brief)[0].axis, "money-flow", "路线 choices 必须能从已选问题回退生成");
   assertEqual(routeAxisProfileForState(selectorState, brief).axis, "money-flow", "路线画像必须能脱离 app.js 生成");
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   assertIncludes(appSource, "./runtime/caseStateSelectors.js", "app.js 必须通过 runtime caseStateSelectors 读取案件状态");
   assert(!appSource.includes("function selectedScenePick("), "app.js 不能重新维护场景选择 selector");
   assert(!appSource.includes("function selectedEvidencePicksFor("), "app.js 不能重新维护材料选择 selector");
@@ -797,7 +820,7 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   assertIncludes(stylesSource, ".evidence-annotation.miss", "误指材料必须只标出玩家圈偏的位置");
   assertIncludes(stylesSource, ".evidence-workbench.marked.hit::before", "材料命中必须有局部扫描高光，避免圈中反馈太硬");
   assertIncludes(stylesSource, "evidenceHitScan", "材料命中扫描必须有独立动画");
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   assert(!appSource.includes("choiceGroup(\"圈哪一处\""), "材料检视不能退回下方普通按钮组选项");
   assertIncludes(appSource, "evidenceCheckScreenHtml", "材料检视整页 HTML 必须从 app.js 拆到 ui/evidenceView");
   assertIncludes(appSource, "state.lastScreenEffect = \"material-hit\"", "材料命中必须触发一次全屏 CRT 扫描反馈");
@@ -868,7 +891,7 @@ test("MATERIAL-004", "scene dialogue can reveal read-only evidence cards", () =>
 });
 
 test("INVESTIGATION-001", "host investigation backflow is fixed material, not freeform facts", () => {
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   const stateSource = readFileSync(new URL("../src/state.js", import.meta.url), "utf8");
   const cases = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   assertIncludes(appSource, "renderInvestigationBackflow", "案后私信回流必须有独立场景，不能塞进普通结果页文字");
@@ -929,7 +952,7 @@ test("INVESTIGATION-002", "off-mic letters share the final recap page after boun
 });
 
 test("UI-001", "current-node questions separate free asks from key choices", () => {
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   const materialSource = readFileSync(new URL("../src/runtime/materialOperation.js", import.meta.url), "utf8");
   const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
   const routeMapSource = readFileSync(new URL("../src/runtime/routeMapModel.js", import.meta.url), "utf8");
@@ -1226,7 +1249,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
 });
 
 test("UI-003", "decision buttons expose cost, lock, or scoring consequences before activation", () => {
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const metaValues = Object.values(CHOICE_COST_META);
   assert(metaValues.length >= 12, "按钮代价词典必须覆盖追问、材料、白天、回拨、顾问、终局与关怀");
@@ -1242,7 +1265,7 @@ test("UI-003", "decision buttons expose cost, lock, or scoring consequences befo
 });
 
 test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const callFlowViewSource = readFileSync(new URL("../src/ui/callFlowView.js", import.meta.url), "utf8");
   const liveFrameViewSource = readFileSync(new URL("../src/ui/liveFrameView.js", import.meta.url), "utf8");
@@ -1647,7 +1670,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
     assertEqual(dailyAccusationChoices(brief).length, 4, `第 ${index + 1} 案最终必须给四句原话`);
   });
   assertIncludes(a[0].storyThemeTitle, "好听的身份", "当前 demo 包必须共享同一主题");
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   assertIncludes(appSource, "第一通匿名来电，还在等待接入", "标题页必须从开播前进入，不能把热线写成已经接通");
   assert(!/const hook = storyPack \? preview\?\.storyThemeThesis/.test(appSource), "标题页不能直接把主题论点当开场 hook");
   const oldPreviewListClass = `${"weekly"}-${"preview"}-${"list"}`;
@@ -2528,7 +2551,7 @@ test("RUNTIME-007", "action mark patches spend budget without mutating old state
   assert(!retried.caseActionLog["case-a"]["version:1"], "重试必须让当前句重新可问");
   assertEqual(retried.routeChoiceLog["case-a"].length, 1, "重试必须移除这一步路线记录");
   assertEqual(retried.patienceLostContext, null, "重试后不能保留失败上下文");
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   assert(!appSource.includes("data-after-patience-lost"), "耐心耗尽页不能跳下一通或进故事集总结");
 });
 
@@ -2724,7 +2747,7 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   assert(overnightCallbackOpenerById(brief, "女客拉群立场")?.firstConflict?.callerLine, "女客拉群选择必须进入夜 B 冲突，不得只改标签");
   const managerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-manager-training-note");
   assert(!managerHook?.material?.includes("“下一次推进”不是店里模板"), "店长后台说明不得重复培训页的承重结论");
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  const appSource = runtimeSource;
   const sceneAdvanceSource = readFileSync(new URL("../src/runtime/sceneAdvance.js", import.meta.url), "utf8");
   const caseScriptwritingSkill = readFileSync(new URL("../project-skills/case-scriptwriting/SKILL.md", import.meta.url), "utf8");
   assertIncludes(appSource, "先圈一行", "流水调查必须要求玩家实际圈行，不能空手记下离开");
