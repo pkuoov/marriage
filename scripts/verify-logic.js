@@ -1485,7 +1485,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(summary.hiddenThreadProfile.line, "成本", "故事集暗线 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(appSource, "./ui/titleView.js", "标题页 HTML 必须从 app.js 拆到 ui/titleView");
   const titleHtml = titleScreenHtml({
-    productName: "直播间大侦探",
+    productName: "深夜热线：直播间侦探",
     storyPack: true,
     title: "Steam 试玩版",
     hook: "第一通匿名来电还在等待接入。",
@@ -1494,6 +1494,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
     acts: [{ act: "体面" }, { act: "自己人" }, { act: "条件" }, { act: "主责" }]
   });
   assertIncludes(titleHtml, "title-page-shell", "标题页必须使用独立封面骨架，而不是把信息卡纵向堆满首屏");
+  assertIncludes(titleHtml, "<span>深夜热线</span><strong>直播间侦探</strong>", "标题页必须按节目名与游戏身份分成两行");
   assertIncludes(titleHtml, "title-console-strip", "标题页必须先有直播信号状态条，不能只剩普通剧情标题卡");
   assertIncludes(titleHtml, "林旭阳", "标题页必须交代固定主播角色");
   assertIncludes(titleHtml, "等待开播", "标题页必须明确仍在开播前，不能先写已接通再倒退进序章");
@@ -1504,12 +1505,12 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(titleHtml, "新游戏", "无存档时标题页必须用标准游戏入口文案");
   assertIncludes(titleHtml, "data-audio-settings", "标题页必须能在开始前调声音");
   assert(!/四案|4\s*案|故事集目录|第一案|第二案|第三案|第四案|主题论点/.test(titleHtml), "标题页不能提前暴露案数、目录或主题论点");
-  const resumeTitleHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, canContinue: true, resumeLabel: "上次停在：白天调查" });
+  const resumeTitleHtml = titleScreenHtml({ productName: "深夜热线：直播间侦探", storyPack: true, canContinue: true, resumeLabel: "上次停在：白天调查" });
   assertIncludes(resumeTitleHtml, "data-continue-story", "有存档时标题页必须提供继续入口");
   assertIncludes(resumeTitleHtml, "继续上次直播", "继续入口必须使用玩家能立即理解的存档文案");
   assertIncludes(resumeTitleHtml, "上次停在：白天调查", "继续入口必须提示存档所在阶段，但不剧透案件目录");
   assertIncludes(resumeTitleHtml, "data-request-new-game", "有存档时仍必须保留新游戏入口");
-  const confirmNewGameHtml = titleScreenHtml({ productName: "直播间大侦探", storyPack: true, canContinue: true, confirmNewGame: true });
+  const confirmNewGameHtml = titleScreenHtml({ productName: "深夜热线：直播间侦探", storyPack: true, canContinue: true, confirmNewGame: true });
   assertIncludes(confirmNewGameHtml, "新游戏会覆盖当前进度", "覆盖存档前必须有明确二次确认");
   assertIncludes(confirmNewGameHtml, "data-confirm-new-game", "新游戏二次确认必须有明确确认按钮");
   assertIncludes(confirmNewGameHtml, "data-cancel-new-game", "新游戏二次确认必须允许保留当前进度");
@@ -1533,7 +1534,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(deckHtml, "后台材料", "控场台必须把材料作为直播间后台对象呈现");
   assertIncludes(deckHtml, "deck-material-preview", "控场台材料卡必须有缩略图，提升直播后台操作感");
   assertIncludes(deckHtml, "审批图", "控场台必须展示当前后台材料");
-  const frameHtml = liveFrameHtml({ productName: "直播间大侦探", modeLabel: "试玩连线", soundEnabled: true, label: "继续对话", chapter: "匿名来电", text: "<p>正文</p>", choices: "<button>继续</button>", visualHud: "<div>HUD</div>", controlDeckHtml: deckHtml, backdropClass: "backdrop-credit", material: "信用卡账单" });
+  const frameHtml = liveFrameHtml({ productName: "深夜热线：直播间侦探", modeLabel: "试玩连线", soundEnabled: true, label: "继续对话", chapter: "匿名来电", text: "<p>正文</p>", choices: "<button>继续</button>", visualHud: "<div>HUD</div>", controlDeckHtml: deckHtml, backdropClass: "backdrop-credit", material: "信用卡账单" });
   assertIncludes(frameHtml, "live-console-shell", "案内主画面必须使用控场台布局骨架");
   assertIncludes(frameHtml, "has-control-deck", "有控场台时主舞台必须进入明确的桌面两栏状态");
   assertIncludes(frameHtml, "data-live-shell", "主舞台必须暴露稳定的交互外壳标记，不能由 app.js 复制骨架类名");

@@ -1,5 +1,5 @@
 ---
-title: Livestream Detective｜直播间大侦探
+title: Midnight Hotline: Livestream Detective｜深夜热线：直播间侦探
 schema-version: 2
 genre: 现实悬疑互动剧
 sub-genre: 直播热线推理／社会议题群像
@@ -14,7 +14,7 @@ pov: third-person-limited／玩家代理主播
 tense: present
 ---
 
-# Livestream Detective｜直播间大侦探
+# Midnight Hotline: Livestream Detective｜深夜热线：直播间侦探
 
 ## Synopsis
 

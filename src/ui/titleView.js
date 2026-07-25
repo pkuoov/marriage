@@ -1,7 +1,7 @@
 import { audioSettingsPanelHtml } from "./audioSettingsView.js";
 
 export function titleScreenHtml({
-  productName = "直播间大侦探",
+  productName = "深夜热线：直播间侦探",
   storyPack = true,
   title = "",
   hook = "",
@@ -106,8 +106,8 @@ export function titleScreenHtml({
 }
 
 function productTitleLines(productName = "") {
-  const value = String(productName || "直播间大侦探");
-  if (value === "直播间大侦探") return ["直播间", "大侦探"];
+  const value = String(productName || "深夜热线：直播间侦探");
+  if (value === "深夜热线：直播间侦探") return ["深夜热线", "直播间侦探"];
   return [value, ""];
 }
 

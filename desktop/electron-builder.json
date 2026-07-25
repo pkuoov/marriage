@@ -1,6 +1,6 @@
 {
   "appId": "com.livestreamdetective.demo",
-  "productName": "Livestream Detective Demo",
+  "productName": "Midnight Hotline Detective Demo",
   "directories": {
     "app": "dist/desktop-electron",
     "output": "dist/steam"

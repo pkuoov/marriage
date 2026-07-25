@@ -1,6 +1,6 @@
 ---
 name: detective-plot-coupling-review
-description: Use when designing, reviewing, or revising 《直播间大侦探》 cases through detective-fiction structure: clue coupling, fair-play reveals, false solutions, witness self-interest, reversal timing, quote-pick payoff, and hidden story-pack threads.
+description: Use when designing, reviewing, or revising 《深夜热线：直播间侦探》 cases through detective-fiction structure: clue coupling, fair-play reveals, false solutions, witness self-interest, reversal timing, quote-pick payoff, and hidden story-pack threads.
 ---
 
 # Detective Plot Coupling Review

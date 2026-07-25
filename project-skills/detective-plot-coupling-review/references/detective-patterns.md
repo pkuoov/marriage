@@ -1,6 +1,6 @@
 # Detective Pattern Reference
 
-This reference compresses famous detective novels, films, and games into reusable structures for 《直播间大侦探》. Do not copy plots, characters, or set pieces. Translate the pattern into live-call social evidence.
+This reference compresses famous detective novels, films, and games into reusable structures for 《深夜热线：直播间侦探》. Do not copy plots, characters, or set pieces. Translate the pattern into live-call social evidence.
 
 ## Canon Patterns
 

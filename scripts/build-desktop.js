@@ -21,7 +21,7 @@ await withBuildLock(async () => {
     await writeFile(resolve(tempDir, "package.json"), `${JSON.stringify({
       name: "livestream-detective-demo",
       version: "0.1.0",
-      productName: "Livestream Detective Demo",
+      productName: "Midnight Hotline Detective Demo",
       private: true,
       main: "main.cjs",
       scripts: {

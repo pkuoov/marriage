@@ -3,7 +3,7 @@ const DEFAULT_GAME_URL = "https://your-domain.example/livestream-detective/index
 Page({
   data: {
     gameUrl: DEFAULT_GAME_URL,
-    shareTitle: "直播间大侦探",
+    shareTitle: "深夜热线：直播间侦探",
     sharePath: "/pages/index/index"
   },
   onLoad(options = {}) {
@@ -33,7 +33,7 @@ Page({
     if (!latestShare) return;
     const shareTitle = latestShare.playerType
       ? `${latestShare.playerType}｜${latestShare.title || "四案故事集"}`
-      : latestShare.title || "直播间大侦探";
+      : latestShare.title || "深夜热线：直播间侦探";
     this.setData({
       shareTitle,
       sharePath: latestShare.path || "/pages/index/index"

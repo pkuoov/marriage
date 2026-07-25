@@ -1,6 +1,6 @@
 ---
 name: story-dialogue-staging
-description: Use when restructuring or expanding a dialogue-driven game's overall plot, NPC participation, cross-night scene sequence, scene-by-scene storyboard, playable dialogue, case closure, inter-case transition, narrative UI, or anonymous-caller portrait rollout. Trigger for requests to continue modifying a case, write the full story before storyboards, increase NPC frequency, add daytime location changes, make investigation choices alter callback dialogue, rewrite scene lines, remove AI-sounding copy, add a formal case summary or next-case title, standardize caller portraits, or turn narrative design into runtime content for 《直播间大侦探》.
+description: Use when restructuring or expanding a dialogue-driven game's overall plot, NPC participation, cross-night scene sequence, scene-by-scene storyboard, playable dialogue, case closure, inter-case transition, narrative UI, or anonymous-caller portrait rollout. Trigger for requests to continue modifying a case, write the full story before storyboards, increase NPC frequency, add daytime location changes, make investigation choices alter callback dialogue, rewrite scene lines, remove AI-sounding copy, add a formal case summary or next-case title, standardize caller portraits, or turn narrative design into runtime content for 《深夜热线：直播间侦探》.
 ---
 
 # Story Dialogue Staging

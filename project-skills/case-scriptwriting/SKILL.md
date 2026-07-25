@@ -1,6 +1,6 @@
 ---
 name: case-scriptwriting
-description: Use when writing or rewriting 《直播间大侦探》 case content — openings, scene beats, question options, guarded answers, materials, comment seeds, recap/share copy, and case-length enrichment. Covers de-AI language rules, the story-packet → stitched-transcript → field-split workflow, dialogue rewrite rules, clue insertion techniques, gated diegetic comment hints, and how to make a case feel like a 20-minute playable call without filler.
+description: Use when writing or rewriting 《深夜热线：直播间侦探》 case content — openings, scene beats, question options, guarded answers, materials, comment seeds, recap/share copy, and case-length enrichment. Covers de-AI language rules, the story-packet → stitched-transcript → field-split workflow, dialogue rewrite rules, clue insertion techniques, gated diegetic comment hints, and how to make a case feel like a 20-minute playable call without filler.
 ---
 
 # Case Scriptwriting

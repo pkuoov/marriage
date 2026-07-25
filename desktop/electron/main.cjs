@@ -306,7 +306,7 @@ if (!gotSingleInstanceLock) {
   });
 
   app.whenReady().then(() => {
-    app.setName("Livestream Detective Demo");
+    app.setName("Midnight Hotline Detective Demo");
     if (process.platform === "win32") app.setAppUserModelId("com.livestreamdetective.demo");
     registerSaveIpc();
     mainWindow = createWindow();

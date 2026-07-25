@@ -61,7 +61,7 @@ export function storyPackShareText({
   playerType = ""
 } = {}) {
   return [
-    "《直播间大侦探》试玩收麦",
+    "《深夜热线：直播间侦探》试玩收麦",
     theme.title ?? "",
     `我今晚常看的线：${displayBest.label ?? ""}`,
     `现场压力：${pressureProfile.label ?? ""}`,

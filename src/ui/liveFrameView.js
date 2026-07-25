@@ -98,7 +98,7 @@ function materialGlyph(kind = "file") {
 }
 
 export function liveFrameHtml({
-  productName = "直播间大侦探",
+  productName = "深夜热线：直播间侦探",
   modeLabel = "试玩连线",
   soundEnabled = true,
   audioSettings = null,

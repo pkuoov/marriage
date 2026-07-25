@@ -48,7 +48,7 @@ import { createSceneScreens } from "./ui/screens/sceneScreens.js";
 import { createRecapScreens } from "./ui/screens/recapScreens.js";
 
 const app = document.querySelector("#app");
-const PRODUCT_NAME = "直播间大侦探";
+const PRODUCT_NAME = "深夜热线：直播间侦探";
 const DEFAULT_ATTRS = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const SCENE_HELPER = CONTENT_HELPER_NPCS["v-bro"] ?? null;
 
