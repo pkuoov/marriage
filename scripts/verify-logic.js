@@ -969,14 +969,18 @@ test("UI-004", "inline transition buttons keep a normal CTA shape", () => {
   const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const recapScreenSource = readFileSync(new URL("../src/ui/screens/recapScreens.js", import.meta.url), "utf8");
   const inlineFlowRule = stylesSource.slice(
-    stylesSource.indexOf(".avg-choice-overlay.inline-choice-flow:not([hidden]) button {"),
+    stylesSource.indexOf(".avg-choice-overlay.inline-choice-flow:not([hidden]) {"),
     stylesSource.indexOf(".evidence-screen, .investigation-screen")
   );
   assertIncludes(inlineFlowRule, "flex: 0 0 auto", "过场按钮必须清掉普通 flow button 的 150px flex-basis，不能被拉成竖方块");
   assertIncludes(inlineFlowRule, "height: auto", "“进入第一幕”等过场按钮必须按文字高度排版");
   assertIncludes(inlineFlowRule, "min-height: 3rem", "过场按钮仍需保留清晰、可点击的最小高度");
+  assertIncludes(inlineFlowRule, "justify-content: center", "进入幕、接入案件和后续继续按钮必须统一居中，不能悬在舞台最右侧");
+  assertIncludes(inlineFlowRule, "text-align: center", "推进按钮文字必须使用居中 CTA 排版");
+  assertIncludes(inlineFlowRule, "scroll-margin-block: 1rem", "推进按钮滚入视口时必须保留底部呼吸空间");
   assertIncludes(recapScreenSource, "night-shell-prologue-screen", "开播前页面必须有独立布局类，避免入口按钮被长对白挤出首屏");
   assertIncludes(stylesSource, ".night-shell-prologue-screen .vn-stage", "开播前舞台必须给入口按钮预留一行");
+  assertIncludes(runtimeSource, "keepInlineChoicesVisible(shownChoices)", "后续继续按钮出现时必须滚到完整可见位置");
 });
 
 test("INVESTIGATION-001", "host investigation backflow is fixed material, not freeform facts", () => {

@@ -851,7 +851,10 @@ function mountCurrentDialogue() {
       saveState();
       if (state.settings?.autoMode) setTimeout(() => controller?.advance(), Math.max(1, Number(state.settings.autoDelay ?? 2)) * 500);
     },
-    onChoicesShown: () => materialPanel.syncChoices()
+    onChoicesShown: (shownChoices) => {
+      materialPanel.syncChoices();
+      keepInlineChoicesVisible(shownChoices);
+    }
   });
   materialPanel.syncChoices();
   mountCourtRecord(app, {
@@ -859,6 +862,11 @@ function mountCurrentDialogue() {
     onSettingsChange: cycleAvgSetting,
     onBeforeOpen: () => materialPanel.close({ restoreFocus: false })
   });
+}
+
+function keepInlineChoicesVisible(choices) {
+  if (!choices?.classList?.contains("inline-choice-flow")) return;
+  choices.scrollIntoView?.({ block: "nearest", inline: "nearest" });
 }
 
 function mountMaterialPanel() {
