@@ -365,7 +365,7 @@
           ]
         },
         "tony-emotion-to-sales": {
-          "entry": { "mode": "continue", "fromAnchor": "愿意替他转", "toAnchor": "往回翻", "relation": "上一段已经提到替他转活动，本段回看亲密语音与转活动的先后。" },
+          "entry": { "mode": "continue", "fromAnchor": "愿意替他转", "toAnchor": "往回翻", "relation": "上一段已经提到替他转活动，主播把已经出现的诉苦和转发并列询问；咨询者再说明自己回看记录后发现的先后。" },
           "questionOptions": [
             { "contextAnchor": "我一心软，他就让我帮忙转活动", "questionAnchor": "下一句通常是什么", "answerAnchor": "先让我转活动", "guardedAnswerAnchor": "活动、剪头", "relation": "主播沿她已经说出的语音后行动追问，回答补出活动、带客和年卡的次序。" },
             { "contextAnchor": "帮忙转活动", "questionAnchor": "觉得自己是在帮谁", "answerAnchor": "帮“我们以后”", "relation": "从她实际执行的转发动作追问当时在帮谁，回答说明她把店务当成共同未来。" }
@@ -412,7 +412,7 @@
           ]
         },
         "tony-caller-benefits": {
-          "entry": { "mode": "continue", "fromAnchor": "年卡、投一点", "toAnchor": "我在他店里也花过钱", "relation": "商业要求已出现后，咨询者主动交代自己的消费，也补上从特殊位置得到的折扣和免单。" },
+          "entry": { "mode": "continue", "fromAnchor": "年卡、投一点", "toAnchor": "我在他店里也花过钱", "relation": "商业要求和攻击性弹幕都已出现，主播先拒绝弹幕的定性，再按此前已经说出的免单与插号询问她实际得到过哪些照顾。" },
           "questionOptions": [
             { "contextAnchor": "朋友多，带客", "questionAnchor": "为什么愿意给", "answerAnchor": "当时就觉得他给我面子", "guardedAnswerAnchor": "有折扣", "relation": "主播从表内带客备注回看六折原因，回答先说当时感受，再承认如今无法只把折扣当人情。" },
             { "contextAnchor": "闺蜜一出门就说", "questionAnchor": "知道你们没确认关系", "answerAnchor": "知道一点", "relation": "沿闺蜜当场评价补问她掌握多少关系事实，回答承认咨询者没有纠正。" }
@@ -450,9 +450,9 @@
       ],
       "scenes": {
         "profile-proof-before-dinner": {
-          "entry": { "mode": "continue", "fromAnchor": "存款证明", "toAnchor": "见父母以前", "relation": "从开场最后补来的存款证明回到见父母前一天的完整材料顺序。" },
+          "entry": { "mode": "continue", "fromAnchor": "存款证明", "toAnchor": "收入和存款都不是我问的", "relation": "开场已经说明她只提学校和工作，主播只追问额外两项如何出现；咨询者按中午三张、晚上补一张的顺序回答。" },
           "questionOptions": [
-            { "contextAnchor": "收入和存款，我都没问", "questionAnchor": "为什么连收入和存款", "answerAnchor": "省得饭桌上解释", "guardedAnswerAnchor": "不是我开口要的", "relation": "主播沿她明确未索要的两项问对方解释，回答只提供“省得解释”这一原话。" },
+            { "contextAnchor": "收入和存款都不是我问的", "questionAnchor": "为什么连收入和存款", "answerAnchor": "省得饭桌上解释", "guardedAnswerAnchor": "不是我开口要的", "relation": "主播沿她明确未索要的两项问对方解释，回答只提供“省得解释”这一原话。" },
             { "contextAnchor": "最后不知道该回哪张", "questionAnchor": "你当时起疑了吗", "answerAnchor": "当时只觉得省事", "relation": "材料连发造成停顿后，主播问她当时有没有起疑，回答承认自己先把额外材料理解成省事。" },
             { "contextAnchor": "二十八万六的存款证明", "questionAnchor": "能证明多久", "answerAnchor": "一天", "relation": "从具体存款证明询问时间效力，审计从业者回答只覆盖开具当日。" }
           ],
@@ -523,10 +523,10 @@
           ]
         },
         "profile-income-and-card": {
-          "entry": { "mode": "continue", "fromAnchor": "结婚以后钱最好一起管", "toAnchor": "工资卡也要交出来", "relation": "群里已经出现婚后管钱，本段接到男方对此作出的工资卡反问。" },
+          "entry": { "mode": "continue", "fromAnchor": "结婚以后钱最好一起管", "toAnchor": "工资卡也要交出来", "relation": "她刚承认没有把婚后管钱原话转告男方，主播追问工资卡说法如何出现；回答补出她反复查问收入稳定性的过程和男方原话。" },
           "questionOptions": [
             { "contextAnchor": "工资卡也要交出来", "questionAnchor": "你怎么回", "answerAnchor": "只是想看稳定", "guardedAnswerAnchor": "想看稳定", "relation": "主播沿男方的原句问咨询者实际回复，回答说明她只接稳定而避开共同管钱。" },
-            { "contextAnchor": "团购是真的", "questionAnchor": "能证明收入有问题吗", "answerAnchor": "不敢这么说", "relation": "从她用于怀疑收入的小额消费问证据边界，回答撤回以消费习惯证明收入的推断。" }
+            { "contextAnchor": "团购、积分和停车 AA", "questionAnchor": "能证明收入有问题吗", "answerAnchor": "不敢这么说", "relation": "从她用于怀疑收入的小额消费问证据边界，回答撤回以消费习惯证明收入的推断。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "工资卡也要交出来", "questionAnchor": "多久没正面回", "answerAnchor": "那晚都没正面回", "relation": "沿这条微信补问她回避正面回答的时长，回答限定为当晚只谈稳定、没有接工资卡管理。" },
@@ -582,15 +582,15 @@
           "closer": { "anchor": "我妈敲门", "routeIndependent": true, "relation": "母亲敲门只打断通话，不提供案件判断，任一路线后都能继续看审批页。" }
         },
         "work-approval-only": {
-          "entry": { "mode": "continue", "fromAnchor": "财务群真发了延后通知", "toAnchor": "钱就是那次", "relation": "财务通知解释了她为何继续等，本段回到实际垫款和重复出现的审批页。" },
+          "entry": { "mode": "continue", "fromAnchor": "财务群真发了延后通知", "toAnchor": "活动后，他发来一张审批页", "relation": "开场已经确认六万八刷在她的信用卡上；主播不再重复问金额，只问对方后来拿什么让她继续等，回答直接落到反复发送的审批页。" },
           "questionOptions": [
             { "contextAnchor": "报销审批通过", "questionAnchor": "实际看懂了哪一格", "answerAnchor": "审批通过", "guardedAnswerAnchor": "审批过了", "relation": "主播只问她能读懂的截图字段，回答把审批与其他未知部分分开。" },
             { "contextAnchor": "财务群真发了延后通知", "questionAnchor": "有付款回单吗", "answerAnchor": "没有", "relation": "从后来确有延后通知追到当前持有材料，回答确认同事始终只回同一张审批页。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "个人卡", "questionAnchor": "垫的钱是多少", "answerAnchor": "大半额度", "relation": "从个人卡垫款补问金额，回答暂时拒绝具体数但交代额度压力。" },
+            { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "占了你信用卡多少额度", "answerAnchor": "大半额度", "relation": "金额和卡种在开场已经确认，主播只补问额度压力；回答说明这笔钱占去她唯一一张信用卡的大半额度。" },
             { "contextAnchor": "财务群", "questionAnchor": "认识人吗", "answerAnchor": "不认识", "relation": "从后续财务通知补问她是否有独立询问渠道，回答说明仍依赖同事。" },
-            { "contextAnchor": "个人卡", "questionAnchor": "刷的是信用卡", "answerAnchor": "信用卡", "relation": "主播把卡种作为假设确认，回答说明只有一张信用卡且额度大多被占。" }
+            { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "刷的是信用卡", "answerAnchor": "信用卡", "relation": "主播沿开场已经说出的信用卡确认账户数量，回答说明只有一张信用卡且额度大多被占。" }
           ]
         },
         "work-supplier-route": {
@@ -606,7 +606,7 @@
           ]
         },
         "work-leader-note": {
-          "entry": { "mode": "interrupt", "fromAnchor": "对接人栏，是他", "toAnchor": "今晚他在群里发了二十个红包", "relation": "账户仍未知时，同事当晚在大群发红包的新动作插入，随后才回看领导复盘批注。" },
+          "entry": { "mode": "interrupt", "fromAnchor": "对接人栏，是他", "toAnchor": "今晚他在群里发了二十个红包", "relation": "账户仍未知时，同事当晚在大群发红包的新动作插入；主播先把红包放回当晚情绪，再问公司是否公开提过活动，咨询者由此回到更早的复盘批注。" },
           "questionOptions": [
             { "contextAnchor": "执行主责记陈", "questionAnchor": "六万八什么时候补", "answerAnchor": "一个都没有", "guardedAnswerAnchor": "钱怎么回，没写", "relation": "领导批注明确主责后，主播只核对六万八的补款时间，回答说明垫款人、补款人和日期都未记录。" },
             { "contextAnchor": "看到自己的姓，我真松了口气", "questionAnchor": "为什么又等了一天", "answerAnchor": "因为我高兴", "relation": "从她被点名后的松气追问继续拖延，回答承认怕刚拿主责就暴露未报备。" }

@@ -177,9 +177,9 @@ function renderReport() {
   const lines = [];
   const reviewed = new Set(review.reviewedCaseIds ?? []);
   lines.push(`# 《${manifest.title}》逐话轮承接审查`, "");
-  lines.push("> 本表从实际 JSON 字段生成。它不判断案件大纲是否完整，只检查相邻话轮：上一句给了什么，主播为什么问这一句，回答有没有落回问题。修改案件台词后必须同步审查锚点并重新生成。", "");
+  lines.push("> 本表从实际 JSON 字段生成。机器只能确认登记的抓词仍存在，不能据此证明语义因果已经成立。人工复审还必须检查：问题有没有新增尚未出现的前提、上一个问题是否得到回应、连续两句是否重复发问，以及回答第一拍是否正面作答。", "");
   lines.push("## 覆盖状态", "", "| 案件 | 状态 | 场数 |", "|---|---|---:|");
-  for (const packet of packets) lines.push(`| ${cell(packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.caseId)} | ${reviewed.has(packet.caseId) ? "已逐句锁定" : "待逐句复审"} | ${(packet.sceneVersions ?? []).length} |`);
+  for (const packet of packets) lines.push(`| ${cell(packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.caseId)} | ${reviewed.has(packet.caseId) ? "锚点合同已覆盖" : "待登记锚点合同"} | ${(packet.sceneVersions ?? []).length} |`);
   lines.push("");
 
   lines.push("## 四案微因果合同覆盖", "", "> 承重追问必须从本场固定台词取得前提，写清材料的证明边界、回答新增事实和下一问上限。第三方镜头或作者题眼不得留在人物台词中。", "");
@@ -228,9 +228,9 @@ function renderReport() {
       lines.push("");
     }
   }
-  lines.push("## 尚未锁定", "");
+  lines.push("## 人工语义复审状态", "");
   const pending = packets.filter((packet) => !reviewed.has(packet.caseId));
-  if (!pending.length) lines.push("四案均已完成逐句复审。", "");
+  if (!pending.length) lines.push("四案的锚点合同均已登记；这不等于语义已锁定。每次试玩发现跳跃后，仍须回看前后至少两个话轮并重新生成本表。", "");
   else pending.forEach((packet) => lines.push(`- ${packet.caseId}：${packet.caseTitle?.title ?? packet.storyArcTitle ?? "未命名"}`));
   lines.push("");
   return `${lines.join("\n")}\n`;

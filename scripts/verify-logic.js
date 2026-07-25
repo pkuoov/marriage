@@ -1899,7 +1899,7 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
 test("EPISODE-001E", "all four demo cases preserve human causality and evidence boundaries", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const allText = JSON.stringify(briefs);
-  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|东西送到哪儿，我今晚还不想说|先让我把账算完/;
+  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|东西送到哪儿，我今晚还不想说|先让我把账算完|后来你是怎么发现这个顺序的|你从这段关系里拿过什么好处|你白天去了哪里，先说给我听|你先把昨晚突然挂断的事说清楚|那四张材料是怎么发来的|他问到工资卡以后呢|钱就是那次“你先顶上”刷进我个人卡的|新批注和审批页对不上|为什么没继续问回单号|那三张审批图里有什么|垫的钱是多少|红包发完以后呢/;
   assert(!staleCausality.test(allText), "四案不能重新引入无来源预设、重复追问、作者金句或会议纪要腔旧台词");
   assert(!allText.includes("TA"), "四案玩家可见内容不得用 TA 代替具体人物");
   briefs.forEach((brief) => {
@@ -1918,7 +1918,7 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(byPlot["education-income-fake-profile"], "那张图上到底写了什么，没写什么", "案三必须先核图片字段再讨论名校标签");
   assertIncludes(byPlot["education-income-fake-profile"], "后来补问出来的那些信息", "案三各选项不得引用只在兄弟分支出现的‘这三样’");
   assertIncludes(byPlot["workplace-reimbursement-screenshot"], "最后收钱的账户，单上有吗", "案四报价单只能追到对接人，不能替账户作证");
-  assertIncludes(byPlot["workplace-reimbursement-screenshot"], "为什么没继续问回单号", "案四截图动作必须落到具体可执行追问");
+  assertIncludes(byPlot["workplace-reimbursement-screenshot"], "为什么没再追问钱到底什么时候到", "案四只能追问咨询者当时已经知道该问的到账时间，不能倒灌白天才学到的回单号术语");
   const case2Hook = briefs.find((brief) => brief.runtimeContentCaseId === "02-tony")?.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");
   assert(!(case2Hook?.options ?? []).some((option) => option.correct === false && option.contradiction), "案二同款表误选项不得同时携带可结算矛盾，避免两项都对却只认一个");
 });
@@ -2075,7 +2075,7 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assert(spendingScene, "收入疑点必须来自日常观察而不只是截图缺边");
   assert(wageScene, "女方家关注流水必须连到婚后管钱预设");
   assertIncludes(JSON.stringify(brief), "工资卡", "追问流水必须触发额外隐藏信息");
-  assertIncludes(brief.deepFollowup?.question, "你要看他的收入和工资卡", "满格后必须从已出现的收入要求追问咨询者自己的经济位置");
+  assertIncludes(brief.deepFollowup?.question, "有没有把自己的收入告诉过他", "满格后必须从已出现的收入要求追问咨询者是否承担同等透明义务");
   assertIncludes(brief.deepFollowup?.answer, "一万出头", "深入一问必须用具体数字揭示咨询者自身经济压力");
 });
 

@@ -548,13 +548,13 @@
         "lines": [
           {
             "role": "host",
-            "text": "好，这顿饭先放在这里。账单里还有一笔一万二的分期，那笔是什么？"
+            "text": "好，这顿饭先放在这里。账单里还有一笔一万二的分期，我们接着看那笔。"
           }
         ]
       },
       "closureContract": {
         "entryAnchor": "一万二的分期",
-        "closerAnchor": "那笔是什么",
+        "closerAnchor": "我们接着看那笔",
         "adds": "从纪念日晚餐收回账单，恢复此前尚未说明用途的一万二分期。",
         "openEdge": "这笔分期买了什么，以及谁实际受益。",
         "routeIndependent": true

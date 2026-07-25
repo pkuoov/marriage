@@ -169,6 +169,21 @@ function assertClosureContract(packet, scene, sceneIndex, label) {
   assert(contract.openEdge.length >= 6, `${label}.closureContract.openEdge 必须留下一个明确未决问题`);
 }
 
+function assertNoDuplicateTransitionQuestions(packet = {}) {
+  const scenes = packet.sceneVersions ?? [];
+  scenes.slice(0, -1).forEach((scene, sceneIndex) => {
+    const closerHostLine = loadBearingCloserLines(scene)
+      .filter((line) => line.role === "host")
+      .at(-1)?.text ?? "";
+    const nextEntryQuestion = scenes[sceneIndex + 1]?.entryQuestion ?? "";
+    if (/[？?]\s*$/.test(closerHostLine) && /[？?]\s*$/.test(nextEntryQuestion)) {
+      throw new Error(
+        `${packet.caseId} ${scene.id} 场尾和下一场 entryQuestion 连续发问：${closerHostLine} / ${nextEntryQuestion}`
+      );
+    }
+  });
+}
+
 function spokenSurfaceEntries(packet = {}) {
   const entries = [];
   const add = (path, text) => {
@@ -1231,6 +1246,7 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
       assertNonEmptyString(casePacket.openingComplaint, `${casePacket.caseId} openingComplaint 不能为空`);
       assertArrayMin(casePacket.openingDialogue, 2, `${casePacket.caseId} openingDialogue 至少要有来回两句`);
       assertSingleQuestionTurns(casePacket, casePacket.caseId);
+      assertNoDuplicateTransitionQuestions(casePacket);
       casePacket.openingDialogue.forEach((line, lineIndex) => {
         assertNonEmptyString(line.role, `${casePacket.caseId} openingDialogue[${lineIndex}] 缺少 role`);
         assertNonEmptyString(line.text, `${casePacket.caseId} openingDialogue[${lineIndex}] 缺少 text`);
