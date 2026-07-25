@@ -2727,6 +2727,9 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   assert(policeResponseIndex === policeIndex + 1, "案 2 主播必须在民警揭露后的下一轮先接住咨询者的安全处境");
   assertIncludes(brief.hostDisclosure?.text ?? "", "民警找到你", "案 2 结案口播必须回应警情本身");
   assertIncludes(brief.hostDisclosure?.text ?? "", "不能替那十万下结论", "案 2 警情口播必须保留十万元资金路径边界");
+  assertIncludes(brief.stageJudgement ?? "", "联络人却是你的名字和手机号", "案 2 判词必须称量来电人被写进合作介绍的顶重事实");
+  assertIncludes(brief.stageJudgement ?? "", "警察却因此找上了你", "案 2 判词必须回应警察上门造成的现实后果");
+  assertIncludes(brief.stageJudgement ?? "", "不能跟免单、六折混在一起算", "案 2 判词必须把来电人得到的优惠与被写成联络人分开");
   assert(!callbackTexts.slice(0, openerIndex).some((text) => text.includes("宸直")), "案 2 带回物 opener 之前不得出现宸直");
   const otherCallerAction = nightActionById(brief, "other-caller-dm");
   const otherCallerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");
