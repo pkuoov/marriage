@@ -292,17 +292,17 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "我又把转账页点开了",
+              "contextAnchor": "转账页点开了",
               "questionAnchor": "为什么还想转",
               "answerAnchor": "我一拒绝，就像在证明他说对了",
               "guardedAnswerAnchor": "账单还没到期",
               "relation": "咨询者已经说出再次打开转账页，主播再问明知尚未到期却仍想转的原因；回答落到她把拒绝转账误听成拒绝感情。"
             },
             {
-              "contextAnchor": "自己其实很吃那种体面",
+              "contextAnchor": "转账页点开了",
               "questionAnchor": "最怕这八万最后落到谁头上",
               "answerAnchor": "最后成了我的债",
-              "relation": "接住她反复要求先看账单的拖延，直接问她担心八万最终由谁承担。"
+              "relation": "她听完语音便重新打开转账页，主播顺着这次动作问她真正担心八万最终由谁承担。"
             }
           ],
           "freeQuestions": [

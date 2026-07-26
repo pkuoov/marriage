@@ -779,7 +779,7 @@ async function completeOvernightDay(page, route) {
         await activate(page, route, `[data-day-timeline-card="${card}"]`);
       }
       await activate(page, route, "[data-submit-day-timeline]");
-      await assertVisibleText(page, "摘要我也不收——路径先留着", "timeline sort should preserve the unknown account owner and reject the unsupported summary");
+      await assertVisibleText(page, "人是谁，手里这些东西看不出来", "timeline sort should preserve the unknown account owner and reject the unsupported summary");
     }
     if (sceneId === "day-restaurant") {
       await assertVisibleText(page, "今天第三拨了", "restaurant scene should render exact service line");

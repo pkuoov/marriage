@@ -1762,7 +1762,8 @@ test("PACK-016", "case 1 keeps two anonymous money edges and one institutional p
   assert(flowRows.some((row) => row.party?.includes("王**")), "案一流水行必须保留王姓半姓原始字段");
   assert(flowRows.some((row) => row.party === "宸直信托有限公司"), "案一不得删除宸直种子行");
   const timelineOpener = caseOne?.overnightStructure?.callbackOpeners?.["周会计的时间线"]?.line ?? "";
-  assert(timelineOpener.includes("七月 8 号却空着") && timelineOpener.includes("别猜转账的人"), "周会计时间线回拨必须钉住断流，不追猜王姓身份");
+  assert(timelineOpener.includes("翻到七月 8 号，空的"), "周会计时间线回拨必须只钉住七月断流");
+  assert(!/王\\*\\*是谁|王\\*\\*的具体身份/.test(timelineOpener), "周会计时间线回拨不得追猜王姓身份");
 });
 
 test("PACK-017", "case 1 does not overcue the ordinary bonus excuse", () => {

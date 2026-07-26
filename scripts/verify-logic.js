@@ -1838,7 +1838,7 @@ test("EPISODE-004", "daily mode reuses runtime-loaded JSON content before templa
 test("EPISODE-001B", "each demo case exposes the caller's self-serving omission", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const expectedOmissions = {
-    "lost-job-hidden-credit": ["撑不住场面", "自己其实很吃那种体面"],
+    "lost-job-hidden-credit": ["撑不住场面", "我也怕别人觉得我找了个撑不住场面的人"],
     "tony-multi-dating": ["自己人", "关系我一直没敢问"],
     "education-income-fake-profile": ["一万出头", "流水是我先提的"],
     "workplace-reimbursement-screenshot": ["那时候我是真想拿主责", "我来扛"]
@@ -2750,24 +2750,24 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assertIncludes(flowOpener?.line ?? "", "澄川金融", "流水回拨必须说清二十万借款的来源");
   assert(!/五月|六月|七月|3301/.test(flowOpener?.line ?? ""), "信托带回物不得在一句里重念后续月份和 3301");
   const trustConflictLines = flowOpener?.firstConflict?.lines ?? [];
-  assertEqual(JSON.stringify(trustConflictLines.map((line) => line.role)), JSON.stringify(["host", "caller", "host", "caller", "host", "caller", "host", "caller"]), "信托回拨必须拆成四轮一问一答");
+  assertEqual(JSON.stringify(trustConflictLines.map((line) => line.role)), JSON.stringify(["host", "caller", "host", "caller", "host", "caller"]), "信托回拨必须拆成三轮一问一答");
   trustConflictLines.filter((line) => line.role === "host").forEach((line) => {
     assertEqual((line.text.match(/[？?]/g) ?? []).length, 1, "信托回拨每轮只允许一个问题");
   });
   assertIncludes(JSON.stringify(trustConflictLines), "十二号十万，十四号又十万", "两笔信托认购必须由咨询者分步念出");
   assertIncludes(JSON.stringify(trustConflictLines), "能翻倍", "信托动机必须由对方曾说过的收益期待进入对话");
-  assertIncludes(JSON.stringify(trustConflictLines), "三月是借钱买信托", "流水回拨必须把三月信托旧账与后续资金缺口分开");
-  assertIncludes(JSON.stringify(trustConflictLines), "四月工资停了以后", "流水回拨必须说明王姓转账和新阳信贷属于工资停发后的另一段钱路");
+  assert(!/四月|五月|六月|七月|王姓|新阳信贷|3301/.test(JSON.stringify(trustConflictLines)), "信托回拨只重开三月，不得顺口汇报后续月份和账户");
   ["旧洞", "新洞", "压的注", "两条都要问"].forEach((summarySlop) => {
     assert(!JSON.stringify(trustConflictLines).includes(summarySlop), `流水回拨不得照抄作者总结腔: ${summarySlop}`);
   });
-  const pathFrameOpener = overnightCallbackOpenerById(brief, "路径框架");
-  assertIncludes(pathFrameOpener?.line ?? "", "5 号是新阳信贷放款五万", "路径框架也必须保留贷款行的日期和来源");
-  assertIncludes(pathFrameOpener?.line ?? "", "19 号账户向 3301 转出 49,800", "路径框架也必须单列转出行");
-  assert(!(pathFrameOpener?.line ?? "").includes("五万进来，又转走"), "路径框架不能暗示已经证明两行是同一笔钱");
+  const pathFrameOpener = overnightCallbackOpenerById(brief, "周会计排的日子");
+  assertIncludes(pathFrameOpener?.line ?? "", "8 号那天是空的", "周会计带回物只抓七月固定入账中断");
+  assert(!/新阳信贷|3301|49,800/.test(pathFrameOpener?.line ?? ""), "周会计带回物不得让咨询者口头重抄整张流水");
   const sharedPerformanceEcho = brief.overnightStructure?.snapshotEcho?.["both-performed"] ?? "";
-  assertIncludes(sharedPerformanceEcho, "那顿饭不全是他一个人安排的", "共同参与路线必须由咨询者说清自己承认的具体事实");
-  assertIncludes(sharedPerformanceEcho, "剩下三万五也不能混在一起", "共同参与路线必须自然接回信用卡三桶");
+  assertIncludes(sharedPerformanceEcho, "订座短信", "共同参与路线必须由咨询者从一个具体物件承认自己的动作");
+  assertIncludes(sharedPerformanceEcho, "订座也是我办的", "共同参与路线必须归还咨询者省略的订座主语");
+  assert(!sharedPerformanceEcho.includes("男装"), "立场回应不能在一句里重抄信用卡三桶");
+  assertEqual((sharedPerformanceEcho.match(/三万五/g) ?? []).length, 1, "立场回应只用一个未决金额接回主线");
   assert(!sharedPerformanceEcho.includes("还能留着"), "立场回应不能用指代不明的作者摘要连接两晚剧情");
   assert(overnightCallbackOpenerById(brief, "他对三万五的沉默")?.firstConflict?.callerLine, "旁听提前离开必须改变夜 B 第一轮回答");
   assertIncludes(brief.stageJudgement, "他自己的消费", "案一结论必须保留男方个人排场消费");
