@@ -78,8 +78,8 @@
 | 02 | 他说我像店里自己人 | Scene 2 version | 合规 |
 | 02 | 我从来没说只有你一个 | Scene 5 version | 合规 |
 | 02 | 以后店开起来，你就是老板娘 | Scene 5 version | 合规 |
-| 03 | 也算吧，MBA | Scene 2 version | 合规 |
-| 03 | 我只说他学校那边确实是真的 | V2 version | 合规 |
+| 03 | 也算吧，我读的是 MBA | Scene 2 version | 合规 |
+| 03 | 学校是真的 | V2 version | 合规 |
 | 03 | 再问下去，是不是工资卡也要交出来？ | Scene 7 version | 合规 |
 | 03 | 结婚以后钱最好放一起管 | Scene 7 version | 合规 |
 | 04 | 报销审批通过 | Scene 4 version | 合规 |

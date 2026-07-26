@@ -471,12 +471,12 @@ async function runCase3DayRoutes() {
     name: "case3-day-map",
     interludeAction: "profile-closed-zhang",
     dayScenes: [
-      { id: "day-profile-teahouse", text: "两段聊天都调出来" },
+      { id: "day-profile-teahouse", text: "你先看聊天" },
       { id: "day-profile-cousin-doorstep", text: "门只开到防盗链" }
     ],
-    opener: "介绍人双边记录",
-    openerText: "‘收入稳’，她给我家加的",
-    conflictText: "她替你家添了‘收入稳’"
+    opener: "两边的完整聊天",
+    openerText: "我把介绍人两边的聊天都看完了",
+    conflictText: "她说他收入稳，你当时问过她凭什么吗"
   });
   await runOfflineDayMap({
     chapter: 3,
@@ -484,10 +484,10 @@ async function runCase3DayRoutes() {
     interludeAction: "profile-closed-zhang",
     dayScenes: [
       { id: "day-profile-credential-docs", text: "学历核验页与存款证明对读", rows: ["p04"] },
-      { id: "day-profile-teahouse", text: "两段聊天都调出来" }
+      { id: "day-profile-teahouse", text: "你先看聊天" }
     ],
     opener: "双份材料圈注",
-    openerText: "哪张纸上都没有",
+    openerText: "学校那页只写了 MBA 项目",
     reactionText: "她拍我家的群。给一个直播间。",
     reactionChoice: "push-back",
     reactionResponse: "你先让我把这段说完。"

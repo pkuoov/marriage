@@ -440,21 +440,21 @@
     "03-profile": {
       "reviewedAt": "2026-07-26",
       "opening": [
-        { "fromAnchor": "不敢带他见父母", "toAnchor": "见父母这件事先停一下", "relation": "咨询者先交代四张图带来的直接后果，主播先允许她暂停饭局，不急着判断材料。" },
-        { "fromAnchor": "不急着替那四张图下结论", "toAnchor": "见过几次", "relation": "暂缓材料结论后，主播另起一问，确认关系进度和见父母日期。" },
-        { "fromAnchor": "什么时候见父母", "toAnchor": "这个周末", "relation": "咨询者直接回答见面次数和原定日期。" },
-        { "fromAnchor": "本来要见父母", "toAnchor": "现在不想带他去", "relation": "主播听见计划被说成“本来”，确认她是否已经动摇。" },
-        { "fromAnchor": "现在不想带他去", "toAnchor": "我不敢", "relation": "咨询者直接回答不敢，再说明家里已经听到的条件版本。" },
-        { "fromAnchor": "几张材料", "toAnchor": "你开口要的吗", "relation": "材料令她动摇后，主播先核对这些材料由谁提出。" },
-        { "fromAnchor": "你开口要的吗", "toAnchor": "只跟他说", "relation": "咨询者回答自己只提学校和工作，并区分后来主动补来的材料。" }
+        { "fromAnchor": "还该不该带他回家", "toAnchor": "周末这顿饭可以先放一放", "relation": "咨询者直接问是否还该带人回家，主播先允许她暂停饭局，不急着判这段关系。" },
+        { "fromAnchor": "先把这四张图说清楚", "toAnchor": "你们见过几次", "relation": "接住去不去饭局以后，主播另起一问，先确认关系进展到哪一步。" },
+        { "fromAnchor": "见过几次", "toAnchor": "见过四次", "relation": "咨询者直接回答见面次数和原定见父母日期。" },
+        { "fromAnchor": "见过四次", "toAnchor": "那四张是什么", "relation": "四次见面已经走到见父母，主播顺着她开场提到的四张材料问具体内容。" },
+        { "fromAnchor": "那四张是什么", "toAnchor": "学校、公司", "relation": "咨询者逐项回答材料内容，并说明自己此前已向家里夸过对方。" },
+        { "fromAnchor": "学校、公司", "toAnchor": "这些材料是你开口要的吗", "relation": "材料内容已经明确，主播转而核对是谁提出这些证明要求。" },
+        { "fromAnchor": "这些材料是你开口要的吗", "toAnchor": "不是", "relation": "咨询者直接否认，再区分自己只提学校和工作、男方主动补收入与存款。" }
       ],
       "scenes": {
         "profile-proof-before-dinner": {
-          "entry": { "mode": "continue", "fromAnchor": "存款证明", "toAnchor": "收入和存款都不是我问的", "relation": "开场已经说明她只提学校和工作，主播只追问额外两项如何出现；咨询者按中午三张、晚上补一张的顺序回答。" },
+          "entry": { "mode": "continue", "fromAnchor": "真没人问他要", "toAnchor": "我根本没问过存款", "relation": "开场已说明最后一张并非索要，主播问男方如何解释；咨询者按中午三张、晚上补一张的顺序回忆，并承认自己先被金额安抚。" },
           "questionOptions": [
-            { "contextAnchor": "收入和存款都不是我问的", "questionAnchor": "为什么连收入和存款", "answerAnchor": "省得饭桌上解释", "guardedAnswerAnchor": "不是我开口要的", "relation": "主播沿她明确未索要的两项问对方解释，回答只提供“省得解释”这一原话。" },
-            { "contextAnchor": "最后不知道该回哪张", "questionAnchor": "你当时起疑了吗", "answerAnchor": "当时只觉得省事", "relation": "材料连发造成停顿后，主播问她当时有没有起疑，回答承认自己先把额外材料理解成省事。" },
-            { "contextAnchor": "二十八万六的存款证明", "questionAnchor": "能证明多久", "answerAnchor": "一天", "relation": "从具体存款证明询问时间效力，审计从业者回答只覆盖开具当日。" }
+            { "contextAnchor": "我根本没问过存款", "questionAnchor": "后来问过原因吗", "answerAnchor": "没问过", "guardedAnswerAnchor": "没问", "relation": "主播沿她未索要存款这一事实问是否追过原因；回答承认自己只回收到，并把主动证明先理解成周到。" },
+            { "contextAnchor": "手机连续亮了三次", "questionAnchor": "当晚就转给家里了吗", "answerAnchor": "转了", "relation": "材料连续到达后，主播问她是否马上转发；回答交代母亲见到校名和余额后立即推进饭局。" },
+            { "contextAnchor": "二十八万六的存款证明", "questionAnchor": "除了日期和余额", "answerAnchor": "没有", "relation": "主播只问证明上实际还有哪些字段；回答把可见范围限定在开具日与余额。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "见过四次", "questionAnchor": "见了几次", "answerAnchor": "四次", "relation": "回到开场见面次数，补足四次见面的具体形式。" },
@@ -462,23 +462,23 @@
           ]
         },
         "profile-dinner-pause": {
-          "entry": { "mode": "continue", "fromAnchor": "省得饭桌上解释", "toAnchor": "第一次正式吃饭", "relation": "对方说材料可免去饭桌解释，本段进入那顿正式饭局检验是否真的解释清楚。" },
+          "entry": { "mode": "continue", "fromAnchor": "饭桌上再解释", "toAnchor": "学历真的说清楚了吗", "relation": "男方把发材料解释为免去饭桌说明，主播顺势回到那顿饭，核对学历是否真的当面说清。" },
           "questionOptions": [
-            { "contextAnchor": "也算吧，MBA", "questionAnchor": "下一句问了什么", "answerAnchor": "没问", "guardedAnswerAnchor": "没把本科那句逼出来", "relation": "主播沿对方的含混回答问咨询者是否继续追本科，回答承认她让问题过去。" },
-            { "contextAnchor": "服务员来加水", "questionAnchor": "怎么就不问了", "answerAnchor": "也怕尴尬", "relation": "从现场打断问她为何顺势停下，回答落到尴尬与见父母计划。" },
+            { "contextAnchor": "也算吧，我读的是 MBA", "questionAnchor": "为什么没接着问", "answerAnchor": "我先跟家里说的", "guardedAnswerAnchor": "没问", "relation": "主播指出MBA没有回答本科并追问她为何停下；回答落到她怕暴露自己先把话说满。" },
+            { "contextAnchor": "服务员来添水", "questionAnchor": "还回到本科", "answerAnchor": "没有", "relation": "从现场打断继续问服务员离开后是否恢复话题；回答说明两人共同把尴尬带开。" },
             { "contextAnchor": "第一次正式吃饭", "questionAnchor": "谁结的账", "answerAnchor": "他付的", "relation": "沿这顿饭补问实际付款，回答给出团购、积分和停车费分摊。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "介绍人订的靠窗位", "questionAnchor": "为什么推荐", "answerAnchor": "包间安静", "relation": "介绍人已负责选店，补问她推荐此处的理由和实际座位变化。" },
-            { "contextAnchor": "我才问", "questionAnchor": "谁先把条件聊成问题", "answerAnchor": "准确说", "relation": "从咨询者主动问本科，核对是谁先把条件摆上饭桌。" }
+            { "contextAnchor": "介绍人订了窗边", "questionAnchor": "为什么推荐", "answerAnchor": "那家安静", "relation": "介绍人已负责选店，补问她推荐此处的理由和实际座位变化。" },
+            { "contextAnchor": "你说的名校，本科也是那儿的吗", "questionAnchor": "已经觉得那张学校图有问题", "answerAnchor": "还没有", "relation": "从她主动问本科追问当时是否已有材料疑点；回答说明她本想把介绍人口中的学校好问具体。" }
           ],
           "closer": { "anchor": "台灯换个档", "routeIndependent": true, "relation": "调台灯只提供呼吸，不依赖任何分支，也不提前交代介绍链是谁加了词。" }
         },
         "profile-caller-repeats-label": {
-          "entry": { "mode": "continue", "fromAnchor": "你说的名校", "toAnchor": "介绍人一开始夸他", "relation": "饭桌上已出现“名校”称呼，本段往前追这层说法最初如何经介绍人和咨询者形成。" },
+          "entry": { "mode": "continue", "fromAnchor": "你说的名校", "toAnchor": "你回家以后是怎么跟家里说的", "relation": "饭桌上已出现“名校”称呼，本段往前追这层说法最初如何经介绍人和咨询者形成。" },
           "questionOptions": [
-            { "contextAnchor": "我只说他学校那边确实是真的", "questionAnchor": "为什么只回", "answerAnchor": "因为改口难看", "guardedAnswerAnchor": "校名是真的", "relation": "主播沿她自己承认的缩短回复追问原因，回答落到此前已经对家里说满。" },
-            { "contextAnchor": "本科没有", "questionAnchor": "没问本科", "answerAnchor": "没问", "relation": "原图缺少本科后，主播核对母亲是否发现，回答说明咨询者也没有提醒。" }
+            { "contextAnchor": "本科不在那张图上", "questionAnchor": "为什么还只回", "answerAnchor": "我嫌难看", "guardedAnswerAnchor": "校名是真的", "relation": "主播沿她看见本科缺失却只确认学校的动作问原因；回答落到母亲已向亲戚夸过和她不愿承认没问清。" },
+            { "contextAnchor": "本科不在那张图上", "questionAnchor": "没问本科在哪儿读", "answerAnchor": "没问", "relation": "原图缺少本科后，主播核对母亲是否发现；回答说明母女都选择相信先前说法。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "介绍人", "questionAnchor": "什么关系", "answerAnchor": "老同事", "relation": "从介绍人的条件转述补问她与男方家的现实关系。" },
@@ -486,55 +486,55 @@
           ]
         },
         "profile-introducer-two-prices": {
-          "entry": { "mode": "continue", "fromAnchor": "介绍人", "toAnchor": "介绍人偏男方", "relation": "上一段已经追到介绍人的转述，本段进入两家围绕她是否偏袒的争执。" },
+          "entry": { "mode": "continue", "fromAnchor": "介绍人", "toAnchor": "替男方骗人", "relation": "上一段已追到介绍人的转述，本段由母亲的指责引出介绍人发送两边完整聊天自辩。" },
           "questionOptions": [
-            { "contextAnchor": "两边原话都在", "questionAnchor": "为什么把两边都说得那么省心", "answerAnchor": "也想把这事做成", "guardedAnswerAnchor": "两边都挑好听的", "relation": "两份原话显示两边都被说轻后，回答补出旧人情和促成相亲的利益；防备回答只承认双边添话，不假装没看过男方家的截图。" },
-            { "contextAnchor": "收入稳", "questionAnchor": "替他的收入作过证", "answerAnchor": "没有", "relation": "从介绍人使用的收入标签核对证据范围，回答明确她没有金额或来源。" },
-            { "contextAnchor": "给你家是学校好", "questionAnchor": "原话是怎么跟你妈说", "answerAnchor": "名校毕业，条件不错", "relation": "主播先抓介绍人对女方家的原话，再让咨询者复述自己回家加上的完整版本。" }
+            { "contextAnchor": "给男方家的聊天", "questionAnchor": "为什么这么急着", "answerAnchor": "男方家以前帮过她", "guardedAnswerAnchor": "这个人情还上", "relation": "两边聊天已经出现，主播问介绍人为何急于促成；回答补出旧人情和先见一面的愿望。" },
+            { "contextAnchor": "收入稳", "questionAnchor": "看过工资，还是听男方家说的", "answerAnchor": "听男方家说的", "relation": "主播沿介绍人的具体说法追问依据；回答明确她没看过工资或流水。" },
+            { "contextAnchor": "只讲过“学校不错”", "questionAnchor": "说成了什么", "answerAnchor": "名校毕业，条件不错", "relation": "主播先限定介绍人的原话，再让咨询者复述自己回家加重后的说法。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "给他家", "questionAnchor": "怎么知道", "answerAnchor": "他转过一段聊天", "relation": "两边截图出现后补问男方家那份话术的取得来源。" },
-            { "contextAnchor": "偏男方", "questionAnchor": "偏谁", "answerAnchor": "她偏她自己", "relation": "沿母亲的偏袒指控问咨询者当时判断，回答落到介绍人先想促成饭局。" }
+            { "contextAnchor": "给男方家的聊天", "questionAnchor": "以前见过吗", "answerAnchor": "第一次看见", "relation": "两边截图出现后补问咨询者此前是否知道男方家收到的说法。" },
+            { "contextAnchor": "替男方骗人", "questionAnchor": "当时觉得介绍人偏谁", "answerAnchor": "当时觉得她偏男方", "relation": "沿母亲的偏袒指控问咨询者当时判断；回答再因另一边聊天修正为介绍人急于促成。" }
           ],
-          "closer": { "anchor": "水杯见底", "routeIndependent": true, "relation": "喝水停顿不新增证词，任一分支后都可继续核对学校图片。" }
+          "closer": { "anchor": "倒点水", "routeIndependent": true, "relation": "喝水停顿不新增证词，任一分支后都可继续核对学校图片。" }
         },
         "profile-mba-wording": {
-          "entry": { "mode": "continue", "fromAnchor": "给你家是学校好", "toAnchor": "我家一直按“名校毕业”理解", "relation": "介绍人的“学校好”和咨询者的回家转述已经分开，本段检查学校图究竟支撑哪一层。" },
+          "entry": { "mode": "continue", "fromAnchor": "后面那句“名校毕业”不是她的话", "toAnchor": "又问过本科", "relation": "介绍人的截图已经否认自己说过“名校毕业”，主播接着问饭后是否补问本科；回答交代男方这次明确说本科不在该校。" },
           "questionOptions": [
-            { "contextAnchor": "校名是真的，项目也是真的", "questionAnchor": "写了什么，没写什么", "answerAnchor": "没写本科", "guardedAnswerAnchor": "本科、项目性质和学制", "relation": "主播只按图片可见字段问有无，回答列出校名项目与三个缺失限定。" },
-            { "contextAnchor": "跟家里只回“学校是真的”", "questionAnchor": "告诉家里了吗", "answerAnchor": "没有", "relation": "从她已经承认的简化回复核对后来补问出的限定是否传回家里。" }
+            { "contextAnchor": "本科不是那所", "questionAnchor": "只看那张学校图", "answerAnchor": "看不出来", "guardedAnswerAnchor": "看不出来", "relation": "男方已在微信明确本科不在该校，主播反查原图是否能显示本科；回答限定图上只有校名和MBA项目。" },
+            { "contextAnchor": "没把本科那句补上", "questionAnchor": "告诉家里了吗", "answerAnchor": "没有", "relation": "从她已经承认未补本科的动作核对家里是否收到完整信息。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "也算吧，MBA", "questionAnchor": "语气什么样", "answerAnchor": "一口气就说完", "relation": "沿饭桌上的MBA解释问当时说法，回答区分项目名流畅与本科处停顿。" },
+            { "contextAnchor": "本科不是那所", "questionAnchor": "语气什么样", "answerAnchor": "一口气就说完", "relation": "沿微信里明确的本科答案追问当时说法，回答区分项目名流畅与本科处停顿。" },
             { "contextAnchor": "名校毕业", "questionAnchor": "你自己学历", "answerAnchor": "普通一本", "relation": "从她对名校标签的重视补问自身条件，回答承认这层说法也替她增光。" }
           ],
           "closer": { "anchor": "要不要把流水也问了", "routeIndependent": true, "relation": "学校口径问完后，家里群的新问题把话头转到流水，同时故意保留是谁先提的。" }
         },
         "profile-family-chat-origin": {
-          "entry": { "mode": "interrupt", "fromAnchor": "要不要把流水也问了", "toAnchor": "今天下午，他又发来一张", "relation": "家里群刚转到流水，对方当天新发的存款证明打断并把争执带到新的余额图。" },
+          "entry": { "mode": "continue", "fromAnchor": "要不要把流水也问了", "toAnchor": "那张新证明发来以后", "relation": "上一段由群里那句把话头带到流水，主播让她从新证明到家里群按顺序往下讲；她先交代自己如何借母亲的名义追问，把真正的主语留给下一问。" },
           "questionOptions": [
-            { "contextAnchor": "一直跟他说，是我妈想看流水", "questionAnchor": "为什么一直说", "answerAnchor": "我自己问", "guardedAnswerAnchor": "流水是我先提", "relation": "主播沿她反复使用的主语问原因，回答说明借母亲开口能让自己显得不只盯钱，并承认流水最先由自己提出。" },
-            { "contextAnchor": "结婚以后钱最好一起管", "questionAnchor": "原样告诉他了吗", "answerAnchor": "没有", "relation": "群里已经出现婚后管钱原话，主播核对她是否完整转告，回答说明只递了稳定要求。" }
+            { "contextAnchor": "最先把“要不要问流水”发进群里的人", "questionAnchor": "是谁", "answerAnchor": "我。可我自己问", "guardedAnswerAnchor": "我先提的", "relation": "咨询者已承认一直隐去最先发问者，主播直接追主语；回答承认自己先提，并说明借母亲开口更好看。" },
+            { "contextAnchor": "结婚以后钱最好放在一起管", "questionAnchor": "原样告诉他了吗", "answerAnchor": "没有", "relation": "群里已经出现婚后管钱原话，主播核对她是否完整转告，回答说明只递了稳定要求。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "团购、积分，停车费再 AA", "questionAnchor": "算钱时会跟你解释", "answerAnchor": "都说得很清楚", "relation": "从她反复记住的付款细节补问对方当时是否解释，回答给出她原先的正面理解。" },
+            { "contextAnchor": "券、积分、停车费都要讲清", "questionAnchor": "算钱时会跟你解释", "answerAnchor": "都说得很清楚", "relation": "从她反复记住的付款细节补问对方当时是否解释，回答给出她原先的正面理解。" },
             { "contextAnchor": "我妈", "questionAnchor": "见过他照片", "answerAnchor": "见过", "relation": "沿母亲参与筛选补问她见过哪些基础资料。" },
             { "contextAnchor": "我妈", "questionAnchor": "现在什么态度", "answerAnchor": "先别把人得罪死", "relation": "从母亲仍催见父母补问当前态度，回答给出重复多次的原话。" }
           ]
         },
         "profile-income-and-card": {
-          "entry": { "mode": "continue", "fromAnchor": "结婚以后钱最好一起管", "toAnchor": "工资卡也要交出来", "relation": "她刚承认没有把婚后管钱原话转告男方，主播追问工资卡说法如何出现；回答补出她反复查问收入稳定性的过程和男方原话。" },
+          "entry": { "mode": "continue", "fromAnchor": "结婚以后钱最好放在一起管", "toAnchor": "工资卡也要交出来", "relation": "她刚承认没有把婚后管钱原话转告男方，主播追问工资卡说法如何出现；回答补出她反复查问收入稳定性的过程和男方原话。" },
           "questionOptions": [
-            { "contextAnchor": "工资卡也要交出来", "questionAnchor": "你怎么回", "answerAnchor": "只是想看稳定", "guardedAnswerAnchor": "想看稳定", "relation": "主播沿男方的原句问咨询者实际回复，回答说明她只接稳定而避开共同管钱。" },
-            { "contextAnchor": "团购、积分和停车 AA", "questionAnchor": "能证明收入有问题吗", "answerAnchor": "不敢这么说", "relation": "从她用于怀疑收入的小额消费问证据边界，回答撤回以消费习惯证明收入的推断。" }
+            { "contextAnchor": "工资卡也要交出来", "questionAnchor": "你怎么回", "answerAnchor": "只是想知道你收入稳不稳", "guardedAnswerAnchor": "想看稳定", "relation": "主播沿男方的原句问咨询者实际回复；回答说明她只接收入稳定，仍避开婚后共同管钱。" },
+            { "contextAnchor": "团购、积分、停车费 AA", "questionAnchor": "能证明收入有问题吗", "answerAnchor": "不能", "relation": "从她用于怀疑收入的小额消费问证据边界；回答承认自己起疑后把节省习惯都往收入问题上套。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "工资卡也要交出来", "questionAnchor": "多久没正面回", "answerAnchor": "那晚都没正面回", "relation": "沿这条微信补问她回避正面回答的时长，回答限定为当晚只谈稳定、没有接工资卡管理。" },
-            { "contextAnchor": "结婚以后钱最好一起管", "questionAnchor": "一起管钱的例子", "answerAnchor": "我表姐", "relation": "从母亲提出的共同管钱补问她现实参照，回答也暴露她习惯精确计算。" },
-            { "contextAnchor": "他发微信", "questionAnchor": "现在还给你发消息", "answerAnchor": "间隔很规律", "relation": "从仍在进行的微信争执补问目前是否保持联系。" },
+            { "contextAnchor": "结婚以后钱最好放在一起管", "questionAnchor": "一起管钱的例子", "answerAnchor": "我表姐", "relation": "从母亲提出的共同管钱补问她现实参照，回答也暴露她习惯精确计算。" },
+            { "contextAnchor": "饭后发微信问我", "questionAnchor": "现在还给你发消息", "answerAnchor": "间隔很规律", "relation": "从仍在进行的微信争执补问目前是否保持联系。" },
             { "contextAnchor": "这个周末本来要见父母", "questionAnchor": "还想见吗", "answerAnchor": "不知道", "relation": "回扣开场被搁置的周末饭局，回答保留她尚未决定。" }
           ],
-          "closer": { "anchor": "我给这四次见面建了个表", "routeIndependent": true, "relation": "图与工资卡谈完后，咨询者主动披露自己的统计表，把控制欲和焦虑落到她亲手记录的数字上。" }
+          "closer": { "anchor": "我给我们见面的四次都记了账", "routeIndependent": true, "relation": "图与工资卡谈完后，咨询者主动披露自己的私人记录，把焦虑落到她亲手记下的花销和停顿上。" }
         }
       }
     },

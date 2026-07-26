@@ -62,8 +62,8 @@ const DAILY_PLOT_DEFINITIONS = {
     premeditated: false,
     premeditatedActorRole: null,
     accusationChoices: [
-      { label: "“也算吧，MBA。”", accuseRole: "respondent", response: "学校不是假的，但这句话让别人往更好听的方向理解了。" },
-      { label: "“我只说他学校那边确实是真的。”", accuseRole: "complainant", response: "你这句也没说全。前面话说满了，后面就很难自己拆台。" },
+      { label: "“也算吧，我读的是 MBA。”", accuseRole: "respondent", response: "学校不是假的，但这句话让别人往更好听的方向理解了。" },
+      { label: "“学校是真的。”", accuseRole: "complainant", response: "你这句也没说全。前面话说满了，后面就很难自己拆台。" },
       { label: "“再问下去，是不是工资卡也要交出来？”", accuse: "both", response: "这句刺耳，但它碰到的不是学历，是婚后钱怎么管。" },
       { label: "“结婚以后钱最好放一起管。”", accuseRole: "complainant", response: "这句才是流水后面那半句话。不是只验真假，是在试婚后钱归谁管。" }
     ]
@@ -893,10 +893,10 @@ function dailyFakeProfileTemplate(brief, names) {
       ]
     ],
     evidenceCards: [
-      { id: "daily-profile-scale", type: "聊天原话", title: "见面前的问题", front: "学校、工作、收入、存款、流水都被提前问到。", detail: "饭还没吃，条件已经先筛了一轮。", targets: ["truthWithGap"], contradiction: "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。" },
-      { id: "daily-profile-mba", type: "学历材料", title: "名校毕业", front: "细问才知道是 MBA 项目，本科学历没有一起说。", detail: "真标签也能制造过度想象。", targets: ["halfLie"], contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。" },
-      { id: "daily-profile-spending", type: "消费细节", title: "收入和花销", front: "口头收入不错，日常小钱却反复算。", detail: "抠门不等于没钱，但会让收入叙事变得别扭。", targets: ["truthWithGap", "sceneHint"], contradiction: "男方声称收入和日常花销、抠门细节不匹配。" },
-      { id: "daily-profile-flow", type: "聊天原话", title: "流水和工资卡", front: "对方反问：再问下去，是不是工资卡也要交出来？", detail: "这句刺中女方家没有说出口的工资管理预设。", targets: ["sceneHint"], contradiction: "流水追问背后藏着婚后工资透明和上交工资的预设。" }
+      { id: "daily-profile-scale", type: "聊天原话", title: "见面前的问题", front: "见父母还没定，学校、工作、收入、存款和流水已经全摆上了桌。", detail: "她只提过学校和工作；收入、存款是他主动发的，流水是她后来追问的。", targets: ["truthWithGap"], contradiction: "见父母前就要学校、收入、存款和流水，本身已经超过普通寒暄。" },
+      { id: "daily-profile-mba", type: "学历材料", title: "名校毕业", front: "细问才知道是 MBA 项目，本科学历没有一起说。", detail: "图上写的是 MBA，没有写他本科在哪儿读。", targets: ["halfLie"], contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。" },
+      { id: "daily-profile-spending", type: "消费细节", title: "收入和花销", front: "口头收入不错，日常小钱却反复算。", detail: "团购、积分和停车费 AA 只能说明他算钱细，不能说明他没有收入。", targets: ["truthWithGap", "sceneHint"], contradiction: "男方声称收入和日常花销、抠门细节不匹配。" },
+      { id: "daily-profile-flow", type: "聊天原话", title: "流水和工资卡", front: "对方反问：再问下去，是不是工资卡也要交出来？", detail: "她没告诉他，家里还说过婚后工资最好放在一起管。", targets: ["sceneHint"], contradiction: "流水追问背后藏着婚后工资透明和上交工资的预设。" }
     ],
     evidenceChecks: [
       {
@@ -907,7 +907,7 @@ function dailyFakeProfileTemplate(brief, names) {
         options: [
           { label: "本科、项目性质和学制", correct: true, contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。", feedback: "图不一定假，但少的这一块会让“名校毕业”变成另一种听法。", routeAxis: "identity-wording" },
           { label: "截图像不像修过", correct: false, feedback: "修没修先放下，这张图缺的是后半截。", routeAxis: "document-edge" },
-          { label: "介绍人有没有夸张", correct: false, feedback: "介绍人是前因，这张图缺的是另一半。", routeAxis: "caller-credibility" }
+          { label: "介绍人有没有夸张", correct: false, feedback: "介绍人说过什么，不能替这张图补上本科。", routeAxis: "caller-credibility" }
         ]
       },
       {
@@ -916,7 +916,7 @@ function dailyFakeProfileTemplate(brief, names) {
         prompt: "存款证明和收入截图里，还缺哪一块？",
         material: "资料里有一张当日存款证明，余额停在 28.6 万；另一张收入截图只露出“本月到账 3.1 万”和公司抬头。",
         options: [
-          { label: "连续流水和收入构成", correct: true, contradiction: "单张存款证明和当日收入截图撑不起长期收入判断。", feedback: "这一块不补，稳定两个字还是悬着。", routeAxis: "money-flow" },
+          { label: "连续流水和收入构成", correct: true, contradiction: "单张存款证明和当日收入截图撑不起长期收入判断。", feedback: "只有一个月的到账，不能说明他以后每个月都有这笔钱。", routeAxis: "money-flow" },
           { label: "存款当天的余额数字", correct: false, feedback: "余额数字好看，但它只站在那一天。", routeAxis: "money-flow" },
           { label: "截图是不是原图", correct: false, feedback: "原图也可能只截到最好看的那一页。", routeAxis: "document-edge" }
         ]

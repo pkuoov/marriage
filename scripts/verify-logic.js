@@ -1900,7 +1900,7 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
 test("EPISODE-001E", "all four demo cases preserve human causality and evidence boundaries", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const allText = JSON.stringify(briefs);
-  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|上个月发过一张办材料的截图|东西送到哪儿，我今晚还不想说|买了什么，我现在不想说|买了什么……这句我先不说|先让我把账算完|还想转给他时，心里怎么想的|后来你是怎么发现这个顺序的|你从这段关系里拿过什么好处|你白天去了哪里，先说给我听|你先把昨晚突然挂断的事说清楚|那四张材料是怎么发来的|他问到工资卡以后呢|下一句通常是什么|那次六折，你当时觉得他为什么愿意给|这条不算骂|二十九。说的|在我这里。你等一下，我把灯拖过来|面……看心情吧|账单里剩下那三万五……让我缓一晚|好，我不逼你今晚说|账单里那三万五你继续问|你先别问我，先看他的图|钱就是那次“你先顶上”刷进我个人卡的|新批注和审批页对不上|为什么没继续问回单号|那三张审批图里有什么|垫的钱是多少|红包发完以后呢|后半句，你别逼我|欠条有没有|为什么一直没提欠条/;
+  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|上个月发过一张办材料的截图|东西送到哪儿，我今晚还不想说|买了什么，我现在不想说|买了什么……这句我先不说|先让我把账算完|还想转给他时，心里怎么想的|后来你是怎么发现这个顺序的|你从这段关系里拿过什么好处|你白天去了哪里，先说给我听|你先把昨晚突然挂断的事说清楚|那四张材料是怎么发来的|他问到工资卡以后呢|下一句通常是什么|那次六折，你当时觉得他为什么愿意给|这条不算骂|二十九。说的|在我这里。你等一下，我把灯拖过来|面……看心情吧|账单里剩下那三万五……让我缓一晚|好，我不逼你今晚说|账单里那三万五你继续问|你先别问我，先看他的图|钱就是那次“你先顶上”刷进我个人卡的|新批注和审批页对不上|为什么没继续问回单号|那三张审批图里有什么|垫的钱是多少|红包发完以后呢|后半句，你别逼我|欠条有没有|为什么一直没提欠条|先别一句一个骗|说高、说低，两边都有|你要骂，按句骂|我承认添话，不认凭空造人|两套报价并排|不替任何一边省掉半句/;
   assert(!staleCausality.test(allText), "四案不能重新引入无来源预设、重复追问、作者金句或会议纪要腔旧台词");
   assert(!allText.includes("TA"), "四案玩家可见内容不得用 TA 代替具体人物");
   briefs.forEach((brief) => {
@@ -1926,8 +1926,10 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(byPlot["tony-multi-dating"], "这条语音有没有原样发给别人，今晚没有证据", "案二必须把相似话术与同一条录音分开，不能拿前者替后者作证");
   assertIncludes(byPlot["tony-multi-dating"], "“只有你能接住我”这条语音是否原样发给过其他人", "案二真相边界必须显式保留录音是否复用这一未知项");
   assert(!byPlot["tony-multi-dating"].includes("同一句“只有你懂我”也发给了几个人"), "案二不得把相似专属话术升级成已证实的同句群发");
-  assertIncludes(byPlot["education-income-fake-profile"], "那张图上到底写了什么，没写什么", "案三必须先核图片字段再讨论名校标签");
-  assertIncludes(byPlot["education-income-fake-profile"], "后来补问出来的那些信息", "案三各选项不得引用只在兄弟分支出现的‘这三样’");
+  assertIncludes(byPlot["education-income-fake-profile"], "只看那张学校图，能看出他本科在哪儿读吗", "案三必须先核图片字段再讨论名校标签");
+  assertIncludes(byPlot["education-income-fake-profile"], "后来问清的本科", "案三各选项不得引用只在兄弟分支出现的‘这三样’");
+  assertIncludes(byPlot["education-income-fake-profile"], "工资、流水，你一样都没见过", "案三茶馆必须先追介绍人说法的依据，不能让她进场自报完整审查结论");
+  assertIncludes(byPlot["education-income-fake-profile"], "两边聊天我都留着，前后几句也一起截", "案三保存材料必须写成具体动作，不能由主播复述两组证据分类");
   assertIncludes(byPlot["workplace-reimbursement-screenshot"], "最后收钱的账户，单上有吗", "案四报价单只能追到对接人，不能替账户作证");
   assertIncludes(byPlot["workplace-reimbursement-screenshot"], "为什么没再追问钱到底什么时候到", "案四只能追问咨询者当时已经知道该问的到账时间，不能倒灌白天才学到的回单号术语");
   assert(!byPlot["workplace-reimbursement-screenshot"].includes("欠条"), "案四公司报销关系不得被写成私人借贷欠条");
@@ -2082,19 +2084,19 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   const introducerScene = brief.sceneVersions.find((scene) => scene.version.includes("介绍人"));
   const dinnerScene = brief.sceneVersions.find((scene) => scene.version.includes("第一次正式吃饭"));
   const mbaScene = brief.sceneVersions.find((scene) => scene.version.includes("MBA") && scene.version.includes("本科"));
-  const spendingScene = brief.sceneVersions.find((scene) => scene.version.includes("团购") && scene.version.includes("停车 AA"));
+  const spendingScene = brief.sceneVersions.find((scene) => scene.version.includes("团购") && scene.version.includes("停车费 AA"));
   const wageScene = brief.sceneVersions.find((scene) => scene.version.includes("工资"));
   assertIncludes(brief.sceneVersions[0].version, "见父母", "第一段必须指出见家长前问得过细本身不正常");
   assertIncludes(sceneVersionsText, "介绍人", "扩成长案后必须交代体面标签不是单人凭空出现");
   assertIncludes(sceneVersionsText, "第一次正式吃饭", "扩成长案后必须还原第一次饭局现场");
-  assertIncludes(sceneVersionsText, "两边", "扩成长案后必须还原介绍链双面话术");
+  assertIncludes(sceneVersionsText, "给男方家的聊天", "扩成长案后必须还原介绍链双面话术");
   assert(introducerScene, "扩成长案后必须有介绍人参与的场景");
   assert(dinnerScene, "扩成长案后必须有第一次饭局场景");
   assert(mbaScene, "MBA 必须是追问后才揭示出的具体说法，并明确本科学历有落差");
   assert(spendingScene, "收入疑点必须来自日常观察而不只是截图缺边");
   assert(wageScene, "女方家关注流水必须连到婚后管钱预设");
   assertIncludes(JSON.stringify(brief), "工资卡", "追问流水必须触发额外隐藏信息");
-  assertIncludes(brief.deepFollowup?.question, "有没有把自己的收入告诉过他", "满格后必须从已出现的收入要求追问咨询者是否承担同等透明义务");
+  assertIncludes(brief.deepFollowup?.question, "他知道你每个月工资有多少吗", "满格后必须从已出现的收入要求追问咨询者是否承担同等透明义务");
   assertIncludes(brief.deepFollowup?.answer, "一万出头", "深入一问必须用具体数字揭示咨询者自身经济压力");
 });
 
@@ -2998,7 +3000,7 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
   const initial = initialOvernightStateFor(brief);
   assert(!canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-profile-teahouse"] }), "案 3 只去一处不能进入第二夜");
   assert(canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-profile-teahouse", "day-profile-cousin-doorstep"] }), "案 3 去满两处后必须允许回拨");
-  const case3OpenerIds = ["介绍人双边记录", "介绍人添话标记", "表姐门口口供", "双份材料圈注", "家里群原话", "饭局停顿回放"];
+  const case3OpenerIds = ["两边的完整聊天", "她没核实的两句话", "表姐门口口供", "双份材料圈注", "家里群原话", "饭局停顿回放"];
   case3OpenerIds.forEach((itemId) => {
     assert(availableOvernightCallbackOpeners(brief, [itemId]).some((opener) => opener.id === itemId), `案 3 带回 ${itemId} 必须改变第二夜第一句`);
     assert(overnightCallbackOpenerById(brief, itemId)?.firstConflict?.hostLine, `案 3 带回 ${itemId} 必须改变第二夜第一轮对峙`);
