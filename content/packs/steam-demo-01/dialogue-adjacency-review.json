@@ -43,10 +43,10 @@
               "relation": "关窗插曲后先复述加班说法，再核对借钱前是否交代工作异常。"
             },
             {
-              "contextAnchor": "社保那一栏已经停了两个多月",
-              "questionAnchor": "社保已经停了两个多月",
-              "answerAnchor": "问了句",
-              "relation": "复述截图上的断缴信息，再问她当时有没有核实。"
+              "contextAnchor": "工资记录没发",
+              "questionAnchor": "为什么拿社保记录代替工资记录",
+              "answerAnchor": "工资明细太私密",
+              "relation": "咨询者已经说明自己索要工资记录却只收到社保记录，主播追问男方当时如何解释替代；回答保留其漏缴辩解，也明确该页面不能证明仍在职。"
             }
           ],
           "freeQuestions": [
@@ -67,9 +67,9 @@
         "credit-eight-wan-bill": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "社保那一栏已经停了两个多月",
+            "fromAnchor": "最后一笔停在四月",
             "toAnchor": "社保早就停了",
-            "relation": "从断缴截图继续追到失业后的完整消费账单。"
+            "relation": "咨询者先说明自己索要工资和账单、男方却只发最低还款与社保记录；主播再追问她是否继续索要完整账单。"
           },
           "questionOptions": [
             {

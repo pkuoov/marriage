@@ -134,7 +134,7 @@ test("AVG-002", "dialogue pages keep one short question-answer exchange and spli
   assertEqual(openingPages[1].lines.map((line) => line.role).join(","), "host,caller", "短问答必须同页成组");
   assertEqual(openingPages[2].lines.map((line) => line.role).join(","), "host,caller", "金额问答必须同页成组");
 
-  const longReply = "他说最近奖金晚发，让我先帮他挡几天。后来我重新翻聊天记录，才看到上个月那张材料截图里社保已经停了两个多月。可那段时间他每天还在跟我说加班，我一直没有往失业那边想。";
+  const longReply = "他说最近奖金晚发，让我先帮他挡几天。八万太多，我让他把账单和最近的工资记录发来。他没发工资，只发来一张社保缴费记录，说公司只是漏缴。可最后缴费月份停在四月，那段时间他还每天跟我说加班。";
   const longPages = groupDialogueTurns([
     { role: "host", speaker: "林旭阳", text: "那你后来为什么没有直接转给他？" },
     ...chunkDialogueTurn({ role: "caller", speaker: "咨询者", text: longReply }, 56)
@@ -1899,7 +1899,7 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
 test("EPISODE-001E", "all four demo cases preserve human causality and evidence boundaries", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const allText = JSON.stringify(briefs);
-  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|东西送到哪儿，我今晚还不想说|买了什么，我现在不想说|买了什么……这句我先不说|先让我把账算完|还想转给他时，心里怎么想的|后来你是怎么发现这个顺序的|你从这段关系里拿过什么好处|你白天去了哪里，先说给我听|你先把昨晚突然挂断的事说清楚|那四张材料是怎么发来的|他问到工资卡以后呢|下一句通常是什么|那次六折，你当时觉得他为什么愿意给|这条不算骂|二十九。说的|在我这里。你等一下，我把灯拖过来|面……看心情吧|账单里剩下那三万五……让我缓一晚|好，我不逼你今晚说|账单里那三万五你继续问|你先别问我，先看他的图|钱就是那次“你先顶上”刷进我个人卡的|新批注和审批页对不上|为什么没继续问回单号|那三张审批图里有什么|垫的钱是多少|红包发完以后呢|后半句，你别逼我|欠条有没有|为什么一直没提欠条/;
+  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|上个月发过一张办材料的截图|东西送到哪儿，我今晚还不想说|买了什么，我现在不想说|买了什么……这句我先不说|先让我把账算完|还想转给他时，心里怎么想的|后来你是怎么发现这个顺序的|你从这段关系里拿过什么好处|你白天去了哪里，先说给我听|你先把昨晚突然挂断的事说清楚|那四张材料是怎么发来的|他问到工资卡以后呢|下一句通常是什么|那次六折，你当时觉得他为什么愿意给|这条不算骂|二十九。说的|在我这里。你等一下，我把灯拖过来|面……看心情吧|账单里剩下那三万五……让我缓一晚|好，我不逼你今晚说|账单里那三万五你继续问|你先别问我，先看他的图|钱就是那次“你先顶上”刷进我个人卡的|新批注和审批页对不上|为什么没继续问回单号|那三张审批图里有什么|垫的钱是多少|红包发完以后呢|后半句，你别逼我|欠条有没有|为什么一直没提欠条/;
   assert(!staleCausality.test(allText), "四案不能重新引入无来源预设、重复追问、作者金句或会议纪要腔旧台词");
   assert(!allText.includes("TA"), "四案玩家可见内容不得用 TA 代替具体人物");
   briefs.forEach((brief) => {
@@ -1911,6 +1911,13 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   const byPlot = Object.fromEntries(briefs.map((brief) => [brief.plotId, JSON.stringify(brief)]));
   assertIncludes(byPlot["lost-job-hidden-credit"], "你们俩是不是有人是那里的老会员", "案一必须先把会员身份作为假设询问");
   assertIncludes(byPlot["lost-job-hidden-credit"], "是我。我没跟他在一起的时候就办了会员", "案一必须等咨询者确认会员身份后再追过去消费");
+  assertIncludes(byPlot["lost-job-hidden-credit"], "从电子社保卡导出的缴费记录", "案一社保线索必须说明由谁、通过什么载体取得，不能让截图凭空出现");
+  assertIncludes(byPlot["lost-job-hidden-credit"], "工资记录没发", "案一必须说明社保记录为何进入对话，并保留男方没有提供工资记录这一缺口");
+  const case1SocialSecurityCard = briefs
+    .find((brief) => brief.runtimeContentCaseId === "01-credit")
+    ?.evidenceCards?.find((card) => card.id === "daily-credit-social-security");
+  assert(!case1SocialSecurityCard?.front?.includes("五万贷款"), "案一社保截图本身不能提前携带银行流水中的五万贷款");
+  assertIncludes(case1SocialSecurityCard?.detail ?? "", "不能单独确定离职日期", "案一社保材料必须明确缴费中断不等于精确离职日");
   assertIncludes(byPlot["lost-job-hidden-credit"], "送到我这儿了，东西也一直是我在用", "案一被直接问设备去向时必须说出事实并给出人物自己的责任解释，不能为排剧情硬拒答");
   assertIncludes(byPlot["lost-job-hidden-credit"], "我真以为那是他全款买来送我的", "案一必须让咨询者用当时的赠礼理解解释行为，而不是用作者式总结拖延揭示");
   assertIncludes(byPlot["tony-multi-dating"], "你们平时到底怎么相处", "案二第一段必须先补关系背景再进入表格");

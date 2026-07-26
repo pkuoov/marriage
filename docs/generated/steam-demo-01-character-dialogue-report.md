@@ -102,7 +102,7 @@
 - `$case.sceneVersions[0].casualQuestions[0].question` 你们平时谁管钱多一点？
 - `$case.sceneVersions[0].casualQuestions[1].question` 他丢工作前，加班是什么样子？
 - `$case.sceneVersions[0].questionOptions[0].question` 好。你刚才说，他那段时间还天天讲加班。借钱以前，他有没有提过工作出了问题？
-- `$case.sceneVersions[0].questionOptions[1].question` 好。那张截图上，社保已经停了两个多月。你当场问他了吗？
+- `$case.sceneVersions[0].questionOptions[1].question` 他为什么拿社保记录代替工资记录？
 - `$case.sceneVersions[0].dialogueOptions[0].question` 他当时只说差多少钱吗？
 - `$case.sceneVersions[0].dialogueOptions[1].question` 你当时为什么没接着问工作？
 - `$case.sceneVersions[1].casualQuestions[0].question` 那些餐厅是什么档次？
@@ -202,7 +202,7 @@
 
 - `$case.openingDialogue[0]` 主播，我男朋友以前连打车钱都不让我出，这两天却突然让我替他还八万块信用卡。我没敢转，是不是我太防着他了？
 - `$case.openingDialogue[3]` 半年多。他说最近奖金晚发，信用卡得周转一下，让我先替他垫着。可他开口就是八万。
-- `$case.sceneVersions[0].afterVersion.lines[1]` 我重新翻了一遍聊天记录，看到他上个月发过一张办材料的截图。社保那一栏已经停了两个多月。可那段时间，他每天还在跟我说加班。
+- `$case.sceneVersions[0].afterVersion.lines[1]` 八万太多，我让他把这期账单和最近的工资记录发来。工资记录没发，他只发来一张从电子社保卡导出的缴费记录，说公司这两个月只是漏缴。我把月份往前翻，最后一笔停在四月。可四月以后，他每天还在跟我说加班。
 - `$case.sceneVersions[0].afterVersion.lines[2]` ……你等我一下，我把窗关了。楼下有车在报警，吵。
 - `$case.sceneVersions[1].casualQuestions[3].lines[0]` 嗯。
 - `$case.sceneVersions[1].casualQuestions[3].lines[2]` 一分没少。
@@ -216,7 +216,7 @@
 - `$case.sceneVersions[0].casualQuestions[1].answer` 天天说忙。可几点下班、跟谁吃饭，我都不知道。我们没住一起，他说加班，我就回“早点睡”。
 - `$case.sceneVersions[0].questionOptions[0].answer` 没有。他每天说的都是忙、加班、项目要上线，还说服务器凌晨得有人盯着。有一回我说给他送点吃的，他让我别去，说公司门禁严。现在回头看，那时候他可能已经不去公司了。可工作出了问题，他一个字都没跟我提。
 - `$case.sceneVersions[0].questionOptions[0].guardedAnswer` 他说忙，我就信了。我们没住一起，我也不想天天问他在哪。
-- `$case.sceneVersions[0].questionOptions[1].answer` 问了句“这是什么意思”。他说公司材料没更新，让我别跟着添乱。具体哪天不去上班的，他一直没说。
+- `$case.sceneVersions[0].questionOptions[1].answer` 他说工资明细太私密，社保足够证明公司还在给他办手续，停两个月只是漏缴。可那张记录里没写他还在职，也没写奖金什么时候发。
 - `$case.sceneVersions[0].dialogueOptions[0].answer` 一开始没有。他就说先帮他挡一下，别让卡逾期。我追问，他才把最低还款那一栏截给我看。
 - `$case.sceneVersions[0].dialogueOptions[1].answer` 我怕问重了像查岗。那会儿我还把他当男朋友，不是当一个要对账的人。
 - `$case.sceneVersions[1].version` 要了。他一开始只发了最低还款那一栏，我说想看明细，他才把完整账单补给我。我先看见右上角那个数，七万九……不对，八万零几百，反正是八万出头。往下是餐厅、礼物和两次酒店，再下一行是一万二的短视频平台分期。后面还有几笔男装，加起来一万五左右，都是他平时会买的牌子。我在那儿停了几秒，还是划走了。分期是从他手机上开的，我就拿这句话挡着自己，没再细看。
