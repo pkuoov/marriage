@@ -1839,9 +1839,9 @@ test("EPISODE-001B", "each demo case exposes the caller's self-serving omission"
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const expectedOmissions = {
     "lost-job-hidden-credit": ["撑不住场面", "自己其实很吃那种体面"],
-    "tony-multi-dating": ["自己人", "我不敢问关系"],
+    "tony-multi-dating": ["自己人", "关系我一直没敢问"],
     "education-income-fake-profile": ["一万出头", "流水是我先提的"],
-    "workplace-reimbursement-screenshot": ["主责，我确实想要", "我来扛"]
+    "workplace-reimbursement-screenshot": ["那时候我是真想拿主责", "我来扛"]
   };
   briefs.forEach((brief) => {
     const text = JSON.stringify({
@@ -1900,7 +1900,7 @@ test("EPISODE-001D", "workplace case keeps role pronouns aligned with assigned c
 test("EPISODE-001E", "all four demo cases preserve human causality and evidence boundaries", () => {
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
   const allText = JSON.stringify(briefs);
-  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|上个月发过一张办材料的截图|东西送到哪儿，我今晚还不想说|买了什么，我现在不想说|买了什么……这句我先不说|先让我把账算完|还想转给他时，心里怎么想的|后来你是怎么发现这个顺序的|你从这段关系里拿过什么好处|你白天去了哪里，先说给我听|你先把昨晚突然挂断的事说清楚|那四张材料是怎么发来的|他问到工资卡以后呢|下一句通常是什么|那次六折，你当时觉得他为什么愿意给|这条不算骂|二十九。说的|在我这里。你等一下，我把灯拖过来|面……看心情吧|账单里剩下那三万五……让我缓一晚|好，我不逼你今晚说|账单里那三万五你继续问|你先别问我，先看他的图|钱就是那次“你先顶上”刷进我个人卡的|新批注和审批页对不上|为什么没继续问回单号|那三张审批图里有什么|垫的钱是多少|红包发完以后呢|后半句，你别逼我|欠条有没有|为什么一直没提欠条|先别一句一个骗|说高、说低，两边都有|你要骂，按句骂|我承认添话，不认凭空造人|两套报价并排|不替任何一边省掉半句/;
+  const staleCausality = /订座记录和朋友圈，我|靠窗位是谁订的|我看窗外，他看酒|现在那两个字卡在这儿|这张表记的是发型，还是人能派什么用|那列不是预约|一个把我写成|这三样，你补给家里了吗|材料就对到这儿|先别打。她也是看你困在里面|报价单哪一行写了钱往谁那儿走|领导写了你什么；钱，又写了什么|你第三次为什么还收了|月底，在归档以后|他一直说名校毕业，细问才说是 MBA|他今晚在群里说话了吗|归档前，你最怕补哪七个字|我在他那儿是个项目|那天刚好看到那张表|上个月发过一张办材料的截图|东西送到哪儿，我今晚还不想说|买了什么，我现在不想说|买了什么……这句我先不说|先让我把账算完|还想转给他时，心里怎么想的|后来你是怎么发现这个顺序的|你从这段关系里拿过什么好处|你白天去了哪里，先说给我听|你先把昨晚突然挂断的事说清楚|那四张材料是怎么发来的|他问到工资卡以后呢|下一句通常是什么|那次六折，你当时觉得他为什么愿意给|这条不算骂|二十九。说的|在我这里。你等一下，我把灯拖过来|面……看心情吧|账单里剩下那三万五……让我缓一晚|好，我不逼你今晚说|账单里那三万五你继续问|你先别问我，先看他的图|钱就是那次“你先顶上”刷进我个人卡的|新批注和审批页对不上|为什么没继续问回单号|那三张审批图里有什么|垫的钱是多少|红包发完以后呢|后半句，你别逼我|欠条有没有|为什么一直没提欠条|先别一句一个骗|说高、说低，两边都有|你要骂，按句骂|我承认添话，不认凭空造人|两套报价并排|不替任何一边省掉半句|最后分别要人做什么|三栏念完了|付款一张凭据，到账另一张|赵律师站在控制室门口|我只帮你看纸面：三页都没有回单号|主责，我确实想要|这句我想哭。忍住了|比他半年说的都实在/;
   assert(!staleCausality.test(allText), "四案不能重新引入无来源预设、重复追问、作者金句或会议纪要腔旧台词");
   assert(!allText.includes("TA"), "四案玩家可见内容不得用 TA 代替具体人物");
   briefs.forEach((brief) => {
@@ -1922,7 +1922,7 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(byPlot["lost-job-hidden-credit"], "送到我这儿了，东西也一直是我在用", "案一被直接问设备去向时必须说出事实并给出人物自己的责任解释，不能为排剧情硬拒答");
   assertIncludes(byPlot["lost-job-hidden-credit"], "我真以为那是他全款买来送我的", "案一必须让咨询者用当时的赠礼理解解释行为，而不是用作者式总结拖延揭示");
   assertIncludes(byPlot["tony-multi-dating"], "你们平时到底怎么相处", "案二第一段必须先补关系背景再进入表格");
-  assertIncludes(byPlot["tony-multi-dating"], "最后分别要人做什么", "案二最后一列必须追问三行各自要求的行动，不能复述表面答案");
+  assertIncludes(byPlot["tony-multi-dating"], "先看你自己那行。他下一步想让你做什么", "案二最后一列必须只追咨询者自己的下一步，不能让她口头归纳整张表");
   assertIncludes(byPlot["tony-multi-dating"], "这条语音有没有原样发给别人，今晚没有证据", "案二必须把相似话术与同一条录音分开，不能拿前者替后者作证");
   assertIncludes(byPlot["tony-multi-dating"], "“只有你能接住我”这条语音是否原样发给过其他人", "案二真相边界必须显式保留录音是否复用这一未知项");
   assert(!byPlot["tony-multi-dating"].includes("同一句“只有你懂我”也发给了几个人"), "案二不得把相似专属话术升级成已证实的同句群发");
@@ -2873,11 +2873,11 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   const openerIndex = callbackTexts.indexOf(callbackOpener.line);
   assert(policeIndex >= 0 && policeIndex < openerIndex, "案 2 实际回拨拼装必须先回收民警敲门，再进入带回物 opener");
   assert(policeResponseIndex === policeIndex + 1, "案 2 主播必须在民警揭露后的下一轮先接住咨询者的安全处境");
-  assertIncludes(brief.hostDisclosure?.text ?? "", "民警找到你", "案 2 结案口播必须回应警情本身");
-  assertIncludes(brief.hostDisclosure?.text ?? "", "不能替那十万下结论", "案 2 警情口播必须保留十万元资金路径边界");
-  assertIncludes(brief.stageJudgement ?? "", "联络人却是你的名字和手机号", "案 2 判词必须称量来电人被写进合作介绍的顶重事实");
-  assertIncludes(brief.stageJudgement ?? "", "警察却因此找上了你", "案 2 判词必须回应警察上门造成的现实后果");
-  assertIncludes(brief.stageJudgement ?? "", "不能跟免单、六折混在一起算", "案 2 判词必须把来电人得到的优惠与被写成联络人分开");
+  assertIncludes(brief.hostDisclosure?.text ?? "", "民警为什么找到你", "案 2 结案口播必须回应警情本身");
+  assertIncludes(brief.hostDisclosure?.text ?? "", "还是得等原始记录", "案 2 警情口播必须保留十万元资金路径边界");
+  assertIncludes(brief.stageJudgement ?? "", "名字和手机号写进了别人的合作介绍", "案 2 判词必须称量来电人被写进合作介绍的顶重事实");
+  assertIncludes(brief.stageJudgement ?? "", "警察找上门", "案 2 判词必须回应警察上门造成的现实后果");
+  assertIncludes(brief.stageJudgement ?? "", "不是因为你拿过六折", "案 2 判词必须把来电人得到的优惠与被写成联络人分开");
   assert(!callbackTexts.slice(0, openerIndex).some((text) => text.includes("宸直")), "案 2 带回物 opener 之前不得出现宸直");
   const otherCallerAction = nightActionById(brief, "other-caller-dm");
   const otherCallerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");

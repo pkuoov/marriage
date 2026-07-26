@@ -500,7 +500,7 @@ async function runCase4AdvisorConflict() {
     name: "case4-day-map",
     interludeAction: "zhao-zhou-work",
     interludeChoice: "work-frame-lin",
-    interludeText: "赵律师站在控制室门口",
+    interludeText: "后台连续进来三条回复",
     expectedDaySceneCount: 4,
     dayScenes: [
       {
@@ -512,7 +512,7 @@ async function runCase4AdvisorConflict() {
       { id: "day-work-finance-window", text: "真付了，就让他们报回单号" }
     ],
     opener: "报销流转记录圈注",
-    openerText: "财务通知是九天以后",
+    openerText: "财务说延后，是九天以后",
     conflictText: "财务那时还没说延后",
     reactionText: "弹幕里有人说我蠢。我看见了。",
     reactionChoice: "silence",

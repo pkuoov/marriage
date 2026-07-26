@@ -1718,9 +1718,9 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(openingText.includes("今天轮休") && openingText.includes("在家"), "案二第一夜必须交代咨询者为何在晚间待在家中");
   assert(openingText.includes("酒吧做营销") && openingText.includes("订台") && openingText.includes("照看桌台") && openingText.includes("头发隔一阵就得弄"), "案二必须用职责一致的酒吧营销工作造成高频美发需求");
   assert(!openingText.includes("气氛组") && !JSON.stringify(caseTwo).includes("客服主管"), "案二不得再把两个岗位拼成方便剧情的混合职业");
-  assert(exclusiveText.includes("她靠自己拿提成") && exclusiveText.includes("最晚一档"), "Tony 的情绪价值必须落成当面维护与具体照顾");
+  assert(exclusiveText.includes("她靠自己拿提成") && exclusiveText.includes("最晚那档"), "Tony 的情绪价值必须落成当面维护与具体照顾");
   assert(benefitsText.includes("提成有时当天结") && benefitsText.includes("染发加护理"), "案二必须交代快钱如何转成高频美发消费");
-  assert(caseTwo?.stageJudgement?.includes("这些我不抹"), "案二结案不得因销售动机倒销 Tony 真实发生过的照顾");
+  assert(caseTwo?.stageJudgement?.includes("这些都是真的"), "案二结案不得因销售动机倒销 Tony 真实发生过的照顾");
   assert(callerProfile?.background?.includes("酒吧做营销") && callerProfile?.background?.includes("提成") && callerProfile?.background?.includes("轮休在家"), "案二来电人的固定角色档案必须登记职业、结算方式和连麦地点");
 
   const caseTwoInterlude = interludesByCaseId.get("02-tony");

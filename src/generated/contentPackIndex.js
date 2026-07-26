@@ -871,7 +871,7 @@ export const CONTENT_CAST = {
     "fear": "行业经营动作被一概说成情感骗局。",
     "defense": "只比字段、权限和收益。",
     "voice": {
-      "rhythm": "干脆，常用‘店里会/店里不会’。",
+      "rhythm": "干脆，先说自己开店时真会记什么；被追问到 Tony 时立刻说自己不在场。",
       "lexicon": [
         "标准表",
         "会员维护",
@@ -879,7 +879,7 @@ export const CONTENT_CAST = {
         "私加"
       ],
       "habits": [
-        "先护行业边界再指出异常"
+        "先举自己的旧表，再拒绝替别人的私表作证"
       ],
       "avoid": [
         "替Tony猜感情",
@@ -888,7 +888,7 @@ export const CONTENT_CAST = {
     },
     "knowledgeBoundary": "知道理发店常规运营，不知道这家店和Tony的全部事实。",
     "exampleLines": [
-      "会员维护店里会做；‘下一次推进’不归标准表。到这儿先分开。"
+      "我们会记水温、发型、下次护理。Tony 那几列我没见过，你得问他。"
     ]
   },
   "case2-manager": {
@@ -1284,7 +1284,8 @@ export const CONTENT_CAST = {
       ],
       "habits": [
         "引用流程词加引号",
-        "金额处停顿"
+        "金额处停顿",
+        "一次只讲眼前正在翻的那张纸，不替自己把整条责任链总结完"
       ],
       "avoid": [
         "一开始承认抢项目",
@@ -1299,7 +1300,7 @@ export const CONTENT_CAST = {
       "ending": "保留对机会的主动承担，同时明确钱未还、署名未定。"
     },
     "exampleLines": [
-      "他说我来‘主责’，钱先‘走流程’。我垫了。到现在，没回。"
+      "他说复盘写我主责，让我先顶上。我回得很快。六万八，到现在没回。"
     ]
   },
   "case4-colleague": {
@@ -1324,7 +1325,7 @@ export const CONTENT_CAST = {
     },
     "motivation": "保住项目收益和对上汇报位置，把垫付风险留在执行端。",
     "fear": "审批、付款、到账和署名被放进同一条时间线。",
-    "defense": "每次只承认一个流程片段，强调自己也在替新人争取。",
+    "defense": "只回答眼前被问到的那一步，随后把选择说成咨询者自愿，把延迟推给财务。",
     "voice": {
       "rhythm": "顺滑、像工作消息，责任词精确切分。",
       "lexicon": [
@@ -1339,7 +1340,8 @@ export const CONTENT_CAST = {
       ],
       "avoid": [
         "承认最终受益",
-        "给确定返款日期"
+        "给确定返款日期",
+        "一次把执行主责、审批、付款和返款四层全讲完"
       ]
     },
     "knowledgeBoundary": "知道自己发出的私聊、审批和署名安排；未有材料时不替财务或返点账户作证。",
@@ -1376,7 +1378,7 @@ export const CONTENT_CAST = {
     "fear": "一句‘审批过了’被当成财务承诺。",
     "defense": "不给评价，只列系统状态。",
     "voice": {
-      "rhythm": "平直、编号感强。",
+      "rhythm": "平直、短句，窗口还有人排队时会直接打断。",
       "lexicon": [
         "审批",
         "付款",
@@ -1384,7 +1386,7 @@ export const CONTENT_CAST = {
         "凭证"
       ],
       "habits": [
-        "三节点分开说",
+        "一次回答一个系统状态",
         "明确自己不认私聊"
       ],
       "avoid": [
@@ -1394,7 +1396,7 @@ export const CONTENT_CAST = {
     },
     "knowledgeBoundary": "只知道财务系统与经办材料，不知道私聊动机和返点归属。",
     "exampleLines": [
-      "审批通过不等于付款发起；付款发起也不等于对方到账。现在缺回执。"
+      "这页只到审批。真付了，让经办报回单号。下一位。"
     ]
   },
   "case4-supplier": {
@@ -1518,7 +1520,8 @@ export const CONTENT_CAST = {
       ],
       "avoid": [
         "评价同事",
-        "推测垫款去向"
+        "推测垫款去向",
+        "替来访者把三页材料总结成一张责任表"
       ]
     },
     "knowledgeBoundary": "只知道公开群流程与样本，不知道私聊和钱的去向。",
@@ -4360,16 +4363,16 @@ export const CONTENT_CASES = {
       },
       "accusationChoices": [
         {
-          "label": "“只有我能接住他。”",
+          "label": "“只有你能接住我。”",
           "quoteSourceSceneId": "tony-exclusive-voice",
           "accuseRole": "respondent",
           "response": "这句听起来很专属。可我们目前只确认，他也对别人说过“你和别人不一样”；这条语音有没有原样发给别人，今晚没有证据。"
         },
         {
-          "label": "“他说我像店里自己人。”",
+          "label": "“我听多了，真以为自己对他不一样。”",
           "quoteSourceSceneId": "tony-exclusive-voice",
           "accuseRole": "complainant",
-          "response": "这句也得算在你自己头上。你愿意帮店里，也一直拖着不问“自己人”到底算什么。"
+          "response": "这句是你当时的判断，不是他给过的承诺。你愿意帮店里，也一直拖着没问清关系。"
         },
         {
           "label": "“我从来没说只有你一个。”",
@@ -4449,14 +4452,14 @@ export const CONTENT_CASES = {
           "speakerId": "he",
           "speaker": "咨询者",
           "entryQuestion": "你们平时到底怎么相处？",
-          "version": "我做酒吧营销，别人听见这几个字，有时候说话就不好听。有回店里一个客人拿我开玩笑，他当场回了一句：“她靠自己拿提成，关你什么事。”从那以后，我就在他店里剪头，染发护理也只找他。他知道我下午才醒，总给我留最晚一档。晚上我收工，他也会发语音，说店长又骂他了，末了总有一句：“只有你能接住我。”我听久了，真觉得只有我能接住他。我们没正式在一起，可我就是觉得，他至少不嫌我。店里有活动，我也愿意替他转。",
+          "version": "我做酒吧营销，别人听见这几个字，有时候说话就不好听。有回店里一个客人拿我开玩笑，他当场回了一句：“她靠自己拿提成，关你什么事。”从那以后，我就在他店里剪头，染发护理也只找他。他知道我下午才醒，总把最晚那档留给我。晚上我收工，他也会发语音，说店长又骂他了，最后总来一句：“只有你能接住我。”我听多了，真以为自己对他不一样。我们没正式在一起，这个我知道。可店里要转活动的时候，他说一句“就帮我这一次”，我还是会转。",
           "helperHint": "把你听出来的关系，和他亲口说过的称呼分开。别替任何一边补答案。",
           "revisedVersion": "……“只有你能接住我”，我当宝贝存了半年。看见那张表以后，我再听，像店里一键发出去的。",
           "afterVersion": {
             "lines": [
               {
                 "role": "caller",
-                "text": "我喝口水。你继续。",
+                "text": "我喝口水。你问吧。",
                 "nonLoadBearing": true
               }
             ]
@@ -4511,8 +4514,8 @@ export const CONTENT_CASES = {
               "routeTone": "trust-but-verify"
             },
             {
-              "question": "你一直没再问清楚，是怕他会怎么回答？",
-              "answer": "他叫我自己人，剪头不收钱，满号也留位置。我承认，我听着受用。再问下去，万一他说我就是顾客呢？",
+              "question": "他说“只有你能接住我”的时候，你通常怎么回？",
+              "answer": "我会回他：“有事你就找我。”他叫我自己人，剪头不收钱，满号也留位置，我当然愿意信。可我一直没敢接着问，我们到底算什么。",
               "correct": false,
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
@@ -4536,8 +4539,8 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "he",
           "speaker": "咨询者",
-          "entryQuestion": "你后来为什么会把他的诉苦和转活动放在一起看？",
-          "version": "后来我往回翻，才看出顺序。他先发语音，说店长又骂他了，末了补一句：只跟我讲。我跟朋友提他，也只会说“他说我像店里自己人”。我一心软，他就让我帮忙转活动。我转了。过两天，他又问我哪个朋友要剪头。那阵子我留过一条语音，先放后台吧，我现在听不了。店里确实教客户维护，我拿这句话哄了自己很久。",
+          "entryQuestion": "他跟你诉苦以后，通常还会聊什么？",
+          "version": "以前我没往一块想。他说店长骂他，我就陪他聊；后来让我转活动、问哪个朋友要剪头，我也照做。昨晚把聊天翻到一起，我才觉得这个顺序怪。那阵子我留过一条语音，先放后台吧，我现在听不了。",
           "helperHint": "先不判真心假意。只看每次他说压力大以后，下一步总落到什么行动。",
           "doubt": "情绪求助后面开始接店里的经营目标。",
           "contradiction": "他把亲密聊天接到办卡、带客和朋友圈推广上。",
@@ -4569,7 +4572,7 @@ export const CONTENT_CASES = {
               "answer": "不是每次。最近一次是先让我转活动，过几天又问哪个朋友要剪头。年卡也提过。我现在往回翻，才发现最后总会落到店里的事上。",
               "guardedAnswer": "不是每次都挨着。可活动、剪头、年卡，后来都提过。",
               "logicContract": {
-                "premiseAnchor": "我一心软，他就让我帮忙转活动",
+                "premiseAnchor": "让我转活动、问哪个朋友要剪头",
                 "sourceKind": "caller-statement",
                 "sourceProves": "至少一次情绪倾诉后紧接着出现转活动请求。",
                 "sourceDoesNotProve": "相邻顺序不能单独证明每次倾诉都是为了拉客。",
@@ -4585,7 +4588,7 @@ export const CONTENT_CASES = {
             {
               "question": "你帮他转活动时，觉得自己是在帮谁？",
               "suspicionLabel": "她为什么愿意帮店里",
-              "answer": "帮他，也像在帮“我们以后”。他叫我自己人，给折扣、送护理。我不肯往拉客上想。真想了，我就得问：那我到底算谁？",
+              "answer": "帮他呗。那时候我还跟闺蜜说，等他以后开店，我能不帮吗？现在想想，我们连关系都没说清楚，我已经先把“以后”说出来了。",
               "correct": false,
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
@@ -4653,7 +4656,7 @@ export const CONTENT_CASES = {
             },
             {
               "question": "小妹喊嫂子，你为什么不否认？",
-              "answer": "因为我不想。很虚荣，也很受用。可我没否认一句玩笑，不等于我答应被他们往年卡那边推。",
+              "answer": "因为我不想。我听着挺受用的。可我没回那句“嫂子”，也不是说年卡我就得办。",
               "correct": false,
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
@@ -4678,7 +4681,7 @@ export const CONTENT_CASES = {
           "speakerId": "he",
           "speaker": "咨询者",
           "entryQuestion": "那张表里具体写了什么？",
-          "version": "昨天那张表，表头写预约。可备注里不是“烫发”“修刘海”，是“情绪稳定”“办卡意向强”“朋友多”。我那行三个字：稳情绪。我先截图，才敢往下看。后来发给开过店的大学室友，她没骂人，只让我把店里会记的东西，跟最后一列分开看。",
+          "version": "那张表表头写着预约。我往下看，发型、项目那几格没怎么填，备注倒写得很满：“情绪稳定”“办卡意向强”“朋友多”。我那行是“稳情绪”。我截了图，发给以前开过店的大学室友。她回我：先别哭，把最后一列拍全。",
           "helperHint": "预约表本该记服务。把正常服务信息和那列人的特征分开看。",
           "doubt": "那张表不像普通客户备注，更像在写每个人能带来什么。",
           "contradiction": "他把不同对象按情绪价值、办卡意向和客源资源分类管理。",
@@ -4727,14 +4730,14 @@ export const CONTENT_CASES = {
             {
               "question": "这些备注里，哪一项跟剪头有关？",
               "suspicionLabel": "预约表到底在记什么",
-              "answer": "没有一项。写的全是我能不能哄、会不会办卡、能不能带朋友。发型那一栏反倒空着。",
-              "guardedAnswer": "发型那栏是空的。别的，我不想替他念。",
+              "answer": "没有。发型那格是空的。我看到的就是“稳情绪”“办卡”这些词。",
+              "guardedAnswer": "发型那格是空的。别的，我不想念。",
               "logicContract": {
                 "premiseAnchor": "办卡意向强",
                 "sourceKind": "document-readout",
                 "sourceProves": "表内备注包含情绪、办卡意向和朋友数量。",
                 "sourceDoesNotProve": "这些字段不能单独证明谁建表、谁录入或每一行都对应暧昧关系。",
-                "answerAnchor": "发型那一栏反倒空着",
+                "answerAnchor": "发型那格是空的",
                 "answerAdds": "咨询者确认该页没有记录具体发型，重点落在可维护和可转化特征。",
                 "nextLegalQuestion": "可以与标准服务表对照并追最后一列，不能先认定整家店共同实施感情骗局。"
               },
@@ -4746,7 +4749,7 @@ export const CONTENT_CASES = {
             {
               "question": "看到自己那行“稳情绪”，你先想了什么？",
               "suspicionLabel": "她那栏的“稳情绪”",
-              "answer": "先想是不是全店都这么写。店里确实教统一话术，也有客户维护表。只要大家都有，我还能骗自己是我多心。",
+              "answer": "我先想，他是不是给熟客都这么写。要是大家都一样，至少不是我一个人看走眼。",
               "correct": false,
               "routeAxis": "document-edge",
               "routeTone": "detour"
@@ -4822,15 +4825,15 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "那句“老板娘”以后，他又跟你谈过哪些花钱的事？",
-              "answer": "年卡。没隔多久，说我以后常来，办了方便。后来又提，店要扩大，我可以先投一点。",
+              "question": "那句“老板娘”说完以后，他多久又提到年卡？",
+              "answer": "没几天。他说我以后常来，办了方便。再往后才提到开店，说我也可以先投一点。",
               "guardedAnswer": "提过办卡。投店那句，他后来就岔开了。",
               "logicContract": {
                 "premiseAnchor": "你就是老板娘",
                 "sourceKind": "quoted-message",
                 "sourceProves": "对方曾用“老板娘”描述她在未来店里的位置。",
                 "sourceDoesNotProve": "这句称呼不是正式关系承诺，也不能证明开店计划一定存在。",
-                "answerAnchor": "年卡",
+                "answerAnchor": "没几天",
                 "answerAdds": "称呼后不久出现年卡和投店请求。",
                 "nextLegalQuestion": "可以比较称呼和商业请求的顺序，不能把称呼直接当求婚或投资合同。"
               },
@@ -4840,8 +4843,8 @@ export const CONTENT_CASES = {
               "routeTone": "pressure-point"
             },
             {
-              "question": "他说“老板娘”时，你信了多少？",
-              "answer": "深夜说的。我没当求婚，可我愿意往那边信。现在把后面的年卡、投店接上，我有点犯恶心。",
+              "question": "他发“老板娘”那句时，你怎么回的？",
+              "answer": "我发了个捂脸的表情，没问他是不是认真的。后来他提年卡，我也没把这两件事分开。",
               "correct": false,
               "routeAxis": "identity-wording",
               "routeTone": "detour"
@@ -4892,15 +4895,15 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "表上写“朋友多，带客”。那次六折，他有没有明说过，给你六折是想让你再带人？",
-              "answer": "没有明说。他只说我的朋友按自己人价，店长也点了头。后来他确实问过，哪个朋友还要剪头。六折我拿了，也高兴过；但我不能替他说，当时就是拿折扣换带客。",
+              "question": "他给你闺蜜六折的时候，有没有提过让你继续带人？",
+              "answer": "当时没有。他只说我的朋友按自己人价，店长也点了头。后来他确实问过，哪个朋友还要剪头。可六折那天，他没说这是拿来换人的。",
               "guardedAnswer": "没有明说。折扣我拿了，后来他也问过谁还要剪头。",
               "logicContract": {
                 "premiseAnchor": "朋友多，带客",
                 "sourceKind": "document-readout",
                 "sourceProves": "表格把朋友数量和带客写进同一人的备注。",
                 "sourceDoesNotProve": "这行字不能证明此前六折必然是预设佣金或交换条件。",
-                "answerAnchor": "没有明说",
+                "answerAnchor": "当时没有",
                 "answerAdds": "咨询者确认折扣后确有继续带客的询问，同时拒绝把两者直接定成交换。",
                 "nextLegalQuestion": "可以追问折扣由谁提出以及她是否继续带客，不能替她把折扣定性为交易。"
               },
@@ -4948,7 +4951,7 @@ export const CONTENT_CASES = {
           "speakerId": "he",
           "speaker": "咨询者",
           "entryQuestion": "最后一列写了什么？",
-          "version": "最后那一列，叫“下一次推进”。我那行：年卡已聊，可稳情绪。另一个：能投店，约饭再谈。还有一个：朋友多，带客。我盯了很久。原来不止我一个人在等一句准话。昨晚我还拿“店里都这样”安慰自己。今天我不想再替那一列找理由了。",
+          "version": "最后一列，我看了半天才敢点开。我那行后面写：“年卡已聊，可稳情绪。”下面一个是“能投店，约饭再谈”，还有一个是“朋友多，带客”。我把手机扣在桌上，过了几分钟，又翻回来确认了一遍。",
           "helperHint": "先把服务备注和最后一列分开看。两边各自在安排什么？",
           "doubt": "表格还写了下一步怎么把人往店里推进。",
           "contradiction": "他把不同暧昧对象按可推进资源分层管理。",
@@ -4971,7 +4974,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "表念完了。今晚就到——"
+                "text": "行，我看到你那一行了。今晚先到——"
               },
               {
                 "role": "caller",
@@ -4982,7 +4985,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "caller",
-                "text": "上礼拜他还给我修过刘海，手特别轻。我就想不明白，他给我剪头那么细，怎么又能在表里把我写成那样。"
+                "text": "上礼拜他还给我修过刘海，手特别轻。我就想不明白，他给我剪头发那么仔细，怎么又能在表里把我写成那样。"
               },
               {
                 "role": "host",
@@ -4991,7 +4994,7 @@ export const CONTENT_CASES = {
             ]
           },
           "closureContract": {
-            "entryAnchor": "表念完了",
+            "entryAnchor": "看到你那一行",
             "closerAnchor": "修过刘海",
             "adds": "咨询者在证据讨论结束时主动补入一次细致服务，保留感情上的矛盾感。",
             "openEdge": "手艺上的细致与表格里的分类为何能同时存在。",
@@ -4999,17 +5002,17 @@ export const CONTENT_CASES = {
           },
           "questionOptions": [
             {
-              "question": "这三行写的“下一步”，最后分别要人做什么？",
-              "answer": "办年卡、投店、带客。每个人的写法不一样，可没有一行是在安排发型或者班次。",
-              "guardedAnswer": "都不是发型和班次。再往下我不想替他念。",
+              "question": "先看你自己那行。他下一步想让你做什么？",
+              "answer": "办年卡。“可稳情绪”要怎么稳，我不知道。反正那一行不是在约我下次剪头。",
+              "guardedAnswer": "办年卡。后面那几个字，我不想念。",
               "logicContract": {
-                "premiseAnchor": "下一次推进",
+                "premiseAnchor": "最后一列",
                 "sourceKind": "document-readout",
                 "sourceProves": "最后一列逐行写有年卡、投店、约饭和带客等下一步。",
                 "sourceDoesNotProve": "表格不能证明每一步已经执行，也不能单独证明表中每个人都与Tony暧昧。",
-                "answerAnchor": "办年卡、投店、带客",
-                "answerAdds": "三行的共同方向是商业转化，而不是发型服务或排班。",
-                "nextLegalQuestion": "可以要求Tony解释私表用途，结论仍需保留行业表与私人表的边界。"
+                "answerAnchor": "办年卡",
+                "answerAdds": "咨询者自己的下一步被明确写成继续推进年卡，而不是预约发型。",
+                "nextLegalQuestion": "可以要求 Tony 解释她这一行和其他两行的用途，不能让咨询者替整张表完成一段总括供词。"
               },
               "contradiction": "排班表实为暧昧对象资源分层表。",
               "correct": true,
@@ -5018,7 +5021,7 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你觉得会不会只是店里的玩笑备注？",
-              "answer": "只有我一个，我还能这么骗。可每个人后面都有一个用处，还有下一步。我骗不下去了。",
+              "answer": "可下面不止我一行。有人后面写办卡，有人写带客，还有人写投店。我再说是玩笑，连我自己都不信。",
               "correct": false,
               "routeAxis": "outer-thread",
               "routeTone": "softening"
@@ -5489,8 +5492,8 @@ export const CONTENT_CASES = {
           },
           "default": "neutral",
           "lines": {
-            "defensive": "我差点不打回来。弹幕说我也有份……我自己人那点儿好处，我又没否认。可那列推进，不是我自己写上去的。",
-            "open": "我回来了。表的事你继续问——这回我不替行业开脱。",
+            "defensive": "我差点不打回来。弹幕说我也有份……他给过我的便宜，我没否认。可“下一次推进”不是我让他写的。",
+            "open": "我回来了。表的事你继续问。这回我不先替他说话。",
             "neutral": "我回来了。隔了一天再看，那一列还在。"
           }
         }
@@ -5538,7 +5541,7 @@ export const CONTENT_CASES = {
         },
         "snapshotEcho": {
           "respondent-problem": "昨晚一半人先记了他一票。今晚我把六折和免单也摆上来——这一票你们要改，现在改。",
-          "industry-gray": "昨晚说“行业就这样”的，培训页我翻给你们看了。差的那一列，行业不背。",
+          "industry-gray": "昨晚我还说，店里可能都这么记。培训页翻完，办卡、预约都有，就是没有“下一次推进”。",
           "caller-complicit": "说我也有份的，我听见了。好处我认。可那列推进，先写上去的不是我的手。"
         },
         "liveCounterBeats": [
@@ -5737,7 +5740,7 @@ export const CONTENT_CASES = {
             "backdropClass": "day-studio",
             "kind": "studio",
             "body": {
-              "text": "她那位开过店的朋友如今在摄影棚做造型。她把旧会员表从纸箱里翻出来，又让你把发错的私表放到旁边。",
+              "text": "她那位开过店的朋友如今在摄影棚做造型。她从纸箱里翻出一张旧会员表，又让你把 Tony 发错的表放到旁边。",
               "routeAxis": "process-control",
               "cast": [
                 "开过店的朋友",
@@ -5746,11 +5749,11 @@ export const CONTENT_CASES = {
               "beats": [
                 {
                   "speaker": "开过店的朋友",
-                  "text": "水温、发型、忌讳、办卡可能，我们都会记。熟客多，忘一次就丢人。"
+                  "text": "水温、发型、客人不喜欢聊什么，我们都会记。熟客一多，记岔一次人家就不来了。"
                 },
                 {
                   "speaker": "你",
-                  "text": "你想先看哪一边——店里的标准表，还是她拿过的那些好处？"
+                  "text": "你先帮我看看，正常的会员表一般会记到哪儿？"
                 }
               ],
               "choice": {
@@ -5764,11 +5767,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "开过店的朋友",
-                        "text": "我那张表记到下次护理就停。Tony 那张谁加的，我没在店里。别借我的表给他作证。"
+                        "text": "我这张最多写到下次护理。Tony 那张谁加的，我又没在他店里上过班，你得去问他。"
                       },
                       {
                         "speaker": "你",
-                        "text": "那就只带回边界：旧表能说明行业怎么服务，说明不了 Tony 为什么那样记人。"
+                        "text": "行。我把两张表的不同拍下来。Tony 那几列是谁加的，回去问他。"
                       }
                     ]
                   },
@@ -5780,11 +5783,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "开过店的朋友",
-                        "text": "插号、免单、朋友六折，她都拿过。拿过不等于同意进私表。可她回麦再说自己只是普通顾客，我不认。"
+                        "text": "插号、免单、朋友六折，她都拿过，这个别装没发生。可拿了店里的便宜，跟 Tony 能不能在私表里那样写她，不是一回事。"
                       },
                       {
                         "speaker": "你",
-                        "text": "好处留着，私表也留着。两边不互相抵。"
+                        "text": "明白。她拿过什么，让她自己说；那张表也照样问。"
                       }
                     ]
                   }
@@ -5869,8 +5872,8 @@ export const CONTENT_CASES = {
           "吹风机回放": {
             "line": "吹风机那段，我听清了。那晚他还在店里。背景一直没消失，是我把它剪掉，只留了‘只有你能接住我’。",
             "firstConflict": {
-              "hostLine": "你把吹风机剪掉以后，那句话听起来像只给谁的？",
-              "callerLine": "像只给我的。我就是想这么听。"
+              "hostLine": "你把吹风机的声音剪掉以后，再听那句话，跟原来有什么不一样？",
+              "callerLine": "就像他已经下班了，专门在陪我。那时候我想听成这样。"
             }
           },
           "女客拉群立场": {
@@ -5884,35 +5887,35 @@ export const CONTENT_CASES = {
             "line": "我劝她先退卡，别去堵门。他的电话我也没接。可我没让她删表，这事他得自己说。",
             "firstConflict": {
               "hostLine": "你说止损。要是她把表公开，你会不会又劝她算了？",
-              "callerLine": "不会劝她删。我只是不替她带头。"
+              "callerLine": "不会。我就是不想带头去店里堵人。"
             }
           },
           "培训模板说明": {
-            "line": "培训页我来回看了三遍。店里会教人办卡，这是真的。可‘下一次推进’……没有。我昨晚拿前半张纸给自己垫台阶。",
+            "line": "培训页我翻了两遍，办卡、预约都有。我一直翻到最后，也没找到‘下一次推进’。昨晚那句‘店里都这样’，我可能说早了。",
             "firstConflict": {
-              "hostLine": "你拿“店里都这样”挡了一晚。挡住以后，哪句话就不用问了？",
-              "callerLine": "不用问，他到底把我当什么。"
+              "hostLine": "昨晚你为什么那么急着说‘店里都这样’？",
+              "callerLine": "这么说，我就不用问他为什么单独记那一列了。"
             }
           },
           "店里的标准表": {
-            "line": "两张表摆一起，旧表只记项目、时间和服务备注。那张私表多出的几列，写的是谁好哄、谁能办卡、谁能带客。",
+            "line": "两张表我放在一起看了。旧表写项目、时间、怕烫这些；Tony 那张多出来的，都是‘稳情绪’‘办卡’‘带客’。",
             "firstConflict": {
-              "hostLine": "旧表没那一列。你还打算用‘店里规矩’替它挡吗？",
-              "callerLine": "不挡了。谁加的，让他拿原件说。"
+              "hostLine": "现在再看，你还觉得那几列只是店里的普通备注吗？",
+              "callerLine": "不觉得了。他要说是店里的，就把原表拿出来。"
             }
           },
           "那次六折": {
             "line": "六折那次我记得。她们都夸我有面子，我也没说这是店里活动。好处我拿了。",
             "firstConflict": {
               "hostLine": "好处都摆完了。表的事，你还问不问？",
-              "callerLine": "敢。好处归我认，私表归他答。"
+              "callerLine": "问。六折我拿过，这个我不赖。可那张表不是我写的，他得说清楚。"
             }
           },
           "店长门口拒答": {
-            "line": "店长把门挡着，只认维护、办卡。完整私表，他说没见过。再问，他就不说了。",
+            "line": "店长没让你进门，只说店里有维护表、有办卡指标。你问到 Tony 那张，他说没见过整张，然后就把门关了。",
             "firstConflict": {
-              "hostLine": "店长只是关了门，没替 Tony 的私表作证。你能先不把他的拒答当成心虚吗？",
-              "callerLine": "能。他只划清了店里的责任。私表还是空着。"
+              "hostLine": "他没见过整张。你还打算拿店长的话替 Tony 解释吗？",
+              "callerLine": "不了。店长只认店里那张，Tony 的表还得 Tony 自己说。"
             }
           }
         },
@@ -5966,7 +5969,7 @@ export const CONTENT_CASES = {
       "respondentNote": {
         "source": "respondent-note",
         "appearsNowBecause": "收麦后，他给节目后台留了一段文字，说不上麦，就说这几句。",
-        "text": "表的事，是我做事糙，认。但话说清楚：我没跟谁说过是女朋友，一个都没有。办卡带客是店里的活，谁对我好我记着，这两码事。老板娘那句是酒话，当真我也没办法。还有那十万，我跟她说过先放宸直两个月，收益出来再进店。现在店没开成，不等于我吞了她的钱。"
+        "text": "那张表我写得难看，这个我认。可我没说过她是我女朋友。“老板娘”是喝酒时开玩笑，她真当了，我也没办法。办卡、带客本来就是我的工作。十万那件事我也跟对方说过，先放宸直两个月，再拿收益进店。现在店没开起来，不能就说我吞了钱。"
       },
       "crossCaseEchoes": [
         {
@@ -5976,14 +5979,14 @@ export const CONTENT_CASES = {
       ],
       "hostDisclosure": {
         "anchor": "afterBackflow",
-        "text": "民警找到你，这件事得单说。那张表能说明他怎么记人，不能替那十万下结论。“自己人”这三个字，我以前上班的时候也听过，后面往往就是：“这次你先帮我。”"
+        "text": "昨晚听见警笛，我先担心的是你安不安全。现在知道民警为什么找到你，这件事就不能绕过去了。可那十万到底怎么走的，还是得等原始记录，今晚这几张转发图不够。至于“自己人”——我以前上班也听过，下一句常常就是：“这次你先帮我。”"
       },
       "deepFollowup": {
-        "question": "那我多问一句。现在回头看，你当时为什么愿意帮他转活动、带朋友去店里？",
-        "answer": "剪头不要钱，满号也能插，带闺蜜去还有六折。我嘴上说是顺手帮忙，心里真把自己当成了店里的人。他让我转活动，我就转；朋友要剪头，我就往那儿带。表上后来把这叫“带客”，可我当时真觉得是在帮我们。连他提投店，我第一反应都是，他是不是认真把我算进以后。我不敢问关系，他也一直不说。只要那句“自己人”还在，我就愿意继续帮。",
+        "question": "表里写你“朋友多，带客”。你当时为什么会替他转活动，还把朋友带去店里？",
+        "answer": "因为我真把自己当成他那边的人了。店里活动缺转发，我顺手就发；闺蜜要剪头，我直接把他的微信推过去。她们夸我有面子，我还挺高兴。后来他提开店，我第一反应也不是问钱，是想：他是不是终于把我算进以后了。关系我一直没敢问，他也一直不说。",
         "note": "问到这里，甜话和店里的账已经缠在一起了。"
       },
-      "stageJudgement": "他给你留过晚档，也替你挡过难听话，这些我不抹。你也确实拿过免单和六折。可培训页上没有“下一次推进”，店里的照顾解释不了他为什么私下记你。再说那十万。另一个女生把钱转给他，可他交给她的合作介绍上，联络人却是你的名字和手机号。你没答应做联络人，甚至不知道这回事，警察却因此找上了你。这件事不能跟免单、六折混在一起算。",
+      "stageJudgement": "他替你挡过难听话，也确实对你好过，这些都是真的。可警察找上门，不是因为你拿过六折，是因为他把你的名字和手机号写进了别人的合作介绍里。你没同意，这就不是一句“自己人”能带过去的。那十万是不是后来进了宸直，今晚的转发图还不够，我们不替警方下结论。",
       "careChoices": [
         {
           "id": "pragmatic",
@@ -6008,12 +6011,12 @@ export const CONTENT_CASES = {
         {
           "id": "affirm",
           "label": "肯定",
-          "hostLine": "受用不丢人。想被人当自己人，谁都想。",
+          "hostLine": "你愿意信他，不是因为你傻。那几次照顾，换谁都会往心里去。",
           "lines": [
             {
               "role": "caller",
               "speaker": "咨询者",
-              "text": "……你这句，比他半年说的都实在。"
+              "text": "……我还真怕你也说我活该。你这么讲，我能听进去。"
             }
           ]
         },
@@ -7905,7 +7908,7 @@ export const CONTENT_CASES = {
           "response": "这张图只到审批。收款账户和付款回单都没在上面。"
         },
         {
-          "label": "“主责，我确实想要。”",
+          "label": "“那时候我是真想拿主责。”",
           "quoteSourceSceneId": "work-title-for-advance",
           "accuseRole": "complainant",
           "response": "你想要这个机会，没什么不能认的。可他把机会和垫款放在同一句里，也得说清楚。"
@@ -7934,7 +7937,7 @@ export const CONTENT_CASES = {
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "你先别发消息。这六万八怎么刷出去的，我得先问清楚。",
+          "text": "先别急着往上报。我先听听，这六万八是怎么刷到你卡上的。",
           "mood": "listening"
         },
         {
@@ -7965,7 +7968,7 @@ export const CONTENT_CASES = {
           "speakerId": "chen",
           "speaker": "咨询者",
           "entryQuestion": "你当时为什么答应先垫？",
-          "version": "我不是完全被迫。入职八个月，刚转正两个月，我想让老板看见我。前面还主动说过，这活我能接。他私聊：“你先顶上，复盘材料里可以写你主责。”我回得很快。主责，我确实想要。",
+          "version": "我前面刚在小会上说过，这活我能接。入职八个月，转正才两个月，我当然想让老板看见我。他后来私聊：“你先顶上，复盘材料里可以写你主责。”我几乎马上就回了。那时候我是真想拿主责。",
           "helperHint": "把私聊拆成两半：他给了什么身份，又让她先承担什么。",
           "doubt": "咨询者不是完全被逼，也确实想拿这个表现机会。",
           "contradiction": "咨询者先想要主责曝光，同事再把垫付款包装成机会，资金风险被弱化。",
@@ -8005,16 +8008,16 @@ export const CONTENT_CASES = {
           },
           "questionOptions": [
             {
-              "question": "“写你主责”和“你先垫”，中间隔了几句？",
+              "question": "他那条私聊，是先说给你主责，还是先说要你垫钱？",
               "suspicionLabel": "“主责”后面紧跟“先垫”",
-              "answer": "没隔，就一句。他说缺执行负责人，让我先垫场地和礼品费，复盘写我主责。我听见“主责”，后半句就没细抠。",
+              "answer": "是一句话。他说缺执行负责人，让我先垫场地和礼品费，复盘写我主责。我先看见“主责”，后面的垫款就没细问。",
               "guardedAnswer": "同一句。写我主责，我就答应先顶。",
               "logicContract": {
                 "premiseAnchor": "你先顶上，复盘材料里可以写你主责",
                 "sourceKind": "quoted-message",
                 "sourceProves": "主责署名与个人垫款出现在同一条私聊里。",
                 "sourceDoesNotProve": "同一句话不能证明垫款已获公司授权或一定会按时报销。",
-                "answerAnchor": "没隔，就一句",
+                "answerAnchor": "是一句话",
                 "answerAdds": "咨询者承认自己因注意主责而没有细问垫款责任。",
                 "nextLegalQuestion": "可以追问她是否问过预算和还款人，不能把想要主责等同于同意承担六万八。"
               },
@@ -8024,9 +8027,9 @@ export const CONTENT_CASES = {
               "routeTone": "trust-but-verify"
             },
             {
-              "question": "你答应时，问过谁还钱吗？",
+              "question": "你答应先垫时，有没有问这钱最后谁来还？",
               "suspicionLabel": "答应前的还款安排",
-              "answer": "没问。他说活动后补流程，我回：“我来扛。”我想要主责，也怕一开口问钱怎么还，显得斤斤计较。这四个字，是我自己打的。",
+              "answer": "没有。他说活动后补流程，我回了句：“我来扛。”我怕刚说完能接活，转头就问钱怎么还，别人会觉得我只惦记钱。",
               "correct": false,
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
@@ -8051,7 +8054,7 @@ export const CONTENT_CASES = {
           "speakerId": "chen",
           "speaker": "咨询者",
           "entryQuestion": "公开流程里是怎么写的？",
-          "version": "活动前一天，14：05，部门助理在大群发了张流程表。我点开过。预算先填金额，供应商走对公；个人垫付，得提前报备。群里很快刷了一串“收到”。我也看见了。可场地在催，礼品也在催，我没去群里问预算。",
+          "version": "活动前一天，14：05，部门助理在大群发了张流程表。我点开过：预算先填金额，供应商走对公；真要个人垫，得提前报备。群里很快刷了一串“收到”。我也跟着回了一个。可场地和礼品那边一直催，我没在群里问预算。",
           "helperHint": "公开流程已经出现。先追她为什么看见了，却没有用它保护自己。",
           "doubt": "正常流程先出现过，绕流程不是因为流程不存在。",
           "contradiction": "部门助理已经发过预算流程，个人垫款本来需要提前报备。",
@@ -8069,14 +8072,14 @@ export const CONTENT_CASES = {
           "questionOptions": [
             {
               "question": "流程表就在群里，你为什么不问预算？",
-              "answer": "刚跟老板说完我能主责，转头就在群里问钱，像流程都没摸清。我怕别人觉得我只会嘴上扛，就等他私下给数。",
+              "answer": "我刚在小会上拍过胸口，说这活我能做。转头就在群里问预算，我怕人家觉得我连流程都没弄懂，就想着先等他私下把数发我。",
               "guardedAnswer": "看见了，没问。刚接主责，我不想第一句就问预算。",
               "logicContract": {
-                "premiseAnchor": "我没去群里问预算",
+                "premiseAnchor": "我没在群里问预算",
                 "sourceKind": "caller-statement",
                 "sourceProves": "咨询者看过公开流程后仍没有在群里确认预算。",
                 "sourceDoesNotProve": "没有公开提问不能证明她愿意放弃报销或独自承担费用。",
-                "answerAnchor": "怕别人觉得",
+                "answerAnchor": "怕人家觉得",
                 "answerAdds": "她因为刚争取主责、怕显得不熟流程而等待同事私下给数。",
                 "nextLegalQuestion": "可以追问谁让她避开群聊，不能把绕流程的全部动机预先归给同事。"
               },
@@ -8087,7 +8090,7 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你以为谁会替你报备？",
-              "answer": "他。供应商是他对接，预算也在他手里。我以为自己只先刷一下，后面他补。可这个“以为”，没有一个字留在群里。",
+              "answer": "我以为是他。供应商是他找的，预算也在他手里。我想着自己先刷，回头他会补。现在去翻群，我一句都没留。",
               "correct": false,
               "routeAxis": "process-control",
               "routeTone": "softening"
@@ -8113,7 +8116,7 @@ export const CONTENT_CASES = {
           "speakerId": "chen",
           "speaker": "咨询者",
           "entryQuestion": "他私下又是怎么说的？",
-          "version": "流程表发完十七分钟，14：22，他私聊我：“先别在大群问预算，来不及，复盘再补。刚接主责，别让领导觉得你不担事。”我看见“不担事”，就没问。九天后财务群真发了延后通知。我看到那条通知，反过来觉得他前面说的“来不及”也是真的。",
+          "version": "我后来才注意到，只隔了十七分钟。14：22，他私聊我：“先别在大群问预算，来不及，复盘再补。刚接主责，别让领导觉得你不担事。”我看到“不担事”，就把群关了。九天后财务真发了延后通知，我还拿那条通知劝自己：你看，他没骗你，财务确实慢。",
           "helperHint": "把 14:05 和 14:22 分开：公开规则说什么，私聊又让她别做什么。",
           "revisedVersion": "时间我改口。两点二十二，是他说来不及。财务九天后才通知延后。财务那时候还没发通知，可我已经听他的话，没在群里问了。",
           "doubt": "私下垫款不是偶然，它先绕开了公开预算确认。",
@@ -8147,15 +8150,15 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "他哪一句，让你把群聊关了？",
-              "answer": "“刚接主责，别让领导觉得你不担事。”他说先私下办成，复盘再补。我怕老板觉得我推活，也怕别人看出我不熟。群聊打开了，又关掉。",
+              "question": "你看到哪句话以后，没再回大群？",
+              "answer": "“刚接主责，别让领导觉得你不担事。”我怕老板觉得我推活，也怕别人看出我不熟，就真没在群里问。",
               "guardedAnswer": "他说别让领导觉得我不担事。我就没问。",
               "logicContract": {
                 "premiseAnchor": "别让领导觉得你不担事",
                 "sourceKind": "quoted-message",
                 "sourceProves": "同事用“不担事”的评价劝她不要在大群问预算。",
                 "sourceDoesNotProve": "这句私聊不能证明财务当时确实延后，也不能证明领导知情。",
-                "answerAnchor": "群聊打开了，又关掉",
+                "answerAnchor": "没在群里问",
                 "answerAdds": "这句话直接促使她放弃公开询问。",
                 "nextLegalQuestion": "可以按时间线核对财务通知，不能拿九天后的通知替十四点二十二分作证。"
               },
@@ -8165,8 +8168,8 @@ export const CONTENT_CASES = {
               "routeTone": "caller-skeptical"
             },
             {
-              "question": "你真在群里问预算，最坏能怎样？",
-              "answer": "最多有人觉得我连流程都不熟，难看一会儿。现在想，难看总比六万八一直卡在我这儿强。",
+              "question": "你当时真在群里问一句预算，会丢主责吗？",
+              "answer": "不会吧。最多有人觉得我流程不熟，难看一会儿。可我那时候连这一会儿都不想难看。",
               "correct": false,
               "routeAxis": "identity-wording",
               "routeTone": "softening"
@@ -8234,10 +8237,10 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "三张同样的图，你实际看懂了哪一格？",
+              "question": "这张图除了“审批通过”，有没有写什么时候付款？",
               "suspicionLabel": "审批图只证明到哪一步",
-              "answer": "就“审批通过”四个字。再往下能确认什么，我说不准。把那页摆出来看吧，别听我替它说。",
-              "guardedAnswer": "只看懂审批过了。再往下，我不替它说。",
+              "answer": "没有。我其实只看得懂“审批通过”四个字，付款时间和回单号都没看见。你们直接看图吧，我怕自己又把它想多了。",
+              "guardedAnswer": "没有。图上只写了审批通过。",
               "logicContract": {
                 "premiseAnchor": "报销审批通过",
                 "sourceKind": "document-readout",
@@ -8253,9 +8256,9 @@ export const CONTENT_CASES = {
               "routeTone": "pressure-point"
             },
             {
-              "question": "财务后来是说延后。可到现在，你手里有付款回单吗？",
+              "question": "他每次把这张图发回来，有没有说过具体哪天到账？",
               "suspicionLabel": "审批通过后的付款凭证",
-              "answer": "没有。每次问钱，他发回来的还是那张审批页。我把财务通知和它摞在一起，自己听成了“钱在路上”。",
+              "answer": "没有。每次都是“流程在走”。后来财务又说延后，我就把两边的话拼到一起，觉得钱早晚会来。",
               "correct": false,
               "routeAxis": "money-flow",
               "routeTone": "softening"
@@ -8280,7 +8283,7 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "chen",
           "speaker": "咨询者",
-          "version": "今天下午，我把供应商报价单补到了后台。礼品下面多一项“服务协调费”。他说是正常费用。可备注还有一句：“按老规矩返给对接人。”对接人栏，是他。别的页我没拿到。划到这行，我不敢再往下猜。",
+          "version": "我今天下午才拿到供应商报价单。礼品下面多了一项“服务协调费”。我问他这是什么，他说正常费用。可那行备注还有一句：“按老规矩返给对接人。”我再往旁边看，对接人写的是他。后面的付款页，我没拿到。",
           "helperHint": "把费用名称和对接信息分开看。一处正常，不替另一处作证。",
           "doubt": "钱卡着不动，可能还牵着供应商那边的返款。",
           "contradiction": "供应商报价单出现服务协调费，返款却可能打给同事这个对接人。",
@@ -8293,7 +8296,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "……没事。纸干了再翻。你说。"
+                "text": "……没事，洒台本上了。你接着说。"
               }
             ]
           },
@@ -8327,14 +8330,14 @@ export const CONTENT_CASES = {
           "questionOptions": [
             {
               "question": "这张单只写了他是对接人。最后收钱的账户，单上有吗？",
-              "answer": "没有。单上只写“返给对接人”，这个活动的对接人是他。最后进哪个账户，单子没写。",
+              "answer": "没有。单上只写他是对接人，最后进哪个账户没写。",
               "guardedAnswer": "没有。它只写到对接人，账户没写。",
               "logicContract": {
-                "premiseAnchor": "对接人栏，是他",
+                "premiseAnchor": "对接人写的是他",
                 "sourceKind": "document-readout",
                 "sourceProves": "报价单能确认该同事是活动对接人。",
                 "sourceDoesNotProve": "对接人姓名不能证明返点最终进入他的个人账户。",
-                "answerAnchor": "最后进哪个账户，单子没写",
+                "answerAnchor": "最后进哪个账户没写",
                 "answerAdds": "咨询者明确把对接人和实际收款账户分开。",
                 "nextLegalQuestion": "可以索要供应商付款确认和收款账户，不能先指控同事收取返点。"
               },
@@ -8369,7 +8372,7 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "chen",
           "speaker": "咨询者",
-          "version": "活动后小复盘，领导点名：“客户反馈不错，执行主责记陈；流程按老规矩补齐。”看到自己的姓，我真松了口气。后半句都没细看。第二晚我才把群翻回 14：05。那张流程表，我看见了，也回过“收到”。规矩就摆在那儿。我当时不想让它拦我。",
+          "version": "活动后开小复盘，领导当众说：“客户反馈不错，执行主责记陈；流程按老规矩补齐。”我一听见自己的姓，马上截了图发给朋友，后半句根本没细看。今天再往前翻，14：05 那张流程表还在，我回的“收到”也还在。",
           "helperHint": "领导一句话同时给了署名和流程要求。她先听进去了哪半句？",
           "doubt": "小复盘夸奖把主责写实，也把流程问题压回执行层。",
           "contradiction": "领导夸的是结果和主责，没有追问垫款与流程入口。",
@@ -8409,16 +8412,16 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "领导写清了你是主责。那六万八什么时候补，批注里写了吗？",
-              "answer": "没写。钱是谁垫、谁来补、哪天补，一个都没有。我当时只顾着看自己的名字。",
+              "question": "领导那句里，提没提这六万八什么时候还？",
+              "answer": "没提。谁来还、哪天还，都没说。我当时只顾着截自己的名字。",
               "guardedAnswer": "写了主责。钱怎么回，没写。",
               "logicContract": {
                 "premiseAnchor": "执行主责记陈",
                 "sourceKind": "document-readout",
                 "sourceProves": "领导批注明确记录咨询者为执行主责。",
                 "sourceDoesNotProve": "主责署名不能证明领导知道个人垫款，也没有确定补款人和日期。",
-                "answerAnchor": "一个都没有",
-                "answerAdds": "批注没有记录垫款人、补流程人或供应商对接责任。",
+                "answerAnchor": "都没说",
+                "answerAdds": "批注没有记录还款人或具体还款日期。",
                 "nextLegalQuestion": "可以追问归档前责任如何落字，不能用公开表扬替付款流程背书。"
               },
               "contradiction": "领导只确认结果和署名，没有确认垫款与流程责任。",
@@ -8442,7 +8445,7 @@ export const CONTENT_CASES = {
               "text": "说到被夸时反而把声音压低"
             }
           },
-          "revisedVersion": "批注看见了吗？主责写我。钱往哪走，一个字没有。……我截图时手在抖。下周一一归档，名字写死，六万八还在我的卡账单上。"
+          "revisedVersion": "我把批注放大了。主责写的是我，可付款那一栏空着。……下周一就要归档了。名字落下去，六万八还在我的信用卡上。"
         },
         {
           "id": "work-split-ownership",
@@ -8456,7 +8459,7 @@ export const CONTENT_CASES = {
           "speakerId": "chen",
           "speaker": "咨询者",
           "entryQuestion": "归档材料最后怎么写的？",
-          "version": "复盘材料出来了。执行主责：我。付款对接人：他。供应商确认人：还是他。出问题先找我，钱什么时候回来，我还得等他一句。下周一归档，主责就写死了。我的卡账单，还在。",
+          "version": "归档表发来让我确认。我名字在“执行主责”那格，下一格“付款对接人”写的是他，再下一格“供应商确认人”还是他。我盯着这三格看了半天。下周一就要归档，我现在还没点确认。",
           "helperHint": "主责、付款对接、供应商确认是三个位置。别让“主责”替另外两处背书。",
           "doubt": "署名给了表面责任，付款和供应商入口仍在同事手里。",
           "contradiction": "咨询者拿到项目署名，却没有拿到付款和供应商入口。",
@@ -8476,7 +8479,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "三栏念完了。今晚——"
+                "text": "我听明白了。你先——"
               },
               {
                 "role": "caller",
@@ -8498,7 +8501,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "四十三页，记下了。"
+                "text": "难怪你气到现在。"
               }
             ]
           },
@@ -8511,15 +8514,15 @@ export const CONTENT_CASES = {
           },
           "questionOptions": [
             {
-              "question": "这三栏里，哪一栏会让出了问题的人先来找你？",
-              "answer": "执行主责。那一栏写的是我。可付款对接和供应商确认都写他；出了事先找我，问钱还得找他。",
-              "guardedAnswer": "执行主责写的是我。付款对接写的是他。",
+              "question": "归档以后，活动要是出了问题，公司先找谁？",
+              "answer": "先找我，因为执行主责写的是我。可我要催付款，还得找他。",
+              "guardedAnswer": "先找我。执行主责写的是我。",
               "logicContract": {
-                "premiseAnchor": "执行主责：我",
+                "premiseAnchor": "执行主责",
                 "sourceKind": "document-readout",
                 "sourceProves": "复盘材料把执行主责写给咨询者，把付款和供应商入口写给同事。",
                 "sourceDoesNotProve": "岗位分栏不能证明款项已经被同事占有，也不能消除咨询者绕流程的责任。",
-                "answerAnchor": "执行主责",
+                "answerAnchor": "先找我",
                 "answerAdds": "出现问题时责任先落到她，追款却仍要经过同事掌握的入口。",
                 "nextLegalQuestion": "可以决定是否在归档前写明个人垫款未返，不能直接宣布返点归属。"
               },
@@ -8529,8 +8532,8 @@ export const CONTENT_CASES = {
               "routeTone": "pressure-point"
             },
             {
-              "question": "归档前，你最怕补哪句话？",
-              "answer": "“个人垫款未返。”我怕别人顺着问：你私下垫的钱，流程怎么走的？写上去，先挨问的是我。不写，卡账单还是我的。",
+              "question": "你想过在归档里加一句“个人垫款还没返”吗？",
+              "answer": "想过。可一加，别人先问的就是我为什么私下垫钱。写上去，我先挨问；不写，卡账单还是我的。",
               "correct": false,
               "routeAxis": "caller-credibility",
               "routeTone": "caller-skeptical"
@@ -9038,8 +9041,8 @@ export const CONTENT_CASES = {
         "hangup": {
           "afterSceneIndex": 3,
           "speaker": "咨询者",
-          "line": "审批页只写到“通过”，付款那一栏还是空的。我白天先去问清楚，晚上再打进来。……我刚才一开口就报了六万八，说得像公司的预算，不像我自己的信用卡账单。我到现在还在拿“只是垫一下”哄自己。",
-          "hostLine": "好，你先去问。审批图我留着。要是拿不到付款回单号，明晚就别再把“审批通过”当成钱已经到了。",
+          "line": "这页下面是空的。我明天去问财务。六万八刷出去的时候，我一直跟自己说“先垫一下”。现在账单出来了，哪有这么轻。",
+          "hostLine": "去问清楚。明晚打回来，拿不到回单号就直接说拿不到，别再拿这张图当钱到账。",
           "stageDirection": "忙音。审批页上，‘付款状态’还是空的。",
           "audioCueId": "sfx.phone.busy"
         },
@@ -9064,18 +9067,18 @@ export const CONTENT_CASES = {
             {
               "id": "zhao-zhou-work",
               "label": "三路同时进后台",
-              "summary": "赵守边界，周追钱路，小林拆“主责”。先采一套，另两套留在终局材料台。",
+              "summary": "三个人几乎同时回了消息。你只能先点开一条。",
               "cost": 1,
               "kind": "advisorConflict",
               "npcVerb": "conflict",
               "backdropClass": "day-city",
-              "sceneText": "赵律师站在控制室门口，周会计开着远程表格，小林老师的语音压进后台。三个人都不肯替另外两个人让路。",
+              "sceneText": "收麦没几分钟，后台连续进来三条回复：赵律师回了文字，周会计开了共享表格，小林老师发来一段语音。三个人各盯一件事。",
               "options": [
                 {
                   "id": "work-frame-zhao",
                   "advisorId": "zhao-lawyer",
-                  "label": "先采赵律师的边界",
-                  "advisorLine": "公司名遮住。群里原话和刷卡记录能证明她垫过；返款给谁，材料不够。",
+                  "label": "先看赵律师的回复",
+                  "advisorLine": "公司名先遮住。私聊和刷卡记录都留好。至于返款给了谁，现在这些东西还不够。",
                   "grantsInventory": [
                     "work-frame-zhao"
                   ],
@@ -9084,8 +9087,8 @@ export const CONTENT_CASES = {
                 {
                   "id": "work-frame-zhou",
                   "advisorId": "zhou-accountant",
-                  "label": "先采周会计的钱路",
-                  "advisorLine": "审批页我看过了。现在找付款回单号。拿不出来，就不能说钱已经付了。",
+                  "label": "先看周会计的回复",
+                  "advisorLine": "审批页看到了。付款回单号呢？拿不出来，就先别说已经付了。",
                   "grantsInventory": [
                     "work-frame-zhou"
                   ],
@@ -9094,8 +9097,8 @@ export const CONTENT_CASES = {
                 {
                   "id": "work-frame-lin",
                   "advisorId": "lin-matchmaker",
-                  "label": "先采小林老师的身份词",
-                  "advisorLine": "她想要主责，这句得认。对方把垫款塞进主责里，也别替他藏。",
+                  "label": "先听小林老师的语音",
+                  "advisorLine": "她想要主责，不丢人。可对方一句话把主责和垫款捆在一块儿了，这得拆开说。",
                   "grantsInventory": [
                     "work-frame-lin"
                   ],
@@ -9154,7 +9157,7 @@ export const CONTENT_CASES = {
                 "audioCueId": "voice.case4.pad-message",
                 "clipLabel": "回放·私聊",
                 "clipLine": "你先顶上，复盘材料里可以写你主责。",
-                "hostNote": "署名和垫款在同一句里——表现机会压着资金风险。"
+                "hostNote": "他用“主责”劝她先把钱垫上。"
               }
             }
           ]
@@ -9167,9 +9170,9 @@ export const CONTENT_CASES = {
           },
           "default": "neutral",
           "lines": {
-            "defensive": "我差点不打回来。弹幕说我也想要主责……我是想要。可钱不能一直卡在他手里。",
-            "open": "我回来了。流程和截图你继续问——这回我不替财务慢开脱。",
-            "neutral": "我回来了。批注截完，我自己又把审批图看了一眼。少的那页还在。"
+            "defensive": "我差点没敢再打。弹幕说得也没错，主责是我想要的。可那六万八不能就这么算了。",
+            "open": "我回来了。白天我问了财务。那三张图，我现在不敢当成钱了。",
+            "neutral": "我回来了。新批注还在手机里，那张审批图也还在。少的东西还是没拿到。"
           }
         }
       },
@@ -9177,7 +9180,7 @@ export const CONTENT_CASES = {
         "hangupAnchor": "一共三次",
         "hangupLine": "忙音。审批页上，‘付款状态’还是空的。",
         "hangupAudioCueId": "sfx.phone.busy",
-        "hostHoldLine": "好，你先去问。审批图我留着。要是拿不到付款回单号，明晚就别再把“审批通过”当成钱已经到了。",
+        "hostHoldLine": "去问清楚。明晚打回来，拿不到回单号就直接说拿不到，别再拿这张图当钱到账。",
         "returnBeat": {
           "lines": [
             {
@@ -9188,9 +9191,9 @@ export const CONTENT_CASES = {
           ]
         },
         "snapshotEcho": {
-          "respondent-problem": "昨晚记他一票的，回单号还是没有。票先留着，别提前庆祝。",
-          "caller-complicit": "说我也有份的——“我来扛”仨字我认。今晚只算这仨字，值不值六万八。",
-          "unclear": "昨晚留空的，今晚三张纸都到了：审批、批注、报价单。该落票了。"
+          "respondent-problem": "昨晚大家都在骂他。今天先别急，回单号我还没拿到，别的材料倒多了。",
+          "caller-complicit": "昨晚说我也有份的，我听见了。“我来扛”是我发的。可我当时想扛的是活，不是六万八。",
+          "unclear": "昨晚说听不出来的，今天再听听。我带回来的不是结论，是审批页、领导批注和供应商报价单。"
         },
         "liveCounterBeats": [
           {
@@ -9282,7 +9285,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "caller",
-                "text": "他在大群发了：“陈垫的钱月底统一走，大家辛苦。”……你看，他连还钱，都得像他在照顾我。"
+                "text": "他在大群发了：“陈垫的钱月底统一走，大家辛苦。”我盯着“月底统一走”看了半天。到底哪天，还是没说。"
               },
               {
                 "role": "host",
@@ -9327,7 +9330,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "speaker": "财务经办",
-                  "text": "发十次也还是审批页。付款一张凭据，到账另一张，别混。"
+                  "text": "发十次也没用。你先问回单号；真有回单，再看收款账户。"
                 },
                 {
                   "speaker": "财务经办",
@@ -9345,11 +9348,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "你",
-                        "text": "我只带回窗口的回单要求。没有回单号，审批页就停在通过。"
+                        "text": "那我回去只问回单号。"
                       },
                       {
                         "speaker": "财务经办",
-                        "text": "记缺回单号。别记未付款，这两个不是一回事。"
+                        "text": "对。问不到就说问不到，别自己写成没付。"
                       }
                     ]
                   },
@@ -9361,11 +9364,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "你",
-                        "text": "账户后四位也没问到。窗口说我材料不全，只肯给一张拒查记录。我先把这个带回去。"
+                        "text": "回单号、账户后四位我都没有，窗口不给查。我只拿到一张拒查记录。"
                       },
                       {
                         "speaker": "财务经办",
-                        "text": "窗口拒查，是你条件不全。跟收款人是谁没关系。"
+                        "text": "这只能说明你材料不全，别拿它猜收款人。"
                       }
                     ]
                   }
@@ -9389,7 +9392,7 @@ export const CONTENT_CASES = {
               "beats": [
                 {
                   "speaker": "供应商项目员",
-                  "text": "我只复述语音原话：服务协调费按老规矩返给对接人。"
+                  "text": "那段工作语音我可以再放一遍，原话就是：服务协调费按老规矩返给对接人。"
                 },
                 {
                   "speaker": "你",
@@ -9401,7 +9404,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "speaker": "仓库管理员",
-                  "text": "我这儿只认出货单。协调费、公司报销，是另外两张。你手上正好都没有。"
+                  "text": "协调费我这儿不管，公司报销我也看不见。你要找这两样，别在仓库找。"
                 }
               ],
               "choice": {
@@ -9415,11 +9418,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "你",
-                        "text": "我只拍对接栏，不拿「老规矩」往账户上猜。"
+                        "text": "我把对接栏拍下来。账户那部分不在这张单上。"
                       },
                       {
                         "speaker": "供应商项目员",
-                        "text": "你拍单。照片只到对接人，钱去了哪儿不在我们这页。"
+                        "text": "拍吧。账户不在这张单上。"
                       }
                     ]
                   },
@@ -9432,11 +9435,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "你",
-                        "text": "我只带回语音原句：「按老规矩返给对接人。」"
+                        "text": "那我把语音原句带回去：“按老规矩返给对接人。”"
                       },
                       {
                         "speaker": "供应商项目员",
-                        "text": "原话你可以带。对接人看单；账户，问收款那边。"
+                        "text": "原话带走。至于账户，得去问收款那边。"
                       }
                     ]
                   }
@@ -9464,15 +9467,15 @@ export const CONTENT_CASES = {
                 },
                 {
                   "speaker": "部门助理",
-                  "text": "领导原文就这一句：执行主责记陈，流程按老规矩补齐。"
+                  "text": "领导批注我只核过这一句：执行主责记陈，流程按老规矩补齐。"
                 },
                 {
                   "speaker": "部门助理",
-                  "text": "这三页我给你并着看。审批只到通过；那句私聊，别问我。"
+                  "text": "审批页只写到通过。那句私聊不是我发的，你别问我是什么意思。"
                 },
                 {
                   "speaker": "部门助理",
-                  "text": "模板写得很清楚：个人垫付先报备，供应商优先走对公。"
+                  "text": "流程表我那天在群里发过。个人垫付要先报备，供应商优先走对公。"
                 }
               ],
               "choice": {
@@ -9486,11 +9489,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "部门助理",
-                        "text": "我只帮你看纸面：三页都没有回单号。别的我不说。"
+                        "text": "这三页我都翻过了，确实没有回单号。别的你别问我，我也不知道。"
                       },
                       {
                         "speaker": "你",
-                        "text": "那就把托话、批注、审批页并排，不替任何一页补付款。"
+                        "text": "明白。我把三页原样拍下来，不往里补付款。"
                       }
                     ]
                   },
@@ -9502,11 +9505,11 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "部门助理",
-                        "text": "托话叫她别问，大群批她主责。谁催付款、谁给回单，模板里没有。"
+                        "text": "私聊让她别问预算，领导后来只写了主责。谁负责催付款，我这儿没看到。"
                       },
                       {
                         "speaker": "你",
-                        "text": "我带回责任空白，不拿流程样本替具体人作证。"
+                        "text": "那我把缺的这句拍下来，别的回去再问。"
                       }
                     ]
                   }
@@ -9528,7 +9531,7 @@ export const CONTENT_CASES = {
         ],
         "callbackOpeners": {
           "报销流转记录圈注": {
-            "line": "那张流转记录我看完了。14：05 是公开流程，14：22 他就让我别在群里问。财务通知是九天以后。",
+            "line": "我把群聊按时间重新翻了一遍。14：05 助理发流程，14：22 他就让我别在群里问。财务说延后，是九天以后。",
             "firstConflict": {
               "hostLine": "先看十四点二十二分。财务那时还没说延后，他让你别问，你怎么回的？",
               "callerLine": "我回“我来扛”。他让我别问，我也真没问。"
@@ -9563,23 +9566,23 @@ export const CONTENT_CASES = {
             }
           },
           "茶水间回单缺口": {
-            "line": "助理把三页摊开：私聊叫我别问，批注写我主责，审批页停在通过。回单号？没有。",
+            "line": "助理把三页摊在桌上。我那条私聊叫我别问，领导批注只写我主责，审批页还是停在“通过”。我当时有点想笑——哪一页都没说钱什么时候回。",
             "firstConflict": {
-              "hostLine": "三页都让你等。谁答应过具体哪天把钱给你？",
+              "hostLine": "这三页都没有日期。那之前，有没有谁答应过具体哪天还？",
               "callerLine": "没人。每次我问，话就回到主责。"
             }
           },
           "茶水间责任对照": {
-            "line": "我先留下那句‘别在群里问’，又看见领导只写我主责。至于谁催付款……两页都空着。",
+            "line": "私聊让我别问预算，领导后来只写了我主责。我来回看了几遍，也没找到谁负责催付款。",
             "firstConflict": {
-              "hostLine": "主责有名字，催款没有。归档前，这个空白你打算替谁补？",
-              "callerLine": "替我自己。主责是我张口要来的。",
+              "hostLine": "领导写了你主责。有没有人书面写过谁负责催付款？",
+              "callerLine": "没有。主责有我的名字，催款没有。",
               "pauseAfterCallerLine": true,
               "callerFollowupLine": "可要我现在把“个人垫款未返”写进归档，我还不敢。"
             }
           },
           "赵律师边界框架": {
-            "line": "赵律师先问：私聊留没留，谁书面确认过这六万八该由公司返。私聊在，确认没有。",
+            "line": "赵律师让我先把公司名遮住，又问私聊和刷卡记录还在不在。都在。她再问：公司会返这六万八，谁写过？没人。",
             "firstConflict": {
               "hostLine": "六万八还在你卡上。你为什么一直没让他把“公司会返”写清楚？",
               "callerLine": "刚拿到主责，怕别人说我只盯钱。"
@@ -9593,7 +9596,7 @@ export const CONTENT_CASES = {
             }
           },
           "小林主责框架": {
-            "line": "小林老师问我，‘我来扛’到底答应了什么。我想要的是主责，可他开口时，垫款就跟在后面，我没把两件事分开。",
+            "line": "小林老师问我：“你回‘我来扛’，到底是扛活，还是扛钱？”我当时一下没答上来。主责和垫款在他那句话里挨得太近了。",
             "firstConflict": {
               "hostLine": "你说“我来扛”时，答应的是把活接下来，还是连六万八也一起出？",
               "callerLine": "我答应的是活，不是替公司出六万八。"
@@ -9614,7 +9617,7 @@ export const CONTENT_CASES = {
             }
           },
           "顾问回单": {
-            "line": "顾问回得很短，只说审批确实过了。至于钱付没付、返到谁的账户，他一个字都没替我补。",
+            "line": "顾问问我回单在哪儿。我拿不出来。那张图，他只认审批过了，再往下一个字也没说。",
             "firstConflict": {
               "hostLine": "顾问只肯确认审批过了。没有付款回单，你现在还觉得钱已经在走吗？",
               "callerLine": "不觉得。没有回单，我就说没有。"
@@ -9632,8 +9635,8 @@ export const CONTENT_CASES = {
           "line": "我回来了。新批注还在手机里。你白天先看了哪份材料？"
         },
         "postures": {
-          "againstCaller": "主责是我先要的，我来扛也是我回的。可这两句不能替付款回单。",
-          "withCaller": "我把三张审批图都留着。你查到哪一页，就从哪一页问。"
+          "againstCaller": "主责是我先要的，“我来扛”也是我回的。我认。可钱还是没回来。",
+          "withCaller": "那三张审批图我都留着。你先问吧，我不躲了。"
         }
       },
       "stanceSnapshot": {
@@ -9672,13 +9675,13 @@ export const CONTENT_CASES = {
         {
           "advisorId": "zhou-accountant",
           "appearsNowBecause": "张法医转来的，只加了一句：我对象让我原话带到。",
-          "text": "审批、付款、到账，是三张纸。看见第一张就当有了第三张，垫钱的人最容易吃这个亏。这一单，到收麦我们也没看见付款回单。"
+          "text": "我只问一句：付款回单在哪儿？审批过了，钱也可能还没付；真付了，也得看进了哪个账户。今晚没有回单，就别替它往下走。"
         }
       ],
       "respondentNote": {
         "source": "respondent-note",
         "appearsNowBecause": "收麦后，那位同事托人给后台带了话。",
-        "text": "垫款我认，月底肯定结。审批本来就走完了，是财务节奏的事。主责署名是人家自己开口要的，这话敢不敢认？返款是供应商这边的老规矩，跟垫款两码事。",
+        "text": "六万八我没不认，月底会结。她当初自己抢着要主责，也回过“我来扛”，现在不能全说成我逼她。审批已经过了，财务慢我能怎么办？供应商那边是他们自己的老规矩，我没拿她垫的钱。",
         "teaseDuringSegment2": true
       },
       "crossCaseEchoes": [
@@ -9689,7 +9692,7 @@ export const CONTENT_CASES = {
       ],
       "hostDisclosure": {
         "anchor": "atStageJudgement",
-        "text": "我上一份工作丢的那个月，办公室里也整天说流程。我刚才听到“老规矩”，先起了火。我停一下，喝口水。",
+        "text": "我丢掉上一份工作的那阵子，办公室里也天天说“流程”。刚才一听见“老规矩”，我先冒火了。等我喝口水。",
         "lines": [
           {
             "role": "stage",
@@ -9698,8 +9701,8 @@ export const CONTENT_CASES = {
         ]
       },
       "deepFollowup": {
-        "question": "你现在敢不敢在公司群里把话写明白：这六万八是你的个人垫款，审批过了，可钱到今天还没回来？",
-        "answer": "……敢。主责我还想留，可这句话也得写。再不写，月底信用卡只会找我。",
+        "question": "这六万八是你替公司垫的钱，到现在还没报销。周一就归档了，你准备把这句话发进群里吗？",
+        "answer": "……发。主责我还想留，可这句话也得写。再不写，月底信用卡只会找我。",
         "resistanceBeat": {
           "lines": [
             {
@@ -9708,23 +9711,23 @@ export const CONTENT_CASES = {
             },
             {
               "role": "host",
-              "text": "对。写不写，我不替你选。"
+              "text": "是，我不在你公司，后果不是我扛。你自己决定。"
             }
           ]
         },
         "note": "主责利益没有消失，但她第一次给出愿意承担代价的行动。"
       },
-      "stageJudgement": "她想要主责，回过“收到”和“我来扛”，这几句要留着。可审批页没有付款，供应商又写着返给对接人。她想出头，不等于六万八也该她出。",
+      "stageJudgement": "主责是她自己争取的，“我来扛”也是她回的，这两句她得认。可她答应接活，不是答应替公司出六万八。审批图没有回单，供应商那笔钱最后到哪儿也没看见。先把这笔个人垫款写进群里；其他的，拿到账户再说。",
       "careChoices": [
         {
           "id": "pragmatic",
           "label": "务实",
-          "hostLine": "明天上班，先补报备，再提回单号。一件一件来。",
+          "hostLine": "明天一上班，把这六万八写进群里，再问回单号。别一口气跟他们吵完。",
           "lines": [
             {
               "role": "caller",
               "speaker": "咨询者",
-              "text": "呃，我记下了。报备，回单。"
+              "text": "先发群，再问回单。呃，行。"
             },
             {
               "role": "pause"
@@ -9732,7 +9735,7 @@ export const CONTENT_CASES = {
             {
               "role": "caller",
               "speaker": "咨询者",
-              "text": "像考试划重点。"
+              "text": "我明天早点到公司。"
             }
           ]
         },
@@ -9752,7 +9755,7 @@ export const CONTENT_CASES = {
             {
               "role": "caller",
               "speaker": "咨询者",
-              "text": "这句我想哭。忍住了。"
+              "text": "我就是怕一说钱，别人觉得我不配拿主责。"
             }
           ]
         },
