@@ -149,6 +149,8 @@ async function runStateReplacementRoutes() {
       const brief = save.caseBriefs?.[0] ?? {};
       const caseId = brief.id;
       const answerKey = `${caseId}:scene:0`;
+      const staleAnniversary = brief.sceneVersions?.find((scene) => scene.id === "credit-anniversary-agency");
+      if (staleAnniversary) staleAnniversary.version = "他把酒单推到我面前。酒是他点的，我当时也没拦。";
       save.screen = "chapter";
       save.chapter = 1;
       save.caseBrief = brief;
@@ -176,6 +178,10 @@ async function runStateReplacementRoutes() {
     const retriedState = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
     const retriedCaseId = retriedState.caseBriefs?.[0]?.id;
     const retriedAnswerKey = `${retriedCaseId}:scene:0`;
+    const refreshedAnniversary = retriedState.caseBriefs?.[0]?.sceneVersions?.find((scene) => scene.id === "credit-anniversary-agency");
+    if (!refreshedAnniversary?.version?.includes("他看中一瓶，我说太贵了") || refreshedAnniversary.version.includes("他把酒单推到我面前")) {
+      throw new Error("continuing a save must refresh stale authored dialogue from the current content pack");
+    }
     if (retriedState.scene !== "sceneReview" || retriedState.patienceLostContext !== null) {
       throw new Error("patience retry must render from the replacement state and clear its retry context");
     }

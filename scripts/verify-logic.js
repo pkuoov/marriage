@@ -12,6 +12,7 @@ import { platformRuntime } from "../src/platformRuntime.js";
 import { createSaveStore } from "../src/platform/saveStore.js";
 import { materialOperationOutcome } from "../src/runtime/materialOperation.js";
 import { unlockedMaterialProfile } from "../src/runtime/materialVisibility.js";
+import { refreshSavedCaseContent } from "../src/runtime/savedContentRefresh.js";
 import { audioBusGain, normalizeAudioSettings, updateAudioBusVolume } from "../src/runtime/audioModel.js";
 import { ambienceCueForBackdrop, audioScenePlan } from "../src/runtime/audioSceneModel.js";
 import { applyRuntimeCaseContent, isRuntimeLoadedCaseContent, RUNTIME_CASE_CONTENT_STATUS } from "../src/runtime/contentCase.js";
@@ -2436,6 +2437,33 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
     caseBriefs: generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" }).slice(0, 3)
   });
   assertEqual(variableEpisodeMigrated.caseBriefs.length, 3, "episode 存档不能再把三案章节包当成坏存档清掉");
+});
+
+test("STATE-002", "saved progress refreshes authored case copy from the current content pack", () => {
+  const currentBriefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const staleBriefs = structuredClone(currentBriefs);
+  const staleAnniversary = staleBriefs[0].sceneVersions.find((scene) => scene.id === "credit-anniversary-agency");
+  staleAnniversary.version = "他把酒单推到我面前。酒是他点的，我当时也没拦。";
+  const saved = {
+    caseMode: "episode",
+    chapter: 1,
+    attrs,
+    caseBriefs: staleBriefs,
+    caseBrief: staleBriefs[0],
+    scene: "sceneReview",
+    sceneAnswers: { kept: "玩家已经做过的选择" },
+    contradictionLog: { kept: ["既有矛盾"] }
+  };
+  const refreshed = refreshSavedCaseContent(saved, {
+    generateCases: (npcs, savedAttrs, options) => generateCasesForMode("episode", npcs, savedAttrs, options),
+    npcs: NPCS
+  });
+  const anniversary = refreshed.caseBriefs[0].sceneVersions.find((scene) => scene.id === "credit-anniversary-agency");
+  assertIncludes(anniversary.version, "他看中一瓶，我说太贵了", "继续旧存档时必须刷新为当前点酒因果，不能继续播放旧案件快照");
+  assert(!anniversary.version.includes("他把酒单推到我面前"), "存档刷新后不得保留已经废弃的点酒台词");
+  assertEqual(refreshed.caseBrief, refreshed.caseBriefs[0], "刷新内容后当前案件引用必须指向同一份新台本");
+  assertEqual(refreshed.sceneAnswers.kept, saved.sceneAnswers.kept, "刷新台本不能清掉玩家已经完成的问答");
+  assertEqual(refreshed.contradictionLog.kept[0], "既有矛盾", "刷新台本不能清掉玩家已经取得的矛盾");
 });
 
 test("RUNTIME-001", "case outcome records daily recap rhythm without visible score systems", () => {

@@ -20,6 +20,7 @@ import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js";
+import { refreshSavedCaseContent } from "./runtime/savedContentRefresh.js";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js";
 import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js";
@@ -57,6 +58,12 @@ const startsFresh = hasFreshStartParam();
 if (startsFresh) clearStateSnapshot();
 const loadedState = startsFresh ? null : loadState();
 let state = normalizeDailyState(loadedState ?? structuredClone(baseState));
+if (!startsFresh && state.caseBriefs.length) {
+  state = refreshSavedCaseContent(state, {
+    generateCases: (npcs, attrs, options) => generateCasesForMode(state.caseMode, npcs, attrs, options),
+    npcs: NPCS
+  });
+}
 // Screen handlers read ctx.getState() when invoked; cache the factory, never the state object.
 let dailyScreenRenderers = null;
 if (!startsFresh && loadedState?.screen === "chapter" && state.caseBriefs.length) state.screen = "title";
