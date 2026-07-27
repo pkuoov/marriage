@@ -28,9 +28,9 @@
       "status": "temporary-system-master",
       "targetPath": "./assets/audio/voice/case2-dryer-message.ogg",
       "speaker": "案2男店员，二十多岁，疲惫但很熟悉如何向她示弱",
-      "transcript": "今晚又被店长说了，只有你能接住我。",
+      "transcript": "今晚店长又说我了。也就你肯听我说这些。",
       "direction": "像忙着工作时顺手发来的语音，不要停下来深情告白；第二句比第一句更轻。",
-      "editNotes": "正式演员干声交付；吹风机持续声由混音阶段另加，不能盖住“店长”和“接住我”。"
+      "editNotes": "正式演员干声交付；吹风机持续声由混音阶段另加，不能盖住“店长”和“也就你肯听”。"
     },
     {
       "cueId": "voice.case3.dinner-pause",
@@ -48,8 +48,8 @@
       "status": "actor-required",
       "targetPath": "./assets/audio/voice/case4-pad-message.ogg",
       "speaker": "案4项目负责人，理性、忙、习惯用机会语言压缩别人的判断时间",
-      "transcript": "你先顶上，复盘材料里可以写你主责。",
-      "direction": "像在赶进度，不觉得自己在威胁；“先顶上”快，“可以写你主责”略放慢，像给补偿。",
+      "transcript": "你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。",
+      "direction": "像在赶进度，不觉得自己在威胁；“先把场地和礼品费垫了”说得快，“执行主责可以写你”略放慢，像给补偿。",
       "editNotes": "不要加笑声、叹气或反派停顿；保留手机语音的近讲感，线路滤波在混音阶段处理。"
     },
     {

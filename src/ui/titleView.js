@@ -29,7 +29,7 @@ export function titleScreenHtml({
               <p class="eyebrow">${storyPack ? "匿名连麦 · 现实推理" : "今天只有这一通"}</p>
               <h1><span>${escapeHtml(titleLines[0])}</span><strong>${escapeHtml(titleLines[1])}</strong></h1>
               <p class="title-deck">${storyPack
-                ? "接起电话，听完原话，再把账单、截图和时间线放到一起。"
+                ? "今晚，你坐在林旭阳的主播台前。接起电话，听完原话，再决定从哪儿问下去。"
                 : escapeHtml(title)}</p>
               ${storyPack ? `
                 <section class="title-theme-card">
@@ -53,7 +53,7 @@ export function titleScreenHtml({
               </div>
               ${storyPack ? `
                 <section class="title-host-card">
-                  <span>主播</span>
+                  <span>今晚由你接麦</span>
                   <b>${escapeHtml(host.name ?? "林旭阳")}<small>${escapeHtml(host.role ?? "深夜热线主播")}</small></b>
                   <p>${escapeHtml(host.setup ?? "不替任何人下结论，只把没说全的话问清楚。")}</p>
                 </section>
@@ -80,7 +80,7 @@ export function titleScreenHtml({
                     <button class="primary title-journey-action title-journey-new title-journey-new-only" data-start-story type="button">
                       <span>NEW GAME</span>
                       <b>${storyPack ? "新游戏" : "开始今日来电"}</b>
-                      <small>${storyPack ? "从今晚 20:00 的开播前开始" : "接入今天这通匿名来电"}</small>
+                      <small>${storyPack ? "从今晚 20:00 推门进直播间" : "接入今天这通匿名来电"}</small>
                     </button>
                   `}
                 </div>

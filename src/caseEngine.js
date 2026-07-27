@@ -46,7 +46,7 @@ const DAILY_PLOT_DEFINITIONS = {
     premeditated: true,
     premeditatedActorRole: "respondent",
     accusationChoices: [
-      { label: "“只有我能接住 对方 的情绪。”", accuseRole: "respondent", response: "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。" },
+      { label: "“也就我肯听他说这些。”", accuseRole: "respondent", response: "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。" },
       { label: "“他说我像店里自己人。”", accuseRole: "complainant", response: "这句要承认。她不是错在帮忙，是她也不想太早拆穿那个位置到底算不算关系。" },
       { label: "“我从来没说只有你一个。”", accuse: "noPremeditated", response: "他确实留了口子，但“老板娘”这种话也不是随便听听就算了。" },
       { label: "“以后店开起来，你就是老板娘。”", accuse: "both", response: "这句甜不甜先放一边，后面有没有接办卡、投店，才是关键。" }
@@ -79,9 +79,9 @@ const DAILY_PLOT_DEFINITIONS = {
     premeditatedActorRole: null,
     accusationChoices: [
       { label: "“报销审批通过了。”", accuseRole: "respondent", response: "审批走到哪一步是一回事，钱打给谁是另一回事。" },
-      { label: "“我也确实想要这个主责。”", accuseRole: "complainant", response: "这句要承认。她想要机会是真的，同事拿这个机会让她先刷卡也是真的。" },
+      { label: "“我也确实想让老板把这次活动交给我。”", accuseRole: "complainant", response: "这句要承认。她想要机会是真的，同事拿这个机会让她先刷卡也是真的。" },
       { label: "“返款统一打给对接人。”", accuse: "both", response: "这句和审批截图放一起看，钱为什么一直回不来就有方向了。" },
-      { label: "“先私下把事办成，复盘再补流程。”", accuseRole: "respondent", response: "这句是入口。流程先被挪到私下，后面截图再漂亮，也补不了垫款风险。" }
+      { label: "“先别在大群问预算了，今天来不及。活动结束再补报备。”", accuseRole: "respondent", response: "这句是入口。预算确认先被挪到私下，后面截图再漂亮，也补不了垫款风险。" }
     ]
   }
 };
@@ -675,7 +675,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "对方 每次下班后都陪我聊天，说只有我能接住 对方 的情绪，还说别人都不懂。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。",
+        version: "对方每次下班后都陪我聊天，总说也就我肯听他说这些。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。",
         doubt: "没有确认关系，但对方一直给排他式的亲近感。",
         contradiction: "对方 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
         reliability: "mixed",
@@ -906,7 +906,7 @@ function dailyFakeProfileTemplate(brief, names) {
         material: "截图能看到校名和 MBA 项目，但本科、项目性质和学制没有放在一起。",
         options: [
           { label: "本科、项目性质和学制", correct: true, contradiction: "男方用名校毕业概括 MBA 项目，本科学历落差被留在了标签外面。", feedback: "图不一定假，但少的这一块会让“名校毕业”变成另一种听法。", routeAxis: "identity-wording" },
-          { label: "截图像不像修过", correct: false, feedback: "修没修先放下，这张图缺的是后半截。", routeAxis: "document-edge" },
+          { label: "截图像不像修过", correct: false, feedback: "就算图片没改过，它也没有本科院校、项目性质和学制。", routeAxis: "document-edge" },
           { label: "介绍人有没有夸张", correct: false, feedback: "介绍人说过什么，不能替这张图补上本科。", routeAxis: "caller-credibility" }
         ]
       },
@@ -977,24 +977,24 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "我一开始也不是完全被迫。我刚进项目组，确实想借这次客户答谢会让老板看到我。更难听一点，我先跟老板说过这次我可以主责，所以听到“署名写你负责”，就先垫了。",
+        version: "我一开始也不是完全被迫。我刚进项目组，确实想借这次客户答谢会让老板看到我。更难听一点，我先跟老板说过这次活动我能负责，所以听到“活动总结写你负责”，就先垫了。",
         doubt: "咨询者不是完全被逼，也确实想拿这个表现机会。",
-        contradiction: "咨询者先想要主责曝光，同事再把垫付款包装成机会，资金风险被弱化。",
+        contradiction: "咨询者先争取负责这次活动，同事再把垫付款包装成表现机会，资金风险被弱化。",
         reliability: "mixed",
         questionOptions: [
-          { question: "他让你垫钱时，原话有没有提署名和老板？", answer: "有。他说这次答谢会缺个执行负责人，如果我先垫场地和礼品费，复盘材料里可以写我主责。我没说的是，我前面已经跟老板表过态，想接这个活。", contradiction: "咨询者先向老板表态想主责，同事借这个把垫款包装成机会。", correct: true },
-          { question: "他说署名写你负责的时候，你当时怎么想的？", answer: "我接了。说难听点，我就是想要这个主责。所以垫款流程我没第一时间追，怕一追就显得我斤斤计较。可想表现不等于钱可以一直卡在他手里。", correct: false }
+          { question: "他让你垫钱时，原话有没有提署名和老板？", answer: "有。他让我先垫场地和礼品费，又说活动总结里可以写我负责。我没说的是，我前面已经跟老板表过态，想接这个活。", contradiction: "咨询者先向老板表态想负责这次活动，同事借这个把垫款包装成机会。", correct: true },
+          { question: "他说活动总结写你负责的时候，你当时怎么想的？", answer: "我马上答应了。说难听点，我就是想让老板把这次活动交给我。所以垫款的事我没马上追问，怕一问就显得我只惦记钱。可想表现不等于钱可以一直卡在他手里。", correct: false }
         ]
       },
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "我后来才想起来，活动前他让我别在大群里问预算，说客户答谢会临时调整太多，先私下把事办成，复盘再补流程。我也怕在大群问预算，会显得我前面说能主责是嘴硬。",
+        version: "我后来才想起来，活动前他让我别在大群里问预算，说当天来不及，等活动结束再补报备。我也怕在大群问预算，会让人觉得我前面说能负责这次活动是在逞强。",
         doubt: "私下垫款不是偶然，它先绕开了公开预算确认。",
         contradiction: "同事让咨询者避开大群预算确认，把垫款放进私下流程。",
         reliability: "partial",
         questionOptions: [
-          { question: "他为什么不让你在大群确认预算？", answer: "他说大群里问预算，会显得我不担事，老板会觉得我推活。不如先私下办成，复盘时再补流程。我当时最怕老板觉得我不扛事，就没再问。现在想想，他就是卡着我这个脸面。", contradiction: "同事借表现压力阻止公开确认预算。", correct: true },
+          { question: "他为什么不让你在大群确认预算？", answer: "他说大群里问预算，会显得我不担事，老板会觉得我推活。让我先把活动办了，结束以后再补报备。我当时最怕老板觉得我不扛事，就没再问。现在想想，他就是卡着我这个脸面。", contradiction: "同事借表现压力阻止公开确认预算。", correct: true },
           { question: "你如果当时在群里问，会不会真的影响观感？", answer: "会，肯定不那么好看。但至少群里会留下话，谁批钱、谁还钱、谁跟供应商对接，都跑不掉。", correct: false }
         ]
       },
@@ -1025,19 +1025,19 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "复盘材料出来以后，主责那栏确实写了我，但付款对接人和供应商确认人都还是他。也就是说，出问题时我像负责人，拿钱时入口还在他手里。",
+        version: "活动总结表出来以后，“执行主责”那栏确实写了我，但付款对接人和供应商确认人都还是他。出了问题，公司先找我；可我要催付款，还得找他。",
         doubt: "署名给了表面责任，关键入口仍在同事手里。",
         contradiction: "咨询者拿到项目署名，却没有拿到付款和供应商入口。",
         reliability: "partial",
         questionOptions: [
-          { question: "主责署名和付款入口，最后在同一个人手里吗？", answer: "不在。报告上写我主责，出了事先找我；可付款、供应商确认、返款都在他那边。钱什么时候回来，我还得等他一句话。", contradiction: "项目责任和资金入口被拆给不同人。", correct: true },
-          { question: "主责写了你以后，你最怕别人怎么说？", answer: "一开始我觉得值，署名到手就算多干点。可钱没回来以后，主责两个字越看越像坑。我最怕别人问：你自己私下垫的钱，流程怎么走的？", correct: false }
+          { question: "活动总结写你负责，付款又归他对接，这两个位置最后在同一个人手里吗？", answer: "不在。报告上写我负责，出了事先找我；可付款、供应商确认、返款都在他那边。钱什么时候回来，我还得等他一句话。", contradiction: "项目责任和资金入口被拆给不同人。", correct: true },
+          { question: "活动总结写了你负责以后，你最怕别人怎么说？", answer: "一开始我觉得值，能让老板看见我，多干点也认了。可钱一直没回来，我再看那张表，心里就发虚。我最怕别人问：你自己私下垫的钱，为什么没提前报备？", correct: false }
         ]
       }
     ],
     evidenceCards: [
       { id: "daily-work-repay-approval", type: "报销截图", title: "审批通过页", front: "截图只露出“审批通过”，没有付款状态和收款账户。", detail: "审批通过不等于钱已到账。", targets: ["truthWithGap"], contradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。" },
-      { id: "daily-work-repay-chat", type: "群聊原话", title: "署名和垫款", front: "“你先顶上，复盘材料里可以写你主责。”", detail: "表现机会和资金风险被放在同一句话里。", targets: ["sceneHint"], contradiction: "垫付款被包装成项目署名机会，资金风险被弱化。" },
+      { id: "daily-work-repay-chat", type: "群聊原话", title: "署名和垫款", front: "“你先把场地和礼品费垫了。活动总结的‘执行主责’一栏，可以写你的名字。”", detail: "表现机会和资金风险被放在同一条消息里。", targets: ["sceneHint"], contradiction: "垫付款被包装成项目署名机会，资金风险被弱化。" },
       { id: "daily-work-repay-vendor", type: "报价单", title: "服务协调费", front: "礼品报价里出现服务协调费，供应商群里提到返款给对接人。", detail: "返款流向决定这事是慢报销，还是有人截住入口。", targets: ["truthWithGap"], contradiction: "同事同时控制报销入口和供应商返款入口。" }
     ],
     evidenceChecks: [
@@ -1049,7 +1049,7 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
         options: [
           { label: "付款状态和收款账户", correct: true, contradiction: "审批截图缺少付款状态和收款账户，不能证明钱已到账。", feedback: "审批过不等于钱到账，少的就是这一页。", routeAxis: "document-edge" },
           { label: "活动现场照片", correct: false, feedback: "活动办了也不代表钱回来了。", routeAxis: "outer-thread" },
-          { label: "老板有没有看到复盘", correct: false, feedback: "复盘写了谁主责，没写他什么时候把垫款还回来。", routeAxis: "identity-wording" }
+          { label: "老板有没有看到活动总结", correct: false, feedback: "活动总结写了谁负责，没写他什么时候把垫款还回来。", routeAxis: "identity-wording" }
         ]
       }
     ],
@@ -1075,15 +1075,15 @@ function dailyWorkplaceReimbursementTemplate(brief, names) {
     ],
     deepFollowup: {
       question: "那我多问一句，如果今天不只是钱没回来，你最怕这件事在公司里被说成什么？",
-      answer: "我最怕他们说我是为了抢署名才私下垫款，流程不规范。我先跟老板说能主责，我也确实想要这个主责；但他用这个让我先刷卡、又拿审批截图挡我，也是真的。",
+      answer: "我最怕他们说我是为了抢署名才私下垫款，流程不规范。我先跟老板说这次活动我能负责，我也确实想让老板把活动交给我；但他用这个让我先刷卡、又拿审批截图挡我，也是真的。",
       note: "问到这里，咨询者想表现是真的，被人拿这个点压着先垫钱也是真的。"
     },
-    stageJudgement: "这不只是同事欠钱。主责写在报告上，垫款划在咨询者卡里；审批图、付款入口和供应商返款还都攥在对方手里。",
+    stageJudgement: "这不只是同事欠钱。活动总结写了咨询者负责，垫款却划在她自己的卡里；审批图、付款入口和供应商返款还都攥在对方手里。",
     followupTwist: "后续回拨里，财务说审批通过后还要二次付款确认，收款账户填的是同事账户。截图不是假，只是刚好截到最能让人闭嘴的地方。",
     dailyShareTitle: "报销截图都发了，钱为什么还没回来？",
     dailyShareBody: "审批图是过了，可付款状态、收款账户、供应商返款，一项都没露。",
     dailyShareQuestion: "你会先问审批截图，还是先问谁拿了项目署名？",
-    truth: "办公室里，有些机会听着很好听，先刷出去的却是自己的卡。咨询者想拿表现，所以没把流程问死；对方把主责署名递过来，付款入口和供应商返款却还攥着。名声好不好听是一回事，垫出去的钱是真出去了。",
+    truth: "办公室里，有些机会听着很好听，先刷出去的却是自己的卡。咨询者想让老板看见自己，所以没把报备问清楚；对方答应在活动总结里写她负责，付款入口和供应商返款却还攥着。名声好不好听是一回事，垫出去的钱是真出去了。",
     premeditated: false,
     premeditatedActorId: null,
     stance: "halfTruth"

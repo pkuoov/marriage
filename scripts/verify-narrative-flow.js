@@ -136,7 +136,7 @@ function validateFlow(flow) {
   check(hasGrayZoneMotivation(allText), "GRAY_ZONE_MOTIVE", "精选集单案必须有灰区动机或不明确推手，例如父母、面子、转述、平台、朋友或双方压力。");
   check(hasPurposeSignal(allText), "MOTIVE_CHAIN", "隐藏/裁切/改口必须有目的：推进、过关、借钱、见父母、面子、资源、署名、流程或退路。");
   check(hasRiskIfExposed(allText), "RISK_IF_EXPOSED", "必须能看出完整说清后会失去什么或被谁追问。");
-  check(flow.scenes.length >= 5 && flow.scenes.length <= 7, "SCENE_COUNT", "精选集单案 sceneReview 应为 5-7 段，才能支撑至少二十分钟的直播连线。");
+  check(flow.scenes.length >= 5 && flow.scenes.length <= 8, "SCENE_COUNT", "精选集单案 sceneReview 应为 5-8 段，才能支撑至少二十分钟的直播连线，并容纳一次玩家主动拆开的伏笔回收。");
   flow.scenes.forEach((scene) => {
     check(Boolean(scene.text && scene.contradiction), "SCENE_HAS_GAP", `${scene.id} 必须同时有叙述和矛盾。`);
     check(scene.options.length >= 2 && scene.options.length <= 3, "CHOICE_COUNT", `${scene.id} 选项应为 2-3 个。`);
@@ -377,7 +377,7 @@ function recapUsesFoundLogic(flow) {
 }
 
 function importantTokens(text) {
-  const matches = String(text).match(/见父母|截图|饭局|信用卡|社保|断缴|还款|债务|房本|产权|还贷|共同账户|协议|补偿|排班表|备注|投店|带客|活动|朋友|专属|学制|合同主体|收入|真实收入|花销|抠门|本科|MBA|工资|工资卡|上交工资|钱流向|父母|好印象|好感|周转|分期|包装|裁切|先过这一关|完整信息|匹配判断|审批|报销|付款|收款|供应商|返款|垫款|个人卡|署名|主责|归档|流程|项目|老板|财务|入口/g);
+  const matches = String(text).match(/见父母|截图|饭局|信用卡|社保|断缴|还款|债务|房本|产权|还贷|共同账户|协议|补偿|排班表|备注|投店|带客|活动|朋友|专属|学制|合同主体|收入|真实收入|花销|抠门|本科|MBA|工资|工资卡|上交工资|钱流向|父母|彩礼|存款|婚礼|理财|宸直|好印象|好感|周转|分期|包装|裁切|先过这一关|完整信息|匹配判断|审批|报销|付款|收款|供应商|返款|垫款|个人卡|署名|主责|归档|流程|项目|老板|财务|入口/g);
   return [...new Set(matches ?? [])];
 }
 

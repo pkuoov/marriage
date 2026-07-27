@@ -424,12 +424,12 @@ export function createRecapScreens(ctx) {
   }
 
   function liveCounterAftertasteHtml(brief = {}) {
-    const aftertaste = liveCounterBeatsFor(brief).map((beat) => {
+    const aftertastes = liveCounterBeatsFor(brief).map((beat) => {
       const pick = liveCounterPickForState(brief, beat.id);
       const choice = (beat.choices ?? []).find((item) => item.id === pick?.choiceId);
       return choice?.recapAftertaste ?? "";
-    }).find(Boolean);
-    return aftertaste ? callDialogueHtml([{ role: "host", text: aftertaste }], "host-disclosure") : "";
+    }).filter(Boolean);
+    return aftertastes.map((text) => callDialogueHtml([{ role: "host", text }], "host-disclosure")).join("");
   }
 
   function overnightCallerQuestionAftertasteHtml(brief = {}) {

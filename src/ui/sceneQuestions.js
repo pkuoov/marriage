@@ -49,8 +49,8 @@ export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks
   return `
     <section class="question-menu-card" aria-label="连线追问">
       <header>
-        <b>这句话，你想往哪儿追？</b>
-        <small>标着“疑点方向”的选项只选方向，具体问法由林旭阳开口。</small>
+        <b>这句话，你准备从哪儿问下去？</b>
+        <small>标着“疑点方向”的选项只选你在意的点；按下以后，它会变成你说出口的完整问句。</small>
       </header>
       ${helperPromptHtml(sceneIndex, scene, helper, helperRevealed)}
       <div class="question-menu-options">

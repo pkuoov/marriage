@@ -45,7 +45,7 @@ const continuousStoryRoutes = {
       { sceneId: "day-profile-teahouse", optionId: "keep-both-records" },
       { sceneId: "day-profile-credential-docs" }
     ],
-    callbackEarnedItem: "家里群原话",
+    callbackEarnedItem: "双份材料圈注",
     posture: "withCaller",
     snapshot: "market-coauthored",
     careChoiceId: "accompany"
@@ -137,7 +137,7 @@ function renderScript() {
   }
   add("");
 
-  add("## 序幕：晚上八点，ON AIR", "");
+  add("## 序幕：晚上八点，开播", "");
   for (const line of manifest.nightShell?.prologue?.lines ?? []) renderSpokenLine(lines, line);
   if (manifest.nightShell?.prologue?.hostLine) renderSpokenLine(lines, manifest.nightShell.prologue.hostLine);
   add("");
@@ -286,7 +286,7 @@ function renderPureStoryScript() {
     if (item.bridge) lines.push(`【转场】${item.bridge}`, "");
     if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
 
-    lines.push("## 第一夜｜第一次来电", "", "【ON AIR。主播先让咨询者把自己的版本说完。】", "");
+    lines.push("## 第一夜｜第一次来电", "", "【开播。主播先让咨询者把自己的版本说完。】", "");
     if (packet.openingComplaint) lines.push(`【来电摘要】${packet.openingComplaint}`, "");
     for (const line of packet.openingDialogue ?? []) renderDirectorSpoken(lines, line);
     (packet.nightStructure?.segment1SceneIndexes ?? []).forEach((sceneIndex, localIndex) => {
@@ -304,8 +304,6 @@ function renderPureStoryScript() {
     for (const scene of overnight.dayScenes ?? []) renderPureStoryDayScene(lines, scene, packet.documents ?? []);
 
     lines.push("## 第二夜｜回拨", "");
-    if (overnight.hangupLine) lines.push(`【${overnight.hangupLine}】`, "");
-    if (overnight.hostHoldLine) lines.push(`**林旭阳：** ${overnight.hostHoldLine}`, "");
     renderPureStoryCallerVariants(lines, "来电人的回拨立场", overnight.postures);
     for (const line of overnight.returnLead?.lines ?? []) renderDirectorSpoken(lines, line);
     renderPureStoryCallbackOpeners(lines, overnight.callbackOpeners, overnight.callbackFallback);
@@ -375,7 +373,7 @@ function renderContinuousStoryScript() {
     if (item.bridge) lines.push(`【转场】${item.bridge}`, "");
     if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
 
-    lines.push("## 第一夜｜第一次来电", "", "【ON AIR。林旭阳先让她把自己的版本说完。】", "");
+    lines.push("## 第一夜｜第一次来电", "", "【你接入这通电话，先让她把事情从头说。】", "");
     if (packet.openingComplaint) lines.push(`【来电摘要】${packet.openingComplaint}`, "");
     for (const line of packet.openingDialogue ?? []) renderContinuousSpoken(lines, line);
     for (const sceneIndex of packet.nightStructure?.segment1SceneIndexes ?? []) {
@@ -397,7 +395,6 @@ function renderContinuousStoryScript() {
     }
 
     lines.push("## 第二夜｜回拨", "");
-    if (packet.overnightStructure?.hangupLine) lines.push(`【${packet.overnightStructure.hangupLine}】`, "");
     renderContinuousCallerVariant(lines, packet.overnightStructure?.postures, route.posture);
     for (const line of packet.overnightStructure?.returnLead?.lines ?? []) renderContinuousSpoken(lines, line);
     renderContinuousCallback(lines, packet, route.callbackEarnedItem);
@@ -479,7 +476,7 @@ function renderContinuousInterlude(lines, interlude, actionId, optionId) {
   if (optionId) {
     const option = (action.options ?? action.choices ?? []).find((entry) => entry.id === optionId);
     if (!option) throw new Error(`连续阅读路线找不到幕间选项 ${optionId}`);
-    if (option.label) lines.push(`【林旭阳选择：${option.label}】`, "");
+    if (option.label) lines.push(`【你选择：${option.label}】`, "");
     if (option.advisorLine) lines.push(`**${advisorName(option.advisorId)}：** ${option.advisorLine}`, "");
   }
   const hasVisibleContent = action.sceneText || action.script?.open || action.script?.reply || action.script?.clipLine || action.text || optionId;
@@ -489,6 +486,7 @@ function renderContinuousInterlude(lines, interlude, actionId, optionId) {
 function renderContinuousDayScene(lines, scene, documents, optionId) {
   lines.push(`### ${scene.label ?? "白天地点"}`, "");
   const body = scene.body ?? {};
+  if (body.access) lines.push(`【这次为什么能问】${continuousStageText(body.access)}`, "");
   if (body.text) lines.push(`【${continuousStageText(body.text)}】`, "");
   for (const beat of body.beats ?? []) renderContinuousSpoken(lines, beat);
   const document = documents.find((entry) => entry.id === body.documentId);
@@ -497,7 +495,7 @@ function renderContinuousDayScene(lines, scene, documents, optionId) {
   if (!options.length) return;
   const option = options.find((entry) => entry.id === optionId);
   if (!option) throw new Error(`连续阅读路线找不到白天选项 ${optionId}`);
-  lines.push(`【林旭阳选择：${option.label ?? "继续核实"}】`, "");
+  lines.push(`【你选择：${option.label ?? "继续核实"}】`, "");
   for (const beat of option.resultBeats ?? []) renderContinuousSpoken(lines, beat);
   if (option.resultText) lines.push(`【${continuousStageText(option.resultText)}】`, "");
 }
@@ -526,7 +524,7 @@ function renderContinuousLiveCounter(lines, beat) {
   const choice = (beat.choices ?? []).find((entry) => !entry.silent) ?? beat.choices?.[0];
   if (!choice) return;
   if (!choice.silent && choice.label && choice.lines?.length) lines.push(`**林旭阳：** ${choice.label}`, "");
-  else if (!choice.silent && choice.label && !choice.questionOverride?.question) lines.push(`【林旭阳选择：${choice.label}】`, "");
+  else if (!choice.silent && choice.label && !choice.questionOverride?.question) lines.push(`【你选择：${choice.label}】`, "");
   for (const line of choice.lines ?? []) renderContinuousSpoken(lines, line);
   if (choice.questionOverride?.question) lines.push(`**林旭阳：** ${choice.questionOverride.question}`, "");
 }
@@ -645,6 +643,7 @@ function renderPureStoryInterlude(lines, interlude) {
 function renderPureStoryDayScene(lines, scene, documents) {
   lines.push(`### ${scene.label ?? "白天地点"}`, "");
   const body = scene.body ?? {};
+  if (body.access) lines.push(`【这次为什么能问】${body.access}`, "");
   if (body.text) lines.push(`【${body.text}】`, "");
   for (const beat of body.beats ?? []) renderDirectorSpoken(lines, beat);
   const document = documents.find((entry) => entry.id === body.documentId);
@@ -811,7 +810,7 @@ function renderDirectorScript() {
       lines.push("");
     }
 
-    lines.push("## 夜 A｜第一次来电", "", "【ON AIR。先让咨询者把自己相信的版本讲完整。】", "");
+    lines.push("## 夜 A｜第一次来电", "", "【开播。先让咨询者把自己相信的版本讲完整。】", "");
     if (packet.openingComplaint) lines.push(`【来电摘要】${packet.openingComplaint}`, "");
     for (const line of packet.openingDialogue ?? []) renderDirectorSpoken(lines, line);
     (packet.nightStructure?.segment1SceneIndexes ?? []).forEach((sceneIndex, localIndex) => {
@@ -829,8 +828,6 @@ function renderDirectorScript() {
     for (const scene of overnight.dayScenes ?? []) renderDirectorDayScene(lines, scene, packet.documents ?? []);
 
     lines.push("## 夜 B｜把省略问回来", "");
-    if (overnight.hangupLine) lines.push(`【回拨前】${overnight.hangupLine}`, "");
-    if (overnight.hostHoldLine) lines.push(`**林旭阳：** ${overnight.hostHoldLine}`, "");
     if (packet.nightStructure?.returnStance?.lines) {
       lines.push("### 回拨时的咨询者立场", "");
       for (const [stance, line] of Object.entries(packet.nightStructure.returnStance.lines)) lines.push(`- **${humanLabel(stance)}：** ${line}`);
@@ -1008,6 +1005,9 @@ function renderDirectorHangup(lines, hangup) {
   }
   if (hangup.hostHoldLine) lines.push(`**林旭阳：** ${hangup.hostHoldLine}`, "");
   if (hangup.hostLine) lines.push(`**林旭阳：** ${hangup.hostLine}`, "");
+  if (hangup.stageDirection && hangup.stageDirection !== hangup.hangupLine) {
+    lines.push(`【${hangup.stageDirection}】`, "");
+  }
 }
 
 function renderDirectorInterlude(lines, interlude) {
@@ -1031,6 +1031,7 @@ function renderDirectorInterlude(lines, interlude) {
 function renderDirectorDayScene(lines, scene, documents) {
   lines.push(`### ${scene.label ?? scene.id}`, "");
   const body = scene.body ?? {};
+  if (body.access) lines.push(`【联系与授权】${body.access}`, "");
   if (body.text) lines.push(`【${body.text}】`, "");
   for (const beat of body.beats ?? []) renderDirectorSpoken(lines, beat);
   const document = documents.find((entry) => entry.id === body.documentId);
@@ -1251,12 +1252,7 @@ function continuousCaseTitle(packet, caseIndex) {
 }
 
 function continuousStageText(value) {
-  let named = false;
-  return String(value ?? "").replace(/你/g, () => {
-    if (named) return "他";
-    named = true;
-    return "林旭阳";
-  });
+  return String(value ?? "");
 }
 
 function renderContinuousSpoken(lines, line) {
@@ -1279,6 +1275,24 @@ function assertContinuousStory(markdown, packets) {
   for (const [caseIndex, packet] of packets.entries()) {
     const title = continuousCaseTitle(packet, caseIndex);
     if (title && !markdown.includes(title)) throw new Error(`连续阅读版缺少案件 ${packet.caseId}`);
+    const caseHeading = `# 第${chineseNumber(caseIndex + 1)}幕｜${title}`;
+    const nextPacket = packets[caseIndex + 1];
+    const nextHeading = nextPacket
+      ? `# 第${chineseNumber(caseIndex + 2)}幕｜${continuousCaseTitle(nextPacket, caseIndex + 1)}`
+      : "";
+    const caseStart = markdown.indexOf(caseHeading);
+    const nextStart = nextHeading ? markdown.indexOf(nextHeading, caseStart + caseHeading.length) : markdown.length;
+    const caseMarkdown = markdown.slice(caseStart, nextStart >= 0 ? nextStart : markdown.length);
+    const hangupStage = packet.nightStructure?.hangup?.stageDirection;
+    if (hangupStage) {
+      const stageMarker = `【${hangupStage}】`;
+      const stageIndex = caseMarkdown.indexOf(stageMarker);
+      const postLiveIndex = caseMarkdown.indexOf("## 收麦后");
+      const stageCount = caseMarkdown.split(stageMarker).length - 1;
+      if (stageIndex < 0 || postLiveIndex < 0 || stageIndex > postLiveIndex || stageCount !== 1) {
+        throw new Error(`${packet.caseId} 连续阅读版的第一次收麦动作必须只出现一次，并紧跟在第一夜之后`);
+      }
+    }
     const holdLine = packet.overnightStructure?.hostHoldLine;
     if (holdLine && markdown.split(holdLine).length - 1 > 1) throw new Error(`${packet.caseId} 连续阅读版重复播放收麦留话`);
     if (packet.hostDisclosure?.text && !markdown.includes(packet.hostDisclosure.text)) throw new Error(`${packet.caseId} 连续阅读版漏掉主播自揭`);

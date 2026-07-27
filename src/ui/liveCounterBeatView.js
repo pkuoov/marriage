@@ -3,8 +3,9 @@ import { callDialogueHtml } from "./callFlowView.js";
 export function liveCounterBeatHtml(beat = {}, pick = null) {
   const choices = beat.choices ?? [];
   const selectedChoice = choices.find((choice) => choice.id === pick?.choiceId) ?? null;
+  const presentationClass = beat.presentation === "gift" ? " gift-counter-beat-card" : "";
   return `
-    <section class="interlude-action-card interrupt-toast-card live-counter-beat-card">
+    <section class="interlude-action-card interrupt-toast-card live-counter-beat-card${presentationClass}">
       <span class="source-badge">${escapeHtml(beat.from ?? "现场新消息")}</span>
       ${beat.text ? `<p><b>${escapeHtml(beat.text)}</b></p>` : ""}
       ${callDialogueHtml(beat.lines ?? [], "live-counter-dialogue")}

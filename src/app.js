@@ -311,7 +311,7 @@ function renderTitle() {
   const storyPack = modeFromUrl() !== "daily";
   const pack = storyPack ? storyPackForKey(storyKeyFromUrl()) : null;
   const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
-  const hook = storyPack ? "晚上八点，林旭阳推开直播间的门。第一通匿名来电，还在等待接入。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
+  const hook = storyPack ? "晚上八点，你推开直播间的门。第一通匿名来电，还在等待接入。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
   const object = storyPack ? "今晚 20:00 · 开播前" : preview?.storyClueObject ?? "今日通话摘录";
   const canContinue = canContinueJourney();
   app.innerHTML = titleScreenHtml({

@@ -224,6 +224,9 @@ async function runRoute(route) {
   page.setDefaultTimeout(8000);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-${route.name}-${Date.now()}&storyKey=steam-demo-01`);
+    if (route.name === "accounting-restaurant") {
+      await assertVisibleText(page, "今晚由你接麦", "title page should establish that the player is Lin Xuyang before starting");
+    }
     if (route.name === "accounting-restaurant") await assertAudioSettings(page);
     if (route.inputMode === "gamepad") await connectGamepad(page);
     await activate(page, route, "[data-start-story]");
@@ -266,7 +269,7 @@ async function runRoute(route) {
       await collectLiveVisualState(page, visualStates, portraitStates);
       if (await page.locator("[data-evidence-check]").count()) break;
       if (await page.locator("[data-enter-day-map]").count()) {
-        await assertVisibleText(page, "离台调查", "the second act opening should frame the daytime investigation before the map");
+        await assertVisibleText(page, "把昨晚没问完的补上", "the second act opening should frame why the host is following up before the map");
         await activate(page, route, "[data-enter-day-map]");
         await completeOvernightDay(page, route);
         continue;
@@ -476,18 +479,18 @@ async function runCase3DayRoutes() {
     ],
     opener: "两边的完整聊天",
     openerText: "我把介绍人两边的聊天都看完了",
-    conflictText: "她说他收入稳，你当时问过她凭什么吗"
+    conflictText: "知道你家现在能拿多少吗"
   });
   await runOfflineDayMap({
     chapter: 3,
     name: "case3-reaction-beat",
     interludeAction: "profile-closed-zhang",
     dayScenes: [
-      { id: "day-profile-credential-docs", text: "学历核验页与存款证明对读", rows: ["p04"] },
+      { id: "day-profile-credential-docs", text: "学历、彩礼与两家资金对读", rows: ["p04"] },
       { id: "day-profile-teahouse", text: "你先看聊天" }
     ],
     opener: "双份材料圈注",
-    openerText: "学校那页只写了 MBA 项目",
+    openerText: "MBA 缴费回单能证明二十三万八是他自己出的",
     reactionText: "她拍我家的群。给一个直播间。",
     reactionChoice: "push-back",
     reactionResponse: "你先让我把这段说完。"
@@ -505,19 +508,19 @@ async function runCase4AdvisorConflict() {
     dayScenes: [
       {
         id: "day-work-payment-ledger",
-        text: "报销与返款流转记录",
+        text: "她整理的七条报销记录",
         rows: ["q01", "q02", "q04"],
         questionText: "公开流程和这条私聊只隔十七分钟"
       },
       { id: "day-work-finance-window", text: "真付了，就让他们报回单号" }
     ],
-    opener: "报销流转记录圈注",
+    opener: "她整理的报销时间线",
     openerText: "财务说延后，是九天以后",
     conflictText: "财务那时还没说延后",
     reactionText: "弹幕里有人说我蠢。我看见了。",
     reactionChoice: "silence",
     reactionResponse: "行，继续。",
-    nextCounterText: "陈垫的钱月底统一走"
+    nextCounterText: "月底财务集中报销时一起办"
   });
 }
 
@@ -676,12 +679,15 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
       await click(page, "[data-complete-interlude-action]");
     }
     await click(page, "[data-callback-ready]");
-    await assertVisibleText(page, "离台调查", `${name} must enter the daytime act after the short interlude`);
+    await assertVisibleText(page, "把昨晚没问完的补上", `${name} must enter the daytime follow-up after the short interlude`);
     await click(page, "[data-enter-day-map]");
     if (await page.locator("[data-day-scene]").count() !== expectedDaySceneCount) throw new Error(`${name} should expose exactly ${expectedDaySceneCount} daytime locations`);
     if (await page.locator("[data-enter-overnight-callback]").count()) throw new Error(`${name} must require two daytime locations`);
     for (const [index, scene] of dayScenes.entries()) {
       await click(page, `[data-day-scene="${scene.id}"]`);
+      if (await page.locator(".day-access-hint").count() !== 1) {
+        throw new Error(`${scene.id} must explain why the host can meet this source or read this material`);
+      }
       const dayEntryTranscript = await drainDialogue(page, {});
       await assertNoPageText(page, "ON AIR", `${scene.id} must stay off air`);
       if (!dayEntryTranscript.includes(scene.text)) {
@@ -759,7 +765,7 @@ async function advanceToReactionBeat(page, expectedText, name) {
 }
 
 async function completeOvernightDay(page, route) {
-  await assertVisibleText(page, "下午走访", "day map should start with locations after the second-act opening");
+  await assertVisibleText(page, "今天的约见与材料", "day map should start with authorized appointments and materials");
   await assertVisibleText(page, "耗时 1 · 占用一处走访", "day locations must expose their action cost before activation");
   await assertNoPageText(page, "节目不在线，弹幕不在，城市在。", "day map must not repeat the second-act opening copy");
   await assertNoPageText(page, "ON AIR", "day map must hide ON AIR");
@@ -769,6 +775,9 @@ async function completeOvernightDay(page, route) {
   }
   for (const sceneId of route.dayScenes) {
     await activate(page, route, `[data-day-scene="${sceneId}"]`);
+    if (await page.locator(".day-access-hint").count() !== 1) {
+      throw new Error(`${sceneId} must keep its contact and consent source visible`);
+    }
     await drainDialogue(page, route);
     await assertNoPageText(page, "ON AIR", `${sceneId} must hide ON AIR`);
     await assertNoPageText(page, "听众耐心", `${sceneId} must hide patience HUD`);

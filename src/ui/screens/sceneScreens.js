@@ -270,10 +270,10 @@ export function createSceneScreens(ctx) {
         ]) : ""}
       `,
       choices: picked && (picked.hostChoices ?? []).length && !hostPick
-        ? choiceGroupHtml("主播怎么接", (picked.hostChoices ?? []).map((option) => `<button class="decision-choice" data-caller-question-host="${escapeHtml(option.id ?? "")}" type="button">${choiceButtonBodyHtml(option.label ?? "", CHOICE_COST_META.nonScoredReply)}</button>`).join(""), "single-choice-group", "不判对错，只记下你怎么接住这次迁怒")
+        ? choiceGroupHtml("你怎么接", (picked.hostChoices ?? []).map((option) => `<button class="decision-choice" data-caller-question-host="${escapeHtml(option.id ?? "")}" type="button">${choiceButtonBodyHtml(option.label ?? "", CHOICE_COST_META.nonScoredReply)}</button>`).join(""), "single-choice-group", "不判对错，只记下你怎么接住这次迁怒")
         : picked
         ? flowGroupHtml(`<button class="primary" data-after-caller-question type="button">再深入一句</button>`)
-        : choiceGroupHtml("主播回应", (question.options ?? []).map((option) => {
+        : choiceGroupHtml("你先回应", (question.options ?? []).map((option) => {
             const locked = option.requiresEarnedItem && !earned.has(option.requiresEarnedItem);
             return `<button class="decision-choice" data-caller-question="${escapeHtml(option.id ?? "")}" ${locked ? "disabled" : ""} type="button">${choiceButtonBodyHtml(option.label ?? "", locked ? `缺少：${option.requiresEarnedItem}` : CHOICE_COST_META.nonScoredReply)}</button>`;
           }).join(""), "single-choice-group", "不判对错，只留下余味")

@@ -7,12 +7,15 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ffmpeg = process.env.FFMPEG_BIN || "ffmpeg";
 const say = process.env.SAY_BIN || "say";
 const scratchDir = resolve(root, ".tmp-audio-p1");
+const voiceOnly = process.argv.includes("--voice-only");
+const sfxOnly = process.argv.includes("--sfx-only");
 
 assertCommand(ffmpeg, ["-version"], "ffmpeg with libvorbis");
-assertCommand(say, ["-v", "?"], "macOS say");
+if (!sfxOnly) assertCommand(say, ["-v", "?"], "macOS say");
 
 mkdirSync(resolve(root, "assets", "audio", "bgm"), { recursive: true });
 mkdirSync(resolve(root, "assets", "audio", "ambience"), { recursive: true });
+mkdirSync(resolve(root, "assets", "audio", "sfx"), { recursive: true });
 mkdirSync(resolve(root, "assets", "audio", "voice"), { recursive: true });
 mkdirSync(scratchDir, { recursive: true });
 
@@ -40,8 +43,11 @@ const loops = [
   }
 ];
 
-for (const asset of loops) buildLoop(asset);
-buildDryerPlayback();
+if (!voiceOnly && !sfxOnly) {
+  for (const asset of loops) buildLoop(asset);
+}
+if (!voiceOnly) buildCase2DoorKnock();
+if (!sfxOnly) buildDryerPlayback();
 rmSync(scratchDir, { recursive: true, force: true });
 
 function buildLoop(asset) {
@@ -67,7 +73,7 @@ function buildDryerPlayback() {
     "-v", "Tingting",
     "-r", "205",
     "-o", speechPath,
-    "今晚又被店长说了……只有你能接住我。"
+    "今晚店长又说我了。也就你肯听我说这些。"
   ], "voice source");
   if (statSync(speechPath).size < 8192) {
     throw new Error("macOS speech service returned an empty voice source; rerun audio:p1 with speech-service access");
@@ -78,7 +84,7 @@ function buildDryerPlayback() {
     "-f", "lavfi", "-i", "anoisesrc=color=pink:sample_rate=48000:duration=8:amplitude=0.18",
     "-f", "lavfi", "-i", "anoisesrc=color=white:sample_rate=48000:duration=8:amplitude=0.08",
     "-filter_complex",
-    "[0:a]highpass=f=170,lowpass=f=3900,acompressor=threshold=-22dB:ratio=3:attack=15:release=180,volume=1.15[v];[1:a]highpass=f=280,lowpass=f=2600,tremolo=f=7:d=0.16,volume=0.15[n1];[2:a]highpass=f=1600,lowpass=f=7200,volume=0.045[n2];[v][n1][n2]amix=inputs=3:duration=first:normalize=0,afade=t=in:st=0:d=0.08,afade=t=out:st=2.65:d=0.45,alimiter=limit=0.58[out]",
+    "[0:a]highpass=f=170,lowpass=f=3900,acompressor=threshold=-22dB:ratio=3:attack=15:release=180,volume=1.15[v];[1:a]highpass=f=280,lowpass=f=2600,tremolo=f=7:d=0.16,volume=0.15[n1];[2:a]highpass=f=1600,lowpass=f=7200,volume=0.045[n2];[v][n1][n2]amix=inputs=3:duration=first:normalize=0,afade=t=in:st=0:d=0.08,afade=t=out:st=3.25:d=0.45,alimiter=limit=0.58[out]",
     "-map", "[out]",
     "-ar", "48000",
     "-ac", "2",
@@ -88,6 +94,29 @@ function buildDryerPlayback() {
     "-metadata", "comment=Temporary system-voice performance; replace with directed actor recording before commercial release",
     resolve(root, "assets", "audio", "voice", "case2-dryer-message.ogg")
   ], "voice/case2-dryer-message.ogg");
+}
+
+function buildCase2DoorKnock() {
+  const pulse = (start, level) => [
+    `if(gte(t,${start}),${level}*exp(-38*(t-${start}))*sin(2*PI*92*(t-${start})),0)`,
+    `if(gte(t,${start}),${level * 0.46}*exp(-54*(t-${start}))*sin(2*PI*181*(t-${start})),0)`,
+    `if(gte(t,${start}),${level * 0.2}*exp(-72*(t-${start}))*sin(2*PI*347*(t-${start})),0)`
+  ].join("+");
+  const expression = [pulse(0.18, 0.92), pulse(0.48, 0.78)].join("+").replaceAll(",", "\\,");
+  run(ffmpeg, [
+    "-hide_banner", "-loglevel", "error", "-y",
+    "-f", "lavfi", "-i", `aevalsrc=exprs=${expression}:s=48000:d=1.65`,
+    "-filter_complex",
+    "[0:a]highpass=f=55,lowpass=f=1850,aecho=0.7:0.28:92:0.16,volume=0.82,alimiter=limit=0.72[out]",
+    "-map", "[out]",
+    "-ar", "48000",
+    "-ac", "2",
+    "-c:a", "libvorbis",
+    "-q:a", "6",
+    "-metadata", "title=Case 2 apartment door knock",
+    "-metadata", "comment=Two restrained knocks heard through a phone microphone",
+    resolve(root, "assets", "audio", "sfx", "case2-door-knock.ogg")
+  ], "sfx/case2-door-knock.ogg");
 }
 
 function assertCommand(command, args, label) {

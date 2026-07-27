@@ -19,8 +19,8 @@ story: midnight-hotline-livestream-detective
 | chapter-02 | 4 | 服务与专属的余味 | host-lin-xuyang | revised | [scene](chapter-02-scene-04.md) |
 | chapter-03 | 1 | 资料图上线 | host-lin-xuyang | revised | [scene](chapter-03-scene-01.md) |
 | chapter-03 | 2 | 原件、行话与家人口风 | host-lin-xuyang | revised | [scene](chapter-03-scene-02.md) |
-| chapter-03 | 3 | 条件问回自己 | host-lin-xuyang | revised | [scene](chapter-03-scene-03.md) |
-| chapter-03 | 4 | 未知收入的余味 | host-lin-xuyang | revised | [scene](chapter-03-scene-04.md) |
+| chapter-03 | 3 | 礼物插麦与条件问回自己 | host-lin-xuyang | revised | [scene](chapter-03-scene-03.md) |
+| chapter-03 | 4 | 两张不能现在花的钱 | host-lin-xuyang | revised | [scene](chapter-03-scene-04.md) |
 | chapter-04 | 1 | 主责与垫款 | host-lin-xuyang | revised | [scene](chapter-04-scene-01.md) |
 | chapter-04 | 2 | 审批、到货与返款 | host-lin-xuyang | revised | [scene](chapter-04-scene-02.md) |
 | chapter-04 | 3 | 责任入口对质 | host-lin-xuyang | revised | [scene](chapter-04-scene-03.md) |

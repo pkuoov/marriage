@@ -152,20 +152,20 @@ export function createOvernightScreens(ctx) {
     const caseNumber = Number(state.chapter ?? 1);
     dayFrame({
       brief,
-      label: `第 ${caseNumber} 案 · 第二幕`,
-      chapter: "第二天，下午 · 离台调查",
+      label: `第 ${caseNumber} 案 · 回访准备`,
+      chapter: "第二天，下午",
       backdropClass: "day-city",
       text: `
         <section class="day-act-opening">
           <span>第二天，下午</span>
-          <b>离台调查</b>
+          <b>把昨晚没问完的补上</b>
           <p>${escapeHtml(structure.dayIntro ?? "")}</p>
-          <small>没有弹幕替你接话。现在去找人，也去找原件。</small>
+          <small>没有弹幕催你。你只见已经答应见面的人，只看来电人同意交给节目的材料。</small>
         </section>
       `,
       choices: flowGroupHtml(
-        `<button class="primary" data-enter-day-map type="button">开始走访</button>`,
-        { label: "白天调查", note: "选择去处会花掉一格下午时间。" }
+        `<button class="primary" data-enter-day-map type="button">安排下午的回访</button>`,
+        { label: "回访准备", note: "每次约见或看材料会占掉一格下午时间。" }
       )
     });
     bind("[data-enter-day-map]", () => {
@@ -216,18 +216,18 @@ export function createOvernightScreens(ctx) {
       backdropClass: "day-city",
       text: `
         <section class="day-map-card">
-          <span class="source-badge">下午走访</span>
+          <span class="source-badge">今天的约见与材料</span>
           <div class="interlude-budget" aria-label="白天剩余 ${remaining} 格，总计 ${Number(overnight.dayBudget?.max ?? 0)} 格">
             <b>剩余 ${remaining} 格</b>
             <span>${completedCount ? `已走访 ${completedCount} 处` : "每处耗时 1 格"}</span>
           </div>
           <div class="day-place-grid">${sceneGrid}</div>
-          ${(overnight.earnedItems ?? []).length ? `<p class="hint">带到夜里的东西：${escapeHtml((overnight.earnedItems ?? []).join(" / "))}</p>` : ""}
+          ${(overnight.earnedItems ?? []).length ? `<p class="hint">今晚回拨能用的内容：${escapeHtml((overnight.earnedItems ?? []).join(" / "))}</p>` : ""}
         </section>
       `,
       choices: flowGroupHtml(callbackReady
-        ? `<button class="primary" data-enter-overnight-callback type="button">等到夜里</button>`
-        : `<button type="button" disabled>还要去 ${Math.max(0, required - completedCount)} 处</button>`)
+        ? `<button class="primary" data-enter-overnight-callback type="button">回直播间等回拨</button>`
+        : `<button type="button" disabled>还要选 ${Math.max(0, required - completedCount)} 处</button>`)
     });
     bind("[data-day-scene]", (event) => {
       updateOvernight(brief, { activeDaySceneId: event.currentTarget?.getAttribute("data-day-scene") ?? "" });
@@ -283,8 +283,8 @@ export function createOvernightScreens(ctx) {
         </section>
       `,
       choices: flowGroupHtml(`
-        <button data-scene="dayMap" type="button">先退回街上</button>
-        ${canLeave ? `<button class="primary" data-complete-day-scene type="button">记下离开</button>` : (body.choice && !choiceStateId ? `<button type="button" disabled>先选一步</button>` : "")}
+        <button data-scene="dayMap" type="button">先回安排页</button>
+        ${canLeave ? `<button class="primary" data-complete-day-scene type="button">带着这部分离开</button>` : (body.choice && !choiceStateId ? `<button type="button" disabled>先选一步</button>` : "")}
       `)
     });
     bind("[data-day-timeline-card]", (event) => {
@@ -329,6 +329,9 @@ export function createOvernightScreens(ctx) {
 
   function dayStageExtrasHtml(dayScene = {}, body = {}) {
     const parts = [];
+    if (body.access) {
+      parts.push(`<p class="hint day-access-hint"><b>这次为什么能问：</b>${escapeHtml(body.access)}</p>`);
+    }
     if (Array.isArray(body.cast) && body.cast.length) {
       parts.push(`<div class="day-cast">${body.cast.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</div>`);
     }
@@ -509,11 +512,14 @@ export function createOvernightScreens(ctx) {
       label: dayScene.label ?? document.title ?? "回后台审流水",
       chapter: quietDayChapter(dayScene.kind),
       backdropClass: dayScene.backdropClass ?? "day-document",
-      text: documentViewerHtml({ document, markedRows }),
+      text: `
+        ${dayScene.body?.access ? `<p class="hint day-access-hint"><b>这份材料为什么能看：</b>${escapeHtml(dayScene.body.access)}</p>` : ""}
+        ${documentViewerHtml({ document, markedRows })}
+      `,
       choices: flowGroupHtml(`
-        <button data-scene="dayMap" type="button">先退回街上</button>
+        <button data-scene="dayMap" type="button">先回安排页</button>
         ${canLeave
-          ? `<button class="primary" data-complete-day-scene type="button">记下离开</button>`
+          ? `<button class="primary" data-complete-day-scene type="button">圈好，带回直播间</button>`
           : `<button type="button" disabled>先圈一行</button>`}
       `)
     });

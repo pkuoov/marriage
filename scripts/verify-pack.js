@@ -616,6 +616,13 @@ function assertOvernightStructure(packet = {}, label = "") {
   assertNonEmptyString(structure.hangupAnchor, `${label} overnightStructure.hangupAnchor 不能为空`);
   const anchorIndex = (packet.sceneVersions ?? []).findIndex((scene) => collectTextFrom(scene).includes(structure.hangupAnchor));
   assert(anchorIndex >= 0, `${label} overnightStructure.hangupAnchor 未命中任何 sceneVersions`);
+  if (packet.nightStructure?.hangup?.afterSceneIndex !== undefined) {
+    assertEqual(
+      anchorIndex,
+      packet.nightStructure.hangup.afterSceneIndex,
+      `${label} overnightStructure.hangupAnchor 必须命中夜 A 最后一段，不能提前命中相似台词`
+    );
+  }
   assertNonEmptyString(structure.hangupLine, `${label} overnightStructure.hangupLine 不能为空`);
   if (structure.postHangupContact !== undefined) {
     assertNonEmptyString(structure.postHangupContact?.label, `${label} overnightStructure.postHangupContact.label 不能为空`);
@@ -659,6 +666,8 @@ function assertOvernightStructure(packet = {}, label = "") {
       (beat.choices ?? []).forEach((choice, choiceIndex) => {
         assertNonEmptyString(choice.id, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 id`);
         assertNonEmptyString(choice.label, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 label`);
+        assertNonEmptyString(choice.recapAftertaste, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 必须为玩家的处理方式留下回看余味`);
+        assert(!choice.recapAftertaste.includes("主播"), `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}].recapAftertaste 必须用第一人称回看，不能把玩家写回主播身后`);
         assert(choice.correct === undefined, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 不得判对错`);
         if (choice.lines !== undefined) {
           assertBeatLines(choice.lines, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}].lines`);
@@ -692,6 +701,7 @@ function assertOvernightStructure(packet = {}, label = "") {
     assertNonEmptyString(scene.label, `${label} overnightStructure.dayScenes[${sceneIndex}] 缺少 label`);
     assertNonEmptyString(scene.backdropClass, `${label} overnightStructure.dayScenes[${sceneIndex}] 缺少 backdropClass`);
     assert(["lab", "visit", "home", "studio", "document", "observe", "sitIn", "doorstep"].includes(scene.kind), `${label} overnightStructure.dayScenes[${sceneIndex}].kind 不合法`);
+    assertNonEmptyString(scene.body?.access, `${label} overnightStructure.dayScenes[${sceneIndex}].body.access 必须向玩家说明联系与授权来源`);
     if (Array.isArray(scene.body?.beats)) {
       assert(scene.body.beats.length > 0, `${label} overnightStructure.dayScenes[${sceneIndex}].body.beats 不能为空`);
       scene.body.beats.forEach((beat, beatIndex) => {
@@ -1576,6 +1586,7 @@ test("PACK-013", "warmth props close their arcs and the personal livestream stay
   assertEqual(hostProfile?.age, 33, "主播年龄背景必须固定为三十三岁");
   assertEqual(hostProfile?.formerOccupation, "互联网大厂法务", "主播前职业不得退回媒体机构从业者");
   assertEqual(hostProfile?.streamerTenure, "两年半", "主播年限必须固定为两年半");
+  assertEqual(hostProfile?.relationships?.find((relationship) => relationship.with === "zhao-lawyer")?.publicLabel, "妻子", "赵律师与林旭阳的关系必须保持夫妻设定");
   const backgroundLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "background");
   assertEqual(backgroundLine?.speaker, "林旭阳", "主播履历必须由本人第一人称介绍");
   assert(backgroundLine?.text?.includes("互联网大厂做法务") && backgroundLine?.text?.includes("两年半"), "开篇必须交代前职业、失业转折和主播年限");
@@ -1584,15 +1595,18 @@ test("PACK-013", "warmth props close their arcs and the personal livestream stay
   const epilogue = manifest.nightShell?.epilogue ?? {};
   assert(prologueText.includes("汤在冰箱"), "汤弧线缺少序章留下拍");
   assert(caseThreeInterlude?.afterLines?.some((line) => line.text?.includes("热过的汤")), "汤弧线缺少案间在场拍");
-  assert(epilogue.home?.includes("保温盒空了。他顺手洗了"), "汤弧线缺少回家收尾拍");
+  assert(epilogue.home?.includes("保温盒空了。你顺手洗了"), "汤弧线缺少回家收尾拍，且必须保持玩家第一人称行动视角");
   assert(prologueText.includes("有个东西我塞你包里了"), "赵律师序章留言必须像恋人托放东西，不得写成材料交接");
   assert(!prologueText.includes("案卷") && !prologueText.includes("收播后再看"), "赵律师私下留言不得使用案卷交接腔");
   assert(epilogue.close?.includes("从包里拿出那个牛皮纸文件袋"), "文件袋必须回收序章的生活化托放动作");
+  assert(epilogue.opening?.includes("你摘下耳机"), "整晚尾声必须继续让玩家以林旭阳的身份行动，不能突然退回旁观视角");
+  assert(epilogue.close?.startsWith("你从包里"), "正式版钩子的最后一个动作必须由玩家亲手完成");
   assert(epilogue.close?.includes("你当年没问完的那通"), "文件袋便签没有形成正式版主线钩子");
   assert(!epilogue.close?.includes("留给后续正式内容"), "玩家可见文件袋不得夹带编剧说明");
   const goLiveLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "stage" && line.text?.includes("开始直播"));
-  const streamStartLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "narration" && line.text?.includes("林旭阳推开直播间的门"));
+  const streamStartLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "narration" && line.text?.includes("推开直播间的门"));
   assert(streamStartLine?.text?.startsWith("晚上八点"), "普通情感连麦必须从晚上八点开播，不能设在凌晨一点");
+  assert(streamStartLine?.text?.includes("你推开直播间的门"), "运行时序幕舞台动作必须使用第二人称，把玩家和林旭阳保持为同一行动者");
   assert(!collectTextFrom(manifest.nightShell?.prologue).includes("凌晨一点"), "序幕不得残留凌晨一点开播设定");
   assertEqual(goLiveLine?.speaker, "旁白", "个人主播开播倒计时必须写成舞台动作，不得成为工作人员台词");
   assertEqual(goLiveLine?.audioCueId, "sfx.broadcast.on-air", "个人主播开播只允许平台提示音，不得使用人声倒数");
@@ -1667,41 +1681,58 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
 
   const trustPromise = (manifest.crossCasePromises ?? []).find((promise) => promise.id === "chenzhi-trust-payment-crisis");
   assertEqual(trustPromise?.secondarySeed?.caseId, "02-tony", "宸直线第二个案内种子必须登记在案二");
-  assertDeepEqual(trustPromise?.secondarySeed?.anchors, ["警笛", "敲门", "十万", "宸直信托"], "案二种子必须登记警笛、敲门、金额和机构四个锚点");
+  assertDeepEqual(trustPromise?.secondarySeed?.anchors, ["窗外强光", "敲门", "十万", "宸直信托"], "案二种子必须登记强光、敲门、金额和机构四个锚点");
+  assertEqual(trustPromise?.tertiarySeed?.caseId, "03-profile", "宸直线第三个案内种子必须登记在案三女方家庭婚礼资金");
+  assertDeepEqual(trustPromise?.tertiarySeed?.anchors, ["二十八万八", "三十万", "九月底到期", "宸直"], "案三种子必须登记彩礼、金额、期限和机构四个锚点");
   assertEqual(trustPromise?.payoff?.afterCaseId, "04-workplace", "宸直线必须到案四结尾才正式爆发");
+
+  const caseThree = caseFiles.find((packet) => packet.caseId === "03-profile");
+  const caseThreeText = JSON.stringify(caseThree ?? {});
+  assert(caseThreeText.includes("二十三万八") && caseThreeText.includes("自己交"), "案三必须明确 MBA 学费由男方本人承担");
+  assert(caseThreeText.includes("二十八万八") && caseThreeText.includes("二十八万六"), "案三必须把彩礼要求与男方资金上限放在同一条因果链");
+  assert(caseThreeText.includes("宸直") && caseThreeText.includes("九月底到期"), "案三必须在正式暴雷前种下女方家庭婚礼资金的到期边界");
+  assert(caseThree?.truthBoundary?.unknown?.some((item) => item.includes("九月底") && item.includes("兑付")), "案三不得提前结算宸直兑付结果");
 
   const firstTailText = JSON.stringify(interludesByCaseId.get("01-credit") ?? {});
   assert(firstTailText.includes("收益写得很高"), "案一小尾声必须由赵律师补入高收益合同风险");
   assert(firstTailText.includes("一轮一轮往外融"), "案一小尾声必须说明大盘子对外部融资的依赖");
 
   const caseTwo = caseFiles.find((packet) => packet.caseId === "02-tony");
-  const sirenScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-roster-function-notes");
-  const sirenLines = sirenScene?.sceneCloser?.lines ?? [];
-  const sirenText = sirenLines.map((line) => line.text ?? "").join(" ");
-  const sirenLine = sirenLines.find((line) => line.text?.includes("警笛"));
-  assert(sirenText.includes("警笛") && sirenText.includes("门外有人敲门") && sirenText.includes("你先去看看"), "案二第一夜必须用警笛、敲门和主播应答造成被迫中断");
-  assertEqual(sirenLine?.audioCueId, "sfx.case2.distant-siren", "真正的警笛音效必须只跟随案二警笛舞台句播放");
-  assert(!JSON.stringify(caseOne).includes("警笛") && !JSON.stringify(caseOne).includes("sfx.case2.distant-siren"), "案一不得出现警笛文字或案二专属警笛音效");
+  const knockScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-roster-function-notes");
+  const knockLines = knockScene?.sceneCloser?.lines ?? [];
+  const knockText = knockLines.map((line) => line.text ?? "").join(" ");
+  const knockLine = knockLines.find((line) => line.text?.includes("两下敲门声"));
+  assert(knockText.includes("发白的强光") && knockText.includes("把帘子拉上") && knockText.includes("两下敲门声"), "案二第一夜场尾必须按强光、拉帘和背景敲门留下开放边");
+  assert(caseTwo?.nightStructure?.hangup?.hostLine?.includes("确认安全"), "案二独立挂断页必须让主播先确认安全");
+  assertEqual(knockLine?.audioCueId, "sfx.case2.door-knock", "真正的敲门音效必须只跟随案二第一声背景敲门播放");
+  assert(!knockText.includes("警笛") && !/警车|民警|警察|报案/.test(knockText), "案二第一夜不得用警笛或身份词提前解释强光和敲门");
+  assert(!JSON.stringify(caseOne).includes("警笛") && !JSON.stringify(caseOne).includes("sfx.case2.door-knock"), "案一不得出现警笛文字或案二专属敲门音效");
   const caseOneLampScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-bank-flow");
   const caseOneLampLine = caseOneLampScene?.beforeVersion?.lines?.find((line) => line.text?.includes("金属灯架"));
   assertEqual(caseOneLampScene?.audioCueId, undefined, "案一灯架音效不得在整段场景进入时提前播放");
   assertEqual(caseOneLampLine?.audioCueId, "sfx.case1.lamp-drag", "案一灯架音效必须只跟随拖灯动作播放");
-  assert(sirenLines.every((line) => !/警笛|敲门/.test(line.text ?? "") || line.nonLoadBearing !== true), "被人物注意的警笛与敲门不得伪装成生活噪声");
-  assertEqual(sirenScene?.closureContract?.openEdge, "深夜来敲门的人是谁，为什么会在警笛停下后找上她。", "案二警笛场尾必须登记明确开放边");
+  assert(knockLines.every((line) => !/强光|敲门/.test(line.text ?? "") || line.nonLoadBearing !== true), "被人物注意的强光与敲门不得伪装成生活噪声");
+  assertEqual(knockScene?.closureContract?.openEdge, "强光和敲门是否来自同一拨人，来人是谁，咨询者为什么不肯当场说明。", "案二强光场尾必须登记明确开放边");
   const caseTwoHangupLine = caseTwo?.nightStructure?.hangup?.line ?? "";
-  assert(caseTwoHangupLine.includes("警笛停在楼下") && caseTwoHangupLine.includes("门外有人敲门"), "案二挂断页必须把眼前的警笛和敲门呈现给玩家，不能退回含糊的“突然有事”");
-  assert(!/民警|警察|报案/.test(caseTwoHangupLine), "案二第一夜只能播下警笛与敲门，不能提前揭晓来人身份");
+  assert(caseTwoHangupLine.includes("临时有点事") && caseTwoHangupLine.includes("可能是物业"), "案二挂断页必须承接场尾敲门并保留含糊借口");
+  assert(!/亮|帘/.test(caseTwoHangupLine), "案二挂断页不得重复上一屏已经演过的强光与拉帘");
+  assert(caseTwo?.nightStructure?.hangup?.hostLine?.includes("听见敲门"), "案二挂断页必须让主播听见背景敲门");
+  assert(!/民警|警察|警车|报案|酒吧/.test(JSON.stringify(caseTwo?.nightStructure?.hangup ?? {})), "案二第一夜不能提前揭晓来人或职业");
   assert(/电话.*断/.test(caseTwo?.overnightStructure?.hangupLine ?? ""), "案二隔夜结构必须保留突然断线的动作结果");
 
   const returnLeadLines = caseTwo?.overnightStructure?.returnLead?.lines ?? [];
   const returnLeadText = returnLeadLines.map((line) => line.text ?? "").join(" ");
-  const returnPoliceIndex = returnLeadLines.findIndex((line) => line.role === "caller" && line.text?.includes("门外是民警"));
-  const returnHostResponseIndex = returnLeadLines.findIndex((line) => line.role === "host" && /民警为什么会找到你/.test(line.text ?? ""));
-  const returnCauseIndex = returnLeadLines.findIndex((line) => line.role === "caller" && line.text?.includes("入股新店"));
-  assert(returnPoliceIndex >= 0 && returnHostResponseIndex === returnPoliceIndex + 1 && returnCauseIndex === returnHostResponseIndex + 1, "案二第二夜必须按民警揭露、主播回应追问、上门原因的顺序逐步回收警情");
-  assert(returnLeadLines[returnHostResponseIndex]?.text?.includes("先在你妈家待着"), "案二主播追问警情前必须先接住咨询者当下的安全处境");
-  assert(returnLeadText.includes("入股新店") && returnLeadText.includes("联络人写的是我"), "案二回拨先行拍必须先让玩家听懂十万元与联络人风险");
-  assert(!returnLeadText.includes("宸直"), "案二回拨先行拍不得提前塞入宸直");
+  assert(returnLeadText.includes("有人来找我问点事") && returnLeadText.includes("我现在不太想说"), "案二第二夜回拨必须先让咨询者继续闪躲");
+  assert(returnLeadText.includes("你现在安全吗") && returnLeadText.includes("安全"), "案二主播追问前必须先接住咨询者当下的安全处境");
+  assert(!/民警|警察|警车|报案|十万|酒吧|宸直/.test(returnLeadText), "案二回拨先行拍不得自动交出玩家应问出的民警、职业和资金答案");
+
+  const knockWorkScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-knock-and-work");
+  const knockWorkText = JSON.stringify(knockWorkScene ?? {});
+  assert(knockWorkScene?.questionOptions?.some((option) => option.correct && option.answer?.includes("楼下停的是警车") && option.answer?.includes("敲门的是民警")), "案二必须由玩家追问强光与敲门，才能确认来人是民警");
+  assert(knockWorkText.includes("我在酒吧做营销") && knockWorkText.includes("订台") && knockWorkText.includes("桌台和酒水提成"), "案二必须在民警揭示后的场尾才问出具体职业与结算方式");
+  assert(knockWorkScene?.sceneCloser?.lines?.some((line) => line.text?.includes("你到底做什么工作")), "案二职业追问必须位于玩家选择后的场尾，不能放在 afterVersion 提前播放");
+  assert(!knockWorkScene?.afterVersion, "案二不得用 afterVersion 在玩家选择前泄露民警原因与职业");
+  assert(knockWorkText.includes("没有被带走") && knockWorkText.includes("都没有"), "案二必须明确警方询问不等于咨询者违法或同意当联络人");
 
   const trustBeat = caseTwo?.overnightStructure?.liveCounterBeats?.find((beat) => beat.id === "tony-trust-screenshot-followup");
   const trustText = (trustBeat?.lines ?? []).map((line) => line.text ?? "").join(" ");
@@ -1709,17 +1740,23 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(trustText.includes("宸直") && trustText.includes("认购回单"), "案二后段独立拍必须带出同机构理财种子");
   assert(trustText.includes("只有她转来的图") && trustText.includes("原件已经交给民警"), "案二必须在对白中区分转发截图与警方持有的原件");
   assert(trustText.includes("不能") && trustText.includes("是不是同一笔钱"), "案二必须由咨询者承认两笔十万元的资金同一性尚未确认");
-  assert(caseTwo?.truthBoundary?.unknown?.some((item) => item.includes("实际资金路径") && item.includes("警方")), "案二必须把截图的资金同一性留给警方核对");
+  assert(
+    caseTwo?.truthBoundary?.unknown?.some(
+      (item) => item.includes("警方") && (item.includes("十万元后来去了哪里") || item.includes("是不是同一笔钱"))
+    ),
+    "案二必须把截图的资金同一性留给警方核对"
+  );
 
   const openingText = JSON.stringify(caseTwo?.openingDialogue ?? {});
   const exclusiveText = JSON.stringify(caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-exclusive-voice") ?? {});
   const benefitsText = JSON.stringify(caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-caller-benefits") ?? {});
   const callerProfile = castRegistry.cast.find((profile) => profile.id === "case2-caller-he");
   assert(openingText.includes("今天轮休") && openingText.includes("在家"), "案二第一夜必须交代咨询者为何在晚间待在家中");
-  assert(openingText.includes("酒吧做营销") && openingText.includes("订台") && openingText.includes("照看桌台") && openingText.includes("头发隔一阵就得弄"), "案二必须用职责一致的酒吧营销工作造成高频美发需求");
+  assert(openingText.includes("上班时间跟别人不太一样") && openingText.includes("经常要见人") && openingText.includes("头发隔一阵就得弄"), "案二第一夜只能展示职业造成的作息、见人与美发需求");
+  assert(!/酒吧|订台|桌台|提成/.test(openingText), "案二具体职业必须留到第二夜由玩家问出");
   assert(!openingText.includes("气氛组") && !JSON.stringify(caseTwo).includes("客服主管"), "案二不得再把两个岗位拼成方便剧情的混合职业");
-  assert(exclusiveText.includes("她靠自己拿提成") && exclusiveText.includes("最晚那档"), "Tony 的情绪价值必须落成当面维护与具体照顾");
-  assert(benefitsText.includes("提成有时当天结") && benefitsText.includes("染发加护理"), "案二必须交代快钱如何转成高频美发消费");
+  assert(exclusiveText.includes("人家上自己的班") && exclusiveText.includes("最晚那档"), "Tony 的情绪价值必须先落成不泄露职业的当面维护与具体照顾");
+  assert(benefitsText.includes("提成有时当晚就结") && benefitsText.includes("染发加护理"), "案二第二夜必须交代快钱如何转成高频美发消费");
   assert(caseTwo?.stageJudgement?.includes("这些都是真的"), "案二结案不得因销售动机倒销 Tony 真实发生过的照顾");
   assert(callerProfile?.background?.includes("酒吧做营销") && callerProfile?.background?.includes("提成") && callerProfile?.background?.includes("轮休在家"), "案二来电人的固定角色档案必须登记职业、结算方式和连麦地点");
 
@@ -1733,7 +1770,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
 test("PACK-015", "case 4 exposes a seven-row relative-time payment document", () => {
   const caseFour = caseFiles.find((packet) => packet.caseId === "04-workplace");
   const paymentLedger = caseFour?.documents?.find((document) => document.id === "case4-payment-ledger");
-  assert(paymentLedger, "案四必须新增报销与返款流转记录");
+  assert(paymentLedger, "案四必须新增她整理的七条报销记录");
   assertEqual(paymentLedger.dateMode, "relative", "案四文档必须显式声明相对时间，不能伪造月日");
   assertEqual(paymentLedger.rows?.length, 7, "案四流转记录必须有七行");
   assertEqual(paymentLedger.columns?.length, 4, "案四流转记录必须显式定义四个玩家可见字段");
@@ -1746,8 +1783,8 @@ test("PACK-015", "case 4 exposes a seven-row relative-time payment document", ()
   assert(paymentLedger.crossQuestions?.some((question) => ["q04", "q06"].every((rowId) => question.rows?.includes(rowId))), "案四必须比较审批页与供应商返款备注");
   const dayScene = caseFour?.overnightStructure?.dayScenes?.find((scene) => scene.id === "day-work-payment-ledger");
   assertEqual(dayScene?.body?.documentId, paymentLedger.id, "案四白天文档场景必须接到新增流转记录");
-  assertEqual(dayScene?.body?.earnedItemId, "报销流转记录圈注", "案四文档场景必须授予同名回拨物");
-  assert(caseFour?.overnightStructure?.callbackOpeners?.["报销流转记录圈注"]?.firstConflict, "案四新增圈注必须有第一轮冲突");
+  assertEqual(dayScene?.body?.earnedItemId, "她整理的报销时间线", "案四文档场景必须授予同名回拨物");
+  assert(caseFour?.overnightStructure?.callbackOpeners?.["她整理的报销时间线"]?.firstConflict, "案四新增时间线必须有第一轮冲突");
 });
 
 test("PACK-016", "case 1 keeps two anonymous money edges and one institutional payoff", () => {

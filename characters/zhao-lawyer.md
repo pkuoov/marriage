@@ -11,7 +11,7 @@ tags:
   - partner
 relationships:
   - character: host-lin-xuyang
-    type: partner
+    type: spouse
 ---
 
 # 赵律师

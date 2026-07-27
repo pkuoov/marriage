@@ -15,30 +15,30 @@ story: midnight-hotline-livestream-detective
 
 | Name | Type | Region | File |
 |------|------|--------|------|
-| 林旭阳的直播间 | studio | city | [livestream-studio](locations/livestream-studio.md) |
-| 案一餐厅 | restaurant | city | [case1-restaurant](locations/case1-restaurant.md) |
-| 案二理发店 | salon | city | [case2-salon](locations/case2-salon.md) |
-| 案三茶馆／核材料地点 | public-meeting-place | city | [case3-teahouse](locations/case3-teahouse.md) |
-| 案四公司与仓储链 | workplace | city | [case4-office](locations/case4-office.md) |
+| 案一餐厅 | Restaurant |  | [case1-restaurant](locations/case1-restaurant.md) |
+| 案二理发店 | Salon |  | [case2-salon](locations/case2-salon.md) |
+| 案三茶馆／核材料地点 | Public Meeting Place |  | [case3-teahouse](locations/case3-teahouse.md) |
+| 案四公司与仓储链 | Workplace |  | [case4-office](locations/case4-office.md) |
+| 林旭阳的直播间 | Studio |  | [livestream-studio](locations/livestream-studio.md) |
 
 ## Systems
 
 | Name | Type | File |
 |------|------|------|
-| 匿名热线的事实边界 | narrative-rule | [evidence-boundary](systems/evidence-boundary.md) |
-| 夜 A—白天—夜 B 调查循环 | story-loop | [overnight-investigation-loop](systems/overnight-investigation-loop.md) |
+| 匿名热线的事实边界 | Narrative Rule | [evidence-boundary](systems/evidence-boundary.md) |
+| 夜 A—白天—夜 B 调查循环 | Story Loop | [overnight-investigation-loop](systems/overnight-investigation-loop.md) |
 
 ## Factions
 
 | Name | Type | Status | File |
 |------|------|--------|------|
-| 宸直信托 | company | declining | [chenzhi-trust](factions/chenzhi-trust.md) |
+| 宸直信托 | Company | declining | [chenzhi-trust](factions/chenzhi-trust.md) |
 
 ## Artifacts
 
 | Name | Type | Status | File |
 |------|------|--------|------|
-| 案一账单与流水 | document | active | [case1-ledger](artifacts/case1-ledger.md) |
-| 案二排班表与剪辑录音 | document | active | [case2-salon-records](artifacts/case2-salon-records.md) |
-| 案三条件资料图 | document | active | [case3-profile-images](artifacts/case3-profile-images.md) |
-| 案四审批与返款材料 | document | active | [case4-approval-chain](artifacts/case4-approval-chain.md) |
+| 案一账单与流水 | Document | active | [case1-ledger](artifacts/case1-ledger.md) |
+| 案二排班表与剪辑录音 | Document | active | [case2-salon-records](artifacts/case2-salon-records.md) |
+| 案三条件资料图 | Document | active | [case3-profile-images](artifacts/case3-profile-images.md) |
+| 案四审批与返款材料 | Document | active | [case4-approval-chain](artifacts/case4-approval-chain.md) |

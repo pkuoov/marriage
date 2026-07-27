@@ -97,7 +97,7 @@
     "kicker": "中段立场快照",
     "prompt": "现在这通麦，你先站哪边？",
     "note": "不判分。只记下你此刻更信哪条说法。",
-    "afterPickLine": "下一段对日期和金额。八万从哪天开始，她又拿过什么，分开看。",
+    "afterPickLine": "八万是什么时候提的，她又拿过哪些东西，还得分开看。",
     "continueLabel": "继续听",
     "recapKicker": "中段立场",
     "options": [
@@ -110,10 +110,10 @@
       },
       {
         "id": "respondent-shifted-debt",
-        "label": "他在转嫁债务",
+        "label": "他想让她替自己还账",
         "summary": "失业、断缴、催最低还款都在同一条钱路上。",
-        "feedback": "断缴和催转都压在他这边；她拿过设备这件事也没消失。",
-        "recap": "断缴、催转和未说明的三万五把债务压回他那边；约会与设备又补上她参与过的那一份。"
+        "feedback": "社保停了以后，他还在刷卡，又催她转钱；可那套设备确实送到了她家。",
+        "recap": "社保断缴、催着转钱和没说清的三万五，都让人怀疑那八万主要是他的旧账；约会与设备里，她也确实享受过好处。"
       },
       {
         "id": "both-performed",
@@ -548,14 +548,14 @@
         "lines": [
           {
             "role": "host",
-            "text": "好，这顿饭先放在这里。账单里还有一笔一万二的分期，我们接着看那笔。"
+            "text": "好，纪念日那顿饭我听明白了。你刚才还提到一万二的分期。"
           }
         ]
       },
       "closureContract": {
         "entryAnchor": "一万二的分期",
-        "closerAnchor": "我们接着看那笔",
-        "adds": "从纪念日晚餐收回账单，恢复此前尚未说明用途的一万二分期。",
+        "closerAnchor": "一万二的分期",
+        "adds": "确认纪念日订座、点酒和朋友圈各自由谁完成，并回到此前尚未说明用途的一万二分期。",
         "openEdge": "这笔分期买了什么，以及谁实际受益。",
         "routeIndependent": true
       },
@@ -646,13 +646,13 @@
           },
           {
             "role": "host",
-            "text": "没关系，先喝口水。这一万二先记着。我们接着把账单往下翻，看看八万里还有哪些钱是你知道的。"
+            "text": "没关系，先喝口水。灯和稳定器送到你家，你当时不知道他办了分期，这两件事我听明白了。"
           }
         ]
       },
       "closureContract": {
         "entryAnchor": "灯和稳定器",
-        "closerAnchor": "这一万二先记着",
+        "closerAnchor": "灯和稳定器送到你家",
         "adds": "确认设备由咨询者接收和使用，同时把分期决定与还款责任留作后续问题。",
         "openEdge": "她参与开箱和账号拍摄到什么程度，以及这是否改变任何还款责任。",
         "routeIndependent": true
@@ -676,8 +676,8 @@
       "speakerId": "shen",
       "speaker": "咨询者",
       "entryQuestion": "你把这些消费重新加过了吗？",
-      "version": "我昨晚拿计算器按了好几遍。餐厅、酒店、礼物和那套设备，这些我都认；他买衣服的钱是他自己的。两边加完，离八万还差至少三万五。账单还有三天才到期，可他先说“今晚就要”，过了一会儿又改成“这几天都行”。我就是从那儿不敢转了。",
-      "helperHint": "八万已经拆成几块。只比较每一块有没有说清，别替空着的那块猜用途。",
+      "version": "我昨晚拿计算器按了好几遍。餐厅、酒店、礼物和那套设备，这些我都认；他买衣服的钱是他自己的。这些加起来，离八万还差至少三万五。账单还有三天才到期，可他先说“今晚就要”，过了一会儿又改成“这几天都行”。我就是从那儿不敢转了。",
+      "helperHint": "八万已经按餐厅、酒店、礼物、设备和男装分开算了。只看还有多少钱没说明用途，先别替他猜。",
       "doubt": "数字对不上：与咨询者有关的不到三万，男方自己的男装约一万五，至少三万五仍未说明。",
       "contradiction": "他自己在失业后仍刷了一万五男装，又无法解释剩余至少三万五，并用催款堵住追问。",
       "reliability": "partial",
@@ -802,7 +802,7 @@
               },
               {
                 "role": "stage",
-                "text": "他没接话。直播间安静了两秒。"
+                "text": "你没接话。直播间安静了两秒。"
               }
             ]
           },
@@ -1074,7 +1074,7 @@
       ],
       "options": [
         {
-          "label": "老会员和朋友圈都是她这边的",
+          "label": "会员号是她的，朋友圈也是她发的",
           "correct": true,
           "contradiction": "纪念日晚餐由咨询者订座、接受高价酒水并发布朋友圈，体面现场不是单方制造。",
           "feedback": "这不让她背八万，只把那顿饭的观众席也记进账里。",
@@ -1393,7 +1393,7 @@
       "actions": [
         {
           "id": "send-appraisal",
-          "label": "送鉴定",
+          "label": "把账页发给顾问",
           "summary": "把往期账单那几页送给一位顾问。",
           "cost": 1,
           "kind": "delegation",
@@ -1468,7 +1468,7 @@
     "liveCounterBeats": [
       {
         "id": "credit-live-listener-screenshot",
-        "kind": "interruptToast",
+        "kind": "emotionalChoice",
         "cost": 0,
         "afterSceneIndex": 5,
         "from": "来电人转读手机",
@@ -1483,15 +1483,59 @@
           {
             "role": "caller",
             "text": "一张截图。是这个直播间，你们现在的画面。他在听。"
+          }
+        ],
+        "choices": [
+          {
+            "id": "ask-to-continue",
+            "label": "他已经在听了。你还愿意继续吗？你说停，我们现在就停。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "继续。我本来就是来问这笔账的，不能他一听见，我就不敢说了。"
+              }
+            ],
+            "recapAftertaste": "他发来直播截图以后，我先问她还愿不愿意继续。她说继续，我们才把账问完。",
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure"
           },
           {
-            "role": "host",
-            "text": "既然他在听，就让他把后面的话也听完。你先不用回他。"
+            "id": "mute-before-continuing",
+            "label": "我先关一分钟麦。你不用回他，想好了再告诉我还要不要继续。",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "直播静音。一分钟后，她重新开口。"
+              },
+              {
+                "role": "caller",
+                "text": "继续吧。我不回他，先把这笔账说完。"
+              }
+            ],
+            "recapAftertaste": "他闯进监听以后，我先关了一分钟麦。重新开口，是她自己做的决定。",
+            "stanceNudge": "neutral",
+            "routeAxis": "process-control",
+            "routeTone": "neutral"
+          },
+          {
+            "id": "ignore-screenshot",
+            "label": "截图先放着。你不用替他回话，只告诉我，你还要不要继续。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "要。后面他再发什么，我只念我愿意念的。"
+              }
+            ],
+            "recapAftertaste": "我没有拿他的截图替他插话。她愿意继续，也只念了自己愿意公开的消息。",
+            "stanceNudge": "defensive",
+            "routeAxis": "process-control",
+            "routeTone": "firm"
           }
         ]
       }
     ],
-    "dayIntro": "第二天，下午。收麦后你只够在控台做一件短查，再出门。节目不在线，弹幕不在，城市在。你有一个下午，够去两个地方。",
+    "dayIntro": "沈把遮掉姓名和完整账号的账页、订座截图和会员页发到后台，同意节目只问日期、金额和公开订位规则。周会计答应看一眼；她还约了男友在咖啡厅对账，请你坐在隔壁听着。下午最多处理两处。",
     "dayBudget": 2,
     "minDayScenes": 2,
     "dayScenes": [
@@ -1501,6 +1545,7 @@
         "backdropClass": "day-document",
         "kind": "studio",
         "body": {
+          "access": "周会计是节目的长期顾问，只看沈同意交给节目的遮名账页，不猜姓名和账户。",
           "text": "旧厂房改的档案室，白炽灯照着一排铁柜。你把手机摘要递过去，周会计没接：「摘要不要。原件没拿到，就别拿半个姓猜人。先把四个日子排清楚，看看规律在哪儿断了。」",
           "routeAxis": "money-flow",
           "earnedItemId": "周会计的时间线",
@@ -1528,6 +1573,7 @@
         "backdropClass": "day-restaurant",
         "kind": "visit",
         "body": {
+          "access": "沈同意你拿遮名订座截图询问公开订位规则；你不查询任何具体客人的会员资料。",
           "text": "下午三点，靠窗那排立着「已预订」。你坐下假装等人。服务员擦杯子时多看了你一眼，邻桌常客把菜单一合。",
           "routeAxis": "process-control",
           "cast": [
@@ -1566,7 +1612,7 @@
               },
               {
                 "id": "chase-rotation",
-                "label": "追常客的轮订规律——记下「不专给一对」",
+                "label": "问常客靠窗位平时怎么订",
                 "grantsEarnedItemId": "常客的轮订规律",
                 "routeAxis": "external-corroboration",
                 "routeTone": "rotation-edge",
@@ -1595,6 +1641,7 @@
         "backdropClass": "day-cafe",
         "kind": "sitIn",
         "body": {
+          "access": "沈约人前说明会请节目的人隔桌旁听，男友回了“你要带就带，别插话”；你只听共享听筒，不参与谈话。",
           "text": "她发来定位：「我约了他，只对账。你坐隔壁，耳机戴上，别开口——开口我就不说了。」店里下午茶客不多。你背对那桌，耳机里是她手机的共享听筒。",
           "routeAxis": "caller-credibility",
           "cast": [
@@ -1658,6 +1705,7 @@
         "backdropClass": "day-document",
         "kind": "document",
         "body": {
+          "access": "流水原页由沈本人上传，姓名和完整账号已经遮掉；节目只处理她明确同意公开的几行。",
           "documentId": "case1-bank-flow",
           "routeAxis": "money-flow",
           "earnedItemId": "流水圈注"
@@ -1684,7 +1732,7 @@
           ],
           "callerLine": "……说成断了，话就重了。",
           "pauseAfterCallerLine": true,
-          "callerFollowupLine": "我没敢往那边说。"
+          "callerFollowupLine": "我只敢跟自己说，他是奖金晚发。"
         }
       },
       "餐厅拒绝核对": {
@@ -1786,7 +1834,7 @@
       "lines": [
         {
           "role": "host",
-          "text": "昨晚那三万五还没说清。我们从这儿接着问。"
+          "text": "昨晚那三万五还没说清。"
         },
         {
           "role": "caller",
@@ -1861,9 +1909,9 @@
               "label": "(不接话)",
               "silent": true,
               "lines": [
-                {
-                  "role": "stage",
-                  "text": "他没接话。电流声里，她自己缓了过来。"
+                  {
+                    "role": "stage",
+                    "text": "你没接话。电流声里，她自己缓了过来。"
                 },
                 {
                   "role": "caller",
