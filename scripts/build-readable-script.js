@@ -11,6 +11,9 @@ const castRegistry = await readJson("content/characters/cast.json");
 const casePackets = await Promise.all(
   manifest.sequence.map((item) => readJson(`content/packs/${packId}/cases/${item.caseId}.json`))
 );
+const quickCasePackets = await Promise.all(
+  (manifest.quickCases ?? []).map((quickCaseId) => readJson(`content/packs/${packId}/quick-cases/${quickCaseId}.json`))
+);
 const continuousStoryRoutes = {
   "01-credit": {
     helperSceneId: "credit-eight-wan-bill",
@@ -86,7 +89,7 @@ const outputs = [
     content: renderContinuousStoryScript()
   }
 ];
-assertSourceCompleteness(outputs[0].content, { manifest, comments, cases: casePackets });
+assertSourceCompleteness(outputs[0].content, { manifest, comments, cases: casePackets, quickCases: quickCasePackets });
 assertContinuousStory(outputs[3].content, casePackets);
 
 if (checkOnly) {
@@ -128,6 +131,7 @@ function renderScript() {
   renderNode(lines, manifest.crossCasePromises, "跨案承诺账本", 3);
   renderNode(lines, manifest.caseLabels, "来电标签", 3);
   renderNode(lines, manifest.sequence, "案件顺序", 3);
+  renderNode(lines, manifest.quickCases, "独立快案入口", 3);
   add("");
 
   add("## 演员与声纹速查", "");
@@ -253,6 +257,33 @@ function renderScript() {
       renderWorldEcho(lines, interlude.worldEcho, true);
     }
   });
+
+  if (quickCasePackets.length) {
+    add("# 独立模式：评论区快案", "");
+    add("> 快案不属于四幕主线。玩家先听完整段公开连线，再限次圈句；评论区只能比较本段已经播出的原话。", "");
+    for (const packet of quickCasePackets) {
+      add(`## ${packet.label}：${packet.title}`, "");
+      add(`- **时长：** ${packet.durationLabel}`, `- **玩法：** ${packet.rule}`, `- **开场：** ${packet.premise}`, "");
+      add("### 原始连线", "");
+      for (const [index, turn] of (packet.turns ?? []).entries()) {
+        add(`#### 第 ${index + 1} 组（${turn.id}）`, "");
+        add(`**林旭阳：** ${turn.host}`, "", `**来电人：** ${turn.caller}`, "");
+        if (turn.ambientComments?.length) add(`【实时评论】${turn.ambientComments.join("／")}`, "");
+      }
+      add("### 圈句、评论接力与问回", "");
+      renderNode(lines, packet.quoteOptions, "全部候选与反馈", 4);
+      add("", "### 结案边界", "");
+      renderNode(lines, packet.ending, "结案", 4);
+      add(`- **改写边界：** ${packet.sourceBoundary}`, "");
+      renderNode(lines, {
+        id: packet.id,
+        castProfileId: packet.castProfileId,
+        requiredFlawCount: packet.requiredFlawCount,
+        playerMarkLimit: packet.playerMarkLimit
+      }, "运行规则", 4);
+      add("");
+    }
+  }
 
   add("# 尾声", "");
   renderNode(lines, manifest.nightShell?.epilogue, "收播后", 2);

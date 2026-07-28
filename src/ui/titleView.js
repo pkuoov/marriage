@@ -12,7 +12,8 @@ export function titleScreenHtml({
   audioSettings = {},
   canContinue = false,
   resumeLabel = "上次停在：直播连线",
-  confirmNewGame = false
+  confirmNewGame = false,
+  quickModeAvailable = false
 } = {}) {
   const titleLines = productTitleLines(productName);
   const actRows = (acts ?? []).slice(0, 4);
@@ -83,6 +84,13 @@ export function titleScreenHtml({
                       <small>${storyPack ? "从今晚 20:00 推门进直播间" : "接入今天这通匿名来电"}</small>
                     </button>
                   `}
+                  ${quickModeAvailable ? `
+                    <button class="title-journey-action title-quick-detective" data-start-quick-detective type="button">
+                      <span>DETECTIVE MODE · 10 MIN</span>
+                      <b>评论区快案</b>
+                      <small>听完一通电话，从原话里圈出破绽</small>
+                    </button>
+                  ` : ""}
                 </div>
                 ${confirmNewGame ? `
                   <section class="title-new-game-confirm" aria-live="polite">

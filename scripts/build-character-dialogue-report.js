@@ -10,6 +10,9 @@ const castRegistry = await readJson("content/characters/cast.json");
 const casePackets = await Promise.all(
   manifest.sequence.map((item) => readJson(`content/packs/${packId}/cases/${item.caseId}.json`))
 );
+const quickCasePackets = await Promise.all(
+  (manifest.quickCases ?? []).map((quickCaseId) => readJson(`content/packs/${packId}/quick-cases/${quickCaseId}.json`))
+);
 const outputPath = resolve(root, "docs", "generated", `${packId}-character-dialogue-report.md`);
 const profiles = castRegistry.cast ?? [];
 const profilesById = new Map(profiles.map((profile) => [profile.id, profile]));
@@ -20,6 +23,7 @@ const seen = new Set();
 
 collectShellDialogue();
 for (const packet of casePackets) collectCaseDialogue(packet);
+for (const packet of quickCasePackets) collectQuickCaseDialogue(packet);
 assertNoForbiddenPatterns();
 if (errors.length) throw new Error(`character dialogue attribution failed:\n${errors.slice(0, 20).join("\n")}`);
 
@@ -159,6 +163,36 @@ function collectCaseDialogue(packet) {
   if (respondentId) add(respondentId, "backstage", "$case.respondentNote.text", packet.respondentNote?.text, "对方后台留言");
 }
 
+function collectQuickCaseDialogue(packet) {
+  const caseId = `quick-${packet.id}`;
+  const callerId = packet.castProfileId;
+  const hostId = "host-lin-xuyang";
+  if (!profilesById.has(callerId)) {
+    errors.push(`${caseId}: unknown caller profile ${callerId}`);
+    return;
+  }
+  const add = (profileId, path, text, surface) => {
+    if (typeof text !== "string" || !text.trim()) return;
+    const normalized = text.trim();
+    const key = `${caseId}\u0000${profileId}\u0000${path}\u0000${normalized}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    lines.push({ caseId, profileId, phase: "other", path, text: normalized, surface });
+  };
+  for (const [index, turn] of (packet.turns ?? []).entries()) {
+    add(hostId, `$quick.turns[${index}].host`, turn.host, "林旭阳");
+    add(callerId, `$quick.turns[${index}].caller`, turn.caller, "来电人");
+  }
+  for (const [index, option] of (packet.quoteOptions ?? []).entries()) {
+    add(hostId, `$quick.quoteOptions[${index}].hostLine`, option.hostLine, "林旭阳");
+    add(callerId, `$quick.quoteOptions[${index}].callerLine`, option.callerLine, "来电人");
+  }
+  add(hostId, "$quick.ending.hostLead", packet.ending?.hostLead, "林旭阳");
+  add(hostId, "$quick.ending.hostVerdict", packet.ending?.hostVerdict, "林旭阳");
+  add(callerId, "$quick.ending.callerReply", packet.ending?.callerReply, "来电人");
+  add(hostId, "$quick.ending.hostClose", packet.ending?.hostClose, "林旭阳");
+}
+
 function collectShellDialogue() {
   const globalProfiles = profiles.filter((profile) => profile.caseIds.includes("*"));
   const resolveSurface = (surface, path) => {
@@ -287,6 +321,17 @@ function renderReport() {
     for (const profileId of orderedProfileIds) {
       const profile = profilesById.get(profileId);
       const profileLines = lines.filter((line) => line.caseId === packet.caseId && line.profileId === profileId);
+      if (!profile || !profileLines.length) continue;
+      renderProfileSection(out, profile, profileLines, orderedPhases, phaseLabels);
+    }
+  }
+
+  for (const packet of quickCasePackets) {
+    const caseId = `quick-${packet.id}`;
+    out.push(`# 快案：${packet.title}`, "");
+    for (const profileId of ["host-lin-xuyang", packet.castProfileId]) {
+      const profile = profilesById.get(profileId);
+      const profileLines = lines.filter((line) => line.caseId === caseId && line.profileId === profileId);
       if (!profile || !profileLines.length) continue;
       renderProfileSection(out, profile, profileLines, orderedPhases, phaseLabels);
     }

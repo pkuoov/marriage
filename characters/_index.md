@@ -25,6 +25,7 @@ story: midnight-hotline-livestream-detective
 | 张法医 | supporting | alive | [zhang-forensic](zhang-forensic.md) |
 | 赵律师 | deuteragonist | alive | [zhao-lawyer](zhao-lawyer.md) |
 | 周会计 | supporting | alive | [zhou-accountant](zhou-accountant.md) |
+| 快案来电人·罗 | supporting | alive | [quick1-caller-luo](quick1-caller-luo.md) |
 
 ## Relationship Map
 

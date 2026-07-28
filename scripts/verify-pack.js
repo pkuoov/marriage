@@ -1757,7 +1757,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(!openingText.includes("气氛组") && !JSON.stringify(caseTwo).includes("客服主管"), "案二不得再把两个岗位拼成方便剧情的混合职业");
   assert(exclusiveText.includes("人家上自己的班") && exclusiveText.includes("最晚那档"), "Tony 的情绪价值必须先落成不泄露职业的当面维护与具体照顾");
   assert(benefitsText.includes("提成有时当晚就结") && benefitsText.includes("染发加护理"), "案二第二夜必须交代快钱如何转成高频美发消费");
-  assert(caseTwo?.stageJudgement?.includes("这些都是真的"), "案二结案不得因销售动机倒销 Tony 真实发生过的照顾");
+  assert(caseTwo?.stageJudgement?.includes("这些照顾都是真的"), "案二结案不得因销售动机倒销 Tony 真实发生过的照顾");
   assert(callerProfile?.background?.includes("酒吧做营销") && callerProfile?.background?.includes("提成") && callerProfile?.background?.includes("轮休在家"), "案二来电人的固定角色档案必须登记职业、结算方式和连麦地点");
 
   const caseTwoInterlude = interludesByCaseId.get("02-tony");

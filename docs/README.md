@@ -1,8 +1,8 @@
 # 文档入口
 
-更新时间：2026-07-25
+更新时间：2026-07-28
 
-`docs/` 只保留现行规范、生产交接、发行计划和可再生成的审查稿。已经执行完的 pass Prompt、外部模型复审、被 skill/测试吸收的方案和废止美术方向不继续保留；需要追溯时使用 Git 历史。
+`docs/` 顶层只保留现行规范、生产交接、发行计划和可再生成的审查稿。已经执行完的 pass Prompt、外部模型复审、被 skill/测试吸收的方案和废止美术方向不留在顶层；需要保留复审来源时统一放进 `review-archive/`，其余追溯使用 Git 历史。
 
 ## 从这里开始
 
@@ -25,6 +25,7 @@
 - [双夜结构](two-call-night-design.md)
 - [多场景罗生门结构](multi-scene-rashomon-design.md)
 - [主播调查与证据回流](host-investigation-loop.md)
+- [评论区快案：快速侦探模式](quick-detective-mode.md)
 
 人物性格、场景功能、伏笔和跨案状态分别维护在 `characters/`、`scenes/`、`plot/`、`continuity/`；玩家实际看到的文本维护在 `content/packs/steam-demo-01/`。
 
@@ -84,6 +85,16 @@ npm run content:script
 npm run check
 ```
 
+## 提交前行为闸门
+
+修改 `content/`、`src/ui/`、`src/app.js`、反制拍或场景流程后，提交前必须运行：
+
+```bash
+npm run test:pr
+```
+
+`npm run check` 负责静态结构、内容边界和叙事路径；`npm run test:pr` 会在此基础上追加浏览器完整回放。涉及 Electron、桌面打包或发布流程时，再运行 `npm run test:full`。
+
 ## 文档生命周期
 
 新增文档前先判断内容属于哪里：
@@ -91,5 +102,5 @@ npm run check
 1. 长期规则写入现有设计文档或 `project-skills/`。
 2. 玩家可见内容写入案件 JSON，不另建台词副本。
 3. 未完成事项写入 `unfinished-backlog.md`。
-4. 一次性评审意见执行后应转成代码、测试、skill 或 backlog 条目，不长期保留 Prompt。
+4. 一次性评审意见执行后应转成代码、测试、skill 或 backlog 条目，不再放在 `docs/` 顶层。确需保留外部复审来源时，只在 `review-archive/` 留一个标明执行状态的最终版本；同一批的截断稿、v2 副本和临时改名稿必须合并。
 5. 可由脚本重建的报告放在 `docs/generated/`，并由检查命令防止过期。

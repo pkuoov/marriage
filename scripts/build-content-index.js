@@ -11,7 +11,7 @@ const castPath = resolve(root, "content", "characters", "cast.json");
 const outputPath = resolve(root, "src", "generated", "contentPackIndex.js");
 const checkOnly = process.argv.includes("--check");
 
-const { contentPacks, contentCases } = await loadContentPacks();
+const { contentPacks, contentCases, contentQuickCases } = await loadContentPacks();
 const contentAdvisors = await loadAdvisors();
 const contentHelperNpcs = await loadHelperNpcs();
 const contentCast = await loadCast();
@@ -23,8 +23,13 @@ for (const pack of Object.values(contentPacks)) {
     }
   }
 }
+for (const quickCases of Object.values(contentQuickCases)) {
+  for (const quickCase of Object.values(quickCases)) {
+    validateQuickCase(quickCase, contentCast);
+  }
+}
 const source = stripManualCacheTokens(
-  renderContentIndex(contentPacks, contentCases, contentAdvisors, contentHelperNpcs, contentCast)
+  renderContentIndex(contentPacks, contentCases, contentQuickCases, contentAdvisors, contentHelperNpcs, contentCast)
 );
 
 if (checkOnly) {
@@ -46,6 +51,7 @@ async function loadContentPacks() {
     .sort();
   const packs = {};
   const cases = {};
+  const quickCases = {};
   for (const packId of packIds) {
     const manifest = await readJson(resolve(packsDir, packId, "manifest.json"));
     const comments = await readJson(resolve(packsDir, packId, "comments.json"));
@@ -59,15 +65,22 @@ async function loadContentPacks() {
       nightShell: manifest.nightShell,
       comments,
       caseLabels: manifest.caseLabels,
+      quickCases: manifest.quickCases ?? [],
       sequence: manifest.sequence
     };
     cases[manifest.id] = {};
+    quickCases[manifest.id] = {};
     for (const item of manifest.sequence ?? []) {
       const packet = await readJson(resolve(packsDir, packId, "cases", `${item.caseId}.json`));
       cases[manifest.id][item.caseId] = runtimeIndexCase(packet, item);
     }
+    for (const quickCaseId of manifest.quickCases ?? []) {
+      const packet = await readJson(resolve(packsDir, packId, "quick-cases", `${quickCaseId}.json`));
+      assert(packet.id === quickCaseId, `${packId} quick case ${quickCaseId} id must match filename`);
+      quickCases[manifest.id][quickCaseId] = packet;
+    }
   }
-  return { contentPacks: packs, contentCases: cases };
+  return { contentPacks: packs, contentCases: cases, contentQuickCases: quickCases };
 }
 
 async function readJson(path) {
@@ -126,7 +139,41 @@ function runtimeIndexCase(packet, manifestItem) {
   return runtimeCaseContentSummary(packet);
 }
 
-function renderContentIndex(packs, cases, advisors, helperNpcs, cast) {
+function validateQuickCase(packet, cast) {
+  const turns = packet.turns ?? [];
+  const options = packet.quoteOptions ?? [];
+  const turnIds = new Set(turns.map((turn) => turn.id));
+  const optionIds = new Set(options.map((option) => option.id));
+  const flawOptions = options.filter((option) => option.kind === "flaw");
+  const flawIds = new Set(flawOptions.map((option) => option.flawId));
+  assert(packet.id, "quick case id is required");
+  assert(packet.title, `${packet.id} quick case title is required`);
+  assert(cast[packet.castProfileId], `${packet.id} references unknown cast profile ${packet.castProfileId}`);
+  assert(turns.length >= 6, `${packet.id} needs at least six question-answer turns`);
+  assert(turnIds.size === turns.length, `${packet.id} turn ids must be unique`);
+  assert(optionIds.size === options.length, `${packet.id} quote option ids must be unique`);
+  assert(flawIds.size === flawOptions.length, `${packet.id} flaw ids must be unique`);
+  assert(flawOptions.length === Number(packet.requiredFlawCount), `${packet.id} requiredFlawCount must match flaw options`);
+  assert(options.some((option) => option.kind === "decoy"), `${packet.id} needs at least one evidence-boundary decoy`);
+  assert(Number(packet.playerMarkLimit) > 0, `${packet.id} playerMarkLimit must be positive`);
+  assert(Number(packet.playerMarkLimit) < flawOptions.length, `${packet.id} must leave at least one flaw for the crowd`);
+  assert(packet.ending?.confirmed?.length && packet.ending?.unknown?.length, `${packet.id} ending must separate confirmed and unknown`);
+  assert(packet.ending?.verdictKicker && packet.ending?.confirmedTitle && packet.ending?.unknownTitle, `${packet.id} ending must separate risk action from unresolved background`);
+  assert(packet.ending?.riskReading?.title && packet.ending?.riskReading?.text, `${packet.id} ending must label its strongest risk reading`);
+  assert(packet.sourceBoundary, `${packet.id} must record its adaptation boundary`);
+  for (const option of options) {
+    assert(turnIds.has(option.turnId), `${packet.id} option ${option.id} references unknown turn ${option.turnId}`);
+    if (option.kind !== "flaw") continue;
+    assert((option.pairedTurnIds ?? []).length >= 2, `${packet.id} flaw ${option.id} needs at least two line anchors`);
+    for (const turnId of option.pairedTurnIds) {
+      assert(turnIds.has(turnId), `${packet.id} flaw ${option.id} references unknown paired turn ${turnId}`);
+    }
+    assert((option.comments ?? []).length >= 2, `${packet.id} flaw ${option.id} needs a crowd comparison`);
+    assert(option.hostLine && option.callerLine && option.finding, `${packet.id} flaw ${option.id} needs follow-up and finding`);
+  }
+}
+
+function renderContentIndex(packs, cases, quickCases, advisors, helperNpcs, cast) {
   const defaultKey = packs["steam-demo-01"] ? "steam-demo-01" : Object.keys(packs)[0];
   assert(defaultKey, "at least one content pack manifest is required");
   return `// Generated by scripts/build-content-index.js. Do not edit by hand.
@@ -141,6 +188,8 @@ export const CONTENT_CAST = ${JSON.stringify(cast, null, 2)};
 export const CONTENT_PACKS = ${JSON.stringify(packs, null, 2)};
 
 export const CONTENT_CASES = ${JSON.stringify(cases, null, 2)};
+
+export const CONTENT_QUICK_CASES = ${JSON.stringify(quickCases, null, 2)};
 `;
 }
 

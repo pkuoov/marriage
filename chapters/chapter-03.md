@@ -17,7 +17,7 @@ arcs-advanced:
   - identity-cost-episode
   - host-judgment-method
 status: revised
-word-count: 15
+word-count: 16
 ---
 
 # 第三幕：资料图里的条件

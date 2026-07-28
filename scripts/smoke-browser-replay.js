@@ -1,10 +1,16 @@
 import { chromium } from "@playwright/test";
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
+const storyManifest = JSON.parse(await readFile(resolve(root, "content", "packs", "steam-demo-01", "manifest.json"), "utf8"));
+const transitionQuoteByCaseId = Object.fromEntries(
+  (storyManifest.nightShell?.interludes ?? [])
+    .filter((interlude) => interlude.transitionQuote)
+    .map((interlude) => [interlude.afterCaseId, interlude.transitionQuote])
+);
 const routes = [
   { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-rotation" }, dayChoiceText: { "day-restaurant": "位置难订是真的" }, opener: "常客的轮订规律", openerText: "他只说提前订了", callerQuestion: "not-your-debt", callerQuestionHost: "soothe" },
   { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "六月 8 号那笔没来", callerQuestion: "ask-fifty-thousand" },
@@ -264,6 +270,7 @@ async function runRoute(route) {
     const portraitStates = new Set();
     let helperChecked = false;
     let directionChoiceChecked = false;
+    let selectedCounterChoiceLabel = "";
 
     for (let beat = 0; beat < 48; beat += 1) {
       await collectLiveVisualState(page, visualStates, portraitStates);
@@ -329,6 +336,7 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-live-counter-choice]").count()) {
+        selectedCounterChoiceLabel = (await page.locator("[data-live-counter-choice]").first().textContent())?.trim() ?? "";
         await activate(page, route, "[data-live-counter-choice]", 0);
         continue;
       }
@@ -338,9 +346,10 @@ async function runRoute(route) {
           if (!liveCounterTranscript.includes("他在听。")) {
             throw new Error("night-B counter-pressure should interrupt between two live scenes");
           }
-          const hostReply = page.locator("[data-dialogue-advance]:visible .avg-page-line.speaker-host .avg-line").first();
-          if (!await hostReply.isVisible().catch(() => false) || !(await hostReply.textContent())?.trim()) {
-            throw new Error("the host must answer the relayed counter-pressure without putting the other party on mic");
+          // verify-pack rejects respondent roles in live-counter lines; this replay verifies
+          // that the player's selected on-air host response actually reached the transcript.
+          if (!selectedCounterChoiceLabel || !liveCounterTranscript.includes(selectedCounterChoiceLabel)) {
+            throw new Error("the host must answer the relayed counter-pressure through the selected on-air choice");
           }
         }
         await activate(page, route, "[data-continue-live-counter]");
@@ -486,11 +495,11 @@ async function runCase3DayRoutes() {
     name: "case3-reaction-beat",
     interludeAction: "profile-closed-zhang",
     dayScenes: [
-      { id: "day-profile-credential-docs", text: "学历、彩礼与两家资金对读", rows: ["p04"] },
+      { id: "day-profile-credential-docs", text: "学历、彩礼与两家资金边界", rows: ["p04"] },
       { id: "day-profile-teahouse", text: "你先看聊天" }
     ],
     opener: "双份材料圈注",
-    openerText: "MBA 缴费回单能证明二十三万八是他自己出的",
+    openerText: "我重新看那两份材料",
     reactionText: "她拍我家的群。给一个直播间。",
     reactionChoice: "push-back",
     reactionResponse: "你先让我把这段说完。"
@@ -591,7 +600,7 @@ async function runCase2DayMap() {
     interludeAction: "listen-dryer",
     expectedDaySceneCount: 4,
     dayScenes: [
-      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "你还是自己人" },
+      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
       { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
     ],
     opener: "吹风机回放",
@@ -608,7 +617,7 @@ async function runCase2DayMap() {
     expectedNightInventory: "side-other-caller",
     expectedDaySceneCount: 4,
     dayScenes: [
-      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "你还是自己人" },
+      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
       { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
     ],
     opener: "女客拉群立场",
@@ -622,7 +631,7 @@ async function runCase2DayMap() {
     expectedNightInventory: "side-caller-stop",
     expectedDaySceneCount: 4,
     dayScenes: [
-      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "你还是自己人" },
+      { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
       { id: "day-tony-member-docs", text: "会员维护表与私表截图", rows: ["m02", "m04"] }
     ],
     opener: "咨询者止损立场",
@@ -698,7 +707,10 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
       if (await page.locator("[data-day-choice]").count()) await click(page, scene.choice ? `[data-day-choice="${scene.choice}"]` : "[data-day-choice]");
       const daySceneTranscript = await drainDialogue(page, {});
       if (scene.choiceText && !daySceneTranscript.includes(scene.choiceText)) {
-        throw new Error(`${scene.id} must reveal only the selected branch result`);
+        throw new Error(`${scene.id} must reveal the selected branch result`);
+      }
+      if (scene.excludedChoiceText && daySceneTranscript.includes(scene.excludedChoiceText)) {
+        throw new Error(`${scene.id} must not reveal an unselected branch result`);
       }
       await click(page, "[data-complete-day-scene]");
       if (index === 0 && await page.locator("[data-enter-overnight-callback]").count()) throw new Error(`${name} unlocked callback after only one location`);
@@ -856,9 +868,10 @@ async function runCaseTransition() {
     await assertVisibleText(page, "我们俩大概一开始就看不上对方", "first case epilogue should establish Lin and Zhao as a couple through dialogue");
     if (await page.locator(".pixel-transition-signal-disconnect").count() !== 1) throw new Error("program interlude should use one short disconnect signal transition");
     await click(page, "[data-enter-case-bridge]");
-    await assertVisibleText(page, "祸莫大于不知足，咎莫大于欲得", "case one and case two must be joined by the authored classic quote");
-    await assertVisibleText(page, "老子 ·《道德经》第四十六章", "inter-case quote must display its source");
-    await assertVisibleText(page, "账单，下一通把“自己人”写进排班表", "inter-case quote must bridge the finished case to the next one");
+    const firstTransitionQuote = transitionQuoteByCaseId["01-credit"];
+    await assertVisibleText(page, firstTransitionQuote.text, "case one and case two must be joined by the authored classic quote");
+    await assertVisibleText(page, firstTransitionQuote.source, "inter-case quote must display its source");
+    await assertVisibleText(page, firstTransitionQuote.bridge, "inter-case quote must bridge the finished case to the next one");
     await click(page, "[data-enter-next-case]");
     await assertVisibleText(page, "第二幕", "second case must open on a numbered act title card");
     await assertVisibleText(page, "02 / 04", "second act title must show its position in the four-act night");
@@ -891,7 +904,7 @@ async function runCaseTransition() {
     await assertVisibleText(page, "第二案 · 小尾声", "second case must close without prematurely paying off the trust thread");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await click(page, "[data-enter-case-bridge]");
-    await assertVisibleText(page, "巧言令色，鲜矣仁", "case two and case three must use the authored quote transition");
+    await assertVisibleText(page, transitionQuoteByCaseId["02-tony"].text, "case two and case three must use the authored quote transition");
     await click(page, "[data-enter-next-case]");
     await assertVisibleText(page, "第三幕", "case two tail must return to the normal act transition");
 

@@ -28,6 +28,7 @@ export const baseState = {
     contentWarningAccepted: false
   },
   caseMode: "episode",
+  quickDetective: null,
   chapter: 1,
   scene: "caseOpen",
   attrs: { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 },
@@ -129,6 +130,7 @@ export function migrateState(saved) {
   next.investigationPicks = migrateChoiceRecord(next.investigationPicks);
   next.routeChoiceLog = migrateChoiceListRecord(next.routeChoiceLog);
   next.caseMode = normalizeCaseMode(next.caseMode);
+  if (!next.quickDetective || typeof next.quickDetective !== "object" || Array.isArray(next.quickDetective)) next.quickDetective = null;
   if (next.caseBriefs.length && !validCaseBriefCount(next.caseBriefs.length, next.caseMode)) {
     next.screen = "title";
     next.caseBrief = null;

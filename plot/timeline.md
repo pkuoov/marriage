@@ -20,3 +20,4 @@ story: midnight-hotline-livestream-detective
 | 第四幕 | 审批、垫款、到货、返款与主责被拆成不同入口 | identity-cost-episode | chapter-04 |
 | 第四幕尾声 | 宸直全面兑付危机成为城市新闻 | chenzhi-trust-crisis | chapter-04 |
 | 终局 | 四案路线汇成玩家的听话方法，平台压力仍未完全解决 | host-judgment-method | chapter-04 |
+| 独立快案（不计入四幕时间线） | 来电人以极低条件求主播介绍；两个“爸爸”、婚育报告、优质择偶池和撒娇背书被评论区从公开原话中接起 | - | chapter-05 |

@@ -17,6 +17,7 @@ import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, an
 import { storyInterludeCaseId } from "./runtime/storyInterludeModel.js";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
+import { advanceQuickTranscript, applyQuickQuoteSelection, continueQuickCrowd, continueQuickInvestigation, initialQuickDetectiveState, normalizeQuickDetectiveState, revealNextCrowdFlaw } from "./runtime/quickDetectiveModel.js";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js";
@@ -41,8 +42,9 @@ import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "./ui/titleView.js";
+import { quickDetectiveCrowdAssistHtml, quickDetectiveFeedbackHtml, quickDetectiveHudHtml, quickDetectiveIntroHtml, quickDetectiveInvestigationHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "./ui/quickDetectiveView.js";
 import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js";
-import { storyPackForKey } from "./storyPacks.js";
+import { quickDetectiveCaseFor, storyPackForKey } from "./storyPacks.js";
 import { HOST_PROFILE } from "./hostProfile.js";
 import { createOvernightScreens } from "./ui/screens/overnightScreens.js";
 import { createInterludeScreens } from "./ui/screens/interludeScreens.js";
@@ -80,7 +82,7 @@ document.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button || button.disabled) return;
   if (button.hasAttribute("data-audio-mute")) return;
-  if (button.matches("[data-start-story], [data-continue-story], [data-request-new-game], [data-confirm-new-game], [data-cancel-new-game], [data-enter-first-case]")) return;
+  if (button.matches("[data-start-story], [data-start-quick-detective], [data-continue-story], [data-request-new-game], [data-confirm-new-game], [data-cancel-new-game], [data-enter-first-case]")) return;
   if (button.matches("[data-evidence-check], [data-document-row]")) return;
   playSfx(button.classList.contains("primary") || button.dataset.accuse ? "confirm" : "click");
 });
@@ -141,7 +143,7 @@ function normalizeDailyState(saved) {
   return {
     ...structuredClone(baseState),
     ...saved,
-    screen: saved?.screen === "chapter" ? "chapter" : "title",
+    screen: ["chapter", "quickDetective"].includes(saved?.screen) ? saved.screen : "title",
     caseMode: mode,
     chapter: Math.max(1, Number(saved?.chapter ?? 1)),
     attrs: { ...DEFAULT_ATTRS, ...(saved?.attrs ?? {}) },
@@ -180,6 +182,7 @@ function normalizeDailyState(saved) {
     lastPressureAxis: saved?.lastPressureAxis ?? null,
     lastPityLine: saved?.lastPityLine ?? null,
     patienceLostContext: saved?.patienceLostContext ?? null,
+    quickDetective: saved?.quickDetective ?? null,
     settings: { ...baseState.settings, ...(saved?.settings ?? {}) }
   };
 }
@@ -260,6 +263,16 @@ function startStoryPack() {
   render();
 }
 
+function startQuickDetective() {
+  const packet = activeQuickDetectiveCase();
+  if (!packet) return;
+  titleNewGameConfirmation = false;
+  state.screen = "quickDetective";
+  state.quickDetective = initialQuickDetectiveState(packet);
+  saveState();
+  render();
+}
+
 function storyPreviewBriefs() {
   try {
     return generateCasesForMode(modeFromUrl(), NPCS, DEFAULT_ATTRS, {
@@ -284,6 +297,7 @@ function returnToTitle() {
   titleNewGameConfirmation = false;
   shownPixelTransitions = new Set();
   state.screen = "title";
+  saveState();
   render();
 }
 
@@ -301,6 +315,7 @@ function resetToTitle() {
 function render() {
   if (!app) return;
   if (state.screen === "title") return renderTitle();
+  if (state.screen === "quickDetective") return renderQuickDetective();
   if (!activeCaseBrief()) return renderTitle();
   return renderDailyCase();
 }
@@ -326,9 +341,11 @@ function renderTitle() {
     audioSettings: getAudioSettings(),
     canContinue,
     resumeLabel: resumeStageLabel(),
-    confirmNewGame: canContinue && titleNewGameConfirmation
+    confirmNewGame: canContinue && titleNewGameConfirmation,
+    quickModeAvailable: storyPack && Boolean(activeQuickDetectiveCase())
   });
   bind("[data-start-story]", startStoryPack);
+  bind("[data-start-quick-detective]", startQuickDetective);
   bind("[data-continue-story]", continueStoryPack);
   bind("[data-request-new-game]", () => {
     titleNewGameConfirmation = true;
@@ -342,6 +359,62 @@ function renderTitle() {
   bindAudioControls({ root: app, onToggleSound: render });
   syncSceneAudio({ scene: "title" });
   queueDefaultFocus();
+}
+
+function activeQuickDetectiveCase() {
+  return quickDetectiveCaseFor(storyKeyFromUrl());
+}
+
+function renderQuickDetective() {
+  const packet = activeQuickDetectiveCase();
+  if (!packet) {
+    state.screen = "title";
+    return renderTitle();
+  }
+  state.quickDetective = normalizeQuickDetectiveState(state.quickDetective, packet);
+  const quickState = state.quickDetective;
+  const body = {
+    intro: () => quickDetectiveIntroHtml(packet),
+    transcript: () => quickDetectiveTranscriptHtml(packet, quickState),
+    investigation: () => quickDetectiveInvestigationHtml(packet, quickState),
+    feedback: () => quickDetectiveFeedbackHtml(packet, quickState),
+    crowdAssist: () => quickDetectiveCrowdAssistHtml(packet, quickState),
+    crowdFeedback: () => quickDetectiveFeedbackHtml(packet, quickState, { crowd: true }),
+    verdict: () => quickDetectiveVerdictHtml(packet, quickState)
+  }[quickState.scene] ?? (() => quickDetectiveIntroHtml(packet));
+  app.innerHTML = liveFrameHtml({
+    productName: PRODUCT_NAME,
+    modeLabel: "快速侦探",
+    audioSettings: getAudioSettings(),
+    backdropClass: "backdrop-live quick-detective-backdrop",
+    label: packet.label,
+    chapter: `${packet.title} · ${packet.durationLabel}`,
+    text: body(),
+    visualHud: quickDetectiveHudHtml(packet, quickState),
+    screenClass: `quick-detective-screen quick-scene-${quickState.scene}`,
+    controlDeckHtml: "",
+    showRecordButton: false
+  });
+  bind('[data-action="title"]', returnToTitle);
+  bind('[data-action="reset"]', startQuickDetective);
+  bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0 }));
+  bind("[data-quick-next-turn]", () => updateQuickDetective(advanceQuickTranscript(packet, quickState)));
+  bind("[data-quick-quote]", (event) => updateQuickDetective(applyQuickQuoteSelection(packet, quickState, event.currentTarget.dataset.quickQuote)));
+  bind("[data-quick-continue-investigation]", () => updateQuickDetective(continueQuickInvestigation(packet, quickState)));
+  bind("[data-quick-reveal-crowd]", () => updateQuickDetective(revealNextCrowdFlaw(packet, quickState)));
+  bind("[data-quick-next-crowd]", () => updateQuickDetective(continueQuickCrowd(packet, quickState)));
+  bind("[data-quick-restart]", startQuickDetective);
+  bind("[data-quick-title]", returnToTitle);
+  bindAudioControls({ root: app, onToggleSound: render });
+  syncSceneAudio({ briefId: `quick-${packet.id}`, scene: "sceneReview", backdropClass: "backdrop-live" });
+  resetViewportScroll();
+  queueDefaultFocus();
+}
+
+function updateQuickDetective(nextQuickState) {
+  state.quickDetective = nextQuickState;
+  saveState();
+  render();
 }
 
 function canContinueJourney() {

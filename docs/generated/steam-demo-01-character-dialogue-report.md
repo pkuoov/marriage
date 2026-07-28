@@ -4,9 +4,9 @@
 
 ## 汇总
 
-- 固定人物卡：34
-- 收录台词／玩家可见人物材料：934
-- 本包实际出声人物：33
+- 固定人物卡：35
+- 收录台词／玩家可见人物材料：968
+- 本包实际出声人物：34
 - 句长节奏人工复核提示：22
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
 
@@ -485,10 +485,10 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[1]` 没关系，我听得清。你先缓口气。
-- `$case.openingDialogue[2]` 谁发的，你们是什么关系？
-- `$case.openingDialogue[4]` 怎么个不太像？
-- `$case.openingDialogue[6]` 那你为什么今天打进来？
+- `$case.openingDialogue[1]` 一张店里的表把你折腾了一夜。那先说这张表。
+- `$case.openingDialogue[2]` 谁发的？你们平时是什么关系？
+- `$case.openingDialogue[4]` 你说后来不太像普通顾客，具体是从哪件事开始的？
+- `$case.openingDialogue[6]` 他原本要发你什么？
 - `$case.nightStructure.hangup.hostLine` 我听见敲门了。你先处理，确认安全以后给后台留句话。
 - `$case.sceneVersions[0].entryQuestion` 你们平时到底怎么相处？
 - `$case.sceneVersions[0].casualQuestions[0].question` 你在他们店剪了多久头发？
@@ -566,14 +566,14 @@
 
 ### 终局
 
-- `$case.hostDisclosure.text` 昨晚看你突然去拉帘子，紧接着又听见敲门，我先担心的是你安不安全。现在知道来的是民警，就得问清楚，他为什么把你的名字和手机号写进别人的合作介绍。至于那个女生转给他的十万，后来是不是拿去买了宸直产品，还得看原始记录；今晚这几张转发图不够。“自己人”这三个字，我以前上班也听过，下一句常常就是：“这次你先帮我。”
+- `$case.hostDisclosure.text` 昨晚你突然去拉帘子，紧接着又有人敲门，我确实担心你出事。现在知道来的是民警，我只想问一句：别人的合作介绍里，为什么会有你的名字和手机号？至于另一个女生的十万，还得看原始记录，今晚先别往下猜。“自己人”这三个字，我以前上班也听过。先不扯我的。
 - `$case.deepFollowup.question` 表里写你“朋友多，带客”。你当时为什么会替他转活动，还把朋友带去店里？
-- `$case.stageJudgement` 他替你挡过难听话，也确实对你好过，这些都是真的。你第一夜没说自己在酒吧上班，敲门时还拿物业挡了一句，这个也得认。可警察找上门，不是因为你做什么工作，也不是因为你拿过六折，是因为他把你的名字和手机号写进了别人的合作介绍里。你没同意，这就不是一句“自己人”能带过去的。那个女生转给他的十万，后来是不是拿去买了宸直产品，今晚的转发图还不够，我们不替警方下结论。
+- `$case.stageJudgement` 他给你留过最晚的号，也替你挡过店里的闲话。这些照顾都是真的。第一夜你没说自己在酒吧上班，民警敲门时又说成物业，这两句你得认。你拿过六折，跟警察找上门没关系。警察来，是因为他把你的名字和手机号写进了别人的合作介绍，而且事先没问你。另一个女生的十万后来去了哪儿，转发图不够，等警方查。
 
 ### 其他出声面
 
 - `$case.careChoices[0].hostLine` 年卡别办，号先留着。头发该剪还得剪——换家店。
-- `$case.careChoices[1].hostLine` 你愿意信他，不是因为你傻。那几次照顾，换谁都会往心里去。
+- `$case.careChoices[1].hostLine` 他总给你留最晚那档，还替你挡过店里的话。你会往那边想，不奇怪。
 - `$case.careChoices[2].hostLine` 群里的事不急。想不好，就来节目里想。
 - `$case.overnightStructure.returnLead.lines[1]` 昨晚你先去拉帘子，后来麦里又响了敲门声。到底出了什么事？
 - `$case.overnightStructure.returnLead.lines[3]` 你今天换到妈妈家，我先确认一句：你现在安全吗？
@@ -590,7 +590,7 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[0]` 主播你好。我今天轮休，在家。我可能说得有点快。他昨天发错了一张表，我看完以后，一晚上没睡。
+- `$case.openingDialogue[0]` 他昨晚发错一张店里的表。我看了半个钟头，越看越不对，一晚上没睡。我今天轮休，在家，正好能打进来。
 - `$case.openingDialogue[3]` 一个相亲认识的理发师，认识几个月了。我上班时间跟别人不太一样，又经常要见人，头发隔一阵就得弄。最早我只是去他店里剪，后来才不太像普通顾客。
 - `$case.openingDialogue[5]` 他知道我一般下午才醒，总把最晚那档给我留着。临时要补发根，他也能给我插进去，有几次连剪发的钱都没收。店里忙完以后，我们还单独吃过饭。可他一直没把关系说清楚。
 - `$case.openingDialogue[7]` 昨天他本来要发预约时间，手一滑，发来一张店里的表。我先当排班看，后来越看越不对。
@@ -879,9 +879,9 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[1]` 你好。你慢慢说，我们先把彩礼这件事问清楚。
-- `$case.openingDialogue[2]` 谈到多少，是谁先开的口？
-- `$case.openingDialogue[4]` 学历已经纠正了，二十八万八却还是递到了男方家。男方怎么回的？
+- `$case.openingDialogue[1]` 饭店还没订，彩礼倒先问过去了。那先说彩礼。
+- `$case.openingDialogue[2]` 你妈让介绍人报了多少？
+- `$case.openingDialogue[4]` 你已经把本科说清楚了，她还是把这个数递过去了。男方怎么回的？
 - `$case.nightStructure.hangup.hostLine` 好。你把群聊从学费那句往下看，尤其看清二十八万八后面，你爸爸接了什么。
 - `$case.sceneVersions[0].entryQuestion` 他把工资账户流水发来以后，你们怎么聊的？
 - `$case.sceneVersions[0].casualQuestions[0].question` 你们相亲见了几次？
@@ -951,7 +951,7 @@
 
 - `$case.hostDisclosure.text` 我先说句自己的。我以前也被人追着问过工资，当时觉得特别难堪，直接把门摔了。后来真缺钱交房租，我又想过，要是那天肯好好说，也许不用闹成那样。
 - `$case.deepFollowup.question` 你问过他的收入，也要求看过他的银行流水。现在先不算你父母那笔理财，你自己现在有多少存款，愿意拿多少出来办婚礼？
-- `$case.stageJudgement` 这个周末先别见父母了，也请你妈妈把二十八万八收回来。他读 MBA 花了多少，跟现在该给多少彩礼不是一回事。他先说拿不出，你不信，要求看流水；他又只交工资账户，没有把其他账户说清。工资卡里的二十八万六，既不能证明他只有这些，也不能替他答应彩礼。你爸妈答应的二十万现在还在宸直，也先别算。下播以后别再让家里和介绍人传话，你们两个自己把愿意公开什么、现在愿意拿多少说清楚。要是这一步都谈不下去，婚礼就更不用急着谈了。
+- `$case.stageJudgement` 这个周末先别见父母，彩礼也先别谈。他说拿不出，你没信；他只发了一张工资卡，也没把其他账户说清。你自己的八万四今晚才告诉他，家里答应的二十万现在又拿不出来。别再让介绍人传话了。你们俩见面，把现在各能拿多少、愿意拿多少说清楚，再决定这顿饭还吃不吃。
 
 ### 其他出声面
 
@@ -972,7 +972,7 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[0]` 主播你好，我想问一件相亲的事。这个周末本来要带他回家见父母，可两边连饭店都没订，已经隔着介绍人谈到彩礼了。我现在有点不想去了。
+- `$case.openingDialogue[0]` 这个周末本来要带他回家见父母，饭店还没订，我妈已经托介绍人去问彩礼了。我知道以后，突然不想去了。
 - `$case.openingDialogue[3]` 二十八万八。是我妈让介绍人去问的。她事先没告诉我，男方来找我时，我才知道她已经把数字递过去了。她原先一直把他当成名校本科，我上周明明纠正过：本科不是那所，只是工作以后去那里读过 MBA。
 - `$case.openingDialogue[5]` 他说二十八万八拿不出来，还说结婚不能把手里的钱全拿去做彩礼。我不信，让他把银行流水打出来。第二天下午，他只发来一份工资账户流水，截止那天余额二十八万六。他说：“你不是要看收入吗？这张你先看。”
 - `$case.sceneVersions[1].sceneCloser.lines[0]` 你等一下，我把台灯换个档。刺眼。
@@ -1049,7 +1049,7 @@
 - `$case.overnightStructure.callbackOpeners.两边的完整聊天.line` 我把介绍人两边的聊天都看完了。她替两边说过好话，也把我妈那句二十八万八原样转给了男方家。
 - `$case.overnightStructure.callbackOpeners.她没核实的两句话.line` 我把介绍人没问过的几句话标出来了。她没看过男方工资，也没问我家现在能拿多少，就把二十八万八递了过去。
 - `$case.overnightStructure.callbackOpeners.表姐门口口供.line` 表姐没让进门，只隔着防盗链说，男方家商量过发哪张卡，最后只挑了工资账户。她提醒过要说清范围，那句话没有跟着流水一起发出来。
-- `$case.overnightStructure.callbackOpeners.双份材料圈注.line` MBA 缴费回单能证明二十三万八是他自己出的，不能证明他现在有钱。工资账户流水也只代表这一张卡，其他账户没有交出来。我妈和我都把两份材料往财力上算了。
+- `$case.overnightStructure.callbackOpeners.双份材料圈注.line` 我重新看那两份材料，才发现自己一直在往一块儿算。看到二十三万八是他自己交的，我就觉得他肯定有钱；工资卡上又正好有二十八万六，我干脆把它当成了他的全部。
 - `$case.overnightStructure.callbackOpeners.家里群原话.line` 家里群我重新从头看了。二十八万八后面，紧跟着就是我爸那句“宸直九月底到期”。
 - `$case.overnightStructure.callbackOpeners.饭局停顿回放.line` 饭局那十几秒我又听了一遍。我问本科，他承认不是那所，又说二十三万八学费是自己交的。我当时已经不再想学历，开始想他是不是很有钱。
 - `$case.overnightStructure.callbackFallback.line` 我回来了。二十八万八和宸直那三十万，我都愿意说。你白天查到什么了？
@@ -1175,7 +1175,7 @@
 
 ### 后台／材料回流
 
-- `$case.advisorNotes[0].text` 介绍人会挑好听的，也会替家长传难听的。可彩礼不是报价单，不能只问对方拿多少。两个人真想继续，就把各自现在能拿的钱、家里答应但还拿不出来的钱，都当面说清。
+- `$case.advisorNotes[0].text` 我做婚介的，最怕两家隔着中间人传彩礼数字。你们俩要是还想往下谈，就自己见面，把能拿多少说清楚。家里答应的那份什么时候到，也别含糊。
 - `$case.delegation.outcomes.lin-matchmaker.text` “名校毕业”不是材料上的原话。介绍人只说学校好，她回家又顺成了名校毕业。每个人都往好听里加了一点，饭局真问本科，差别就出来了。
 
 ## 张法医
@@ -1206,7 +1206,7 @@
 - `$case.sceneVersions[1].helperHint` 停顿本身不是答案。你要找的是她在那十几秒后有没有把本科问到底。
 - `$case.sceneVersions[2].helperHint` 父母把学费当家底的原因已经问出来。现在要看的是，她知道二十八万八怎么来的以后做了什么。
 - `$case.sceneVersions[3].helperHint` 先分清谁定数字、谁传话。再问自费读书为什么会被当成现成的彩礼钱。
-- `$case.sceneVersions[4].helperHint` 项目、本科、学费和当前财力是四件事。自费读书能证明支出，不能直接证明现在还有很多积蓄。
+- `$case.sceneVersions[4].helperHint` 先别算家底。问问她，那张学校图里到底有没有本科。
 
 ### 夜 B
 
@@ -1275,7 +1275,7 @@
 - `$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.hostLine` 活动总结写了你负责。有没有人书面写过谁负责催付款？
 - `$case.overnightStructure.callbackOpeners.赵律师边界框架.firstConflict.hostLine` 六万八还在你卡上。你为什么一直没让他把“公司会返”写清楚？
 - `$case.overnightStructure.callbackOpeners.周会计钱路框架.firstConflict.hostLine` 下一次他再发审批图，你回哪一句？
-- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.firstConflict.hostLine` 你说“我来扛”时，答应的是把活接下来，还是连六万八也一起出？
+- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.firstConflict.hostLine` 现在你愿意认哪一件？
 - `$case.overnightStructure.callbackOpeners.预算时间线复核.firstConflict.hostLine` 他当时拿什么让你别在群里问？
 - `$case.overnightStructure.callbackOpeners.领导批注.firstConflict.hostLine` 那句夸奖落下来时，你有没有问六万八什么时候回？
 - `$case.overnightStructure.callbackOpeners.顾问回单.firstConflict.hostLine` 顾问只肯确认审批过了。没有付款回单，你现在还觉得钱已经在走吗？
@@ -1371,8 +1371,8 @@
 - `$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.callerLine` 没有。负责人的位置有我的名字，催款的人没写。
 - `$case.overnightStructure.callbackOpeners.赵律师边界框架.firstConflict.callerLine` 老板刚把活动交给我，我怕别人说我只盯着钱。
 - `$case.overnightStructure.callbackOpeners.周会计钱路框架.firstConflict.callerLine` 回单号给我。别的先不聊。
-- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.firstConflict.callerLine` 我答应的是活，不是替公司出六万八。
-- `$case.overnightStructure.callbackOpeners.预算时间线复核.firstConflict.callerLine` 只说来不及。‘财务’两个字，是我后来替他补的。
+- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.firstConflict.callerLine` 活动我认。六万八不是我该替公司出的。
+- `$case.overnightStructure.callbackOpeners.预算时间线复核.firstConflict.callerLine` 就说来不及，还说别让领导觉得我不担事。财务慢，是我后来替他补的。
 - `$case.overnightStructure.callbackOpeners.领导批注.firstConflict.callerLine` 没有。我先截图发给朋友了。
 - `$case.overnightStructure.callbackOpeners.顾问回单.firstConflict.callerLine` 不觉得。没有回单，我就说没有。
 - `$case.overnightStructure.callbackOpeners.垫款回放.firstConflict.callerLine` 是。我接的是活。六万八算不算进去，我当时没敢问。
@@ -1405,8 +1405,8 @@
 - `$case.overnightStructure.callbackOpeners.茶水间责任对照.line` 私聊让我别问预算，领导后来只写了我负责。我来回看了几遍，也没找到谁负责催付款。
 - `$case.overnightStructure.callbackOpeners.赵律师边界框架.line` 赵律师让我先把公司名遮住，又问私聊和刷卡记录还在不在。都在。她再问：公司会返这六万八，谁写过？没人。
 - `$case.overnightStructure.callbackOpeners.周会计钱路框架.line` 周会计只问回单号。我报不出来。审批图倒有三张，像复制粘贴。
-- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.line` 小林老师问我：“你回‘我来扛’，到底是扛活，还是扛钱？”我当时一下没答上来。他把负责活动和先垫钱放在同一条消息里，我那会儿没分开想。
-- `$case.overnightStructure.callbackOpeners.预算时间线复核.line` 时间线对完了。他说‘来不及’那天，财务还没发延后通知。我昨晚把后来的通知挪到前面，替他圆了。
+- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.line` 小林老师翻到我那句“我来扛”，问我说的是活动，还是那六万八。我卡了半天，一个字都没回。
+- `$case.overnightStructure.callbackOpeners.预算时间线复核.line` 我把那几天的消息重新翻了一遍。他让我别在群里问预算的时候，财务根本没发延后通知。昨晚我还拿后面那张通知替他解释。
 - `$case.overnightStructure.callbackOpeners.领导批注.line` 领导那条批注，我又看了。只写了我负责，一个钱字都没有。我当时高兴，是真的。账也还在。
 - `$case.overnightStructure.callbackOpeners.顾问回单.line` 顾问问我回单在哪儿。我拿不出来。那张图，他只认审批过了，再往下一个字也没说。
 - `$case.overnightStructure.callbackOpeners.垫款回放.line` 那句私聊我重新放了。‘你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。’钱在前，“执行主责”在后。可我当时就盯着后面那四个字，马上回了“我来扛”。
@@ -1468,7 +1468,7 @@
 - `$case.overnightStructure.dayScenes[0].body.beats[2]` 发十次也没用。你先问回单号；真有回单，再看收款账户。
 - `$case.overnightStructure.dayScenes[0].body.beats[3]` 没回单号，先别报付款。下一位。
 - `$case.overnightStructure.dayScenes[0].body.choice.options[0].resultBeats[1]` 对。问不到就说问不到，别自己写成没付。
-- `$case.overnightStructure.dayScenes[0].body.choice.options[1].resultBeats[1]` 这只能说明你材料不全，别拿它猜收款人。
+- `$case.overnightStructure.dayScenes[0].body.choice.options[1].resultBeats[1]` 材料不够，别拿它猜收款人。
 
 ## 案四供应商项目员
 
@@ -1609,6 +1609,62 @@
 - `$case.sceneVersions[4].helperHint` 把费用名称和对接信息分开看。一处正常，不替另一处作证。
 - `$case.sceneVersions[5].helperHint` 领导一句话同时给了署名和流程要求。她先听进去了哪半句？
 - `$case.sceneVersions[6].helperHint` 表上有三个不同的位置：执行主责、付款对接人、供应商确认人。先别用第一栏替后两栏作证。
+
+# 快案：什么都不图
+
+## 林旭阳
+
+- **固定性格：** 温热而克制
+- **受压反应：** 担心误判时先缩短句子，把混在一起的事实拆开。
+- **防御动作：** 把感情和判决分开，用小而合法的试探代替情绪宣判。
+- **知识边界：** 只知道节目已经收到、玩家已经看见或对方在麦上说出的内容。
+
+### 其他出声面
+
+- `$quick.turns[0].host` 你好，连上了。今天想聊什么？
+- `$quick.turns[1].host` 以前谈过吗？你觉得为什么没走下去？
+- `$quick.turns[2].host` 收入、房子、年龄呢？总得有个范围吧。
+- `$quick.turns[3].host` 你把条件说得这么宽，我反而不太敢随便介绍。真要介绍，我也得先了解你一点。你家里是什么情况？
+- `$quick.turns[4].host` 你现在跟父亲一起住吗？
+- `$quick.turns[5].host` 你亲爸不是一直没法干重活吗？这一百万也是他给的？
+- `$quick.turns[6].host` 我问的是一百万。你怎么突然说到生孩子？
+- `$quick.turns[7].host` 报告不用给节目看。真开始谈了，你准备什么时候告诉对方？
+- `$quick.turns[8].host` 弹幕里刚有个普通上班族说愿意认识你。三十一，月薪六千，没房，都在你刚才说的范围里。要不要让他给后台留个联系方式？
+- `$quick.turns[9].host` 四五千也行、没房也行，是你刚才自己说的。为什么真有一个，你又不要？
+- `$quick.quoteOptions[0].hostLine` 这句现在还不能算。年龄范围宽，只能说明她愿意这样说，不能证明她为什么这样说。
+- `$quick.quoteOptions[1].hostLine` 房子和一百万可以是真的。但你前面说的亲爸，和后来给钱的这个人不是同一个，对吧？你能说说你们到底是什么关系吗？
+- `$quick.quoteOptions[2].hostLine` 报告不用给节目看。我只问一件事：如果它会影响对方要不要结婚，你会不会在确定关系以前告诉他？
+- `$quick.quoteOptions[3].hostLine` 我照你的条件说了一个人，你没见就拒绝；转头只问做生意、家里稳定的。你说的“没要求”，到底是说给谁听的？
+- `$quick.quoteOptions[4].hostLine` 这句可以解释她为什么怕穷，但不能替她父母把离婚原因定下来。
+- `$quick.quoteOptions[5].hostLine` 你说前两段散了，是因为自己太直、不会哄人。现在又说，只要我替你说句好话，见面以后你会哄。这两句哪句是真的？
+- `$quick.ending.hostLead` 这通电话一开始，连我都被你吓了一下。四五千、没房、大十岁都行，听着像你什么都不挑。
+- `$quick.ending.hostVerdict` 可真有一个符合这些话的人，你不要。你要的是我说过做生意、家里稳的人，还希望我先替你说一句“这个姑娘人不错”。一百万是谁给的、那份报告什么时候说，你又都准备往后放。
+- `$quick.ending.hostClose` 你不肯说明一百万是谁给的，也准备把婚育报告往后放，却要我先跟别人保证“这个姑娘靠谱”。这些已经够了。我不会替你背书，也不会把听众介绍给你。
+
+## 快案来电人·罗
+
+- **固定性格：** 擅长用低姿态和亲近感争取入口的机会主义自保者
+- **受压反应：** 被追到钱源或报告时先叫“哥”软化气氛，再换话题；前后原话并排后，会承认自己知道怎样让特定对象喜欢。
+- **防御动作：** 先把择偶条件压到极低，把两位不同男性都称为“爸爸”；受压时撒娇、转题，并把延后披露解释成争取了解机会。
+- **知识边界：** 知道亲生父亲的身体与家庭经历、一百万元的真实给款人、自己的检查结果和择偶目标；不会公开年长给款者的身份。她不知道父母和前任会怎样解释旧事，也不能用检查结果证明任何性经历。
+
+### 其他出声面
+
+- `$quick.turns[0].caller` 主播哥，我想让你帮我介绍个对象。我二十四，要求真的不高，人老实、对我好就行。
+- `$quick.turns[1].caller` 谈过两个。可能我说话太直吧。我不会撒娇，也不会哄人，有什么就说什么。
+- `$quick.turns[2].caller` 一个月挣四五千也行，没房也行。大我十来岁，我也能接受。只要别赌、别动手，能正常过日子就行。
+- `$quick.turns[3].caller` 我爸妈很早就离了，就是没钱，天天吵。我跟我亲爸过。他腰不好，干不了重活，这些年家里条件一直一般。
+- `$quick.turns[4].caller` 没有，我自己有套小两居。去年我爸爸给了我一百万，我添了一点买的。所以男方没房也不要紧，可以住我这儿。
+- `$quick.turns[5].caller` 哎呀，哥，你别问这么细嘛。反正是一个我叫爸爸的人给的，他不愿意露面。我拿到钱是真的。再说我也不图男方房子，以后有没有孩子，我都不强求，两个人开心不就行了。
+- `$quick.turns[6].caller` 以前相亲，人家总问这个。我身体没什么大问题，就是医生说自然怀孕的机会低一点。那份报告我不想一开始就跟男方说，不然还怎么聊啊。
+- `$quick.turns[7].caller` 感情稳一点再说吧。第一次见面就讲这个，谁还愿意认识我？我可以在别的地方对他好啊。
+- `$quick.turns[8].caller` 这个先不用。哥，你以前不是说过，听众里有几个自己做生意、家里也稳定的吗？你觉得靠谱的，帮我挑一个呗。
+- `$quick.turns[9].caller` 我不是只看钱，我是信你。你介绍的人会先听你一句。你就说我人挺好的，让他愿意见一面。见了以后我会跟他聊，哄人我还是会的。哥，你就帮我一次嘛。
+- `$quick.quoteOptions[1].callerLine` 不是同一个。他年纪比我大很多，对我一直挺好。别的我不想在直播里说。
+- `$quick.quoteOptions[2].callerLine` 确定关系以前……我尽量吧。可要是说得太早，我真的一个机会都没有。
+- `$quick.quoteOptions[3].callerLine` 我就是觉得，你都说过他条件好了，那至少靠谱一点。要谈结婚，谁不想找稳一点的？
+- `$quick.quoteOptions[5].callerLine` 我不是对谁都那样。真想让一个人喜欢我，我当然知道该怎么说。
+- `$quick.ending.callerReply` 我就是想先有个见面的机会。条件好一点有什么错？我把这些一上来都说了，谁会选我？
 
 # 未在本报告捕获到台词的人物卡
 

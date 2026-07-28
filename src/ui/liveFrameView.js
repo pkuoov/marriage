@@ -125,7 +125,8 @@ export function liveFrameHtml({
   materialCount = 1,
   screenEffect = "",
   screenClass = "",
-  pixelTransition = null
+  pixelTransition = null,
+  showRecordButton = true
 } = {}) {
   const materialKind = materialKindForLabel(material);
   const choiceMarkup = String(choices ?? "");
@@ -142,7 +143,7 @@ export function liveFrameHtml({
         <nav aria-label="章节"><span class="active"><i></i>${escapeHtml(modeLabel)}</span></nav>
         ${audioSettingsPanelHtml(audioSettings ?? { enabled: soundEnabled }, { placement: "topbar" })}
         <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
-        <button class="record-button" data-record-open type="button">案卷</button>
+        ${showRecordButton ? `<button class="record-button" data-record-open type="button">案卷</button>` : ""}
       </header>
       <section class="story-grid case-vn-grid live-console-shell ${controlDeckHtml ? "has-control-deck" : ""} ${escapeHtml(screenClass)}" data-live-shell>
         ${screenEffect ? `<div class="screen-effect screen-effect-${escapeHtml(screenEffect)}" aria-hidden="true"></div>` : ""}

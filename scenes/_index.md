@@ -25,5 +25,6 @@ story: midnight-hotline-livestream-detective
 | chapter-04 | 2 | 审批、到货与返款 | host-lin-xuyang | revised | [scene](chapter-04-scene-02.md) |
 | chapter-04 | 3 | 责任入口对质 | host-lin-xuyang | revised | [scene](chapter-04-scene-03.md) |
 | chapter-04 | 4 | 宸直新闻与终局 | host-lin-xuyang | revised | [scene](chapter-04-scene-04.md) |
+| chapter-05 | 1 | 三次圈句与评论接力 | host-lin-xuyang | revised | [scene](chapter-05-scene-01.md) |
 
-场景记录只写目的、输入与输出。实际台词仍在对应案件 JSON 的 `openingDialogue / sceneVersions / overnightStructure / caseClosing`。
+场景记录只写目的、输入与输出。四幕实际台词仍在对应案件 JSON 的 `openingDialogue / sceneVersions / overnightStructure / caseClosing`；独立快案台词在 `quick-cases/*.json`。

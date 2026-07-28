@@ -29,6 +29,7 @@
     "smoke:browser": "npm run build:playable && node scripts/smoke-browser-replay.js",
     "test": "npm run test:full",
     "test:full": "npm run check && npm run smoke:browser && npm run smoke:desktop",
+    "test:pr": "npm run check && npm run smoke:browser",
     "test:quick": "npm run content:index:check && npm run test:unit && npm run test:narrative",
     "intel:collect": "node scripts/collect-daily-intelligence.js",
     "intel:drafts": "node scripts/generate-daily-case-drafts.js",

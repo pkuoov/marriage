@@ -1,4 +1,4 @@
-import { CONTENT_CASES, CONTENT_PACKS, DEFAULT_CONTENT_PACK_KEY } from "./generated/contentPackIndex.js";
+import { CONTENT_CASES, CONTENT_PACKS, CONTENT_QUICK_CASES, DEFAULT_CONTENT_PACK_KEY } from "./generated/contentPackIndex.js";
 import { isRuntimeLoadedCaseContent } from "./runtime/contentCase.js";
 
 export const DEFAULT_STORY_PACK_KEY = DEFAULT_CONTENT_PACK_KEY;
@@ -29,4 +29,11 @@ export function storyPackCaseContentForPlot(storyKey, plotId) {
 
 export function storyPackCaseContentStatus(storyKey, caseId) {
   return CONTENT_CASES[storyKey]?.[caseId]?.runtimeContentStatus ?? CONTENT_CASES[DEFAULT_STORY_PACK_KEY]?.[caseId]?.runtimeContentStatus ?? "metadata-only";
+}
+
+export function quickDetectiveCaseFor(storyKey, quickCaseId) {
+  const packKey = CONTENT_QUICK_CASES[storyKey] ? storyKey : DEFAULT_CONTENT_PACK_KEY;
+  const cases = CONTENT_QUICK_CASES[packKey] ?? {};
+  const preferredId = quickCaseId ?? storyPackForKey(packKey)?.quickCases?.[0];
+  return cases[preferredId] ?? cases[Object.keys(cases)[0]] ?? null;
 }
