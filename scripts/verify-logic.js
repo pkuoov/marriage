@@ -2883,6 +2883,8 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assertIncludes(brief.stageJudgement, "他自己的消费", "案一结论必须保留男方个人排场消费");
   assertIncludes(brief.stageJudgement, "七月那笔钱转给谁", "案一结论必须把未知转账同信用卡缺口分开");
   assertIncludes(brief.stageJudgement, "是他自己的决定", "案一结论必须明确个人投机决定不能转成伴侣债务");
+  assertIncludes(brief.stageJudgement, "手还停在转账页上", "案一结论必须回到直播监听发生时的转账现场");
+  assertIncludes(brief.stageJudgement, "怕一拒绝", "案一结论必须说清咨询者把拒绝还款误听成离开的恐惧");
   assertIncludes(JSON.stringify(sitIn?.body?.choice?.options ?? []), "灯是我真心买的", "同席原句必须保留，供麦外来信精确回声");
   assertEqual(brief.lurkerNote?.deletedFragment, "灯是我真心买的", "lurker 只能复现同席已经当面说过的原句");
   const deviceSeed = brief.sceneVersions.find((scene) => scene.id === "credit-device-benefit");
@@ -2997,6 +2999,7 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   assertIncludes(brief.stageJudgement ?? "", "名字和手机号写进了别人的合作介绍", "案 2 判词必须称量来电人被写进合作介绍的顶重事实");
   assertIncludes(brief.stageJudgement ?? "", "警察找上门", "案 2 判词必须回应警察上门造成的现实后果");
   assertIncludes(brief.stageJudgement ?? "", "拿过六折，跟警察找上门没关系", "案 2 判词必须把来电人得到的优惠与被写成联络人分开");
+  assertIncludes(brief.stageJudgement ?? "", "修刘海时手很轻", "案 2 判词必须用具体手艺回收真实照顾，不能只剩销售表格");
   assert(!callbackTexts.slice(0, openerIndex).some((text) => text.includes("宸直")), "案 2 带回物 opener 之前不得出现宸直");
   const otherCallerAction = nightActionById(brief, "other-caller-dm");
   const otherCallerHook = brief.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");
@@ -3187,6 +3190,10 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
   assertIncludes((incomeCardScene?.afterVersion?.lines ?? []).map((line) => line.text ?? "").join(" "), "那三十万宸直", "案 3 最终对峙必须当面追问女方家尚未到期的婚礼资金");
   assert(!incomeCardScene?.version?.includes("只能代表一张工资卡"), "案 3 咨询者不得替材料念证明边界公式");
   assert(!/只能证明|既不能.*也不能/.test((incomeCardScene?.afterVersion?.lines ?? []).map((line) => line.text ?? "").join(" ")), "案 3 主播不得用证明边界三联代替现场说话");
+  const meetingLedgerCloser = (incomeCardScene?.sceneCloser?.lines ?? []).map((line) => line.text ?? "").join(" ");
+  assertIncludes(meetingLedgerCloser, "那四次吃饭", "案 3 最终对峙必须让男方当面发现咨询者记录了四次见面");
+  assertIncludes(meetingLedgerCloser, "每次回家", "案 3 见面账必须落到咨询者当面说不出口的习惯，不能只当材料噱头");
+  assertIncludes(brief.stageJudgement ?? "", "四次见面", "案 3 判词必须回到见面账，不再以金额清单收口");
   const privacyBeat = structure?.liveCounterBeats?.find((beat) => beat.id === "profile-family-chat-blowup");
   assertIncludes(privacyBeat?.choices?.find((choice) => choice.id === "soothe")?.label ?? "", "没有经过你同意", "案 3 家庭群截图爆点必须提供明确的隐私边界选项");
   assert((privacyBeat?.choices ?? []).every((choice) => choice.silent !== true), "案 3 隐私爆点不得把沉默包装成唯一不施压的处理方式");
@@ -3244,6 +3251,10 @@ test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", ()
   assertEqual(nightStructureFor(brief)?.hangup?.hostLine, structure?.hostHoldLine, "案 4 主持人挂断句必须与 overnight 保持单一来源");
   assert(!nightStructureFor(brief)?.hangup?.line?.includes("马上"), "案 4 挂断不能再写成马上回来的软离席");
   assert(!brief.stageJudgement?.includes("答应接活，不是答应"), "案 4 结案不得使用整齐的反题句代替责任与回单事实");
+  const firstWorkScene = brief.sceneVersions?.find((scene) => scene.id === "work-title-for-advance");
+  assertIncludes(firstWorkScene?.version ?? "", "早点回", "案 4 第一场必须让便利贴进入固定陈述，不能只藏在可跳过的闲聊");
+  assertIncludes(brief.stageJudgement ?? "", "四十三页 PPT", "案 4 判词必须回到咨询者实际完成的工作");
+  assertIncludes(brief.stageJudgement ?? "", "只改了字体", "案 4 判词必须让署名与劳动落差可感知");
   assert(!brief.evidenceChecks?.find((check) => check.id === "work-budget-timeline")?.options?.find((option) => option.correct)?.reactionLine?.includes("财务根本还没说延后"), "案 4 材料反应必须像人物现场想起来，而不是分析报告");
 });
 

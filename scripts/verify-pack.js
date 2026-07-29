@@ -1692,16 +1692,23 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
 
   const caseThree = caseFiles.find((packet) => packet.caseId === "03-profile");
   const caseThreeText = JSON.stringify(caseThree ?? {});
+  const caseThreeFundsDocument = caseThree?.documents?.find((document) => document.id === "case3-credential-balance");
+  const caseThreeRows = new Map((caseThreeFundsDocument?.rows ?? []).map((row) => [row.rowId, row]));
   assert(caseThreeText.includes("二十三万八") && caseThreeText.includes("自己交"), "案三必须明确 MBA 学费由男方本人承担");
   assert(caseThreeText.includes("二十八万八") && caseThreeText.includes("二十八万六"), "案三必须把彩礼要求与男方资金上限放在同一条因果链");
   assert(caseThreeText.includes("宸直") && caseThreeText.includes("九月底到期"), "案三必须在正式暴雷前种下女方家庭婚礼资金的到期边界");
   assert(caseThree?.truthBoundary?.unknown?.some((item) => item.includes("九月底") && item.includes("兑付")), "案三不得提前结算宸直兑付结果");
+  assertEqual(caseThreeRows.get("p06")?.memo, "从下述30万宸直中划出，称到期后用于女儿婚礼", "案三父亲口头安排的二十万必须明确属于下述三十万宸直，不能让玩家重复计作五十万");
+  assertEqual(caseThreeRows.get("p05")?.amount, "¥300,000", "案三宸直持有页仍须保留三十万元原始金额");
 
   const firstTailText = JSON.stringify(interludesByCaseId.get("01-credit") ?? {});
   assert(firstTailText.includes("收益写得很高"), "案一小尾声必须由赵律师补入高收益合同风险");
   assert(firstTailText.includes("一轮一轮往外融"), "案一小尾声必须说明大盘子对外部融资的依赖");
 
   const caseTwo = caseFiles.find((packet) => packet.caseId === "02-tony");
+  const tonyEmotionScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-emotion-to-sales");
+  assert(tonyEmotionScene?.version?.includes("他给我发过一条语音") && tonyEmotionScene?.version?.includes("我一直留着"), "案二必须说清语音由 Tony 发来、咨询者一直保存，不能把“留过”写成来源不明");
+  assert(!tonyEmotionScene?.version?.includes("我留过一条语音"), "案二语音来源不得退回录制者与保存者混淆的说法");
   const knockScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-roster-function-notes");
   const knockLines = knockScene?.sceneCloser?.lines ?? [];
   const knockText = knockLines.map((line) => line.text ?? "").join(" ");

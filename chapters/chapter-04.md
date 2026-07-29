@@ -19,14 +19,14 @@ arcs-advanced:
   - chenzhi-trust-crisis
   - platform-pressure
 status: revised
-word-count: 14
+word-count: 15
 ---
 
 # 第四幕：主责与付款入口
 
 ## Structural Job
 
-离开婚恋，把前三幕形成的方法迁移到职场。审批截图、主责署名、垫款、到货与返款必须拆开，避免一个流程词替所有责任背书。
+离开婚恋，把前三幕形成的方法迁移到职场。同事留过“早点回”的便利贴，咨询者也真心想拿下活动；活动结束后，她熬了四十三页 PPT，对方只改字体却仍握着付款入口。审批截图、主责署名、垫款、到货与返款必须拆开，避免一个流程词替所有责任背书。
 
 ## Progression
 

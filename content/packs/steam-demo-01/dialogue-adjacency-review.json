@@ -564,7 +564,7 @@
           ],
           "freeQuestions": [
             { "contextAnchor": "这活我能接", "questionAnchor": "群里说的，还是当面说的", "answerAnchor": "部门小会上", "relation": "沿她主动接活的陈述补问发生场合，回答限定老板当面在场。" },
-            { "contextAnchor": "一个同事", "questionAnchor": "平时人缘怎么样", "answerAnchor": "谁都能聊两句", "relation": "从涉事同事补问此前相处印象，回答以工位和留灯经历说明她为何信任。" }
+            { "contextAnchor": "桌上贴着“早点回”", "questionAnchor": "便利贴，你现在还留着", "answerAnchor": "夹在工牌套后面", "relation": "固定陈述已经交代留灯和便利贴，补问物件是否仍在；回答说明这次照顾怎样影响她后来对私聊补流程的信任。" }
           ],
           "closer": { "anchor": "把工牌摘了", "routeIndependent": true, "relation": "摘工牌只是压力下的生活动作，任一分支后都能回到公开流程表。" }
         },
