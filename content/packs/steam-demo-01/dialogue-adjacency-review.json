@@ -31,8 +31,8 @@
           "entry": {
             "mode": "continue",
             "fromAnchor": "八万",
-            "toAnchor": "一次性借八万",
-            "relation": "从开场金额自然追到对方借钱时的原话。"
+            "toAnchor": "最晚哪天还你",
+            "relation": "开场已经听见奖金晚发和八万，主播不再让她复述整句话，只追这笔钱有没有明确归还日期。"
           },
           "questionOptions": [
             {
@@ -73,11 +73,11 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "餐厅、礼物和两次酒店",
-              "questionAnchor": "哪些消费",
-              "answerAnchor": "纪念日晚餐",
-              "guardedAnswerAnchor": "就那几笔",
-              "relation": "主播把账单内容按断缴前后重新问一遍，回答列出消费。"
+              "contextAnchor": "后面还有几笔男装",
+              "questionAnchor": "一万五男装",
+              "answerAnchor": "他自己",
+              "guardedAnswerAnchor": "他自己买的",
+              "relation": "固定陈述已经念过账单项目，主播不再整表复问，只追男装由谁购买和使用；回答把男方个人消费从共同消费中分开。"
             },
             {
               "contextAnchor": "餐厅、礼物和两次酒店",
@@ -210,17 +210,17 @@
             }
           ],
           "closer": {
-            "anchor": "灯和稳定器送到你家",
+            "anchor": "账单还有几页",
             "routeIndependent": true,
-            "relation": "先回应咳嗽；三条路线都已确认设备由她接收和使用，并限定她当时声称不知道分期，不替任何一边定债。"
+            "relation": "先回应咳嗽，不再复述设备去向和分期知情两项结论，只用剩余账单自然带到下一段重算。"
           }
         },
         "credit-five-wan-gap": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "灯和稳定器送到你家",
+            "fromAnchor": "灯和稳定器",
             "toAnchor": "我昨晚拿计算器",
-            "relation": "设备的去向和知情范围已经说清，主播再问她是否重算过全部消费；来电人回答缺口和催款时间变化。"
+            "relation": "设备已经进入固定陈述，场尾又说明账单仍有余页；主播接着问她有没有把可见消费重新相加，来电人回答缺口和催款时间变化。"
           },
           "questionOptions": [
             {
@@ -249,9 +249,9 @@
         "credit-bank-flow": {
           "entry": {
             "mode": "resumed-thread",
-            "fromAnchor": "灯和稳定器送到你家",
+            "fromAnchor": "灯和稳定器",
             "toAnchor": "昨晚那笔一万二",
-            "relation": "第二夜明确回到第一夜已经承认的设备去向与使用，继续追问当时尚未说出的开箱过程。"
+            "relation": "第二夜明确回到第一夜已经出现的设备，继续追问当时尚未说出的开箱过程。"
           },
           "questionOptions": [
             {
@@ -463,8 +463,8 @@
           "entry": { "mode": "continue", "fromAnchor": "这张你先看", "toAnchor": "工资账户流水发来以后", "relation": "开场已经交代女方要求看银行流水、男方只交工资账户；主播接着问双方怎样理解这份局部材料。" },
           "questionOptions": [
             { "contextAnchor": "拿不出来", "questionAnchor": "为什么还是不信", "answerAnchor": "觉得他在跟我压价", "guardedAnswerAnchor": "觉得他说拿不出是在压价", "relation": "玩家从男方已经明确拒绝却仍被要求打流水切入；回答才暴露咨询者和母亲把自费 MBA 当成现有财力。" },
-            { "contextAnchor": "只有这一张", "questionAnchor": "为什么只发工资账户", "answerAnchor": "其他账户一张都没发", "guardedAnswerAnchor": "只发了工资账户", "relation": "玩家检查材料范围；回答确认男方选择性提供工资账户，并保留其他账户余额未知。" },
-            { "contextAnchor": "她看见以后", "questionAnchor": "是不是他的全部账户", "answerAnchor": "没有", "relation": "沿女方母亲看到二十八万六后的反应继续问，回答说明她没有核材料范围便认定男方只是不愿给。" }
+            { "contextAnchor": "只有这一张", "questionAnchor": "为什么只发工资账户", "answerAnchor": "手里就这一张", "guardedAnswerAnchor": "只发了工资账户", "relation": "玩家检查材料范围；夜 A 回答只停在咨询者手里只有一张工资卡，不提前引用男方第二夜才承认的其他账户。" },
+            { "contextAnchor": "她看完", "questionAnchor": "是不是他的全部账户", "answerAnchor": "没有", "relation": "沿女方母亲看到工资卡余额后的反应继续问，回答说明她没有核材料范围便认定男方只是不愿给。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "这个周末本来要带他回家见父母", "questionAnchor": "相亲见了几次", "answerAnchor": "四次", "relation": "彩礼已把周末饭局打断，补问实际相处次数以衡量关系进度。" },

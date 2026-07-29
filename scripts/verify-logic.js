@@ -2176,7 +2176,8 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   const bridePriceFlow = `${openingText} ${brief.sceneVersions[0]?.version ?? ""}`;
   assertIncludes(brief.sceneVersions[0].version, "工资卡最清楚", "第一段必须承接女方索要流水后男方只交工资账户，不能残留无缘无故主动发图");
   assertIncludes(requestedFlowQuestion?.answer, "觉得他在跟我压价", "玩家必须问出咨询者为何不信男方拿不出而要求流水");
-  assertIncludes(salaryOnlyQuestion?.answer, "其他账户一张都没发", "玩家必须能问出男方只提供工资账户的材料缺口");
+  assertIncludes(salaryOnlyQuestion?.answer, "手里就这一张", "玩家必须能问出男方只提供工资账户的材料缺口");
+  assert(!salaryOnlyQuestion?.answer?.includes("今晚上麦") && !salaryOnlyQuestion?.answer?.includes("刚才上麦"), "案三夜 A 追问不得提前引用夜 B 上麦后的承认");
   assertIncludes(salaryOnlyQuestion?.logicContract?.sourceDoesNotProve, "其他账户", "工资账户不能被写成男方全部家底");
   assertIncludes(sceneVersionsText, "介绍人", "扩成长案后必须交代体面标签不是单人凭空出现");
   assertIncludes(sceneVersionsText, "第一次正式吃饭", "扩成长案后必须还原第一次饭局现场");
@@ -2195,6 +2196,7 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assertIncludes(bridePriceFlow, "二十八万八拿不出来", "案三必须先让男方拒绝二十八万八");
   assertIncludes(bridePriceFlow, "工资账户", "案三必须把女方索要流水与男方只交工资账户接在拒绝之后");
   assertIncludes(bridePriceFlow, "二十八万六", "案三必须让工资账户二十八万六成为局部材料，而非主动展示完整家底");
+  assertEqual((proofScene?.version?.match(/二十八万六/g) ?? []).length, 0, "案三开场报过二十八万六后，首场固定陈述不得再次完整报数");
   assertIncludes(JSON.stringify(brief), "宸直那三十万", "案三必须把女方家尚未到期的婚礼资金带回第二夜");
   assertIncludes(JSON.stringify(brief), "九月底到期", "案三必须明确宸直在案三阶段只到约定期限，不能提前宣布暴雷");
   assertIncludes(brief.deepFollowup?.question, "自己现在有多少存款", "满格后必须把当前可用资金问回来电人");
@@ -2846,7 +2848,13 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assertIncludes(JSON.stringify(membershipChoice?.resultBeats ?? []), "回去问她本人", "第三方拒答后必须把事实问题退回原始说话人");
   assert(!JSON.stringify(membershipChoice?.resultBeats ?? []).includes("不等于这个号就是她的"), "主播不能把第三方拒答压成自己的结论");
   assertIncludes(overnightCallbackOpenerById(brief, "餐厅拒绝核对")?.line ?? "", "我自己说", "会员号归属必须由咨询者本人开口确认");
-  assert(overnightCallbackOpenerById(brief, "餐厅拒绝核对")?.firstConflict?.hostLine, "餐厅拒绝核对必须改变夜 B 第一轮追问，不能只换开场文案");
+  const restaurantRefusalConflict = overnightCallbackOpenerById(brief, "餐厅拒绝核对")?.firstConflict;
+  assert(restaurantRefusalConflict?.hostLine, "餐厅拒绝核对必须改变夜 B 第一轮追问，不能只换开场文案");
+  assertIncludes(brief.sceneVersions.find((scene) => scene.id === "credit-anniversary-agency")?.version ?? "", "他说两周前订的", "餐厅回拨引用必须先在夜 A 由咨询者说出");
+  assertIncludes(restaurantRefusalConflict?.hostLine ?? "", "你昨晚说“他两周前订的”", "餐厅回拨不得虚构夜 A 未出现的引语");
+  const creditBillScene = brief.sceneVersions.find((scene) => scene.id === "credit-eight-wan-bill");
+  assert(!JSON.stringify(creditBillScene?.questionOptions ?? []).includes("又刷了哪些消费"), "账单固定陈述已经报过消费项目，玩家追问不得再整表复挖");
+  assertIncludes(creditBillScene?.questionOptions?.find((option) => option.correct)?.answer ?? "", "他自己", "账单追问应把男装受益人问清，而不是重念整张表");
   const flowOpener = overnightCallbackOpenerById(brief, "流水圈注");
   assertIncludes(flowOpener?.line ?? "", "三月十一号", "流水回拨必须从最早的二十万借款开始");
   assertIncludes(flowOpener?.line ?? "", "澄川金融", "流水回拨必须说清二十万借款的来源");
@@ -2883,6 +2891,7 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assert(deviceSeed, "案 1 夜 A 必须保留设备受益种子");
   assert(deviceReveal, "案 1 夜 B 必须保留设备受益揭示");
   assert(loyaltyPayoff, "案 1 夜 B 必须保留催款消息回收");
+  assert(!JSON.stringify(deviceSeed?.sceneCloser ?? {}).includes("两件事我听明白了"), "案一设备场尾不得用审计清单复述刚听完的两项事实");
   assertIncludes(deviceSeed.version, "投资", "案 1 夜 A 只能先种下投资话术");
   const deviceResistance = JSON.stringify(deviceReveal?.questionOptions?.[0]?.resistanceBeat?.lines ?? []);
   assertIncludes(deviceResistance, "这笔分期就该算在我头上", "设备追问的抵抗拍必须表现咨询者对归责的防御性误解");
@@ -2974,6 +2983,8 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   const openerIndex = callbackTexts.indexOf(callbackOpener.line);
   assert(callbackTexts.some((text) => text.includes("有人来找我问点事")), "案 2 实际回拨拼装必须先保留咨询者的闪躲");
   assert(callbackTexts.some((text) => text.includes("你现在安全吗")), "案 2 主播必须在正式追问前先确认咨询者安全");
+  assert(callbackTexts.some((text) => text.includes("不是物业")), "案 2 咨询者拒绝公开身份时必须先交出一条可追的真话");
+  assert(!callbackTexts.some((text) => text.includes("等会儿再问行不行")), "案 2 不得用档期闸门把已知事实硬拖到后场");
   assert(!callbackTexts.slice(0, openerIndex).some((text) => /民警|警车|酒吧|十万/.test(text)), "案 2 带回物 opener 前不得自动交出需要玩家追问的民警、职业和金额");
   const knockWorkScene = brief.sceneVersions.find((scene) => scene.id === "tony-knock-and-work");
   const knockWorkOption = knockWorkScene?.questionOptions?.find((option) => option.correct);
@@ -3169,10 +3180,13 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
   assertEqual(nightStructure?.hangup?.stageDirection, structure?.hangupLine, "案 3 挂断舞台指示必须与 overnight 挂断文案对齐");
   assertEqual(nightStructure?.hangup?.hostLine, structure?.hostHoldLine, "案 3 主持人挂断句必须与 overnight 保持单一来源");
   assert(!nightStructure?.hangup?.line?.includes("马上"), "案 3 挂断不能再写成马上回来的软离席");
+  assert(!/爸爸|宸直/.test(nightStructure?.hangup?.hostLine ?? ""), "案 3 夜 A 挂断不得点名尚未揭示的父亲或宸直线");
   const incomeCardScene = (brief.sceneVersions ?? []).find((scene) => scene.id === "profile-income-and-card");
   assertIncludes(incomeCardScene?.version ?? "", "还有其他账户", "案 3 最终对峙必须确认男方只交了工资账户，其他账户仍在材料外");
   assertIncludes((incomeCardScene?.afterVersion?.lines ?? []).map((line) => line.text ?? "").join(" "), "其他账户是我的私事", "案 3 必须让男方亲口说明选择性提供流水的边界");
   assertIncludes((incomeCardScene?.afterVersion?.lines ?? []).map((line) => line.text ?? "").join(" "), "那三十万宸直", "案 3 最终对峙必须当面追问女方家尚未到期的婚礼资金");
+  assert(!incomeCardScene?.version?.includes("只能代表一张工资卡"), "案 3 咨询者不得替材料念证明边界公式");
+  assert(!/只能证明|既不能.*也不能/.test((incomeCardScene?.afterVersion?.lines ?? []).map((line) => line.text ?? "").join(" ")), "案 3 主播不得用证明边界三联代替现场说话");
   const privacyBeat = structure?.liveCounterBeats?.find((beat) => beat.id === "profile-family-chat-blowup");
   assertIncludes(privacyBeat?.choices?.find((choice) => choice.id === "soothe")?.label ?? "", "没有经过你同意", "案 3 家庭群截图爆点必须提供明确的隐私边界选项");
   assert((privacyBeat?.choices ?? []).every((choice) => choice.silent !== true), "案 3 隐私爆点不得把沉默包装成唯一不施压的处理方式");
@@ -3229,6 +3243,8 @@ test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", ()
   assertEqual(nightStructureFor(brief)?.hangup?.stageDirection, structure?.hangupLine, "案 4 挂断舞台指示必须与 overnight 挂断文案对齐");
   assertEqual(nightStructureFor(brief)?.hangup?.hostLine, structure?.hostHoldLine, "案 4 主持人挂断句必须与 overnight 保持单一来源");
   assert(!nightStructureFor(brief)?.hangup?.line?.includes("马上"), "案 4 挂断不能再写成马上回来的软离席");
+  assert(!brief.stageJudgement?.includes("答应接活，不是答应"), "案 4 结案不得使用整齐的反题句代替责任与回单事实");
+  assert(!brief.evidenceChecks?.find((check) => check.id === "work-budget-timeline")?.options?.find((option) => option.correct)?.reactionLine?.includes("财务根本还没说延后"), "案 4 材料反应必须像人物现场想起来，而不是分析报告");
 });
 
 test("NARRATION-001", "case narration helpers keep critical labels stable", () => {
@@ -3280,6 +3296,9 @@ test("DOCS-003", "case writing law requires audited adjacent-turn causality", ()
   assertIncludes(scriptwritingSkill, "sceneCloser", "逐话轮合同必须检查所有分支共用的场尾");
   assertIncludes(scriptwritingSkill, "runtime displays `lines`", "选项同时存在 answer 与 lines 时必须按玩家实际听见的 lines 审查");
   assertIncludes(scriptwritingSkill, "No plot-scheduled withholding", "案本 skill 必须禁止为排剧情而拒答已知事实");
+  assertIncludes(scriptwritingSkill, "Cross-night knowledge isolation", "案本 skill 必须禁止夜 A 台词引用夜 B 才发生的承认");
+  assertIncludes(scriptwritingSkill, "Hangup does not preview the payoff", "案本 skill 必须禁止挂断句替下一幕点名答案");
+  assertIncludes(scriptwritingSkill, "Quoted lines must be traceable", "案本 skill 必须要求主播引用能追溯到玩家已听见的原话");
   assertIncludes(scriptwritingSkill, "Dialogue Humanization Closure", "案本 skill 必须同时执行删总结与口语复述闭环");
   assertIncludes(scriptwritingSkill, "Summary-removal pass", "双层人话闭环必须先删除作者总结");
   assertIncludes(scriptwritingSkill, "Spoken-realization pass", "双层人话闭环必须补回必要的人类复述时序");

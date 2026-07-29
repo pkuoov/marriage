@@ -1587,9 +1587,13 @@ test("PACK-013", "warmth props close their arcs and the personal livestream stay
   assertEqual(hostProfile?.formerOccupation, "互联网大厂法务", "主播前职业不得退回媒体机构从业者");
   assertEqual(hostProfile?.streamerTenure, "两年半", "主播年限必须固定为两年半");
   assertEqual(hostProfile?.relationships?.find((relationship) => relationship.with === "zhao-lawyer")?.publicLabel, "妻子", "赵律师与林旭阳的关系必须保持夫妻设定");
+  const zhaoProfile = castRegistry.cast?.find((profile) => profile.id === "zhao-lawyer");
+  assertEqual(zhaoProfile?.occupation, "执业律师", "赵律师的职业必须固定为执业律师");
+  assert(hostProfile?.relationships?.find((relationship) => relationship.with === "zhao-lawyer")?.dynamic?.includes("大学同学"), "林旭阳与赵律师的大学同学关系必须写入固定人物档案");
   const backgroundLine = manifest.nightShell?.prologue?.lines?.find((line) => line.type === "background");
   assertEqual(backgroundLine?.speaker, "林旭阳", "主播履历必须由本人第一人称介绍");
   assert(backgroundLine?.text?.includes("互联网大厂做法务") && backgroundLine?.text?.includes("两年半"), "开篇必须交代前职业、失业转折和主播年限");
+  assert(backgroundLine?.text?.includes("老婆") && backgroundLine?.text?.includes("大学同学") && backgroundLine?.text?.includes("执业律师"), "开篇自我介绍必须交代赵律师是大学同学、妻子和执业律师");
   const prologueText = manifest.nightShell?.prologue?.lines?.find((line) => line.speaker === "领导（老婆）")?.text ?? "";
   const caseThreeInterlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === "03-profile");
   const epilogue = manifest.nightShell?.epilogue ?? {};
