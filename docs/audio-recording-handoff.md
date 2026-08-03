@@ -25,3 +25,15 @@
 5. 跑 `npm run verify:audio`、浏览器回放和桌面 smoke；确认静音、分轨、压低 BGM 与逐字稿仍成立。
 
 未经过第 4、5 步的文件只能是试音，不得覆盖仓库母版。
+
+## Amphion 内部试音
+
+六条语音材料现已有一套可复现的 Amphion 试制清单和离线工具。它只用于内部 A/B，不改变上面的演员交付合同：
+
+- `npm run audio:voice -- validate` 检查角色、台词、路径、上游 revision 和非商用边界；
+- `npm run audio:voice -- prepare all` 把六段固定参考录音稿写进本地忽略目录，演员照稿录制同目录的 `reference.wav`；
+- `npm run audio:voice -- plan <cue-id>` 给出该句的参考录音、固定 seed 和输出位置；
+- `scripts/amphion-generate-voice.py` 在仓库外的 Linux/NVIDIA Amphion 环境生成原始 takes；
+- `npm run audio:voice -- stage <cue-id> --input <take.wav>` 只写入被忽略的 review 目录，不会晋升正式母版。
+
+官方 Vevo/MaskGCT checkpoint 当前带非商用限制，且克隆声线必须取得参考说话人的明确同意。完整安装、生成、试听和授权说明见 `docs/amphion-dialogue-voice-pipeline.md`。

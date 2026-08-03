@@ -8,6 +8,7 @@ const CONTENT_URL = new URL("../content/packs/steam-demo-01/", import.meta.url);
 const errors = [];
 const references = [];
 const voiceProduction = JSON.parse(await readFile(new URL("../assets/audio/voice/recording-manifest.json", import.meta.url), "utf8"));
+const amphionVoiceProduction = JSON.parse(await readFile(new URL("../assets/audio/voice/amphion-production.json", import.meta.url), "utf8"));
 const bgmProduction = JSON.parse(await readFile(new URL("../assets/audio/bgm-production.json", import.meta.url), "utf8"));
 
 for (const fileUrl of await jsonFiles(CONTENT_URL)) {
@@ -113,6 +114,42 @@ for (const [cueId, cue] of Object.entries(AUDIO_CUES).filter(([, item]) => item.
 }
 for (const cueId of voiceEntries.keys()) {
   if (AUDIO_CUES[cueId]?.bus !== "voice") fail(`${cueId}: recording manifest references a missing/non-voice cue`);
+}
+
+if (amphionVoiceProduction.policy?.commercialReleaseAllowed !== false) {
+  fail("Amphion official-checkpoint outputs must remain blocked from commercial release");
+}
+if (amphionVoiceProduction.policy?.referenceConsentRequired !== true) {
+  fail("Amphion voice references must require informed speaker consent");
+}
+if (!/^[0-9a-f]{40}$/i.test(amphionVoiceProduction.upstream?.code?.revision ?? "")) {
+  fail("Amphion source revision must be pinned to a full Git SHA");
+}
+for (const [engineId, engine] of Object.entries(amphionVoiceProduction.upstream?.engines ?? {})) {
+  if (!/^[0-9a-f]{40}$/i.test(engine.revision ?? "")) fail(`${engineId}: model revision must be pinned to a full Git SHA`);
+  if (engine.commercialReleaseAllowed !== false) fail(`${engineId}: official checkpoint must remain non-commercial`);
+  if (!String(engine.license ?? "").includes("NC")) fail(`${engineId}: non-commercial license marker is required`);
+}
+const amphionJobs = new Map();
+for (const job of amphionVoiceProduction.jobs ?? []) {
+  if (amphionJobs.has(job.cueId)) fail(`${job.cueId}: duplicate Amphion job`);
+  amphionJobs.set(job.cueId, job);
+  const entry = voiceEntries.get(job.cueId);
+  if (!entry) {
+    fail(`${job.cueId}: Amphion job references a missing recording entry`);
+    continue;
+  }
+  if (job.transcript !== entry.transcript) fail(`${job.cueId}: Amphion transcript must match the recording contract`);
+  if (job.targetPath !== entry.targetPath) fail(`${job.cueId}: Amphion targetPath must match the recording contract`);
+  if (!String(job.referenceWav ?? "").startsWith(`${amphionVoiceProduction.paths?.referenceRoot}/`)) fail(`${job.cueId}: reference WAV must stay under ignored source storage`);
+  if (!String(job.referenceTranscript ?? "").startsWith(`${amphionVoiceProduction.paths?.referenceRoot}/`)) fail(`${job.cueId}: reference transcript must stay under ignored source storage`);
+  if (!String(job.generationDirectory ?? "").startsWith(`${amphionVoiceProduction.paths?.generationRoot}/`)) fail(`${job.cueId}: generated takes must stay under ignored source storage`);
+  if (!String(job.reviewPath ?? "").startsWith(`${amphionVoiceProduction.paths?.reviewRoot}/`)) fail(`${job.cueId}: synthetic candidate must stay under ignored review storage`);
+  if (job.reviewPath === job.targetPath?.replace(/^\.\//, "")) fail(`${job.cueId}: candidate path must not overwrite the runtime master`);
+  if (!["blocked-reference", "ready-for-generation", "candidate-generated"].includes(job.status)) fail(`${job.cueId}: invalid internal Amphion status ${job.status}`);
+}
+for (const cueId of voiceEntries.keys()) {
+  if (!amphionJobs.has(cueId)) fail(`${cueId}: Amphion evaluation job is required`);
 }
 
 for (const sample of [

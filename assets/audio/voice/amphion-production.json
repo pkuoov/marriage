@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "purpose": "internal-evaluation-only",
+    "commercialReleaseAllowed": false,
+    "candidateStatus": "synthetic-review-only",
+    "rule": "Official Amphion checkpoints listed here are non-commercial evaluation dependencies. Their outputs must remain under ignored source/review paths and must not replace repository masters without separately documented commercial rights and voice-reference consent.",
+    "referenceConsentRequired": true,
+    "prohibitedReferences": [
+      "celebrity or public-figure recordings",
+      "recordings without the speaker's informed consent",
+      "copyrighted performance clips without adaptation rights"
+    ]
+  },
+  "upstream": {
+    "code": {
+      "repository": "https://github.com/open-mmlab/Amphion.git",
+      "revision": "26f6883110181f1dbfe95c70a7c7dbaf4de5f42a",
+      "license": "MIT"
+    },
+    "engines": {
+      "vevo-tts": {
+        "modelRepository": "amphion/Vevo",
+        "revision": "7edf4640c400c20542aa39c45b63f60e6c7baba0",
+        "license": "CC-BY-NC-4.0",
+        "languages": [
+          "zh"
+        ],
+        "separateTimbreAndStyleReferences": true,
+        "commercialReleaseAllowed": false
+      },
+      "maskgct": {
+        "modelRepository": "amphion/MaskGCT",
+        "revision": "265c6cef07625665d0c28d2faafb1415562379dc",
+        "license": "CC-BY-NC-4.0",
+        "languages": [
+          "zh"
+        ],
+        "supportsTargetDuration": true,
+        "commercialReleaseAllowed": false
+      }
+    }
+  },
+  "paths": {
+    "referenceRoot": "assets/audio/source/voice/references",
+    "generationRoot": "assets/audio/source/voice/amphion",
+    "reviewRoot": "assets/audio/review/voice",
+    "reportRoot": "assets/audio/reports/voice"
+  },
+  "defaults": {
+    "engine": "vevo-tts",
+    "sourceLanguage": "zh",
+    "referenceLanguage": "zh",
+    "takes": 4,
+    "seedBase": 7400,
+    "sampleRate": 48000,
+    "channels": 1,
+    "targetLufs": -18,
+    "truePeakDb": -3,
+    "codec": "libvorbis",
+    "quality": 6,
+    "headSilenceSeconds": 0.08,
+    "tailSilenceSeconds": 0.12
+  },
+  "speakerProfiles": {
+    "case1-respondent": {
+      "kind": "cast-character",
+      "description": "案1男方，二十至三十多岁；失业后仍在维持体面，解释时先撑住再露怯。",
+      "referenceScript": "今天外面有点闷，我下楼买了杯咖啡，回来以后才想起钥匙还在桌上。我在门口站了一会儿，给同事打了个电话。"
+    },
+    "case2-tony": {
+      "kind": "cast-character",
+      "description": "案2托尼老师，二十多岁；疲惫、嘴甜，熟悉如何顺手给出情绪价值。",
+      "referenceScript": "今天店里从下午忙到晚上，我刚送走最后一位客人。吹风机停下来了，耳朵里还是嗡嗡的，我先坐一会儿。"
+    },
+    "case3-female-elder": {
+      "kind": "material-only-role",
+      "description": "案3饭局女性长辈；礼貌核对事实，不知道自己的问题会让桌面冷下来。",
+      "referenceScript": "这家店我以前来过两次，菜上得不算快。你们先聊，我给大家添点热水，等人齐了我们再点菜。"
+    },
+    "case4-colleague": {
+      "kind": "cast-character",
+      "description": "案4项目负责人；理性、忙，习惯用机会语言催别人承担成本。",
+      "referenceScript": "场地那边刚回了消息，明天下午可以进场。名单我等会儿发到群里，有变动你再直接联系我。"
+    },
+    "case4-supplier": {
+      "kind": "cast-character",
+      "description": "案4供应商项目员；流程化，认为自己只是在说明长期做法。",
+      "referenceScript": "报价单我已经按新数量改过了，送货时间还是周五上午。东西到场以后，麻烦找个人签收。"
+    },
+    "zhang-forensic": {
+      "kind": "cast-character",
+      "description": "张法医；语速偏快、边界明确，说完即止。",
+      "referenceScript": "照片上我只能看清这些，原件不在我手里。剩下的情况，你们最好去正式渠道核实。"
+    }
+  },
+  "jobs": [
+    {
+      "cueId": "voice.case1.loyalty-message",
+      "status": "blocked-reference",
+      "speakerProfileId": "case1-respondent",
+      "transcript": "我只是怕你知道我失业后就离开我。",
+      "targetPath": "./assets/audio/voice/case1-loyalty-message.ogg",
+      "referenceWav": "assets/audio/source/voice/references/case1-respondent/reference.wav",
+      "referenceTranscript": "assets/audio/source/voice/references/case1-respondent/reference.txt",
+      "generationDirectory": "assets/audio/source/voice/amphion/voice-case1-loyalty-message",
+      "reviewPath": "assets/audio/review/voice/case1-loyalty-message-candidate.ogg",
+      "reportPath": "assets/audio/reports/voice/case1-loyalty-message-candidate.json",
+      "performance": "先解释、后示弱；不要演成反派自白。",
+      "effectsDeferred": []
+    },
+    {
+      "cueId": "voice.case2.dryer-message",
+      "status": "blocked-reference",
+      "speakerProfileId": "case2-tony",
+      "transcript": "今晚店长又说我了。也就你肯听我说这些。",
+      "targetPath": "./assets/audio/voice/case2-dryer-message.ogg",
+      "referenceWav": "assets/audio/source/voice/references/case2-tony/reference.wav",
+      "referenceTranscript": "assets/audio/source/voice/references/case2-tony/reference.txt",
+      "generationDirectory": "assets/audio/source/voice/amphion/voice-case2-dryer-message",
+      "reviewPath": "assets/audio/review/voice/case2-dryer-message-candidate.ogg",
+      "reportPath": "assets/audio/reports/voice/case2-dryer-message-candidate.json",
+      "performance": "像忙着工作时顺手发来的语音，第二句更轻，不停下来深情告白。",
+      "effectsDeferred": [
+        "phone playback filtering",
+        "dryer ambience"
+      ]
+    },
+    {
+      "cueId": "voice.case3.dinner-pause",
+      "status": "blocked-reference",
+      "speakerProfileId": "case3-female-elder",
+      "transcript": "本科也是那所学校吗？",
+      "targetPath": "./assets/audio/voice/case3-dinner-pause.ogg",
+      "referenceWav": "assets/audio/source/voice/references/case3-female-elder/reference.wav",
+      "referenceTranscript": "assets/audio/source/voice/references/case3-female-elder/reference.txt",
+      "generationDirectory": "assets/audio/source/voice/amphion/voice-case3-dinner-pause",
+      "reviewPath": "assets/audio/review/voice/case3-dinner-pause-candidate.ogg",
+      "reportPath": "assets/audio/reports/voice/case3-dinner-pause-candidate.json",
+      "performance": "真心核对，不带审讯口气，尾音自然落下。",
+      "tailSilenceSeconds": 11,
+      "effectsDeferred": [
+        "cup and plate room response"
+      ]
+    },
+    {
+      "cueId": "voice.case4.pad-message",
+      "status": "blocked-reference",
+      "speakerProfileId": "case4-colleague",
+      "transcript": "你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。",
+      "targetPath": "./assets/audio/voice/case4-pad-message.ogg",
+      "referenceWav": "assets/audio/source/voice/references/case4-colleague/reference.wav",
+      "referenceTranscript": "assets/audio/source/voice/references/case4-colleague/reference.txt",
+      "generationDirectory": "assets/audio/source/voice/amphion/voice-case4-pad-message",
+      "reviewPath": "assets/audio/review/voice/case4-pad-message-candidate.ogg",
+      "reportPath": "assets/audio/reports/voice/case4-pad-message-candidate.json",
+      "performance": "像在赶进度，不觉得自己在威胁；前句快，后句略慢。",
+      "effectsDeferred": [
+        "phone playback filtering"
+      ]
+    },
+    {
+      "cueId": "voice.case4.supplier-message",
+      "status": "blocked-reference",
+      "speakerProfileId": "case4-supplier",
+      "transcript": "服务协调费按老规矩返给对接人。",
+      "targetPath": "./assets/audio/voice/case4-supplier-message.ogg",
+      "referenceWav": "assets/audio/source/voice/references/case4-supplier/reference.wav",
+      "referenceTranscript": "assets/audio/source/voice/references/case4-supplier/reference.txt",
+      "generationDirectory": "assets/audio/source/voice/amphion/voice-case4-supplier-message",
+      "reviewPath": "assets/audio/review/voice/case4-supplier-message-candidate.ogg",
+      "reportPath": "assets/audio/reports/voice/case4-supplier-message-candidate.json",
+      "performance": "平铺直叙，一句到底，不刻意强调“老规矩”。",
+      "effectsDeferred": [
+        "phone playback filtering"
+      ]
+    },
+    {
+      "cueId": "voice.advisor.zhang-closed",
+      "status": "blocked-reference",
+      "speakerProfileId": "zhang-forensic",
+      "transcript": "不能。像素真假我答过了，学历口径让当事人自己去学信网核。别拿复印件替人作证。",
+      "targetPath": "./assets/audio/voice/advisor-zhang-closed.ogg",
+      "referenceWav": "assets/audio/source/voice/references/zhang-forensic/reference.wav",
+      "referenceTranscript": "assets/audio/source/voice/references/zhang-forensic/reference.txt",
+      "generationDirectory": "assets/audio/source/voice/amphion/voice-advisor-zhang-closed",
+      "reviewPath": "assets/audio/review/voice/advisor-zhang-closed-candidate.ogg",
+      "reportPath": "assets/audio/reports/voice/advisor-zhang-closed-candidate.json",
+      "performance": "第一句干脆，后面是工作边界而不是训人；末句听清后直接收住。",
+      "effectsDeferred": []
+    }
+  ]
+}
