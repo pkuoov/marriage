@@ -1100,7 +1100,7 @@
 
 ### 其他出声面
 
-- `$case.overnightStructure.liveCounterBeats[1].lines[1]` 我是她说的那个人。礼物你先收着。我只想问一句：她家开口二十八万八的时候，有没有告诉她，那三十万还在宸直，眼下根本拿不出来？
+- `$case.overnightStructure.liveCounterBeats[1].lines[1]` 我是她说的那个人。礼物你先收着——你们说了半天，我从头听到现在。我只想问一句：她家开口二十八万八的时候，有没有告诉她，那三十万还在宸直，眼下根本拿不出来？
 - `$case.overnightStructure.liveCounterBeats[1].choices[0].lines[0]` 行。她手里那些材料，这几页可以：学校、学费、工资卡，还有彩礼那几句。其他账户不公开。她家的钱，也只说群里已经提过的。
 - `$case.overnightStructure.liveCounterBeats[1].choices[1].lines[0]` 范围我打后台了。她已经拿到的学校图、学费单、工资卡，这几页可以；彩礼原话也能谈。其他账户不公开。她家的钱，只说群里那一句。
 - `$case.overnightStructure.liveCounterBeats[1].choices[2].lines[0]` 可以，你先问她。我这边同意谈学校、学费、那张工资卡和彩礼，这几页可以。其他账户不公开。她家的钱也只念群里出现过的。
