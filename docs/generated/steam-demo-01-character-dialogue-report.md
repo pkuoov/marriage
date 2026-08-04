@@ -203,7 +203,7 @@
 - `$case.openingDialogue[0]` 主播，我男朋友以前连打车钱都不让我出，这两天却突然让我替他还八万块信用卡。我没敢转，是不是我太防着他了？
 - `$case.openingDialogue[3]` 半年多。他说最近奖金晚发，信用卡得周转一下，让我先替他垫着。可他开口就是八万。
 - `$case.sceneVersions[0].afterVersion.lines[1]` 八万太多，我让他把这期账单和最近的工资记录发来。工资记录没发，他只发来一张从电子社保卡导出的缴费记录，说公司这两个月只是漏缴。我把月份往前翻，最后一笔停在四月。可四月以后，他每天还在跟我说加班。
-- `$case.sceneVersions[0].afterVersion.lines[2]` ……你等我一下，我把窗关了。楼下有车在报警，吵。
+- `$case.sceneVersions[0].afterVersion.lines[2]` ……你等我一下，我把窗关了。楼下大排档还没散，吵。
 - `$case.sceneVersions[1].casualQuestions[3].lines[0]` 嗯。
 - `$case.sceneVersions[1].casualQuestions[3].lines[2]` 一分没少。
 - `$case.sceneVersions[2].afterVersion.lines[1]` ……是我。我没跟他在一起的时候就办了会员。那晚也是我用自己的号订的。刚才说他提前两周才订到，是我说顺嘴了。

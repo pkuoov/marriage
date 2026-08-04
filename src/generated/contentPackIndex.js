@@ -2355,7 +2355,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "caller",
-                "text": "……你等我一下，我把窗关了。楼下有车在报警，吵。",
+                "text": "……你等我一下，我把窗关了。楼下大排档还没散，吵。",
                 "nonLoadBearing": true
               }
             ]
