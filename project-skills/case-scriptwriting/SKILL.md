@@ -849,6 +849,15 @@ The host is a person (design: `docs/host-character-design.md`):
 - Domestic register enters only openers and closing half-lines; the professional core of any advice stays word-for-word professional. At most one family/couple beat per case. Relationships never bend facts or verdicts — 赵's disclaimers got stricter, not softer, when she became family.
 - The room half-knows: regulars dare to type "赵姐" and never dare to ask; on-air copy never explains why she always answers. The apology-turned-dinner origin is bible-only.
 
+### 主播人味法条（双寄存器）
+
+1. **寄存器配额律**：每案默认寄存器（风趣/暖/损）至少 N 拍、专业寄存器（步步紧逼）至少 N 拍，且**每案至少一次可见的"收笑变脸"切换**。全程一个腔调（要么全程端着、要么全程贫）都算没做到。
+2. **风趣不污染事实层**：玩笑只在交付层（怎么说），不进承重层（判什么）。事实分拣、双源、留白结尾、不预判——一条不松。**对脆弱来电人不许损她本人**（可以损套路、损对方、自损）；玩笑永远站在来电人这边或指向操控者。
+3. **步步紧逼律**：来电人/对方一含糊，主播至少追一次"把话说全"，不许放过含糊直接进下一题（这也是他"专业不马虎"的表现）。但逼逻辑不逼人，守阳谋。
+4. **主播语言噪声**：不是每句都推进案子。允许主播累、跑题一下、损一句、自嘲、对弹幕翻个白眼——给他和来电人同等的"废话权"。金句配额律照旧（≤3/案），但腾出的空间填**人味**不是填**更短的提问**。
+5. **夜班情绪弧（跨案写死）**：第一案精神、话多爱贫 → 中段被案子磨、火气上来一点 → 第四案疲、贫里带累、偶尔破功 → 尾声软。上一案的重量可以渗进下一案开场半句。不许四案都是同一个满血中性主播。
+6. **克制是面具不是本性**：默认那个松、有偏见、爱损的人是"真的他"；克制/中立是他戴着的、偶尔滑落的职业面具。滑落的时刻（被案子带偏后认错、被啰嗦问烦了拉回来、对操控真动气）要写出来——活人认错、活人破功，比机器中立可爱。
+
 ## 人味法条
 
 ### 总原则
