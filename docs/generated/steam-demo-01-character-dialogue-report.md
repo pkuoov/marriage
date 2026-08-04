@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：35
-- 收录台词／玩家可见人物材料：967
+- 收录台词／玩家可见人物材料：973
 - 本包实际出声人物：34
 - 句长节奏人工复核提示：19
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -145,6 +145,8 @@
 - `$case.sceneVersions[5].beforeVersion.lines[0]` 昨晚那笔一万二，设备在你家，也一直是你在用。可你没说开箱那晚。那天你们做了什么？
 - `$case.sceneVersions[6].beforeVersion.lines[3]` 抱抱来得挺是时候。先看他后面还说什么。
 - `$case.sceneVersions[6].afterVersion.lines[0]` “怕你离开”后面紧跟最低还款金额。他把两件事绑在一起了。你听完先想到什么？
+- `$case.sceneVersions[6].afterVersion.lines[5]` 等一下。刚才“你们都看着”，你说的是他知道直播开着；这会儿你又说“我总不能显得像一听他失业就躲”。别混在一起。你怕的是他在听，还是别人觉得你嫌他穷？
+- `$case.sceneVersions[6].afterVersion.lines[9]` 知道了。先喘口气。别人怎么看先放一边，八万怎么分，我们还是按账来。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[0]` 六月 8 号那笔没来，八万就开口了。你昨晚——
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[2]` ……对，七月，我念岔了。你昨晚为什么只说『奖金晚发』？
 - `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.firstConflict.hostLine` 你昨晚说“他两周前订的”。现在订座短信在你手机里，这句话怎么回事？
@@ -265,7 +267,11 @@
 - `$case.sceneVersions[6].beforeVersion.lines[2]` 他知道这是直播。他知道你们都看着。
 - `$case.sceneVersions[6].beforeVersion.lines[4]` 有。十二点四十，又来了一条。
 - `$case.sceneVersions[6].beforeVersion.lines[6]` ……跟着又来一句：『账单 26 号出』。前面还是『抱抱』，后面就变成还款日了。
-- `$case.sceneVersions[6].afterVersion.lines[1]` 我第一反应是：“以后他可能就不敢跟我谈结婚了。”……可这句是我自己想出来的，他没说。我也怕别人觉得我找了个撑不住场面的人。然后我就把转账页点开了。
+- `$case.sceneVersions[6].afterVersion.lines[1]` 我第一反应是：“以后他可能就不敢跟我谈结婚了。”
+- `$case.sceneVersions[6].afterVersion.lines[3]` 不对，他没说结婚，是我自己想到的。可你们都看着，我总不能显得像一听他失业就躲吧？
+- `$case.sceneVersions[6].afterVersion.lines[4]` ……我也怕别人觉得我找了个撑不住场面的人。然后我就把转账页点开了。
+- `$case.sceneVersions[6].afterVersion.lines[6]` ……后一个。
+- `$case.sceneVersions[6].afterVersion.lines[8]` 也怕他听见。可我更怕别人觉得我嫌他穷。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.callerLine` ……说成断了，话就重了。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[1]` 七月。六月是有的。
 - `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.firstConflict.callerLine` 那句是我说顺嘴了。座是我订的，酒是他点的，朋友圈也是我发的。我当时确实想让别人羡慕。

@@ -2906,6 +2906,13 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assert(!loyaltyLead.includes("语音"), "案 1 语音到达前的场前对白不得提前引用语音");
   assertEqual(loyaltyPayoff.entryQuestion, "接着呢？", "案 1 语音到达前只能顺接消息，不能提前追问尚未出现的语音");
   assertEqual(loyaltyPayoff.beforeVersion?.lines?.[3]?.text, "抱抱来得挺是时候。先看他后面还说什么。", "案 1 相邻反制拍不得重复要求咨询者别回消息");
+  const loyaltyPressureLines = loyaltyPayoff.afterVersion?.lines ?? [];
+  const loyaltyPressureText = JSON.stringify(loyaltyPressureLines);
+  assertIncludes(loyaltyPressureText, "我总不能显得像一听他失业就躲", "案 1 消息突袭必须让咨询者的体面粉饰在慌乱中滑出口");
+  assertIncludes(loyaltyPressureText, "别混在一起", "案 1 主播必须抓住监听压力与自我展示之间的口径滑动");
+  assertIncludes(loyaltyPressureText, "……后一个。", "案 1 咨询者被追到后必须短答承认更怕观众觉得她嫌贫");
+  assertIncludes(loyaltyPressureText, "先喘口气", "案 1 主播撬开粉饰后必须回暖给台阶");
+  assertEqual(JSON.stringify(loyaltyPressureLines.map((line) => line.role)), JSON.stringify(["host", "caller", "pause", "caller", "caller", "host", "caller", "pause", "caller", "host"]), "案 1 消息突袭必须呈现改口、过度解释、短答崩口与回暖");
   assert(!deviceSeed.version.includes("灯架和稳定器一直在我屋里"), "案 1 夜 A 不得抢先说完设备实际受益");
   assert(!(deviceSeed.questionOptions ?? []).some((option) => /实际服务过咨询者账号|收了设备/.test(option.contradiction ?? "")), "案 1 夜 A 的矛盾入账不得提前公布设备受益结论");
   assertEqual(brief.callMedium, "voice", "案 1 必须保持纯语音连线");
@@ -3293,6 +3300,10 @@ test("DOCS-002", "case writing law keeps reciprocity, callbacks, care echoes, ex
   assertIncludes(scriptwritingSkill, "Keep embodiment in generated reading copies", "玩家身份规则必须覆盖自动生成的连续阅读版");
   assertIncludes(scriptwritingSkill, "Close every branch of the identity loop", "现场压力选择的每一条分支都必须留下回声");
   assertIncludes(scriptwritingSkill, "Establish livelihood pressure once per continuous night", "连续直播不能为了结构重复履历或硬造压力");
+  assertIncludes(scriptwritingSkill, "### 慌乱失稳律（来电人）", "案本 skill 必须要求来电人在急压拍出现可听见的失稳");
+  assertIncludes(scriptwritingSkill, "逻辑/细节露馅 ≥1 处/案", "慌乱失稳必须落到每案至少一处自利粉饰滑动");
+  assertIncludes(scriptwritingSkill, "### 抓破绽·主播加压", "主播双寄存器必须包含抓破绽加压相位");
+  assertIncludes(scriptwritingSkill, "攻击对象是那处矛盾/粉饰,不是她这个人", "主播加压必须逼逻辑而不是攻击求助者");
 });
 
 test("DOCS-003", "case writing law requires audited adjacent-turn causality", () => {
