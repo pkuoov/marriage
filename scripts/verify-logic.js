@@ -2905,7 +2905,7 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assert(!/跟上回|跟上次|又是老样子/.test(loyaltyLead), "案 1 不得用玩家从未听过的过去事件补足催款模式");
   assert(!loyaltyLead.includes("语音"), "案 1 语音到达前的场前对白不得提前引用语音");
   assertEqual(loyaltyPayoff.entryQuestion, "接着呢？", "案 1 语音到达前只能顺接消息，不能提前追问尚未出现的语音");
-  assertEqual(loyaltyPayoff.beforeVersion?.lines?.[3]?.text, "他挑这个时候发抱抱。先看他后面还说什么。", "案 1 相邻反制拍不得重复要求咨询者别回消息");
+  assertEqual(loyaltyPayoff.beforeVersion?.lines?.[3]?.text, "抱抱来得挺是时候。先看他后面还说什么。", "案 1 相邻反制拍不得重复要求咨询者别回消息");
   assert(!deviceSeed.version.includes("灯架和稳定器一直在我屋里"), "案 1 夜 A 不得抢先说完设备实际受益");
   assert(!(deviceSeed.questionOptions ?? []).some((option) => /实际服务过咨询者账号|收了设备/.test(option.contradiction ?? "")), "案 1 夜 A 的矛盾入账不得提前公布设备受益结论");
   assertEqual(brief.callMedium, "voice", "案 1 必须保持纯语音连线");

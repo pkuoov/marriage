@@ -245,7 +245,7 @@ async function runRoute(route) {
     }
     if (await page.locator("[data-enter-first-case]").count()) {
       await drainDialogue(page, route);
-      await assertVisibleText(page, "开播了哈，今天继续连麦。", "night shell prologue should sound like a returning personal streamer");
+      await assertVisibleText(page, "改版又催上了，先让他催着。开播了哈，今天继续连麦。", "night shell prologue should sound like a returning personal streamer");
       await assertNoPageText(page, "试玩已收麦", "night shell prologue must not display the story-pack completion HUD");
       if (await page.locator(".night-shell-line.shell-notice, .night-shell-line.shell-message, .night-shell-line.shell-stage, .night-shell-line.shell-host").count() !== 4) {
         throw new Error("night shell prologue should distinguish work notice, personal message, solo go-live action, and host opening");
@@ -1006,7 +1006,7 @@ async function advanceToAccusation(page, route) {
       await activate(page, route, `[data-caller-question="${route.callerQuestion}"]`);
       if (route.callerQuestion === "dont-answer-for-her") {
         const callerQuestionTranscript = await drainDialogue(page, route);
-        if (!callerQuestionTranscript.includes("先问他三月为什么借了二十万") || !callerQuestionTranscript.includes("我先不转")) {
+        if (!callerQuestionTranscript.includes("先让他把三月借的二十万说全") || !callerQuestionTranscript.includes("我先不转")) {
           throw new Error("process-control answer should stop the transfer and return the trust-loan question to the respondent");
         }
       }

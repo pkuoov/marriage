@@ -1738,7 +1738,7 @@ export const CONTENT_PACKS = {
         "hostLine": {
           "speaker": "主播·林旭阳",
           "type": "host",
-          "text": "开播了哈，今天继续连麦。"
+          "text": "改版又催上了，先让他催着。开播了哈，今天继续连麦。"
         }
       },
       "interludes": [
@@ -2305,7 +2305,7 @@ export const CONTENT_CASES = {
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "八万不是随手帮个忙。你先别怪自己多想。",
+          "text": "八万不是随手帮个忙，换我也得先把手缩回来。先别怪自己多想。",
           "mood": "listening"
         },
         {
@@ -2338,7 +2338,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "你说他让你先垫着。他当时有没有说，最晚哪天还你？"
+                "text": "“先垫着”我听见了。他有没有说最晚哪天还你？"
               }
             ]
           },
@@ -2347,7 +2347,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "那你后来为什么没有直接转给他？"
+                "text": "“钱下来”是哪笔钱、哪天下来，他都没说。你后来为什么没转？"
               },
               {
                 "role": "caller",
@@ -2377,7 +2377,7 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "好。你刚才说，他那段时间还天天讲加班。借钱以前，他有没有提过工作出了问题？",
+              "question": "四月以后他还天天讲加班。借钱以前，他提过工作出了问题吗？",
               "answer": "没有。他每天说的都是忙、加班、项目要上线，还说服务器凌晨得有人盯着。有一回我说给他送点吃的，他让我别去，说公司门禁严。现在回头看，那时候他可能已经不去公司了。可工作出了问题，他一个字都没跟我提。",
               "textureRole": "ramble",
               "guardedAnswer": "他说忙，我就信了。我们没住一起，我也不想天天问他在哪。",
@@ -2436,7 +2436,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "你发现社保早就停了以后，有没有让他把完整账单发给你？"
+                "text": "工资记录没发，社保早就停了。你后来把完整账单要来了吗？"
               }
             ]
           },
@@ -2543,7 +2543,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "我看账单里有一笔餐厅消费特别高。是纪念日那晚吗？"
+                "text": "账单里有一笔餐厅消费特别高，挺舍得花。是纪念日那晚吗？"
               }
             ]
           },
@@ -2552,7 +2552,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "那个靠窗位，提前两周也不一定订得到吧？你们俩是不是有人是那里的老会员？"
+                "text": "先等等。靠窗位提前两周也未必订得到。你们俩是不是有人是那里的老会员？"
               },
               {
                 "role": "caller",
@@ -2596,7 +2596,7 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "你没跟他在一起的时候就已经是老会员了。那时候只靠自己的收入，来这家消费得起吗？",
+              "question": "刚才还是他说提前两周订的，现在又成了你订的。那时候只靠自己的收入，你会来这家吃吗？",
               "answer": "我自己不会这么吃。认识他以前，我跟前任也来过几次，基本都是对方结账。会员等级也是那时候慢慢攒起来的。我当时觉得，约会不都这样吗。",
               "guardedAnswer": "我自己不会常来。以前有人请，会员等级是慢慢攒起来的。",
               "logicContract": {
@@ -2632,7 +2632,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "好，纪念日那顿饭我听明白了。你刚才还提到一万二的分期。"
+                "text": "纪念日这顿先放这儿。你刚才还提到一万二的分期。"
               }
             ]
           },
@@ -2730,7 +2730,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "没事，你先喝口水。账单还有几页，我们一页一页看。"
+                "text": "不着急，喝口水。账单还有几页，又不会趁这会儿跑。"
               }
             ]
           },
@@ -2759,7 +2759,7 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "shen",
           "speaker": "咨询者",
-          "entryQuestion": "你把这些消费重新加过了吗？",
+          "entryQuestion": "这些消费，你自己重新加过一遍吗？",
           "version": "我昨晚拿计算器按了好几遍。餐厅、酒店、礼物和那套设备，这些我都认；他买衣服的钱是他自己的。这些加起来，离八万还差至少三万五。账单还有三天才到期，可他先说“今晚就要”，过了一会儿又改成“这几天都行”。我就是从那儿不敢转了。",
           "helperHint": "八万已经按餐厅、酒店、礼物、设备和男装分开算了。只看还有多少钱没说明用途，先别替他猜。",
           "doubt": "数字对不上：与咨询者有关的不到三万，男方自己的男装约一万五，至少三万五仍未说明。",
@@ -2773,7 +2773,7 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "你加完还差至少三万五。你当时问过他，这些钱花到哪儿了吗？",
+              "question": "你加完还差至少三万五，这个数对不上。你当时怎么问他的？",
               "suspicionLabel": "八万里没说清的三万五",
               "answer": "问过一次。他当时愣了一下，说“反正不是乱来的钱”。然后我再问，他就把话岔到“别拖，今晚先转”上去了。",
               "guardedAnswer": "问过，他没细说。只说不是我该管的那部分。",
@@ -2836,7 +2836,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "昨晚那笔一万二，你说设备送到了你那里，也一直是你在用。开箱那晚呢？你们做了什么？"
+                "text": "昨晚那笔一万二，设备在你家，也一直是你在用。可你没说开箱那晚。那天你们做了什么？"
               },
               {
                 "role": "caller",
@@ -2866,7 +2866,7 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "昨晚你已经说了，设备在你家，也是你在用。为什么没告诉我们，开箱那晚你们就一起拍了第一条视频？",
+              "question": "设备进了你家，这个你昨晚说了。一起拍到凌晨，为什么没告诉我们？",
               "answer": "……我怕一说拍到凌晨，你们就会觉得分期是我们俩一起商量的。可我真没跟他商量过。他说买来送我，我就当礼物收了。视频是一起拍的，这个我认。分期怎么开的，我当时确实不知道。",
               "guardedAnswer": "昨晚没说开箱那晚。我们一起拍过，但分期真不是我提的。",
               "logicContract": {
@@ -2945,7 +2945,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "他挑这个时候发抱抱。先看他后面还说什么。"
+                "text": "抱抱来得挺是时候。先看他后面还说什么。"
               },
               {
                 "role": "caller",
@@ -2965,7 +2965,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "他把失业、怕你离开和还款金额连在一起。你听完，最先想到的是什么？"
+                "text": "“怕你离开”后面紧跟最低还款金额。他把两件事绑在一起了。你听完先想到什么？"
               },
               {
                 "role": "caller",
@@ -3003,7 +3003,7 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "你听完就把转账页点开了。账单还有三天才到期，你现在为什么还想转？",
+              "question": "账单还有三天才到期，你听完却把转账页点开了。为什么还想转？",
               "suspicionLabel": "“怕你离开”后立刻要还款",
               "answer": "因为那句“怕你离开”。我一拒绝，就像在证明他说对了。我知道还没到期，可手还是停在金额框里。",
               "guardedAnswer": "账单还没到期，我知道。可那句“怕你离开”，我现在听不了第二遍。",
@@ -3682,7 +3682,7 @@ export const CONTENT_CASES = {
           "afterSceneIndex": 4,
           "speaker": "咨询者",
           "line": "我知道。流水已经发到后台了。那三万五不是我不说，是他不说。我今晚再问他一遍。明晚这个时间，我回来告诉你他怎么答。",
-          "hostLine": "好。流水我先看一下。你不知道的先别替他猜。明晚把他的原话告诉我，我们再往下看。",
+          "hostLine": "行，流水我先看。你不知道的别替他补。明晚回来，把他怎么答的原话带上。",
           "stageDirection": "电话断了。后台那张信用卡账单还亮着，至少三万五没有说明。弹幕还在刷：“别转。”",
           "audioCueId": "sfx.phone.soft-hangup"
         },
@@ -3762,7 +3762,7 @@ export const CONTENT_CASES = {
         "hangupAnchor": "至少三万五",
         "hangupLine": "电话断了。后台那张信用卡账单还亮着，至少三万五没有说明。弹幕还在刷：“别转。”",
         "hangupAudioCueId": "sfx.phone.soft-hangup",
-        "hostHoldLine": "好。流水我先看一下。你不知道的先别替他猜。明晚把他的原话告诉我，我们再往下看。",
+        "hostHoldLine": "行，流水我先看。你不知道的别替他补。明晚回来，把他怎么答的原话带上。",
         "snapshotEcho": {
           "caller-benefited": "还有件事。昨晚那句“设备在你家”，我记着。我今早看了那盏灯半天。东西我确实用了，开箱那晚我也是真的高兴。可那三万五，他还是没说。",
           "respondent-shifted-debt": "还有。昨晚你们都让我别转，我听着挺解气。今天我把那盏灯从墙边拖出来，才想起来，开箱那天我比他还高兴。可那三万五，他还是没说。",
@@ -3901,7 +3901,7 @@ export const CONTENT_CASES = {
                     "resultBeats": [
                       {
                         "speaker": "你",
-                        "text": "那我不问号码。她说那晚是她订的，这个能确认吗？"
+                        "text": "今天第三拨？行，我不跟着查号码。她说那晚是她订的，这句话能确认吗？"
                       },
                       {
                         "speaker": "服务员",
@@ -4228,13 +4228,13 @@ export const CONTENT_CASES = {
             },
             {
               "id": "ask-fifty-thousand",
-              "label": "八万先别谈，先让他把那三万五说清楚。",
+              "label": "八万先不谈。他先把那三万五说清楚。",
               "callerLine": "好。我不先答应，也不先拒绝。我先让他把那三万五说清楚。",
               "routeAxis": "money-flow"
             },
             {
               "id": "dont-answer-for-her",
-              "label": "先别转。先问他三月为什么借了二十万。",
+              "label": "今晚别转。先让他把三月借的二十万说全。",
               "callerLine": "好。我先不转。三月那二十万，我现在就让他讲清楚。",
               "routeAxis": "process-control",
               "recapAftertaste": "三月那二十万，要他自己解释。"
@@ -4293,10 +4293,10 @@ export const CONTENT_CASES = {
       },
       "hostDisclosure": {
         "anchor": "afterScene:2",
-        "text": "刚才他那句“先帮我挡几天”，我听着有点熟。以前也有人这样向我开过口。那笔钱我后来没再问，也没有要回来。所以你今晚一重复这句话，我手心还是会冒汗。"
+        "text": "“先帮我挡几天”，这话我听过。以前也有人这么跟我借钱，那笔后来没要回来。你刚才一重复，我手心还是会冒汗。"
       },
       "deepFollowup": {
-        "question": "那我换个问法。信用卡这八万里，哪些钱你愿意跟他坐下来谈？",
+        "question": "先不问该不该垫。信用卡这八万里，哪些钱你愿意跟他坐下来谈？",
         "answer": "那套设备的分期，我愿意跟他谈。饭是我们两个人吃的，酒店也是。礼物……东西还在我这儿，我不能说跟我没关系。可他的衣服，还有那三万五，不该让我先垫。",
         "note": "让咨询者用自己的话承认实际受益，同时拒绝替男方承担个人消费和未说明金额。"
       },
