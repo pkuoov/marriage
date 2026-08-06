@@ -271,6 +271,7 @@ async function runRoute(route) {
     let helperChecked = false;
     let directionChoiceChecked = false;
     let selectedCounterChoiceLabel = "";
+    let sceneQuestionCount = 0;
 
     for (let beat = 0; beat < 48; beat += 1) {
       await collectLiveVisualState(page, visualStates, portraitStates);
@@ -397,12 +398,15 @@ async function runRoute(route) {
           await page.locator(".scene-question-group").waitFor({ state: "visible" });
         }
       }
-      const questionIndex = route.sceneMode === "outer" && await page.locator("[data-scene-question]").count() > 1 ? 1 : 0;
+      const questionIndex = route.sceneMode === "outer" && await page.locator("[data-scene-question]").count() > 1
+        ? (sceneQuestionCount === 0 ? 0 : 1)
+        : 0;
       const selectedQuestion = page.locator("[data-scene-question]").nth(questionIndex);
       const directionLabel = await selectedQuestion.locator(".choice-direction-kicker").count()
         ? await selectedQuestion.locator(".choice-text").innerText()
         : "";
       await activate(page, route, "[data-scene-question]", questionIndex);
+      sceneQuestionCount += 1;
       if (directionLabel && !directionChoiceChecked) {
         const spokenQuestion = page.locator("[data-dialogue-advance]:visible .avg-page-line.speaker-host .avg-line").first();
         await spokenQuestion.waitFor({ state: "visible" });
@@ -471,9 +475,8 @@ async function savedHelpInvariant(page) {
 
 async function completeCase1Interlude(page, route) {
   await assertVisibleText(page, "幕间调查台", `${route.name} must pass through the short interlude before the day map`);
-  await activate(page, route, '[data-interlude-action="zhao-zhou-frame"]');
-  await activate(page, route, '[data-advisor-conflict="frame-zhou"]');
-  await activate(page, route, "[data-return-interlude]");
+  await activate(page, route, '[data-interlude-action="recheck-history-pages"]');
+  await activate(page, route, "[data-evidence-check]");
   await activate(page, route, "[data-callback-ready]");
 }
 
@@ -1090,7 +1093,7 @@ async function exerciseTruthBoundary(page, route) {
   const finalBody = await page.locator("body").innerText();
   if (finalBody.includes("灯是我真心买的")) {
     assertTextOrder(finalBody, [
-      "收麦后，对方给后台留了一段文字，说不上麦。",
+      "收麦后，对方给后台留了一段文字",
       "三月那二十万是我从澄川借的",
       "灯是我真心买的"
     ], "麦外来信 should show respondent note before lurker");

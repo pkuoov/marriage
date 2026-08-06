@@ -17,8 +17,7 @@ const quickCasePackets = await Promise.all(
 const continuousStoryRoutes = {
   "01-credit": {
     helperSceneId: "credit-eight-wan-bill",
-    interludeActionId: "zhao-zhou-frame",
-    interludeOptionId: "frame-zhou",
+    interludeActionId: "recheck-history-pages",
     dayStops: [
       { sceneId: "day-restaurant", optionId: "chase-member" },
       { sceneId: "day-bank-flow" }
@@ -169,7 +168,7 @@ function renderScript() {
     add("");
 
     add("## 【编剧资料】案件发动机", "");
-    for (const key of ["dramaticAnchor", "whyTonight", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject"]) {
+    for (const key of ["dramaticAnchor", "whyTonight", "helpRequest", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject"]) {
       if (packet[key] !== undefined) renderNode(lines, packet[key], key, 3);
     }
     add("");
@@ -240,7 +239,7 @@ function renderScript() {
 
     add("## 【编剧资料】事实边界与运行规则", "");
     const alreadyRendered = new Set([
-      "caseId", "plotId", "label", "storyArcTitle", "caseTitle", "dramaticAnchor", "whyTonight", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject", "openingComplaint", "openingDialogue", "sceneVersions", "nightStructure", "overnightStructure", "stanceSnapshot", "delegation", "evidenceCards", "evidenceChecks", "investigationHooks", "documents", "advisorNotes", "respondentNote", "lurkerNote", "crossCaseEchoes", "hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "careChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"
+      "caseId", "plotId", "label", "storyArcTitle", "caseTitle", "dramaticAnchor", "whyTonight", "helpRequest", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject", "openingComplaint", "openingDialogue", "sceneVersions", "nightStructure", "overnightStructure", "stanceSnapshot", "delegation", "evidenceCards", "evidenceChecks", "investigationHooks", "documents", "advisorNotes", "respondentNote", "lurkerNote", "crossCaseEchoes", "hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "careChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"
     ]);
     for (const [key, value] of Object.entries(packet)) {
       if (!alreadyRendered.has(key)) renderNode(lines, value, key, 3);
@@ -264,6 +263,12 @@ function renderScript() {
     for (const packet of quickCasePackets) {
       add(`## ${packet.label}：${packet.title}`, "");
       add(`- **时长：** ${packet.durationLabel}`, `- **玩法：** ${packet.rule}`, `- **开场：** ${packet.premise}`, "");
+      renderNode(lines, {
+        whyTonight: packet.whyTonight,
+        helpRequest: packet.helpRequest,
+        callerStake: packet.callerStake,
+        selfServingOmission: packet.selfServingOmission
+      }, "求助与重大隐瞒", 3);
       add("### 原始连线", "");
       for (const [index, turn] of (packet.turns ?? []).entries()) {
         add(`#### 第 ${index + 1} 组（${turn.id}）`, "");
@@ -415,7 +420,7 @@ function renderContinuousStoryScript() {
     renderDirectorHangup(lines, packet.nightStructure?.hangup);
 
     lines.push("## 收麦后｜控台只够做一件事", "");
-    renderContinuousInterlude(lines, packet.nightStructure?.interlude, route.interludeActionId, route.interludeOptionId);
+    renderContinuousInterlude(lines, packet, route.interludeActionId, route.interludeOptionId);
 
     lines.push("## 白天｜沿两条线核实", "");
     if (packet.overnightStructure?.dayIntro) lines.push(`【${continuousStageText(packet.overnightStructure.dayIntro)}】`, "");
@@ -492,7 +497,8 @@ function renderContinuousScene(lines, scene, { includeHelper = false } = {}) {
   for (const line of scene.sceneCloser?.lines ?? []) renderContinuousSpoken(lines, line);
 }
 
-function renderContinuousInterlude(lines, interlude, actionId, optionId) {
+function renderContinuousInterlude(lines, packet, actionId, optionId) {
+  const interlude = packet.nightStructure?.interlude;
   if (!interlude) return;
   if (interlude.kicker) lines.push(`【${interlude.kicker}】`, "");
   const action = (interlude.actions ?? []).find((entry) => entry.id === actionId);
@@ -504,13 +510,20 @@ function renderContinuousInterlude(lines, interlude, actionId, optionId) {
   if (action.script?.clipLine) lines.push(`【${action.script.clipLabel ?? "回放"}】${action.script.clipLine}`, "");
   if (action.script?.hostNote) lines.push(`【林旭阳记下】${action.script.hostNote}`, "");
   if (action.text) lines.push(`**${action.from ?? "后台"}：** ${action.text}`, "");
+  if (action.kind === "evidencePass") {
+    const check = (packet.evidenceChecks ?? []).find((entry) => action.focusCheckIds?.includes(entry.id));
+    const selected = check?.options?.find((entry) => entry.correct) ?? check?.options?.[0];
+    if (check?.material) lines.push(`【${check.title ?? "重看材料"}】${check.material}`, "");
+    if (selected?.label) lines.push(`【你圈出：${selected.label}】`, "");
+    if (selected?.feedback) lines.push(`【结果】${selected.feedback}`, "");
+  }
   if (optionId) {
     const option = (action.options ?? action.choices ?? []).find((entry) => entry.id === optionId);
     if (!option) throw new Error(`连续阅读路线找不到幕间选项 ${optionId}`);
     if (option.label) lines.push(`【你选择：${option.label}】`, "");
     if (option.advisorLine) lines.push(`**${advisorName(option.advisorId)}：** ${option.advisorLine}`, "");
   }
-  const hasVisibleContent = action.sceneText || action.script?.open || action.script?.reply || action.script?.clipLine || action.text || optionId;
+  const hasVisibleContent = action.sceneText || action.script?.open || action.script?.reply || action.script?.clipLine || action.text || action.kind === "evidencePass" || optionId;
   if (!hasVisibleContent && action.summary) lines.push(`【控台记录】${action.summary}`, "");
 }
 
@@ -1237,13 +1250,13 @@ function isDocument(value) {
 function humanLabel(key) {
   const labels = {
     id: "内部 ID", caseId: "案件 ID", plotId: "剧情 ID", runtimeContentStatus: "运行时状态", callMedium: "来电媒介", speakerProfileId: "声纹卡 ID", voiceAttribution: "声音归属",
-    dramaticAnchor: "戏剧锚点", whyTonight: "为何今晚发生", objectPurpose: "核心物件作用", callerStake: "咨询者所求", otherStake: "对方所求", thirdPressure: "第三压力", selfServingOmission: "咨询者自利删减",
+    dramaticAnchor: "戏剧锚点", whyTonight: "为何今晚发生", helpRequest: "公开求助", objectPurpose: "核心物件作用", callerStake: "咨询者所求", otherStake: "对方所求", thirdPressure: "第三压力", selfServingOmission: "咨询者自利删减",
     publicHook: "公开钩子", storyArcSummary: "故事概述", storySuspense: "悬念", storyClueObject: "线索物件", storyArcTitle: "故事标题",
     clueRole: "线索职能", falseFrame: "错误框架", payoffFor: "回收目标", speakerId: "说话人 ID", doubt: "现场疑点", contradiction: "矛盾", reliability: "可靠度", showsCard: "展示卡片",
     casualQuestions: "自由追问", questionOptions: "关键追问", dialogueOptions: "补充对话", question: "主播问句", answer: "咨询者回答", guardedAnswer: "防备回答", suspicionLabel: "玩家所选怀疑方向", correct: "是否核心项", routeAxis: "路线轴", routeTone: "路线口气",
     pressureHint: "压力表演", intentHook: "意图钩子", callerGuard: "防备状态", expression: "表情/听感", helperHint: "V哥提示",
     afterScene: "段后触发", beforeVersion: "正文前节拍", afterVersion: "正文后节拍", sceneCloser: "场尾自动拍", returnLead: "回拨先行拍", returnBeat: "回拨后的生活拍", hostChoices: "主播应对选择", stanceNudge: "立场变化", nonLoadBearing: "生活噪声标记", silent: "不出声", kind: "类型", checkId: "材料检视 ID", revisedVersion: "材料触发后的重述",
-    title: "标题", subtitle: "副标题", intro: "引子", text: "正文", line: "台词", role: "角色职能", type: "表现类型", audioCueId: "音频提示",
+    title: "标题", subtitle: "副标题", intro: "引子", text: "正文", request: "求助内容", line: "台词", role: "角色职能", type: "表现类型", audioCueId: "音频提示",
     opening: "开场", good: "数据较好分支", bad: "数据较差分支", home: "回家", close: "收束",
     true: "能确认", edited: "被修剪", unknown: "今晚定不了", offlineSitIn: "同席特许事实", truthBoundary: "事实边界",
     taskProfile: "任务画像", runtimeLengthPlan: "运行时长度计划", routeAxisComments: "路线评论", stanceSnapshot: "中段立场快照",

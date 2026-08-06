@@ -69,9 +69,10 @@ Spoken syntax (口语感靠句法，不靠感叹):
 - Keep object names stable per character: pick what this caller would call the thing (「那张表」) and hold it. Cycling synonyms (表格/资源表/排班表/名单) inside one speech is elegant-variation slop — a label change must mean something, like the pronominal shift.
 
 Coherence (连贯靠接话头，不靠连接词):
-- Every turn picks up the previous turn: echo its word, answer its question, resist it, or visibly dodge it. A visible dodge is a connection — the audience hears the swerve. A topic jump is not.
+- Every turn picks up the previous turn logically: answer its question, pursue the next missing detail, resist it, or visibly dodge it. A visible dodge is a connection — the audience hears the swerve. A topic jump is not.
+- **默认信息跳跃律**：接上话头不等于把上一句的关键词再说一遍。双方都已听见、指代也清楚时，直接进入下一问；删去开头复述后若问题含义完全不变，那段复述就是 AI 接缝。不要写 `“先垫着”我听见了。他有没有说最晚哪天还你？`，直接问 `他有没有说哪天还你？`；对方答完没有日期后，也不要先归纳缺项，再问为什么没转。只有纠正原词、确认歧义、当面对质、从插曲中恢复旧话题或呈现真实情绪反应时，复述才有新功能。
 - Question-answer adjacency runs both ways: the host may only ask what the last caller line makes askable; the caller must address — or audibly evade — the question actually asked. An answer that would fit under any question answers none; rewrite it around one word from the question.
-- Anchor by repetition, not pronouns: when a referent could blur across turns, a stressed caller repeats the object — 「那八万」「那张表」 — instead of 「它」「这个事」. This is simultaneously more spoken and more coherent; it is the cheap trick that resolves the 口语化-vs-连贯 tension.
+- Anchor by repetition only when the referent could blur across turns: a stressed caller may repeat the object — 「那八万」「那张表」 — instead of 「它」「这个事」. When the referent is already unambiguous, trust the listener and omit it; object repetition must solve ambiguity, not prove that the speaker was listening.
 - Discourse markers (`后来`, `反正`, `就是`, `要不`) are structural signals, at most one per turn: `后来` returns to the timeline, `反正` closes an argument the speaker refuses to itemize, `要不` raises an option they are half-committed to. Never use them as sentence lubricant.
 - **悬时校验律**: any backward reference such as 「跟上次一样」「又是老样子」「这套路我熟」 must point to a concrete beat the player has already heard, or carry its own minimal anchor in the same turn (for example, 「上个月他也先发表情包，再催还款」). The characters may have a shared past, but the script cannot ask a first-time player to supply it. If neither anchor exists, replace the comparison with the concrete contrast happening now.
 - **顶重反应律**: when a beat suddenly raises the case above its original register — police contact, another victim, systemic collapse, or immediate personal-safety risk — the next adjacent host turn must first acknowledge the person's immediate cost or safety before continuing the factual question. The closing spoken surfaces (`hostDisclosure`, `stageJudgement`, or `deepFollowup`) must also separate what this heavier event establishes from what the original object still cannot prove. Do not leave the event only in `caseClosing.unresolved`, and do not summarize it with 「事情没这么简单」.
@@ -100,8 +101,11 @@ Apply this gate to every player-visible spoken surface, not only the mainline. A
 - **Referent before interpretation**: name the concrete person, object, purchase, message, or event before discussing its nickname, meaning, emotion, or motive. A caller must say what the 12,000 yuan bought before explaining why someone called it an “investment”. An isolated conclusion whose object arrives later is reversed causality.
 - **Speaker-view only**: spoken dialogue contains what this person would naturally remember, notice, say, refuse, or infer in the moment. Delete camera blocking, balanced literary montage, author captions, and after-the-fact taglines from a character's mouth. 「我看窗外，他看酒」 and 「那两个字卡在这儿，投资」 belong to a director or essayist, not a caller.
 - **Evidence-source ledger**: for every factual host premise, name the exact visible source: caller statement, bill row, screenshot, audio, public post, prior confirmed answer, or professional common knowledge. A bill proves merchant, amount, and date only if those fields are present; it does not magically contain booking membership, motive, ownership, or off-screen history. Material copy says only what the artifact visibly contains.
+- **Evidence must arrive on stage**: a title card or call-connection bridge may name the caller's immediate problem, but may not place a document in front of the host before anyone has sent it. When a caller supplies a bill, statement, screenshot, or recording during the call, write the host's request, the caller's consent or redaction action, and the file's arrival in the backend before displaying its card. “The evidence is already here” is not a shortcut for the missing human action.
+- **Title-card restraint**: a case subtitle is optional. Omit it when it only restates the title, turns a later discovery into an opening tease, or tells the player who is supporting whom before the dialogue has established that responsibility. A title card orients the player; it does not argue the case.
 - **Row-identity conservation**: adjacent dates and similar amounts do not prove that the same money moved from one row to another. State each row with its date, direction, amount, and counterparty before drawing an inference. Write 「7 月 5 号信贷放款五万；7 月 19 号向 3301 转出 49,800」 unless the material can truly prove 「这五万转去了 3301」. Keep temporal proximity separate from fund identity.
 - **Amount-bucket conservation**: before a character or recap assigns moral responsibility for a bill, divide the total by visible use and beneficiary: shared/relationship spending, one party's personal spending, and still-unexplained remainder. Every bucket needs itemized support, and the arithmetic must survive the total. Do not compress restaurant booking, social posting, and a content account into three separate accusations when they are one social-performance event; do not call the whole bill “spent on her” when rows also show his personal vanity. Ask the person to confirm or dispute one bucket, then discuss responsibility.
+- **Cumulative transfer is not current balance**: whenever one character assumes another can pay because money was transferred over time, keep three figures separate: cumulative inflow, the character's estimated savings, and the holder's current balance. The first can explain why a request was made; it cannot prove the other two. Ask for spending or balance before judging ability to pay, and do not turn a mistaken balance estimate into the holder's debt.
 - **婚事资金双边表**：剧情一旦出现彩礼、嫁妆、婚房或父母承诺，必须分开登记四件事：谁先提出金额、双方本人现在各能拿多少、双方家庭现在各能拿多少、哪些只是未来可能兑付或变现的资产。自费学历只能证明历史支出，不能直接推出当前家底；单日余额不能自动视为彩礼承诺；尚未到期的理财、待售房产或口头承诺不能提前写成婚礼现金。人物可以故意混说，主播和结案不能跟着混，且不得用“双方都有问题”抹平一方开价、一方含糊回应、另一方隐瞒期限这些不同动作。
 - **Unresolved-identity budget**: count every distinct "who received/sent this and we don't know" thread in a case — unknown payee, unknown account, unnamed institution, unconfirmed relative. A tier-1/opener case should carry at most two; a later or capstone case may carry more only if it is the pack's deliberate density peak. Two threads that share the same shape (an opaque lump-sum transfer to an unnamed recipient, repeated with different numbers and institution names) read as one puzzle wearing two costumes unless the case gives them visibly different textures, stakes, or resolution paths — collapse or clearly differentiate them before shipping, and never stack a new cross-case seed thread onto a case that is already at budget.
 - A named institution already registered in `crossCasePromises` is an institution-result thread, not another anonymous identity. Its remaining questions are limited to product, payment status, contract terms, and recoverability. Do not restage it as a third “who received the money” mystery.
@@ -209,6 +213,18 @@ Doubt points are not invented; they are computed. Run this method between the pr
 ### The Truth Ledger with Numbers (真相账本)
 
 Before any dialogue, write the B story's full accounting — every amount, every date, every money path, every object's history — **including the parts that will never appear on screen**. The demo's best turn only became findable when 八万 was decomposed into three buckets: 不到三万的共同消费、约一万五的男方男装、至少三万五未说明; its second turn (每月 8 号还入) only existed because someone wrote the debt's repayment history that no scene had ever needed. The unstated ledger is where turns hide. A case whose B story is only prose has no turns to find.
+
+### Pressure, Decision, and Responsibility (压力—决定—责任三层账)
+
+When two flawed people share a money conflict, never compress causality into “A forced B, therefore B is excused” or “A benefited, therefore A owns B's debt.” Write three separate ledgers:
+
+1. **Pressure** — what repeated demand, dependency, family expectation, status anxiety, or cash shortage made the bad option attractive? Put it on screen through countable behavior: fixed monthly transfers, who paid rent, how often someone called after a missed payment, what spending was treated as normal.
+2. **Decision** — who signed, borrowed, invested, spent, lied, forwarded, or demanded? Emotional pressure can explain this verb; it cannot replace its subject.
+3. **Responsibility** — which amount, contract, benefit, or harm attaches to which person, and which part remains unknown? Shared lifestyle benefit may justify a later conversation about that benefit; it does not silently co-sign another person's loan or investment.
+
+The host and recap must name the layers concretely, not hide behind “both sides have problems.” In the credit case, her treating half his salary plus rent as her own budget and repeatedly chasing after a missed payment is one responsibility; his borrowing to chase a promised doubling return is another. Her pressure is part of his motive and still not his signature.
+
+When a packaged money word later changes meaning — `奖金` → `离职补偿`, `报销款` → `供应商返款`, `投资` → `分期购买` — the payoff needs a second source that can verify the raw category: settlement notice, contract heading, remittance slip, or the responsible person's attributable admission. Record four boundaries: who supplied it, whether public use was authorized, what it proves, and what it does not prove. A notice saying “预计月底支付” never becomes proof that money arrived.
 
 ### The Six Operations (六种运算)
 
@@ -339,6 +355,14 @@ Do not enrich by:
 - repeating the same contradiction in different words;
 - turning the host into a judge, therapist, lawyer, or lecturer.
 
+### Help Request and Major-Omission Gate (求助与重大隐瞒门禁)
+
+- Treat every playable call as a request for help, not as a delivery vehicle for a prepared case file. Register `helpRequest.kind` as either `explanation` (the caller wants to know why or what an event means) or `interest` (the caller wants an action, decision, resource, introduction, repayment, or outcome). Write the request in one sentence the caller could actually say.
+- Keep four functions separate: `helpRequest` says what the caller wants from the host; `whyTonight` says why they call now; `callerStake` says what benefit, relationship, status, or self-image they want to protect; `selfServingOmission` names the most consequential fact they withhold or soften.
+- Use the advice-changing test: reveal the omission and answer the original `helpRequest` again. If the advice, refusal, next action, or risk judgment would not materially change, the omission is texture rather than the case core. A playable case normally hides the fact that matters most to the requested help, not a minor embarrassment saved for a late twist.
+- Plant a fair trace before the reveal: a verb choice, inconsistent amount, material edge, refusal, or consequence. Let a player action expose it. The caller may defend, minimize, or reinterpret the fact after discovery; do not let a convenient confession introduce it first.
+- Do not equate concealment with villainy. Shame, fear, financial need, status, safety, or the wish to keep a relationship can explain the edit. Judge the concrete act and its effect on the requested help. If there is no advice-changing omission, keep the call as a warm interlude or ordinary consultation instead of inflating it into a detective case.
+
 ### Expansion Playbook (把 10 分钟做成 20 分钟)
 
 Nine expansion methods, ordered by cost. Every added minute must carry an A/B conversion, a value turn, or a live hypothesis — an added minute that carries none is prose bulk wearing a mechanic. Never expand by adding a second live caller.
@@ -366,6 +390,7 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
 ### Integrated Writing Loop
 
 1. Write the unified story packet before touching UI fields.
+   - `helpRequest`: `explanation` or `interest`, plus the one-sentence help the caller openly seeks.
    - `whyTonight`: why the call happens now.
    - `relationshipStage`: why this call happens today.
    - `pressurePoint`: what family, money, status, timing, platform, or relationship pressure creates the call.
@@ -432,6 +457,7 @@ Hard rule: a daily case is not assembled from interchangeable good-sounding line
 
 ```json
 {
+  "helpRequest": { "kind": "explanation|interest", "request": "" },
   "whyTonight": "",
   "relationshipStage": "",
   "pressurePoint": "",
@@ -502,6 +528,7 @@ Hard rule: a daily case is not assembled from interchangeable good-sounding line
 ## Case Data Requirements
 
 Every daily case must have:
+- `helpRequest`: either an explanation request or an interest request that the opening exchange makes audible.
 - `whyTonight`: why the caller phones in today, not last week or next month.
 - `objectPurpose`: why the screenshot, proof, bill, contract, voice note, table, or chat log exists in the relationship.
 - `callerBenefit`: what the caller gains by telling the story this way.
@@ -551,6 +578,7 @@ Value baseline (see `docs/game-philosophy.md` for the full statement):
 
 Grey-zone character checks:
 - The caller is never a perfect victim. They must be hiding vanity, self-interest, luck-riding, or convenience somewhere in the opening — surfaced in the back half or the deep question.
+- The caller's core omission must change the answer to `helpRequest`. If it only makes them look slightly worse while the same advice still follows, it is not the case's hidden center.
 - If the caller's line is especially委屈 or可怜, do not leave it clean. Within the same local chain, plant the benefit, face, convenience, or fear that made them tolerate the situation longer than they now want to admit. Store that pressure in `selfServingOmission` and pay it off through a material edge, backflow item, or deep question.
 - The other party is never a cartoon villain. Every cost-shifting move has an internally "reasonable" excuse in their own logic: 「我只是怕你离开我」, 「这是让你在老板面前展现执行力」.
 - The host peels, never sentences. Options move from fact gaps toward the caller's own stake; the non-choice deep question lands on the caller's sorest money or face point.
@@ -813,7 +841,8 @@ The absent party's half mouth (对方后台留言):
 Evidence delegation (证据委托 — the scene-switch turn):
 - The loop: the caller deposits an artifact backstage (照片、报告、账单页), the player chooses **which advisor** to send it to, and the advisor's reply comes back as a new authored fact before the final quote-pick — early enough to change the judgment, or it is scenery.
 - Choosing the advisor IS the deduction: matching the material to the right domain is the trick taxonomy made playable. The strong lead exists only for the right pairing; mismatched pairings return an honest, in-character partial read (「图我看不出花头，链条上这类截图造假成本高，大概率是真的」) — never nothing, never mockery, never the strong lead leaked.
-- One delegation per case. The choice logs a route axis (周会计=money-flow, 赵律师=process/responsibility, 小林老师=identity-wording, 张法医=document-edge) — who you trust to look is who you are.
+- Evidence delegation is optional and limited to at most one per case. Use it only when matching the material to a professional domain is itself a deduction and the reply adds a new authored fact. If the player can perform the same date sort, addition, or source comparison on screen, let the player do it; do not outsource the detective verb to an advisor.
+- **角色出场税**：每个具名顾问或场外 NPC 出场前，必须提供至少一项不可替代的东西：本职才能给出的新事实或边界、玩家不能自行完成的方法，或会在后续产生人物关系后果的选择。删掉此人后，若材料、玩家动作和第二夜开场都不变，就删掉该角色。禁止在幕间与白天让同一顾问重复做一次同样的日期排序或材料归纳；两位专家只是换词同意，也不构成冲突。
 - The reply is a **new authored fact** (a report), not a hint: it must never point at an existing board's correct option (no detection-by-proxy). It is usually one of the six operations executed by a professional — 周会计 on repayment rows performs the 主语核对 (「工资入账有代发抬头，这笔是私人打的」).
 - Reports prefer the open closure type: they sharpen the unknown's shape without naming anyone (「私人转账」 makes 8 号那笔的刀刃更利，仍不指认付款人). A confirming report counts against the pack's confirmation quota.
 - All delegation outcomes are authored JSON passing `truthBoundary` and the promise ledger; the caller's deposit line and the report's return are both promise-ledger entries.
@@ -908,7 +937,7 @@ The host is a person (design: `docs/host-character-design.md`):
 
 #### 5. 顾问退场摩擦
 
-每案 1 次顾问以不专业的方式退场或打断:外卖到了先挂、孩子哭了、看球分心。专业内容照常给,退场方式是人。家人网既有口径不变(家常只落在开场收场,情侣拍每案 ≤1)。
+只有已经通过「角色出场税」的顾问段才加生活摩擦，不得为了满足配额强行安排顾问。整包保留 2 次即可：外卖到了先挂、孩子哭了、看球分心。专业内容照常给，退场方式是人。家人网既有口径不变（家常只落在开场收场，情侣拍每案 ≤1）。
 
 #### 6. 主播狼狈配额
 

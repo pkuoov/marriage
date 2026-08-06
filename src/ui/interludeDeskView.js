@@ -250,6 +250,7 @@ function inventoryLabel(inventory = []) {
     "family-chat-seen": "家里群整页截图",
     "cousin-note-seen": "表姐的资料说明",
     "assistant-sample-seen": "部门公开流程样本",
+    "history-pages-reviewed": "往期账页",
     "delegation-return": "顾问回单",
     "leader-note-cold": "暂缓公开的领导批注",
     "leader-note-hot": "准备回拨追问的领导批注",

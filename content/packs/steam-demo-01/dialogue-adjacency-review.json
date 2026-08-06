@@ -8,17 +8,17 @@
   ],
   "cases": {
     "01-credit": {
-      "reviewedAt": "2026-07-26",
+      "reviewedAt": "2026-08-05",
       "opening": [
         {
-          "fromAnchor": "没敢转",
-          "toAnchor": "八万不是随手帮个忙",
-          "relation": "来电人先报反常金额并担心自己多疑，主播先确认谨慎有理由，不立刻追问。"
+          "fromAnchor": "不知道这钱该不该给",
+          "toAnchor": "八万不是小数目",
+          "relation": "来电人明确问八万元该不该给；主播先接住金额确实需要问清，不替她补自责，也不急着安慰。"
         },
         {
-          "fromAnchor": "别怪自己多想",
+          "fromAnchor": "不是小数目",
           "toAnchor": "在一起多久",
-          "relation": "回应她对自己的怀疑后，主播另起一问，追两人的关系和借钱原话。"
+          "relation": "主播确认八万元需要认真问清，下一轮再追两人的关系和借钱原话。"
         },
         {
           "fromAnchor": "怎么开口",
@@ -27,12 +27,36 @@
         }
       ],
       "scenes": {
-        "credit-layoff-gap": {
+        "credit-living-arrangement": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "八万",
-            "toAnchor": "最晚哪天还你",
-            "relation": "开场已经听见奖金晚发和八万，主播不再让她复述整句话，只追这笔钱有没有明确归还日期。"
+            "fromAnchor": "一年半左右",
+            "toAnchor": "住在一起吗",
+            "relation": "交往时长和借钱原话已经交代，主播先确认两人是否共同居住，给后面的日常钱款问题划出边界。"
+          },
+          "questionOptions": [
+            {
+              "contextAnchor": "我租了一套一居室",
+              "questionAnchor": "发了工资，会交给你吗",
+              "answerAnchor": "到账就转我一万七千五",
+              "guardedAnswerAnchor": "每个月转一半",
+              "relation": "从没有同住追问是否共管工资；回答先澄清工资卡不在咨询者手里，再补出三万五月薪、十四个月半薪转账、另付房租与七月断供后的三次催问。"
+            },
+            {
+              "contextAnchor": "我租了一套一居室",
+              "questionAnchor": "那边的房租",
+              "answerAnchor": "每个月给三千",
+              "guardedAnswerAnchor": "每月给三千",
+              "relation": "从咨询者另租住房追实际房租承担；回答补出三千房租在一万七千五之外另付，七月两笔同时停转。"
+            }
+          ]
+        },
+        "credit-layoff-gap": {
+          "entry": {
+            "mode": "resumed-thread",
+            "fromAnchor": "先替他垫着",
+            "toAnchor": "那八万",
+            "relation": "居住与日常支出问完后，主播回到开场尚未解决的八万元借款，追问有没有明确归还日期。"
           },
           "questionOptions": [
             {
@@ -51,12 +75,6 @@
           ],
           "freeQuestions": [
             {
-              "contextAnchor": "先帮我挡几天",
-              "questionAnchor": "谁管钱",
-              "answerAnchor": "各花各的",
-              "relation": "作为侧问补足借钱以前双方平常的付钱方式。"
-            },
-            {
               "contextAnchor": "每天还在跟我说加班",
               "questionAnchor": "加班是什么样子",
               "answerAnchor": "天天说忙",
@@ -68,8 +86,8 @@
           "entry": {
             "mode": "continue",
             "fromAnchor": "最后一笔停在四月",
-            "toAnchor": "社保早就停了",
-            "relation": "咨询者先说明自己索要工资和账单、男方却只发最低还款与社保记录；主播再追问她是否继续索要完整账单。"
+            "toAnchor": "信用卡账单",
+            "relation": "咨询者先说明工资记录没拿到、社保停在四月；主播顺着她已经见过的最低还款截图，追问完整账单是否拿到，再请她遮名上传后台。"
           },
           "questionOptions": [
             {
@@ -292,17 +310,17 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "转账页点开了",
-              "questionAnchor": "为什么还想转",
-              "answerAnchor": "我一拒绝，就像在证明他说对了",
-              "guardedAnswerAnchor": "账单还没到期",
-              "relation": "咨询者已经说出再次打开转账页，主播再问明知尚未到期却仍想转的原因；回答落到她把拒绝转账误听成拒绝感情。"
+              "contextAnchor": "没敢跟他说这八万肯定不转",
+              "questionAnchor": "为什么还没把“不转”说出口",
+              "answerAnchor": "一说不转，就觉得自己像是真不要他了",
+              "guardedAnswerAnchor": "没把“不转”两个字发出去",
+              "relation": "咨询者承认自己迟迟没有明确拒绝，主播追问这份犹豫；回答落到她把拒绝转账误听成放弃关系。"
             },
             {
-              "contextAnchor": "转账页点开了",
-              "questionAnchor": "最怕这八万最后落到谁头上",
-              "answerAnchor": "最后成了我的债",
-              "relation": "她听完语音便重新打开转账页，主播顺着这次动作问她真正担心八万最终由谁承担。"
+              "contextAnchor": "这八万肯定不转",
+              "questionAnchor": "最后得由你来还",
+              "answerAnchor": "最后变成我来还",
+              "relation": "她没有把八万元明确拒绝，主播顺着这份犹豫确认是否担心债务最终由自己承担。"
             }
           ],
           "freeQuestions": [
@@ -341,9 +359,9 @@
       }
     },
     "02-tony": {
-      "reviewedAt": "2026-07-28",
+      "reviewedAt": "2026-08-05",
       "opening": [
-        { "fromAnchor": "越看越不对", "toAnchor": "一张店里的表把你折腾了一夜", "relation": "咨询者先把昨晚误发表格和失眠直接说出，主播只复述眼前冲突并确定从表格开始，不另加模板式安抚。" },
+        { "fromAnchor": "这张表真有问题", "toAnchor": "一张店里的表把你折腾了一夜", "relation": "咨询者明确请主播判断表格是否真有问题；主播只接住眼前冲突并确定从表格开始，不另加模板式安抚。" },
         { "fromAnchor": "先说这张表", "toAnchor": "谁发的", "relation": "主播定下当前话题后另起一问，先核表格来源和两人关系。" },
         { "fromAnchor": "什么关系", "toAnchor": "相亲认识的理发师", "relation": "咨询者直接回答对方身份和认识时长，只用作息特殊、经常见人和做头发需求解释频繁到店；具体职业留到第二夜玩家追问。" },
         { "fromAnchor": "不太像普通顾客", "toAnchor": "从哪件事开始", "relation": "主播沿她自己的判断，请她回到关系发生变化的具体事情。" },
@@ -450,9 +468,9 @@
       }
     },
     "03-profile": {
-      "reviewedAt": "2026-07-28",
+      "reviewedAt": "2026-08-05",
       "opening": [
-        { "fromAnchor": "托介绍人去问彩礼", "toAnchor": "彩礼倒先问过去了", "relation": "咨询者把周末见父母和彩礼抢跑放在同一句，主播直接复述其中的时间冲突，不加模板问候。" },
+        { "fromAnchor": "这个饭局还去不去", "toAnchor": "彩礼倒先问过去了", "relation": "咨询者明确说自己拿不准周末饭局是否继续；主播从她给出的彩礼抢跑原因切入，不加模板问候。" },
         { "fromAnchor": "那先说彩礼", "toAnchor": "你妈让介绍人报了多少", "relation": "主播先把当前话题落在彩礼，再另起一问追具体金额。" },
         { "fromAnchor": "报了多少", "toAnchor": "二十八万八", "relation": "主播沿介绍人已经递话的事实追问金额，咨询者先报数，再说明数字来自母亲。" },
         { "fromAnchor": "本科不是那所", "toAnchor": "还是把这个数递过去了", "relation": "咨询者说明自己已纠正本科，主播据此确认母亲仍然递出彩礼数字，再追男方的实际回应。" },

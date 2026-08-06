@@ -148,6 +148,9 @@ function validateQuickCase(packet, cast) {
   const flawIds = new Set(flawOptions.map((option) => option.flawId));
   assert(packet.id, "quick case id is required");
   assert(packet.title, `${packet.id} quick case title is required`);
+  assert(["explanation", "interest"].includes(packet.helpRequest?.kind), `${packet.id} quick case needs an explanation or interest help request`);
+  assert(packet.helpRequest?.request, `${packet.id} quick case help request text is required`);
+  assert(packet.whyTonight && packet.callerStake && packet.selfServingOmission, `${packet.id} quick case must register urgency, caller stake, and major omission`);
   assert(cast[packet.castProfileId], `${packet.id} references unknown cast profile ${packet.castProfileId}`);
   assert(turns.length >= 6, `${packet.id} needs at least six question-answer turns`);
   assert(turnIds.size === turns.length, `${packet.id} turn ids must be unique`);

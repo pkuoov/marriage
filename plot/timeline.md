@@ -10,8 +10,8 @@ story: midnight-hotline-livestream-detective
 | 两年半前 | 林旭阳失业后开始个人直播 | host-judgment-method | 前史 |
 | 两年前 | 林旭阳被剪过的账单带着做出误判 | host-judgment-method | 前史 |
 | 试玩当晚 20:00 | 老方发来改版压力，林旭阳开播 | platform-pressure | chapter-01 |
-| 第一幕夜 A | 沈带来八万元最低还款与“今晚先转” | identity-cost-episode | chapter-01 |
-| 第一幕白天／夜 B | 工资、借款、消费与信托转账并到同一时间线 | identity-cost-episode | chapter-01 |
+| 第一幕夜 A | 沈先说两人没有同住、工资卡不在自己手里；玩家追问后才知道男方离职前月薪三万五，连续十四个月每月转她一万七千五，房租另给三千，七月断供后她当天催过三次 | identity-cost-episode | chapter-01 |
+| 第一幕白天／夜 B | 工资、固定给付、借款、消费与信托转账并到同一时间线；男方主动提供的遮名结算通知揭示“奖金”其实是预计七月底支付的离职补偿。他按二十四万五累计转账认定沈至少存了十五万，沈随后报出实际余额一万一千六百多 | identity-cost-episode | chapter-01 |
 | 第一幕尾声 | 赵律师提及宸直的高收益和兑付纠纷 | chenzhi-trust-crisis | chapter-01 |
 | 第二幕夜 A | 何隐去具体职业，只说作息特殊；窗外强光使她拉帘，敲门声响起后她借口物业下线 | identity-cost-episode | chapter-02 |
 | 第二幕白天／夜 B | 排班表、同句录音与办卡路径对齐；玩家从强光和敲门问出民警来访，再从合作介绍里的手机号问出她在酒吧做营销及十万元投店款 | chenzhi-trust-crisis | chapter-02 |

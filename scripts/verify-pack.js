@@ -321,7 +321,14 @@ function assertCareChoices(choices, label) {
 
 function assertCaseTitle(title, label) {
   assert(title && typeof title === "object", `${label} 缺少正式 caseTitle`);
-  ["title", "subtitle", "intro"].forEach((field) => assertNonEmptyString(title[field], `${label}.caseTitle 缺少 ${field}`));
+  ["title", "intro"].forEach((field) => assertNonEmptyString(title[field], `${label}.caseTitle 缺少 ${field}`));
+  if (title.subtitle !== undefined) assertNonEmptyString(title.subtitle, `${label}.caseTitle.subtitle 如存在则不能为空`);
+}
+
+function assertHelpRequest(request, label) {
+  assert(request && typeof request === "object", `${label} 缺少 helpRequest`);
+  assert(["explanation", "interest"].includes(request.kind), `${label}.helpRequest.kind 必须是 explanation 或 interest`);
+  assertNonEmptyString(request.request, `${label}.helpRequest.request 不能为空`);
 }
 
 function assertHostIdentity(packet = {}, label = "") {
@@ -552,7 +559,7 @@ function assertNightStructure(packet = {}, label = "") {
   assert(Number.isInteger(interlude.minActions) && interlude.minActions >= 1, `${label} nightStructure.interlude.minActions 必须是正整数`);
   assert(Number.isInteger(interlude.maxActions) && interlude.maxActions >= interlude.minActions, `${label} nightStructure.interlude.maxActions 不能小于 minActions`);
   assert(interlude.budget >= interlude.maxActions, `${label} nightStructure.interlude.budget 不能小于 maxActions`);
-  assertArrayMin(interlude.actions, 3, `${label} nightStructure.interlude.actions 至少需要三个行动位`);
+  assertArrayMin(interlude.actions, 2, `${label} nightStructure.interlude.actions 至少需要两个真正不同的行动位`);
   const actionIds = new Set();
   interlude.actions.forEach((action, actionIndex) => {
     assertNonEmptyString(action.id, `${label} nightStructure.interlude.actions[${actionIndex}] 缺少 id`);
@@ -581,8 +588,8 @@ function assertNightStructure(packet = {}, label = "") {
     }
   });
   assert(
-    interlude.actions.some((action) => ["advisorCall", "advisorConflict", "interruptToast"].includes(action.kind)),
-    `${label} nightStructure.interlude.actions 至少需要一个 NPC 行动位`
+    interlude.actions.some((action) => ["advisorCall", "advisorConflict", "interruptToast", "backflowEarly"].includes(action.kind)),
+    `${label} nightStructure.interlude.actions 至少需要一个由场外人物触发的行动位`
   );
   if (packet.overnightStructure) {
     assert(!(structure.callbackOpeners ?? []).length, `${label} 存在 overnightStructure 时不得保留第二套 nightStructure.callbackOpeners`);
@@ -1180,6 +1187,7 @@ test("PACK-003", "case pressure packets are complete", () => {
     "plotId",
     "dramaticAnchor",
     "whyTonight",
+    "helpRequest",
     "objectPurpose",
     "callerStake",
     "otherStake",
@@ -1194,6 +1202,7 @@ test("PACK-003", "case pressure packets are complete", () => {
     requiredFields.forEach((field) => {
       assert(casePacket[field], `${casePacket.caseId} 缺少 ${field}`);
     });
+    assertHelpRequest(casePacket.helpRequest, casePacket.caseId);
     if (casePacket.runtimeContentStatus === RUNTIME_CASE_CONTENT_STATUS.metadataOnly) {
       RUNTIME_CASE_REQUIRED_FIELDS.forEach((runtimeField) => {
         assert(!(runtimeField in casePacket), `${casePacket.caseId} 若写入 ${runtimeField}，必须先切到 runtime-loaded，不能继续做影子字段`);
@@ -1594,7 +1603,8 @@ test("PACK-013", "warmth props close their arcs and the personal livestream stay
   assertEqual(backgroundLine?.speaker, "林旭阳", "主播履历必须由本人第一人称介绍");
   assert(backgroundLine?.text?.includes("互联网大厂做法务") && backgroundLine?.text?.includes("两年半"), "开篇必须交代前职业、失业转折和主播年限");
   assert(backgroundLine?.text?.includes("老婆") && backgroundLine?.text?.includes("大学同学") && backgroundLine?.text?.includes("执业律师"), "开篇自我介绍必须交代赵律师是大学同学、妻子和执业律师");
-  const prologueText = manifest.nightShell?.prologue?.lines?.find((line) => line.speaker === "领导（老婆）")?.text ?? "";
+  assert(backgroundLine?.text?.includes("我老婆姓赵"), "开篇必须先交代妻子的姓氏，后续出现‘赵律师’时玩家才能认出她");
+  const prologueText = manifest.nightShell?.prologue?.lines?.find((line) => line.speaker === "老婆")?.text ?? "";
   const caseThreeInterlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === "03-profile");
   const epilogue = manifest.nightShell?.epilogue ?? {};
   assert(prologueText.includes("汤在冰箱"), "汤弧线缺少序章留下拍");
@@ -1697,6 +1707,8 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(caseThreeText.includes("二十三万八") && caseThreeText.includes("自己交"), "案三必须明确 MBA 学费由男方本人承担");
   assert(caseThreeText.includes("二十八万八") && caseThreeText.includes("二十八万六"), "案三必须把彩礼要求与男方资金上限放在同一条因果链");
   assert(caseThreeText.includes("宸直") && caseThreeText.includes("九月底到期"), "案三必须在正式暴雷前种下女方家庭婚礼资金的到期边界");
+  assert(caseThree?.selfServingOmission?.includes("在算男方还能拿出多少彩礼") && caseThree?.selfServingOmission?.includes("婚礼钱还锁在宸直"), "案三重大隐瞒必须落在咨询者自己的彩礼盘算与未能兑现的婚礼资金");
+  assert(!caseThree?.selfServingOmission?.includes("没有说母亲已经托介绍人问二十八万八"), "案三不得把开场已经承认的彩礼传话继续登记成隐瞒");
   assert(caseThree?.truthBoundary?.unknown?.some((item) => item.includes("九月底") && item.includes("兑付")), "案三不得提前结算宸直兑付结果");
   assertEqual(caseThreeRows.get("p06")?.memo, "从下述30万宸直中划出，称到期后用于女儿婚礼", "案三父亲口头安排的二十万必须明确属于下述三十万宸直，不能让玩家重复计作五十万");
   assertEqual(caseThreeRows.get("p05")?.amount, "¥300,000", "案三宸直持有页仍须保留三十万元原始金额");
@@ -1830,6 +1842,77 @@ test("PACK-017B", "case 1 wine-ordering actions stay causal and fit one reply pa
   assert(anniversaryScene.version.includes("他还是点了") && anniversaryScene.version.includes("我没再拦"), "酒水段必须写清最终动作和咨询者的选择");
   assert(!anniversaryScene.version.includes("他把酒单推到我面前"), "不得用推酒单制造选酒主语，再突然改口“酒是他点的”");
   assert(anniversaryScene.version.length <= 92, "纪念日晚餐回答必须留在一个回答分页内，不能把动作因果拆断");
+});
+
+test("PACK-017C", "case 1 separates residence, salary control, and fixed support", () => {
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  assert(JSON.stringify(caseOne?.openingDialogue ?? []).includes("一年半左右"), "交往时长必须覆盖十四个月固定转账，不能保留旧的半年设定");
+  const livingScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-living-arrangement");
+  assert(livingScene, "案一必须保留居住与日常支出场景");
+  assert(JSON.stringify(livingScene.beforeVersion ?? {}).includes("你们平时住在一起吗"), "居住情况必须先由主播作流程问话确认");
+  assert((livingScene.version ?? "").includes("不住在一起"), "咨询者必须明确回答两人没有同住");
+  const salaryQuestion = livingScene.questionOptions?.find((option) => option.question?.includes("发了工资"));
+  const rentQuestion = livingScene.questionOptions?.find((option) => option.question?.includes("房租"));
+  assert(salaryQuestion, "玩家必须能追问对方是否上交工资");
+  assert(salaryQuestion?.correct === true, "固定半薪必须是本场承重追问");
+  assert((salaryQuestion.answer ?? "").includes("实发三万五"), "工资追问必须补出男方离职前收入");
+  assert((salaryQuestion.answer ?? "").includes("到账就转我一万七千五"), "工资追问必须补出男方固定转给咨询者的一半工资");
+  assert((salaryQuestion.answer ?? "").includes("前后一共十四个月"), "工资追问必须补出一年多固定给付的可计算时长");
+  assert((salaryQuestion.answer ?? "").includes("房租三千另算"), "工资追问必须区分半薪与额外房租");
+  assert((salaryQuestion.answer ?? "").includes("打了三次电话"), "工资追问必须补出断供当天咨询者的催款动作");
+  assert((salaryQuestion.logicContract?.sourceDoesNotProve ?? "").includes("不能证明双方日常收入与支出彼此独立"), "没有同住和没拿工资卡不得被误写为经济独立");
+  assert((salaryQuestion.logicContract?.nextLegalQuestion ?? "").includes("不能据此把男方自行签下的借款与信托认购归给咨询者"), "咨询者的索取不得越级改写男方借款与认购责任");
+  assert(rentQuestion, "玩家必须能从房租方向发现固定经济往来");
+  assert((rentQuestion.answer ?? "").includes("每个月给三千"), "房租追问必须补出男方此前的固定分担");
+  assert((rentQuestion.answer ?? "").includes("一万七千五是另一笔"), "房租追问必须把半薪与房租拆成两笔");
+  const fixedSupportCheck = caseOne?.evidenceChecks?.find((check) => check.id === "credit-fixed-support");
+  assert(fixedSupportCheck, "案一材料板必须让玩家比较工资与固定给付");
+  assert(fixedSupportCheck.materialRows?.some((row) => row.includes("¥17,500 × 14 = ¥245,000")), "固定给付材料板必须显示十四个月累计金额");
+  assert(fixedSupportCheck.options?.some((option) => option.correct && option.label?.includes("二十四万五") && option.label?.includes("十五万")), "固定给付材料板必须把累计转入与男方的存款估算放在一起比较");
+  assert(fixedSupportCheck.options?.some((option) => !option.correct && option.feedback?.includes("不代表现在还剩十五万")), "固定给付材料板必须明确累计转入不等于当前余额");
+  const bankFlow = caseOne?.documents?.find((document) => document.id === "case1-bank-flow");
+  assertEqual(bankFlow?.rows?.find((row) => row.rowId === "r01")?.amount, "¥35,000", "三月工资必须与男方月收入设定一致");
+  assertEqual(bankFlow?.rows?.find((row) => row.rowId === "r02")?.amount, "¥35,000", "四月工资必须与男方月收入设定一致");
+  assertEqual(bankFlow?.rows?.find((row) => row.rowId === "r01a")?.amount, "¥17,500", "工资到账日必须有固定半薪转出");
+  assertEqual(bankFlow?.rows?.find((row) => row.rowId === "r01b")?.amount, "¥3,000", "半薪之外必须有单列房租转出");
+  assert((bankFlow?.rows?.find((row) => row.rowId === "r09")?.memo ?? "").includes("未见对尾号 6624 的固定转出"), "七月空行必须同时记录固定给付中断");
+  assert(!JSON.stringify(caseOne).includes("帮我挡"), "案一垫款语境不得使用不自然的‘帮我挡’");
+});
+
+test("PACK-017D", "case 1 pays off the late-bonus euphemism without moving debt responsibility", () => {
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const loyaltyScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-loyalty-test");
+  const severanceCard = caseOne?.evidenceCards?.find((card) => card.id === "daily-credit-severance");
+  assert(loyaltyScene, "案一第二夜必须保留忠诚测试场景");
+  assert(JSON.stringify(loyaltyScene.afterVersion ?? {}).includes("解除劳动合同补偿金"), "第二夜必须揭示所谓奖金的实际名目");
+  assert(JSON.stringify(loyaltyScene.afterVersion ?? {}).includes("月工资三万五"), "离职结算通知必须与流水工资相互校验");
+  assert(JSON.stringify(loyaltyScene.beforeVersion ?? {}).includes("你手里少说有十五万") && JSON.stringify(loyaltyScene.beforeVersion ?? {}).includes("只让你先拿八万"), "第二夜必须让男方亲口说明八万元请求的余额估算");
+  assertEqual(loyaltyScene.showsCard, "daily-credit-severance", "补偿金揭示必须落到同名证据卡");
+  assert((severanceCard?.front ?? "").includes("¥35,000"), "结算通知必须写明离职前月工资");
+  assert((severanceCard?.front ?? "").includes("¥105,000"), "结算通知必须写明待发离职补偿金额");
+  assert((severanceCard?.detail ?? "").includes("预计支付不等于已经到账"), "待发补偿不得被写成现有还款能力");
+  assert((caseOne.deepFollowup?.question ?? "").includes("至少有十五万"), "深入追问必须沿男方估算追咨询者的实际余额");
+  assert((caseOne.deepFollowup?.answer ?? "").includes("一万一千六百多") && (caseOne.deepFollowup?.answer ?? "").includes("十四个月的钱"), "咨询者必须报出余额并承认十四个月固定转账已基本花完");
+  assert((caseOne.respondentNote?.text ?? "").includes("十四个月") && (caseOne.respondentNote?.text ?? "").includes("二十四万五"), "男方留言必须独立确认固定转账时长与累计金额");
+  assert((caseOne.respondentNote?.text ?? "").includes("不能全推给她"), "女方催款可以构成压力，但不得替男方免除借款与认购责任");
+});
+
+test("PACK-017E", "case 1 earns the bill on air instead of preloading it in the bridge", () => {
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const billScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-eight-wan-bill");
+  const firstSequenceItem = manifest.sequence.find((item) => item.caseId === "01-credit");
+  assert(caseOne && billScene && firstSequenceItem, "案一与信用卡账单场景必须存在");
+  assert(!firstSequenceItem.bridge.includes("账单"), "接通桥接不得提前把账单递到主播面前");
+  assert(!caseOne.caseTitle?.intro?.includes("信用卡账单") && !caseOne.caseTitle?.intro?.includes("她带来"), "标题卡不得提前摆出尚未上传的账单");
+  assert(caseOne.caseTitle?.subtitle === undefined, "案一标题卡不得用副标题提前概括收入与双方责任");
+  const arrivalLines = billScene.beforeVersion?.lines ?? [];
+  const requestIndex = arrivalLines.findIndex((line) => line.role === "host" && line.text.includes("发到后台"));
+  const arrivalIndex = arrivalLines.findIndex((line) => line.role === "stage" && line.text.includes("后台多了一份账单") && line.text.includes("姓名和卡号都遮住了"));
+  assert(requestIndex >= 0, "主播必须在麦上请咨询者遮名上传账单");
+  assert(arrivalIndex > requestIndex, "后台账单必须在主播提出上传要求之后出现");
+  ["八万出头", "餐厅", "一万二", "男装"].forEach((marker) => {
+    assert(billScene.version.includes(marker), `账单上传后仍须保留玩家要核对的可见项目：${marker}`);
+  });
 });
 
 test("PACK-018", "structured story project stays connected to runtime canon", () => {

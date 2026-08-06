@@ -73,7 +73,7 @@ export function caseBridgeChoicesHtml(toCaseNumber = 2) {
 export function caseTitleHtml({ caseNumber = 1, totalCases = 4, brief = {} } = {}) {
   const titleCard = brief.caseTitle ?? {};
   const title = titleCard.title ?? brief.label ?? "新的来电";
-  const subtitle = titleCard.subtitle ?? brief.publicHook ?? "一通新来电已经接入后台。";
+  const subtitle = typeof titleCard.subtitle === "string" ? titleCard.subtitle.trim() : "";
   const intro = titleCard.intro ?? brief.storyBridge ?? "控台亮起了新的呼入灯。";
   const act = brief.storyAct ?? "来电";
   const object = brief.storyObjectLabel ?? brief.storyClueObject ?? "后台材料";
@@ -85,7 +85,7 @@ export function caseTitleHtml({ caseNumber = 1, totalCases = 4, brief = {} } = {
       </header>
       <p class="case-title-act">第${chineseNumber(caseNumber)}幕 · ${escapeHtml(act)}</p>
       <h1>${escapeHtml(title)}</h1>
-      <p class="case-title-subtitle">${escapeHtml(subtitle)}</p>
+      ${subtitle ? `<p class="case-title-subtitle">${escapeHtml(subtitle)}</p>` : ""}
       <div class="case-title-rule"></div>
       <p class="case-title-intro">${escapeHtml(intro)}</p>
       <div class="case-title-object"><span>本幕材料</span><b>${escapeHtml(object)}</b></div>
