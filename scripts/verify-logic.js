@@ -3088,6 +3088,48 @@ test("STATE-002", "saved progress refreshes authored case copy from the current 
   assertEqual(refreshed.contradictionLog.kept[0], "既有矛盾", "刷新台本不能清掉玩家已经取得的矛盾");
 });
 
+test("STATE-002B", "removed daytime scenes refund their slot instead of trapping an old save", () => {
+  const currentBriefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const caseId = currentBriefs[0].id;
+  const saved = {
+    caseMode: "episode",
+    chapter: 1,
+    attrs,
+    caseBriefs: currentBriefs,
+    caseBrief: currentBriefs[0],
+    scene: "overnightCallback",
+    caseOvernights: {
+      [caseId]: {
+        segment: "day",
+        dayBudget: { max: 2, remaining: 0, used: 2 },
+        dayScenesDone: ["day-accounting", "day-cafe-sitin"],
+        earnedItems: ["周会计的时间线", "他对三万五的沉默"],
+        activeDaySceneId: "day-cafe-sitin",
+        callbackOpenerId: "他对三万五的沉默",
+        dayChoices: { "day-cafe-sitin": "leave-early" },
+        dayFollowups: { "day-cafe-sitin": true },
+        timelineSorts: { "day-accounting": { submitted: true }, "day-cafe-sitin": { submitted: true } }
+      }
+    }
+  };
+  const refreshed = refreshSavedCaseContent(saved, {
+    generateCases: (npcs, savedAttrs, options) => generateCasesForMode("episode", npcs, savedAttrs, options),
+    npcs: NPCS
+  });
+  const overnight = refreshed.caseOvernights[caseId];
+  assertEqual(refreshed.scene, "dayMap", "旧白天场景被删除后，存档必须回到安排页继续选择");
+  assertEqual(overnight.dayScenesDone.join("|"), "day-accounting", "已删除的旁听场景不能继续算作完成地点");
+  assertEqual(overnight.dayBudget.remaining, 1, "删除旧场景后必须退回对应的一格白天时间");
+  assertEqual(overnight.activeDaySceneId, null, "活动中的旧场景 id 必须清掉");
+  assertEqual(overnight.callbackOpenerId, null, "旧场景带回的回拨开场必须清掉");
+  assertEqual(overnight.earnedItems.join("|"), "周会计的时间线", "只保留当前台本仍能使用的带回物");
+  assertEqual(Object.keys(overnight.dayChoices).length, 0, "旧场景选项不能继续留在存档里");
+  assert(!canEnterOvernightCallback(currentBriefs[0], {
+    ...overnight,
+    dayScenesDone: ["day-accounting", "day-cafe-sitin"]
+  }), "回拨门槛不能把已删除场景算作合法调查");
+});
+
 test("STATE-003", "retired advisor routes migrate without leaking internal ids", () => {
   const migrated = migrateState({
     caseNights: {

@@ -407,7 +407,9 @@ export function canEnterOvernightCallback(brief = {}, overnight = {}) {
   const structure = overnightStructureFor(brief);
   if (!structure) return false;
   const required = Math.max(0, Number(structure.minDayScenes ?? 0));
-  return (overnight.dayScenesDone ?? []).length >= required;
+  const validSceneIds = new Set((structure.dayScenes ?? []).map((scene) => scene.id));
+  const completed = new Set((overnight.dayScenesDone ?? []).filter((sceneId) => validSceneIds.has(sceneId)));
+  return completed.size >= required;
 }
 
 export function overnightCallbackOpenerById(brief = {}, openerId = "") {
