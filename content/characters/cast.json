@@ -198,34 +198,6 @@
       "exampleLines": ["他阔过，阔得早。后面的钱别问我，我不替谁作证。"]
     },
     {
-      "id": "case1-waiter",
-      "name": "案一服务员",
-      "kind": "offmic",
-      "caseIds": ["01-credit"],
-      "surfaceNames": ["服务员"],
-      "personality": { "core": "职业性谨慎", "secondary": ["圆滑", "重隐私", "怕麻烦"], "stressResponse": "追问熟客时用礼貌套话封口。" },
-      "motivation": "守住工作边界和客人隐私。",
-      "fear": "一句闲话变成投诉。",
-      "defense": "只说自己能确认的服务动作。",
-      "voice": { "rhythm": "礼貌、含蓄。", "lexicon": ["不好说", "我们只记", "您别为难我"], "habits": ["先道歉再拒绝"], "avoid": ["评价客人关系", "泄露消费细节"] },
-      "knowledgeBoundary": "只知道店内自己经手的座位与服务，不知道客人私下关系。",
-      "exampleLines": ["座位我能帮您核，客人的关系不好说，您别为难我。"]
-    },
-    {
-      "id": "case1-regular",
-      "name": "案一熟客",
-      "kind": "offmic",
-      "caseIds": ["01-credit"],
-      "surfaceNames": ["熟客", "邻桌常客"],
-      "personality": { "core": "直率的不耐烦者", "secondary": ["经验主义", "爱下快判断"], "stressResponse": "越解释越打断，直接说自己见过什么。" },
-      "motivation": "把自己看到的反常说出来，不想替陌生人的体面绕弯。",
-      "fear": "被拉去证明没看见的部分。",
-      "defense": "用现场经验划线。",
-      "voice": { "rhythm": "短、硬、口语。", "lexicon": ["我就见过", "别绕", "这我不知道"], "habits": ["先给结论再补范围"], "avoid": ["细腻安慰", "替账户身份定性"] },
-      "knowledgeBoundary": "只知道自己在店里见过的座位、灯和熟客行为。",
-      "exampleLines": ["别绕，我就见过他换座。钱是谁的，这我不知道。"]
-    },
-    {
       "id": "case2-caller-he",
       "name": "案二咨询者·何",
       "kind": "caller",

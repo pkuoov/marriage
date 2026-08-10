@@ -88,9 +88,7 @@
         "case1-caller-shen",
         "case1-respondent",
         "case1-friend",
-        "case1-ex-coworker",
-        "case1-waiter",
-        "case1-regular"
+        "case1-ex-coworker"
       ],
       "act": "体面",
       "objectLabel": "账单",

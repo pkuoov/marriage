@@ -21,8 +21,8 @@ const continuousStoryRoutes = {
     helperSceneId: "credit-eight-wan-bill",
     interludeActionId: "recheck-history-pages",
     dayStops: [
-      { sceneId: "day-restaurant", optionId: "chase-member" },
-      { sceneId: "day-bank-flow", documentQuestionRowId: "r01b" }
+      { sceneId: "day-support-payments", optionId: "ask-rent-home" },
+      { sceneId: "day-bank-flow", documentQuestionRowId: "r13" }
     ],
     callbackEarnedItem: "流水圈注",
     posture: "withCaller",

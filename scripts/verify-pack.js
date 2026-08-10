@@ -1913,10 +1913,13 @@ test("PACK-017C", "case 1 separates residence, salary control, and fixed support
   assertEqual(bankFlow?.rows?.find((row) => row.rowId === "r04b")?.amount, "¥10,000", "五月必须再次出现同额双月房租支出");
   assert((bankFlow?.rows?.find((row) => row.rowId === "r01b")?.memo ?? "").includes("3—4月") && (bankFlow?.rows?.find((row) => row.rowId === "r04b")?.memo ?? "").includes("5—6月"), "两笔房租行必须明确各自覆盖两个月，不能伪装成每月支出");
   assert(!bankFlow?.rows?.some((row) => ["r02b", "r06b"].includes(row.rowId)), "双月房租不得继续保留四月和六月的旧月付行");
-  const rentQuestion = bankFlow?.rowQuestions?.r01b?.find((question) => question.question?.includes("他自己住的地方"));
-  assert(rentQuestion, "第二天必须允许玩家从双月房租行追问实际受益人");
-  assert((rentQuestion.answer ?? "").startsWith("不是，是我住的"), "房租受益人只能在玩家追问后由咨询者承认");
-  assert((rentQuestion.answer ?? "").includes("两个月一万") && (rentQuestion.answer ?? "").includes("一万七千五还是每个月照转") && (rentQuestion.answer ?? "").includes("他自己住的地方也得另外花钱"), "房租回答必须把双月一万元、每月半薪与男方自己的住房成本拆开");
+  assert(!bankFlow?.rowQuestions?.r01b, "完整流水不得在房租白天路线之后重复追问同一个住户事实");
+  const supportScene = caseOne?.overnightStructure?.dayScenes?.find((scene) => scene.id === "day-support-payments");
+  assert(supportScene, "第二天必须让玩家把双月房租从完整流水中单独圈出来");
+  assertEqual(supportScene?.body?.choice?.options?.length, 2, "房租账页必须允许玩家选择先问住户还是是否另付");
+  const rentHomeOpener = caseOne?.overnightStructure?.callbackOpeners?.["两个月一次的房租"];
+  assert(JSON.stringify(rentHomeOpener?.firstConflict ?? {}).includes("是我住的"), "房租受益人只能在玩家带回问题并由主播问出后由咨询者承认");
+  assert(JSON.stringify(rentHomeOpener?.firstConflict ?? {}).includes("房租不在一万七千五里面") && JSON.stringify(rentHomeOpener?.firstConflict ?? {}).includes("他自己住的地方也要另外花钱"), "房租回答必须把双月一万元、每月半薪与男方自己的住房成本拆开");
   assert((bankFlow?.rows?.find((row) => row.rowId === "r09")?.memo ?? "").includes("未见对尾号 6624 的固定转出"), "七月空行必须同时记录固定给付中断");
   const loyaltyScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-loyalty-test");
   const endorsementQuestion = loyaltyScene?.questionOptions?.find((option) => option.question?.includes("想让我替你告诉他"));

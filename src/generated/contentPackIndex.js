@@ -626,90 +626,6 @@ export const CONTENT_CAST = {
       "他阔过，阔得早。后面的钱别问我，我不替谁作证。"
     ]
   },
-  "case1-waiter": {
-    "id": "case1-waiter",
-    "name": "案一服务员",
-    "kind": "offmic",
-    "caseIds": [
-      "01-credit"
-    ],
-    "surfaceNames": [
-      "服务员"
-    ],
-    "personality": {
-      "core": "职业性谨慎",
-      "secondary": [
-        "圆滑",
-        "重隐私",
-        "怕麻烦"
-      ],
-      "stressResponse": "追问熟客时用礼貌套话封口。"
-    },
-    "motivation": "守住工作边界和客人隐私。",
-    "fear": "一句闲话变成投诉。",
-    "defense": "只说自己能确认的服务动作。",
-    "voice": {
-      "rhythm": "礼貌、含蓄。",
-      "lexicon": [
-        "不好说",
-        "我们只记",
-        "您别为难我"
-      ],
-      "habits": [
-        "先道歉再拒绝"
-      ],
-      "avoid": [
-        "评价客人关系",
-        "泄露消费细节"
-      ]
-    },
-    "knowledgeBoundary": "只知道店内自己经手的座位与服务，不知道客人私下关系。",
-    "exampleLines": [
-      "座位我能帮您核，客人的关系不好说，您别为难我。"
-    ]
-  },
-  "case1-regular": {
-    "id": "case1-regular",
-    "name": "案一熟客",
-    "kind": "offmic",
-    "caseIds": [
-      "01-credit"
-    ],
-    "surfaceNames": [
-      "熟客",
-      "邻桌常客"
-    ],
-    "personality": {
-      "core": "直率的不耐烦者",
-      "secondary": [
-        "经验主义",
-        "爱下快判断"
-      ],
-      "stressResponse": "越解释越打断，直接说自己见过什么。"
-    },
-    "motivation": "把自己看到的反常说出来，不想替陌生人的体面绕弯。",
-    "fear": "被拉去证明没看见的部分。",
-    "defense": "用现场经验划线。",
-    "voice": {
-      "rhythm": "短、硬、口语。",
-      "lexicon": [
-        "我就见过",
-        "别绕",
-        "这我不知道"
-      ],
-      "habits": [
-        "先给结论再补范围"
-      ],
-      "avoid": [
-        "细腻安慰",
-        "替账户身份定性"
-      ]
-    },
-    "knowledgeBoundary": "只知道自己在店里见过的座位、灯和熟客行为。",
-    "exampleLines": [
-      "别绕，我就见过他换座。钱是谁的，这我不知道。"
-    ]
-  },
   "case2-caller-he": {
     "id": "case2-caller-he",
     "name": "案二咨询者·何",
@@ -2126,9 +2042,7 @@ export const CONTENT_PACKS = {
           "case1-caller-shen",
           "case1-respondent",
           "case1-friend",
-          "case1-ex-coworker",
-          "case1-waiter",
-          "case1-regular"
+          "case1-ex-coworker"
         ],
         "act": "体面",
         "objectLabel": "账单",
@@ -3624,7 +3538,7 @@ export const CONTENT_CASES = {
         {
           "id": "case1-bank-flow",
           "title": "他的银行流水(她导出的近五个月)",
-          "intro": "不用把整张流水一起吞。先看工资到账后的固定转出，再留意三月和五月那两笔相隔两个月的房租；借款、信托和尾号 3301 分开问。",
+          "intro": "不用把整张流水一起吞。先看三月工资到账后的固定转出，再看借款、信托和尾号 3301。两笔住房租赁支出可以看见，但房子是谁住的不能靠流水判断。",
           "rows": [
             {
               "rowId": "r01",
@@ -3812,25 +3726,6 @@ export const CONTENT_CASES = {
                   "answerAnchor": "尾号 6624 是我的",
                   "answerAdds": "咨询者确认收款账户属于自己，并确认男方把这笔钱说成每月给她的一半工资",
                   "nextLegalQuestion": "可以继续比较后续月份与另付房租，不能据此替男方的借款和信托认购改写责任"
-                }
-              }
-            ],
-            "r01b": [
-              {
-                "question": "你们没住一起。三月和五月都有一万块房租，两个月一次。这是他自己住的地方？",
-                "answer": "不是，是我住的。他直接交给管房子的中介，两个月一万。一万七千五还是每个月照转，他自己住的地方也得另外花钱。",
-                "contradiction": "男方每月转出半薪之外，还直接承担咨询者每月五千元房租",
-                "routeAxis": "money-flow",
-                "logicContract": {
-                  "sourceRows": [
-                    "r01b",
-                    "r04b"
-                  ],
-                  "sourceProves": "三月九日与五月九日均向同一家住房租赁公司支出一万元，备注为两个月房租",
-                  "sourceDoesNotProve": "两笔房租不能仅凭流水判断是谁居住，也不能证明咨询者应为男方其他债务负责",
-                  "answerAnchor": "不是，是我住的",
-                  "answerAdds": "咨询者确认房租对应自己的住处，由男方在每月一万七千五之外直接向中介支付，折合每月五千元；男方自己的住房成本仍另行承担",
-                  "nextLegalQuestion": "可以据此评估男方长期承担的生活成本，不能把经济压力直接改写成咨询者对八万元信用卡负有债务"
                 }
               }
             ],
@@ -4131,7 +4026,7 @@ export const CONTENT_CASES = {
             ]
           }
         ],
-        "dayIntro": "沈把遮掉姓名和完整账号的账页、订座截图和会员页发到后台，同意节目只问日期、金额和公开订位规则。周会计答应只按日期看账页。下午最多处理两处。",
+        "dayIntro": "沈把遮掉姓名和完整账号的账页发到后台，同意节目只问日期、金额和付款项目。周会计答应只按日期看账页。下午最多处理两处。",
         "dayBudget": 2,
         "minDayScenes": 2,
         "dayScenes": [
@@ -4164,68 +4059,32 @@ export const CONTENT_CASES = {
             }
           },
           {
-            "id": "day-restaurant",
-            "label": "那家餐厅",
-            "backdropClass": "day-restaurant",
-            "kind": "visit",
+            "id": "day-support-payments",
+            "label": "把两笔房租圈出来",
+            "backdropClass": "day-document",
+            "kind": "studio",
             "body": {
-              "access": "沈同意你拿遮名订座截图询问公开订位规则；你不查询任何具体客人的会员资料。",
-              "text": "下午三点，靠窗那排立着「已预订」。你坐下假装等人。服务员擦杯子时多看了你一眼，邻桌常客把菜单一合。",
-              "routeAxis": "process-control",
-              "cast": [
-                "服务员",
-                "邻桌常客"
-              ],
-              "beats": [
-                {
-                  "speaker": "服务员",
-                  "text": "靠窗那排？最少提前两周。……您也是听了直播来的？今天第三拨了。"
-                }
-              ],
+              "access": "沈同意节目核对她上传的遮名流水；这里只看已经出现的日期、金额和收款方，不先猜房子是谁住。",
+              "text": "回到工作室，你把三月九日和五月九日两行并排放大。两笔都是一万元，收款方都是安寓住房租赁，备注分别写着三至四月、五至六月。每月一万七千五的固定转账在另外几行。",
+              "routeAxis": "money-flow",
               "choice": {
-                "prompt": "你把哪件事带回夜里？",
+                "prompt": "明晚先问她哪件事？",
                 "options": [
                   {
-                    "id": "chase-member",
-                    "label": "问餐厅能不能核对会员号",
-                    "grantsEarnedItemId": "餐厅拒绝核对",
-                    "routeAxis": "process-control",
-                    "routeTone": "refuse-edge",
-                    "resultBeats": [
-                      {
-                        "speaker": "你",
-                        "text": "今天第三拨？行，我不跟着查号码。她说那晚是她订的，这句话能确认吗？"
-                      },
-                      {
-                        "speaker": "服务员",
-                        "text": "这个也不能。您拿直播里一句话来对，我们不能替客人作证。"
-                      },
-                      {
-                        "speaker": "你",
-                        "text": "明白，我回去问她本人。餐厅这边不打听了。"
-                      }
-                    ]
+                    "id": "ask-rent-home",
+                    "label": "这两笔房租付的是谁住的房子",
+                    "grantsEarnedItemId": "两个月一次的房租",
+                    "routeAxis": "caller-credibility",
+                    "routeTone": "beneficiary-edge",
+                    "resultText": "你在两笔住房租赁支出旁各画了一道线。"
                   },
                   {
-                    "id": "chase-rotation",
-                    "label": "问常客靠窗位平时怎么订",
-                    "grantsEarnedItemId": "常客的轮订规律",
-                    "routeAxis": "external-corroboration",
-                    "routeTone": "rotation-edge",
-                    "resultBeats": [
-                      {
-                        "speaker": "你",
-                        "text": "刚才那句「今天第三拨」，都在问同一排位子？"
-                      },
-                      {
-                        "speaker": "邻桌常客",
-                        "text": "那排我上个月也订过。熟客轮着用，位置难订是真的，专门给哪一对就说不准。"
-                      },
-                      {
-                        "speaker": "服务员",
-                        "text": "靠窗位确实要提前订。至于哪位客人带谁来过，我们不能往外说。"
-                      }
-                    ]
+                    "id": "compare-rent-transfer",
+                    "label": "房租是否另算在每月一万七千五之外",
+                    "grantsEarnedItemId": "房租是不是另外付的",
+                    "routeAxis": "money-flow",
+                    "routeTone": "amount-edge",
+                    "resultText": "你把一万七千五的转账和次日的一万元房租并排标了出来。"
                   }
                 ]
               }
@@ -4267,18 +4126,50 @@ export const CONTENT_CASES = {
               "callerFollowupLine": "我只敢跟自己说，他是奖金晚发。"
             }
           },
-          "餐厅拒绝核对": {
-            "line": "你下午是不是去过餐厅？算了，别让店员为难。我自己说：订座短信在我手机里，号……是我的。昨晚我把这几个字吞了。",
+          "两个月一次的房租": {
+            "line": "我又看了一遍流水。三月和五月那两笔一万，我知道你会问。",
             "firstConflict": {
-              "hostLine": "你昨晚说“他两周前订的”。现在订座短信在你手机里，这句话怎么回事？",
-              "callerLine": "那句是我说顺嘴了。座是我订的，酒是他点的，朋友圈也是我发的。我当时确实想让别人羡慕。"
+              "lines": [
+                {
+                  "role": "host",
+                  "text": "那是你住的房子，还是他住的？"
+                },
+                {
+                  "role": "caller",
+                  "text": "是我住的。他两个月替我交一万，房租不在一万七千五里面。他自己住的地方也要另外花钱。"
+                },
+                {
+                  "role": "host",
+                  "text": "这件事你昨晚为什么没说？"
+                },
+                {
+                  "role": "caller",
+                  "text": "我昨天只想着八万不是我欠的。我知道一说房租，弹幕肯定要骂我。"
+                }
+              ]
             }
           },
-          "常客的轮订规律": {
-            "line": "靠窗那排，常客也会轮着订。提前两周是真的。‘只为我’这三个字……是我自己往里加的。",
+          "房租是不是另外付的": {
+            "line": "我又看了一遍流水。一万七千五的转账后面，还跟着一笔房租。",
             "firstConflict": {
-              "hostLine": "他只说提前订了，还是亲口说过‘只为你’？",
-              "callerLine": "他说‘这位子难订’。后面那句，是我听出来的。"
+              "lines": [
+                {
+                  "role": "host",
+                  "text": "房租算在每月一万七千五里面吗？"
+                },
+                {
+                  "role": "caller",
+                  "text": "不算。他每个月转一万七千五，两个月再替我交一万房租。可他当时说，房租算他帮我，不是我逼他给的。"
+                },
+                {
+                  "role": "host",
+                  "text": "你自己的八千多工资呢？"
+                },
+                {
+                  "role": "caller",
+                  "text": "也基本花完了。我平时没算过这些，真以为他手里还有钱。"
+                }
+              ]
             }
           },
           "流水圈注": {

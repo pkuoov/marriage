@@ -12,13 +12,13 @@ const transitionQuoteByCaseId = Object.fromEntries(
     .map((interlude) => [interlude.afterCaseId, interlude.transitionQuote])
 );
 const routes = [
-  { name: "accounting-restaurant", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-rotation" }, dayChoiceText: { "day-restaurant": "位置难订是真的" }, opener: "常客的轮订规律", openerText: "他只说提前订了", callerQuestion: "not-your-debt", callerQuestionHost: "soothe" },
+  { name: "accounting-support", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, dayChoiceText: { "day-support-payments": "住房租赁支出旁" }, opener: "两个月一次的房租", openerText: "是我住的", callerQuestion: "not-your-debt", callerQuestionHost: "soothe" },
   { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
-  { name: "document-trust-rows", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r01b", "r13", "r14", "r15"], opener: "流水圈注", openerText: "这二十万，他以前跟你提过吗", callerQuestion: "dont-answer-for-her" },
-  { name: "restaurant-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, dayChoiceText: { "day-restaurant": "不能替客人作证" }, documentRows: ["r08", "r11"], opener: "餐厅拒绝核对", openerText: "座是我订的", callerQuestion: "dont-answer-for-her" },
-  { name: "material-miss-accounting-restaurant", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
-  { name: "keyboard-accounting-restaurant", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-restaurant"], dayChoices: { "day-restaurant": "chase-member" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
-  { name: "gamepad-restaurant-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-restaurant", "day-bank-flow"], dayChoices: { "day-restaurant": "chase-member" }, documentRows: ["r08", "r11"], opener: "餐厅拒绝核对", openerText: "座是我订的", callerQuestion: "dont-answer-for-her" }
+  { name: "document-trust-rows", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r13", "r14", "r15"], opener: "流水圈注", openerText: "这二十万，他以前跟你提过吗", callerQuestion: "dont-answer-for-her" },
+  { name: "support-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-support-payments", "day-bank-flow"], dayChoices: { "day-support-payments": "compare-rent-transfer" }, dayChoiceText: { "day-support-payments": "并排标了出来" }, documentRows: ["r08", "r11"], opener: "房租是不是另外付的", openerText: "房租算在每月一万七千五里面吗", callerQuestion: "dont-answer-for-her" },
+  { name: "material-miss-accounting-support", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
+  { name: "keyboard-accounting-support", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
+  { name: "gamepad-support-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-support-payments", "day-bank-flow"], dayChoices: { "day-support-payments": "compare-rent-transfer" }, documentRows: ["r08", "r11"], opener: "房租是不是另外付的", openerText: "房租算在每月一万七千五里面吗", callerQuestion: "dont-answer-for-her" }
 ];
 const smokeTarget = process.env.SMOKE_TARGET ?? "all";
 
@@ -61,7 +61,7 @@ console.log(smokeTarget === "case34"
   : smokeTarget === "case1"
     ? "Browser replay smoke passed: case1 staged disclosure"
   : smokeTarget === "gamepad"
-    ? "Browser replay smoke passed: gamepad-restaurant-document"
+    ? "Browser replay smoke passed: gamepad-support-document"
     : smokeTarget === "case2-transition"
       ? "Browser replay smoke passed: case2-day-map, case-transition"
       : smokeTarget === "portrait-viewports"
@@ -525,7 +525,7 @@ async function runStateReplacementRoutes() {
 async function runRoute(route) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
-    reducedMotion: route.name === "accounting-restaurant" ? "no-preference" : "reduce"
+    reducedMotion: route.name === "accounting-support" ? "no-preference" : "reduce"
   });
   await context.addInitScript(() => {
     window.__smokeGamepad = {
@@ -550,16 +550,16 @@ async function runRoute(route) {
   page.setDefaultTimeout(8000);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-${route.name}-${Date.now()}&storyKey=steam-demo-01`);
-    if (route.name === "accounting-restaurant") {
+    if (route.name === "accounting-support") {
       const defaultPlayerName = await page.locator("[data-player-name]").inputValue();
       if (defaultPlayerName !== "林旭阳") throw new Error(`title page should default the player name to 林旭阳, got ${defaultPlayerName}`);
       if (await page.getByText("林旭阳坐在主播台前", { exact: false }).count()) throw new Error("title page must not explain the player identity twice");
       await page.locator("[data-player-name]").fill("周明");
     }
-    if (route.name === "accounting-restaurant") await assertAudioSettings(page);
+    if (route.name === "accounting-support") await assertAudioSettings(page);
     if (route.inputMode === "gamepad") await connectGamepad(page);
     await activate(page, route, "[data-start-story]");
-    if (route.name === "accounting-restaurant") {
+    if (route.name === "accounting-support") {
       const mainHostCaption = (await page.locator(".case-portrait-host figcaption b").innerText()).trim();
       if (mainHostCaption !== "周明") throw new Error(`主案舞台必须显式沿用玩家姓名，实际为：${mainHostCaption || "<空>"}`);
       await assertNoPageText(page, "林旭阳", "主案改名后不得在立绘、气泡或HUD残留默认主播名");
@@ -581,7 +581,7 @@ async function runRoute(route) {
       await assertVisibleText(page, "账单里的八万", "first act title must state its case hook before the call connects");
       await activate(page, route, "[data-enter-case-live]");
     }
-    if (route.name === "accounting-restaurant") {
+    if (route.name === "accounting-support") {
       await activate(page, route, '[data-action="title"]');
       await assertVisibleText(page, "继续上次直播", "returning to title should preserve a continue entry");
       await assertVisibleText(page, "新游戏", "title menu should keep a separate new-game entry");
@@ -602,7 +602,7 @@ async function runRoute(route) {
 
     for (let beat = 0; beat < 48; beat += 1) {
       await collectLiveVisualState(page, visualStates, portraitStates);
-      if (route.name === "accounting-restaurant" && !materialEntryChecked && await page.locator(".deck-card-material[data-material-open]").count()) {
+      if (route.name === "accounting-support" && !materialEntryChecked && await page.locator(".deck-card-material[data-material-open]").count()) {
         if (await page.locator("[data-material-open]").count() < 3) throw new Error("received material must be reachable from the control deck, dialogue bar, and active choice layer");
         if (!await page.locator(".choice-material-shortcut[data-material-open]").isVisible()) throw new Error("active choices must expose a visible received-material shortcut");
         await page.locator(".choice-material-shortcut[data-material-open]").click();
@@ -690,7 +690,7 @@ async function runRoute(route) {
       }
       if (await page.locator("[data-continue-live-counter]").count()) {
         const liveCounterTranscript = await drainDialogue(page, route);
-        if (route.name === "accounting-restaurant") {
+        if (route.name === "accounting-support") {
           if (!liveCounterTranscript.includes("他在听。")) {
             throw new Error("night-B counter-pressure should interrupt between two live scenes");
           }
@@ -723,10 +723,10 @@ async function runRoute(route) {
         continue;
       }
       await page.locator(".scene-question-group").waitFor({ state: "visible" });
-      if (route.name === "accounting-restaurant") {
+      if (route.name === "accounting-support") {
         await assertVisibleText(page, "收束 · 未命中 −1 耐心", "key question buttons must expose the patience cost before activation");
       }
-      if (!helperHiddenChecked && route.name === "accounting-restaurant") {
+      if (!helperHiddenChecked && route.name === "accounting-support") {
         if (await page.locator("[data-scene-helper]").count()) throw new Error("V哥隐藏期间不得出现求助按钮");
         await assertNoPageText(page, "V哥", "V哥隐藏期间不得出现在玩家可见流程");
         await assertNoPageText(page, "按下以后", "主案问题面板不得解释按钮点击后的行为");
@@ -763,7 +763,7 @@ async function runRoute(route) {
         if (!spokenText || spokenText === directionLabel || !/[？?]$/.test(spokenText)) {
           throw new Error("direction choice should turn into Lin Xuyang's authored spoken question");
         }
-        await assertNoPageText(page, `${route.name === "accounting-restaurant" ? "周明" : "林旭阳"}\n${directionLabel}`, "direction label must not replace the protagonist's spoken line");
+        await assertNoPageText(page, `${route.name === "accounting-support" ? "周明" : "林旭阳"}\n${directionLabel}`, "direction label must not replace the protagonist's spoken line");
         directionChoiceChecked = true;
       }
       await drainDialogue(page, route);
@@ -775,16 +775,16 @@ async function runRoute(route) {
     if (visualStates.size < 2 || portraitStates.size < 2) {
       throw new Error(`${route.name} route should change scene and portrait states while questioning`);
     }
-    if (route.name === "accounting-restaurant" && (!helperHiddenChecked || !directionChoiceChecked || !materialEntryChecked)) {
+    if (route.name === "accounting-support" && (!helperHiddenChecked || !directionChoiceChecked || !materialEntryChecked)) {
       throw new Error("primary browser route must verify hidden V哥 UI, a direction-only question, and the received-material entry");
     }
     const materialIndex = route.materialMode === "miss" ? 1 : 0;
     const materialButtons = page.locator("[data-evidence-check]");
     await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
-    if (route.name === "accounting-restaurant") {
+    if (route.name === "accounting-support") {
       await assertVisibleText(page, "我刚才光说他买衣服", "perfect route should show testimony revision after the material hit");
     }
-    if (route.name === "material-miss-accounting-restaurant") {
+    if (route.name === "material-miss-accounting-support") {
       await assertVisibleText(page, "一件大衣两千多，单看不算离谱", "material-miss route should show pity line after the first miss");
     }
 
@@ -794,7 +794,7 @@ async function runRoute(route) {
     await completePostAccusation(page, route);
     await page.locator(".recap-score-head").waitFor({ state: "visible" });
     await assertVisibleText(page, "收麦回看", `${route.name} route should reach recap`);
-    if (route.name === "accounting-restaurant") {
+    if (route.name === "accounting-support") {
       await exerciseTruthBoundary(page, route);
     }
     await assertNoPageText(page, "undefined", `${route.name} route rendered undefined text`);
@@ -1146,17 +1146,14 @@ async function completeOvernightDay(page, route) {
       await activate(page, route, "[data-submit-day-timeline]");
       await assertVisibleText(page, "人是谁，手里这些东西看不出来", "timeline sort should preserve the unknown account owner and reject the unsupported summary");
     }
-    if (sceneId === "day-restaurant") {
-      await assertVisibleText(page, "今天第三拨了", "restaurant scene should render exact service line");
+    if (sceneId === "day-support-payments") {
+      await assertVisibleText(page, "三月九日和五月九日", "support payment scene should show the two bimonthly rent rows");
+      await assertNoPageText(page, "今天第三拨", "removed restaurant witness must not survive in the replacement scene");
     }
     if (sceneId === "day-bank-flow") {
       await assertVisibleText(page, "他的银行流水(她导出的近五个月)", "document day scene should render bank flow");
       for (const rowId of route.documentRows ?? ["r08", "r11"]) {
         await activate(page, route, `[data-document-row="${rowId}"]`);
-      }
-      if ((route.documentRows ?? []).includes("r01b")) {
-        await assertVisibleText(page, "这是他自己住的地方？", "marking the bimonthly rent row must unlock a beneficiary question without answering it in advance");
-        await assertNoPageText(page, "不是，是我住的", "the daytime document must not reveal the rent beneficiary before the player asks");
       }
       const crossQuestion = (route.documentRows ?? []).includes("r13")
         ? "流水没写后面转出的就是那二十万"
@@ -1339,7 +1336,7 @@ async function advanceToAccusation(page, route) {
   for (let step = 0; step < 16; step += 1) {
     if (await page.locator("[data-accuse]").count()) return;
     if (await page.locator("[data-delegation-advisor]").count()) {
-      if (route.name === "accounting-restaurant") {
+      if (route.name === "accounting-support") {
         await activate(page, route, '[data-delegation-advisor="zhou-accountant"]');
         await assertVisibleText(page, "钱只认路径，不替人起名字。", "accounting route should show the bounded delegation return before final quote");
         await activate(page, route, "[data-after-delegation]");

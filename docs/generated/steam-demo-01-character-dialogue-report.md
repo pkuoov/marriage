@@ -4,9 +4,9 @@
 
 ## 汇总
 
-- 固定人物卡：36
-- 收录台词／玩家可见人物材料：1053
-- 本包实际出声人物：33
+- 固定人物卡：34
+- 收录台词／玩家可见人物材料：1050
+- 本包实际出声人物：31
 - 句长节奏人工复核提示：24
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
 
@@ -118,12 +118,6 @@
 - `$case.sceneVersions[2].dialogueOptions[0].question` 你第一眼先看到哪一栏？
 - `$case.sceneVersions[2].dialogueOptions[1].question` 那几页账单是完整的吗？
 
-### 白天
-
-- `$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[0]` 今天第三拨？行，我不跟着查号码。她说那晚是她订的，这句话能确认吗？
-- `$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[2]` 明白，我回去问她本人。餐厅这边不打听了。
-- `$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[0]` 刚才那句「今天第三拨」，都在问同一排位子？
-
 ### 夜 B
 
 - `$case.sceneVersions[3].beforeVersion.lines[0]` 账单里有一笔餐厅消费特别高，挺舍得花。是纪念日那晚吗？
@@ -138,8 +132,10 @@
 - `$case.sceneVersions[7].afterVersion.lines[9]` 所以你到现在只说拿不出来，没说过不想给。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[0]` 五月、六月都有一万进来，七月 8 号却空了。给你的那两笔也是这个月一起停的吗？
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[2]` 那你昨晚为什么只说他奖金晚发？
-- `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.firstConflict.hostLine` 你昨晚说“他两周前订的”。现在订座短信在你手机里，这句话怎么回事？
-- `$case.overnightStructure.callbackOpeners.常客的轮订规律.firstConflict.hostLine` 他只说提前订了，还是亲口说过‘只为你’？
+- `$case.overnightStructure.callbackOpeners.两个月一次的房租.firstConflict.lines[0]` 那是你住的房子，还是他住的？
+- `$case.overnightStructure.callbackOpeners.两个月一次的房租.firstConflict.lines[2]` 这件事你昨晚为什么没说？
+- `$case.overnightStructure.callbackOpeners.房租是不是另外付的.firstConflict.lines[0]` 房租算在每月一万七千五里面吗？
+- `$case.overnightStructure.callbackOpeners.房租是不是另外付的.firstConflict.lines[2]` 你自己的八千多工资呢？
 - `$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[0]` 这二十万，他以前跟你提过吗？
 - `$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[2]` 后面两笔宸直信托呢？
 - `$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[4]` 宸直这个名字，他以前说过吗？
@@ -255,8 +251,10 @@
 - `$case.sceneVersions[7].afterVersion.lines[10]` ……对。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.callerLine` ……说成断了，话就重了。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.firstConflict.lines[1]` 对。一万七千五没来。我那天问了他好几次，他一直拿奖金晚发搪塞。
-- `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.firstConflict.callerLine` 那句是我说顺嘴了。座是我订的，酒是他点的，朋友圈也是我发的。我当时确实想让别人羡慕。
-- `$case.overnightStructure.callbackOpeners.常客的轮订规律.firstConflict.callerLine` 他说‘这位子难订’。后面那句，是我听出来的。
+- `$case.overnightStructure.callbackOpeners.两个月一次的房租.firstConflict.lines[1]` 是我住的。他两个月替我交一万，房租不在一万七千五里面。他自己住的地方也要另外花钱。
+- `$case.overnightStructure.callbackOpeners.两个月一次的房租.firstConflict.lines[3]` 我昨天只想着八万不是我欠的。我知道一说房租，弹幕肯定要骂我。
+- `$case.overnightStructure.callbackOpeners.房租是不是另外付的.firstConflict.lines[1]` 不算。他每个月转一万七千五，两个月再替我交一万房租。可他当时说，房租算他帮我，不是我逼他给的。
+- `$case.overnightStructure.callbackOpeners.房租是不是另外付的.firstConflict.lines[3]` 也基本花完了。我平时没算过这些，真以为他手里还有钱。
 - `$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[1]` 没有。他只说自己在看一个投资机会，没说钱是借来的。
 - `$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[3]` 我也是昨天才看到。十二号十万，十四号又十万。
 - `$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[5]` 说过。他嫌十来个点太慢，说真想翻身就得找能翻倍的。我以为他只是嘴上说说。
@@ -289,8 +287,8 @@
 - `$case.sceneVersions[7].questionOptions[0].guardedAnswer` ……我确实想把回放发给他。我不想自己跟他掰扯。
 - `$case.sceneVersions[7].questionOptions[1].answer` 我可能就把回放发给他，别的先不说。至少让他别再催。余额……我还没想好怎么讲。
 - `$case.overnightStructure.callbackOpeners.周会计的时间线.line` 周会计那张时间线，我看了好几遍。五月 8 号、六月 8 号都有一万，翻到七月 8 号，空的。
-- `$case.overnightStructure.callbackOpeners.餐厅拒绝核对.line` 你下午是不是去过餐厅？算了，别让店员为难。我自己说：订座短信在我手机里，号……是我的。昨晚我把这几个字吞了。
-- `$case.overnightStructure.callbackOpeners.常客的轮订规律.line` 靠窗那排，常客也会轮着订。提前两周是真的。‘只为我’这三个字……是我自己往里加的。
+- `$case.overnightStructure.callbackOpeners.两个月一次的房租.line` 我又看了一遍流水。三月和五月那两笔一万，我知道你会问。
+- `$case.overnightStructure.callbackOpeners.房租是不是另外付的.line` 我又看了一遍流水。一万七千五的转账后面，还跟着一笔房租。
 - `$case.overnightStructure.callbackOpeners.流水圈注.line` 我把流水从头翻了一遍。三月十一号，澄川金融打进来二十万，备注写的是借款。
 - `$case.overnightStructure.callbackOpeners.往期账页.line` 我把前几个月的账页也翻了。五月 8 号、六月 8 号各进过一万，到了七月 8 号，那天是空的。
 - `$case.overnightStructure.callbackOpeners.闺蜜删掉的那条评论.line` 闺蜜把删掉的评论发回来了。我看着那句‘这才像被认真对待’，脸有点烫。那场面，我也撑过。
@@ -366,30 +364,6 @@
 ### 后台／材料回流
 
 - `$case.investigationHooks[1].material` 前同事说：“他以前阔过，阔得早。请客、送礼、订酒店，真不是认识她以后才学会的。欠过他人情，我只能说到这儿。钱后来去哪儿、五月六月那两笔怎么回事，我不说，也别问我。”
-
-## 案一服务员
-
-- **固定性格：** 职业性谨慎
-- **受压反应：** 追问熟客时用礼貌套话封口。
-- **防御动作：** 只说自己能确认的服务动作。
-- **知识边界：** 只知道店内自己经手的座位与服务，不知道客人私下关系。
-
-### 白天
-
-- `$case.overnightStructure.dayScenes[1].body.beats[0]` 靠窗那排？最少提前两周。……您也是听了直播来的？今天第三拨了。
-- `$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[1]` 这个也不能。您拿直播里一句话来对，我们不能替客人作证。
-- `$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[2]` 靠窗位确实要提前订。至于哪位客人带谁来过，我们不能往外说。
-
-## 案一熟客
-
-- **固定性格：** 直率的不耐烦者
-- **受压反应：** 越解释越打断，直接说自己见过什么。
-- **防御动作：** 用现场经验划线。
-- **知识边界：** 只知道自己在店里见过的座位、灯和熟客行为。
-
-### 白天
-
-- `$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[1]` 那排我上个月也订过。熟客轮着用，位置难订是真的，专门给哪一对就说不准。
 
 ## V哥
 
@@ -1621,9 +1595,8 @@
 - 01-credit／林旭阳／nightB：19、18、20 字（$case.sceneVersions[7].casualQuestions[1].question；$case.sceneVersions[7].casualQuestions[2].question；$case.sceneVersions[7].casualQuestions[3].question）
 - 01-credit／林旭阳／nightB：28、24、24 字（$case.sceneVersions[7].questionOptions[1].question；$case.overnightStructure.callerQuestion.options[0].label；$case.overnightStructure.callerQuestion.options[1].label）
 - 01-credit／林旭阳／nightB：24、24、26 字（$case.overnightStructure.callerQuestion.options[0].label；$case.overnightStructure.callerQuestion.options[1].label；$case.overnightStructure.callerQuestion.options[2].label）
-- 01-credit／案一咨询者·沈／nightB：22、25、22 字（$case.overnightStructure.callbackOpeners.常客的轮订规律.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[1]；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[3]）
+- 01-credit／案一咨询者·沈／nightB：26、25、22 字（$case.overnightStructure.callbackOpeners.房租是不是另外付的.firstConflict.lines[3]；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[1]；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[3]）
 - 01-credit／案一咨询者·沈／nightB：31、32、29 字（$case.overnightStructure.postures.withCaller；$case.nightStructure.returnStance.lines.defensive；$case.nightStructure.returnStance.lines.open）
-- 01-credit／案一服务员／day：31、27、29 字（$case.overnightStructure.dayScenes[1].body.beats[0]；$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[1]；$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[2]）
 - 02-tony／林旭阳／nightB：35、32、34 字（$case.sceneVersions[4].sceneCloser.lines[6]；$case.sceneVersions[4].sceneCloser.lines[8]；$case.sceneVersions[4].sceneCloser.lines[10]）
 - 02-tony／林旭阳／nightB：28、29、32 字（$case.overnightStructure.callbackOpeners.培训页圈注.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.吹风机回放.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.女客拉群立场.firstConflict.hostLine）
 - 02-tony／林旭阳／nightB：27、23、23 字（$case.sceneVersions[4].questionOptions[0].question；$case.sceneVersions[4].questionOptions[1].question；$case.sceneVersions[6].entryQuestion）
@@ -1639,3 +1612,4 @@
 - quick-01-no-conditions／快案来电人·罗／other：49、45、49 字（$quick.turns[6].caller；$quick.turns[7].caller；$quick.turns[8].caller）
 - quick-02-one-missed-message／林旭阳／other：27、25、24 字（$quick.turns[11].host；$quick.turns[12].host；$quick.turns[13].host）
 - quick-02-one-missed-message／快案来电人·周女士／other：57、54、56 字（$quick.turns[13].caller；$quick.turns[14].caller；$quick.turns[15].caller）
+- quick-02-one-missed-message／快案来电人·周女士／other：34、38、34 字（$quick.confrontations[0].lines[5]；$quick.confrontations[1].lines[1]；$quick.confrontations[1].lines[3]）
