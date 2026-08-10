@@ -1,0 +1,4 @@
+# Content generators write deterministic LF output. Keep these paths independent
+# of each developer's core.autocrlf setting so byte-for-byte freshness checks work.
+/docs/generated/*.md text eol=lf
+/src/generated/*.js text eol=lf

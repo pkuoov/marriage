@@ -18,9 +18,11 @@ npm --version
 首次拉取项目后，在项目根目录执行：
 
 ```bash
-npm install
+npm ci
 npm start
 ```
+
+`npm ci` 会严格使用 `package-lock.json` 安装依赖，适合首次拉取、CI 和发布验证。只有在明确更新依赖并准备同步锁文件时才使用 `npm install`。
 
 `npm start` 会完成以下操作：
 
@@ -113,6 +115,31 @@ npm run build:desktop
 ```text
 dist/desktop-electron/
 ```
+
+## Windows 便携版 EXE
+
+正式 EXE 只能在 Node.js `>=22.12` 的 Windows x64 环境打包。先完成源码与桌面预检：
+
+```bash
+npm ci
+npm run check
+npm run build:h5
+npm run smoke:browser
+npm run build:steam
+npm run smoke:desktop
+npm run steam:preflight
+```
+
+然后生成并验证便携版：
+
+```bash
+npm run package:win
+npm run verify:win-package
+```
+
+产物位于 `dist/steam/`。除 EXE 外，必须同时保留 `.sha256`、`windows-package-report.json` 和 `windows-runtime-smoke.json`。本机启动 EXE 并验证离线存档桥的完整命令见 [Desktop and Steam Build Plan](desktop-steam-build-plan.md#local-packaged-runtime-verification)。
+
+`verify:win-package` 只验证 PE 文件和校验和，不代表 EXE 已进行数字签名。未签名、使用默认 Electron 图标或缺少正式元数据的构建仅用于内部测试，不应作为公开发布包。
 
 ## 常见问题
 
