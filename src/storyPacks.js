@@ -37,3 +37,15 @@ export function quickDetectiveCaseFor(storyKey, quickCaseId) {
   const preferredId = quickCaseId ?? storyPackForKey(packKey)?.quickCases?.[0];
   return cases[preferredId] ?? cases[Object.keys(cases)[0]] ?? null;
 }
+
+export function quickDetectiveCasesFor(storyKey) {
+  const packKey = CONTENT_QUICK_CASES[storyKey] ? storyKey : DEFAULT_CONTENT_PACK_KEY;
+  const cases = CONTENT_QUICK_CASES[packKey] ?? {};
+  const orderedIds = storyPackForKey(packKey)?.quickCases ?? [];
+  const ordered = orderedIds.map((caseId) => cases[caseId]).filter(Boolean);
+  const knownIds = new Set(orderedIds);
+  return [
+    ...ordered,
+    ...Object.entries(cases).filter(([caseId]) => !knownIds.has(caseId)).map(([, packet]) => packet)
+  ];
+}

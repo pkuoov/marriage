@@ -39,15 +39,15 @@ const DAILY_PLOT_DEFINITIONS = {
   "tony-multi-dating": {
     taskProfile: { id: "emotion", label: "情绪卡住了", recommendedSpecialtyId: "emotion", summary: "情绪很满，有人一直把问题推回爱不爱。" },
     backdropClass: "backdrop-tony",
-    label: "托尼老师多线养鱼局",
-    publicHook: "一方以服务热情、性格会聊为借口，同时给多人制造排他暧昧。",
-    truth: "几句专属话术如果后面都接办卡、带客、投店，那就不只是会聊天。",
+    label: "理发店自己人局",
+    publicHook: "真实的照顾后面接着办卡、带客和投店，一张发错的表又把顾客按用途分了栏。",
+    truth: "照顾确实发生过，关系却没有说定；相似称呼后接着生意请求，私加的推进列也不在门店标准表里。",
     stance: "trueVictim",
     premeditated: true,
     premeditatedActorRole: "respondent",
     accusationChoices: [
-      { label: "“也就我肯听他说这些。”", accuseRole: "respondent", response: "如果只对你一个人这么说，是暧昧；同样的话复制出去，味道就变了。" },
-      { label: "“他说我像店里自己人。”", accuseRole: "complainant", response: "这句要承认。她不是错在帮忙，是她也不想太早拆穿那个位置到底算不算关系。" },
+      { label: "“也就你肯听我说这些。”", accuseRole: "respondent", response: "这句听起来很专属。可相似称呼不等于这条语音原样发给过别人。" },
+      { label: "“我听久了，真觉得自己对他不一样。”", accuseRole: "complainant", response: "这是她当时的判断，不是对方给过的关系承诺。" },
       { label: "“我从来没说只有你一个。”", accuse: "noPremeditated", response: "他确实留了口子，但“老板娘”这种话也不是随便听听就算了。" },
       { label: "“以后店开起来，你就是老板娘。”", accuse: "both", response: "这句甜不甜先放一边，后面有没有接办卡、投店，才是关键。" }
     ]
@@ -262,7 +262,6 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       storyLowRevealTone: comments.lowRevealTone ?? "",
       storyHighRevealTone: comments.highRevealTone ?? "",
       storyAct: spec.act,
-      storyBridge: spec.bridge,
       storyObjectLabel: spec.objectLabel,
       backdropClass: spec.backdropClass ?? brief.backdropClass,
       callerArt: spec.callerArt ?? brief.callerArt,
@@ -277,11 +276,10 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       weeklyThemeCommentPrompt: theme.commentPrompt,
       weeklyHiddenThread: theme.hiddenThread,
       weeklyAct: spec.act,
-      weeklyBridge: spec.bridge,
       weeklyObjectLabel: spec.objectLabel,
       modeLabel: "试玩连线",
       storyArcTitle: "热线连线",
-      storyArcSummary: spec.bridge,
+      storyArcSummary: brief.storyArcSummary,
       storyEpisodeTitle: storyPack.title,
       storyCaseLabel: storyPack.caseLabels?.[index] ?? "匿名来电",
       weeklyEpisodeTitle: storyPack.title,
@@ -476,7 +474,7 @@ function dailyLostJobCreditTemplate(brief, names) {
     ],
     evidenceCards: [
       { id: "daily-credit-social-security", type: "社保截图", title: "社保断缴时间", front: "断缴发生在第一次借钱之前。", detail: "失业并非临时发生。", targets: ["truthWithGap", "sceneHint"], contradiction: "社保断缴早于借钱，说明失业被持续隐瞒。" },
-      { id: "daily-credit-card-bill", type: "账单", title: "信用卡账单", front: "餐厅、礼物分期、酒店、1.2 万短视频分期和最低还款集中在同一周。", detail: "账单显示债务与体面恋爱消费有关，短视频分期另有受益人。", targets: ["sceneHint"], contradiction: "信用卡债务包含维持恋爱体面的消费成本，也包含一笔咨询者受益的短视频分期。" },
+      { id: "daily-credit-card-bill", type: "账单", title: "信用卡账单", front: "约四万用于两人的餐厅、酒店、礼物和短视频设备，能看清的男方个人男装约五千，至少三万五未说明。", detail: "一件大衣两千多不能单独证明个人挥霍；咨询者开场也没有主动提共同消费里自己的那一份。", targets: ["sceneHint"], contradiction: "咨询者只追着男方的五千元男装发问，却省略了金额更大的共同消费。" },
       { id: "daily-credit-chat", type: "聊天", title: "最低还款请求", front: "“你先帮我垫一下，我不想这段关系因为钱毁了。”", detail: "把债务包装成关系考验。", targets: ["truthWithGap"], contradiction: "还款请求把个人债务包装成关系考验。" }
     ],
     evidenceChecks: [
@@ -523,7 +521,7 @@ function dailyLostJobCreditTemplate(brief, names) {
     dailyShareTitle: "8 万信用卡，到底该不该帮 对方 还？",
     dailyShareBody: "手头紧可以理解，可社保早已断缴，约会账单还在往上堆。",
     dailyShareQuestion: "你会先问失业时间，还是先问 对方 为什么借钱？",
-    truth: "两条账分开算。他的：失业早已发生，断缴后照样刷吃住玩，三天的期限说成今晚，最后拿感情递账单。这四步一步比一步重，八万的主体是他的债，递不到她手里。她的：店多半是她挑的，人设是她发的，一万二的分期她收了东西还说没细看。这三步不欠他钱，但欠今晚的直播间半个真相。定不了的今晚就不定：他失业前的旧债从哪来的，这两个人往后还过不过，弹幕替谁着急都没用。"
+    truth: "两边都少说了。男方早已失业，却继续替两个人的排场刷卡，还把三天后的还款说成今晚就要；贷款和至少三万五的去向仍由他解释。咨询者开场只盯着约五千的男装，却没提约四万共同消费，也没有说清设备和账号由谁受益。一件大衣两千多不能证明男方个人挥霍，她参与过消费也不等于要替他还八万。"
   });
 }
 
@@ -663,19 +661,20 @@ function dailyTonyMultiDatingTemplate(brief, names) {
     label: "理发店排班表",
     storyArcTitle: "今日来电：理发店排班表",
     publicHook: "她以为自己快要确定关系，直到对方发错一张店里预约表，备注不像剪头，倒像在给人分类。",
-    storyArcSummary: "看那张表怎么从预约表变成资源表：谁被安抚，谁被办卡，谁被往投店上推。",
-    storySuspense: "他会聊天不稀奇，稀奇的是每句亲近后面都接了店里的事。",
-    storyClueObject: "理发店排班表与办卡记录",
-    openingComplaint: `${name}连线说：“我和相亲认识的一个发型师暧昧了几个月，本来以为快要往前走一步了。结果他昨晚发错一张店里的内部表，我越看越觉得，那上面记的不是预约时间。”`,
+    storyArcSummary: "先保留真实照顾，再看亲近如何被接进年卡、带客和投店。",
+    storySuspense: "她做了一年多普通顾客，最近几个月才觉得关系变了；发错的表却把这种亲近写成可利用的顾客特征。",
+    storyClueObject: "遮名后的理发店私表、标准表与办卡记录",
+    openingComplaint: `${name}连线说：“同事推荐我去他店里剪了一年多，最近几个月才变得不像普通顾客。昨晚他发错一张店里的表，我翻到最后一列，突然不知道我们俩到底算什么。”`,
     openingDialogue: [
-      { speaker: name, role: "caller", text: "主播你好，我想问一下相亲认识的一个男生。我们暧昧了几个月，他在理发店当发型师。昨天他本来要发当天的预约时间给我，可能手滑，发错了一张店里的内部表。我刚点开还以为是排班，越看越觉得不对。", mood: "anxious" },
-      { speaker: "你", role: "host", text: "晚上好。那张表格的事我们先放一放，在发错表之前，他平时都是怎么跟你相处的？", mood: "listening" }
+      { speaker: name, role: "caller", text: "主播，我想问个有点丢人的事。给我剪了一年多头的理发师，昨晚发错一张表。我看了半宿，还是没想明白我们俩到底算什么。", mood: "anxious" },
+      { speaker: "你", role: "host", text: "先不急着给关系下名字。你们怎么认识的？", mood: "listening" },
+      { speaker: name, role: "caller", text: "一年多前，同事说他剪得好，推荐我去的。最开始就是剪头，最近几个月才越走越近。", mood: "anxious" }
     ],
     sceneVersions: [
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "对方每次下班后都陪我聊天，总说也就我肯听他说这些。我们没正式说男女朋友，可每天聊到凌晨，我就默认是在往那边走。",
+        version: "我下班晚，他总给我留最后那档。有回店里有人拿我的上班时间开玩笑，他还替我挡了一句。后来他会发语音，说店长又骂他了，最后来一句‘也就你肯听我说这些’。我们没正式在一起，可我听久了，真觉得自己对他不一样。",
         doubt: "没有确认关系，但对方一直给排他式的亲近感。",
         contradiction: "对方 用“只有你懂我”的亲密话术制造排他期待，却没有给明确关系承诺。",
         reliability: "mixed",
@@ -699,19 +698,19 @@ function dailyTonyMultiDatingTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "昨天他发错那张表，我才把前面的事串起来。表头写的是预约，可备注没写“烫发”“修刘海”，写的是“情绪稳定”“办卡意向强”“朋友多”。我那一行后面写着“稳情绪”。",
+        version: "昨天他发错那张表，我才把前面的事串起来。表头写的是预约，可发型和项目那几格都是空的，备注写着“稳情绪”“能投店”“朋友多”。我那一行是“稳情绪”。",
         doubt: "那张表不像普通客户备注，更像在写每个人能带来什么。",
-        contradiction: "对方 把不同对象按情绪价值、办卡意向和客源资源分类管理。",
+        contradiction: "对方把不同顾客按情绪、投店能力和客源资源分类管理。",
         reliability: "partial",
         questionOptions: [
-          { question: "这张表是在记发型需求，还是在记你们能带来什么？", answer: "他写的不是我想剪什么头，备注里全是我能不能安抚、会不会办卡、能不能带朋友。发型那栏反而空着。", contradiction: "预约表实际在记录对象可转化的资源。", correct: true },
+          { question: "这些备注里，哪一项跟剪头有关？", answer: "没有。发型那格是空的。我看到的就是‘稳情绪’‘能投店’‘朋友多’。", contradiction: "预约表实际在记录顾客可转化的资源。", correct: true },
           { question: "你那一栏为什么会被写成稳情绪？", answer: "可能因为我总听他说店里的事，也很少当场翻脸。他知道我会先安慰他，再帮他想办法。", correct: false }
         ]
       },
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "我拿表问他，他回我：“我从来没说只有你一个。”可我翻聊天，他发过“以后店开起来，你就是老板娘”。这句话不是求婚，可听完以后，他再说办年卡、以后投一点，我就没那么防备。",
+        version: "昨晚收到那张表，我马上问他是什么意思。他只回了一句：“我从来没说只有你一个。”可他以前明明发过“以后店开起来，你就是老板娘”。我知道那不是求婚，可听了这句话，他再提年卡、再问我要不要投一点，我确实没那么防着他。",
         doubt: "没说“只有你”，不代表没有让人往那个方向想。",
         contradiction: "对方 用未来身份暗示制造排他期待，同时保留口头退路。",
         reliability: "partial",
@@ -723,29 +722,29 @@ function dailyTonyMultiDatingTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "我后来盯着最后那列看了很久：“下一次推进”。我那行写“年卡已聊，可稳情绪”；另一个女生写“能投店，约饭再谈”；还有一个写“朋友多，带客”。看到那儿，我才知道不是我一个人在自作多情。",
+        version: "我后来盯着最后那列看了很久：“下一次推进”。我那行写“年卡已聊，可稳情绪”；下面是“能投店，约饭再谈”；还有一个写“朋友多，带客”。",
         doubt: "表格不只是备注，还写了下一步怎么把人往店里推进。",
-        contradiction: "对方 把不同暧昧对象按可推进资源分层管理。",
+        contradiction: "对方把不同顾客按可转化资源分层管理。",
         reliability: "partial",
         questionOptions: [
-          { question: "这张表是在排员工，还是在排你们这些人下一步怎么推进？", answer: "那不是排班。我的名字后面是“年卡已聊、稳情绪”；另一个也不是班次，是“能投店”“能带客”。", contradiction: "排班表实为暧昧对象资源分层表。", correct: true },
+          { question: "先看你自己那行。他下一步想让你做什么？", answer: "办年卡。那一行不是在约我下次剪头。", contradiction: "私人表把她的下一步写成年卡，不是服务预约。", correct: true },
           { question: "有没有可能只是店里玩笑备注？", answer: "如果只有我一个名字，我还能骗自己是玩笑。但每个人后面都接一个功能，还写下一次怎么推进，我就没法只当玩笑了。", correct: false }
         ]
       }
     ],
     evidenceCards: [
-      { id: "daily-tony-roster", type: "排班表", title: "理发店预约表", front: "备注列写着“情绪稳定 / 能投店 / 能带客”。", detail: "这些备注不像剪发需求，更像每个人能带来的东西。", targets: ["truthWithGap", "sceneHint"], contradiction: "排班表显示多个暧昧对象被按功能分类。" },
-      { id: "daily-tony-chat-copy", type: "聊天截图", title: "三份专属话术", front: "三个人都收到过“你和别人不一样”。", detail: "后续请求不同：办卡、投店、见朋友。", targets: ["halfLie"], contradiction: "专属话术被复制给不同对象。" },
-      { id: "daily-tony-card", type: "消费记录", title: "办卡与礼物", front: "暧昧升温后一周内出现年卡和礼物消费。", detail: "情绪承诺与消费绑定。", targets: ["sceneHint"], contradiction: "未来承诺后紧接消费绑定。" }
+      { id: "daily-tony-roster", type: "排班表", title: "理发店预约表", front: "备注列写着“稳情绪 / 能投店 / 朋友多”。", detail: "这些备注不像剪发需求，更像每个人能带来的东西。", targets: ["truthWithGap", "sceneHint"], contradiction: "排班表显示多名顾客被按可转化价值分类。" },
+      { id: "daily-tony-chat-copy", type: "聊天截图", title: "相似称呼与不同请求", front: "不止一名熟客收到过‘自己人’或‘你和别人不一样’一类称呼。", detail: "这些称呼后面出现过办卡、投店或带朋友。", targets: ["halfLie"], contradiction: "相似的亲密称呼被接到不同商业目标。" },
+      { id: "daily-tony-card", type: "消费记录", title: "老板娘与年卡", front: "‘老板娘’玩笑后几天再次出现年卡，之后又提过新店投入。", detail: "未来称呼后面接上具体消费和投钱话题。", targets: ["sceneHint"], contradiction: "未来称呼后紧接消费与投钱话题。" }
     ],
     evidenceChecks: [
       {
         id: "tony-roster-column",
         title: "排班表检视",
         prompt: "这张表里哪一列不像预约表？",
-        material: "表头写预约，备注却写着“情绪稳定”“办卡意向强”“朋友多”，最后一列还有“下一次推进”。",
+        material: "表头写预约，备注却写着“稳情绪”“能投店”“朋友多”，最后一列还有“下一次推进”。",
         options: [
-          { label: "备注和下一次推进", correct: true, contradiction: "对方 把不同对象按可推进资源分层管理。", feedback: "这不是剪头需求，是把人按能带来什么往下排。", routeAxis: "process-control" },
+          { label: "备注和下一次推进", correct: true, contradiction: "对方把不同顾客按可转化资源分层管理。", feedback: "这不是剪头需求，是把人按能带来什么往下排。", routeAxis: "process-control" },
           { label: "预约时间", correct: false, feedback: "预约时间本身没问题，刺眼的是备注里的功能标签。", routeAxis: "document-edge" },
           { label: "店员名字", correct: false, feedback: "名字不够要紧，后面那些“稳情绪”“能投店”才让这张表变了性质。", routeAxis: "outer-thread" }
         ]
@@ -772,7 +771,7 @@ function dailyTonyMultiDatingTemplate(brief, names) {
         appearsNowBecause: "收麦后，另一个女生把她收到的那张表也发了过来。",
         prompt: "这张同款表里，哪处最该圈？",
         material: "她那栏写着“能投店”，后面跟着“约见朋友、聊分红”。另一栏写“情绪稳住，年卡下次推”。",
-        proves: "同一套亲密话术后面接的是不同商业目标。",
+        proves: "相似的亲密称呼后面接的是不同商业目标。",
         stillCannotProve: "不能证明所有暧昧都假，但能证明他把人按用途往下排。",
         routeAxis: "external-corroboration",
         options: [
@@ -787,12 +786,12 @@ function dailyTonyMultiDatingTemplate(brief, names) {
       answer: "因为我也吃了那个“自己人”的感觉。他说以后店里有我一个位置，我就觉得办卡、转活动、带朋友过去都像在帮我们。现在看，他不承认关系，我也没逼他说清楚，投店、带客这些难听话就被我们一起往后拖了。",
       note: "问到这里，甜话和店里的账已经缠在一起了。"
     },
-    stageJudgement: "这不是普通多聊几个人。那张表里有“稳情绪”“年卡已聊”“能投店”“带客”，甜话后面接的是店里的下一步。",
+    stageJudgement: "他给过晚档，也替她挡过闲话，这些照顾是真的。可私人表把年卡、投店和带客写成下一步；她拿过便利、帮过店里，也不等于同意被写成生意上的联络人。",
     followupTwist: "后续回拨里，另一位女生也发来私信，说她那栏写着“能投店”。到这里，“排班表”三个字已经挂不住了。",
     dailyShareTitle: "你会从哪一句看出 对方 在养鱼？",
     dailyShareBody: "几句暧昧聊天还能解释，排班表里那几栏解释不了：情绪稳定、能投店、能带客。",
     dailyShareQuestion: "你觉得“你和别人不一样”算锤吗？",
-    truth: "会聊天不等于有问题。可同一套“你最懂我”分别发给几个人，后面又接办卡、带客、投店，那就不只是暧昧了。"
+    truth: "会聊天不等于有问题，给晚档和替人挡闲话也确实是照顾。可相似的亲密称呼后面反复接办卡、带客和投店，私人表又按这些用途记人，就不能只用‘店里都这样’解释。那条深夜语音有没有原样发给别人，仍然没有证据。"
   });
 }
 

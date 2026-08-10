@@ -63,6 +63,7 @@ export function createRecapScreens(ctx) {
     nightShellInterludeForBrief,
     nightShellGoodEnding,
     frame,
+    hostPortraitLayer,
     compactDialogueLines,
     bind,
     bindSceneButtons,
@@ -90,10 +91,7 @@ export function createRecapScreens(ctx) {
       label: "直播连线",
       chapter: liveChapterTitle(brief),
       text: callDialogueHtml(lines),
-      choices: flowGroupHtml(
-        `<button class="primary" data-scene="sceneReview" type="button">听她接着说</button>`,
-        { label: "来电已接通", note: "先让咨询者把事情从头说清楚。" }
-      )
+      choices: flowGroupHtml(`<button class="primary" data-scene="sceneReview" type="button">听她接着说</button>`)
     });
     bindSceneButtons();
   }
@@ -108,7 +106,7 @@ export function createRecapScreens(ctx) {
       label: "开播前",
       chapter: "晚间热线",
       showCaseHud: false,
-      visualHud: "",
+      visualHud: hostPortraitLayer(),
       screenClass: "night-shell-prologue-screen",
       text: nightShellHtml(lines),
       choices: flowGroupHtml(
@@ -288,7 +286,7 @@ export function createRecapScreens(ctx) {
       showCaseHud: false,
       visualHud: "",
       screenClass: "care-choice-screen",
-      text: careChoiceHtml({ choices: careChoicesFor(brief), selectedChoice }),
+      text: careChoiceHtml({ choices: careChoicesFor(brief), selectedChoice, hostName: state.playerName }),
       choices: selectedChoice ? flowGroupHtml(careChoiceContinueHtml({ finalCase })) : ""
     });
     document.querySelectorAll("[data-care-choice]").forEach((button) => {
@@ -344,8 +342,8 @@ export function createRecapScreens(ctx) {
     frame({
       brief,
       mood: "focused",
-      label: "新案接入",
-      chapter: "热线连线",
+      label: "",
+      chapter: "",
       showCaseHud: false,
       visualHud: "",
       screenClass: "case-title-screen",
@@ -405,7 +403,7 @@ export function createRecapScreens(ctx) {
   }
 
   function hostDisclosureForAnchor(brief = {}, anchor = "") {
-    return callDialogueHtml(hostDisclosureLinesForAnchor(brief, anchor), "host-disclosure");
+    return callDialogueHtml(hostDisclosureLinesForAnchor(brief, anchor, ctx.getState()?.playerName), "host-disclosure");
   }
 
   function respondentTeaseHtml(brief = {}, sceneIndex = 0) {
@@ -490,8 +488,8 @@ export function createRecapScreens(ctx) {
     frame({
       brief,
       mood: "focused",
-      label: "幕间引页",
-      chapter: "下一幕",
+      label: "",
+      chapter: "",
       showCaseHud: false,
       visualHud: "",
       screenClass: "case-bridge-screen",

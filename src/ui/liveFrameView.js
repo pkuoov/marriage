@@ -126,7 +126,9 @@ export function liveFrameHtml({
   screenEffect = "",
   screenClass = "",
   pixelTransition = null,
-  showRecordButton = true
+  rewindAvailable = false,
+  showRecordButton = true,
+  showResetButton = true
 } = {}) {
   const materialKind = materialKindForLabel(material);
   const choiceMarkup = String(choices ?? "");
@@ -139,10 +141,11 @@ export function liveFrameHtml({
     <main>
       ${pixelTransitionHtml(pixelTransition)}
       <header class="topbar">
+        <button class="history-back-button" data-action="rewind" type="button" aria-label="返回上次追问" ${rewindAvailable ? "" : "disabled"}>返回</button>
         <button data-action="title" type="button" aria-label="回到标题页">${escapeHtml(productName)}</button>
         <nav aria-label="章节"><span class="active"><i></i>${escapeHtml(modeLabel)}</span></nav>
         ${audioSettingsPanelHtml(audioSettings ?? { enabled: soundEnabled }, { placement: "topbar" })}
-        <button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>
+        ${showResetButton ? `<button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>` : ""}
         ${showRecordButton ? `<button class="record-button" data-record-open type="button">案卷</button>` : ""}
       </header>
       <section class="story-grid case-vn-grid live-console-shell ${controlDeckHtml ? "has-control-deck" : ""} ${escapeHtml(screenClass)}" data-live-shell>
@@ -150,13 +153,13 @@ export function liveFrameHtml({
         ${controlDeckHtml}
         <article class="vn-stage">
           <div class="visual-scene backdrop-office ${escapeHtml(backdropClass)}" aria-hidden="true">
-            <div class="scene-label">${escapeHtml(label)}</div>
+            ${label ? `<div class="scene-label">${escapeHtml(label)}</div>` : ""}
             ${sceneEvidencePropsHtml(backdropClass, materialKind)}
             ${visualHud}
           </div>
           <div class="dialogue-card" aria-live="polite">
             <div class="dialogue-toolbar">
-              <p class="eyebrow">${escapeHtml(chapter)}</p>
+              ${chapter ? `<p class="eyebrow">${escapeHtml(chapter)}</p>` : ""}
               ${material ? `<button class="avg-material-card" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="打开材料板：${escapeHtml(material)}" type="button"><small>材料</small><b>${Math.max(1, Number(materialCount) || 1)}</b></button>` : ""}
             </div>
             ${text}
@@ -173,7 +176,7 @@ export function liveFrameHtml({
 
 export function pixelTransitionHtml(transition = null) {
   if (!transition?.label) return "";
-  const kind = ["scene", "soft-fade", "signal-connect", "signal-disconnect"].includes(transition.kind) ? transition.kind : "scene";
+  const kind = ["scene", "soft-fade", "signal-connect", "signal-disconnect", "reveal"].includes(transition.kind) ? transition.kind : "scene";
   const signalClass = kind.startsWith("signal-") ? " pixel-transition-signal" : "";
   return `
     <div class="pixel-transition pixel-transition-${kind}${signalClass}" data-transition-kind="${kind}" aria-hidden="true">

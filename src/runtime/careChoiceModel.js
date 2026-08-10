@@ -1,3 +1,5 @@
+import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
+
 export const CARE_CHOICE_IDS = ["pragmatic", "affirm", "accompany"];
 
 export function careChoicesFor(brief = {}) {
@@ -9,10 +11,10 @@ export function careChoiceById(brief = {}, choiceId = "") {
   return careChoicesFor(brief).find((choice) => choice.id === choiceId) ?? null;
 }
 
-export function careChoiceLines(choice = {}) {
+export function careChoiceLines(choice = {}, hostName = DEFAULT_PLAYER_NAME) {
   if (!choice?.id) return [];
   return [
-    { role: "host", speaker: "林旭阳", text: choice.hostLine ?? "" },
+    { role: "host", speaker: hostName, text: choice.hostLine ?? "" },
     ...(choice.lines ?? [])
   ].filter((line) => line.role === "pause" || line.text);
 }

@@ -1,6 +1,6 @@
 const TEXTURE_THRESHOLDS = Object.freeze({
   shortAnswerCount: 3,
-  longRambleCount: 2,
+  longRambleCount: 1,
   interruptionCount: 2,
   nonLoadBearingCount: 3,
   callerTicCount: 2,

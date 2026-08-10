@@ -5,6 +5,7 @@ import {
   evidenceAnswerKey,
   evidenceChecksFor,
   investigationAnswerKey,
+  playableSceneIndexes,
   unlockedInvestigationEntries
 } from "./sceneAdvance.js";
 import {
@@ -23,7 +24,7 @@ export function contradictionsForState(state = {}, brief = {}) {
 }
 
 export function answeredSceneCountForState(state = {}, brief = {}) {
-  return (brief.sceneVersions ?? []).filter((_, index) => actionDoneForState(state, brief, `version:${index}`)).length;
+  return playableSceneIndexes(brief).filter((index) => actionDoneForState(state, brief, `version:${index}`)).length;
 }
 
 export function selectedScenePickForState(state = {}, brief = {}, index = 0) {

@@ -133,6 +133,27 @@ export function keyQuestionLimit(brief = {}) {
   return brief.sceneVersions?.length ?? 0;
 }
 
+export function playableSceneIndexes(brief = {}) {
+  const total = brief.sceneVersions?.length ?? 0;
+  const structure = nightStructureFor(brief);
+  if (!structure) return Array.from({ length: total }, (_, index) => index);
+  const indexes = [
+    ...(structure.segment1SceneIndexes ?? []),
+    ...(structure.segment2SceneIndexes ?? [])
+  ];
+  return [...new Set(indexes.map(Number))].filter((index) => Number.isInteger(index) && index >= 0 && index < total);
+}
+
+export function playableSceneCount(brief = {}) {
+  return playableSceneIndexes(brief).length;
+}
+
+export function nextPlayableSceneIndex(brief = {}, sceneIndex = -1) {
+  const indexes = playableSceneIndexes(brief);
+  const position = indexes.indexOf(Number(sceneIndex));
+  return position >= 0 && position < indexes.length - 1 ? indexes[position + 1] : -1;
+}
+
 export function evidenceChecksFor(brief = {}) {
   return Array.isArray(brief?.evidenceChecks) ? brief.evidenceChecks : [];
 }
@@ -346,6 +367,8 @@ export function overnightAnchorSceneIndex(brief = {}) {
 }
 
 export function overnightFirstNight2SceneIndex(brief = {}) {
+  const secondNightIndexes = nightSegmentSceneIndexes(brief, "segment2");
+  if (secondNightIndexes.length) return secondNightIndexes[0];
   const anchorIndex = overnightAnchorSceneIndex(brief);
   const total = brief.sceneVersions?.length ?? 0;
   if (anchorIndex < 0) return 0;
@@ -490,7 +513,7 @@ export function delegationRouteAxisForAdvisor(advisorId = "") {
 }
 
 export function answeredSceneCount(brief = {}, actionDone = () => false) {
-  return (brief.sceneVersions ?? []).filter((_, index) => actionDone(`version:${index}`)).length;
+  return playableSceneIndexes(brief).filter((index) => actionDone(`version:${index}`)).length;
 }
 
 export function evidenceAnsweredCount(brief = {}, actionDone = () => false) {
@@ -502,9 +525,9 @@ export function investigationRouteIndexBase(brief = {}) {
 }
 
 export function firstUnansweredSceneIndex(brief = {}, actionDone = () => false) {
-  const scenes = brief.sceneVersions ?? [];
-  const index = scenes.findIndex((_, sceneIndex) => !actionDone(`version:${sceneIndex}`));
-  return index >= 0 ? index : Math.max(0, scenes.length - 1);
+  const indexes = playableSceneIndexes(brief);
+  const index = indexes.find((sceneIndex) => !actionDone(`version:${sceneIndex}`));
+  return index ?? indexes[indexes.length - 1] ?? 0;
 }
 
 export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => false, issueBadge = false, hasDeepFollowup = false } = {}) {
@@ -515,7 +538,8 @@ export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => fal
   const done = actionDone(`version:${safeIndex}`);
   const pendingSnapshot = done ? stanceSnapshotForScene(brief, safeIndex, actionDone) : null;
   const pendingAfterSceneEvidence = done ? afterSceneEvidenceFor(brief, safeIndex, actionDone) : null;
-  const lastStage = safeIndex >= scenes.length - 1;
+  const activeIndexes = playableSceneIndexes(brief);
+  const lastStage = safeIndex === activeIndexes[activeIndexes.length - 1];
   const overnightHangupStage = done && shouldEnterOvernightHangupAfterScene(brief, safeIndex);
   const hangupStage = done && (shouldEnterHangupAfterScene(brief, safeIndex) || overnightHangupStage);
   const flowBreak = Boolean(pendingSnapshot || pendingAfterSceneEvidence || hangupStage || lastStage);
@@ -619,7 +643,7 @@ export function investigationBackflowModel({ entries = [], selectedPick = () => 
 }
 
 export function dailyAccusationReadiness(brief = {}, actionDone = () => false) {
-  const required = keyQuestionLimit(brief);
+  const required = playableSceneCount(brief);
   const sceneCount = answeredSceneCount(brief, actionDone);
   if (sceneCount < required) return { ready: false, message: "麦还没到能挂的时候，先把当前这段问完。" };
   const evidenceRequired = evidenceChecksFor(brief).length;

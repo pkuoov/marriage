@@ -13,7 +13,7 @@ export function choiceGroupHtml(label, content, className = "", note = "") {
   `;
 }
 
-export function flowGroupHtml(content, { label = "下一步", note = "" } = {}) {
+export function flowGroupHtml(content, { label = "", note = "" } = {}) {
   if (!content?.trim()) return "";
   return `
     <section class="choice-group flow-group">

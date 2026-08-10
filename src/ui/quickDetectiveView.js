@@ -1,173 +1,218 @@
-import { quickDetectiveProgress, quickQuoteOption, quickTurnById } from "../runtime/quickDetectiveModel.js";
+import { quickConfrontationLines, quickDisclosureRoundForState, quickIssueOptionsForRound, quickTurnIndexesForRound } from "../runtime/quickDetectiveModel.js";
+import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
-export function quickDetectiveHudHtml(packet = {}, state = {}) {
-  const progress = quickDetectiveProgress(packet, state);
-  const heardCount = state.scene === "intro"
-    ? 0
-    : state.scene === "transcript"
-      ? Math.min((packet.turns?.length ?? 0), Number(state.turnIndex ?? 0) + 1)
-      : packet.turns?.length ?? 0;
+export function quickDetectiveCaseSelectHtml(packets = [], completedIds = []) {
+  const completed = new Set(completedIds);
   return `
-    <div class="quick-detective-hud" aria-label="快案进度">
-      <span><small>回放</small><b>${heardCount}/${packet.turns?.length ?? 0}</b></span>
-      <span><small>圈句机会</small><b>${progress.marksLeft}/${progress.markLimit}</b></span>
-      <span><small>已经接上</small><b>${progress.foundIds.length}/${packet.requiredFlawCount ?? 0}</b></span>
+    <section class="quick-case-library" aria-labelledby="quick-case-library-title">
+      <header>
+        <p class="quick-mode-kicker">DETECTIVE MODE</p>
+        <h1 id="quick-case-library-title">今晚先接哪一通？</h1>
+      </header>
+      <div class="quick-case-grid">
+        ${packets.map((packet, index) => quickCaseCardHtml(packet, index, completed.has(packet.id))).join("")}
+      </div>
+      <footer>
+        <button data-quick-select-title type="button">返回标题页</button>
+      </footer>
+    </section>
+  `;
+}
+
+export function quickDetectiveStageHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
+  const presentation = packet.presentation ?? {};
+  const host = presentation.host ?? {};
+  const caller = presentation.caller ?? {};
+  const focus = quickStageFocus(packet, state);
+  const status = quickStageStatus(packet, state);
+  return `
+    <div class="quick-duel-stage focus-${escapeHtml(focus)}" data-quick-stage-focus="${escapeHtml(focus)}">
+      ${presentation.backgroundSrc ? `<img class="quick-stage-backdrop" src="${escapeHtml(presentation.backgroundSrc)}" alt="" onerror="this.hidden=true" />` : ""}
+      <div class="quick-stage-vignette"></div>
+      <figure class="quick-stage-speaker quick-stage-host${["host", "both"].includes(focus) ? " is-active" : ""}">
+        ${host.artSrc ? `<img src="${escapeHtml(host.artSrc)}" alt="" onerror="this.hidden=true" />` : ""}
+        <figcaption><small>${escapeHtml(host.roleLabel ?? "主播")}</small><b>${escapeHtml(hostName)}</b></figcaption>
+      </figure>
+      <div class="quick-call-link" aria-hidden="true">
+        <small>${escapeHtml(status)}</small>
+        <span><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+      <figure class="quick-stage-speaker quick-stage-caller${["caller", "both"].includes(focus) ? " is-active" : ""}">
+        ${caller.artSrc ? `<img src="${escapeHtml(caller.artSrc)}" alt="" onerror="this.hidden=true" />` : ""}
+        <figcaption><small>${escapeHtml(caller.roleLabel ?? "语音连线")}</small><b>${escapeHtml(caller.name ?? "匿名来电人")}</b></figcaption>
+      </figure>
     </div>
   `;
 }
 
-export function quickDetectiveIntroHtml(packet = {}) {
+export function quickDetectiveIntroHtml(packet = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
   return `
     <section class="quick-detective-panel quick-intro">
-      <p class="quick-mode-kicker">${escapeHtml(packet.label)} · ${escapeHtml(packet.durationLabel)}</p>
+      <p class="quick-mode-kicker">${escapeHtml(packet.label)}</p>
       <h2>${escapeHtml(packet.title)}</h2>
+      <p class="quick-intro-host"><span>本场主播</span><b>${escapeHtml(hostName)}</b></p>
       <p>${escapeHtml(packet.premise)}</p>
-      <div class="quick-rule-card">
-        <b>这次怎么玩</b>
-        <p>${escapeHtml(packet.rule)}</p>
-        <small>你只能圈 ${Number(packet.playerMarkLimit ?? 0)} 句；真正成立的破绽有 ${Number(packet.requiredFlawCount ?? 0)} 组。你找不全的，评论区会继续翻。</small>
-      </div>
       <button class="primary quick-main-action" data-quick-begin type="button">接入这通电话</button>
     </section>
   `;
 }
 
-export function quickDetectiveTranscriptHtml(packet = {}, state = {}) {
+export function quickDetectiveTranscriptHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
   const index = Math.max(0, Number(state.turnIndex ?? 0));
+  const lineIndex = Number(state.turnLineIndex ?? 0) === 1 ? 1 : 0;
   const turn = packet.turns?.[index] ?? {};
-  const last = index >= Math.max(0, (packet.turns?.length ?? 1) - 1);
+  const round = quickDisclosureRoundForState(packet, state);
+  const roundIndexes = quickTurnIndexesForRound(packet, round);
+  const last = index === roundIndexes[roundIndexes.length - 1];
+  const line = lineIndex === 0
+    ? { role: "host", speaker: hostName, text: turn.host }
+    : { role: "caller", speaker: "来电人", text: turn.caller };
   return `
     <section class="quick-detective-panel quick-transcript">
       <header>
-        <span>原始连线</span>
-        <b>第 ${index + 1} 组 / ${packet.turns?.length ?? 0}</b>
+        <span>${escapeHtml(round.label ?? "原始连线")}</span>
       </header>
-      <div class="quick-exchange">
-        <div class="quick-line quick-line-host"><b>林旭阳</b><p>${escapeHtml(turn.host)}</p></div>
-        <div class="quick-line quick-line-caller"><b>来电人</b><p>${escapeHtml(turn.caller)}</p></div>
-      </div>
-      <div class="quick-ambient-comments" aria-label="实时评论">
-        ${(turn.ambientComments ?? []).map((comment) => `<span>${escapeHtml(comment)}</span>`).join("")}
-      </div>
-      <button class="primary quick-main-action" data-quick-next-turn type="button">${last ? "听完了，开始圈句" : "继续听"}</button>
+      ${quickSpeechBubbleHtml(line, "", hostName)}
+      <button class="primary quick-main-action" data-quick-next-turn type="button">${lineIndex === 0 ? "听来电人回答" : last ? "轮到你判断" : "继续听"}</button>
     </section>
   `;
 }
 
-export function quickDetectiveInvestigationHtml(packet = {}, state = {}) {
-  const progress = quickDetectiveProgress(packet, state);
+export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
+  const confrontations = packet.confrontations ?? [];
+  const index = Math.max(0, confrontations.findIndex((item) => item.id === state.activeConfrontationId));
+  const confrontation = confrontations[index] ?? {};
+  const lines = quickConfrontationLines(confrontation);
+  const lineIndex = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.confrontationLineIndex ?? 0)));
+  const last = (state.resolvedConfrontationIds?.length ?? 0) + 1 >= confrontations.length;
+  const line = lines[lineIndex] ?? {};
+  const nextLine = lines[lineIndex + 1];
+  const advanceLabel = nextLine
+    ? nextLine.role === "caller" ? "听来电人回应" : "继续问"
+    : last ? "听最后一句" : "继续听";
   return `
-    <section class="quick-detective-panel quick-investigation">
+    <section class="quick-detective-panel quick-confrontation">
       <header>
-        <div><span>回放记录</span><h2>哪句话跟她后面说的对不上？</h2></div>
-        <b>还能圈 ${progress.marksLeft} 句</b>
+        <span>当面对质</span>
       </header>
-      <p class="quick-instruction">圈一句以后，评论区会试着给它找对照。数字显眼、听着离谱，都不自动算破绽。</p>
-      <div class="quick-quote-grid">
-        ${(packet.quoteOptions ?? []).map((option) => quickQuoteButtonHtml(option, state)).join("")}
-      </div>
-      ${progress.readyForCrowd ? `
-        <div class="quick-crowd-handoff">
-          <p>你的三次机会用完了。现在让评论区继续翻同一段回放。</p>
-          <button class="primary" data-quick-continue-investigation type="button">看看评论区接上了什么</button>
-        </div>
-      ` : ""}
+      ${quickSpeechBubbleHtml({ ...line, speaker: line.role === "caller" ? "来电人" : hostName }, "", hostName)}
+      <button class="primary quick-main-action" data-quick-next-confrontation type="button">${advanceLabel}</button>
     </section>
   `;
 }
 
-export function quickDetectiveFeedbackHtml(packet = {}, state = {}, { crowd = false } = {}) {
-  const option = quickQuoteOption(packet, state.selectedQuoteId);
-  if (!option) return "";
-  const anchorTurns = (option.pairedTurnIds ?? [option.turnId]).map((turnId) => quickTurnById(packet, turnId)).filter(Boolean);
+export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
+  const resolved = new Set(state.resolvedConfrontationIds ?? []);
+  const round = quickDisclosureRoundForState(packet, state);
   return `
-    <section class="quick-detective-panel quick-feedback ${option.kind === "flaw" ? "is-hit" : "is-miss"}">
-      <p class="quick-mode-kicker">${crowd ? "评论区补线" : option.kind === "flaw" ? "这句接上了" : "先别急着判"}</p>
-      <h2>${escapeHtml(option.feedbackTitle)}</h2>
-      <blockquote>${escapeHtml(option.excerpt)}</blockquote>
-      ${anchorTurns.length > 1 ? `
-        <div class="quick-anchor-pair">
-          ${anchorTurns.map((turn) => `<p><small>她还说过</small>${escapeHtml(turn.caller)}</p>`).join("")}
-        </div>
-      ` : ""}
-      <div class="quick-comment-wall">
-        ${(option.comments ?? []).map((comment, index) => `<p><b>观众${index + 1}</b><span>${escapeHtml(comment)}</span></p>`).join("")}
+    <section class="quick-detective-panel quick-issue-selection">
+      <header>
+        <div><span>${escapeHtml(round.label ?? "轮到你判断")}</span><h2>先追问哪个矛盾点？</h2></div>
+      </header>
+      <div class="quick-issue-grid">
+        ${quickIssueOptionsForRound(packet, state).map((option) => quickIssueButtonHtml(option, state, resolved)).join("")}
       </div>
-      <div class="quick-followup">
-        <p><b>林旭阳</b>${escapeHtml(option.hostLine)}</p>
-        ${option.callerLine ? `<p><b>来电人</b>${escapeHtml(option.callerLine)}</p>` : ""}
-      </div>
-      ${option.finding ? `<p class="quick-finding"><b>暂时能确定</b>${escapeHtml(option.finding)}</p>` : ""}
-      <button class="primary quick-main-action" ${crowd ? "data-quick-next-crowd" : "data-quick-continue-investigation"} type="button">
-        ${crowd ? "继续看评论区" : "回到回放"}
-      </button>
+      ${state.issueFeedback ? `<p class="quick-issue-feedback" role="status">${escapeHtml(state.issueFeedback)}</p>` : ""}
     </section>
   `;
 }
 
-export function quickDetectiveCrowdAssistHtml(packet = {}, state = {}) {
-  const remaining = quickDetectiveProgress(packet, state).remainingFlawIds.length;
-  return `
-    <section class="quick-detective-panel quick-crowd-assist">
-      <p class="quick-mode-kicker">主播没来得及想到，评论还在往上刷</p>
-      <h2>还有 ${remaining} 组原话没有接上</h2>
-      <div class="quick-comment-wall quick-comment-scanning">
-        <p><b>观众</b><span>先别找新料，就翻她刚才自己说过的话。</span></p>
-        <p><b>观众</b><span>看看她前面说的原则，到了后面有没有变成一项具体要求。</span></p>
-      </div>
-      <button class="primary quick-main-action" data-quick-reveal-crowd type="button">让评论区贴出下一组</button>
-    </section>
-  `;
-}
-
-export function quickDetectiveVerdictHtml(packet = {}, state = {}) {
-  const progress = quickDetectiveProgress(packet, state);
+export function quickDetectiveVerdictHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
   const ending = packet.ending ?? {};
+  const pages = ending.summaryPages ?? [];
+  const index = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
+  const page = pages[index] ?? {};
+  const lines = page.lines ?? [];
+  const lineIndex = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.verdictLineIndex ?? 0)));
+  const line = lines[lineIndex] ?? {};
+  const last = index >= Math.max(0, pages.length - 1) && lineIndex >= Math.max(0, lines.length - 1);
+  const kicker = page.kicker ?? ending.verdictKicker ?? `${hostName}最后总结`;
+  const title = page.title ?? packet.title;
   return `
     <section class="quick-detective-panel quick-verdict">
-      <p class="quick-mode-kicker">${escapeHtml(ending.verdictKicker ?? "快案结论 · 只判原话能证明的部分")}</p>
-      <h2>${escapeHtml(packet.title)}</h2>
-      <div class="quick-followup quick-ending-dialogue">
-        <p><b>林旭阳</b>${escapeHtml(ending.hostLead)}</p>
-        <p><b>林旭阳</b>${escapeHtml(ending.hostVerdict)}</p>
-        <p><b>来电人</b>${escapeHtml(ending.callerReply)}</p>
-        <p><b>林旭阳</b>${escapeHtml(ending.hostClose)}</p>
-      </div>
-      <div class="quick-result-split">
-        <section><span>你接上的</span><b>${progress.playerFound.length}</b><small>组破绽</small></section>
-        <section><span>评论区补上的</span><b>${progress.crowdFound.length}</b><small>组破绽</small></section>
-      </div>
-      ${ending.riskReading?.text ? `
-        <section class="quick-risk-reading">
-          <h3>${escapeHtml(ending.riskReading.title ?? "最需要防的解释")}</h3>
-          <p>${escapeHtml(ending.riskReading.text)}</p>
-        </section>
-      ` : ""}
-      <div class="quick-boundary-grid">
-        <section>
-          <h3>${escapeHtml(ending.confirmedTitle ?? "已经能确定")}</h3>
-          <ul>${(ending.confirmed ?? []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-        </section>
-        <section>
-          <h3>${escapeHtml(ending.unknownTitle ?? "这通电话还不能确定")}</h3>
-          <ul>${(ending.unknown ?? []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-        </section>
-      </div>
-      <div class="quick-ending-actions">
-        <button class="primary" data-quick-restart type="button">再玩一次</button>
-        <button data-quick-title type="button">回标题页</button>
-      </div>
+      <header class="quick-summary-header">
+        <div><p class="quick-mode-kicker">${escapeHtml(kicker)}</p><h2>${escapeHtml(title)}</h2></div>
+      </header>
+      ${quickSpeechBubbleHtml({ ...line, speaker: line.role === "caller" ? "来电人" : hostName }, "quick-summary-dialogue", hostName)}
+      ${last ? `
+        <div class="quick-ending-actions">
+          <button class="primary" data-quick-restart type="button">再玩一次</button>
+          <button data-quick-select type="button">返回案件选择</button>
+        </div>
+      ` : `<button class="primary quick-main-action" data-quick-next-verdict type="button">继续听</button>`}
     </section>
   `;
 }
 
-function quickQuoteButtonHtml(option = {}, state = {}) {
-  const attempted = state.attemptedQuoteIds?.includes(option.id);
-  const found = option.flawId && state.playerFoundFlawIds?.includes(option.flawId);
+function quickCaseCardHtml(packet = {}, index = 0, completed = false) {
+  const number = String(packet.caseNumber ?? packet.id?.match(/^\d+/)?.[0] ?? index + 1).padStart(2, "0");
   return `
-    <button class="quick-quote-option ${attempted ? "is-attempted" : ""} ${found ? "is-found" : ""}" data-quick-quote="${escapeHtml(option.id)}" type="button" ${attempted ? "disabled" : ""}>
-      <small>${attempted ? found ? "已接上" : "证据不足" : "圈这句话"}</small>
-      <b>${escapeHtml(option.excerpt)}</b>
+    <button class="quick-case-card${completed ? " is-complete" : ""}" data-quick-case-id="${escapeHtml(packet.id)}" type="button">
+      <span class="quick-case-number"><small>CASE</small><b>${escapeHtml(number)}</b></span>
+      <span class="quick-case-copy">
+        <small>${escapeHtml(packet.label ?? `直播快案 ${number}`)}</small>
+        <strong>${escapeHtml(packet.title)}</strong>
+      </span>
+      <span class="quick-case-status" aria-label="${completed ? "已完成" : "尚未完成"}">
+        ${completed ? "<i>✓</i><b>已完成</b>" : "<i></i><b>未完成</b>"}
+      </span>
+    </button>
+  `;
+}
+
+function quickStageFocus(packet = {}, state = {}) {
+  if (state.scene === "transcript") return Number(state.turnLineIndex ?? 0) === 1 ? "caller" : "host";
+  if (state.scene === "issueSelection") return "both";
+  if (state.scene === "confrontation") {
+    const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId) ?? {};
+    const lines = quickConfrontationLines(confrontation);
+    const lineIndex = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.confrontationLineIndex ?? 0)));
+    return lines[lineIndex]?.role === "caller" ? "caller" : "host";
+  }
+  if (state.scene === "verdict") {
+    const pages = packet.ending?.summaryPages ?? [];
+    const page = pages[Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)))] ?? {};
+    const lines = page.lines ?? [];
+    const line = lines[Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.verdictLineIndex ?? 0)))] ?? {};
+    return line.role === "caller" ? "caller" : "host";
+  }
+  return "host";
+}
+
+function quickSpeechBubbleHtml(line = {}, className = "", hostName = DEFAULT_PLAYER_NAME) {
+  const role = line.role === "caller" ? "caller" : "host";
+  return `
+    <div class="quick-exchange quick-single-bubble ${escapeHtml(className)}" data-quick-speaking="${role}">
+      <div class="quick-line quick-line-${role}">
+        <b>${escapeHtml(line.speaker ?? (role === "caller" ? "来电人" : hostName))}</b>
+        <p>${escapeHtml(line.text)}</p>
+      </div>
+    </div>
+  `;
+}
+
+function quickStageStatus(packet = {}, state = {}) {
+  if (state.scene === "verdict") {
+    const pages = packet.ending?.summaryPages ?? [];
+    const index = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
+    return pages[index]?.stageLabel ?? "最后总结";
+  }
+  return {
+    intro: "等待接通",
+    transcript: "语音连线中",
+    issueSelection: "整理矛盾",
+    confrontation: "当面对质"
+  }[state.scene] ?? "语音连线中";
+}
+
+function quickIssueButtonHtml(option = {}, state = {}, resolved = new Set()) {
+  const solved = option.confrontationId && resolved.has(option.confrontationId);
+  const attempted = state.attemptedIssueIds?.includes(option.id);
+  const disabled = solved || (attempted && !option.confrontationId);
+  return `
+    <button class="quick-issue-option${solved ? " is-resolved" : ""}${disabled && !solved ? " is-dismissed" : ""}" data-quick-issue="${escapeHtml(option.id)}" type="button" ${disabled ? "disabled" : ""}>
+      ${solved || disabled ? `<small>${solved ? "已经问过" : "目前接不上"}</small>` : ""}
+      <b>${escapeHtml(option.label)}</b>
     </button>
   `;
 }

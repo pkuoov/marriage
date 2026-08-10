@@ -1,3 +1,5 @@
+import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "../../playerIdentity.js";
+
 export function createOvernightScreens(ctx) {
   const {
     playAudioCueOnce,
@@ -16,6 +18,7 @@ export function createOvernightScreens(ctx) {
     liveCounterBeatAfterScene,
     liveCounterBeatBeforeScene,
     liveCounterBeatById,
+    nextPlayableSceneIndex,
     nightStructureFor,
     overnightCallbackDialogueLines,
     overnightCallbackOpenerById,
@@ -347,9 +350,10 @@ export function createOvernightScreens(ctx) {
   function dayBeatsHtml(body = {}) {
     const beats = body.beats ?? [];
     if (!beats.length) return "";
+    const hostName = normalizePlayerName(ctx.getState()?.playerName);
     return callDialogueHtml(beats.map((beat) => {
       const speaker = beat.speaker ?? "";
-      const isHost = /你|主播|林旭阳/.test(speaker);
+      const isHost = ["你", "主播", DEFAULT_PLAYER_NAME, hostName].some((label) => speaker === label || speaker.includes(label));
       return { role: isHost ? "host" : "caller", speaker, text: beat.text ?? "" };
     }));
   }
@@ -1005,8 +1009,8 @@ export function createOvernightScreens(ctx) {
       render();
       return;
     }
-    const nextSceneIndex = Number(beat.afterSceneIndex ?? 0) + 1;
-    if (nextSceneIndex < (brief.sceneVersions?.length ?? 0)) {
+    const nextSceneIndex = nextPlayableSceneIndex(brief, Number(beat.afterSceneIndex ?? 0));
+    if (nextSceneIndex >= 0) {
       setIndexValue(brief, "sceneReview", nextSceneIndex);
       state.scene = "overnightNight2";
     } else {

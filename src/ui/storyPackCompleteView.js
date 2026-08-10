@@ -18,16 +18,14 @@ export function storyPackCompleteHtml({
   callCountText = "这几路麦"
 } = {}) {
   return `
-    <p><b>今晚收麦</b></p>
     <p>${escapeHtml(storyPackCallLine(callCountText))}你最常回头看的，是：${escapeHtml(displayBest.label)}。</p>
     <section class="share-result-card">
-      <div class="share-card-head"><span>${escapeHtml(theme.title)}</span><em>${escapeHtml(displayBest.label)}</em></div>
+      <div class="share-card-head"><span>今晚收麦</span><em>${escapeHtml(displayBest.label)}</em></div>
       <div class="share-player-type">
         <span>你是</span>
         <b>${escapeHtml(playerType)}</b>
       </div>
       <p class="share-card-title">${escapeHtml(shareTitle)}</p>
-      <p class="weekly-theme-thesis">${escapeHtml(theme.thesis)}</p>
       <p class="issue-score">${escapeHtml(aftertaste)}</p>
       ${weeklyProfileLine("事实边界", boundaryProfile)}
       ${weeklyProfileLine("现场压力", pressureProfile)}
@@ -62,7 +60,6 @@ export function storyPackShareText({
 } = {}) {
   return [
     "《深夜热线：直播间侦探》试玩收麦",
-    theme.title ?? "",
     `我今晚常看的线：${displayBest.label ?? ""}`,
     `现场压力：${pressureProfile.label ?? ""}`,
     `材料圈点：${materialProfile.label ?? ""}`,

@@ -60,6 +60,8 @@ export function createSceneScreens(ctx) {
     setIndexValue,
     currentIndex,
     firstUnansweredSceneIndex,
+    nextPlayableSceneIndex,
+    playableSceneIndexes,
     resolveAccusationFromButton,
     issueCompletion,
     accusationReadinessForBrief,
@@ -102,6 +104,7 @@ export function createSceneScreens(ctx) {
       chapter: liveChapterTitle(brief),
       text: sceneReviewHtml({
         index,
+        displayIndex: Math.max(0, playableSceneIndexes(brief).indexOf(index)),
         done,
         completedExchangeHtml,
         activeExchangeHtml: done ? "" : scenePromptExchangeHtml({ scene: sceneForView, askedCount: dialoguePicks.length }),
@@ -408,6 +411,7 @@ export function createSceneScreens(ctx) {
       [answerKey(brief, sceneIndex)]: {
         question: option.question ?? "",
         suspicionLabel: option.suspicionLabel ?? "",
+        revealTransition: option.revealTransition ?? null,
         answer,
         contradiction: option.contradiction ?? "",
         routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
@@ -557,7 +561,9 @@ export function createSceneScreens(ctx) {
       render();
       return;
     }
-    setIndex(brief, "sceneReview", sceneIndex + 1);
+    const nextIndex = nextPlayableSceneIndex(brief, sceneIndex);
+    if (nextIndex >= 0) setIndex(brief, "sceneReview", nextIndex);
+    else moveScene("accusation");
   }
 
   function recordCallerQuestionChoice(brief, choiceId = "") {

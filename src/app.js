@@ -13,12 +13,14 @@ import { answeredEvidenceCountForState, answeredSceneCountForState, askedDialogu
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationPickReaction, issueLine, issueResultLine, recapRankLabel, truthBoundaryAftertaste, truthBoundaryReview } from "./runtime/recapModel.js";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, pressuredAnswerVariant, questionPressureReaction, questionPressureSignal } from "./runtime/livePressure.js";
 import { normalizeRouteChoice, routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js";
-import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js";
+import { canRewindQuestion, popQuestionRewindPoint, pushQuestionRewindPoint } from "./runtime/questionRewind.js";
+import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canCompleteNightAction, canEnterOvernightCallback, caseKey, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nextPlayableSceneIndex, nightActionById, nightActionCountsForBudget, nightStructureFor, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, playableSceneCount, playableSceneIndexes, recordPatienceLostState, retryPatienceLostState, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js";
 import { storyInterludeCaseId } from "./runtime/storyInterludeModel.js";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
-import { advanceQuickTranscript, applyQuickQuoteSelection, continueQuickCrowd, continueQuickInvestigation, initialQuickDetectiveState, normalizeQuickDetectiveState, revealNextCrowdFlaw } from "./runtime/quickDetectiveModel.js";
+import { advanceQuickConfrontation, advanceQuickTranscript, advanceQuickVerdict, applyQuickIssueSelection, initialQuickDetectiveState, normalizeQuickDetectiveState, quickDetectiveIsComplete } from "./runtime/quickDetectiveModel.js";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js";
+import { normalizePlayerName, personalizeHostHtml, personalizeHostText, playerFamiliarName } from "./playerIdentity.js";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js";
 import { refreshSavedCaseContent } from "./runtime/savedContentRefresh.js";
@@ -42,9 +44,9 @@ import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "./ui/titleView.js";
-import { quickDetectiveCrowdAssistHtml, quickDetectiveFeedbackHtml, quickDetectiveHudHtml, quickDetectiveIntroHtml, quickDetectiveInvestigationHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "./ui/quickDetectiveView.js";
+import { quickDetectiveCaseSelectHtml, quickDetectiveConfrontationHtml, quickDetectiveIntroHtml, quickDetectiveIssueSelectionHtml, quickDetectiveStageHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "./ui/quickDetectiveView.js";
 import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js";
-import { quickDetectiveCaseFor, storyPackForKey } from "./storyPacks.js";
+import { quickDetectiveCaseFor, quickDetectiveCasesFor, storyPackForKey } from "./storyPacks.js";
 import { HOST_PROFILE } from "./hostProfile.js";
 import { createOvernightScreens } from "./ui/screens/overnightScreens.js";
 import { createInterludeScreens } from "./ui/screens/interludeScreens.js";
@@ -54,7 +56,8 @@ import { createRecapScreens } from "./ui/screens/recapScreens.js";
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "深夜热线：直播间侦探";
 const DEFAULT_ATTRS = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
-const SCENE_HELPER = CONTENT_HELPER_NPCS["v-bro"] ?? null;
+const REGISTERED_SCENE_HELPER = CONTENT_HELPER_NPCS["v-bro"] ?? null;
+const SCENE_HELPER = REGISTERED_SCENE_HELPER?.playerVisible === false ? null : REGISTERED_SCENE_HELPER;
 
 const startsFresh = hasFreshStartParam();
 if (startsFresh) clearStateSnapshot();
@@ -75,12 +78,33 @@ let gamepadPreviousButtons = {};
 let lastGamepadMoveAt = 0;
 let shownPixelTransitions = new Set();
 let titleNewGameConfirmation = false;
+let titlePlayerNameDraft = null;
+let questionRewindHistory = [];
+let lastQuestionRewindCapture = { target: null, at: 0 };
+
+const QUESTION_REWIND_TRIGGER_SELECTOR = [
+  "button.choice-question",
+  "button.decision-choice",
+  "button.quick-issue-option",
+  "button[data-evidence-check]",
+  "button[data-document-row]",
+  "button[data-day-timeline-card]",
+  "button[data-submit-day-timeline]",
+  "button[data-live-counter-choice]",
+  "button[data-truth-boundary-pick]",
+  "button[data-stance-snapshot]",
+  "button[data-care-choice]"
+].join(",");
 
 watchAudioPlaybackControls({ getRoot: () => app });
+
+document.addEventListener("pointerup", captureQuestionRewindFromEvent, true);
+document.addEventListener("click", captureQuestionRewindFromEvent, true);
 
 document.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button || button.disabled) return;
+  if (button.matches('[data-action="rewind"]')) return rewindToPreviousQuestion();
   if (button.hasAttribute("data-audio-mute")) return;
   if (button.matches("[data-start-story], [data-start-quick-detective], [data-continue-story], [data-request-new-game], [data-confirm-new-game], [data-cancel-new-game], [data-enter-first-case]")) return;
   if (button.matches("[data-evidence-check], [data-document-row]")) return;
@@ -143,7 +167,8 @@ function normalizeDailyState(saved) {
   return {
     ...structuredClone(baseState),
     ...saved,
-    screen: ["chapter", "quickDetective"].includes(saved?.screen) ? saved.screen : "title",
+    playerName: normalizePlayerName(saved?.playerName),
+    screen: ["chapter", "quickDetectiveSelect", "quickDetective"].includes(saved?.screen) ? saved.screen : "title",
     caseMode: mode,
     chapter: Math.max(1, Number(saved?.chapter ?? 1)),
     attrs: { ...DEFAULT_ATTRS, ...(saved?.attrs ?? {}) },
@@ -183,12 +208,39 @@ function normalizeDailyState(saved) {
     lastPityLine: saved?.lastPityLine ?? null,
     patienceLostContext: saved?.patienceLostContext ?? null,
     quickDetective: saved?.quickDetective ?? null,
+    quickDetectiveCompletedIds: [...new Set(Array.isArray(saved?.quickDetectiveCompletedIds) ? saved.quickDetectiveCompletedIds.filter(Boolean) : [])],
     settings: { ...baseState.settings, ...(saved?.settings ?? {}) }
   };
 }
 
 function saveState() {
   saveStateSnapshot(state);
+}
+
+function captureQuestionRewindFromEvent(event) {
+  const button = event.target?.closest?.(QUESTION_REWIND_TRIGGER_SELECTOR);
+  if (!button || button.disabled) return;
+  const now = Date.now();
+  if (lastQuestionRewindCapture.target === button && now - lastQuestionRewindCapture.at < 350) return;
+  questionRewindHistory = pushQuestionRewindPoint(questionRewindHistory, state);
+  lastQuestionRewindCapture = { target: button, at: now };
+}
+
+function rewindToPreviousQuestion() {
+  const rewind = popQuestionRewindPoint(questionRewindHistory, state);
+  if (!rewind.state) return;
+  questionRewindHistory = rewind.history;
+  lastQuestionRewindCapture = { target: null, at: 0 };
+  shownPixelTransitions = new Set();
+  // Replace the whole state so every memoized screen handler follows the restored checkpoint.
+  state = normalizeDailyState(rewind.state);
+  saveState();
+  render();
+}
+
+function clearQuestionRewindHistory() {
+  questionRewindHistory = [];
+  lastQuestionRewindCapture = { target: null, at: 0 };
 }
 
 function activeCaseBrief() {
@@ -238,6 +290,9 @@ function hasFreshStartParam() {
 }
 
 function startStoryPack() {
+  clearQuestionRewindHistory();
+  commitTitlePlayerName();
+  const quickDetectiveCompletedIds = [...(state.quickDetectiveCompletedIds ?? [])];
   titleNewGameConfirmation = false;
   resetAudioCueHistory();
   shownPixelTransitions = new Set();
@@ -250,6 +305,8 @@ function startStoryPack() {
   // Replace the whole state object; memoized screen handlers follow through ctx.getState().
   state = normalizeDailyState({
     ...structuredClone(baseState),
+    playerName: state.playerName,
+    quickDetectiveCompletedIds,
     screen: "chapter",
     scene: mode === "daily" || !nightShellForStoryKey(caseBriefs[0]?.storyKey ?? storyKeyFromUrl())?.prologue ? "caseOpen" : "nightShellPrologue",
     profileDone: true,
@@ -263,10 +320,22 @@ function startStoryPack() {
   render();
 }
 
-function startQuickDetective() {
-  const packet = activeQuickDetectiveCase();
-  if (!packet) return;
+function openQuickDetectiveSelect() {
+  clearQuestionRewindHistory();
+  commitTitlePlayerName();
   titleNewGameConfirmation = false;
+  shownPixelTransitions = new Set();
+  state.screen = "quickDetectiveSelect";
+  saveState();
+  render();
+}
+
+function startQuickDetective(caseId = "") {
+  const packet = quickDetectiveCaseFor(storyKeyFromUrl(), caseId);
+  if (!packet) return;
+  clearQuestionRewindHistory();
+  titleNewGameConfirmation = false;
+  shownPixelTransitions = new Set();
   state.screen = "quickDetective";
   state.quickDetective = initialQuickDetectiveState(packet);
   saveState();
@@ -287,6 +356,7 @@ function storyPreviewBriefs() {
 
 function continueStoryPack() {
   if (!canContinueJourney()) return startStoryPack();
+  commitTitlePlayerName();
   titleNewGameConfirmation = false;
   state.screen = "chapter";
   saveState();
@@ -294,6 +364,7 @@ function continueStoryPack() {
 }
 
 function returnToTitle() {
+  clearQuestionRewindHistory();
   titleNewGameConfirmation = false;
   shownPixelTransitions = new Set();
   state.screen = "title";
@@ -302,11 +373,16 @@ function returnToTitle() {
 }
 
 function resetToTitle() {
+  clearQuestionRewindHistory();
+  const playerName = normalizePlayerName(state.playerName);
+  const quickDetectiveCompletedIds = [...(state.quickDetectiveCompletedIds ?? [])];
   clearStateSnapshot();
   titleNewGameConfirmation = false;
   shownPixelTransitions = new Set();
   // Replace the whole state object; memoized screen handlers follow through ctx.getState().
   state = normalizeDailyState(structuredClone(baseState));
+  state.playerName = playerName;
+  state.quickDetectiveCompletedIds = quickDetectiveCompletedIds;
   state.screen = "title";
   saveState();
   render();
@@ -315,6 +391,7 @@ function resetToTitle() {
 function render() {
   if (!app) return;
   if (state.screen === "title") return renderTitle();
+  if (state.screen === "quickDetectiveSelect") return renderQuickDetectiveSelect();
   if (state.screen === "quickDetective") return renderQuickDetective();
   if (!activeCaseBrief()) return renderTitle();
   return renderDailyCase();
@@ -324,28 +401,30 @@ function renderTitle() {
   const previews = storyPreviewBriefs();
   const preview = previews[0] ?? null;
   const storyPack = modeFromUrl() !== "daily";
-  const pack = storyPack ? storyPackForKey(storyKeyFromUrl()) : null;
   const title = storyPack ? "Steam 试玩版" : preview?.dailyShareTitle ?? preview?.label ?? "今日来电有点东西";
-  const hook = storyPack ? "晚上八点，你推开直播间的门。第一通匿名来电，还在等待接入。" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
-  const object = storyPack ? "今晚 20:00 · 开播前" : preview?.storyClueObject ?? "今日通话摘录";
+  const hook = storyPack ? "" : preview?.publicHook ?? "一通匿名来电已经接进来，第一句还没说完。";
+  const object = storyPack ? "" : preview?.storyClueObject ?? "今日通话摘录";
   const canContinue = canContinueJourney();
-  app.innerHTML = titleScreenHtml({
+  const playerName = normalizePlayerName(titlePlayerNameDraft ?? state.playerName);
+  app.innerHTML = personalizeHostHtml(titleScreenHtml({
     productName: PRODUCT_NAME,
     storyPack,
     title,
     hook,
     object,
-    themeTitle: pack?.theme?.title ?? "",
-    acts: pack?.sequence ?? [],
-    host: HOST_PROFILE,
+    host: { ...HOST_PROFILE, name: playerName },
     audioSettings: getAudioSettings(),
     canContinue,
     resumeLabel: resumeStageLabel(),
     confirmNewGame: canContinue && titleNewGameConfirmation,
-    quickModeAvailable: storyPack && Boolean(activeQuickDetectiveCase())
-  });
+    quickModeAvailable: storyPack && quickDetectiveCasesFor(storyKeyFromUrl()).length > 0,
+    playerName
+  }), playerName);
+  bind("[data-player-name]", (event) => {
+    titlePlayerNameDraft = event.currentTarget.value;
+  }, "input");
   bind("[data-start-story]", startStoryPack);
-  bind("[data-start-quick-detective]", startQuickDetective);
+  bind("[data-start-quick-detective]", openQuickDetectiveSelect);
   bind("[data-continue-story]", continueStoryPack);
   bind("[data-request-new-game]", () => {
     titleNewGameConfirmation = true;
@@ -362,7 +441,35 @@ function renderTitle() {
 }
 
 function activeQuickDetectiveCase() {
-  return quickDetectiveCaseFor(storyKeyFromUrl());
+  return quickDetectiveCaseFor(storyKeyFromUrl(), state.quickDetective?.caseId);
+}
+
+function renderQuickDetectiveSelect() {
+  const packets = quickDetectiveCasesFor(storyKeyFromUrl());
+  if (!packets.length) {
+    state.screen = "title";
+    return renderTitle();
+  }
+  app.innerHTML = personalizeHostHtml(liveFrameHtml({
+    productName: PRODUCT_NAME,
+    modeLabel: "快速侦探",
+    audioSettings: getAudioSettings(),
+    backdropClass: "backdrop-live quick-case-select-backdrop",
+    label: "快案档案",
+    chapter: `${packets.length} 宗案件可选`,
+    text: quickDetectiveCaseSelectHtml(packets, state.quickDetectiveCompletedIds),
+    visualHud: "",
+    screenClass: "quick-case-select-screen",
+    controlDeckHtml: "",
+    showRecordButton: false,
+    showResetButton: false
+  }), state.playerName);
+  bind('[data-action="title"], [data-quick-select-title]', returnToTitle);
+  bind("[data-quick-case-id]", (event) => startQuickDetective(event.currentTarget.dataset.quickCaseId));
+  bindAudioControls({ root: app, onToggleSound: render });
+  syncSceneAudio({ scene: "title" });
+  resetViewportScroll();
+  queueDefaultFocus();
 }
 
 function renderQuickDetective() {
@@ -373,38 +480,42 @@ function renderQuickDetective() {
   }
   state.quickDetective = normalizeQuickDetectiveState(state.quickDetective, packet);
   const quickState = state.quickDetective;
+  if (quickDetectiveIsComplete(packet, quickState) && !state.quickDetectiveCompletedIds.includes(packet.id)) {
+    state.quickDetectiveCompletedIds = [...state.quickDetectiveCompletedIds, packet.id];
+    saveState();
+  }
   const body = {
-    intro: () => quickDetectiveIntroHtml(packet),
-    transcript: () => quickDetectiveTranscriptHtml(packet, quickState),
-    investigation: () => quickDetectiveInvestigationHtml(packet, quickState),
-    feedback: () => quickDetectiveFeedbackHtml(packet, quickState),
-    crowdAssist: () => quickDetectiveCrowdAssistHtml(packet, quickState),
-    crowdFeedback: () => quickDetectiveFeedbackHtml(packet, quickState, { crowd: true }),
-    verdict: () => quickDetectiveVerdictHtml(packet, quickState)
-  }[quickState.scene] ?? (() => quickDetectiveIntroHtml(packet));
-  app.innerHTML = liveFrameHtml({
+    intro: () => quickDetectiveIntroHtml(packet, { hostName: state.playerName }),
+    transcript: () => quickDetectiveTranscriptHtml(packet, quickState, { hostName: state.playerName }),
+    issueSelection: () => quickDetectiveIssueSelectionHtml(packet, quickState),
+    confrontation: () => quickDetectiveConfrontationHtml(packet, quickState, { hostName: state.playerName }),
+    verdict: () => quickDetectiveVerdictHtml(packet, quickState, { hostName: state.playerName })
+  }[quickState.scene] ?? (() => quickDetectiveIntroHtml(packet, { hostName: state.playerName }));
+  const quickTransition = quickRevealTransition(packet, quickState);
+  app.innerHTML = personalizeHostHtml(liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel: "快速侦探",
     audioSettings: getAudioSettings(),
     backdropClass: "backdrop-live quick-detective-backdrop",
     label: packet.label,
-    chapter: `${packet.title} · ${packet.durationLabel}`,
+    chapter: packet.title,
     text: body(),
-    visualHud: quickDetectiveHudHtml(packet, quickState),
-    screenClass: `quick-detective-screen quick-scene-${quickState.scene}`,
+    visualHud: quickDetectiveStageHtml(packet, quickState, { hostName: state.playerName }),
+    screenClass: `quick-detective-screen quick-scene-${quickState.scene}${quickTransition ? " key-reveal-answer" : ""}`,
+    pixelTransition: quickTransition,
+    rewindAvailable: canRewindQuestion(questionRewindHistory),
     controlDeckHtml: "",
     showRecordButton: false
-  });
+  }), state.playerName);
   bind('[data-action="title"]', returnToTitle);
-  bind('[data-action="reset"]', startQuickDetective);
-  bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0 }));
+  bind('[data-action="reset"]', () => startQuickDetective(packet.id));
+  bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0, turnLineIndex: 0 }));
   bind("[data-quick-next-turn]", () => updateQuickDetective(advanceQuickTranscript(packet, quickState)));
-  bind("[data-quick-quote]", (event) => updateQuickDetective(applyQuickQuoteSelection(packet, quickState, event.currentTarget.dataset.quickQuote)));
-  bind("[data-quick-continue-investigation]", () => updateQuickDetective(continueQuickInvestigation(packet, quickState)));
-  bind("[data-quick-reveal-crowd]", () => updateQuickDetective(revealNextCrowdFlaw(packet, quickState)));
-  bind("[data-quick-next-crowd]", () => updateQuickDetective(continueQuickCrowd(packet, quickState)));
-  bind("[data-quick-restart]", startQuickDetective);
-  bind("[data-quick-title]", returnToTitle);
+  bind("[data-quick-issue]", (event) => updateQuickDetective(applyQuickIssueSelection(packet, quickState, event.currentTarget.dataset.quickIssue)));
+  bind("[data-quick-next-confrontation]", () => updateQuickDetective(advanceQuickConfrontation(packet, quickState)));
+  bind("[data-quick-next-verdict]", () => updateQuickDetective(advanceQuickVerdict(packet, quickState)));
+  bind("[data-quick-restart]", () => startQuickDetective(packet.id));
+  bind("[data-quick-select]", openQuickDetectiveSelect);
   bindAudioControls({ root: app, onToggleSound: render });
   syncSceneAudio({ briefId: `quick-${packet.id}`, scene: "sceneReview", backdropClass: "backdrop-live" });
   resetViewportScroll();
@@ -415,6 +526,18 @@ function updateQuickDetective(nextQuickState) {
   state.quickDetective = nextQuickState;
   saveState();
   render();
+}
+
+function quickRevealTransition(packet = {}, quickState = {}) {
+  if (quickState.scene !== "confrontation") return null;
+  const confrontation = (packet.confrontations ?? []).find((item) => item.id === quickState.activeConfrontationId);
+  const transition = confrontation?.revealTransition;
+  if (Number(quickState.confrontationLineIndex ?? 0) !== Number(transition?.lineIndex ?? 0)) return null;
+  if (!transition?.id) return null;
+  const key = `quick:${packet.id}:${transition.id}`;
+  if (shownPixelTransitions.has(key)) return null;
+  shownPixelTransitions.add(key);
+  return { ...transition, kind: "reveal" };
 }
 
 function canContinueJourney() {
@@ -456,12 +579,14 @@ function createDailyScreenRenderers() {
     liveCounterBeatAfterScene,
     liveCounterBeatBeforeScene,
     liveCounterBeatById,
+    nextPlayableSceneIndex,
     nightStructureFor,
     overnightCallbackDialogueLines,
     overnightCallbackOpenerById,
     overnightFirstNight2SceneIndex,
     overnightReturnPostureFor,
     overnightStructureFor,
+    playableSceneIndexes,
     returnStanceFor,
     snapshotEchoFor,
     CHOICE_COST_META,
@@ -476,6 +601,7 @@ function createDailyScreenRenderers() {
     render,
     frame,
     dayFrame,
+    hostPortraitLayer: () => portraitLayerHtml({ callerVisible: false, mood: "focused", hostName: normalizePlayerName(state.playerName) }),
     bind,
     stanceSnapshotPickForState,
     setIndexValue,
@@ -569,7 +695,7 @@ function createDailyScreenRenderers() {
     sceneWithCallbackRevision,
     sceneRevisionUnlocked,
     bindChoiceActivation,
-    firstUnansweredSceneIndex,
+    firstUnansweredSceneIndex: firstPendingSceneIndex,
     resolveAccusationFromButton,
     accusationReadinessForBrief,
     retryPatienceLostStep,
@@ -690,7 +816,7 @@ function renderDailyCase() {
     state.scene = "sceneReview";
     state.dialogueProgress = {
       ...(state.dialogueProgress ?? {}),
-      [`${caseKey(brief)}:sceneReview`]: firstUnansweredSceneIndex(brief)
+      [`${caseKey(brief)}:sceneReview`]: firstPendingSceneIndex(brief)
     };
     saveState();
     return screens.renderSceneReview(brief);
@@ -807,10 +933,11 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
   const visualHud = visualHudOverride ?? (showCaseHud
     ? `${caseProgressStrip(brief)}${audiencePatienceHud(pressure)}${liveCommentStrip(pressure)}${portraitLayer(brief, mood)}`
     : storyPackSummaryHud());
-  const total = Math.max(1, keyQuestionLimit(brief));
+  const total = Math.max(1, playableSceneCount(brief));
   const materialProfile = unlockedMaterialProfile({ state, brief, visible: showCaseHud });
   const currentMaterial = materialProfile.label;
-  app.innerHTML = liveFrameHtml({
+  const pixelTransition = pixelTransitionForCurrentScene(brief);
+  app.innerHTML = personalizeHostHtml(liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel,
     audioSettings: getAudioSettings(),
@@ -824,20 +951,21 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     material: currentMaterial,
     materialCount: materialProfile.count,
     screenEffect: state.lastScreenEffect ?? "",
-    pixelTransition: pixelTransitionForCurrentScene(brief),
-    screenClass: `${screenClass} ${showCaseHud ? liveSceneClass(brief, mood) : ""}`.trim(),
+    pixelTransition,
+    rewindAvailable: canRewindQuestion(questionRewindHistory),
+    screenClass: `${screenClass} ${pixelTransition?.kind === "reveal" ? "key-reveal-answer" : ""} ${showCaseHud ? liveSceneClass(brief, mood) : ""}`.trim(),
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
           onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
           label,
-          segment: answeredSceneCountForState(state, brief) + 1,
+          segment: Math.min(total, answeredSceneCountForState(state, brief) + 1),
           total,
           pressure,
           material: currentMaterial,
           materialCount: materialProfile.count
         })
       : ""
-  });
+  }), state.playerName);
   const hadPressureCue = Boolean(state.lastReaction || state.lastPressureSignal || state.lastScreenEffect || state.lastPityLine);
   if (pressure.pityKey) {
     state.materialPityLog = {
@@ -866,7 +994,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
 
 function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-city", audioEnterCueId = "", keepVoiceCueId = "" }) {
   const materialProfile = unlockedMaterialProfile({ state, brief });
-  app.innerHTML = liveFrameHtml({
+  app.innerHTML = personalizeHostHtml(liveFrameHtml({
     productName: PRODUCT_NAME,
     modeLabel: "白天调查",
     audioSettings: getAudioSettings(),
@@ -881,8 +1009,9 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
     materialCount: materialProfile.count,
     screenEffect: "",
     pixelTransition: pixelTransitionForCurrentScene(brief),
+    rewindAvailable: canRewindQuestion(questionRewindHistory),
     controlDeckHtml: ""
-  });
+  }), state.playerName);
   bind('[data-action="title"]', returnToTitle);
   bind('[data-action="reset"]', resetToTitle);
   bindAudioControls({ root: app, onToggleSound: render });
@@ -893,14 +1022,14 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
 }
 
 function pixelTransitionForCurrentScene(brief = {}) {
+  const revealTransition = keyRevealTransitionForCurrentScene(brief);
+  if (revealTransition) return revealTransition;
   const transition = {
     nightShellPrologue: { kind: "soft-fade", eyebrow: "20:00", label: "开播前" },
     overnightPostLive: { kind: "signal-disconnect", eyebrow: "SIGNAL LOST", label: "挂断以后" },
     dayActOpening: { kind: "scene", eyebrow: "DAY SHIFT", label: "白天调查" },
     overnightCallback: { kind: "signal-connect", eyebrow: "CALLBACK", label: "第二晚回拨" },
-    storyInterlude: { kind: "signal-disconnect", eyebrow: "LINE CLOSED", label: "换下一通热线" },
-    caseBridge: { kind: "soft-fade", eyebrow: "INTERMISSION", label: "下一幕" },
-    caseTitle: { kind: "signal-connect", eyebrow: `CALL ${String(state.chapter ?? 1).padStart(2, "0")}`, label: "新案接入" },
+    storyInterlude: { kind: "signal-disconnect", eyebrow: "LINE CLOSED", label: "连线结束" },
     nightShellEpilogue: { kind: "scene", eyebrow: "OFF AIR", label: "天亮前" }
   }[state.scene];
   if (!transition) return null;
@@ -910,12 +1039,26 @@ function pixelTransitionForCurrentScene(brief = {}) {
   return transition;
 }
 
+function keyRevealTransitionForCurrentScene(brief = {}) {
+  if (state.scene !== "sceneQuestionAnswer") return null;
+  const focus = state.sceneQuestionFocus;
+  if (!focus || focus.kind !== "key" || focus.caseId !== caseKey(brief)) return null;
+  const pick = state.sceneQuestionPicks?.[answerKey(brief, focus.sceneIndex)];
+  const transition = pick?.revealTransition;
+  if (!transition?.id) return null;
+  const key = `${caseKey(brief)}:reveal:${transition.id}`;
+  if (shownPixelTransitions.has(key)) return null;
+  shownPixelTransitions.add(key);
+  return { ...transition, kind: "reveal" };
+}
+
 function mountCurrentDialogue() {
   const card = app?.querySelector(".dialogue-card");
   if (card) card.insertAdjacentHTML("beforeend", avgSystemBarHtml(state.settings));
   const materialPanel = mountMaterialPanel();
   let controller = null;
   controller = mountDialoguePresentation(app, {
+    hostName: normalizePlayerName(state.playerName),
     speed: state.settings?.textSpeed ?? "normal",
     onPageStart: (page) => {
       const pageLines = Array.isArray(page?.lines) ? page.lines : [page];
@@ -1004,10 +1147,30 @@ function compactDialogueLines(lines) {
   return (lines ?? []).filter((line) => line?.text);
 }
 
-function bind(selector, handler) {
+function bind(selector, handler, eventName = "click") {
   document.querySelectorAll(selector).forEach((element) => {
-    element.addEventListener("click", handler);
+    element.addEventListener(eventName, handler);
   });
+}
+
+function commitTitlePlayerName() {
+  const previousName = normalizePlayerName(state.playerName);
+  const input = document.querySelector("[data-player-name]");
+  const nextName = normalizePlayerName(input?.value ?? titlePlayerNameDraft ?? previousName);
+  state.playerName = nextName;
+  if (previousName !== nextName) {
+    const previousFamiliarName = playerFamiliarName(previousName);
+    const nextFamiliarName = playerFamiliarName(nextName);
+    state.dialogueBacklog = (state.dialogueBacklog ?? []).map((line) => ({
+      ...line,
+      speaker: personalizeHostText(line?.speaker ?? "", nextName).replaceAll(previousName, nextName),
+      text: personalizeHostText(line?.text ?? "", nextName)
+        .replaceAll(`${previousFamiliarName}哥`, `${nextFamiliarName}哥`)
+        .replaceAll(previousName, nextName)
+    }));
+  }
+  titlePlayerNameDraft = null;
+  return nextName;
 }
 
 function resetViewportScroll() {
@@ -1045,7 +1208,7 @@ function preferredDefaultButton() {
 }
 
 function preferredBackButton() {
-  return topInteractiveScope()?.querySelector('[data-material-close]:not(:disabled), [data-record-close]:not(:disabled), [data-close-question-menu]:not(:disabled), [data-retry-case]:not(:disabled), [data-action="title"]:not(:disabled)') ?? null;
+  return topInteractiveScope()?.querySelector('[data-material-close]:not(:disabled), [data-record-close]:not(:disabled), [data-close-question-menu]:not(:disabled), [data-retry-case]:not(:disabled), [data-action="rewind"]:not(:disabled), [data-action="title"]:not(:disabled)') ?? null;
 }
 
 function preferredReviewButton() {
@@ -1222,7 +1385,7 @@ function moveScene(scene) {
       state.scene = "sceneReview";
       state.dialogueProgress = {
         ...(state.dialogueProgress ?? {}),
-        [`${caseKey(brief)}:sceneReview`]: firstUnansweredSceneIndex(brief)
+        [`${caseKey(brief)}:sceneReview`]: firstPendingSceneIndex(brief)
       };
       saveState();
       return render();
@@ -1263,7 +1426,7 @@ function currentIndex(brief, area, total) {
   return Math.max(0, Math.min(Number(state.dialogueProgress?.[`${caseKey(brief)}:${area}`] ?? 0), Math.max(0, total - 1)));
 }
 
-function firstUnansweredSceneIndex(brief) {
+function firstPendingSceneIndex(brief) {
   return firstOpenSceneIndex(brief, (actionKey) => actionDone(brief, actionKey));
 }
 
@@ -1332,7 +1495,7 @@ function issueCompletion(brief) {
   return calculateIssueCompletion({
     brief,
     foundContradictions: contradictionsForState(state, brief),
-    requiredLimit: keyQuestionLimit(brief)
+    requiredLimit: playableSceneCount(brief)
   });
 }
 
@@ -1410,6 +1573,7 @@ function isFinalStoryPackCase() {
 }
 
 function advanceToNextStoryPackCase(message = "新的来电接进来，上一通留给弹幕吵。") {
+  clearQuestionRewindHistory();
   state.chapter = Math.min(Number(state.chapter ?? 1) + 1, state.caseBriefs?.length ?? 1);
   state.caseBrief = activeCaseBrief();
   state.scene = "caseTitle";
@@ -1439,6 +1603,7 @@ function retryPatienceLostStep(brief) {
 }
 
 function resetCaseAttempt(brief) {
+  clearQuestionRewindHistory();
   const key = caseKey(brief);
   state.scene = "caseOpen";
   state.sceneQuestionFocus = null;
@@ -1504,7 +1669,7 @@ function audiencePatienceLost(brief, context = {}) {
   if (!casePatienceLost({
     budget,
     answeredScenes: answeredSceneCountForState(state, brief),
-    requiredScenes: keyQuestionLimit(brief),
+    requiredScenes: playableSceneCount(brief),
     answeredEvidence: answeredEvidenceCountForState(state, brief),
     requiredEvidence: evidenceChecksFor(brief).length
   })) return false;
@@ -1811,7 +1976,7 @@ function materialPityLineFor(brief = {}, check = {}, checkIndex = 0, outcome = n
 function caseProgressStrip(brief) {
   if (!brief) return "";
   return caseProgressStripHtml({
-    total: keyQuestionLimit(brief),
+    total: playableSceneCount(brief),
     answered: answeredSceneCountForState(state, brief),
     label: isStoryPackMode() ? "匿名来电" : brief.label ?? "连线中"
   });
@@ -1844,6 +2009,7 @@ function portraitLayer(brief, mood = "listening") {
     artSrc: art.src,
     fallbackSrc: art.fallbackSrc,
     artStyle: brief.callerArtStyle,
+    hostName: normalizePlayerName(state.playerName),
     mood,
     expression,
     sceneIndex

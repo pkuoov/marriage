@@ -2,13 +2,14 @@ import { HOST_NAME } from "../hostProfile.js";
 
 export function sceneReviewHtml({
   index = 0,
+  displayIndex = index,
   done = false,
   activeExchangeHtml = "",
   completedExchangeHtml = "",
   reviewHtml = ""
 } = {}) {
   return `
-    <p><b>第 ${Number(index ?? 0) + 1} 句</b></p>
+    <p><b>第 ${Number(displayIndex ?? 0) + 1} 句</b></p>
     <div class="call-dialogue">
       ${done ? completedExchangeHtml : activeExchangeHtml}
     </div>
@@ -135,14 +136,13 @@ function stanceSnapshotOptionHtml(option = {}, optionIndex = 0, pick = null) {
     return `
       <article class="stance-snapshot-option ${selected ? "selected" : "dimmed"}">
         <b>${escapeHtml(option.label ?? "")}</b>
-        <p>${escapeHtml(selected ? option.feedback ?? option.summary ?? "" : option.summary ?? "")}</p>
+        ${selected && (option.feedback ?? option.summary) ? `<p>${escapeHtml(option.feedback ?? option.summary ?? "")}</p>` : ""}
       </article>
     `;
   }
   return `
     <button class="stance-snapshot-option" data-stance-snapshot="${optionIndex}" type="button">
       <b>${escapeHtml(option.label ?? "")}</b>
-      <p>${escapeHtml(option.summary ?? "")}</p>
     </button>
   `;
 }

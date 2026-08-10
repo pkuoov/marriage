@@ -1,6 +1,7 @@
 import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js";
 import { activeSaveSlot, saveStore } from "./platform/saveStore.js";
 import { routeAxisForChoice } from "./runtime/routeLog.js";
+import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "./playerIdentity.js";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
@@ -20,6 +21,7 @@ export const CHARACTER_ART = {
 export const baseState = {
   screen: "title",
   saveSlot: "slot1",
+  playerName: DEFAULT_PLAYER_NAME,
   settings: {
     textSpeed: "normal",
     autoMode: false,
@@ -29,6 +31,7 @@ export const baseState = {
   },
   caseMode: "episode",
   quickDetective: null,
+  quickDetectiveCompletedIds: [],
   chapter: 1,
   scene: "caseOpen",
   attrs: { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 },
@@ -86,6 +89,7 @@ export function migrateState(saved) {
     attrs: { ...baseState.attrs, ...(saved.attrs ?? {}) }
   };
   next.saveSlot = activeSaveSlot();
+  next.playerName = normalizePlayerName(next.playerName);
   next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
   if (!Array.isArray(next.dialogueBacklog)) next.dialogueBacklog = [];
   if (!("caseBrief" in next)) next.caseBrief = null;
@@ -131,6 +135,8 @@ export function migrateState(saved) {
   next.routeChoiceLog = migrateChoiceListRecord(next.routeChoiceLog);
   next.caseMode = normalizeCaseMode(next.caseMode);
   if (!next.quickDetective || typeof next.quickDetective !== "object" || Array.isArray(next.quickDetective)) next.quickDetective = null;
+  if (!Array.isArray(next.quickDetectiveCompletedIds)) next.quickDetectiveCompletedIds = [];
+  next.quickDetectiveCompletedIds = [...new Set(next.quickDetectiveCompletedIds.filter((caseId) => typeof caseId === "string" && caseId))];
   if (next.caseBriefs.length && !validCaseBriefCount(next.caseBriefs.length, next.caseMode)) {
     next.screen = "title";
     next.caseBrief = null;

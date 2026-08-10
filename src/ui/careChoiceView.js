@@ -1,7 +1,8 @@
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 import { choiceButtonBodyHtml } from "./callFlowView.js";
+import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
-export function careChoiceHtml({ choices = [], selectedChoice = null } = {}) {
+export function careChoiceHtml({ choices = [], selectedChoice = null, hostName = DEFAULT_PLAYER_NAME } = {}) {
   return `
     <section class="care-choice-card">
       <div class="care-choice-heading">
@@ -9,7 +10,7 @@ export function careChoiceHtml({ choices = [], selectedChoice = null } = {}) {
         <h2>案情说完了，你还想怎么送她下麦？</h2>
         <p>这句不判分。她会记得你怎么说。</p>
       </div>
-      ${selectedChoice ? careChoiceDialogueHtml(selectedChoice) : `
+      ${selectedChoice ? careChoiceDialogueHtml(selectedChoice, hostName) : `
         <div class="care-choice-grid">
           ${choices.map((choice) => `
             <button class="decision-choice" data-care-choice="${escapeHtml(choice.id)}" type="button">
@@ -26,9 +27,9 @@ export function careChoiceContinueHtml({ finalCase = false } = {}) {
   return `<button class="primary" data-care-choice-continue type="button">${finalCase ? "听完这夜" : "正式结案"}</button>`;
 }
 
-function careChoiceDialogueHtml(choice = {}) {
+function careChoiceDialogueHtml(choice = {}, hostName = DEFAULT_PLAYER_NAME) {
   const lines = [
-    { role: "host", speaker: "林旭阳", text: choice.hostLine },
+    { role: "host", speaker: hostName, text: choice.hostLine },
     ...(choice.lines ?? [])
   ];
   return `
@@ -36,7 +37,7 @@ function careChoiceDialogueHtml(choice = {}) {
       ${lines.map((line) => line.role === "pause"
         ? `<div class="care-choice-pause" aria-label="停顿"><span></span></div>`
         : `<div class="care-choice-line care-${escapeHtml(line.role ?? "caller")}">
-            <b>${escapeHtml(line.speaker ?? (line.role === "host" ? "林旭阳" : "咨询者"))}</b>
+            <b>${escapeHtml(line.speaker ?? (line.role === "host" ? hostName : "咨询者"))}</b>
             <p>${escapeHtml(line.text ?? "")}</p>
           </div>`).join("")}
     </div>

@@ -33,13 +33,12 @@ export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePi
     ${questionSectionHtml({
       className: "question-section-dialogue",
       title: "补问背景",
-      hint: "先听细节，不收束当前这句话。",
       content: dialogueRows
     })}
     ${questionSectionHtml({
       className: "question-section-key",
       title: "追原话",
-      hint: "选一句继续；绕开要点可能消耗听众耐心。",
+      hint: "绕开要点可能消耗听众耐心。",
       content: keyRows
     })}
   `, "scene-question-group");
@@ -50,7 +49,6 @@ export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks
     <section class="question-menu-card" aria-label="连线追问">
       <header>
         <b>这句话，你准备从哪儿问下去？</b>
-        <small>标着“疑点方向”的选项只选你在意的点；按下以后，它会变成你说出口的完整问句。</small>
       </header>
       ${helperPromptHtml(sceneIndex, scene, helper, helperRevealed)}
       <div class="question-menu-options">
@@ -91,11 +89,9 @@ function dialogueQuestionButton(sceneIndex, optionIndex, option = {}, asked = fa
 }
 
 function keyQuestionButton(sceneIndex, optionIndex, option = {}) {
-  const directionOnly = Boolean(option.suspicionLabel);
   return `
-    <button class="choice-question ${directionOnly ? "choice-question-direction" : ""}" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
+    <button class="choice-question choice-question-direction" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
       <span class="choice-label">
-        ${directionOnly ? `<small class="choice-direction-kicker">疑点方向</small>` : ""}
         <span class="choice-text">${escapeHtml(playerQuestionLabel(option))}</span>
       </span>
       <small class="choice-cost-meta">${CHOICE_COST_META.keyQuestion}</small>
@@ -109,7 +105,7 @@ export function playerQuestionLabel(option = {}) {
 
 function helperPromptHtml(sceneIndex, scene = {}, helper = null, helperRevealed = false) {
   const hint = String(scene.helperHint ?? "").trim();
-  if (!helper?.id || !hint) return "";
+  if (!helper?.id || helper.playerVisible === false || !hint) return "";
   if (!helperRevealed) {
     return `
       <aside class="helper-prompt helper-prompt-closed" aria-label="场下求助">
@@ -132,7 +128,7 @@ function questionSectionHtml({ className = "", title = "", hint = "", content = 
     <section class="question-section ${className}">
       <header class="question-section-head">
         <b>${escapeHtml(title)}</b>
-        <small>${escapeHtml(hint)}</small>
+        ${hint ? `<small>${escapeHtml(hint)}</small>` : ""}
       </header>
       <div class="choice-stack">${content}</div>
     </section>

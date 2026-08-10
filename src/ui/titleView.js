@@ -6,17 +6,15 @@ export function titleScreenHtml({
   title = "",
   hook = "",
   object = "",
-  themeTitle = "",
-  acts = [],
   host = {},
   audioSettings = {},
   canContinue = false,
   resumeLabel = "上次停在：直播连线",
   confirmNewGame = false,
-  quickModeAvailable = false
+  quickModeAvailable = false,
+  playerName = "林旭阳"
 } = {}) {
   const titleLines = productTitleLines(productName);
-  const actRows = (acts ?? []).slice(0, 4);
   return `
     <main>
       <section class="title-screen">
@@ -29,23 +27,7 @@ export function titleScreenHtml({
             <section class="title-brand-block">
               <p class="eyebrow">${storyPack ? "匿名连麦 · 现实推理" : "今天只有这一通"}</p>
               <h1><span>${escapeHtml(titleLines[0])}</span><strong>${escapeHtml(titleLines[1])}</strong></h1>
-              <p class="title-deck">${storyPack
-                ? "今晚，你坐在林旭阳的主播台前。接起电话，听完原话，再决定从哪儿问下去。"
-                : escapeHtml(title)}</p>
-              ${storyPack ? `
-                <section class="title-theme-card">
-                  <span>今晚主题</span>
-                  <b>${escapeHtml(themeTitle || "好听的身份，最后让谁买单")}</b>
-                </section>
-                <ol class="title-act-rail" aria-label="今晚四幕">
-                  ${actRows.map((act, index) => `
-                    <li>
-                      <small>${String(index + 1).padStart(2, "0")}</small>
-                      <b>${escapeHtml(act.label ?? act.act ?? "")}</b>
-                    </li>
-                  `).join("")}
-                </ol>
-              ` : ""}
+              ${storyPack ? "" : `<p class="title-deck">${escapeHtml(title)}</p>`}
             </section>
             <aside class="title-entry-panel">
               <div class="title-console-strip" aria-label="直播间状态">
@@ -54,16 +36,17 @@ export function titleScreenHtml({
               </div>
               ${storyPack ? `
                 <section class="title-host-card">
-                  <span>今晚由你接麦</span>
-                  <b>${escapeHtml(host.name ?? "林旭阳")}<small>${escapeHtml(host.role ?? "深夜热线主播")}</small></b>
-                  <p>${escapeHtml(host.setup ?? "不替任何人下结论，只把没说全的话问清楚。")}</p>
+                  <label class="title-host-name-field">
+                    <input data-player-name type="text" value="${escapeHtml(playerName || host.name || "林旭阳")}" maxlength="12" autocomplete="off" spellcheck="false" aria-label="主播姓名" />
+                    <small>${escapeHtml(host.role ?? "深夜热线主播")}</small>
+                  </label>
                 </section>
               ` : ""}
-              <div class="quick-play-card case-file-ledger daily-hook-card">
+              ${storyPack ? "" : `<div class="quick-play-card case-file-ledger daily-hook-card">
                 <span>${escapeHtml(object)}</span>
                 <b>${escapeHtml(hook)}</b>
-                <small>${storyPack ? "门外还有一点安静。进门以后，先把直播开起来。" : "同一天同一通电话。你接哪句，朋友进来就能对答案。"}</small>
-              </div>
+                <small>同一天同一通电话。你接哪句，朋友进来就能对答案。</small>
+              </div>`}
               <div class="title-actions">
                 <div class="title-journey-menu">
                   ${canContinue ? `
@@ -86,9 +69,9 @@ export function titleScreenHtml({
                   `}
                   ${quickModeAvailable ? `
                     <button class="title-journey-action title-quick-detective" data-start-quick-detective type="button">
-                      <span>DETECTIVE MODE · 10 MIN</span>
-                      <b>评论区快案</b>
-                      <small>听完一通电话，从原话里圈出破绽</small>
+                      <span>DETECTIVE MODE · 15 MIN</span>
+                      <b>直播快案</b>
+                      <small>选择一宗短案，当面问穿前后矛盾</small>
                     </button>
                   ` : ""}
                 </div>

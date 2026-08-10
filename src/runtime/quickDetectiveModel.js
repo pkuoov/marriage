@@ -1,125 +1,254 @@
+const QUICK_SCENES = new Set(["intro", "transcript", "issueSelection", "confrontation", "verdict"]);
+const LEGACY_REVIEW_SCENES = new Set(["investigation", "feedback", "crowdAssist", "crowdFeedback"]);
+
 export function initialQuickDetectiveState(packet = {}) {
   return {
+    flowVersion: quickFlowVersion(packet),
     caseId: packet.id ?? "",
     scene: "intro",
+    roundIndex: 0,
     turnIndex: 0,
-    attemptedQuoteIds: [],
-    playerFoundFlawIds: [],
-    crowdFoundFlawIds: [],
-    crowdQueue: [],
-    selectedQuoteId: null
+    turnLineIndex: 0,
+    activeConfrontationId: null,
+    resolvedConfrontationIds: [],
+    attemptedIssueIds: [],
+    issueFeedback: "",
+    confrontationLineIndex: 0,
+    verdictIndex: 0,
+    verdictLineIndex: 0
   };
 }
 
 export function normalizeQuickDetectiveState(value, packet = {}) {
   const base = initialQuickDetectiveState(packet);
   if (!value || value.caseId !== packet.id) return base;
-  const optionIds = new Set((packet.quoteOptions ?? []).map((option) => option.id));
-  const flawIds = new Set((packet.quoteOptions ?? []).filter((option) => option.kind === "flaw").map((option) => option.flawId));
-  const scenes = new Set(["intro", "transcript", "investigation", "feedback", "crowdAssist", "crowdFeedback", "verdict"]);
-  return {
+  if (value.flowVersion !== base.flowVersion) return base;
+  const requestedScene = LEGACY_REVIEW_SCENES.has(value.scene) || (value.scene === "confrontation" && !value.activeConfrontationId)
+    ? "issueSelection"
+    : value.scene;
+  const confrontationIds = new Set((packet.confrontations ?? []).map((item) => item.id));
+  const issueIds = new Set((packet.issueOptions ?? []).map((item) => item.id));
+  const activeConfrontation = (packet.confrontations ?? []).find((item) => item.id === value.activeConfrontationId);
+  const roundIndex = boundedIndex(value.roundIndex, quickDisclosureRounds(packet).length);
+  const normalized = {
     ...base,
-    ...value,
-    scene: scenes.has(value.scene) ? value.scene : "intro",
-    turnIndex: Math.max(0, Math.min(Math.max(0, (packet.turns?.length ?? 1) - 1), Number(value.turnIndex ?? 0))),
-    attemptedQuoteIds: uniqueKnown(value.attemptedQuoteIds, optionIds),
-    playerFoundFlawIds: uniqueKnown(value.playerFoundFlawIds, flawIds),
-    crowdFoundFlawIds: uniqueKnown(value.crowdFoundFlawIds, flawIds),
-    crowdQueue: uniqueKnown(value.crowdQueue, flawIds),
-    selectedQuoteId: optionIds.has(value.selectedQuoteId) ? value.selectedQuoteId : null
+    flowVersion: base.flowVersion,
+    scene: QUICK_SCENES.has(requestedScene) ? requestedScene : "intro",
+    roundIndex,
+    turnIndex: boundedIndex(value.turnIndex, packet.turns?.length),
+    turnLineIndex: boundedLineIndex(value.turnLineIndex, 2),
+    activeConfrontationId: confrontationIds.has(value.activeConfrontationId) ? value.activeConfrontationId : null,
+    resolvedConfrontationIds: uniqueKnown(value.resolvedConfrontationIds, confrontationIds),
+    attemptedIssueIds: uniqueKnown(value.attemptedIssueIds, issueIds),
+    issueFeedback: String(value.issueFeedback ?? ""),
+    confrontationLineIndex: boundedLineIndex(value.confrontationLineIndex, quickConfrontationLines(activeConfrontation).length),
+    verdictIndex: boundedIndex(value.verdictIndex, packet.ending?.summaryPages?.length),
+    verdictLineIndex: boundedLineIndex(
+      value.verdictLineIndex,
+      packet.ending?.summaryPages?.[boundedIndex(value.verdictIndex, packet.ending?.summaryPages?.length)]?.lines?.length
+    )
   };
-}
-
-export function quickDetectiveProgress(packet = {}, state = {}) {
-  const flawIds = (packet.quoteOptions ?? []).filter((option) => option.kind === "flaw").map((option) => option.flawId);
-  const playerFound = uniqueKnown(state.playerFoundFlawIds, new Set(flawIds));
-  const crowdFound = uniqueKnown(state.crowdFoundFlawIds, new Set(flawIds)).filter((id) => !playerFound.includes(id));
-  const foundIds = [...playerFound, ...crowdFound];
-  const attemptsUsed = uniqueKnown(state.attemptedQuoteIds, new Set((packet.quoteOptions ?? []).map((option) => option.id))).length;
-  const markLimit = Math.max(1, Number(packet.playerMarkLimit ?? 1));
-  return {
-    attemptsUsed,
-    marksLeft: Math.max(0, markLimit - attemptsUsed),
-    markLimit,
-    playerFound,
-    crowdFound,
-    foundIds,
-    remainingFlawIds: flawIds.filter((id) => !foundIds.includes(id)),
-    transcriptComplete: Number(state.turnIndex ?? 0) >= Math.max(0, (packet.turns?.length ?? 1) - 1),
-    readyForCrowd: attemptsUsed >= markLimit,
-    solved: foundIds.length >= flawIds.length
-  };
+  return resumeSolvedQuickRound(packet, normalized);
 }
 
 export function advanceQuickTranscript(packet = {}, state = {}) {
-  const lastIndex = Math.max(0, (packet.turns?.length ?? 1) - 1);
-  const turnIndex = Math.min(lastIndex, Number(state.turnIndex ?? 0) + 1);
+  const round = quickDisclosureRoundForState(packet, state);
+  const turnIndexes = quickTurnIndexesForRound(packet, round);
+  const currentIndex = turnIndexes.includes(Number(state.turnIndex))
+    ? Number(state.turnIndex)
+    : (turnIndexes[0] ?? 0);
+  const position = Math.max(0, turnIndexes.indexOf(currentIndex));
+  if (boundedLineIndex(state.turnLineIndex, 2) === 0) {
+    return { ...state, scene: "transcript", turnIndex: currentIndex, turnLineIndex: 1 };
+  }
+  if (position >= Math.max(0, turnIndexes.length - 1)) {
+    return { ...state, scene: "issueSelection", issueFeedback: "" };
+  }
+  return { ...state, scene: "transcript", turnIndex: turnIndexes[position + 1], turnLineIndex: 0 };
+}
+
+export function applyQuickIssueSelection(packet = {}, state = {}, issueId = "") {
+  const issue = quickIssueOptionsForRound(packet, state).find((item) => item.id === issueId);
+  if (!issue) return state;
+  // A decoy only needs one response. A valid direction must remain recoverable if
+  // a save was restored after the attempt was recorded but before the
+  // confrontation finished.
+  if (state.attemptedIssueIds?.includes(issueId) && !issue.confrontationId) return state;
+  const attemptedIssueIds = [...new Set([...(state.attemptedIssueIds ?? []), issueId])];
+  const resolved = new Set(state.resolvedConfrontationIds ?? []);
+  const confrontation = (packet.confrontations ?? []).find((item) => item.id === issue.confrontationId);
+  if (!confrontation || resolved.has(confrontation.id)) {
+    return {
+      ...state,
+      scene: "issueSelection",
+      attemptedIssueIds,
+      issueFeedback: issue.missLine ?? "这件事可以继续问，但她刚才的两段说法还没有形成矛盾。"
+    };
+  }
   return {
     ...state,
-    turnIndex,
-    scene: Number(state.turnIndex ?? 0) >= lastIndex ? "investigation" : "transcript"
+    scene: "confrontation",
+    attemptedIssueIds,
+    activeConfrontationId: confrontation.id,
+    confrontationLineIndex: 0,
+    issueFeedback: ""
   };
 }
 
-export function applyQuickQuoteSelection(packet = {}, state = {}, quoteId = "") {
-  const progress = quickDetectiveProgress(packet, state);
-  const option = quickQuoteOption(packet, quoteId);
-  if (!option || progress.readyForCrowd || state.attemptedQuoteIds?.includes(quoteId)) return state;
+export function advanceQuickConfrontation(packet = {}, state = {}) {
+  const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId);
+  const lines = quickConfrontationLines(confrontation);
+  const lineIndex = boundedLineIndex(state.confrontationLineIndex, lines.length);
+  if (lineIndex < Math.max(0, lines.length - 1)) {
+    return { ...state, scene: "confrontation", confrontationLineIndex: lineIndex + 1 };
+  }
+  const activeId = state.activeConfrontationId;
+  const resolvedConfrontationIds = activeId && !state.resolvedConfrontationIds?.includes(activeId)
+    ? [...(state.resolvedConfrontationIds ?? []), activeId]
+    : [...(state.resolvedConfrontationIds ?? [])];
+  const rounds = quickDisclosureRounds(packet);
+  const roundIndex = boundedIndex(state.roundIndex, rounds.length);
+  const round = rounds[roundIndex] ?? {};
+  const roundRequiredIds = quickRequiredConfrontationIds(packet, round);
+  const roundSolved = roundRequiredIds.every((id) => resolvedConfrontationIds.includes(id));
+  if (roundSolved && roundIndex < rounds.length - 1) {
+    const nextRoundIndex = roundIndex + 1;
+    const nextTurnIndex = quickTurnIndexesForRound(packet, rounds[nextRoundIndex])[0] ?? 0;
+    return {
+      ...state,
+      scene: "transcript",
+      roundIndex: nextRoundIndex,
+      turnIndex: nextTurnIndex,
+      turnLineIndex: 0,
+      activeConfrontationId: null,
+      resolvedConfrontationIds,
+      confrontationLineIndex: 0,
+      issueFeedback: ""
+    };
+  }
+  const solved = resolvedConfrontationIds.length >= (packet.confrontations?.length ?? 0);
+  return solved
+    ? { ...state, scene: "verdict", activeConfrontationId: null, resolvedConfrontationIds, verdictIndex: 0, verdictLineIndex: 0 }
+    : { ...state, scene: "issueSelection", activeConfrontationId: null, resolvedConfrontationIds, confrontationLineIndex: 0 };
+}
+
+export function quickDisclosureRounds(packet = {}) {
+  if (Array.isArray(packet.disclosureRounds) && packet.disclosureRounds.length) return packet.disclosureRounds;
+  return [{
+    id: "full-call",
+    label: "原始连线",
+    turnIds: (packet.turns ?? []).map((turn) => turn.id),
+    issueOptionIds: (packet.issueOptions ?? []).map((option) => option.id),
+    requiredConfrontationIds: (packet.confrontations ?? []).map((item) => item.id)
+  }];
+}
+
+export function quickFlowVersion(packet = {}) {
+  const rounds = quickDisclosureRounds(packet);
+  const roundShape = rounds.map((round) => [
+    round.id,
+    ...(round.turnIds ?? []),
+    "?",
+    ...(round.issueOptionIds ?? []),
+    "!",
+    ...(round.requiredConfrontationIds ?? [])
+  ].join(":"));
+  const confrontationShape = (packet.confrontations ?? []).map((item) => item.id).join(":");
+  return `quick-v3|${roundShape.join("|")}|${confrontationShape}`;
+}
+
+export function quickDisclosureRoundForState(packet = {}, state = {}) {
+  const rounds = quickDisclosureRounds(packet);
+  return rounds[boundedIndex(state.roundIndex, rounds.length)] ?? rounds[0] ?? {};
+}
+
+export function quickIssueOptionsForRound(packet = {}, state = {}) {
+  const round = quickDisclosureRoundForState(packet, state);
+  const allowedIds = new Set(round.issueOptionIds ?? []);
+  return (packet.issueOptions ?? []).filter((option) => !allowedIds.size || allowedIds.has(option.id));
+}
+
+export function quickTurnIndexesForRound(packet = {}, round = {}) {
+  const indexById = new Map((packet.turns ?? []).map((turn, index) => [turn.id, index]));
+  const indexes = (round.turnIds ?? []).map((id) => indexById.get(id)).filter(Number.isInteger);
+  return indexes.length ? indexes : (packet.turns ?? []).map((_, index) => index);
+}
+
+function quickRequiredConfrontationIds(packet = {}, round = {}) {
+  if (Array.isArray(round.requiredConfrontationIds) && round.requiredConfrontationIds.length) {
+    return round.requiredConfrontationIds;
+  }
+  const issueIds = new Set(round.issueOptionIds ?? []);
+  return (packet.issueOptions ?? [])
+    .filter((option) => (!issueIds.size || issueIds.has(option.id)) && option.confrontationId)
+    .map((option) => option.confrontationId);
+}
+
+function resumeSolvedQuickRound(packet = {}, state = {}) {
+  if (state.scene !== "issueSelection") return state;
+  const rounds = quickDisclosureRounds(packet);
+  const roundIndex = boundedIndex(state.roundIndex, rounds.length);
+  const requiredIds = quickRequiredConfrontationIds(packet, rounds[roundIndex] ?? {});
+  if (!requiredIds.length || !requiredIds.every((id) => state.resolvedConfrontationIds?.includes(id))) return state;
+  if (roundIndex < rounds.length - 1) {
+    const nextRoundIndex = roundIndex + 1;
+    return {
+      ...state,
+      scene: "transcript",
+      roundIndex: nextRoundIndex,
+      turnIndex: quickTurnIndexesForRound(packet, rounds[nextRoundIndex])[0] ?? 0,
+      turnLineIndex: 0,
+      activeConfrontationId: null,
+      confrontationLineIndex: 0,
+      issueFeedback: ""
+    };
+  }
+  const allConfrontationsSolved = (packet.confrontations ?? [])
+    .every((item) => state.resolvedConfrontationIds?.includes(item.id));
+  return allConfrontationsSolved
+    ? { ...state, scene: "verdict", activeConfrontationId: null, verdictIndex: 0, verdictLineIndex: 0 }
+    : state;
+}
+
+export function quickConfrontationLines(confrontation = {}) {
+  if (Array.isArray(confrontation.lines) && confrontation.lines.length) return confrontation.lines;
+  return [
+    confrontation.host ? { role: "host", text: confrontation.host } : null,
+    confrontation.caller ? { role: "caller", text: confrontation.caller } : null
+  ].filter(Boolean);
+}
+
+export function advanceQuickVerdict(packet = {}, state = {}) {
+  const pages = packet.ending?.summaryPages ?? [];
+  const pageIndex = boundedIndex(state.verdictIndex, pages.length);
+  const lineIndex = boundedLineIndex(state.verdictLineIndex, pages[pageIndex]?.lines?.length);
+  const lastLineIndex = Math.max(0, (pages[pageIndex]?.lines?.length ?? 1) - 1);
+  if (lineIndex < lastLineIndex) {
+    return { ...state, verdictIndex: pageIndex, verdictLineIndex: lineIndex + 1 };
+  }
+  const lastIndex = Math.max(0, pages.length - 1);
   return {
     ...state,
-    scene: "feedback",
-    selectedQuoteId: quoteId,
-    attemptedQuoteIds: [...(state.attemptedQuoteIds ?? []), quoteId],
-    playerFoundFlawIds: option.kind === "flaw" && !state.playerFoundFlawIds?.includes(option.flawId)
-      ? [...(state.playerFoundFlawIds ?? []), option.flawId]
-      : [...(state.playerFoundFlawIds ?? [])]
+    verdictIndex: Math.min(lastIndex, pageIndex + 1),
+    verdictLineIndex: 0
   };
 }
 
-export function continueQuickInvestigation(packet = {}, state = {}) {
-  const progress = quickDetectiveProgress(packet, state);
-  return {
-    ...state,
-    selectedQuoteId: null,
-    scene: progress.readyForCrowd ? "crowdAssist" : "investigation",
-    crowdQueue: progress.readyForCrowd && !(state.crowdQueue ?? []).length
-      ? [...progress.remainingFlawIds]
-      : [...(state.crowdQueue ?? [])]
-  };
+export function quickDetectiveIsComplete(packet = {}, state = {}) {
+  if (state.scene !== "verdict") return false;
+  const pages = packet.ending?.summaryPages ?? [];
+  if (!pages.length) return false;
+  const lastPageIndex = pages.length - 1;
+  const lastLineIndex = Math.max(0, (pages[lastPageIndex]?.lines?.length ?? 1) - 1);
+  return Number(state.verdictIndex ?? 0) >= lastPageIndex && Number(state.verdictLineIndex ?? 0) >= lastLineIndex;
 }
 
-export function revealNextCrowdFlaw(packet = {}, state = {}) {
-  const progress = quickDetectiveProgress(packet, state);
-  const queue = (state.crowdQueue ?? []).length ? [...state.crowdQueue] : [...progress.remainingFlawIds];
-  const flawId = queue.shift();
-  if (!flawId) return { ...state, scene: "verdict", selectedQuoteId: null, crowdQueue: [] };
-  const option = (packet.quoteOptions ?? []).find((item) => item.flawId === flawId);
-  return {
-    ...state,
-    scene: "crowdFeedback",
-    selectedQuoteId: option?.id ?? null,
-    crowdFoundFlawIds: state.crowdFoundFlawIds?.includes(flawId)
-      ? [...(state.crowdFoundFlawIds ?? [])]
-      : [...(state.crowdFoundFlawIds ?? []), flawId],
-    crowdQueue: queue
-  };
+function boundedIndex(value, length) {
+  return Math.max(0, Math.min(Math.max(0, Number(length ?? 1) - 1), Number(value ?? 0)));
 }
 
-export function continueQuickCrowd(packet = {}, state = {}) {
-  const progress = quickDetectiveProgress(packet, state);
-  return {
-    ...state,
-    selectedQuoteId: null,
-    scene: progress.solved || !(state.crowdQueue ?? []).length ? "verdict" : "crowdAssist"
-  };
-}
-
-export function quickQuoteOption(packet = {}, quoteId = "") {
-  return (packet.quoteOptions ?? []).find((option) => option.id === quoteId) ?? null;
-}
-
-export function quickTurnById(packet = {}, turnId = "") {
-  return (packet.turns ?? []).find((turn) => turn.id === turnId) ?? null;
+function boundedLineIndex(value, length) {
+  return Math.max(0, Math.min(Math.max(0, Number(length ?? 1) - 1), Number(value ?? 0)));
 }
 
 function uniqueKnown(values, allowed) {

@@ -1,3 +1,5 @@
+import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
+
 export function caseProgressStripHtml({ total = 1, answered = 0, label = "连线中" } = {}) {
   const safeTotal = Math.max(1, Number(total ?? 1));
   const segment = Math.max(1, Math.min(safeTotal, Number(answered ?? 0) + 1));
@@ -76,7 +78,17 @@ export function callerArtForExpression({ neutralSrc = "", variants = {}, express
   };
 }
 
-export function portraitLayerHtml({ artSrc = "", fallbackSrc = "", artStyle = "", mood = "listening", expression = null, sceneIndex = 0 } = {}) {
+export function portraitLayerHtml({
+  artSrc = "",
+  fallbackSrc = "",
+  artStyle = "",
+  hostArtSrc = "./assets/generated/quick-detective/lin-xuyang-host-pixel.png",
+  hostName = DEFAULT_PLAYER_NAME,
+  callerVisible = true,
+  mood = "listening",
+  expression = null,
+  sceneIndex = 0
+} = {}) {
   const safeExpression = expression ?? { kind: "blink", text: "麦里轻轻吸气" };
   const artStyleClass = artStyle === "pixel" ? " art-pixel" : "";
   const fallbackAttr = fallbackSrc && fallbackSrc !== artSrc
@@ -91,11 +103,15 @@ export function portraitLayerHtml({ artSrc = "", fallbackSrc = "", artStyle = ""
   };
   return `
     <div class="case-duel-portraits">
-      <figure class="case-portrait${artStyleClass} mood-${escapeHtml(mood)} pose-${escapeHtml(safeExpression.kind)} beat-${Math.max(0, Number(sceneIndex ?? 0)) % 4} active">
+      <figure class="case-portrait case-portrait-host art-pixel${callerVisible ? "" : " active"}" data-dialogue-portrait="host">
+        ${hostArtSrc ? `<img src="${escapeHtml(hostArtSrc)}" alt="" onerror="this.hidden=true;this.closest('figure')?.classList.add('art-missing');" /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>` : `<span class="anonymous-portrait-placeholder" aria-hidden="true"></span>`}
+        <figcaption><span>主播</span><b>${escapeHtml(hostName)}</b></figcaption>
+      </figure>
+      ${callerVisible ? `<figure class="case-portrait case-portrait-caller${artStyleClass} mood-${escapeHtml(mood)} pose-${escapeHtml(safeExpression.kind)} beat-${Math.max(0, Number(sceneIndex ?? 0)) % 4} active" data-dialogue-portrait="caller">
         ${artSrc ? `<img src="${escapeHtml(artSrc)}" alt=""${fallbackAttr} /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>` : `<span class="anonymous-portrait-placeholder" aria-hidden="true"></span>`}
         <div class="call-expression expression-${escapeHtml(safeExpression.kind)}"><span>${escapeHtml(safeExpression.text)}</span></div>
-        <figcaption><span>匿名来电｜${escapeHtml(moodLabels[mood] ?? "听线")}</span><b>来电形象</b></figcaption>
-      </figure>
+        <figcaption><span>语音连线｜${escapeHtml(moodLabels[mood] ?? "听线")}</span><b>匿名来电人</b></figcaption>
+      </figure>` : ""}
     </div>
   `;
 }
