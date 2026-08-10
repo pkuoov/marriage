@@ -1095,7 +1095,7 @@ function keepInlineChoicesVisible(choices) {
 function mountMaterialPanel() {
   const shell = app?.querySelector("[data-live-shell]");
   const modal = app?.querySelector("[data-material-modal]");
-  const trigger = app?.querySelector("[data-material-open]");
+  const triggers = Array.from(app?.querySelectorAll?.("[data-material-open]") ?? []);
   const choices = app?.querySelector(".avg-choice-overlay");
   let lastFocused = null;
 
@@ -1103,7 +1103,7 @@ function mountMaterialPanel() {
     if (!modal || modal.hidden) return false;
     modal.hidden = true;
     shell?.classList.remove("material-open");
-    trigger?.setAttribute("aria-expanded", "false");
+    triggers.forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
     if (restoreFocus && lastFocused && isVisibleElement(lastFocused)) focusButton(lastFocused);
     return true;
   };
@@ -1111,21 +1111,19 @@ function mountMaterialPanel() {
   const syncChoices = () => {
     const choicesOpen = Boolean(choices && !choices.hidden && choices.querySelector("button:not(:disabled)"));
     shell?.classList.toggle("choices-open", choicesOpen);
-    if (choicesOpen) close({ restoreFocus: false });
   };
 
-  if (!modal || !trigger) return { close, syncChoices };
+  if (!modal || !triggers.length) return { close, syncChoices };
 
-  trigger.addEventListener("click", () => {
-    if (shell?.classList.contains("choices-open")) return;
+  triggers.forEach((trigger) => trigger.addEventListener("click", () => {
     const record = app?.querySelector(".court-record:not([hidden])");
     if (record) record.hidden = true;
     lastFocused = document.activeElement;
     modal.hidden = false;
     shell?.classList.add("material-open");
-    trigger.setAttribute("aria-expanded", "true");
+    triggers.forEach((item) => item.setAttribute("aria-expanded", "true"));
     focusButton(modal.querySelector(".avg-material-panel [data-material-close]"));
-  });
+  }));
   modal.querySelectorAll("[data-material-close]").forEach((button) => button.addEventListener("click", () => close()));
   return { close, syncChoices };
 }

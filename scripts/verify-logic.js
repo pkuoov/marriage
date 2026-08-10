@@ -2102,6 +2102,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(deckHtml, "Viewers", "控场台直播指标必须像直播间状态，不写成玩法分数");
   assertIncludes(deckHtml, "deck-monitor-strip", "控场台必须有麦克风/监听状态，不能只是普通信息卡");
   assertIncludes(deckHtml, "后台材料", "控场台必须把材料作为直播间后台对象呈现");
+  assertIncludes(deckHtml, "data-material-open", "后台材料收到后必须能从控场台直接打开，不能只显示数量");
+  assertIncludes(deckHtml, "点击查看", "后台材料卡必须明确提示玩家可以查看");
   assertIncludes(deckHtml, "deck-material-preview", "控场台材料卡必须有缩略图，提升直播后台操作感");
   assertIncludes(deckHtml, "审批图", "控场台必须展示当前后台材料");
   const frameHtml = liveFrameHtml({ productName: "深夜热线：直播间侦探", modeLabel: "试玩连线", soundEnabled: true, label: "继续对话", chapter: "匿名来电", text: "<p>正文</p>", choices: "<button>继续</button>", visualHud: "<div>HUD</div>", controlDeckHtml: deckHtml, backdropClass: "backdrop-credit", material: "信用卡账单" });
@@ -2138,7 +2140,9 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(stylesSource, ".live-console-shell.has-control-deck > .vn-stage", "桌面主舞台必须明确进入第二列");
   assert(!stylesSource.includes(".case-vn-grid .control-deck { position: absolute"), "控场台不能再被后置 AVG 样式改成遮挡舞台的绝对定位");
   assertIncludes(stylesSource, ".avg-material-modal[hidden]", "材料模态关闭后必须真正退出布局");
-  assertIncludes(stylesSource, ".choices-open .avg-material-card", "选择出现时必须收起材料入口，避免两个交互层争抢");
+  assertIncludes(stylesSource, ".choice-material-shortcut", "关键选择出现时必须在选择层提供材料快捷入口");
+  assertIncludes(liveFrameViewSource, "选择前查看材料", "选择层材料入口必须说明可以先看材料再决定");
+  assertIncludes(appSource, "querySelectorAll?.(\"[data-material-open]\")", "控场台与对白框两个材料入口必须共用同一个材料板");
   assertIncludes(stylesSource, ".case-portrait.art-pixel img", "像素立绘必须使用独立的最近邻渲染规则，不能给旧立绘全局套滤镜");
   assertIncludes(stylesSource, ".deck-card-live", "控场台必须有直播信号视觉模块");
   assert(!stylesSource.includes("50% 50% 44% 44%"), "控场台主播监听不能再画成小人脸图标");

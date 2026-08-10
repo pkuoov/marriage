@@ -1308,10 +1308,34 @@ button:active:not(:disabled) {
   border-color: rgba(121, 184, 204, .22);
 }
 
+.deck-card-material[data-material-open] {
+  width: 100%;
+  text-align: left;
+}
+
+.deck-card-material[data-material-open]::after {
+  content: "查看";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 7px;
+  border: 1px solid rgba(121, 184, 204, .28);
+  border-radius: 999px;
+  color: rgba(187, 229, 239, .86);
+  background: rgba(121, 184, 204, .08);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.deck-card-material[data-material-open]:hover {
+  border-color: rgba(121, 184, 204, .58);
+}
+
 .deck-material-preview {
   position: relative;
   display: grid;
   place-items: center;
+  gap: 0;
   width: 54px;
   height: 38px;
   margin-top: 2px;
@@ -6232,6 +6256,23 @@ button.evidence-target {
 .avg-material-card small { color: rgba(237, 241, 238, .74); font-size: .76rem; }
 .avg-material-card b { color: var(--accent); font-size: .92rem; }
 .choices-open .avg-material-card { visibility: hidden; pointer-events: none; }
+.choice-material-shortcut {
+  position: absolute;
+  z-index: 2;
+  top: clamp(68px, 9vh, 92px);
+  right: clamp(12px, 3vw, 32px);
+  width: auto;
+  min-width: 7.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  border-color: rgba(121, 184, 204, .5);
+  color: #d8fff7;
+  background: rgba(9, 18, 18, .94);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .34);
+}
+.choice-material-shortcut b { color: var(--accent); }
 .avg-material-modal { position: fixed; z-index: 40; inset: 0; display: grid; place-items: center; padding: clamp(1rem, 5vw, 5rem); }
 .avg-material-modal[hidden] { display: none; }
 .avg-material-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 0; background: rgba(2, 5, 12, .82); backdrop-filter: blur(8px); }
@@ -7239,7 +7280,17 @@ button.evidence-target {
   display: none;
 }
 
-.dialogue-focus-stage .dialogue-card.avg-dialogue-active .dialogue-toolbar,
+.dialogue-focus-stage .dialogue-card.avg-dialogue-active .dialogue-toolbar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  min-height: 28px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .quick-detective-screen.quick-scene-transcript .dialogue-toolbar,
 .quick-detective-screen.quick-scene-issueSelection .dialogue-toolbar,
 .quick-detective-screen.quick-scene-confrontation .dialogue-toolbar,
@@ -7247,7 +7298,10 @@ button.evidence-target {
   display: none;
 }
 
-.dialogue-focus-stage .dialogue-card.avg-dialogue-active .dialogue-toolbar .eyebrow,
+.dialogue-focus-stage .dialogue-card.avg-dialogue-active .dialogue-toolbar .eyebrow {
+  display: none;
+}
+
 .quick-detective-screen.quick-scene-transcript .dialogue-toolbar .eyebrow,
 .quick-detective-screen.quick-scene-issueSelection .dialogue-toolbar .eyebrow,
 .quick-detective-screen.quick-scene-confrontation .dialogue-toolbar .eyebrow,

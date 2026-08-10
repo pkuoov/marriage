@@ -596,11 +596,21 @@ async function runRoute(route) {
     const portraitStates = new Set();
     let helperHiddenChecked = false;
     let directionChoiceChecked = false;
+    let materialEntryChecked = false;
     let selectedCounterChoiceLabel = "";
     let sceneQuestionCount = 0;
 
     for (let beat = 0; beat < 48; beat += 1) {
       await collectLiveVisualState(page, visualStates, portraitStates);
+      if (route.name === "accounting-restaurant" && !materialEntryChecked && await page.locator(".deck-card-material[data-material-open]").count()) {
+        if (await page.locator("[data-material-open]").count() < 3) throw new Error("received material must be reachable from the control deck, dialogue bar, and active choice layer");
+        if (!await page.locator(".choice-material-shortcut[data-material-open]").isVisible()) throw new Error("active choices must expose a visible received-material shortcut");
+        await page.locator(".choice-material-shortcut[data-material-open]").click();
+        await page.locator(".avg-material-modal:not([hidden])").waitFor({ state: "visible" });
+        await assertVisibleText(page, "社保断缴时间", "the first received material must open before the active choice");
+        await page.locator(".avg-material-panel [data-material-close]").click();
+        materialEntryChecked = true;
+      }
       if (await page.locator("[data-evidence-check]").count()) break;
       if (await page.locator("[data-enter-day-map]").count()) {
         await assertVisibleText(page, "把昨晚没问完的补上", "the second act opening should frame why the host is following up before the map");
@@ -765,8 +775,8 @@ async function runRoute(route) {
     if (visualStates.size < 2 || portraitStates.size < 2) {
       throw new Error(`${route.name} route should change scene and portrait states while questioning`);
     }
-    if (route.name === "accounting-restaurant" && (!helperHiddenChecked || !directionChoiceChecked)) {
-      throw new Error("primary browser route must verify hidden V哥 UI and exercise a direction-only question");
+    if (route.name === "accounting-restaurant" && (!helperHiddenChecked || !directionChoiceChecked || !materialEntryChecked)) {
+      throw new Error("primary browser route must verify hidden V哥 UI, a direction-only question, and the received-material entry");
     }
     const materialIndex = route.materialMode === "miss" ? 1 : 0;
     const materialButtons = page.locator("[data-evidence-check]");

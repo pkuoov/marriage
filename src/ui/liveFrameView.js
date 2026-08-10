@@ -52,24 +52,27 @@ export function liveControlDeckHtml({
         <small>${escapeHtml(pressure.patienceLabel ?? "")}</small>
         ${showPatienceHint ? `<small class="deck-patience-hint">绕问、误指会掉耐心；归零要重听本段。</small>` : ""}
       </section>
-      <section class="deck-card deck-card-material">
-        <span>后台材料</span>
-        ${hasMaterial ? `
-          <div class="deck-material-preview material-${escapeHtml(materialKind)}" aria-hidden="true">
+      ${hasMaterial ? `
+        <button class="deck-card deck-card-material is-ready" data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="查看后台材料：${escapeHtml(material)}" type="button">
+          <span>后台材料</span>
+          <span class="deck-material-preview material-${escapeHtml(materialKind)}" aria-hidden="true">
             <i>${escapeHtml(materialGlyph(materialKind))}</i>
             <em></em>
-          </div>
+          </span>
           <b>${escapeHtml(material)}</b>
-          <small>已收到 ${Number(materialCount)} 份。</small>
-        ` : `
+          <small>已收到 ${Number(materialCount)} 份 · 点击查看</small>
+        </button>
+      ` : `
+        <section class="deck-card deck-card-material">
+          <span>后台材料</span>
           <div class="deck-material-preview material-empty" aria-hidden="true">
             <i>—</i>
             <em></em>
           </div>
           <b>尚未收到</b>
           <small>来电人发来后会出现在这里。</small>
-        `}
-      </section>
+        </section>
+      `}
     </aside>
   `;
 }
@@ -134,8 +137,11 @@ export function liveFrameHtml({
   const choiceMarkup = String(choices ?? "");
   const hasChoices = Boolean(choiceMarkup.trim());
   const choicesAreFlow = hasChoices && choiceMarkup.includes("flow-group");
+  const materialShortcut = material && !choicesAreFlow
+    ? `<button class="choice-material-shortcut" data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="选择前查看材料：${escapeHtml(material)}" type="button"><span>查看材料</span><b>${Math.max(1, Number(materialCount) || 1)}</b></button>`
+    : "";
   const choiceLayer = hasChoices
-    ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choiceMarkup}</div>`
+    ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${materialShortcut}${choiceMarkup}</div>`
     : "";
   return `
     <main>
