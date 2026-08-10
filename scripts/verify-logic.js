@@ -132,6 +132,10 @@ test("AVG-001", "render-layer sentence splitting preserves quoted sentences and 
 test("AVG-002", "dialogue pages show one current speaker and split long turns", () => {
   const audioChunks = chunkDialogueTurn({ role: "stage", speaker: "旁白", text: "开播提示音响了一声。", audioCueId: "sfx.broadcast.on-air" }, 56);
   assertEqual(audioChunks[0].audioCueId, "sfx.broadcast.on-air", "对白分页不能丢掉随台词触发的语义音效");
+  const sentenceLimitedChunks = chunkDialogueTurn({ role: "caller", speaker: "咨询者", text: "第一句。第二句。第三句。第四句。" }, 92);
+  assertEqual(sentenceLimitedChunks.length, 2, "主案同一人连续说话时每屏最多显示两句");
+  assertEqual(sentenceLimitedChunks[0].text, "第一句。第二句。", "两句以内必须留在同一个当前说话者气泡里");
+  assert(sentenceLimitedChunks.every((turn) => splitDialogueSentences(turn.text).length <= 2), "主案任何对白续页都不能超过两句话");
 
   const openingPages = groupDialogueTurns([
     { role: "caller", speaker: "咨询者", text: "主播你好，我想咨询一件事。" },

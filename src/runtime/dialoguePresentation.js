@@ -38,7 +38,7 @@ export function splitDialogueSentences(value = "") {
   return rows;
 }
 
-export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxPageChars = 156, hostName = DEFAULT_PLAYER_NAME } = {}) {
+export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxTurnSentences = 2, maxPageChars = 156, hostName = DEFAULT_PLAYER_NAME } = {}) {
   return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction") ?? []).flatMap((line) => {
     const isCallStage = line.classList.contains("call-stage-direction");
     const isNarration = line.classList.contains("shell-narration") || line.classList.contains("shell-stage");
@@ -53,7 +53,7 @@ export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxPageChars = 156,
         : "caller";
     const text = isCallStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
     const audioCueId = line.getAttribute?.("data-audio-cue-id") ?? "";
-    return chunkDialogueTurn({ speaker, role, text, audioCueId }, maxTurnChars);
+    return chunkDialogueTurn({ speaker, role, text, audioCueId }, maxTurnChars, maxTurnSentences);
   });
 }
 
@@ -61,16 +61,20 @@ export function dialoguePagesFrom(root, options = {}) {
   return groupDialogueTurns(dialogueTurnsFrom(root, options), options);
 }
 
-export function chunkDialogueTurn(turn = {}, maxChars = 92) {
+export function chunkDialogueTurn(turn = {}, maxChars = 92, maxSentences = 2) {
   const sentences = splitDialogueSentences(turn.text ?? "");
   const chunks = [];
   let current = "";
+  let sentenceCount = 0;
+  const sentenceLimit = Math.max(1, Number(maxSentences) || 2);
   for (const sentence of sentences.flatMap((item) => splitLongSentence(item, maxChars))) {
-    if (current && current.length + sentence.length > maxChars) {
+    if (current && (current.length + sentence.length > maxChars || sentenceCount >= sentenceLimit)) {
       chunks.push(current);
       current = sentence;
+      sentenceCount = 1;
     } else {
       current += sentence;
+      sentenceCount += 1;
     }
   }
   if (current) chunks.push(current);

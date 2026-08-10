@@ -686,7 +686,8 @@ async function runRoute(route) {
           }
           // verify-pack rejects respondent roles in live-counter lines; this replay verifies
           // that the player's selected on-air host response actually reached the transcript.
-          if (!selectedCounterChoiceLabel || !liveCounterTranscript.includes(selectedCounterChoiceLabel)) {
+          const selectedCounterSentences = selectedCounterChoiceLabel.match(/[^。！？!?]+[。！？!?]?/gu)?.map((item) => item.trim()).filter(Boolean) ?? [];
+          if (!selectedCounterChoiceLabel || !selectedCounterSentences.every((sentence) => liveCounterTranscript.includes(sentence))) {
             throw new Error("the host must answer the relayed counter-pressure through the selected on-air choice");
           }
         }
