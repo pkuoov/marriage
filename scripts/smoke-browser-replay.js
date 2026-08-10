@@ -1470,7 +1470,10 @@ async function drainDialogue(page, route) {
   const shownText = new Set();
   for (let line = 0; line < 80; line += 1) {
     const box = page.locator("[data-dialogue-advance]:not([data-dialogue-done]):visible").first();
-    if (!await box.count()) return [...shownText].join("\n");
+    if (!await box.count()) {
+      await assertInlineContinuePlacement(page);
+      return [...shownText].join("\n");
+    }
     await assertDialoguePageDensity(box);
     const currentPageText = (await box.locator(".avg-line").allTextContents()).join("\n").trim();
     if (currentPageText) shownText.add(currentPageText);
@@ -1482,6 +1485,25 @@ async function drainDialogue(page, route) {
     if (pageText) shownText.add(pageText);
   }
   throw new Error("per-line dialogue did not finish within 80 advances");
+}
+
+async function assertInlineContinuePlacement(page) {
+  const overlay = page.locator(".dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:visible").first();
+  if (!await overlay.count()) return;
+  const placement = await overlay.evaluate((element) => {
+    const stage = element.closest(".vn-stage");
+    const button = element.querySelector("button");
+    const stageRect = stage?.getBoundingClientRect();
+    const buttonRect = button?.getBoundingClientRect();
+    return {
+      insideRecord: Boolean(element.closest(".court-record")),
+      stageRatio: stageRect && buttonRect ? (buttonRect.top - stageRect.top) / Math.max(1, stageRect.height) : -1,
+      bottomOverflow: stageRect && buttonRect ? buttonRect.bottom - stageRect.bottom : 999
+    };
+  });
+  if (placement.insideRecord || placement.stageRatio < 0.55 || placement.bottomOverflow > 2) {
+    throw new Error(`main continue action must stay in the lower dialogue stage, got ${JSON.stringify(placement)}`);
+  }
 }
 
 async function assertDialoguePresentation(page) {

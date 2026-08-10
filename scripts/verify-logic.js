@@ -2138,6 +2138,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(stylesSource, "@media (min-width: 1440px)", "桌面全屏必须有独立宽屏布局，不能把主体锁死在 1280px 中央");
   assertIncludes(stylesSource, "width: calc(100% - clamp(48px, 4vw, 96px))", "宽屏主舞台必须利用两侧空间并保留适度安全边距");
   assertIncludes(stylesSource, ".live-console-shell.has-control-deck > .vn-stage", "桌面主舞台必须明确进入第二列");
+  assertIncludes(stylesSource, ".dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden])", "主案高频继续按钮必须固定在对白舞台底部，不能落到后台控件层");
+  assertIncludes(stylesSource, "bottom: clamp(14px, 2.4vh, 26px)", "主案继续按钮必须与对白框共享底部安全边距");
   assert(!stylesSource.includes(".case-vn-grid .control-deck { position: absolute"), "控场台不能再被后置 AVG 样式改成遮挡舞台的绝对定位");
   assertIncludes(stylesSource, ".avg-material-modal[hidden]", "材料模态关闭后必须真正退出布局");
   assertIncludes(stylesSource, ".choice-material-shortcut", "关键选择出现时必须在选择层提供材料快捷入口");

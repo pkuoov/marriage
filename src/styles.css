@@ -7272,6 +7272,43 @@ button.evidence-target {
   backdrop-filter: none;
 }
 
+.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active {
+  padding-bottom: 68px;
+}
+
+.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+  position: absolute;
+  z-index: 24;
+  right: clamp(14px, 3vw, 34px);
+  bottom: clamp(14px, 2.4vh, 26px);
+  left: clamp(14px, 3vw, 34px);
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) .choice-group {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) button {
+  width: min(100%, 22rem);
+  min-width: 10rem;
+}
+
+.dialogue-focus-stage.choices-open .avg-system-bar {
+  display: none;
+}
+
 .dialogue-focus-stage .vn-stage .dialogue-card.avg-dialogue-active::before,
 .quick-detective-screen.quick-scene-transcript .vn-stage .dialogue-card::before,
 .quick-detective-screen.quick-scene-issueSelection .vn-stage .dialogue-card::before,
