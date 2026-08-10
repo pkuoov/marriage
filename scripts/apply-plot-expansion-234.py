@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Apply nightStructure + drama rewrites to cases 2-4. Does not touch 01-credit.json."""
+"""Archived pass-234 migration.
+
+The payload predates the current case-spine canon and must not be replayed against
+the live cases. It is kept only so old commits remain understandable.
+"""
 
 from __future__ import annotations
 
@@ -60,6 +64,9 @@ def patch_case(stem: str, spec: dict) -> None:
 
 
 def main() -> None:
+    raise SystemExit(
+        "archived migration: do not replay pass 234; edit the canonical case files instead"
+    )
     specs = load_json(PAYLOAD / "patch-specs.json")
     for stem in ("02-tony", "03-profile", "04-workplace"):
         patch_case(stem, specs[stem])

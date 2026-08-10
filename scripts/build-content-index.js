@@ -141,39 +141,70 @@ function runtimeIndexCase(packet, manifestItem) {
 
 function validateQuickCase(packet, cast) {
   const turns = packet.turns ?? [];
-  const options = packet.quoteOptions ?? [];
+  const issueOptions = packet.issueOptions ?? [];
+  const confrontations = packet.confrontations ?? [];
   const turnIds = new Set(turns.map((turn) => turn.id));
-  const optionIds = new Set(options.map((option) => option.id));
-  const flawOptions = options.filter((option) => option.kind === "flaw");
-  const flawIds = new Set(flawOptions.map((option) => option.flawId));
+  const issueIds = new Set(issueOptions.map((item) => item.id));
+  const confrontationIds = new Set(confrontations.map((item) => item.id));
   assert(packet.id, "quick case id is required");
   assert(packet.title, `${packet.id} quick case title is required`);
   assert(["explanation", "interest"].includes(packet.helpRequest?.kind), `${packet.id} quick case needs an explanation or interest help request`);
   assert(packet.helpRequest?.request, `${packet.id} quick case help request text is required`);
   assert(packet.whyTonight && packet.callerStake && packet.selfServingOmission, `${packet.id} quick case must register urgency, caller stake, and major omission`);
+  assert(packet.coverStrategy?.publicImage, `${packet.id} quick case must define the caller's believable public image`);
+  assert((packet.coverStrategy?.honestDetails ?? []).length >= 3, `${packet.id} quick case needs at least three ordinary or honest cover details`);
+  assert((packet.coverStrategy?.layeredLeaks ?? []).length >= confrontations.length, `${packet.id} quick case must hide each confrontation behind a layered leak`);
+  assert(packet.presentation?.backgroundSrc, `${packet.id} quick case must define a live-room background`);
+  assert(packet.presentation?.host?.artSrc, `${packet.id} quick case must define host portrait art`);
+  assert(packet.presentation?.caller?.artSrc, `${packet.id} quick case must define caller portrait art`);
+  assert(packet.presentation?.artStyle === "pixel", `${packet.id} quick case portraits must use the approved pixel-art direction`);
   assert(cast[packet.castProfileId], `${packet.id} references unknown cast profile ${packet.castProfileId}`);
   assert(turns.length >= 6, `${packet.id} needs at least six question-answer turns`);
+  assert(turns.every((turn) => !(turn.ambientComments ?? []).length), `${packet.id} raw transcript turns must not coach the player with ambient comments`);
   assert(turnIds.size === turns.length, `${packet.id} turn ids must be unique`);
-  assert(optionIds.size === options.length, `${packet.id} quote option ids must be unique`);
-  assert(flawIds.size === flawOptions.length, `${packet.id} flaw ids must be unique`);
-  assert(flawOptions.length === Number(packet.requiredFlawCount), `${packet.id} requiredFlawCount must match flaw options`);
-  assert(options.some((option) => option.kind === "decoy"), `${packet.id} needs at least one evidence-boundary decoy`);
-  assert(Number(packet.playerMarkLimit) > 0, `${packet.id} playerMarkLimit must be positive`);
-  assert(Number(packet.playerMarkLimit) < flawOptions.length, `${packet.id} must leave at least one flaw for the crowd`);
+  assert(confrontations.length >= 3, `${packet.id} needs at least three direct confrontations`);
+  assert(confrontationIds.size === confrontations.length, `${packet.id} confrontation ids must be unique`);
+  assert(issueOptions.length > confrontations.length, `${packet.id} needs issue choices plus at least one plausible non-contradiction`);
+  assert(issueIds.size === issueOptions.length, `${packet.id} issue option ids must be unique`);
+  assert(issueOptions.every((item) => item.id && item.label), `${packet.id} issue options need ids and player-visible labels`);
+  assert(issueOptions.filter((item) => item.confrontationId).length === confrontations.length, `${packet.id} must expose exactly one issue direction for every confrontation`);
+  assert(issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine), `${packet.id} non-contradiction issue choices need neutral retry copy`);
+  for (const issue of issueOptions) {
+    if (issue.confrontationId) assert(confrontationIds.has(issue.confrontationId), `${packet.id} issue ${issue.id} references unknown confrontation ${issue.confrontationId}`);
+  }
+  assert(packet.quoteOptions === undefined && packet.playerMarkLimit === undefined && packet.requiredFlawCount === undefined, `${packet.id} must not restore the retired quote-selection or crowd-assist rules`);
   assert(packet.ending?.confirmed?.length && packet.ending?.unknown?.length, `${packet.id} ending must separate confirmed and unknown`);
   assert(packet.ending?.verdictKicker && packet.ending?.confirmedTitle && packet.ending?.unknownTitle, `${packet.id} ending must separate risk action from unresolved background`);
   assert(packet.ending?.riskReading?.title && packet.ending?.riskReading?.text, `${packet.id} ending must label its strongest risk reading`);
-  assert(packet.sourceBoundary, `${packet.id} must record its adaptation boundary`);
-  for (const option of options) {
-    assert(turnIds.has(option.turnId), `${packet.id} option ${option.id} references unknown turn ${option.turnId}`);
-    if (option.kind !== "flaw") continue;
-    assert((option.pairedTurnIds ?? []).length >= 2, `${packet.id} flaw ${option.id} needs at least two line anchors`);
-    for (const turnId of option.pairedTurnIds) {
-      assert(turnIds.has(turnId), `${packet.id} flaw ${option.id} references unknown paired turn ${turnId}`);
-    }
-    assert((option.comments ?? []).length >= 2, `${packet.id} flaw ${option.id} needs a crowd comparison`);
-    assert(option.hostLine && option.callerLine && option.finding, `${packet.id} flaw ${option.id} needs follow-up and finding`);
+  assert((packet.ending?.summaryPages ?? []).length >= 1, `${packet.id} ending must be spoken by the host`);
+  for (const [index, page] of (packet.ending?.summaryPages ?? []).entries()) {
+    assert((page.lines ?? []).length, `${packet.id} ending summary page ${index + 1} needs spoken lines`);
+    assert((page.lines ?? []).every((line) => ["host", "caller"].includes(line.role) && line.text), `${packet.id} ending summary page ${index + 1} has an invalid spoken line`);
+    assert((page.lines ?? []).some((line) => line.role === "host"), `${packet.id} ending summary page ${index + 1} must let the host speak`);
   }
+  const recapPage = (packet.ending?.summaryPages ?? []).find((page) => page.stageLabel === "结案复盘");
+  assert(recapPage, `${packet.id} quick case must include a separate recap page after the call ends`);
+  assert(recapPage.lines?.[0]?.role === "host" && recapPage.lines[0].text === "我们来把这次这个连线复个盘。", `${packet.id} recap page must open with the fixed host handoff`);
+  assert(packet.sourceBoundary, `${packet.id} must record its adaptation boundary`);
+  for (const confrontation of confrontations) {
+    const lines = quickConfrontationLines(confrontation);
+    assert(confrontation.id && lines.length >= 2, `${packet.id} confrontation needs an id and at least two spoken lines`);
+    assert(lines.every((line) => ["host", "caller"].includes(line.role) && line.text), `${packet.id} confrontation ${confrontation.id} has an invalid spoken line`);
+    assert(lines[0]?.role === "host" && lines.some((line) => line.role === "caller"), `${packet.id} confrontation ${confrontation.id} must begin with the host and include the caller`);
+    assert(lines.every((line, index) => index === 0 || line.role !== lines[index - 1].role), `${packet.id} confrontation ${confrontation.id} must alternate speakers`);
+    assert((confrontation.basisTurnIds ?? []).length >= 2, `${packet.id} confrontation ${confrontation.id} needs at least two line anchors`);
+    for (const turnId of confrontation.basisTurnIds ?? []) {
+      assert(turnIds.has(turnId), `${packet.id} confrontation ${confrontation.id} references unknown turn ${turnId}`);
+    }
+  }
+}
+
+function quickConfrontationLines(confrontation = {}) {
+  if (Array.isArray(confrontation.lines) && confrontation.lines.length) return confrontation.lines;
+  return [
+    confrontation.host ? { role: "host", text: confrontation.host } : null,
+    confrontation.caller ? { role: "caller", text: confrontation.caller } : null
+  ].filter(Boolean);
 }
 
 function renderContentIndex(packs, cases, quickCases, advisors, helperNpcs, cast) {

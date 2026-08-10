@@ -183,14 +183,28 @@ function collectQuickCaseDialogue(packet) {
     add(hostId, `$quick.turns[${index}].host`, turn.host, "林旭阳");
     add(callerId, `$quick.turns[${index}].caller`, turn.caller, "来电人");
   }
-  for (const [index, option] of (packet.quoteOptions ?? []).entries()) {
-    add(hostId, `$quick.quoteOptions[${index}].hostLine`, option.hostLine, "林旭阳");
-    add(callerId, `$quick.quoteOptions[${index}].callerLine`, option.callerLine, "来电人");
+  for (const [index, confrontation] of (packet.confrontations ?? []).entries()) {
+    for (const [lineIndex, line] of quickConfrontationLines(confrontation).entries()) {
+      const profileId = line.role === "caller" ? callerId : hostId;
+      const surface = line.role === "caller" ? "来电人" : "林旭阳";
+      add(profileId, `$quick.confrontations[${index}].lines[${lineIndex}]`, line.text, surface);
+    }
   }
-  add(hostId, "$quick.ending.hostLead", packet.ending?.hostLead, "林旭阳");
-  add(hostId, "$quick.ending.hostVerdict", packet.ending?.hostVerdict, "林旭阳");
-  add(callerId, "$quick.ending.callerReply", packet.ending?.callerReply, "来电人");
-  add(hostId, "$quick.ending.hostClose", packet.ending?.hostClose, "林旭阳");
+  for (const [pageIndex, page] of (packet.ending?.summaryPages ?? []).entries()) {
+    for (const [lineIndex, line] of (page.lines ?? []).entries()) {
+      const profileId = line.role === "caller" ? callerId : hostId;
+      const surface = line.role === "caller" ? "来电人" : "林旭阳";
+      add(profileId, `$quick.ending.summaryPages[${pageIndex}].lines[${lineIndex}]`, line.text, surface);
+    }
+  }
+}
+
+function quickConfrontationLines(confrontation = {}) {
+  if (Array.isArray(confrontation.lines) && confrontation.lines.length) return confrontation.lines;
+  return [
+    confrontation.host ? { role: "host", text: confrontation.host } : null,
+    confrontation.caller ? { role: "caller", text: confrontation.caller } : null
+  ].filter(Boolean);
 }
 
 function collectShellDialogue() {

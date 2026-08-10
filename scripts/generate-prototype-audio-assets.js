@@ -58,16 +58,6 @@ const assets = [
     filter: "[0:a]highpass=f=1250,lowpass=f=6500,tremolo=f=27:d=0.62,volume=0.12,afade=t=in:st=0:d=0.025,afade=t=out:st=0.22:d=0.12[s];[1:a]highpass=f=180,lowpass=f=1050,volume=0.045,afade=t=out:st=0.18:d=0.12[p];[s][p]amix=inputs=2:normalize=0,volume=13,alimiter=limit=0.5[out]"
   },
   {
-    file: "case1-lamp-drag.ogg",
-    title: "Case 1 metal lamp stand drag",
-    inputs: [
-      "anoisesrc=color=brown:sample_rate=48000:duration=0.92:amplitude=0.30",
-      "anoisesrc=color=white:sample_rate=48000:duration=0.82:amplitude=0.10",
-      "sine=frequency=104:sample_rate=48000:duration=0.92"
-    ],
-    filter: "[0:a]highpass=f=70,lowpass=f=820,volume=0.12,afade=t=in:st=0:d=0.025,afade=t=out:st=0.48:d=0.44[body];[1:a]highpass=f=900,lowpass=f=2400,volume=0.025,afade=t=in:st=0:d=0.02,afade=t=out:st=0.42:d=0.40[scrape];[2:a]lowpass=f=190,volume=0.045,afade=t=out:st=0.45:d=0.47[resonance];[body][scrape][resonance]amix=inputs=3:normalize=0,volume=8.0,alimiter=limit=0.38[out]"
-  },
-  {
     file: "case2-distant-siren.ogg",
     title: "Case 2 distant police siren arrival",
     inputs: [

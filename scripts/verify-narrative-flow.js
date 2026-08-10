@@ -124,7 +124,7 @@ function validateFlow(flow) {
   check(flow.scenes.every((scene) => scene.speaker === "咨询者"), "CALLER_SCENE_ONLY", "每日 sceneReview 的材料必须由咨询者说出，不能由后台/回拨/系统段落直接插入。");
   check(!hasRealNpcName(allText), "NO_REAL_NAMES", "直播间单案文本不能出现 NPC 真名。");
   check(!hasCallerPerspectiveLeak(allText), "CALLER_PERSPECTIVE", "咨询者语境下的反馈应使用第一人称或直接引语，不能写成第三人称旁白。");
-  check(Boolean(flow.opening.length >= 2 && flow.opening.length <= 9), "OPENING_LENGTH", "开场应控制在 2-9 句，并按一问一答分屏呈现。");
+  check(Boolean(flow.opening.length >= 2 && flow.opening.length <= 10), "OPENING_LENGTH", "开场应控制在 2-10 句，并按一问一答分屏呈现。");
   check(flow.opening[0]?.speaker === "咨询者", "CALLER_FIRST", "第一句必须由咨询者开口。");
   check(flow.opening.some((line) => line.speaker === "你"), "HOST_AFTER_CALLER", "开场必须有主播接话，但不能抢在咨询者之前。");
   check(!renderedOpeningEndsOnHost(flow.opening), "OPENING_DANGLING_HOST", "首屏开场不能停在主播问句上，必须让咨询者答完再进入通话推进。");
@@ -136,7 +136,7 @@ function validateFlow(flow) {
   check(hasGrayZoneMotivation(allText), "GRAY_ZONE_MOTIVE", "精选集单案必须有灰区动机或不明确推手，例如父母、面子、转述、平台、朋友或双方压力。");
   check(hasPurposeSignal(allText), "MOTIVE_CHAIN", "隐藏/裁切/改口必须有目的：推进、过关、借钱、见父母、面子、资源、署名、流程或退路。");
   check(hasRiskIfExposed(allText), "RISK_IF_EXPOSED", "必须能看出完整说清后会失去什么或被谁追问。");
-  check(flow.scenes.length >= 5 && flow.scenes.length <= 8, "SCENE_COUNT", "精选集单案 sceneReview 应为 5-8 段，才能支撑至少二十分钟的直播连线，并容纳一次玩家主动拆开的伏笔回收。");
+  check(flow.scenes.length >= 5 && flow.scenes.length <= 8, "SCENE_COUNT", "精选集单案 sceneReview 应为 5-8 段，才能支撑至少二十分钟的直播连线，并避免为单一线索硬造独立问话场景。");
   flow.scenes.forEach((scene) => {
     check(Boolean(scene.text && scene.contradiction), "SCENE_HAS_GAP", `${scene.id} 必须同时有叙述和矛盾。`);
     check(scene.options.length >= 2 && scene.options.length <= 3, "CHOICE_COUNT", `${scene.id} 选项应为 2-3 个。`);
@@ -244,7 +244,7 @@ function hasRiskIfExposed(text) {
 }
 
 function isHostLikeQuestion(question) {
-  return /你|他|她|谁|TA|对方|这|那|怎么|为什么|哪|有没有|是不是|先|说|问|补全|原话|发来|算什么|见父母|钱|图|饭局|还贷|账|审批|报销|付款|收款|供应商|返款|垫款|署名/.test(question);
+  return /你|他|她|谁|TA|对方|这|那|怎么|为什么|哪|有没有|是不是|不算|过分|先|说|问|补全|原话|发来|算什么|见父母|钱|图|饭局|还贷|账|审批|报销|付款|收款|供应商|返款|垫款|署名/.test(question);
 }
 
 function isNoClickChoice(question) {

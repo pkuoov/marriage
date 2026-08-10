@@ -45,7 +45,6 @@ for (const reference of references) {
 }
 
 const requiredContentCues = [
-  "sfx.case1.lamp-drag",
   "sfx.case2.door-knock",
   "voice.case2.dryer-message",
   "voice.case3.dinner-pause",
@@ -71,7 +70,6 @@ const requiredReadyP1 = [
   "ambience.studio-room",
   "ambience.city-afternoon",
   "voice.case2.dryer-message",
-  "sfx.case1.lamp-drag",
   "sfx.case2.door-knock"
 ];
 for (const cueId of requiredReadySfx) {

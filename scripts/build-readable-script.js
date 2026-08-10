@@ -8,6 +8,8 @@ const checkOnly = process.argv.includes("--check");
 const manifest = await readJson(`content/packs/${packId}/manifest.json`);
 const comments = await readJson(`content/packs/${packId}/comments.json`);
 const castRegistry = await readJson("content/characters/cast.json");
+const helperRegistry = await readJson("content/characters/helper-npcs.json").catch(() => ({ helpers: [] }));
+const vBroPlayerVisible = helperRegistry.helpers?.find((helper) => helper.id === "v-bro")?.playerVisible !== false;
 const casePackets = await Promise.all(
   manifest.sequence.map((item) => readJson(`content/packs/${packId}/cases/${item.caseId}.json`))
 );
@@ -20,7 +22,7 @@ const continuousStoryRoutes = {
     interludeActionId: "recheck-history-pages",
     dayStops: [
       { sceneId: "day-restaurant", optionId: "chase-member" },
-      { sceneId: "day-bank-flow" }
+      { sceneId: "day-bank-flow", documentQuestionRowId: "r01b" }
     ],
     callbackEarnedItem: "流水圈注",
     posture: "withCaller",
@@ -88,7 +90,12 @@ const outputs = [
     content: renderContinuousStoryScript()
   }
 ];
-assertSourceCompleteness(outputs[0].content, { manifest, comments, cases: casePackets, quickCases: quickCasePackets });
+assertSourceCompleteness(outputs[0].content, {
+  manifest,
+  comments,
+  cases: casePackets.map(projectPlayableCaseSource),
+  quickCases: quickCasePackets
+});
 assertContinuousStory(outputs[3].content, casePackets);
 
 if (checkOnly) {
@@ -136,6 +143,7 @@ function renderScript() {
   add("## 演员与声纹速查", "");
   add("| 角色 | 类型 | 固定性格 | 压力反应 | 主要声纹 |", "|---|---|---|---|---|");
   for (const profile of castRegistry.cast ?? []) {
+    if (profile.id === "v-bro" && !vBroPlayerVisible) continue;
     add(`| ${cell(profile.name)} | ${cell(profile.kind)} | ${cell(profile.personality?.core)} | ${cell(profile.personality?.stressResponse)} | ${cell([profile.voice?.rhythm, ...(profile.voice?.lexicon ?? [])].filter(Boolean).join("；"))} |`);
   }
   add("");
@@ -150,12 +158,10 @@ function renderScript() {
     const caseNumber = chineseNumber(caseIndex + 1);
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? packet.caseId;
     add(`# 第${caseNumber}幕：${title}`, "");
-    add(`> ${item.bridge ?? packet.publicHook ?? ""}`, "");
     add(`- **案件 ID：** ${packet.caseId}`);
     add(`- **剧情 ID：** ${packet.plotId}`);
     if (packet.storyArcTitle) add(`- **内容包原题：** ${packet.storyArcTitle}`);
     if (packet.caseTitle?.subtitle) add(`- **副标题：** ${packet.caseTitle.subtitle}`);
-    if (packet.caseTitle?.intro) add(`- **标题卡引子：** ${packet.caseTitle.intro}`);
     add("");
 
     add("## 本案人物", "");
@@ -174,7 +180,6 @@ function renderScript() {
     add("");
 
     add("## 夜 A：第一次来电", "");
-    if (packet.openingComplaint) add(`【来电摘要】${packet.openingComplaint}`, "");
     for (const line of packet.openingDialogue ?? []) renderSpokenLine(lines, line);
     const firstNightIndexes = packet.nightStructure?.segment1SceneIndexes ?? [];
     firstNightIndexes.forEach((sceneIndex, localIndex) => renderScene(lines, packet.sceneVersions?.[sceneIndex], sceneIndex, `夜 A · ${localIndex + 1}`));
@@ -238,6 +243,7 @@ function renderScript() {
     add("");
 
     add("## 【编剧资料】事实边界与运行规则", "");
+    if (packet.openingComplaint) renderNode(lines, packet.openingComplaint, "内部来电索引", 3);
     const alreadyRendered = new Set([
       "caseId", "plotId", "label", "storyArcTitle", "caseTitle", "dramaticAnchor", "whyTonight", "helpRequest", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject", "openingComplaint", "openingDialogue", "sceneVersions", "nightStructure", "overnightStructure", "stanceSnapshot", "delegation", "evidenceCards", "evidenceChecks", "investigationHooks", "documents", "advisorNotes", "respondentNote", "lurkerNote", "crossCaseEchoes", "hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "careChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"
     ]);
@@ -258,33 +264,44 @@ function renderScript() {
   });
 
   if (quickCasePackets.length) {
-    add("# 独立模式：评论区快案", "");
-    add("> 快案不属于四幕主线。玩家先听完整段公开连线，再限次圈句；评论区只能比较本段已经播出的原话。", "");
+    add("# 独立模式：直播快案", "");
+    add("> 快案不属于四幕主线。每听完一个局部段落，玩家判断当前已经出现的问题；当面对质逼出的改口，再带出下一段。", "");
     for (const packet of quickCasePackets) {
       add(`## ${packet.label}：${packet.title}`, "");
-      add(`- **时长：** ${packet.durationLabel}`, `- **玩法：** ${packet.rule}`, `- **开场：** ${packet.premise}`, "");
+      add(`- **开场：** ${packet.premise}`, "");
       renderNode(lines, {
         whyTonight: packet.whyTonight,
         helpRequest: packet.helpRequest,
         callerStake: packet.callerStake,
-        selfServingOmission: packet.selfServingOmission
+        selfServingOmission: packet.selfServingOmission,
+        coverStrategy: packet.coverStrategy,
+        caseLedger: packet.caseLedger,
+        deceptionChain: packet.deceptionChain
       }, "求助与重大隐瞒", 3);
-      add("### 原始连线", "");
-      for (const [index, turn] of (packet.turns ?? []).entries()) {
-        add(`#### 第 ${index + 1} 组（${turn.id}）`, "");
-        add(`**林旭阳：** ${turn.host}`, "", `**来电人：** ${turn.caller}`, "");
-        if (turn.ambientComments?.length) add(`【实时评论】${turn.ambientComments.join("／")}`, "");
+      renderReadableQuickRounds(lines, packet);
+      add("", "### 主播结案复盘", "");
+      if (packet.ending?.verdictKicker) add(`> ${packet.ending.verdictKicker}`, "");
+      for (const [pageIndex, page] of (packet.ending?.summaryPages ?? []).entries()) {
+        add(`#### ${page.kicker ?? `总结第 ${pageIndex + 1} 页`}｜${page.title ?? packet.title}`, "");
+        if (page.stageLabel) add(`【舞台状态】${page.stageLabel}`, "");
+        for (const line of page.lines ?? []) {
+          add(`**${line.role === "caller" ? "来电人" : "林旭阳"}：** ${line.text}`, "");
+        }
       }
-      add("### 圈句、评论接力与问回", "");
-      renderNode(lines, packet.quoteOptions, "全部候选与反馈", 4);
-      add("", "### 结案边界", "");
-      renderNode(lines, packet.ending, "结案", 4);
+      renderNode(lines, {
+        riskReading: packet.ending?.riskReading,
+        confirmedTitle: packet.ending?.confirmedTitle,
+        confirmed: packet.ending?.confirmed,
+        unknownTitle: packet.ending?.unknownTitle,
+        unknown: packet.ending?.unknown
+      }, "制作边界（不上屏）", 4);
       add(`- **改写边界：** ${packet.sourceBoundary}`, "");
+      renderNode(lines, packet.presentation, "UI 舞台配置（非剧情证据）", 4);
       renderNode(lines, {
         id: packet.id,
+        caseNumber: packet.caseNumber,
         castProfileId: packet.castProfileId,
-        requiredFlawCount: packet.requiredFlawCount,
-        playerMarkLimit: packet.playerMarkLimit
+        confrontationCount: packet.confrontations?.length ?? 0
       }, "运行规则", 4);
       add("");
     }
@@ -298,32 +315,90 @@ function renderScript() {
   return `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd()}\n`;
 }
 
+function quickConfrontationLines(confrontation = {}) {
+  if (Array.isArray(confrontation.lines) && confrontation.lines.length) return confrontation.lines;
+  return [
+    confrontation.host ? { role: "host", text: confrontation.host } : null,
+    confrontation.caller ? { role: "caller", text: confrontation.caller } : null
+  ].filter(Boolean);
+}
+
+function renderReadableQuickRounds(lines, packet) {
+  const turnsById = new Map((packet.turns ?? []).map((turn, index) => [turn.id, { turn, index }]));
+  const optionsById = new Map((packet.issueOptions ?? []).map((option) => [option.id, option]));
+  const confrontationsById = new Map((packet.confrontations ?? []).map((item) => [item.id, item]));
+  const rounds = packet.disclosureRounds?.length
+    ? packet.disclosureRounds
+    : [{
+        id: "full-call",
+        label: "原始连线",
+        turnIds: (packet.turns ?? []).map((turn) => turn.id),
+        issueOptionIds: (packet.issueOptions ?? []).map((option) => option.id),
+        requiredConfrontationIds: (packet.confrontations ?? []).map((item) => item.id)
+      }];
+
+  rounds.forEach((round, roundIndex) => {
+    lines.push(`### 第 ${roundIndex + 1} 轮｜${round.label ?? round.id}（${round.id}）`, "");
+    lines.push("#### 普通问话", "");
+    for (const turnId of round.turnIds ?? []) {
+      const entry = turnsById.get(turnId);
+      if (!entry) continue;
+      const { turn, index } = entry;
+      lines.push(`##### 第 ${index + 1} 组（${turn.id}）`, "");
+      lines.push(`**林旭阳：** ${turn.host}`, "", `**来电人：** ${turn.caller}`, "");
+      if (turn.ambientComments?.length) lines.push(`【实时评论】${turn.ambientComments.join("／")}`, "");
+    }
+
+    lines.push("#### 本轮玩家可选的问题方向", "");
+    for (const optionId of round.issueOptionIds ?? []) {
+      const option = optionsById.get(optionId);
+      if (!option) continue;
+      lines.push(`- **${option.id}**：${option.label}${option.confrontationId ? ` → 对质 ${option.confrontationId}` : ` → 当前依据不足：${option.missLine}`}`, "");
+    }
+
+    lines.push("#### 本轮当面对质", "");
+    for (const confrontationId of round.requiredConfrontationIds ?? []) {
+      const confrontation = confrontationsById.get(confrontationId);
+      if (!confrontation) continue;
+      lines.push(`##### ${confrontation.id}`, "");
+      lines.push(`【依据话轮】${(confrontation.basisTurnIds ?? []).join(" / ")}`, "");
+      if (confrontation.logicContract) renderNode(lines, confrontation.logicContract, "微因果合同", 6);
+      const confrontationLines = quickConfrontationLines(confrontation);
+      confrontationLines.forEach((line, lineIndex) => {
+        lines.push(`**${line.role === "caller" ? "来电人" : "林旭阳"}：** ${line.text}`, "");
+        if (confrontation.revealTransition?.lineIndex === lineIndex + 1) {
+          const transition = confrontation.revealTransition;
+          lines.push(`【画面短停，屏幕掠过“${transition.label}”。主播立绘提亮。】`, "");
+          lines.push(`- **过场 ID：** ${transition.id}`, `- **过场类型：** ${transition.kind}`, `- **过场短标：** ${transition.eyebrow}`, `- **触发行：** ${transition.lineIndex}`, "");
+        }
+      });
+      if (confrontation.revealTransition && !Number.isInteger(confrontation.revealTransition.lineIndex)) {
+        const transition = confrontation.revealTransition;
+        lines.push(`【画面短停，屏幕掠过“${transition.label}”。主播立绘提亮。】`, "");
+        lines.push(`- **过场 ID：** ${transition.id}`, `- **过场类型：** ${transition.kind}`, `- **过场短标：** ${transition.eyebrow}`, "");
+      }
+    }
+  });
+}
+
 function renderPureStoryScript() {
   const lines = [];
-  const sequenceByCaseId = new Map(manifest.sequence.map((item) => [item.caseId, item]));
 
   lines.push(`# 《${manifest.title}》纯故事台本`, "");
   lines.push(
     "> 本稿只保留故事、台词、动作、材料内容与玩家可能听见的分支。内部 ID、数值、判定规则、作者真相和工程字段均已移除；`【另一种接法】` 表示同一处可选台词，不代表这些分支会在一次游玩里同时发生。本文由当前内容包自动生成，请修改 JSON 真源后运行 `npm run content:script`。",
     ""
   );
-  lines.push(`**本集：** ${manifest.theme?.title ?? ""}`, "");
-  lines.push(`**题眼：** ${manifest.theme?.thesis ?? ""}`, "");
-
   lines.push("# 序幕｜晚上八点，开麦", "", "【直播间。控台灯亮，热线接入。】", "");
   for (const line of manifest.nightShell?.prologue?.lines ?? []) renderDirectorSpoken(lines, line);
   if (manifest.nightShell?.prologue?.hostLine) renderDirectorSpoken(lines, manifest.nightShell.prologue.hostLine);
 
   casePackets.forEach((packet, caseIndex) => {
-    const item = sequenceByCaseId.get(packet.caseId) ?? {};
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? `第${caseIndex + 1}案`;
     lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
-    if (item.bridge) lines.push(`【转场】${item.bridge}`, "");
-    if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
 
-    lines.push("## 第一夜｜第一次来电", "", "【开播。主播先让咨询者把自己的版本说完。】", "");
-    if (packet.openingComplaint) lines.push(`【来电摘要】${packet.openingComplaint}`, "");
+    lines.push("## 第一夜｜第一次来电", "", "【开播。】", "");
     for (const line of packet.openingDialogue ?? []) renderDirectorSpoken(lines, line);
     (packet.nightStructure?.segment1SceneIndexes ?? []).forEach((sceneIndex, localIndex) => {
       renderPureStoryScene(lines, packet.sceneVersions?.[sceneIndex], `第一夜 · ${localIndex + 1}`);
@@ -384,37 +459,29 @@ function renderPureStoryScript() {
 
 function renderContinuousStoryScript() {
   const lines = [];
-  const sequenceByCaseId = new Map(manifest.sequence.map((item) => [item.caseId, item]));
 
   lines.push("# 《深夜热线：直播间侦探》连续故事台本", "");
   lines.push(
     "> 固定一条完整可玩路线，供连续阅读与人物排演。其他分支见“纯故事台本”和“全量可读文字剧本”。本文由 JSON 真源生成，请勿手改。",
     ""
   );
-  lines.push(`**本集：** ${manifest.title}｜${manifest.theme?.title ?? ""}`, "");
-  lines.push(`**本集题眼：** ${manifest.theme?.thesis ?? ""}`, "");
-
   lines.push("# 序幕｜晚上八点，开麦", "", "【直播间。控台灯亮，热线接入。】", "");
   for (const line of manifest.nightShell?.prologue?.lines ?? []) renderContinuousSpoken(lines, line);
   if (manifest.nightShell?.prologue?.hostLine) renderContinuousSpoken(lines, manifest.nightShell.prologue.hostLine);
 
   casePackets.forEach((packet, caseIndex) => {
-    const item = sequenceByCaseId.get(packet.caseId) ?? {};
     const route = continuousStoryRoutes[packet.caseId];
     if (!route) throw new Error(`${packet.caseId} 缺少连续阅读路线`);
     const title = continuousCaseTitle(packet, caseIndex);
 
     lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
-    if (item.bridge) lines.push(`【转场】${item.bridge}`, "");
-    if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
 
-    lines.push("## 第一夜｜第一次来电", "", "【你接入这通电话，先让她把事情从头说。】", "");
-    if (packet.openingComplaint) lines.push(`【来电摘要】${packet.openingComplaint}`, "");
+    lines.push("## 第一夜｜第一次来电", "", "【你接入电话。】", "");
     for (const line of packet.openingDialogue ?? []) renderContinuousSpoken(lines, line);
     for (const sceneIndex of packet.nightStructure?.segment1SceneIndexes ?? []) {
       renderContinuousScene(lines, packet.sceneVersions?.[sceneIndex], {
-        includeHelper: packet.sceneVersions?.[sceneIndex]?.id === route.helperSceneId
+        includeHelper: vBroPlayerVisible && packet.sceneVersions?.[sceneIndex]?.id === route.helperSceneId
       });
     }
     renderDirectorHangup(lines, packet.nightStructure?.hangup);
@@ -427,7 +494,7 @@ function renderContinuousStoryScript() {
     for (const stop of route.dayStops) {
       const scene = (packet.overnightStructure?.dayScenes ?? []).find((entry) => entry.id === stop.sceneId);
       if (!scene) throw new Error(`${packet.caseId} 连续阅读路线找不到白天场景 ${stop.sceneId}`);
-      renderContinuousDayScene(lines, scene, packet.documents ?? [], stop.optionId);
+      renderContinuousDayScene(lines, scene, packet.documents ?? [], stop.optionId, stop.documentQuestionRowId);
     }
 
     lines.push("## 第二夜｜回拨", "");
@@ -489,6 +556,7 @@ function renderContinuousScene(lines, scene, { includeHelper = false } = {}) {
     lines.push("【林旭阳按亮场外求助键】", "", `**V哥：** ${scene.helperHint}`, "");
   }
   const question = (scene.questionOptions ?? []).find((option) => option.correct) ?? scene.questionOptions?.[0];
+  if (question?.revealTransition) lines.push(`【画面短停，屏幕掠过“${question.revealTransition.label}”。主播立绘提亮。】`, "");
   if (question?.question) lines.push(`**林旭阳：** ${question.question}`, "");
   for (const line of question?.resistanceBeat?.lines ?? []) renderContinuousSpoken(lines, line);
   if (question?.lines?.length) question.lines.forEach((line) => renderContinuousSpoken(lines, line));
@@ -527,14 +595,21 @@ function renderContinuousInterlude(lines, packet, actionId, optionId) {
   if (!hasVisibleContent && action.summary) lines.push(`【控台记录】${action.summary}`, "");
 }
 
-function renderContinuousDayScene(lines, scene, documents, optionId) {
+function renderContinuousDayScene(lines, scene, documents, optionId, documentQuestionRowId) {
   lines.push(`### ${scene.label ?? "白天地点"}`, "");
   const body = scene.body ?? {};
   if (body.access) lines.push(`【这次为什么能问】${continuousStageText(body.access)}`, "");
   if (body.text) lines.push(`【${continuousStageText(body.text)}】`, "");
   for (const beat of body.beats ?? []) renderContinuousSpoken(lines, beat);
   const document = documents.find((entry) => entry.id === body.documentId);
-  if (document) renderDirectorDocument(lines, document);
+  if (document) {
+    renderDirectorDocument(lines, document);
+    if (documentQuestionRowId) {
+      const question = document.rowQuestions?.[documentQuestionRowId]?.[0];
+      if (!question) throw new Error(`${document.id} 连续阅读路线找不到逐行追问 ${documentQuestionRowId}`);
+      lines.push(`【你圈出：${documentQuestionRowId}】`, "", `**林旭阳：** ${question.question}`, "", `**咨询者：** ${question.answer}`, "");
+    }
+  }
   const options = body.choice?.options ?? [];
   if (!options.length) return;
   const option = options.find((entry) => entry.id === optionId);
@@ -629,6 +704,7 @@ function renderPureStoryScene(lines, scene, label) {
   questions.forEach((option, index) => {
     lines.push(index === 0 ? "#### 主播追问" : "#### 另一种接法", "");
     if (option.suspicionLabel) lines.push(`【玩家怀疑：${option.suspicionLabel}】`, "");
+    if (option.revealTransition) lines.push(`【画面短停，屏幕掠过“${option.revealTransition.label}”。主播立绘提亮。】`, "");
     if (option.question) lines.push(`**林旭阳：** ${option.question}`, "");
     for (const beat of option.resistanceBeat?.lines ?? []) renderDirectorSpoken(lines, beat);
     if (option.lines?.length) option.lines.forEach((line) => renderDirectorSpoken(lines, line));
@@ -665,7 +741,6 @@ function renderWorldEcho(lines, worldEcho, includeBoundary = false, includeActio
 function renderTransitionQuote(lines, quote) {
   if (!quote?.text) return;
   lines.push("### 幕间引页", "", `> “${quote.text}”`, ">", `> ${quote.source ?? ""}`, "");
-  if (quote.bridge) lines.push(`【承接下一幕】${quote.bridge}`, "");
 }
 
 function renderPureStoryInterlude(lines, interlude) {
@@ -837,7 +912,6 @@ function renderDirectorScript() {
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? packet.caseId;
     lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
-    if (packet.caseTitle?.intro) lines.push(`【标题卡】${packet.caseTitle.intro}`, "");
     lines.push(`【场景目标】${packet.dramaticAnchor ?? ""}`, "");
     lines.push(`【今晚非发生不可】${packet.whyTonight ?? ""}`, "");
 
@@ -855,7 +929,6 @@ function renderDirectorScript() {
     }
 
     lines.push("## 夜 A｜第一次来电", "", "【开播。先让咨询者把自己相信的版本讲完整。】", "");
-    if (packet.openingComplaint) lines.push(`【来电摘要】${packet.openingComplaint}`, "");
     for (const line of packet.openingDialogue ?? []) renderDirectorSpoken(lines, line);
     (packet.nightStructure?.segment1SceneIndexes ?? []).forEach((sceneIndex, localIndex) => {
       renderDirectorScene(lines, packet.sceneVersions?.[sceneIndex], `夜 A · ${localIndex + 1}`);
@@ -961,6 +1034,7 @@ function renderDirectorScene(lines, scene, label) {
   const coreQuestions = (scene.questionOptions ?? []).filter((option) => option.correct);
   for (const option of coreQuestions) {
     if (option.suspicionLabel) lines.push(`【玩家怀疑方向】${option.suspicionLabel}`, "");
+    if (option.revealTransition) lines.push(`【画面短停，屏幕掠过“${option.revealTransition.label}”。主播立绘提亮。】`, "");
     lines.push(`**林旭阳：** ${option.question}`, "");
     for (const beat of option.resistanceBeat?.lines ?? []) renderDirectorSpoken(lines, beat);
     lines.push(`**咨询者：** ${option.answer}`, "");
@@ -1129,7 +1203,7 @@ function renderScene(lines, scene, sourceIndex, label) {
   if (scene.entryQuestion) lines.push(`**林旭阳：** ${scene.entryQuestion}`, "");
   if (scene.version) lines.push(`**${scene.speaker ?? "咨询者"}：** ${scene.version}`, "");
   if (scene.revisedVersion) lines.push(`【材料触发后的重述】 **${scene.speaker ?? "咨询者"}：** ${scene.revisedVersion}`, "");
-  if (scene.helperHint) lines.push(`【主动求助·V哥】 ${scene.helperHint}`, "");
+  if (vBroPlayerVisible && scene.helperHint) lines.push(`【主动求助·V哥】 ${scene.helperHint}`, "");
   for (const [key, value] of Object.entries(scene)) {
     if (["id", "speaker", "entryQuestion", "version", "revisedVersion", "helperHint"].includes(key)) continue;
     renderNode(lines, value, key, 4);
@@ -1249,12 +1323,12 @@ function isDocument(value) {
 
 function humanLabel(key) {
   const labels = {
-    id: "内部 ID", caseId: "案件 ID", plotId: "剧情 ID", runtimeContentStatus: "运行时状态", callMedium: "来电媒介", speakerProfileId: "声纹卡 ID", voiceAttribution: "声音归属",
+    id: "内部 ID", caseId: "案件 ID", caseNumber: "案件编号", plotId: "剧情 ID", runtimeContentStatus: "运行时状态", callMedium: "来电媒介", speakerProfileId: "声纹卡 ID", voiceAttribution: "声音归属",
     dramaticAnchor: "戏剧锚点", whyTonight: "为何今晚发生", helpRequest: "公开求助", objectPurpose: "核心物件作用", callerStake: "咨询者所求", otherStake: "对方所求", thirdPressure: "第三压力", selfServingOmission: "咨询者自利删减",
     publicHook: "公开钩子", storyArcSummary: "故事概述", storySuspense: "悬念", storyClueObject: "线索物件", storyArcTitle: "故事标题",
     clueRole: "线索职能", falseFrame: "错误框架", payoffFor: "回收目标", speakerId: "说话人 ID", doubt: "现场疑点", contradiction: "矛盾", reliability: "可靠度", showsCard: "展示卡片",
     casualQuestions: "自由追问", questionOptions: "关键追问", dialogueOptions: "补充对话", question: "主播问句", answer: "咨询者回答", guardedAnswer: "防备回答", suspicionLabel: "玩家所选怀疑方向", correct: "是否核心项", routeAxis: "路线轴", routeTone: "路线口气",
-    pressureHint: "压力表演", intentHook: "意图钩子", callerGuard: "防备状态", expression: "表情/听感", helperHint: "V哥提示",
+    pressureHint: "压力表演", intentHook: "意图钩子", callerGuard: "防备状态", expression: "表情/听感", helperHint: "V哥提示", revealTransition: "唯一核心反转过场", eyebrow: "过场短标",
     afterScene: "段后触发", beforeVersion: "正文前节拍", afterVersion: "正文后节拍", sceneCloser: "场尾自动拍", returnLead: "回拨先行拍", returnBeat: "回拨后的生活拍", hostChoices: "主播应对选择", stanceNudge: "立场变化", nonLoadBearing: "生活噪声标记", silent: "不出声", kind: "类型", checkId: "材料检视 ID", revisedVersion: "材料触发后的重述",
     title: "标题", subtitle: "副标题", intro: "引子", text: "正文", request: "求助内容", line: "台词", role: "角色职能", type: "表现类型", audioCueId: "音频提示",
     opening: "开场", good: "数据较好分支", bad: "数据较差分支", home: "回家", close: "收束",
@@ -1342,7 +1416,8 @@ function assertContinuousStory(markdown, packets) {
     if (packet.hostDisclosure?.text && !markdown.includes(packet.hostDisclosure.text)) throw new Error(`${packet.caseId} 连续阅读版漏掉主播自揭`);
   }
   const helperCount = (markdown.match(/\*\*V哥：\*\*/g) ?? []).length;
-  if (helperCount !== packets.length) throw new Error(`连续阅读版应每案保留一次 V哥主动求助，实际 ${helperCount} 次`);
+  const expectedHelperCount = vBroPlayerVisible ? packets.length : 0;
+  if (helperCount !== expectedHelperCount) throw new Error(`连续阅读版 V哥露出次数不符合当前可见状态：预期 ${expectedHelperCount}，实际 ${helperCount}`);
 }
 
 function assertSourceCompleteness(markdown, sources) {
@@ -1361,12 +1436,25 @@ function assertSourceCompleteness(markdown, sources) {
     if (value && typeof value === "object") {
       Object.entries(value).forEach(([key, entry]) => {
         if (key === "answer" && Array.isArray(value.lines) && value.lines.length) return;
+        if (key === "helperHint" && !vBroPlayerVisible) return;
         visit(entry, `${path}.${key}`);
       });
     }
   };
   visit(sources, "source");
   if (missing.length) throw new Error(`readable script omitted source strings: ${missing.slice(0, 12).join(", ")}`);
+}
+
+function projectPlayableCaseSource(packet) {
+  if (!packet.nightStructure?.enabled) return packet;
+  const activeIndexes = new Set([
+    ...(packet.nightStructure.segment1SceneIndexes ?? []),
+    ...(packet.nightStructure.segment2SceneIndexes ?? [])
+  ]);
+  return {
+    ...packet,
+    sceneVersions: (packet.sceneVersions ?? []).filter((_, index) => activeIndexes.has(index))
+  };
 }
 
 async function readJson(relativePath) {
