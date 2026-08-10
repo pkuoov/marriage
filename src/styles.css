@@ -1019,6 +1019,16 @@ button:active:not(:disabled) {
   padding: 18px;
 }
 
+@media (min-width: 1440px) {
+  .story-grid.case-vn-grid.live-console-shell {
+    width: calc(100% - clamp(48px, 4vw, 96px));
+  }
+
+  .story-grid.case-vn-grid.live-console-shell.has-control-deck {
+    grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
+  }
+}
+
 .screen-effect {
   position: fixed;
   inset: 0;

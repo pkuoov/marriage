@@ -65,7 +65,7 @@ console.log(smokeTarget === "case34"
     : smokeTarget === "case2-transition"
       ? "Browser replay smoke passed: case2-day-map, case-transition"
       : smokeTarget === "portrait-viewports"
-        ? "Browser replay smoke passed: portrait layouts at 390x844, 1366x768, 1280x800"
+        ? "Browser replay smoke passed: portrait layouts at 390x844, 1366x768, 1280x800, 1920x1080"
         : smokeTarget === "state-replacement"
           ? "Browser replay smoke passed: new-game-reset, patience-retry"
           : smokeTarget === "quick-detective"
@@ -1274,7 +1274,8 @@ async function runPortraitViewports() {
   for (const viewport of [
     { width: 390, height: 844, label: "mobile" },
     { width: 1366, height: 768, label: "desktop" },
-    { width: 1280, height: 800, label: "deck-css" }
+    { width: 1280, height: 800, label: "deck-css" },
+    { width: 1920, height: 1080, label: "wide-desktop" }
   ]) {
     const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
     const page = await context.newPage();
@@ -1298,6 +1299,7 @@ async function runPortraitViewports() {
           imageRendering: portrait ? getComputedStyle(portrait).imageRendering : "missing",
           portraitCount: document.querySelectorAll("[data-dialogue-portrait]").length,
           activePortraitCount: document.querySelectorAll("[data-dialogue-portrait].active").length,
+          shellWidth: shell?.getBoundingClientRect().width ?? 0,
           rect: rect ? { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width } : null
         };
       });
@@ -1307,6 +1309,9 @@ async function runPortraitViewports() {
       if (layout.imageRendering !== "pixelated") throw new Error(`${viewport.label} portrait must keep nearest-neighbor rendering`);
       if (layout.portraitCount !== 2) throw new Error(`${viewport.label} live dialogue stage must keep host and caller portraits`);
       if (layout.activePortraitCount !== 1) throw new Error(`${viewport.label} live dialogue stage must highlight exactly one speaker portrait`);
+      if (viewport.width >= 1440 && layout.shellWidth < viewport.width * 0.9) {
+        throw new Error(`${viewport.label} live stage uses only ${Math.round(layout.shellWidth)}px of a ${viewport.width}px fullscreen viewport`);
+      }
       if (layout.rect.left < -1 || layout.rect.right > viewport.width + 1) throw new Error(`${viewport.label} portrait escapes the viewport horizontally`);
       if (layout.rect.width > Math.min(viewport.width * 0.5, 420)) throw new Error(`${viewport.label} portrait is too wide for the full-stage dialogue composition`);
     } finally {
