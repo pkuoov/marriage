@@ -32,7 +32,7 @@ Mac 端本批新增/修改的关键文件：
 2. 参考声线必须由说话人明确同意用于语音生成。不得使用明星、公众人物、影视/直播片段、陌生人语音或未经授权的演员样本。
 3. 不得把参考 WAV、参考逐字稿、模型权重、原始 take、review 候选或报告提交 Git。它们分别位于已经忽略的 `assets/audio/source/`、`assets/audio/review/`、`assets/audio/reports/`。
 4. 不得覆盖 `assets/audio/voice/*.ogg`，不得把 `src/audioCatalog.js` 的语音改成 ready，不得把 `recording-manifest.json` 改成 `approved-actor-master`。
-5. 当前只处理六条关键“语音材料”，不是给约四百段主对话全量配音。全语音还缺顺序播放、跳过、自动推进和存档恢复设计。
+5. 当前只处理五条关键“语音材料”，不是给约四百段主对话全量配音。全语音还缺顺序播放、跳过、自动推进和存档恢复设计。
 6. 不要在没有 NVIDIA CUDA 的情况下假装完成生成；MPS 不是 Windows 路径，CPU 推理默认禁止。
 
 ## 一、同步并确认仓库
@@ -160,14 +160,13 @@ python scripts\amphion-generate-voice.py --all-ready --amphion-root D:\tools\Amp
 
 工具应只加载一次 Vevo，再为每个 `reference-ready` 角色生成四个固定 seed：`7400`、`7401`、`7402`、`7403`。缺参考 WAV 的角色会跳过。不得删除这两个明确确认参数，也不得添加绕过 revision、许可证或参考同意检查的开关。
 
-六条 cue 的优先顺序：
+五条 cue 的优先顺序：
 
 1. `voice.case2.dryer-message`
 2. `voice.case3.dinner-pause`
 3. `voice.case4.pad-message`
 4. `voice.case4.supplier-message`
 5. `voice.case1.loyalty-message`
-6. `voice.advisor.zhang-closed`
 
 ## 七、人工选 take，再做候选后期
 

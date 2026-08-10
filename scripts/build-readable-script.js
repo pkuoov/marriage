@@ -56,8 +56,7 @@ const continuousStoryRoutes = {
   },
   "04-workplace": {
     helperSceneId: "work-approval-only",
-    interludeActionId: "zhao-zhou-work",
-    interludeOptionId: "work-frame-zhou",
+    interludeActionId: "recheck-approval-page",
     dayStops: [
       { sceneId: "day-work-finance-window", optionId: "keep-payment-receipt-rule" },
       { sceneId: "day-work-supplier-visit", optionId: "keep-supplier-contact-column" }

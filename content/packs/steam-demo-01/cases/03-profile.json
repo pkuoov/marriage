@@ -39,7 +39,7 @@
       "先问两句",
       "定向追问",
       "中段挂断进幕间",
-      "幕间短呼 / 回听冷场 / 提前看家里群",
+      "幕间回听冷场 / 提前看家里群",
       "回拨开场与立场",
       "圈学历与收入材料",
       "在礼物插麦后划定调解和公开边界",
@@ -74,31 +74,6 @@
       "介绍链也在抬价",
       "资料不是一个人整理的"
     ]
-  },
-  "delegation": {
-    "moment": "interlude:send-appraisal",
-    "material": {
-      "id": "profile-mba-gap",
-      "label": "他发来的学校图"
-    },
-    "outcomes": {
-      "zhang-forensic": {
-        "tone": "strong",
-        "text": "哥们的忙照帮，检测费照记。图没改过，这一点她验对了。可我的鉴定书只写图片本身。项目算什么学历，去学信网查；他拿图跟别人怎么说，问当事人。学历和说法，我都不签。"
-      },
-      "zhao-lawyer": {
-        "tone": "partial",
-        "text": "MBA 说成“名校毕业”，单看这句话，不能直接推出骗婚。婚姻登记也不会替两个人核学历。真要谈责任，先把谁说过哪句、有没有因此发生财产处分留好。"
-      },
-      "lin-matchmaker": {
-        "tone": "partial",
-        "text": "“名校毕业”不是材料上的原话。介绍人只说学校好，她回家又顺成了名校毕业。每个人都往好听里加了一点，饭局真问本科，差别就出来了。"
-      },
-      "zhou-accountant": {
-        "tone": "offDomain",
-        "text": "工资账户流水只到这个月。真要看稳不稳，就看连续几个月的工资到账；真要看全部家底，这一张卡更不够。"
-      }
-    }
   },
   "stanceSnapshot": {
     "afterScene": 5,
@@ -1529,20 +1504,6 @@
       "maxActions": 1,
       "continueLabel": "进入白天调查",
       "actions": [
-        {
-          "id": "profile-closed-zhang",
-          "label": "给张法医打电话",
-          "summary": "聊天截图不进鉴定链，今天也等不到原件。",
-          "cost": 1,
-          "kind": "advisorCall",
-          "advisorId": "zhang-forensic",
-          "npcVerb": "refuse",
-          "script": {
-            "audioCueId": "voice.advisor.zhang-closed",
-            "open": "学校图还能不能替她往下验？",
-            "reply": "不能。图有没有改，我已经答了。这个项目到底算什么学历，让他们自己去学信网查。别拿一张复印件让我替人作证。……行了，今天真收了。我家那位喊我对发票呢。你说这日子。"
-          }
-        },
         {
           "id": "profile-family-chat-late",
           "label": "先在后台看表妹发来的群聊",

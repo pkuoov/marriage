@@ -1636,17 +1636,6 @@
             "clipLine": "“今晚店长又说我了。也就你肯听我说这些。”话音底下，吹风机持续响了十几秒。",
             "hostNote": "吹风机没停。至少发这条语音的时候，他还在店里工作。"
           }
-        },
-        {
-          "id": "shop-sync-interrupt",
-          "speakerProfileId": "case2-manager",
-          "label": "后台同步（未邀）",
-          "summary": "店长微信闪过一句，不进直播。",
-          "cost": 0,
-          "kind": "interruptToast",
-          "npcVerb": "interrupt",
-          "from": "店长微信（后台同步）",
-          "text": "别来拍店门，也别把店名带进直播。Tony 私下怎么记人，你们问他；今晚我不接电话。"
         }
       ]
     },

@@ -61,16 +61,6 @@
       "transcript": "服务协调费按老规矩返给对接人。",
       "direction": "平铺直叙，不知道这句会成为关键；“老规矩”不做刻意重音。",
       "editNotes": "一句到底，允许轻微办公室口腔噪声；不要在文件里混入键盘或环境底。"
-    },
-    {
-      "cueId": "voice.advisor.zhang-closed",
-      "priority": 3,
-      "status": "actor-required",
-      "targetPath": "./assets/audio/voice/advisor-zhang-closed.ogg",
-      "speaker": "张法医，理性、边界感强、说完即止",
-      "transcript": "不能。像素真假我答过了，学历口径让当事人自己去学信网核。别拿复印件替人作证。",
-      "direction": "第一句干脆，后面是工作边界，不是训人；语速偏快，但“别拿复印件替人作证”要听清。",
-      "editNotes": "“不能”后留 300 ms；末句不加情绪尾巴。"
     }
   ]
 }

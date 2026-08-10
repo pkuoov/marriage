@@ -21,7 +21,7 @@ export function interludeDeskHtml({
   const budget = night.interludeBudget ?? {};
   return `
     <section class="interlude-desk-card">
-      <span class="source-badge">广告中 / 等待回拨</span>
+      <span class="source-badge">收麦后</span>
       <p><b>${escapeHtml(interlude.title ?? "幕间·调查台")}</b></p>
       <p>${escapeHtml(interlude.kicker ?? "她不在线。时间只够做两三件事。")}</p>
       <div class="interlude-budget" aria-label="幕间剩余 ${Number(budget.remaining ?? 0)} 格，总计 ${Number(budget.max ?? 0)} 格">
@@ -251,15 +251,12 @@ function inventoryLabel(inventory = []) {
     "cousin-note-seen": "表姐的资料说明",
     "assistant-sample-seen": "部门公开流程样本",
     "history-pages-reviewed": "往期账页",
-    "delegation-return": "顾问回单",
+    "approval-page-reviewed": "审批页缺口",
     "leader-note-cold": "暂缓公开的领导批注",
     "leader-note-hot": "准备回拨追问的领导批注",
     "playback-pad": "私聊原话回放",
     "supplier-dm-seen": "供应商返款补话",
     "timeline-delay-gap": "来不及与延后通知时间线",
-    "work-frame-lin": "小林老师的主责拆词",
-    "work-frame-zhao": "赵律师的证据边界",
-    "work-frame-zhou": "周会计的付款回单框架"
   };
   return (inventory ?? []).length ? inventory.map((item) => labels[item] ?? item).join(" / ") : "还没有带回物";
 }

@@ -3500,7 +3500,7 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   assert(!(nightStructure.callbackOpeners ?? []).length, "案 2 存在 overnightStructure 时不得保留第二套 opener 表");
   assert(!nightActionById(brief, "visit-lin"), "标准表对照必须迁入白天地图库，不能继续藏在旧幕间登门");
   assert(!nightActionById(brief, "call-manager-boundary"), "店长拒答已迁出幕间，不得再保留 call-manager-boundary");
-  assertEqual(nightActionById(brief, "shop-sync-interrupt")?.npcVerb, "interrupt", "短幕间须保留 NPC interrupt 配额");
+  assert(!nightActionById(brief, "shop-sync-interrupt"), "店长拒答已经落在白天门口，短幕间不得再塞一条不改变材料或回拨的微信");
   const structure = overnightStructureFor(brief);
   assertEqual(structure?.dayBudget, 2, "案 2 白天地图库必须四选二");
   assertEqual(structure?.dayScenes?.length, 4, "案 2 白天必须提供四处地点");
@@ -3754,22 +3754,21 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
   assert((privacyBeat?.choices ?? []).every((choice) => choice.silent !== true), "案 3 隐私爆点不得把沉默包装成唯一不施压的处理方式");
 });
 
-test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", () => {
+test("RUNTIME-011", "case 4 keeps interlude choices on evidence that changes the callback", () => {
   const brief = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
     .find((item) => item.runtimeContentCaseId === "04-workplace");
-  const conflict = nightActionById(brief, "zhao-zhou-work");
-  assertEqual(conflict?.kind, "advisorConflict", "案 4 三位顾问必须在同一冲突场景出现");
-  assertEqual(conflict?.options?.length, 3, "案 4 必须同时呈现赵律师、周会计和小林老师三套框架");
-  ["work-frame-zhao", "work-frame-zhou", "work-frame-lin"].forEach((id) => {
-    assert(conflict.options.some((option) => option.id === id), `案 4 顾问冲突缺少 ${id}`);
-  });
+  assert(!brief.delegation, "案 4 不得保留与审批页复核重复的顾问委托");
+  assert(!nightActionById(brief, "zhao-zhou-work"), "案 4 不得再用三位顾问包装同一组材料问题");
+  const approvalAction = nightActionById(brief, "recheck-approval-page");
+  assertEqual(approvalAction?.kind, "evidencePass", "案 4 幕间应直接核对审批页");
+  assert(approvalAction?.focusCheckIds?.includes("work-approval-missing"), "审批页行动必须接到付款缺口材料题");
+  assert(approvalAction?.grantsInventory?.includes("approval-page-reviewed"), "核对审批页后必须带回可改变第二夜开场的结果");
   assertEqual(nightStructureFor(brief)?.interlude?.budget, 1, "案 4 短幕间最多支出一步");
   assert(!(nightStructureFor(brief)?.callbackOpeners ?? []).length, "案 4 存在 overnightStructure 时不得保留第二套 opener 表");
   const structure = overnightStructureFor(brief);
-  const linFrameEarned = interludeEarnedItemsForOvernight(brief, ["work-frame-lin"]);
-  assert(linFrameEarned.includes("扛活还是扛钱"), "案 4 小林老师的提问必须同步进 overnight earnedItems");
-  assert(availableOvernightCallbackOpeners(brief, linFrameEarned).some((item) => item.id === "扛活还是扛钱"), "采小林老师的提问必须改变第二夜开场");
-  assert(interludeEarnedItemsForOvernight(brief, ["delegation-return"]).includes("顾问回单"), "案 4 顾问回单必须从幕间同步进 overnight earnedItems");
+  const approvalEarned = interludeEarnedItemsForOvernight(brief, ["approval-page-reviewed"]);
+  assert(approvalEarned.includes("审批页缺口"), "案 4 审批页复核必须同步进 overnight earnedItems");
+  assert(availableOvernightCallbackOpeners(brief, approvalEarned).some((item) => item.id === "审批页缺口"), "审批页复核必须改变第二夜开场");
   assert(interludeEarnedItemsForOvernight(brief, ["playback-pad"]).includes("垫款回放"), "案 4 垫款回放必须从幕间同步进 overnight earnedItems");
   const leaderInterrupt = nightActionById(brief, "leader-interrupt");
   assert(leaderInterrupt?.choices?.find((choice) => choice.id === "bring-to-callback")?.grantsInventory?.includes("leader-note-hot"), "案 4 带回领导批注必须继续解锁回拨");
@@ -3796,7 +3795,8 @@ test("RUNTIME-011", "case 4 stages a three-advisor conflict before callback", ()
   assert(availableOvernightCallbackOpeners(brief, ["她整理的报销时间线"]).some((item) => item.id === "她整理的报销时间线"), "案 4 报销时间线必须改变第二夜开场");
   assertEqual(daySceneById(brief, "day-work-breakroom-observe")?.body?.choice?.options?.length, 2, "案 4 茶水间观察必须有两岔现场取舍");
   const case4OpenerIds = Object.keys(structure?.callbackOpeners ?? {});
-  assertEqual(case4OpenerIds.length, 14, "案 4 必须覆盖既有 opener 与新增的报销时间线");
+  assertEqual(case4OpenerIds.length, 11, "案 4 必须覆盖十一条由实际材料带回的回拨开场");
+  assert(!case4OpenerIds.some((itemId) => /赵律师|周会计|小林老师|顾问回单/.test(itemId)), "案 4 回拨物不得再用无实际作用的人名或顾问回单占位");
   case4OpenerIds.forEach((itemId) => {
     assert(overnightCallbackOpenerById(brief, itemId)?.firstConflict?.hostLine, `案 4 带回 ${itemId} 必须改变第二夜第一轮对峙`);
   });

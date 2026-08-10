@@ -87,11 +87,6 @@
       "kind": "cast-character",
       "description": "案4供应商项目员；流程化，认为自己只是在说明长期做法。",
       "referenceScript": "报价单我已经按新数量改过了，送货时间还是周五上午。东西到场以后，麻烦找个人签收。"
-    },
-    "zhang-forensic": {
-      "kind": "cast-character",
-      "description": "张法医；语速偏快、边界明确，说完即止。",
-      "referenceScript": "照片上我只能看清这些，原件不在我手里。剩下的情况，你们最好去正式渠道核实。"
     }
   },
   "jobs": [
@@ -174,20 +169,6 @@
       "effectsDeferred": [
         "phone playback filtering"
       ]
-    },
-    {
-      "cueId": "voice.advisor.zhang-closed",
-      "status": "blocked-reference",
-      "speakerProfileId": "zhang-forensic",
-      "transcript": "不能。像素真假我答过了，学历口径让当事人自己去学信网核。别拿复印件替人作证。",
-      "targetPath": "./assets/audio/voice/advisor-zhang-closed.ogg",
-      "referenceWav": "assets/audio/source/voice/references/zhang-forensic/reference.wav",
-      "referenceTranscript": "assets/audio/source/voice/references/zhang-forensic/reference.txt",
-      "generationDirectory": "assets/audio/source/voice/amphion/voice-advisor-zhang-closed",
-      "reviewPath": "assets/audio/review/voice/advisor-zhang-closed-candidate.ogg",
-      "reportPath": "assets/audio/reports/voice/advisor-zhang-closed-candidate.json",
-      "performance": "第一句干脆，后面是工作边界而不是训人；末句听清后直接收住。",
-      "effectsDeferred": []
     }
   ]
 }

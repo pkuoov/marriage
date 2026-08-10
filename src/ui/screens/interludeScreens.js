@@ -105,8 +105,8 @@ export function createInterludeScreens(ctx) {
     dayFrame({
       brief,
       backdropClass: "day-city",
-      label: "幕间调查台",
-      chapter: "广告中 / 等待回拨",
+      label: "收麦后",
+      chapter: "回拨前",
       text: interludeDeskHtml({ interlude, night, actionStates, canReturn }),
       choices: flowGroupHtml(`
         ${canReturn ? `<button class="primary" data-callback-ready type="button">${escapeHtml(interlude.continueLabel ?? "回拨她")}</button>` : ""}
@@ -153,7 +153,7 @@ export function createInterludeScreens(ctx) {
       brief,
       backdropClass: "day-document",
       label: pick ? "顾问回单" : "送鉴定",
-      chapter: "幕间·调查台",
+      chapter: "回拨前",
       text: delegationScreenHtml({
         delegation,
         advisors: CONTENT_ADVISORS,
@@ -180,7 +180,7 @@ export function createInterludeScreens(ctx) {
       brief,
       backdropClass: action.backdropClass ?? "day-document",
       label: action.label ?? "重看材料",
-      chapter: "幕间·调查台",
+      chapter: "回拨前",
       text: evidenceCheckScreenHtml({
         check,
         pick,
@@ -192,7 +192,7 @@ export function createInterludeScreens(ctx) {
         : ""
     });
     bindEvidenceCheckButtons(brief, check, { interludeAction: action });
-    bind("[data-return-interlude]", () => closeInterludeAction(brief));
+    bind("[data-return-interlude]", () => completeInterludeAction(brief, action));
     bindSceneButtons();
   }
 
@@ -209,7 +209,7 @@ export function createInterludeScreens(ctx) {
       brief,
       backdropClass: action.backdropClass ?? "day-document",
       label: action.label ?? "后台私信",
-      chapter: "幕间·调查台",
+      chapter: "回拨前",
       text: `${investigationBackflowScreenHtml({
         hook,
         pick,
@@ -234,7 +234,7 @@ export function createInterludeScreens(ctx) {
       brief,
       backdropClass: action.backdropClass ?? "day-city",
       label: action.label ?? "幕间通话",
-      chapter: "幕间·调查台",
+      chapter: "回拨前",
       text: interludeDialogueActionHtml(action, followupAsked, audioCueView(cueId)),
       choices: flowGroupHtml(`
         ${action.script?.followupQuestion && !followupAsked ? `<button data-interlude-followup="${escapeHtml(action.id)}" type="button">追一问</button>` : ""}
@@ -263,7 +263,7 @@ export function createInterludeScreens(ctx) {
       brief,
       backdropClass: action.backdropClass ?? "day-document",
       label: action.label ?? "听回放",
-      chapter: "幕间·调查台",
+      chapter: "回拨前",
       text: interludePlaybackActionHtml(action, audioCueView(cueId)),
       choices: flowGroupHtml(`<button class="primary" data-complete-interlude-action type="button">记下回调查台</button>`),
       keepVoiceCueId: cueId
@@ -305,7 +305,7 @@ export function createInterludeScreens(ctx) {
       brief,
       backdropClass: action.backdropClass ?? "day-city",
       label: "后台打断",
-      chapter: "幕间·调查台",
+      chapter: "回拨前",
       text: interruptToastHtml(action, selectedChoiceId),
       choices: flowGroupHtml(`
         ${!hasChoices && !selectedChoiceId ? `<button class="primary" data-complete-interlude-action type="button">稍后处理</button>` : ""}

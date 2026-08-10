@@ -5936,17 +5936,6 @@ export const CONTENT_CASES = {
                 "clipLine": "“今晚店长又说我了。也就你肯听我说这些。”话音底下，吹风机持续响了十几秒。",
                 "hostNote": "吹风机没停。至少发这条语音的时候，他还在店里工作。"
               }
-            },
-            {
-              "id": "shop-sync-interrupt",
-              "speakerProfileId": "case2-manager",
-              "label": "后台同步（未邀）",
-              "summary": "店长微信闪过一句，不进直播。",
-              "cost": 0,
-              "kind": "interruptToast",
-              "npcVerb": "interrupt",
-              "from": "店长微信（后台同步）",
-              "text": "别来拍店门，也别把店名带进直播。Tony 私下怎么记人，你们问他；今晚我不接电话。"
             }
           ]
         },
@@ -7610,31 +7599,6 @@ export const CONTENT_CASES = {
           ]
         }
       ],
-      "delegation": {
-        "moment": "interlude:send-appraisal",
-        "material": {
-          "id": "profile-mba-gap",
-          "label": "他发来的学校图"
-        },
-        "outcomes": {
-          "zhang-forensic": {
-            "tone": "strong",
-            "text": "哥们的忙照帮，检测费照记。图没改过，这一点她验对了。可我的鉴定书只写图片本身。项目算什么学历，去学信网查；他拿图跟别人怎么说，问当事人。学历和说法，我都不签。"
-          },
-          "zhao-lawyer": {
-            "tone": "partial",
-            "text": "MBA 说成“名校毕业”，单看这句话，不能直接推出骗婚。婚姻登记也不会替两个人核学历。真要谈责任，先把谁说过哪句、有没有因此发生财产处分留好。"
-          },
-          "lin-matchmaker": {
-            "tone": "partial",
-            "text": "“名校毕业”不是材料上的原话。介绍人只说学校好，她回家又顺成了名校毕业。每个人都往好听里加了一点，饭局真问本科，差别就出来了。"
-          },
-          "zhou-accountant": {
-            "tone": "offDomain",
-            "text": "工资账户流水只到这个月。真要看稳不稳，就看连续几个月的工资到账；真要看全部家底，这一张卡更不够。"
-          }
-        }
-      },
       "documents": [
         {
           "id": "case3-credential-balance",
@@ -7809,20 +7773,6 @@ export const CONTENT_CASES = {
           "maxActions": 1,
           "continueLabel": "进入白天调查",
           "actions": [
-            {
-              "id": "profile-closed-zhang",
-              "label": "给张法医打电话",
-              "summary": "聊天截图不进鉴定链，今天也等不到原件。",
-              "cost": 1,
-              "kind": "advisorCall",
-              "advisorId": "zhang-forensic",
-              "npcVerb": "refuse",
-              "script": {
-                "audioCueId": "voice.advisor.zhang-closed",
-                "open": "学校图还能不能替她往下验？",
-                "reply": "不能。图有没有改，我已经答了。这个项目到底算什么学历，让他们自己去学信网查。别拿一张复印件让我替人作证。……行了，今天真收了。我家那位喊我对发票呢。你说这日子。"
-              }
-            },
             {
               "id": "profile-family-chat-late",
               "label": "先在后台看表妹发来的群聊",
@@ -9434,31 +9384,6 @@ export const CONTENT_CASES = {
           ]
         }
       ],
-      "delegation": {
-        "moment": "interlude:send-appraisal",
-        "material": {
-          "id": "work-approval-missing",
-          "label": "那张审批图"
-        },
-        "outcomes": {
-          "zhou-accountant": {
-            "tone": "strong",
-            "text": "对公付款通常会有回单号。让她别再问“钱怎么还没到”，就问这单的付款回单号。报得出，就沿回单查；报不出，至少不能说已经付了。……先这样。老张点的外卖送我这儿了，地址又填错。验了半辈子指纹的人，自己家门牌号记不住。"
-          },
-          "zhao-lawyer": {
-            "tone": "partial",
-            "text": "私聊里让她先垫的原话、刷卡记录、后续催款，都先完整留好。能向谁主张、走哪一步，还要看经办主体和公司后续材料；现在别只留一张审批图。"
-          },
-          "zhang-forensic": {
-            "tone": "partial",
-            "text": "这张截图是完整截屏，底部没有裁切痕迹。它本来就只走到审批这一步。能确认审批过了，不能拿它当付款回执。"
-          },
-          "lin-matchmaker": {
-            "tone": "offDomain",
-            "text": "职场不是我的场。我只听见一件事：她想让老板把活动交给她，对方就把“先垫”跟在后面。她自己想往前走，不等于这笔钱不用说清。"
-          }
-        }
-      },
       "documents": [
         {
           "id": "case4-payment-ledger",
@@ -9634,62 +9559,23 @@ export const CONTENT_CASES = {
         },
         "interlude": {
           "title": "收麦后·控台短查",
-          "kicker": "出门前只够处理一样：顾问短会、回放或时间线。",
+          "kicker": "出门前只够处理一样：核审批页、听回放或重排时间线。",
           "budget": 1,
           "minActions": 1,
           "maxActions": 1,
           "continueLabel": "进入白天调查",
           "actions": [
             {
-              "id": "send-appraisal",
-              "label": "把审批页发给顾问",
-              "summary": "把审批截图送给一位顾问。",
+              "id": "recheck-approval-page",
+              "label": "核对审批页",
+              "summary": "再看一遍审批图到底有了什么、还缺什么。",
               "cost": 1,
-              "kind": "delegation",
+              "kind": "evidencePass",
               "grantsInventory": [
-                "delegation-return"
-              ]
-            },
-            {
-              "id": "zhao-zhou-work",
-              "label": "三路同时进后台",
-              "summary": "三个人几乎同时回了消息。你只能先点开一条。",
-              "cost": 1,
-              "kind": "advisorConflict",
-              "npcVerb": "conflict",
-              "backdropClass": "day-city",
-              "sceneText": "收麦没几分钟，后台连续进来三条回复：赵律师回了文字，周会计开了共享表格，小林老师发来一段语音。三个人各盯一件事。",
-              "options": [
-                {
-                  "id": "work-frame-zhao",
-                  "advisorId": "zhao-lawyer",
-                  "label": "先看赵律师的回复",
-                  "advisorLine": "公司名先遮住。私聊和刷卡记录都留好。公司报销和供应商项目返利分开留证，两边现在都不能猜收款人。",
-                  "grantsInventory": [
-                    "work-frame-zhao"
-                  ],
-                  "routeAxis": "process-control"
-                },
-                {
-                  "id": "work-frame-zhou",
-                  "advisorId": "zhou-accountant",
-                  "label": "先看周会计的回复",
-                  "advisorLine": "审批页看到了。付款回单号呢？拿不出来，就先别说已经付了。",
-                  "grantsInventory": [
-                    "work-frame-zhou"
-                  ],
-                  "routeAxis": "money-flow"
-                },
-                {
-                  "id": "work-frame-lin",
-                  "advisorId": "lin-matchmaker",
-                  "label": "先听小林老师的语音",
-                  "advisorLine": "她想让老板把活动交给她，不丢人。可对方一句话把负责活动和先垫钱捆在一块儿了，这得拆开说。",
-                  "grantsInventory": [
-                    "work-frame-lin"
-                  ],
-                  "routeAxis": "identity-wording"
-                }
+                "approval-page-reviewed"
+              ],
+              "focusCheckIds": [
+                "work-approval-missing"
               ]
             },
             {
@@ -9888,15 +9774,12 @@ export const CONTENT_CASES = {
           }
         ],
         "interludeEarnedItemMap": {
-          "delegation-return": "顾问回单",
-          "work-frame-zhao": "赵律师边界框架",
-          "work-frame-zhou": "周会计钱路框架",
-          "work-frame-lin": "扛活还是扛钱",
+          "approval-page-reviewed": "审批页缺口",
           "timeline-delay-gap": "预算时间线复核",
           "leader-note-hot": "领导批注",
           "playback-pad": "垫款回放"
         },
-        "dayIntro": "陈把遮掉公司名和姓名的审批页、刷卡记录和供应商内部结算页交给节目。周会计替你约了一位财务顾问，只讲通用付款节点；陈也给供应商和部门助理发了书面同意，他们只谈各自经手的材料。下午最多处理两处。",
+        "dayIntro": "陈把遮掉公司名和姓名的审批页、刷卡记录和供应商内部结算页交给节目。节目约到一位财务经办，只讲通用付款节点；陈也给供应商和部门助理发了书面同意，他们只谈各自经手的材料。下午最多处理两处。",
         "dayBudget": 2,
         "minDayScenes": 2,
         "dayScenes": [
@@ -9906,7 +9789,7 @@ export const CONTENT_CASES = {
             "backdropClass": "day-studio",
             "kind": "studio",
             "body": {
-              "access": "周会计代约的财务顾问只看遮名审批页、解释通用节点，不进入咨询者公司的财务系统。",
+              "access": "财务经办只看遮名审批页、解释通用节点，不进入咨询者公司的财务系统。",
               "text": "午休前，财务服务窗只剩一个号。你遮住公司名和姓名，把咨询者收到的审批页递进窗口。经办人没有替你查个案。",
               "routeAxis": "money-flow",
               "cast": [
@@ -10178,25 +10061,11 @@ export const CONTENT_CASES = {
               "callerFollowupLine": "可要我现在把“个人垫款未返”写进那张表，我还不敢。"
             }
           },
-          "赵律师边界框架": {
-            "line": "赵律师让我先把公司名遮住，又问私聊和刷卡记录还在不在。都在。她再问：公司会返这六万八，谁写过？没人。",
+          "审批页缺口": {
+            "line": "我又看了那三张审批图。除了审批通过，付款状态、回单号和收款账户什么都没有。",
             "firstConflict": {
-              "hostLine": "六万八还在你卡上。你为什么一直没让他把“公司会返”写清楚？",
-              "callerLine": "老板刚把活动交给我，我怕别人说我只盯着钱。"
-            }
-          },
-          "周会计钱路框架": {
-            "line": "周会计只问回单号。我报不出来。审批图倒有三张，像复制粘贴。",
-            "firstConflict": {
-              "hostLine": "下一次他再发审批图，你回哪一句？",
-              "callerLine": "回单号给我。别的先不聊。"
-            }
-          },
-          "扛活还是扛钱": {
-            "line": "小林老师翻到我那句“我来扛”，问我说的是活动，还是那六万八。我卡了半天，一个字都没回。",
-            "firstConflict": {
-              "hostLine": "现在你愿意认哪一件？",
-              "callerLine": "活动我认。六万八不是我该替公司出的。"
+              "hostLine": "你问了三次到账，对方都只发这张图。为什么第三次还没追问付款回单？",
+              "callerLine": "我把图存下来了，想着审批都过了，再催就像我只盯着钱。"
             }
           },
           "预算时间线复核": {
@@ -10211,13 +10080,6 @@ export const CONTENT_CASES = {
             "firstConflict": {
               "hostLine": "那句夸奖落下来时，你有没有问六万八什么时候回？",
               "callerLine": "没有。我先截图发给朋友了。"
-            }
-          },
-          "顾问回单": {
-            "line": "顾问问我回单在哪儿。我拿不出来。那张图，他只认审批过了，再往下一个字也没说。",
-            "firstConflict": {
-              "hostLine": "顾问只肯确认审批过了。没有付款回单，你现在还觉得钱已经在走吗？",
-              "callerLine": "不觉得。没有回单，我就说没有。"
             }
           },
           "垫款回放": {
@@ -10268,13 +10130,6 @@ export const CONTENT_CASES = {
           }
         ]
       },
-      "advisorNotes": [
-        {
-          "advisorId": "zhou-accountant",
-          "appearsNowBecause": "张法医转来的，只加了一句：我对象让我原话带到。",
-          "text": "我只问一句：付款回单在哪儿？审批过了，钱也可能还没付；真付了，也得看进了哪个账户。今晚没有回单，就别替它往下走。"
-        }
-      ],
       "respondentNote": {
         "source": "respondent-note",
         "appearsNowBecause": "收麦后，那位同事托人给后台带了话。",
@@ -10391,7 +10246,7 @@ export const CONTENT_CASES = {
         "title": "职场报销截图"
       },
       "storyInterludeRecap": "活动总结写了她负责，报备要求也发在群里，六万八却实打实从她自己的卡里划走了。",
-      "followupTwist": "回拨前，赵律师、周会计和小林老师同时进后台：赵律师让你遮住公司名，周会计只问付款回单，小林老师则问她答应扛的是活还是钱。白天先带回哪条意见，第二夜就从哪一处开口。",
+      "followupTwist": "回拨前，后台多出领导批注；审批页、私聊回放和预算时间线也都能重新核对。白天带回哪份材料，第二夜就从哪一处开口。",
       "dailyShareTitle": "报销截图都发了，钱为什么还没回来？",
       "dailyShareBody": "她回过“收到”，也回过“我来扛”；活动总结写了她负责，公司审批页却没有付款。供应商项目返利另有记录，但支付状态和账户同样空着。",
       "dailyShareQuestion": "你会先问审批截图，还是先问谁拿了项目署名？",

@@ -5,8 +5,8 @@
 ## 汇总
 
 - 固定人物卡：36
-- 收录台词／玩家可见人物材料：1076
-- 本包实际出声人物：35
+- 收录台词／玩家可见人物材料：1053
+- 本包实际出声人物：33
 - 句长节奏人工复核提示：24
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
 
@@ -714,10 +714,6 @@
 - **防御动作：** 承认培训，不承认自己知道私人推进。
 - **知识边界：** 知道培训、会员制度和员工指标，不知道Tony全部私人对话。
 
-### 收麦幕间
-
-- `$case.nightStructure.interlude.actions[3].text` 别来拍店门，也别把店名带进直播。Tony 私下怎么记人，你们问他；今晚我不接电话。
-
 ### 白天
 
 - `$case.overnightStructure.dayScenes[2].body.beats[0]` 昨晚那条微信你看见了。培训页我让人转了，页上写什么就看页，别拿我当 Tony 的证人。
@@ -1040,28 +1036,6 @@
 - `$case.overnightStructure.dayScenes[1].body.beats[2]` 他在家里群问过该发哪张。姑姑说工资卡最规整，别的卡不用给。我还提醒过他，至少跟人家说清这只是工资账户。他最后只把这张发了，没带那句话。
 - `$case.overnightStructure.dayScenes[1].body.beats[3]` 我能说的就这些。其他账户是什么、他愿意拿多少，你去问他，我不替他答。
 
-## 赵律师
-
-- **固定性格：** 锋利的理性派
-- **受压反应：** 听见无证据定性会立刻打断，并补适用条件。
-- **防御动作：** 短句、免责、拒猜动机。
-- **知识边界：** 只解释法律与责任效果，不替案件当事人作证，不指点玩家圈哪一栏。
-
-### 后台／材料回流
-
-- `$case.delegation.outcomes.zhao-lawyer.text` MBA 说成“名校毕业”，单看这句话，不能直接推出骗婚。婚姻登记也不会替两个人核学历。真要谈责任，先把谁说过哪句、有没有因此发生财产处分留好。
-
-## 周会计
-
-- **固定性格：** 冷静的数字理性派
-- **受压反应：** 删掉形容词，只报金额、时间和路径。
-- **防御动作：** 按日期排列，拒绝替数字添故事。
-- **知识边界：** 只读材料中已经出现的账目与流程，不认定未知付款人身份。
-
-### 后台／材料回流
-
-- `$case.delegation.outcomes.zhou-accountant.text` 工资账户流水只到这个月。真要看稳不稳，就看连续几个月的工资到账；真要看全部家底，这一张卡更不够。
-
 ## 小林老师
 
 - **固定性格：** 热络的感性现实派
@@ -1072,22 +1046,6 @@
 ### 后台／材料回流
 
 - `$case.advisorNotes[0].text` 我做婚介的，最怕两家隔着中间人传彩礼数字。你们俩要是还想往下谈，就自己见面，把能拿多少说清楚。家里答应的那份什么时候到，也别含糊。
-- `$case.delegation.outcomes.lin-matchmaker.text` “名校毕业”不是材料上的原话。介绍人只说学校好，她回家又顺成了名校毕业。每个人都往好听里加了一点，饭局真问本科，差别就出来了。
-
-## 张法医
-
-- **固定性格：** 技术洁癖型理性派
-- **受压反应：** 碰到来源不全的材料会停止讨论结论。
-- **防御动作：** 先查链条，再谈内容。
-- **知识边界：** 只判断证据链与技术可检验性，不认定关系或动机。
-
-### 收麦幕间
-
-- `$case.nightStructure.interlude.actions[0].script.reply` 不能。图有没有改，我已经答了。这个项目到底算什么学历，让他们自己去学信网查。别拿一张复印件让我替人作证。……行了，今天真收了。我家那位喊我对发票呢。你说这日子。
-
-### 后台／材料回流
-
-- `$case.delegation.outcomes.zhang-forensic.text` 哥们的忙照帮，检测费照记。图没改过，这一点她验对了。可我的鉴定书只写图片本身。项目算什么学历，去学信网查；他拿图跟别人怎么说，问当事人。学历和说法，我都不签。
 
 ## V哥
 
@@ -1163,12 +1121,9 @@
 - `$case.overnightStructure.callbackOpeners.供应商对接人栏.firstConflict.hostLine` 名字在，对账的东西不在。你今晚要他补哪一张？
 - `$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.hostLine` 这三页都没有日期。那之前，有没有谁答应过具体哪天还？
 - `$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.hostLine` 活动总结写了你负责。有没有人书面写过谁负责催付款？
-- `$case.overnightStructure.callbackOpeners.赵律师边界框架.firstConflict.hostLine` 六万八还在你卡上。你为什么一直没让他把“公司会返”写清楚？
-- `$case.overnightStructure.callbackOpeners.周会计钱路框架.firstConflict.hostLine` 下一次他再发审批图，你回哪一句？
-- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.firstConflict.hostLine` 现在你愿意认哪一件？
+- `$case.overnightStructure.callbackOpeners.审批页缺口.firstConflict.hostLine` 你问了三次到账，对方都只发这张图。为什么第三次还没追问付款回单？
 - `$case.overnightStructure.callbackOpeners.预算时间线复核.firstConflict.hostLine` 他当时拿什么让你别在群里问？
 - `$case.overnightStructure.callbackOpeners.领导批注.firstConflict.hostLine` 那句夸奖落下来时，你有没有问六万八什么时候回？
-- `$case.overnightStructure.callbackOpeners.顾问回单.firstConflict.hostLine` 顾问只肯确认审批过了。没有付款回单，你现在还觉得钱已经在走吗？
 - `$case.overnightStructure.callbackOpeners.垫款回放.firstConflict.hostLine` 你回“我来扛”时，知道自己要垫六万八吗？
 - `$case.sceneVersions[4].entryQuestion` 你白天还拿到什么材料？
 - `$case.sceneVersions[4].casualQuestions[0].question` 这页结算表是谁给你的？
@@ -1252,12 +1207,9 @@
 - `$case.overnightStructure.callbackOpeners.供应商对接人栏.firstConflict.callerLine` 供应商的返利支付记录。上面得有支付状态和收款账户。
 - `$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.callerLine` 没人。每次我问，话就绕回这次活动是我自己要接的。
 - `$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.callerLine` 没有。负责人的位置有我的名字，催款的人没写。
-- `$case.overnightStructure.callbackOpeners.赵律师边界框架.firstConflict.callerLine` 老板刚把活动交给我，我怕别人说我只盯着钱。
-- `$case.overnightStructure.callbackOpeners.周会计钱路框架.firstConflict.callerLine` 回单号给我。别的先不聊。
-- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.firstConflict.callerLine` 活动我认。六万八不是我该替公司出的。
+- `$case.overnightStructure.callbackOpeners.审批页缺口.firstConflict.callerLine` 我把图存下来了，想着审批都过了，再催就像我只盯着钱。
 - `$case.overnightStructure.callbackOpeners.预算时间线复核.firstConflict.callerLine` 就说来不及，还说别让领导觉得我不担事。财务慢，是我后来替他补的。
 - `$case.overnightStructure.callbackOpeners.领导批注.firstConflict.callerLine` 没有。我先截图发给朋友了。
-- `$case.overnightStructure.callbackOpeners.顾问回单.firstConflict.callerLine` 不觉得。没有回单，我就说没有。
 - `$case.overnightStructure.callbackOpeners.垫款回放.firstConflict.callerLine` 不知道具体金额。我以为只是先把活接下来，真让我刷卡时，我也没敢追问这算谁的责任。
 - `$case.sceneVersions[4].version` 我今天下午拿到一页供应商内部结算表。里面另有一项“项目返利”，项目联系人写的是他，备注原话是：“项目返利按合作惯例返给项目联系人。”可收款账户是空的。我不知道这笔返利有没有付，也不知道最后给了谁。它和公司该还我的六万八不是同一笔钱。
 - `$case.sceneVersions[4].casualQuestions[0].answer` 供应商那边的项目员给的。他只肯确认这页是他们内部的结算记录，不肯说钱最后给了谁。
@@ -1286,12 +1238,9 @@
 - `$case.overnightStructure.callbackOpeners.供应商对接人栏.line` 供应商内部结算页的项目联系人写他，可支付状态和收款账户都是空的。这跟公司报销不是一张单，我不能把两处接上。
 - `$case.overnightStructure.callbackOpeners.茶水间回单缺口.line` 助理把三页摊在桌上。私聊叫我别问预算，领导批注只写了我负责，审批页还是停在“通过”。我当时有点想笑——哪一页都没说钱什么时候回。
 - `$case.overnightStructure.callbackOpeners.茶水间责任对照.line` 私聊让我别问预算，领导后来只写了我负责。我来回看了几遍，也没找到谁负责催付款。
-- `$case.overnightStructure.callbackOpeners.赵律师边界框架.line` 赵律师让我先把公司名遮住，又问私聊和刷卡记录还在不在。都在。她再问：公司会返这六万八，谁写过？没人。
-- `$case.overnightStructure.callbackOpeners.周会计钱路框架.line` 周会计只问回单号。我报不出来。审批图倒有三张，像复制粘贴。
-- `$case.overnightStructure.callbackOpeners.扛活还是扛钱.line` 小林老师翻到我那句“我来扛”，问我说的是活动，还是那六万八。我卡了半天，一个字都没回。
+- `$case.overnightStructure.callbackOpeners.审批页缺口.line` 我又看了那三张审批图。除了审批通过，付款状态、回单号和收款账户什么都没有。
 - `$case.overnightStructure.callbackOpeners.预算时间线复核.line` 我把那几天的消息重新翻了一遍。他让我别在群里问预算的时候，财务根本没发延后通知。昨晚我还拿后面那张通知替他解释。
 - `$case.overnightStructure.callbackOpeners.领导批注.line` 领导那条批注，我又看了。只写了我负责，一个钱字都没有。我当时高兴，是真的。账也还在。
-- `$case.overnightStructure.callbackOpeners.顾问回单.line` 顾问问我回单在哪儿。我拿不出来。那张图，他只认审批过了，再往下一个字也没说。
 - `$case.overnightStructure.callbackOpeners.垫款回放.line` 那句私聊我重新放了。‘你先把场地和礼品费垫了。活动总结里，我写你是负责人。’钱在前，负责人在后。可我当时只顾着高兴，马上回了“我来扛”。
 - `$case.overnightStructure.callbackFallback.line` 我回来了。新批注还在手机里。你白天先看了哪份材料？
 - `$case.overnightStructure.postures.againstCaller` 这次活动是我先争取的，“我来扛”也是我回的。我认。可钱还是没回来。
@@ -1417,68 +1366,11 @@
 
 ### 收麦幕间
 
-- `$case.nightStructure.interlude.actions[2].text` 下周一照常开季度总结会，负责人就按现在这份名单写。你们没报备的那几项，开会前自己补上。
+- `$case.nightStructure.interlude.actions[1].text` 下周一照常开季度总结会，负责人就按现在这份名单写。你们没报备的那几项，开会前自己补上。
 
 ### 后台／材料回流
 
 - `$case.investigationHooks[1].material` 领导批注：“客户反馈不错，这次活动负责人写小陈；流程该补的补齐。别让这点流程问题影响部门这季度的成绩。”批注里没有垫款金额、付款账户、供应商联系人。
-
-## 赵律师
-
-- **固定性格：** 锋利的理性派
-- **受压反应：** 听见无证据定性会立刻打断，并补适用条件。
-- **防御动作：** 短句、免责、拒猜动机。
-- **知识边界：** 只解释法律与责任效果，不替案件当事人作证，不指点玩家圈哪一栏。
-
-### 收麦幕间
-
-- `$case.nightStructure.interlude.actions[1].options[0].advisorLine` 公司名先遮住。私聊和刷卡记录都留好。公司报销和供应商项目返利分开留证，两边现在都不能猜收款人。
-
-### 后台／材料回流
-
-- `$case.delegation.outcomes.zhao-lawyer.text` 私聊里让她先垫的原话、刷卡记录、后续催款，都先完整留好。能向谁主张、走哪一步，还要看经办主体和公司后续材料；现在别只留一张审批图。
-
-## 周会计
-
-- **固定性格：** 冷静的数字理性派
-- **受压反应：** 删掉形容词，只报金额、时间和路径。
-- **防御动作：** 按日期排列，拒绝替数字添故事。
-- **知识边界：** 只读材料中已经出现的账目与流程，不认定未知付款人身份。
-
-### 收麦幕间
-
-- `$case.nightStructure.interlude.actions[1].options[1].advisorLine` 审批页看到了。付款回单号呢？拿不出来，就先别说已经付了。
-
-### 后台／材料回流
-
-- `$case.advisorNotes[0].text` 我只问一句：付款回单在哪儿？审批过了，钱也可能还没付；真付了，也得看进了哪个账户。今晚没有回单，就别替它往下走。
-- `$case.delegation.outcomes.zhou-accountant.text` 对公付款通常会有回单号。让她别再问“钱怎么还没到”，就问这单的付款回单号。报得出，就沿回单查；报不出，至少不能说已经付了。……先这样。老张点的外卖送我这儿了，地址又填错。验了半辈子指纹的人，自己家门牌号记不住。
-
-## 小林老师
-
-- **固定性格：** 热络的感性现实派
-- **受压反应：** 先替行业解释一句，再把行话翻成人话。
-- **防御动作：** 笑着纠偏，拆一次话术就补一次行业辩护。
-- **知识边界：** 只解释婚恋行业话术和流程，不知道本案人物私下做过什么。
-
-### 收麦幕间
-
-- `$case.nightStructure.interlude.actions[1].options[2].advisorLine` 她想让老板把活动交给她，不丢人。可对方一句话把负责活动和先垫钱捆在一块儿了，这得拆开说。
-
-### 后台／材料回流
-
-- `$case.delegation.outcomes.lin-matchmaker.text` 职场不是我的场。我只听见一件事：她想让老板把活动交给她，对方就把“先垫”跟在后面。她自己想往前走，不等于这笔钱不用说清。
-
-## 张法医
-
-- **固定性格：** 技术洁癖型理性派
-- **受压反应：** 碰到来源不全的材料会停止讨论结论。
-- **防御动作：** 先查链条，再谈内容。
-- **知识边界：** 只判断证据链与技术可检验性，不认定关系或动机。
-
-### 后台／材料回流
-
-- `$case.delegation.outcomes.zhang-forensic.text` 这张截图是完整截屏，底部没有裁切痕迹。它本来就只走到审批这一步。能确认审批过了，不能拿它当付款回执。
 
 ## V哥
 
@@ -1715,6 +1607,8 @@
 
 # 未在本报告捕获到台词的人物卡
 
+- 周会计（zhou-accountant）：可能只存在于非台词元数据、未进入本包或需要补结构化归属。
+- 张法医（zhang-forensic）：可能只存在于非台词元数据、未进入本包或需要补结构化归属。
 - 案二前台（case2-front-desk）：可能只存在于非台词元数据、未进入本包或需要补结构化归属。
 
 # 句长节奏人工复核
@@ -1736,12 +1630,12 @@
 - 02-tony／案二咨询者·何／nightB：45、45、48 字（$case.sceneVersions[7].questionOptions[1].answer；$case.overnightStructure.callbackOpeners.店外称呼观察.line；$case.overnightStructure.callbackOpeners.店外服务序列.line）
 - 04-workplace／案四咨询者·陈／nightB：24、25、24 字（$case.overnightStructure.callbackOpeners.供应商对接补话.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.供应商对接人栏.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.callerLine）
 - 04-workplace／案四咨询者·陈／nightB：25、24、22 字（$case.overnightStructure.callbackOpeners.供应商对接人栏.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.callerLine）
-- 04-workplace／案四咨询者·陈／nightB：24、22、21 字（$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.赵律师边界框架.firstConflict.callerLine）
+- 04-workplace／案四咨询者·陈／nightB：24、22、26 字（$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.审批页缺口.firstConflict.callerLine）
 - 04-workplace／案四部门助理／day：31、29、30 字（$case.overnightStructure.dayScenes[2].body.beats[1]；$case.overnightStructure.dayScenes[2].body.beats[2]；$case.overnightStructure.dayScenes[2].body.beats[3]）
 - 04-workplace／案四部门助理／day：29、30、30 字（$case.overnightStructure.dayScenes[2].body.beats[2]；$case.overnightStructure.dayScenes[2].body.beats[3]；$case.overnightStructure.dayScenes[2].body.choice.options[0].resultBeats[0]）
 - 04-workplace／林旭阳／nightB：22、26、25 字（$case.overnightStructure.callbackOpeners.供应商对接人栏.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.hostLine）
-- 04-workplace／林旭阳／nightB：26、25、29 字（$case.overnightStructure.callbackOpeners.茶水间回单缺口.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.茶水间责任对照.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.赵律师边界框架.firstConflict.hostLine）
 - 04-workplace／V哥／nightA：25、29、28 字（$case.sceneVersions[0].helperHint；$case.sceneVersions[1].helperHint；$case.sceneVersions[3].helperHint）
 - quick-01-no-conditions／快案来电人·罗／other：49、45、49 字（$quick.turns[6].caller；$quick.turns[7].caller；$quick.turns[8].caller）
 - quick-02-one-missed-message／林旭阳／other：27、25、24 字（$quick.turns[11].host；$quick.turns[12].host；$quick.turns[13].host）
 - quick-02-one-missed-message／快案来电人·周女士／other：57、54、56 字（$quick.turns[13].caller；$quick.turns[14].caller；$quick.turns[15].caller）
+- quick-02-one-missed-message／快案来电人·周女士／other：34、38、34 字（$quick.confrontations[0].lines[5]；$quick.confrontations[1].lines[1]；$quick.confrontations[1].lines[3]）

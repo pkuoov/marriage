@@ -28,7 +28,7 @@
 
 ## Amphion 内部试音
 
-六条语音材料现已有一套可复现的 Amphion 试制清单和离线工具。它只用于内部 A/B，不改变上面的演员交付合同：
+五条语音材料现已有一套可复现的 Amphion 试制清单和离线工具。它只用于内部 A/B，不改变上面的演员交付合同：
 
 - `npm run audio:voice -- validate` 检查角色、台词、路径、上游 revision 和非商用边界；
 - `npm run audio:voice -- prepare all` 把六段固定参考录音稿写进本地忽略目录，演员照稿录制同目录的 `reference.wav`；

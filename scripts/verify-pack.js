@@ -1476,13 +1476,17 @@ test("PACK-006", "theatrical license lurker budget stays singular", () => {
   assert(lurkerCases.length <= 1, `每包至多一个案子使用 lurkerNote，当前 ${lurkerCases.length} 个`);
 });
 
-test("PACK-007", "NPC verbs cover refuse interrupt and conflict", () => {
-  const verbs = new Set(caseFiles.flatMap((casePacket) =>
-    (casePacket.nightStructure?.interlude?.actions ?? []).map((action) => action.npcVerb).filter(Boolean)
-  ));
-  if (verbs.size === 0) return;
-  ["refuse", "interrupt", "conflict"].forEach((verb) => {
-    assert(verbs.has(verb), `故事包缺少 NPC ${verb} 动词`);
+test("PACK-007", "interlude NPC appearances must change evidence, route, or callback", () => {
+  caseFiles.forEach((casePacket) => {
+    (casePacket.nightStructure?.interlude?.actions ?? [])
+      .filter((action) => action.npcVerb)
+      .forEach((action) => {
+        const outcomes = [...(action.choices ?? []), ...(action.options ?? [])];
+        const changesPlay = (action.grantsInventory ?? []).length > 0 || outcomes.some((outcome) =>
+          (outcome.grantsInventory ?? []).length > 0 || outcome.routeAxis || outcome.questionOverride
+        );
+        assert(changesPlay, `${casePacket.caseId} ${action.id} 让 NPC 出场却不改变材料、路线或回拨`);
+      });
   });
 });
 

@@ -1,6 +1,6 @@
 # Amphion 对话语音内部试制流程
 
-本流程用于给试玩版现有的六条“语音材料”做可比较的内部试音，不等于给约四百段主对话自动配音。主对话若要全语音化，还需要另做逐页顺序播放、跳过、自动推进和存档恢复；当前运行时在同一页连续触发两条 voice cue 时，后一条会停止前一条，不能直接批量铺满。
+本流程用于给试玩版现有的五条“语音材料”做可比较的内部试音，不等于给约四百段主对话自动配音。主对话若要全语音化，还需要另做逐页顺序播放、跳过、自动推进和存档恢复；当前运行时在同一页连续触发两条 voice cue 时，后一条会停止前一条，不能直接批量铺满。
 
 ## 权利边界
 
@@ -14,7 +14,7 @@
 - [Vevo 模型页](https://huggingface.co/amphion/Vevo)
 - [MaskGCT 模型页](https://huggingface.co/amphion/MaskGCT)
 
-版本、许可证、人物声线和六条台词都固定在 `assets/audio/voice/amphion-production.json`。`npm run verify:audio` 会阻止清单把官方非商用 checkpoint 标成可发布资产。
+版本、许可证、人物声线和五条台词都固定在 `assets/audio/voice/amphion-production.json`。`npm run verify:audio` 会阻止清单把官方非商用 checkpoint 标成可发布资产。
 
 ## 为什么主用 Vevo-TTS
 
@@ -22,7 +22,7 @@
 
 ## 一、准备已授权参考
 
-每个角色准备一段 8–20 秒、安静环境下的 48 kHz mono WAV 干声。语气应接近角色，但不要直接朗读目标台词；停顿自然，不加混响、音乐、电话滤波或吹风机声。六段录音稿已经固定在生产清单中，先运行以下命令生成本地 `reference.txt`：
+每个角色准备一段 8–20 秒、安静环境下的 48 kHz mono WAV 干声。语气应接近角色，但不要直接朗读目标台词；停顿自然，不加混响、音乐、电话滤波或吹风机声。五段录音稿已经固定在生产清单中，先运行以下命令生成本地 `reference.txt`：
 
 ```bash
 npm run audio:voice -- prepare all
@@ -39,7 +39,7 @@ assets/audio/source/voice/references/case2-tony/reference.txt
 
 这些目录已被 `.gitignore` 排除。不要把演员原始录音或同意文件提交到仓库；同意记录应参考 `docs/voice-reference-consent-template.md`，保存在项目受控的合同/制作档案中。
 
-先检查六条任务：
+先检查五条任务：
 
 ```bash
 npm run audio:voice -- validate
@@ -120,11 +120,10 @@ npm run audio:voice -- stage voice.case2.dryer-message \
 
 通过仅代表“内部候选可用”。正式母版仍按 `docs/audio-recording-handoff.md` 的收件流程处理；本工具有意不提供 promote 命令。
 
-## 当前六条顺序
+## 当前五条顺序
 
 1. `voice.case2.dryer-message`：先与现有系统声线 A/B，比角色可信度；吹风机后混。
 2. `voice.case3.dinner-pause`：验证普通问句加真实停顿是否成立。
 3. `voice.case4.pad-message`：避免威胁腔，保持忙碌同事口吻。
 4. `voice.case4.supplier-message`：一句话说普通，关键性留给上下文。
 5. `voice.case1.loyalty-message`：解释后露怯，不演成自白。
-6. `voice.advisor.zhang-closed`：短、快、边界明确。

@@ -26,7 +26,7 @@ const browser = await launchBrowser();
 try {
   if (smokeTarget === "case34") {
     await runCase3DayRoutes();
-    await runCase4AdvisorConflict();
+    await runCase4DayRoutes();
   } else if (smokeTarget === "case1") {
     await runRoute(routes[0]);
   } else if (smokeTarget === "gamepad") {
@@ -46,7 +46,7 @@ try {
     }
     await runCase2DayMap();
     await runCase3DayRoutes();
-    await runCase4AdvisorConflict();
+    await runCase4DayRoutes();
     await runCaseTransition();
     await runPortraitViewports();
     await runStateReplacementRoutes();
@@ -811,7 +811,7 @@ async function runRoute(route) {
 }
 
 async function completeCase1Interlude(page, route) {
-  await assertVisibleText(page, "幕间调查台", `${route.name} must pass through the short interlude before the day map`);
+  await assertVisibleText(page, "回拨前", `${route.name} must pass through the short interlude before the day map`);
   await activate(page, route, '[data-interlude-action="recheck-history-pages"]');
   await activate(page, route, "[data-evidence-check]");
   await activate(page, route, "[data-callback-ready]");
@@ -821,7 +821,7 @@ async function runCase3DayRoutes() {
   await runOfflineDayMap({
     chapter: 3,
     name: "case3-day-map",
-    interludeAction: "profile-closed-zhang",
+    interludeAction: "profile-listen-dinner-pause",
     dayScenes: [
       { id: "day-profile-teahouse", text: "你先看聊天" },
       { id: "day-profile-cousin-doorstep", text: "门只开到防盗链" }
@@ -833,7 +833,7 @@ async function runCase3DayRoutes() {
   await runOfflineDayMap({
     chapter: 3,
     name: "case3-reaction-beat",
-    interludeAction: "profile-closed-zhang",
+    interludeAction: "profile-listen-dinner-pause",
     dayScenes: [
       { id: "day-profile-credential-docs", text: "学历、彩礼与两家资金边界", rows: ["p04"] },
       { id: "day-profile-teahouse", text: "你先看聊天" }
@@ -846,13 +846,12 @@ async function runCase3DayRoutes() {
   });
 }
 
-async function runCase4AdvisorConflict() {
+async function runCase4DayRoutes() {
   await runOfflineDayMap({
     chapter: 4,
     name: "case4-day-map",
-    interludeAction: "zhao-zhou-work",
-    interludeChoice: "work-frame-lin",
-    interludeText: "后台连续进来三条回复",
+    interludeAction: "recheck-approval-page",
+    interludeText: "这张审批图最该让对方补哪一页",
     expectedDaySceneCount: 4,
     dayScenes: [
       {
@@ -1006,7 +1005,7 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
       && await page.locator("[data-complete-interlude-action]").count()) {
       await click(page, "[data-complete-interlude-action]");
     }
-    await assertVisibleText(page, "幕间调查台", `${name} must pass through the short interlude before the day map`);
+    await assertVisibleText(page, "回拨前", `${name} must pass through the short interlude before the day map`);
     await click(page, `[data-interlude-action="${interludeAction}"]`);
     await assertNoPageText(page, "ON AIR", `${name} interlude action must stay off air`);
     if (interludeText) await assertVisibleText(page, interludeText, `${name} must render the selected interlude NPC action`);
@@ -1024,6 +1023,11 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     } else if (interludeChoice) {
       await click(page, `[data-advisor-conflict="${interludeChoice}"]`);
       await click(page, "[data-return-interlude]");
+    } else if (await page.locator("[data-return-interlude]").count()) {
+      await click(page, "[data-return-interlude]");
+    } else if (await page.locator("[data-evidence-check]").count()) {
+      await click(page, "[data-evidence-check]");
+      if (await page.locator("[data-return-interlude]").count()) await click(page, "[data-return-interlude]");
     } else {
       await click(page, "[data-complete-interlude-action]");
     }

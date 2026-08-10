@@ -41,8 +41,7 @@ export const AUDIO_CUES = Object.freeze({
   "voice.case2.dryer-message": readyVoice("案2·吹风机回放", "./assets/audio/voice/case2-dryer-message.ogg", "今晚店长又说我了。也就你肯听我说这些。"),
   "voice.case3.dinner-pause": plannedVoice("案3·饭局停顿", "./assets/audio/voice/case3-dinner-pause.ogg", "本科也是那所学校吗？"),
   "voice.case4.pad-message": plannedVoice("案4·垫款私聊", "./assets/audio/voice/case4-pad-message.ogg", "你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。"),
-  "voice.case4.supplier-message": plannedVoice("案4·供应商补话", "./assets/audio/voice/case4-supplier-message.ogg", "服务协调费按老规矩返给对接人。"),
-  "voice.advisor.zhang-closed": plannedVoice("张法医·停止收件", "./assets/audio/voice/advisor-zhang-closed.ogg", "不能。像素真假我答过了，学历口径让当事人自己去学信网核。别拿复印件替人作证。")
+  "voice.case4.supplier-message": plannedVoice("案4·供应商补话", "./assets/audio/voice/case4-supplier-message.ogg", "服务协调费按老规矩返给对接人。")
 });
 
 export function audioCueById(cueId = "") {
