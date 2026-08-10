@@ -378,7 +378,7 @@
 
 - `$case.overnightStructure.dayScenes[1].body.beats[0]` 靠窗那排？最少提前两周。……您也是听了直播来的？今天第三拨了。
 - `$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[1]` 这个也不能。您拿直播里一句话来对，我们不能替客人作证。
-- `$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[2]` 提前订，这个我能说。谁为了谁，不归我们店里答。
+- `$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[2]` 靠窗位确实要提前订。至于哪位客人带谁来过，我们不能往外说。
 
 ## 案一熟客
 
@@ -1623,6 +1623,7 @@
 - 01-credit／林旭阳／nightB：24、24、26 字（$case.overnightStructure.callerQuestion.options[0].label；$case.overnightStructure.callerQuestion.options[1].label；$case.overnightStructure.callerQuestion.options[2].label）
 - 01-credit／案一咨询者·沈／nightB：22、25、22 字（$case.overnightStructure.callbackOpeners.常客的轮订规律.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[1]；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[3]）
 - 01-credit／案一咨询者·沈／nightB：31、32、29 字（$case.overnightStructure.postures.withCaller；$case.nightStructure.returnStance.lines.defensive；$case.nightStructure.returnStance.lines.open）
+- 01-credit／案一服务员／day：31、27、29 字（$case.overnightStructure.dayScenes[1].body.beats[0]；$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[1]；$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[2]）
 - 02-tony／林旭阳／nightB：35、32、34 字（$case.sceneVersions[4].sceneCloser.lines[6]；$case.sceneVersions[4].sceneCloser.lines[8]；$case.sceneVersions[4].sceneCloser.lines[10]）
 - 02-tony／林旭阳／nightB：28、29、32 字（$case.overnightStructure.callbackOpeners.培训页圈注.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.吹风机回放.firstConflict.hostLine；$case.overnightStructure.callbackOpeners.女客拉群立场.firstConflict.hostLine）
 - 02-tony／林旭阳／nightB：27、23、23 字（$case.sceneVersions[4].questionOptions[0].question；$case.sceneVersions[4].questionOptions[1].question；$case.sceneVersions[6].entryQuestion）
@@ -1638,4 +1639,3 @@
 - quick-01-no-conditions／快案来电人·罗／other：49、45、49 字（$quick.turns[6].caller；$quick.turns[7].caller；$quick.turns[8].caller）
 - quick-02-one-missed-message／林旭阳／other：27、25、24 字（$quick.turns[11].host；$quick.turns[12].host；$quick.turns[13].host）
 - quick-02-one-missed-message／快案来电人·周女士／other：57、54、56 字（$quick.turns[13].caller；$quick.turns[14].caller；$quick.turns[15].caller）
-- quick-02-one-missed-message／快案来电人·周女士／other：34、38、34 字（$quick.confrontations[0].lines[5]；$quick.confrontations[1].lines[1]；$quick.confrontations[1].lines[3]）

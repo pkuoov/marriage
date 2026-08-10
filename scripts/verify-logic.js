@@ -3406,6 +3406,9 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assertEqual(membershipChoice?.grantsEarnedItemId, "餐厅拒绝核对", "餐厅拒答只能带回拒绝核对，不能提前授予她的会员号");
   assertIncludes(JSON.stringify(membershipChoice?.resultBeats ?? []), "回去问她本人", "第三方拒答后必须把事实问题退回原始说话人");
   assert(!JSON.stringify(membershipChoice?.resultBeats ?? []).includes("不等于这个号就是她的"), "主播不能把第三方拒答压成自己的结论");
+  const restaurantDialogue = JSON.stringify(restaurant?.body?.beats ?? []) + JSON.stringify(restaurant?.body?.choice?.options ?? []);
+  assertIncludes(restaurantDialogue, "哪位客人带谁来过，我们不能往外说", "餐厅服务员应以顾客隐私口吻拒答，不能替客人判断关系动机");
+  assert(!restaurantDialogue.includes("谁为了谁，不归我们店里答"), "餐厅服务员不能把证据边界念成作者判词");
   assertIncludes(overnightCallbackOpenerById(brief, "餐厅拒绝核对")?.line ?? "", "我自己说", "会员号归属必须由咨询者本人开口确认");
   const restaurantRefusalConflict = overnightCallbackOpenerById(brief, "餐厅拒绝核对")?.firstConflict;
   assert(restaurantRefusalConflict?.hostLine, "餐厅拒绝核对必须改变夜 B 第一轮追问，不能只换开场文案");
