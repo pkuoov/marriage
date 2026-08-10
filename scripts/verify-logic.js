@@ -3087,6 +3087,48 @@ test("STATE-002", "saved progress refreshes authored case copy from the current 
   assertEqual(refreshed.contradictionLog.kept[0], "既有矛盾", "刷新台本不能清掉玩家已经取得的矛盾");
 });
 
+test("STATE-003", "retired advisor routes migrate without leaking internal ids", () => {
+  const migrated = migrateState({
+    caseNights: {
+      workplace: {
+        activeActionId: "zhao-zhou-work",
+        inventory: ["work-frame-zhou", "work-frame-lin", "delegation-return"],
+        interludeActionsDone: ["send-appraisal", "zhao-zhou-work"],
+        interludeChoicesDone: ["work-frame-zhou"],
+        interludeActionChoices: { "zhao-zhou-work": "work-frame-zhou" }
+      }
+    },
+    caseOvernights: {
+      workplace: {
+        earnedItems: ["周会计钱路框架", "顾问回单"],
+        callbackOpenerId: "周会计钱路框架"
+      }
+    },
+    caseActionLog: {
+      workplace: { "interlude:zhao-zhou-work": true }
+    },
+    delegationPicks: {
+      workplace: { material: { id: "work-approval-missing", label: "那张审批图" } }
+    },
+    earnedItems: ["周会计钱路框架"]
+  });
+  const night = migrated.caseNights.workplace;
+  assertEqual(night.activeActionId, null, "已经完成的旧顾问分流不得迁成一个无法退出的活动页面");
+  assertEqual(night.inventory.join("|"), "approval-page-reviewed", "旧顾问库存必须折叠成一份审批页缺口");
+  assertEqual(night.interludeActionsDone.join("|"), "recheck-approval-page", "旧顾问行动进度必须迁到当前行动并去重");
+  assertEqual(night.interludeChoicesDone.length, 0, "已删除的顾问选项不得留在存档里");
+  assertEqual(Object.keys(night.interludeActionChoices).length, 0, "已删除的顾问分流记录不得继续参与界面渲染");
+  assertEqual(migrated.caseOvernights.workplace.earnedItems.join("|"), "审批页缺口", "旧回拨物必须折叠成当前玩家可见名");
+  assertEqual(migrated.caseOvernights.workplace.callbackOpenerId, "审批页缺口", "已选旧 opener 必须迁到当前审批页 opener");
+  assert(migrated.caseActionLog.workplace["interlude:recheck-approval-page"], "旧行动日志必须保留完成状态");
+  assertEqual(Object.keys(migrated.delegationPicks).length, 0, "已删除委托的顾问回单不得继续出现在案卷");
+  assertEqual(migrated.earnedItems.join("|"), "审批页缺口", "旧全局收获不得泄漏内部名称");
+  const inProgress = migrateState({
+    caseNights: { workplace: { activeActionId: "zhao-zhou-work", interludeActionsDone: [] } }
+  });
+  assertEqual(inProgress.caseNights.workplace.activeActionId, "recheck-approval-page", "尚未完成的旧顾问分流必须落到当前审批页行动");
+});
+
 test("RUNTIME-001", "case outcome records daily recap rhythm without visible score systems", () => {
   const efficientWin = calculateCaseOutcome({
     result: { correct: true },

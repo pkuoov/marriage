@@ -252,13 +252,18 @@ function inventoryLabel(inventory = []) {
     "assistant-sample-seen": "部门公开流程样本",
     "history-pages-reviewed": "往期账页",
     "approval-page-reviewed": "审批页缺口",
+    "delegation-return": "审批页缺口",
     "leader-note-cold": "暂缓公开的领导批注",
     "leader-note-hot": "准备回拨追问的领导批注",
     "playback-pad": "私聊原话回放",
     "supplier-dm-seen": "供应商返款补话",
     "timeline-delay-gap": "来不及与延后通知时间线",
+    "work-frame-lin": "审批页缺口",
+    "work-frame-zhao": "审批页缺口",
+    "work-frame-zhou": "审批页缺口",
   };
-  return (inventory ?? []).length ? inventory.map((item) => labels[item] ?? item).join(" / ") : "还没有带回物";
+  const visibleLabels = [...new Set((inventory ?? []).map((item) => labels[item] ?? item))];
+  return visibleLabels.length ? visibleLabels.join(" / ") : "还没有带回物";
 }
 
 function callLineHtml(line = {}) {

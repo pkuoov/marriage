@@ -7,6 +7,24 @@ export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
 const LEGACY_STORAGE_KEY = "marriage-detective-agency-save-v1";
 const LEGACY_META_STORAGE_KEY = "marriage-detective-agency-meta-v1";
+const LEGACY_INTERLUDE_INVENTORY = Object.freeze({
+  "work-frame-zhao": "approval-page-reviewed",
+  "work-frame-zhou": "approval-page-reviewed",
+  "work-frame-lin": "approval-page-reviewed",
+  "delegation-return": "approval-page-reviewed"
+});
+const LEGACY_INTERLUDE_ACTIONS = Object.freeze({
+  "send-appraisal": "recheck-approval-page",
+  "zhao-zhou-work": "recheck-approval-page"
+});
+const LEGACY_CALLBACK_ITEMS = Object.freeze({
+  "赵律师边界框架": "审批页缺口",
+  "周会计钱路框架": "审批页缺口",
+  "扛活还是扛钱": "审批页缺口",
+  "顾问回单": "审批页缺口"
+});
+const RETIRED_INTERLUDE_CHOICES = new Set(["work-frame-zhao", "work-frame-zhou", "work-frame-lin"]);
+const RETIRED_DELEGATION_MATERIALS = new Set(["profile-mba-gap", "work-approval-missing"]);
 
 export const CHARACTER_ART = {
   meng: "./assets/generated/characters/meng_host_v2.png",
@@ -133,6 +151,11 @@ export function migrateState(saved) {
   next.evidenceCheckPicks = migrateChoiceRecord(next.evidenceCheckPicks);
   next.investigationPicks = migrateChoiceRecord(next.investigationPicks);
   next.routeChoiceLog = migrateChoiceListRecord(next.routeChoiceLog);
+  next.caseNights = migrateCaseNightRecord(next.caseNights);
+  next.caseOvernights = migrateCaseOvernightRecord(next.caseOvernights);
+  next.caseActionLog = migrateCaseActionLog(next.caseActionLog);
+  next.delegationPicks = removeRetiredDelegationPicks(next.delegationPicks);
+  if (Array.isArray(next.earnedItems)) next.earnedItems = migrateIdList(next.earnedItems, LEGACY_CALLBACK_ITEMS);
   next.caseMode = normalizeCaseMode(next.caseMode);
   if (!next.quickDetective || typeof next.quickDetective !== "object" || Array.isArray(next.quickDetective)) next.quickDetective = null;
   if (!Array.isArray(next.quickDetectiveCompletedIds)) next.quickDetectiveCompletedIds = [];
@@ -236,6 +259,62 @@ function migrateChoiceListRecord(record) {
       Array.isArray(value) ? value.map(migrateQuestionOptionCopy) : value
     ])
   );
+}
+
+function migrateCaseNightRecord(record) {
+  return Object.fromEntries(Object.entries(record ?? {}).map(([key, night]) => {
+    if (!night || typeof night !== "object" || Array.isArray(night)) return [key, night];
+    const actionsDone = migrateIdList(night.interludeActionsDone, LEGACY_INTERLUDE_ACTIONS);
+    const activeActionId = LEGACY_INTERLUDE_ACTIONS[night.activeActionId] ?? night.activeActionId ?? null;
+    const actionChoices = Object.fromEntries(Object.entries(night.interludeActionChoices ?? {})
+      .filter(([actionId]) => !LEGACY_INTERLUDE_ACTIONS[actionId]));
+    return [key, {
+      ...night,
+      activeActionId: actionsDone.includes(activeActionId) ? null : activeActionId,
+      inventory: migrateIdList(night.inventory, LEGACY_INTERLUDE_INVENTORY),
+      interludeActionsDone: actionsDone,
+      interludeChoicesDone: (night.interludeChoicesDone ?? []).filter((choiceId) => !RETIRED_INTERLUDE_CHOICES.has(choiceId)),
+      interludeActionChoices: actionChoices
+    }];
+  }));
+}
+
+function migrateCaseOvernightRecord(record) {
+  return Object.fromEntries(Object.entries(record ?? {}).map(([key, overnight]) => {
+    if (!overnight || typeof overnight !== "object" || Array.isArray(overnight)) return [key, overnight];
+    return [key, {
+      ...overnight,
+      earnedItems: migrateIdList(overnight.earnedItems, LEGACY_CALLBACK_ITEMS),
+      callbackOpenerId: LEGACY_CALLBACK_ITEMS[overnight.callbackOpenerId] ?? overnight.callbackOpenerId ?? null
+    }];
+  }));
+}
+
+function migrateCaseActionLog(record) {
+  const actionMigrations = {
+    "interlude:send-appraisal": "interlude:recheck-approval-page",
+    "interlude:zhao-zhou-work": "interlude:recheck-approval-page"
+  };
+  return Object.fromEntries(Object.entries(record ?? {}).map(([key, actions]) => {
+    if (!actions || typeof actions !== "object" || Array.isArray(actions)) return [key, actions];
+    const migrated = { ...actions };
+    Object.entries(actionMigrations).forEach(([legacyId, currentId]) => {
+      if (legacyId in migrated) migrated[currentId] = migrated[currentId] ?? migrated[legacyId];
+      delete migrated[legacyId];
+    });
+    return [key, migrated];
+  }));
+}
+
+function removeRetiredDelegationPicks(record) {
+  return Object.fromEntries(Object.entries(record ?? {}).filter(([, pick]) =>
+    !RETIRED_DELEGATION_MATERIALS.has(pick?.material?.id)
+  ));
+}
+
+function migrateIdList(items, migrations) {
+  if (!Array.isArray(items)) return [];
+  return [...new Set(items.map((item) => migrations[item] ?? item).filter(Boolean))];
 }
 
 function migrateDeepFollowup(brief) {
