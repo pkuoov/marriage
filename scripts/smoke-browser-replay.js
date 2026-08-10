@@ -1477,6 +1477,11 @@ async function assertDialoguePresentation(page) {
   const completed = await box.locator(".avg-line").first().textContent();
   if ((completed?.length ?? 0) < (before?.length ?? 0)) throw new Error("typing click must complete the current sentence");
   if (!await box.locator(".avg-continue").isVisible()) throw new Error("completed sentence must show continue indicator");
+  await page.mouse.wheel(0, -120);
+  await page.waitForTimeout(50);
+  if (await page.locator(".court-record:not([hidden])").count()) {
+    throw new Error("mouse wheel must scroll without opening the court record");
+  }
   await page.locator("[data-record-open]").click();
   await page.locator(".court-record:not([hidden])").waitFor({ state: "visible" });
   await page.locator("[data-record-close]").click();

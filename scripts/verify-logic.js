@@ -71,6 +71,12 @@ const runtimeSource = [
   ...screenSources
 ].join("\n");
 const quickDetectiveUiSource = readFileSync(new URL("../src/ui/quickDetectiveView.js", import.meta.url), "utf8");
+const courtRecordUiSource = readFileSync(new URL("../src/ui/courtRecordView.js", import.meta.url), "utf8");
+
+test("INPUT-000", "mouse wheel never opens the court record", () => {
+  assert(!courtRecordUiSource.includes('addEventListener("wheel"'), "鼠标滚轮只能滚动页面，不能打开案卷");
+  assertIncludes(courtRecordUiSource, 'querySelectorAll("[data-record-open]")', "案卷必须保留明确的打开入口");
+});
 
 test("ARCH-001", "screen modules depend on an injected context instead of app.js", () => {
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");

@@ -13,7 +13,6 @@ export function mountCourtRecord(root, { state, onSettingsChange = () => {}, onB
     overlay.querySelectorAll("[data-record-tab]").forEach((item) => item.classList.toggle("active", item === button));
     overlay.querySelectorAll("[data-record-page]").forEach((page) => { page.hidden = page.dataset.recordPage !== button.dataset.recordTab; });
   }));
-  root.addEventListener("wheel", (event) => { if (event.deltaY < -20) open(); }, { passive: true, once: true });
   root.querySelectorAll("[data-avg-setting]").forEach((button) => button.addEventListener("click", () => onSettingsChange(button.dataset.avgSetting)));
   return { open, close };
 }
