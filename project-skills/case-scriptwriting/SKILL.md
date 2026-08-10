@@ -101,7 +101,7 @@ Apply this gate to every player-visible spoken surface, not only the mainline. A
 - **Referent before interpretation**: name the concrete person, object, purchase, message, or event before discussing its nickname, meaning, emotion, or motive. A caller must say what the 12,000 yuan bought before explaining why someone called it an “investment”. An isolated conclusion whose object arrives later is reversed causality.
 - **Speaker-view only**: spoken dialogue contains what this person would naturally remember, notice, say, refuse, or infer in the moment. Delete camera blocking, balanced literary montage, author captions, and after-the-fact taglines from a character's mouth. 「我看窗外，他看酒」 and 「那两个字卡在这儿，投资」 belong to a director or essayist, not a caller.
 - **Evidence-source ledger**: for every factual host premise, name the exact visible source: caller statement, bill row, screenshot, audio, public post, prior confirmed answer, or professional common knowledge. A bill proves merchant, amount, and date only if those fields are present; it does not magically contain booking membership, motive, ownership, or off-screen history. Material copy says only what the artifact visibly contains.
-- **Evidence must arrive on stage**: a title card or call-connection bridge may name the caller's immediate problem, but may not place a document in front of the host before anyone has sent it. When a caller supplies a bill, statement, screenshot, or recording during the call, write the host's request, the caller's consent or redaction action, and the file's arrival in the backend before displaying its card. “The evidence is already here” is not a shortcut for the missing human action.
+- **Evidence must arrive on stage**: a title card,案间页或接通前页面都不概括来电人的问题，也不摆出材料。标题以后直接接人物开口，由第一组问答建立求助；当咨询者在通话中提供账单、流水、截图或录音时，必须先写主播提出请求、当事人同意或遮名、文件到达后台，再显示材料。“证据已经在这里”不能替代人的动作。
 - **Title-card restraint**: a case subtitle is optional. Omit it when it only restates the title, turns a later discovery into an opening tease, or tells the player who is supporting whom before the dialogue has established that responsibility. A title card orients the player; it does not argue the case.
 - **Row-identity conservation**: adjacent dates and similar amounts do not prove that the same money moved from one row to another. State each row with its date, direction, amount, and counterparty before drawing an inference. Write 「7 月 5 号信贷放款五万；7 月 19 号向 3301 转出 49,800」 unless the material can truly prove 「这五万转去了 3301」. Keep temporal proximity separate from fund identity.
 - **Amount-bucket conservation**: before a character or recap assigns moral responsibility for a bill, divide the total by visible use and beneficiary: shared/relationship spending, one party's personal spending, and still-unexplained remainder. Every bucket needs itemized support, and the arithmetic must survive the total. Do not compress restaurant booking, social posting, and a content account into three separate accusations when they are one social-performance event; do not call the whole bill “spent on her” when rows also show his personal vanity. Ask the person to confirm or dispute one bucket, then discuss responsibility.
@@ -168,20 +168,35 @@ Treat each load-bearing choice as a typed state transition, not a good-sounding 
 
 Run the pack validator and generated micro-logic table. A missing contract, stale anchor, narration leak, or unsupported fixed follow-up blocks shipping.
 
-### 群体复核快案律
+### 主播对质快案律
 
-快速侦探关卡不是把主播写笨，再让“万能弹幕”宣布答案。它模拟的是同一段公开连线被多人反复听过以后，观众把主播当时没来得及并排的原话接到一起。
+快案不是自动播放结论的短剧，也不是一轮圈具体句子的证据小游戏。玩家先听来电人把公开形象立起来；每听完一个有完整局部因果的段落，玩家只选择值得追问的问题方向，主播再把已经出现的说法问回去。对质可以逼出来电人换一套口径，新口径随后成为下一段普通问话的合法前提。戏剧性来自玩家认出矛盾、来电人刚才的从容与此刻的支吾，不是评论区或系统替主播宣布答案。
 
-- **只复核已公开原话**：评论区不得带来住址、职业黑料、私聊截图或麦外调查。每一条有效评论必须指向至少两处玩家已经听见的 `turnId`；若需要新事实，转为常规案件的材料调查，不得留在快案。
-- **反常不等于矛盾**：工资听着高、家庭经历少见、语气让人不舒服，都只能成为疑问。只有同一人物的两句可见陈述在金额、条件、时间、责任或因果上不能同时维持原先听感，才计为破绽。必须至少配置一个这种“显眼但不能判”的诱饵，并在反馈里说明为什么证据不足。
-- **主播允许漏，结案不能越界**：玩家与林旭阳共享有限的圈句预算；`playerMarkLimit` 必须小于 `requiredFlawCount`，保证评论区至少补出一组真实联系。弹幕补线以后仍由主播问回当事人，不允许评论直接替人物认罪。
-- **并排以后只问一步**：评论先贴两句原话，主播只问这两句之间的缺口；来电人可以解释、承认省略或拒答。不能由主播一次复述四组矛盾，也不能让来电人顺势提交完整自我审计。
-- **结案分双栏，但未知项不能稀释风险**：结论要区分“原话已经说明什么”和“背景仍未查清什么”。未知栏负责防止作者捏造细节，不负责替角色洗掉已经成立的矛盾。不要用“没有实锤包养／诈骗”把结案写回五五开。
-- **把事实定案与生活避险分开**：主播不是法官，也没有义务把听众送进一段关系替来电人验证。三组以上相扣矛盾若共同服务于同一种获利路径，例如压低口头标准、索要主播背书、延后披露重要信息，主播可以明确拒绝介绍或背书。这个行动结论不需要先证明隐藏关系的准确名称。
-- **允许最强风险判断，不虚构麦外细节**：人物把两个不同男性都叫“爸爸”，又拒绝解释一百万元来源；她主动提到婚育报告，承认准备延后披露；她口称低要求，却只挑条件好的对象。几项放在一起，可以写成“最可能、最需要避开的风险”，包括她可能在寻找能摆到台面上的婚配对象，甚至遮住另一段关系。仍不得把包养、性经历、现有伴侣写成已经查实的事实。结案应当同时做到两件事：把避雷判断说透，把未经证实的具体经历留白。
-- **原创边界**：参考真实直播或短视频时，只能抽取互动结构、证据运算与节奏；人物、金额、家庭关系、原话和结论必须重新创作，并在快案数据登记 `sourceBoundary`。
+- **分段披露律**：一宗快案分成二至三轮“普通问话 -> 玩家判断 -> 当面对质”。每轮先播完一个能独立理解的局部经历，再开放一至两个成立方向；未来轮次才会出现的人、材料和矛盾必须隐藏。对质逼出的新事实可以成为下一轮问话前提，不能让玩家在事实尚未出现时预选答案。
+- **首轮静默律**：每一轮第一次听问答时只显示主播与来电人的原话，不显示实时评论，也不写“先记着”“这很可疑”“重点是……”一类作者提示。普通寒暄、真实经历和暂时无法核验的话都要保留，不能让每一页都像故意递出破绽。
+- **常规问答成对写，反驳不受一问一答限制**：普通咨询按“上一句怎样合法引出下一句”审查，一问一答只是控制信息量的常用节奏，不是所有场景的固定格式。进入反驳或对质以后，按人物真实攻防写成问、否认、追问、改口、再反驳等必要拍数；每多一拍都必须回应紧邻上一句，并带来新事实或新的防御。运行时仍一屏只显示当前一方的一段台词，当前说话人的立绘提亮，另一方压暗但不离场。
+- **咨询因果先于破绽清单**：每一问必须从上一答的经历、诉求或用词里长出来。接通后的第一页可以只完成问候，下一页再问来意；家庭经历若解释了“想找能相互扶持的人”，下一问才可以顺着择偶条件问房子。若去掉对质标记后整通电话不像真人咨询，顺序必须重写。
+- **咨询者不得替主播破案**：来电人开头先建立可信的公开形象，并至少说出三条真实、普通、不会直接定性的生活信息。每个核心漏洞第一次出现时都带一层当场说得通的保护，例如模糊称呼、只答一半、合理顾虑或改换披露时点。两处承重原话之间至少隔一个正常问答；她不能主动完成动机自白。
+- **对质延迟律**：主播在当前轮原始问话阶段只了解具体情况，不提前说“你其实就是……”；当前轮铺垫问答结束后才进入该轮 `confrontations`。每一项对质必须用 `basisTurnIds` 指向本轮结束前已经播出的原话，不得引入职业黑料、私聊截图或任何麦外事实。若矛盾本身是一个尚未回答的空缺，`basisTurnIds` 可以登记“原说法 + 追问空缺”，真正的新事实必须由对质里的最小承认产生，并登记在 `answerAdds`，之后才能供下一轮使用。
+- **异常举例延迟回问律**：来电人若在普通经历里突然拿自己的敏感问题举例，主播首轮可以自然换到下一项生活信息，不必当场追问“你为什么这么说”。这个异常例子本身只构成怀疑方向，不能直接等同于答案；玩家选中该方向以后，主播才把原话问回去，检查结果或其他事实只能从来电人的反驳、辩解或最小承认中出现。不得在原始问答里先问出完整证据，再让玩家重复选择同一个结论。
+- **否认后短追问律**：来电人的第一句若只是“你怎么能这么问”或“我只是随口说说”，不能把事实承认硬接在同一个长回答里。主播可以用“那到底有没有”一类短话继续追问，再由来电人交出最小事实；若她再次换理由，还可以继续攻防，但每一拍都要推进事实或防御，不能为了显得激烈空转。
+- **重大隐瞒不得首问直认**：若某个事实正是人物整通来电都在掩饰的核心，她被第一次正面问到时不能立刻交出答案。先让她重定义称呼、反问提问动机、淡化区别或强调结果合法；主播把问题收窄到只能回答的是非项以后，她才作最小承认，随后再用隐私、对方自愿或“这不影响求助”转移。狡辩每一层都要保护她的现实利益，不能只为拖长对话。
+- **一次对质只打一个矛盾**：这里限制的是问题范围，不是问答轮数。主播不能一口气复述四组问题，也不能把四个结论压成一张成片卡；同一个矛盾内部可以连续否认、追问和改口。主播可以把逻辑说清，但不能把未知身份和未经证实的经历说成事实。
+- **先判断再对质**：每轮原始问话结束后必须把控制权交给玩家。选项只写已经出现的人、物、时点或口径方向，不写完整质问、答案或人物动机；选中成立方向后，才由主播说出自然的完整问题。每轮至多两个成立方向，并至少保留一个听来可疑但当前尚不能互证的方向；选错只说明现有依据不足，不扣分、不靠评论区补答案。
+- **改口带出下一轮**：对质不是结案复读。它应让人物否认、缩小问题或作最小承认，并留下一个新的可问名词、日期、同行人或材料入口。下一轮主播只能顺着这个刚获得的入口继续问；不得突然调出此前未获授权的朋友圈、账户或职业资料。
+- **最小承认与转题**：被问住的人优先承认最小、最不伤自己的部分，随后改换理由、强调隐私、反问主播或把问题说成对方误解。她可以支吾、重复、突然变短，但不能顺势提交完整自我审计。四次回应应有递进：含混否认、为双重标准找理由、露出真实偏好、最后恼羞或结束通话。
+- **删除群体答案与数字进度机制**：不得再设置圈句池、限次预算、评论接力或弹幕裁判；这里的圈句池指让玩家从一批具体原话里猜答案，不禁止当前只显示问题方向的判断层。评论可以作为直播间环境，但不能提供答案、教玩家价值观或替人物认罪。快案的核心动作是玩家选矛盾方向、主播当面追问；UI保留同一直播间背景、两张立绘和方向选择，但不显示预计时长、“第 X/Y 屏”“对质 X/Y”“本轮 X/Y”或完成比例。流程进度由人物改口、新问话和舞台状态自然表达。
+- **问清即续播，恢复也能续播**：当前段的所有必要方向问清后，必须直接进入由新口径带出的下一段普通问话，不再让玩家回到只剩“已经问过”的选择页。成立方向即使因刷新或旧存档丢失了正在播放的对质状态，也必须允许重新进入；恢复时若当前段实际上已经完成，则自动跳到下一段，不能出现按钮可点但流程不动。
+- **开场不讲玩法，也不替玩家概括案情**：快案入口只使用接通前观众和主播已经知道的信息，例如“一个姑娘打进电话，想问问她和男朋友接下来该怎么办”。删掉“这次怎么玩”、轮次与按钮说明、对质会怎样推进、让玩家寻找隐瞒等游戏概念；也不得提前写出学历、职业、认识渠道、消费行为、失联导火索或当事人的归因。人物和案情必须在连线中由玩家逐句听出来，第一处判断层自然出现时再让界面教会操作。
+- **结案不能越界**：`confirmed / unknown` 继续作为作者校验，不直接渲染成结论卡。主播可以基于三组以上同向矛盾拒绝介绍或背书，但必须明确哪些事实没有查清。未知项防止捏造，不负责冲淡已经成立的风险。
+- **结案三段律**：快案结尾不能停在“拒绝帮忙”。先让主播结束通话，再用玩家已经问出的矛盾复盘“不合理在哪里”，最后说出目前最能解释这些矛盾的高概率经历版本。三段都由主播逐句说，不用静态结论卡代替。来电结束后进入 `stageLabel: 结案复盘` 的第一句固定为主播口播「我们来把这次这个连线复个盘。」；这句话只负责从通话切到复盘，不得提前放在来电仍在线的收尾页，也不得被案情摘要替换。
+- **判断不能被边界句撤销**：高概率版本至少要由三处同向的已播事实支撑，并把推导链说给玩家听。事实层和判断层分开，不等于主播只能说“很像”“无法坐实”；证据已经支持经济交换、利益筛选或成本转嫁时，主播应直接说“我判断这是……”。`unknown` 只保留真正没问到的具体身份、当前状态或成因，不能紧跟在判断后面把整段判断撤回。结尾行动依据是主播是否愿意让听众承担已经看见的风险。
+- **素材改编先锁因果事实**：用户要求“依据某段公开视频内容做案件”时，动笔前先列一张不含原句的素材账本：来电人的表面求助、事件实际顺序、每次被追问才补出的事实、现实利益、让判断改变的承重细节、高概率结论。公开事件事实与时间顺序不是原视频台词；凡是支撑反转的饮酒、送花、同行人、金额、日期、动作或利益关系，除非用户要求删去或存在安全问题，必须保留其因果功能。不得为了证明“原创”而同时更换人物性别、职业、关系、事件场景和利益入口，最后只留下一个抽象改口机制；若确需替换承重事实，必须重新证明每层隐瞒为什么发生、痕迹从哪里出现、结论怎样推出。
+- **原创边界**：素材账本保留因果，成稿仍须匿名化并重新组织表达。人物姓名、可识别机构、非承重金额、聊天措辞、主播问法、对质台词和舞台结论重新创作，不逐句复刻视频，也不把公开评论中的攻击性猜测写成事实；在快案数据登记 `sourceBoundary`，明确哪些承重事实被保留、哪些身份与措辞已改写。
 
-快案最小闭环：`完整短对话 -> 玩家限次圈句 -> 错误项讲清证据边界 -> 评论区补线 -> 主播沿原话问回 -> confirmed / unknown 结案`。任何环节若需要观众“知道一个屏幕外事实”才能成立，关卡不合格。
+快案最小闭环：`局部问话 -> 玩家选择矛盾方向 -> 主播当面对质 -> 来电人最小承认或改口 -> 新口径进入下一轮问话 -> 再判断与对质 -> 主播结束求助并作结案判断 -> confirmed / unknown 作者校验`。任何对质若需要一个屏幕外事实才能成立、未来方向提前可见，或无需玩家判断便自动播放，关卡不合格。
+
+主案使用同一披露纪律，但按跨夜节奏展开：第一夜只让玩家确认二至三个问题，并留下具体开放边；白天材料只能回答这些开放边或合法带回新的入口；第二夜再确认二至三个问题。第一夜不得为了显得“案情丰富”一次交出全案，第二夜也不得只是复述第一夜已经成立的结论。
 
 Voice fingerprint:
 - Plan 2-3 speech fingerprints per caller in the story packet and hold them for the whole call: a pet filler, a sentence-length habit, what they call the other party (and where that label shifts), and which topic makes them go short.
@@ -204,6 +219,8 @@ Detour options are not stupid options:
 - Per-line/AVG display is achieved by SHORT SENTENCES, never by SHORT SCENES — the chunker splits long speech; it never licenses deleting texture. Any edit that raises information density by removing emotional beats, direct quotes, verb texture, or connective breath is a content regression regardless of intent (the 15d5749b incident: 「他把截图丢给我…那一刻我不是生气，是懵」 became 「他发办材料截图…我当时没接上这件事」 — that is a log line, not a person).
 - Per-scene texture floor: every `version` keeps at least one direct quote OR one afterthought/particle beat, AND at least one non-load-bearing sentence. A scene where every sentence carries plot is a synopsis.
 - 发现权守恒 (conservation of discovery): anything the player is designed to earn — document rows, laundering catches, replay finds, mid-case turns — may never be pre-narrated by the caller or any surface. A refactor that surfaces hidden agency early, or has the caller recite exhibit rows, breaks the case even if every sentence reads fine.
+- 标题静默律: 主案标题卡只显示案号和案名。不要用一句“她还停在转账页”、案情摘要、材料预告、主题句或操作指引替剧情开口；来电人的求助必须在接通后的第一组问答里成立。案间名言页只显示名言和出处，不再追加作者写的承上启下句。`openingComplaint` 只允许作为内部索引，`manifest.sequence` 不写玩家可见的 `bridge`；全量阅读版、导演版和其他派生稿也不得在人物开口前重新插入“来电摘要”或案情旁白。
+- 方向选项静默律: 玩家作中段判断或选择怀疑方向时，按钮只显示方向标签，不在按钮下面附一段作者归纳。选中以后可以反馈这一方向已经由哪些已播事实支持，但未选方向不提前展示总结，更不能替玩家解释人物动机。
 - Any rewrite pass must ship a texture diff: count of direct quotes, emotional beats, and breath sentences before/after per scene. Net loss requires explicit sign-off, not a commit message.
 
 ## Manufacturing Doubt, Questions, and Turns (疑点、问题点、转折点的制造方法)
@@ -325,8 +342,9 @@ Double-layer question economy:
 - The live-call screen may have a free context layer and a committed pursuit layer, but they must not be the same option list twice.
 - `dialogueOptions` are authored free asks: chronology, caller self-protection, relationship context, document origin, or a concrete "how did that line happen" probe. They can add texture, loosen or tighten the caller, and surface a small human excuse, but they must not solve the node.
 - `questionOptions` are committed pursuit routes. Each current node should have 2-3 plausible host angles with different reveal depth: one closest to the load-bearing gap, one socially tempting detour, and one caller-side or document-side pressure when the beat supports it.
-- A committed route may expose a short `suspicionLabel` instead of its full `question` when the player's decision is the doubt direction, not the protagonist's wording. Keep `question` mandatory: after selection, 林旭阳 speaks that natural full sentence and the caller answers it. `suspicionLabel` names only an already-visible person, object, action, number, or mismatch; it must not contain a conclusion, route-axis term, or answer.
-- Direction-only display is a node-level presentation mode, not a correctness badge. If one sibling option in a node has `suspicionLabel`, give every committed sibling one of similar specificity and visual weight. Never put short labels only on core/correct routes.
+- Every committed `questionOptions[]` route in the main cases and quick cases must expose a short `suspicionLabel`, because the player's decision is what feels wrong, not the protagonist's finished wording. Keep `question` mandatory: after selection, the player-character speaks that natural full sentence and the caller answers it. `suspicionLabel` names only an already-visible person, object, action, number, timing, or mismatch; it must not contain a conclusion, route-axis term, answer, or a full interrogative sentence.
+- Direction-only display is a node-level presentation rule, not a correctness badge. Give every committed sibling a label of similar specificity and visual weight. Never put short labels only on core/correct routes, and never expose the finished `question` on the decision button. Authored `casualQuestions` may remain short spoken questions because they are conversational background asks rather than deductions that commit the route.
+- Each case may mark exactly one load-bearing committed route with `revealTransition`. It plays after the player selects the doubt direction and immediately before the player-character says the authored full question. Use it only for the case's largest reinterpretation, never for every correct clue, a decoy, a fixed autoplay reveal, or a conclusion the player has not earned. Keep it under one second, non-interactive, non-expository, and reduced-motion safe; a minimal natural beat such as `等等` plus an existing portrait focus change is enough.
 - Free asks are not a spoiler mode. Asking around can make the caller more guarded, reduce later answer texture, or leave the live room noisier. Do not let the player sweep free asks to identify the correct committed route for no cost.
 - Do not write the free ask by copying the committed option and changing one word. The player should feel they asked a side question, not previewed the answer key.
 - Visible UI labels must stay clear before they stay stylish. Avoid `soft ask`, `hard ask`, `核心`, `正确`, `最佳`, route-axis labels, and vague process labels like "先问两句", "接着追", or "选一句往下追". Because the game has two different economies on the same screen, the panel may explicitly say "普通提问" and "关键选择"; each button should carry the same kind marker so the player never has to infer the rule from color alone.
@@ -357,11 +375,75 @@ Do not enrich by:
 
 ### Help Request and Major-Omission Gate (求助与重大隐瞒门禁)
 
+- Keep authorial truth and caller testimony separate. The B-story chronology must close, but the caller's A-story may contradict itself on purpose. Preserve a contradiction when it comes from a protected interest, is fairly planted, can be tested by the player, and changes the answer to the request; repair it only when the writer cannot state which version is edited or how the player could discover that edit.
 - Treat every playable call as a request for help, not as a delivery vehicle for a prepared case file. Register `helpRequest.kind` as either `explanation` (the caller wants to know why or what an event means) or `interest` (the caller wants an action, decision, resource, introduction, repayment, or outcome). Write the request in one sentence the caller could actually say.
 - Keep four functions separate: `helpRequest` says what the caller wants from the host; `whyTonight` says why they call now; `callerStake` says what benefit, relationship, status, or self-image they want to protect; `selfServingOmission` names the most consequential fact they withhold or soften.
 - Use the advice-changing test: reveal the omission and answer the original `helpRequest` again. If the advice, refusal, next action, or risk judgment would not materially change, the omission is texture rather than the case core. A playable case normally hides the fact that matters most to the requested help, not a minor embarrassment saved for a late twist.
 - Plant a fair trace before the reveal: a verb choice, inconsistent amount, material edge, refusal, or consequence. Let a player action expose it. The caller may defend, minimize, or reinterpret the fact after discovery; do not let a convenient confession introduce it first.
 - Do not equate concealment with villainy. Shame, fear, financial need, status, safety, or the wish to keep a relationship can explain the edit. Judge the concrete act and its effect on the requested help. If there is no advice-changing omission, keep the call as a warm interlude or ordinary consultation instead of inflating it into a detective case.
+
+#### Consultation Benefit Engine（咨询获益发动机）
+
+Before writing scenes, name four things for every side: `already obtained`, `still wants`, `does not want to pay or surrender`, and `moral wrapper`. Convert at least one benefit into countable behavior—money, visits, contacts, labor, account control, payment timing, public endorsement, or access to a social circle. “图感情 / 图安全感 / 图诚意” alone is too thin for a playable case.
+
+The caller normally arrives in one of three states: seeking permission to avoid reciprocal cost; discovering that the other party extracted more than first admitted; or asking the host to legitimize a one-sided allocation. The other party needs its own concrete gain or defense. Do not make either side's benefit symmetrical merely for neatness.
+
+Run the **remedy-split test** after the omission is exposed. Separate completed exchange from unauthorized use, shared benefit from personal debt, and a proposed term from an accepted agreement. The reveal must change what the host can reasonably advise: what may be stopped, requested, refunded, refused, preserved as evidence, or left unknown. If the same generic advice still works, the benefit engine has not reached the case core.
+
+Let the caller's early version remain imperfect when the contradiction protects that benefit. Do not rewrite testimony into a polished summary. Require a fair trace and a player action that exposes what the caller hoped the host would not price into the answer.
+
+#### Layered Disguise Chain（多层伪装链）
+
+A full-length playable caller normally does not protect the case core with one clean lie and one late confession. Build a chain of **surface versions**: direct falsehood, omission, euphemism, amount-shrinking, beneficiary erasure, agency shift, or a technically true sentence used to imply a false whole. Flagship cases should normally carry 3–5 stages including the opening frame; a short warm call may use fewer. Do not add contradictions merely to meet a count.
+
+Keep one authorially stable `protectedPurpose` behind the chain. Every stage must register:
+
+- `pressureTrigger`: what visible question, consequence, line, or material made the previous version unsafe;
+- `surfaceVersion`: what the caller is willing to say at this stage, in language they could actually use;
+- `editedFact`: the specific actor, amount, beneficiary, timing, consent, cost, or motive being removed or renamed;
+- `immediateUtility`: what this version helps the caller obtain or avoid **right now**;
+- `fairTrace`: the earlier word, number, refusal, behavior, or document edge that makes the edit discoverable;
+- `playerTest`: the authored action that can press this exact gap;
+- `forcedRevision`: the narrower version the caller falls back to after that test;
+- `adviceImpact`: how pricing in this layer changes the host's advice, refusal, next action, or risk boundary.
+
+The author's B story must be rigorous even when the caller's A story is not. A caller may contradict themself, forget what they implied, defend one lie with a second half-truth, or reveal only the minimum forced by the current evidence. The writer must still know why each version appears and which fact remains protected. “People are inconsistent” is not a motive.
+
+Run these chain checks before line polish:
+
+1. **Same-purpose test:** every stage protects the same outcome or self-image. A contradiction with a different utility is a separate subplot, not automatically part of the chain.
+2. **Pressure-link test:** Stage N+1 exists because Stage N was made unsafe. If the new version could have appeared anywhere, the stages are only a list of twists.
+3. **Minimum-concession test:** discovery usually forces the smallest survivable admission, not a villain monologue or a complete case summary. The next layer may narrow scale, rename the benefit, move agency, or concede conduct while disputing responsibility.
+4. **Rising-cost test:** each patch should become harder to maintain because the player now holds more visible facts. Do not reset the conversation with an unrelated new secret.
+5. **Advice-changing test:** at least two exposed layers in a flagship case must materially change what the host can endorse, refuse, separate, preserve, or leave unknown. Pure credibility damage is not enough.
+6. **Human-speech test:** keep the chain in author metadata and scene causality. Do not make the host recite “you first hid A, then B, then C” unless a real person in that moment would need that list.
+
+Store the chain as author-only case metadata when the content format permits it:
+
+```json
+{
+  "deceptionChain": {
+    "owner": "caller",
+    "protectedPurpose": "the outcome or self-image every stage protects",
+    "stages": [
+      {
+        "id": "opening-frame",
+        "pressureTrigger": "what makes this version appear or fail",
+        "surfaceVersion": "what is said now",
+        "editedFact": "what is removed, renamed, minimized, or reassigned",
+        "immediateUtility": "what this buys now",
+        "fairTrace": "what the player could already notice",
+        "playerTest": "which question, row, or action tests it",
+        "forcedRevision": "the next survivable version",
+        "adviceImpact": "what changes once exposed"
+      }
+    ]
+  }
+}
+```
+
+`deceptionChain` is not player-visible exposition. It is a causal contract for scene order, evidence placement, and revision behavior. If dialogue and this ledger disagree, repair the dialogue or the ledger before generating reading scripts.
+When deterministic validation is available, make every `playerTest` name an existing scene, document, row question, or deep-followup beat, and pin at least one spoken anchor from each `forcedRevision`. A beautifully filled ledger that is not reachable in the playable script is a shadow asset.
 
 ### Expansion Playbook (把 10 分钟做成 20 分钟)
 
@@ -397,6 +479,7 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - `dramaticAnchor`: the concrete object, quote, screenshot, proof, bill, agreement, table, or transfer record that makes the live room argue.
    - `objectPurpose`: what the object is trying to prove, soften, excuse, delay, or force.
    - `callerStake`: what the caller gains by telling it this way and what they are hiding, softening, or afraid to admit.
+   - `deceptionChain`: for a full case, the staged surface versions that protect one purpose, including each trigger, edit, fair trace, player test, forced revision, and advice impact.
    - `otherStake`: what the other party gains by showing/hiding/wording things this way and what they would lose if fully exposed.
    - `thirdPressure`: parent, friend, platform, ex, family role, or public image pressure if it exists.
    - `truthBoundary`: which parts are real, which are edited, and which remain unknown.
@@ -419,7 +502,8 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - No field may introduce a motive, fact, object, or conclusion that did not appear in the stitched transcript.
    - An outer branch can reveal less, but it must still point at the same case core. Do not use generic emotional outer angles such as "do you still like them" unless the case core is actually emotional attachment.
    - Quote-pick choices must be copied from disclosed lines or compressed from disclosed lines. They are not labels for hidden conclusions.
-   - For a direction-only node, preserve both layers: `suspicionLabel` is what the player chooses; `question` is what 林旭阳 actually says. Read the question-answer exchange aloud without the label before shipping it.
+   - For every committed node, preserve both layers: `suspicionLabel` is what the player chooses; `question` is what the player-character actually says. Read the question-answer exchange aloud without the label before shipping it.
+   - Mark the one core reversal with `revealTransition`, then replay the miss and detour routes to confirm that the impact beat cannot fire before that direction is selected and cannot repeat on ordinary hits.
 
 4. After any line edit, rerun local coherence.
    - Ask: whose face, money, status, safety, or convenience does this sentence protect?
@@ -724,6 +808,7 @@ Verbal clues (in the caller's retelling or quoted lines):
 - Euphemism downgrade: vocabulary drops from packaged to raw as pressure rises. Early: 「他在做一个周转」. Under pressure: 「我哪知道那是拆东墙补西墙啊」. Plan the word pair in the story packet so the downgrade lands as a beat, not an accident.
 - Pronominal shift: the caller's label for the other party tracks their心理防线: 「我男朋友」 (opening, defended) → 「他」 (doubt) → 「那个人 / 对方」 (cut). Do not force the full chain into every case; even one visible shift late in the call reads loudly. Keep recap wording consistent with wherever the chain ended.
 - Agency laundering (春秋笔法): the caller's early lines wash their own initiative out of shared actions through verb choice — 「他带我去的那种店」 when the reservation was on her member account, 「他手机上弄的分期」 when the equipment sits in her room, 「我妈想看流水」 when she forwarded the screenshot herself. This is the catchable form of the unreliable narrator: the bias lives in verbs and attributions from the opening, and a later material, backflow item, or slip exposes the true subject of the sentence. Every case needs at least one laundered verb planted early and one surface that exposes it; a caller whose edit is only confessed at the end was never catchable, and the Rashomon collapses into a diary.
+- Beneficiary omission (受益人省略): a material may show a real expense without identifying who benefited — for example, a bank statement shows `03-09 / 05-09 · 房租 ¥10,000` after the caller has already established that the couple lives apart. The host must not invent a dedicated spoken setup such as 「还有别的固定钱吗」 merely to deliver this clue. Let the object and amount first appear on the material surface, then offer an optional player question about owner, recipient or beneficiary. The answer may reveal that the recurring rent was for the caller's home and paid in addition to a fixed transfer. Do not expose that beneficiary in fixed narration, mandatory recap, helper copy, or an earlier answer and then pretend the player discovered it. If the clue is optional, route-independent closing copy must remain valid even when the player never asked it.
 
 Physical clues (materials on the board):
 - Accidental attachment: the material enters the call through a believable slip — 发错表、多选了一张图、转发时带上了上一条. The sender's intended message and the accidental payload should both be nameable.
@@ -861,7 +946,7 @@ Character bible:
 - After editing dialogue, run `npm run content:dialogue-report`. Review one character vertically across phases and then one scene horizontally across speakers. The generated rhythm warnings are reading prompts, not automatic rewrite orders; the forbidden-template and attribution failures are hard errors.
 
 The host is a person (design: `docs/host-character-design.md`):
-- **Player embodiment is first-person action, not proxy control.** In runtime copy, `你` and 林旭阳 are the same person. Dialogue bubbles keep the fixed name `林旭阳`, while stage directions, action prompts, and off-air movement use second person. Never explain a direction-only choice as “由林旭阳开口” or label a response group “主播怎么接”; write “按下以后，它会变成你说出口的完整问句” and “你怎么接”.
+- **Player embodiment is first-person action, not proxy control.** In content truth, `你` and the default host 林旭阳 are the same person. Runtime dialogue bubbles use the player's saved display name (default `林旭阳`), while stage directions, action prompts, and off-air movement use second person. A custom name changes display only, never biography, relationships, personality, evidence access, or knowledge boundaries. After a direction-only choice, play the host question directly. Never explain this mapping with “由林旭阳开口”, “按下以后会变成完整问句”, “只选怀疑方向” or similar tutorial copy; the button and the following dialogue must make the behavior clear by themselves.
 - **Keep embodiment in generated reading copies.** Continuous/player-readable scripts preserve `你` in stage directions and `你选择` at decisions. Do not let a generator rewrite them as `林旭阳选择`, which turns the player back into a proxy. Personal-stream stage copy says `开播` or `直播中`; `ON AIR` may remain a compact HUD status label, never a spoken or scripted production cue.
 - **Every player choice must name an in-world host verb.** Valid verbs include 接线、追问、静音、求助、退回礼物、约见、看获准材料、带一部分回麦上、说最后一句. Avoid choices whose only meaning is a design category, route axis, or content-management action.
 - **High-pressure identity beats need player control.** If the moment defines what kind of host 林旭阳 is — paid mic requests, privacy leaks, caller panic, a demand to expose an unconsenting party — facts and legal boundaries may stay fixed, but at least one handling choice must be playable. Do not auto-resolve the defining moral action and leave the player only minor evidence questions.
@@ -897,6 +982,18 @@ The host is a person (design: `docs/host-character-design.md`):
 4. **接话节奏不破**:开场接线仍是风趣默认档、先接住;攻击性出现在**矛盾露头之后**,不是一上来就凶。
 
 一句话:主播平时松、暖、爱贫;**她一露馅,他立刻较真、步步紧逼、不让糊弄过去,撬开了再软下来。** 这正是"专业上不马虎、步步紧逼追求真相"的兑现。
+
+### 同情梯度与加压回暖
+
+同一包里的来电人不能排成一列等着主播逐个扒皮。改稿前先按人物的主动算计、真实受害和可补救程度排出梯度，再决定主播能把话压到多重：
+
+1. **至少留一个清楚的同情锚点**：当前试玩包里，案四的陈是焦虑、想把工作做好的新人。她确实把话说重了，也确实没留下完整报销手续，但不把她写成精于算计的人。主播对她的追问以保护为主，目标是帮她把事实写准、把钱要回来。
+2. **混合受害者要把两笔账分开**：案二的何既享受折扣、插号和特殊称呼，也确实被擅自写进开店项目介绍并被民警找上门。主播可以追她为什么想把十八次服务全部退掉；问到姓名、电话被冒用和现实安全时，只能先保护，再核事实。
+3. **算计型来电人也不是纯反派**：案一与案三可以压得更紧，但加压只落在她们为了现实利益删掉的部分。另一方已有的隐瞒、选择性披露和压力不能被改没；结案必须把两边各自没说全的部分都留下。
+4. **每段加压都要有收口**：主播钉住前后矛盾以后，要给一句能继续说话或行动的台阶。回暖不是通用安慰，也不是替人免责；它应点出这个人真实受到的伤害、刚刚承认的事实，或下一步还能做的具体动作。
+5. **整包累积自查**：连续读完四案后，玩家不能只剩下“来电人都在骗人”。至少要同时记得一个值得帮的人、一个既受伤又占过便宜的人，以及两场双方都在保护自己利益的冲突。若四个结案听起来只是同一种冷判词，哪怕逐案逻辑成立，整包声音仍然失败。
+
+“默认寄存器至少 N 拍”是审稿提醒，不是强塞笑话的计数任务。人物正处于警察上门、隐私泄露或大额垫款压力时，宁可用生活化的停顿、护人的一句和疲惫反应完成声线，也不要为了达标写俏皮话。
 
 ## 人味法条
 
