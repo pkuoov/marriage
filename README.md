@@ -127,6 +127,8 @@ npm run package:win
 
 Windows portable 产物输出到 `dist/steam/`。正式上 Steam 前仍需要补商店 App ID、Steam Cloud 映射、overlay/崩溃日志和实机手柄 QA。
 
+Windows 原生制作步骤、GitHub Actions 打包、SHA-256 核验和实机清单见 [Windows EXE 制作与验包手册](docs/windows-exe-build-guide.md)。macOS 不作为正式 Windows EXE 的验收环境。
+
 不启动 Electron 的桌面 staging 烟测：
 
 ```bash
