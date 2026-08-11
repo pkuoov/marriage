@@ -136,7 +136,7 @@ Required before public Steam release:
 The portable executable may still be suitable for internal testing while these gates remain open, but label it as an unsigned internal build. Before external distribution, verify all of the following:
 
 - `Get-AuthenticodeSignature <path-to-exe>` reports `Valid`, not merely that packaging succeeded.
-- `desktop/electron-builder.json` points to the approved application icon; otherwise electron-builder uses its default icon.
+- `desktop/electron-builder.json` points to `assets/icons/livestream-detective-app-icon.png`; `npm run steam:preflight` fails when that approved icon is missing.
 - The staged package metadata contains the intended `description` and `author`; electron-builder warnings about either field must be resolved.
 - SmartScreen behavior is checked on a clean Windows machine that has not previously trusted the file.
 

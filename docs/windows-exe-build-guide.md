@@ -21,6 +21,13 @@ dist\steam\windows-runtime-smoke.json
 
 文件名中的版本来自 `package.json`，以后修改版本号时会自动变化。
 
+## 应用图标
+
+- Windows EXE 的图标源文件是 `assets/icons/livestream-detective-app-icon.png`，采用 1024×1024 的正方形 PNG。
+- `desktop/electron-builder.json` 通过 `win.icon` 引用该文件；`electron-builder` 会在打包时生成 Windows 所需的多尺寸图标资源。
+- `npm run steam:preflight` 会检查配置和源文件是否存在。正式打包日志不应出现 `default Electron icon is used`。
+- 更换图标时应保留粗轮廓和高对比度，并在 16×16、32×32 和 48×48 下人工检查辨识度。
+
 ## 方案一：在原生 Windows 电脑制作
 
 在仓库根目录打开 PowerShell。先确认拿到的是准备发布的干净提交：

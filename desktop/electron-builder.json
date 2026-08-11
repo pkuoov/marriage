@@ -11,6 +11,7 @@
   "asar": true,
   "compression": "maximum",
   "win": {
+    "icon": "assets/icons/livestream-detective-app-icon.png",
     "target": [
       {
         "target": "portable",

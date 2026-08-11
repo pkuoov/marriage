@@ -33,6 +33,12 @@ record("package:win script", Boolean(packageJson.scripts?.["package:win"]), "Win
 record("native packaging guard", packageJson.scripts?.["package:win"]?.includes("assert-windows-package-env.js"), "Official .exe packaging rejects Mac/Linux cross-builds");
 record("Windows native workflow", windowsWorkflow.includes("runs-on: windows-latest") && windowsWorkflow.includes("verify:win-package"), "CI packages and verifies the portable executable on Windows");
 record("electron-builder config", builderConfig.directories?.app === "dist/desktop-electron" && builderConfig.directories?.output === "dist/steam", "Builder uses desktop staging and Steam output dirs");
+const configuredIcon = builderConfig.win?.icon;
+record(
+  "application icon",
+  typeof configuredIcon === "string" && await exists(resolve(root, configuredIcon)),
+  typeof configuredIcon === "string" ? `Configured icon: ${configuredIcon}` : "Set win.icon to the approved project asset",
+);
 record("portable x64 target", builderConfig.win?.target?.some((target) => target.target === "portable" && target.arch?.includes("x64")), "Windows target is portable x64");
 record("desktop staging", await exists(resolve(root, "dist", "desktop-electron", "playable", "index.html")), "Run npm run build:steam before final packaging");
 record("file save bridge", mainSource.includes("userData") && preloadSource.includes("saveFiles"), "Desktop saves go through userData file bridge");
