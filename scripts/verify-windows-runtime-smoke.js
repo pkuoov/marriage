@@ -11,7 +11,7 @@ assert(report.arch === "x64", `Runtime smoke must execute the x64 package; found
 assert(report.offlineResolverBlocked === true, "Runtime smoke must block external host resolution.");
 assert(!report.error, `Packaged runtime reported an error: ${report.error}`);
 assert(report.renderer?.protocol === "file:", `Packaged runtime must load from file:, found ${report.renderer?.protocol}.`);
-assert(report.renderer?.startButton === true, "Packaged runtime did not reach the playable title screen.");
+assert(report.renderer?.startButton === true, "Packaged runtime did not expose a playable title action.");
 assert(report.renderer?.desktopBridge === true, "Packaged runtime did not expose the desktop save bridge.");
 assert(report.saveBridge?.roundTrip === true, "Packaged save bridge failed write/read round-trip.");
 assert(report.saveBridge?.listed === true, "Packaged save bridge did not list a file-backed slot.");

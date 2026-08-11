@@ -254,7 +254,7 @@ async function runReleaseSmoke(window, reportPath) {
     report.renderer = await window.webContents.executeJavaScript(`({
       title: document.title,
       protocol: location.protocol,
-      startButton: Boolean(document.querySelector("[data-start-story]")),
+      startButton: Boolean(document.querySelector("[data-start-story], [data-continue-story], [data-request-new-game]")),
       desktopBridge: typeof window.livestreamDetectiveDesktop?.saveFiles?.write === "function"
     })`);
     report.saveBridge = await window.webContents.executeJavaScript(`(() => {

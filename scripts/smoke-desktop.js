@@ -47,6 +47,7 @@ assert(mainSource.includes("requestSingleInstanceLock"), "Electron main must kee
 assert(mainSource.includes("--release-smoke-report="), "Electron main must expose the hidden Windows release smoke entry");
 assert(mainSource.includes("offlineResolverBlocked"), "Windows release smoke must block external host resolution");
 assert(mainSource.includes("portable-save-roundtrip"), "Windows release smoke must exercise the real file-save bridge");
+assert(mainSource.includes("[data-start-story], [data-continue-story], [data-request-new-game]"), "Windows release smoke must accept fresh and resumable title states");
 assert(preloadSource.includes("livestreamDetectiveDesktop"), "Preload must expose the desktop bridge");
 assert(!/localhost|127\.0\.0\.1|http\.server/i.test(`${indexHtml}\n${mainSource}`), "Desktop smoke found dev-server dependency");
 
