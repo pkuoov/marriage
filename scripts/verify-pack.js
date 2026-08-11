@@ -268,7 +268,12 @@ function assertEvidenceOperation(operation, label, { requireMaterialRows = false
     });
   }
   assertArrayMin(operation.options, 3, `${label} 至少需要三个材料圈点选项`);
-  assertOneCorrect(operation.options, `${label} 必须且只能有一个正确圈点`);
+  if (operation.selectionMode === "priority") {
+    assertEqual(operation.options.filter((option) => option.correct === true).length, 2, `${label} 先问哪个模式必须恰好有两个成立方向`);
+  } else {
+    assert(operation.selectionMode === undefined || operation.selectionMode === "single", `${label} selectionMode 只能是 single 或 priority`);
+    assertOneCorrect(operation.options, `${label} 必须且只能有一个正确圈点`);
+  }
   operation.options.forEach((option, optionIndex) => {
     assertNonEmptyString(option.label, `${label}.options[${optionIndex}] 缺少 label`);
     assertNonEmptyString(option.feedback, `${label}.options[${optionIndex}] 缺少 feedback`);
@@ -681,6 +686,7 @@ function assertOvernightStructure(packet = {}, label = "") {
           assert(choice.lines.filter((line) => line.role !== "pause").length <= 3, `${label} liveCounter 情绪支线最多三行收束`);
         }
         if (choice.stanceNudge !== undefined) assert(["open", "defensive", "neutral"].includes(choice.stanceNudge), `${label} liveCounter stanceNudge 非法`);
+        if (choice.endingImpact !== undefined) assertEqual(choice.endingImpact, "platform-data-loss", `${label} liveCounter endingImpact 目前只支持 platform-data-loss`);
         if (choice.questionOverride) {
           assertNonEmptyString(choice.questionOverride.sceneId, `${label} liveCounter questionOverride 缺少 sceneId`);
           const targetScene = (packet.sceneVersions ?? []).find((scene) => scene.id === choice.questionOverride.sceneId);
@@ -1621,6 +1627,9 @@ test("PACK-012", "epilogue unread callbacks stay typed, attributed, and non-evid
       assert(manifest.sequence.some((item) => item.castProfileIds?.includes(message.speakerProfileId)), "陌生号码也必须进入固定角色表");
     }
   });
+  const caseTwoCallback = messages.find((message) => message.caseId === "02-tony");
+  assert(caseTwoCallback?.base?.includes("三个拿到表的人") && caseTwoCallback?.base?.includes("摆在前台拍了照"), "案二尾声必须有一次已经发生的联合留证动作，不能只停在建群或准备行动");
+  assert(caseTwoCallback?.base?.includes("没堵门") && caseTwoCallback?.base?.includes("材料收好就走了"), "案二行动落地必须保持克制，不能写成胜利式围堵");
 });
 
 test("PACK-013", "warmth props close their arcs and the personal livestream stays solo", () => {
@@ -1644,6 +1653,7 @@ test("PACK-013", "warmth props close their arcs and the personal livestream stay
   assert(prologueText.includes("汤在冰箱"), "汤弧线缺少序章留下拍");
   assert(caseThreeInterlude?.afterLines?.some((line) => line.text?.includes("热过的汤")), "汤弧线缺少案间在场拍");
   assert(epilogue.home?.includes("保温盒空了。你顺手洗了"), "汤弧线缺少回家收尾拍，且必须保持玩家第一人称行动视角");
+  assert(epilogue.platformCost?.includes("推荐位没了"), "玩家顶住平台压力后，终局必须显示推荐位代价，不能仍由总分覆盖");
   assert(prologueText.includes("有个东西我塞你包里了"), "赵律师序章留言必须像恋人托放东西，不得写成材料交接");
   assert(!prologueText.includes("案卷") && !prologueText.includes("收播后再看"), "赵律师私下留言不得使用案卷交接腔");
   assert(epilogue.close?.includes("从包里拿出那个牛皮纸文件袋"), "文件袋必须回收序章的生活化托放动作");
@@ -1730,7 +1740,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const trustPromise = (manifest.crossCasePromises ?? []).find((promise) => promise.id === "chenzhi-trust-payment-crisis");
   assertEqual(trustPromise?.secondarySeed?.caseId, "02-tony", "宸直线第二个案内种子必须登记在案二");
   assertDeepEqual(trustPromise?.secondarySeed?.anchors, ["窗外强光", "敲门", "十万", "宸直信托"], "案二种子必须登记强光、敲门、金额和机构四个锚点");
-  assertEqual(trustPromise?.tertiarySeed?.caseId, "03-profile", "宸直线第三个案内种子必须登记在案三女方家庭婚礼资金");
+  assertEqual(trustPromise?.tertiarySeed?.caseId, "03-profile", "宸直线第三个案内种子必须登记在案三女方家庭未到期资产");
   assertDeepEqual(trustPromise?.tertiarySeed?.anchors, ["二十八万八", "三十万", "九月底到期", "宸直"], "案三种子必须登记彩礼、金额、期限和机构四个锚点");
   assertEqual(trustPromise?.payoff?.afterCaseId, "04-workplace", "宸直线必须到案四结尾才正式爆发");
 
@@ -1740,7 +1750,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const caseThreeRows = new Map((caseThreeFundsDocument?.rows ?? []).map((row) => [row.rowId, row]));
   assert(caseThreeText.includes("二十三万八") && caseThreeText.includes("自己交"), "案三必须明确 MBA 学费由男方本人承担");
   assert(caseThreeText.includes("二十八万八") && caseThreeText.includes("二十八万六"), "案三必须把彩礼要求与男方资金上限放在同一条因果链");
-  assert(caseThreeText.includes("宸直") && caseThreeText.includes("九月底到期"), "案三必须在正式暴雷前种下女方家庭婚礼资金的到期边界");
+  assert(caseThreeText.includes("宸直") && caseThreeText.includes("九月底到期"), "案三必须在正式暴雷前种下女方家庭未到期资产的期限边界");
   assert(caseThree?.selfServingOmission?.includes("领证前进自己的个人账户") && caseThree?.selfServingOmission?.includes("婚宴和首饰另算"), "案三重大隐瞒必须包含彩礼的收款账户、支付时点和另算项目");
   assert(caseThree?.selfServingOmission?.includes("八万四") && caseThree?.selfServingOmission?.includes("先留在女方一侧"), "案三重大隐瞒必须包含咨询者自己的存款和女方资金用途");
   assert(!caseThree?.selfServingOmission?.includes("没有说母亲已经托介绍人问二十八万八"), "案三不得把开场已经承认的彩礼传话继续登记成隐瞒");
@@ -1769,7 +1779,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   assert(!JSON.stringify(caseOne).includes("警笛") && !JSON.stringify(caseOne).includes("sfx.case2.door-knock"), "案一不得出现警笛文字或案二专属敲门音效");
   const caseOneDeviceScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-bank-flow");
   const caseOneDeviceText = JSON.stringify(caseOneDeviceScene ?? {});
-  assert(caseOneDeviceText.includes("八万里面") && caseOneDeviceText.includes("这一万二我认"), "案一设备段必须把一万二明确记为咨询者从八万元中的直接受益");
+  assert(caseOneDeviceText.includes("这一万二是花在我身上") && caseOneDeviceText.includes("没签那个分期"), "案一设备段必须承认一万二是咨询者的直接受益，同时保留分期签字边界");
   assert(!/把灯拖过来|金属灯架|拍到凌晨一点|开箱那晚|sfx\.case1\.lamp-drag/.test(caseOneDeviceText), "案一不得再用拖灯、开箱补演或音效重复证明设备归属");
   assert(knockLines.every((line) => !/强光|敲门/.test(line.text ?? "") || line.nonLoadBearing !== true), "被人物注意的强光与敲门不得伪装成生活噪声");
   assertEqual(knockScene?.closureContract?.openEdge, "强光和敲门是否来自同一拨人，来人是谁，咨询者为什么不肯当场说明。", "案二强光场尾必须登记明确开放边");
@@ -1789,10 +1799,10 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const knockWorkScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-knock-and-work");
   const knockWorkText = JSON.stringify(knockWorkScene ?? {});
   assert(knockWorkScene?.questionOptions?.some((option) => option.correct && option.answer?.includes("楼下停的是警车") && option.answer?.includes("敲门的是民警")), "案二必须由玩家追问强光与敲门，才能确认来人是民警");
-  assert(knockWorkText.includes("我在酒吧做营销") && knockWorkText.includes("订台") && knockWorkText.includes("桌台和酒水提成"), "案二必须在民警揭示后的场尾才问出具体职业与结算方式");
+  assert(knockWorkText.includes("我在酒吧做营销") && knockWorkText.includes("订台") && knockWorkText.includes("桌台") && knockWorkText.includes("酒水") && knockWorkText.includes("提成"), "案二必须在民警揭示后的场尾才问出具体职业与结算方式");
   assert(knockWorkScene?.sceneCloser?.lines?.some((line) => line.text?.includes("你到底做什么工作")), "案二职业追问必须位于玩家选择后的场尾，不能放在 afterVersion 提前播放");
   assert(!knockWorkScene?.afterVersion, "案二不得用 afterVersion 在玩家选择前泄露民警原因与职业");
-  assert(knockWorkText.includes("没有被带走") && knockWorkText.includes("都没有"), "案二必须明确警方询问不等于咨询者违法或同意当联络人");
+  assert(knockWorkText.includes("没有被带走") && knockWorkText.includes("连那份介绍都没见过"), "案二必须明确警方询问不等于咨询者违法或同意当联络人");
 
   const trustBeat = caseTwo?.overnightStructure?.liveCounterBeats?.find((beat) => beat.id === "tony-trust-screenshot-followup");
   const trustText = (trustBeat?.lines ?? []).map((line) => line.text ?? "").join(" ");
@@ -1806,6 +1816,10 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
     ),
     "案二必须把截图的资金同一性留给警方核对"
   );
+  const businessBeat = caseTwo?.overnightStructure?.liveCounterBeats?.find((beat) => beat.id === "tony-business-letter");
+  const publicFollowup = businessBeat?.choices?.find((choice) => choice.id === "keep-asking-table");
+  assertEqual(publicFollowup?.endingImpact, "platform-data-loss", "案二继续公开追表必须写入平台数据代价");
+  assert(JSON.stringify(publicFollowup?.lines ?? []).includes("本场停止推荐"), "案二平台代价必须当场可见，不能只藏进尾声状态");
 
   const openingText = JSON.stringify(caseTwo?.openingDialogue ?? {});
   const exclusiveText = JSON.stringify(caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-exclusive-voice") ?? {});
@@ -1964,6 +1978,8 @@ test("PACK-017E", "case 1 earns the bill on air instead of preloading it in the 
   });
   assert(billScene.version.includes("五千左右") && billScene.version.includes("一件大衣就两千多"), "案一男装必须改为约五千，并给出两千多一件大衣这个生活常识锚点");
   assert(!billScene.version.includes("跟我都有关系"), "咨询者第一次念账单时不能主动替约四万共同消费补上自己的受益主语");
+  assert(!billScene.version.includes("差不多四万"), "咨询者第一次念账单时不能先报出后续由主播加总的共同消费金额");
+  assert(billScene.questionOptions?.find((option) => option.correct)?.question?.includes("我把账单加了一下"), "约四万共同消费必须明确来自主播对后台账单的加总");
   assert(!/拿这句话挡着自己|把文件夹抱紧/.test(JSON.stringify(billScene)), "案一账单场景不得使用作者心理总结或来源不明的文件夹动作");
 });
 
@@ -1986,11 +2002,11 @@ test("PACK-017E2", "case 1 separates modest menswear, shared spending, and the u
   assert(menswearQuestion?.answer?.includes("单看五千") && menswearQuestion?.answer?.includes("已经没工作了"), "咨询者必须把不满落在失业后仍消费，而不是夸大男装本身的金额");
   assert(menswearQuestion?.correct === false, "五千元男装只能作为普通消费判断，不能挤掉第一夜的金额缺口");
   assert(!menswearQuestion?.resistanceBeat, "男装页只承担普通消费判断，共同消费的反驳必须另起后续场景");
-  assert(gapQuestion?.question?.includes("四万左右") && gapQuestion?.question?.includes("五千左右") && gapQuestion?.question?.includes("至少三万五"), "第一夜必须先把八万拆成共同消费、个人男装和未说明缺口");
+  assert(/(?:四万左右|差不多四万)/.test(gapQuestion?.question ?? "") && gapQuestion?.question?.includes("五千左右") && gapQuestion?.question?.includes("至少三万五"), "第一夜必须先把八万拆成共同消费、个人男装和未说明缺口");
   assert(gapQuestion?.answer?.includes("反正不是乱来的钱") && gapQuestion?.answer?.includes("今晚先转"), "金额缺口被问到后，男方必须回避用途并继续催款");
   assert((billCard?.detail ?? "").includes("约四万") && (billCard?.detail ?? "").includes("约五千") && (billCard?.detail ?? "").includes("至少三万五"), "证据卡必须与三桶金额一致");
   assert(JSON.stringify(billCheck).includes("两个人一起花掉的四万左右，数更大"), "材料检视必须把责任重心放回共同虚荣消费");
-  assert((caseOne.truth ?? "").includes("不足以证明他个人挥霍") && (caseOne.truth ?? "").includes("只字不提"), "真相字段必须保留男方个人消费不高与女方避重就轻两个结论");
+  assert((caseOne.truth ?? "").includes("不足以证明他个人挥霍") && (caseOne.truth ?? "").includes("一句带过"), "真相字段必须保留男方个人消费不高与女方避重就轻两个结论");
   assert(!/一万五.{0,12}男装|男装.{0,12}一万五|1\.5 万.{0,12}男装/.test(JSON.stringify(caseOne)), "案一不得残留约一万五男装旧口径");
 });
 
@@ -2033,6 +2049,10 @@ test("PACK-018", "structured story project stays connected to runtime canon", ()
   assert(promiseIndex.includes("chenzhi-trust-crisis.md"), "跨案信托暗线必须进入故事工程伏笔注册表");
   const questionIndex = storyProjectFiles.get("continuity/questions/_index.md");
   assert(questionIndex.includes("case1-unknown-money.md") && questionIndex.includes("case4-repayment-gap.md"), "案件有意未决项必须进入连续性问题注册表");
+
+  const continuityState = storyProjectFiles.get("continuity/state.md");
+  assert(!continuityState.includes("女方家的婚礼钱尚未到期"), "案三连续性台账不得把留给女儿本人的宸直资金写成婚礼钱");
+  assert(continuityState.includes("父亲说其中二十万元到期后留给女儿本人"), "案三连续性台账必须与案身保持同一资金用途");
 });
 
 test("PACK-019", "cases 2 and 3 keep countable benefit and remedy boundaries", () => {
@@ -2042,7 +2062,12 @@ test("PACK-019", "cases 2 and 3 keep countable benefit and remedy boundaries", (
   assertEqual(caseTwo?.helpRequest?.kind, "interest", "案二必须是行动型求助，不能只问关系定义");
   assert(caseTwoBenefits.includes("十四个月") && caseTwoBenefits.includes("十八笔") && caseTwoBenefits.includes("四万六千三百八十"), "案二必须把持续消费落到时长、次数和总额");
   assert(caseTwoBenefits.includes("七个人") && caseTwoBenefits.includes("四个后来真去了"), "案二必须把转介绍落到联系人和实际到店人数");
-  assert(caseTwoBenefits.includes("都做了") && caseTwoBenefits.includes("手艺是好的"), "案二全退诉求必须由来电人承认服务已完成且无质量指控");
+  assert(caseTwoBenefits.includes("都做了") && caseTwoBenefits.includes("手艺这块") && caseTwoBenefits.includes("挑不出毛病"), "案二全退诉求必须由来电人承认服务已完成且无质量指控");
+  assert(!JSON.stringify(caseTwo?.evidenceChecks ?? []).includes("没敢数"), "案二不得把同一晚已经主动报过的人数写成此前不敢数");
+  assert(caseTwo?.respondentNote?.text?.includes("事先没问她") && caseTwo?.respondentNote?.text?.includes("这个是我做错了"), "Tony 留言必须回应姓名和手机号被擅自写入项目介绍这一项最重指控");
+  const otherCallerHook = caseTwo?.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");
+  assert(otherCallerHook?.materialRows?.some((row) => row.includes("我以前也把那些话当真过")), "案二另一位顾客的感受选项必须有玩家可见原话来源");
+  assert(otherCallerHook?.options?.some((option) => option.label === "她也说自己当真过"), "案二后台私信选项必须与材料原话同源");
   assert(caseTwoLedger?.rows?.some((row) => row.rowId === "m05" && row.amount === "¥46,380"), "案二行级材料必须保留十八次服务的付款总额");
   assert(caseTwoLedger?.rows?.some((row) => row.rowId === "m06" && row.amount === "7 人"), "案二行级材料必须保留七名转介绍联系人");
   assert(caseTwoLedger?.rows?.some((row) => row.rowId === "m07" && row.amount === "4 人"), "案二行级材料必须保留四名实际到店者");
@@ -2056,6 +2081,7 @@ test("PACK-019", "cases 2 and 3 keep countable benefit and remedy boundaries", (
   assert(caseThreeText.includes("领证前") && caseThreeText.includes("自己的卡里"), "案三必须写清彩礼支付时点和女方个人收款账户");
   assert(caseThreeText.includes("婚宴和首饰另算"), "案三必须把婚宴首饰从彩礼数字中拆出");
   assert(familyScene?.version?.includes("让我自己留着"), "案三必须让父亲的二十万元保留给女儿个人的用途");
+  assert(!(caseThree?.overnightStructure?.callbackOpeners?.["家里群原话"]?.firstConflict?.callerLine ?? "").includes("八万四"), "案三家里群回拨只能承认自己的钱没说，不能提前报出深入一问的八万四");
   assert(caseThree?.deepFollowup?.answer?.includes("八万四") && caseThree?.deepFollowup?.answer?.includes("领证以后添家电、搬家"), "案三必须问出咨询者自己的存款、上限和使用时点");
   assert(fundsRows.get("p04")?.memo?.includes("领证前转入女方个人账户"), "案三材料行必须写清彩礼进入谁的账户");
   assert(fundsRows.get("p07")?.memo?.includes("不包含在 28.8 万内"), "案三材料行必须单列婚宴与首饰");
@@ -2074,7 +2100,7 @@ test("PACK-020", "all four long cases keep one causal layered-disguise chain", (
         "credit-hidden-balance"
       ],
       protectedMarkers: ["一分钱也不出", "固定给付", "实际余额"],
-      revisionMarkers: ["后一个", "到账就转我一万七千五", "我开头只说了他的衣服", "这一万二我认", "一万一千六百多"]
+      revisionMarkers: ["后一个", "到账就转我一万七千五", "差不多四万，是跟我有关", "这一万二是花在我身上", "一万一千六百多"]
     },
     {
       caseId: "02-tony",
@@ -2086,7 +2112,7 @@ test("PACK-020", "all four long cases keep one causal layered-disguise chain", (
         "tony-refund-bundle"
       ],
       protectedMarkers: ["全额退款", "服务便利", "完整消费"],
-      revisionMarkers: ["说过。他说我那边喝酒的人太多", "我订的。四百多块钱", "今天拿培训页一对", "楼下停的是警车", "都做了，头发也没做坏"]
+      revisionMarkers: ["说过。他说我那边喝酒的人太多", "我订的。四百多块钱", "偏偏那列不在模板里", "楼下停的是警车", "都做了，头发也没做坏"]
     },
     {
       caseId: "03-profile",
@@ -2110,7 +2136,7 @@ test("PACK-020", "all four long cases keep one causal layered-disguise chain", (
         "work-acknowledgement-without-record"
       ],
       protectedMarkers: ["六万八", "负责人署名", "绕过报备"],
-      revisionMarkers: ["那时候我是真想让老板把这次活动交给我", "我也跟着回了一个", "时间我改口", "我其实只看得懂", "那我是不是就不用再单独发了"]
+      revisionMarkers: ["那时候我是真想让老板把这次活动交给我", "我也跟着回了一个", "等一下，时间不对", "我其实只看得懂", "那我是不是就不用再单独发了"]
     }
   ];
 
@@ -2153,8 +2179,15 @@ test("PACK-020", "all four long cases keep one causal layered-disguise chain", (
   const groupMessageBeat = caseFour?.overnightStructure?.liveCounterBeats?.find((beat) => beat.id === "work-group-repayment-message");
   assert(caseFourOpening.includes("工作群输入框") && caseFourOpening.includes("还没发"), "案四必须在开场种下未发送的追款消息");
   assert(JSON.stringify(groupMessageBeat ?? {}).includes("那我是不是就不用再单独发了"), "案四第二夜必须让含糊群消息诱发第五层退让");
+  assert(groupMessageBeat?.from === "平台强制贴片" && (groupMessageBeat?.choices ?? []).length === 2, "案四必须用强制贴片打破前三案的固定节拍，并留给玩家两种处理");
+  assert(groupMessageBeat?.choices?.some((choice) => choice.endingImpact === "platform-data-loss"), "案四先念完群消息必须付出退出推荐的真实代价");
+  assert(groupMessageBeat?.choices?.some((choice) => JSON.stringify(choice.lines ?? []).includes("撤回") && JSON.stringify(choice.lines ?? []).includes("截到")), "案四先静音路线必须失去公开原话但留下可归因截图");
   assert(caseFour?.deepFollowup?.answer?.includes("个人信用卡") && caseFour?.deepFollowup?.answer?.includes("预计付款日期") && caseFour?.deepFollowup?.answer?.includes("付款后再补回单"), "案四结案必须用实际发送文案回收开场草稿");
   assert(!caseFour?.deepFollowup?.resistanceBeat, "案四最终改写页只承担发送文案，不能把另一个认错辩论硬塞进同一节点");
+  const selfAnnotationText = JSON.stringify(caseFiles);
+  for (const staleLine of ["我怕问重了像查岗", "我就没把自己当普通顾客", "这么说，我就不用问他为什么单独记那一列了"]) {
+    assert(!selfAnnotationText.includes(staleLine), `来电人不得替作者完整命名自己的防御机制：${staleLine}`);
+  }
 });
 
 const failed = results.filter((result) => !result.ok);

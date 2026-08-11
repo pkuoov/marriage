@@ -22,7 +22,7 @@ story: midnight-hotline-livestream-detective
 | 旁白 | narrator | alive | [narrator](narrator.md) |
 | 老方 | supporting | alive | [producer-lao-fang](producer-lao-fang.md) |
 | 快案来电人·罗 | supporting | alive | [quick1-caller-luo](quick1-caller-luo.md) |
-| 快案来电人·周 | supporting | alive | [quick2-caller-zhou](quick2-caller-zhou.md) |
+| 快案来电人·周女士 | supporting | alive | [quick2-caller-zhou](quick2-caller-zhou.md) |
 | V哥 | supporting | alive | [v-bro](v-bro.md) |
 | 张法医 | supporting | alive | [zhang-forensic](zhang-forensic.md) |
 | 赵律师 | deuteragonist | alive | [zhao-lawyer](zhao-lawyer.md) |

@@ -121,6 +121,11 @@ Apply this gate to every player-visible spoken surface, not only the mainline. A
 - **Cross-night knowledge isolation**: audit every player-visible line before an overnight hangup against what that speaker knows at that moment. A night-A answer cannot say 「直到今晚上麦」 or cite a night-B admission. Keep the first-night line at the unresolved observation; let the later scene supply the admission after it happens.
 - **Hangup does not preview the payoff**: a host may send the caller back to material already on screen, but cannot name the unrevealed person, institution, account, or consequence that the next act is designed to uncover. A hangup line points to where to look, not what the answer will be.
 - **Quoted lines must be traceable**: quotation marks in a host challenge require a player-visible earlier line with the same wording and speaker. If only the meaning appeared, paraphrase without quotation marks. Never invent a cleaner quote so the callback sounds sharper.
+- **一次揭示律**：为承重事实分别登记 `firstTrace / firstQuestion / firstAdmission / laterUse`。回拨 opener 可以提醒“有一条短信要问”，不能先把短信里的答案完整说出，再让固定场景把同一答案演成反转；夜 B、尾声和复盘再次提到它时，只能新增人物反应、行动后果或旧句的新含义。
+- **可选路线兜底律**：白天可选调查若独占一条事实，后续固定台词不得默认玩家已经知道。需要所有路线都知道时，另放一条可信的共通来源（当事人消息、固定材料、对方可归因的回复）；否则为不同带回物写条件台词。兜底来源可以交付同一事实，不能冒充玩家已经完成过那次调查。
+- **尾声引语同源律**：关怀选择、未读回访和案间回声里的引号内容，必须能在触发它的那条选择中找到原词。只保留意思时去掉引号并改成自然转述，禁止为尾声临时发明一句更像金句的旧话。
+- **对方回应承重指控律**：`respondentNote` 先回应让处置发生变化的那项最重指控，再谈自己的辩解。对方可以只认最小事实、争论责任或补充咨询者的删减，但不得绕开姓名被擅用、金额未到账、材料范围或是否同意这些核心问题，只回答旁枝。
+- **入场来源律**：对方实时发消息、刷礼物上麦或第三方突然补材料时，正文必须交代他如何找到直播或为什么此刻回复。优先使用已经存在的闺蜜、介绍人、工作询问或后台转发；不得让角色因为作者需要反制就自动知道匿名直播间。
 - **Complete action before reaction**: a social reaction needs its triggering action and subject in the same local chain. Do not drop 「照片是我发的」 as a floating answer. Say who posted, who did not, and only then what friends saw or said.
 - **One inferential step per turn**: a host turn asks one question. Do not bundle identity, ownership, motive, history, and affordability into one leap. If the answer creates a new premise, put the derived question in the next turn or fixed follow-up exchange.
 - **Responsibility question before judgement**: the key moral question must be spoken, not left for recap copy to imply. Once the bill buckets are visible, the host may state the narrow calculation and ask the caller which item in the caller-related bucket is actually unrelated to them. The caller must be allowed to dispute the premise, admit benefit without accepting another person's whole debt, or visibly refuse. Only after that exchange may the host separate shared spending, personal display, and unexplained money in `stageJudgement`.
@@ -1055,7 +1060,7 @@ The host is a person (design: `docs/host-character-design.md`):
 
 1. **长度方差**:≥3 句五字以内的答句(「嗯。」「没有。」「你说。」);≥2 段 120 字以上收不住的车轱辘话(絮叨里埋信息)。
 2. **抢话**:≥2 次台词中断——一方说到半句被掐断,渲染层支持断句符(——)。
-3. **不承重句**:≥3 句纯生活噪声(信号不好/喝口水/那边救护车过去了/咳嗽)。
+3. **不承重句不是配额**：允许 0 句；整案最多 2 句。信号不好、喝口水、外卖到了、随手关窗等动作，若删除后人物、材料和下一问都不变，就优先删除，禁止为了“人味”或测试门槛硬塞。真正保留的生活动作必须至少暴露人物习惯、现实压力或关系状态；做到这一点就不再标成 `nonLoadBearing`。
 4. **口误自纠**:≥1 人把事实说错再自己改口(「六月……不对,五月底」)。改口本身可以是线索肌理。
 5. **语气词专属**:每个主要角色分配专属口头禅/语气词(她:「就是说」;何:「反正」;陈:「呃」;林:精确到不用语气词——零语气词也是指纹),互不串用。
 6. **起步失败**:每案 ≥2 处话头起两次才起来(「他那个……就是他上个月,呃,不对,我从头说」)。
@@ -1067,7 +1072,7 @@ The host is a person (design: `docs/host-character-design.md`):
 - **补救物即人物律**:廉价补救必须出自对方的职业或人格域——补救物是人物测验(理发师=券,习惯用材料说话的相亲对象=选择性发一份工资账户流水,老油条同事=群红包)。补救物仍受证据范围约束；“给了真的”不等于“给全了”。
 - **自纠方向条款**:口误自纠的方向也是指纹——沈:说错改对;林(审计):模糊改精确(「百分之三十几……不对,三十七」)。
 - **呼吸差异律**:省略号/停顿(……)不是全员通用的呼吸方式——配额机械执行后最容易长出的新齐整感,就是每个角色都在用同一个符号换气。每案至少安排一位角色几乎不停顿、语速直给(常见于职业角色:财务经办/仓库管理员/前台/顾问),用密不透风的短句或专业术语的连续性反衬其他角色的停顿;停顿本身也要分快慢——惊慌的停顿短而破碎,盘算的停顿长而完整,不能所有停顿都是同一个长度、同一种情绪。
-- **生活噪声不得伪装伏笔**：只有“掠过且无人追问”的救护车、咳嗽、喝水等能计入不承重配额。声音靠近后停住、紧接敲门并导致人物换地点或中断行动时，必须撤掉 `nonLoadBearing`，登记偶发细节闭环并回收。
+- **生活噪声不得伪装伏笔，也不得反向凑数**：只有“掠过且无人追问”的救护车、咳嗽、喝水等才可以标 `nonLoadBearing`，但没有最低数量要求。声音靠近后停住、紧接敲门并导致人物换地点或中断行动时，必须撤掉 `nonLoadBearing`，登记偶发细节闭环并回收；工作群提示音让人物躲避消息、电话铃引出特定来电等动作也属于承重反应，不能伪装成纯噪声。
 - **职业因果律**：非固定坐班、夜场、零工或其他容易被污名化的职业，正文只写角色具体做什么、怎么结算、身体或外形要付出什么成本。禁止由主播或旁白贴“不正经”标签。职业至少推动两项可见行动，例如必须约晚档、频繁补染、提成到账后消费；所谓“情绪价值”至少落成一句原话或一次动作，例如替她挡住职业玩笑，不能只写进人物小传。
 - **职业延迟揭示律**：若具体职业被设计成第二夜才发现，第一夜只能留下真实但不完整的后果，例如下午才醒、要见很多人、需要晚档和妆造；不得让来电摘要、开场台词或顾问提前报出职位。第二夜回拨先让人物用“有人来问点事”等自利说法闪躲，再由玩家沿第一夜已出现的强光、敲门、账单、地点或联系方式问出具体职责、结算方式和隐瞒原因。职业揭示可以降低叙述可信度，不能自动证明违法、道德低下或“活该被骗”；后续判断仍须回到人物实际做过的动作。
 - **真实照顾不得倒销**：后续发现销售动机或私表，不得把先前真实发生的维护和尊重全部改判为假。结案应同时保留照顾确实发生、照顾后来被接入消费推进这两层事实。
@@ -1081,6 +1086,9 @@ The host is a person (design: `docs/host-character-design.md`):
 
 - **金句配额律**:主播每案格言句 ≤3,只许落在深问、结案与金句拍;其余追问用工作语言(短问、实指、可重复)。判定法:一句话删掉案件名词后仍像格言,即计入配额。
 - **潜台词律**:来电人不得当场剖析自己的心理防御机制;自我洞察由行为、拒答或他人说破交付。每案"完美自知句"≤2,且只许出现在深问之后。
+- **自我注释审计**:全文检索“现在回头看／我才发现／这么说我就不用／我就没把自己当／我怕这样显得”等句式。来电人如果在替作者命名自己的逃避方式，改成一个可见动作或被删掉的话，例如打完问题又删掉、把材料停在某一页、听见某个称呼后没有再问；需要点破机制时，把命名权交给主播，来电人只承认、否认或沉默。即时好恶和人物惯用的自嘲可以保留，不能把所有“我觉得”机械删除。
+- **压力线必须付账**:平台、礼物、商务函或家庭压力若连续出现两次以上，至少一次必须改变当场局面或后续结果。可见代价包括退出推荐、被迫贴片、失去一段公开原话或让尾声数据落到较差分支；只留下回看文案而不改变任何状态，视为假压力。代价不得改写证据真值或把平台处罚当成正确答案奖励。
+- **先问哪个材料板**:材料圈选不必全部是唯一正解。承重材料存在两个都成立的入口时，可标为 `selectionMode: priority`：恰好两个方向成立、玩家只能先带一个上麦，未选项不自动补发；两项必须证明不同缺口，不能把同一句结论拆成同义按钮。其余材料板仍保持单一正确项，避免所有题都退化成无差别选择。
 - **答非所问配额**:每案至少 3 处来电人的回答是答非所问、反问或沉默;沉默用舞台指示承接,不许用台词填平。
 - **抵抗拍配额**:每案至少 1 拍来电人把矛头指向主播或节目本身;主播接话不得用格言,允许接不住(接不住要记账,后拍归还)。
 - **对手在场律**:默认对方不上麦;每案至少 1 次对方的实时反制经合法传感器进入(来电人转读、后台函件、第三方转话),且发生在夜 B 进行中,不许全部堆到收麦后。若个案明确需要双人调解，必须登记为一次性特许：双方分别口头授权可公开范围，主播先说明付费不购买站队，未授权材料不上屏；礼物或打赏只能提高拒绝压力，不能充当证据、同意或结论。特许只在当前案件成立，不得悄悄改写全包制作规模。

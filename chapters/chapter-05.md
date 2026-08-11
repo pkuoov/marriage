@@ -10,8 +10,11 @@ characters:
 mentions: []
 arcs-advanced: []
 status: revised
-word-count: 13
+word-count: 14
 ---
+
+
+
 
 # 快案一：什么都不图
 

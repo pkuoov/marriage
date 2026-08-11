@@ -58,6 +58,10 @@ Do not repair a broken spine by adding dialogue, atmosphere, an NPC explanation,
 - Do not join adjacent payments into one money path without a tracing source.
 - Do not use a later reveal to make an earlier character know more than they could know.
 - A character's omission may damage credibility without proving the opposing party's whole story.
+- Keep a **single-reveal ledger** for every load-bearing fact: first visible trace, first legal question, first attributable admission, and later echoes. Once a callback opener or fixed line has stated the owner, amount, beneficiary, or result, a later scene may react to it or change its consequence, but may not stage the same fact as a fresh discovery. If the later scene must own the reveal, keep the earlier surface at the unresolved question or material edge.
+- Audit optional investigation against fixed continuation. A later fixed question may rely only on facts available on every reachable route. If a daytime choice is the only source for a premise, either make the later exchange conditional, add a separate route-independent source at the seam, or narrow the fixed line so a player who skipped that choice is not treated as already informed.
+- Treat quoted aftermath and callback language as evidence too. Text inside quotation marks must trace to an exact earlier player-visible phrase from the branch that produced it; a meaning-only echo must be written without quotation marks.
+- Make every absent party answer the case's strongest attributable accusation. A respondent note may minimize, counter-accuse or concede only the smallest point, but it cannot discuss side grievances while silently skipping the unauthorized act, unpaid amount or consent question that caused the case to change.
 
 ## Contradiction classes
 
@@ -135,6 +139,9 @@ After revising:
 - Verify every question is licensed by already visible information.
 - Verify every answer adds one new fact, defense, decision or emotion.
 - Verify every planted interruption, sound, object and third-party remark is paid off or removed.
+- Verify every callback, live interruption and respondent appearance has an in-world access path: who sent the link, forwarded the clip, asked for the reply or otherwise made the stream/material reachable.
+- Verify every load-bearing fact is revealed once; later uses are explicitly reaction, consequence or revaluation rather than a second first reveal.
+- Verify skipped optional routes still reach coherent fixed dialogue without phantom knowledge.
 - Verify the B story is consistent while every intentional A-story contradiction retains a motive, fair trace, player test and advice-changing payoff.
 - Verify `confirmed / edited / unknown` remain distinct.
 - Run the repository's content generation, full checks and relevant playable smoke test.

@@ -356,7 +356,7 @@ async function runQuickDetective() {
           if (index === 0 && lineIndex === 2) await assertVisibleText(page, "朋友圈截图我看了", "展示需求对质必须明确引用刚收到的截图");
           if (index === 3 && lineIndex === 1) await assertVisibleText(page, "这个‘他’是谁", "男方必须从来电人说漏的代词发现第三个人");
           if (index === 3 && lineIndex === 3) await assertVisibleText(page, "我不想说得好像我专门去见他一样", "发现来源对质必须以最小承认和自利辩解收尾");
-          if (index === 0 && lineIndex === 4) await assertVisibleText(page, "也希望别人羡慕他给你的生活", "展示需求对质必须把截图事实问回她的实际诉求");
+          if (index === 0 && lineIndex === 4) await assertVisibleText(page, "希望别人羡慕他给你的生活", "展示需求对质必须把截图事实问回她的实际诉求");
           if (index === 1 && lineIndex === 2) await assertVisibleText(page, "不叫‘我只漏看一条消息’", "消息对质必须落到被缩小的醉酒状态");
           if (index === 0 && lineIndex === 4) await assertVisibleText(page, "我们不脱离感情只谈钱", "展示需求对质必须保留主播关于感情与金钱的固定判断");
           if (index === 2 && lineIndex === 3) await assertVisibleText(page, "男的", "第三名男性必须经过身份收窄以后才由来电人承认");
@@ -766,7 +766,13 @@ async function runRoute(route) {
         await assertNoPageText(page, `${route.name === "accounting-support" ? "周明" : "林旭阳"}\n${directionLabel}`, "direction label must not replace the protagonist's spoken line");
         directionChoiceChecked = true;
       }
-      await drainDialogue(page, route);
+      const answerTranscript = await drainDialogue(page, route);
+      if (route.name === "accounting-support" && sceneQuestionCount === 1 && !answerTranscript.includes("以前每个月都按时到")) {
+        throw new Error("the normal key-question route must play the authored sceneCloser before advancing");
+      }
+      if (route.name === "accounting-support" && sceneQuestionCount === 2 && !answerTranscript.includes("以前也有人这么跟我借钱")) {
+        throw new Error("the normal key-question route must play the anchored host disclosure instead of skipping it");
+      }
       continue;
     }
 
@@ -782,7 +788,7 @@ async function runRoute(route) {
     const materialButtons = page.locator("[data-evidence-check]");
     await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
     if (route.name === "accounting-support") {
-      await assertVisibleText(page, "我刚才光说他买衣服", "perfect route should show testimony revision after the material hit");
+      await assertVisibleText(page, "餐厅、酒店、礼物，还有设备", "perfect route should show testimony revision after the material hit");
     }
     if (route.name === "material-miss-accounting-support") {
       await assertVisibleText(page, "一件大衣两千多，单看不算离谱", "material-miss route should show pity line after the first miss");
@@ -868,7 +874,7 @@ async function runCase4DayRoutes() {
     reactionText: "弹幕里有人说我蠢。我看见了。",
     reactionChoice: "silence",
     reactionResponse: "行，继续。",
-    nextCounterText: "月底财务集中报销时一起办"
+    nextCounterText: "工作群刚弹出一条"
   });
 }
 
@@ -946,7 +952,7 @@ async function runCase2DayMap() {
     openerText: "是我把它剪掉",
     reactionText: "收了好处装什么受害者",
     reactionChoice: "soothe",
-    reactionResponse: "……嗯。你问吧。"
+    reactionResponse: "你问吧。"
   });
   await runOfflineDayMap({
     chapter: 2,
