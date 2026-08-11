@@ -972,6 +972,7 @@ export function createOvernightScreens(ctx) {
         recapAftertaste: choice.recapAftertaste ?? "",
         stanceNudge: choice.stanceNudge ?? null,
         routeTone: choice.routeTone ?? "live-counter",
+        endingImpact: choice.endingImpact ?? null,
         at: Date.now()
       }
     };

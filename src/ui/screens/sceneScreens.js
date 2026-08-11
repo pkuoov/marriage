@@ -153,7 +153,8 @@ export function createSceneScreens(ctx) {
     const pick = focus.kind === "dialogue"
       ? dialoguePicks.find((item) => Number(item.optionIndex) === Number(focus.optionIndex))
       : selectedScenePickForState(state, brief, index);
-    if (!pick?.question || !pick?.answer) return closeSceneQuestionMenu(brief);
+    if (!pick?.question || (!pick?.answer && !pick?.lines?.length)) return closeSceneQuestionMenu(brief);
+    const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
     const review = sceneReviewModel({
       brief,
       index,
@@ -166,7 +167,14 @@ export function createSceneScreens(ctx) {
       mood: focus.kind === "key" ? "focused" : "thinking",
       label: "连线继续",
       chapter: liveChapterTitle(brief),
-      text: sceneQuestionAnswerHtml({ question: pick.question, answer: pick.answer, lines: pick.lines, resistanceBeat: pick.resistanceBeat }),
+      text: `${sceneQuestionAnswerHtml({
+        question: pick.question,
+        answer: pick.answer,
+        lines: pick.lines,
+        resistanceBeat: pick.resistanceBeat,
+        reactionLine: pick.reactionLine,
+        sceneCloser: focus.kind === "key" ? scene.sceneCloser : null
+      })}${focus.kind === "key" ? `${respondentTeaseHtml(brief, index)}${hostDisclosureForAnchor(brief, `afterScene:${index + 1}`)}` : ""}`,
       choices: focus.kind === "key"
         ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
         : flowGroupHtml(`<button class="primary" data-return-question-menu type="button">继续问</button>`)
@@ -418,7 +426,10 @@ export function createSceneScreens(ctx) {
         routeTone: option.routeTone ?? routeToneForChoice(option),
         correct: Boolean(option.contradiction),
         guarded: answerVariant.guarded || Boolean(option.forcedGuardedAnswer),
-        resistanceBeat: option.resistanceBeat ?? null
+        resistanceBeat: option.resistanceBeat ?? null,
+        lines: answerVariant.guarded ? null : option.lines ?? null,
+        reactionLine: option.reactionLine ?? "",
+        sceneVersionKind: scene.version === brief.sceneVersions?.[sceneIndex]?.revisedVersion ? "revised" : "base"
       }
     };
     recordRouteChoice(brief, sceneIndex, option, scene);
@@ -474,7 +485,8 @@ export function createSceneScreens(ctx) {
           lines: answerVariant.guarded ? null : option.lines ?? null,
           routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
           routeTone: option.routeTone ?? routeToneForChoice(option),
-          guarded: answerVariant.guarded
+          guarded: answerVariant.guarded,
+          sceneVersionKind: scene.version === brief.sceneVersions?.[sceneIndex]?.revisedVersion ? "revised" : "base"
         }
       ]
     };

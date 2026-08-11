@@ -1,121 +1,102 @@
-export function caseKey(brief) {
-  return brief?.id ?? "daily";
-}
+import {
+  applyActionMark,
+  caseKey,
+  casePatienceLost,
+  initialCaseBudget,
+  recordPatienceLostState,
+  refundOneBudgetPoint,
+  retryPatienceLostState
+} from "./caseBudgetModel.js";
+import {
+  documentById,
+  documentQuestionId,
+  documentRowById,
+  documentsFor,
+  earnedDocumentQuestionsFor
+} from "./documentMarkModel.js";
+import {
+  liveCounterBeatAfterScene,
+  liveCounterBeatBeforeScene,
+  liveCounterBeatById,
+  liveCounterBeatsFor,
+  liveCounterBeatTriggerMet
+} from "./liveCounterModel.js";
+import {
+  availableCallbackOpeners,
+  availableOvernightCallbackOpeners,
+  callbackOpenerById,
+  canCompleteNightAction,
+  canEnterOvernightCallback,
+  completeNightAction,
+  daySceneById,
+  initialNightStateFor,
+  initialOvernightStateFor,
+  interludeEarnedItemsForOvernight,
+  nightActionById,
+  nightActionCost,
+  nightActionCountsForBudget,
+  nightSegmentLastSceneIndex,
+  nightSegmentSceneIndexes,
+  nightStructureFor,
+  overnightAnchorSceneIndex,
+  overnightCallbackDialogueLines,
+  overnightCallbackOpenerById,
+  overnightCallerQuestionFor,
+  overnightFirstNight2SceneIndex,
+  overnightReturnPostureFor,
+  overnightStructureFor,
+  returnStanceFor,
+  shouldEnterHangupAfterScene,
+  shouldEnterOvernightHangupAfterScene,
+  snapshotEchoFor
+} from "./nightOvernightModel.js";
 
-export function initialCaseBudget(max = 0) {
-  return { max, remaining: max, used: 0 };
-}
-
-export function applyActionMark({ caseActionLog = {}, caseId = "daily", actionKey = "", budget = null, spend = false } = {}) {
-  const caseLog = caseActionLog?.[caseId] ?? {};
-  const alreadyDone = Boolean(caseLog[actionKey]);
-  const nextBudget = budget ? { ...budget } : null;
-  if (nextBudget && spend && !alreadyDone) {
-    nextBudget.remaining = Math.max(0, Number(nextBudget.remaining ?? 0) - 1);
-    nextBudget.used = Number(nextBudget.used ?? 0) + 1;
-  }
-  return {
-    alreadyDone,
-    budget: nextBudget,
-    caseActionLog: {
-      ...(caseActionLog ?? {}),
-      [caseId]: {
-        ...caseLog,
-        [actionKey]: true
-      }
-    }
-  };
-}
-
-export function casePatienceLost({ budget = {}, answeredScenes = 0, requiredScenes = 0, answeredEvidence = 0, requiredEvidence = 0 } = {}) {
-  const allAnswered = answeredScenes >= requiredScenes && answeredEvidence >= requiredEvidence;
-  return Number(budget.remaining ?? 0) <= 0 && !allAnswered;
-}
-
-export function recordPatienceLostState({ state = {}, brief = {}, context = {} } = {}) {
-  return {
-    ...state,
-    scene: "patienceLost",
-    patienceLostContext: {
-      caseId: caseKey(brief),
-      ...(context ?? {})
-    },
-    lastReaction: null,
-    lastPressureSignal: null,
-    lastPressureAxis: null
-  };
-}
-
-export function retryPatienceLostState({ state = {}, brief = {}, context = null, budget = null, areaTotal = 1 } = {}) {
-  const retryContext = context ?? state.patienceLostContext ?? {};
-  const key = retryContext.caseId ?? caseKey(brief);
-  const answerId = retryContext.answerKey;
-  let nextState = { ...state };
-
-  if (answerId && retryContext.removeQuestionPick) {
-    nextState.sceneQuestionPicks = omitRecordKey(nextState.sceneQuestionPicks, answerId);
-    nextState.sceneAnswers = omitRecordKey(nextState.sceneAnswers, answerId);
-  }
-
-  if (answerId && retryContext.dialogueOptionIndex !== undefined) {
-    const current = nextState.sceneDialoguePicks?.[answerId] ?? [];
-    nextState.sceneDialoguePicks = {
-      ...(nextState.sceneDialoguePicks ?? {}),
-      [answerId]: current.filter((item) => Number(item.optionIndex) !== Number(retryContext.dialogueOptionIndex))
-    };
-  }
-
-  if (answerId && retryContext.removeEvidencePick) {
-    nextState.evidenceCheckPicks = omitRecordKey(nextState.evidenceCheckPicks, answerId);
-  }
-
-  if (answerId && retryContext.removeInvestigationPick) {
-    nextState.investigationPicks = omitRecordKey(nextState.investigationPicks, answerId);
-  }
-
-  if (Number.isInteger(retryContext.routeIndex)) {
-    nextState.routeChoiceLog = {
-      ...(nextState.routeChoiceLog ?? {}),
-      [key]: (nextState.routeChoiceLog?.[key] ?? []).filter((item) => Number(item.sceneIndex) !== Number(retryContext.routeIndex))
-    };
-  }
-
-  nextState.caseActionLog = {
-    ...(nextState.caseActionLog ?? {}),
-    [key]: omitRecordKeys(nextState.caseActionLog?.[key] ?? {}, retryContext.actionKeys ?? [])
-  };
-
-  if (retryContext.spent) {
-    nextState.caseBudgets = {
-      ...(nextState.caseBudgets ?? {}),
-      [key]: refundOneBudgetPoint(budget ?? nextState.caseBudgets?.[key] ?? {})
-    };
-  }
-
-  const area = retryContext.area ?? "sceneReview";
-  if (Number.isInteger(retryContext.index)) {
-    nextState.dialogueProgress = {
-      ...(nextState.dialogueProgress ?? {}),
-      [`${key}:${area}`]: clampProgressIndex(retryContext.index, areaTotal)
-    };
-  }
-
-  return {
-    ...nextState,
-    scene: area,
-    lastReaction: null,
-    lastPressureSignal: null,
-    lastPressureAxis: null,
-    patienceLostContext: null
-  };
-}
-
-export function refundOneBudgetPoint(budget = {}) {
-  const max = Math.max(0, Number(budget.max ?? 0));
-  const remaining = Math.min(max, Number(budget.remaining ?? 0) + 1);
-  const used = Math.max(0, Number(budget.used ?? 0) - 1);
-  return { ...budget, max, remaining, used };
-}
+export {
+  applyActionMark,
+  availableCallbackOpeners,
+  availableOvernightCallbackOpeners,
+  callbackOpenerById,
+  canCompleteNightAction,
+  canEnterOvernightCallback,
+  caseKey,
+  casePatienceLost,
+  completeNightAction,
+  daySceneById,
+  documentById,
+  documentQuestionId,
+  documentRowById,
+  documentsFor,
+  earnedDocumentQuestionsFor,
+  initialCaseBudget,
+  initialNightStateFor,
+  initialOvernightStateFor,
+  interludeEarnedItemsForOvernight,
+  liveCounterBeatAfterScene,
+  liveCounterBeatBeforeScene,
+  liveCounterBeatById,
+  liveCounterBeatsFor,
+  liveCounterBeatTriggerMet,
+  nightActionById,
+  nightActionCost,
+  nightActionCountsForBudget,
+  nightSegmentLastSceneIndex,
+  nightSegmentSceneIndexes,
+  nightStructureFor,
+  overnightAnchorSceneIndex,
+  overnightCallbackDialogueLines,
+  overnightCallbackOpenerById,
+  overnightCallerQuestionFor,
+  overnightFirstNight2SceneIndex,
+  overnightReturnPostureFor,
+  overnightStructureFor,
+  recordPatienceLostState,
+  refundOneBudgetPoint,
+  returnStanceFor,
+  retryPatienceLostState,
+  shouldEnterHangupAfterScene,
+  shouldEnterOvernightHangupAfterScene,
+  snapshotEchoFor
+};
 
 export function answerKey(brief, index) {
   return `${caseKey(brief)}:scene:${index}`;
@@ -166,332 +147,6 @@ export function pendingEvidenceChecksFor(brief = {}, actionDone = () => false) {
 
 export function investigationHooksFor(brief = {}) {
   return Array.isArray(brief?.investigationHooks) ? brief.investigationHooks : [];
-}
-
-export function documentsFor(brief = {}) {
-  return Array.isArray(brief?.documents) ? brief.documents : [];
-}
-
-export function documentById(brief = {}, documentId = "") {
-  return documentsFor(brief).find((document) => document.id === documentId) ?? null;
-}
-
-export function documentRowById(document = {}, rowId = "") {
-  return (document?.rows ?? []).find((row) => row.rowId === rowId) ?? null;
-}
-
-export function documentQuestionId(documentId = "", kind = "row", rowIds = [], question = "") {
-  const rows = (rowIds ?? []).join("+");
-  let hash = 2166136261;
-  for (const char of `${documentId}:${kind}:${rows}:${question}`) {
-    hash ^= char.charCodeAt(0);
-    hash = Math.imul(hash, 16777619);
-  }
-  return `${documentId}:${kind}:${rows}:${(hash >>> 0).toString(36)}`;
-}
-
-export function earnedDocumentQuestionsFor(document = {}, markedRows = []) {
-  const marked = new Set(markedRows ?? []);
-  const questions = [];
-  for (const rowId of marked) {
-    const rowQuestions = document?.rowQuestions?.[rowId] ?? [];
-    rowQuestions.forEach((question) => {
-      questions.push({
-        ...question,
-        id: documentQuestionId(document.id, "row", [rowId], question.question),
-        documentId: document.id,
-        kind: "row",
-        rows: [rowId]
-      });
-    });
-  }
-  (document?.crossQuestions ?? []).forEach((question) => {
-    const rows = question.rows ?? [];
-    if (!rows.length || !rows.every((rowId) => marked.has(rowId))) return;
-    questions.push({
-      ...question,
-      id: documentQuestionId(document.id, "cross", rows, question.question),
-      documentId: document.id,
-      kind: "cross",
-      routeAxis: question.routeAxis ?? "money-flow"
-    });
-  });
-  const seen = new Set();
-  return questions.filter((question) => {
-    const key = `${question.question}\n${question.answer}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-export function nightStructureFor(brief = {}) {
-  const structure = brief?.nightStructure;
-  if (!structure || structure.enabled !== true) return null;
-  return structure;
-}
-
-export function overnightStructureFor(brief = {}) {
-  const structure = brief?.overnightStructure;
-  if (!structure || typeof structure !== "object" || Array.isArray(structure)) return null;
-  return structure;
-}
-
-export function initialNightStateFor(brief = {}) {
-  const structure = nightStructureFor(brief);
-  const max = Math.max(0, Number(structure?.interlude?.budget ?? 0));
-  return {
-    segment: "segment1",
-    hangupDone: false,
-    interludeBudget: { max, remaining: max, used: 0 },
-    interludeActionsDone: [],
-    interludeChoicesDone: [],
-    inventory: [],
-    callbackOpenerId: null,
-    callerStanceOnReturn: "neutral",
-    stanceNudge: null
-  };
-}
-
-export function initialOvernightStateFor(brief = {}) {
-  const structure = overnightStructureFor(brief);
-  const max = Math.max(0, Number(structure?.dayBudget ?? 0));
-  return {
-    segment: "night1",
-    hangupDone: false,
-    dayBudget: { max, remaining: max, used: 0 },
-    dayScenesDone: [],
-    earnedItems: [],
-    timelineSorts: {},
-    dayFollowups: {},
-    dayChoices: {},
-    documentMarks: {},
-    documentEarnedQuestions: [],
-    documentAnsweredQuestions: {},
-    activeDocumentQuestionId: null,
-    activeDaySceneId: null,
-    callbackOpenerId: null,
-    callerQuestionChoiceId: null,
-    callerQuestionHostChoiceId: null,
-    callerQuestionStanceNudge: null
-  };
-}
-
-export function nightActionById(brief = {}, actionId = "") {
-  return (nightStructureFor(brief)?.interlude?.actions ?? []).find((action) => action.id === actionId) ?? null;
-}
-
-export function canCompleteNightAction(night = {}, action = {}, structure = {}) {
-  const actionId = action?.id ?? "";
-  if (!actionId) return { ok: false, reason: "missing-action" };
-  if ((night.interludeActionsDone ?? []).includes(actionId)) return { ok: true, reason: "already-done" };
-  const maxActions = Math.max(0, Number(structure?.interlude?.maxActions ?? Infinity));
-  const doneCount = (night.interludeActionsDone ?? []).filter((id) => nightActionCountsForBudget(structure, id)).length;
-  if (nightActionCountsForBudget(structure, actionId) && doneCount >= maxActions) return { ok: false, reason: "max-actions" };
-  const cost = nightActionCost(action);
-  if (Number(night.interludeBudget?.remaining ?? 0) < cost) return { ok: false, reason: "budget" };
-  return { ok: true, reason: "" };
-}
-
-export function completeNightAction(night = {}, action = {}, structure = {}) {
-  const readiness = canCompleteNightAction(night, action, structure);
-  if (!readiness.ok || readiness.reason === "already-done") return night;
-  const cost = nightActionCost(action);
-  const budget = night.interludeBudget ?? { max: 0, remaining: 0, used: 0 };
-  const grants = Array.isArray(action.grantsInventory) ? action.grantsInventory : [];
-  return {
-    ...night,
-    segment: "interlude",
-    activeActionId: null,
-    interludeBudget: {
-      ...budget,
-      remaining: Math.max(0, Number(budget.remaining ?? 0) - cost),
-      used: Number(budget.used ?? 0) + cost
-    },
-    interludeActionsDone: [...new Set([...(night.interludeActionsDone ?? []), action.id])],
-    inventory: [...new Set([...(night.inventory ?? []), ...grants])]
-  };
-}
-
-export function availableCallbackOpeners(brief = {}, inventory = [], choiceIds = []) {
-  const carried = new Set(inventory ?? []);
-  const choices = new Set(choiceIds ?? []);
-  return (nightStructureFor(brief)?.callbackOpeners ?? []).filter((opener) => {
-    if ((opener.blocksIfInventory ?? []).some((item) => carried.has(item))) return false;
-    if (opener.requiresChoiceId && !choices.has(opener.requiresChoiceId)) return false;
-    const requirements = opener.requiresAny ?? [];
-    if (!requirements.length) return true;
-    return requirements.some((item) => carried.has(item));
-  });
-}
-
-export function callbackOpenerById(brief = {}, openerId = "") {
-  return (nightStructureFor(brief)?.callbackOpeners ?? []).find((opener) => opener.id === openerId) ?? null;
-}
-
-export function returnStanceFor(brief = {}, snapshotPick = null) {
-  const stance = nightStructureFor(brief)?.returnStance;
-  const optionId = snapshotPick?.id ?? "";
-  return stance?.fromSnapshotOptionIds?.[optionId] ?? stance?.default ?? "neutral";
-}
-
-export function overnightReturnPostureFor(snapshotPick = null, stanceNudge = null) {
-  if (stanceNudge === "defensive") return "againstCaller";
-  if (stanceNudge === "open") return "withCaller";
-  return snapshotPick?.id === "caller-benefited" ? "againstCaller" : "withCaller";
-}
-
-export function nightSegmentSceneIndexes(brief = {}, segment = "segment1") {
-  const structure = nightStructureFor(brief);
-  const field = segment === "segment2" ? "segment2SceneIndexes" : "segment1SceneIndexes";
-  return Array.isArray(structure?.[field]) ? structure[field] : [];
-}
-
-export function nightSegmentLastSceneIndex(brief = {}, segment = "segment1") {
-  const indexes = nightSegmentSceneIndexes(brief, segment);
-  return indexes.length ? indexes[indexes.length - 1] : -1;
-}
-
-export function shouldEnterHangupAfterScene(brief = {}, sceneIndex = 0) {
-  return Boolean(nightStructureFor(brief)) && Number(sceneIndex) === nightSegmentLastSceneIndex(brief, "segment1");
-}
-
-export function overnightAnchorSceneIndex(brief = {}) {
-  const structure = overnightStructureFor(brief);
-  const anchor = String(structure?.hangupAnchor ?? "").trim();
-  if (!anchor) return -1;
-  return (brief.sceneVersions ?? []).findIndex((scene) => [
-    scene?.version,
-    ...(scene?.sceneCloser?.lines ?? []).map((line) => line?.text)
-  ].filter(Boolean).join("\n").includes(anchor));
-}
-
-export function overnightFirstNight2SceneIndex(brief = {}) {
-  const secondNightIndexes = nightSegmentSceneIndexes(brief, "segment2");
-  if (secondNightIndexes.length) return secondNightIndexes[0];
-  const anchorIndex = overnightAnchorSceneIndex(brief);
-  const total = brief.sceneVersions?.length ?? 0;
-  if (anchorIndex < 0) return 0;
-  return Math.min(total - 1, anchorIndex + 1);
-}
-
-export function shouldEnterOvernightHangupAfterScene(brief = {}, sceneIndex = 0) {
-  return Boolean(overnightStructureFor(brief)) && Number(sceneIndex) === overnightAnchorSceneIndex(brief);
-}
-
-export function daySceneById(brief = {}, sceneId = "") {
-  return (overnightStructureFor(brief)?.dayScenes ?? []).find((scene) => scene.id === sceneId) ?? null;
-}
-
-export function availableOvernightCallbackOpeners(brief = {}, earnedItems = []) {
-  const carried = new Set(earnedItems ?? []);
-  return Object.entries(overnightStructureFor(brief)?.callbackOpeners ?? {})
-    .filter(([earnedItemId]) => carried.has(earnedItemId))
-    .map(([id, opener]) => ({ id, ...(opener ?? {}) }));
-}
-
-export function interludeEarnedItemsForOvernight(brief = {}, inventory = []) {
-  const structure = overnightStructureFor(brief);
-  const mapping = structure?.interludeEarnedItemMap ?? {};
-  const openerIds = new Set(Object.keys(structure?.callbackOpeners ?? {}));
-  const carried = new Set(inventory ?? []);
-  const directItems = [...carried].filter((inventoryId) => openerIds.has(inventoryId));
-  const mappedItems = Object.entries(mapping)
-    .filter(([inventoryId]) => carried.has(inventoryId))
-    .flatMap(([, earnedItemIds]) => Array.isArray(earnedItemIds) ? earnedItemIds : [earnedItemIds])
-    .filter(Boolean);
-  return [...new Set([...directItems, ...mappedItems])];
-}
-
-export function canEnterOvernightCallback(brief = {}, overnight = {}) {
-  const structure = overnightStructureFor(brief);
-  if (!structure) return false;
-  const required = Math.max(0, Number(structure.minDayScenes ?? 0));
-  const validSceneIds = new Set((structure.dayScenes ?? []).map((scene) => scene.id));
-  const completed = new Set((overnight.dayScenesDone ?? []).filter((sceneId) => validSceneIds.has(sceneId)));
-  return completed.size >= required;
-}
-
-export function overnightCallbackOpenerById(brief = {}, openerId = "") {
-  const opener = overnightStructureFor(brief)?.callbackOpeners?.[openerId];
-  return opener ? { id: openerId, ...opener } : null;
-}
-
-export function snapshotEchoFor(brief = {}, snapshotPick = null) {
-  const optionId = snapshotPick?.id ?? "";
-  if (!optionId) return "";
-  return overnightStructureFor(brief)?.snapshotEcho?.[optionId] ?? "";
-}
-
-export function overnightCallbackDialogueLines(brief = {}, { stanceLine = "", opener = {}, snapshotEcho = "" } = {}) {
-  const structure = overnightStructureFor(brief) ?? {};
-  const firstConflict = opener.firstConflict ?? {};
-  return [
-    ...(stanceLine ? [{ role: "caller", text: stanceLine }] : []),
-    ...(structure.returnLead?.lines ?? []),
-    ...(opener.line ? [{ role: "caller", text: opener.line }] : []),
-    ...(firstConflict.lines ?? (firstConflict.hostLine ? [{ role: "host", text: firstConflict.hostLine }] : [])),
-    ...(firstConflict.callerLine ? [{ role: "caller", text: firstConflict.callerLine }] : []),
-    ...(firstConflict.pauseAfterCallerLine ? [{ role: "pause" }] : []),
-    ...(firstConflict.callerFollowupLine ? [{ role: "caller", text: firstConflict.callerFollowupLine }] : []),
-    ...(snapshotEcho ? [{ role: "caller", text: snapshotEcho }] : []),
-    ...(structure.returnBeat?.lines ?? [])
-  ];
-}
-
-export function liveCounterBeatsFor(brief = {}) {
-  const beats = overnightStructureFor(brief)?.liveCounterBeats;
-  return Array.isArray(beats) ? beats : [];
-}
-
-export function liveCounterBeatById(brief = {}, beatId = "") {
-  return liveCounterBeatsFor(brief).find((beat) => beat.id === beatId) ?? null;
-}
-
-export function liveCounterBeatAfterScene(brief = {}, sceneIndex = 0, actionDone = () => false, overnight = {}) {
-  return liveCounterBeatsFor(brief).find((beat) => (
-    Number(beat.afterSceneIndex) === Number(sceneIndex)
-      && liveCounterBeatTriggerMet(beat, overnight)
-      && !actionDone(`liveCounterBeat:${beat.id}`)
-  )) ?? null;
-}
-
-export function liveCounterBeatBeforeScene(brief = {}, sceneIndex = 0, actionDone = () => false, overnight = {}) {
-  return liveCounterBeatsFor(brief).find((beat) => (
-    Number(beat.beforeSceneIndex) === Number(sceneIndex)
-      && liveCounterBeatTriggerMet(beat, overnight)
-      && !actionDone(`liveCounterBeat:${beat.id}`)
-  )) ?? null;
-}
-
-export function liveCounterBeatTriggerMet(beat = {}, overnight = {}) {
-  const trigger = beat.triggerAny;
-  if (!trigger || typeof trigger !== "object") return true;
-  const openerHit = (trigger.callbackOpeners ?? []).includes(overnight.callbackOpenerId);
-  const documentHit = (trigger.documentRows ?? []).some((entry) => {
-    const splitAt = String(entry).lastIndexOf(":");
-    if (splitAt < 0) return false;
-    const documentId = String(entry).slice(0, splitAt);
-    const rowId = String(entry).slice(splitAt + 1);
-    return (overnight.documentMarks?.[documentId] ?? []).includes(rowId);
-  });
-  return openerHit || documentHit;
-}
-
-export function overnightCallerQuestionFor(brief = {}) {
-  const question = overnightStructureFor(brief)?.callerQuestion;
-  if (!question || typeof question !== "object" || Array.isArray(question)) return null;
-  return question;
-}
-
-export function nightActionCost(action = {}) {
-  if (action.kind === "interruptToast") return Math.max(0, Number(action.cost ?? 0));
-  return Math.max(0, Number(action.cost ?? 1));
-}
-
-export function nightActionCountsForBudget(structure = {}, actionId = "") {
-  const action = (structure?.interlude?.actions ?? []).find((item) => item.id === actionId);
-  return action?.kind !== "interruptToast";
 }
 
 export function delegationFor(brief = {}) {
@@ -667,17 +322,4 @@ export function unlockedInvestigationEntries(brief = {}, { foundContradictions =
       if (hook.triggerContradiction && found.has(hook.triggerContradiction)) return true;
       return false;
     });
-}
-
-function clampProgressIndex(index = 0, total = 1) {
-  return Math.max(0, Math.min(Number(index ?? 0), Math.max(0, Number(total || 1) - 1)));
-}
-
-function omitRecordKey(record = {}, keyToOmit) {
-  return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => key !== keyToOmit));
-}
-
-function omitRecordKeys(record = {}, keysToOmit = []) {
-  const remove = new Set(keysToOmit ?? []);
-  return Object.fromEntries(Object.entries(record ?? {}).filter(([key]) => !remove.has(key)));
 }

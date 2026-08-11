@@ -69,19 +69,25 @@ export function latestChoiceReviewRowsForState(state = {}, brief = {}, { exclude
   if (lastAnsweredIndex >= 0) {
     const selectedPick = selectedScenePickForState(state, brief, lastAnsweredIndex);
     return [
-      { role: "caller", text: scenes[lastAnsweredIndex]?.version ?? "" },
+      { role: "caller", text: sceneVersionForReview(scenes[lastAnsweredIndex], selectedPick) },
       { role: "host", text: selectedPick?.question ?? "" },
       { role: "caller", text: selectedPick?.answer ?? sceneAnswerForState(state, brief, lastAnsweredIndex) },
       ...latestEvidenceRevisionRowsForState(state, brief)
     ].filter((line) => line.text);
   }
+  const latestDialoguePicks = askedDialoguePicksForState(state, brief, lastDialogueIndex);
   return [
-    { role: "caller", text: scenes[lastDialogueIndex]?.version ?? "" },
-    ...askedDialoguePicksForState(state, brief, lastDialogueIndex).flatMap((pick) => [
+    { role: "caller", text: sceneVersionForReview(scenes[lastDialogueIndex], latestDialoguePicks.at(-1)) },
+    ...latestDialoguePicks.flatMap((pick) => [
       { role: "host", text: pick.question },
       ...(Array.isArray(pick.lines) && pick.lines.length ? pick.lines : [{ role: "caller", text: pick.answer }])
     ])
   ].filter((line) => line.text);
+}
+
+function sceneVersionForReview(scene = {}, pick = null) {
+  if (pick?.sceneVersionKind === "revised" && scene.revisedVersion) return scene.revisedVersion;
+  return scene.version ?? "";
 }
 
 function latestEvidenceRevisionRowsForState(state = {}, brief = {}) {

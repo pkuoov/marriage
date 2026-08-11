@@ -2,7 +2,7 @@ const TEXTURE_THRESHOLDS = Object.freeze({
   shortAnswerCount: 3,
   longRambleCount: 1,
   interruptionCount: 2,
-  nonLoadBearingCount: 3,
+  nonLoadBearingMaxCount: 2,
   callerTicCount: 2,
   otherTicCount: 0
 });
@@ -323,7 +323,7 @@ function textureErrors(metrics = {}, options = {}) {
   if (metrics.shortAnswerCount < TEXTURE_THRESHOLDS.shortAnswerCount) errors.push(`短答句 ${metrics.shortAnswerCount}/${TEXTURE_THRESHOLDS.shortAnswerCount}`);
   if (metrics.longRambleCount < TEXTURE_THRESHOLDS.longRambleCount) errors.push(`长絮叨段 ${metrics.longRambleCount}/${TEXTURE_THRESHOLDS.longRambleCount}`);
   if (metrics.interruptionCount < TEXTURE_THRESHOLDS.interruptionCount) errors.push(`掐断标记 ${metrics.interruptionCount}/${TEXTURE_THRESHOLDS.interruptionCount}`);
-  if (metrics.nonLoadBearingCount < TEXTURE_THRESHOLDS.nonLoadBearingCount) errors.push(`生活噪声句 ${metrics.nonLoadBearingCount}/${TEXTURE_THRESHOLDS.nonLoadBearingCount}`);
+  if (metrics.nonLoadBearingCount > TEXTURE_THRESHOLDS.nonLoadBearingMaxCount) errors.push(`无功能生活噪声过多 ${metrics.nonLoadBearingCount}/${TEXTURE_THRESHOLDS.nonLoadBearingMaxCount}`);
   if (!voiceTicsDeclared) errors.push("voiceTics 未声明");
   if (!voiceTicArcDeclared) errors.push("voiceTicArc 未声明");
   if (voiceTics.length > 0 && metrics.callerTicCount < TEXTURE_THRESHOLDS.callerTicCount) errors.push(`来电人口癖 ${metrics.callerTicCount}/${TEXTURE_THRESHOLDS.callerTicCount}`);

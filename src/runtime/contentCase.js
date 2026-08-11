@@ -84,9 +84,18 @@ export function runtimeCaseContentSummary(packet = {}) {
   };
 }
 
+export function missingRuntimeCaseRequiredFields(packet = {}) {
+  if (!isRuntimeLoadedCaseContent(packet)) return [];
+  return RUNTIME_CASE_REQUIRED_FIELDS.filter((field) => packet[field] === undefined);
+}
+
 export function applyRuntimeCaseContent(brief, packet = {}) {
   if (!packet) return brief;
   if (!isRuntimeLoadedCaseContent(packet)) return brief;
+  const missingFields = missingRuntimeCaseRequiredFields(packet);
+  if (missingFields.length && typeof globalThis.console?.warn === "function") {
+    globalThis.console.warn(`[contentCase] runtime-loaded case ${packet.caseId ?? "unknown"} is missing required fields: ${missingFields.join(", ")}`);
+  }
   const content = RUNTIME_CASE_CONTENT_FIELDS.reduce((next, field) => {
     if (packet[field] !== undefined) next[field] = packet[field];
     return next;

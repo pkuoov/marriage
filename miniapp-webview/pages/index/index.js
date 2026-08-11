@@ -1,5 +1,10 @@
 const DEFAULT_GAME_URL = "https://your-domain.example/livestream-detective/index.html";
 
+function sharePathForPayload(payload = {}) {
+  const query = String(payload.shareQuery ?? "").replace(/^\?/, "");
+  return query ? `/pages/index/index?${query}` : "/pages/index/index";
+}
+
 Page({
   data: {
     gameUrl: DEFAULT_GAME_URL,
@@ -36,7 +41,7 @@ Page({
       : latestShare.title || "深夜热线：直播间侦探";
     this.setData({
       shareTitle,
-      sharePath: latestShare.path || "/pages/index/index"
+      sharePath: sharePathForPayload(latestShare)
     });
   },
   onShareAppMessage() {

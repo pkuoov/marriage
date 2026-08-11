@@ -68,13 +68,22 @@ export function scenePromptExchangeHtml({ scene = {} } = {}) {
   ].join("");
 }
 
-export function sceneQuestionAnswerHtml({ question = "", answer = "", lines = null, resistanceBeat = null } = {}) {
+export function sceneQuestionAnswerHtml({
+  question = "",
+  answer = "",
+  lines = null,
+  resistanceBeat = null,
+  reactionLine = "",
+  sceneCloser = null
+} = {}) {
   return `
     <section class="question-answer-card">
       <div class="call-dialogue">
         ${callLineHtml({ role: "host", text: question })}
         ${resistanceBeatLinesHtml(resistanceBeat)}
         ${dialogueAnswerHtml({ answer, lines })}
+        ${reactionLine ? callLineHtml({ role: "caller", text: reactionLine }) : ""}
+        ${sceneBeatLinesHtml(sceneCloser)}
       </div>
     </section>
   `;
@@ -103,7 +112,10 @@ export function keyChoiceExchangeHtml({ scene = {}, pick = {}, fallbackAnswer = 
   return [
     callLineHtml({ role: "host", text: question }),
     resistanceBeatLinesHtml(safePick.resistanceBeat),
-    answer ? callLineHtml({ role: "caller", text: answer }) : ""
+    Array.isArray(safePick.lines) && safePick.lines.length
+      ? dialogueAnswerHtml(safePick)
+      : answer ? callLineHtml({ role: "caller", text: answer }) : "",
+    safePick.reactionLine ? callLineHtml({ role: "caller", text: safePick.reactionLine }) : ""
   ].join("");
 }
 

@@ -18,6 +18,7 @@ export function materialOperationOutcome(check = {}, checkIndex = 0, optionIndex
       revisesScene: option.revisesScene,
       contradiction: fullContradiction,
       routeAxis,
+      selectionMode: check.selectionMode ?? "single",
       correct
     },
     routeChoice: {

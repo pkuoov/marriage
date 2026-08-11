@@ -752,6 +752,7 @@ function createDailyScreenRenderers() {
     nightShellForBrief,
     nightShellInterludeForBrief,
     nightShellGoodEnding,
+    nightShellEndingKey,
     compactDialogueLines,
     normalizedDailyResult,
     routeProfileForBrief,
@@ -863,6 +864,13 @@ function nightShellGoodEnding() {
   if (!finished.length) return false;
   const average = finished.reduce((sum, result) => sum + Number(result.issuePercent ?? 0), 0) / finished.length;
   return average >= 60;
+}
+
+function nightShellEndingKey() {
+  const paidPlatformCost = Object.values(state.liveCounterPicks ?? {})
+    .some((pick) => pick?.endingImpact === "platform-data-loss");
+  if (paidPlatformCost) return "platformCost";
+  return nightShellGoodEnding() ? "good" : "bad";
 }
 
 function sceneWithShownCard(brief = {}, scene = {}) {
@@ -1551,6 +1559,7 @@ function routeProfileForBrief(brief, result = {}) {
 function postDailySharePayload(brief, route, result) {
   const mode = isStoryPackMode() ? "episode" : "daily";
   const storyKey = brief.storyKey ?? brief.weeklyKey ?? "";
+  const shareQuery = `mode=${encodeURIComponent(mode)}&dailyKey=${encodeURIComponent(brief.dailyKey ?? "")}&storyKey=${encodeURIComponent(storyKey)}`;
   platformRuntime.postMessage({
     type: "daily-share",
     dailyKey: brief.dailyKey,
@@ -1562,7 +1571,8 @@ function postDailySharePayload(brief, route, result) {
     title: route.shareTitle,
     body: route.shareBody,
     question: route.shareQuestion,
-    path: `/pages/index/index?mode=${mode}&dailyKey=${encodeURIComponent(brief.dailyKey ?? "")}&storyKey=${encodeURIComponent(storyKey)}`
+    shareQuery,
+    shareUrl: `?${shareQuery}`
   });
 }
 

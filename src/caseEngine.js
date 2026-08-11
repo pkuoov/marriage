@@ -104,7 +104,7 @@ function runtimeContentForDailyCase(options, plotId) {
   return storyPackCaseContentForPlot(storyKey, plotId);
 }
 
-const DAILY_RO对方TION = [
+const DAILY_ROTATION = [
   {
     plotId: "lost-job-hidden-credit",
     caseMode: "daily",
@@ -169,7 +169,7 @@ export function generateDailyCaseSequence(npcs, attrs, options = {}) {
     throw new Error(`Daily case plot is not templated: ${options.plotId}`);
   }
   const dailyKey = options.dailyKey ?? dailyCaseKey(options.now);
-  const dailySpec = options.plotId ? null : DAILY_RO对方TION[dailyHash(dailyKey) % DAILY_RO对方TION.length];
+  const dailySpec = options.plotId ? null : DAILY_ROTATION[dailyHash(dailyKey) % DAILY_ROTATION.length];
   const plotId = options.plotId ?? dailySpec?.plotId ?? DAILY_TEMPLATE_PLOT_IDS[0];
   const plot = DAILY_PLOT_DEFINITIONS[plotId];
   if (!plot) throw new Error(`Daily case plot not found: ${plotId}`);
@@ -267,23 +267,11 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       callerArt: spec.callerArt ?? brief.callerArt,
       callerArtStyle: spec.callerArtStyle ?? brief.callerArtStyle ?? "",
       callerArtVariants: spec.callerArtVariants ?? brief.callerArtVariants ?? {},
-      weeklyCase: true,
-      weeklyKey: storyKey,
-      weeklyThemeId: theme.id,
-      weeklyThemeTitle: theme.title,
-      weeklyThemeIntro: theme.intro,
-      weeklyThemeThesis: theme.thesis,
-      weeklyThemeCommentPrompt: theme.commentPrompt,
-      weeklyHiddenThread: theme.hiddenThread,
-      weeklyAct: spec.act,
-      weeklyObjectLabel: spec.objectLabel,
       modeLabel: "试玩连线",
       storyArcTitle: "热线连线",
       storyArcSummary: brief.storyArcSummary,
       storyEpisodeTitle: storyPack.title,
-      storyCaseLabel: storyPack.caseLabels?.[index] ?? "匿名来电",
-      weeklyEpisodeTitle: storyPack.title,
-      weeklyCaseLabel: storyPack.caseLabels?.[index] ?? "匿名来电"
+      storyCaseLabel: storyPack.caseLabels?.[index] ?? "匿名来电"
     };
     return applyDifficultyProfile(episodeBrief, spec.difficultyProfile);
   });

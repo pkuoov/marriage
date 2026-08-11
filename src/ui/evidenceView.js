@@ -16,7 +16,7 @@ export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
         ${pick ? evidenceAnnotationHtml(pick) : ""}
       </div>
       <div class="evidence-target-board" aria-label="圈点区域">
-        <span>圈哪一处</span>
+        <span>${check.selectionMode === "priority" ? "先问哪一处" : "圈哪一处"}</span>
         <div class="evidence-target-grid">
           ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick)).join("")}
         </div>
@@ -78,9 +78,10 @@ export function evidenceMaterialRows(check = {}) {
 }
 
 export function evidencePickFeedbackHtml(pick = {}) {
+  const priority = pick.selectionMode === "priority";
   return `
     <section class="evidence-result-card ${pick.correct ? "hit" : "miss"}">
-      <span>${pick.correct ? "圈中了" : "没圈准"}</span>
+      <span>${priority ? pick.correct ? "先问这一处" : "这处还不够" : pick.correct ? "圈中了" : "没圈准"}</span>
       <b>${escapeHtml(pick.label ?? "")}</b>
       <p>${escapeHtml(pick.feedback ?? "")}</p>
     </section>

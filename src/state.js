@@ -171,16 +171,38 @@ export function migrateState(saved) {
 
 function migrateCaseBrief(brief) {
   if (!brief || typeof brief !== "object") return brief;
-  const daily = brief.dailyCase || brief.storyPackCase || brief.weeklyCase || brief.dailyKey || brief.storyKey || brief.weeklyKey || brief.caseMode === "daily" || brief.caseMode === "episode" || brief.caseMode === "weekly" || String(brief.id ?? "").startsWith("daily-") || String(brief.id ?? "").startsWith("episode-") || String(brief.id ?? "").startsWith("weekly-");
-  if (!daily) return brief;
+  const rawMode = String(brief.caseMode ?? "");
+  const mode = rawMode ? normalizeCaseMode(rawMode) : "";
+  const isDailyLike =
+    mode === "daily" ||
+    mode === "episode" ||
+    brief.dailyCase === true ||
+    brief.storyPackCase === true ||
+    brief.weeklyCase === true ||
+    String(brief.id ?? "").startsWith("daily-") ||
+    String(brief.id ?? "").startsWith("episode-") ||
+    String(brief.id ?? "").startsWith("weekly-");
+  if (!isDailyLike) return brief;
   const openingDialogue = migrateOpeningDialogue(brief);
   return {
     ...brief,
+    ...(brief.storyPackCase === undefined && brief.weeklyCase === true ? { storyPackCase: true } : {}),
+    ...(brief.storyKey === undefined && brief.weeklyKey !== undefined ? { storyKey: brief.weeklyKey } : {}),
+    ...(brief.storyThemeId === undefined && brief.weeklyThemeId !== undefined ? { storyThemeId: brief.weeklyThemeId } : {}),
+    ...(brief.storyThemeTitle === undefined && brief.weeklyThemeTitle !== undefined ? { storyThemeTitle: brief.weeklyThemeTitle } : {}),
+    ...(brief.storyThemeIntro === undefined && brief.weeklyThemeIntro !== undefined ? { storyThemeIntro: brief.weeklyThemeIntro } : {}),
+    ...(brief.storyThemeThesis === undefined && brief.weeklyThemeThesis !== undefined ? { storyThemeThesis: brief.weeklyThemeThesis } : {}),
+    ...(brief.storyThemeCommentPrompt === undefined && brief.weeklyThemeCommentPrompt !== undefined ? { storyThemeCommentPrompt: brief.weeklyThemeCommentPrompt } : {}),
+    ...(brief.storyHiddenThread === undefined && brief.weeklyHiddenThread !== undefined ? { storyHiddenThread: brief.weeklyHiddenThread } : {}),
+    ...(brief.storyAct === undefined && brief.weeklyAct !== undefined ? { storyAct: brief.weeklyAct } : {}),
+    ...(brief.storyObjectLabel === undefined && brief.weeklyObjectLabel !== undefined ? { storyObjectLabel: brief.weeklyObjectLabel } : {}),
+    ...(brief.storyEpisodeTitle === undefined && brief.weeklyEpisodeTitle !== undefined ? { storyEpisodeTitle: brief.weeklyEpisodeTitle } : {}),
+    ...(brief.storyCaseLabel === undefined && brief.weeklyCaseLabel !== undefined ? { storyCaseLabel: brief.weeklyCaseLabel } : {}),
     openingDialogue,
     sceneVersions: migrateSceneRouteAxes(brief),
     deepFollowup: migrateDeepFollowup(brief),
     dailyCase: true,
-    modeLabel: brief.storyPackCase || brief.weeklyCase || brief.caseMode === "episode" || brief.caseMode === "weekly" ? "试玩连线" : brief.modeLabel === "今日连线" ? "今日来电" : brief.modeLabel ?? "今日来电",
+    modeLabel: brief.storyPackCase || brief.weeklyCase || mode === "episode" ? "试玩连线" : brief.modeLabel === "今日连线" ? "今日来电" : brief.modeLabel ?? "今日来电",
     storyArcTitle: String(brief.storyArcTitle ?? "").startsWith("今日连线")
       ? String(brief.storyArcTitle).replace("今日连线", "今日来电")
       : brief.storyArcTitle

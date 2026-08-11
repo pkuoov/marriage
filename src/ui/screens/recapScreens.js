@@ -62,6 +62,7 @@ export function createRecapScreens(ctx) {
     nightShellForBrief,
     nightShellInterludeForBrief,
     nightShellGoodEnding,
+    nightShellEndingKey,
     frame,
     hostPortraitLayer,
     compactDialogueLines,
@@ -125,7 +126,8 @@ export function createRecapScreens(ctx) {
   function renderNightShellEpilogue(brief) {
     const state = ctx.getState();
     const epilogue = nightShellForBrief(brief)?.epilogue ?? {};
-    const resultLine = nightShellGoodEnding() ? epilogue.good : epilogue.bad;
+    const resultLine = epilogue[nightShellEndingKey?.() ?? (nightShellGoodEnding() ? "good" : "bad")]
+      ?? (nightShellGoodEnding() ? epilogue.good : epilogue.bad);
     const stage = epilogueUnreadStage(epilogue, state.careChoices, state.epilogueUnreadStep);
     const currentIndex = stage.visibleMessages.length - 1;
     const lines = stage.complete
