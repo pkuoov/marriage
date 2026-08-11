@@ -1157,7 +1157,7 @@ async function completeOvernightDay(page, route) {
       await assertNoPageText(page, "今天第三拨", "removed restaurant witness must not survive in the replacement scene");
     }
     if (sceneId === "day-bank-flow") {
-      await assertVisibleText(page, "他的银行流水(她导出的近五个月)", "document day scene should render bank flow");
+      await assertVisibleText(page, "他的银行流水（近五个月关键交易摘录）", "document day scene should render bank flow");
       for (const rowId of route.documentRows ?? ["r08", "r11"]) {
         await activate(page, route, `[data-document-row="${rowId}"]`);
       }

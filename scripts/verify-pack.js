@@ -1869,7 +1869,11 @@ test("PACK-016", "case 1 keeps two anonymous money edges and one institutional p
   assert(caseOne?.truthBoundary?.unknown?.some((item) => item.includes("每月 8 号") && item.includes("七月中断")), "案一未知清单必须把王姓转账并回 8 号供血规律");
   assert(caseOne?.truthBoundary?.unknown?.some((item) => item.includes("尾号 3301")), "案一必须保留 3301 私人尾号线");
   assert(caseOne?.truthBoundary?.unknown?.some((item) => item.includes("宸直信托") && item.includes("兑付状态")), "案一必须把宸直保留为机构结果线");
-  const flowRows = caseOne?.documents?.find((document) => document.id === "case1-bank-flow")?.rows ?? [];
+  const bankFlow = caseOne?.documents?.find((document) => document.id === "case1-bank-flow");
+  const flowRows = bankFlow?.rows ?? [];
+  assert(bankFlow?.title?.includes("关键交易摘录") && bankFlow?.intro?.includes("没有余额列") && bankFlow?.intro?.includes("不是完整收支表"), "案一银行材料必须明确是摘录，不能伪装成完整资金账本");
+  const postSalaryGap = bankFlow?.crossQuestions?.find((question) => ["r04", "r04a", "r04b"].every((rowId) => question.rows?.includes(rowId)));
+  assert(postSalaryGap?.answer?.includes("不知道") && postSalaryGap?.logicContract?.sourceDoesNotProve?.includes("期初余额"), "案一停薪后资金缺口必须保留未知，不能由咨询者猜成信用卡透支");
   assert(flowRows.some((row) => row.party?.includes("王**")), "案一流水行必须保留王姓半姓原始字段");
   assert(flowRows.some((row) => row.party === "宸直信托有限公司"), "案一不得删除宸直种子行");
   const timelineOpener = caseOne?.overnightStructure?.callbackOpeners?.["周会计的时间线"]?.line ?? "";
