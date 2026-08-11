@@ -226,7 +226,7 @@ Detour options are not stupid options:
 - Per-scene texture floor: every `version` keeps at least one direct quote OR one afterthought/particle beat, AND at least one non-load-bearing sentence. A scene where every sentence carries plot is a synopsis.
 - 发现权守恒 (conservation of discovery): anything the player is designed to earn — document rows, laundering catches, replay finds, mid-case turns — may never be pre-narrated by the caller or any surface. A refactor that surfaces hidden agency early, or has the caller recite exhibit rows, breaks the case even if every sentence reads fine.
 - 标题静默律: 主案标题卡只显示案号和案名。不要用一句“她还停在转账页”、案情摘要、材料预告、主题句或操作指引替剧情开口；来电人的求助必须在接通后的第一组问答里成立。案间名言页只显示名言和出处，不再追加作者写的承上启下句。`openingComplaint` 只允许作为内部索引，`manifest.sequence` 不写玩家可见的 `bridge`；全量阅读版、导演版和其他派生稿也不得在人物开口前重新插入“来电摘要”或案情旁白。
-- 方向选项静默律: 玩家作中段判断或选择怀疑方向时，按钮只显示方向标签，不在按钮下面附一段作者归纳。选中以后可以反馈这一方向已经由哪些已播事实支持，但未选方向不提前展示总结，更不能替玩家解释人物动机。
+- 方向选项静默律: 玩家作中段判断或选择怀疑方向时，按钮只显示方向标签，不在按钮下面附一段作者归纳。成立方向由主播把完整问题问出来；干扰方向只在原按钮上标“目前接不上”，不得用 `missLine`、提示段或人物反应解释为什么不成立，也不得借错误反馈反向排除其他答案。阶段标题只写“继续听／继续问当晚的情况”等中性进程，不许写“她改了说法／真正想要什么”等作者结论。
 - Any rewrite pass must ship a texture diff: count of direct quotes, emotional beats, and breath sentences before/after per scene. Net loss requires explicit sign-off, not a commit message.
 
 ## Manufacturing Doubt, Questions, and Turns (疑点、问题点、转折点的制造方法)
@@ -675,7 +675,7 @@ Grey-zone character checks:
 
 ## Call Loop and Reveal Rules
 
-Material inspection is a playable beat, not a hint panel. A correct material pick should add a contradiction and keep audience patience unchanged. A wrong material pick may consume patience, but it must not reveal the correct answer. The route map should mark material beats as material, not as a fake sixth dialogue scene.
+材料检视必须是可玩的剧情拍，不是提示面板。正确选择要增加矛盾且不扣耐心，判断由当前主播以署名台词说出，不显示“圈中了／先问这一处”等无署名判卷卡。错误选择可以扣耐心，但不能泄露正确答案：主播只说“这条先放着”一类收住话头的短句，不播放该选项的 `feedback`、`reactionLine` 或 `revisedVersion`。路线图把它记为材料动作，不伪装成第六段对话。
 
 Host investigation and evidence backflow may expand the reasoning range, but only after the player has already heard the relevant contradiction. Treat these as a controlled extension of the material system: backstage verification, post-call direct messages, or limited off-mic inquiries can add fixed materials, not freeform facts. They must never turn into open-world investigation, AI-generated evidence, or a second-party live debate. Every backflow item must state why it appears now, which heard contradiction it relates to, what it proves, and what it still cannot prove.
 

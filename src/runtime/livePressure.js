@@ -60,11 +60,10 @@ export function materialPressureSignal(outcome = {}) {
 
 export function materialPressureReaction(outcome = {}, check = {}) {
   void check;
-  if (outcome.pick?.feedback) return outcome.pick.feedback;
   if (outcome.correct) {
-    return "这块圈住了，前面那句开始变味。";
+    return "弹幕开始往回翻前面的原话。";
   }
-  return "这一处还撑不住，现场又吵开了。";
+  return "弹幕一下分成了两拨。";
 }
 
 export function pressureRecapProfile({ budget = {}, choices = [], foundCount = 0 } = {}) {
@@ -114,7 +113,7 @@ function pressureRecapLine({ label, used, missCount, heldCount, guardCount, foun
   if (label === "跑偏过") return "中间被闲话带走过几次，后来拉了回来。";
   if (label === "稳住了") {
     if (guardCount > 0) return "对面的事你问到了，来电人自己没说满的地方，你也没放过。";
-    return foundCount >= 2 ? "该问的几句问到了，材料也圈中了，弹幕没跑题。" : "没吵起来，几处要紧的都问到了。";
+    return foundCount >= 2 ? "该问的几句问到了，材料也用上了，弹幕没跑题。" : "没吵起来，几处要紧的都问到了。";
   }
   return "这通问得少，听得多。";
 }

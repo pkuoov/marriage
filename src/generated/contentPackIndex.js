@@ -3287,7 +3287,7 @@ export const CONTENT_CASES = {
               "label": "会员号是她的，朋友圈也是她发的",
               "correct": true,
               "contradiction": "纪念日晚餐由咨询者订座、接受高价酒水并发布朋友圈，体面现场不是单方制造。",
-              "feedback": "这不让她背八万，只把那顿饭的观众席也记进账里。",
+              "feedback": "会员和朋友圈说明那顿饭也有她的一份，但不能据此说八万都是她花的。",
               "reactionLine": "会员号是我的，靠窗位也是我订的。照片是谁发的，我前面说过。可这顿饭被我讲成全是他安排，讲顺嘴了。",
               "routeAxis": "caller-credibility"
             },
@@ -3462,7 +3462,7 @@ export const CONTENT_CASES = {
               "label": "删掉的起哄评论和探店设备",
               "correct": true,
               "contradiction": "闺蜜当初起哄“他真大方”，后来删评撇清，体面人设有过观众。",
-              "feedback": "朋友圈那晚有人跟着起哄，第二天又删了。她不是这八万的还款人，最多算这份人设的观众。",
+              "feedback": "她朋友当时也参与了探店号的起哄，第二天删了评论。但八万该不该还，不能算到她头上。",
               "routeAxis": "external-corroboration"
             },
             {
@@ -3509,7 +3509,7 @@ export const CONTENT_CASES = {
               "label": "阔过，阔得早",
               "correct": true,
               "contradiction": "同款体面消费早于这段关系，旧洞不是认识咨询者以后才出现。",
-              "feedback": "这句能用。它把旧账往前推，但没有解释 8 号的入账为什么断了。",
+              "feedback": "他以前确实有钱。可为什么七月那笔入账没了，这句话还是解释不了。",
               "routeAxis": "document-edge"
             },
             {
@@ -5491,7 +5491,7 @@ export const CONTENT_CASES = {
               "label": "七个联系人和四份到店回执",
               "correct": true,
               "contradiction": "咨询者不只持续消费，还主动替 Tony 转去七名联系人并促成四人到店；她从‘自己人’位置获得面子，也给店里带去客源。",
-              "feedback": "这组先问她自己做过什么：七个联系人里四人到店。它不能决定十八笔服务是否退款，却能补上她从未主动讲过的投入和收益。",
+              "feedback": "七个联系人里，四个真的到过店。这件事她一直没提。不过这和十八次服务退不退款要分开。",
               "reactionLine": "七个里去了四个。我以前只说‘顺手推了几个人’。行，这组也算我的。",
               "routeAxis": "caller-credibility"
             },
@@ -5530,7 +5530,7 @@ export const CONTENT_CASES = {
               "label": "培训和指标都是店里教的",
               "correct": true,
               "contradiction": "店长承认统一维护和业绩压力存在，却拒绝替 Tony 的私表说明来源。",
-              "feedback": "这句先把行业那一半留下。Tony 的私表，还得回到原件和他自己的说法。",
+              "feedback": "店里确实教过维护表和办卡话术，这点先认。Tony 自己那张表是谁让他写的，还得问他。",
               "routeAxis": "process-control"
             },
             {
@@ -7354,7 +7354,7 @@ export const CONTENT_CASES = {
               "label": "男方只交了工资账户",
               "correct": true,
               "contradiction": "男方用一张工资账户回答女方要求的银行流水，却没有说明还有其他账户；女方也不能把这一张卡当成他的全部家底。",
-              "feedback": "这组先问材料范围：二十八万六只属于工资账户。其他账户存在，但余额和用途仍未知。",
+              "feedback": "二十八万六只是一张工资账户里的余额。别的账户有多少、钱拿去做什么，现在都不知道。",
               "reactionLine": "我拿到这一张，就当成他全部的钱。他也没告诉我，还有别的账户。",
               "routeAxis": "money-flow"
             },
@@ -8982,7 +8982,7 @@ export const CONTENT_CASES = {
               "label": "延后通知晚了九天",
               "correct": true,
               "contradiction": "同事说来不及时，财务还没有发布付款延后通知。",
-              "feedback": "这一下把借口的时间线拆开了：绕流程先发生，财务延后后发生。",
+              "feedback": "先看时间。14:22 已经有人让她绕开群流程，财务是九天后才通知延期，前后对不上。",
               "reactionLine": "14:22……财务通知是九天以后。我之前怎么一直把这两条当成一天的？",
               "revisesScene": 2,
               "routeAxis": "process-control"
@@ -8991,7 +8991,7 @@ export const CONTENT_CASES = {
               "label": "个人垫付需报备",
               "correct": true,
               "contradiction": "咨询者看过个人垫付必须提前报备的公开流程，却在没有预算和报备的情况下用自己的信用卡支付六万八。",
-              "feedback": "这条先问她自己的动作：流程公开发过，她也回了收到，却没有报备就刷了个人卡。",
+              "feedback": "流程她看过，也回了收到。可刷六万八之前，她没有报备，这件事先问她。",
               "reactionLine": "这条我认。流程我看过，也回了收到。可六万八刷出去以前，我没报备。",
               "routeAxis": "caller-credibility"
             },
@@ -9111,7 +9111,7 @@ export const CONTENT_CASES = {
               "label": "个人垫付需提前报备",
               "correct": true,
               "contradiction": "正常流程要求个人垫付提前报备，这单却被挪到私聊里。",
-              "feedback": "正常入口就在流程表上，有人让她绕了过去。",
+              "feedback": "群里明明有正常报备流程，后来却有人叫她转到私聊里办。",
               "routeAxis": "process-control"
             },
             {
@@ -10210,7 +10210,7 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "actual-request",
-          "label": "再听她真正想找什么",
+          "label": "再听她怎么说",
           "turnIds": [
             "low-standards",
             "relationship-pace",
@@ -10326,8 +10326,7 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "mother-departure",
-          "label": "她母亲当年为什么离开",
-          "missLine": "这段经历只有她的一面说法，可以存疑，但还没有和她后面的话直接冲突。"
+          "label": "她母亲当年为什么离开"
         },
         {
           "id": "report-disclosure",
@@ -10336,8 +10335,7 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "mortgage-pressure",
-          "label": "她的收入能不能负担剩余房贷",
-          "missLine": "现在只知道房子买成两百万，不知道当时贷了多少、目前还剩多少，暂时不能判断她的收入能不能负担。"
+          "label": "她的收入能不能负担剩余房贷"
         },
         {
           "id": "actual-standard",
@@ -10665,7 +10663,7 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "changed-version",
-          "label": "她改了第一次说法",
+          "label": "继续问当晚的情况",
           "turnIds": [
             "who-was-there-first",
             "drinking-level",
@@ -10951,8 +10949,7 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "age-gap",
-          "label": "两个人相差八岁",
-          "missLine": "年龄差可能影响相处，但两个人此前按同一节奏见了一个月。现有原话还不能把这个周末后的退出归因于年龄。"
+          "label": "两个人相差八岁"
         },
         {
           "id": "missed-message-state",
@@ -10971,8 +10968,7 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "founder-busy",
-          "label": "创业者是不是都没时间听歌",
-          "missLine": "他是否忙、会不会听歌只能解释两人的交流习惯，解释不了她为什么把同一个周末拆成几个版本。"
+          "label": "创业者是不是都没时间听歌"
         },
         {
           "id": "how-he-knew",

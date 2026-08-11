@@ -360,7 +360,7 @@ function renderReadableQuickRounds(lines, packet) {
     for (const optionId of round.issueOptionIds ?? []) {
       const option = optionsById.get(optionId);
       if (!option) continue;
-      lines.push(`- **${option.id}**：${option.label}${option.confrontationId ? ` → 对质 ${option.confrontationId}` : ` → 当前依据不足：${option.missLine}`}`, "");
+      lines.push(`- **${option.id}**：${option.label}${option.confrontationId ? ` → 对质 ${option.confrontationId}` : " → 不触发对质"}`, "");
     }
 
     lines.push("#### 本轮当面对质", "");
@@ -595,7 +595,7 @@ function renderContinuousInterlude(lines, packet, actionId, optionId) {
     const selected = check?.options?.find((entry) => entry.correct) ?? check?.options?.[0];
     if (check?.material) lines.push(`【${check.title ?? "重看材料"}】${check.material}`, "");
     if (selected?.label) lines.push(`【你圈出：${selected.label}】`, "");
-    if (selected?.feedback) lines.push(`【结果】${selected.feedback}`, "");
+    if (selected?.feedback) lines.push(`**林旭阳：** ${selected.feedback}`, "");
   }
   if (optionId) {
     const option = (action.options ?? action.choices ?? []).find((entry) => entry.id === optionId);
@@ -698,7 +698,7 @@ function renderContinuousEvidenceCheck(lines, check, { label = "材料检视", p
   const option = (check.options ?? []).find((entry) => entry.correct) ?? check.options?.[0];
   if (!option) return;
   lines.push(`【你圈出：${option.label ?? "这一处"}】`, "");
-  if (option.feedback) lines.push(`【${option.feedback}】`, "");
+  if (option.feedback) lines.push(`**林旭阳：** ${option.feedback}`, "");
   if (option.reactionLine) lines.push(`**咨询者：** ${option.reactionLine}`, "");
   const revisedVersion = option.revisedVersion
     ?? (Number.isInteger(option.revisesScene) ? packet?.sceneVersions?.[option.revisesScene]?.revisedVersion : "");
@@ -951,8 +951,8 @@ function renderPureStoryMaterials(lines, packet) {
     if (check.prompt) lines.push(`**林旭阳：** ${check.prompt}`, "");
     for (const option of check.options ?? []) {
       lines.push(`#### 圈选：${option.label ?? ""}`, "");
-      if (option.feedback) lines.push(`【${option.feedback}】`, "");
-      if (option.reactionLine) lines.push(`**咨询者：** ${option.reactionLine}`, "");
+      if (option.correct && option.feedback) lines.push(`**林旭阳：** ${option.feedback}`, "");
+      if (option.correct && option.reactionLine) lines.push(`**咨询者：** ${option.reactionLine}`, "");
     }
   }
 
@@ -964,7 +964,7 @@ function renderPureStoryMaterials(lines, packet) {
     if (hook.prompt) lines.push(`**林旭阳：** ${hook.prompt}`, "");
     for (const option of hook.options ?? []) {
       lines.push(`#### 圈选：${option.label ?? ""}`, "");
-      if (option.feedback) lines.push(`【${option.feedback}】`, "");
+      if (option.correct && option.feedback) lines.push(`**林旭阳：** ${option.feedback}`, "");
     }
     for (const reply of hook.replyChoices ?? []) lines.push(`【主播可以回复：${reply.label ?? ""}】`, "");
   }

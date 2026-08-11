@@ -107,12 +107,11 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
   return `
     <section class="quick-detective-panel quick-issue-selection">
       <header>
-        <div><span>${escapeHtml(round.label ?? "轮到你判断")}</span><h2>先追问哪个矛盾点？</h2></div>
+        <div><span>${escapeHtml(round.label ?? "轮到你判断")}</span><h2>先问哪件事？</h2></div>
       </header>
       <div class="quick-issue-grid">
         ${quickIssueOptionsForRound(packet, state).map((option) => quickIssueButtonHtml(option, state, resolved)).join("")}
       </div>
-      ${state.issueFeedback ? `<p class="quick-issue-feedback" role="status">${escapeHtml(state.issueFeedback)}</p>` : ""}
     </section>
   `;
 }
@@ -200,7 +199,7 @@ function quickStageStatus(packet = {}, state = {}) {
   return {
     intro: "等待接通",
     transcript: "语音连线中",
-    issueSelection: "整理矛盾",
+    issueSelection: "准备追问",
     confrontation: "当面对质"
   }[state.scene] ?? "语音连线中";
 }

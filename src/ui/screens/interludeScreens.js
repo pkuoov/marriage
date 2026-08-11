@@ -183,6 +183,7 @@ export function createInterludeScreens(ctx) {
         check,
         pick,
         index: safeIndex,
+        hostName: state.playerName,
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       }),
       choices: pick
@@ -212,6 +213,7 @@ export function createInterludeScreens(ctx) {
         hook,
         pick,
         index: hookIndex,
+        hostName: state.playerName,
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       })}${pick ? replyChoicesHtml(replyChoices, replyChoiceId) : ""}`,
       choices: pick
@@ -312,6 +314,7 @@ export function createInterludeScreens(ctx) {
         check,
         pick,
         index: checkIndex,
+        hostName: state.playerName,
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       }),
       choices: pick
@@ -354,6 +357,7 @@ export function createInterludeScreens(ctx) {
         check,
         pick,
         index,
+        hostName: state.playerName,
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       }),
       choices: pick
@@ -389,6 +393,7 @@ export function createInterludeScreens(ctx) {
           hook,
           pick,
           index,
+          hostName: state.playerName,
           reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
         })}
         ${pick ? hostDisclosureForAnchor(brief, "afterBackflow") : ""}

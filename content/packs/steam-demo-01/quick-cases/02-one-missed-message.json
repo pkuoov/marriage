@@ -67,7 +67,7 @@
     },
     {
       "id": "changed-version",
-      "label": "她改了第一次说法",
+      "label": "继续问当晚的情况",
       "turnIds": ["who-was-there-first", "drinking-level", "who-ordered-drinks"],
       "issueOptionIds": ["third-person"],
       "requiredConfrontationIds": ["third-person-at-table"]
@@ -297,8 +297,7 @@
     },
     {
       "id": "age-gap",
-      "label": "两个人相差八岁",
-      "missLine": "年龄差可能影响相处，但两个人此前按同一节奏见了一个月。现有原话还不能把这个周末后的退出归因于年龄。"
+      "label": "两个人相差八岁"
     },
     {
       "id": "missed-message-state",
@@ -317,8 +316,7 @@
     },
     {
       "id": "founder-busy",
-      "label": "创业者是不是都没时间听歌",
-      "missLine": "他是否忙、会不会听歌只能解释两人的交流习惯，解释不了她为什么把同一个周末拆成几个版本。"
+      "label": "创业者是不是都没时间听歌"
     },
     {
       "id": "how-he-knew",

@@ -859,7 +859,7 @@
           "label": "延后通知晚了九天",
           "correct": true,
           "contradiction": "同事说来不及时，财务还没有发布付款延后通知。",
-          "feedback": "这一下把借口的时间线拆开了：绕流程先发生，财务延后后发生。",
+          "feedback": "先看时间。14:22 已经有人让她绕开群流程，财务是九天后才通知延期，前后对不上。",
           "reactionLine": "14:22……财务通知是九天以后。我之前怎么一直把这两条当成一天的？",
           "revisesScene": 2,
           "routeAxis": "process-control"
@@ -868,7 +868,7 @@
           "label": "个人垫付需报备",
           "correct": true,
           "contradiction": "咨询者看过个人垫付必须提前报备的公开流程，却在没有预算和报备的情况下用自己的信用卡支付六万八。",
-          "feedback": "这条先问她自己的动作：流程公开发过，她也回了收到，却没有报备就刷了个人卡。",
+          "feedback": "流程她看过，也回了收到。可刷六万八之前，她没有报备，这件事先问她。",
           "reactionLine": "这条我认。流程我看过，也回了收到。可六万八刷出去以前，我没报备。",
           "routeAxis": "caller-credibility"
         },
@@ -988,7 +988,7 @@
           "label": "个人垫付需提前报备",
           "correct": true,
           "contradiction": "正常流程要求个人垫付提前报备，这单却被挪到私聊里。",
-          "feedback": "正常入口就在流程表上，有人让她绕了过去。",
+          "feedback": "群里明明有正常报备流程，后来却有人叫她转到私聊里办。",
           "routeAxis": "process-control"
         },
         {

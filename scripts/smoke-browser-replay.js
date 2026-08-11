@@ -160,17 +160,18 @@ async function runQuickDetective() {
         await click(page, "[data-quick-next-turn]");
       }
 
-      await assertVisibleText(page, "先追问哪个矛盾点", "快案听完后必须先进入玩家判断层");
+      await assertVisibleText(page, "先问哪件事", "快案听完后必须先进入玩家判断层");
       await assertNoPageText(page, "只选怀疑的方向", "快案判断层不得重复解释按钮行为");
       await assertNoPageText(page, "追问方向", "可选按钮不得重复标注其控件类型");
       await assertNoPageText(page, "先说买房那一百万", "矛盾选择页不得提前展示主播答案句");
       await click(page, '[data-quick-issue="mother-departure"]');
-      await assertVisibleText(page, "还没有和她后面的话直接冲突", "选择干扰方向后必须留在判断层并允许重试");
+      await assertVisibleText(page, "目前接不上", "选择干扰方向后必须留在判断层并允许重试");
+      await assertNoPageText(page, "还没有和她后面的话直接冲突", "干扰方向不得显示系统解释");
       await assertNoPageText(page, "不会说好听话是不是分手的根本原因", "第一轮不能提前开放尚未出现的背书与分手根因");
       const rewindButton = page.locator('[data-action="rewind"]');
       if (!await rewindButton.isVisible()) throw new Error("完成一次追问后，顶部必须出现全局返回键");
       await click(page, '[data-action="rewind"]');
-      await assertVisibleText(page, "先追问哪个矛盾点", "返回键必须回到刚才追问前的判断状态");
+      await assertVisibleText(page, "先问哪件事", "返回键必须回到刚才追问前的判断状态");
       await assertNoPageText(page, "还没有和她后面的话直接冲突", "返回后必须撤销刚才的错误方向反馈");
       if (await rewindButton.isVisible()) throw new Error("退回唯一检查点后，返回键必须隐藏，不能继续跨到案件入口");
 
@@ -223,7 +224,7 @@ async function runQuickDetective() {
           if (index === 3 && lineIndex === 3) await assertVisibleText(page, "我脾气也不好", "来电人必须承认更深一层的争吵问题");
           await click(page, "[data-quick-next-confrontation]");
         }
-        if (index === 0 || index === 2) await assertVisibleText(page, "先追问哪个矛盾点", "同一轮尚有问题时必须把选择权交还玩家");
+        if (index === 0 || index === 2) await assertVisibleText(page, "先问哪件事", "同一轮尚有问题时必须把选择权交还玩家");
         if (index === 1) await assertVisibleText(page, "那收入和年龄呢", "第一轮问清以后必须回到连线，继续听她真正的择偶要求");
       }
 
@@ -295,10 +296,11 @@ async function runQuickDetective() {
         await click(page, "[data-quick-next-turn]");
       }
 
-      await assertVisibleText(page, "先追问哪个矛盾点", "第二宗快案听完后必须交还玩家选择方向");
+      await assertVisibleText(page, "先问哪件事", "第二宗快案听完后必须交还玩家选择方向");
       await assertNoPageText(page, "他是在重新判断", "第二宗快案选择页不能提前显示主播结论");
       await click(page, '[data-quick-issue="age-gap"]');
-      await assertVisibleText(page, "不能把这个周末后的退出归因于年龄", "第二宗快案合理干扰项必须给出证据不足说明并允许重试");
+      await assertVisibleText(page, "目前接不上", "第二宗快案合理干扰项必须留在当前判断层并允许重试");
+      await assertNoPageText(page, "不能把这个周末后的退出归因于年龄", "第二宗快案干扰项不得显示系统解释");
 
       const quick2IssueIds = ["emotion-or-display", "missed-message-state", "third-person", "how-he-knew", "nightlife-pattern", "apology-post"];
       const quick2ConfrontationRoles = [
@@ -311,7 +313,7 @@ async function runQuickDetective() {
       ];
       for (let index = 0; index < quick2IssueIds.length; index += 1) {
         if (index === 2) {
-          await assertVisibleText(page, "她改了第一次说法", "前两处问完后必须进入第二轮信息，不能继续展示后续答案按钮");
+          await assertVisibleText(page, "继续问当晚的情况", "前两处问完后必须进入第二轮信息，不能继续展示后续答案按钮");
           for (let turnIndex = 17; turnIndex < 20; turnIndex += 1) {
             await assertQuickLayout(page, viewport, `case 02 transcript ${turnIndex + 1} host`, "host");
             if (turnIndex === 19) await assertVisibleText(page, "两个人为什么点这么多", "第二轮必须先露出酒不是两个人点完的缺口");
@@ -377,7 +379,7 @@ async function runQuickDetective() {
           if (index === 5 && lineIndex === 4) await assertVisibleText(page, "他也能据此决定", "道歉动态的对质必须改变追回建议");
           await click(page, "[data-quick-next-confrontation]");
         }
-        if (index === 0 || index === 3) await assertVisibleText(page, "先追问哪个矛盾点", "同一轮尚有问题时必须交还玩家选择权");
+        if (index === 0 || index === 3) await assertVisibleText(page, "先问哪件事", "同一轮尚有问题时必须交还玩家选择权");
       }
 
       const quick2VerdictLines = [];

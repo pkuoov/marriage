@@ -168,7 +168,7 @@ function validateQuickCase(packet, cast) {
   assert(issueIds.size === issueOptions.length, `${packet.id} issue option ids must be unique`);
   assert(issueOptions.every((item) => item.id && item.label), `${packet.id} issue options need ids and player-visible labels`);
   assert(issueOptions.filter((item) => item.confrontationId).length === confrontations.length, `${packet.id} must expose exactly one issue direction for every confrontation`);
-  assert(issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine), `${packet.id} non-contradiction issue choices need neutral retry copy`);
+  assert(issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine === undefined), `${packet.id} non-contradiction issue choices must not carry answer-explaining retry copy`);
   for (const issue of issueOptions) {
     if (issue.confrontationId) assert(confrontationIds.has(issue.confrontationId), `${packet.id} issue ${issue.id} references unknown confrontation ${issue.confrontationId}`);
   }

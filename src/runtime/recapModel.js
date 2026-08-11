@@ -446,31 +446,30 @@ export function investigationPickReaction(outcome = {}, hook = {}) {
   if (outcome.correct) {
     return "";
   }
-  if (/截图|图|表|账/.test(outcome.pick?.label ?? "")) return "这一块圈偏了，弹幕又吵到旁边去了。";
-  return "这一下圈偏了，评论区开始翻另一边。";
+  return "弹幕一下分成了两拨。";
 }
 
 function materialPackLabel({ total, hits, misses }) {
   if (!total) return "没看材料";
-  if (hits > 0 && misses === 0) return "圈得准";
-  if (hits >= misses && hits > 0) return "圈回来了";
-  if (misses > 0) return "圈偏过";
-  return "材料没落地";
+  if (hits > 0 && misses === 0) return "材料跟上";
+  if (hits >= misses && hits > 0) return "材料拉回";
+  if (misses > 0) return "材料绕过弯";
+  return "材料没接上";
 }
 
 function materialPackLine({ total, hits, misses, firstMiss }) {
-  if (!total) return "今晚没有留下能被圈住的材料动作。";
-  if (hits > 0 && misses === 0) return `${hits} 处材料都圈在要害上，几通麦没有只靠听感往前冲。`;
-  if (hits >= misses && hits > 0) return `${hits} 处圈住了，${misses} 处跑偏过，材料最后还是把话拉回台面。`;
-  if (misses > 0) return `${firstMiss?.caseLabel || "有一通"}那块材料圈偏过，弹幕会抓着这一下继续吵。`;
-  return "材料看过了，但还没圈到本案缺口。";
+  if (!total) return "今晚没怎么用上材料。";
+  if (hits > 0 && misses === 0) return `${hits} 处材料都用上了，几通麦没有只靠听感往前冲。`;
+  if (hits >= misses && hits > 0) return `${hits} 处材料问到了，${misses} 处绕过弯，最后还是把话拉回了台面。`;
+  if (misses > 0) return `${firstMiss?.caseLabel || "有一通"}那块材料让现场绕了一下，弹幕还在接着吵。`;
+  return "材料看过了，但没能接到眼前这通话上。";
 }
 
 function materialPackComment({ total, hits, misses }) {
   if (!total) return "「今晚像是只听电话，后台材料没真用起来。」";
-  if (hits > 0 && misses === 0) return "「材料圈得准，比空口判断有劲。」";
-  if (hits >= misses && hits > 0) return "「有几下圈偏了，但后面还是靠材料拉回来了。」";
-  return "「材料还没圈准，现场那股热闹盖过了图上的缺口。」";
+  if (hits > 0 && misses === 0) return "「材料都用上了，比空口判断有劲。」";
+  if (hits >= misses && hits > 0) return "「中间绕过弯，后面还是靠材料拉回来了。」";
+  return "「材料没接上，现场那股热闹把图上的缺口盖过去了。」";
 }
 
 function quotePackLabel({ total, hits, picked }) {

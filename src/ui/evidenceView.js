@@ -1,4 +1,5 @@
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
+import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "../playerIdentity.js";
 import { choiceButtonBodyHtml } from "./callFlowView.js";
 
 export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
@@ -77,16 +78,15 @@ export function evidenceMaterialRows(check = {}) {
   return rows.map((row) => String(row ?? "").trim()).filter(Boolean);
 }
 
-export function evidencePickFeedbackHtml(pick = {}) {
-  const priority = pick.selectionMode === "priority";
+export function evidencePickFeedbackHtml(pick = {}, hostName = DEFAULT_PLAYER_NAME) {
+  const hostLine = pick.correct ? pick.feedback : "这条先放着。";
   return `
-    <section class="evidence-result-card ${pick.correct ? "hit" : "miss"}">
-      <span>${priority ? pick.correct ? "先问这一处" : "这处还不够" : pick.correct ? "圈中了" : "没圈准"}</span>
-      <b>${escapeHtml(pick.label ?? "")}</b>
-      <p>${escapeHtml(pick.feedback ?? "")}</p>
-    </section>
-    ${pick.reactionLine ? evidenceReactionLineHtml(pick.reactionLine) : ""}
-    ${pick.revisedVersion ? evidenceReactionLineHtml(pick.revisedVersion) : ""}
+    <div class="call-line host evidence-host-line">
+      <b>${escapeHtml(normalizePlayerName(hostName))}</b>
+      <p>${escapeHtml(hostLine)}</p>
+    </div>
+    ${pick.correct && pick.reactionLine ? evidenceReactionLineHtml(pick.reactionLine) : ""}
+    ${pick.correct && pick.revisedVersion ? evidenceReactionLineHtml(pick.revisedVersion) : ""}
   `;
 }
 
@@ -94,6 +94,7 @@ export function evidenceCheckScreenHtml({
   check = {},
   pick = null,
   index = 0,
+  hostName = DEFAULT_PLAYER_NAME,
   reviewHtml = ""
 } = {}) {
   return `
@@ -101,7 +102,7 @@ export function evidenceCheckScreenHtml({
     ${evidenceOperationHtml(check, pick, index)}
     ${evidenceMaterialNoteHtml(check)}
     <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>
-    ${pick ? evidencePickFeedbackHtml(pick) : ""}
+    ${pick ? evidencePickFeedbackHtml(pick, hostName) : ""}
     ${reviewHtml}
   `;
 }
@@ -110,6 +111,7 @@ export function investigationBackflowScreenHtml({
   hook = {},
   pick = null,
   index = 0,
+  hostName = DEFAULT_PLAYER_NAME,
   reviewHtml = ""
 } = {}) {
   return `
@@ -119,7 +121,7 @@ export function investigationBackflowScreenHtml({
     ${evidenceOperationHtml(hook, pick, index)}
     ${evidenceMaterialNoteHtml(hook)}
     <p>${escapeHtml(hook.prompt ?? "这条回流里，哪一句最该圈出来？")}</p>
-    ${pick ? evidencePickFeedbackHtml(pick) : ""}
+    ${pick ? evidencePickFeedbackHtml(pick, hostName) : ""}
     ${reviewHtml}
   `;
 }
@@ -256,7 +258,7 @@ function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick =
 function evidenceAnnotationHtml(pick = {}) {
   return `
     <div class="evidence-annotation ${pick.correct ? "hit" : "miss"}">
-      <span>${pick.correct ? "圈住" : "圈偏"}</span>
+      <span>已圈</span>
       <b>${escapeHtml(pick.label ?? "")}</b>
     </div>
   `;

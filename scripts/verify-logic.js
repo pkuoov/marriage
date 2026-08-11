@@ -564,7 +564,7 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   assert(packet.issueOptions.length > packet.confrontations.length, "快案必须让玩家在矛盾方向和合理干扰项之间判断，不能自动播放答案");
   assertEqual(packet.issueOptions.filter((item) => item.confrontationId).length, packet.confrontations.length, "每项对质必须恰好有一个玩家可选的问题方向");
   assert(packet.issueOptions.every((item) => item.label && !/[？?。！!]$/.test(item.label)), "快案玩家按钮必须只写疑点方向，不直接展示完整问句");
-  assert(packet.issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine), "干扰方向必须有不带价值判断的重试说明");
+  assert(packet.issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine === undefined), "干扰方向不得携带系统讲解");
   assert(packet.quoteOptions === undefined && packet.playerMarkLimit === undefined && packet.requiredFlawCount === undefined, "快案数据不得保留圈句预算和评论接力旧字段");
   assert((packet.coverStrategy?.honestDetails ?? []).length >= 3, "快案必须先用至少三条普通生活信息建立可信形象");
   assert((packet.coverStrategy?.layeredLeaks ?? []).length >= packet.confrontations.length, "每个矛盾点都必须有一层当场说得通的保护说法");
@@ -697,14 +697,16 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   while (quick.scene === "transcript") quick = advanceQuickTranscript(packet, quick);
   assertEqual(quick.scene, "issueSelection", "听完第一轮信息后必须先让玩家判断矛盾方向，不能直接播放答案");
   const issueSelection = quickDetectiveIssueSelectionHtml(packet, quick);
-  assertIncludes(issueSelection, "先追问哪个矛盾点", "每轮信息结束后必须出现玩家判断层");
+  assertIncludes(issueSelection, "先问哪件事", "每轮信息结束后必须出现玩家判断层");
   assert(!issueSelection.includes("只选怀疑的方向") && !issueSelection.includes("问成一句完整的话") && !issueSelection.includes("追问方向"), "快案选择页不得用教程句重复解释按钮行为");
   assert(!/\d+\s*[/／]\s*\d+/.test(issueSelection), "快案判断层不得用轮次或完成数量催促玩家");
   assert(!issueSelection.includes(quickConfrontationLines(packet.confrontations[0])[0]?.text), "矛盾方向选择页不得提前显示主播的完整答案句");
   const decoy = quickIssueOptionsForRound(packet, quick).find((item) => !item.confrontationId);
   quick = applyQuickIssueSelection(packet, quick, decoy.id);
   assertEqual(quick.scene, "issueSelection", "只可存疑但尚不矛盾的方向不得触发主播揭底");
-  assertIncludes(quickDetectiveIssueSelectionHtml(packet, quick), decoy.missLine, "无充分依据时应给中性重试说明");
+  const decoyResult = quickDetectiveIssueSelectionHtml(packet, quick);
+  assertIncludes(decoyResult, "目前接不上", "无充分依据时只在按钮上收住，不追加解释答案");
+  assert(!decoyResult.includes("quick-issue-feedback"), "干扰方向不得显示系统判卷段落");
   const firstValidIssue = quickIssueOptionsForRound(packet, quick).find((item) => item.confrontationId);
   const interruptedValidAttempt = {
     ...quick,
@@ -1210,8 +1212,8 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
   assertEqual(pressuredAnswerVariant({ answer: "原回答", guardedAnswer: "收紧回答" }, { pressureSignal: "held" }).answer, "原回答", "稳住现场时不能无故改写来电人回答");
   assertEqual(materialPressureSignal({ correct: false }), "drift", "材料误指必须生成结构化跑偏状态");
   assertEqual(questionPressureReaction({ answer: "我只是替他说一句。", routeTone: "softening" }), "", "普通绕路追问不应生成空泛现场氛围句");
-  assertIncludes(materialPressureReaction({ correct: true, pick: { label: "付款状态", feedback: "缺的这一页才决定钱去了哪里。" } }, { title: "审批图", material: "付款和收款账户没露出来。" }), "缺的这一页", "材料命中必须优先使用内容包写好的反馈");
-  assertIncludes(materialPressureReaction({ correct: false, pick: { label: "截图边角" } }, { title: "截图" }), "撑不住", "材料误指必须说清这一处撑不住，不能只写抽象氛围");
+  assertEqual(materialPressureReaction({ correct: true, pick: { label: "付款状态", feedback: "缺的这一页才决定钱去了哪里。" } }, { title: "审批图", material: "付款和收款账户没露出来。" }), "弹幕开始往回翻前面的原话。", "材料判断由主播说出后，现场反应不得重复系统答案");
+  assertEqual(materialPressureReaction({ correct: false, pick: { label: "截图边角", feedback: "这会顺手讲出答案。" } }, { title: "截图" }), "弹幕一下分成了两拨。", "材料误指只能改变现场反应，不能解释答案");
   const recap = pressureRecapProfile({
     budget: { max: 8, remaining: 1, used: 7 },
     choices: [{ tone: "evidence-miss" }, { tone: "detour" }],
@@ -1225,7 +1227,7 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
     { label: "第一通", picks: [{ correct: true, label: "账单缺口" }] },
     { label: "第二通", picks: [{ correct: false, label: "截图边角" }] }
   ]);
-  assertEqual(materialProfile.label, "圈回来了", "故事集终局必须汇总材料圈点命中和误指");
+  assertEqual(materialProfile.label, "材料拉回", "故事集终局必须汇总材料使用情况，但不显示判卷标签");
   assertIncludes(materialProfile.line, "材料", "材料圈点汇总必须进入终局余味");
   const quoteProfile = storyQuoteProfile([{ quoteHit: true, dailyAccuseLabel: "原话 A" }, { quoteHit: false, dailyAccuseLabel: "原话 B" }]);
   assertEqual(quoteProfile.label, "接住几句", "故事集终局必须汇总最终原话选择");
@@ -1375,12 +1377,23 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
   });
   assertIncludes(screenHtml, "evidence-workbench", "材料检视页面 helper 必须保留材料操作台");
   assertIncludes(screenHtml, "圈哪一处", "材料检视候选区不能写成工具名，必须提示玩家圈内容");
+  assertIncludes(screenHtml, DEFAULT_PLAYER_NAME, "材料判断必须由主播说出口，不能继续显示无署名系统判卷");
+  assert(!screenHtml.includes("圈中了") && !screenHtml.includes("没圈准") && !screenHtml.includes("这处还不够"), "材料判断页不得使用系统判卷标签");
   assertIncludes(screenHtml, "咨询者", "材料圈点后的 reactionLine 必须以咨询者对话气泡渲染");
   assertIncludes(screenHtml, "这页我刚才没敢细看。", "材料圈点后的 reactionLine 必须出现在材料结果页");
   assertIncludes(screenHtml, "……我再说一遍，那页不是没看，是没敢看。", "材料命中后的 revisedVersion 必须作为咨询者气泡出现在反应台词之后");
   assert(!screenHtml.includes("荧光笔"), "材料检视候选区不能继续显示不明确的工具名");
   assertIncludes(screenHtml, "上一问", "材料检视页面 helper 必须能接入上一问回看");
   assert(!stylesSource.includes("evidence-check-card"), "材料操作台上线后不能留下旧材料段落卡样式");
+  const missScreenHtml = evidenceCheckScreenHtml({
+    check: { title: "账单检视", prompt: "圈哪里？", material: "账单缺页。", options: [{ label: "日期", correct: false }] },
+    pick: { optionIndex: 0, label: "日期", correct: false, feedback: "这里会顺手讲出正确答案。", reactionLine: "这句反应也会提示答案。" },
+    hostName: "周明"
+  });
+  assertIncludes(missScreenHtml, "周明", "材料判断必须使用玩家设置的主播姓名");
+  assertIncludes(missScreenHtml, "这条先放着。", "材料圈偏后只收住当前方向");
+  assert(!missScreenHtml.includes("这里会顺手讲出正确答案。"), "材料圈偏后不得借错误选项解释正确答案");
+  assert(!missScreenHtml.includes("这句反应也会提示答案。"), "材料圈偏后不得播放为正确材料准备的人物反应");
 });
 
 test("MATERIAL-003", "material board uses distinct visual layouts by material type", () => {
@@ -2066,10 +2079,10 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assert(!titleWithoutSubtitle.includes("case-title-subtitle") && !titleWithoutSubtitle.includes("不应回填到副标题"), "幕标题允许省略无功能副标题，且不得拿 publicHook 自动回填");
   assertIncludes(appSource, "./ui/storyPackCompleteView.js", "故事集终局 HTML 必须从 app.js 拆到 ui/storyPackCompleteView");
   const hiddenThreadProfile = { total: 4, title: "今晚暗线", label: "同款话术", line: "好听话后面接成本。", beats: ["体面接钱", "自己人接资源"] };
-  const storyCompleteCard = storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "圈得准", line: "材料圈准" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, hiddenThreadProfile, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" });
+  const storyCompleteCard = storyPackCompleteHtml({ displayBest: { label: "钱流线" }, theme: { title: "今晚主题", thesis: "看谁买单" }, materialProfile: { total: 1, label: "材料跟上", line: "材料已经用上" }, quoteProfile: { total: 1, label: "原话收住", line: "接住原话" }, objectProfile: { total: 1, label: "物件串起来", line: "账单、表格" }, hiddenThreadProfile, briefs: [{ label: "第一案" }], results: [{ dailyAccuseLabel: "“原话”" }], routeProfiles: [{ label: "钱流" }], comments: ["「弹幕」"], playerType: "收麦主播", shareTitle: "今晚收住", aftertaste: "几条线露头", closingLine: "挂麦", callCountText: "这一路麦" });
   assertIncludes(storyCompleteCard, "评论区审判墙", "故事集终局结果卡必须可由纯 UI 模块渲染");
   assertIncludes(storyCompleteCard, "hidden-thread-card", "故事集终局必须能渲染串案暗线卡");
-  assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "稳住" }, materialProfile: { label: "圈准" }, quoteProfile: { label: "收住" }, hiddenThreadProfile, playerType: "收麦主播" }), "散场暗线：同款话术", "故事集终局复制文案必须带出散场暗线");
+  assertIncludes(storyPackShareText({ theme: { title: "今晚主题" }, displayBest: { label: "钱流线" }, pressureProfile: { label: "稳住" }, materialProfile: { label: "材料跟上" }, quoteProfile: { label: "收住" }, hiddenThreadProfile, playerType: "收麦主播" }), "散场暗线：同款话术", "故事集终局复制文案必须带出散场暗线");
   const summaryBriefs = [{ label: "第一案", truthBoundary: { true: ["账单是真的"], edited: ["少了来源"], unknown: ["动机定不了"] }, storyClueObject: "账单", storyHiddenThread: { title: "今晚暗线", label: "同款话术", reveal: "好听词后面接成本。", beats: ["账单", "表格"] } }];
   const summary = storyPackSummaryModel({
     briefs: summaryBriefs,
@@ -2079,7 +2092,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
     pressureRows: storyPressureRows(summaryBriefs, { budgetFor: () => ({ max: 8, remaining: 8 }), choicesFor: () => [], foundCountFor: () => 3 }),
     materialRows: storyMaterialRows(summaryBriefs, { evidencePicksFor: () => [{ correct: true }], investigationPicksFor: () => [] })
   });
-  assertIncludes(summary.materialProfile.label, "圈", "故事集材料 profile 必须可由纯 runtime summary 模型生成");
+  assertIncludes(summary.materialProfile.label, "材料", "故事集材料 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(summary.boundaryProfile.label, "挂", "故事集事实边界 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(summary.objectProfile.line, "账单", "故事集物件 profile 必须可由纯 runtime summary 模型生成");
   assertIncludes(summary.hiddenThreadProfile.line, "成本", "故事集暗线 profile 必须可由纯 runtime summary 模型生成");

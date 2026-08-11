@@ -50,7 +50,7 @@
     },
     {
       "id": "actual-request",
-      "label": "再听她真正想找什么",
+      "label": "再听她怎么说",
       "turnIds": ["low-standards", "relationship-pace", "small-circle", "ordinary-match", "ordinary-caution", "home-price", "borrow-host-trust"],
       "issueOptionIds": ["mortgage-pressure", "actual-standard", "soft-talk"],
       "requiredConfrontationIds": ["hidden-standards", "useful-soft-talk"]
@@ -151,8 +151,7 @@
     },
     {
       "id": "mother-departure",
-      "label": "她母亲当年为什么离开",
-      "missLine": "这段经历只有她的一面说法，可以存疑，但还没有和她后面的话直接冲突。"
+      "label": "她母亲当年为什么离开"
     },
     {
       "id": "report-disclosure",
@@ -161,8 +160,7 @@
     },
     {
       "id": "mortgage-pressure",
-      "label": "她的收入能不能负担剩余房贷",
-      "missLine": "现在只知道房子买成两百万，不知道当时贷了多少、目前还剩多少，暂时不能判断她的收入能不能负担。"
+      "label": "她的收入能不能负担剩余房贷"
     },
     {
       "id": "actual-standard",

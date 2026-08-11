@@ -12,7 +12,6 @@ export function initialQuickDetectiveState(packet = {}) {
     activeConfrontationId: null,
     resolvedConfrontationIds: [],
     attemptedIssueIds: [],
-    issueFeedback: "",
     confrontationLineIndex: 0,
     verdictIndex: 0,
     verdictLineIndex: 0
@@ -40,7 +39,6 @@ export function normalizeQuickDetectiveState(value, packet = {}) {
     activeConfrontationId: confrontationIds.has(value.activeConfrontationId) ? value.activeConfrontationId : null,
     resolvedConfrontationIds: uniqueKnown(value.resolvedConfrontationIds, confrontationIds),
     attemptedIssueIds: uniqueKnown(value.attemptedIssueIds, issueIds),
-    issueFeedback: String(value.issueFeedback ?? ""),
     confrontationLineIndex: boundedLineIndex(value.confrontationLineIndex, quickConfrontationLines(activeConfrontation).length),
     verdictIndex: boundedIndex(value.verdictIndex, packet.ending?.summaryPages?.length),
     verdictLineIndex: boundedLineIndex(
@@ -62,7 +60,7 @@ export function advanceQuickTranscript(packet = {}, state = {}) {
     return { ...state, scene: "transcript", turnIndex: currentIndex, turnLineIndex: 1 };
   }
   if (position >= Math.max(0, turnIndexes.length - 1)) {
-    return { ...state, scene: "issueSelection", issueFeedback: "" };
+    return { ...state, scene: "issueSelection" };
   }
   return { ...state, scene: "transcript", turnIndex: turnIndexes[position + 1], turnLineIndex: 0 };
 }
@@ -81,8 +79,7 @@ export function applyQuickIssueSelection(packet = {}, state = {}, issueId = "") 
     return {
       ...state,
       scene: "issueSelection",
-      attemptedIssueIds,
-      issueFeedback: issue.missLine ?? "这件事可以继续问，但她刚才的两段说法还没有形成矛盾。"
+      attemptedIssueIds
     };
   }
   return {
@@ -90,8 +87,7 @@ export function applyQuickIssueSelection(packet = {}, state = {}, issueId = "") 
     scene: "confrontation",
     attemptedIssueIds,
     activeConfrontationId: confrontation.id,
-    confrontationLineIndex: 0,
-    issueFeedback: ""
+    confrontationLineIndex: 0
   };
 }
 
@@ -122,8 +118,7 @@ export function advanceQuickConfrontation(packet = {}, state = {}) {
       turnLineIndex: 0,
       activeConfrontationId: null,
       resolvedConfrontationIds,
-      confrontationLineIndex: 0,
-      issueFeedback: ""
+      confrontationLineIndex: 0
     };
   }
   const solved = resolvedConfrontationIds.length >= (packet.confrontations?.length ?? 0);
@@ -199,8 +194,7 @@ function resumeSolvedQuickRound(packet = {}, state = {}) {
       turnIndex: quickTurnIndexesForRound(packet, rounds[nextRoundIndex])[0] ?? 0,
       turnLineIndex: 0,
       activeConfrontationId: null,
-      confrontationLineIndex: 0,
-      issueFeedback: ""
+      confrontationLineIndex: 0
     };
   }
   const allConfrontationsSolved = (packet.confrontations ?? [])
