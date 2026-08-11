@@ -54,21 +54,6 @@ export function interludeDialogueActionHtml(action = {}, followupAsked = false, 
   `;
 }
 
-export function interludeConflictActionHtml(action = {}, selectedChoiceId = "") {
-  const options = action.options ?? [];
-  const selected = options.find((option) => option.id === selectedChoiceId) ?? null;
-  return `
-    <section class="interlude-action-card advisor-conflict-card">
-      <span class="source-badge">${escapeHtml(action.label ?? "顾问分歧")}</span>
-      <p><b>${escapeHtml(action.summary ?? "")}</b></p>
-      ${selected?.sceneText || action.sceneText ? `<p>${escapeHtml(selected?.sceneText ?? action.sceneText)}</p>` : ""}
-      <div class="advisor-conflict-options">
-        ${options.map((option) => advisorConflictOptionHtml(option, selected)).join("")}
-      </div>
-    </section>
-  `;
-}
-
 export function interruptToastHtml(action = {}, selectedChoiceId = "") {
   const choices = action.choices ?? [];
   const selected = choices.find((choice) => choice.id === selectedChoiceId) ?? null;
@@ -171,52 +156,6 @@ function interludeActionButtonHtml({ action = {}, done = false, disabled = false
       <span>${disabled ? escapeHtml(disabledReason || "不可用") : `耗时 ${Number(action.cost ?? (action.kind === "interruptToast" ? 0 : 1))}`}</span>
     </button>
   `;
-}
-
-function advisorConflictOptionHtml(option = {}, selected = null) {
-  const advisor = advisorMetaForOption(option);
-  if (selected) {
-    return `
-      <article class="advisor-conflict-option ${selected.id === option.id ? "selected" : "dimmed"}">
-        ${advisorOptionHeadHtml(option, advisor)}
-        <p>${escapeHtml(selected.id === option.id ? option.advisorLine ?? "" : advisorLinePreview(option.advisorLine))}</p>
-      </article>
-    `;
-  }
-  return `
-    <button class="advisor-conflict-option decision-choice" data-advisor-conflict="${escapeHtml(option.id ?? "")}" type="button">
-      ${advisorOptionHeadHtml(option, advisor)}
-      <p>${escapeHtml(advisorLinePreview(option.advisorLine))}</p>
-      <small class="choice-cost-meta">${CHOICE_COST_META.advisorRoute}</small>
-    </button>
-  `;
-}
-
-function advisorOptionHeadHtml(option = {}, advisor = {}) {
-  return `
-    <span class="advisor-option-head">
-      <span class="advisor-avatar advisor-${escapeHtml(advisor.key ?? "default")}" aria-hidden="true">${escapeHtml(advisor.surname ?? "顾")}</span>
-      <span class="advisor-option-title">
-        <b>${escapeHtml(option.label ?? advisor.name ?? "顾问")}</b>
-        <small>${escapeHtml(advisor.domain ?? "专业意见")}</small>
-      </span>
-    </span>
-  `;
-}
-
-function advisorMetaForOption(option = {}) {
-  const key = `${option.id ?? ""} ${option.label ?? ""}`;
-  if (/zhao|赵/.test(key)) return { key: "zhao", surname: "赵", name: "赵律师", domain: "证据与性质边界" };
-  if (/zhou|周/.test(key)) return { key: "zhou", surname: "周", name: "周会计", domain: "账目与资金路径" };
-  if (/lin|小林|林老师/.test(key)) return { key: "lin", surname: "林", name: "小林老师", domain: "身份词与关系成本" };
-  if (/zhang|张/.test(key)) return { key: "zhang", surname: "张", name: "张法医", domain: "材料与保全边界" };
-  return { key: "default", surname: "顾", name: "顾问", domain: "专业意见" };
-}
-
-function advisorLinePreview(line = "") {
-  const text = String(line ?? "").trim();
-  const firstSentence = text.match(/^.*?[。！？]/)?.[0] ?? text;
-  return firstSentence.length > 44 ? `${firstSentence.slice(0, 43)}…` : firstSentence;
 }
 
 function replyChoiceButtonHtml(choice = {}, selected = null, attr = "reply-choice") {

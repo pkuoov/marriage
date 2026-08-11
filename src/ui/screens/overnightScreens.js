@@ -338,9 +338,6 @@ export function createOvernightScreens(ctx) {
     if (Array.isArray(body.cast) && body.cast.length) {
       parts.push(`<div class="day-cast">${body.cast.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</div>`);
     }
-    if (dayScene.kind === "sitIn") {
-      parts.push(`<p class="hint day-sitin-hint">她求你听着，别开口。旁听不算上麦。</p>`);
-    }
     if (dayScene.kind === "observe") {
       parts.push(`<p class="hint day-sitin-hint">同场不同桌。你只看，不介入。</p>`);
     }
@@ -624,7 +621,6 @@ export function createOvernightScreens(ctx) {
       studio: "白天·工作室",
       document: "白天·后台流水",
       observe: "白天·同场观察",
-      sitIn: "白天·旁听同席",
       doorstep: "白天·门口"
     }[dayKind] ?? "白天";
   }

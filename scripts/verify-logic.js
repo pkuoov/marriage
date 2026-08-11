@@ -63,7 +63,8 @@ const screenSourcePaths = [
   "../src/ui/screens/overnightScreens.js",
   "../src/ui/screens/interludeScreens.js",
   "../src/ui/screens/sceneScreens.js",
-  "../src/ui/screens/recapScreens.js"
+  "../src/ui/screens/recapScreens.js",
+  "../src/ui/screens/quickDetectiveScreens.js"
 ];
 const screenSources = screenSourcePaths.map((path) => readFileSync(new URL(path, import.meta.url), "utf8"));
 const runtimeSource = [
@@ -87,9 +88,12 @@ test("ARCH-001", "screen modules depend on an injected context instead of app.js
   });
   assertIncludes(appSource, "createDailyScreenRenderers", "app.js 必须只负责组装屏幕依赖与分发");
   assertIncludes(appSource, "dailyScreenRenderers ??= createDailyScreenRenderers()", "屏幕工厂必须只创建一次并复用");
+  assertIncludes(appSource, "quickScreenRenderers ??= createQuickScreenRenderers()", "快案屏幕工厂必须只创建一次并复用");
   assert(!appSource.includes("function renderSceneReview("), "sceneReview 屏幕不能重新回到 app.js");
   assert(!appSource.includes("function renderInterludeDesk("), "interludeDesk 屏幕不能重新回到 app.js");
   assert(!appSource.includes("function renderSolved("), "recap 屏幕不能重新回到 app.js");
+  assert(!appSource.includes("function renderQuickDetective("), "快案主屏幕不能重新回到 app.js");
+  assert(!appSource.includes("function quickRevealTransition("), "快案揭示过场不能重新回到 app.js");
 });
 
 test("ARCH-002", "memoized screen factories follow whole-state replacement", () => {
@@ -1711,7 +1715,8 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(recapViewSource, "truthBoundaryPlaced", "事实边界必须改成一次放置后继续，不能强制玩家改到标准答案");
   assertIncludes(recapViewSource, "solvedRecapFlowView", "单案收麦回看分页和按钮必须由纯 UI 模块生成");
   assertIncludes(interludeDeskViewSource, "剩余 ${Number(budget.remaining ?? 0)} 格", "幕间预算必须压成一行剩余格数");
-  assertIncludes(interludeDeskViewSource, "advisor-avatar", "顾问分歧必须有可辨识头像槽");
+  assert(!interludeDeskViewSource.includes("advisor-conflict"), "未被内容使用的顾问分歧卡不能残留在运行时 UI");
+  assert(!stylesSource.includes(".advisor-conflict"), "顾问分歧死分支删除后不能残留孤立样式");
   assertIncludes(stylesSource, ".day-studio", "工作室白天场景必须有独立背景规则");
   assertIncludes(stylesSource, ".day-office", "办公室白天场景必须有独立背景规则");
   assertIncludes(stylesSource, "backgrounds/cafe_date.png", "餐厅与咖啡馆必须接入已有场景图");

@@ -18,7 +18,6 @@ import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, an
 import { storyInterludeCaseId } from "./runtime/storyInterludeModel.js";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
-import { advanceQuickConfrontation, advanceQuickTranscript, advanceQuickVerdict, applyQuickIssueSelection, initialQuickDetectiveState, normalizeQuickDetectiveState, quickDetectiveIsComplete } from "./runtime/quickDetectiveModel.js";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js";
 import { normalizePlayerName, personalizeHostHtml, personalizeHostText, playerFamiliarName } from "./playerIdentity.js";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js";
@@ -28,7 +27,7 @@ import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPress
 import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js";
-import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeConflictActionHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js";
+import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js";
 import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "./ui/liveCallView.js";
 import { liveCounterBeatHtml } from "./ui/liveCounterBeatView.js";
@@ -44,7 +43,6 @@ import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "./ui/titleView.js";
-import { quickDetectiveCaseSelectHtml, quickDetectiveConfrontationHtml, quickDetectiveIntroHtml, quickDetectiveIssueSelectionHtml, quickDetectiveStageHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "./ui/quickDetectiveView.js";
 import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "./generated/contentPackIndex.js";
 import { quickDetectiveCaseFor, quickDetectiveCasesFor, storyPackForKey } from "./storyPacks.js";
 import { HOST_PROFILE } from "./hostProfile.js";
@@ -52,6 +50,7 @@ import { createOvernightScreens } from "./ui/screens/overnightScreens.js";
 import { createInterludeScreens } from "./ui/screens/interludeScreens.js";
 import { createSceneScreens } from "./ui/screens/sceneScreens.js";
 import { createRecapScreens } from "./ui/screens/recapScreens.js";
+import { createQuickDetectiveScreens } from "./ui/screens/quickDetectiveScreens.js";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "深夜热线：直播间侦探";
@@ -71,6 +70,7 @@ if (!startsFresh && state.caseBriefs.length) {
 }
 // Screen handlers read ctx.getState() when invoked; cache the factory, never the state object.
 let dailyScreenRenderers = null;
+let quickScreenRenderers = null;
 if (!startsFresh && loadedState?.screen === "chapter" && state.caseBriefs.length) state.screen = "title";
 let meta = loadMeta();
 let gamepadPollingStarted = false;
@@ -320,28 +320,6 @@ function startStoryPack() {
   render();
 }
 
-function openQuickDetectiveSelect() {
-  clearQuestionRewindHistory();
-  commitTitlePlayerName();
-  titleNewGameConfirmation = false;
-  shownPixelTransitions = new Set();
-  state.screen = "quickDetectiveSelect";
-  saveState();
-  render();
-}
-
-function startQuickDetective(caseId = "") {
-  const packet = quickDetectiveCaseFor(storyKeyFromUrl(), caseId);
-  if (!packet) return;
-  clearQuestionRewindHistory();
-  titleNewGameConfirmation = false;
-  shownPixelTransitions = new Set();
-  state.screen = "quickDetective";
-  state.quickDetective = initialQuickDetectiveState(packet);
-  saveState();
-  render();
-}
-
 function storyPreviewBriefs() {
   try {
     return generateCasesForMode(modeFromUrl(), NPCS, DEFAULT_ATTRS, {
@@ -391,8 +369,8 @@ function resetToTitle() {
 function render() {
   if (!app) return;
   if (state.screen === "title") return renderTitle();
-  if (state.screen === "quickDetectiveSelect") return renderQuickDetectiveSelect();
-  if (state.screen === "quickDetective") return renderQuickDetective();
+  if (state.screen === "quickDetectiveSelect") return quickScreenRenderersForRender().renderQuickDetectiveSelect();
+  if (state.screen === "quickDetective") return quickScreenRenderersForRender().renderQuickDetective();
   if (!activeCaseBrief()) return renderTitle();
   return renderDailyCase();
 }
@@ -424,7 +402,7 @@ function renderTitle() {
     titlePlayerNameDraft = event.currentTarget.value;
   }, "input");
   bind("[data-start-story]", startStoryPack);
-  bind("[data-start-quick-detective]", openQuickDetectiveSelect);
+  bind("[data-start-quick-detective]", () => quickScreenRenderersForRender().openQuickDetectiveSelect());
   bind("[data-continue-story]", continueStoryPack);
   bind("[data-request-new-game]", () => {
     titleNewGameConfirmation = true;
@@ -438,106 +416,6 @@ function renderTitle() {
   bindAudioControls({ root: app, onToggleSound: render });
   syncSceneAudio({ scene: "title" });
   queueDefaultFocus();
-}
-
-function activeQuickDetectiveCase() {
-  return quickDetectiveCaseFor(storyKeyFromUrl(), state.quickDetective?.caseId);
-}
-
-function renderQuickDetectiveSelect() {
-  const packets = quickDetectiveCasesFor(storyKeyFromUrl());
-  if (!packets.length) {
-    state.screen = "title";
-    return renderTitle();
-  }
-  app.innerHTML = personalizeHostHtml(liveFrameHtml({
-    productName: PRODUCT_NAME,
-    modeLabel: "快速侦探",
-    audioSettings: getAudioSettings(),
-    backdropClass: "backdrop-live quick-case-select-backdrop",
-    label: "快案档案",
-    chapter: `${packets.length} 宗案件可选`,
-    text: quickDetectiveCaseSelectHtml(packets, state.quickDetectiveCompletedIds),
-    visualHud: "",
-    screenClass: "quick-case-select-screen",
-    controlDeckHtml: "",
-    showRecordButton: false,
-    showResetButton: false
-  }), state.playerName);
-  bind('[data-action="title"], [data-quick-select-title]', returnToTitle);
-  bind("[data-quick-case-id]", (event) => startQuickDetective(event.currentTarget.dataset.quickCaseId));
-  bindAudioControls({ root: app, onToggleSound: render });
-  syncSceneAudio({ scene: "title" });
-  resetViewportScroll();
-  queueDefaultFocus();
-}
-
-function renderQuickDetective() {
-  const packet = activeQuickDetectiveCase();
-  if (!packet) {
-    state.screen = "title";
-    return renderTitle();
-  }
-  state.quickDetective = normalizeQuickDetectiveState(state.quickDetective, packet);
-  const quickState = state.quickDetective;
-  if (quickDetectiveIsComplete(packet, quickState) && !state.quickDetectiveCompletedIds.includes(packet.id)) {
-    state.quickDetectiveCompletedIds = [...state.quickDetectiveCompletedIds, packet.id];
-    saveState();
-  }
-  const body = {
-    intro: () => quickDetectiveIntroHtml(packet, { hostName: state.playerName }),
-    transcript: () => quickDetectiveTranscriptHtml(packet, quickState, { hostName: state.playerName }),
-    issueSelection: () => quickDetectiveIssueSelectionHtml(packet, quickState),
-    confrontation: () => quickDetectiveConfrontationHtml(packet, quickState, { hostName: state.playerName }),
-    verdict: () => quickDetectiveVerdictHtml(packet, quickState, { hostName: state.playerName })
-  }[quickState.scene] ?? (() => quickDetectiveIntroHtml(packet, { hostName: state.playerName }));
-  const quickTransition = quickRevealTransition(packet, quickState);
-  app.innerHTML = personalizeHostHtml(liveFrameHtml({
-    productName: PRODUCT_NAME,
-    modeLabel: "快速侦探",
-    audioSettings: getAudioSettings(),
-    backdropClass: "backdrop-live quick-detective-backdrop",
-    label: packet.label,
-    chapter: packet.title,
-    text: body(),
-    visualHud: quickDetectiveStageHtml(packet, quickState, { hostName: state.playerName }),
-    screenClass: `quick-detective-screen quick-scene-${quickState.scene}${quickTransition ? " key-reveal-answer" : ""}`,
-    pixelTransition: quickTransition,
-    rewindAvailable: canRewindQuestion(questionRewindHistory),
-    controlDeckHtml: "",
-    showRecordButton: false
-  }), state.playerName);
-  bind('[data-action="title"]', returnToTitle);
-  bind('[data-action="reset"]', () => startQuickDetective(packet.id));
-  bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0, turnLineIndex: 0 }));
-  bind("[data-quick-next-turn]", () => updateQuickDetective(advanceQuickTranscript(packet, quickState)));
-  bind("[data-quick-issue]", (event) => updateQuickDetective(applyQuickIssueSelection(packet, quickState, event.currentTarget.dataset.quickIssue)));
-  bind("[data-quick-next-confrontation]", () => updateQuickDetective(advanceQuickConfrontation(packet, quickState)));
-  bind("[data-quick-next-verdict]", () => updateQuickDetective(advanceQuickVerdict(packet, quickState)));
-  bind("[data-quick-restart]", () => startQuickDetective(packet.id));
-  bind("[data-quick-select]", openQuickDetectiveSelect);
-  bindAudioControls({ root: app, onToggleSound: render });
-  syncSceneAudio({ briefId: `quick-${packet.id}`, scene: "sceneReview", backdropClass: "backdrop-live" });
-  resetViewportScroll();
-  queueDefaultFocus();
-}
-
-function updateQuickDetective(nextQuickState) {
-  state.quickDetective = nextQuickState;
-  saveState();
-  render();
-}
-
-function quickRevealTransition(packet = {}, quickState = {}) {
-  if (quickState.scene !== "confrontation") return null;
-  const confrontation = (packet.confrontations ?? []).find((item) => item.id === quickState.activeConfrontationId);
-  const transition = confrontation?.revealTransition;
-  if (Number(quickState.confrontationLineIndex ?? 0) !== Number(transition?.lineIndex ?? 0)) return null;
-  if (!transition?.id) return null;
-  const key = `quick:${packet.id}:${transition.id}`;
-  if (shownPixelTransitions.has(key)) return null;
-  shownPixelTransitions.add(key);
-  return { ...transition, kind: "reveal" };
 }
 
 function canContinueJourney() {
@@ -643,7 +521,6 @@ function createDailyScreenRenderers() {
     delegationScreenHtml,
     evidenceCheckScreenHtml,
     investigationBackflowScreenHtml,
-    interludeConflictActionHtml,
     interludeDeskHtml,
     interludeDialogueActionHtml,
     interludePlaybackActionHtml,
@@ -660,7 +537,7 @@ function createDailyScreenRenderers() {
     completeInterludeAction,
     nextPendingInterruptAction,
     countCompletedInterludeActions,
-    recordAdvisorConflictChoice,
+    recordInterludeActionChoice,
     recordInterludeReplyChoice,
     closeInterludeAction,
     hasDeepFollowup,
@@ -784,6 +661,46 @@ function createDailyScreenRenderers() {
 function dailyScreenRenderersForRender() {
   dailyScreenRenderers ??= createDailyScreenRenderers();
   return dailyScreenRenderers;
+}
+
+function createQuickScreenRenderers() {
+  return createQuickDetectiveScreens({
+    getState: () => state,
+    getRoot: () => app,
+    productName: PRODUCT_NAME,
+    clearQuestionRewindHistory,
+    commitTitlePlayerName,
+    resetQuickTransientState: () => {
+      titleNewGameConfirmation = false;
+      shownPixelTransitions = new Set();
+    },
+    saveState,
+    render,
+    quickDetectiveCaseFor,
+    quickDetectiveCasesFor,
+    storyKeyFromUrl,
+    renderTitle,
+    personalizeHostHtml,
+    liveFrameHtml,
+    getAudioSettings,
+    bind,
+    returnToTitle,
+    bindAudioControls,
+    syncSceneAudio,
+    resetViewportScroll,
+    queueDefaultFocus,
+    canRewindQuestionNow: () => canRewindQuestion(questionRewindHistory),
+    consumePixelTransition: (key) => {
+      if (shownPixelTransitions.has(key)) return false;
+      shownPixelTransitions.add(key);
+      return true;
+    }
+  });
+}
+
+function quickScreenRenderersForRender() {
+  quickScreenRenderers ??= createQuickScreenRenderers();
+  return quickScreenRenderers;
 }
 
 function renderDailyCase() {
@@ -1795,7 +1712,7 @@ function countCompletedInterludeActions(brief, night = {}) {
   return (night.interludeActionsDone ?? []).filter((id) => nightActionCountsForBudget(structure, id)).length;
 }
 
-function recordAdvisorConflictChoice(brief, action = {}, choiceId = "") {
+function recordInterludeActionChoice(brief, action = {}, choiceId = "") {
   const choice = (action.options ?? action.choices ?? []).find((item) => item.id === choiceId);
   if (!choice) return;
   completeInterludeAction(brief, action, { renderNow: false });

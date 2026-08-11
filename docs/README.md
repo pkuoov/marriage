@@ -96,6 +96,10 @@ npm run test:pr
 
 `npm run check` 负责静态结构、内容边界和叙事路径；`npm run test:pr` 会在此基础上追加浏览器完整回放。涉及 Electron、桌面打包或发布流程时，再运行 `npm run test:full`。
 
+## 运行时屏幕纪律
+
+新增完整屏幕时放进 `src/ui/screens/`，由 `create*Screens(ctx)` 工厂接收能力；事件触发时再通过 `ctx.getState()` 读取当前状态。不要把新屏幕重新堆回 `src/app.js`，也不要从屏幕模块反向导入 `app.js`。
+
 ## 文档生命周期
 
 新增文档前先判断内容属于哪里：

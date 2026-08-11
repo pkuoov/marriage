@@ -37,7 +37,6 @@ export function createInterludeScreens(ctx) {
     delegationScreenHtml,
     evidenceCheckScreenHtml,
     investigationBackflowScreenHtml,
-    interludeConflictActionHtml,
     interludeDeskHtml,
     interludeDialogueActionHtml,
     interludePlaybackActionHtml,
@@ -72,7 +71,7 @@ export function createInterludeScreens(ctx) {
     completeInterludeAction,
     nextPendingInterruptAction,
     countCompletedInterludeActions,
-    recordAdvisorConflictChoice,
+    recordInterludeActionChoice,
     recordInterludeReplyChoice,
     closeInterludeAction,
     recordContradiction,
@@ -138,7 +137,6 @@ export function createInterludeScreens(ctx) {
     if (action.kind === "evidencePass") return renderInterludeEvidence(brief, action);
     if (action.kind === "backflowEarly") return renderInterludeBackflow(brief, action);
     if (action.kind === "advisorCall") return renderInterludeAdvisorCall(brief, action);
-    if (action.kind === "advisorConflict") return renderInterludeAdvisorConflict(brief, action);
     if (action.kind === "interruptToast") return renderInterludeInterruptToast(brief, action);
     if (action.kind === "playback") return renderInterludePlayback(brief, action);
     completeInterludeAction(brief, action);
@@ -272,30 +270,6 @@ export function createInterludeScreens(ctx) {
     bindSceneButtons();
   }
 
-  function renderInterludeAdvisorConflict(brief, action) {
-    const night = ensureNight(brief);
-    const selectedChoiceId = night.interludeActionChoices?.[action.id] ?? "";
-    const selectedChoice = (action.options ?? []).find((option) => option.id === selectedChoiceId) ?? null;
-    const screen = {
-      brief,
-      label: action.label ?? "顾问分歧",
-      chapter: action.chapter ?? "幕间·调查台",
-      text: interludeConflictActionHtml(action, selectedChoiceId),
-      choices: selectedChoiceId
-        ? flowGroupHtml(`<button class="primary" data-return-interlude type="button">回调查台</button>`)
-        : ""
-    };
-    const backdropClass = selectedChoice?.backdropClass ?? action.backdropClass;
-    if (backdropClass) {
-      dayFrame({ ...screen, backdropClass });
-    } else {
-      frame({ ...screen, mood: "focused" });
-    }
-    bind("[data-advisor-conflict]", (event) => recordAdvisorConflictChoice(brief, action, event.currentTarget?.getAttribute("data-advisor-conflict") ?? ""));
-    bind("[data-return-interlude]", () => closeInterludeAction(brief));
-    bindSceneButtons();
-  }
-
   function renderInterludeInterruptToast(brief, action) {
     const night = ensureNight(brief);
     const selectedChoiceId = night.interludeActionChoices?.[action.id] ?? "";
@@ -312,7 +286,7 @@ export function createInterludeScreens(ctx) {
         ${selectedChoiceId ? `<button class="primary" data-return-interlude type="button">回调查台</button>` : ""}
       `)
     });
-    bind("[data-interrupt-choice]", (event) => recordAdvisorConflictChoice(brief, action, event.currentTarget?.getAttribute("data-interrupt-choice") ?? ""));
+    bind("[data-interrupt-choice]", (event) => recordInterludeActionChoice(brief, action, event.currentTarget?.getAttribute("data-interrupt-choice") ?? ""));
     bind("[data-complete-interlude-action]", () => completeInterludeAction(brief, action));
     bind("[data-return-interlude]", () => closeInterludeAction(brief));
     bindSceneButtons();
@@ -670,7 +644,6 @@ export function createInterludeScreens(ctx) {
     renderInterludeBackflow,
     renderInterludeAdvisorCall,
     renderInterludePlayback,
-    renderInterludeAdvisorConflict,
     renderInterludeInterruptToast,
     renderAfterSceneEvidence,
     renderEvidenceCheck,
