@@ -13,9 +13,10 @@ This document is the release checklist for turning the offline playable into a S
 
 ## Release Commands
 
-Run these before any Steam upload:
+Install the locked dependency graph, then run these before any Steam upload:
 
 ```bash
+npm ci
 npm run check
 npm run build:h5
 npm run smoke:browser
@@ -41,6 +42,34 @@ dist/steam/windows-runtime-smoke.json
 ```
 
 Do not run `electron-builder --win` directly on macOS and treat the result as release evidence. Mac is approved for `build:desktop`, `smoke:desktop`, browser replay, and `steam:preflight`; Windows is the authority for the executable and packaged-runtime report.
+
+### Local packaged-runtime verification
+
+After `npm run package:win` and `npm run verify:win-package` pass on Windows, launch the exact packaged executable through the same hidden smoke entry used by CI:
+
+```powershell
+$exe = Get-ChildItem dist/steam/*.exe | Select-Object -First 1
+$report = Join-Path (Resolve-Path dist/steam) "windows-runtime-smoke.json"
+$process = Start-Process -FilePath $exe.FullName -ArgumentList "--release-smoke-report=$report" -Wait -PassThru
+if ($process.ExitCode -ne 0) { throw "Packaged runtime smoke exited with code $($process.ExitCode)" }
+npm run verify:win-runtime-smoke
+```
+
+Treat the package as locally verified only when all four release files exist, the executable exits with code 0, and both verification commands pass. `verify:win-package` proves the file is a Windows PE artifact and records its checksum; it does not prove that the file carries an Authenticode signature.
+
+### Generated files on Windows
+
+Content freshness checks compare generated output byte for byte. The tracked files under `docs/generated/` and `src/generated/` are therefore pinned to LF in `.gitattributes`, regardless of the developer's `core.autocrlf` setting.
+
+If `npm run check` reports a stale content index or readable script after a content change, regenerate and inspect the diff before committing:
+
+```bash
+npm run content:index
+npm run content:script -- steam-demo-01
+npm run check
+```
+
+Do not silence a real generated-report diff as a line-ending issue. `git diff --name-only` should identify any substantive changes after Git normalization.
 
 ## Automated Windows Runtime Gate
 
@@ -103,6 +132,13 @@ Required before public Steam release:
 - Steamworks branch for internal test.
 - Store capsule/screenshots generated from the desktop build, not the dev server.
 - Privacy note: no AI server, no account system, no telemetry in the offline demo unless explicitly added later.
+
+The portable executable may still be suitable for internal testing while these gates remain open, but label it as an unsigned internal build. Before external distribution, verify all of the following:
+
+- `Get-AuthenticodeSignature <path-to-exe>` reports `Valid`, not merely that packaging succeeded.
+- `desktop/electron-builder.json` points to the approved application icon; otherwise electron-builder uses its default icon.
+- The staged package metadata contains the intended `description` and `author`; electron-builder warnings about either field must be resolved.
+- SmartScreen behavior is checked on a clean Windows machine that has not previously trusted the file.
 
 ## External Release Gates
 
