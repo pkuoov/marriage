@@ -5,6 +5,13 @@ export function liveCounterBeatsFor(brief = {}) {
   return Array.isArray(beats) ? beats : [];
 }
 
+export function pressureSignalForLiveCounterChoice(choice = {}, fallback = "") {
+  if (choice.stanceNudge === "defensive") return "guarded";
+  if (choice.stanceNudge === "open") return "held";
+  if (choice.stanceNudge === "neutral") return "";
+  return fallback;
+}
+
 export function liveCounterBeatById(brief = {}, beatId = "") {
   return liveCounterBeatsFor(brief).find((beat) => beat.id === beatId) ?? null;
 }

@@ -11,36 +11,61 @@
       "reviewedAt": "2026-08-07",
       "opening": [
         {
-          "fromAnchor": "我不转，真就是我不讲情分吗",
-          "toAnchor": "得分开说",
-          "relation": "来电人索取的是不转也不欠情分的判断；主播不直接背书，先说明过去给付和当前债务不能混成一件事。"
+          "fromAnchor": "突然找我借钱",
+          "toAnchor": "借多少",
+          "relation": "咨询者先只说男友突然借钱；主播没有替她判断该不该给，只问金额。"
         },
         {
-          "fromAnchor": "得分开说",
+          "fromAnchor": "借多少",
+          "toAnchor": "八万",
+          "relation": "主播问借款金额，咨询者先报八万，再复述男友所说的奖金和信用卡周转。"
+        },
+        {
+          "fromAnchor": "让我先替他垫着",
+          "toAnchor": "你转了吗",
+          "relation": "咨询者已经说出男友要求她垫钱；主播只追她有没有实际转账。"
+        },
+        {
+          "fromAnchor": "你转了吗",
+          "toAnchor": "没有",
+          "relation": "主播问是否转账，咨询者明确回答没转，并补出男友随后拿过去的花销施压。"
+        },
+        {
+          "fromAnchor": "现在该轮到我帮他一次",
+          "toAnchor": "今天想问什么",
+          "relation": "男友已经用过去的花销催她帮忙；主播让咨询者自己说出这次连线真正想得到什么。"
+        },
+        {
+          "fromAnchor": "今天想问什么",
+          "toAnchor": "我不想转这八万块",
+          "relation": "咨询者正面说出自己的诉求：她不想转这八万元，希望主播支持她拒绝。"
+        },
+        {
+          "fromAnchor": "行不行",
           "toAnchor": "在一起多久",
-          "relation": "主播先划开两类钱，再单独确认交往时长，避免在第一句话里同时追问关系、金额和证据。"
+          "relation": "主播没有马上替她答应，先问交往时长，为后面核对两人长期的钱款来往留出依据。"
         },
         {
           "fromAnchor": "在一起多久",
           "toAnchor": "一年半左右",
-          "relation": "咨询者先回答交往时长，再顺着最初的求助把奖金晚发、信用卡周转和八万元请求说完。"
+          "relation": "咨询者只回答交往时长，没有在同一句继续倾倒账单和关系背景。"
         }
       ],
       "scenes": {
         "credit-living-arrangement": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "开口就是八万",
+            "fromAnchor": "一年半左右",
             "toAnchor": "平时住在一起吗",
-            "relation": "咨询者说完八万元请求，主播先确认双方是否共同居住；居住状态会决定随后该怎么问日常钱款，但此时还不能预设房租由谁承担。"
+            "relation": "咨询者说两人交往一年半后，主播接着确认是否共同居住；此时还不能预设房租由谁承担。"
           },
           "questionOptions": [
             {
               "contextAnchor": "他住他的，我住我的",
               "questionAnchor": "发了工资，会交给你吗",
-              "answerAnchor": "到账就转我一万七千五",
+              "answerAnchor": "工资一到账，转我一半",
               "guardedAnswerAnchor": "每个月会转一半",
-              "relation": "从没有同住追问是否共管工资；回答先澄清工资卡不在咨询者手里，再补出三万五月薪与十四个月半薪转账。房租尚未在谈话中出现。"
+              "relation": "从没有同住追问是否共管工资；她先澄清工资卡不在自己手里，再被连续短问逼出固定转一半和十四个月。精确金额留给第二天流水，房租也尚未出现。"
             },
             {
               "contextAnchor": "他住他的，我住我的",
@@ -65,14 +90,14 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "每天还在跟我说加班",
+              "contextAnchor": "还天天跟我说加班",
               "questionAnchor": "天天讲加班",
               "answerAnchor": "没有",
               "guardedAnswerAnchor": "他说忙",
               "relation": "咨询者刚说四月以后仍每天听见加班，主播沿这句核对借钱前是否交代工作异常。"
             },
             {
-              "contextAnchor": "工资记录没发",
+              "contextAnchor": "工资记录他没发",
               "questionAnchor": "为什么拿社保记录代替工资记录",
               "answerAnchor": "工资明细太私密",
               "relation": "咨询者已经说明自己索要工资记录却只收到社保记录，主播追问男方当时如何解释替代；回答保留其漏缴辩解，也明确该页面不能证明仍在职。"
@@ -80,7 +105,7 @@
           ],
           "freeQuestions": [
             {
-              "contextAnchor": "每天还在跟我说加班",
+              "contextAnchor": "还天天跟我说加班",
               "questionAnchor": "加班是什么样子",
               "answerAnchor": "天天说忙",
               "relation": "沿着她重复的加班说法追问可核对的日常细节。"
@@ -90,7 +115,7 @@
         "credit-eight-wan-bill": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "最后一笔停在四月",
+            "fromAnchor": "最后一笔其实停在四月",
             "toAnchor": "信用卡账单",
             "relation": "咨询者先说明工资记录没拿到、社保停在四月；主播顺着她已经见过的最低还款截图，追问完整账单是否拿到，再请她遮名上传后台。"
           },
@@ -275,7 +300,7 @@
               "contextAnchor": "是给我买的",
               "questionAnchor": "为什么把这件事省了",
               "answerAnchor": "这一万二是花在我身上",
-              "guardedAnswerAnchor": "一万二是花在我身上",
+              "guardedAnswerAnchor": "设备是在我这儿",
               "relation": "咨询者确认设备直接买给自己以后，主播追问她为何第一夜只说设备放在自己家，没有说明东西就是买给自己的；回答承认自己怕整张卡都被算到头上。"
             },
             {
@@ -309,14 +334,14 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "只说拿不出来，没说过不想给",
-              "questionAnchor": "想让我替你告诉他",
-              "answerAnchor": "我把回放发给他",
+              "contextAnchor": "说的还是拿不出来，不是不想给",
+              "questionAnchor": "想让我替你说一句别转",
+              "answerAnchor": "把回放发给他",
               "guardedAnswerAnchor": "想把回放发给他",
               "relation": "咨询者一直用拿不出来代替不想给；玩家追问她这通电话真正想带走什么，才得到她想借直播回放完成拒绝、回避说明十四个月花销的承认。"
             },
             {
-              "contextAnchor": "只说拿不出来，没说过不想给",
+              "contextAnchor": "说的还是拿不出来，不是不想给",
               "questionAnchor": "怎么跟他谈前面那些钱",
               "answerAnchor": "把回放发给他",
               "relation": "玩家用结案后的具体行动检验她的来电目的；她承认会先发回放，余额仍没有准备说明。"
@@ -360,21 +385,26 @@
     "02-tony": {
       "reviewedAt": "2026-08-08",
       "opening": [
-        { "fromAnchor": "晚上正好在家", "toAnchor": "听得见", "relation": "咨询者交代为什么今晚来电；主播先接住情绪，不在第一句话里连问材料和结论。" },
-        { "fromAnchor": "听得见", "toAnchor": "你们怎么认识的", "relation": "主播接住来电后另起一问，把关系判断放到后面，先问两人的认识来源。" },
-        { "fromAnchor": "你们怎么认识的", "toAnchor": "同事说他剪得好", "relation": "咨询者直接回答由同事推荐，并把一年多的普通顾客阶段与最近几个月的关系变化分开。" },
-        { "fromAnchor": "最近几个月才越走越近", "toAnchor": "哪件事先让你觉得", "relation": "主播沿她给出的变化时间，追问最早让她觉得不再只是普通顾客的具体动作。" },
-        { "fromAnchor": "不只是普通顾客", "toAnchor": "最晚那档", "relation": "咨询者用留晚档、临时补发根和单独吃饭回答亲近体现在哪里，同时承认关系一直没敢问。" },
-        { "fromAnchor": "关系我一直没敢问", "toAnchor": "原本要发你什么", "relation": "关系长期含混已经说明，主播回到开场的误发动作，先问 Tony 原本想发送什么。" },
-        { "fromAnchor": "原本要发你什么", "toAnchor": "本来要发今天的预约时间", "relation": "咨询者直接回答原定发送内容，并说明自己翻到最后一列才觉得不对。" },
-        { "fromAnchor": "店里的表", "toAnchor": "把店名、人名和电话遮住", "relation": "主播在材料上屏前先限定匿名范围，再追问咨询者已经准备采取的现实行动。" },
-        { "fromAnchor": "已经准备怎么处理", "toAnchor": "我连话都写好了", "relation": "咨询者先确认遮名授权，再说出删名、退款和公开私表三项打算，并请求主播判断是否过分。" }
+        { "fromAnchor": "有点丢人的事", "toAnchor": "什么事", "relation": "咨询者只说事情难以启齿，主播用短问让她自己决定先交代哪一层。" },
+        { "fromAnchor": "什么事", "toAnchor": "理发师", "relation": "咨询者先给出两人认识的现实关系和误发表格，不预先下结论。" },
+        { "fromAnchor": "发错了一张表", "toAnchor": "原本要发你什么", "relation": "误发动作已经出现，主播追原定发送内容，先确认表格如何到她手里。" },
+        { "fromAnchor": "原本要发你什么", "toAnchor": "今天的预约时间", "relation": "咨询者回答原定内容，再说明误发的是店内表格以及自己看完后的关系疑问。" },
+        { "fromAnchor": "到底算什么", "toAnchor": "怎么认识的", "relation": "关系判断尚无足够事实，主播退回两人的认识来源。" },
+        { "fromAnchor": "怎么认识的", "toAnchor": "同事说他剪得好", "relation": "咨询者直接回答由同事推荐，并把一年多的普通顾客阶段与最近几个月的关系变化分开。" },
+        { "fromAnchor": "最近几个月才越走越近", "toAnchor": "今晚没上班", "relation": "咨询者把关系变化限定在最近几个月，主播先确认她当晚为何能在家连麦。" },
+        { "fromAnchor": "今晚没上班", "toAnchor": "今天轮休，在家", "relation": "咨询者回答轮休在家，并用特殊作息为晚档需求留下真实但不完整的职业后果。" },
+        { "fromAnchor": "下午才醒", "toAnchor": "他做过什么", "relation": "作息背景已经成立，主播再追 Tony 做过哪些具体动作。" },
+        { "fromAnchor": "不只是普通顾客", "toAnchor": "最晚那档", "relation": "咨询者用见人需求、晚档和临时加号回答店内特殊照顾。" },
+        { "fromAnchor": "临时补发根也肯加号", "toAnchor": "只是在店里照顾你", "relation": "店内照顾已经成立，主播再问两人的来往是否走出门店。" },
+        { "fromAnchor": "只是在店里照顾你", "toAnchor": "单独吃过饭", "relation": "咨询者补出店外吃饭，同时承认双方一直没有把关系说清。" },
+        { "fromAnchor": "关系我一直没敢问", "toAnchor": "现在想怎么处理", "relation": "关系仍然含混，主播回到她今晚的现实诉求。" },
+        { "fromAnchor": "现在想怎么处理", "toAnchor": "删掉", "relation": "咨询者把删名与退款说成自己准备采取的行动，请主播判断是否过分。" }
       ],
       "scenes": {
         "tony-exclusive-voice": {
-          "entry": { "mode": "continue", "fromAnchor": "这样过不过分", "toAnchor": "平时到底怎么相处", "relation": "咨询者请求主播判断删资料、退款和公开材料三项行动；主播先不背书，补问两人平时如何相处，再交代专属感从哪里来。" },
+          "entry": { "mode": "continue", "fromAnchor": "这样过分吗", "toAnchor": "平时到底怎么相处", "relation": "咨询者请求主播判断删资料与退款；主播先不背书，补问两人平时如何相处，再交代专属感从哪里来。" },
           "questionOptions": [
-            { "contextAnchor": "下班以后的事", "questionAnchor": "为什么不肯往前走", "answerAnchor": "花也老往店里送", "guardedAnswerAnchor": "身边人多", "relation": "咨询者先含糊提到两人曾为她下班后的生活争吵；玩家选择怀疑方向后，主播才问出 Tony 对酒桌、收花和社交关系的具体顾虑。" },
+            { "contextAnchor": "下班以后的事", "questionAnchor": "为什么不肯往前走", "answerAnchor": "花也老往店里送", "guardedAnswerAnchor": "那边人多", "relation": "咨询者先含糊提到两人曾为她下班后的生活争吵；玩家选择怀疑方向后，主播才问出 Tony 对酒桌、收花和社交关系的具体顾虑。" },
             { "contextAnchor": "也就你肯听我说这些", "questionAnchor": "也就你肯听", "answerAnchor": "有事你就找我", "relation": "主播沿她反复收到的具体原话追问实际回应；回答用她主动许诺陪伴的动作，带出关系始终没有问清。" }
           ],
           "freeQuestions": [
@@ -387,7 +417,7 @@
         "tony-emotion-to-sales": {
           "entry": { "mode": "continue", "fromAnchor": "吵完以后", "toAnchor": "后来怎么又走近了", "relation": "两人为她下班后的生活争吵以后仍继续联系；主播顺着追两人为何没有疏远，咨询者先讲生日花与当晚语音，不提前说明花是谁送的。" },
           "questionOptions": [
-            { "contextAnchor": "店里收到一束花", "questionAnchor": "是谁订的", "answerAnchor": "我订的", "guardedAnswerAnchor": "我送的", "relation": "正文只交代 Tony 生日时店里收到花；玩家选择花的来路后，咨询者才承认自己主动订花送到店里。" },
+            { "contextAnchor": "店里收到一束花", "questionAnchor": "是谁订的", "answerAnchor": "我送的", "guardedAnswerAnchor": "我送的", "relation": "正文只交代 Tony 生日时店里收到花；玩家选择花的来路后，她先承认是自己送的，再被追问送达地点和卡片内容。" },
             { "contextAnchor": "晚上他给我发过一条语音", "questionAnchor": "那晚还说了什么", "answerAnchor": "少喝点", "relation": "沿收花当晚的语音追问 Tony 的回应，只能证明他继续关心，不能回答花是谁送的。" }
           ],
           "freeQuestions": [
@@ -403,7 +433,7 @@
           ],
           "freeQuestions": [
             { "contextAnchor": "自己人办年卡划算", "questionAnchor": "还像当场那么排斥", "answerAnchor": "没那么排斥", "relation": "从当场年卡话术追问其后态度是否变化，回答说明称呼降低了她的抗拒。" },
-            { "contextAnchor": "小妹就喊“嫂子”", "questionAnchor": "他什么反应", "answerAnchor": "说别闹", "relation": "沿小妹当面称呼补问对方现场反应，回答提供她亲眼看见的笑与原话。" }
+            { "contextAnchor": "小妹就喊“嫂子”", "questionAnchor": "他什么反应", "answerAnchor": "别闹", "relation": "沿小妹当面称呼补问对方现场反应，回答提供她亲眼看见的笑与原话。" }
           ]
         },
         "tony-roster-function-notes": {
@@ -419,14 +449,14 @@
           "closer": { "anchor": "把帘子拉上", "routeIndependent": true, "relation": "窗外强光先使她拉上窗帘，数秒后麦里出现第一声敲门；独立收麦页再让她借口物业下线。第一夜不解释强光、来人或职业，第二夜再交给玩家追问。" }
         },
         "tony-knock-and-work": {
-          "entry": { "mode": "resumed-thread", "fromAnchor": "两下敲门声", "toAnchor": "有人来问事", "relation": "第一夜敲门留下开放边，第二夜回拨仍对上门者闪躲；首个正式场景继续追同一件事，不让带回材料把敲门开放边挤掉。" },
+          "entry": { "mode": "resumed-thread", "fromAnchor": "两下敲门声", "toAnchor": "有人来过", "relation": "第一夜敲门留下开放边，第二夜回拨仍对上门者闪躲；首个正式场景继续追同一件事，不让带回材料把敲门开放边挤掉。" },
           "questionOptions": [
-            { "contextAnchor": "有人来问事", "questionAnchor": "强光和敲门", "answerAnchor": "楼下停的是警车", "guardedAnswerAnchor": "来的是民警", "relation": "主播拒绝跟随“有没有违法”的自证，只核对第一夜已经出现的强光与敲门是否同源；回答在玩家动作后才确认警车和民警。" },
-            { "contextAnchor": "有人来问事", "questionAnchor": "突然搬到你妈家", "answerAnchor": "不是 Tony", "relation": "主播把换住处误猜成 Tony 上门，回答先纠正这一猜测，再交代来人是民警；该路线只拿到身份，仍未把第一夜强光与敲门合并验证。" }
+            { "contextAnchor": "有人来过", "questionAnchor": "强光和敲门", "answerAnchor": "警车", "guardedAnswerAnchor": "敲门的是民警", "relation": "主播拒绝跟随“有没有违法”的自证，只核对第一夜已经出现的强光与敲门是否同源；咨询者先承认同源，再经两次短问确认警车、民警和来意。" },
+            { "contextAnchor": "有人来过", "questionAnchor": "突然搬到你妈家", "answerAnchor": "不是 Tony", "relation": "主播把换住处误猜成 Tony 上门，回答先纠正这一猜测，再交代来人是民警；该路线只拿到身份，仍未把第一夜强光与敲门合并验证。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "昨晚说是物业", "questionAnchor": "为什么说可能是物业", "answerAnchor": "已经看见楼下的车", "relation": "沿第一夜原借口追问她当时已知多少，回答承认自己有意阻止主播继续问。" },
-            { "contextAnchor": "我上班的地方", "questionAnchor": "为什么不想说自己在哪儿上班", "answerAnchor": "怕直播间一听工作地点", "relation": "从她主动设置的职业边界追问隐瞒原因，回答停在害怕被追问，不提前交具体职位。" }
+            { "contextAnchor": "昨晚说物业", "questionAnchor": "为什么说可能是物业", "answerAnchor": "已经看见楼下的车", "relation": "沿第一夜原借口追问她当时已知多少，回答承认自己有意阻止主播继续问。" },
+            { "contextAnchor": "我在哪儿上班", "questionAnchor": "为什么不想说自己在哪儿上班", "answerAnchor": "怕直播间一听工作地点", "relation": "从她主动设置的职业边界追问隐瞒原因，回答停在害怕被追问，不提前交具体职位。" }
           ],
           "closer": { "anchor": "连那份介绍都没见过", "routeIndependent": true, "relation": "两条关键路线都会先确认来人是民警；选择后才按手机号继续问出酒吧营销、Tony 对她客源的了解，以及她从未同意当联络人或收钱。职业改变可信度，不替警方认定违法。" }
         },
@@ -445,25 +475,25 @@
         "tony-caller-benefits": {
           "entry": { "mode": "resumed-thread", "fromAnchor": "退我这一年多花的钱", "toAnchor": "过去花的钱都要回来", "relation": "开场已经给出全额退款诉求；亲近话术和商业推进出现后，主播回到她真正想带走的结果，先问总额。" },
           "questionOptions": [
-            { "contextAnchor": "十八笔", "questionAnchor": "有没有哪次没做", "answerAnchor": "都做了", "guardedAnswerAnchor": "都做了", "relation": "主播沿她报出的十八笔和全退诉求问服务是否履行，回答承认服务完成、手艺没有问题，却仍不甘心。" },
-            { "contextAnchor": "七个人，有四个后来真去了", "questionAnchor": "觉得在帮店里，还是在帮他", "answerAnchor": "帮他", "relation": "主播沿转介绍人数追她当时认定的受益人，回答承认她借朋友到店维持自己在 Tony 那里的特殊位置。" }
+            { "contextAnchor": "十八次", "questionAnchor": "有没有哪次没做", "answerAnchor": "都做了", "guardedAnswerAnchor": "都做了", "relation": "主播沿她报出的十八次和全退诉求问服务是否履行；普通回答承认服务完成，防守回答则先反问主播是否认为她活该。" },
+            { "contextAnchor": "七个人，四个真去了", "questionAnchor": "觉得在帮店里，还是在帮他", "answerAnchor": "帮他", "relation": "主播沿转介绍人数追她当时认定的受益人，回答承认她借朋友到店维持自己在 Tony 那里的特殊位置。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "四万六千三百八十", "questionAnchor": "什么时候花出去", "answerAnchor": "提成有时当晚就结", "relation": "主播沿她报出的消费总额问花钱节奏，回答把周末提成、见客妆造和高频美发接起来。" },
-            { "contextAnchor": "闺蜜去那次", "questionAnchor": "后来还去过", "answerAnchor": "去过一次", "relation": "从闺蜜曾到店补问是否形成后续消费，回答落到再次询价。" },
-            { "contextAnchor": "她六折", "questionAnchor": "谁主动说", "answerAnchor": "他主动", "relation": "沿六折事实核对折扣由谁提出，回答也限定店长只在旁点头。" }
+            { "contextAnchor": "闺蜜那次", "questionAnchor": "后来还去过", "answerAnchor": "去过一次", "relation": "从闺蜜曾到店补问是否形成后续消费，回答落到再次询价。" },
+            { "contextAnchor": "打了六折", "questionAnchor": "谁主动说", "answerAnchor": "他主动", "relation": "沿六折事实核对折扣由谁提出，回答也限定店长只在旁点头。" }
           ]
         },
         "tony-next-push-column": {
-          "entry": { "mode": "resumed-thread", "fromAnchor": "四万六千三百八十", "toAnchor": "最后一列", "relation": "消费与转介绍已经落到实数，主播回到误发表格，查看 Tony 如何给这些关系安排下一步。" },
+          "entry": { "mode": "resumed-thread", "fromAnchor": "四万六千三百八十", "toAnchor": "昨晚你已经看见", "relation": "消费与转介绍已经落到实数，主播回到第一夜已经看见的推进列，不再假装第二夜才打开。" },
           "questionOptions": [
-            { "contextAnchor": "年卡已聊，可稳情绪", "questionAnchor": "他下一步想让你做什么", "answerAnchor": "办年卡", "guardedAnswerAnchor": "办年卡", "relation": "三行原文已经出现在材料里，主播不再要求咨询者口头归纳整表，只追她自己这一行；回答停在办年卡和非发型预约。" },
-            { "contextAnchor": "又翻回来确认", "questionAnchor": "玩笑备注", "answerAnchor": "下面不止我一行", "relation": "从她反复确认表格问是否仍可能只是玩笑备注，回答只复述另外几行的实际写法，说明自己为何不再相信。" }
+            { "contextAnchor": "发到网上全写在了一起", "questionAnchor": "这张表如果发出去", "answerAnchor": "自己的事也全摊开了", "guardedAnswerAnchor": "手机号和工作备注", "relation": "她已经把公开私表写进投诉，主播追问公开会同时带出什么；回答承认工作、联系方式和带客记录也会曝光。" },
+            { "contextAnchor": "昨晚我就看完了", "questionAnchor": "玩笑备注", "answerAnchor": "下面不止我一行", "relation": "她已经看完整列，主播问是否仍可能只是玩笑备注，回答复述其他行的实际写法。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "那张表", "questionAnchor": "还去那家店", "answerAnchor": "人没去", "relation": "表格冲突发生后补问她是否继续到店，回答区分预约仍留与人未到。" },
             { "contextAnchor": "开过店的大学室友", "questionAnchor": "怎么认识", "answerAnchor": "大学室友", "relation": "沿此前出现的开店朋友补足关系来源和行业经验。" },
-            { "contextAnchor": "最后一列", "questionAnchor": "还转给过谁", "answerAnchor": "只发给室友和你们后台", "relation": "表格内容已经念完，主播补问传播范围；回答确认目前只发给室友和节目，公开控诉仍是她准备采取而尚未执行的动作。" }
+            { "contextAnchor": "那几行原话", "questionAnchor": "还转给过谁", "answerAnchor": "只发给室友和你们后台", "relation": "表格内容已经念完，主播补问传播范围；回答确认目前只发给室友和节目，公开控诉仍是她准备采取而尚未执行的动作。" }
           ],
           "closer": { "anchor": "上礼拜他还给我修过刘海", "routeIndependent": true, "relation": "表格念完后咨询者主动补回一次真实的细致服务，任何路线下都保留她无法把好手艺与伤害简单互相抹掉的未决感。" }
         }
@@ -472,27 +502,38 @@
     "03-profile": {
       "reviewedAt": "2026-08-08",
       "opening": [
-        { "fromAnchor": "这个饭局还去不去", "toAnchor": "彩礼倒先问过去了", "relation": "咨询者明确说自己拿不准周末饭局是否继续；主播从她给出的彩礼抢跑原因切入，不加模板问候。" },
-        { "fromAnchor": "那先说彩礼", "toAnchor": "你妈让介绍人报了多少", "relation": "主播先把当前话题落在彩礼，再另起一问追具体金额。" },
-        { "fromAnchor": "报了多少", "toAnchor": "二十八万八", "relation": "主播沿介绍人已经递话的事实追问金额，咨询者先报数，再说明数字来自母亲。" },
-        { "fromAnchor": "本科不是那所", "toAnchor": "还是把这个数递过去了", "relation": "咨询者说明自己已纠正本科，主播据此确认母亲仍然递出彩礼数字，再追男方的实际回应。" },
-        { "fromAnchor": "男方怎么回的", "toAnchor": "拿不出来", "relation": "主播沿已经发生的彩礼传话追问结果，咨询者按时间顺序说出男方先拒绝、自己不信并要求流水、男方只交工资账户的完整触发链。" }
+        { "fromAnchor": "这周末那顿饭", "toAnchor": "跟谁吃", "relation": "咨询者先只问饭局还去不去，主播先确认饭局中的人。" },
+        { "fromAnchor": "跟谁吃", "toAnchor": "双方父母", "relation": "咨询者直接回答是对象与双方父母，并补充这是第一次正式见面。" },
+        { "fromAnchor": "第一次正式见父母", "toAnchor": "为什么不想去了", "relation": "饭局性质已经明确，主播再问是什么变化让她想取消。" },
+        { "fromAnchor": "为什么不想去了", "toAnchor": "托介绍人去问彩礼", "relation": "咨询者回答母亲在订饭店前先问彩礼，并说明自己事先不知情。" },
+        { "fromAnchor": "事先没告诉我", "toAnchor": "问了多少", "relation": "母亲已经越过她传话，主播只追具体金额。" },
+        { "fromAnchor": "问了多少", "toAnchor": "二十八万八", "relation": "咨询者先报金额，再说自己是从男方那里知道数字已经传出。" },
+        { "fromAnchor": "已经跟人家说了", "toAnchor": "为什么是这个数", "relation": "主播不马上评价金额高低，先追女方家怎样得出这个数。" },
+        { "fromAnchor": "为什么是这个数", "toAnchor": "名校本科", "relation": "咨询者从母亲对学历的理解讲起，再补充 MBA 学费怎样被换算成家底。" },
+        { "fromAnchor": "家底应该不错", "toAnchor": "男方怎么回", "relation": "女方家的财力推断已经说清，主播才问男方收到要求后的回应。" },
+        { "fromAnchor": "男方怎么回", "toAnchor": "拿不出来", "relation": "咨询者只复述男方的明确拒绝和理由，没有在同一拍继续倾倒流水。" },
+        { "fromAnchor": "拿不出来", "toAnchor": "你信吗", "relation": "男方已经拒绝，主播只问咨询者当时是否相信。" },
+        { "fromAnchor": "你信吗", "toAnchor": "没信", "relation": "咨询者承认不信，再补出自己要求银行流水的动作。" },
+        { "fromAnchor": "银行流水打出来", "toAnchor": "他给了吗", "relation": "材料请求已经发生，主播追材料是否真的交付。" },
+        { "fromAnchor": "他给了吗", "toAnchor": "工资账户流水", "relation": "咨询者回答男方只给了一份工资账户流水，并报出该卡余额。" },
+        { "fromAnchor": "余额二十八万六", "toAnchor": "只有这一张", "relation": "工资卡余额出现后，主播马上核对材料范围。" },
+        { "fromAnchor": "只有这一张", "toAnchor": "这张你先看", "relation": "咨询者确认只有一张，并用男方原话说明他为何选择工资账户。" }
       ],
       "scenes": {
         "profile-proof-before-dinner": {
           "entry": { "mode": "continue", "fromAnchor": "这张你先看", "toAnchor": "工资账户流水发来以后", "relation": "开场已经交代女方要求看银行流水、男方只交工资账户；主播接着问双方怎样理解这份局部材料。" },
           "questionOptions": [
-            { "contextAnchor": "拿不出来", "questionAnchor": "为什么还是不信", "answerAnchor": "觉得他在跟我压价", "guardedAnswerAnchor": "觉得他说拿不出是在压价", "relation": "玩家从男方已经明确拒绝却仍被要求打流水切入；回答才暴露咨询者和母亲把自费 MBA 当成现有财力。" },
-            { "contextAnchor": "只有这一张", "questionAnchor": "为什么只发工资账户", "answerAnchor": "手里就这一张", "guardedAnswerAnchor": "只发了工资账户", "relation": "玩家检查材料范围；夜 A 回答只停在咨询者手里只有一张工资卡，不提前引用男方第二夜才承认的其他账户。" },
-            { "contextAnchor": "她看完", "questionAnchor": "是不是他的全部账户", "answerAnchor": "没有", "relation": "沿女方母亲看到工资卡余额后的反应继续问，回答说明她没有核材料范围便认定男方只是不愿给。" }
+            { "contextAnchor": "拿不出来", "questionAnchor": "为什么还是不信", "answerAnchor": "在跟我压价", "guardedAnswerAnchor": "卡上正好二十八万六", "relation": "玩家从男方已经明确拒绝却仍被要求打流水切入；普通回答才承认咨询者和母亲把自费 MBA 当成现有财力，防守回答则反过来抓住卡上余额。" },
+            { "contextAnchor": "只有这一张", "questionAnchor": "为什么只发工资账户", "answerAnchor": "他发工资卡", "guardedAnswerAnchor": "只看见一张", "relation": "玩家检查材料范围；夜 A 回答只停在咨询者收到一张工资卡，不提前引用男方第二夜才承认的其他账户。" },
+            { "contextAnchor": "她看过", "questionAnchor": "是不是他的全部账户", "answerAnchor": "没有", "relation": "沿女方母亲看到工资卡后的反应继续问，回答说明她没有核材料范围便认定男方只是不愿给。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "这个周末本来要带他回家见父母", "questionAnchor": "相亲见了几次", "answerAnchor": "四次", "relation": "彩礼已把周末饭局打断，补问实际相处次数以衡量关系进度。" },
-            { "contextAnchor": "是我妈让介绍人去问的", "questionAnchor": "平时什么都聊吗", "answerAnchor": "大事聊", "relation": "母亲直接介入彩礼后，补问母女平时的信息边界和筛选习惯。" }
+            { "contextAnchor": "第一次正式见父母", "questionAnchor": "相亲见了几次", "answerAnchor": "四次", "relation": "彩礼已把周末饭局打断，补问实际相处次数以衡量关系进度。" },
+            { "contextAnchor": "我妈先托介绍人去问彩礼", "questionAnchor": "平时什么都聊吗", "answerAnchor": "大事聊", "relation": "母亲直接介入彩礼后，补问母女平时的信息边界和筛选习惯。" }
           ]
         },
         "profile-dinner-pause": {
-          "entry": { "mode": "continue", "fromAnchor": "我妈没有回", "toAnchor": "学历真的说清楚了吗", "relation": "第一段确认双方都没有把自己的资金范围说全，主播回到女方不相信男方拿不出的依据，核学历是否真的说清。" },
+          "entry": { "mode": "continue", "fromAnchor": "手里就这一张", "toAnchor": "学历真的说清楚了吗", "relation": "第一段确认女方手里只有一张工资卡，主播回到她不相信男方拿不出的依据，核学历是否真的说清。" },
           "questionOptions": [
             { "contextAnchor": "本科不是", "questionAnchor": "为什么没接着问", "answerAnchor": "我先跟家里说的", "guardedAnswerAnchor": "没问", "relation": "男方已纠正本科并说明自费学费，主播追她为何不问名校标签的来源；回答落到她怕暴露自己先说满，也开始把学费理解成财力。" },
             { "contextAnchor": "服务员来添水", "questionAnchor": "又聊本科", "answerAnchor": "没有", "relation": "从现场打断继续问服务员离开后是否恢复话题；回答说明两人共同把尴尬带开。" },
@@ -506,7 +547,7 @@
         "profile-caller-repeats-label": {
           "entry": { "mode": "continue", "fromAnchor": "本科不是", "toAnchor": "回家以后是怎么跟家里说的", "relation": "饭桌上已经纠正本科，上一段玩家也已问出父母为何不信男方拿不出；本段继续追咨询者知道二十八万八来由后的实际反应。" },
           "questionOptions": [
-            { "contextAnchor": "没有让她把话收回来", "questionAnchor": "有没有劝她", "answerAnchor": "我也没有让她收回来", "guardedAnswerAnchor": "没有让她收回来", "relation": "玩家不再重复询问父母的财力推断，而是追咨询者知情后的动作；回答让她承认自己默许彩礼继续传递。" },
+            { "contextAnchor": "没有让她把话收回来", "questionAnchor": "有没有劝她", "answerAnchor": "我没拦", "guardedAnswerAnchor": "没叫她收", "relation": "玩家不再重复询问父母的财力推断，而是追咨询者知情后的动作；回答让她承认自己默许彩礼继续传递。" },
             { "contextAnchor": "本科不是那所", "questionAnchor": "当时怎么回的", "answerAnchor": "二十三万八真是他自己交的", "relation": "玩家从母亲听完更正后的反应切入，回答才暴露她把注意力从学历转向学费和现有财力。" }
           ],
           "freeQuestions": [
@@ -541,26 +582,26 @@
         "profile-family-chat-origin": {
           "entry": { "mode": "continue", "fromAnchor": "二十八万八", "toAnchor": "家里群还说过什么", "relation": "介绍人已确认彩礼传话，本段追问女方家没有随数字一起告诉男方的付款条件和自家资金用途。" },
           "questionOptions": [
-            { "contextAnchor": "彩礼领证前打到她自己的卡里", "questionAnchor": "也一起说清楚", "answerAnchor": "没有", "guardedAnswerAnchor": "没有全说", "relation": "主播沿家里群完整原话问咨询者转达了多少，回答承认她只报彩礼数字，省掉收款账户和额外支出。" },
-            { "contextAnchor": "拿二十万给我，让我自己留着", "questionAnchor": "付婚宴，还是给你自己留着", "answerAnchor": "给我自己留着", "relation": "主播沿父亲的原话核这笔钱的计划用途，回答承认她此前把个人赠与说成女方家也会为结婚出钱。" }
+            { "contextAnchor": "彩礼领证前打到她自己的卡里", "questionAnchor": "也一起说清楚", "answerAnchor": "没有", "guardedAnswerAnchor": "只把二十八万八发给他", "relation": "主播沿家里群完整原话问咨询者转达了多少，回答承认她只报彩礼数字，省掉收款账户和额外支出。" },
+            { "contextAnchor": "拿二十万给我留着", "questionAnchor": "付婚宴，还是给你自己留着", "answerAnchor": "给我自己留着", "relation": "主播沿父亲的原话核这笔钱的计划用途，回答承认她此前把个人赠与说成女方家也会为结婚出钱。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "第一次正式吃饭", "questionAnchor": "算钱时会跟你解释吗", "answerAnchor": "都说得很清楚", "relation": "从前面饭局的支付细节补问男方是否解释，回答保留节俭的正面理解。" },
-            { "contextAnchor": "是我妈让介绍人去问的", "questionAnchor": "见过他照片吗", "answerAnchor": "见过", "relation": "沿母亲参与筛选补问她掌握过哪些基础资料。" },
-            { "contextAnchor": "我妈先说", "questionAnchor": "现在什么态度", "answerAnchor": "先别把人得罪死", "relation": "彩礼已使饭局停摆，补问母亲当前态度，回答给出她仍催婚的原话。" }
+            { "contextAnchor": "九月底到期", "questionAnchor": "为什么非得领证前", "answerAnchor": "他先把彩礼给了", "relation": "女方家的钱要等九月底，主播追问男方的钱为何不能同样等到双方都能拿出来再谈；回答落到母亲坚持先收彩礼、女儿当时没有异议。" },
+            { "contextAnchor": "我妈先发了一句", "questionAnchor": "现在什么态度", "answerAnchor": "先别把人得罪死", "relation": "彩礼已使饭局停摆，补问母亲当前态度，回答给出她仍催婚的原话。" }
           ]
         },
         "profile-income-and-card": {
           "entry": { "mode": "continue", "fromAnchor": "九月底到期", "toAnchor": "承认只发了工资账户", "relation": "女方家资金期限已经明确；礼物插麦并完成授权后，主播把男方选择性提供流水的问题带回双方当面解释。" },
           "questionOptions": [
-            { "contextAnchor": "婚宴和首饰另算", "questionAnchor": "后面的钱怎么出", "answerAnchor": "没有认真想", "guardedAnswerAnchor": "没认真算", "relation": "完整条件已经露出额外支出，主播问她看到工资卡余额时是否计算过彩礼之后的钱；回答承认她默认男方还有账户并继续承担。" },
+            { "contextAnchor": "婚宴和首饰另算", "questionAnchor": "后面的钱怎么出", "answerAnchor": "他家", "guardedAnswerAnchor": "我当时就觉得他还有钱", "relation": "完整条件已经露出额外支出，主播先问她当时的假设，再连续收窄到默认由男方家承担、且没有说出口。" },
             { "contextAnchor": "停车费跟我 AA", "questionAnchor": "能证明收入有问题吗", "answerAnchor": "不能", "relation": "当前版本已经补回小额消费，主播问证据边界；回答承认自己先怀疑收入不稳，才把节省习惯也当成可疑迹象。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "自己准备给她多少", "questionAnchor": "多久没回", "answerAnchor": "到现在都没回", "relation": "男方家已反问女方家出资，主播追她回避多久；回答说明她怕被理解成拿彩礼先办婚礼。" },
             { "contextAnchor": "婚宴和首饰", "questionAnchor": "一起管钱的例子", "answerAnchor": "我表姐", "relation": "从双方都在讨论婚事资金补问她现实参照，回答也暴露她习惯精确计算。" },
             { "contextAnchor": "二十八万六", "questionAnchor": "现在还给你发消息", "answerAnchor": "间隔很规律", "relation": "从仍在进行的彩礼争执补问目前是否保持联系。" },
-            { "contextAnchor": "回家见父母", "questionAnchor": "还想见吗", "answerAnchor": "不知道", "relation": "回扣开场被搁置的周末饭局，回答保留她尚未决定。" }
+            { "contextAnchor": "第一次正式见父母", "questionAnchor": "还想见吗", "answerAnchor": "不知道", "relation": "回扣开场被搁置的周末饭局，回答保留她尚未决定。" }
           ]
         }
       }
@@ -568,50 +609,47 @@
     "04-workplace": {
       "reviewedAt": "2026-08-08",
       "opening": [
-        { "fromAnchor": "工作群输入框里了，还没发", "toAnchor": "我现在猜不了", "relation": "咨询者拿着一条尚未发送的追款话来求助，也担心影响后续机会；主播不预判公司反应，先阻止她发送依据尚未说清的指控。" },
-        { "fromAnchor": "得先说清楚", "toAnchor": "是谁让你刷这张卡的", "relation": "下一屏只问刷卡指令来自谁，不同时追流程、报销和负责人署名。" },
-        { "fromAnchor": "是谁让你刷这张卡的", "toAnchor": "一个同事私聊我", "relation": "主播沿她刚报出的金额，只问刷卡指令来自谁；咨询者在回答中自然补出同事承诺的负责人署名。" }
+        { "fromAnchor": "垫了一笔钱", "toAnchor": "多少", "relation": "咨询者先只说替公司垫钱未还，主播只问金额。" },
+        { "fromAnchor": "多少", "toAnchor": "六万八", "relation": "咨询者报出六万八和个人信用卡，不在同一拍补流程与职业后果。" },
+        { "fromAnchor": "自己的信用卡", "toAnchor": "办完多久", "relation": "金额和付款工具明确以后，主播沿未还款追活动结束时间。" },
+        { "fromAnchor": "办完多久", "toAnchor": "账单都出来了", "relation": "咨询者说明活动早已结束、账单已经到来，形成今晚来电的现实压力。" },
+        { "fromAnchor": "钱还没回来", "toAnchor": "找过公司吗", "relation": "未还款已经成立，主播再问她有没有采取过公开追款动作。" },
+        { "fromAnchor": "找过公司吗", "toAnchor": "工作群输入框", "relation": "咨询者回答自己写了群消息但尚未发送。" },
+        { "fromAnchor": "还没发", "toAnchor": "为什么没发", "relation": "主播不替她润色，先问她为什么停在发送前。" },
+        { "fromAnchor": "为什么没发", "toAnchor": "刚争来的", "relation": "咨询者说出负责人机会和个人账单之间的冲突，求助由追款扩展到职业代价。" },
+        { "fromAnchor": "自己的卡也扛不住", "toAnchor": "谁让你刷", "relation": "现实压力已经明确，主播才追垫款指令来自谁。" },
+        { "fromAnchor": "谁让你刷", "toAnchor": "同事私聊", "relation": "咨询者直接回答同事私聊，并补出对方把报销和负责人署名放在一起承诺。" }
       ],
       "scenes": {
         "work-title-for-advance": {
           "entry": { "mode": "continue", "fromAnchor": "让我先垫上", "toAnchor": "这活我能接", "relation": "从同事要求先垫，转入咨询者此前在小会上主动争取项目的具体动作。" },
           "questionOptions": [
-            { "contextAnchor": "活动总结里，我写你是负责人", "questionAnchor": "先说让你负责这次活动，还是先说要你垫钱", "answerAnchor": "先说垫钱", "guardedAnswerAnchor": "先说垫钱", "relation": "主播按原私聊顺序问负责人承诺和垫款谁先出现，回答明确先说垫钱、后说活动总结写她负责，也交代咨询者当时只听进了后半句。" },
+            { "contextAnchor": "活动总结里，我写你是负责人", "questionAnchor": "先说让你负责这次活动，还是先说要你垫钱", "answerAnchor": "先说垫钱", "guardedAnswerAnchor": "他先提垫钱", "relation": "主播按原私聊顺序问负责人承诺和垫款谁先出现；普通回答说全先后，防守回答只承认自己看见负责人署名后立即回复。" },
             { "contextAnchor": "几乎马上就回了", "questionAnchor": "有没有问这钱最后谁来还", "answerAnchor": "没有", "relation": "她已承认迅速答应，主播追问是否确认还款责任，回答补出“我来扛”原话。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "这活我能接", "questionAnchor": "群里说的，还是当面说的", "answerAnchor": "部门小会上", "relation": "沿她主动接活的陈述补问发生场合，回答限定老板当面在场。" },
-            { "contextAnchor": "桌上贴着“早点回”", "questionAnchor": "便利贴，你现在还留着", "answerAnchor": "夹在工牌套后面", "relation": "固定陈述已经交代留灯和便利贴，补问物件是否仍在；回答说明这次照顾怎样影响她后来对私聊补流程的信任。" }
+            { "contextAnchor": "桌上贴着“早点回”", "questionAnchor": "便利贴，你现在还留着", "answerAnchor": "夹在工牌套后面", "relation": "固定陈述已经交代留灯和便利贴，补问物件是否仍在；回答说明这次照顾怎样影响她后来对私聊补流程的信任。" },
+            { "contextAnchor": "六万八", "questionAnchor": "怎么一次刷得下来", "answerAnchor": "申请了临时提额", "relation": "开场已确认个人信用卡垫付六万八，主播追问现实额度；回答显示她为完成活动主动申请临时提额，没有改变公司成本仍待处理的事实。" }
           ],
           "closer": { "anchor": "工作群又响了", "routeIndependent": true, "relation": "她把手机扣过去只表现工作群提示音带来的追款焦虑，不新增消息内容；任一分支后都能回到公开流程表。" }
         },
-        "work-public-process": {
-          "entry": { "mode": "continue", "fromAnchor": "真想让老板把这次活动交给我", "toAnchor": "活动前一天", "relation": "咨询者想负责活动、想让老板看见自己的心思已经交代，本段回到活动前公开群里的报备规则。" },
-          "questionOptions": [
-            { "contextAnchor": "我没在群里问预算", "questionAnchor": "为什么不问预算", "answerAnchor": "预算多少", "guardedAnswerAnchor": "不想开口第一句就问预算", "relation": "主播沿她承认未问预算追原因，回答落到她把问题打进大群又删掉的具体动作。" },
-            { "contextAnchor": "真要个人垫，得提前报备", "questionAnchor": "谁会替你报备", "answerAnchor": "供应商是他找的", "relation": "公开规则要求报备而她没有执行，回答说明她把补流程寄托在供应商对接同事身上。" }
-          ],
-          "freeQuestions": [
-            { "contextAnchor": "预算先填金额", "questionAnchor": "谁管预算", "answerAnchor": "部门助理发流程", "relation": "从公开预算流程补问常规职责，回答区分助理发流程与财务出数。" },
-            { "contextAnchor": "我点开过", "questionAnchor": "看懂", "answerAnchor": "看懂了大概", "relation": "她已承认打开流程表，主播核对是否理解，回答承认看懂却选择不问。" }
-          ]
-        },
         "work-private-process": {
-          "entry": { "mode": "continue", "fromAnchor": "我没在群里问预算", "toAnchor": "只隔了十七分钟", "relation": "公开群未提问之后，本段按时间接上十七分钟后的私聊劝阻。" },
+          "entry": { "mode": "continue", "fromAnchor": "工作群又响了", "toAnchor": "群里发过正式流程吗", "relation": "前一场以工作群提示音收住；主播顺着‘活动后补流程’回问当天是否已有公开流程，回答把 14:05 群公告与 14:22 相反私聊放进同一条时间链。" },
           "questionOptions": [
-            { "contextAnchor": "别让领导觉得你不担事", "questionAnchor": "哪句话以后，没再回大群", "answerAnchor": "别让领导觉得你不担事", "guardedAnswerAnchor": "我就没问", "relation": "主播从完整私聊中问真正使她停手的句子，回答复述“不担事”并说明没有再回大群。" },
-            { "contextAnchor": "把群关了", "questionAnchor": "老板就会不让你负责这个活动吗", "answerAnchor": "不会吧", "relation": "她已交代面子压力，主播把实际风险问具体；回答承认最多只是短暂难看。" }
+            { "contextAnchor": "个人垫付得提前报备", "questionAnchor": "他又让你别问。你为什么听他的", "answerAnchor": "把‘预算多少’删了", "guardedAnswerAnchor": "我那时候不敢问", "relation": "公开报备要求和相反私聊已经同场出现；主播只追她为何照做，回答落到害怕显得不担事和删除预算问题的具体动作。" },
+            { "contextAnchor": "活动结束再补", "questionAnchor": "以为谁会替你补报备", "answerAnchor": "我以为是他", "relation": "她把流程交回同事以后，主播追问她认定的补办主体；回答说明供应商和预算都在同事手里，而她自己没有留下一句。" }
           ],
           "freeQuestions": [
-            { "contextAnchor": "他私聊我", "questionAnchor": "私聊你留着吗", "answerAnchor": "留着", "relation": "沿当前私聊材料确认记录是否保留，回答也说明她为何先前不敢公开。" },
-            { "contextAnchor": "九天后财务真发了延后通知", "questionAnchor": "当时提过财务延后", "answerAnchor": "没有", "relation": "从后来的财务通知倒查活动当天，回答明确同事当时只说来不及。" }
+            { "contextAnchor": "14：22，他私聊我", "questionAnchor": "私聊你留着吗", "answerAnchor": "留着", "relation": "沿当前私聊材料确认记录是否保留，回答也说明她为何先前不敢公开。" },
+            { "contextAnchor": "后来财务发了延后通知", "questionAnchor": "当时提过财务延后", "answerAnchor": "没有", "relation": "从她含糊的‘后来’倒查活动当天，回答明确同事当时只说来不及；九天差留给随后材料板揭开。" }
           ]
         },
         "work-approval-only": {
-          "entry": { "mode": "continue", "fromAnchor": "财务真发了延后通知", "toAnchor": "活动后，他发来一张审批页", "relation": "开场已经确认六万八刷在她的信用卡上；主播不再重复问金额，只问对方后来拿什么让她继续等，回答直接落到反复发送的审批页。" },
+          "entry": { "mode": "continue", "fromAnchor": "后来财务发了延后通知", "toAnchor": "活动后，他发来一张审批页", "relation": "前一场只留下含糊的后发通知；主播不再重复问金额，只问对方后来拿什么让她继续等，回答直接落到反复发送的审批页。" },
           "questionOptions": [
-            { "contextAnchor": "报销审批通过", "questionAnchor": "写没写哪天付款", "answerAnchor": "没有", "guardedAnswerAnchor": "只写了审批通过", "relation": "主播只问审批图上有没有付款时间，回答限定可见内容，并主动把图摆上材料板。" },
-            { "contextAnchor": "流程在走", "questionAnchor": "有没有说过具体哪天到账", "answerAnchor": "没有", "relation": "主播沿同事每次配图的原话追问具体日期，回答承认自己把后来的财务延后通知拼进了这张图。" }
+            { "contextAnchor": "顶上写着“审批通过”", "questionAnchor": "图上的“单据类型”和编号开头", "answerAnchor": "不是报销单", "guardedAnswerAnchor": "活动前一天批的立项", "relation": "主播不顺着页面顶端的‘审批通过’猜付款，而是让咨询者读出审批时间、单据类型与 LX 编号；回答确认这张图批的是旧立项，没有报销申请编号。" },
+            { "contextAnchor": "流程在走", "questionAnchor": "有没有说过具体哪天到账", "answerAnchor": "没有", "relation": "主播沿同事每次配图的原话追问具体日期，回答承认自己既没看单据类型，又把后来的财务延后通知拼进了这张图。" }
           ],
           "freeQuestions": [
             { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "账单出来以后", "answerAnchor": "还没想好", "relation": "金额和卡种在开场已经确认，主播不再重复问信用卡额度，而是询问账单到来后的现实压力。" },
@@ -619,22 +657,10 @@
             { "contextAnchor": "这六万八刷出去以后", "questionAnchor": "以前用个人信用卡垫过", "answerAnchor": "没有", "relation": "沿本次个人信用卡垫款补问她是否有过同类经验；回答说明过去只垫过可迅速报销的小额打车费。" }
           ]
         },
-        "work-supplier-route": {
-          "entry": { "mode": "resumed-thread", "fromAnchor": "流程在走", "toAnchor": "白天还拿到什么材料", "relation": "审批页只能说公司报销流程在走；主播转问白天的新材料，再由供应商内部结算页另查项目返利，不能与六万八合并。" },
-          "questionOptions": [
-            { "contextAnchor": "项目联系人写的是他", "questionAnchor": "能不能证明，项目返利已经给了他", "answerAnchor": "没写返利有没有付", "guardedAnswerAnchor": "支付状态和账户都没写", "relation": "主播从项目联系人身份追问证明边界，回答明确支付状态和账户都缺失，也不能把供应商返利接到公司的报销上。" },
-            { "contextAnchor": "和公司该还我的六万八不是同一笔钱", "questionAnchor": "能证明公司为什么没还你六万八吗", "answerAnchor": "不能", "relation": "沿咨询者已主动划开的两条钱路继续追问，回答把公司付款回单留作独立凭证。" }
-          ],
-          "freeQuestions": [
-            { "contextAnchor": "供应商内部结算表", "questionAnchor": "这页结算表是谁给你的", "answerAnchor": "项目员给的", "relation": "从内部结算页补问材料来源，回答限定项目员只确认记录，不替最终账户作证。" },
-            { "contextAnchor": "供应商内部结算表", "questionAnchor": "供应商是谁选的", "answerAnchor": "他定的", "relation": "沿供应商材料补问选择主体，回答限定她甚至没有项目联系人微信。" },
-            { "contextAnchor": "公司该还我的六万八", "questionAnchor": "家里知道吗", "answerAnchor": "知道个大概", "relation": "咨询者再次明确六万八仍由公司偿还，主播顺势问这笔现实压力是否已经让家里知情。" }
-          ]
-        },
         "work-leader-note": {
-          "entry": { "mode": "continue", "fromAnchor": "它和公司该还我的六万八不是同一笔钱", "toAnchor": "公司有人公开提过这次活动吗", "relation": "供应商项目返利已经和公司报销分开；主播转问公司公开场合是否提过活动，再回到活动结束后的部门小会，核领导究竟确认了活动结果还是垫款。" },
+          "entry": { "mode": "resumed-thread", "fromAnchor": "流程在走", "toAnchor": "公司有人公开提过这次活动吗", "relation": "第一夜停在同事反复用‘流程在走’让她继续等；回拨转问公司公开场合究竟确认过什么，再用领导的表扬检验负责人署名是否包含个人垫款。" },
           "questionOptions": [
-            { "contextAnchor": "这次活动负责人写小陈", "questionAnchor": "提没提这六万八什么时候还", "answerAnchor": "没提", "guardedAnswerAnchor": "钱怎么回，没写", "relation": "领导批注明确活动负责人后，主播只核对六万八的还款时间，回答停在谁还、哪天还都没说。" },
+            { "contextAnchor": "这次活动负责人写小陈", "questionAnchor": "提没提这六万八什么时候还", "answerAnchor": "没提", "guardedAnswerAnchor": "只顾着截图", "relation": "领导批注明确活动负责人后，主播只核对六万八的还款时间；普通回答停在缺日期，防守回答则暴露她当时只顾着截图。" },
             { "contextAnchor": "一听见自己的名字", "questionAnchor": "为什么又等了一天", "answerAnchor": "因为我高兴", "relation": "从她被点名后立刻截图追问继续拖延，回答承认活动刚交给她，自己却没按规定报备，怕当众难看。" }
           ],
           "freeQuestions": [

@@ -23,16 +23,17 @@ export function liveCounterBeatHtml(beat = {}, pick = null) {
 }
 
 function counterChoiceHtml(choice = {}, pick = null) {
+  const directionLabel = choice.directionLabel ?? choice.label ?? "";
   if (pick) {
     return `
       <article class="reply-choice-option ${pick.choiceId === choice.id ? "selected" : "dimmed"}">
-        <b>${escapeHtml(choice.label ?? "")}</b>
+        <b>${escapeHtml(directionLabel)}</b>
       </article>
     `;
   }
   return `
     <button class="reply-choice-option" data-live-counter-choice="${escapeHtml(choice.id ?? "")}" type="button">
-      <b>${escapeHtml(choice.label ?? "")}</b>
+      <b>${escapeHtml(directionLabel)}</b>
     </button>
   `;
 }

@@ -13,7 +13,12 @@ export function liveControlDeckHtml({
   const safeSegment = Math.max(1, Math.min(safeTotal, Number(segment ?? 1)));
   const pressureRemaining = Number(pressure.remaining ?? 0);
   const pressureMax = Number(pressure.max ?? 0);
-  const showPatienceHint = safeSegment === 1 && pressureMax > 0 && pressureRemaining === pressureMax;
+  const progressPercent = Math.round((safeSegment / safeTotal) * 100);
+  const pressurePercent = pressureMax > 0
+    ? Math.round((Math.max(0, Math.min(pressureMax, pressureRemaining)) / pressureMax) * 100)
+    : 0;
+  const progressState = deckProgressState(safeSegment, safeTotal);
+  const patienceState = deckPatienceState(pressure);
   const materialKind = materialKindForLabel(material);
   const hasMaterial = Boolean(material && Number(materialCount) > 0);
   const hostState = hostMonitorStateForPressure(pressure);
@@ -43,14 +48,15 @@ export function liveControlDeckHtml({
       </section>
       <section class="deck-card">
         <span>通话进度</span>
-        <b>${safeSegment}/${safeTotal}</b>
-        <small>当前第 ${safeSegment} 段，共 ${safeTotal} 段。</small>
+        <b>${escapeHtml(progressState.label)}</b>
+        <i class="deck-value-rail" aria-hidden="true"><em style="width:${progressPercent}%"></em></i>
+        <small>${escapeHtml(progressState.note)}</small>
       </section>
       <section class="deck-card deck-card-pressure">
         <span>听众耐心</span>
-        <b>${pressureRemaining}/${pressureMax}</b>
-        <small>${escapeHtml(pressure.patienceLabel ?? "")}</small>
-        ${showPatienceHint ? `<small class="deck-patience-hint">绕问、误指会掉耐心；归零要重听本段。</small>` : ""}
+        <b>${escapeHtml(patienceState.label)}</b>
+        <i class="deck-value-rail deck-pressure-rail" aria-hidden="true"><em style="width:${pressurePercent}%"></em></i>
+        <small>${escapeHtml(patienceState.note)}</small>
       </section>
       ${hasMaterial ? `
         <button class="deck-card deck-card-material is-ready" data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="查看后台材料：${escapeHtml(material)}" type="button">
@@ -75,6 +81,21 @@ export function liveControlDeckHtml({
       `}
     </aside>
   `;
+}
+
+function deckProgressState(segment = 1, total = 1) {
+  const ratio = segment / Math.max(1, total);
+  if (total <= 1 || ratio >= 1) return { label: "这一段问完", note: "来电人的这段话已经说完。" };
+  if (segment <= 1) return { label: "刚接进来", note: "来电人还在讲自己的版本。" };
+  if (ratio <= 0.55) return { label: "还在往下问", note: "问题已经问开，麦还在继续。" };
+  return { label: "接近收束", note: "剩下的话不多了，先别替她收尾。" };
+}
+
+function deckPatienceState(pressure = {}) {
+  const level = pressure.level ?? "high";
+  if (level === "low") return { label: pressure.patienceLabel ?? "快压不住", note: "麦里的停顿变长了。" };
+  if (level === "mid") return { label: pressure.patienceLabel ?? "开始起噪", note: "她答得慢了，弹幕也在分岔。" };
+  return { label: pressure.patienceLabel ?? "还在听", note: "来电人还愿意往下说。" };
 }
 
 function hostMonitorStateForPressure(pressure = {}) {
@@ -157,7 +178,11 @@ export function liveFrameHtml({
       <section class="story-grid case-vn-grid live-console-shell ${controlDeckHtml ? "has-control-deck" : ""} ${escapeHtml(screenClass)}" data-live-shell>
         ${screenEffect ? `<div class="screen-effect screen-effect-${escapeHtml(screenEffect)}" aria-hidden="true"></div>` : ""}
         ${controlDeckHtml}
-        <article class="vn-stage">
+        <article class="vn-stage" data-live-stage>
+          <div class="vn-stage-frame" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+            <span><em></em><em></em><em></em><em></em><em></em><em></em><em></em></span>
+          </div>
           <div class="visual-scene backdrop-office ${escapeHtml(backdropClass)}" aria-hidden="true">
             ${label ? `<div class="scene-label">${escapeHtml(label)}</div>` : ""}
             ${sceneEvidencePropsHtml(backdropClass, materialKind)}

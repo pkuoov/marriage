@@ -3,10 +3,11 @@ import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 export function caseProgressStripHtml({ total = 1, answered = 0, label = "连线中" } = {}) {
   const safeTotal = Math.max(1, Number(total ?? 1));
   const segment = Math.max(1, Math.min(safeTotal, Number(answered ?? 0) + 1));
+  const phase = segment >= safeTotal ? "这一段问完" : segment <= 1 ? "刚接进来" : "连线进行中";
   return `
     <div class="case-progress-strip">
-      <span>第 ${segment}/${safeTotal} 句</span>
       <span>${escapeHtml(label)}</span>
+      <span>${escapeHtml(phase)}</span>
     </div>
   `;
 }
@@ -14,12 +15,11 @@ export function caseProgressStripHtml({ total = 1, answered = 0, label = "连线
 export function audiencePatienceHudHtml(pressure = {}) {
   const percent = Math.round(Number(pressure.ratio ?? 0) * 100);
   const level = pressure.level ?? "high";
-  const remaining = Number(pressure.remaining ?? 0);
-  const max = Number(pressure.max ?? 0);
+  const label = pressure.patienceLabel ?? (level === "low" ? "快压不住" : level === "mid" ? "开始起噪" : "还在听");
   return `
-    <div class="audience-patience patience-${escapeHtml(level)}" aria-label="听众忍耐度 ${remaining}/${max}">
-      <span>听众忍耐</span>
-      <b>${remaining}/${max}</b>
+    <div class="audience-patience patience-${escapeHtml(level)}" aria-label="听众耐心：${escapeHtml(label)}">
+      <span>听众耐心</span>
+      <b>${escapeHtml(label)}</b>
       <i><em style="width:${percent}%"></em></i>
     </div>
   `;

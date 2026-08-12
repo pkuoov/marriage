@@ -383,6 +383,9 @@ Do not enrich by:
 
 - Keep authorial truth and caller testimony separate. The B-story chronology must close, but the caller's A-story may contradict itself on purpose. Preserve a contradiction when it comes from a protected interest, is fairly planted, can be tested by the player, and changes the answer to the request; repair it only when the writer cannot state which version is edited or how the player could discover that edit.
 - Treat every playable call as a request for help, not as a delivery vehicle for a prepared case file. Register `helpRequest.kind` as either `explanation` (the caller wants to know why or what an event means) or `interest` (the caller wants an action, decision, resource, introduction, repayment, or outcome). Write the request in one sentence the caller could actually say.
+- **现实诉求优先于道德概括**：不要把「我不想转这八万块，行不行」润色成「不转是不是不讲情分」，也不要把「我想让他还钱」升格成「我是否有资格维护边界」。先写来电人希望主播批准、阻止、追回、介绍或代说的现实结果；只有人物本人确实会拿「情分／孝顺／懂事／诚意」当作防守包装时，才让抽象道德词进入台词。作者知道她在索取道德支持，不等于人物会用作者的术语说出来。
+- **表面求助与真实用途分拍揭示**：来电人可以在开场直说「我不想转，行不行」，但不能顺便自白「我想拿你的回放去压他」。前者是她愿意公开承认的结果，后者是她使用这通直播的隐藏办法。把隐藏用途登记进 `callerStake / selfServingOmission / deceptionChain`，先留一处可听见的痕迹，再由后续玩家追问逼出。开场说清求助，不等于开场说穿案件。
+- **能力与意愿分账**：`拿不出来`、`不想给`、`不认为该由自己给` 是三件事。允许来电人在不同话轮中同时说出前两件，它们之间的落差可以成为后续问题；不得用一句「我拿不出来」替她遮掉意愿，也不得因为她说了「不想给」就自动证明债务责任。后续追问要问她想让主播替她做什么，而不是重复问她转没转。
 - Keep four functions separate: `helpRequest` says what the caller wants from the host; `whyTonight` says why they call now; `callerStake` says what benefit, relationship, status, or self-image they want to protect; `selfServingOmission` names the most consequential fact they withhold or soften.
 - Use the advice-changing test: reveal the omission and answer the original `helpRequest` again. If the advice, refusal, next action, or risk judgment would not materially change, the omission is texture rather than the case core. A playable case normally hides the fact that matters most to the requested help, not a minor embarrassment saved for a late twist.
 - Plant a fair trace before the reveal: a verb choice, inconsistent amount, material edge, refusal, or consequence. Let a player action expose it. The caller may defend, minimize, or reinterpret the fact after discovery; do not let a convenient confession introduce it first.
@@ -397,6 +400,28 @@ The caller normally arrives in one of three states: seeking permission to avoid 
 Run the **remedy-split test** after the omission is exposed. Separate completed exchange from unauthorized use, shared benefit from personal debt, and a proposed term from an accepted agreement. The reveal must change what the host can reasonably advise: what may be stopped, requested, refunded, refused, preserved as evidence, or left unknown. If the same generic advice still works, the benefit engine has not reached the case core.
 
 Let the caller's early version remain imperfect when the contradiction protects that benefit. Do not rewrite testimony into a polished summary. Require a fair trace and a player action that exposes what the caller hoped the host would not price into the answer.
+
+#### Caller Intent and Pain-Point Response Map（连线目的与痛点反应表）
+
+Before writing dialogue, combine three layers: the speaker's fixed personality, this call's concrete purpose, and the current threat to that purpose. Keep fixed personality and knowledge boundaries in `content/characters/cast.json`; keep the case-specific intent and pressure map in author metadata. Do not treat a broad label such as “急躁 / 理智 / 感性” as finished characterization.
+
+For every caller, predefine:
+
+- `openGoal`: what they openly ask the host to explain, permit, recover, introduce, refuse, or say for them;
+- `preferredAnswer`: the concrete answer or outcome they hope the room will give them;
+- `audienceTilt`: whom they want viewers to trust, blame, pity, pressure, or contact;
+- `protectedInterest`: the money, relationship, face, status, safety, convenience, or self-image they cannot afford to lose;
+- `defaultTactic`: their habitual way of controlling the call — charm, precision, grievance, moral pressure, minimization, counter-questioning, over-explanation, or silence;
+- `concessionLimit`: the most damaging fact they can admit while still pursuing the preferred answer;
+- `painPoints[]`: the concrete topic that threatens the preferred answer, why it hurts, the first defensive reaction, the response after proof, and the minimum fact that may leak.
+
+Write each load-bearing exchange as `baseline voice -> pain-point hit -> audible reaction -> narrowed pressure -> minimum revision`. The first line after a hit must sound different from the caller's baseline; a stage direction alone does not count. Let the character go shorter, colder, faster, unusually detailed, repetitive, flattering, sarcastic, silent, or suddenly formal according to the fixed card and current tactic. Do not give every caller the same ellipsis, stammer, or three-stage confession.
+
+Make emotion alter disclosure without altering truth. The first reaction may deny, grab one word, question the host's right to ask, shrink the amount, change the subject, or defend the immediate result. After evidence closes one escape route, force only the smallest survivable revision. On a second hit, escalate or switch tactic; do not reset to the same generic `……` response. If the body is panicking while the spoken line remains a polished psychological summary, rewrite the spoken line.
+
+Every emotional change must have a traceable cause. Do not make a caller flare up merely because the beat needs drama, and do not make every painful question loud: a controlled person becoming extremely exact or going abruptly quiet can be the stronger rise. The author should be able to state what the question threatened, what reaction protected, and what changed in the next legal question.
+
+Store this author-only map as `callerIntentProfile` when the content format permits it; otherwise map it explicitly into `helpRequest`, `callerStake`, `selfServingOmission`, `deceptionChain`, the character card's `stressResponse`, and the affected scene notes. Never render the map itself as dialogue or recap analysis.
 
 #### Layered Disguise Chain（多层伪装链）
 
@@ -485,6 +510,7 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - `dramaticAnchor`: the concrete object, quote, screenshot, proof, bill, agreement, table, or transfer record that makes the live room argue.
    - `objectPurpose`: what the object is trying to prove, soften, excuse, delay, or force.
    - `callerStake`: what the caller gains by telling it this way and what they are hiding, softening, or afraid to admit.
+   - `callerIntentProfile`: the caller's open goal, preferred answer, audience tilt, protected interest, default tactic, concession limit, and pain-point reactions for this call.
    - `deceptionChain`: for a full case, the staged surface versions that protect one purpose, including each trigger, edit, fair trace, player test, forced revision, and advice impact.
    - `otherStake`: what the other party gains by showing/hiding/wording things this way and what they would lose if fully exposed.
    - `thirdPressure`: parent, friend, platform, ex, family role, or public image pressure if it exists.
@@ -502,6 +528,7 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - While reading, run the coupling questions: does Scene 4's number get seeded by Scene 1? Does Scene 3's turn follow Scene 2's emotion? If a beat could be removed with nothing breaking, merge it or give it a missing edge.
    - Pickup audit (接话头): for every turn, name the exact word, question, or claim from the previous turn that it picks up — or the visible dodge it performs. A turn that could follow any previous line equally well connects to none; rewrite it around one word from the turn before it.
    - Voice audit: check each caller turn against the packet's `callerVoice` fingerprint — filler, sentence habit, name for the other party, shutdown topic — and check that guard state tightens the fingerprint instead of replacing it.
+   - Pain-point audit: for every load-bearing question, compare the caller's line immediately before and after it. Confirm that the hit threatens a registered interest, produces an audible character-specific change, and yields no more than the minimum fact current evidence can force.
 
 3. Only then split into data fields.
    - Each UI field must be traceable back to the story packet.
@@ -515,6 +542,7 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - Ask: whose face, money, status, safety, or convenience does this sentence protect?
    - Ask: did this sentence change who pushed the dramatic object into the call?
    - Ask: did this sentence make an earlier option or later conclusion incoherent?
+   - Read the next reply for accidental agreement. After 「行不行／可不可以／该不该」, a bare 「行／可以／好」 sounds like the host has already ruled, even when the following sentence intends only to continue the interview. Delete the ambiguous acknowledgment or replace it with the next concrete question.
    - If yes, update the whole affected chain, not just the sentence.
 
 ### Adjacent-Turn Contract (逐话轮承接合同)
@@ -554,6 +582,23 @@ Hard rule: a daily case is not assembled from interchangeable good-sounding line
   "dramaticAnchor": "",
   "objectPurpose": "",
   "callerStake": "",
+  "callerIntentProfile": {
+    "openGoal": "",
+    "preferredAnswer": "",
+    "audienceTilt": "",
+    "protectedInterest": "",
+    "defaultTactic": "",
+    "concessionLimit": "",
+    "painPoints": [
+      {
+        "topic": "",
+        "threatens": "",
+        "firstResponse": "",
+        "afterProof": "",
+        "minimumLeak": ""
+      }
+    ]
+  },
   "otherStake": "",
   "thirdPressure": "",
   "callerVoice": {
@@ -622,6 +667,7 @@ Every daily case must have:
 - `whyTonight`: why the caller phones in today, not last week or next month.
 - `objectPurpose`: why the screenshot, proof, bill, contract, voice note, table, or chat log exists in the relationship.
 - `callerBenefit`: what the caller gains by telling the story this way.
+- `callerIntentProfile` or an explicit equivalent: what answer the caller wants, which interest they protect, how they normally steer the call, and how each load-bearing pain point changes their spoken behavior.
 - `otherBenefit`: what the other party gains by showing, cropping, delaying, wording, or hiding something.
 - `thirdPressure`: whose mouth or expectation is being borrowed: parents, friends, platform, ex, matchmaker, boss, money deadline, public image.
 - `truthGradient`: at least three layers: true, edited, and still unknowable.
@@ -737,7 +783,7 @@ Motive chain:
 - If behavior has no obvious strategic gain, classify it deliberately as a different case type: spoiled entitlement, conflict avoidance, low responsibility, pretending not to understand, genuine incompetence, or malicious but impulsive harm. Do not force every messy behavior into premeditated fraud.
 
 Opening:
-- Caller speaks first and gives relationship context.
+- Caller speaks first and gives only enough relationship context to make the request intelligible.
 - Host asks a neutral continuation question.
 - Conversational Phrasing Rules (直播连线拟真话语权与对话承接规范):
   - Do not use abrupt, clinical, or command-style speech for the host or caller. It must feel like a real phone-in talk show, not a rigid script or a police interrogation.
@@ -745,12 +791,15 @@ Opening:
   - **Host transitions must be warm and inquiry-based**: Instead of abrupt commands like `“先说第一次提钱，他原话怎么讲？”` (sounds like an interrogator), write it as an empathetic inquiry: `“晚上好。我想问一下，他提钱的时候，原话是怎么讲的？”` (natural hosting transition).
   - Avoid any Host or Caller lines that sound like system placeholders or prompt labels.
   - **Pack-level opening variance**: a story pack must not let its opening first caller line collapse into one shared template with only the topic noun swapped (「主播你好，我想问一段...的事」×4). Vary the entry energy per caller: one blurts the number before the greeting, one apologizes for calling this late, one has clearly rehearsed a neutral line, one gets interrupted by the host before finishing a sentence. Read all four openings back to back before shipping — if you can predict word six of case 3's opening from case 1's template, rewrite it.
-- Do not pack relationship source, relationship stage, family reaction, suspicious material, and caller doubt into the first caller line. Split them into beats:
+- Do not pack relationship source, relationship stage, family reaction, suspicious material, and caller doubt into the first caller line. One possible split for a relationship-stage call is:
   - caller: call reason only
   - host: how did you meet / where has it progressed
   - caller: relationship source + current stage
   - host: what exactly happened at that stage
   - caller: trigger material / quote / pressure point
+- **Opening turn information budget**: a caller's first turn may do one job only: ask for help, name the amount, report the other person's reaction, or ask for a concrete decision. If one turn contains three or more of these jobs, split it into at least two or three alternating host-caller exchanges. The host asks for one missing piece at a time; the caller adds one layer at a time. Sentence pagination does not satisfy this rule: breaking an information dump into several bubbles without giving the other person a chance to respond is still an information dump.
+- **开场阶梯按眼前缺口走，不按固定问卷走**：来电人说「男朋友找我借钱」以后，最自然的下一问可能是「借多少」，不是一律先问怎么认识、交往多久；金额出来以后再问转没转，施压方式出来以后再问她今天想要什么。关系时长、同住情况和材料来源在它们真正变得必要时进入。判断标准是上一答是否让下一问成为现场最想问的那一句，而不是模板字段是否已经填满。
+- **求助问句不许被主播提前批准**：当来电人用「行不行／可不可以／我该不该」索取决定，而事实尚未展开，主播不要用「行」「可以」「你没错」接话。直接追问一个会改变答案的事实，例如交往多久、钱由谁欠、是否已经转出。主播可以晚些给明确立场，但不能在开场用口头应答词无意中替玩家和证据下结论。
 - The trigger for suspicious material appears naturally, for example: "聊到见父母/以后安排时，对方主动发截图".
 - The material's purpose appears naturally too, for example: "对方想先把饭局定下来", "怕父母第一眼把 TA 筛掉", or "想让你先替 TA 向家里解释".
 - Caller only names unease after the preceding line gives a reason.
@@ -838,6 +887,10 @@ Guard continuity: the caller's guard state moves with the player's questioning, 
 - Drifting on outer questions keeps the caller relaxed and self-assured — until the final quote-pick confronts them, where the dissonance should be audible.
 
 Guarded answers are not bonus confessions. A `guardedAnswer` must withhold: fewer specifics, hedging, subject changes, a half-answer that still contains the beat's contradiction but with less texture. It must never pre-spend the deepFollowup confession, the recap conclusion, or the final quote payoff. If the normal answer names three details, the guarded answer names one and resists the other two.
+
+- **防备回答要换策略，不只删字**：普通回答承认事实时，`guardedAnswer` 不能只是删掉数字和例子后留下同一个标准答案。让人物按人设选择反问、缩小范围、抓住措辞、转向眼前损失或只承认无法再否认的一层；下一轮追问再逼出下一层。
+- **高压失稳不能四案同模**：不要把所有被戳穿都写成统一的“短否认→自我修正→完整坦白”。爱体面的人会改口保脸，防御强的人会反咬问题，精确型人物会把范围越说越窄，职场新人会先复述流程再漏出害怕。失稳方式必须来自人物长期声线。
+- **一轮只塌一层**：证据出现后的第一反应最多交出一个新事实或一个防守动作。若一句话同时交代事实、动机、心理总结和证据边界，应拆给相邻追问、沉默或主播；来电人不能替作者把自己分析完。
 
 当事人的“防御闪躲”与推诿话术机制 (Evasion & Deflection Mechanics):
 当连线人在核心疑点被 Host 戳中或面对矛盾材料时，决不能立即坦白或爽快承认，必须表现出强烈的心理防御，采用以下三种口语化闪躲话术以制造对话张力：
@@ -947,6 +1000,7 @@ Character bible:
 - Every player-visible voice must resolve structurally. Use `speaker` for direct beats and `speakerProfileId` for an authored DM, note, or relayed NPC material. Use `voiceAttribution: document` only when the artifact itself is the source and no new NPC is speaking. A generic `source: dm` is not voice attribution.
 - Personality changes expression, never fact access. An impatient witness may interrupt and a sensitive caller may over-explain, but neither may cross `knowledgeBoundary`, `truthBoundary`, or the sensor contract. Do not use a personality label to justify omniscience.
 - Pressure must be audible. At each character's load-bearing pressure point, apply the registered `stressResponse` through sentence length, subject choice, evasion, or vocabulary. Repeating a catchphrase without the registered defense action does not count as characterization.
+- Separate the permanent card from the temporary call motive. The same proud person may charm when seeking endorsement, become precise when protecting money, and turn cold when face is threatened; those variations must still share the card's rhythm, vocabulary, defense, and knowledge boundary. For every pain-point exchange, verify `baseline -> trigger -> reaction -> minimum concession`; if the post-hit line could be moved under another question or spoken by another caller unchanged, the reaction is not designed yet.
 - Run the role-swap test: hide names and swap a line with another speaker in the same case. If it still reads naturally without changing syntax or defense, rewrite it. At least one of rhythm, action, or omission must identify the speaker; do not merely paste a catchphrase onto generic exposition.
 - Every named off-mic voice (friend, cousin, store manager, team lead, introducer, the other woman) gets a three-line stance card before it speaks: 立场 (what it wants the room to believe), 遮掩 (what it hides or softens), 利益 (what it gains from its version). A voice that exists only to confirm the mainline is a prop — cut it or arm it. Two victims who want different things (说法 vs 止损) are drama; two witnesses who agree are furniture. Stance cards feed the sensor contract audit: what the voice knows must fit its life, and what it says must serve its stake.
 - After editing dialogue, run `npm run content:dialogue-report`. Review one character vertically across phases and then one scene horizontally across speakers. The generated rhythm warnings are reading prompts, not automatic rewrite orders; the forbidden-template and attribution failures are hard errors.
@@ -977,6 +1031,8 @@ The host is a person (design: `docs/host-character-design.md`):
 4. **主播语言噪声**：不是每句都推进案子。允许主播累、跑题一下、损一句、自嘲、对弹幕翻个白眼——给他和来电人同等的"废话权"。金句配额律照旧（≤3/案），但腾出的空间填**人味**不是填**更短的提问**。
 5. **夜班情绪弧（跨案写死）**：第一案精神、话多爱贫 → 中段被案子磨、火气上来一点 → 第四案疲、贫里带累、偶尔破功 → 尾声软。上一案的重量可以渗进下一案开场半句。不许四案都是同一个满血中性主播。
 6. **克制是面具不是本性**：默认那个松、有偏见、爱损的人是"真的他"；克制/中立是他戴着的、偶尔滑落的职业面具。滑落的时刻（被案子带偏后认错、被啰嗦问烦了拉回来、对操控真动气）要写出来——活人认错、活人破功，比机器中立可爱。
+7. **事实闭合后必须有立场**：克制只约束下判断的时机，不允许主播在证据齐了以后继续躲进材料清单。若来电人把自己的虚荣、贪心、成本转嫁或占便宜包装成单纯受害，主播要用第二人称点出具体动作，再给明确评价；若另一方利用新人想表现、怕难看的心思逼其承担成本，也要当面点名。禁止用“双方都有问题”抹平轻重。攻击对象只限已有证据支撑的行为与现实目的，不攻击身份、职业、出身或脆弱处；说完接现实行动，但不能再用一句温吞安慰把判断撤回。
+8. **判词要有人格峰值**：每案至多一处真正的价值判断峰值。进入峰值后停用“能确认／仍未知／下一步”式分栏口播和连续 `X 归 X`，改用短句、第二人称和生活词；材料边界仍留在结案卡。人物听完这段，应该知道林旭阳为什么生气，而不只是知道他整理出了哪些项目。
 
 ### 抓破绽·主播加压
 
@@ -1149,9 +1205,15 @@ For case and pack skeletons drawn from classic detective fiction — false solut
 After content edits:
 
 ```bash
-npm run check
+npm run content:index
+npm run content:script
 npm run verify:pack -- <pack-id>
 npm run test:narrative
+npm run check
 ```
+
+Run builders before narrative tests: runtime reports read `src/generated/contentPackIndex.js`, so testing before `content:index` can validate stale dialogue and leave rejected wording in `docs/generated/narrative-flow-report.md`. Afterward search the repository for the rejected phrase, including generated reports.
+
+Write semantic tests around stable structure. Locate a beat by case id, scene id, option id, or `suspicionLabel`, then assert the intended behavior. Do not locate it only by an old full sentence that the test itself prevents editors from improving. Reserve exact player-visible string assertions for deliberate wording locks and banned regressions.
 
 Run `npm run smoke:browser` if the change touches flow, options, materials, or recap structure. Then hand off to `livestream-game-flow-review` for a played-through review — content is not done when the JSON validates; it is done when the call plays well.

@@ -18,6 +18,7 @@ export function createOvernightScreens(ctx) {
     liveCounterBeatAfterScene,
     liveCounterBeatBeforeScene,
     liveCounterBeatById,
+    pressureSignalForLiveCounterChoice,
     nextPlayableSceneIndex,
     nightStructureFor,
     overnightCallbackDialogueLines,
@@ -960,6 +961,7 @@ export function createOvernightScreens(ctx) {
     const state = ctx.getState();
     const choice = (beat.choices ?? []).find((item) => item.id === choiceId) ?? null;
     if (!choice) return;
+    const pressureSignal = pressureSignalForLiveCounterChoice(choice, state.lastPressureSignal ?? "");
     state.liveCounterPicks = {
       ...(state.liveCounterPicks ?? {}),
       [liveCounterPickKey(brief, beat.id)]: {
@@ -967,11 +969,14 @@ export function createOvernightScreens(ctx) {
         label: choice.label ?? "",
         recapAftertaste: choice.recapAftertaste ?? "",
         stanceNudge: choice.stanceNudge ?? null,
+        pressureSignal,
         routeTone: choice.routeTone ?? "live-counter",
         endingImpact: choice.endingImpact ?? null,
         at: Date.now()
       }
     };
+    state.lastPressureSignal = pressureSignal || null;
+    state.lastPressureAxis = choice.routeAxis ?? "caller-credibility";
     const anchorIndex = Number(beat.beforeSceneIndex ?? beat.afterSceneIndex ?? 0);
     recordRouteChoice(brief, anchorIndex + (beat.beforeSceneIndex === undefined ? 0.5 : -0.5), {
       question: beat.text ?? beat.from ?? "现场反压",

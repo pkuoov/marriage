@@ -67,7 +67,7 @@ const continuousStoryRoutes = {
       { sceneId: "day-work-finance-window", optionId: "keep-payment-receipt-rule" },
       { sceneId: "day-work-supplier-visit", optionId: "keep-supplier-contact-column" }
     ],
-    callbackEarnedItem: "财务窗口回单要求",
+    callbackEarnedItem: "财务窗口补报销要求",
     posture: "withCaller",
     snapshot: "caller-complicit",
     accusationChoiceIndex: 2,
@@ -654,8 +654,8 @@ function renderContinuousLiveCounter(lines, beat) {
   for (const line of beat.lines ?? []) renderContinuousSpoken(lines, line);
   const choice = (beat.choices ?? []).find((entry) => !entry.silent) ?? beat.choices?.[0];
   if (!choice) return;
-  if (!choice.silent && choice.label && choice.lines?.length) lines.push(`**林旭阳：** ${choice.label}`, "");
-  else if (!choice.silent && choice.label && !choice.questionOverride?.question) lines.push(`【你选择：${choice.label}】`, "");
+  lines.push(`【你选择：${choice.directionLabel ?? choice.label}】`, "");
+  if (!choice.silent && choice.label) lines.push(`**林旭阳：** ${choice.label}`, "");
   for (const line of choice.lines ?? []) renderContinuousSpoken(lines, line);
   if (choice.questionOverride?.question) lines.push(`**林旭阳：** ${choice.questionOverride.question}`, "");
 }
@@ -909,8 +909,8 @@ function renderPureStoryLiveCounter(lines, beat = {}) {
   if (beat.text) lines.push(`**${beat.from ?? "后台"}：** ${beat.text}`, "");
   for (const line of beat.lines ?? []) renderDirectorSpoken(lines, line);
   for (const choice of beat.choices ?? []) {
-    lines.push(`#### 主播可以：${choice.label}`, "");
-    if (!choice.silent && choice.lines?.length) lines.push(`**林旭阳：** ${choice.label}`, "");
+    lines.push(`#### 你可以选择：${choice.directionLabel ?? choice.label}`, "");
+    if (!choice.silent && choice.label) lines.push(`**林旭阳：** ${choice.label}`, "");
     for (const line of choice.lines ?? []) renderDirectorSpoken(lines, line);
     if (choice.questionOverride?.question) lines.push(`**林旭阳：** ${choice.questionOverride.question}`, "");
   }
@@ -1566,6 +1566,7 @@ function assertSourceCompleteness(markdown, sources) {
       Object.entries(value).forEach(([key, entry]) => {
         if (key === "answer" && Array.isArray(value.lines) && value.lines.length) return;
         if (key === "helperHint" && !vBroPlayerVisible) return;
+        if (key === "callerIntentProfile") return;
         visit(entry, `${path}.${key}`);
       });
     }

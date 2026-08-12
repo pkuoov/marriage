@@ -222,9 +222,10 @@ export function createRecapScreens(ctx) {
     });
     frame({
       brief,
-      mood: "listening",
-      label: "连线回看",
+      mood: recap.kind === "verdict" ? "focused" : "listening",
+      label: recap.kind === "verdict" ? "连线收束" : "连线回看",
       chapter: liveChapterTitle(brief),
+      screenClass: recap.kind === "verdict" ? "host-verdict-screen" : "recap-screen",
       text: recap.text,
       choices: recap.choices
     });

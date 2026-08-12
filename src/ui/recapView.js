@@ -1,4 +1,6 @@
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
+import { splitDialogueSentences } from "../runtime/dialoguePresentation.js";
+import { callDialogueHtml } from "./callFlowView.js";
 
 export function solvedRecapPagesHtml({
   rank = "",
@@ -16,6 +18,8 @@ export function solvedRecapPagesHtml({
   boundaryLine = "",
   issueLineText = ""
 } = {}) {
+  const spokenConclusion = String(conclusion.summary ?? "").trim();
+  const spokenConclusionLines = splitDialogueSentences(spokenConclusion).map((text) => ({ role: "host", text }));
   return [
     `
       <section class="recap-score-card">
@@ -46,17 +50,20 @@ export function solvedRecapPagesHtml({
         ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
       </section>
     `,
+    spokenConclusion ? `
+      <section class="host-verdict-stage" data-recap-kind="verdict">
+        ${callDialogueHtml(spokenConclusionLines, "host-verdict-dialogue")}
+      </section>
+    ` : "",
     `
-      <section class="recap-boundary-page">
+      <section class="recap-boundary-page" data-recap-kind="boundary">
         <p><b>台面上的话</b></p>
         <p>${(issue.revealed ?? []).length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮只听到表层，评论区还会继续吵。"}</p>
-        <p><b>主播收话</b></p>
-        <p>${escapeHtml(conclusion.summary)}</p>
         ${truthBoundaryReviewHtml(boundary, boundaryPicks)}
       </section>
     `,
     `
-      <section class="recap-aftercare-page">
+      <section class="recap-aftercare-page" data-recap-kind="aftercare">
         <p><b>后续回拨</b></p>
         <p>${escapeHtml(conclusion.followup)}</p>
         ${conclusion.deepQuestion ? `<p class="hint"><strong>多问一句</strong>：${escapeHtml(conclusion.deepQuestion)}</p>` : ""}
@@ -111,17 +118,21 @@ export function solvedRecapFlowView({
   const index = Math.max(0, Math.min(Number(step ?? 0), safePages.length - 1));
   const pageHtml = safePages[index] ?? "";
   const isBoundaryPage = pageHtml.includes("truth-boundary-card");
+  const kind = recapPageKind(pageHtml);
+  const nextKind = recapPageKind(safePages[index + 1] ?? "");
   const canLeaveBoundary = !isBoundaryPage || truthBoundaryPlaced(boundary, boundaryPicks);
   return {
     index,
     pageCount: safePages.length,
+    kind,
     isBoundaryPage,
     canLeaveBoundary,
-    text: `<div class="recap-page-kicker"><span>回看</span><b>${index + 1}/${safePages.length}</b></div>${pageHtml}`,
+    text: `<div class="recap-page-kicker"><span>${escapeHtml(recapPageLabel(kind))}</span></div>${pageHtml}`,
     choices: recapFlowChoicesHtml({
       index,
       pageCount: safePages.length,
       canLeaveBoundary,
+      nextLabel: recapNextLabel(kind, nextKind),
       afterLabel,
       retryLabel
     })
@@ -211,12 +222,12 @@ function truthBoundaryChallengeHtml(review, picks = {}) {
   `;
 }
 
-function recapFlowChoicesHtml({ index = 0, pageCount = 1, canLeaveBoundary = true, afterLabel = "继续", retryLabel = "从头再问" } = {}) {
+function recapFlowChoicesHtml({ index = 0, pageCount = 1, canLeaveBoundary = true, nextLabel = "继续回看", afterLabel = "继续", retryLabel = "从头再问" } = {}) {
   const hasNext = Number(index ?? 0) < Number(pageCount ?? 1) - 1;
   if (hasNext) {
     return flowGroup(`
       ${canLeaveBoundary
-        ? `<button class="primary" data-recap-next type="button">继续回看</button>`
+        ? `<button class="primary" data-recap-next type="button">${escapeHtml(nextLabel)}</button>`
         : `<button class="primary" disabled type="button">还有话没落位</button>`}
       <button data-retry-case type="button">${escapeHtml(retryLabel)}</button>
     `);
@@ -225,6 +236,31 @@ function recapFlowChoicesHtml({ index = 0, pageCount = 1, canLeaveBoundary = tru
     <button class="primary" data-after-recap type="button">${escapeHtml(afterLabel)}</button>
     <button data-retry-case type="button">${escapeHtml(retryLabel)}</button>
   `);
+}
+
+function recapPageKind(pageHtml = "") {
+  if (pageHtml.includes('data-recap-kind="verdict"')) return "verdict";
+  if (pageHtml.includes('data-recap-kind="boundary"')) return "boundary";
+  if (pageHtml.includes('data-recap-kind="aftercare"')) return "aftercare";
+  if (pageHtml.includes("recap-score-card")) return "score";
+  return "recap";
+}
+
+function recapPageLabel(kind = "recap") {
+  return {
+    score: "收麦回看",
+    verdict: "主播收话",
+    boundary: "整理案卷",
+    aftercare: "回拨与未决",
+    recap: "回看"
+  }[kind] ?? "回看";
+}
+
+function recapNextLabel(kind = "recap", nextKind = "recap") {
+  if (kind === "score" && nextKind === "verdict") return "听完这通";
+  if (kind === "verdict") return "整理案卷";
+  if (kind === "boundary") return "查看回拨";
+  return "继续回看";
 }
 
 function flowGroup(content) {

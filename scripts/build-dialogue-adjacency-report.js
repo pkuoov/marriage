@@ -68,7 +68,8 @@ function validateMicroLogicContracts() {
         });
         if (!MICRO_LOGIC_SOURCE_KINDS.has(contract.sourceKind)) findings.push(`${label}.sourceKind: unsupported value ${contract.sourceKind}`);
         if (contract.premiseAnchor && !invariant.includes(contract.premiseAnchor)) findings.push(`${label}.premiseAnchor: not found in fixed scene setup`);
-        if (contract.answerAnchor && !String(option.answer ?? "").includes(contract.answerAnchor)) findings.push(`${label}.answerAnchor: not found in normal answer`);
+        const answerSurface = visibleAnswerText(option);
+        if (contract.answerAnchor && !answerSurface.includes(contract.answerAnchor)) findings.push(`${label}.answerAnchor: not found in normal answer or dialogue lines`);
         if (contract.sourceProves === contract.sourceDoesNotProve) findings.push(`${label}: proves and doesNotProve must be different scopes`);
       }
       const closerLines = loadBearingCloserLines(scene);

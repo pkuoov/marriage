@@ -34,6 +34,8 @@ try {
   } else if (smokeTarget === "case2-transition") {
     await runCase2DayMap();
     await runCaseTransition();
+  } else if (smokeTarget === "host-verdict") {
+    await runHostVerdictPresentation();
   } else if (smokeTarget === "portrait-viewports") {
     await runPortraitViewports();
   } else if (smokeTarget === "state-replacement") {
@@ -64,6 +66,8 @@ console.log(smokeTarget === "case34"
     ? "Browser replay smoke passed: gamepad-support-document"
     : smokeTarget === "case2-transition"
       ? "Browser replay smoke passed: case2-day-map, case-transition"
+      : smokeTarget === "host-verdict"
+        ? "Browser replay smoke passed: host verdict staged at mobile and desktop widths"
       : smokeTarget === "portrait-viewports"
         ? "Browser replay smoke passed: portrait layouts at 390x844, 1366x768, 1280x800, 1920x1080"
         : smokeTarget === "state-replacement"
@@ -572,8 +576,11 @@ async function runRoute(route) {
       if (transitionDuration !== "2.4s") throw new Error(`pre-show transition should hold for 2.4s, got ${transitionDuration}`);
     }
     if (await page.locator("[data-enter-first-case]").count()) {
-      await drainDialogue(page, route);
-      await assertVisibleText(page, "改版又催上了，先让他催着。开播了哈，今天继续连麦。", "night shell prologue should sound like a returning personal streamer");
+      const prologueTranscript = (await drainDialogue(page, route)).replace(/\s+/g, "");
+      const expectedPrologue = "改版又催上了，先让他催着。又要打PK，又要搞团播，真烦啊。开播了哈，今天继续连麦。";
+      if (!prologueTranscript.includes(expectedPrologue)) {
+        throw new Error("night shell prologue should sound like a returning personal streamer and seed the later multi-caller format");
+      }
       await assertNoPageText(page, "试玩已收麦", "night shell prologue must not display the story-pack completion HUD");
       if (await page.locator(".night-shell-line.shell-notice, .night-shell-line.shell-message, .night-shell-line.shell-stage, .night-shell-line.shell-host").count() !== 4) {
         throw new Error("night shell prologue should distinguish work notice, personal message, solo go-live action, and host opening");
@@ -626,7 +633,7 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-enter-post-live], [data-enter-interlude]").count()) {
-        await assertVisibleText(page, "电话断了。后台那张信用卡账单还亮着，至少三万五没有说明", "overnight route should show the authored three-bucket hangup line before the show ends");
+        await assertVisibleText(page, "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明", "overnight route should identify the caller-authorized transaction excerpt before the show ends");
         await assertVisibleText(page, "别转", "case 1 hangup should retain the audience warning not to transfer");
         await assertVisibleText(page, "这八万就该转", "case 1 hangup should also show the opposing audience view after both sides are exposed");
         await assertNoPageText(page, "账单、到期日、她要垫多少", "Zhao's private call must not happen while the show is still live");
@@ -691,16 +698,15 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-continue-live-counter]").count()) {
+        const selectedHostResponse = (await page.locator(".live-counter-response .call-line.host p").first().textContent())?.trim() ?? "";
         const liveCounterTranscript = await drainDialogue(page, route);
         if (route.name === "accounting-support") {
           if (!liveCounterTranscript.includes("他在听。")) {
             throw new Error("night-B counter-pressure should interrupt between two live scenes");
           }
-          // verify-pack rejects respondent roles in live-counter lines; this replay verifies
-          // that the player's selected on-air host response actually reached the transcript.
-          const selectedCounterSentences = selectedCounterChoiceLabel.match(/[^。！？!?]+[。！？!?]?/gu)?.map((item) => item.trim()).filter(Boolean) ?? [];
-          if (!selectedCounterChoiceLabel || !selectedCounterSentences.every((sentence) => liveCounterTranscript.includes(sentence))) {
-            throw new Error("the host must answer the relayed counter-pressure through the selected on-air choice");
+          // The button only names a direction; the complete host sentence appears after selection.
+          if (!selectedCounterChoiceLabel || !selectedHostResponse || selectedHostResponse === selectedCounterChoiceLabel) {
+            throw new Error("the selected counter-pressure direction must resolve into a distinct on-air host response");
           }
         }
         await activate(page, route, "[data-continue-live-counter]");
@@ -859,21 +865,21 @@ async function runCase4DayRoutes() {
     chapter: 4,
     name: "case4-day-map",
     interludeAction: "recheck-approval-page",
-    interludeText: "这张审批图最该让对方补哪一页",
+    interludeText: "这张“审批通过”最先要核对哪三项",
     expectedDaySceneCount: 4,
     dayScenes: [
       {
         id: "day-work-payment-ledger",
         text: "她整理的七条报销记录",
         rows: ["q01", "q02", "q04"],
-        questionText: "公开流程和这条私聊只隔十七分钟"
+        questionText: "公开流程刚写完对公要比价，他为什么十七分钟后就让你改刷个人卡"
       },
-      { id: "day-work-finance-window", text: "真付了，就让他们报回单号" }
+      { id: "day-work-finance-window", text: "拿着立项页等不到账" }
     ],
     opener: "她整理的报销时间线",
     openerText: "财务说延后，是九天以后",
     conflictText: "财务那时还没说延后",
-    reactionText: "弹幕里有人说我蠢。我看见了。",
+    reactionText: "弹幕里有人说我蠢。",
     reactionChoice: "silence",
     reactionResponse: "行，继续。",
     nextCounterText: "工作群刚弹出一条"
@@ -1290,6 +1296,73 @@ async function runCaseTransition() {
   }
 }
 
+async function runHostVerdictPresentation() {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 1280, height: 800 }
+  ]) {
+    const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    page.setDefaultTimeout(8000);
+    try {
+      await page.goto(`${playableUrl}?playtest=browser-smoke-host-verdict-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
+      await click(page, "[data-start-story]");
+      await page.evaluate(() => {
+        const storageKey = "livestream-detective-save-v1";
+        const save = JSON.parse(localStorage.getItem(storageKey) ?? "{}");
+        const brief = save.caseBriefs?.[1] ?? {};
+        const contradictions = [...new Set((brief.sceneVersions ?? []).map((scene) => scene.contradiction).filter(Boolean))];
+        save.chapter = 2;
+        save.caseBrief = brief;
+        save.screen = "chapter";
+        save.scene = "caseSolved";
+        save.recapStep = 1;
+        save.lastReaction = null;
+        save.contradictionLog = { ...(save.contradictionLog ?? {}), [brief.id]: contradictions };
+        save.accusationHistory = [
+          ...(save.accusationHistory ?? []).filter((item) => item.caseId !== brief.id),
+          { caseId: brief.id, accused: "both", correct: true, dailyBadge: true, quoteHit: true }
+        ];
+        localStorage.setItem(storageKey, JSON.stringify(save));
+      });
+      await page.reload();
+      await click(page, "[data-continue-story]");
+      if (await page.locator(".host-verdict-screen").count() !== 1) throw new Error("host verdict must use its own live-stage screen");
+      if (await page.locator('[data-live-shell][data-active-speaker="host"]').count() !== 1) throw new Error("host verdict must highlight the host portrait");
+      const hostPortraitClass = await page.locator(".case-portrait-host").getAttribute("class") ?? "";
+      if (await page.locator(".case-portrait.active").count() !== 1 || !hostPortraitClass.includes("active")) {
+        throw new Error("host verdict must dim the caller and keep only the host active");
+      }
+      const expectedBeats = [
+        "后面的预约先取消",
+        "这件事性质不一样",
+        "民警联系你的记录",
+        "一开始就觉得他长得好看",
+        "服务也都做完了",
+        "自己的贪心全甩成",
+        "已经做过的项目能退多少",
+        "原始记录交给民警"
+      ];
+      for (const expected of expectedBeats) {
+        await assertVisibleText(page, expected, `host verdict must stage the beat: ${expected}`);
+        if (await page.locator(".avg-page-line").count() !== 1) throw new Error("host verdict must show one current speech bubble");
+        if (await page.locator("[data-recap-next]:visible").count()) throw new Error("archive button must stay hidden until the host finishes speaking");
+        await page.locator("[data-dialogue-advance]").click();
+        await page.waitForTimeout(20);
+      }
+      await assertVisibleText(page, "整理案卷", "host verdict must hand off to the archive only after its last beat");
+      await assertNoPageText(page, "1/4", "host verdict must not display mechanical page counts");
+      const viewportFit = await page.locator(".avg-textbox").evaluate((element) => {
+        const box = element.getBoundingClientRect();
+        return box.left >= 0 && box.right <= window.innerWidth && box.bottom <= window.innerHeight;
+      });
+      if (!viewportFit) throw new Error(`${viewport.width}x${viewport.height} host verdict must fit inside the viewport`);
+    } finally {
+      await context.close();
+    }
+  }
+}
+
 async function runPortraitViewports() {
   for (const viewport of [
     { width: 390, height: 844, label: "mobile" },
@@ -1447,8 +1520,9 @@ async function exerciseTruthBoundary(page, route) {
     await prompt.locator("[data-truth-boundary-pick]").first().evaluate((element) => element.click());
   }
   await assertNoPageText(page, "这句还不能这么放", "Truth boundary must not reveal correctness on the choice page");
-  await page.locator("[data-recap-next]").first().waitFor({ state: "visible" });
-  await activate(page, route, "[data-recap-next]");
+  await drainDialogue(page, route);
+  await page.locator("[data-recap-next]:visible").first().waitFor({ state: "visible" });
+  await activate(page, route, "[data-recap-next]:visible");
   await assertVisibleText(page, "麦外来信", "Recap final page should keep off-mic letters after boundary placement");
   const finalBody = await page.locator("body").innerText();
   if (finalBody.includes("灯是我真心买的")) {

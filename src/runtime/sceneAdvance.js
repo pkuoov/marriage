@@ -19,7 +19,8 @@ import {
   liveCounterBeatBeforeScene,
   liveCounterBeatById,
   liveCounterBeatsFor,
-  liveCounterBeatTriggerMet
+  liveCounterBeatTriggerMet,
+  pressureSignalForLiveCounterChoice
 } from "./liveCounterModel.js";
 import {
   availableCallbackOpeners,
@@ -76,6 +77,7 @@ export {
   liveCounterBeatById,
   liveCounterBeatsFor,
   liveCounterBeatTriggerMet,
+  pressureSignalForLiveCounterChoice,
   nightActionById,
   nightActionCost,
   nightActionCountsForBudget,

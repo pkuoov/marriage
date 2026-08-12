@@ -9,7 +9,6 @@ export function sceneReviewHtml({
   reviewHtml = ""
 } = {}) {
   return `
-    <p><b>第 ${Number(displayIndex ?? 0) + 1} 句</b></p>
     <div class="call-dialogue">
       ${done ? completedExchangeHtml : activeExchangeHtml}
     </div>

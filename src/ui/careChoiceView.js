@@ -1,4 +1,3 @@
-import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 import { choiceButtonBodyHtml } from "./callFlowView.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
@@ -7,14 +6,13 @@ export function careChoiceHtml({ choices = [], selectedChoice = null, hostName =
     <section class="care-choice-card">
       <div class="care-choice-heading">
         <span>今晚最后一句</span>
-        <h2>案情说完了，你还想怎么送她下麦？</h2>
-        <p>这句不判分。她会记得你怎么说。</p>
+        <h2>案情说完了，最后跟她说一句。</h2>
       </div>
       ${selectedChoice ? careChoiceDialogueHtml(selectedChoice, hostName) : `
         <div class="care-choice-grid">
           ${choices.map((choice) => `
             <button class="decision-choice" data-care-choice="${escapeHtml(choice.id)}" type="button">
-              ${choiceButtonBodyHtml(choice.label, CHOICE_COST_META.careChoice, choice.hostLine)}
+              ${choiceButtonBodyHtml(choice.label)}
             </button>
           `).join("")}
         </div>

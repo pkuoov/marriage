@@ -18,10 +18,11 @@ const LEGACY_INTERLUDE_ACTIONS = Object.freeze({
   "zhao-zhou-work": "recheck-approval-page"
 });
 const LEGACY_CALLBACK_ITEMS = Object.freeze({
-  "赵律师边界框架": "审批页缺口",
-  "周会计钱路框架": "审批页缺口",
-  "扛活还是扛钱": "审批页缺口",
-  "顾问回单": "审批页缺口"
+  "赵律师边界框架": "立项页不是报销单",
+  "周会计钱路框架": "立项页不是报销单",
+  "扛活还是扛钱": "立项页不是报销单",
+  "顾问回单": "立项页不是报销单",
+  "审批页缺口": "立项页不是报销单"
 });
 const RETIRED_INTERLUDE_CHOICES = new Set(["work-frame-zhao", "work-frame-zhou", "work-frame-lin"]);
 const RETIRED_DELEGATION_MATERIALS = new Set(["profile-mba-gap", "work-approval-missing"]);
