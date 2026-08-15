@@ -1,6 +1,6 @@
 # 文档入口
 
-更新时间：2026-07-28
+更新时间：2026-08-15
 
 `docs/` 顶层只保留现行规范、生产交接、发行计划和可再生成的审查稿。已经执行完的 pass Prompt、外部模型复审、被 skill/测试吸收的方案和废止美术方向不留在顶层；需要保留复审来源时统一放进 `review-archive/`，其余追溯使用 Git 历史。
 
@@ -42,6 +42,9 @@
 - [BGM 生成记录](bgm-generation-log.md)
 - [BGM 处理管线](bgm-processing-pipeline.md)
 - [真人录音交接单](audio-recording-handoff.md)
+- [Amphion 对话语音管线](amphion-dialogue-voice-pipeline.md)
+- [Windows Amphion 语音试制交接单](windows-amphion-voice-handoff.md)
+- [声音参考授权与同意模板](voice-reference-consent-template.md)
 - [像素立绘与过场现行标准](pixel-art-transition-and-portrait-direction.md)
 - [UI／立绘／场景资产状态](ui-art-asset-review.md)
 

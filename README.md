@@ -1,241 +1,124 @@
 # 深夜热线：直播间侦探
 
-> 新成员请先阅读：[启动说明](docs/startup-guide.md)；剧情修改从 [故事工程总入口](story.md) 开始；测试人员另见 [开发测试组验收入口](docs/qa-test-guide.md)。
+> Steam 优先的章节式直播侦探游戏。玩家作为主持人，从匿名来电、材料和后续回拨中追问缺口，在证据边界内判断谁隐瞒了什么、成本最终落在谁身上。
 
-直播连线式事件判断小游戏原型。题材从婚恋关系扩展到职场、消费、租房、平台交易、熟人借贷、资料包装等公共生活事件。
+当前版本为 `steam-demo-01` 试玩包。新成员先看 [启动说明](docs/startup-guide.md)，剧情修改从 [故事工程总入口](story.md) 开始，测试与验收见 [开发测试组验收入口](docs/qa-test-guide.md)。
 
-当前版本主方向调整为 Steam 首发试玩“章节式案件包”：像《逆转裁判》一样，一次发版是一组有共同主题的案件，而不是固定必须四案。当前 demo 包暂定四通匿名来电，用来提供完整试玩体验。玩家作为直播间里的主持侦探，从咨询者的口述、转述、截图和后续补充里听出哪句话没说全。每案仍然线性推进，但同一包里的案件会围绕同一个问题互相照应：好听的身份、关系和流程词，最后到底让谁买单。
+## 当前试玩版
 
-## 游戏宗旨
+主线由四通匿名来电组成，顺序以内容包为准：
 
-《深夜热线：直播间侦探》使用“精选集”和“可重试短局”作为游戏表达，并不是为了说现实可以重开，而是为了让玩家在安全的虚构环境里练习观察、判断、沟通、止损和承担后果。游戏里的重开是一种学习工具，现实里的每一次选择才是真正要认真对待的东西。
+1. 失业、信用卡与借款认购。
+2. 职场活动、审批截图与报销责任。
+3. 学历收入、家庭资产与婚前条件。
+4. 理发店名单、代投与资金去向。
 
-本作更接近一款“日常事件风险识别”游戏，而不是传统侦探破案。婚恋、职场、消费、租房、平台交易、熟人借贷都可以成为来电题材。你要识别的不是某类人，而是截图、账单、转述、话术和时间线如何被不同人拿来保护自己的利益与面子。
+每案沿着“夜间来电 → 收麦调查 → 白天取舍 → 夜间回拨 → 最终追问 → 单案回看”推进，四案还会回收同一条跨案资金线。标题页另有两通直播快案，用于短局判断和路线复盘。
 
-案件不是线性破案。每个当事人都有预设立场，有些话是假话，有些话只是迷惑性含糊，有些事 TA 明明知道但不愿意说。场景复原也只是当事人的版本，不自动等于事实。玩家需要反复追问，找出迷惑点和矛盾点，证据不足时不能稳定指认。
+游戏要求玩家区分“已经证明”“仍待核对”和“不能从现有材料推出”的内容。最终选择记录的是玩家的切入角度，不是覆盖前面推理的标准答案。本作关注撒谎、操控、失责与成本转嫁，不用性别或身份标签代替行为判断。
 
-本作的价值观不是制造性别对立，也不是把公共事件写成“男的都怎样 / 女的都怎样”。游戏要团结愿意真诚沟通、愿意承担责任、愿意保护边界的好人；真正要打击的是撒谎、操控、利用善意、转嫁成本、借身份或关系压人的坏行为。婚恋案也必须落回三观、责任、诚实和边界，而不是落回性别标签。
+更完整的创作边界见 [游戏价值边界](docs/game-philosophy.md) 和 [直播案件包设计圣经](docs/weekly-livestream-design-bible.md)。
 
-价值观正确不等于剧情要被净化。现实里很多事确实是双方互害、互相试探、互相包装、互相把成本推给对方；游戏必须把这种信息暴露出来。只是在表达时要讲清楚具体行为链条：谁说了半句真话，谁隐瞒了关键事实，谁利用了谁的善意，谁又把自己的利益包装成道德要求。
+## 快速开始
 
-## 作者想说的话
+环境要求：Node.js 22.12 或更高版本，以及随 Node.js 安装的 npm。
 
-人生不是肉鸽游戏，人生也不能重来。大多数人并不是完美无限或是十恶不赦，他们都有他们的利益考量，他们也有他们的诉求。我不能改变随机的事和随机的人，我只能关注我自己的每一次选择。
-
-欢迎大家提出创作意见，也欢迎分享自己或者知道的故事。我们可以把这些故事抽象、改写、融合进游戏里，让更多的人享受幸福，也让更多的人提前避坑。
-
-## 如何游玩
-
-### 最简单的启动方式
-
-首次运行先执行一次 `npm install`，之后开发和测试统一使用：
+首次拉取：
 
 ```bash
+npm ci
 npm start
 ```
 
-它会清空旧进度、自动选择可用端口、打开浏览器，并在文件变化后自动刷新。Windows 非开发测试人员可直接双击 `play-windows.bat`。
+以后日常启动只需 `npm start`。它会从全新进度打开浏览器，并在源码或内容变化后自动刷新。
 
-完整自动化测试统一使用 `npm test`；Windows 可双击 `test-windows.bat`。详细测试范围和手工验收清单见 [开发测试组验收入口](docs/qa-test-guide.md)。
+Windows 非开发测试人员也可以直接双击：
 
-### 在线运行本地版本
+- `play-windows.bat`：构建并打开离线试玩版。
+- `test-windows.bat`：运行完整自动化测试。
 
-本项目是纯前端原型，不需要后端服务。
+其他启动方式和常见问题见 [启动说明](docs/startup-guide.md)。
 
-```bash
-npm run dev
-```
-
-服务会优先使用 `5174`，若被占用会自动寻找下一个可用端口，并把实际地址打印在终端。开发时改动 `src/`、`content/` 或样式，浏览器会自动刷新。
-
-要直接打开浏览器试玩：
+## 测试
 
 ```bash
-npm run play
+# 内容索引、逻辑单测和剧情连续性
+npm run test:quick
+
+# 提交前检查，并回放浏览器完整流程
+npm run test:pr
+
+# 完整检查：追加桌面 staging 烟测
+npm test
 ```
 
-要清空当前进度、从标题页开始一局：
+修改 `content/`、`src/ui/`、`src/app.js`、反制拍或场景流程后，提交前必须运行 `npm run test:pr`。涉及 Electron、桌面打包或发行流程时运行 `npm test`，并按 Windows 手册补正式 EXE 验证。
+
+## 构建
+
+| 目标 | 命令 | 输出 |
+| --- | --- | --- |
+| 静态 H5 | `npm run build:h5` | `dist/` |
+| 单页离线试玩 | `npm run build:playable` | `dist/playable/` |
+| Electron 桌面 staging | `npm run build:desktop` | `dist/desktop-electron/` |
+| Windows x64 便携版 | `npm run package:win` | `dist/steam/*.exe` |
+
+Windows 产物生成后先核对文件头和 SHA-256：
 
 ```bash
-npm run play:fresh
+npm run verify:win-package
 ```
 
-也可指定一个起始端口：
+然后必须实际启动 EXE 生成运行报告，再执行 `npm run verify:win-runtime-smoke`。正式 EXE 只能在原生 Windows 或 GitHub Windows Runner 上验收。当前打包流程使用项目图标、文件存档桥、SHA-256 报告和打包后运行时烟测；启动参数与完整步骤见 [Windows EXE 制作与验包手册](docs/windows-exe-build-guide.md)。`dist/` 是本地构建输出，不提交到 Git。
 
-```bash
-npm run dev -- --port 5200
-```
-
-运行中的开发服务终端会显示这两个地址：
+## 内容与代码真源
 
 ```text
-普通试玩：http://127.0.0.1:<实际端口>/
-从头试玩：http://127.0.0.1:<实际端口>/?fresh=1
+content/packs/steam-demo-01/   玩家可见的四案内容与内容包清单
+content/characters/            运行时角色、知识边界与声纹真源
+src/runtime/                   状态写入、结算和运行时规则
+src/ui/screens/                完整屏幕与场景渲染器
+src/generated/                 由内容脚本生成的运行时索引
+desktop/                       Electron 主进程、preload 与打包配置
+scripts/                       构建、校验、烟测和内容生成脚本
+story.md                       故事工程总入口
+characters/ scenes/ plot/      人物、场景和剧情结构投影
+continuity/                    跨案状态与伏笔投影
+docs/                          现行设计、制作、测试和发行文档
 ```
 
-### H5 / 小程序准备
-
-当前代码按纯静态 H5 运行，浏览器版默认使用 localStorage。先用静态构建产物验证内容流程：
+玩家可见台词和事实必须修改案件 JSON，不要直接修改 `docs/generated/` 或另建台词副本。内容修改后运行：
 
 ```bash
-npm run build:h5
-```
-
-构建结果会输出到：
-
-```text
-dist/
-```
-
-小程序第一版使用 `miniapp-webview/` 承载 H5。部署到 HTTPS 域名后，把小程序壳里的 `gameUrl` 改成线上地址，并在微信后台配置业务域名。
-
-### 离线可玩版 / Steam 试玩准备
-
-开发预览可以起本地端口，但发布可玩版不能依赖本地 HTTP 服务。生成可双击验证的离线包：
-
-```bash
-npm run build:playable
-```
-
-构建结果会输出到：
-
-```text
-dist/playable/index.html
-```
-
-这个产物会把当前 JS 模块和 CSS 内联到一个 HTML，资源保留在 `dist/playable/assets/`。Steam 桌面壳应加载这个离线包或同等打包产物，而不是运行 `npm run dev`。
-
-Windows 本地试玩可以直接双击：
-
-```text
-play-windows.bat
-```
-
-脚本会优先打开 `dist/playable/index.html`。如果离线包还没生成，它会自动执行 `npm run build:playable`，再打开默认浏览器。这个脚本不启动本地端口，也不依赖 dev server。
-
-Steam/桌面壳 staging：
-
-```bash
-npm run build:steam
-```
-
-构建结果会输出到 `dist/desktop-electron/`，包含 Electron 主进程、preload、文件存档桥和离线 playable。安装 devDependencies 后，可以生成 Windows portable 验包。当前锁定 Electron 43，打包环境需要 Node 22.12 或更高版本：
-
-```bash
-npm run package:win
-```
-
-Windows portable 产物输出到 `dist/steam/`。正式上 Steam 前仍需要补商店 App ID、Steam Cloud 映射、overlay/崩溃日志和实机手柄 QA。
-
-Windows 原生制作步骤、GitHub Actions 打包、SHA-256 核验和实机清单见 [Windows EXE 制作与验包手册](docs/windows-exe-build-guide.md)。macOS 不作为正式 Windows EXE 的验收环境。
-
-不启动 Electron 的桌面 staging 烟测：
-
-```bash
-npm run smoke:desktop
-```
-
-### 开始一局
-
-1. 进入标题页后点击开始。
-2. 点击开始接案。
-3. 默认进入 Steam demo 案件包；当前 demo 包包含四通匿名连线，后续章节包不固定案数。
-4. 听咨询者开口，选择主播下一句最该怎么接。
-5. 每段来电只有少数追问方向；有的能摸到瓜心，有的会停在外围。
-6. 关键追问结束后查看一份材料，指出账单、截图、表格或审批图里最该圈出来的缺口。
-7. 每次选择会在后台记录路线轴，例如来电人可信度线、材料缺口线、钱流结构线。
-8. 最后从几句来电原话里选一句往下接，这一步决定你的结果角度和分享人格，不再一票否决前面的推理。
-9. 案件包结束后生成总结，展示平均问题揭示率、每案路线和主播倾向。
-
-## 当前内容
-
-- 首页直接展示当前案件包钩子，一键进入。
-- 案件包使用 `storyKey` 稳定生成；`dailyKey` 入口保留为单案兼容和调试。旧 `weeklyKey` 链接只做兼容。
-- 首个故事包骨架已拆到 `content/packs/steam-demo-01/`，并通过 `npm run verify:pack` 校验运行时定义、压力系统和内容包文件一致。
-- 案件包携带主题和主题论点，包内案件围绕同一个现实问题互相照应；当前 demo 包是四案，但架构不再依赖四案。
-- Steam 试玩主线为：8 万信用卡周转、理发店排班表、存款证明、职场报销截图。婚前房与共同还贷保留在单案轮换里。
-- 当前轮换包含 5 个模板案：8 万信用卡周转、婚前房与共同还贷、理发店排班表、存款证明、职场报销截图。
-- 单人匿名连线：只和咨询者对话，另一方只能通过转述、截图、原话或回拨出现。
-- 每案包含 5-6 个关键来电段，目标支撑至少 20 分钟玩法；结算按关键问题揭示率给出。
-- 每案增加一段材料检视，玩家要在账单、截图、表格或审批图里指出具体缺口；关键追问和材料命中不消耗听众忍耐，外围绕问或误指材料才会扣。
-- 最终“选一句原话”记录玩家切入角度，路线图会生成玩家类型和本集倾向。
-- 案件包总结包含评论区审判墙，把玩家路线、揭示率和本集主题转成可分享的评论区复盘。
-- 小程序 web-view 壳已提供，H5 会向壳层发送分享标题、问题揭示率、玩家类型和 `storyKey`。
-- 逻辑单测和剧情串读校验覆盖当前 demo 包结构、每日单案兼容、匿名规则、灰区动机、无废选项和文案连续性。
-
-## 内容边界
-
-本作是虚构游戏，不提供法律、心理、婚恋、职场或消费维权咨询结论。游戏中的案例、角色和事件会参考中文互联网常见公共讨论、律师普法内容、职场/消费/情感博主叙事和现实关系矛盾，但会进行抽象、改写和混合，不对应任何单一真实人物或具体案件。
-
-游戏的核心不是审判某一类人，而是呈现日常事件里常见的利益、压力、误判、投射和边界问题。玩家可以在游戏中练习识别风险，也可以看到“善意的人如何保护自己、失责的人如何被指出、坏行为如何露出代价”的过程。遇到双方互害的案子，游戏不会为了价值观把它改成单方善恶，也不会用“两边都有问题”草草收场，而是要把双方如何互相伤害、如何升级、如何止损讲清楚。
-
-## 文件结构
-
-```text
-.
-├── index.html
-├── package.json
-├── README.md
-├── docs/
-│   ├── README.md
-│   ├── game-philosophy.md
-│   ├── weekly-livestream-design-bible.md
-│   ├── script-generation-agent-playbook.md
-│   ├── case-library-sources.md
-│   ├── roadmap.md
-│   └── content-pack-schema.md
-├── content/
-│   └── packs/
-│       └── steam-demo-01/
-├── scripts/
-│   ├── build-static.js
-│   ├── verify-pack.js
-│   └── verify-logic.js
-├── src/
-│   ├── app.js
-│   ├── state.js
-│   ├── platformRuntime.js
-│   ├── caseModes.js
-│   ├── dailyChoices.js
-│   ├── caseNarration.js
-│   ├── caseRuntime.js
-│   ├── difficulty.js
-│   ├── storyPacks.js
-│   ├── caseEngine.js
-│   ├── random.js
-│   ├── sound.js
-│   └── story.js
-├── miniapp-webview/
-│   └── pages/index/
-├── assets/
-│   ├── generated/
-│   └── characters/
-└── src/styles.css
-```
-
-## 开发命令
-
-检查主要脚本语法：
-
-```bash
+npm run content:index
+npm run content:script
 npm run check
 ```
 
-启动本地预览：
+新增完整屏幕放在 `src/ui/screens/`，通过 `create*Screens(ctx)` 接收能力，并在使用时读取当前状态；不要把新屏幕重新堆回 `src/app.js`，也不要从屏幕模块反向导入 `app.js`。
 
-```bash
-npm run dev
-```
+## 当前发行边界
 
-生成离线可玩版：
+代码、浏览器离线包、Electron 桌面壳和 Windows 便携版流水线已经接通。正式发行前仍需要：
 
-```bash
-npm run build:playable
-```
+- 真人盲测与真人定向录音。
+- 补齐 `epilogue-dawn` BGM，并在真实声卡上完成混音验收。
+- Windows 干净机器、Steam Deck／控制器和手机实机测试。
+- Steamworks App ID、Depot、Cloud、Overlay、Input 与签名决策。
 
-## 后续路线
+当前阶段不凭主观感觉继续扩写四案，也不新增第二套压力或失败经济。最新状态只以 [版本路线](docs/roadmap.md) 和 [未完成项目清单](docs/unfinished-backlog.md) 为准。
 
-- 当前工程状态、发布门与下一步只以 `docs/roadmap.md` 和 `docs/unfinished-backlog.md` 为准。
-- 后续每次发版都是一个独立章节式案件包，不固定案数；当前四案试玩包已完成数据化。
-- AI 问答采用受控方案：玩家可以用自然语言追问，但系统只把它映射到当前已写好的追问意图，不让 AI 生成新事实，详见 `docs/ai-question-mode-design.md`。
-- 真人盲测、真人录音、真实设备与 Steamworks 权限项是当前发行门；没有实测证据不继续扩写剧情。
+## 文档入口
+
+- [文档总目录](docs/README.md)
+- [内容包开发管线](docs/story-pack-development-pipeline.md)
+- [内容包 Schema](docs/content-pack-schema.md)
+- [音频录制交接单](docs/audio-recording-handoff.md)
+- [Amphion 对话语音管线](docs/amphion-dialogue-voice-pipeline.md)
+- [Windows Amphion 交接单](docs/windows-amphion-voice-handoff.md)
+- [桌面与 Steam 构建计划](docs/desktop-steam-build-plan.md)
+- [Windows EXE 制作与验包手册](docs/windows-exe-build-guide.md)
+
+## 内容声明
+
+本作是虚构游戏，不提供法律、心理、婚恋、职场或消费维权结论。案例会参考常见公共讨论并进行抽象、改写和混合，不对应任何单一真实人物或具体案件。游戏里的重试是用于练习观察、沟通和止损的机制，不表示现实选择可以重来。
