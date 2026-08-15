@@ -10,12 +10,23 @@
     "host": {
       "name": "林旭阳",
       "roleLabel": "主播",
-      "artSrc": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png"
+      "artSrc": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png",
+      "artVariants": {
+        "listening": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png?v=0.27.0",
+        "questioning": "./assets/generated/host/lin_xuyang_questioning_pixel.png?v=0.27.0",
+        "pressing": "./assets/generated/host/lin_xuyang_pressing_pixel.png?v=0.27.0",
+        "verdict": "./assets/generated/host/lin_xuyang_verdict_pixel.png?v=0.27.0"
+      }
     },
     "caller": {
       "name": "匿名来电人",
       "roleLabel": "语音连线",
-      "artSrc": "./assets/generated/quick-detective/caller-zhou-female-pixel.png"
+      "artSrc": "./assets/generated/quick-detective/caller-zhou-female-pixel.png",
+      "artVariants": {
+        "neutral": "./assets/generated/quick-detective/caller-zhou-female-pixel.png?v=0.27.0",
+        "guarded": "./assets/generated/quick-detective/caller-zhou-female-guarded-pixel.png?v=0.27.0",
+        "pause": "./assets/generated/quick-detective/caller-zhou-female-pause-pixel.png?v=0.27.0"
+      }
     }
   },
   "whyTonight": "她通过婚恋机构认识了一位创业者。两个人相处一个月，男方却在一次周末聚会后停下了联系。她认为自己只是有一晚喝多了、漏回一条消息，想问主播是不是自己对情绪交流要求太高。",
@@ -106,21 +117,24 @@
     {
       "id": "surface-story",
       "label": "先听她怎么讲",
-      "turnIds": ["greeting", "help-request", "caller-profile", "his-profile", "family-assets", "how-they-met", "relationship-pace", "emotion-need", "care-examples", "flower-request", "public-photo", "public-photo-screenshot", "gift-bag", "break-point", "missed-message-version", "chat-times", "why-no-reply"],
+      "patience": 4,
+      "turnIds": ["greeting", "help-request", "both-profiles", "relationship-version", "public-photo-screenshot", "missed-message-version"],
       "issueOptionIds": ["emotion-or-display", "age-gap", "missed-message-state", "founder-busy"],
       "requiredConfrontationIds": ["care-or-display", "message-or-drunkenness"]
     },
     {
       "id": "changed-version",
       "label": "继续问当晚的情况",
-      "turnIds": ["who-was-there-first", "drinking-level", "who-ordered-drinks"],
+      "patience": 3,
+      "turnIds": ["changed-night-version", "who-ordered-drinks"],
       "issueOptionIds": ["third-person"],
       "requiredConfrontationIds": ["third-person-at-table"]
     },
     {
       "id": "social-feed",
       "label": "再看她发来的朋友圈截图",
-      "turnIds": ["what-he-knew", "social-feed-permission", "social-feed-review", "tattoo-background", "next-day-apology", "social-post-date", "previous-night", "two-nights-admission", "closing-request"],
+      "patience": 4,
+      "turnIds": ["social-feed-version", "how-he-knew-version", "social-post-date", "previous-night", "closing-request"],
       "issueOptionIds": ["nightlife-pattern", "how-he-knew", "apology-post"],
       "requiredConfrontationIds": ["nightlife-pattern", "how-he-knew", "apology-and-post"]
     }
@@ -131,7 +145,7 @@
       "surfaceVersion": "她只在意有没有深度交流，对物质和排场要求不高。",
       "omittedFact": "她主动让男方送花，也收过男方送的包，又把花、包和男方的车拍进公开动态。",
       "immediateBenefit": "让主播先把问题归到男方不会理解她。",
-      "traceTurnIds": ["emotion-need", "flower-request", "public-photo", "public-photo-screenshot", "gift-bag"],
+      "traceTurnIds": ["relationship-version", "public-photo-screenshot"],
       "playerTest": "她所说的情绪需求里有没有公开展示和条件带来的满足",
       "minimumAdmission": "承认自己喜欢男方送来的花和包，也喜欢别人看到男方在她身上花心思。",
       "adviceChange": "主播不再只评判男方会不会聊天，而先分清她实际向对方索取了什么。"
@@ -141,7 +155,7 @@
       "surfaceVersion": "她只是喝多后没看到一条消息。",
       "omittedFact": "她六分钟前还回过‘还行’，随后因已经喝到难受而不再看手机，也不想让男方知道自己喝多。",
       "immediateBenefit": "把主动隐瞒醉酒状态说成一次无意漏看。",
-      "traceTurnIds": ["missed-message-version", "chat-times", "why-no-reply", "drinking-level"],
+      "traceTurnIds": ["missed-message-version", "changed-night-version"],
       "playerTest": "漏回消息和隐瞒醉酒状态是不是一回事",
       "minimumAdmission": "承认当时已经喝多，‘还行’是为了不让男方担心或生气。",
       "adviceChange": "主播把问题从回复速度改为她为什么要缩小当时的状态。"
@@ -151,7 +165,7 @@
       "surfaceVersion": "她只是和妹妹两个人出去小聚。",
       "omittedFact": "桌上还有妹妹的一名男性朋友，三个人混着喝酒，最后她喝到呕吐、记不清回程。",
       "immediateBenefit": "让聚会听起来像一次单纯的姐妹夜谈。",
-      "traceTurnIds": ["missed-message-version", "who-was-there-first", "drinking-level", "who-ordered-drinks", "what-he-knew"],
+      "traceTurnIds": ["missed-message-version", "changed-night-version", "who-ordered-drinks", "how-he-knew-version"],
       "playerTest": "酒桌上的人数为什么从两个人变成三个人，以及男方为什么会追问到这个人",
       "minimumAdmission": "承认有男性在场，也承认第二天是自己先说漏一个‘他’，男方追问后才补充。",
       "adviceChange": "主播可以判断开场版本有意缩小，但不补写酒局中没有证据的事。"
@@ -161,7 +175,7 @@
       "surfaceVersion": "她第二天已经把喝多的事情向男方解释清楚，是男方仍不愿意相信她。",
       "omittedFact": "她一开始仍只说妹妹送自己回去，直到解释时说漏一个‘他’，才被男方追问出桌上的男性朋友。",
       "immediateBenefit": "把男方继续追问写成无端猜疑，掩掉自己对男方也在分段补充。",
-      "traceTurnIds": ["what-he-knew", "next-day-apology"],
+      "traceTurnIds": ["who-ordered-drinks", "how-he-knew-version"],
       "playerTest": "男方为什么会突然追问桌上是否还有别人",
       "minimumAdmission": "承认是自己先说漏一个‘他’，男方问这个人是谁以后，她才补出男性同行者。",
       "adviceChange": "主播可以指出她并非主动解释完整，但不把男方的怀疑当成酒局越界的证明。"
@@ -171,7 +185,7 @@
       "surfaceVersion": "她很久没出去，只是那天碰巧被妹妹叫去。",
       "omittedFact": "前一晚她已经和师姐去 KTV；她主动发来的朋友圈截图还显示，近两个月有多个周末在酒吧或 KTV 待到凌晨。继续追问后，她承认读研以来聚会一直不少，同行的男男女女也不是固定一拨，其中几次没有回宿舍。",
       "immediateBenefit": "把生活习惯和连续发生的选择压成一次偶然。",
-      "traceTurnIds": ["missed-message-version", "social-feed-review", "previous-night", "two-nights-admission"],
+      "traceTurnIds": ["missed-message-version", "social-feed-version", "previous-night"],
       "playerTest": "偶尔一次和朋友圈里反复出现的深夜酒局是不是同一种生活状态",
       "minimumAdmission": "承认读研以后聚会一直不少，同行有不同圈子的男女；近两个月有几次玩到天亮，有时住在妹妹那里，但坚持这只是普通聚会。",
       "adviceChange": "主播把婚介所说的‘生活简单’、她开场所说的‘很久没出去’，和她自己承认的长期夜场习惯放到一起判断。"
@@ -181,7 +195,7 @@
       "surfaceVersion": "她第二天醒来以后一直在认真解释和道歉。",
       "omittedFact": "就在道歉当天，她还公开发了前一晚 KTV 喝酒的照片。",
       "immediateBenefit": "把男方继续退出归因于他不肯听解释。",
-      "traceTurnIds": ["next-day-apology", "social-post-date", "previous-night", "closing-request"],
+      "traceTurnIds": ["social-post-date", "previous-night", "closing-request"],
       "playerTest": "道歉当天的公开动态会不会让解释失去分量",
       "minimumAdmission": "承认男方能看到那条动态，但坚持照片不是出事当晚拍的。",
       "adviceChange": "主播不再建议继续证明自己没做错，而要求她先承认对方为什么会觉得这次道歉不可信。"
@@ -191,142 +205,62 @@
     {
       "id": "greeting",
       "host": "你好，能听见吗？",
-      "caller": "能，主播你好。"
+      "caller": "能听见。"
     },
     {
       "id": "help-request",
-      "host": "那你今天想问什么？",
+      "host": "你说吧，遇上什么事了？",
       "caller": "我跟一个男生接触了一个月，本来都挺好的，最近突然不联系了。我觉得他什么都肯做，就是不太懂我的感受。我想问，是不是我对交流要求太高了。"
     },
     {
-      "id": "caller-profile",
-      "host": "先说说你自己吧，多大，做什么？",
-      "caller": "二十六，研三，本科和硕士都在一所985高校。我快毕业了。"
+      "id": "both-profiles",
+      "host": "你先把你们俩的情况大概说一下。",
+      "caller": "我二十六，研三，本科和硕士都在一所985高校。他三十五，自己开公司，是婚恋机构介绍的。机构跟他说我学历好、生活简单，也跟我说他想认真结婚。他至少中A8，本地两套平层。我们家就普通家庭，A7吧。家里能支持我，所以找对象也不是指望他养我。"
     },
     {
-      "id": "his-profile",
-      "host": "男方呢？",
-      "caller": "三十五，自己开公司，算是从小公司一点点做起来的。平时开一辆保时捷，收入肯定比我高很多。不过我答应见面，主要是觉得他想结婚，人也稳当。家里能支持我，所以找对象也不是指望他养我。"
-    },
-    {
-      "id": "family-assets",
-      "host": "那你家里大概是什么资产水平，他大概什么身家，你知道吗？",
-      "caller": "他至少中A8，本地两套平层。我们家就普通家庭，A7吧。"
-    },
-    {
-      "id": "how-they-met",
-      "host": "你们怎么认识的？",
-      "caller": "婚恋机构介绍的。老师说他想认真找，也跟他说我学历好、生活简单。我们先吃了顿饭，后来基本一周见两三次。"
-    },
-    {
-      "id": "relationship-pace",
-      "host": "这一个月相处到什么程度？",
-      "caller": "就是吃饭、散步，他有时开车来接我。手也牵过，但没有再往下。我说想慢一点，他也没催。"
-    },
-    {
-      "id": "emotion-need",
-      "host": "你刚才说他不懂你的感受，具体是什么事？",
-      "caller": "比如我给他分享一首歌，那首歌其实就是我当时的心情。他可能隔很久才回一句‘听了’，也不问我为什么发。我会觉得两个人一直停在吃饭聊天，没有更深一点的东西。"
-    },
-    {
-      "id": "care-examples",
-      "host": "那他平时怎么对你？",
-      "caller": "见面基本都是他安排，也会接送。我说最近有点累，他就把餐厅换到学校附近。你要说他不管我，也不是。"
-    },
-    {
-      "id": "flower-request",
-      "host": "还有别的吗？",
-      "caller": "有一次聊天我刷到一束花，随口说挺好看的，问他能不能也送我一束。下次见面他真带了一大束来。我本来只想要一小束，是他自己买那么大的。"
-    },
-    {
-      "id": "public-photo",
-      "host": "收到花以后呢？",
-      "caller": "我当然高兴，就捧着花坐在他车里拍了几张，挑了一张发到社交平台。朋友都问我是不是谈恋爱了，我也没说是谁。"
+      "id": "relationship-version",
+      "host": "这一个月怎么相处的？你为什么觉得他不懂你？",
+      "caller": "我们一周见两三次，吃饭、散步，他也会开车来接我。我说累，他就把餐厅换到学校附近。可我发一首歌给他，他隔很久只回一句‘听了’，从来不问我为什么发。我有次刷到一束花，顺口问他能不能也送我一束，下次他真带了一大束来。花是有了，可两个人还是聊不到里面去。"
     },
     {
       "id": "public-photo-screenshot",
-      "host": "那条朋友圈还在的话，连前面几条一起截给我看看，方便吗？",
-      "caller": "可以。我现在朋友圈三天可见，你这边看不到以前的。我自己还能翻，花那条和前面几条都截了，刚发后台。前面就是吃饭、演唱会这些。花那条底下也就是朋友问两句，我回了几个表情，又没说男方是谁。"
-    },
-    {
-      "id": "gift-bag",
-      "host": "你发的花那张里，旁边那个新包也是这个新男友送的吧？",
-      "caller": "嗯。第一次一起逛街时，我在柜台前多看了几眼。他后来自己买的，我没开口跟他要。"
-    },
-    {
-      "id": "break-point",
-      "host": "你说前面相处得都挺好。他是从哪件事以后不联系的？",
-      "caller": "就是有一晚我没及时回消息。他第二天明显不高兴，我也解释了。后来我们又聊到他不太回应我，两边都觉得累，就没再说下去。"
+      "host": "花发出去以后呢？那条动态还找得到吗？",
+      "caller": "我挺高兴的，坐在他车里拍了照片。朋友在下面问是不是谈恋爱了，还有人说羡慕，我回了几个表情。现在朋友圈三天可见。你这边看不到以前的。我自己还能翻。我把花那条和前面几条都截了，刚发后台，前面就是吃饭、演唱会这些。"
     },
     {
       "id": "missed-message-version",
-      "host": "那晚你在做什么？",
-      "caller": "我妹妹叫我出去坐坐。我已经很久没出去过了，正好那天她想喝一点，我们就去了家清吧。后来我有点晕，手机没顾上看。"
+      "host": "他是从哪件事以后不联系的？那晚你从头说一下。",
+      "caller": "我妹妹叫我出去坐坐。我已经很久没出去了，正好她想喝一点，我们就去了一家清吧。十一点五十二，他问我喝得怎么样，我回‘还行’；十一点五十八，他又问我准备几点回去。后面那条我没看见，早上七点多才回。第二天我解释了，他还是越来越冷。"
     },
     {
-      "id": "chat-times",
-      "host": "聊天记录还在吗？你按时间念。",
-      "caller": "在。十一点五十二，他问我喝得怎么样，我回‘还行’。十一点五十八，他又问我准备几点回去。后面这条我早上七点多才回。"
-    },
-    {
-      "id": "why-no-reply",
-      "host": "六分钟以后怎么就看不到了？",
-      "caller": "我回‘还行’的时候其实已经不太舒服了，只是不想让他知道我喝多。我回完把手机放包里，就想赶紧回家。"
-    },
-    {
-      "id": "who-was-there-first",
-      "host": "你前面一直只提妹妹。当晚一直是你们两个人？",
-      "caller": "我主要就是跟她出去。她坐我旁边，最后也是她带我走的。"
-    },
-    {
-      "id": "drinking-level",
-      "host": "还是你酒量很差，多喝了六分钟就撑不住了？",
-      "caller": "鸡尾酒混着喝了几种，还有龙舌兰。我后来吐了，回去那段也记不太清。反正第二天醒来，人已经在妹妹家了。"
+      "id": "changed-night-version",
+      "host": "刚才那晚重新讲一遍。你回了‘还行’以后，发生了什么？",
+      "caller": "那时候我其实已经有点晕了，怕他知道我喝多，才回了‘还行’。桌上混着点了几种鸡尾酒，还有龙舌兰，后面又有人点了一轮。我后来吐了，回去那段也记不太清，醒来已经在妹妹家。"
     },
     {
       "id": "who-ordered-drinks",
-      "host": "两个人为什么点这么多？",
-      "caller": "也不全是我们点的。有人本来就在那儿，顺手点了一轮。我跟那个人又不熟，所以前面没提。"
+      "host": "后面又点的那一轮，你还记得自己喝了多少吗？",
+      "caller": "记不清了。就是有人又加了酒，我那时候已经开始晕，后来还吐了。"
     },
     {
-      "id": "what-he-knew",
-      "host": "第二天你主动把那个男的也告诉他了吗？",
-      "caller": "一开始没有。我只解释自己喝多了，妹妹把我送回去。后来他追着问，我才把那个人也说了。我觉得跟我又没关系，没必要一上来就讲。"
+      "id": "social-feed-version",
+      "host": "你说自己很久没出去。近两个月的动态还能找着吗？",
+      "caller": "我又截了一批发后台了。里面是有六次酒吧或者 KTV，上个月三个周末都有，最晚一张发到凌晨五点十七分，可有的是生日，有的是毕业聚会。照片里也能看见我胳膊上那片纹身，他第一次见我就看见了，这个我没藏。发得晚也不等于我每次都喝醉。"
     },
     {
-      "id": "social-feed-permission",
-      "host": "你刚才发的是花那条和前面几张。既然你自己还能翻，近两个月带时间的也一起截过来，方便吗？",
-      "caller": "我发吧。不过里面都是朋友聚会，不能拿几张照片当成我天天在外面玩。"
-    },
-    {
-      "id": "social-feed-review",
-      "host": "后台收到了。你发来的截图里，近两个月有六次酒吧或者 KTV，上个月三个周末都有，最晚一条是凌晨五点十七分。",
-      "caller": "有的是朋友生日，有的是毕业聚会。发得晚不等于我每次都喝成九号那样，也不等于我没回去。"
-    },
-    {
-      "id": "tattoo-background",
-      "host": "婚恋老师跟他说你生活简单。你给机构的照片，和朋友圈里这些是一个样子吗？",
-      "caller": "资料照当然穿得正式一点。我肩膀到胳膊有一大片纹身，见面第一回他就看见了，我没藏。以前酒吧那些照片设过权限，但谁相亲一上来什么都往外放啊。"
-    },
-    {
-      "id": "next-day-apology",
-      "host": "第二天你怎么解释的？",
-      "caller": "我一醒就跟他说昨晚喝多了，妹妹把我送回来的，也跟他道歉。他回得很淡。我后来打了两次电话，他都没接。"
+      "id": "how-he-knew-version",
+      "host": "第二天他怎么知道桌上还有别人？",
+      "caller": "我一开始只说自己喝多了，妹妹把我送回去。后来解释的时候顺嘴说了句‘他也不知道我会吐成那样’，男方就问这个‘他’是谁。后来他追着问，我才把那个人也说了。"
     },
     {
       "id": "social-post-date",
-      "host": "他除了聊天记录，还看到别的了吗？",
+      "host": "十号你还发了一组 KTV 的照片，那是哪天拍的？",
       "caller": "十号我发过一组 KTV 的照片。他可能以为是喝断片那晚拍的，其实不是，那是八号的照片，我晚了两天才发。"
     },
     {
       "id": "previous-night",
       "host": "八号你也出去喝酒了？",
       "caller": "我跟师姐去唱歌，包厢套餐里带了六杯鸡尾酒。那天就我们两个，我也没喝醉，和九号不是一回事。"
-    },
-    {
-      "id": "two-nights-admission",
-      "host": "也就是八号 KTV，九号酒吧，连续两晚？",
-      "caller": "是连着两晚，可就是碰巧撞上了。八号没喝多，九号才出状况，不能把两天说成一回事。"
     },
     {
       "id": "closing-request",
@@ -338,56 +272,64 @@
     {
       "id": "emotion-or-display",
       "label": "情绪交流和公开展示",
+      "sourceAnchor": "还有人说羡慕",
       "confrontationId": "care-or-display"
     },
     {
       "id": "age-gap",
-      "label": "两个人相差八岁"
+      "label": "两个人相差八岁",
+      "sourceAnchor": "他三十五"
     },
     {
       "id": "missed-message-state",
       "label": "漏回消息前后的真实状态",
+      "sourceAnchor": "十一点五十二",
       "confrontationId": "message-or-drunkenness"
     },
     {
       "id": "third-person",
       "label": "那晚没有先说出的第三个人",
+      "sourceAnchor": "后面又有人点了一轮",
       "confrontationId": "third-person-at-table"
     },
     {
       "id": "nightlife-pattern",
       "label": "偶尔一次还是经常玩到很晚",
+      "sourceAnchor": "六次酒吧或者 KTV",
       "confrontationId": "nightlife-pattern"
     },
     {
       "id": "founder-busy",
-      "label": "创业者是不是都没时间听歌"
+      "label": "创业者是不是都没时间听歌",
+      "sourceAnchor": "自己开公司"
     },
     {
       "id": "how-he-knew",
       "label": "男方怎么发现当晚还有别人",
+      "sourceAnchor": "顺嘴说了句‘他也不知道",
       "confrontationId": "how-he-knew"
     },
     {
       "id": "apology-post",
       "label": "道歉当天仍发出的 KTV 动态",
+      "sourceAnchor": "十号我发过一组 KTV",
       "confrontationId": "apology-and-post"
     }
   ],
   "confrontations": [
     {
       "id": "care-or-display",
-      "basisTurnIds": ["emotion-need", "care-examples", "flower-request", "public-photo", "public-photo-screenshot", "gift-bag"],
+      "basisTurnIds": ["relationship-version", "public-photo-screenshot"],
       "logicContract": {
-        "premiseAnchor": "她用分享歌曲没人回应证明男方不懂情绪，却主动要求送花，也收过男方送的包，并把花、包和男方的车拍进公开动态。她发来的截图里，朋友点赞、表示羡慕，她回复得很开心；前几条也多是漂亮饭和演唱会。",
+        "premiseAnchor": "她用分享歌曲没人回应证明男方不懂情绪，却主动要求送花；她发来的照片里还有一个新包，评论里朋友表示羡慕，她回复得很开心，前几条也多是漂亮饭和演唱会。",
         "sourceProves": "她在意私人交流，也在意男方提供的物质条件和别人如何看待这段关系。",
         "sourceDoesNotProve": "收花、收包和发照片不能单独证明她只图钱，也不能否定她确实需要沟通。",
         "answerAdds": "她承认花和包都让自己高兴，朋友羡慕也会让自己高兴，但坚持这和想被理解并不冲突。",
         "nextLimit": "主播只拆开两种需求，不把整段关系简化成拜金。"
       },
       "lines": [
-        { "role": "host", "text": "你说你想要的是深一点的交流。可你开口让他送花，也收了他送的包，最后还把花、包和他的车拍在一张照片里。你想要的只有他听懂那首歌吗？" },
-        { "role": "caller", "text": "花我是开口了，包可不是。他自己买的。我发照片也是因为那天高兴，又没拍着车标。" },
+        { "role": "host", "text": "你发来的花那张里，旁边那个新包也是他送的吧？" },
+        { "role": "caller", "text": "嗯。第一次逛街时我在柜台前多看了几眼，他后来自己买的。我可没开口跟他要。" },
         { "role": "host", "text": "你刚发来的朋友圈截图我看了。朋友问你是不是谈恋爱了，下面有人点赞，有人说羡慕，你回得挺开心。再往前几条，也都是漂亮饭、演唱会这些。看得出来，你很在意别人觉得你过得好不好。" },
         { "role": "caller", "text": "朋友圈不就发这些吗？我总不能把两个人私下聊什么也发上去。我喜欢拍照，不代表我不想好好交流。" },
         { "role": "host", "text": "我们不脱离感情只谈钱。你希望他懂你，可以；可你也喜欢他送花、送包，还希望别人羡慕他给你的生活。这部分不能不说，别只剩一句他听不懂你的歌。" },
@@ -396,33 +338,34 @@
     },
     {
       "id": "message-or-drunkenness",
-      "basisTurnIds": ["missed-message-version", "chat-times", "why-no-reply"],
+      "basisTurnIds": ["help-request", "missed-message-version"],
       "logicContract": {
-        "premiseAnchor": "她把问题说成没有看到一条消息；记录显示她六分钟前还回过话，她又承认当时已喝到难受，并故意回‘还行’掩饰状态。",
-        "sourceProves": "那一晚的问题不只是漏看消息，她还在缩小自己的醉酒程度。",
-        "sourceDoesNotProve": "不能据此断定她故意冷落男方，也不能证明酒局发生了其他行为。",
+        "premiseAnchor": "她把问题说成没有看到一条消息；自己念出的记录却显示，她六分钟前刚回过‘还行’，随后才不再回复。",
+        "sourceProves": "她并非整晚没有看见手机；‘还行’时的真实状态仍需要当面问。",
+        "sourceDoesNotProve": "六分钟的记录不能单独证明她当时已经喝醉，也不能证明酒局发生了其他行为。",
         "answerAdds": "她承认‘还行’并不是真实状态，只是不想让男方知道自己喝多。",
         "nextLimit": "继续问她为什么要藏，不把六分钟本身写成罪证。"
       },
       "lines": [
-        { "role": "host", "text": "十一点五十二你还能回‘还行’，六分钟以后就不回了。你不是整晚没看见手机，是已经喝得难受，又不想让他知道。对吗？" },
+        { "role": "host", "text": "十一点五十二你还能回‘还行’，六分钟以后就不回了。那时候你已经喝得难受，只是不想让他知道，对吗？" },
         { "role": "caller", "text": "我当时想着马上就走了，没必要让他跟着担心。谁知道那几分钟以后我会那么不舒服。" },
-        { "role": "host", "text": "那就叫‘我喝多了，还跟他说没事’，不叫‘我只漏看一条消息’。后一句把真正让他担心的部分拿掉了。" },
+        { "role": "host", "text": "你喝多了，还跟他说没事。可你开场只剩一句‘漏看了消息’，真正让他担心的那一段没了。" },
         { "role": "caller", "text": "好，我那句‘还行’确实逞强了。但我第二天一醒就说了，也没有故意晾他。" }
       ]
     },
     {
       "id": "third-person-at-table",
-      "basisTurnIds": ["missed-message-version", "who-was-there-first", "drinking-level", "who-ordered-drinks"],
+      "basisTurnIds": ["changed-night-version", "who-ordered-drinks"],
       "revealTransition": {
         "id": "quick-third-person-appears",
         "kind": "reveal",
         "lineIndex": 4,
         "eyebrow": "人数对不上",
-        "label": "桌上还有一个人"
+        "label": "桌上还有一个人",
+        "visualVariant": "third-chair"
       },
       "logicContract": {
-        "premiseAnchor": "她先说妹妹叫她小聚，也一直说是妹妹带她回家；追到酒量时又说，有些酒是‘别人’点的。",
+        "premiseAnchor": "她第一版只提妹妹；被问到自己已经喝多以后，重讲当晚才说有人又点了一轮。",
         "sourceProves": "‘跟妹妹出去’不是当晚人员的完整版本，她在开场省掉了一个会影响男方判断的人。",
         "sourceDoesNotProve": "男性在场不自动证明暧昧、出轨或任何性关系。",
         "answerAdds": "她先把对方说成妹妹的朋友，主播把问题收窄到性别以后，才承认对方是男性。",
@@ -433,13 +376,13 @@
         { "role": "caller", "text": "我妹妹的一个朋友。他本来就在附近，后来过来坐了一会儿。" },
         { "role": "host", "text": "男的还是女的？" },
         { "role": "caller", "text": "……男的。但我跟他不熟，也不是我叫来的。" },
-        { "role": "host", "text": "那晚不是姐妹俩小聚，是你、妹妹和一个男的三个人混着喝。男的在场不能证明你们发生过什么，可这件事不该问到这里才有。" },
+        { "role": "host", "text": "你前面一直说是姐妹俩小聚。现在桌上多出一个男的。男的在场不能证明你们发生过什么，可这件事不该问到这里才有。" },
         { "role": "caller", "text": "……我是不想被误会，不是想骗人。" }
       ]
     },
     {
       "id": "nightlife-pattern",
-      "basisTurnIds": ["missed-message-version", "social-feed-permission", "social-feed-review", "previous-night", "two-nights-admission"],
+      "basisTurnIds": ["missed-message-version", "social-feed-version", "previous-night"],
       "logicContract": {
         "premiseAnchor": "婚介向男方说她生活简单，她自己也说很久没出去、九号只是偶然；她发来的截图却有近两个月六次深夜酒局，八号和九号又连续两晚外出。",
         "sourceProves": "她的夜生活不是一次孤立聚会；截图至少证明近两个月反复出现，后续回答又把这种社交习惯延伸到读研以来。",
@@ -456,7 +399,7 @@
     },
     {
       "id": "how-he-knew",
-      "basisTurnIds": ["who-ordered-drinks", "what-he-knew", "next-day-apology"],
+      "basisTurnIds": ["who-ordered-drinks", "how-he-knew-version"],
       "logicContract": {
         "premiseAnchor": "她说第二天一开始仍只解释自己喝多、妹妹送她回去，男方后来追着问，她才补出桌上还有一个人。",
         "sourceProves": "她没有主动把当晚人员说完整，男方是从她后续解释里的破绽继续问下去。",
@@ -465,15 +408,15 @@
         "nextLimit": "主播可以判断她对男方也在分段补充，不能把男性在场直接写成越界。"
       },
       "lines": [
-        { "role": "host", "text": "你一直说，是他追着问，你才把那个人说出来。他为什么会突然问桌上还有谁？" },
-        { "role": "caller", "text": "我解释的时候顺嘴说了句‘他也不知道我会吐成那样’。男方就问我，这个‘他’是谁。" },
-        { "role": "host", "text": "所以你不是第二天主动说清楚，是先说漏了一个‘他’，他问到以后，你才补上？" },
+        { "role": "host", "text": "你不是主动告诉他的，是解释时先说漏了一个‘他’，对吧？" },
+        { "role": "caller", "text": "我当时急着解释，哪会每句话都说得那么严谨。他听见了就一直问。" },
+        { "role": "host", "text": "他问这个‘他’是谁，你才把桌上那个人补上。不是他凭空怀疑。" },
         { "role": "caller", "text": "……是。但那个人就是我妹妹的朋友，我不想说得好像我专门去见他一样。" }
       ]
     },
     {
       "id": "apology-and-post",
-      "basisTurnIds": ["emotion-need", "next-day-apology", "social-post-date", "previous-night", "closing-request"],
+      "basisTurnIds": ["social-post-date", "previous-night", "closing-request"],
       "logicContract": {
         "premiseAnchor": "她说第二天一直认真解释和道歉，却在同一天公开发出前一晚 KTV 喝酒的照片。",
         "sourceProves": "男方只看到她十号道歉时又发了一组 KTV 照片，并不知道照片拍于八号；这会让她的道歉显得很没分量。",
@@ -482,7 +425,7 @@
         "nextLimit": "主播只判断她的解释为何缺乏说服力，不替男方补唯一心理。"
       },
       "lines": [
-        { "role": "host", "text": "十号你一边跟他解释九号喝多了，一边发八号在 KTV 的照片。他看见的就是：你为一晚喝酒道歉，转头又在展示另一晚。" },
+        { "role": "host", "text": "十号你跟他解释九号喝多了。同一天，你又发了八号在 KTV 的照片。他看见的就是：你刚为一晚喝酒道歉，转头又在展示另一晚。" },
         { "role": "caller", "text": "可那不是同一天。我照片早就修好了，不发也浪费。他要是问，我完全可以解释。" },
         { "role": "host", "text": "可他看到的是你十号发了一组 KTV 的照片，哪知道那是八号拍的？你刚为喝断片道歉，转头又在发喝酒的照片。对方又不傻，你这道歉还能有多少分量？" },
         { "role": "caller", "text": "那我总不能因为他不高兴，什么都不发、哪里也不去吧？" },
@@ -512,7 +455,7 @@
         "lines": [
           { "role": "host", "text": "我们来把这次这个连线复个盘。" },
           { "role": "host", "text": "我还是那句话：动作倒推发心，逻辑要闭环。" },
-          { "role": "host", "text": "八号，她和师姐去 KTV；九号，她跟妹妹以及妹妹的一名男性朋友去酒吧，混着喝到吐，十一点五十二还回‘还行’，六分钟后不再回；十号，她一边道歉，一边发八号的 KTV 照片。" },
+          { "role": "host", "text": "八号，她和师姐去 KTV。九号，她跟妹妹以及妹妹的一名男性朋友去酒吧，混着喝到吐；十一点五十二还回‘还行’，六分钟后不再回。十号，她道歉，当天又发了八号的 KTV 照片。" },
           { "role": "host", "text": "婚介跟男方说她生活简单，她今晚也先说自己很久没出去。对质以后，桌上多出一个男的；再看她发来的旧动态截图，近两个月有六次酒吧或者 KTV。继续问，她才承认读研以后聚会一直不少，同行的男男女女也不是固定一拨。" },
           { "role": "host", "text": "再往前看，她说自己只想要深度交流，可花是她开口要的，包也是对方送的，花、包和车又被她放进了同一条动态。她不只想被理解，也很享受男方的条件和这段关系被别人看见。" }
         ]

@@ -1,6 +1,7 @@
 export function createInterludeScreens(ctx) {
   const {
     playAudioCueOnce,
+    consumePixelTransition,
     audioCueView,
     materialOperationOutcome,
     latestChoiceReviewRowsForState,
@@ -25,6 +26,7 @@ export function createInterludeScreens(ctx) {
     investigationBackflowModel,
     investigationRouteIndexBase,
     keyQuestionLimit,
+    nextPlayableSceneIndex,
     nightActionById,
     nightStructureFor,
     overnightStructureFor,
@@ -276,6 +278,10 @@ export function createInterludeScreens(ctx) {
     const night = ensureNight(brief);
     const selectedChoiceId = night.interludeActionChoices?.[action.id] ?? "";
     const hasChoices = (action.choices ?? []).length > 0;
+    const transitionKey = `${caseKey(brief)}:interrupt:${action.id}:reveal`;
+    const pixelTransition = action.revealTransition?.id && consumePixelTransition?.(transitionKey)
+      ? { ...action.revealTransition, kind: "reveal", evidenceArtSrc: brief.evidenceBoard ?? action.revealTransition.evidenceArtSrc ?? "" }
+      : null;
     playAudioCueOnce("sfx.message.notification", `${caseKey(brief)}:interrupt:${action.id}`);
     dayFrame({
       brief,
@@ -283,6 +289,7 @@ export function createInterludeScreens(ctx) {
       label: "后台打断",
       chapter: "回拨前",
       text: interruptToastHtml(action, selectedChoiceId),
+      pixelTransition,
       choices: flowGroupHtml(`
         ${!hasChoices && !selectedChoiceId ? `<button class="primary" data-complete-interlude-action type="button">稍后处理</button>` : ""}
         ${selectedChoiceId ? `<button class="primary" data-return-interlude type="button">回调查台</button>` : ""}
@@ -505,8 +512,8 @@ export function createInterludeScreens(ctx) {
       saveState();
       return render();
     }
-    const nextSceneIndex = Number(sceneIndex ?? 0) + 1;
-    if (nextSceneIndex < (brief.sceneVersions?.length ?? 0)) {
+    const nextSceneIndex = nextPlayableSceneIndex(brief, sceneIndex);
+    if (nextSceneIndex >= 0) {
       setIndexValue(brief, "sceneReview", nextSceneIndex);
       state.scene = "sceneReview";
     } else {

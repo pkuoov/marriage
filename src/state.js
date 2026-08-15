@@ -26,6 +26,7 @@ const LEGACY_CALLBACK_ITEMS = Object.freeze({
 });
 const RETIRED_INTERLUDE_CHOICES = new Set(["work-frame-zhao", "work-frame-zhou", "work-frame-lin"]);
 const RETIRED_DELEGATION_MATERIALS = new Set(["profile-mba-gap", "work-approval-missing"]);
+const RUNTIME_TOP_LEVEL_SCREENS = new Set(["chapter", "quickDetectiveSelect", "quickDetective"]);
 
 export const CHARACTER_ART = {
   meng: "./assets/generated/characters/meng_host_v2.png",
@@ -40,6 +41,7 @@ export const CHARACTER_ART = {
 export const baseState = {
   screen: "title",
   saveSlot: "slot1",
+  saveLoadError: null,
   playerName: DEFAULT_PLAYER_NAME,
   settings: {
     textSpeed: "normal",
@@ -61,6 +63,9 @@ export const baseState = {
   sceneAnswers: {},
   sceneQuestionPicks: {},
   sceneDialoguePicks: {},
+  statementReviewAttempts: {},
+  statementPatience: {},
+  activeStatementLineId: null,
   helperHintPicks: {},
   sceneQuestionFocus: null,
   evidenceCheckPicks: {},
@@ -93,12 +98,42 @@ export const baseState = {
 };
 
 export function loadState() {
+  const saveSlot = activeSaveSlot();
   try {
     const raw = saveStore.read(STORAGE_KEY, [LEGACY_STORAGE_KEY]);
-    return raw ? migrateState({ ...JSON.parse(raw), saveSlot: activeSaveSlot() }) : null;
+    return parseStateSnapshot(raw, saveSlot);
   } catch {
-    return null;
+    return damagedSaveState(saveSlot);
   }
+}
+
+export function parseStateSnapshot(raw, saveSlot = "slot1") {
+  if (!raw) return null;
+  try {
+    return normalizeRuntimeState({ ...JSON.parse(raw), saveSlot });
+  } catch {
+    return damagedSaveState(saveSlot);
+  }
+}
+
+function damagedSaveState(saveSlot = "slot1") {
+  return {
+    ...structuredClone(baseState),
+    saveSlot,
+    screen: "title",
+    saveLoadError: "corrupt-save"
+  };
+}
+
+export function normalizeRuntimeState(saved = {}) {
+  const next = migrateState(saved ?? {});
+  const chapter = Number(next.chapter);
+  next.screen = RUNTIME_TOP_LEVEL_SCREENS.has(next.screen) ? next.screen : "title";
+  next.chapter = Number.isInteger(chapter) && chapter > 0 ? chapter : 1;
+  next.attrs = { ...baseState.attrs, ...(next.attrs ?? {}) };
+  next.caseBriefs = Array.isArray(next.caseBriefs) ? next.caseBriefs : [];
+  next.caseBrief = next.caseBrief ?? next.caseBriefs[next.chapter - 1] ?? null;
+  return next;
 }
 
 export function migrateState(saved) {
@@ -108,6 +143,7 @@ export function migrateState(saved) {
     attrs: { ...baseState.attrs, ...(saved.attrs ?? {}) }
   };
   next.saveSlot = activeSaveSlot();
+  next.saveLoadError = typeof next.saveLoadError === "string" && next.saveLoadError ? next.saveLoadError : null;
   next.playerName = normalizePlayerName(next.playerName);
   next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
   if (!Array.isArray(next.dialogueBacklog)) next.dialogueBacklog = [];
@@ -119,6 +155,9 @@ export function migrateState(saved) {
   if (!next.sceneAnswers || Array.isArray(next.sceneAnswers)) next.sceneAnswers = {};
   if (!next.sceneQuestionPicks || Array.isArray(next.sceneQuestionPicks)) next.sceneQuestionPicks = {};
   if (!next.sceneDialoguePicks || Array.isArray(next.sceneDialoguePicks)) next.sceneDialoguePicks = {};
+  if (!next.statementReviewAttempts || Array.isArray(next.statementReviewAttempts)) next.statementReviewAttempts = {};
+  if (!next.statementPatience || Array.isArray(next.statementPatience)) next.statementPatience = {};
+  if (!("activeStatementLineId" in next)) next.activeStatementLineId = null;
   if (!next.helperHintPicks || Array.isArray(next.helperHintPicks)) next.helperHintPicks = {};
   if (!next.sceneQuestionFocus || typeof next.sceneQuestionFocus !== "object" || Array.isArray(next.sceneQuestionFocus)) next.sceneQuestionFocus = null;
   if (!next.evidenceCheckPicks || Array.isArray(next.evidenceCheckPicks)) next.evidenceCheckPicks = {};

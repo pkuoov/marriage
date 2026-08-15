@@ -27,10 +27,10 @@
       "priority": 0,
       "status": "temporary-system-master",
       "targetPath": "./assets/audio/voice/case2-dryer-message.ogg",
-      "speaker": "案2男店员，二十多岁，疲惫但很熟悉如何向她示弱",
+      "speaker": "案2男店员，二十多岁，忙完一阵后随手给熟客回语音",
       "transcript": "今晚店长又说我了。也就你肯听我说这些。",
-      "direction": "像忙着工作时顺手发来的语音，不要停下来深情告白；第二句比第一句更轻。",
-      "editNotes": "正式演员干声交付；吹风机持续声由混音阶段另加，不能盖住“店长”和“也就你肯听”。"
+      "direction": "像边做头发边回语音，疲惫里带一点熟练的亲近；不要刻意暧昧，也不要演成告白。",
+      "editNotes": "正式演员干声交付；吹风机持续声由混音阶段另加，不能盖住“也就你肯听”这句。"
     },
     {
       "cueId": "voice.case3.dinner-pause",

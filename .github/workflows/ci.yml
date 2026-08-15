@@ -25,7 +25,7 @@ jobs:
       - name: Install Chromium for browser smoke tests
         run: npx playwright install --with-deps chromium
 
-      # check guards static and content invariants; smoke:browser catches
-      # playable flow and rendering regressions, including stale text pins.
+      # Local work can use test:local's single-route smoke. CI intentionally
+      # keeps the complete smoke:browser matrix for flow and rendering drift.
       - name: Run pull-request behavior gate
         run: npm run test:pr

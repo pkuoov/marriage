@@ -50,22 +50,38 @@ export function callLineHtml(line = {}) {
     : line.role === "director" ? "other" : "caller";
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
+  const autoAdvanceAttr = line.autoAdvanceNext === true ? ' data-auto-advance-next="true"' : "";
   return `
-    <div class="call-line ${role}">
+    <div class="call-line ${role}"${autoAdvanceAttr}>
       <b>${speaker}</b>
       <p>${escapeHtml(text)}</p>
     </div>
   `;
 }
 
-export function callDialogueHtml(lines = [], className = "") {
+export function callDialogueHtml(lines = [], className = "", { autoPairQuestions = false } = {}) {
   const rows = (lines ?? []).filter((line) => line?.role === "pause" || line?.text || line?.version || line?.line);
   if (!rows.length) return "";
   return `
     <div class="call-dialogue ${escapeHtml(className)}">
-      ${rows.map((line) => callLineHtml(line)).join("")}
+      ${rows.map((line, index) => callLineHtml({
+        ...line,
+        autoAdvanceNext: line.autoAdvanceNext === true || autoPairQuestions && isQuestionAnswerPair(line, rows[index + 1])
+      })).join("")}
     </div>
   `;
+}
+
+function isQuestionAnswerPair(line = {}, nextLine = null) {
+  if (!nextLine || ["pause", "stage"].includes(line.role) || ["pause", "stage"].includes(nextLine.role)) return false;
+  const role = spokenRole(line);
+  const nextRole = spokenRole(nextLine);
+  const text = String(line.text ?? line.version ?? line.line ?? "").trim();
+  return role !== nextRole && ["host", "caller"].includes(role) && ["host", "caller"].includes(nextRole) && /[？?][」』”’\"']?$/.test(text);
+}
+
+function spokenRole(line = {}) {
+  return line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
 }
 
 export function choiceReviewHtml(rows = []) {

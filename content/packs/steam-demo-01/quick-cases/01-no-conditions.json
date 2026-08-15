@@ -10,12 +10,23 @@
     "host": {
       "name": "林旭阳",
       "roleLabel": "主播",
-      "artSrc": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png"
+      "artSrc": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png",
+      "artVariants": {
+        "listening": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png?v=0.27.0",
+        "questioning": "./assets/generated/host/lin_xuyang_questioning_pixel.png?v=0.27.0",
+        "pressing": "./assets/generated/host/lin_xuyang_pressing_pixel.png?v=0.27.0",
+        "verdict": "./assets/generated/host/lin_xuyang_verdict_pixel.png?v=0.27.0"
+      }
     },
     "caller": {
       "name": "匿名来电人",
       "roleLabel": "语音连线",
-      "artSrc": "./assets/generated/quick-detective/caller-luo-pixel.png"
+      "artSrc": "./assets/generated/quick-detective/caller-luo-pixel.png",
+      "artVariants": {
+        "neutral": "./assets/generated/quick-detective/caller-luo-pixel.png?v=0.27.0",
+        "guarded": "./assets/generated/quick-detective/caller-luo-guarded-pixel.png?v=0.27.0",
+        "pause": "./assets/generated/quick-detective/caller-luo-pause-pixel.png?v=0.27.0"
+      }
     }
   },
   "whyTonight": "她知道林旭阳除了做情感热线，也兼职替人介绍对象，登记的听众里有做生意、家境稳定的男性，想借直播间获得介绍。",
@@ -82,14 +93,16 @@
     {
       "id": "family-version",
       "label": "先听她怎么介绍自己",
-      "turnIds": ["greeting", "ask-for-match", "caller-profile", "straight-persona", "desired-partner", "birth-father", "father-now", "housing-requirement", "million-from-dad", "which-dad"],
+      "patience": 3,
+      "turnIds": ["greeting", "ask-for-match", "caller-profile", "birth-father", "million-from-dad", "which-dad"],
       "issueOptionIds": ["benefactor-source", "mother-departure", "report-disclosure"],
       "requiredConfrontationIds": ["two-fathers", "fertility-slip"]
     },
     {
       "id": "actual-request",
       "label": "再听她怎么说",
-      "turnIds": ["low-standards", "relationship-pace", "small-circle", "ordinary-match", "ordinary-caution", "home-price", "borrow-host-trust"],
+      "patience": 3,
+      "turnIds": ["low-standards", "ordinary-match", "ordinary-caution", "home-price", "borrow-host-trust"],
       "issueOptionIds": ["mortgage-pressure", "actual-standard", "soft-talk"],
       "requiredConfrontationIds": ["hidden-standards", "useful-soft-talk"]
     }
@@ -98,7 +111,7 @@
     {
       "id": "greeting",
       "host": "你好，能听见吗？",
-      "caller": "主播你好，能听见。"
+      "caller": "能听见。"
     },
     {
       "id": "ask-for-match",
@@ -107,38 +120,18 @@
     },
     {
       "id": "caller-profile",
-      "host": "你今年多大？现在做什么？",
-      "caller": "二十四，在商场卖衣服。底薪加提成，一个月六七千吧，忙的时候多一点。我平时花得不多，自己能养活自己。"
-    },
-    {
-      "id": "straight-persona",
-      "host": "以前谈过吗？",
-      "caller": "谈过两个。一个后来去了外地，另一个总说我脾气硬。我不太会说那些好听的，吵完架也拉不下脸哄人，慢慢就散了。"
-    },
-    {
-      "id": "desired-partner",
-      "host": "那你现在想找个什么样的？",
-      "caller": "人踏实一点，别赌，也别动手。挣多挣少我没那么看重，家里真遇上事，别瞒着我，也别一转身就跑。"
+      "host": "先把你自己的情况，还有以前谈过的，大概说一下。",
+      "caller": "我二十四，在商场卖衣服，底薪加提成一个月六七千，自己能养活自己。以前谈过两个，一个去了外地，另一个总说我脾气硬。我不太会讲好听的，吵完也拉不下脸哄人，后来就散了。现在就想找个踏实点的，别赌，别动手，家里真遇上事也别瞒着我、转身就跑。"
     },
     {
       "id": "birth-father",
       "host": "你为什么把这个看得这么重？",
-      "caller": "我爸以前给人开货车，后来伤了腰，坐久一点都疼，重活也干不了。那时候家里本来就没什么钱，他一伤，收入也断了。我妈一看这日子过不下去，连句话都没跟我爸多说，收拾东西就走了。那年我还在上小学。后来一年也见不了一回，是我爸一个人把我带大的。等我大一点，他看病、跑手续都是我陪着。所以我就觉得，两个人真碰上病啊、没法上班啊，别说散就散。哪怕以后是他身体不好，或者是我不能生孩子，也能商量着过。"
-    },
-    {
-      "id": "father-now",
-      "host": "叔叔现在身体怎么样？",
-      "caller": "还是老样子，重活肯定做不了。有时候帮熟人看看店，一个月也没多少钱。他不爱求人，能自己出的就自己出。"
-    },
-    {
-      "id": "housing-requirement",
-      "host": "那你对男方的房子有要求吗？",
-      "caller": "没有。我自己有套小两居，还有一点贷款，每个月不算多。以后真在一起，他没房也可以先住我这儿。"
+      "caller": "我爸以前给人开货车，后来伤了腰，坐久一点都疼，重活也干不了。家里本来就没什么钱，他一伤，收入也断了。我妈看这日子过不下去，连句话都没多说，收拾东西就走了。那年我还在上小学，后来是我爸一个人把我带大的。现在他偶尔替熟人看看店，也挣不了多少。所以我就觉得，两个人真碰上病啊、没法上班啊，别说散就散。哪怕以后是他身体不好，或者是我不能生孩子，也能商量着过。"
     },
     {
       "id": "million-from-dad",
-      "host": "二十四就买房，挺早的。首付是自己攒的？",
-      "caller": "我哪攒得出那么多。去年买的时候，我爸爸给了我一百万，我又添了一点才买下来。现在我只还后面那点贷款。"
+      "host": "你刚才说自己能养活自己。现在是租房，还是跟家里住？",
+      "caller": "我自己有套小两居，还有一点贷款。去年买的时候，我爸爸给了我一百万，我又添了一点才买下来。以后男方没房，也可以先住我这里。"
     },
     {
       "id": "which-dad",
@@ -147,18 +140,8 @@
     },
     {
       "id": "low-standards",
-      "host": "那收入和年龄呢？",
-      "caller": "一个月四五千也行，年龄别差太多，大我五岁以内都可以。反正我有地方住，两个人把自己的日子过好就行。学历、长相那些，我真不挑。"
-    },
-    {
-      "id": "relationship-pace",
-      "host": "你是想认真往结婚谈，还是先认识几个人看看？",
-      "caller": "肯定是认真谈。二十四也不小了，合适的话相处一两年，差不多就可以结婚。我不喜欢同时聊好几个，能遇到一个靠谱的就行。"
-    },
-    {
-      "id": "small-circle",
-      "host": "平时下班以后呢，认识新人的机会多不多？",
-      "caller": "不多。商场下班本来就晚，休息的时候有时陪我爸去医院，剩下就在家。我要是自己认识得到合适的，也不会来问您了。"
+      "host": "那你愿意见什么样的？你一次说完。",
+      "caller": "一个月四五千也行，年龄大我五岁以内，没房也可以。学历、长相我真不挑。合适的话相处一两年就结婚。商场下班晚，我平时也没什么机会认识人，要不然也不会来找您。"
     },
     {
       "id": "ordinary-match",
@@ -185,41 +168,48 @@
     {
       "id": "benefactor-source",
       "label": "买房的钱到底是谁出的",
+      "sourceAnchor": "我爸爸给了我一百万",
       "confrontationId": "two-fathers"
     },
     {
       "id": "mother-departure",
-      "label": "她母亲当年为什么离开"
+      "label": "她母亲当年为什么离开",
+      "sourceAnchor": "我妈看这日子过不下去"
     },
     {
       "id": "report-disclosure",
       "label": "为什么偏偏拿自己不能生孩子举例",
+      "sourceAnchor": "或者是我不能生孩子",
       "confrontationId": "fertility-slip"
     },
     {
       "id": "mortgage-pressure",
-      "label": "她的收入能不能负担剩余房贷"
+      "label": "她的收入能不能负担剩余房贷",
+      "sourceAnchor": "能帮我减轻点房贷压力"
     },
     {
       "id": "actual-standard",
       "label": "她说的条件和实际选择",
+      "sourceAnchor": "先别急吧",
       "confrontationId": "hidden-standards"
     },
     {
       "id": "soft-talk",
       "label": "不会说好听话是不是分手的根本原因",
+      "sourceAnchor": "旭阳哥",
       "confrontationId": "useful-soft-talk"
     }
   ],
   "confrontations": [
     {
       "id": "two-fathers",
-      "basisTurnIds": ["birth-father", "father-now", "million-from-dad", "which-dad"],
+      "basisTurnIds": ["birth-father", "million-from-dad", "which-dad"],
       "revealTransition": {
         "id": "quick-two-fathers",
         "kind": "reveal",
-        "eyebrow": "HOLD",
-        "label": "等等"
+        "eyebrow": "称呼对不上",
+        "label": "两个“爸爸”",
+        "visualVariant": "two-fathers"
       },
       "lines": [
         {
@@ -250,7 +240,7 @@
     },
     {
       "id": "fertility-slip",
-      "basisTurnIds": ["desired-partner", "birth-father", "relationship-pace"],
+      "basisTurnIds": ["caller-profile", "birth-father"],
       "lines": [
         {
           "role": "host",
@@ -284,7 +274,7 @@
         },
         {
           "role": "host",
-          "text": "可下一句你就要我介绍自己做生意、家里稳定的，最好还能帮你减轻房贷。你那套房总价两百万。你不是没要求，是没把真要求放在前面。"
+          "text": "可下一句你就要我介绍自己做生意、家里稳定的，最好还能帮你减轻房贷。你那套房总价两百万。这些才是你的要求，前面一直没说。"
         },
         {
           "role": "caller",
@@ -294,11 +284,11 @@
     },
     {
       "id": "useful-soft-talk",
-      "basisTurnIds": ["straight-persona", "borrow-host-trust"],
+      "basisTurnIds": ["caller-profile", "borrow-host-trust"],
       "lines": [
         {
           "role": "host",
-          "text": "你说那段感情慢慢散了，是因为自己不会讲好听话，吵完也不会哄人。可一到让我帮忙，你马上夸我看人准，叫我旭阳哥，还想让我先替你说好话。你不是不会说。"
+          "text": "你说那段感情慢慢散了，是因为自己不会讲好听话，吵完也不会哄人。可一到让我帮忙，你马上夸我看人准，叫我旭阳哥，还想让我先替你说好话。你明明知道什么时候该把话说软。"
         },
         {
           "role": "caller",
@@ -325,7 +315,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "给你一百万的不是亲爸。你又主动说到自己不能生孩子，问回去才承认做过检查。想找条件好的人可以直接说，可你还要借我的信誉去认识人，这个忙我不能帮。"
+          "text": "给你一百万的不是亲爸。你主动拿自己不能生孩子举例，问回去才承认做过检查。想找条件好的人可以直接说，可你还要借我的信誉去认识人，这个忙我不能帮。"
           },
           {
             "role": "caller",

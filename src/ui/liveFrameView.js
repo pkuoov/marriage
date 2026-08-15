@@ -6,6 +6,7 @@ export function liveControlDeckHtml({
   segment = 1,
   total = 1,
   pressure = {},
+  mode = "listen",
   material = "",
   materialCount = 1
 } = {}) {
@@ -23,7 +24,7 @@ export function liveControlDeckHtml({
   const hasMaterial = Boolean(material && Number(materialCount) > 0);
   const hostState = hostMonitorStateForPressure(pressure);
   return `
-    <aside class="control-deck" aria-label="直播控场台">
+    <aside class="control-deck deck-mode-${escapeHtml(mode)}" aria-label="直播控场台">
       <section class="deck-card deck-card-live">
         <span><i></i>ON AIR</span>
         <b>${escapeHtml(onAirLabel)}</b>
@@ -41,9 +42,9 @@ export function liveControlDeckHtml({
           <i>${viewerCountForPressure(pressure)}</i>
         </div>
         <div class="deck-monitor-strip" aria-hidden="true">
-          <i>MIC</i>
-          <i>REC</i>
-          <i>LINE</i>
+          <i class="${mode === "listen" ? "is-active" : ""}">MIC</i>
+          <i class="${mode === "replay" ? "is-active" : ""}">REC</i>
+          <i class="${mode === "interrupt" ? "is-active" : ""}">LINE</i>
         </div>
       </section>
       <section class="deck-card">
@@ -93,6 +94,14 @@ function deckProgressState(segment = 1, total = 1) {
 
 function deckPatienceState(pressure = {}) {
   const level = pressure.level ?? "high";
+  if (pressure.quietUntilEmpty) {
+    if (Number(pressure.remaining ?? 0) <= 0) {
+      return { label: pressure.patienceLabel ?? "直播间失去耐心", note: "直播间开始催你别再乱带节奏。" };
+    }
+    if (level === "low") return { label: pressure.patienceLabel ?? "快见底", note: "刚才有一句没有问到点上。" };
+    if (level === "mid") return { label: pressure.patienceLabel ?? "还能继续", note: "这段里还有机会把问题找回来。" };
+    return { label: pressure.patienceLabel ?? "耐心充足", note: "先听原话，再决定打断哪一句。" };
+  }
   if (level === "low") return { label: pressure.patienceLabel ?? "快压不住", note: "麦里的停顿变长了。" };
   if (level === "mid") return { label: pressure.patienceLabel ?? "开始起噪", note: "她答得慢了，弹幕也在分岔。" };
   return { label: pressure.patienceLabel ?? "还在听", note: "来电人还愿意往下说。" };
@@ -101,6 +110,9 @@ function deckPatienceState(pressure = {}) {
 function hostMonitorStateForPressure(pressure = {}) {
   const level = pressure.level ?? "high";
   const crowd = pressure.crowd ?? "";
+  if (pressure.quietUntilEmpty && Number(pressure.remaining ?? 0) > 0) {
+    return { kind: "idle", label: "监听中" };
+  }
   if (level === "low" || crowd === "散了") return { kind: "pressed", label: "压麦" };
   if (crowd === "跑偏") return { kind: "thinking", label: "拉回" };
   if (crowd === "稳住" || crowd === "追上") return { kind: "held", label: "收住" };
@@ -108,6 +120,7 @@ function hostMonitorStateForPressure(pressure = {}) {
 }
 
 function viewerCountForPressure(pressure = {}) {
+  if (pressure.quietUntilEmpty && Number(pressure.remaining ?? 0) > 0) return "9.0K Viewers";
   const ratio = Number.isFinite(Number(pressure.ratio)) ? Number(pressure.ratio) : 0.75;
   const base = 6.2 + Math.max(0, Math.min(1, ratio)) * 2.8;
   return `${base.toFixed(1)}K Viewers`;
@@ -147,6 +160,7 @@ export function liveFrameHtml({
   controlDeckHtml = "",
   material = "",
   materialCount = 1,
+  materialArtSrc = "",
   screenEffect = "",
   screenClass = "",
   pixelTransition = null,
@@ -199,25 +213,34 @@ export function liveFrameHtml({
           ${choicesAreFlow ? choiceLayer : ""}
         </article>
         ${choicesAreFlow ? "" : choiceLayer}
-        ${material ? materialModalHtml(material, materialKind) : ""}
+        ${material ? materialModalHtml(material, materialKind, materialArtSrc) : ""}
       </section>
     </main>
   `;
 }
 
 export function pixelTransitionHtml(transition = null) {
-  if (!transition?.label) return "";
-  const kind = ["scene", "soft-fade", "signal-connect", "signal-disconnect", "reveal"].includes(transition.kind) ? transition.kind : "scene";
+  if (!transition) return "";
+  const kind = ["scene", "soft-fade", "signal-connect", "signal-disconnect", "reveal", "phase"].includes(transition.kind) ? transition.kind : "scene";
   const signalClass = kind.startsWith("signal-") ? " pixel-transition-signal" : "";
+  const phaseVariant = kind === "phase" && ["listen", "review"].includes(transition.visualVariant)
+    ? ` pixel-transition-phase-${transition.visualVariant}`
+    : "";
+  const eyebrow = String(transition.eyebrow ?? "").trim();
+  const label = String(transition.label ?? "").trim();
+  const caption = eyebrow || label
+    ? `<p>${eyebrow ? `<small>${escapeHtml(eyebrow)}</small>` : ""}${label ? `<b>${escapeHtml(label)}</b>` : ""}</p>`
+    : "";
   return `
-    <div class="pixel-transition pixel-transition-${kind}${signalClass}" data-transition-kind="${kind}" aria-hidden="true">
+    <div class="pixel-transition pixel-transition-${kind}${signalClass}${phaseVariant}" data-transition-kind="${kind}"${phaseVariant ? ` data-transition-variant="${escapeHtml(transition.visualVariant)}"` : ""} aria-hidden="true">
       <div class="pixel-transition-grid"></div>
-      <p><small>${escapeHtml(transition.eyebrow ?? "SCENE SHIFT")}</small><b>${escapeHtml(transition.label)}</b></p>
+      ${revealPerformanceHtml(transition)}
+      ${caption}
     </div>
   `;
 }
 
-function materialModalHtml(material = "", materialKind = "file") {
+function materialModalHtml(material = "", materialKind = "file", materialArtSrc = "") {
   return `
     <aside class="avg-material-modal" id="avg-material-modal" data-material-modal hidden>
       <button class="avg-material-backdrop" data-material-close aria-label="关闭材料板" type="button"></button>
@@ -226,7 +249,8 @@ function materialModalHtml(material = "", materialKind = "file") {
           <span>后台材料</span>
           <button data-material-close type="button">关闭</button>
         </header>
-        <div class="avg-material-sheet material-${escapeHtml(materialKind)}">
+        <div class="avg-material-sheet material-${escapeHtml(materialKind)}${materialArtSrc ? " has-material-art" : ""}">
+          ${materialArtSrc ? `<img class="avg-material-art" src="${escapeHtml(materialArtSrc)}" alt="${escapeHtml(material)}的材料合成图" onerror="this.hidden=true" />` : ""}
           <small id="avg-material-title">当前材料</small>
           <i aria-hidden="true">${escapeHtml(materialGlyph(materialKind))}</i>
           <b>${escapeHtml(material)}</b>
@@ -235,6 +259,24 @@ function materialModalHtml(material = "", materialKind = "file") {
       </section>
     </aside>
   `;
+}
+
+function revealPerformanceHtml(transition = {}) {
+  const variant = String(transition.visualVariant ?? "");
+  if (!variant) return "";
+  const art = transition.evidenceArtSrc
+    ? `<img class="reveal-performance-art" src="${escapeHtml(transition.evidenceArtSrc)}" alt="" />`
+    : "";
+  const inner = {
+    "amount-gap": `${art}<div class="reveal-amounts"><b>80,000</b><span>− 40,000</span><span>− 5,000</span><strong>35,000 ?</strong></div>`,
+    "proxy-ledger": `<div class="reveal-amounts"><b>1,000,000</b><span>起投</span><span>120,000</span><strong>走我户</strong></div>`,
+    "police-knock": `<div class="reveal-window-light"></div><div class="reveal-door"><i></i><i></i></div>`,
+    "second-mic": `<div class="reveal-gift">✦</div><div class="reveal-mics"><i></i><i></i></div>`,
+    "approval-split": `${art}<div class="reveal-approval-split"><span>活动负责人</span><i></i><span>付款经办人</span></div>`,
+    "two-fathers": `<div class="reveal-father-card"><small>亲生父亲</small><b>零工</b></div><div class="reveal-father-link">≠</div><div class="reveal-father-card"><small>另一位“爸爸”</small><b>1,000,000</b></div>`,
+    "third-chair": `<div class="reveal-chairs"><i></i><i></i><i class="appears"></i></div>`
+  }[variant] ?? "";
+  return inner ? `<div class="reveal-performance reveal-${escapeHtml(variant)}">${inner}</div>` : "";
 }
 
 function sceneEvidencePropsHtml(backdropClass = "", materialKind = "file") {

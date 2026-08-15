@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { RUNTIME_CASE_CONTENT_FIELDS, RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS, runtimeCaseContentSummary } from "../src/runtime/contentCase.js";
+import { statementLinesFromText } from "../src/runtime/statementReviewModel.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packsDir = resolve(root, "content", "packs");
@@ -72,6 +73,7 @@ async function loadContentPacks() {
     quickCases[manifest.id] = {};
     for (const item of manifest.sequence ?? []) {
       const packet = await readJson(resolve(packsDir, packId, "cases", `${item.caseId}.json`));
+      validateStatementReplayCase(packet);
       cases[manifest.id][item.caseId] = runtimeIndexCase(packet, item);
     }
     for (const quickCaseId of manifest.quickCases ?? []) {
@@ -81,6 +83,25 @@ async function loadContentPacks() {
     }
   }
   return { contentPacks: packs, contentCases: cases, contentQuickCases: quickCases };
+}
+
+function validateStatementReplayCase(packet) {
+  const replayScenes = (packet.sceneVersions ?? []).filter((scene) => scene.interactionMode === "lineReplay");
+  if (!replayScenes.length) return;
+  assert(Number.isInteger(packet.statementPatience?.["night-a"]) && packet.statementPatience["night-a"] > 0, `${packet.caseId} line replay needs a night-a patience budget`);
+  assert(Number.isInteger(packet.statementPatience?.["night-b"]) && packet.statementPatience["night-b"] > 0, `${packet.caseId} line replay needs a night-b patience budget`);
+  for (const scene of replayScenes) {
+    const loadBearingOptions = (scene.questionOptions ?? []).filter((option) => option.correct === true || option.contradiction);
+    assert(loadBearingOptions.length, `${packet.caseId} scene ${scene.id} line replay needs at least one load-bearing question`);
+    for (const option of loadBearingOptions) {
+      assert(option.sourceAnchor, `${packet.caseId} scene ${scene.id} load-bearing question needs sourceAnchor`);
+      assertUniqueStatementAnchor(scene.version, option.sourceAnchor, `${packet.caseId} scene ${scene.id} sourceAnchor`);
+      if (scene.revisedVersion) {
+        const revisedSourceAnchor = option.revisedSourceAnchor ?? option.sourceAnchor;
+        assertUniqueStatementAnchor(scene.revisedVersion, revisedSourceAnchor, `${packet.caseId} scene ${scene.id} revised sourceAnchor`);
+      }
+    }
+  }
 }
 
 async function readJson(path) {
@@ -143,6 +164,7 @@ function validateQuickCase(packet, cast) {
   const turns = packet.turns ?? [];
   const issueOptions = packet.issueOptions ?? [];
   const confrontations = packet.confrontations ?? [];
+  const disclosureRounds = packet.disclosureRounds ?? [];
   const turnIds = new Set(turns.map((turn) => turn.id));
   const issueIds = new Set(issueOptions.map((item) => item.id));
   const confrontationIds = new Set(confrontations.map((item) => item.id));
@@ -164,15 +186,32 @@ function validateQuickCase(packet, cast) {
   assert(turnIds.size === turns.length, `${packet.id} turn ids must be unique`);
   assert(confrontations.length >= 3, `${packet.id} needs at least three direct confrontations`);
   assert(confrontationIds.size === confrontations.length, `${packet.id} confrontation ids must be unique`);
+  assert(disclosureRounds.length >= 2, `${packet.id} needs at least two statement rounds`);
+  for (const round of disclosureRounds) {
+    const roundTurns = turns.filter((turn) => (round.turnIds ?? []).includes(turn.id));
+    const callerStatement = roundTurns
+      .map((turn) => turn.caller)
+      .filter(Boolean)
+      .join("\n");
+    assert((round.turnIds ?? []).length && roundTurns.length === round.turnIds.length, `${packet.id} round ${round.id} references unknown turns`);
+    assert(Number.isInteger(round.patience) && round.patience > 0, `${packet.id} round ${round.id} needs a positive patience budget`);
+    assert(callerStatement, `${packet.id} round ${round.id} needs a caller statement`);
+    for (const issueId of round.issueOptionIds ?? []) {
+      const issue = issueOptions.find((item) => item.id === issueId);
+      assert(issue, `${packet.id} round ${round.id} references unknown issue ${issueId}`);
+      assert(issue.sourceAnchor, `${packet.id} issue ${issueId} needs sourceAnchor`);
+      assertUniqueStatementAnchor(callerStatement, issue.sourceAnchor, `${packet.id} issue ${issueId} sourceAnchor`);
+    }
+  }
   assert(issueOptions.length > confrontations.length, `${packet.id} needs issue choices plus at least one plausible non-contradiction`);
   assert(issueIds.size === issueOptions.length, `${packet.id} issue option ids must be unique`);
-  assert(issueOptions.every((item) => item.id && item.label), `${packet.id} issue options need ids and player-visible labels`);
+  assert(issueOptions.every((item) => item.id && item.label && item.sourceAnchor), `${packet.id} issue options need ids, labels, and source-line anchors`);
   assert(issueOptions.filter((item) => item.confrontationId).length === confrontations.length, `${packet.id} must expose exactly one issue direction for every confrontation`);
   assert(issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine === undefined), `${packet.id} non-contradiction issue choices must not carry answer-explaining retry copy`);
   for (const issue of issueOptions) {
     if (issue.confrontationId) assert(confrontationIds.has(issue.confrontationId), `${packet.id} issue ${issue.id} references unknown confrontation ${issue.confrontationId}`);
   }
-  assert(packet.quoteOptions === undefined && packet.playerMarkLimit === undefined && packet.requiredFlawCount === undefined, `${packet.id} must not restore the retired quote-selection or crowd-assist rules`);
+  assert(packet.quoteOptions === undefined && packet.playerMarkLimit === undefined && packet.requiredFlawCount === undefined, `${packet.id} must not restore retired crowd-assist scoring fields`);
   assert(packet.ending?.confirmed?.length && packet.ending?.unknown?.length, `${packet.id} ending must separate confirmed and unknown`);
   assert(packet.ending?.verdictKicker && packet.ending?.confirmedTitle && packet.ending?.unknownTitle, `${packet.id} ending must separate risk action from unresolved background`);
   assert(packet.ending?.riskReading?.title && packet.ending?.riskReading?.text, `${packet.id} ending must label its strongest risk reading`);
@@ -197,6 +236,12 @@ function validateQuickCase(packet, cast) {
       assert(turnIds.has(turnId), `${packet.id} confrontation ${confrontation.id} references unknown turn ${turnId}`);
     }
   }
+}
+
+function assertUniqueStatementAnchor(statement = "", anchor = "", label = "sourceAnchor") {
+  const matches = statementLinesFromText(statement).filter((line) => line.text.includes(String(anchor ?? "")));
+  assert(matches.length === 1, `${label} must match exactly one replay sentence (matched ${matches.length})`);
+  return matches[0];
 }
 
 function quickConfrontationLines(confrontation = {}) {

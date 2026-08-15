@@ -33,6 +33,7 @@ story: midnight-hotline-livestream-detective
 | Name | Type | Status | File |
 |------|------|--------|------|
 | 宸直信托 | Company | declining | [chenzhi-trust](factions/chenzhi-trust.md) |
+| 栖行共享科技 | Company | unstable | [qixing-shared-tech](factions/qixing-shared-tech.md) |
 
 ## Artifacts
 
@@ -41,4 +42,4 @@ story: midnight-hotline-livestream-detective
 | 案一账单与流水 | Document | active | [case1-ledger](artifacts/case1-ledger.md) |
 | 案二排班表与剪辑录音 | Document | active | [case2-salon-records](artifacts/case2-salon-records.md) |
 | 案三条件资料图 | Document | active | [case3-profile-images](artifacts/case3-profile-images.md) |
-| 案四审批与返款材料 | Document | active | [case4-approval-chain](artifacts/case4-approval-chain.md) |
+| 案四审批、报销与三层返费材料 | Document | active | [case4-approval-chain](artifacts/case4-approval-chain.md) |

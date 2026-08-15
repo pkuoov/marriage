@@ -14,6 +14,12 @@
       "displayName": "宸直信托",
       "kind": "trust-company",
       "fictional": true
+    },
+    {
+      "id": "qixing-shared-tech",
+      "displayName": "栖行共享科技",
+      "kind": "shared-hardware-company",
+      "fictional": true
     }
   ],
   "crossCasePromises": [
@@ -30,10 +36,21 @@
         "afterCaseId": "01-credit",
         "surface": "case-tail"
       },
+      "corporateSeed": {
+        "caseId": "04-workplace",
+        "surface": "case-tail",
+        "entityId": "qixing-shared-tech",
+        "anchors": [
+          "主要股东",
+          "共享硬件",
+          "层层返费",
+          "估值"
+        ]
+      },
       "secondarySeed": {
         "caseId": "02-tony",
         "surface": "overnight-return",
-        "anchors": ["窗外强光", "敲门", "十万", "宸直信托"]
+        "anchors": ["名单", "十二万", "走我户", "宸直信托"]
       },
       "tertiarySeed": {
         "caseId": "03-profile",
@@ -41,28 +58,28 @@
         "anchors": ["二十八万八", "三十万", "九月底到期", "宸直"]
       },
       "payoff": {
-        "afterCaseId": "04-workplace",
+        "afterCaseId": "02-tony",
         "worldEchoId": "world-echo-chenzhi-payment-crisis"
       },
-      "revalues": "机构最后出现全面兑付危机，既扩大案一投资风险的社会背景，也让案二十万元回单和案三女方父母三十万元未到期资产重新变重；不倒推证明任何一笔钱已经全部损失，也不替当事人的借款、挪用或彩礼加码免责。"
+      "revalues": "机构最后出现全面兑付危机，既扩大案一投资风险的社会背景，也让栖行共享科技依赖融资抬估值的扩张、最后一通里的十二万元代投、周的一百万元回单和案三女方父母三十万元未到期资产重新变重；不倒推证明任何一笔钱已经全部损失，也不替当事人的借款、挪用、回扣或彩礼加码免责。"
     }
   ],
   "theme": {
     "id": "identity-cost-demo",
     "title": "四通来电",
     "intro": "热线已经接进来。资料在后台，她已经开口了。",
-    "thesis": "账单、店表、工资流水和审批页都是真的，但没有一份能单独证明当事人的全部说法。",
+    "thesis": "账单、审批页、工资流水和店表都是真的，但没有一份能单独证明当事人的全部说法。",
     "commentPrompt": "先别替谁下结论。把四样东西放在一起看。",
     "hiddenThread": {
       "title": "四份材料",
       "label": "各自只证明了一部分",
-      "reveal": "账单、店表、资料图和审批页都是真的。可它们一张也没有把当事人嘴里的那段故事独自证明完。",
+      "reveal": "账单、审批页、资料图和店表都是真的。可它们一张也没有把当事人嘴里的那段故事独自证明完。",
       "lowReveal": "四样材料已经摆到一起了。它们各自缺的那一块，还没有完全对上。",
       "beats": [
         "账单里有消费、借款和两笔认购，尾号 3301 仍没有名字。",
-        "店表写了办卡、带客和投店，另一位女客的十万元仍在调查。",
+        "三张审批页都写着通过，付款账户和回单号仍是空的。",
         "学校图和工资卡都是真的，两边的全部家底仍没有摊开。",
-        "三张审批页都写着通过，付款账户和回单号仍是空的。"
+        "店表写了起投和走他户，十二万是否入产品仍不知道。"
       ],
       "comment": "「四张材料都是真的，偏偏没有一张能替人把整句话说完。」"
     }
@@ -100,73 +117,12 @@
         "guarded": "./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png?v=0.26.0",
         "pause": "./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.26.0"
       },
+      "evidenceBoard": "./assets/generated/materials/case1-credit-evidence-board.png?v=0.27.0",
       "difficultyProfile": {
         "tier": 1,
         "label": "开场体面",
         "budgetDelta": 1,
         "truthBoundaryPromptLimit": 5
-      }
-    },
-    {
-      "caseId": "02-tony",
-      "plotId": "tony-multi-dating",
-      "sceneId": "late-night-chat",
-      "complainantId": "he",
-      "respondentId": "chen",
-      "castProfileIds": [
-        "case2-caller-he",
-        "case2-tony",
-        "case2-regular",
-        "case2-former-owner",
-        "case2-manager",
-        "case2-front-desk",
-        "case2-other-customer"
-      ],
-      "act": "自己人",
-      "objectLabel": "店表",
-      "backdropClass": "backdrop-tony",
-      "callerArt": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0",
-      "callerArtStyle": "pixel",
-      "callerArtVariants": {
-        "neutral": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0",
-        "guarded": "./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png?v=0.26.0",
-        "pause": "./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.26.0"
-      },
-      "difficultyProfile": {
-        "tier": 2,
-        "label": "自己人加压",
-        "budgetDelta": 0,
-        "truthBoundaryPromptLimit": 5
-      }
-    },
-    {
-      "caseId": "03-profile",
-      "plotId": "education-income-fake-profile",
-      "sceneId": "live-call",
-      "complainantId": "lin",
-      "respondentId": "zhou",
-      "castProfileIds": [
-        "case3-caller-lin",
-        "case3-caller-cousin",
-        "case3-respondent",
-        "case3-introducer",
-        "case3-cousin"
-      ],
-      "act": "条件",
-      "objectLabel": "彩礼与存款",
-      "backdropClass": "backdrop-profile",
-      "callerArt": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0",
-      "callerArtStyle": "pixel",
-      "callerArtVariants": {
-        "neutral": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0",
-        "guarded": "./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.26.0",
-        "pause": "./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.26.0"
-      },
-      "difficultyProfile": {
-        "tier": 3,
-        "label": "条件反问",
-        "budgetDelta": 0,
-        "truthBoundaryPromptLimit": 6
       }
     },
     {
@@ -195,9 +151,80 @@
         "guarded": "./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png?v=0.26.0",
         "pause": "./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.26.0"
       },
+      "evidenceBoard": "./assets/generated/materials/case4-workplace-evidence-board.png?v=0.27.0",
+      "difficultyProfile": {
+        "tier": 2,
+        "label": "流程加压",
+        "budgetDelta": 0,
+        "truthBoundaryPromptLimit": 6
+      }
+    },
+    {
+      "caseId": "03-profile",
+      "plotId": "education-income-fake-profile",
+      "sceneId": "live-call",
+      "complainantId": "lin",
+      "respondentId": "zhou",
+      "castProfileIds": [
+        "case3-caller-lin",
+        "case3-caller-cousin",
+        "case3-respondent",
+        "case3-introducer",
+        "case3-cousin"
+      ],
+      "act": "条件",
+      "objectLabel": "彩礼与存款",
+      "backdropClass": "backdrop-profile",
+      "callerArt": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0",
+      "callerArtStyle": "pixel",
+      "callerArtVariants": {
+        "neutral": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0",
+        "guarded": "./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.26.0",
+        "pause": "./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.26.0"
+      },
+      "respondentArt": "./assets/generated/respondents/pixel-case03/respondent_profile_neutral_pixel.png?v=0.27.0",
+      "respondentArtVariants": {
+        "neutral": "./assets/generated/respondents/pixel-case03/respondent_profile_neutral_pixel.png?v=0.27.0",
+        "guarded": "./assets/generated/respondents/pixel-case03/respondent_profile_guarded_pixel.png?v=0.27.0"
+      },
+      "evidenceBoard": "./assets/generated/materials/case3-profile-evidence-board.png?v=0.27.0",
+      "difficultyProfile": {
+        "tier": 3,
+        "label": "条件反问",
+        "budgetDelta": 0,
+        "truthBoundaryPromptLimit": 6
+      }
+    },
+    {
+      "caseId": "02-tony",
+      "plotId": "tony-multi-dating",
+      "sceneId": "late-night-chat",
+      "complainantId": "he",
+      "respondentId": "chen",
+      "castProfileIds": [
+        "case2-caller-he",
+        "case2-tony",
+        "case2-regular",
+        "case2-former-owner",
+        "case2-manager",
+        "case2-front-desk",
+        "case2-other-customer",
+        "case2-chenzhi-clerk"
+      ],
+      "act": "自己人",
+      "objectLabel": "名单",
+      "backdropClass": "backdrop-tony",
+      "callerArt": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0",
+      "callerArtStyle": "pixel",
+      "callerArtVariants": {
+        "neutral": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0",
+        "guarded": "./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png?v=0.26.0",
+        "pause": "./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.26.0"
+      },
+      "evidenceBoard": "./assets/generated/materials/case2-tony-evidence-board.png?v=0.27.0",
       "difficultyProfile": {
         "tier": 4,
-        "label": "流程压麦",
+        "label": "名单压麦",
         "budgetDelta": -1,
         "truthBoundaryPromptLimit": 6
       }
@@ -323,26 +350,71 @@
         }
       },
       {
-        "afterCaseId": "02-tony",
-      "kicker": "广告间隙",
+        "afterCaseId": "04-workplace",
+        "kicker": "广告间隙",
         "lines": [
           {
             "speaker": "老方（语音）",
             "role": "production",
-            "text": "他店里那个六折，我现在去还算数吗？"
+            "text": "刚才贴片再晚十秒，就自己切进来了。"
           },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "你真想剪就正常约。别为了六折，顺便认个自己人。"
+            "text": "可那六万八也不会自己回来。"
           },
           {
             "speaker": "老方（语音）",
             "role": "production",
-            "text": "那算了。别把我加群里。"
+            "text": "行。下周的改版方案里别写这句。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "她下麦前又发来一页供应商返费表。招商主管、区域经理、采购经办，三层都有一栏。"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "名目还不一样吧？点位协调、渠道维护、采购配合。写得像三件事，钱是一层一层往经手人手里返。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "对。她那六万八还是走公司报销，这张表另存。可这公司这么搞，早晚得出事。"
+          },
+          {
+            "speaker": "老方（语音）",
+            "role": "production",
+            "text": "我刚翻到栖行共享科技的融资稿。宸直是主要股东之一，两轮融资都在往上抬估值，讲得最多的是又铺了多少点位。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "押金二十九，一次一块五。押金还得退，不能当收入。柜机、铺设、维护、场地方分成，哪个不要钱？"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "按他们自己写的使用率，单个点位连维护费和场地分成都盖不住。再让各级主管抽一遍，摊子铺得越大，窟窿只会越大。"
+          },
+          {
+            "speaker": "老方（语音）",
+            "role": "production",
+            "text": "老板儿子倒挺忙。八卦号拍到他跟宸直老板的儿子一起泡吧，身边的人换得比柜机广告还快。"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "宸直那位更出名。前后跟大网红、女明星闹过绯闻，上个月还被拍到坐私人飞机去法国看酒庄。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "八卦不能拿来算公司的账。可公开融资稿和这张返费表，已经够难看了。"
           }
         ],
-        "line": "老方撤回一张预约截图，像是什么都没问过。",
+        "line": "你把工作群截图和那张返费表分开放好。广告快结束了，老方还在语音里翻栖行的融资稿。",
         "afterLines": [
         {
           "role": "stage",
@@ -350,8 +422,8 @@
           }
         ],
       "transitionQuote": {
-        "text": "巧言令色，鲜矣仁。",
-        "source": "孔子 ·《论语·学而》"
+        "text": "名不正，则言不顺；言不顺，则事不成。",
+        "source": "孔子 ·《论语·子路》"
         }
       },
       {
@@ -397,12 +469,12 @@
           }
         ],
       "transitionQuote": {
-        "text": "名不正，则言不顺；言不顺，则事不成。",
-        "source": "孔子 ·《论语·子路》"
+        "text": "巧言令色，鲜矣仁。",
+        "source": "孔子 ·《论语·学而》"
         }
       },
       {
-        "afterCaseId": "04-workplace",
+        "afterCaseId": "02-tony",
       "kicker": "收播以后",
         "lines": [
           {
@@ -433,10 +505,12 @@
           "promiseId": "chenzhi-trust-payment-crisis",
           "kicker": "收播后 · 新闻推送",
           "actionLabel": "把新闻推送点开",
+          "artSrc": "./assets/generated/cg/chenzhi-news-push-pixel.png?v=0.28.0",
+          "artAlt": "收播后的工作室桌面，手机亮起一条紧急新闻推送",
           "headline": "宸直信托全部产品暂停兑付，实控人失联",
           "body": "赵律师的手机连续震了两下。新闻客户端刚发出通报：宸直信托全部产品暂停兑付，多处关联项目停摆，实控人暂时无法联系，监管部门和警方已经介入。公告没有公布清偿顺序。",
           "proves": "宸直信托已经出现全面兑付危机，关联项目也受到波及。",
-          "doesNotProve": "不能倒推案一的两笔认购已经全部损失，也不能证明案二女客的十万元就是 Tony 回单里的同一笔资金；案三女方父母的三十万元具体产品、清偿顺序和可追回金额也仍要分别核对。"
+          "doesNotProve": "不能倒推第一通的两笔认购已经全部损失，也不能证明最后一通里何的十二万元已经进入宸直，或周的一百万元转账就是回单对应的同一笔资金；第三通女方父母的三十万元具体产品、清偿顺序和可追回金额也仍要分别核对。"
         }
       }
     ],
@@ -462,21 +536,16 @@
           }
         },
         {
-          "id": "case2-callback",
-          "caseId": "02-tony",
+          "id": "case4-callback",
+          "caseId": "04-workplace",
           "caseLabel": "第二通回访",
-          "sender": "咨询者",
-          "speakerProfileId": "case2-caller-he",
-          "base": "我们三个拿到表的人已经去过店里。三张表摆在前台拍了照。没堵门。材料收好就走了。新闻出来以后报案的女生又补交了一次原图。那张十万回单现在兑不出来。是不是她转的那笔民警还没说。",
+          "sender": "陈",
+          "speakerProfileId": "case4-caller-chen",
+          "base": "明天的话我写好了,三个版本。……开玩笑的。用第一版:先报备,再要回单号。",
           "echoes": {
-        "pragmatic": "照片和付款记录我分开存了。",
-            "affirm": "群里有人说,当时喜欢听那些话也不丢人。",
-        "accompany": "后面真要走投诉,我先拿材料问清楚。"
-          },
-          "attachment": {
-            "kind": "image-placeholder",
-        "label": "三张表的留证照片",
-        "alt": "三张遮名表格并排摆在前台的留证照片"
+            "pragmatic": "就是你说的顺序。",
+            "affirm": "『六万八是六万八』,我抄在第一版开头了。",
+            "accompany": "下周一开会前要是扛不住,我真打啊。"
           }
         },
         {
@@ -485,7 +554,7 @@
           "caseLabel": "第三通回访",
           "sender": "表妹",
           "speakerProfileId": "case3-caller-cousin",
-          "base": "我姐把周末的饭取消了。先跟他两个人谈。她说二十八万八先不提。宸直那笔钱也不算进婚礼预算。她让我替她说声谢谢——她自己不好意思打。",
+          "base": "我姐把周末包间退了。定金没退。两边父母也各自说过了。她说二十八万八先不提。宸直的新闻也出来了。那笔钱更不敢算进婚礼预算。她让我替她说声谢谢——她自己不好意思打。",
           "echoes": {
             "pragmatic": "她说包里会放张表。让你别问是哪张。",
             "affirm": "她把『问清楚不丢人』那句转给我姨了。",
@@ -493,16 +562,21 @@
           }
         },
         {
-          "id": "case4-callback",
-          "caseId": "04-workplace",
+          "id": "case2-callback",
+          "caseId": "02-tony",
           "caseLabel": "第四通回访",
-          "sender": "陈",
-          "speakerProfileId": "case4-caller-chen",
-          "base": "明天的话我写好了,三个版本。……开玩笑的。用第一版:先报备,再要回单号。",
+          "sender": "咨询者",
+          "speakerProfileId": "case2-caller-he",
+          "base": "周把转账和回单原图又交了一遍,我也把自己的聊天和十二万转账交了。我们没去店里堵人。新闻出来以后,Tony 还是只说已经提交,没把合同发来。我的钱到底进没进产品,还是不知道。",
           "echoes": {
-            "pragmatic": "就是你说的顺序。",
-            "affirm": "『六万八是六万八』,我抄在第一版开头了。",
-            "accompany": "下周一开会前要是扛不住,我真打啊。"
+            "pragmatic": "聊天、转账和他发的提交页面,我分开存了。",
+            "affirm": "群里有人说,当时喜欢听那些话也不丢人。",
+            "accompany": "后面真要走投诉,我先拿材料问清楚。"
+          },
+          "attachment": {
+            "kind": "image-placeholder",
+            "label": "转账与回单原图",
+            "alt": "分别保存的转账、聊天与回单截图"
           }
         },
         {
@@ -516,7 +590,13 @@
     "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。下周，方案还是要交。",
     "platformCost": "后台曲线掉回老地方。老方这次没打字，直接发来一句：‘推荐位没了。下周一的方案，照交。’",
       "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。保温盒空了。你顺手洗了，倒扣在水池边。你把她的合同挪开，又把自己的手机放远了点。",
-      "close": "你从包里拿出那个牛皮纸文件袋。封口贴着一张便签，赵的字：『你当年没问完的那通，我帮你找到了后续。』便签下露出一角日期：2019-11-08，『已撤回的账单』。"
+      "close": "你从包里拿出那个牛皮纸文件袋。封口贴着一张便签，赵的字：『你当年没问完的那通，我帮你找到了后续。』便签下露出一角日期：2019-11-08，『已撤回的账单』。",
+      "closingCg": {
+        "src": "./assets/generated/cg/envelope-2019-pixel.png?v=0.28.0",
+        "alt": "天快亮时，直播桌上摊开的牛皮纸文件袋和旧账单",
+        "kicker": "2019-11-08",
+        "caption": "你当年没问完的那通"
+      }
     }
   }
 }

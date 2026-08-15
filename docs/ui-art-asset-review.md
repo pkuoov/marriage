@@ -17,7 +17,11 @@ Reviewed:
 - 每案双色调纯度
 - 颗粒密度统一
 
-三层清晰度原则:来电人>朦胧,顾问>清晰,主播永不露脸。
+三层清晰度原则：来电人保持匿名化但可读，临时上麦者与来电人同级，主播以固定像素形象出现；顾问仍以后台身份为主，不与直播舞台抢镜。
+
+2026-08-13 P0 更新：主播四态、案 3 男方双态、两宗快案来电人补充态、四案材料合成图和六套承重反转演出已经接入运行时。下文“缺少主播形象”“材料仍为纯文本”等段落保留为历史诊断，现状以本段和 `docs/pixel-art-transition-and-portrait-direction.md` 为准。
+
+2026-08-13 P1 更新：赵律师 `日常 / 揶揄 / 认真` 三态、关掉直播灯后的双人广告间隙、案间材料退场/进场动画、宸直新闻推送 CG 和 2019 文件袋 CG 已接入运行时。旧婚恋 AVG 背景继续只作未引用素材，不回到试玩路线。
 
 2026-07-18 方向更新：案 1 通过复审的暖色侧脸方向已经扩展到四案。四案三态像素立绘均取消常驻眼部光带，改以侧脸角度和简化五官保持匿名；规格与验收门见 `docs/pixel-art-transition-and-portrait-direction.md`。旧半写实立绘和遮罩样张仅保留为制作参考，不再作为试玩运行时主图。
 
@@ -84,7 +88,7 @@ Upgrade target:
 
 2026-07-18 update: all four callers now ship `neutral / guarded / pause` as transparent `256x512` masters plus nearest-neighbor `1024x2048` runtime assets. Runtime and pack validation cover every case; physical-device readability remains a release QA gate rather than a migration blocker.
 
-### P1: Missing Host-Side Visual Identity
+### P1: Missing Host-Side Visual Identity（已完成）
 
 The title background shows a studio, but in the live call the visible portrait is only the caller. The player is the host, yet the host has no persistent visual presence except UI text.
 
@@ -100,9 +104,9 @@ Suggested assets:
 - `assets/generated/host/host_monitor_thinking.png`
 - `assets/generated/host/host_monitor_pressed.png`
 
-2026-07-03 update: the first host-side layer is implemented as a diegetic CSS monitor inside `src/ui/liveFrameView.js`, with mic-light, small face silhouette, and waveform states. It deliberately avoids a second full portrait or another live speaker. Dedicated PNG host monitor variants can still be generated later if the final art pass needs higher fidelity.
+2026-08-13 update: the live stage now uses a persistent full-body host identity with listening, questioning, pressing, and verdict states. Active-speaker focus keeps the host dim while callers speak, so the player is visibly present without competing with the current line.
 
-### P1: Material Assets Are Still Text-Only
+### P1: Material Assets Are Still Text-Only（已完成）
 
 The material board works mechanically, but the "documents" are still text lines styled as bills/tables. For Steam, the materials should feel like real objects without becoming unreadable screenshots.
 
@@ -117,7 +121,9 @@ These should remain stylized UI assets, not real screenshots. No personal data, 
 
 2026-07-03 update: first foreground prop layer is implemented in CSS through `scene-evidence-props`. It changes shape by material type and scene class, stays under the portrait, and avoids readable text or answer hints. This does not replace final material art, but it gives every live-call screen a concrete case object before the player opens the material board.
 
-### P1: Background Set Still Carries Old Marriage-AVG DNA
+2026-08-13 update: all four cases now ship a fixed 1600×900 pixel-art evidence composite and the material modal renders that image behind the verified text label. The composites remain illustrative and cannot introduce facts beyond the authored rows.
+
+### P1: Background Set Still Carries Old Marriage-AVG DNA（运行时已去强调）
 
 Existing unused backgrounds include wedding hotel, parents home, hospital, school gate, married home. These are useful for an older relationship-life sim direction, but they now dilute the Steam-first "live public incident detective" identity.
 
@@ -125,6 +131,8 @@ Action:
 
 - Move old marriage-life backgrounds to an archive or keep them unused.
 - Prioritize public-life assets: finance office, rental room, refund counter, platform support desk, community group-buy chat board, co-working desk, salon counter.
+
+2026-08-13 update: no old marriage-life background is referenced by the Steam demo runtime. Files remain in place only as archive/reference assets so existing user work and Git history are not destructively rewritten. New P1 interludes reuse the broadcast studio instead of adding another marriage-AVG location.
 
 ## Recommended Priority
 

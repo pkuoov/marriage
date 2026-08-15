@@ -125,6 +125,16 @@ export function nightSegmentLastSceneIndex(brief = {}, segment = "segment1") {
   return indexes.length ? indexes[indexes.length - 1] : -1;
 }
 
+export function liveSceneForCurrentSegment(brief = {}, { night = {}, overnight = {} } = {}) {
+  if (overnightStructureFor(brief)) {
+    return overnight?.segment === "night2" ? "overnightNight2" : "overnightNight1";
+  }
+  if (nightStructureFor(brief)) {
+    return night?.segment === "segment2" ? "callSegment2" : "callSegment1";
+  }
+  return "sceneReview";
+}
+
 export function shouldEnterHangupAfterScene(brief = {}, sceneIndex = 0) {
   return Boolean(nightStructureFor(brief)) && Number(sceneIndex) === nightSegmentLastSceneIndex(brief, "segment1");
 }

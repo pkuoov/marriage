@@ -1,5 +1,12 @@
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
+export const DEFAULT_HOST_ART_VARIANTS = {
+  listening: "./assets/generated/quick-detective/lin-xuyang-host-pixel.png?v=0.27.0",
+  questioning: "./assets/generated/host/lin_xuyang_questioning_pixel.png?v=0.27.0",
+  pressing: "./assets/generated/host/lin_xuyang_pressing_pixel.png?v=0.27.0",
+  verdict: "./assets/generated/host/lin_xuyang_verdict_pixel.png?v=0.27.0"
+};
+
 export function caseProgressStripHtml({ total = 1, answered = 0, label = "连线中" } = {}) {
   const safeTotal = Math.max(1, Number(total ?? 1));
   const segment = Math.max(1, Math.min(safeTotal, Number(answered ?? 0) + 1));
@@ -63,6 +70,13 @@ export function callerExpressionForView({ pressure = {}, budget = {}, scene = ""
   return { kind: "blink", text: "麦里轻轻吸气" };
 }
 
+export function hostSpeakingStateForView({ scene = "", mood = "listening" } = {}) {
+  if (/recap|ending|epilogue|storyInterlude|caseConclusion/i.test(String(scene))) return "verdict";
+  if (["sceneQuestionAnswer", "liveCounterBeat", "callerQuestion", "deepFollowup"].includes(scene) || ["tense", "anxious"].includes(mood)) return "pressing";
+  if (["sceneReview", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2"].includes(scene)) return "listening";
+  return "questioning";
+}
+
 export function callerArtForExpression({ neutralSrc = "", variants = {}, expression = {} } = {}) {
   const neutral = variants.neutral ?? neutralSrc ?? "";
   const expressionKind = expression.kind ?? "neutral";
@@ -82,8 +96,14 @@ export function portraitLayerHtml({
   artSrc = "",
   fallbackSrc = "",
   artStyle = "",
-  hostArtSrc = "./assets/generated/quick-detective/lin-xuyang-host-pixel.png",
+  hostArtSrc = DEFAULT_HOST_ART_VARIANTS.listening,
+  hostArtVariants = DEFAULT_HOST_ART_VARIANTS,
+  hostSpeakingState = "questioning",
   hostName = DEFAULT_PLAYER_NAME,
+  respondentArtSrc = "",
+  respondentFallbackSrc = "",
+  respondentArtVariants = {},
+  respondentName = "男方",
   callerVisible = true,
   mood = "listening",
   expression = null,
@@ -101,16 +121,29 @@ export function portraitLayerHtml({
     tense: "绷住",
     thinking: "接话"
   };
+  const hostListeningSrc = hostArtVariants.listening ?? hostArtSrc;
+  const hostQuestioningSrc = hostArtVariants.questioning ?? hostListeningSrc;
+  const hostPressingSrc = hostArtVariants.pressing ?? hostQuestioningSrc;
+  const hostVerdictSrc = hostArtVariants.verdict ?? hostQuestioningSrc;
+  const respondentNeutralSrc = respondentArtVariants.neutral ?? respondentArtSrc;
+  const respondentGuardedSrc = respondentArtVariants.guarded ?? respondentNeutralSrc;
+  const respondentFallbackAttr = respondentFallbackSrc && respondentFallbackSrc !== respondentNeutralSrc
+    ? ` data-fallback-src="${escapeHtml(respondentFallbackSrc)}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;"`
+    : ` onerror="this.hidden=true;this.closest('figure')?.classList.add('art-missing');"`;
   return `
-    <div class="case-duel-portraits">
+    <div class="case-duel-portraits${respondentNeutralSrc ? " has-respondent" : ""}">
       <figure class="case-portrait case-portrait-host art-pixel${callerVisible ? "" : " active"}" data-dialogue-portrait="host">
-        ${hostArtSrc ? `<img src="${escapeHtml(hostArtSrc)}" alt="" onerror="this.hidden=true;this.closest('figure')?.classList.add('art-missing');" /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>` : `<span class="anonymous-portrait-placeholder" aria-hidden="true"></span>`}
+        ${hostListeningSrc ? `<img src="${escapeHtml(hostListeningSrc)}" alt="" data-host-portrait data-host-speaking-state="${escapeHtml(hostSpeakingState)}" data-host-art-listening="${escapeHtml(hostListeningSrc)}" data-host-art-questioning="${escapeHtml(hostQuestioningSrc)}" data-host-art-pressing="${escapeHtml(hostPressingSrc)}" data-host-art-verdict="${escapeHtml(hostVerdictSrc)}" onerror="this.hidden=true;this.closest('figure')?.classList.add('art-missing');" /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>` : `<span class="anonymous-portrait-placeholder" aria-hidden="true"></span>`}
         <figcaption><span>主播</span><b>${escapeHtml(hostName)}</b></figcaption>
       </figure>
       ${callerVisible ? `<figure class="case-portrait case-portrait-caller${artStyleClass} mood-${escapeHtml(mood)} pose-${escapeHtml(safeExpression.kind)} beat-${Math.max(0, Number(sceneIndex ?? 0)) % 4} active" data-dialogue-portrait="caller">
         ${artSrc ? `<img src="${escapeHtml(artSrc)}" alt=""${fallbackAttr} /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>` : `<span class="anonymous-portrait-placeholder" aria-hidden="true"></span>`}
         <div class="call-expression expression-${escapeHtml(safeExpression.kind)}"><span>${escapeHtml(safeExpression.text)}</span></div>
         <figcaption><span>语音连线｜${escapeHtml(moodLabels[mood] ?? "听线")}</span><b>匿名来电人</b></figcaption>
+      </figure>` : ""}
+      ${respondentNeutralSrc ? `<figure class="case-portrait case-portrait-respondent art-pixel" data-dialogue-portrait="respondent" data-respondent-art-neutral="${escapeHtml(respondentNeutralSrc)}" data-respondent-art-guarded="${escapeHtml(respondentGuardedSrc)}">
+        <img src="${escapeHtml(respondentNeutralSrc)}" alt="" data-respondent-portrait${respondentFallbackAttr} /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>
+        <figcaption><span>临时连麦</span><b>${escapeHtml(respondentName)}</b></figcaption>
       </figure>` : ""}
     </div>
   `;

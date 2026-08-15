@@ -1,4 +1,14 @@
-const QUICK_SCENES = new Set(["intro", "transcript", "issueSelection", "confrontation", "verdict"]);
+import {
+  DEFAULT_STATEMENT_PATIENCE,
+  normalizeStatementPatience,
+  resetStatementPatience,
+  spendStatementPatience,
+  statementLineForId,
+  statementLinesFromTurns,
+  statementOptionForLine
+} from "./statementReviewModel.js";
+
+const QUICK_SCENES = new Set(["intro", "transcript", "issueSelection", "confrontation", "patienceLost", "verdict"]);
 const LEGACY_REVIEW_SCENES = new Set(["investigation", "feedback", "crowdAssist", "crowdFeedback"]);
 
 export function initialQuickDetectiveState(packet = {}) {
@@ -10,8 +20,11 @@ export function initialQuickDetectiveState(packet = {}) {
     turnIndex: 0,
     turnLineIndex: 0,
     activeConfrontationId: null,
+    activeSourceLineId: null,
     resolvedConfrontationIds: [],
     attemptedIssueIds: [],
+    attemptedLineIds: [],
+    roundPatience: {},
     confrontationLineIndex: 0,
     verdictIndex: 0,
     verdictLineIndex: 0
@@ -37,8 +50,11 @@ export function normalizeQuickDetectiveState(value, packet = {}) {
     turnIndex: boundedIndex(value.turnIndex, packet.turns?.length),
     turnLineIndex: boundedLineIndex(value.turnLineIndex, 2),
     activeConfrontationId: confrontationIds.has(value.activeConfrontationId) ? value.activeConfrontationId : null,
+    activeSourceLineId: typeof value.activeSourceLineId === "string" ? value.activeSourceLineId : null,
     resolvedConfrontationIds: uniqueKnown(value.resolvedConfrontationIds, confrontationIds),
     attemptedIssueIds: uniqueKnown(value.attemptedIssueIds, issueIds),
+    attemptedLineIds: uniqueStrings(value.attemptedLineIds),
+    roundPatience: normalizeQuickRoundPatience(value.roundPatience, packet),
     confrontationLineIndex: boundedLineIndex(value.confrontationLineIndex, quickConfrontationLines(activeConfrontation).length),
     verdictIndex: boundedIndex(value.verdictIndex, packet.ending?.summaryPages?.length),
     verdictLineIndex: boundedLineIndex(
@@ -50,19 +66,41 @@ export function normalizeQuickDetectiveState(value, packet = {}) {
 }
 
 export function advanceQuickTranscript(packet = {}, state = {}) {
+  return { ...state, scene: "issueSelection", activeSourceLineId: null };
+}
+
+export function applyQuickStatementLineSelection(packet = {}, state = {}, lineId = "") {
   const round = quickDisclosureRoundForState(packet, state);
-  const turnIndexes = quickTurnIndexesForRound(packet, round);
-  const currentIndex = turnIndexes.includes(Number(state.turnIndex))
-    ? Number(state.turnIndex)
-    : (turnIndexes[0] ?? 0);
-  const position = Math.max(0, turnIndexes.indexOf(currentIndex));
-  if (boundedLineIndex(state.turnLineIndex, 2) === 0) {
-    return { ...state, scene: "transcript", turnIndex: currentIndex, turnLineIndex: 1 };
+  const lines = quickStatementLinesForRound(packet, state);
+  const line = statementLineForId(lines, lineId);
+  if (!line) return state;
+  const issue = statementOptionForLine(quickIssueOptionsForRound(packet, state), line);
+  if (!issue?.confrontationId && state.attemptedLineIds?.includes(lineId)) return state;
+  const attemptedLineIds = [...new Set([...(state.attemptedLineIds ?? []), lineId])];
+  if (!issue?.confrontationId) {
+    const roundId = round.id ?? `round-${Number(state.roundIndex ?? 0)}`;
+    const max = quickRoundPatienceMax(round);
+    const nextBudget = spendStatementPatience(state.roundPatience?.[roundId], max);
+    return {
+      ...state,
+      scene: nextBudget.remaining <= 0 ? "patienceLost" : "issueSelection",
+      attemptedLineIds,
+      attemptedIssueIds: issue?.id
+        ? [...new Set([...(state.attemptedIssueIds ?? []), issue.id])]
+        : [...(state.attemptedIssueIds ?? [])],
+      activeSourceLineId: lineId,
+      roundPatience: {
+        ...(state.roundPatience ?? {}),
+        [roundId]: nextBudget
+      }
+    };
   }
-  if (position >= Math.max(0, turnIndexes.length - 1)) {
-    return { ...state, scene: "issueSelection" };
-  }
-  return { ...state, scene: "transcript", turnIndex: turnIndexes[position + 1], turnLineIndex: 0 };
+  const next = applyQuickIssueSelection(packet, state, issue.id);
+  return {
+    ...next,
+    attemptedLineIds,
+    activeSourceLineId: lineId
+  };
 }
 
 export function applyQuickIssueSelection(packet = {}, state = {}, issueId = "") {
@@ -83,11 +121,12 @@ export function applyQuickIssueSelection(packet = {}, state = {}, issueId = "") 
     };
   }
   return {
-    ...state,
-    scene: "confrontation",
+      ...state,
+      scene: "confrontation",
     attemptedIssueIds,
-    activeConfrontationId: confrontation.id,
-    confrontationLineIndex: 0
+      activeConfrontationId: confrontation.id,
+      activeSourceLineId: state.activeSourceLineId ?? null,
+      confrontationLineIndex: 0
   };
 }
 
@@ -117,14 +156,31 @@ export function advanceQuickConfrontation(packet = {}, state = {}) {
       turnIndex: nextTurnIndex,
       turnLineIndex: 0,
       activeConfrontationId: null,
+      activeSourceLineId: null,
       resolvedConfrontationIds,
       confrontationLineIndex: 0
     };
   }
   const solved = resolvedConfrontationIds.length >= (packet.confrontations?.length ?? 0);
   return solved
-    ? { ...state, scene: "verdict", activeConfrontationId: null, resolvedConfrontationIds, verdictIndex: 0, verdictLineIndex: 0 }
-    : { ...state, scene: "issueSelection", activeConfrontationId: null, resolvedConfrontationIds, confrontationLineIndex: 0 };
+    ? { ...state, scene: "verdict", activeConfrontationId: null, activeSourceLineId: null, resolvedConfrontationIds, verdictIndex: 0, verdictLineIndex: 0 }
+    : { ...state, scene: "issueSelection", activeConfrontationId: null, activeSourceLineId: null, resolvedConfrontationIds, confrontationLineIndex: 0 };
+}
+
+export function retryQuickStatement(packet = {}, state = {}) {
+  const round = quickDisclosureRoundForState(packet, state);
+  const roundId = round.id ?? `round-${Number(state.roundIndex ?? 0)}`;
+  const lineIds = new Set(statementLinesFromTurns(packet, round).map((line) => line.id));
+  return {
+    ...state,
+    scene: "transcript",
+    activeSourceLineId: null,
+    attemptedLineIds: (state.attemptedLineIds ?? []).filter((lineId) => !lineIds.has(lineId)),
+    roundPatience: {
+      ...(state.roundPatience ?? {}),
+      [roundId]: resetStatementPatience(quickRoundPatienceMax(round))
+    }
+  };
 }
 
 export function quickDisclosureRounds(packet = {}) {
@@ -146,10 +202,12 @@ export function quickFlowVersion(packet = {}) {
     "?",
     ...(round.issueOptionIds ?? []),
     "!",
-    ...(round.requiredConfrontationIds ?? [])
+    ...(round.requiredConfrontationIds ?? []),
+    "@",
+    ...(quickIssueOptionsForRound(packet, { roundIndex: rounds.indexOf(round) }).map((option) => `${option.id}:${option.sourceAnchor ?? ""}`))
   ].join(":"));
   const confrontationShape = (packet.confrontations ?? []).map((item) => item.id).join(":");
-  return `quick-v3|${roundShape.join("|")}|${confrontationShape}`;
+  return `quick-v4|${roundShape.join("|")}|${confrontationShape}`;
 }
 
 export function quickDisclosureRoundForState(packet = {}, state = {}) {
@@ -167,6 +225,16 @@ export function quickTurnIndexesForRound(packet = {}, round = {}) {
   const indexById = new Map((packet.turns ?? []).map((turn, index) => [turn.id, index]));
   const indexes = (round.turnIds ?? []).map((id) => indexById.get(id)).filter(Number.isInteger);
   return indexes.length ? indexes : (packet.turns ?? []).map((_, index) => index);
+}
+
+export function quickStatementLinesForRound(packet = {}, state = {}) {
+  return statementLinesFromTurns(packet, quickDisclosureRoundForState(packet, state));
+}
+
+export function quickRoundPatienceForState(packet = {}, state = {}) {
+  const round = quickDisclosureRoundForState(packet, state);
+  const roundId = round.id ?? `round-${Number(state.roundIndex ?? 0)}`;
+  return normalizeStatementPatience(state.roundPatience?.[roundId], quickRoundPatienceMax(round));
 }
 
 function quickRequiredConfrontationIds(packet = {}, round = {}) {
@@ -247,4 +315,20 @@ function boundedLineIndex(value, length) {
 
 function uniqueKnown(values, allowed) {
   return [...new Set(Array.isArray(values) ? values : [])].filter((value) => allowed.has(value));
+}
+
+function uniqueStrings(values) {
+  return [...new Set(Array.isArray(values) ? values : [])].filter((value) => typeof value === "string" && value);
+}
+
+function quickRoundPatienceMax(round = {}) {
+  return Math.max(1, Number(round.patience ?? DEFAULT_STATEMENT_PATIENCE) || DEFAULT_STATEMENT_PATIENCE);
+}
+
+function normalizeQuickRoundPatience(value = {}, packet = {}) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  return Object.fromEntries(quickDisclosureRounds(packet).map((round, index) => {
+    const id = round.id ?? `round-${index}`;
+    return [id, normalizeStatementPatience(source[id], quickRoundPatienceMax(round))];
+  }));
 }

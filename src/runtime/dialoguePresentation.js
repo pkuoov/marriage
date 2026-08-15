@@ -50,10 +50,18 @@ export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxTurnSentences = 
       ? "stage"
       : line.classList.contains("host") || line.classList.contains("shell-host") || speaker === DEFAULT_PLAYER_NAME || speaker === hostName
         ? "host"
-        : "caller";
+        : speaker === "男方"
+          ? "respondent"
+          : "caller";
     const text = isCallStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
     const audioCueId = line.getAttribute?.("data-audio-cue-id") ?? "";
-    return chunkDialogueTurn({ speaker, role, text, audioCueId }, maxTurnChars, maxTurnSentences);
+    const autoAdvanceNext = line.getAttribute?.("data-auto-advance-next") === "true";
+    const statementBlock = line.getAttribute?.("data-dialogue-block") === "statement";
+    return chunkDialogueTurn(
+      { speaker, role, text, audioCueId, autoAdvanceNext, statementBlock },
+      statementBlock ? Number.MAX_SAFE_INTEGER : maxTurnChars,
+      statementBlock ? Number.MAX_SAFE_INTEGER : maxTurnSentences
+    );
   });
 }
 
@@ -132,6 +140,7 @@ export function mountDialoguePresentation(root, options = {}) {
     pages,
     choices,
     ...options,
+    pairedAutoAdvance: options.pairedAutoAdvance ?? !shell?.classList.contains("dialogue-mode-listen"),
     onPageStart: (page, pageIndex) => {
       syncDialoguePortraitFocus(root, page);
       options.onPageStart?.(page, pageIndex);
@@ -147,10 +156,24 @@ export function mountDialoguePresentation(root, options = {}) {
   return controller;
 }
 
-export function createDialogueController({ box, pages, choices, speed = "normal", hostName = DEFAULT_PLAYER_NAME, onPageStart = () => {}, onShown = () => {}, onChoicesShown = () => {} } = {}) {
+export function createDialogueController({
+  box,
+  pages,
+  choices,
+  speed = "normal",
+  hostName = DEFAULT_PLAYER_NAME,
+  autoMode = false,
+  autoDelay = 2,
+  pairedAutoDelay = 450,
+  pairedAutoAdvance = true,
+  onPageStart = () => {},
+  onShown = () => {},
+  onChoicesShown = () => {}
+} = {}) {
   let pageIndex = 0;
   let visibleCount = 0;
   let frameId = 0;
+  let autoTimerId = 0;
   let lastAt = 0;
   let complete = false;
   const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
@@ -160,6 +183,7 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
   const baseDelay = delays[speed] ?? delays.normal;
 
   function showPage() {
+    clearAutoAdvance();
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
     const lines = normalizedPageLines(page);
@@ -168,11 +192,12 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
     const activeRole = dialoguePageRole(page);
     box.classList.toggle("speaker-host", activeRole === "host");
     box.classList.toggle("speaker-caller", activeRole === "caller");
+    box.classList.toggle("speaker-respondent", activeRole === "respondent");
     box.classList.toggle("speaker-stage", activeRole === "stage");
     box.dataset.activeSpeaker = activeRole;
     box.classList.toggle("reduced-fade", reduceMotion);
     pageLines.innerHTML = lines.map((entry) => `
-      <div class="avg-page-line speaker-${entry.role === "host" ? "host" : entry.role === "stage" ? "stage" : "caller"}${entry.repeatedContext ? " context-repeat" : ""}">
+      <div class="avg-page-line speaker-${entry.role === "host" ? "host" : entry.role === "respondent" ? "respondent" : entry.role === "stage" ? "stage" : "caller"}${entry.repeatedContext ? " context-repeat" : ""}">
         <b>${entry.repeatedContext ? "上一问 · " : ""}${escapeHtml(entry.role === "host" ? hostName : entry.speaker)}</b>
         <p class="avg-line"></p>
       </div>
@@ -207,6 +232,30 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
     complete = true;
     indicator.hidden = false;
     onShown(page, pageIndex);
+    scheduleAutoAdvance();
+  }
+
+  function scheduleAutoAdvance() {
+    clearAutoAdvance();
+    const nextPage = pages[pageIndex + 1];
+    const pairDelay = pairedAutoAdvance && !reduceMotion && baseDelay > 0 && shouldAutoAdvanceDialoguePair(pages[pageIndex], nextPage)
+      ? Math.max(250, Number(pairedAutoDelay) || 450)
+      : null;
+    const delay = autoMode
+      ? Math.max(1, Number(autoDelay) || 2) * 500
+      : pairDelay;
+    if (delay === null) return;
+    autoTimerId = globalThis.setTimeout(() => {
+      autoTimerId = 0;
+      if (box.isConnected === false) return;
+      advance();
+    }, delay);
+  }
+
+  function clearAutoAdvance() {
+    if (!autoTimerId) return;
+    globalThis.clearTimeout(autoTimerId);
+    autoTimerId = 0;
   }
 
   function applyVisibleText(page, count) {
@@ -225,6 +274,7 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
   }
 
   function advance() {
+    clearAutoAdvance();
     if (!complete) return finishPage();
     if (pageIndex < pages.length - 1) {
       pageIndex += 1;
@@ -238,11 +288,20 @@ export function createDialogueController({ box, pages, choices, speed = "normal"
     choices?.querySelector("button:not(:disabled)")?.focus?.({ preventScroll: true });
   }
 
-  return { start: showPage, advance, finish: finishPage, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
+  return { start: showPage, advance, finish: finishPage, destroy: clearAutoAdvance, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
+}
+
+export function shouldAutoAdvanceDialoguePair(page = {}, nextPage = null) {
+  if (!nextPage) return false;
+  const lines = normalizedPageLines(page);
+  if (lines.length !== 1 || lines[0]?.autoAdvanceNext !== true) return false;
+  const role = dialoguePageRole(page);
+  const nextRole = dialoguePageRole(nextPage);
+  return role !== "stage" && nextRole !== "stage" && role !== nextRole;
 }
 
 export function dialoguePageRole(page = {}) {
-  const roles = normalizedPageLines(page).map((line) => line?.role).filter((role) => role === "host" || role === "caller");
+  const roles = normalizedPageLines(page).map((line) => line?.role).filter((role) => role === "host" || role === "caller" || role === "respondent");
   return roles.length === 1 ? roles[0] : "stage";
 }
 
@@ -253,7 +312,24 @@ export function syncDialoguePortraitFocus(root, page = {}) {
   Array.from(root?.querySelectorAll?.("[data-dialogue-portrait]") ?? []).forEach((portrait) => {
     portrait.classList.toggle("active", portrait.dataset.dialoguePortrait === role);
   });
+  const hostPortrait = root?.querySelector?.("[data-host-portrait]");
+  if (hostPortrait) {
+    const state = role === "host" ? hostPortrait.dataset.hostSpeakingState ?? "questioning" : "listening";
+    const src = hostPortrait.dataset[`hostArt${capitalize(state)}`] ?? hostPortrait.dataset.hostArtQuestioning;
+    if (src && hostPortrait.getAttribute("src") !== src) hostPortrait.setAttribute("src", src);
+  }
+  const respondentPortrait = root?.querySelector?.("[data-respondent-portrait]");
+  if (respondentPortrait) {
+    const holder = respondentPortrait.closest("[data-dialogue-portrait='respondent']");
+    const src = role === "respondent" ? holder?.dataset.respondentArtGuarded : holder?.dataset.respondentArtNeutral;
+    if (src && respondentPortrait.getAttribute("src") !== src) respondentPortrait.setAttribute("src", src);
+  }
   return role;
+}
+
+function capitalize(value = "") {
+  const text = String(value ?? "");
+  return text ? `${text[0].toUpperCase()}${text.slice(1)}` : "";
 }
 
 function normalizedPageLines(page = {}) {

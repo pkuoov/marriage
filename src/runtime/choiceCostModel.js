@@ -1,5 +1,4 @@
 export const CHOICE_COST_META = Object.freeze({
-  dialogueQuestion: "补问 · 不收束",
   keyQuestion: "收束 · 未命中 −1 耐心",
   evidenceMark: "圈点 · 圈偏 −1 耐心",
   dayPlace: "耗时 1 · 占用一处走访",

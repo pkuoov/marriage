@@ -6,6 +6,15 @@ import { dirname, resolve } from "node:path";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
 const storyManifest = JSON.parse(await readFile(resolve(root, "content", "packs", "steam-demo-01", "manifest.json"), "utf8"));
+const authoredCasePackets = await Promise.all((storyManifest.sequence ?? []).map((item) => (
+  readFile(resolve(root, "content", "packs", "steam-demo-01", "cases", `${item.caseId}.json`), "utf8").then(JSON.parse)
+)));
+const loadBearingSourceAnchors = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
+  (scene.questionOptions ?? [])
+    .filter((option) => option.contradiction)
+    .flatMap((option) => [option.sourceAnchor, option.revisedSourceAnchor])
+    .filter(Boolean)
+)));
 const transitionQuoteByCaseId = Object.fromEntries(
   (storyManifest.nightShell?.interludes ?? [])
     .filter((interlude) => interlude.transitionQuote)
@@ -20,61 +29,111 @@ const routes = [
   { name: "keyboard-accounting-support", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
   { name: "gamepad-support-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-support-payments", "day-bank-flow"], dayChoices: { "day-support-payments": "compare-rent-transfer" }, documentRows: ["r08", "r11"], opener: "房租是不是另外付的", openerText: "房租算在每月一万七千五里面吗", callerQuestion: "dont-answer-for-her" }
 ];
-const smokeTarget = process.env.SMOKE_TARGET ?? "all";
+const supportedSmokeTargets = new Set([
+  "all",
+  "local-quick",
+  "case34",
+  "case1",
+  "gamepad",
+  "case2-transition",
+  "host-verdict",
+  "portrait-viewports",
+  "state-replacement",
+  "quick-detective"
+]);
+const smokeStepTimeoutMs = Math.max(1000, Number(process.env.SMOKE_STEP_TIMEOUT_MS) || 90000);
+const gamepadDialogueSamples = new WeakMap();
+const gamepadDialogueSampleLimit = 4;
+const smokeStartedAt = Date.now();
+const smokeTarget = smokeTargetFrom(process.argv.slice(2), process.env.SMOKE_TARGET);
 
-const browser = await launchBrowser();
+smokeProgress(`TARGET ${smokeTarget}`);
+const browser = await runSmokeStep("browser launch", launchBrowser);
 try {
   if (smokeTarget === "case34") {
     await runCase3DayRoutes();
     await runCase4DayRoutes();
-  } else if (smokeTarget === "case1") {
-    await runRoute(routes[0]);
+  } else if (smokeTarget === "case1" || smokeTarget === "local-quick") {
+    await runSmokeStep("route 1/1 accounting-support", () => runRoute(routes[0]));
   } else if (smokeTarget === "gamepad") {
-    await runRoute(routes.find((route) => route.inputMode === "gamepad"));
+    await runSmokeStep("route 1/1 gamepad-support-document", () => runRoute(routes.find((route) => route.inputMode === "gamepad")));
   } else if (smokeTarget === "case2-transition") {
     await runCase2DayMap();
-    await runCaseTransition();
+    await runSmokeStep("case transition", runCaseTransition);
   } else if (smokeTarget === "host-verdict") {
-    await runHostVerdictPresentation();
+    await runSmokeStep("host verdict viewport matrix", runHostVerdictPresentation);
   } else if (smokeTarget === "portrait-viewports") {
-    await runPortraitViewports();
+    await runSmokeStep("portrait viewport matrix", runPortraitViewports);
   } else if (smokeTarget === "state-replacement") {
-    await runStateReplacementRoutes();
+    await runSmokeStep("state replacement", runStateReplacementRoutes);
   } else if (smokeTarget === "quick-detective") {
-    await runQuickDetective();
+    await runSmokeStep("quick detective viewport matrix", runQuickDetective);
   } else {
-    for (const route of routes) {
-      await runRoute(route);
+    for (const [index, route] of routes.entries()) {
+      await runSmokeStep(`route ${index + 1}/${routes.length} ${route.name}`, () => runRoute(route));
     }
     await runCase2DayMap();
     await runCase3DayRoutes();
     await runCase4DayRoutes();
-    await runCaseTransition();
-    await runPortraitViewports();
-    await runStateReplacementRoutes();
-    await runQuickDetective();
+    await runSmokeStep("case transition", runCaseTransition);
+    await runSmokeStep("portrait viewport matrix", runPortraitViewports);
+    await runSmokeStep("state replacement", runStateReplacementRoutes);
+    await runSmokeStep("quick detective viewport matrix", runQuickDetective);
   }
 } finally {
   await browser.close();
 }
 
-console.log(smokeTarget === "case34"
-  ? "Browser replay smoke passed: case3-day-map, case4-day-map"
-  : smokeTarget === "case1"
-    ? "Browser replay smoke passed: case1 staged disclosure"
-  : smokeTarget === "gamepad"
-    ? "Browser replay smoke passed: gamepad-support-document"
-    : smokeTarget === "case2-transition"
-      ? "Browser replay smoke passed: case2-day-map, case-transition"
-      : smokeTarget === "host-verdict"
-        ? "Browser replay smoke passed: host verdict staged at mobile and desktop widths"
-      : smokeTarget === "portrait-viewports"
-        ? "Browser replay smoke passed: portrait layouts at 390x844, 1366x768, 1280x800, 1920x1080"
-        : smokeTarget === "state-replacement"
-          ? "Browser replay smoke passed: new-game-reset, patience-retry"
-          : smokeTarget === "quick-detective"
-            ? "Browser replay smoke passed: quick detective at 390x844 and 1280x800"
-    : `Browser replay smoke passed: ${[...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition", "new-game-reset", "patience-retry", "quick-detective"].join(", ")}`);
+smokeProgress(`PASS ${smokeSummary(smokeTarget)}`);
+
+function smokeTargetFrom(args, environmentTarget = "") {
+  const inlineTarget = args.find((argument) => argument.startsWith("--target="))?.slice("--target=".length);
+  const targetFlagIndex = args.indexOf("--target");
+  const flagTarget = targetFlagIndex >= 0 ? args[targetFlagIndex + 1] : "";
+  const target = String(inlineTarget || flagTarget || environmentTarget || "all").trim();
+  if (!supportedSmokeTargets.has(target)) {
+    throw new Error(`Unknown smoke target: ${target}. Expected one of: ${[...supportedSmokeTargets].join(", ")}`);
+  }
+  return target;
+}
+
+function smokeSummary(target) {
+  if (target === "case34") return "case3-day-map, case4-day-map";
+  if (target === "case1" || target === "local-quick") return "case1 staged disclosure (single viewport)";
+  if (target === "gamepad") return "gamepad-support-document";
+  if (target === "case2-transition") return "case2-day-map, case-transition";
+  if (target === "host-verdict") return "host verdict staged at mobile and desktop widths";
+  if (target === "portrait-viewports") return "portrait layouts at 390x844, 1366x768, 1280x800, 1920x1080";
+  if (target === "state-replacement") return "new-game-reset, patience-retry";
+  if (target === "quick-detective") return "quick detective at 390x844 and 1280x800";
+  return [...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition", "new-game-reset", "patience-retry", "quick-detective"].join(", ");
+}
+
+function smokeProgress(message) {
+  const elapsedSeconds = ((Date.now() - smokeStartedAt) / 1000).toFixed(1).padStart(6, " ");
+  console.log(`[browser-smoke +${elapsedSeconds}s] ${message}`);
+}
+
+async function runSmokeStep(label, action) {
+  const startedAt = Date.now();
+  let timeoutId = 0;
+  smokeProgress(`START ${label}`);
+  try {
+    const result = await Promise.race([
+      action(),
+      new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error(`Smoke step timed out after ${smokeStepTimeoutMs}ms: ${label}`)), smokeStepTimeoutMs);
+      })
+    ]);
+    smokeProgress(`PASS  ${label} (${((Date.now() - startedAt) / 1000).toFixed(1)}s)`);
+    return result;
+  } catch (error) {
+    smokeProgress(`FAIL  ${label} (${((Date.now() - startedAt) / 1000).toFixed(1)}s)`);
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 async function assertAudioSettings(page) {
   await page.locator("[data-audio-settings] > summary").click();
@@ -94,6 +153,14 @@ async function assertAudioSettings(page) {
   await page.locator("[data-audio-settings] > summary").click();
   await page.locator("[data-audio-mute]").click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem("livestream-detective-audio-settings-v1") || "{}").enabled === true);
+}
+
+async function currentLoadBearingStatementLine(page) {
+  const lines = page.locator("[data-scene-review-line]:visible");
+  const texts = await lines.allTextContents();
+  const index = texts.findIndex((text) => loadBearingSourceAnchors.some((anchor) => text.includes(anchor)));
+  if (index < 0) throw new Error(`current statement has no source-anchored line: ${texts.join(" | ")}`);
+  return lines.nth(index);
 }
 
 async function launchBrowser() {
@@ -127,295 +194,111 @@ async function runQuickDetective() {
     { width: 390, height: 844 },
     { width: 1280, height: 800 }
   ]) {
+    const viewportStartedAt = Date.now();
+    smokeProgress(`START quick detective ${viewport.width}x${viewport.height}`);
     const context = await browser.newContext({ viewport, reducedMotion: viewport.width === 390 ? "no-preference" : "reduce" });
     const page = await context.newPage();
     page.setDefaultTimeout(8000);
     try {
-      await page.goto(`${playableUrl}?playtest=quick-detective-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
+      await page.goto(`${playableUrl}?playtest=quick-statement-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
       await page.locator("[data-player-name]").fill("周明");
       await click(page, "[data-start-quick-detective]");
       await assertVisibleText(page, "今晚先接哪一通", "快案入口必须先进入案件选择页");
-      const quickCaseNumber = (await page.locator('[data-quick-case-id="01-no-conditions"] .quick-case-number b').innerText()).trim();
-      if (quickCaseNumber !== "01") throw new Error("快案选择卡必须显示稳定案件编号");
-      const quickCaseNumber2 = (await page.locator('[data-quick-case-id="02-one-missed-message"] .quick-case-number b').innerText()).trim();
-      if (quickCaseNumber2 !== "02") throw new Error("第二宗快案选择卡必须显示稳定案件编号 02");
-      if (await page.locator(".quick-case-card").count() !== 2) throw new Error("当前试玩快案选择页必须从 manifest 加载两宗案件");
-      await assertVisibleText(page, "那晚没回消息", "快案选择页必须显示第二宗案件标题");
-      await assertVisibleText(page, "未完成", "尚未通关的快案必须显示未完成状态");
-      await assertNoPageText(page, "完成的案件会留下一枚对勾", "案件卡已经表达完成状态，选择页不得重复解释");
-      await assertNoPageText(page, "约 15 分钟", "快案选择页不再显示估算时长");
-      await assertNoPageText(page, "约 20 分钟", "快案选择页不再显示估算时长");
-      if (await page.locator(".quick-case-card.is-complete").count()) throw new Error("fresh quick-case catalog must not show a completion checkmark");
-      await click(page, '[data-quick-case-id="01-no-conditions"]');
-      await assertVisibleText(page, "周明", "快案必须显示玩家在标题页输入的主播姓名");
-      await assertNoPageText(page, "林旭阳", "自定义姓名生效后不得残留默认主播姓名");
-      await assertNoPageText(page, "这次怎么玩", "快案开场只交代来电背景，不显示玩法说明卡");
-      await assertNoPageText(page, "每轮只判断", "快案开场不向玩家解释内部轮次机制");
-      await assertNoPageText(page, "对质会逼出新的说法", "快案开场不预告后续披露机制");
-      await assertNoPageText(page, "约 15 分钟", "快案开场不再显示估算时长");
-      await assertNoPageText(page, "圈这句话", "快案不得保留圈句入口");
-      await assertNoPageText(page, "评论区翻记录", "快案不得保留评论区补答案入口");
-      await click(page, "[data-quick-begin]");
+      if (await page.locator(".quick-case-card").count() !== 2) throw new Error("快案选择页必须从 manifest 加载两宗案件");
 
-      for (let index = 0; index < 10; index += 1) {
-        await assertQuickLayout(page, viewport, `transcript ${index + 1} host`, "host");
-        await click(page, "[data-quick-next-turn]");
-        await assertQuickLayout(page, viewport, `transcript ${index + 1} caller`, "caller");
-        await click(page, "[data-quick-next-turn]");
-      }
-
-      await assertVisibleText(page, "先问哪件事", "快案听完后必须先进入玩家判断层");
-      await assertNoPageText(page, "只选怀疑的方向", "快案判断层不得重复解释按钮行为");
-      await assertNoPageText(page, "追问方向", "可选按钮不得重复标注其控件类型");
-      await assertNoPageText(page, "先说买房那一百万", "矛盾选择页不得提前展示主播答案句");
-      await click(page, '[data-quick-issue="mother-departure"]');
-      await assertVisibleText(page, "目前接不上", "选择干扰方向后必须留在判断层并允许重试");
-      await assertNoPageText(page, "还没有和她后面的话直接冲突", "干扰方向不得显示系统解释");
-      await assertNoPageText(page, "不会说好听话是不是分手的根本原因", "第一轮不能提前开放尚未出现的背书与分手根因");
-      const rewindButton = page.locator('[data-action="rewind"]');
-      if (!await rewindButton.isVisible()) throw new Error("完成一次追问后，顶部必须出现全局返回键");
-      await click(page, '[data-action="rewind"]');
-      await assertVisibleText(page, "先问哪件事", "返回键必须回到刚才追问前的判断状态");
-      await assertNoPageText(page, "还没有和她后面的话直接冲突", "返回后必须撤销刚才的错误方向反馈");
-      if (await rewindButton.isVisible()) throw new Error("退回唯一检查点后，返回键必须隐藏，不能继续跨到案件入口");
-
-      const issueIds = ["benefactor-source", "report-disclosure", "actual-standard", "soft-talk"];
-      const confrontationRoles = [
-        ["host", "caller", "host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller"]
-      ];
-      for (let index = 0; index < issueIds.length; index += 1) {
-        if (index === 2) {
-          for (let turnIndex = 10; turnIndex < 17; turnIndex += 1) {
-            await assertQuickLayout(page, viewport, `transcript ${turnIndex + 1} host`, "host");
-            if (turnIndex === 15) await assertVisibleText(page, "你那套房买下来一共多少钱", "房贷诉求后必须紧接房屋总价追问");
-            await click(page, "[data-quick-next-turn]");
-            await assertQuickLayout(page, viewport, `transcript ${turnIndex + 1} caller`, "caller");
-            if (turnIndex === 15) await assertVisibleText(page, "总价两百万", "来电人必须回答房屋总价");
-            if (turnIndex === 16) {
-              await assertVisibleText(page, "周明哥", "来电人对主播的熟称也必须随玩家姓名变化");
-              await assertNoPageText(page, "旭阳哥", "自定义姓名生效后不得残留默认熟称");
-            }
-            await click(page, "[data-quick-next-turn]");
-          }
-          await assertVisibleText(page, "不会说好听话是不是分手的根本原因", "第二轮才允许追问分手根因");
-        }
-        await click(page, `[data-quick-issue="${issueIds[index]}"]`);
-        const revealTransitionCount = await page.locator('[data-transition-kind="reveal"]').count();
-        if (index === 0 && revealTransitionCount !== 1) throw new Error("一百万与两个‘爸爸’的方向必须触发快案唯一核心反转过场");
-        if (index > 0 && revealTransitionCount !== 0) throw new Error("快案普通对质不能重复触发核心反转过场");
-        if (index === 0 && viewport.width === 390) {
-          const reveal = page.locator('[data-transition-kind="reveal"]');
-          const animationDuration = await reveal.evaluate((element) => getComputedStyle(element).animationDuration);
-          const pointerEvents = await reveal.evaluate((element) => getComputedStyle(element).pointerEvents);
-          if (animationDuration !== "1.68s") throw new Error(`核心反转过场必须留出稳定阅读时间，实际为 ${animationDuration}`);
-          if (pointerEvents !== "none") throw new Error("核心反转过场不能阻挡玩家操作");
-        }
-        await assertVisibleText(page, "当面对质", `quick confrontation ${index + 1} must keep a clear stage label`);
-        await assertNoPageText(page, "圈句", "对质页不得恢复圈句玩法");
-        await assertNoPageText(page, "评论接力", "对质页不得恢复评论接力");
-        for (const [lineIndex, role] of confrontationRoles[index].entries()) {
-          await assertQuickLayout(page, viewport, `confrontation ${index + 1} line ${lineIndex + 1}`, role);
-          if (index === 0 && lineIndex === 1) await assertVisibleText(page, "为什么非要分得这么清", "钱源对质必须先让来电人坚持父女称呼并反问");
-          if (index === 0 && lineIndex === 3) await assertVisibleText(page, "不是亲爸", "主播收窄问题以后来电人才可以最小承认");
-          if (index === 0 && lineIndex === 5) await assertVisibleText(page, "这是我的私事", "钱源对质必须以隐私和自愿赠与转移真实关系");
-          if (index === 1 && lineIndex === 2) await assertVisibleText(page, "那到底有没有嘛", "婚育对质必须让主播在否认后短追问");
-          if (index === 1 && lineIndex === 3) await assertVisibleText(page, "我以前确实查过", "检查结果只能在短追问以后承认");
-          if (index === 2 && lineIndex === 2) await assertVisibleText(page, "总价两百万", "实际标准对质必须带回房价和分担房贷诉求");
-          if (index === 3 && lineIndex === 2) await assertVisibleText(page, "根本原因真是你不会说好听话吗", "表达能力对质必须继续追到分手根因");
-          if (index === 3 && lineIndex === 3) await assertVisibleText(page, "我脾气也不好", "来电人必须承认更深一层的争吵问题");
-          await click(page, "[data-quick-next-confrontation]");
-        }
-        if (index === 0 || index === 2) await assertVisibleText(page, "先问哪件事", "同一轮尚有问题时必须把选择权交还玩家");
-        if (index === 1) await assertVisibleText(page, "那收入和年龄呢", "第一轮问清以后必须回到连线，继续听她真正的择偶要求");
-      }
-
-      const verdictLines = [];
-      let verdictFinished = false;
-      for (let step = 0; step < 64; step += 1) {
-        verdictLines.push(await page.locator(".quick-line p").innerText());
-        const role = await page.locator(".quick-single-bubble").getAttribute("data-quick-speaking");
-        await assertQuickLayout(page, viewport, `verdict ${step + 1}`, role);
-        if (await page.locator("[data-quick-select]").count()) {
-          verdictFinished = true;
-          break;
-        }
-        await click(page, "[data-quick-next-verdict]");
-      }
-      if (!verdictFinished) throw new Error("快案结论必须在有限逐句推进后显示返回案件选择入口");
-      const verdictText = verdictLines.join(" ");
-      if (!verdictText.includes("这个忙我不能帮")) throw new Error("快案结尾必须由主播亲口拒绝背书");
-      if (!verdictText.includes("那就不介绍。今天到这儿。")) throw new Error("快案必须用主播当面结束通话");
-      if (!verdictText.includes("我们来把这次这个连线复个盘。")) throw new Error("快案挂断后必须用固定口头标记进入主播复盘");
-      if (!verdictText.includes("电话挂了")) throw new Error("快案挂断后必须继续进入主播结案复盘");
-      if (!verdictText.includes("概率最高")) throw new Error("快案结尾必须说出目前概率最高的经历版本");
-      if (!verdictText.includes("长期处在一段经济交换关系里")) throw new Error("快案必须由主播明确作出经济交换关系判断");
-      if (!verdictText.includes("长期叫对方“爸爸”") || !verdictText.includes("对方年纪肯定不小了")) throw new Error("快案必须说清长期称呼带出的年龄判断");
-      if (!verdictText.includes("一个做销售的，怎么可能不会给别人提供情绪价值嘛") || !verdictText.includes("我也有兼职红娘的业务")) throw new Error("快案必须用销售职业和主播兼职业务说清背书链条");
-      if (!verdictText.includes("她那位“爸爸”还在不在，我也不知道")) throw new Error("快案必须保留原经济交换关系是否持续的现实顾虑");
-      if (!verdictText.includes("她下意识也好，有意也好") || !verdictText.includes("明显是她自己有这方面的问题")) throw new Error("快案婚育总结必须由异常举例落到来电人本人问题");
-      if (verdictText.includes("原因我不能猜") || verdictText.includes("关系走深了再讲")) throw new Error("快案婚育结论不得用价值边界话术撤回判断");
-      if (verdictText.includes("不肯说两个人到底是什么关系") || verdictText.includes("我只能说很像")) throw new Error("快案结论不得捏造未问问题或用免责话术撤回判断");
-      if (!verdictText.includes("想在我们直播间骗人，不可能")) throw new Error("快案高概率判断必须落回主播对欺骗行为的直接拒绝");
-      if (!verdictText.includes("无论男女，都请远离正常婚恋市场")) throw new Error("快案一结尾必须补上面向现实婚恋市场的明确总结");
-      await page.waitForFunction(() => {
-        const saved = JSON.parse(localStorage.getItem("livestream-detective-save-v1") || "{}");
-        return saved.quickDetectiveCompletedIds?.includes("01-no-conditions");
+      await playStatementQuickCase(page, viewport, {
+        caseId: "01-no-conditions",
+        rounds: [
+          ["我爸爸给了我一百万", "或者是我不能生孩子"],
+          ["先别急吧", "您就帮我留意一下吧"]
+        ],
+        decoyAnchor: "我妈看这日子过不下去",
+        expectedListen: ["我二十四，在商场卖衣服", "我爸爸给了我一百万"],
+        expectedVerdict: ["想在我们直播间骗人，不可能", "长期处在一段经济交换关系里"]
       });
       await click(page, "[data-quick-select]");
-      const completedCard = page.locator('[data-quick-case-id="01-no-conditions"].is-complete');
-      if (await completedCard.count() !== 1) throw new Error("completed quick case must keep its checkmarked card selectable for replay");
-      if ((await completedCard.locator(".quick-case-status b").innerText()).trim() !== "已完成") throw new Error("通关后返回快案选择页必须显示完成状态");
-      if ((await completedCard.locator(".quick-case-status i").innerText()).trim() !== "✓") throw new Error("通关后返回快案选择页必须显示完成对勾");
-
-      await click(page, '[data-quick-case-id="02-one-missed-message"]');
-      await assertVisibleText(page, "那晚没回消息", "第二宗快案必须从案件选择页独立进入");
-      const quick2PlayerName = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") || "{}").playerName);
-      if (quick2PlayerName !== "周明") throw new Error(`切换快案后必须保留玩家姓名，实际存档为：${quick2PlayerName ?? "<空>"}`);
-      const quick2HostCaption = (await page.locator(".quick-stage-host figcaption b").innerText()).trim();
-      if (quick2HostCaption !== "周明") throw new Error(`第二宗快案也必须沿用玩家输入的主播姓名，实际舞台姓名为：${quick2HostCaption || "<空>"}`);
-      await assertNoPageText(page, "林旭阳", "第二宗快案不得恢复默认主播姓名");
-      const quick2CallerArt = await page.locator(".quick-stage-caller img").getAttribute("src");
-      if (!quick2CallerArt?.includes("caller-zhou-female-pixel")) throw new Error("第二宗快案必须使用独立女性来电人立绘");
-      await click(page, "[data-quick-begin]");
-
-      for (let index = 0; index < 17; index += 1) {
-        await assertQuickLayout(page, viewport, `case 02 transcript ${index + 1} host`, "host");
-        if (index === 4) await assertVisibleText(page, "大概是什么资产水平", "第二宗快案必须在介绍男方后自然追问双方家底");
-        if (index === 11) await assertVisibleText(page, "连前面几条一起截给我看看", "展示需求对质前必须先取得朋友圈截图");
-        if (index === 12) await assertVisibleText(page, "旁边那个新包也是这个新男友送的吧", "收到朋友圈截图以后必须追问照片里的包");
-        if (index === 15) await assertVisibleText(page, "你按时间念", "第二宗快案必须让聊天时间在首轮公平出现");
-        await click(page, "[data-quick-next-turn]");
-        await assertQuickLayout(page, viewport, `case 02 transcript ${index + 1} caller`, "caller");
-        if (index === 4) await assertVisibleText(page, "他至少中A8", "第二宗快案必须由来电人亲口给出双方家底差距");
-        if (index === 11) {
-          await assertVisibleText(page, "现在朋友圈三天可见", "第一批截图必须先解释主播为何看不到旧朋友圈");
-          await assertVisibleText(page, "你这边看不到以前的。我自己还能翻", "三天可见以后必须由来电人自己翻出旧动态");
-          await assertVisibleText(page, "吃饭、演唱会这些", "第一批朋友圈必须实际显示她平时展示的内容");
-        }
-        if (index === 12) await assertVisibleText(page, "我在柜台前多看了几眼", "包必须由来电人确认是男方主动买下");
-        if (index === 15) await assertVisibleText(page, "十一点五十二", "第二宗快案六分钟消息差必须实际显示");
-        await click(page, "[data-quick-next-turn]");
+      if (await page.locator('.quick-case-card.is-complete[data-quick-case-id="01-no-conditions"]').count() !== 1) {
+        throw new Error("首宗快案通关后必须显示完成对勾");
       }
 
-      await assertVisibleText(page, "先问哪件事", "第二宗快案听完后必须交还玩家选择方向");
-      await assertNoPageText(page, "他是在重新判断", "第二宗快案选择页不能提前显示主播结论");
-      await click(page, '[data-quick-issue="age-gap"]');
-      await assertVisibleText(page, "目前接不上", "第二宗快案合理干扰项必须留在当前判断层并允许重试");
-      await assertNoPageText(page, "不能把这个周末后的退出归因于年龄", "第二宗快案干扰项不得显示系统解释");
-
-      const quick2IssueIds = ["emotion-or-display", "missed-message-state", "third-person", "how-he-knew", "nightlife-pattern", "apology-post"];
-      const quick2ConfrontationRoles = [
-        ["host", "caller", "host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller"],
-        ["host", "caller", "host", "caller", "host", "caller"]
-      ];
-      for (let index = 0; index < quick2IssueIds.length; index += 1) {
-        if (index === 2) {
-          await assertVisibleText(page, "继续问当晚的情况", "前两处问完后必须进入第二轮信息，不能继续展示后续答案按钮");
-          for (let turnIndex = 17; turnIndex < 20; turnIndex += 1) {
-            await assertQuickLayout(page, viewport, `case 02 transcript ${turnIndex + 1} host`, "host");
-            if (turnIndex === 19) await assertVisibleText(page, "两个人为什么点这么多", "第二轮必须先露出酒不是两个人点完的缺口");
-            await click(page, "[data-quick-next-turn]");
-            await assertQuickLayout(page, viewport, `case 02 transcript ${turnIndex + 1} caller`, "caller");
-            if (turnIndex === 19) {
-              await assertVisibleText(page, "也不全是我们点的", "第三个人必须先以含糊的点酒主语出现");
-              await assertNoPageText(page, "其实是三个人", "来电人不能在玩家质问前主动交出第三个人");
-            }
-            await click(page, "[data-quick-next-turn]");
-          }
-          await assertVisibleText(page, "那晚没有先说出的第三个人", "第二轮只能开放酒桌人数方向");
-          await assertNoPageText(page, "去酒吧本身是不是错误", "第二轮不得再用价值判断充当无效选项");
-          await assertNoPageText(page, "偶尔一次还是经常玩到很晚", "朋友圈出现前不能开放夜生活频率结论");
-        }
-        if (index === 3) {
-          await assertVisibleText(page, "再看她发来的朋友圈截图", "第三个人问出来以后必须进入朋友圈截图深究阶段");
-          for (let turnIndex = 20; turnIndex < 29; turnIndex += 1) {
-            await assertQuickLayout(page, viewport, `case 02 transcript ${turnIndex + 1} host`, "host");
-            if (turnIndex === 21) await assertVisibleText(page, "既然你自己还能翻", "第二批截图请求必须承接来电人能够查看自己旧动态的前提");
-            if (turnIndex === 22) {
-              await assertVisibleText(page, "你发来的截图里", "主播必须说明近两个月的材料来自来电人截图");
-              await assertVisibleText(page, "凌晨五点十七分", "第三轮必须实际看到朋友圈截图里的深夜时间");
-            }
-            if (turnIndex === 26) await assertVisibleText(page, "八号你也出去喝酒了", "朋友圈追问必须带回前一晚 KTV");
-            await click(page, "[data-quick-next-turn]");
-            await assertQuickLayout(page, viewport, `case 02 transcript ${turnIndex + 1} caller`, "caller");
-            if (turnIndex === 23) await assertVisibleText(page, "一大片纹身", "纹身只作为人物背景在后续问话中自然出现");
-            if (turnIndex === 25) await assertVisibleText(page, "那是八号的照片", "公开动态的拍摄日期必须在结案前由来电人说出");
-            await click(page, "[data-quick-next-turn]");
-          }
-          await assertVisibleText(page, "偶尔一次还是经常玩到很晚", "第三轮才允许玩家判断夜生活频率");
-          await assertVisibleText(page, "男方怎么发现当晚还有别人", "第三轮必须开放男方发现第三个人的来源追问");
-          await assertNoPageText(page, "去酒吧本身是不是错误", "第三轮不得保留无效价值判断选项");
-        }
-        await click(page, `[data-quick-issue="${quick2IssueIds[index]}"]`);
-        let revealTransitionCount = await page.locator('[data-transition-kind="reveal"]').count();
-        if (revealTransitionCount !== 0) throw new Error("第二宗快案重击不能在来电人承认第三人以前提前给答案");
-        await assertVisibleText(page, "当面对质", `case 02 confrontation ${index + 1} must keep a clear stage label`);
-        for (const [lineIndex, role] of quick2ConfrontationRoles[index].entries()) {
-          await assertQuickLayout(page, viewport, `case 02 confrontation ${index + 1} line ${lineIndex + 1}`, role);
-          if (index === 0 && lineIndex === 2) await assertVisibleText(page, "朋友圈截图我看了", "展示需求对质必须明确引用刚收到的截图");
-          if (index === 3 && lineIndex === 1) await assertVisibleText(page, "这个‘他’是谁", "男方必须从来电人说漏的代词发现第三个人");
-          if (index === 3 && lineIndex === 3) await assertVisibleText(page, "我不想说得好像我专门去见他一样", "发现来源对质必须以最小承认和自利辩解收尾");
-          if (index === 0 && lineIndex === 4) await assertVisibleText(page, "希望别人羡慕他给你的生活", "展示需求对质必须把截图事实问回她的实际诉求");
-          if (index === 1 && lineIndex === 2) await assertVisibleText(page, "不叫‘我只漏看一条消息’", "消息对质必须落到被缩小的醉酒状态");
-          if (index === 0 && lineIndex === 4) await assertVisibleText(page, "我们不脱离感情只谈钱", "展示需求对质必须保留主播关于感情与金钱的固定判断");
-          if (index === 2 && lineIndex === 3) await assertVisibleText(page, "男的", "第三名男性必须经过身份收窄以后才由来电人承认");
-          if (index === 2 && lineIndex === 4) {
-            revealTransitionCount = await page.locator('[data-transition-kind="reveal"]').count();
-            if (revealTransitionCount !== 1) throw new Error("第二宗快案必须在来电人承认男性在场后才播放唯一重击");
-            await assertVisibleText(page, "不能证明你们发生过什么", "第三人对质不得把异性在场写成越界证据");
-          }
-          if (index === 4 && lineIndex === 1) {
-            await assertVisibleText(page, "男的女的都有", "朋友圈深究必须逼出来电人承认同行者并非固定一拨人");
-            await assertVisibleText(page, "读研以后聚会一直不少", "朋友圈深究必须由来电人自己把近期记录延伸到长期习惯");
-          }
-          if (index === 4 && lineIndex === 2) {
-            await assertVisibleText(page, "婚介跟他说你生活简单", "夜生活对质必须带回开场的生活简单口径");
-            await assertVisibleText(page, "男方看到了当然不可能信啊", "夜生活对质必须直接落到男方为何不再相信");
-          }
-          if (index === 5 && lineIndex === 2) await assertVisibleText(page, "对方又不傻", "道歉动态对质必须按男方当时看不到照片拍摄日期的现实口语追问");
-          if (index === 5 && lineIndex === 4) await assertVisibleText(page, "他也能据此决定", "道歉动态的对质必须改变追回建议");
-          await click(page, "[data-quick-next-confrontation]");
-        }
-        if (index === 0 || index === 3) await assertVisibleText(page, "先问哪件事", "同一轮尚有问题时必须交还玩家选择权");
-      }
-
-      const quick2VerdictLines = [];
-      let quick2VerdictFinished = false;
-      for (let step = 0; step < 64; step += 1) {
-        quick2VerdictLines.push(await page.locator(".quick-line p").innerText());
-        const role = await page.locator(".quick-single-bubble").getAttribute("data-quick-speaking");
-        await assertQuickLayout(page, viewport, `case 02 verdict ${step + 1}`, role);
-        if (await page.locator("[data-quick-select]").count()) {
-          quick2VerdictFinished = true;
-          break;
-        }
-        await click(page, "[data-quick-next-verdict]");
-      }
-      if (!quick2VerdictFinished) throw new Error("第二宗快案结论必须在有限逐句推进后返回案件选择");
-      const quick2VerdictText = quick2VerdictLines.join(" ");
-      if (!quick2VerdictText.includes("动作倒推发心，逻辑要闭环")) throw new Error("第二宗快案结案复盘必须出现主播固定口头禅");
-      if (!quick2VerdictText.includes("把八号、九号、桌上那个人")) throw new Error("第二宗快案必须让建议随着完整周末揭开而变化");
-      if (!quick2VerdictText.includes("三番五次出去喝酒疯玩到深夜")) throw new Error("第二宗快案高概率判断必须对已播行为直接落判断");
-      if (!quick2VerdictText.includes("舍不得对方的经济条件") || !quick2VerdictText.includes("想让我帮她想话术、想办法复合")) throw new Error("第二宗快案必须说清来电人的复合动机和求助目的");
-      if (!quick2VerdictText.includes("酒桌上有没有发生别的事，不用猜")) throw new Error("第二宗快案结案必须保留聚会内容未知且不撤回判断");
-      if (!quick2VerdictText.includes("先找了个条件好的供养者") || !quick2VerdictText.includes("‘深度沟通’和‘情绪价值’，都是借口罢了")) throw new Error("第二宗快案必须把供养诉求、继续玩乐和沟通借口直接说清");
-      if (!quick2VerdictText.includes("骑驴找马") || !quick2VerdictText.includes("认真找结婚对象的人怎么可能接受")) throw new Error("第二宗快案必须把供养诉求、继续玩乐和婚恋后果直接说清");
-      await page.waitForFunction(() => {
-        const saved = JSON.parse(localStorage.getItem("livestream-detective-save-v1") || "{}");
-        return saved.quickDetectiveCompletedIds?.includes("02-one-missed-message");
+      await playStatementQuickCase(page, viewport, {
+        caseId: "02-one-missed-message",
+        rounds: [
+          ["还有人说羡慕", "十一点五十二"],
+          ["后面又有人点了一轮"],
+          ["六次酒吧或者 KTV", "顺嘴说了句‘他也不知道", "十号我发过一组 KTV"]
+        ],
+        decoyAnchor: "他三十五",
+        expectedListen: ["本科和硕士都在一所985高校", "十一点五十二"],
+        expectedVerdict: ["我说实话，也建议男方退出", "骑驴找马"]
       });
       await click(page, "[data-quick-select]");
-      if (await page.locator(".quick-case-card.is-complete").count() !== 2) throw new Error("两宗快案通关后都必须保留完成对勾和重玩入口");
+      if (await page.locator(".quick-case-card.is-complete").count() !== 2) throw new Error("两宗快案通关后都必须保留完成对勾");
     } finally {
       await context.close();
     }
+    smokeProgress(`PASS  quick detective ${viewport.width}x${viewport.height} (${((Date.now() - viewportStartedAt) / 1000).toFixed(1)}s)`);
+  }
+}
+
+async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, expectedListen, expectedVerdict }) {
+  await click(page, `[data-quick-case-id="${caseId}"]`);
+  await assertVisibleText(page, "周明", "快案必须显示玩家保存的主播姓名");
+  await assertNoPageText(page, "这次怎么玩", "快案入口不得解释内部机制");
+  await click(page, "[data-quick-begin]");
+
+  let verdictText = "";
+  for (const [roundIndex, anchors] of rounds.entries()) {
+    await assertQuickLayout(page, viewport, `${caseId} round ${roundIndex + 1} listen`, "caller");
+    if (roundIndex === 0) {
+      for (const text of expectedListen) await assertVisibleText(page, text, `${caseId} 首次听麦必须保留整段陈述内容`);
+    }
+    await assertVisibleText(page, "监听", "首次整段陈述必须点亮监听状态");
+    await advanceQuickLine(page, "[data-quick-next-turn]");
+    await page.locator("[data-quick-review-line]").first().waitFor({ state: "visible" });
+    await assertVisibleText(page, "REC 回放", "找问题时必须切换为逐句回放状态");
+    await assertNoPageText(page, "先问哪件事", "回放不得退回抽象问题方向菜单");
+    await assertNoPageText(page, "只选怀疑的方向", "回放不得添加操作教程");
+    if (roundIndex === 0 && decoyAnchor) {
+      await clickQuickSourceLine(page, decoyAnchor);
+      await assertVisibleText(page, "这句没有可追问的线索 · 耐心 −1", "错误原句只做局部反馈，不讲解答案");
+    }
+    for (const anchor of anchors) {
+      await clickQuickSourceLine(page, anchor);
+      await assertVisibleText(page, "LINE 打断", "按中原句以后必须切到短问打断状态");
+      await finishQuickConfrontation(page);
+      if (await page.locator(".quick-scene-issueSelection").count()) {
+        await page.locator("[data-quick-review-line]").first().waitFor({ state: "visible" });
+      }
+    }
+  }
+
+  await page.locator(".quick-scene-verdict").waitFor({ state: "visible" });
+  while (!await page.locator(".quick-ending-actions").count()) {
+    const box = page.locator("[data-quick-dialogue-box]");
+    verdictText += ` ${(await box.getAttribute("data-quick-line-text")) ?? ""}`;
+    if (!await page.locator("[data-quick-next-verdict]:visible").count()) await box.click();
+    if (await page.locator("[data-quick-next-verdict]:visible").count()) {
+      await click(page, "[data-quick-next-verdict]");
+    } else {
+      await page.locator(".quick-ending-actions").waitFor({ state: "visible" });
+    }
+  }
+  verdictText += ` ${(await page.locator("[data-quick-dialogue-box]").getAttribute("data-quick-line-text")) ?? ""}`;
+  for (const text of expectedVerdict) {
+    if (!verdictText.includes(text)) throw new Error(`${caseId} verdict should include ${text}`);
+  }
+}
+
+async function clickQuickSourceLine(page, anchor) {
+  const line = page.locator("[data-quick-review-line]:visible").filter({ hasText: anchor }).first();
+  await line.waitFor({ state: "visible" });
+  await line.click();
+}
+
+async function finishQuickConfrontation(page) {
+  while (await page.locator(".quick-scene-confrontation").count()) {
+    await advanceQuickLine(page, "[data-quick-next-confrontation]");
   }
 }
 
@@ -426,7 +309,7 @@ async function assertQuickLayout(page, viewport, label, expectedRole) {
     activePortraitCount: document.querySelectorAll(".quick-stage-speaker.is-active").length,
     stageFocus: document.querySelector(".quick-duel-stage")?.dataset.quickStageFocus ?? "",
     speakingRole: document.querySelector(".quick-single-bubble")?.dataset.quickSpeaking ?? "",
-    lineCount: document.querySelectorAll(".quick-exchange .quick-line").length,
+    lineCount: document.querySelectorAll(".quick-exchange .avg-page-line").length,
     legacyControlCount: document.querySelectorAll("[data-quick-quote], [data-quick-reveal-crowd], [data-quick-next-crowd]").length
   }));
   if (layout.overflow > 2) throw new Error(`${viewport.width}x${viewport.height} quick ${label} overflows horizontally by ${layout.overflow}px`);
@@ -437,6 +320,29 @@ async function assertQuickLayout(page, viewport, label, expectedRole) {
     throw new Error(`${viewport.width}x${viewport.height} quick ${label} focus ${layout.stageFocus}/${layout.speakingRole} does not match ${expectedRole}`);
   }
   if (layout.legacyControlCount) throw new Error(`${viewport.width}x${viewport.height} quick ${label} still renders retired crowd or quote controls`);
+}
+
+async function advanceQuickLine(page, selector, expectedNextRole = "") {
+  const box = page.locator("[data-quick-dialogue-box]");
+  const currentRole = await box.getAttribute("data-quick-speaking");
+  if (expectedNextRole && currentRole === expectedNextRole) return;
+  const autoPair = await box.getAttribute("data-quick-auto-pair");
+  if (autoPair === "true" && expectedNextRole) {
+    await page.locator(`[data-quick-dialogue-box][data-quick-speaking="${expectedNextRole}"]`).waitFor({ state: "visible" });
+    return;
+  }
+  if (!await page.locator(`${selector}:visible`).count()) {
+    await box.click();
+    if (autoPair === "true") {
+      if (expectedNextRole) {
+        await page.locator(`[data-quick-dialogue-box][data-quick-speaking="${expectedNextRole}"]`).waitFor({ state: "visible" });
+      } else {
+        await page.waitForFunction((role) => document.querySelector("[data-quick-dialogue-box]")?.dataset.quickSpeaking !== role, currentRole);
+      }
+      return;
+    }
+  }
+  await click(page, selector);
 }
 
 async function runStateReplacementRoutes() {
@@ -456,10 +362,10 @@ async function runStateReplacementRoutes() {
     }
     await drainDialogue(page, {});
     await click(page, '[data-scene="sceneReview"]');
-    await click(page, "[data-open-question-menu]");
+    await drainDialogue(page, {});
+    await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
     if (await page.locator("[data-scene-helper]").count()) throw new Error("V哥隐藏期间不得出现求助按钮");
-    await assertNoPageText(page, "V哥", "V哥隐藏期间不得出现在提问菜单");
-    await click(page, "[data-close-question-menu]");
+    await assertNoPageText(page, "V哥", "V哥隐藏期间不得出现在问题底栏");
     await click(page, '[data-action="title"]');
     await click(page, "[data-request-new-game]");
     await click(page, "[data-confirm-new-game]");
@@ -506,7 +412,7 @@ async function runStateReplacementRoutes() {
     await assertVisibleText(page, "这通断了", "seeded patience loss must render before retry");
     await click(page, "[data-retry-lost-step]");
     await drainDialogue(page, {});
-    await page.locator("[data-open-question-menu]").waitFor({ state: "visible" });
+    await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
     const retriedState = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
     const retriedCaseId = retriedState.caseBriefs?.[0]?.id;
     const retriedAnswerKey = `${retriedCaseId}:scene:0`;
@@ -573,7 +479,7 @@ async function runRoute(route) {
       const pointerEvents = await page.locator(".pixel-transition").evaluate((element) => getComputedStyle(element).pointerEvents);
       if (pointerEvents !== "none") throw new Error("pixel transition must never block player input");
       const transitionDuration = await page.locator(".pixel-transition-soft-fade").evaluate((element) => getComputedStyle(element).animationDuration);
-      if (transitionDuration !== "2.4s") throw new Error(`pre-show transition should hold for 2.4s, got ${transitionDuration}`);
+      if (transitionDuration !== "1.2s") throw new Error(`pre-show transition should hold for 1.2s, got ${transitionDuration}`);
     }
     if (await page.locator("[data-enter-first-case]").count()) {
       const prologueTranscript = (await drainDialogue(page, route)).replace(/\s+/g, "");
@@ -712,16 +618,6 @@ async function runRoute(route) {
         await activate(page, route, "[data-continue-live-counter]");
         continue;
       }
-      if (await page.locator("[data-open-question-menu]").count()) {
-        await activate(page, route, "[data-open-question-menu]");
-        await page.locator(".question-menu-card").waitFor({ state: "visible" });
-        continue;
-      }
-      if (await page.locator("[data-return-question-menu]").count()) {
-        await activate(page, route, "[data-return-question-menu]");
-        await page.locator(".question-menu-card").waitFor({ state: "visible" });
-        continue;
-      }
       if (await page.locator("[data-next-scene-stage]").count()) {
         await activate(page, route, "[data-next-scene-stage]");
         continue;
@@ -730,10 +626,12 @@ async function runRoute(route) {
         await activate(page, route, "button[data-scene]");
         continue;
       }
-      await page.locator(".scene-question-group").waitFor({ state: "visible" });
-      if (route.name === "accounting-support") {
-        await assertVisibleText(page, "收束 · 未命中 −1 耐心", "key question buttons must expose the patience cost before activation");
-      }
+      await drainDialogue(page, route);
+      await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
+      await activate(page, route, "[data-scene-open-replay]");
+      await page.locator("[data-scene-review-line]").first().waitFor({ state: "visible" });
+      await assertVisibleText(page, "REC", "main-case statement review must switch the control deck to replay");
+      await assertNoPageText(page, "收束 · 未命中 −1 耐心", "原句回放不得把底层耐心成本写成按钮说明");
       if (!helperHiddenChecked && route.name === "accounting-support") {
         if (await page.locator("[data-scene-helper]").count()) throw new Error("V哥隐藏期间不得出现求助按钮");
         await assertNoPageText(page, "V哥", "V哥隐藏期间不得出现在玩家可见流程");
@@ -741,26 +639,11 @@ async function runRoute(route) {
         await assertNoPageText(page, "疑点方向", "主案问题按钮不得重复标注控件类型");
         helperHiddenChecked = true;
       }
-      if (route.sceneMode === "outer") {
-        const dialogueButtons = page.locator("[data-scene-dialogue]");
-        if (await dialogueButtons.count() > 0) {
-          await activate(page, route, "[data-scene-dialogue]", 0);
-          await drainDialogue(page, route);
-          await page.locator("[data-return-question-menu]").waitFor({ state: "visible" });
-          await activate(page, route, "[data-return-question-menu]");
-          await page.locator(".scene-question-group").waitFor({ state: "visible" });
-        }
-      }
-      const questionIndex = route.sceneMode === "outer" && await page.locator("[data-scene-question]").count() > 1
-        ? (sceneQuestionCount === 0 ? 0 : 1)
-        : 0;
-      const selectedQuestion = page.locator("[data-scene-question]").nth(questionIndex);
-      const directionLabel = await selectedQuestion.evaluate((element) => element.classList.contains("choice-question-direction"))
-        ? await selectedQuestion.locator(".choice-text").innerText()
-        : "";
-      await activate(page, route, "[data-scene-question]", questionIndex);
+      const sourceLine = await currentLoadBearingStatementLine(page);
+      const sourceText = (await sourceLine.locator("span").textContent())?.trim() ?? "";
+      await sourceLine.click();
       sceneQuestionCount += 1;
-      if (directionLabel && !directionChoiceChecked) {
+      if (sourceText && !directionChoiceChecked) {
         const dialogueBox = page.locator("[data-dialogue-advance]:visible").first();
         const spokenQuestion = dialogueBox.locator(".avg-page-line.speaker-host .avg-line").first();
         await spokenQuestion.waitFor({ state: "visible" });
@@ -768,10 +651,10 @@ async function runRoute(route) {
           await dialogueBox.evaluate((element) => element.click());
         }
         const spokenText = (await spokenQuestion.textContent())?.trim() ?? "";
-        if (!spokenText || spokenText === directionLabel || !/[？?]$/.test(spokenText)) {
-          throw new Error("direction choice should turn into Lin Xuyang's authored spoken question");
+        if (!spokenText || spokenText === sourceText || !/[？?]$/.test(spokenText)) {
+          throw new Error("held source line should turn into the host's authored spoken question");
         }
-        await assertNoPageText(page, `${route.name === "accounting-support" ? "周明" : "林旭阳"}\n${directionLabel}`, "direction label must not replace the protagonist's spoken line");
+        await assertNoPageText(page, `${route.name === "accounting-support" ? "周明" : "林旭阳"}\n${sourceText}`, "source line must not replace the protagonist's spoken question");
         directionChoiceChecked = true;
       }
       const answerTranscript = await drainDialogue(page, route);
@@ -832,7 +715,7 @@ async function completeCase1Interlude(page, route) {
 }
 
 async function runCase3DayRoutes() {
-  await runOfflineDayMap({
+  await runSmokeStep("case3 day map / chat evidence", () => runOfflineDayMap({
     chapter: 3,
     name: "case3-day-map",
     interludeAction: "profile-listen-dinner-pause",
@@ -843,8 +726,8 @@ async function runCase3DayRoutes() {
     opener: "两边的完整聊天",
     openerText: "我把介绍人两边的聊天都看完了",
     conflictText: "知道你家现在能拿多少吗"
-  });
-  await runOfflineDayMap({
+  }));
+  await runSmokeStep("case3 day map / reaction beat", () => runOfflineDayMap({
     chapter: 3,
     name: "case3-reaction-beat",
     interludeAction: "profile-listen-dinner-pause",
@@ -857,12 +740,12 @@ async function runCase3DayRoutes() {
     reactionText: "她把我家的群发给一个直播间？",
     reactionChoice: "push-back",
     reactionResponse: "你先让我把这段说完。"
-  });
+  }));
 }
 
 async function runCase4DayRoutes() {
-  await runOfflineDayMap({
-    chapter: 4,
+  await runSmokeStep("case4 day map / reimbursement timeline", () => runOfflineDayMap({
+    chapter: 2,
     name: "case4-day-map",
     interludeAction: "recheck-approval-page",
     interludeText: "这张“审批通过”最先要核对哪三项",
@@ -883,7 +766,7 @@ async function runCase4DayRoutes() {
     reactionChoice: "silence",
     reactionResponse: "行，继续。",
     nextCounterText: "工作群刚弹出一条"
-  });
+  }));
 }
 
 async function openCaseAtChapter(page, chapter, name) {
@@ -922,14 +805,6 @@ async function advanceNightCaseToOvernightHangup(page, portraitAssets = null) {
       await click(page, "[data-after-stance-snapshot]");
       continue;
     }
-    if (await page.locator("[data-open-question-menu]").count()) {
-      await click(page, "[data-open-question-menu]");
-      continue;
-    }
-    if (await page.locator("[data-return-question-menu]").count()) {
-      await click(page, "[data-return-question-menu]");
-      continue;
-    }
     if (await page.locator("[data-next-scene-stage]").count()) {
       await click(page, "[data-next-scene-stage]");
       continue;
@@ -938,32 +813,40 @@ async function advanceNightCaseToOvernightHangup(page, portraitAssets = null) {
       await click(page, "button[data-scene]");
       continue;
     }
-    await page.locator("[data-scene-question]").first().waitFor({ state: "visible" });
-    await click(page, "[data-scene-question]");
+    await drainDialogue(page, {});
+    if (await page.locator("[data-scene-open-replay]").count()) {
+      await click(page, "[data-scene-open-replay]");
+      const sourceLine = await currentLoadBearingStatementLine(page);
+      await sourceLine.click();
+    } else {
+      await page.locator("[data-scene-question]").first().waitFor({ state: "visible" });
+      await click(page, "[data-scene-question]");
+    }
     await collectPortraitAsset(page, portraitAssets);
+    await drainDialogue(page, {});
     await click(page, "[data-next-scene-stage], button[data-scene]");
   }
   throw new Error("targeted case did not reach overnight hangup");
 }
 
 async function runCase2DayMap() {
-  await runOfflineDayMap({
-    chapter: 2,
+  await runSmokeStep("case2 day map / dryer playback", () => runOfflineDayMap({
+    chapter: 4,
     name: "case2-day-map",
     interludeAction: "listen-dryer",
     expectedDaySceneCount: 4,
     dayScenes: [
       { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
-      { id: "day-tony-member-docs", text: "会员维护、消费与私表记录", rows: ["m02", "m04"] }
+      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m04"] }
     ],
     opener: "吹风机回放",
-    openerText: "是我把它剪掉",
+    openerText: "也就你肯听我说这些",
     reactionText: "收了好处装什么受害者",
     reactionChoice: "soothe",
     reactionResponse: "你问吧。"
-  });
-  await runOfflineDayMap({
-    chapter: 2,
+  }));
+  await runSmokeStep("case2 day map / side with other caller", () => runOfflineDayMap({
+    chapter: 4,
     name: "case2-dm-other",
     interludeAction: "other-caller-dm",
     interludeReplyChoice: "side-other",
@@ -971,13 +854,13 @@ async function runCase2DayMap() {
     expectedDaySceneCount: 4,
     dayScenes: [
       { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
-      { id: "day-tony-member-docs", text: "会员维护、消费与私表记录", rows: ["m02", "m04"] }
+      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m04"] }
     ],
-    opener: "女客拉群立场",
+    opener: "周发来的材料",
     openerText: "你支持她留表"
-  });
-  await runOfflineDayMap({
-    chapter: 2,
+  }));
+  await runSmokeStep("case2 day map / side with caller", () => runOfflineDayMap({
+    chapter: 4,
     name: "case2-dm-caller",
     interludeAction: "other-caller-dm",
     interludeReplyChoice: "side-caller",
@@ -985,11 +868,11 @@ async function runCase2DayMap() {
     expectedDaySceneCount: 4,
     dayScenes: [
       { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
-      { id: "day-tony-member-docs", text: "会员维护、消费与私表记录", rows: ["m02", "m04"] }
+      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m04"] }
     ],
-    opener: "咨询者止损立场",
-    openerText: "我劝她先把卡停掉"
-  });
+    opener: "先要回单",
+    openerText: "我劝她先要回单"
+  }));
 }
 
 async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoice = "", interludeReplyChoice = "", expectedNightInventory = "", interludeText = "", expectedDaySceneCount = 3, dayScenes, opener, openerText, conflictText = "", reactionText = "", reactionChoice = "", reactionResponse = "", nextCounterText = "" }) {
@@ -1004,7 +887,7 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     const portraitAssets = new Set();
     await assertPixelPortrait(page, chapter);
     await advanceNightCaseToOvernightHangup(page, portraitAssets);
-    const portraitStem = ({ 2: "caller_salon", 3: "caller_profile", 4: "caller_work" })[chapter];
+    const portraitStem = ({ 2: "caller_work", 3: "caller_profile", 4: "caller_salon" })[chapter];
     ["neutral", "guarded", "pause"].forEach((kind) => {
       if (![...portraitAssets].some((src) => src.includes(`${portraitStem}_${kind}_pixel.png`))) {
         throw new Error(`${name} must render the case-${chapter} ${kind} pixel portrait during the live call`);
@@ -1118,8 +1001,6 @@ async function advanceToReactionBeat(page, expectedText, name) {
       "[data-document-question]",
       "[data-close-document-question]",
       "[data-after-scene-evidence]",
-      "[data-open-question-menu]",
-      "[data-return-question-menu]",
       "[data-next-scene-stage]",
       "[data-continue-live-counter]"
     ]) {
@@ -1128,8 +1009,13 @@ async function advanceToReactionBeat(page, expectedText, name) {
         break;
       }
     }
-    if (await page.locator("[data-scene-question]").count()) await click(page, "[data-scene-question]");
-    await page.waitForTimeout(20);
+    if (await page.locator("[data-scene-open-replay]").count()) {
+      await click(page, "[data-scene-open-replay]");
+      const sourceLine = await currentLoadBearingStatementLine(page);
+      await sourceLine.click();
+    } else if (await page.locator("[data-scene-question]").count()) {
+      await click(page, "[data-scene-question]");
+    }
   }
   throw new Error(`${name} did not reach reaction beat: ${expectedText}`);
 }
@@ -1225,15 +1111,18 @@ async function runCaseTransition() {
     });
     await assertVisibleText(page, "广告间隙", "closure should move into the first case's lived epilogue without an authorial case-tail label");
     await assertVisibleText(page, "我们俩大概一开始就看不上对方", "first case epilogue should establish Lin and Zhao as a couple through dialogue");
+    if (await page.locator('.story-interlude-stage[data-after-case="01-credit"]').count() !== 1) throw new Error("first case interlude must return to the off-air studio stage");
+    if (await page.locator('.interlude-zhao img[src*="zhao-lawyer-teasing-pixel"]').count() !== 1) throw new Error("first case interlude must use Zhao's teasing portrait state");
     if (await page.locator(".pixel-transition-signal-disconnect").count() !== 1) throw new Error("program interlude should use one short disconnect signal transition");
     await click(page, "[data-enter-case-bridge]");
     const firstTransitionQuote = transitionQuoteByCaseId["01-credit"];
     await assertVisibleText(page, firstTransitionQuote.text, "case one and case two must be joined by the authored classic quote");
     await assertVisibleText(page, firstTransitionQuote.source, "inter-case quote must display its source");
     if (await page.locator(".case-bridge-handoff").count()) throw new Error("inter-case quote page must not add a next-case synopsis or author-written bridge");
+    if (await page.locator(".case-bridge-objects .case-bridge-object img").count() !== 2) throw new Error("inter-case quote must share the stage with outgoing and incoming case objects");
     await click(page, "[data-enter-next-case]");
     await assertVisibleText(page, "CASE 02", "second case must open on a numbered case title card");
-    await assertVisibleText(page, "理发店排班表", "second case title card should name the case");
+    await assertVisibleText(page, "职场报销截图", "second case title card should name the workplace case");
     await assertNoPageText(page, "02 / 04", "case title must not expose the whole-night directory");
     await assertNoPageText(page, "自己人", "case title must not frame the case with an author-written theme word");
     await assertNoPageText(page, "新案接入", "case title must not duplicate its own meaning in a scene label");
@@ -1264,7 +1153,7 @@ async function runCaseTransition() {
     await assertVisibleText(page, "广告间隙", "second case must close without an authorial case-tail label");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await click(page, "[data-enter-case-bridge]");
-    await assertVisibleText(page, transitionQuoteByCaseId["02-tony"].text, "case two and case three must use the authored quote transition");
+    await assertVisibleText(page, transitionQuoteByCaseId["04-workplace"].text, "case two and case three must use the authored quote transition");
     await click(page, "[data-enter-next-case]");
     await assertVisibleText(page, "CASE 03", "case two tail must return to the normal case transition");
 
@@ -1289,8 +1178,13 @@ async function runCaseTransition() {
     await click(page, "[data-reveal-world-echo]");
     await assertVisibleText(page, "宸直信托全部产品暂停兑付，实控人失联", "final world echo must pay off the case-one and case-two trust seeds");
     await assertVisibleText(page, "公告没有公布清偿顺序", "final world echo must preserve the unresolved recovery boundary");
+    if (await page.locator('.story-world-echo-stage img[src*="chenzhi-news-push-pixel"]').count() !== 1) throw new Error("final world echo must switch to the trust-news ending CG");
     await click(page, "[data-enter-night-epilogue]");
     await assertVisibleText(page, "直播中", "whole-night epilogue should begin only after the fourth case tail");
+    for (let index = 0; index < 8 && await page.locator("[data-epilogue-unread-next]").count(); index += 1) {
+      await click(page, "[data-epilogue-unread-next]");
+    }
+    if (await page.locator('.night-ending-cg-stage img[src*="envelope-2019-pixel"]').count() !== 1) throw new Error("whole-night epilogue must end on the 2019 envelope CG");
   } finally {
     await context.close();
   }
@@ -1301,6 +1195,8 @@ async function runHostVerdictPresentation() {
     { width: 390, height: 844 },
     { width: 1280, height: 800 }
   ]) {
+    const viewportStartedAt = Date.now();
+    smokeProgress(`START host verdict ${viewport.width}x${viewport.height}`);
     const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
     const page = await context.newPage();
     page.setDefaultTimeout(8000);
@@ -1310,9 +1206,9 @@ async function runHostVerdictPresentation() {
       await page.evaluate(() => {
         const storageKey = "livestream-detective-save-v1";
         const save = JSON.parse(localStorage.getItem(storageKey) ?? "{}");
-        const brief = save.caseBriefs?.[1] ?? {};
+        const brief = save.caseBriefs?.find((item) => item.runtimeContentCaseId === "02-tony") ?? {};
         const contradictions = [...new Set((brief.sceneVersions ?? []).map((scene) => scene.contradiction).filter(Boolean))];
-        save.chapter = 2;
+        save.chapter = Math.max(1, (save.caseBriefs ?? []).findIndex((item) => item.runtimeContentCaseId === "02-tony") + 1);
         save.caseBrief = brief;
         save.screen = "chapter";
         save.scene = "caseSolved";
@@ -1348,7 +1244,6 @@ async function runHostVerdictPresentation() {
         if (await page.locator(".avg-page-line").count() !== 1) throw new Error("host verdict must show one current speech bubble");
         if (await page.locator("[data-recap-next]:visible").count()) throw new Error("archive button must stay hidden until the host finishes speaking");
         await page.locator("[data-dialogue-advance]").click();
-        await page.waitForTimeout(20);
       }
       await assertVisibleText(page, "整理案卷", "host verdict must hand off to the archive only after its last beat");
       await assertNoPageText(page, "1/4", "host verdict must not display mechanical page counts");
@@ -1360,6 +1255,7 @@ async function runHostVerdictPresentation() {
     } finally {
       await context.close();
     }
+    smokeProgress(`PASS  host verdict ${viewport.width}x${viewport.height} (${((Date.now() - viewportStartedAt) / 1000).toFixed(1)}s)`);
   }
 }
 
@@ -1370,6 +1266,8 @@ async function runPortraitViewports() {
     { width: 1280, height: 800, label: "deck-css" },
     { width: 1920, height: 1080, label: "wide-desktop" }
   ]) {
+    const viewportStartedAt = Date.now();
+    smokeProgress(`START portrait viewport ${viewport.label} ${viewport.width}x${viewport.height}`);
     const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
     const page = await context.newPage();
     page.setDefaultTimeout(8000);
@@ -1410,6 +1308,7 @@ async function runPortraitViewports() {
     } finally {
       await context.close();
     }
+    smokeProgress(`PASS  portrait viewport ${viewport.label} ${viewport.width}x${viewport.height} (${((Date.now() - viewportStartedAt) / 1000).toFixed(1)}s)`);
   }
 }
 
@@ -1476,20 +1375,23 @@ async function completePostAccusation(page, route) {
     if (await page.locator(".recap-score-head").count()) return;
     if (await page.locator("[data-after-investigation]").count()) {
       await activate(page, route, "[data-after-investigation]");
-      await page.waitForTimeout(80);
       continue;
     }
     if (await page.locator("button[data-scene]").count()) {
       await activate(page, route, "button[data-scene]");
-      await page.waitForTimeout(80);
       continue;
     }
     if (await page.locator("[data-evidence-check]").count()) {
       await activate(page, route, "[data-evidence-check]");
-      await page.waitForTimeout(80);
       continue;
     }
-    await page.waitForTimeout(80);
+    const remaining = Math.max(1, deadline - Date.now());
+    await page.waitForFunction(() => [
+      ".recap-score-head",
+      "[data-after-investigation]",
+      "button[data-scene]",
+      "[data-evidence-check]"
+    ].some((selector) => document.querySelector(selector)), undefined, { timeout: remaining }).catch(() => {});
   }
   const controls = await page.evaluate(() => ({
     recap: document.querySelectorAll(".recap-score-head").length,
@@ -1561,9 +1463,17 @@ async function drainDialogue(page, route) {
     const currentPageText = (await box.locator(".avg-line").allTextContents()).join("\n").trim();
     if (currentPageText) shownText.add(currentPageText);
     if (route.inputMode === "keyboard") await page.keyboard.press("Enter");
-    else if (route.inputMode === "gamepad") await gamepadPress(page, 0);
-    else await box.evaluate((element) => element.click());
-    await page.waitForTimeout(20);
+    else if (route.inputMode === "gamepad") {
+      const sampledAdvances = gamepadDialogueSamples.get(route) ?? 0;
+      // Sample real A-button dialogue handling, then batch the remaining prose.
+      // Choice activation still uses the Gamepad API for the whole route.
+      if (sampledAdvances < gamepadDialogueSampleLimit) {
+        await gamepadPress(page, 0);
+        gamepadDialogueSamples.set(route, sampledAdvances + 1);
+      } else {
+        await box.evaluate((element) => element.click());
+      }
+    } else await box.evaluate((element) => element.click());
     const pageText = (await box.locator(".avg-line").allTextContents()).join("\n").trim();
     if (pageText) shownText.add(pageText);
   }
@@ -1580,11 +1490,13 @@ async function assertInlineContinuePlacement(page) {
     const buttonRect = button?.getBoundingClientRect();
     return {
       insideRecord: Boolean(element.closest(".court-record")),
+      multiQuestionBar: Boolean(element.querySelector(".scene-question-group")),
       stageRatio: stageRect && buttonRect ? (buttonRect.top - stageRect.top) / Math.max(1, stageRect.height) : -1,
       bottomOverflow: stageRect && buttonRect ? buttonRect.bottom - stageRect.bottom : 999
     };
   });
-  if (placement.insideRecord || placement.stageRatio < 0.55 || placement.bottomOverflow > 2) {
+  const minimumStageRatio = placement.multiQuestionBar ? 0.44 : 0.55;
+  if (placement.insideRecord || placement.stageRatio < minimumStageRatio || placement.bottomOverflow > 2) {
     throw new Error(`main continue action must stay in the lower dialogue stage, got ${JSON.stringify(placement)}`);
   }
 }
@@ -1599,7 +1511,7 @@ async function assertDialoguePresentation(page) {
   if ((completed?.length ?? 0) < (before?.length ?? 0)) throw new Error("typing click must complete the current sentence");
   if (!await box.locator(".avg-continue").isVisible()) throw new Error("completed sentence must show continue indicator");
   await page.mouse.wheel(0, -120);
-  await page.waitForTimeout(50);
+  await waitForAnimationFrames(page, 1);
   if (await page.locator(".court-record:not([hidden])").count()) {
     throw new Error("mouse wheel must scroll without opening the court record");
   }
@@ -1662,7 +1574,7 @@ async function assertPixelPortrait(page, chapter) {
     src: element.getAttribute("src") ?? "",
     imageRendering: getComputedStyle(element).imageRendering
   }));
-  const portraitStem = ({ 1: "caller_credit", 2: "caller_salon", 3: "caller_profile", 4: "caller_work" })[chapter];
+  const portraitStem = ({ 1: "caller_credit", 2: "caller_work", 3: "caller_profile", 4: "caller_salon" })[chapter];
   if (!["neutral", "guarded", "pause"].some((kind) => state.src.includes(`${portraitStem}_${kind}_pixel.png`))) {
     throw new Error(`case-${chapter} live call must start from one of the authored pixel portrait states`);
   }
@@ -1680,7 +1592,6 @@ async function collectPortraitAsset(page, assets) {
 async function keyboardActivate(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
-  await page.waitForTimeout(120);
   await target.focus();
   const focused = await target.evaluate((element) => document.activeElement === element);
   if (!focused) throw new Error(`keyboard target did not keep focus: ${selector}`);
@@ -1690,7 +1601,6 @@ async function keyboardActivate(page, selector, index = 0) {
 async function gamepadActivate(page, selector, index = 0) {
   const target = page.locator(selector).nth(index);
   await target.waitFor({ state: "visible" });
-  await page.waitForTimeout(120);
   await target.focus();
   await gamepadPress(page, 0);
 }
@@ -1700,18 +1610,18 @@ async function connectGamepad(page) {
     window.__smokeGamepad.connected = true;
     window.dispatchEvent(new Event("gamepadconnected"));
   });
-  await page.waitForTimeout(500);
+  await waitForAnimationFrames(page, 2);
 }
 
 async function gamepadPress(page, buttonIndex) {
   await page.evaluate((index) => {
     window.__smokeGamepad.buttons[index].pressed = true;
   }, buttonIndex);
-  await waitForAnimationFrames(page, 3);
+  await waitForAnimationFrames(page, 1);
   await page.evaluate((index) => {
     window.__smokeGamepad.buttons[index].pressed = false;
   }, buttonIndex);
-  await waitForAnimationFrames(page, 2);
+  await waitForAnimationFrames(page, 1);
 }
 
 async function waitForAnimationFrames(page, count) {
@@ -1760,6 +1670,8 @@ async function assertVisibleText(page, text, message) {
   for (let index = 0; index < await matches.count(); index += 1) {
     if (await matches.nth(index).isVisible().catch(() => false)) return;
   }
+  const quickLine = page.locator("[data-quick-dialogue-box]:visible").first();
+  if (await quickLine.count() && String(await quickLine.getAttribute("data-quick-line-text") ?? "").includes(text)) return;
   throw new Error(message);
 }
 

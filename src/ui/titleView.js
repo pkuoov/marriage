@@ -11,6 +11,7 @@ export function titleScreenHtml({
   canContinue = false,
   resumeLabel = "上次停在：直播连线",
   confirmNewGame = false,
+  saveLoadError = null,
   quickModeAvailable = false,
   playerName = "林旭阳"
 } = {}) {
@@ -47,6 +48,14 @@ export function titleScreenHtml({
                 <b>${escapeHtml(hook)}</b>
                 <small>同一天同一通电话。你接哪句，朋友进来就能对答案。</small>
               </div>`}
+              ${saveLoadError ? `
+                <section class="title-save-warning" role="alert">
+                  <b>上次进度没有正常读出来</b>
+                  <small>${escapeHtml(saveLoadError === "content-refresh-failed"
+                    ? "存档还在，但现在的故事内容无法和它对上。"
+                    : "存档文件已损坏，游戏不会自动覆盖它。" )}</small>
+                </section>
+              ` : ""}
               <div class="title-actions">
                 <div class="title-journey-menu">
                   ${canContinue ? `
@@ -61,7 +70,7 @@ export function titleScreenHtml({
                       <small>从开播前重新开始</small>
                     </button>
                   ` : `
-                    <button class="primary title-journey-action title-journey-new title-journey-new-only" data-start-story type="button">
+                    <button class="primary title-journey-action title-journey-new title-journey-new-only" ${saveLoadError ? "data-request-new-game" : "data-start-story"} type="button">
                       <span>NEW GAME</span>
                       <b>${storyPack ? "新游戏" : "开始今日来电"}</b>
                       <small>${storyPack ? "从今晚 20:00 推门进直播间" : "接入今天这通匿名来电"}</small>
@@ -77,7 +86,7 @@ export function titleScreenHtml({
                 </div>
                 ${confirmNewGame ? `
                   <section class="title-new-game-confirm" aria-live="polite">
-                    <div><b>要从头开始吗？</b><small>新游戏会覆盖当前进度。</small></div>
+                    <div><b>要从头开始吗？</b><small>${saveLoadError ? "确认后才会覆盖这份异常存档。" : "新游戏会覆盖当前进度。"}</small></div>
                     <button data-cancel-new-game type="button">保留进度</button>
                     <button class="primary" data-confirm-new-game type="button">确认新游戏</button>
                   </section>

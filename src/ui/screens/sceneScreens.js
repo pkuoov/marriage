@@ -1,3 +1,19 @@
+import {
+  normalizeStatementPatience,
+  resetStatementPatience,
+  sceneUsesLineReplay,
+  spendStatementPatience,
+  statementNightKey,
+  statementNightPatienceMax,
+  statementPressureFor
+} from "../../runtime/statementReviewModel.js";
+import {
+  statementPatienceLostHtml,
+  statementReplayHtml,
+  statementReplayLineForScene,
+  statementReplayOptionIndex
+} from "../statementReviewView.js";
+
 export function createSceneScreens(ctx) {
   const {
     playAudioCueOnce,
@@ -12,6 +28,7 @@ export function createSceneScreens(ctx) {
     routeAxisForChoice,
     routeToneForChoice,
     nextSceneAfterEvidence,
+    afterSceneEvidenceFor,
     answerKey,
     caseKey,
     evidenceChecksFor,
@@ -32,14 +49,13 @@ export function createSceneScreens(ctx) {
     hangupBeatHtml,
     focusedQuestionOptions,
     sceneDialogueOptions,
-    sceneQuestionMenuHtml,
+    sceneQuestionChoicesHtml,
     completedSceneExchangeHtml,
     scenePromptExchangeHtml,
     sceneQuestionAnswerHtml,
     sceneReviewDoneChoicesHtml,
     sceneReviewHtml,
     stanceSnapshotHtml,
-    SCENE_HELPER,
     saveState,
     activeCaseBrief,
     render,
@@ -50,6 +66,7 @@ export function createSceneScreens(ctx) {
     hostDisclosureForAnchor,
     respondentTeaseHtml,
     frame,
+    consumePixelTransition,
     bind,
     bindChoiceActivation,
     stanceSnapshotPickForState,
@@ -57,7 +74,6 @@ export function createSceneScreens(ctx) {
     enterLiveCounterBeatAfterScene,
     moveScene,
     setIndex,
-    setIndexValue,
     currentIndex,
     firstUnansweredSceneIndex,
     nextPlayableSceneIndex,
@@ -102,6 +118,10 @@ export function createSceneScreens(ctx) {
       mood: "thinking",
       label: "继续对话",
       chapter: liveChapterTitle(brief),
+      screenClass: sceneUsesLineReplay(sceneForView) ? "dialogue-mode-listen" : "",
+      controlMode: "listen",
+      pressureOverride: sceneUsesLineReplay(sceneForView) ? statementPressure(brief, index, "listen") : null,
+      pixelTransition: sceneUsesLineReplay(sceneForView) ? statementPhaseTransition(brief, sceneForView, index, "listen") : undefined,
       text: sceneReviewHtml({
         index,
         displayIndex: Math.max(0, playableSceneIndexes(brief).indexOf(index)),
@@ -112,36 +132,21 @@ export function createSceneScreens(ctx) {
       }),
       choices: done
         ? sceneReviewDoneChoicesHtml({ lastStage, nextStage, nextLabel })
-        : flowGroupHtml(`<button class="primary" data-open-question-menu type="button">提问</button>`)
+        : sceneUsesLineReplay(sceneForView)
+          ? flowGroupHtml('<button class="primary" data-scene-open-replay type="button">把刚才那段拉回来</button>')
+          : flowGroupHtml(sceneQuestionChoicesHtml(index, sceneForView, dialoguePicks))
     });
     playAudioCueOnce(sceneForView.audioCueId, `${caseKey(brief)}:scene:${index}:${sceneForView.id ?? "beat"}`);
-    bind("[data-open-question-menu]", () => openSceneQuestionMenu(brief, index));
+    bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
+    bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
+    bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, index));
     bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
     bindSceneButtons();
   }
 
   function renderSceneQuestionMenu(brief) {
-    const state = ctx.getState();
-    const index = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
-    const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
-    const dialoguePicks = askedDialoguePicksForState(state, brief, index);
-    if (selectedScenePickForState(state, brief, index)) return closeSceneQuestionMenu(brief);
-    frame({
-      brief,
-      mood: "thinking",
-      label: "连线继续",
-      chapter: liveChapterTitle(brief),
-      text: sceneQuestionMenuHtml(index, scene, dialoguePicks, {
-        helper: SCENE_HELPER,
-        helperRevealed: Boolean(state.helperHintPicks?.[answerKey(brief, index)])
-      }),
-      choices: flowGroupHtml(`<button data-close-question-menu type="button">先不问了</button>`)
-    });
-    bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
-    bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
-    bind("[data-scene-helper]", () => revealSceneHelperHint(brief, index, scene));
-    bind("[data-close-question-menu]", () => closeSceneQuestionMenu(brief));
-    bindSceneButtons();
+    // One-release compatibility for saves captured on the retired question-menu route.
+    closeSceneQuestionMenu(brief);
   }
 
   function renderSceneQuestionAnswer(brief) {
@@ -149,12 +154,18 @@ export function createSceneScreens(ctx) {
     const index = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     const focus = sceneQuestionFocusFor(brief, index);
     if (!focus) return closeSceneQuestionMenu(brief);
+    const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
+    if (focus.kind === "dialogue" && sceneUsesLineReplay(scene)) {
+      state.sceneQuestionFocus = null;
+      state.scene = "sceneLineReplay";
+      saveState();
+      return renderSceneLineReplay(brief);
+    }
     const dialoguePicks = askedDialoguePicksForState(state, brief, index);
     const pick = focus.kind === "dialogue"
       ? dialoguePicks.find((item) => Number(item.optionIndex) === Number(focus.optionIndex))
       : selectedScenePickForState(state, brief, index);
     if (!pick?.question || (!pick?.answer && !pick?.lines?.length)) return closeSceneQuestionMenu(brief);
-    const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
     const review = sceneReviewModel({
       brief,
       index,
@@ -167,6 +178,9 @@ export function createSceneScreens(ctx) {
       mood: focus.kind === "key" ? "focused" : "thinking",
       label: "连线继续",
       chapter: liveChapterTitle(brief),
+      screenClass: focus.kind === "key" && sceneUsesLineReplay(scene) ? "dialogue-mode-interrupt" : "",
+      controlMode: focus.kind === "key" && sceneUsesLineReplay(scene) ? "interrupt" : "listen",
+      pressureOverride: focus.kind === "key" && sceneUsesLineReplay(scene) ? statementPressure(brief, index, "interrupt") : null,
       text: `${sceneQuestionAnswerHtml({
         question: pick.question,
         answer: pick.answer,
@@ -177,11 +191,141 @@ export function createSceneScreens(ctx) {
       })}${focus.kind === "key" ? `${respondentTeaseHtml(brief, index)}${hostDisclosureForAnchor(brief, `afterScene:${index + 1}`)}` : ""}`,
       choices: focus.kind === "key"
         ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
-        : flowGroupHtml(`<button class="primary" data-return-question-menu type="button">继续问</button>`)
+        : flowGroupHtml(sceneQuestionChoicesHtml(index, scene, dialoguePicks))
     });
-    bind("[data-return-question-menu]", () => openSceneQuestionMenu(brief, index));
+    bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
+    bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
     bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
     bindSceneButtons();
+  }
+
+  function openSceneLineReplay(brief, sceneIndex) {
+    const state = ctx.getState();
+    state.scene = "sceneLineReplay";
+    state.activeStatementLineId = null;
+    saveState();
+    render();
+  }
+
+  function renderSceneLineReplay(brief) {
+    const state = ctx.getState();
+    const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+    const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[sceneIndex] ?? {}, sceneIndex));
+    if (!sceneUsesLineReplay(scene)) {
+      state.scene = "sceneReview";
+      saveState();
+      return renderSceneReview(brief);
+    }
+    const attempts = state.statementReviewAttempts?.[answerKey(brief, sceneIndex)] ?? [];
+    frame({
+      brief,
+      mood: "focused",
+      label: "回放",
+      chapter: liveChapterTitle(brief),
+      text: statementReplayHtml({ scene, sceneIndex, attemptedLineIds: attempts }),
+      choices: "",
+      screenClass: "dialogue-mode-replay",
+      controlMode: "replay",
+      pressureOverride: statementPressure(brief, sceneIndex, "replay"),
+      pixelTransition: statementPhaseTransition(brief, scene, sceneIndex, "review")
+    });
+    bind("[data-scene-review-line]", (event) => handleSceneReviewLine(event.currentTarget, brief, scene));
+    bindSceneButtons();
+  }
+
+  function handleSceneReviewLine(button, brief, scene) {
+    const state = ctx.getState();
+    const sceneIndex = Number(button.dataset.sceneReviewIndex ?? currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1));
+    const lineId = button.dataset.sceneReviewLine ?? "";
+    const line = statementReplayLineForScene(scene, lineId);
+    const optionIndex = statementReplayOptionIndex(scene, line);
+    const key = answerKey(brief, sceneIndex);
+    state.activeStatementLineId = lineId;
+    if (optionIndex >= 0) {
+      saveState();
+      return handleSceneQuestionButton({ dataset: { sceneQuestion: `${sceneIndex}:${optionIndex}` } });
+    }
+    if ((state.statementReviewAttempts?.[key] ?? []).includes(lineId)) return;
+    state.statementReviewAttempts = {
+      ...(state.statementReviewAttempts ?? {}),
+      [key]: [...new Set([...(state.statementReviewAttempts?.[key] ?? []), lineId])]
+    };
+    const patienceKey = statementPatienceKey(brief, sceneIndex);
+    const max = statementPatienceMax(brief, sceneIndex);
+    const nextPatience = spendStatementPatience(state.statementPatience?.[patienceKey], max);
+    state.statementPatience = {
+      ...(state.statementPatience ?? {}),
+      [patienceKey]: nextPatience
+    };
+    state.lastScreenEffect = "patience-drop";
+    state.scene = nextPatience.remaining <= 0 ? "statementPatienceLost" : "sceneLineReplay";
+    saveState();
+    render();
+  }
+
+  function renderStatementPatienceLost(brief) {
+    const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+    frame({
+      brief,
+      mood: "tense",
+      label: "线路发散",
+      chapter: liveChapterTitle(brief),
+      text: statementPatienceLostHtml(),
+      choices: flowGroupHtml('<button class="primary" data-retry-statement type="button">重新听这段</button>'),
+      screenClass: "dialogue-mode-replay statement-patience-empty",
+      controlMode: "replay",
+      pressureOverride: statementPressure(brief, sceneIndex, "replay")
+    });
+    bind("[data-retry-statement]", () => retryStatementReview(brief, sceneIndex));
+    bindSceneButtons();
+  }
+
+  function retryStatementReview(brief, sceneIndex) {
+    const state = ctx.getState();
+    const patienceKey = statementPatienceKey(brief, sceneIndex);
+    state.statementPatience = {
+      ...(state.statementPatience ?? {}),
+      [patienceKey]: resetStatementPatience(statementPatienceMax(brief, sceneIndex))
+    };
+    state.statementReviewAttempts = {
+      ...(state.statementReviewAttempts ?? {}),
+      [answerKey(brief, sceneIndex)]: []
+    };
+    state.activeStatementLineId = null;
+    state.lastScreenEffect = null;
+    state.scene = "sceneReview";
+    saveState();
+    render();
+  }
+
+  function statementPatienceKey(brief, sceneIndex) {
+    return `${caseKey(brief)}:${statementNightKey(brief, sceneIndex)}`;
+  }
+
+  function statementPatienceMax(brief, sceneIndex) {
+    return statementNightPatienceMax(brief, statementNightKey(brief, sceneIndex));
+  }
+
+  function statementPatience(brief, sceneIndex) {
+    const state = ctx.getState();
+    const max = statementPatienceMax(brief, sceneIndex);
+    return normalizeStatementPatience(state.statementPatience?.[statementPatienceKey(brief, sceneIndex)], max);
+  }
+
+  function statementPressure(brief, sceneIndex, mode) {
+    return statementPressureFor(statementPatience(brief, sceneIndex), {
+      mode,
+      max: statementPatienceMax(brief, sceneIndex)
+    });
+  }
+
+  function statementPhaseTransition(brief, scene, sceneIndex, mode) {
+    const phase = mode === "review" ? "review" : "listen";
+    const key = `${caseKey(brief)}:statement:${scene?.id ?? sceneIndex}:${phase}`;
+    if (!consumePixelTransition(key)) return null;
+    return phase === "review"
+      ? { kind: "phase", visualVariant: "review", eyebrow: "回到刚才那段", label: "逐句追问" }
+      : { kind: "phase", visualVariant: "listen", eyebrow: "先听她说完", label: "来电人陈述" };
   }
 
   function renderStanceSnapshot(brief) {
@@ -217,11 +361,14 @@ export function createSceneScreens(ctx) {
       button.addEventListener("click", () => recordStanceSnapshot(brief, snapshot, Number(button.dataset.stanceSnapshot ?? 0)));
     });
     bind("[data-after-stance-snapshot]", () => {
-      state.scene = shouldEnterOvernightHangupAfterScene(brief, snapshot.sceneIndex)
-        ? "overnightHangup"
-        : shouldEnterHangupAfterScene(brief, snapshot.sceneIndex)
-          ? "hangupBeat"
-          : "sceneReview";
+      const pendingEvidence = afterSceneEvidenceFor(brief, snapshot.sceneIndex, (key) => actionDone(brief, key));
+      state.scene = pendingEvidence
+        ? "afterSceneEvidence"
+        : shouldEnterOvernightHangupAfterScene(brief, snapshot.sceneIndex)
+          ? "overnightHangup"
+          : shouldEnterHangupAfterScene(brief, snapshot.sceneIndex)
+            ? "hangupBeat"
+            : "sceneReview";
       saveState();
       render();
     });
@@ -319,7 +466,7 @@ export function createSceneScreens(ctx) {
           { role: "host", text: followup.question },
           ...(followup.resistanceBeat?.lines ?? []),
           { role: "caller", text: followup.answer }
-        ])}
+        ], "", { autoPairQuestions: true })}
         <p class="hint">${escapeHtml(followup.note)}</p>
       `,
       choices: flowGroupHtml(`<button class="primary" data-scene="accusation" type="button">选一句往下追</button>`)
@@ -448,25 +595,11 @@ export function createSceneScreens(ctx) {
     render();
   }
 
-  function revealSceneHelperHint(brief, sceneIndex, scene = {}) {
-    const state = ctx.getState();
-    if (!SCENE_HELPER?.id || !String(scene.helperHint ?? "").trim()) return;
-    const key = answerKey(brief, sceneIndex);
-    state.helperHintPicks = {
-      ...(state.helperHintPicks ?? {}),
-      [key]: {
-        helperId: SCENE_HELPER.id,
-        revealed: true
-      }
-    };
-    saveState();
-    render();
-  }
-
   function handleSceneDialogueButton(button) {
     const state = ctx.getState();
     const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
     const { brief, scene, options } = sceneChoiceContext(sceneIndex);
+    if (sceneUsesLineReplay(scene)) return;
     const dialogueRows = sceneDialogueOptions(scene, options);
     const option = dialogueRows[optionIndex]?.option ?? null;
     if (!brief || !option) return;
@@ -495,15 +628,6 @@ export function createSceneScreens(ctx) {
     state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
     state.sceneQuestionFocus = { caseId: caseKey(brief), sceneIndex, kind: "dialogue", optionIndex };
     state.scene = "sceneQuestionAnswer";
-    saveState();
-    render();
-  }
-
-  function openSceneQuestionMenu(brief, sceneIndex) {
-    const state = ctx.getState();
-    state.sceneQuestionFocus = null;
-    state.scene = "sceneQuestionMenu";
-    setIndexValue(brief, "sceneReview", sceneIndex);
     saveState();
     render();
   }
@@ -624,6 +748,8 @@ export function createSceneScreens(ctx) {
     renderSceneReview,
     renderSceneQuestionMenu,
     renderSceneQuestionAnswer,
+    renderSceneLineReplay,
+    renderStatementPatienceLost,
     renderStanceSnapshot,
     renderHangupBeat,
     renderCallerQuestion,

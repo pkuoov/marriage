@@ -15,16 +15,25 @@ export function refreshSavedCaseContent(state = {}, { generateCases, npcs = [] }
       };
   try {
     const refreshed = generateCases(npcs, state.attrs ?? {}, options);
-    if (!Array.isArray(refreshed) || !refreshed.length) return state;
+    if (!Array.isArray(refreshed) || !refreshed.length) return contentRefreshFailure(state);
     const chapterIndex = Math.max(0, Math.min(refreshed.length - 1, Number(state.chapter ?? 1) - 1));
     return reconcileSavedOvernightProgress({
       ...state,
+      saveLoadError: null,
       caseBriefs: refreshed,
       caseBrief: refreshed[chapterIndex]
     }, refreshed, chapterIndex);
   } catch {
-    return state;
+    return contentRefreshFailure(state);
   }
+}
+
+function contentRefreshFailure(state = {}) {
+  return {
+    ...state,
+    screen: "title",
+    saveLoadError: "content-refresh-failed"
+  };
 }
 
 export function reconcileSavedOvernightProgress(state = {}, briefs = [], chapterIndex = 0) {

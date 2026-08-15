@@ -47,11 +47,11 @@ export function activeSceneExchangeHtml({ scene = {}, dialoguePicks = [] } = {})
   return [
     sceneBeatLinesHtml(scene.beforeVersion),
     sceneEntryQuestionHtml(scene),
-    callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    callLineHtml({ ...scene, text: scene.version, role: "caller", statementBlock: scene.interactionMode === "lineReplay" }),
     sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard),
     ...dialoguePicks.flatMap((pick) => [
-      callLineHtml({ role: "host", text: pick.question }),
+      callLineHtml({ role: "host", text: pick.question, autoAdvanceNext: true }),
       dialogueAnswerHtml(pick)
     ])
   ].join("");
@@ -61,7 +61,7 @@ export function scenePromptExchangeHtml({ scene = {} } = {}) {
   return [
     sceneBeatLinesHtml(scene.beforeVersion),
     sceneEntryQuestionHtml(scene),
-    callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    callLineHtml({ ...scene, text: scene.version, role: "caller", statementBlock: scene.interactionMode === "lineReplay" }),
     sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard)
   ].join("");
@@ -78,7 +78,7 @@ export function sceneQuestionAnswerHtml({
   return `
     <section class="question-answer-card">
       <div class="call-dialogue">
-        ${callLineHtml({ role: "host", text: question })}
+        ${callLineHtml({ role: "host", text: question, autoAdvanceNext: true })}
         ${resistanceBeatLinesHtml(resistanceBeat)}
         ${dialogueAnswerHtml({ answer, lines })}
         ${reactionLine ? callLineHtml({ role: "caller", text: reactionLine }) : ""}
@@ -92,11 +92,11 @@ export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pic
   return [
     sceneBeatLinesHtml(scene.beforeVersion),
     sceneEntryQuestionHtml(scene),
-    callLineHtml({ ...scene, text: scene.version, role: "caller" }),
+    callLineHtml({ ...scene, text: scene.version, role: "caller", statementBlock: scene.interactionMode === "lineReplay" }),
     sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard),
     ...dialoguePicks.flatMap((item) => [
-      callLineHtml({ role: "host", text: item.question }),
+      callLineHtml({ role: "host", text: item.question, autoAdvanceNext: true }),
       dialogueAnswerHtml(item)
     ]),
     keyChoiceExchangeHtml({ scene, pick, fallbackAnswer }),
@@ -109,7 +109,7 @@ export function keyChoiceExchangeHtml({ scene = {}, pick = {}, fallbackAnswer = 
   const question = safePick.question ?? scene.questionOptions?.find((option) => option.contradiction)?.question ?? "这句我想再问清楚一点。";
   const answer = safePick.answer ?? fallbackAnswer ?? "";
   return [
-    callLineHtml({ role: "host", text: question }),
+    callLineHtml({ role: "host", text: question, autoAdvanceNext: true }),
     resistanceBeatLinesHtml(safePick.resistanceBeat),
     Array.isArray(safePick.lines) && safePick.lines.length
       ? dialogueAnswerHtml(safePick)
@@ -128,7 +128,7 @@ function sceneBeatLinesHtml(beat = null) {
 
 function sceneEntryQuestionHtml(scene = {}) {
   return scene.entryQuestion
-    ? callLineHtml({ role: "host", text: scene.entryQuestion })
+    ? callLineHtml({ role: "host", text: scene.entryQuestion, autoAdvanceNext: true })
     : "";
 }
 
@@ -166,8 +166,10 @@ function callLineHtml(line = {}) {
   const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
+  const autoAdvanceAttr = line.autoAdvanceNext === true ? ' data-auto-advance-next="true"' : "";
+  const statementAttr = line.statementBlock === true ? ' data-dialogue-block="statement"' : "";
   return `
-    <div class="call-line ${role}">
+    <div class="call-line ${role}"${autoAdvanceAttr}${statementAttr}>
       <b>${speaker}</b>
       <p>${escapeHtml(text)}</p>
     </div>

@@ -23,39 +23,16 @@ export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePi
   const keyOptions = focusedQuestionOptions(scene?.questionOptions ?? []);
   const dialogueOptions = sceneDialogueOptions(scene, keyOptions);
   const askedIndexes = new Set((askedDialoguePicks ?? []).map((pick) => Number(pick.optionIndex)));
+  const dialogueLimit = Math.max(0, 4 - keyOptions.length);
   const dialogueRows = dialogueOptions
-    .map(({ option, optionIndex }) => dialogueQuestionButton(sceneIndex, optionIndex, option, askedIndexes.has(optionIndex)))
+    .filter(({ optionIndex }) => !askedIndexes.has(optionIndex))
+    .slice(0, dialogueLimit)
+    .map(({ option, optionIndex }) => dialogueQuestionButton(sceneIndex, optionIndex, option))
     .join("");
   const keyRows = keyOptions
     .map((option, optionIndex) => keyQuestionButton(sceneIndex, optionIndex, option))
     .join("");
-  return choiceGroup(`
-    ${questionSectionHtml({
-      className: "question-section-dialogue",
-      title: "补问背景",
-      content: dialogueRows
-    })}
-    ${questionSectionHtml({
-      className: "question-section-key",
-      title: "追原话",
-      hint: "绕开要点可能消耗听众耐心。",
-      content: keyRows
-    })}
-  `, "scene-question-group");
-}
-
-export function sceneQuestionMenuHtml(sceneIndex, scene = {}, askedDialoguePicks = [], { helper = null, helperRevealed = false } = {}) {
-  return `
-    <section class="question-menu-card" aria-label="连线追问">
-      <header>
-        <b>这句话，你准备从哪儿问下去？</b>
-      </header>
-      ${helperPromptHtml(sceneIndex, scene, helper, helperRevealed)}
-      <div class="question-menu-options">
-        ${sceneQuestionChoicesHtml(sceneIndex, scene, askedDialoguePicks)}
-      </div>
-    </section>
-  `;
+  return choiceGroup(`${dialogueRows}${keyRows}`, "scene-question-group");
 }
 
 function normalizeDialogueOption(option = {}, optionIndex = 0) {
@@ -79,11 +56,10 @@ function fallbackDialogueQuestion(option = {}, scene = {}, optionIndex = 0) {
   return optionIndex === 0 ? "先把前后问清楚。" : "你当时怎么回他的？";
 }
 
-function dialogueQuestionButton(sceneIndex, optionIndex, option = {}, asked = false) {
+function dialogueQuestionButton(sceneIndex, optionIndex, option = {}) {
   return `
-    <button class="choice-question" data-scene-dialogue="${sceneIndex}:${optionIndex}" type="button" ${asked ? "disabled" : ""}>
+    <button class="choice-question" data-scene-dialogue="${sceneIndex}:${optionIndex}" type="button">
       <span class="choice-label"><span class="choice-text">${escapeHtml(option.question ?? "接着问")}</span></span>
-      <small class="choice-cost-meta">${asked ? "已问过" : CHOICE_COST_META.dialogueQuestion}</small>
     </button>
   `;
 }
@@ -101,38 +77,6 @@ function keyQuestionButton(sceneIndex, optionIndex, option = {}) {
 
 export function playerQuestionLabel(option = {}) {
   return option.suspicionLabel ?? option.question ?? "接着问";
-}
-
-function helperPromptHtml(sceneIndex, scene = {}, helper = null, helperRevealed = false) {
-  const hint = String(scene.helperHint ?? "").trim();
-  if (!helper?.id || helper.playerVisible === false || !hint) return "";
-  if (!helperRevealed) {
-    return `
-      <aside class="helper-prompt helper-prompt-closed" aria-label="场下求助">
-        <span><b>${escapeHtml(helper.name ?? "场下帮手")}</b><small>${escapeHtml(helper.role ?? "场下观察员")}</small></span>
-        <button data-scene-helper="${sceneIndex}" type="button">求助 ${escapeHtml(helper.name ?? "场下帮手")}</button>
-      </aside>
-    `;
-  }
-  return `
-    <aside class="helper-prompt helper-prompt-open" aria-label="${escapeHtml(helper.name ?? "场下帮手")}的提示">
-      <span class="helper-avatar" aria-hidden="true">V</span>
-      <p><b>${escapeHtml(helper.name ?? "场下帮手")}</b><small>${escapeHtml(helper.role ?? "场下观察员")}</small>${escapeHtml(hint)}</p>
-    </aside>
-  `;
-}
-
-function questionSectionHtml({ className = "", title = "", hint = "", content = "" } = {}) {
-  if (!content?.trim()) return "";
-  return `
-    <section class="question-section ${className}">
-      <header class="question-section-head">
-        <b>${escapeHtml(title)}</b>
-        ${hint ? `<small>${escapeHtml(hint)}</small>` : ""}
-      </header>
-      <div class="choice-stack">${content}</div>
-    </section>
-  `;
 }
 
 function choiceGroup(content, className = "") {

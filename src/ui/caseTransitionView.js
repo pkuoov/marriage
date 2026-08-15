@@ -39,10 +39,17 @@ export function caseClosingChoicesHtml() {
 export function caseBridgeHtml({
   fromCaseNumber = 1,
   toCaseNumber = 2,
-  quote = {}
+  quote = {},
+  fromMaterialSrc = "",
+  toMaterialSrc = ""
 } = {}) {
   return `
     <section class="case-bridge-card">
+      <div class="case-bridge-objects" aria-hidden="true">
+        <figure class="case-bridge-object outgoing">${fromMaterialSrc ? `<img src="${escapeHtml(fromMaterialSrc)}" alt="" onerror="this.hidden=true" />` : "<i></i>"}</figure>
+        <span><i></i></span>
+        <figure class="case-bridge-object incoming">${toMaterialSrc ? `<img src="${escapeHtml(toMaterialSrc)}" alt="" onerror="this.hidden=true" />` : "<i></i>"}</figure>
+      </div>
       <blockquote>
         <p>“${escapeHtml(quote.text ?? "")}”</p>
         <cite>${escapeHtml(quote.source ?? "")}</cite>

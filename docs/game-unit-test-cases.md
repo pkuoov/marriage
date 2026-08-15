@@ -2,6 +2,16 @@
 
 This document records the automated unit/contract tests that must run before every major gameplay or UI release.
 
+## Local Feedback Loop
+
+During dialogue, flow, or UI work, run the bounded local gate before committing:
+
+```bash
+npm run test:local
+```
+
+It runs the static/content checks plus the canonical `accounting-support` browser route at one viewport. The replay prints each route or viewport when it starts and finishes, including elapsed time, so a stalled selector is distinguishable from a slow route. This is a fast development loop, not a replacement for the full browser matrix in CI or release testing.
+
 ## Required Release Commands
 
 Run these before tagging or shipping a major version:
@@ -22,6 +32,7 @@ npm run smoke:desktop
 
 | ID | Area | Case | Guards Against |
 | --- | --- | --- | --- |
+| BROWSER-SMOKE-FAST | Local behavior gate | `npm run smoke:quick` builds the playable and replays the canonical long-case route at one viewport; `npm run test:local` runs it after `check`. | 本地行为闸门长到没人运行，内容和 smoke pin 的漂移积到 push 后才发现。 |
 | MODE-001 | Mode routing | Unknown modes normalize to `episode`; explicit `daily` still expects one case; legacy `weekly` links migrate. | Steam 主入口被旧 daily 默认值拉回去，或单案兼容入口丢失。 |
 | PACK-001 | Content pack contract | `content/packs/steam-demo-01/manifest.json` matches the runtime story-pack definition, and each case pressure packet has truth boundaries, stakes, object purpose, self-serving omission, and quote candidates. | 故事包目录和运行时定义脱节，或新故事包只有标题顺序、没有编剧压力系统。 |
 | PACK-005 | Runtime content schema | Runtime-loaded cases must expose playable nested content: task profile, opening dialogue, five scene beats, exactly one core question per beat, at least two readable materials, investigation backflow, caller omission, third pressure, thick truth-boundary pools, deep follow-up, conclusion, share copy, and truth text. | 内容包看着完整，实际缺少可被引擎消费的任务画像、台词、选项、材料、回流、结算字段，事实边界退回三栏各一，或体量退回短问答。 |
@@ -30,6 +41,7 @@ npm run smoke:desktop
 | BROWSER-SMOKE | Playable route replay | `npm run smoke:browser` opens the offline playable and replays perfect, outer-only, material-miss, keyboard-perfect, and gamepad-perfect routes to the recap. | 离线包语法能过但真实按钮无响应、import alias 丢失、后台回流页崩溃、外围追问无法线性推进、材料误圈路线死路，或键盘/手柄焦点无法实际通关。 |
 | UI-001 | Choice UI contract | Current-node questions render in one panel without explainer tags or tutorial sentences; buttons carry the choice themselves, same-panel buttons have equal visual weight, the material inspection stage remains in the runtime, and recap/interlude copy avoids scoring slang. | `按下后会变成完整问句`、`只选怀疑方向`、`追问方向`、`顺着问`、`按住问`、路线轴提示、核心追问高亮、`半口瓜`、`主播倾向` 等教程、设计稿或评分腔残留回到玩家界面，或玩法退回纯问答。 |
 | UI-002 | Broadcast identity | Title and live-call screens preserve a livestream control-desk shell while dialogue uses a full-stage visual-novel composition: fixed background, host and caller portraits, active-speaker focus, audience patience, current segment, materials, and scene props. | UI 退回空白文字卡，或改成视觉小说后丢掉直播间控场职业感、材料入口和玩家作为主播的视觉存在。 |
+| UI-005 | P0 performance assets | Host ships listening/questioning/pressing/verdict states; both quick callers ship neutral/guarded/pause; case 3 respondent has an independent neutral/guarded portrait; every main case has one 1600×900 evidence board and exactly one bespoke reveal performance. | 主播继续固定单图、案 3 男方复用女方立绘、快案对质不切表演态、材料图丢失，或同案重复播放多个全屏重击。 |
 | REWIND-001 | Global question rewind | Every playable question or consequential choice stores a bounded pre-choice checkpoint. The shared top-bar return button restores scene, patience, discovered contradictions, materials, and route state together; title, restart, and case changes clear old checkpoints. | 返回键只切换画面却没有撤销扣除的耐心、已写入的矛盾或材料状态，历史无限膨胀，或上一案的检查点串进下一案。 |
 | QUICK-002 | Quick-case catalog | The quick-mode title entry opens a manifest-ordered case shelf; every packet has a stable two-digit number, completion is stored only after the final verdict line, and completed cards keep a visible checkmark while remaining replayable. | 快案入口直接跳进第一案、以后新增案件无法选择、编号随 UI 顺序漂移、没看完结论就打勾，或主线重开后完成记录消失。 |
 | QUICK-003 | Quick case 02 truth boundary | Case 02 keeps six multi-turn confrontations grounded in heard turn ids, exactly one reveal transition, at least two plausible misses, a separate project-interest path, and explicit unknowns that forbid inferring infidelity from nightlife or an opposite-sex guest. | 快案二退回“一条没回”的单层故事、把异性在场直接判成出轨、把女方控制欲写成事实、项目利益只在结论突然出现，或第二宗继续误用第一宗立绘。 |

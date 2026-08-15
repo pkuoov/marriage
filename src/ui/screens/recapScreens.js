@@ -39,6 +39,8 @@ export function createRecapScreens(ctx) {
     routeTrailHtml,
     storyInterludeChoicesHtml,
     storyInterludeHtml,
+    storyInterludeStageHtml,
+    storyWorldEchoStageHtml,
     caseBridgeChoicesHtml,
     caseBridgeHtml,
     caseClosingChoicesHtml,
@@ -91,7 +93,7 @@ export function createRecapScreens(ctx) {
       mood: "listening",
       label: "直播连线",
       chapter: liveChapterTitle(brief),
-      text: callDialogueHtml(lines),
+      text: callDialogueHtml(lines, "", { autoPairQuestions: true }),
       choices: flowGroupHtml(`<button class="primary" data-scene="sceneReview" type="button">听她接着说</button>`)
     });
     bindSceneButtons();
@@ -141,7 +143,9 @@ export function createRecapScreens(ctx) {
       label: stage.complete ? "天亮前" : "收播后 · 后台未读",
       chapter: "深夜档",
       showCaseHud: false,
-      text: `${openingHtml}${unreadHtml}${stage.complete ? nightShellHtml(lines) : ""}`,
+      visualHud: stage.complete ? endingCgStageHtml(epilogue.closingCg) : "",
+      screenClass: `night-epilogue-screen${stage.complete && epilogue.closingCg?.src ? " has-ending-cg" : ""}`,
+      text: stage.complete ? `${openingHtml}${nightShellHtml(lines)}` : `${openingHtml}${unreadHtml}`,
       choices: flowGroupHtml(stage.complete
         ? `<button class="primary" data-finish-night-shell type="button">收麦</button>`
         : epilogueUnreadContinueHtml({ visibleCount: stage.visibleMessages.length, total: stage.messages.length }))
@@ -451,14 +455,20 @@ export function createRecapScreens(ctx) {
     frame({
       brief,
       mood: "focused",
-      label: "案间过渡",
-      chapter: "案间",
+      label: "",
+      chapter: interlude?.kicker ?? "广告间隙",
+      showCaseHud: false,
+      visualHud: worldEchoRevealed && interlude?.worldEcho?.artSrc
+        ? storyWorldEchoStageHtml(interlude.worldEcho)
+        : storyInterludeStageHtml({ afterCaseId: interludeCaseId, hostName: state.playerName ?? "林旭阳" }),
+      screenClass: `story-interlude-screen story-interlude-${interludeCaseId}${worldEchoRevealed && interlude?.worldEcho ? " has-world-echo" : ""}`,
       text: storyInterludeHtml({
         kicker: interlude?.kicker ?? "案后小尾声",
         shellLine: interlude?.line ?? "",
         shellLines: interlude?.lines ?? [],
         shellAfterLines: interlude?.afterLines ?? [],
-        worldEcho: worldEchoRevealed ? interlude?.worldEcho ?? null : null
+        worldEcho: worldEchoRevealed ? interlude?.worldEcho ?? null : null,
+        afterCaseId: interludeCaseId
       }),
       choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed }))
     });
@@ -502,12 +512,27 @@ export function createRecapScreens(ctx) {
         fromAct: brief.storyAct,
         nextAct: nextBrief.storyAct,
         quote: interlude.transitionQuote,
-        nextBrief
+        nextBrief,
+        fromMaterialSrc: brief.evidenceBoard ?? "",
+        toMaterialSrc: nextBrief.evidenceBoard ?? ""
       }),
       choices: flowGroupHtml(caseBridgeChoicesHtml(toCaseNumber))
     });
     bind("[data-enter-next-case]", () => advanceToNextStoryPackCase());
     bindSceneButtons();
+  }
+
+  function endingCgStageHtml(cg = null) {
+    if (!cg?.src) return "";
+    return `
+      <figure class="night-ending-cg-stage">
+        <img src="${escapeHtml(cg.src)}" alt="${escapeHtml(cg.alt ?? "收播后的桌面")}" onerror="this.closest('figure')?.classList.add('art-missing');this.hidden=true" />
+        <figcaption>
+          ${cg.kicker ? `<span>${escapeHtml(cg.kicker)}</span>` : ""}
+          ${cg.caption ? `<b>${escapeHtml(cg.caption)}</b>` : ""}
+        </figcaption>
+      </figure>
+    `;
   }
 
   function renderRunComplete(brief) {

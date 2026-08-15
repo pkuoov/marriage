@@ -107,6 +107,8 @@ Apply this gate to every player-visible spoken surface, not only the mainline. A
 - **Amount-bucket conservation**: before a character or recap assigns moral responsibility for a bill, divide the total by visible use and beneficiary: shared/relationship spending, one party's personal spending, and still-unexplained remainder. Every bucket needs itemized support, and the arithmetic must survive the total. Do not compress restaurant booking, social posting, and a content account into three separate accusations when they are one social-performance event; do not call the whole bill “spent on her” when rows also show his personal vanity. Ask the person to confirm or dispute one bucket, then discuss responsibility.
 - **Cumulative transfer is not current balance**: whenever one character assumes another can pay because money was transferred over time, keep three figures separate: cumulative inflow, the character's estimated savings, and the holder's current balance. The first can explain why a request was made; it cannot prove the other two. Ask for spending or balance before judging ability to pay, and do not turn a mistaken balance estimate into the holder's debt.
 - **婚事资金双边表**：剧情一旦出现彩礼、嫁妆、婚房或父母承诺，必须分开登记四件事：谁先提出金额、双方本人现在各能拿多少、双方家庭现在各能拿多少、哪些只是未来可能兑付或变现的资产。自费学历只能证明历史支出，不能直接推出当前家底；单日余额不能自动视为彩礼承诺；尚未到期的理财、待售房产或口头承诺不能提前写成婚礼现金。人物可以故意混说，主播和结案不能跟着混，且不得用“双方都有问题”抹平一方开价、一方含糊回应、另一方隐瞒期限这些不同动作。
+- **家境调查四问**：父母以“替孩子把关”为名调查对象时，必须拆开问：查到了什么、是否真的构成欺骗、父母据此采取什么动作、来电人知情后有没有叫停。查到“父母普通、婚房帮不上”不能自动写成被骗；若父母借这个落差加价，来电人嘴上说无奈却继续让报价传递，就要登记为本人支持。若来电人又把对方花钱、接送或情绪劳动当成条件较弱一方应付的差价，主播必须把这份高低判断问回本人，不能只做彩礼数字审计。
+- **商业腐烂两张账**：公司案同时出现个人报销与供应商返费时，必须分成两条证据链。个人垫款只看授权、报销申请、付款和回单；层层返费只看岗位、名目、计算方式、支付状态和收款账户。公开融资稿、单点经济与返费规则可以支持“商业模式撑不住”的判断，老板或公子的八卦只能塑造环境，不能替具体挪用或入账作证。
 - **Unresolved-identity budget**: count every distinct "who received/sent this and we don't know" thread in a case — unknown payee, unknown account, unnamed institution, unconfirmed relative. A tier-1/opener case should carry at most two; a later or capstone case may carry more only if it is the pack's deliberate density peak. Two threads that share the same shape (an opaque lump-sum transfer to an unnamed recipient, repeated with different numbers and institution names) read as one puzzle wearing two costumes unless the case gives them visibly different textures, stakes, or resolution paths — collapse or clearly differentiate them before shipping, and never stack a new cross-case seed thread onto a case that is already at budget.
 - A named institution already registered in `crossCasePromises` is an institution-result thread, not another anonymous identity. Its remaining questions are limited to product, payment status, contract terms, and recoverability. Do not restage it as a third “who received the money” mystery.
 - A masked surname that only labels one recurring date pattern belongs to that supply line. Count the broken pattern once; do not turn “王**” and “每月 8 号” into two separate unknown people. Tier-1 and opener-facing anonymous identity threads still stay at two or fewer. For case 1 they are the 8th-day supply pattern and account suffix 3301; 宸直 remains a named institutional payoff thread.
@@ -176,22 +178,25 @@ Run the pack validator and generated micro-logic table. A missing contract, stal
 
 ### 主播对质快案律
 
-快案不是自动播放结论的短剧，也不是一轮圈具体句子的证据小游戏。玩家先听来电人把公开形象立起来；每听完一个有完整局部因果的段落，玩家只选择值得追问的问题方向，主播再把已经出现的说法问回去。对质可以逼出来电人换一套口径，新口径随后成为下一段普通问话的合法前提。戏剧性来自玩家认出矛盾、来电人刚才的从容与此刻的支吾，不是评论区或系统替主播宣布答案。
+快案不是自动播放结论的短剧。玩家先整段听来电人把当前公开版本说完；找问题时，系统把同一段原话逐句拉回，玩家按住其中一句，主播再把它问成自然的完整问题。对质可以逼出来电人换一套口径，新口径随后成为下一段陈述的合法前提。戏剧性来自同一句话在“第一次听”和“回头细听”时含义变化，以及来电人刚才的从容与此刻的支吾，不是评论区或系统替主播宣布答案。
 
-- **分段披露律**：一宗快案分成二至三轮“普通问话 -> 玩家判断 -> 当面对质”。每轮先播完一个能独立理解的局部经历，再开放一至两个成立方向；未来轮次才会出现的人、材料和矛盾必须隐藏。对质逼出的新事实可以成为下一轮问话前提，不能让玩家在事实尚未出现时预选答案。
+- **分段披露律**：一宗快案分成二至三轮“整段听麦 -> 原句回放 -> 短问对质”。每轮先播完一个能独立理解的局部经历，再把这段拆成句条；未来轮次才会出现的人、材料和矛盾必须隐藏。对质逼出的新事实可以成为下一轮陈述前提，不能让玩家在事实尚未出现时预选答案。
+- **三种播放律**：同一段 `statement` 必须有三种听法。首次听麦时按整块播放，来电人主场；回放时只调用逐句切分，不新增、不摘要；打断后只播放玩家按住的 `sourceAnchor` 所对应的主播 `question` 和人物攻防。每轮首次听麦前必须用全屏大字进入「来电人陈述」，回放前再用全屏大字进入「逐句追问」；大字只切换舞台节奏，不解释规则或暗示正确句。若白天材料会把 `version` 换成 `revisedVersion`，必须另给 `revisedSourceAnchor`，并逐字落在实际播出的改口陈述里；不能让回拨后只剩错误句可点。对质后的新长答回到下一段听麦，不能一直停在一问一答节拍器里。每次连线至少有两轮，主案每个夜次也至少安排两轮。
+- **耐心归属律**：快案耐心按陈述轮重置，主案耐心按夜共用并在第二夜重置。浏览、左右翻句和重复听不扣耐心；逐句回放中的每一句都可确认，只有完全没有可追问线索的原句才扣一格。未耗尽时只缩短状态轨，并在原句下显示 `这句没有可追问的线索 · 耐心 −1`；不得追加弹幕、听众评价或答案讲解。耗尽后才允许出现直播间失去耐心的反馈与本段重听入口。界面不显示 `2/4` 或答对数。
+- **字段时序守恒**：主案固定场的实际顺序是 `beforeVersion -> entryQuestion -> version -> afterVersion -> casualQuestions / questionOptions`。因此 `afterVersion` 只能续完玩家尚未介入的初始陈述，不能承载“玩家问中以后才出现”的二次陈述。若一个事实必须由玩家指出方向后才能出现，把它写进正确项的 `lines` / `guardedAnswer`；下一拍的日期差或材料结论交给 `afterScene`、`revisedVersion` 或下一场追问。`casualQuestions` 只能依赖 `version` 及更早的公共表面，禁止询问尚未出现的私聊、人物或材料。
 - **首轮静默律**：每一轮第一次听问答时只显示主播与来电人的原话，不显示实时评论，也不写“先记着”“这很可疑”“重点是……”一类作者提示。普通寒暄、真实经历和暂时无法核验的话都要保留，不能让每一页都像故意递出破绽。
 - **常规问答成对写，反驳不受一问一答限制**：普通咨询按“上一句怎样合法引出下一句”审查，一问一答只是控制信息量的常用节奏，不是所有场景的固定格式。进入反驳或对质以后，按人物真实攻防写成问、否认、追问、改口、再反驳等必要拍数；每多一拍都必须回应紧邻上一句，并带来新事实或新的防御。运行时仍一屏只显示当前一方的一段台词，当前说话人的立绘提亮，另一方压暗但不离场。
 - **咨询因果先于破绽清单**：每一问必须从上一答的经历、诉求或用词里长出来。接通后的第一页可以只完成问候，下一页再问来意；家庭经历若解释了“想找能相互扶持的人”，下一问才可以顺着择偶条件问房子。若去掉对质标记后整通电话不像真人咨询，顺序必须重写。
 - **咨询者不得替主播破案**：来电人开头先建立可信的公开形象，并至少说出三条真实、普通、不会直接定性的生活信息。每个核心漏洞第一次出现时都带一层当场说得通的保护，例如模糊称呼、只答一半、合理顾虑或改换披露时点。两处承重原话之间至少隔一个正常问答；她不能主动完成动机自白。
 - **对质延迟律**：主播在当前轮原始问话阶段只了解具体情况，不提前说“你其实就是……”；当前轮铺垫问答结束后才进入该轮 `confrontations`。每一项对质必须用 `basisTurnIds` 指向本轮结束前已经播出的原话，不得引入职业黑料、私聊截图或任何麦外事实。若矛盾本身是一个尚未回答的空缺，`basisTurnIds` 可以登记“原说法 + 追问空缺”，真正的新事实必须由对质里的最小承认产生，并登记在 `answerAdds`，之后才能供下一轮使用。
-- **异常举例延迟回问律**：来电人若在普通经历里突然拿自己的敏感问题举例，主播首轮可以自然换到下一项生活信息，不必当场追问“你为什么这么说”。这个异常例子本身只构成怀疑方向，不能直接等同于答案；玩家选中该方向以后，主播才把原话问回去，检查结果或其他事实只能从来电人的反驳、辩解或最小承认中出现。不得在原始问答里先问出完整证据，再让玩家重复选择同一个结论。
+- **异常举例延迟回问律**：来电人若在普通经历里突然拿自己的敏感问题举例，主播首轮可以自然换到下一项生活信息，不必当场追问“你为什么这么说”。这个异常例子必须原样留在首次陈述中，不能直接等同于答案；玩家在回放里按住该句以后，主播才把原话问回去，检查结果或其他事实只能从来电人的反驳、辩解或最小承认中出现。
 - **否认后短追问律**：来电人的第一句若只是“你怎么能这么问”或“我只是随口说说”，不能把事实承认硬接在同一个长回答里。主播可以用“那到底有没有”一类短话继续追问，再由来电人交出最小事实；若她再次换理由，还可以继续攻防，但每一拍都要推进事实或防御，不能为了显得激烈空转。
 - **重大隐瞒不得首问直认**：若某个事实正是人物整通来电都在掩饰的核心，她被第一次正面问到时不能立刻交出答案。先让她重定义称呼、反问提问动机、淡化区别或强调结果合法；主播把问题收窄到只能回答的是非项以后，她才作最小承认，随后再用隐私、对方自愿或“这不影响求助”转移。狡辩每一层都要保护她的现实利益，不能只为拖长对话。
 - **一次对质只打一个矛盾**：这里限制的是问题范围，不是问答轮数。主播不能一口气复述四组问题，也不能把四个结论压成一张成片卡；同一个矛盾内部可以连续否认、追问和改口。主播可以把逻辑说清，但不能把未知身份和未经证实的经历说成事实。
-- **先判断再对质**：每轮原始问话结束后必须把控制权交给玩家。选项只写已经出现的人、物、时点或口径方向，不写完整质问、答案或人物动机；选中成立方向后，才由主播说出自然的完整问题。每轮至多两个成立方向，并至少保留一个听来可疑但当前尚不能互证的方向；选错只说明现有依据不足，不扣分、不靠评论区补答案。
+- **先回放再对质**：每轮原始陈述结束后必须把控制权交给玩家。可点项就是刚才说过的每一句原话，不另写答案摘要；每个承重点用 `sourceAnchor` 逐字绑定原句，用 `question` 保存主播随后说出的完整问题；存在改口版时，`revisedSourceAnchor` 必须绑定改口版的句面。可以保留听来可疑但当前尚不能互证的原句；确认完全没有线索的句子只显示“这句没有可追问的线索 · 耐心 −1”，不靠评论区补答案。
 - **改口带出下一轮**：对质不是结案复读。它应让人物否认、缩小问题或作最小承认，并留下一个新的可问名词、日期、同行人或材料入口。下一轮主播只能顺着这个刚获得的入口继续问；不得突然调出此前未获授权的朋友圈、账户或职业资料。
 - **最小承认与转题**：被问住的人优先承认最小、最不伤自己的部分，随后改换理由、强调隐私、反问主播或把问题说成对方误解。她可以支吾、重复、突然变短，但不能顺势提交完整自我审计。四次回应应有递进：含混否认、为双重标准找理由、露出真实偏好、最后恼羞或结束通话。
-- **删除群体答案与数字进度机制**：不得再设置圈句池、限次预算、评论接力或弹幕裁判；这里的圈句池指让玩家从一批具体原话里猜答案，不禁止当前只显示问题方向的判断层。评论可以作为直播间环境，但不能提供答案、教玩家价值观或替人物认罪。快案的核心动作是玩家选矛盾方向、主播当面追问；UI保留同一直播间背景、两张立绘和方向选择，但不显示预计时长、“第 X/Y 屏”“对质 X/Y”“本轮 X/Y”或完成比例。流程进度由人物改口、新问话和舞台状态自然表达。
+- **删除群体答案与数字进度机制**：不得设置评论接力或弹幕裁判。评论可以作为直播间环境，但不能提供答案、教玩家价值观或替人物认罪。快案的核心动作是整段听麦、逐句回放、主播当面追问；UI保留同一直播间背景和两张立绘，但不显示预计时长、“第 X/Y 屏”“对质 X/Y”“本轮 X/Y”或完成比例。流程进度由人物改口、新陈述和舞台状态自然表达。
 - **问清即续播，恢复也能续播**：当前段的所有必要方向问清后，必须直接进入由新口径带出的下一段普通问话，不再让玩家回到只剩“已经问过”的选择页。成立方向即使因刷新或旧存档丢失了正在播放的对质状态，也必须允许重新进入；恢复时若当前段实际上已经完成，则自动跳到下一段，不能出现按钮可点但流程不动。
 - **开场不讲玩法，也不替玩家概括案情**：快案入口只使用接通前观众和主播已经知道的信息，例如“一个姑娘打进电话，想问问她和男朋友接下来该怎么办”。删掉“这次怎么玩”、轮次与按钮说明、对质会怎样推进、让玩家寻找隐瞒等游戏概念；也不得提前写出学历、职业、认识渠道、消费行为、失联导火索或当事人的归因。人物和案情必须在连线中由玩家逐句听出来，第一处判断层自然出现时再让界面教会操作。
 - **结案不能越界**：`confirmed / unknown` 继续作为作者校验，不直接渲染成结论卡。主播可以基于三组以上同向矛盾拒绝介绍或背书，但必须明确哪些事实没有查清。未知项防止捏造，不负责冲淡已经成立的风险。
@@ -200,7 +205,7 @@ Run the pack validator and generated micro-logic table. A missing contract, stal
 - **素材改编先锁因果事实**：用户要求“依据某段公开视频内容做案件”时，动笔前先列一张不含原句的素材账本：来电人的表面求助、事件实际顺序、每次被追问才补出的事实、现实利益、让判断改变的承重细节、高概率结论。公开事件事实与时间顺序不是原视频台词；凡是支撑反转的饮酒、送花、同行人、金额、日期、动作或利益关系，除非用户要求删去或存在安全问题，必须保留其因果功能。不得为了证明“原创”而同时更换人物性别、职业、关系、事件场景和利益入口，最后只留下一个抽象改口机制；若确需替换承重事实，必须重新证明每层隐瞒为什么发生、痕迹从哪里出现、结论怎样推出。
 - **原创边界**：素材账本保留因果，成稿仍须匿名化并重新组织表达。人物姓名、可识别机构、非承重金额、聊天措辞、主播问法、对质台词和舞台结论重新创作，不逐句复刻视频，也不把公开评论中的攻击性猜测写成事实；在快案数据登记 `sourceBoundary`，明确哪些承重事实被保留、哪些身份与措辞已改写。
 
-快案最小闭环：`局部问话 -> 玩家选择矛盾方向 -> 主播当面对质 -> 来电人最小承认或改口 -> 新口径进入下一轮问话 -> 再判断与对质 -> 主播结束求助并作结案判断 -> confirmed / unknown 作者校验`。任何对质若需要一个屏幕外事实才能成立、未来方向提前可见，或无需玩家判断便自动播放，关卡不合格。
+快案最小闭环：`整段听麦 -> 同段原句回放 -> 玩家按住一句 -> 主播完整质问 -> 来电人最小承认或改口 -> 新口径进入下一段听麦 -> 再回放与对质 -> 主播结束求助并作结案判断 -> confirmed / unknown 作者校验`。任何对质若需要一个屏幕外事实才能成立、`sourceAnchor` 不在刚才的陈述里、未来事实提前可见，或无需玩家动作便自动播放，关卡不合格。
 
 主案使用同一披露纪律，但按跨夜节奏展开：第一夜只让玩家确认二至三个问题，并留下具体开放边；白天材料只能回答这些开放边或合法带回新的入口；第二夜再确认二至三个问题。第一夜不得为了显得“案情丰富”一次交出全案，第二夜也不得只是复述第一夜已经成立的结论。
 
@@ -226,7 +231,7 @@ Detour options are not stupid options:
 - Per-scene texture floor: every `version` keeps at least one direct quote OR one afterthought/particle beat, AND at least one non-load-bearing sentence. A scene where every sentence carries plot is a synopsis.
 - 发现权守恒 (conservation of discovery): anything the player is designed to earn — document rows, laundering catches, replay finds, mid-case turns — may never be pre-narrated by the caller or any surface. A refactor that surfaces hidden agency early, or has the caller recite exhibit rows, breaks the case even if every sentence reads fine.
 - 标题静默律: 主案标题卡只显示案号和案名。不要用一句“她还停在转账页”、案情摘要、材料预告、主题句或操作指引替剧情开口；来电人的求助必须在接通后的第一组问答里成立。案间名言页只显示名言和出处，不再追加作者写的承上启下句。`openingComplaint` 只允许作为内部索引，`manifest.sequence` 不写玩家可见的 `bridge`；全量阅读版、导演版和其他派生稿也不得在人物开口前重新插入“来电摘要”或案情旁白。
-- 方向选项静默律: 玩家作中段判断或选择怀疑方向时，按钮只显示方向标签，不在按钮下面附一段作者归纳。成立方向由主播把完整问题问出来；干扰方向只在原按钮上标“目前接不上”，不得用 `missLine`、提示段或人物反应解释为什么不成立，也不得借错误反馈反向排除其他答案。阶段标题只写“继续听／继续问当晚的情况”等中性进程，不许写“她改了说法／真正想要什么”等作者结论。
+- 原句回放静默律: 承重判断页只显示刚才说过的逐句原话，不在句条下附作者归纳。成立原句由主播把完整问题问出来；完全没有线索的原句只标“这句没有可追问的线索 · 耐心 −1”，不得用 `missLine`、弹幕、提示段或人物反应解释为什么不成立，也不得借错误反馈反向排除其他答案。只有本段耐心耗尽后才允许直播间反应。阶段标题不许写“她改了说法／真正想要什么”等作者结论。
 - Any rewrite pass must ship a texture diff: count of direct quotes, emotional beats, and breath sentences before/after per scene. Net loss requires explicit sign-off, not a commit message.
 
 ## Manufacturing Doubt, Questions, and Turns (疑点、问题点、转折点的制造方法)
@@ -348,7 +353,7 @@ Double-layer question economy:
 - The live-call screen may have a free context layer and a committed pursuit layer, but they must not be the same option list twice.
 - `dialogueOptions` are authored free asks: chronology, caller self-protection, relationship context, document origin, or a concrete "how did that line happen" probe. They can add texture, loosen or tighten the caller, and surface a small human excuse, but they must not solve the node.
 - `questionOptions` are committed pursuit routes. Each current node should have 2-3 plausible host angles with different reveal depth: one closest to the load-bearing gap, one socially tempting detour, and one caller-side or document-side pressure when the beat supports it.
-- Every committed `questionOptions[]` route in the main cases and quick cases must expose a short `suspicionLabel`, because the player's decision is what feels wrong, not the protagonist's finished wording. Keep `question` mandatory: after selection, the player-character speaks that natural full sentence and the caller answers it. `suspicionLabel` names only an already-visible person, object, action, number, timing, or mismatch; it must not contain a conclusion, route-axis term, answer, or a full interrogative sentence.
+- Every committed `questionOptions[]` route in the main cases and quick cases must expose an exact `sourceAnchor` copied from the statement the player just heard. Keep `question` mandatory: after the player holds that source line, the player-character speaks the authored natural question and the caller answers it. `suspicionLabel` may remain as an internal editor index, but the replay UI must not substitute it for the source sentence.
 - Direction-only display is a node-level presentation rule, not a correctness badge. Give every committed sibling a label of similar specificity and visual weight. Never put short labels only on core/correct routes, and never expose the finished `question` on the decision button. Authored `casualQuestions` may remain short spoken questions because they are conversational background asks rather than deductions that commit the route.
 - Each case may mark exactly one load-bearing committed route with `revealTransition`. It plays after the player selects the doubt direction and immediately before the player-character says the authored full question. Use it only for the case's largest reinterpretation, never for every correct clue, a decoy, a fixed autoplay reveal, or a conclusion the player has not earned. Keep it under one second, non-interactive, non-expository, and reduced-motion safe; a minimal natural beat such as `等等` plus an existing portrait focus change is enough.
 - Free asks are not a spoiler mode. Asking around can make the caller more guarded, reduce later answer texture, or leave the live room noisier. Do not let the player sweep free asks to identify the correct committed route for no cost.
@@ -535,7 +540,7 @@ Budget sketch for a 20-minute case: base linear call ~10 minutes; authored press
    - No field may introduce a motive, fact, object, or conclusion that did not appear in the stitched transcript.
    - An outer branch can reveal less, but it must still point at the same case core. Do not use generic emotional outer angles such as "do you still like them" unless the case core is actually emotional attachment.
    - Quote-pick choices must be copied from disclosed lines or compressed from disclosed lines. They are not labels for hidden conclusions.
-   - For every committed node, preserve both layers: `suspicionLabel` is what the player chooses; `question` is what the player-character actually says. Read the question-answer exchange aloud without the label before shipping it.
+   - For every committed node, preserve all three layers: `sourceAnchor` is the exact phrase the player holds in replay; `question` is what the player-character actually says; `suspicionLabel` is only an editor/search index. Read the original statement and the following question-answer exchange aloud before shipping it.
    - Mark the one core reversal with `revealTransition`, then replay the miss and detour routes to confirm that the impact beat cannot fire before that direction is selected and cannot repeat on ordinary hits.
 
 4. After any line edit, rerun local coherence.
@@ -785,12 +790,13 @@ Motive chain:
 Opening:
 - Caller speaks first and gives only enough relationship context to make the request intelligible.
 - Host asks a neutral continuation question.
+- **自然接通税**：每通电话的第一句都要让“人已经接进直播间”成立。可以用「主播你好」「我想咨询个事」「想找你帮我分析一下」或符合该人物声口的同类短句，再进入金额、文件或眼前动作。禁止为了制造冲击直接用「八万」「二十八万八」「工作群输入框」起句；这会像剪掉了电话开头。接通句不是案情摘要，一句里仍只能承担一个主要问题。
 - Conversational Phrasing Rules (直播连线拟真话语权与对话承接规范):
   - Do not use abrupt, clinical, or command-style speech for the host or caller. It must feel like a real phone-in talk show, not a rigid script or a police interrogation.
   - **Caller openings must be conversational and progressive**: Instead of keyword-heavy statements like `“我们谈了半年，之前约会一直挺体面。前几天他突然说信用卡要周转...”` (abrupt and robotic), write it with natural spoken transitions: `“我们谈了半年多，平时约会消费什么的都挺体面的，我也没觉得有什么问题。结果前几天他突然跟我说信用卡需要周转，想让我先帮他顶一下。”` (colloquial, natural pace).
   - **Host transitions must be warm and inquiry-based**: Instead of abrupt commands like `“先说第一次提钱，他原话怎么讲？”` (sounds like an interrogator), write it as an empathetic inquiry: `“晚上好。我想问一下，他提钱的时候，原话是怎么讲的？”` (natural hosting transition).
   - Avoid any Host or Caller lines that sound like system placeholders or prompt labels.
-  - **Pack-level opening variance**: a story pack must not let its opening first caller line collapse into one shared template with only the topic noun swapped (「主播你好，我想问一段...的事」×4). Vary the entry energy per caller: one blurts the number before the greeting, one apologizes for calling this late, one has clearly rehearsed a neutral line, one gets interrupted by the host before finishing a sentence. Read all four openings back to back before shipping — if you can predict word six of case 3's opening from case 1's template, rewrite it.
+  - **Pack-level opening variance**: a story pack must not let its opening first caller line collapse into one shared template with only the topic noun swapped (「主播你好，我想问一段...的事」×4). Vary the entry energy per caller: one直接说想咨询，one礼貌问候后犹豫，one请主播分析，one像事先排练过再开口。每一种都要有接通感，但不能只替换主题名词。Read all four openings back to back before shipping; if you can predict word six of case 3's opening from case 1's template, rewrite it.
 - Do not pack relationship source, relationship stage, family reaction, suspicious material, and caller doubt into the first caller line. One possible split for a relationship-stage call is:
   - caller: call reason only
   - host: how did you meet / where has it progressed
@@ -847,12 +853,12 @@ Hidden clue pacing:
 - A story-pack single case's main scene should usually be 5-6 caller statements advanced one at a time, enough to support at least 20 minutes with recap and route comparison. Each statement gets one current-node choice before the call moves forward, so the player is reading the live call rather than managing a menu.
 
 UI copy:
-- Buttons should feel like a linear call: "继续", "选一句往下追", and short case-specific questions for the current point.
+- Buttons should feel like a live call: "继续听", "把刚才那段拉回来", and "重新听这段". Source-line rows carry the actual words already spoken; do not add a second abstract choice label beside them.
 - Avoid mechanical labels: "阶段判断", "资料核验", "通话回放", "内容提示".
 - In daily cases, avoid "接哪边的麦", "让另一方补话", or any copy implying two-sided mediation.
 - Case-specific summary buttons should reflect the case: screenshot source, missing edge, evasive wording, timing, party switch.
 - Investigation copy should sound like live-room backflow, not task UI. Prefer "后台进来一条私信", "有人补了一张图", "这页刚翻出来", or "对方没上麦，只留了这句". Avoid "new clue unlocked", "verification succeeded", "evidence chain complete", "correct route", or any copy that tells the player the system has found the answer.
-- Choice-panel helper notes must pass the rule-clarity test before the read-aloud test. Dressing a rule explanation in stream slang is still a rule explanation — "这段只能定一次。问偏了，弹幕会散。" fails the same way "问偏会掉耐心" does. But hiding the rule behind "随口问问" or "选一句往下追" also fails if the player cannot tell which button advances the scene. Use direct labels for the two economies: 「普通提问 / 不推进剧情，可以多问。」 and 「关键选择 / 会推进剧情，只选一句。」. This is allowed mechanical copy because it prevents a real misclick, not because it helps solve the mystery.
+- Choice-panel helper notes must pass the rule-clarity test before the read-aloud test. Dressing a rule explanation in stream slang is still a rule explanation — "这段只能定一次。问偏了，弹幕会散。" fails the same way "问偏会掉耐心" does. The statement/replay/interrupt surfaces must explain themselves through layout, `MIC / REC / LINE`, portrait focus, and the direct source-line affordance; do not add prose that tells the player what the button will become.
 
 ## Clue Insertion Techniques
 
@@ -1006,7 +1012,7 @@ Character bible:
 - After editing dialogue, run `npm run content:dialogue-report`. Review one character vertically across phases and then one scene horizontally across speakers. The generated rhythm warnings are reading prompts, not automatic rewrite orders; the forbidden-template and attribution failures are hard errors.
 
 The host is a person (design: `docs/host-character-design.md`):
-- **Player embodiment is first-person action, not proxy control.** In content truth, `你` and the default host 林旭阳 are the same person. Runtime dialogue bubbles use the player's saved display name (default `林旭阳`), while stage directions, action prompts, and off-air movement use second person. A custom name changes display only, never biography, relationships, personality, evidence access, or knowledge boundaries. After a direction-only choice, play the host question directly. Never explain this mapping with “由林旭阳开口”, “按下以后会变成完整问句”, “只选怀疑方向” or similar tutorial copy; the button and the following dialogue must make the behavior clear by themselves.
+- **Player embodiment is first-person action, not proxy control.** In content truth, `你` and the default host 林旭阳 are the same person. Runtime dialogue bubbles use the player's saved display name (default `林旭阳`), while stage directions, action prompts, and off-air movement use second person. A custom name changes display only, never biography, relationships, personality, evidence access, or knowledge boundaries. After the player holds a source line, play the host question directly. Never explain this mapping with “由林旭阳开口”, “按下以后会变成完整问句”, “只选怀疑方向” or similar tutorial copy; the replay and following dialogue must make the behavior clear by themselves.
 - **Keep embodiment in generated reading copies.** Continuous/player-readable scripts preserve `你` in stage directions and `你选择` at decisions. Do not let a generator rewrite them as `林旭阳选择`, which turns the player back into a proxy. Personal-stream stage copy says `开播` or `直播中`; `ON AIR` may remain a compact HUD status label, never a spoken or scripted production cue.
 - **Every player choice must name an in-world host verb.** Valid verbs include 接线、追问、静音、求助、退回礼物、约见、看获准材料、带一部分回麦上、说最后一句. Avoid choices whose only meaning is a design category, route axis, or content-management action.
 - **High-pressure identity beats need player control.** If the moment defines what kind of host 林旭阳 is — paid mic requests, privacy leaks, caller panic, a demand to expose an unconsenting party — facts and legal boundaries may stay fixed, but at least one handling choice must be playable. Do not auto-resolve the defining moral action and leave the player only minor evidence questions.

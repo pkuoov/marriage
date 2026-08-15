@@ -11,12 +11,12 @@ story: midnight-hotline-livestream-detective
 |------|------|--------|------|
 | 案一咨询者·沈 | supporting | alive | [case1-caller-shen](case1-caller-shen.md) |
 | 案一男友 | supporting | alive | [case1-respondent](case1-respondent.md) |
-| 案二咨询者·何 | supporting | alive | [case2-caller-he](case2-caller-he.md) |
+| 第四通咨询者·何 | supporting | alive | [case2-caller-he](case2-caller-he.md) |
 | Tony | supporting | alive | [case2-tony](case2-tony.md) |
 | 案三咨询者·林 | supporting | alive | [case3-caller-lin](case3-caller-lin.md) |
 | 案三相亲对象 | supporting | alive | [case3-respondent](case3-respondent.md) |
-| 案四咨询者·陈 | supporting | alive | [case4-caller-chen](case4-caller-chen.md) |
-| 案四同事 | supporting | alive | [case4-colleague](case4-colleague.md) |
+| 第二通咨询者·陈 | supporting | alive | [case4-caller-chen](case4-caller-chen.md) |
+| 第二通同事 | supporting | alive | [case4-colleague](case4-colleague.md) |
 | 林旭阳 | protagonist | alive | [host-lin-xuyang](host-lin-xuyang.md) |
 | 小林老师 | supporting | alive | [lin-matchmaker](lin-matchmaker.md) |
 | 旁白 | narrator | alive | [narrator](narrator.md) |

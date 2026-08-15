@@ -115,7 +115,7 @@
       "generationDirectory": "assets/audio/source/voice/amphion/voice-case2-dryer-message",
       "reviewPath": "assets/audio/review/voice/case2-dryer-message-candidate.ogg",
       "reportPath": "assets/audio/reports/voice/case2-dryer-message-candidate.json",
-      "performance": "像忙着工作时顺手发来的语音，第二句更轻，不停下来深情告白。",
+      "performance": "像边做头发边回语音，疲惫里带一点熟练的亲近，不演成告白。",
       "effectsDeferred": [
         "phone playback filtering",
         "dryer ambience"

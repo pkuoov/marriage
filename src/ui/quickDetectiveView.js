@@ -1,4 +1,11 @@
-import { quickConfrontationLines, quickDisclosureRoundForState, quickIssueOptionsForRound, quickTurnIndexesForRound } from "../runtime/quickDetectiveModel.js";
+import {
+  quickConfrontationLines,
+  quickDisclosureRoundForState,
+  quickIssueOptionsForRound,
+  quickRoundPatienceForState,
+  quickStatementLinesForRound
+} from "../runtime/quickDetectiveModel.js";
+import { statementOptionForLine, statementTextFromTurns } from "../runtime/statementReviewModel.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
 export function quickDetectiveCaseSelectHtml(packets = [], completedIds = []) {
@@ -25,20 +32,22 @@ export function quickDetectiveStageHtml(packet = {}, state = {}, { hostName = pa
   const caller = presentation.caller ?? {};
   const focus = quickStageFocus(packet, state);
   const status = quickStageStatus(packet, state);
+  const hostArtSrc = quickHostArtSrc(host, state, focus);
+  const callerArtSrc = quickCallerArtSrc(caller, state, focus);
   return `
     <div class="quick-duel-stage focus-${escapeHtml(focus)}" data-quick-stage-focus="${escapeHtml(focus)}">
       ${presentation.backgroundSrc ? `<img class="quick-stage-backdrop" src="${escapeHtml(presentation.backgroundSrc)}" alt="" onerror="this.hidden=true" />` : ""}
       <div class="quick-stage-vignette"></div>
-      <figure class="quick-stage-speaker quick-stage-host${["host", "both"].includes(focus) ? " is-active" : ""}">
-        ${host.artSrc ? `<img src="${escapeHtml(host.artSrc)}" alt="" onerror="this.hidden=true" />` : ""}
+      <figure class="quick-stage-speaker quick-stage-host${["host", "both"].includes(focus) ? " is-active" : ""}" data-dialogue-portrait="host">
+        ${hostArtSrc ? `<img src="${escapeHtml(hostArtSrc)}" alt="" onerror="this.hidden=true" />` : ""}
         <figcaption><small>${escapeHtml(host.roleLabel ?? "主播")}</small><b>${escapeHtml(hostName)}</b></figcaption>
       </figure>
       <div class="quick-call-link" aria-hidden="true">
         <small>${escapeHtml(status)}</small>
         <span><i></i><i></i><i></i><i></i><i></i></span>
       </div>
-      <figure class="quick-stage-speaker quick-stage-caller${["caller", "both"].includes(focus) ? " is-active" : ""}">
-        ${caller.artSrc ? `<img src="${escapeHtml(caller.artSrc)}" alt="" onerror="this.hidden=true" />` : ""}
+      <figure class="quick-stage-speaker quick-stage-caller${["caller", "both"].includes(focus) ? " is-active" : ""}" data-dialogue-portrait="caller">
+        ${callerArtSrc ? `<img src="${escapeHtml(callerArtSrc)}" alt="" onerror="this.hidden=true" />` : ""}
         <figcaption><small>${escapeHtml(caller.roleLabel ?? "语音连线")}</small><b>${escapeHtml(caller.name ?? "匿名来电人")}</b></figcaption>
       </figure>
     </div>
@@ -58,22 +67,12 @@ export function quickDetectiveIntroHtml(packet = {}, { hostName = packet.present
 }
 
 export function quickDetectiveTranscriptHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
-  const index = Math.max(0, Number(state.turnIndex ?? 0));
-  const lineIndex = Number(state.turnLineIndex ?? 0) === 1 ? 1 : 0;
-  const turn = packet.turns?.[index] ?? {};
   const round = quickDisclosureRoundForState(packet, state);
-  const roundIndexes = quickTurnIndexesForRound(packet, round);
-  const last = index === roundIndexes[roundIndexes.length - 1];
-  const line = lineIndex === 0
-    ? { role: "host", speaker: hostName, text: turn.host }
-    : { role: "caller", speaker: "来电人", text: turn.caller };
+  const line = { role: "caller", speaker: "来电人", text: statementTextFromTurns(packet, round) };
   return `
-    <section class="quick-detective-panel quick-transcript">
-      <header>
-        <span>${escapeHtml(round.label ?? "原始连线")}</span>
-      </header>
-      ${quickSpeechBubbleHtml(line, "", hostName)}
-      <button class="primary quick-main-action" data-quick-next-turn type="button">${lineIndex === 0 ? "听来电人回答" : last ? "轮到你判断" : "继续听"}</button>
+    <section class="quick-detective-panel quick-transcript quick-statement-listen">
+      ${quickSpeechBubbleHtml(line, "quick-statement-bubble", hostName)}
+      <button class="primary quick-main-action" data-quick-next-turn type="button">把刚才那段拉回来</button>
     </section>
   `;
 }
@@ -88,7 +87,7 @@ export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostN
   const line = lines[lineIndex] ?? {};
   const nextLine = lines[lineIndex + 1];
   const advanceLabel = nextLine
-    ? nextLine.role === "caller" ? "听来电人回应" : "继续问"
+    ? "继续"
     : last ? "听最后一句" : "继续听";
   return `
     <section class="quick-detective-panel quick-confrontation">
@@ -101,17 +100,62 @@ export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostN
   `;
 }
 
+export function quickDetectiveActiveLine(packet = {}, state = {}, hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME) {
+  if (state.scene === "transcript") {
+    const round = quickDisclosureRoundForState(packet, state);
+    return { role: "caller", speaker: "来电人", text: statementTextFromTurns(packet, round) };
+  }
+  if (state.scene === "confrontation") {
+    const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId) ?? {};
+    const lines = quickConfrontationLines(confrontation);
+    const index = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.confrontationLineIndex ?? 0)));
+    const line = lines[index] ?? {};
+    return { ...line, speaker: line.role === "caller" ? "来电人" : hostName };
+  }
+  if (state.scene === "verdict") {
+    const pages = packet.ending?.summaryPages ?? [];
+    const pageIndex = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
+    const lines = pages[pageIndex]?.lines ?? [];
+    const lineIndex = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.verdictLineIndex ?? 0)));
+    const line = lines[lineIndex] ?? {};
+    return { ...line, speaker: line.role === "caller" ? "来电人" : hostName };
+  }
+  return null;
+}
+
+export function quickDetectiveShouldAutoContinue(packet = {}, state = {}) {
+  if (state.scene === "transcript") return false;
+  if (state.scene !== "confrontation") return false;
+  const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId) ?? {};
+  const lines = quickConfrontationLines(confrontation);
+  const index = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.confrontationLineIndex ?? 0)));
+  const line = lines[index] ?? {};
+  const next = lines[index + 1];
+  if (!next || line.role === next.role || [line.role, next.role].includes("stage")) return false;
+  return line.autoAdvanceNext === true || (line.role === "host" && /[？?]\s*$/.test(String(line.text ?? "")));
+}
+
 export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
   const resolved = new Set(state.resolvedConfrontationIds ?? []);
   const round = quickDisclosureRoundForState(packet, state);
+  const options = quickIssueOptionsForRound(packet, state);
+  const attempted = new Set(state.attemptedLineIds ?? []);
+  const lines = quickStatementLinesForRound(packet, state);
   return `
-    <section class="quick-detective-panel quick-issue-selection">
-      <header>
-        <div><span>${escapeHtml(round.label ?? "轮到你判断")}</span><h2>先问哪件事？</h2></div>
-      </header>
-      <div class="quick-issue-grid">
-        ${quickIssueOptionsForRound(packet, state).map((option) => quickIssueButtonHtml(option, state, resolved)).join("")}
+    <section class="quick-detective-panel quick-issue-selection quick-statement-replay" aria-label="通话回放">
+      <div class="quick-review-strip" aria-hidden="true"><i>REC</i><span></span></div>
+      <div class="quick-statement-lines">
+        ${lines.map((line) => quickStatementLineButton(line, options, attempted, resolved)).join("")}
       </div>
+    </section>
+  `;
+}
+
+export function quickDetectivePatienceLostHtml() {
+  return `
+    <section class="quick-detective-panel quick-patience-lost">
+      <p>连续几次都没问到点上，直播间开始催你别再乱带节奏。电话还在，先把这段原话重新听一遍。</p>
+      <button class="primary quick-main-action" data-quick-retry-statement type="button">重新听这段</button>
     </section>
   `;
 }
@@ -160,8 +204,8 @@ function quickCaseCardHtml(packet = {}, index = 0, completed = false) {
 }
 
 function quickStageFocus(packet = {}, state = {}) {
-  if (state.scene === "transcript") return Number(state.turnLineIndex ?? 0) === 1 ? "caller" : "host";
-  if (state.scene === "issueSelection") return "both";
+  if (state.scene === "transcript") return "caller";
+  if (state.scene === "issueSelection" || state.scene === "patienceLost") return "host";
   if (state.scene === "confrontation") {
     const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId) ?? {};
     const lines = quickConfrontationLines(confrontation);
@@ -178,15 +222,38 @@ function quickStageFocus(packet = {}, state = {}) {
   return "host";
 }
 
+function quickHostArtSrc(host = {}, state = {}, focus = "host") {
+  const variants = host.artVariants ?? {};
+  const variant = state.scene === "intro"
+    ? "listening"
+    : state.scene === "verdict"
+    ? "verdict"
+    : state.scene === "confrontation" && focus === "host"
+      ? "pressing"
+      : focus === "host" || focus === "both"
+        ? "questioning"
+        : "listening";
+  return variants[variant] ?? variants.listening ?? host.artSrc ?? "";
+}
+
+function quickCallerArtSrc(caller = {}, state = {}, focus = "caller") {
+  const variants = caller.artVariants ?? {};
+  const confrontationLineIndex = Number(state.confrontationLineIndex ?? 0);
+  const variant = state.scene === "verdict"
+    ? "pause"
+    : state.scene === "confrontation" && focus === "caller"
+      ? confrontationLineIndex >= 3 ? "pause" : "guarded"
+      : "neutral";
+  return variants[variant] ?? variants.neutral ?? caller.artSrc ?? "";
+}
+
 function quickSpeechBubbleHtml(line = {}, className = "", hostName = DEFAULT_PLAYER_NAME) {
   const role = line.role === "caller" ? "caller" : "host";
   return `
-    <div class="quick-exchange quick-single-bubble ${escapeHtml(className)}" data-quick-speaking="${role}">
-      <div class="quick-line quick-line-${role}">
-        <b>${escapeHtml(line.speaker ?? (role === "caller" ? "来电人" : hostName))}</b>
-        <p>${escapeHtml(line.text)}</p>
-      </div>
-    </div>
+    <section class="quick-exchange quick-single-bubble avg-textbox ${escapeHtml(className)}" data-quick-dialogue-box data-quick-speaking="${role}" data-quick-speaker="${escapeHtml(line.speaker ?? (role === "caller" ? "来电人" : hostName))}" data-quick-line-text="${escapeHtml(line.text)}" tabindex="0">
+      <div class="avg-page-lines"></div>
+      <i class="avg-continue" aria-label="继续">▼</i>
+    </section>
   `;
 }
 
@@ -198,22 +265,28 @@ function quickStageStatus(packet = {}, state = {}) {
   }
   return {
     intro: "等待接通",
-    transcript: "语音连线中",
-    issueSelection: "准备追问",
-    confrontation: "当面对质"
+    transcript: "监听",
+    issueSelection: "REC 回放",
+    confrontation: "LINE 打断",
+    patienceLost: "线路发散"
   }[state.scene] ?? "语音连线中";
 }
 
-function quickIssueButtonHtml(option = {}, state = {}, resolved = new Set()) {
-  const solved = option.confrontationId && resolved.has(option.confrontationId);
-  const attempted = state.attemptedIssueIds?.includes(option.id);
-  const disabled = solved || (attempted && !option.confrontationId);
+function quickStatementLineButton(line = {}, options = [], attempted = new Set(), resolved = new Set()) {
+  const option = statementOptionForLine(options, line);
+  const solved = Boolean(option?.confrontationId && resolved.has(option.confrontationId));
+  const missed = attempted.has(line.id) && !solved;
   return `
-    <button class="quick-issue-option${solved ? " is-resolved" : ""}${disabled && !solved ? " is-dismissed" : ""}" data-quick-issue="${escapeHtml(option.id)}" type="button" ${disabled ? "disabled" : ""}>
-      ${solved || disabled ? `<small>${solved ? "已经问过" : "目前接不上"}</small>` : ""}
-      <b>${escapeHtml(option.label)}</b>
+    <button class="quick-statement-line${solved ? " is-resolved" : ""}${missed ? " is-missed" : ""}" data-quick-review-line="${escapeHtml(line.id)}" type="button" ${solved ? "disabled" : ""}>
+      <i aria-hidden="true"></i>
+      <span>${escapeHtml(line.text)}</span>
+      ${missed ? "<small>这句没有可追问的线索 · 耐心 −1</small>" : ""}
     </button>
   `;
+}
+
+export function quickDetectivePatience(packet = {}, state = {}) {
+  return quickRoundPatienceForState(packet, state);
 }
 
 function escapeHtml(value) {

@@ -192,10 +192,9 @@ if (!dryerAction?.grantsInventory?.includes("吹风机回放")) {
   fail("listen-dryer must grant the player-visible 吹风机回放 item");
 }
 if (!dryerAction?.script?.clipLine) fail("listen-dryer must retain a visible transcript fallback");
-const case2KnockScene = findById(case2, "tony-roster-function-notes");
-const case2KnockLine = case2KnockScene?.sceneCloser?.lines?.find((line) => line.text?.includes("两下敲门声"));
-if (case2KnockLine?.audioCueId !== "sfx.case2.door-knock") {
-  fail("the case 2 door-knock cue must be attached to the first audible knock");
+const case2HangupScene = findById(case2, "tony-bar-rumor-hangup");
+if (!case2HangupScene?.sceneCloser?.lines?.some((line) => line.audioCueId === "sfx.case2.door-knock" && line.text?.includes("敲门"))) {
+  fail("the case 2 first-night hangup must wire the door-knock cue to the visible knock beat");
 }
 const case1 = JSON.parse(await readFile(new URL("../content/packs/steam-demo-01/cases/01-credit.json", import.meta.url), "utf8"));
 if (JSON.stringify(case1).includes("sfx.case2.door-knock") || JSON.stringify(case1).includes("警笛")) {

@@ -33,7 +33,7 @@ const continuousStoryRoutes = {
     careChoiceId: "pragmatic"
   },
   "02-tony": {
-    helperSceneId: "tony-roster-function-notes",
+    helperSceneId: "tony-list-columns",
     interludeActionId: "listen-dryer",
     dayStops: [
       { sceneId: "day-tony-shop-observe", optionId: "note-shared-address" },
@@ -42,7 +42,7 @@ const continuousStoryRoutes = {
     callbackEarnedItem: "吹风机回放",
     posture: "withCaller",
     snapshot: "industry-gray",
-    accusationChoiceIndex: 3,
+    accusationChoiceIndex: 2,
     backflowHookId: "tony-manager-training-note",
     careChoiceId: "affirm"
   },
@@ -376,13 +376,13 @@ function renderReadableQuickRounds(lines, packet) {
         if (confrontation.revealTransition?.lineIndex === lineIndex + 1) {
           const transition = confrontation.revealTransition;
           lines.push(`【画面短停，屏幕掠过“${transition.label}”。主播立绘提亮。】`, "");
-          lines.push(`- **过场 ID：** ${transition.id}`, `- **过场类型：** ${transition.kind}`, `- **过场短标：** ${transition.eyebrow}`, `- **触发行：** ${transition.lineIndex}`, "");
+          lines.push(`- **过场 ID：** ${transition.id}`, `- **过场类型：** ${transition.kind}`, `- **过场短标：** ${transition.eyebrow}`, `- **演出变体：** ${transition.visualVariant}`, `- **触发行：** ${transition.lineIndex}`, "");
         }
       });
       if (confrontation.revealTransition && !Number.isInteger(confrontation.revealTransition.lineIndex)) {
         const transition = confrontation.revealTransition;
         lines.push(`【画面短停，屏幕掠过“${transition.label}”。主播立绘提亮。】`, "");
-        lines.push(`- **过场 ID：** ${transition.id}`, `- **过场类型：** ${transition.kind}`, `- **过场短标：** ${transition.eyebrow}`, "");
+        lines.push(`- **过场 ID：** ${transition.id}`, `- **过场类型：** ${transition.kind}`, `- **过场短标：** ${transition.eyebrow}`, `- **演出变体：** ${transition.visualVariant}`, "");
       }
     }
   });
@@ -437,8 +437,8 @@ function renderPureStoryScript() {
     renderPureStoryMaterials(lines, packet);
 
     lines.push("## 结案｜确认到哪，停在哪", "");
+    if (packet.hostDisclosure?.text) lines.push(`**林旭阳：** ${packet.hostDisclosure.text}`, "");
     for (const line of packet.hostDisclosure?.lines ?? []) renderDirectorSpoken(lines, line);
-    if (!packet.hostDisclosure?.lines?.length && packet.hostDisclosure?.text) lines.push(`**林旭阳：** ${packet.hostDisclosure.text}`, "");
     if (packet.deepFollowup?.question) {
       lines.push(`**林旭阳：** ${packet.deepFollowup.question}`, "");
       for (const beat of packet.deepFollowup.resistanceBeat?.lines ?? []) renderDirectorSpoken(lines, beat);
@@ -650,6 +650,7 @@ function renderContinuousCallerVariant(lines, variants, key) {
 }
 
 function renderContinuousLiveCounter(lines, beat) {
+  if (beat.revealTransition) lines.push(`【画面短停，屏幕掠过“${beat.revealTransition.label}”。第二路麦克风接入。】`, "");
   if (beat.text) lines.push(`**${beat.from ?? "后台"}：** ${beat.text}`, "");
   for (const line of beat.lines ?? []) renderContinuousSpoken(lines, line);
   const choice = (beat.choices ?? []).find((entry) => !entry.silent) ?? beat.choices?.[0];
@@ -906,6 +907,7 @@ function renderPureStoryCallerVariants(lines, title, variants = null) {
 
 function renderPureStoryLiveCounter(lines, beat = {}) {
   lines.push(`### 直播中的打断｜${beat.from ?? "后台"}`, "");
+  if (beat.revealTransition) lines.push(`【画面短停，屏幕掠过“${beat.revealTransition.label}”。第二路麦克风接入。】`, "");
   if (beat.text) lines.push(`**${beat.from ?? "后台"}：** ${beat.text}`, "");
   for (const line of beat.lines ?? []) renderDirectorSpoken(lines, line);
   for (const choice of beat.choices ?? []) {
@@ -1204,6 +1206,10 @@ function renderDirectorCallerQuestion(lines, question = null) {
 
 function renderDirectorLiveCounter(lines, beat = {}) {
   lines.push(`### 场间实时反压｜${beat.from ?? beat.id ?? "后台"}`, "");
+  if (beat.revealTransition) {
+    lines.push(`【画面短停，屏幕掠过“${beat.revealTransition.label}”。第二路麦克风接入。】`, "");
+    lines.push(`- **过场 ID：** ${beat.revealTransition.id}`, `- **过场类型：** ${beat.revealTransition.kind}`, `- **过场短标：** ${beat.revealTransition.eyebrow}`, `- **演出变体：** ${beat.revealTransition.visualVariant}`, "");
+  }
   if (beat.text) lines.push(`【${beat.text}】`, "");
   for (const line of beat.lines ?? []) renderDirectorSpoken(lines, line);
   for (const choice of beat.choices ?? []) {
@@ -1567,6 +1573,7 @@ function assertSourceCompleteness(markdown, sources) {
         if (key === "answer" && Array.isArray(value.lines) && value.lines.length) return;
         if (key === "helperHint" && !vBroPlayerVisible) return;
         if (key === "callerIntentProfile") return;
+        if (["src", "artSrc", "alt", "artAlt"].includes(key)) return;
         visit(entry, `${path}.${key}`);
       });
     }

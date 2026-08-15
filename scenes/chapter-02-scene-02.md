@@ -1,23 +1,21 @@
 ---
-title: 门店表与相似称呼
+title: 活动立项与正式报销
 chapter: chapter-02
 scene: 2
 pov: host-lin-xuyang
-location: case2-salon
+location: case4-office
 status: revised
 characters:
   - host-lin-xuyang
-  - case2-caller-he
-  - case2-tony
-mentions:
-  - v-bro
+  - case4-caller-chen
+  - case4-colleague
 arcs-advanced:
   - identity-cost-episode
 state-changes: []
 ---
 
-# 门店表与相似称呼
+# 活动立项与正式报销
 
-**输入：** 何认为自己受到特殊照顾。
-**输出：** 门店标准表、预约节奏、另一位女客的同款私表和可选录音背景，把“专属”拆成可以比较的动作；十四个月十八次消费、四万六千三百八十元、七名联系人和四份到店回执，把 Tony 得到的业绩与客源落到实数。相似称呼成立，不把“也就你肯听我说这些”升级成已证实的同句群发。
-**禁止：** 把 Tony 的每次照顾都倒判成虚假；因关系落空就把十八次已完成服务写成当然可以全退；让 V哥指出正确项或提供新事实。
+**输入：** 夜 A 只知道三次发来的都是同一张“审批通过”页面。
+**输出：** 收麦核图或白天财务窗口才从单据类型和 LX 编号确认它是活动立项；公司抬头发票原件仍在陈手里，正式报销申请编号没有出现。供应商返费只在可选白天路线出现：招商主管、区域经理、采购经办三层各有名目；它不进入七行主材料板，也不能解释六万八为什么没有报销。
+**禁止：** 用立项替报销；用供应商返利替公司付款；让陈在挂断前自己完成材料审计。
