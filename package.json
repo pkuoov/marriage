@@ -1,6 +1,7 @@
 {
   "name": "livestream-detective",
   "version": "0.1.0",
+  "description": "现实向直播连麦剧情推理游戏：听陈述、找破绽，在事实边界内完成判断。",
   "private": true,
   "type": "module",
   "scripts": {
