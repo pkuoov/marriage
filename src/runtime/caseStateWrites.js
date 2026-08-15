@@ -65,6 +65,8 @@ export function createCaseStateWrites(ctx) {
     state.stanceSnapshots = omitRecordKey(state.stanceSnapshots, key);
     state.liveCounterPicks = removeKeyPrefix(state.liveCounterPicks, `${key}:`);
     state.activeLiveCounterBeatId = null;
+    state.pendingQuestionPressureSignal = null;
+    state.pendingQuestionPressureSource = null;
     state.truthBoundaryPicks = omitRecordKey(state.truthBoundaryPicks, key);
     state.truthBoundaryMisses = omitRecordKey(state.truthBoundaryMisses, key);
     state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };

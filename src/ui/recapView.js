@@ -48,6 +48,11 @@ export function solvedRecapPagesHtml({
         <p><strong>你接住的那句</strong>：${escapeHtml(result.dailyAccuseLabel ?? "还没选最后那句")}。</p>
         ${result.dailyResponse ? `<p><strong>主播接法</strong>：${escapeHtml(result.dailyResponse)}</p>` : ""}
         ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}
+        <div class="recap-boundary-inline">
+          <p><b>台面上的话</b></p>
+          <p>${(issue.revealed ?? []).length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮只听到表层，评论区还会继续吵。"}</p>
+          ${truthBoundaryReviewHtml(boundary, boundaryPicks)}
+        </div>
       </section>
     `,
     spokenConclusion ? `
@@ -55,13 +60,6 @@ export function solvedRecapPagesHtml({
         ${callDialogueHtml(spokenConclusionLines, "host-verdict-dialogue")}
       </section>
     ` : "",
-    `
-      <section class="recap-boundary-page" data-recap-kind="boundary">
-        <p><b>台面上的话</b></p>
-        <p>${(issue.revealed ?? []).length ? issue.revealed.map(escapeHtml).join(" / ") : "这轮只听到表层，评论区还会继续吵。"}</p>
-        ${truthBoundaryReviewHtml(boundary, boundaryPicks)}
-      </section>
-    `,
     `
       <section class="recap-aftercare-page" data-recap-kind="aftercare">
         <p><b>后续回拨</b></p>

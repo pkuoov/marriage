@@ -37,6 +37,10 @@ export function questionPressureSignal(option = {}, routeTone = "") {
   return option.contradiction ? "held" : "drift";
 }
 
+export function nextQuestionPressureSignal(state = {}) {
+  return state.pendingQuestionPressureSignal ?? state.lastPressureSignal ?? "";
+}
+
 export function pressuredAnswerVariant(option = {}, { pressureSignal = "" } = {}) {
   const guarded = (pressureSignal === "drift" || pressureSignal === "guarded") && option.guardedAnswer;
   return {

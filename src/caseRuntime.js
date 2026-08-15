@@ -2,9 +2,10 @@ import { caseBudgetDelta } from "./difficulty.js";
 
 export function calculateCaseOutcome({ result, contradictionCount, budgetRemaining, now = Date.now() }) {
   const efficient = contradictionCount >= 3 && budgetRemaining >= 1;
-  const reputationDelta = result.correct ? (efficient ? 3 : 2) : -1;
-  const heatDelta = result.correct ? -1 : 2;
-  const summary = result.correct
+  const deductionComplete = Boolean(result.deductionComplete ?? result.correct);
+  const reputationDelta = deductionComplete ? (efficient ? 3 : 2) : -1;
+  const heatDelta = deductionComplete ? -1 : 2;
+  const summary = deductionComplete
     ? efficient
       ? "这轮问得顺，咨询者愿意把后面那几句也补出来。"
       : "方向是对的，只是中间绕了一点。咨询者还在配合，语气比刚才谨慎些。"
@@ -59,6 +60,21 @@ export function resolveAccusationForCase({ brief, accused, contradictionCount, r
       thresholdForgiven: correct && !enoughContradictions
     },
     enoughContradictions
+  };
+}
+
+export function resolveFinalQuoteForCase({ brief, selectedQuote, issue = {} }) {
+  const expected = expectedAccusationForCase(brief);
+  const deductionComplete = Boolean(issue.badge);
+  return {
+    accused: selectedQuote,
+    expected,
+    relationshipExpected: relationshipExpectedAccusationForCase(brief),
+    structuralExpected: structuralExpectedAccusationForCase(brief),
+    correct: deductionComplete,
+    deductionComplete,
+    dailyBadge: deductionComplete,
+    quoteHit: selectedQuote === expected
   };
 }
 

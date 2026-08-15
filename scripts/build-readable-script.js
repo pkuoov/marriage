@@ -295,6 +295,16 @@ function renderScript() {
           add(`**${line.role === "caller" ? "来电人" : "林旭阳"}：** ${line.text}`, "");
         }
       }
+      if (packet.ending?.partialSummaryPages?.length) {
+        add("### 玩家提前收案｜按现有信息谨慎判断", "");
+        for (const [pageIndex, page] of packet.ending.partialSummaryPages.entries()) {
+          add(`#### ${page.kicker ?? `提前总结第 ${pageIndex + 1} 页`}｜${page.title ?? packet.title}`, "");
+          if (page.stageLabel) add(`【舞台状态】${page.stageLabel}`, "");
+          for (const line of page.lines ?? []) {
+            add(`**${line.role === "caller" ? "来电人" : "林旭阳"}：** ${line.text}`, "");
+          }
+        }
+      }
       renderNode(lines, {
         riskReading: packet.ending?.riskReading,
         confirmedTitle: packet.ending?.confirmedTitle,
@@ -840,6 +850,13 @@ function renderWorldEcho(lines, worldEcho, includeBoundary = false, includeActio
   if (includeBoundary && worldEcho.id) lines.push(`- **世界回声 ID：** ${worldEcho.id}`);
   if (includeBoundary && worldEcho.promiseId) lines.push(`- **承诺 ID：** ${worldEcho.promiseId}`, "");
   if (includeAction && worldEcho.actionLabel) lines.push(`【玩家操作：${worldEcho.actionLabel}】`, "");
+  if (worldEcho.hypotheses?.length) {
+    lines.push("#### 玩家先押下的风险假设（三选一，不判分）", "");
+    for (const hypothesis of worldEcho.hypotheses) {
+      lines.push(`- **${hypothesis.id}｜${hypothesis.label}：** ${hypothesis.response}`);
+    }
+    lines.push("");
+  }
   if (worldEcho.headline) lines.push(`**${worldEcho.headline}**`, "");
   if (worldEcho.body) lines.push(worldEcho.body, "");
   if (includeBoundary && worldEcho.proves) lines.push(`【确认到】${worldEcho.proves}`, "");

@@ -13,6 +13,7 @@ import {
   statementReplayLineForScene,
   statementReplayOptionIndex
 } from "../statementReviewView.js";
+import { nextQuestionPressureSignal } from "../../runtime/livePressure.js";
 
 export function createSceneScreens(ctx) {
   const {
@@ -544,7 +545,9 @@ export function createSceneScreens(ctx) {
     const { brief, scene, options } = sceneChoiceContext(sceneIndex);
     const option = options[optionIndex] ?? options[0];
     if (!brief || !option) return;
-    const answerVariant = pressuredAnswerVariant(option, { pressureSignal: state.lastPressureSignal ?? "" });
+    const answerVariant = pressuredAnswerVariant(option, { pressureSignal: nextQuestionPressureSignal(state) });
+    state.pendingQuestionPressureSignal = null;
+    state.pendingQuestionPressureSource = null;
     const answer = answerVariant.answer;
     markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: !option.contradiction });
     markAction(brief, `version:${sceneIndex}`);
@@ -606,7 +609,9 @@ export function createSceneScreens(ctx) {
     const key = answerKey(brief, sceneIndex);
     const current = state.sceneDialoguePicks?.[key] ?? [];
     if (current.some((pick) => Number(pick.optionIndex) === Number(optionIndex))) return;
-    const answerVariant = pressuredAnswerVariant(option, { pressureSignal: state.lastPressureSignal ?? "" });
+    const answerVariant = pressuredAnswerVariant(option, { pressureSignal: nextQuestionPressureSignal(state) });
+    state.pendingQuestionPressureSignal = null;
+    state.pendingQuestionPressureSource = null;
     state.sceneDialoguePicks = {
       ...(state.sceneDialoguePicks ?? {}),
       [key]: [

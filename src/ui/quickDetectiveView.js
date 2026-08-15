@@ -3,7 +3,8 @@ import {
   quickDisclosureRoundForState,
   quickIssueOptionsForRound,
   quickRoundPatienceForState,
-  quickStatementLinesForRound
+  quickStatementLinesForRound,
+  quickVerdictPages
 } from "../runtime/quickDetectiveModel.js";
 import { statementOptionForLine, statementTextFromTurns } from "../runtime/statementReviewModel.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
@@ -113,7 +114,7 @@ export function quickDetectiveActiveLine(packet = {}, state = {}, hostName = pac
     return { ...line, speaker: line.role === "caller" ? "来电人" : hostName };
   }
   if (state.scene === "verdict") {
-    const pages = packet.ending?.summaryPages ?? [];
+    const pages = quickVerdictPages(packet, state);
     const pageIndex = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
     const lines = pages[pageIndex]?.lines ?? [];
     const lineIndex = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.verdictLineIndex ?? 0)));
@@ -147,22 +148,29 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
       <div class="quick-statement-lines">
         ${lines.map((line) => quickStatementLineButton(line, options, attempted, resolved)).join("")}
       </div>
+      ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `
+        <div class="quick-early-verdict">
+          <p>已经有足够理由先做谨慎判断，也可以继续追完整条线。</p>
+          <button data-quick-end-early type="button">按现有信息收住</button>
+        </div>
+      ` : ""}
     </section>
   `;
 }
 
-export function quickDetectivePatienceLostHtml() {
+export function quickDetectivePatienceLostHtml(packet = {}, state = {}) {
   return `
     <section class="quick-detective-panel quick-patience-lost">
       <p>连续几次都没问到点上，直播间开始催你别再乱带节奏。电话还在，先把这段原话重新听一遍。</p>
       <button class="primary quick-main-action" data-quick-retry-statement type="button">重新听这段</button>
+      ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `<button data-quick-end-early type="button">按现有信息收住</button>` : ""}
     </section>
   `;
 }
 
 export function quickDetectiveVerdictHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
   const ending = packet.ending ?? {};
-  const pages = ending.summaryPages ?? [];
+  const pages = quickVerdictPages(packet, state);
   const index = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
   const page = pages[index] ?? {};
   const lines = page.lines ?? [];
@@ -213,7 +221,7 @@ function quickStageFocus(packet = {}, state = {}) {
     return lines[lineIndex]?.role === "caller" ? "caller" : "host";
   }
   if (state.scene === "verdict") {
-    const pages = packet.ending?.summaryPages ?? [];
+    const pages = quickVerdictPages(packet, state);
     const page = pages[Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)))] ?? {};
     const lines = page.lines ?? [];
     const line = lines[Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.verdictLineIndex ?? 0)))] ?? {};
@@ -259,7 +267,7 @@ function quickSpeechBubbleHtml(line = {}, className = "", hostName = DEFAULT_PLA
 
 function quickStageStatus(packet = {}, state = {}) {
   if (state.scene === "verdict") {
-    const pages = packet.ending?.summaryPages ?? [];
+    const pages = quickVerdictPages(packet, state);
     const index = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
     return pages[index]?.stageLabel ?? "最后总结";
   }

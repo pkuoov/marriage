@@ -22,6 +22,7 @@ export function storyInterludeHtml({
   shellLines = [],
   shellAfterLines = [],
   worldEcho = null,
+  worldEchoHypothesis = null,
   afterCaseId = ""
 } = {}) {
   return `
@@ -35,6 +36,11 @@ export function storyInterludeHtml({
       <span>${escapeHtml(worldEcho.kicker ?? "城市回声")}</span>
       <b>${escapeHtml(worldEcho.headline ?? "")}</b>
       <p>${escapeHtml(worldEcho.body ?? "")}</p>
+    </section>` : ""}
+    ${worldEchoHypothesis ? `<section class="story-interlude-card world-echo-hypothesis">
+      <span>你先压下的判断</span>
+      <b>${escapeHtml(worldEchoHypothesis.label ?? "")}</b>
+      <p>${escapeHtml(worldEchoHypothesis.response ?? "")}</p>
     </section>` : ""}
   `;
 }
@@ -72,8 +78,11 @@ export function storyWorldEchoStageHtml(worldEcho = null) {
   `;
 }
 
-export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null, worldEchoRevealed = false } = {}) {
+export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null, worldEchoRevealed = false, worldEchoHypothesisId = "" } = {}) {
   if (worldEcho && !worldEchoRevealed) {
+    if (worldEcho.hypotheses?.length && !worldEchoHypothesisId) {
+      return `<div class="world-echo-hypothesis-choices"><p>推送点开前，你先把哪条风险假设压在桌面上？</p>${worldEcho.hypotheses.map((item) => `<button data-world-echo-hypothesis="${escapeHtml(item.id)}" type="button">${escapeHtml(item.label)}</button>`).join("")}</div><button data-retry-case type="button">回看这通</button>`;
+    }
     return `<button class="primary" data-reveal-world-echo type="button">${escapeHtml(worldEcho.actionLabel ?? "继续听")}</button><button data-retry-case type="button">回看这通</button>`;
   }
   const primary = finalCase

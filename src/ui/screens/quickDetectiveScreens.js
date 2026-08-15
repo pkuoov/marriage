@@ -3,6 +3,7 @@ import {
   advanceQuickTranscript,
   advanceQuickVerdict,
   applyQuickStatementLineSelection,
+  endQuickCaseEarly,
   initialQuickDetectiveState,
   normalizeQuickDetectiveState,
   quickDetectiveIsComplete,
@@ -142,6 +143,7 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.bind("[data-quick-review-line]", (event) => updateQuickDetective(applyQuickStatementLineSelection(packet, quickState, event.currentTarget.dataset.quickReviewLine)));
     ctx.bind("[data-quick-next-confrontation]", () => updateQuickDetective(advanceQuickConfrontation(packet, quickState)));
     ctx.bind("[data-quick-retry-statement]", () => updateQuickDetective(retryQuickStatement(packet, quickState)));
+    ctx.bind("[data-quick-end-early]", () => updateQuickDetective(endQuickCaseEarly(packet, quickState)));
     ctx.bind("[data-quick-next-verdict]", () => updateQuickDetective(advanceQuickVerdict(packet, quickState)));
     ctx.bind("[data-quick-restart]", () => startQuickDetective(packet.id));
     ctx.bind("[data-quick-select]", openQuickDetectiveSelect);

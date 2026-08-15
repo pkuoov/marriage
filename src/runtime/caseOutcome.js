@@ -3,7 +3,7 @@ import {
   calculateIssueCompletion,
   expectedAccusationForCase,
   relationshipExpectedAccusationForCase,
-  resolveAccusationForCase
+  resolveFinalQuoteForCase
 } from "../caseRuntime.js";
 import { platformRuntime } from "../platformRuntime.js";
 import { saveMetaSnapshot } from "../state.js";
@@ -43,27 +43,18 @@ export function createCaseOutcome(ctx) {
     const response = button.getAttribute("data-accuse-response") ?? "";
     const accused = button.getAttribute("data-accuse") ?? "";
     const issue = issueCompletion(brief);
-    const resolved = resolveAccusationForCase({
+    const quoteResult = resolveFinalQuoteForCase({
       brief,
-      accused,
-      contradictionCount: issue.revealed.length,
-      requiredContradictions: issue.total
+      selectedQuote: accused,
+      issue
     });
-    const issueCleared = Boolean(issue.badge);
-    const quoteHit = accused === resolved.result.expected;
     const result = {
       caseId: brief.id,
-      accused,
-      expected: resolved.result.expected,
-      relationshipExpected: resolved.result.relationshipExpected,
-      structuralExpected: resolved.result.structuralExpected,
-      correct: issueCleared,
+      ...quoteResult,
       contradictionCount: contradictionsForState(state, brief).length,
       issuePercent: issue.percent,
       issueRevealed: issue.revealed,
-      issueMissed: issue.missed,
-      dailyBadge: issueCleared,
-      quoteHit
+      issueMissed: issue.missed
     };
     result.dailyAccuseLabel = accuseLabel;
     result.dailyResponse = response;
@@ -92,13 +83,14 @@ export function createCaseOutcome(ctx) {
       expected: expectedAccusationForCase(brief),
       relationshipExpected: current?.relationshipExpected ?? relationshipExpectedForResult(brief),
       correct: current?.correct ?? false,
+      deductionComplete: current?.deductionComplete ?? current?.correct ?? false,
       dailyAccuseLabel: current?.dailyAccuseLabel ?? "还没选最后那句",
       dailyResponse: current?.dailyResponse ?? "",
       contradictionCount: contradictionsForState(state, brief).length,
       issuePercent: issue.percent,
       issueRevealed: issue.revealed,
       issueMissed: issue.missed,
-      dailyBadge: current?.dailyBadge ?? false,
+      dailyBadge: current?.dailyBadge ?? current?.deductionComplete ?? current?.correct ?? false,
       quoteHit: current?.quoteHit ?? false
     };
   }
@@ -204,6 +196,8 @@ export function createCaseOutcome(ctx) {
     void message;
     state.lastReaction = null;
     state.lastPressureSignal = null;
+    state.pendingQuestionPressureSignal = null;
+    state.pendingQuestionPressureSource = null;
     state.lastPressureAxis = null;
     state.lastScreenEffect = null;
     saveState();

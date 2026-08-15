@@ -123,6 +123,8 @@ export function createLiveCounterScreens(ctx) {
       }
     };
     state.lastPressureSignal = pressureSignal || null;
+    state.pendingQuestionPressureSignal = pressureSignal || null;
+    state.pendingQuestionPressureSource = pressureSignal ? `${caseKey(brief)}:liveCounter:${beat.id}` : null;
     state.lastPressureAxis = choice.routeAxis ?? "caller-credibility";
     const anchorIndex = Number(beat.beforeSceneIndex ?? beat.afterSceneIndex ?? 0);
     recordRouteChoice(brief, anchorIndex + (beat.beforeSceneIndex === undefined ? 0.5 : -0.5), {

@@ -22,7 +22,7 @@ export function careChoiceHtml({ choices = [], selectedChoice = null, hostName =
 }
 
 export function careChoiceContinueHtml({ finalCase = false } = {}) {
-  return `<button class="primary" data-care-choice-continue type="button">${finalCase ? "听完这夜" : "正式结案"}</button>`;
+  return `<button class="primary" data-care-choice-continue type="button">${finalCase ? "听完这夜" : "进入案后间隙"}</button><button data-view-case-closure type="button">查看完整案卷</button>`;
 }
 
 function careChoiceDialogueHtml(choice = {}, hostName = DEFAULT_PLAYER_NAME) {

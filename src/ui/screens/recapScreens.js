@@ -306,6 +306,11 @@ export function createRecapScreens(ctx) {
       });
     });
     bind("[data-care-choice-continue]", () => {
+      state.scene = "storyInterlude";
+      saveState();
+      render();
+    });
+    bind("[data-view-case-closure]", () => {
       state.scene = "caseClosure";
       saveState();
       render();
@@ -452,6 +457,8 @@ export function createRecapScreens(ctx) {
     const finalCase = isFinalStoryPackCase();
     const interludeCaseId = storyInterludeCaseId(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
     const worldEchoRevealed = !interlude?.worldEcho || Boolean(state.storyWorldEchoes?.[interludeCaseId]);
+    const worldEchoHypothesisId = state.storyWorldEchoHypotheses?.[interludeCaseId] ?? "";
+    const worldEchoHypothesis = (interlude?.worldEcho?.hypotheses ?? []).find((item) => item.id === worldEchoHypothesisId) ?? null;
     frame({
       brief,
       mood: "focused",
@@ -468,9 +475,17 @@ export function createRecapScreens(ctx) {
         shellLines: interlude?.lines ?? [],
         shellAfterLines: interlude?.afterLines ?? [],
         worldEcho: worldEchoRevealed ? interlude?.worldEcho ?? null : null,
+        worldEchoHypothesis,
         afterCaseId: interludeCaseId
       }),
-      choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed }))
+      choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed, worldEchoHypothesisId }))
+    });
+    bind("[data-world-echo-hypothesis]", (event) => {
+      const hypothesisId = event.currentTarget.getAttribute("data-world-echo-hypothesis") ?? "";
+      if (!(interlude?.worldEcho?.hypotheses ?? []).some((item) => item.id === hypothesisId)) return;
+      state.storyWorldEchoHypotheses = { ...(state.storyWorldEchoHypotheses ?? {}), [interludeCaseId]: hypothesisId };
+      saveState();
+      render();
     });
     bind("[data-reveal-world-echo]", () => {
       state.storyWorldEchoes = { ...(state.storyWorldEchoes ?? {}), [interludeCaseId]: interlude.worldEcho.id };

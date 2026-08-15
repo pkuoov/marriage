@@ -87,10 +87,13 @@ export const baseState = {
   solvedCaseIds: [],
   caseInterludes: {},
   storyWorldEchoes: {},
+  storyWorldEchoHypotheses: {},
   careChoices: {},
   epilogueUnreadStep: 0,
   lastReaction: null,
   lastPressureSignal: null,
+  pendingQuestionPressureSignal: null,
+  pendingQuestionPressureSource: null,
   lastPressureAxis: null,
   lastPityLine: null,
   patienceLostContext: null,
@@ -179,10 +182,13 @@ export function migrateState(saved) {
   if (!Array.isArray(next.accusationHistory)) next.accusationHistory = [];
   if (!next.caseInterludes || Array.isArray(next.caseInterludes)) next.caseInterludes = {};
   if (!next.storyWorldEchoes || Array.isArray(next.storyWorldEchoes)) next.storyWorldEchoes = {};
+  if (!next.storyWorldEchoHypotheses || Array.isArray(next.storyWorldEchoHypotheses)) next.storyWorldEchoHypotheses = {};
   if (!next.careChoices || Array.isArray(next.careChoices)) next.careChoices = {};
   if (!Number.isFinite(Number(next.epilogueUnreadStep))) next.epilogueUnreadStep = 0;
   if (!("lastReaction" in next)) next.lastReaction = null;
   if (!("lastPressureSignal" in next)) next.lastPressureSignal = null;
+  if (!("pendingQuestionPressureSignal" in next)) next.pendingQuestionPressureSignal = null;
+  if (!("pendingQuestionPressureSource" in next)) next.pendingQuestionPressureSource = null;
   if (!("lastPityLine" in next)) next.lastPityLine = null;
   if (!("patienceLostContext" in next)) next.patienceLostContext = null;
   if (!("lastPressureAxis" in next)) next.lastPressureAxis = null;

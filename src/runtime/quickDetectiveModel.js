@@ -26,6 +26,7 @@ export function initialQuickDetectiveState(packet = {}) {
     attemptedLineIds: [],
     roundPatience: {},
     confrontationLineIndex: 0,
+    verdictMode: "complete",
     verdictIndex: 0,
     verdictLineIndex: 0
   };
@@ -56,10 +57,11 @@ export function normalizeQuickDetectiveState(value, packet = {}) {
     attemptedLineIds: uniqueStrings(value.attemptedLineIds),
     roundPatience: normalizeQuickRoundPatience(value.roundPatience, packet),
     confrontationLineIndex: boundedLineIndex(value.confrontationLineIndex, quickConfrontationLines(activeConfrontation).length),
-    verdictIndex: boundedIndex(value.verdictIndex, packet.ending?.summaryPages?.length),
+    verdictMode: value.verdictMode === "partial" ? "partial" : "complete",
+    verdictIndex: boundedIndex(value.verdictIndex, quickVerdictPages(packet, value).length),
     verdictLineIndex: boundedLineIndex(
       value.verdictLineIndex,
-      packet.ending?.summaryPages?.[boundedIndex(value.verdictIndex, packet.ending?.summaryPages?.length)]?.lines?.length
+      quickVerdictPages(packet, value)[boundedIndex(value.verdictIndex, quickVerdictPages(packet, value).length)]?.lines?.length
     )
   };
   return resumeSolvedQuickRound(packet, normalized);
@@ -183,6 +185,26 @@ export function retryQuickStatement(packet = {}, state = {}) {
   };
 }
 
+export function endQuickCaseEarly(packet = {}, state = {}) {
+  if (!(state.resolvedConfrontationIds?.length ?? 0)) return state;
+  return {
+    ...state,
+    scene: "verdict",
+    verdictMode: "partial",
+    activeConfrontationId: null,
+    activeSourceLineId: null,
+    verdictIndex: 0,
+    verdictLineIndex: 0
+  };
+}
+
+export function quickVerdictPages(packet = {}, state = {}) {
+  if (state.verdictMode === "partial" && packet.ending?.partialSummaryPages?.length) {
+    return packet.ending.partialSummaryPages;
+  }
+  return packet.ending?.summaryPages ?? [];
+}
+
 export function quickDisclosureRounds(packet = {}) {
   if (Array.isArray(packet.disclosureRounds) && packet.disclosureRounds.length) return packet.disclosureRounds;
   return [{
@@ -281,7 +303,7 @@ export function quickConfrontationLines(confrontation = {}) {
 }
 
 export function advanceQuickVerdict(packet = {}, state = {}) {
-  const pages = packet.ending?.summaryPages ?? [];
+  const pages = quickVerdictPages(packet, state);
   const pageIndex = boundedIndex(state.verdictIndex, pages.length);
   const lineIndex = boundedLineIndex(state.verdictLineIndex, pages[pageIndex]?.lines?.length);
   const lastLineIndex = Math.max(0, (pages[pageIndex]?.lines?.length ?? 1) - 1);
@@ -298,7 +320,7 @@ export function advanceQuickVerdict(packet = {}, state = {}) {
 
 export function quickDetectiveIsComplete(packet = {}, state = {}) {
   if (state.scene !== "verdict") return false;
-  const pages = packet.ending?.summaryPages ?? [];
+  const pages = quickVerdictPages(packet, state);
   if (!pages.length) return false;
   const lastPageIndex = pages.length - 1;
   const lastLineIndex = Math.max(0, (pages[lastPageIndex]?.lines?.length ?? 1) - 1);

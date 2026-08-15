@@ -214,11 +214,15 @@ async function runQuickDetective() {
         ],
         decoyAnchor: "我妈看这日子过不下去",
         expectedListen: ["我二十四，在商场卖衣服", "我爸爸给了我一百万"],
-        expectedVerdict: ["想在我们直播间骗人，不可能", "长期处在一段经济交换关系里"]
+        expectedVerdict: ["这个背书我不能做", "不够让我替她编出一段没有证据的人生"]
       });
       await click(page, "[data-quick-select]");
       if (await page.locator('.quick-case-card.is-complete[data-quick-case-id="01-no-conditions"]').count() !== 1) {
         throw new Error("首宗快案通关后必须显示完成对勾");
+      }
+      if (viewport.width === 390) {
+        await playEarlyQuickCase(page, "01-no-conditions", "我爸爸给了我一百万");
+        await click(page, "[data-quick-select]");
       }
 
       await playStatementQuickCase(page, viewport, {
@@ -230,7 +234,7 @@ async function runQuickDetective() {
         ],
         decoyAnchor: "他三十五",
         expectedListen: ["本科和硕士都在一所985高校", "十一点五十二"],
-        expectedVerdict: ["我说实话，也建议男方退出", "骑驴找马"]
+        expectedVerdict: ["我说实话，也建议男方退出", "不能证明她出轨、把谁当备选，或者由谁供养"]
       });
       await click(page, "[data-quick-select]");
       if (await page.locator(".quick-case-card.is-complete").count() !== 2) throw new Error("两宗快案通关后都必须保留完成对勾");
@@ -239,6 +243,21 @@ async function runQuickDetective() {
     }
     smokeProgress(`PASS  quick detective ${viewport.width}x${viewport.height} (${((Date.now() - viewportStartedAt) / 1000).toFixed(1)}s)`);
   }
+}
+
+async function playEarlyQuickCase(page, caseId, anchor) {
+  await click(page, `[data-quick-case-id="${caseId}"]`);
+  await click(page, "[data-quick-begin]");
+  await advanceQuickLine(page, "[data-quick-next-turn]");
+  await clickQuickSourceLine(page, anchor);
+  await finishQuickConfrontation(page);
+  await page.locator("[data-quick-end-early]").waitFor({ state: "visible" });
+  await click(page, "[data-quick-end-early]");
+  await assertVisibleText(page, "按现有信息收住", "快案抓到一个关键矛盾后必须允许谨慎提前收案");
+  while (!await page.locator(".quick-ending-actions").count()) {
+    await advanceQuickLine(page, "[data-quick-next-verdict]");
+  }
+  await assertVisibleText(page, "拒绝背书，不替她编故事", "提前收案必须落到独立的事实边界结论");
 }
 
 async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, expectedListen, expectedVerdict }) {
@@ -1163,6 +1182,7 @@ async function runCaseTransition() {
       save.chapter = 4;
       save.caseBrief = save.caseBriefs?.[3] ?? null;
       save.scene = "caseClosure";
+      save.storyWorldEchoHypotheses = {};
       window.localStorage.setItem(key, JSON.stringify(save));
     });
     await page.reload();
@@ -1174,7 +1194,10 @@ async function runCaseTransition() {
     await assertVisibleText(page, "屏幕右上角的“直播中”灭了", "final case tail must close through an on-screen action instead of an authorial end label");
     if (await page.getByText("下一通 · 材料先到").count()) throw new Error("final case tail must not show a nonexistent next case");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("final world echo must not appear before player action");
-    await assertVisibleText(page, "把新闻推送点开", "final world echo must be offered as a player action");
+    await assertVisibleText(page, "把四案里的宸直线索并在一起", "final world echo must first ask the player to connect the cross-case risk");
+    await click(page, '[data-world-echo-hypothesis="cross-case-ledger"]');
+    await assertVisibleText(page, "借款认购、栖行返费、家庭持有页和代投回单", "the selected cross-case hypothesis must be acknowledged before the reveal");
+    await assertVisibleText(page, "把新闻推送点开", "final world echo must be offered after the player records a hypothesis");
     await click(page, "[data-reveal-world-echo]");
     await assertVisibleText(page, "宸直信托全部产品暂停兑付，实控人失联", "final world echo must pay off the case-one and case-two trust seeds");
     await assertVisibleText(page, "公告没有公布清偿顺序", "final world echo must preserve the unresolved recovery boundary");
@@ -1425,6 +1448,11 @@ async function exerciseTruthBoundary(page, route) {
   await drainDialogue(page, route);
   await page.locator("[data-recap-next]:visible").first().waitFor({ state: "visible" });
   await activate(page, route, "[data-recap-next]:visible");
+  for (let step = 0; step < 2 && !(await page.locator("body").innerText()).includes("麦外来信"); step += 1) {
+    await drainDialogue(page, route);
+    if (!(await page.locator("[data-recap-next]:visible").count())) break;
+    await activate(page, route, "[data-recap-next]:visible");
+  }
   await assertVisibleText(page, "麦外来信", "Recap final page should keep off-mic letters after boundary placement");
   const finalBody = await page.locator("body").innerText();
   if (finalBody.includes("灯是我真心买的")) {

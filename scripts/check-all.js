@@ -1,10 +1,15 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const npmCliPath = [
+  process.env.npm_execpath,
+  process.env.NPM_CLI_JS,
+  join(dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js")
+].find((candidate) => candidate && existsSync(candidate));
 const syntaxRoots = ["src", "scripts", "desktop/electron"];
 const syntaxExtensions = new Set([".js", ".cjs", ".mjs"]);
 
@@ -35,7 +40,12 @@ function collectSyntaxFiles(directory) {
 }
 
 function runNpm(script, extraArgs = []) {
-  run(npmCommand, ["run", script, ...(extraArgs.length ? ["--", ...extraArgs] : [])]);
+  const args = ["run", script, ...(extraArgs.length ? ["--", ...extraArgs] : [])];
+  if (npmCliPath) {
+    run(process.execPath, [npmCliPath, ...args]);
+    return;
+  }
+  run(npmCommand, args);
 }
 
 function run(command, args) {

@@ -42,6 +42,8 @@ export function recordPatienceLostState({ state = {}, brief = {}, context = {} }
     },
     lastReaction: null,
     lastPressureSignal: null,
+    pendingQuestionPressureSignal: null,
+    pendingQuestionPressureSource: null,
     lastPressureAxis: null
   };
 }
@@ -105,6 +107,8 @@ export function retryPatienceLostState({ state = {}, brief = {}, context = null,
     scene: area,
     lastReaction: null,
     lastPressureSignal: null,
+    pendingQuestionPressureSignal: null,
+    pendingQuestionPressureSource: null,
     lastPressureAxis: null,
     patienceLostContext: null
   };
