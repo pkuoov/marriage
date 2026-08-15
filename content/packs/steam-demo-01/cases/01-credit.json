@@ -1,0 +1,2538 @@
+{
+  "caseId": "01-credit",
+  "plotId": "lost-job-hidden-credit",
+  "runtimeContentStatus": "runtime-loaded",
+  "texturePass": true,
+  "voiceTics": {
+    "沈": [
+      "就……",
+      "反正"
+    ]
+  },
+  "voiceTicArc": {
+    "沈": "夜 A 密,夜 B 干净"
+  },
+  "driftComments": [
+    "主播你身后那盏灯闪一晚上了,强迫症都看犯了",
+    "蹲一个主播同款保温杯",
+    "课代表呢?进来就看见八万",
+    "刚下夜班,他还了吗"
+  ],
+  "dramaticAnchor": "信用卡账单、社保断缴截图、离职结算通知、十四个月固定转账与实际余额、二十万借款与两笔信托转账、老会员身份和开箱视频",
+  "whyTonight": "对方再次要求咨询者拿八万处理信用卡，还把过去给她的钱也算了进来。她本来就不想给，账户里也根本拿不出八万；她没准备查清账，只想让主播替她确认：那些钱既然是男方自愿给的，她现在一分不出也不算亏欠。",
+  "helpRequest": {
+    "kind": "interest",
+    "request": "她想让主播支持她拒绝这八万。男友过去自愿给过的钱，不能在这时候拿来逼她还信用卡。"
+  },
+  "objectPurpose": "账单被说成短期周转证明，社保截图先暴露失业时间，第二夜的离职结算通知再说明所谓奖金其实是待发补偿金；十四个月固定转账解释了男方为什么认定她拿得出八万，实际余额、老会员身份和开箱视频则露出咨询者早已把男友收入花进自己的生活。",
+  "callMedium": "voice",
+  "callerStake": "咨询者确实不想给这八万，来电时更想得到一句可以直接转述给男友的道德支持。她没有说男友连续十四个月转给她的一半工资已经基本花完，也没有说男友在半薪之外，每两个月还直接替她交一万元房租。男方以为她至少存着十五万，她实际只剩一万一千六百多。她看信用卡时先抓住男方约五千元的男装，对约四万元共同消费只是一句带过，也没有说明一万二的设备就是买给自己的。",
+  "callerIntentProfile": {
+    "openGoal": "让主播支持她先不转八万元。",
+    "preferredAnswer": "八万元是男友自己的信用卡债，过去给她的钱也不能在今晚改成她必须偿还的欠款。",
+    "audienceTilt": "让听众先把她看成被失业男友催债的人，不去追问固定转账、房租和共同消费。",
+    "protectedInterest": "保住账户里剩下的钱，也保住自己一直被男友照顾、没有占便宜的体面。",
+    "defaultTactic": "先强调没有同住、工资卡不在自己手里，再抓住男方个人消费和隐瞒失业，把双方长期混用的钱说成他的个人债务。",
+    "concessionLimit": "可以承认收过设备、参与过约会消费，也可以承认男友每月转钱；在余额被问到以前，不主动承认固定给付基本花完，更不主动说想拿直播回放替自己回绝。",
+    "painPoints": [
+      {
+        "topic": "十四个月固定转账",
+        "threatens": "一旦说清金额和持续时间，听众会追问她为什么拿不出八万。",
+        "firstResponse": "先说工资卡没给她，只承认每月会转一半。",
+        "afterProof": "流水和日期摆出后才报一万七千五与十四个月。",
+        "minimumLeak": "承认这笔钱过去一直按月到账。"
+      },
+      {
+        "topic": "设备与共同消费",
+        "threatens": "会打破八万元都是男友个人挥霍的开场版本。",
+        "firstResponse": "先强调分期不是自己签的，反问直播间是不是要把八万都算到她头上。",
+        "afterProof": "设备送到她家并由她使用后，只承认这一万二花在自己身上。",
+        "minimumLeak": "承认设备是给她的，不替男友解释其余缺口。"
+      },
+      {
+        "topic": "账户实际余额",
+        "threatens": "会暴露二十四万五固定给付和她自己的工资都没有留下。",
+        "firstResponse": "先只报余额，拒绝逐项念消费。",
+        "afterProof": "主播逐项收窄后才承认大类和自己的工资也没存下。",
+        "minimumLeak": "承认只剩一万一千六百多。"
+      },
+      {
+        "topic": "使用直播回放",
+        "threatens": "会暴露她不是来中立查账，而是想借主播替自己向男友施压。",
+        "firstResponse": "先承认想听主播说别转。",
+        "afterProof": "被问准备怎样使用结论后，才说会把回放发给男友。",
+        "minimumLeak": "承认她来电前已经不想给。"
+      }
+    ]
+  },
+  "otherStake": "对方既想瞒住失业、继续当一个出手大方的男友，也认定十四个月给出去的二十四万五至少还剩十五万，八万才会开口向她要。他每月给出一万七千五，还要另外承担女方每月五千元房租和两人的排场消费，经济压力确实很重；但这不能替他隐瞒失业，也不能把借款、信托认购和信用卡缺口推给咨询者。",
+  "thirdPressure": "朋友圈里的体面伴侣形象、朋友起哄、前同事人情和结婚态度测试。",
+  "runtimeLengthPlan": {
+    "liveBeatCount": 8,
+    "materialBoardCount": 5,
+    "backflowCount": 2,
+    "truthBoundaryPromptCount": 5,
+    "caseSpecificPressure": "首案先把八万账单拆成约四万共同排场、约五千个人男装和至少三万五未说明，再用社保截图、三万五月薪、十四个月固定转账、十五万存款误判、实际余额、离职结算通知、二十万借款、两笔信托转账、老会员身份和开箱夜，把双方各自瞒下的钱拆开。",
+    "whatPlayerDoesBesidesRead": [
+      "圈选银行流水行",
+      "按行追问",
+      "交叉对账",
+      "比较工资与固定转账",
+      "选择白天路线",
+      "决定夜里回拨顺序"
+    ]
+  },
+  "taskProfile": {
+    "id": "audit",
+    "label": "钱款说不清",
+    "recommendedSpecialtyId": "audit",
+    "summary": "钱说得急，责任却还没落到人。"
+  },
+  "routeAxisComments": {
+    "money-flow": [
+      "弹幕开始算账了",
+      "我算了下我自己的卡,不敢细看"
+    ],
+    "document-edge": [
+      "账单边上有时间",
+      "截图不是白发的"
+    ],
+    "caller-credibility": [
+      "有人问她也图体面",
+      "来电人这句也没全白"
+    ],
+    "identity-wording": [
+      "体面这词开始扎人",
+      "身份话压到钱上了"
+    ],
+    "process-control": [
+      "订座号也有名字",
+      "一万二的设备是买给她的"
+    ]
+  },
+  "stanceSnapshot": {
+    "afterScene": 4,
+    "kicker": "中段立场快照",
+    "prompt": "现在这通麦，你先站哪边？",
+    "note": "不判分。只记下你此刻更信哪条说法。",
+    "afterPickLine": "八万为什么正好找她要，她手里的钱又到底剩了多少，还得继续问。",
+    "continueLabel": "继续听",
+    "recapKicker": "中段立场",
+    "options": [
+      {
+        "id": "caller-benefited",
+        "label": "她占的便宜不小",
+        "summary": "十四个月的半薪基本被她花完；订座、朋友圈和设备也都有她的一份。流水里还有一项固定住房支出需要继续问。",
+        "feedback": "她长期拿着固定转账、没有留下男方以为的十五万，信用卡里四万元左右的共同消费也被她一句带过；男方隐瞒失业和至少三万五的去向，则仍是他的责任。",
+        "recap": "十四个月半薪和四万左右的共同消费摆出了她长期享受的那一份；实际余额只剩一万一千六百多。男方约五千的男装不算挥霍，至少三万五未说明才是他仍要回答的账。"
+      },
+      {
+        "id": "respondent-shifted-debt",
+        "label": "他想让她替自己还账",
+        "summary": "失业、断缴、催最低还款都在同一条钱路上。",
+        "feedback": "社保停了以后，他还在刷卡，又催她转钱；可那套设备确实送到了她家。",
+        "recap": "社保断缴、催着转钱和没说清的三万五，都让人怀疑那八万主要是他的旧账；约会与设备里，她也确实享受过好处。"
+      },
+      {
+        "id": "both-performed",
+        "label": "双方一起撑体面",
+        "summary": "他刷卡，她订座发圈，关系里的好看样子是两个人一起养出来的。",
+        "feedback": "体面是一起撑的，交往前的旧账不是。",
+        "recap": "订座、发圈和设备由两个人一起撑起；往期流水又把交往前的旧洞分了出去。"
+      }
+    ]
+  },
+  "truthBoundary": {
+    "true": [
+      "失业和债务压力都存在",
+      "社保断缴早于第一次借钱",
+      "信用卡消费包含约会体面开支",
+      "1.2 万短视频分期开在断缴之后，设备和推广的受益账号是咨询者的",
+      "两人交往约一年半，没有同住，男方工资卡也未交给咨询者；从交往第五个月起，男方连续十四个月每月转给她一万七千五，累计二十四万五；他还每两个月直接替她支付一万元房租，自己的住房成本另行承担",
+      "男方按累计转账认定咨询者手里至少还存着十五万，因此开口向她要八万；这只是他的余额估算，不是她负有八万元债务的证明",
+      "咨询者自己的月收入只有八千多，长期把男方固定转来的钱算进自己的生活；在房租由男方另付的情况下，她仍把自己工资和十四个月固定转账基本花完，实际只剩一万一千六百多，也没有把余额告诉男方",
+      "信用卡里与两人共同生活和维持排场有关的消费约四万，男方个人男装消费约五千，仍有至少三万五未说明",
+      "男方失业后购买的男装合计约五千，其中一件大衣两千多；这笔消费本身不足以证明他个人挥霍",
+      "交往之前的账单上也有同款体面消费",
+      "五月、六月的每月 8 日都有固定私人入账，七月 8 日中断",
+      "纪念日晚餐是咨询者用会员号订的座",
+      "咨询者的餐厅会员等级主要由此前恋爱中对方结账的消费积累",
+      "纪念日晚餐对应账单里一笔明显偏高的餐厅消费，主要金额来自酒水",
+      "纪念日晚餐朋友圈由咨询者发布，朋友曾跟着起哄",
+      "短视频设备开箱和首拍夜发生在咨询者屋里",
+      "那排靠窗位确需提前两周预订",
+      "四月工资停发后，五月和六月各有一笔王姓私人转账，七月又有一笔新阳信贷五万入账",
+      "第一夜挂断前，对方为了继续催她转账，主动发来遮去姓名和卡号的近五个月关键交易摘录，并明确让她拿给节目核对",
+      "七月 5 日贷款到账，七月 19 日 49,800 转出至尾号 3301",
+      "咨询者确认尾号 3301 不是自己的账户",
+      "三月 11 日澄川金融服务发放借款二十万",
+      "三月 12 日和 14 日，账户先后向宸直信托转出两笔十万",
+      "对方在麦外留言中承认，三月的二十万借款用于购买宸直信托产品",
+      "对方第一夜收麦后已经发来离职结算通知；咨询者当时没敢打开，直到第二夜对方同意遮名展示，她才点开；所谓晚发奖金实际是预计七月底支付的离职补偿金",
+      "咨询者长期消费固定给付、接受男方另付房租并共同维持排场，是男方经济压力的重要来源；借款、认购和继续撑排场仍由男方自己决定"
+    ],
+    "edited": [
+      "对方把待发的离职补偿金说成奖金；既想让咨询者别为失业着急，也不想固定转账一停就被追问",
+      "咨询者把两个人挑的体面说成“都是他安排”",
+      "咨询者先用没有同住和没拿工资卡强调各自管钱，没有主动提男方连续十四个月每月转她一半工资，更没有说房租也由男方另付、实际余额只剩一万一千六百多",
+      "对方把十四个月累计转入二十四万五直接算成她至少还存着十五万，没问她实际花销就认定八万拿得出来",
+      "咨询者把收了设备的分期说成“没细看”",
+      "对方把整个八万的窟窿讲成“为这段关系撑面子欠的”",
+      "对方把五月、六月的固定私人转账说成“以前的账”，拒绝给出可核对来源",
+      "对方曾把借钱追求翻倍收益说成一次能填平旧洞的投资机会",
+      "闺蜜把当初的起哄评论删掉后才来补图",
+      "男方前同事只肯说他阔过，不说钱后来去了哪里"
+    ],
+    "unknown": [
+      "尾号 3301 的账户归属仍无法确认",
+      "展示的流水只是关键交易摘录，没有期初余额和完整收支；五月、六月每月 8 号有王姓私人入账，七月中断，来源、中断原因及停薪后其余支出的资金来源仍无法确认",
+      "宸直信托两笔认购对应的具体产品、兑付状态和可追回金额仍无法确认",
+      "对方后续是否具备还款能力仍无法确认",
+      "双方摊开账单后是否继续关系仍无法确认"
+    ]
+  },
+  "selfServingOmission": "咨询者没有中立地问账；她想让主播替她确认自己一分钱也不用出。她自己参与过体面消费，也收下过那套短视频设备；念信用卡时，她先用约五千元的男装指责男方失业后乱花，把约四万元共同消费一句带过，也没有说设备就是买给自己的。她还强调两人没有同住、工资卡不在自己手里，省掉男友连续十四个月每月转她一万七千五，更没说银行流水里每两个月还有一万元房租由男方直接替她支付。二十四万五已经基本花完，账户只剩一万一千六百多。",
+  "deceptionChain": {
+    "owner": "caller",
+    "protectedPurpose": "让主播公开支持她一分钱也不出，同时不让男友和直播间把十四个月固定给付、另付房租、共同排场与实际余额算进这次拒绝。",
+    "stages": [
+      {
+        "id": "credit-moral-backing",
+        "pressureTrigger": "男友再次催她拿八万，并把过去给过的钱也提了出来。",
+        "surfaceVersion": "她已经决定不转，也拿不出八万，却把这个决定交给主播来批准。",
+        "editedFact": "她要的不是中立查账，而是一句可以转给男友的公开背书。",
+        "immediateUtility": "先把直播间拉到拒绝转账这一边，避免说明自己手里的钱去了哪里。",
+        "fairTrace": "开场反复强调钱是男方自愿给的，却不先问八万由什么构成。",
+        "playerTest": "credit-loyalty-test：追问她是真拿不准，还是想让主播替她把拒绝说出口。",
+        "forcedRevision": "她承认自己没转，也一直没把话说死，确实想从节目带走一句不该转。",
+        "adviceImpact": "主播仍可建议八万暂不转，但不能替她把过去的给付和花销一笔勾销。"
+      },
+      {
+        "id": "credit-separate-finances",
+        "pressureTrigger": "主播不肯只谈情分，转而问两人的住处和日常钱怎么走。",
+        "surfaceVersion": "她先说两人不住一起、工资卡也没交给她，让这段经济关系听起来彼此独立。",
+        "editedFact": "男友连续十四个月每月转她一万七千五，房租还在这笔钱之外另付。",
+        "immediateUtility": "阻止直播间把她当成长期固定受益人，也暂时躲开钱是否存下的问题。",
+        "fairTrace": "她说这个月的钱第一次没来，说明自己一直在等一笔固定到账。",
+        "playerTest": "credit-living-arrangement 追问固定转账；case1-bank-flow 的住房支出行再追问房租受益人。",
+        "forcedRevision": "她先承认十四个月半薪，看到两笔双月房租后才承认那也是男友替她付的。",
+        "adviceImpact": "男方长期压力和索要八万的计算来源变得可解释，但名下债务仍不能自动转给她。"
+      },
+      {
+        "id": "credit-selective-bill",
+        "pressureTrigger": "固定给付被问出后，她需要证明八万主要是男友自己失业后乱花。",
+        "surfaceVersion": "她先抓住约五千元男装，尤其是一件两千多的大衣。",
+        "editedFact": "同一张账单里约四万元共同排场与她有关，其中一万二设备直接给她使用。",
+        "immediateUtility": "把男友塑造成失业后仍个人挥霍的人，让拒绝转钱显得不需要再谈自己的受益。",
+        "fairTrace": "她念账单时已经说出餐厅、礼物、酒店和短视频设备，却只对男装作判断。",
+        "playerTest": "credit-anniversary-agency、credit-device-benefit 与 credit-five-wan-gap 连续追问共同消费的安排和受益人。",
+        "forcedRevision": "她承认约四万元与自己有关，也承认开头只拿男装说事，把共同消费一句带过。",
+        "adviceImpact": "主播不能接受八万主要由男方个人挥霍造成的说法，必须把共同消费、个人消费和未知三万五拆开。"
+      },
+      {
+        "id": "credit-gift-relabel",
+        "pressureTrigger": "账单上的一万二设备被明确送到她家并一直由她使用。",
+        "surfaceVersion": "她说自己一直以为设备是男友全款送的，是他主动支持自己的事业。",
+        "editedFact": "她确实直接享受了这笔支出，却借赠与理解把自己从八万元账单里移出去。",
+        "immediateUtility": "承认拿到设备，同时继续拒绝承担任何与这笔钱有关的解释成本。",
+        "fairTrace": "设备出现在信用卡分期里，受益账号和实物都在她这一边。",
+        "playerTest": "credit-bank-flow：追问为什么开场没提这一万二，以及购买时有没有共同还款约定。",
+        "forcedRevision": "她承认八万里这一万二花在自己身上，但坚持男友没有让她共同承担分期。",
+        "adviceImpact": "受益必须进入双方谈账，签字和还款责任仍留在男方名下。"
+      },
+      {
+        "id": "credit-hidden-balance",
+        "pressureTrigger": "男友说出十四个月累计二十四万五，并解释自己为何估算她至少存了十五万。",
+        "surfaceVersion": "她此前只对男友说自己没有八万，从未给过余额，也不解释固定给付怎么花掉。",
+        "editedFact": "账户实际只剩一万一千六百多，自己的工资和固定转账都基本花完。",
+        "immediateUtility": "既不转八万，也避免承认自己把长期给付当成稳定收入花掉。",
+        "fairTrace": "累计金额、另付房租与她始终不展示余额之间有明显空白。",
+        "playerTest": "deepFollowup：在十五万估算出现后直接问当前余额和十四个月花销。",
+        "forcedRevision": "她报出一万一千六百多，并承认衣服、美容、打车、吃饭和账号推广已经把钱花掉。",
+        "adviceImpact": "她必须向男友说明余额和消费，主播仍只建议暂缓转账，不替男方把估算变成她的债。"
+      }
+    ]
+  },
+  "quotePickCandidates": [
+    "我只是怕你知道我失业后就离开我",
+    "我没转，也不敢把‘不想转’说出口",
+    "那些也不是我一个人花的",
+    "你手里少说有十五万，我只让你先拿八万"
+  ],
+  "accusationChoices": [
+    {
+      "label": "“我只是怕你知道我失业后就离开我。”",
+      "quoteSourceSceneId": "credit-loyalty-test",
+      "accuseRole": "respondent",
+      "response": "怕你离开可以是真的，但最低还款为什么马上转到你这里？"
+    },
+    {
+      "label": "“我没转，也不敢把‘不想转’说出口。”",
+      "quoteSourceSceneId": "credit-loyalty-test",
+      "accuseRole": "complainant",
+      "response": "你不是没想好。你是不想自己开口说：八万不转，以前的钱也花得差不多了。今晚这八万先别转。可过去十四个月的钱花到哪儿了，你得自己跟他讲。"
+    },
+    {
+      "label": "“那些也不是我一个人花的。”",
+      "quoteSourceSceneId": "credit-five-wan-gap",
+      "accuseRole": "complainant",
+      "response": "她终于承认，开场先拿男方那五千说事，把四万左右的共同消费一句带过。她少说自己的花销，也不能把他签下的债变成她的。"
+    },
+    {
+      "label": "“你手里少说有十五万，我只让你先拿八万。”",
+      "quoteSourceSceneId": "credit-loyalty-test",
+      "accuse": "both",
+      "response": "二十四万五确实转到过她那里，可累计转入不是当前余额。她把钱花掉了要说明，你也不能因为自己算错了余额，就把八万变成她的债。"
+    }
+  ],
+  "label": "8 万信用卡周转",
+  "storyArcTitle": "今日来电：8 万信用卡周转",
+  "caseTitle": {
+    "title": "账单里的八万"
+  },
+  "publicHook": "他连续十四个月把一半工资交给女友，认定她至少存了十五万；她其实只剩一万一千六百多。现在，他让她先拿八万救信用卡。",
+  "storyArcSummary": "她先用五千元男装追问男方怎么花钱，却把约四万元共同排场一句带过，也一直没让他看十四个月半薪所剩的余额；他隐瞒失业，把累计给过的钱当成她现有的存款，又借钱买信托，想继续撑住两个人已经习惯的生活。",
+  "storySuspense": "他为什么偏偏找她要八万？二十四万五累计转账、十五万存款估算和一万一千六百多实际余额，要与贷款和信托分开算。",
+  "storyClueObject": "一份近五个月的银行流水、一张离职结算通知和双方对十四个月固定转账的说法：三万五月薪、存款误判、实际余额、借款、信托认购与待发补偿金。",
+  "openingComplaint": "她打来问：男朋友突然让她拿八万元还信用卡，她不想转，想让主播支持她拒绝。",
+  "openingDialogue": [
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "主播，我想咨询个事。我男朋友突然让我替他还八万块信用卡。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "你转了没有？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "没有。转账页面都打开了，我还是没按下去。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "他怎么跟你开的口？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "说奖金晚发，让我先垫几天。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "你现在是不敢转，还是不想转？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "不想。他还一直提以前给我花过的钱。可这八万，我就是不想给。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "你们在一起多久了？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "一年半左右。",
+      "mood": "anxious"
+    }
+  ],
+  "scene": {
+    "name": "直播连线"
+  },
+  "sceneVersions": [
+    {
+      "id": "credit-living-arrangement",
+      "interactionMode": "lineReplay",
+      "clueRole": "setup",
+      "falseFrame": "两人没有住在一起，日常的钱也就完全分开。",
+      "payoffFor": [
+        "credit-five-wan-gap",
+        "credit-loyalty-test"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "你们平时住在一起吗？"
+          }
+        ]
+      },
+      "version": "不住在一起。他住他的，我住我的。",
+      "helperHint": "没住在一起，只说明住址分开。她每个月等的是哪笔钱，得继续问。",
+      "doubt": "两人没有同住，但这不等于日常支出完全分开。",
+      "contradiction": "男方工资卡没有交给她，却连续十四个月把一半工资转给她；她没有留下男方以为的十五万。银行流水还会在第二天暴露另一笔她没有主动提的固定住房支出。",
+      "reliability": "mixed",
+      "questionOptions": [
+        {
+          "question": "他平时发了工资，会交给你吗？",
+          "sourceAnchor": "不住在一起",
+          "suspicionLabel": "工资发下来后交不交给她",
+          "answer": "工资卡没给我。他每个月会转一半，转了一年多。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "工资卡没给我。"
+            },
+            {
+              "role": "host",
+              "text": "他会固定转钱给你吗？"
+            },
+            {
+              "role": "caller",
+              "text": "会。工资一到账，转我一半。"
+            },
+            {
+              "role": "host",
+              "text": "转了多久？"
+            },
+            {
+              "role": "caller",
+              "text": "一年多。十四个月。"
+            }
+          ],
+          "guardedAnswer": "工资卡没给我。他每个月会转一半，转了一年多。",
+          "logicContract": {
+            "premiseAnchor": "他住他的，我住我的",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者与对方没有同住，男方也没有把工资卡交给咨询者。",
+            "sourceDoesNotProve": "没有同住、没有交工资卡，不能证明双方日常收入与支出彼此独立。",
+            "answerAnchor": "转我一半",
+            "answerAdds": "男方连续十四个月把一半工资转给咨询者；具体金额会由后续流水确认。",
+            "nextLegalQuestion": "可以继续核对固定转账和咨询者如何使用这笔钱，不能据此把男方自行签下的借款与信托认购归给咨询者。"
+          },
+          "contradiction": "她说工资卡不在自己手里，却早已把男方半薪当成每月应到的钱。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你们没住一起，平时的钱也完全分开吗？",
+          "suspicionLabel": "没住一起时两个人怎么管钱",
+          "answer": "也不是。他每个月固定转我一笔，转了一年多。我一直按月等。",
+          "guardedAnswer": "没有完全分开。他每个月固定转我一笔，转了一年多。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "以前每个月都按时到？"
+          },
+          {
+            "role": "caller",
+            "text": "对。就这个月第一次没来。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "他住他的，我住我的",
+        "closerAnchor": "这个月第一次没来",
+        "adds": "咨询者确认固定的半薪转账此前按月到账，本月第一次中断。",
+        "openEdge": "她如何使用十四个月固定转账，以及男方流水里是否还有她没有说的支出。",
+        "routeIndependent": true
+      },
+      "pressureHint": {
+        "intentHook": "分住以后仍有固定半薪往来",
+        "callerGuard": "guarded"
+      }
+    },
+    {
+      "id": "credit-layoff-gap",
+      "interactionMode": "lineReplay",
+      "clueRole": "setup",
+      "falseFrame": "奖金晚发只是短暂周转。",
+      "payoffFor": [
+        "credit-eight-wan-bill"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "那八万，他有没有说哪天还你？"
+          }
+        ]
+      },
+      "version": "没说具体哪天。他只说：“你先帮我垫几天，钱下来就还你。”我问是哪笔钱，他才说奖金。我当时就信了，以为真是临时周转。",
+      "afterVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "那你后来怎么没转？"
+          },
+          {
+            "role": "caller",
+            "text": "八万太多，我先让他把账单发来。工资记录他没发，只给了我一份从电子社保卡导出的缴费记录，说公司漏缴了两个月。我看了一下，最后一笔其实停在四月。可四月以后，他还天天跟我说加班。"
+          }
+        ]
+      },
+      "helperHint": "先把“奖金晚发”和“社保停了两个月”分开看：他开口借钱前，哪件事没说。",
+      "doubt": "说是奖金晚发，可社保已经断缴两个月。",
+      "contradiction": "他用“奖金延迟”解释周转，社保停后却还在刷体面消费，资金缺口早已出现。",
+      "reliability": "mixed",
+      "showsCard": "daily-credit-social-security",
+      "casualQuestions": [
+        {
+          "question": "他丢工作前，加班是什么样子？",
+          "answer": "天天说忙。可几点下班、跟谁吃饭，我都不知道。我们没住一起，他说加班，我就回“早点睡”。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "借钱以前，他跟你提过工作出了问题吗？",
+          "sourceAnchor": "才说奖金",
+          "suspicionLabel": "加班说法和失业时间",
+          "answer": "没有。他还是天天说忙，项目要上线。有一回我说给他送点吃的，他让我别去，说公司门禁严。可那阵子，他可能已经不去公司了。",
+          "textureRole": "ramble",
+          "guardedAnswer": "他说忙，我就信了。我们没住一起，我也不想天天问他在哪。",
+          "logicContract": {
+            "premiseAnchor": "还天天跟我说加班",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者持续听到对方说自己在加班。",
+            "sourceDoesNotProve": "这些说法不能证明对方当时仍在职。",
+            "answerAnchor": "没有。他还是天天说忙",
+            "answerAdds": "借钱以前，对方没有主动说明工作已经出问题。",
+            "nextLegalQuestion": "继续核对断缴和账单时间，不能只凭加班说法确定离职日期。"
+          },
+          "contradiction": "社保断缴早于借钱，失业不是突然发生。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "他为什么拿社保记录代替工资记录？",
+          "suspicionLabel": "为什么用社保记录代替工资",
+          "answer": "他说工资明细太私密，社保那张就够了，停两个月只是漏缴。我盯着那页看了半天，最后还是没拿到工资记录。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "dialogueOptions": [
+        {
+          "question": "他当时只说差多少钱吗？",
+          "answer": "一开始没有。他就说先帮他垫一下，别让卡逾期。我追问，他才把最低还款那一栏截给我看。",
+          "routeAxis": "money-flow",
+          "routeTone": "detour"
+        },
+        {
+          "question": "你当时为什么没接着问工作？",
+          "answer": "我问到‘是不是工作出问题了’，他脸一下就沉了。我就没往下问。",
+          "routeAxis": "caller-credibility",
+          "routeTone": "softening"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "心疼话后面接钱",
+        "callerGuard": "guarded"
+      }
+    },
+    {
+      "id": "credit-eight-wan-bill",
+      "interactionMode": "lineReplay",
+      "clueRole": "misdirect",
+      "falseFrame": "八万主要是两人维持体面的消费。",
+      "payoffFor": [
+        "credit-anniversary-agency",
+        "credit-five-wan-gap"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "工资记录没发，社保早就停了。那张信用卡账单，你后来要到完整的吗？"
+          },
+          {
+            "role": "caller",
+            "text": "要到了。他一开始只发最低还款那一栏，我说想看明细，他才补给我。"
+          },
+          {
+            "role": "host",
+            "text": "把姓名和卡号遮一下，发到后台。"
+          },
+          {
+            "role": "caller",
+            "text": "好，等我一下。"
+          },
+          {
+            "role": "stage",
+            "text": "几秒后，后台多了一份账单，姓名和卡号都遮住了。"
+          }
+        ]
+      },
+      "version": "我先看见右上角那个数，七万九……不对，八万零几百，反正是八万出头。往下翻，男装一共五千左右，光一件大衣就两千多。我当时就想，他都没工作了，怎么还给自己买这些。别的我没细算，只看到餐厅、礼物、两次酒店，还有一套放在我家的拍摄设备，账上写着一万二分期。",
+      "helperHint": "先别替这八万找理由。问她哪些钱她认，哪些连她也不知道花到哪儿了。",
+      "doubt": "金额、用途和时间都比“垫几天”重得多。",
+      "contradiction": "咨询者先拿男方约五千元的男装证明他乱花钱，却把金额更大的餐厅、酒店、礼物和拍摄设备一句带过，也没有说明设备是买给自己的。",
+      "reliability": "partial",
+      "showsCard": "daily-credit-card-bill",
+      "revisedVersion": "……那些也不是我一个人花的啊，都是两个人一起出去。可你这么加，餐厅、酒店、礼物，还有设备……差不多四万，是跟我有关。",
+      "casualQuestions": [
+        {
+          "question": "那些餐厅是什么档次？",
+          "answer": "人均四五百。有两家是我收藏过的，他记住了。纪念日那家靠窗，他说提前两周才订到。"
+        },
+        {
+          "question": "礼物都送了些什么？",
+          "answer": "香水，还有一条项链。项链那次他自己发朋友圈，写“她值得”。我朋友全点赞，我还截图留着。"
+        },
+        {
+          "question": "他开口的时候，要你垫的就是整整八万吗？",
+          "answer": "一分没少。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "嗯。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "一分没少。"
+            }
+          ],
+          "routeAxis": "money-flow",
+          "routeTone": "detour"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "我把账单加了一下。两个人一起花的差不多四万，他自己的衣服五千左右。八万里还剩至少三万五没说清。你问过他吗？",
+          "sourceAnchor": "别的我没细算",
+          "revisedSourceAnchor": "差不多四万，是跟我有关",
+          "suspicionLabel": "八万里没说清的三万五",
+          "revealTransition": {
+            "id": "case1-unexplained-gap",
+            "kind": "reveal",
+            "eyebrow": "金额对不上",
+            "label": "还差至少三万五",
+            "visualVariant": "amount-gap"
+          },
+          "answer": "问过一次。他当时愣了一下，说‘反正不是乱来的钱’。然后我再问，他就把话岔到‘别拖，今晚先转’上去了。",
+          "guardedAnswer": "问过，他没细说，只说不是我该管的那部分。",
+          "logicContract": {
+            "premiseAnchor": "别的我没细算",
+            "sourceKind": "host-calculation",
+            "sourceProves": "约四万共同消费和约五千男方个人男装之外，八万元总额中仍有至少三万五没有说明。",
+            "sourceDoesNotProve": "金额缺口不能证明收款账户、借款用途或谁实际拿走了钱。",
+            "answerAnchor": "反正不是乱来的钱",
+            "answerAdds": "对方被问到缺口时没有说明用途，反而继续催促当晚转账。",
+            "nextLegalQuestion": "第二夜继续查流水中的对应行和账户，不能把回避直接判成诈骗。"
+          },
+          "contradiction": "八万元中至少三万五去向不明，对方被问时继续催款而没有解释。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "pressure-point"
+        },
+        {
+        "question": "后面男装加起来也就五千，一件大衣两千多。单看这些，能说明他平时挥霍吗？",
+          "suspicionLabel": "五千元男装是不是挥霍",
+          "answer": "单看五千，确实说不上挥霍。可他那时候已经没工作了，我看到以后还是会不舒服。",
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "softening"
+        }
+      ],
+      "dialogueOptions": [
+        {
+          "question": "你第一眼先看到哪一栏？",
+          "answer": "先看到最低还款。八千多，我手都停了一下。再往下翻，才看到那些消费明细。",
+          "routeAxis": "money-flow",
+          "routeTone": "detour"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "体面账单压上来",
+        "callerGuard": "tense"
+      }
+    },
+    {
+      "id": "credit-anniversary-agency",
+      "interactionMode": "lineReplay",
+      "clueRole": "reversal",
+      "falseFrame": "纪念日完全由对方单方面安排。",
+      "payoffFor": [
+        "credit-device-benefit"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "账单里有一笔餐厅消费特别高，挺舍得花。是纪念日那晚吗？"
+          }
+        ]
+      },
+      "version": "对。那晚坐的是靠窗位，他说两周前订的。主要贵在酒。他看中一瓶，我说太贵了。他说：“都纪念日了，总不能太寒酸。”他还是点了，我没再拦。当天只有我发朋友圈，他没发，身边朋友都挺羡慕我的。",
+      "afterVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "先等等。靠窗位提前两周也未必订得到。你们俩是不是有人是那里的老会员？"
+          },
+          {
+            "role": "caller",
+            "text": "……那家店确实难订。你等一下。会员……会员是我的。跟他在一起以前就办了。那晚也用了我的号。"
+          }
+        ]
+      },
+      "helperHint": "她承认是老会员以后，先别急着评价。看看长期消费和她当时的收入能不能对上。",
+      "doubt": "她承认自己是老会员，但过去的高额消费由谁承担还没说。",
+      "contradiction": "咨询者用自己长期积累的会员资格订座，却把纪念日晚餐说成对方单方面安排。",
+      "reliability": "mixed",
+      "showsCard": "daily-credit-anniversary",
+      "casualQuestions": [
+        {
+          "question": "你自己一个人去过那家店吗？",
+          "answer": "没有。不是约会就是朋友聚餐，我自己不会订靠窗那排。"
+        },
+        {
+          "question": "他没发朋友圈，你当时问过他吗？",
+          "answer": "问过。他说自己不爱发这些，叫我发就好。我那时候没多想。"
+        },
+        {
+          "question": "那晚的照片删了吗？",
+          "answer": "舍不得。里面那盏灯拍得挺好看的。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "没删。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "舍不得。里面那盏灯拍得挺好看的。"
+            }
+          ],
+          "routeAxis": "caller-credibility",
+          "routeTone": "detour"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "刚才还是他说提前两周订的，现在又成了你订的。那时候只靠自己的收入，你会来这家吃吗？",
+          "sourceAnchor": "他说两周前订的",
+          "suspicionLabel": "订座的人和她当时的收入",
+          "answer": "我一个月八千多，自己不会这么吃。认识他以前，我跟前任也来过几次，基本都是对方结账。那时候……约会不都这样吗。",
+          "guardedAnswer": "我一个月八千多，自己不会常来。以前有人请，会员等级是这么攒起来的。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "我一个月八千多，自己不会这么吃。"
+            },
+            {
+              "role": "host",
+              "text": "那会员等级怎么攒起来的？"
+            },
+            {
+              "role": "caller",
+              "text": "认识他以前，我跟前任也来过几次，基本都是对方结账。那时候……约会不都这样吗。"
+            }
+          ],
+          "logicContract": {
+            "premiseAnchor": "跟他在一起以前就办了",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者在这段关系以前已经是餐厅会员。",
+            "sourceDoesNotProve": "会员身份不能证明过去的账由她本人支付。",
+            "answerAnchor": "基本都是对方结账",
+            "answerAdds": "咨询者月收入只有八千多，过去的高消费多由此前交往对象结账，会员等级由此积累。",
+            "nextLegalQuestion": "可以追问她对约会消费的长期预期，不能据此替当前男方的债务免责。"
+          },
+          "contradiction": "咨询者的会员等级来自过去由交往对象买单的高消费，她对伴侣承担体面开支早有依赖。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "那晚他说过手头紧吗？",
+          "suspicionLabel": "纪念日晚餐前有没有说手头紧",
+          "answer": "没有。他还说这顿算他的，叫我别看价格。我还挺高兴，真没看。现在账单摆出来，我才知道那句话也是刷卡。",
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "朋友羡慕你时，你有没有说过那个位置其实是你订的？",
+          "suspicionLabel": "朋友是否知道靠窗位是她订的",
+          "answer": "没有。她们都说我没看错人，我听着挺高兴，就没解释。",
+          "correct": false,
+          "routeAxis": "outer-thread",
+          "routeTone": "softening"
+        }
+      ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "纪念日这顿先放这儿。你刚才还提到一万二的分期。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "一万二的分期",
+        "closerAnchor": "一万二的分期",
+        "adds": "确认纪念日订座、点酒和朋友圈各自由谁完成，并回到此前尚未说明用途的一万二分期。",
+        "openEdge": "这笔分期买了什么，以及谁实际受益。",
+        "routeIndependent": true
+      },
+      "pressureHint": {
+        "intentHook": "老会员消费来源暂时留白",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "承认自己是老会员时停了一下"
+        }
+      }
+    },
+    {
+      "id": "credit-device-benefit",
+      "interactionMode": "lineReplay",
+      "clueRole": "missing-edge",
+      "falseFrame": "设备是对方送她的礼物，所以分期和她完全无关。",
+      "payoffFor": [
+        "credit-five-wan-gap"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "entryQuestion": "那一万二买了什么？",
+      "version": "那一万二买的是拍视频用的灯和稳定器。他当时跟我说：“账号做起来，你就不用看别人脸色。”还说这是在投资我。我以前念叨过想做探店号，听到这句，确实挺高兴。我一直以为那是他全款买来送我的。这两天看到账单，我才知道那一万二走的是分期。",
+      "helperHint": "“投资”是称呼，不是证据。先看东西最后在哪、谁实际用过。",
+      "doubt": "她把设备当成对方支持事业的礼物，却直到翻账单才知道对方办了分期。",
+      "contradiction": "设备确实由咨询者接收和使用，但她声称自己当时只知道赠礼，不知道分期。",
+      "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "你以前真想过做探店号？",
+          "answer": "想过，断断续续念了几个月。我关注了好些博主，有个杭州的姑娘，拍面馆的，就一个手机加个小支架，拍得特别香，她粉丝可多了。我还研究过转场，就那种一挥手换一家店的……哎，说这个干嘛。反正，真要拍我又总说没设备。现在设备倒是有了。"
+        },
+        {
+          "question": "那句“投资你”，你当时怎么听？",
+          "answer": "很甜，也很有面子。像他认真把我的事当事。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "那套灯和稳定器，买完以后送到谁那里了？",
+          "sourceAnchor": "灯和稳定器",
+          "suspicionLabel": "设备送到哪里、谁在使用",
+          "answer": "送到我这儿了，东西也一直是我在用。我真以为那是他全款买来送我的。分期不是我签的，也没答应替他还。",
+          "guardedAnswer": "送到我这儿了，一直是我用。可他说的是给我做账号，我怎么知道他刷的是分期。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "送到我这儿了，东西也一直是我在用。"
+            },
+            {
+              "role": "host",
+              "text": "那你当时以为这笔钱怎么付？"
+            },
+            {
+              "role": "caller",
+              "text": "我真以为那是他全款买来送我的。"
+            },
+            {
+              "role": "host",
+              "text": "分期你签过吗？"
+            },
+            {
+              "role": "caller",
+              "text": "没有，也没答应替他还。"
+            }
+          ],
+          "logicContract": {
+            "premiseAnchor": "灯和稳定器",
+            "sourceKind": "caller-statement",
+            "sourceProves": "一万二分期购买的是拍摄设备。",
+            "sourceDoesNotProve": "物件名称不能证明送达地点、实际使用者或还款责任。",
+            "answerAnchor": "送到我这儿了",
+            "answerAdds": "咨询者确认设备由自己接收和使用，同时声称当时把它理解为全款赠礼。",
+            "nextLegalQuestion": "可以继续问她是否承认这一万二是八万元中直接花在自己身上的部分，不能仅凭受益认定还款责任。"
+          },
+          "contradiction": "咨询者承认设备由自己接收和使用，但坚持自己当时不知道对方办了分期。",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "他把这笔分期叫“投资”。你当时有没有觉得，自己也该担一点？",
+          "suspicionLabel": "她把设备当礼物还是共同投入",
+          "answer": "没有。我当时听见的是他要支持我做账号。东西送到我这儿以后，我也一直在用，可我真以为是他全款买来送我的，没想过还款会落到我头上。",
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "你说自己这两天才知道是分期。买的时候，你到底看了什么？",
+          "sourceAnchor": "这两天看到账单",
+          "suspicionLabel": "买设备时她到底看过什么",
+          "answer": "我只看了他挑的那套设备，没看怎么付的钱。东西送到我这儿，我就用了。",
+          "logicContract": {
+            "premiseAnchor": "这两天看到账单，我才知道",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者声称自己直到这两天看到账单才知道设备使用了分期。",
+            "sourceDoesNotProve": "这项陈述不能单独证明她购买时是否在场、看见付款方式或同意承担还款责任。",
+            "answerAnchor": "没看怎么付的钱",
+            "answerAdds": "咨询者确认自己没有查看付款方式，设备送到后由自己使用。",
+            "nextLegalQuestion": "可以追问她为什么开场只拿男方的个人消费说事、却不说明设备是买给自己的，不能把设备受益人直接等同于债务人。"
+          },
+          "contradiction": "咨询者承认自己使用设备，却强调自己没有参与决定分期。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "这一万二先单独记下来。我们把整张账单重新加一遍。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "灯和稳定器",
+        "closerAnchor": "整张账单重新加一遍",
+        "adds": "确认设备送达与使用后，把这一万二单列，再回到整张账单重算。",
+        "openEdge": "共同消费、男方个人消费和剩余缺口分别是多少。",
+        "routeIndependent": true
+      },
+      "pressureHint": {
+        "intentHook": "开箱夜把分期钉住",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "说到“投资”时停了一下"
+        }
+      }
+    },
+    {
+      "id": "credit-five-wan-gap",
+      "interactionMode": "lineReplay",
+      "clueRole": "reversal",
+      "falseFrame": "可见消费足以解释八万。",
+      "payoffFor": [
+        "credit-bank-flow"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "entryQuestion": "他买衣服一共五千左右。可账单里另外四万左右，都跟你有关。你开头为什么只拿衣服说事？",
+      "version": "……那些也不是我一个人花的。可四万里，确实有我那一份。",
+      "helperHint": "八万已经按餐厅、酒店、礼物、设备和男装分开算了。只看还有多少钱没说明用途，先别替他猜。",
+      "doubt": "数字对不上：与两人共同生活和排场有关的约四万，男方自己的男装约五千，至少三万五仍未说明。",
+      "contradiction": "她开场先拿五千元男装指责男方，却把约四万共同消费一句带过；他仍无法解释至少三万五，并用催款堵住追问。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "他以前跟你开过口借钱吗？",
+          "answer": "没有。一次都没有，所以这次我才慌。他那个人，以前连打车钱都不让我掏。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "你加完还差至少三万五，这个数对不上。你当时怎么问他的？",
+          "sourceAnchor": "四万里",
+          "suspicionLabel": "八万里没说清的三万五",
+          "answer": "问过一次。他当时愣了一下，说“反正不是乱来的钱”。然后我再问，他就把话岔到“别拖，今晚先转”上去了。",
+          "guardedAnswer": "问过，他没细说。只说不是我该管的那部分。",
+          "logicContract": {
+            "premiseAnchor": "四万里，确实有我那一份",
+            "sourceKind": "host-calculation",
+            "sourceProves": "把约四万共同消费和约五千男方个人男装分开后，八万总额中仍有至少三万五未说明。",
+            "sourceDoesNotProve": "金额缺口不能证明收款账户、贷款用途或谁实际拿走了钱。",
+            "answerAnchor": "反正不是乱来的钱",
+            "answerAdds": "对方被问到缺口时没有说明用途，并转而催促当晚转账。",
+            "nextLegalQuestion": "继续查流水中的对应行和账户，不能把回避直接判成诈骗。"
+          },
+          "contradiction": "他拒绝解释缺口来历，用还款期限转移话题。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "这些账单上的日子，你们当时在一起吗？",
+          "suspicionLabel": "账单日期和交往时间",
+          "answer": "近几个月能对上。再往前……我把页面关了。一个人没敢看完。",
+          "correct": false,
+          "routeAxis": "document-edge",
+          "routeTone": "trust-but-verify"
+        }
+      ],
+      "dialogueOptions": [
+        {
+          "question": "你当时已经准备转了吗？",
+          "answer": "差一点。页面都打开了。就是看到到期日那里，我才停住。",
+          "routeAxis": "money-flow",
+          "routeTone": "detour"
+        },
+        {
+          "question": "他后来为什么又改口？",
+          "answer": "他说我别紧张，这几天转也行。可前面那句“今晚就要”已经把我吓到了。",
+          "routeAxis": "identity-wording",
+          "routeTone": "trust-but-verify"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "心疼话后面接钱",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "听筒里“咔”了一声。她说自己把手机扣在了桌上"
+        }
+      }
+    },
+    {
+      "id": "credit-bank-flow",
+      "interactionMode": "lineReplay",
+      "clueRole": "missing-edge",
+      "falseFrame": "分期由对方操作，所以八万元里没有任何一笔是直接花给咨询者的。",
+      "payoffFor": [
+        "credit-loyalty-test"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "昨晚你只说，账单里有一套放在你家的拍摄设备。那一万二，到底是给谁买的？"
+          }
+        ]
+      },
+      "version": "是给我买的。送到我家以后，也一直是我在用。可我当时真以为他付的全款，分期那两个字，我是这两天才在账单上看见的。",
+      "helperHint": "先问清这笔钱买给了谁，再把受益和还款责任分开。",
+      "doubt": "她承认一万二的设备是专门买给自己的，第一夜却只说设备放在自己家，没有说明这笔钱直接花给了自己。",
+      "contradiction": "八万元里已经有一万二直接花在咨询者身上，她此前只交代设备放在自己家，避开了自己是直接受益人。",
+      "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "探店号你做起来了吗？",
+          "answer": "发了十几条。最高一条八百多赞。他每条都转。"
+        },
+        {
+          "question": "那套设备现在还用吗？",
+          "answer": "灯上个月还开过。现在拍不动了，一开灯就想起这事。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "昨晚你只说那套设备放在你家，没说东西就是给你买的。为什么把这件事省了？",
+          "sourceAnchor": "是给我买的",
+          "suspicionLabel": "她为什么没提一万二设备",
+          "answer": "你们一听是给我买的，肯定就要把八万都算我头上。可这一万二确实花在我身上，分期不是我签的。",
+          "guardedAnswer": "设备是在我这儿。可你们一听这个，八万是不是又都要算到我头上？分期又不是我开的。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "你们一听是给我买的，肯定就要把八万都算我头上。"
+            },
+            {
+              "role": "host",
+              "text": "我现在只问这一万二。"
+            },
+            {
+              "role": "caller",
+              "text": "……行。这一万二是花在我身上。"
+            },
+            {
+              "role": "host",
+              "text": "分期呢？"
+            },
+            {
+              "role": "caller",
+              "text": "不是我签的。"
+            }
+          ],
+          "logicContract": {
+            "premiseAnchor": "是给我买的",
+            "sourceKind": "caller-statement",
+            "sourceProves": "八万元中有一万二购买的设备直接交给咨询者使用。",
+            "sourceDoesNotProve": "设备买给咨询者不能证明她事先知道分期、同意借款或承担整张信用卡。",
+            "answerAnchor": "这一万二是花在我身上",
+            "answerAdds": "咨询者承认自己开场避开这笔直接受益，是怕观众把整笔八万元都算到她头上。",
+            "nextLegalQuestion": "可以继续追问信用卡里至少三万五的用途，仍须把设备受益、分期责任和未知金额分开。"
+          },
+          "contradiction": "咨询者承认一万二设备直接买给自己，也承认开场有意淡化这笔受益。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "他买设备的时候，有没有跟你说过要一起还分期？",
+          "suspicionLabel": "设备分期有没有说过一起还",
+          "answer": "没有。他说的是买来支持我做账号。我没签，也没答应一起还。这一万二确实花给了我，可他办分期的时候没跟我商量。",
+          "correct": false,
+          "routeAxis": "document-edge",
+          "routeTone": "trust-but-verify"
+        }
+      ],
+      "dialogueOptions": [
+        {
+          "question": "他说投资你的时候，你怎么回的？",
+          "answer": "我没拦。还挺高兴的。那时候我真以为他是买来送我的。",
+          "routeAxis": "money-flow",
+          "routeTone": "softening"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "一万二直接买给她",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "pause",
+          "text": "说到“买给我的”时，她停了一下"
+        }
+      }
+    },
+    {
+      "id": "credit-loyalty-test",
+      "interactionMode": "lineReplay",
+      "clueRole": "payoff",
+      "falseFrame": "害怕被离开只是情绪表达，与催转账无关。",
+      "payoffFor": [
+        "credit-layoff-gap"
+      ],
+      "speakerId": "shen",
+      "speaker": "咨询者",
+      "entryQuestion": "接着呢？",
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等下……他又发消息了。一个『抱抱』表情包，企鹅那个。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "他知道这是直播。他知道你们都看着。"
+          },
+          {
+            "role": "host",
+            "text": "抱抱来得挺是时候。先看他后面还说什么。"
+          },
+          {
+            "role": "caller",
+            "text": "有。十二点四十，又来了一条。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "……跟着又来一句：『账单 26 号出』。前面还是『抱抱』，后面就变成还款日了。"
+          },
+          {
+            "role": "caller",
+            "text": "还有一条：『这一年多，我每个月都给你一半，你住的房租也是我另外付。你手里少说有十五万，我只让你先拿八万。』"
+          },
+          {
+            "role": "host",
+            "text": "他说你住的房租也是另外付的。这个数没算错吧？"
+          },
+          {
+            "role": "caller",
+            "text": "没算错。房租是他另外付的，余额我也一直没给他看。"
+          }
+        ]
+      },
+      "version": "现在又来了一条语音。他说：“我只是怕你知道我失业后就离开我。”语音放完，下一条还是最低还款金额。昨晚他还发过一份文件，我一直没点开。他刚才才说，那是离职结算通知，名字已经遮了，可以给节目看。",
+      "afterVersion": {
+        "lines": [
+          {
+            "role": "host",
+          "text": "所以这份通知昨晚就发给你了？"
+          },
+          {
+            "role": "caller",
+          "text": "嗯。我当时只看到文件名，没敢点开。刚才他同意展示，我才打开。上面写着月工资三万五，待发的是解除劳动合同补偿金，预计七月底到账。"
+          },
+          {
+            "role": "host",
+            "text": "所以他说的奖金，是这笔补偿金？"
+          },
+          {
+            "role": "caller",
+            "text": "对。他又发了一句：“我怕你一听我被裁了着急，也怕你马上问那两笔钱，才说成奖金。”"
+          },
+          {
+            "role": "host",
+            "text": "补偿金是真的，可他后面紧接着发了最低还款金额。你当时怎么想的？"
+          },
+          {
+            "role": "caller",
+            "text": "我第一反应是，他以后是不是连结婚都不敢跟我提了。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "结婚……不是，他没提结婚。是我听到失业，自己往那儿想了。"
+          },
+          {
+            "role": "caller",
+            "text": "我以前总跟朋友夸他对我好。真到他没工作，头一回找我，就是八万。我没转，也不敢把‘不想转’说出口。"
+          },
+          {
+            "role": "host",
+            "text": "到现在，你说的还是拿不出来，不是不想给。"
+          },
+          {
+            "role": "caller",
+            "text": "……对。"
+          }
+        ]
+      },
+      "showsCard": "daily-credit-severance",
+      "helperHint": "她一直说‘拿不出来’，却没说过自己其实不想给。问她这一晚到底想从主播这里带走什么。",
+      "doubt": "所谓奖金确有一笔待发的钱，却被改了名目；咨询者也把明确的不愿意包装成拿不准，想让主播替她回绝。",
+      "contradiction": "他把离职补偿金说成奖金，随后又把个人债务转成关系忠诚测试；咨询者则隐去自己的固定受益和消费，只想拿走一句‘一分钱都不用出’。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "你朋友现在知道多少？",
+          "answer": "知道我们在闹别扭，不知道钱的事。我还没想好怎么开口。"
+        },
+        {
+          "question": "他以前有没有说过，怕失业以后配不上你？",
+          "answer": "说过一次，喝了酒。他说自己要是混不好，就低我一头。那时候我当情话听的。"
+        },
+        {
+          "question": "“怕你离开”那句，他是打字还是语音？",
+          "answer": "语音。声音很低，我听了三遍。……然后金额是打字发的，很整齐。"
+        },
+        {
+          "question": "你发朋友圈的那些朋友，后来有人来问过吗？",
+          "answer": "我闺蜜来问了。她劝我想开点，说至少没领证，她表姐那种才叫惨。……我听完更想哭了。但她是好意，我知道她是好意。"
+        },
+        {
+          "question": "那条语音你还留着？",
+          "answer": "留着。",
+          "routeAxis": "caller-credibility",
+          "routeTone": "detour"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "你今晚打进来，是想问清这八万，还是想让我替你说一句别转？",
+          "sourceAnchor": "下一条还是最低还款金额",
+          "suspicionLabel": "她想从主播这里拿走什么",
+          "answer": "前面那十四个月的钱，我不想再跟他一笔一笔讲。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "……想让你替我说。"
+            },
+            {
+              "role": "host",
+              "text": "说完以后呢？"
+            },
+            {
+              "role": "caller",
+              "text": "我会把回放发给他。"
+            },
+            {
+              "role": "host",
+              "text": "前面十四个月的钱，你准备怎么解释？"
+            },
+            {
+              "role": "caller",
+              "text": "那些我不想再跟他一笔一笔讲。"
+            }
+          ],
+          "guardedAnswer": "我想把回放发给他。前面那些钱，我不想跟他讲。",
+          "logicContract": {
+            "premiseAnchor": "说的还是拿不出来，不是不想给",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者尚未转账，也始终用拿不出来代替明确表达自己不愿意给。",
+            "sourceDoesNotProve": "她不愿意给不能自动证明过去所有给付都是无条件赠与，也不能替男方名下债务改变责任。",
+            "answerAnchor": "把回放发给他",
+            "answerAdds": "咨询者承认来电的实际目标是获得主播公开背书，从而不用亲自解释十四个月固定转账的去向。",
+            "nextLegalQuestion": "可以明确八万元不应当场转，也必须要求她自己说明余额与花销；主播不能替她把过去全部给付定性为赠与。"
+          },
+          "contradiction": "咨询者把明确的不愿出钱说成拿不准，试图借直播间的判断回避自己长期受益和花销。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "如果我现在只说一句‘别转’，你准备怎么跟他谈前面那些钱？",
+          "suspicionLabel": "直播结论之后怎么谈",
+          "answer": "我可能就把回放发给他，别的先不说。至少让他别再催。余额……我还没想好怎么讲。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "体面话开始露底",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "pause",
+          "text": "她停了几秒，没有点开那条语音"
+        }
+      }
+    }
+  ],
+  "evidenceCards": [
+    {
+      "id": "daily-credit-severance",
+      "type": "离职结算通知",
+      "title": "“奖金”的实际名目",
+      "front": "对方第一夜收麦后发给咨询者、第二夜同意遮名展示的通知写着：离职前月工资 ¥35,000；待发项目为解除劳动合同补偿金 ¥105,000；预计 7 月底支付。",
+      "detail": "通知说明他确实在等一笔钱，也说明那不是奖金。预计支付不等于已经到账，更不能覆盖此前的借款、信托认购和信用卡消费。",
+      "targets": [
+        "truthWithGap",
+        "sceneHint"
+      ],
+      "contradiction": "他没有凭空编造待发款项，却把离职补偿金说成奖金，借此同时遮住失业和固定转账断供。"
+    },
+    {
+      "id": "daily-credit-social-security",
+      "type": "社保截图",
+      "title": "社保断缴时间",
+      "front": "他自己发来的缴费记录显示，最后缴费月份停在四月；页面没有在职状态或奖金信息。",
+      "detail": "这张记录能确认参保缴费中断，不能单独确定离职日期。",
+      "targets": [
+        "truthWithGap",
+        "sceneHint"
+      ],
+      "contradiction": "他用奖金晚发解释周转，却没有提供工资记录；自己发来的社保记录反而停在四月。"
+    },
+    {
+      "id": "daily-credit-card-bill",
+      "type": "账单",
+      "title": "信用卡账单",
+      "front": "四月工资停发后，同一张卡上仍有餐厅、礼物、两次酒店和 1.2 万短视频设备分期，合计约四万；另有数笔男装，合计约五千。",
+      "detail": "约四万与两人的约会、礼物和设备有关；男方个人男装约五千，其中一件大衣两千多；至少三万五仍未说明。",
+      "targets": [
+        "sceneHint"
+      ],
+      "contradiction": "两人的共同消费远高于男方个人男装；咨询者不能只用约五千男装指责他乱花钱，男方也仍要解释至少三万五的去向。"
+    },
+    {
+      "id": "daily-credit-chat",
+      "type": "聊天",
+      "title": "最低还款请求",
+      "front": "“你先帮我垫一下，我不想这段关系因为钱毁了。”",
+      "detail": "把债务包装成关系考验。",
+      "targets": [
+        "truthWithGap"
+      ],
+      "contradiction": "还款请求把个人债务包装成关系考验。"
+    },
+    {
+      "id": "daily-credit-anniversary",
+      "type": "消费记录",
+      "title": "纪念日晚餐痕迹",
+      "front": "账单只显示一笔高额餐厅消费，酒水占了大头；她发出的朋友圈截图里，闺蜜曾评论“真羡慕你”。",
+      "detail": "体面不是单向投喂，她也把它发给了观众看。",
+      "targets": [
+        "halfLie",
+        "sceneHint"
+      ],
+      "contradiction": "纪念日晚餐由咨询者订座、接受高价酒水并发布朋友圈，体面现场不是单方制造。"
+    }
+  ],
+  "evidenceChecks": [
+    {
+      "id": "credit-after-layoff-spend",
+      "revalues": [
+        "credit-layoff-gap",
+        "credit-eight-wan-bill"
+      ],
+      "title": "账单检视",
+      "selectionMode": "priority",
+      "prompt": "这张信用卡账单里，两处都要问。你先带哪一处上麦？",
+      "material": "社保断缴后，同一张卡上继续出现纪念日晚餐、礼物分期、两次酒店和一笔 1.2 万的短视频设备分期，合计约四万；男装数笔，合计约五千，其中一件大衣两千多。",
+      "pityLine": "一件大衣两千多，单看不算离谱。四万共同消费里她那一份没说，这账看偏了吧？",
+      "materialRows": [
+        "纪念日晚餐 · 断缴后",
+        "礼物分期 · 断缴后",
+        "酒店消费 ×2 · 断缴后",
+        "短视频平台分期 · 1.2 万",
+        "餐厅、酒店、礼物及设备 · 合计约 4 万",
+        "男装消费数笔 · 约 5 千 · 其中大衣 2 千多",
+        "本期最低还款 · 待还"
+      ],
+      "options": [
+        {
+          "label": "四万共同消费与五千男装",
+          "correct": true,
+          "contradiction": "约四万共同消费远高于约五千个人男装；咨询者先指责后者，省略了自己参与的主要花销。",
+          "feedback": "五千元里有一件两千多的大衣，不能单凭这笔就说他个人挥霍。两个人一起花掉的四万左右，数更大。",
+          "reactionLine": "他那几件衣服确实只有五千左右。我一看是失业以后买的，就先拿出来说了。跟我有关的那些，数更大。",
+          "revisesScene": 2,
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "最低还款金额本身很高",
+          "correct": false,
+          "feedback": "最低还款八千多，谁看都得发慌。可它只报这一期要还多少，没交代这八万是怎么滚出来的。",
+          "reactionLine": "金额我也吓到过。可你这么问，他还是那句“先帮我垫一下”。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "那笔 1.2 万的短视频平台分期",
+          "correct": true,
+          "contradiction": "八万元账单里有一万二直接买了咨询者正在使用的设备，她不能把整张账单都说成对方自己的花销。",
+          "feedback": "这一笔直接买给她用。先问它，会把她从‘完全不知情’里拉出来；八万其余部分仍要另算。",
+          "reactionLine": "那笔……设备在我家，也一直是我用。行，先问这个。",
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "他说自己怕被分手",
+          "correct": false,
+          "feedback": "这句话会让人心软，但它不是账单里的消费记录。先把卡上那几笔圈清楚。",
+          "reactionLine": "这句我听一次软一次。可软完，账单还在我手机里亮着。",
+          "routeAxis": "caller-credibility"
+        }
+      ]
+    },
+    {
+      "id": "credit-anniversary-footprint",
+      "revalues": [
+        "credit-eight-wan-bill",
+        "credit-anniversary-agency"
+      ],
+      "title": "纪念日痕迹检视",
+      "prompt": "纪念日晚餐这组痕迹里，哪一处最该圈出来？",
+      "material": "信用卡账单显示高额酒水；咨询者在连线中承认自己是老会员，并用自己的号订座；朋友圈照片由咨询者发布，闺蜜的起哄评论已删除。",
+      "pityLine": "发照片那晚，账单已经在后台计时了。",
+      "materialRows": [
+        "订座口述 · 咨询者承认是老会员",
+        "酒水小票 · 对方信用卡",
+        "朋友圈照片 · 咨询者发布",
+        "闺蜜评论 · 已删除"
+      ],
+      "options": [
+        {
+          "label": "会员号是她的，朋友圈也是她发的",
+          "correct": true,
+          "contradiction": "纪念日晚餐由咨询者订座、接受高价酒水并发布朋友圈，体面现场不是单方制造。",
+          "feedback": "会员和朋友圈说明那顿饭也有她的一份，但不能据此说八万都是她花的。",
+          "reactionLine": "会员号是我的，靠窗位也是我订的。照片是谁发的，我前面说过。可这顿饭被我讲成全是他安排，讲顺嘴了。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "酒水是他主动点的",
+          "correct": false,
+          "feedback": "餐厅和酒店都刷在他卡上。单凭消费地点，还分不出谁在经营这顿饭的样子。",
+          "reactionLine": "酒是他点的，我没拦。那晚我也想让它好看一点。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "闺蜜评论删了",
+          "correct": false,
+          "feedback": "删评发生在事后。那晚的订座记录和朋友圈还留着。",
+          "reactionLine": "她删掉我也懂。谁都不想显得自己当初眼光很响。",
+          "routeAxis": "outer-thread"
+        }
+      ]
+    },
+    {
+      "id": "credit-fixed-support",
+      "revalues": [
+        "credit-living-arrangement",
+        "credit-anniversary-agency"
+      ],
+      "title": "固定转账与存款预期",
+      "prompt": "他为什么认定她拿得出八万？",
+      "material": "咨询者在后台补充的十四个月固定转账口径，与近五个月流水一并核对。",
+      "pityLine": "先分开看：一共转进来多少，不等于现在还剩多少。",
+      "materialRows": [
+        "咨询者后台补充 · 固定半薪持续 14 个月：¥17,500 × 14 = ¥245,000",
+        "03-08 · 代发工资 ¥35,000；当日转出 ¥17,500 至尾号 6624",
+        "04-08 · 同样转出 ¥17,500",
+        "05-08 · 同样转出 ¥17,500",
+        "06-08 · 同样转出 ¥17,500",
+        "07-08 · 固定转出未出现"
+      ],
+      "options": [
+        {
+          "label": "累计二十四万五与“至少存了十五万”",
+          "correct": true,
+          "contradiction": "男方按十四个月累计转出的二十四万五估算她至少还存着十五万，咨询者却始终没有给他看过实际余额。",
+          "feedback": "这能解释八万是怎么算出来的，但不能证明十五万真的还在。累计转入和当前余额之间，还缺她的花销。",
+          "reactionLine": "他一直觉得我卡里至少还有十五万。我没让他看过余额。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "她卡里一定还有十五万",
+          "correct": false,
+          "feedback": "转进来过二十四万五，不代表现在还剩十五万。余额和花销都没有出现在这几行里。",
+          "reactionLine": "不是。我没有那么多。具体还剩多少……等会儿我说。",
+          "routeAxis": "outer-thread"
+        },
+        {
+          "label": "他已经把工资全部交给她",
+          "correct": false,
+          "feedback": "流水只显示三万五工资到账后转出一万七千五，另一半怎么使用不能替他补。",
+          "reactionLine": "没有。工资卡一直在他手里，他每个月转给我的是一半。",
+          "routeAxis": "document-edge"
+        }
+      ]
+    },
+    {
+      "id": "credit-leveraged-trust",
+      "revalues": [
+        "credit-layoff-gap",
+        "credit-five-wan-gap"
+      ],
+      "title": "借款与信托转账检视",
+      "prompt": "三月这三行里，哪一处最值得继续问？",
+      "material": "后台流水索引：case1-bank-flow r13/r14/r15。",
+      "pityLine": "把三行分开读。日期和金额能对上，流水没有写这是不是同一笔钱。",
+      "materialRows": [
+        "case1-bank-flow r13 · 03-11 · 入账 ¥200,000 · 澄川金融服务有限公司 · 借款发放",
+        "case1-bank-flow r14 · 03-12 · 支出 ¥100,000 · 宸直信托有限公司 · 产品认购",
+        "case1-bank-flow r15 · 03-14 · 支出 ¥100,000 · 宸直信托有限公司 · 产品认购"
+      ],
+      "options": [
+        {
+          "label": "二十万借款后紧接两笔十万认购",
+          "correct": true,
+          "contradiction": "对方在有工资时已经借入二十万，随后三天内向同一家信托机构分两次转出二十万，债务并非失业后才突然出现。",
+          "feedback": "三月十一号有二十万借款入账，十二号和十四号各有十万转给宸直信托。先后和金额都能看见，三笔钱是不是同一笔还要另外确认。",
+          "reactionLine": "宸直这个名字，我听他提过。他那阵还说，十来个点太慢，真想翻身就得找能翻倍的。我以为他只是嘴上说说。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "两笔十万就是借来的二十万",
+          "correct": false,
+          "feedback": "金额正好，日期也近，但流水只记录每次进出，没有证明转出的就是十一号那笔借款。",
+          "reactionLine": "我也想直接这么认。可他账户里本来还有钱，光看这三行，我不敢替他说。",
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "二十万比信用卡欠款更大",
+          "correct": false,
+          "feedback": "二十万确实更大，但金额大小没有回答借款和两笔认购是什么关系。",
+          "reactionLine": "二十万我看到的时候也吓了一跳。可钱大归钱大，我还是不知道这三笔怎么回事。",
+          "routeAxis": "outer-thread"
+        }
+      ]
+    },
+    {
+      "id": "credit-history-pages",
+      "revalues": [
+        "credit-five-wan-gap",
+        "credit-bank-flow"
+      ],
+      "title": "往期账单检视",
+      "prompt": "往前翻的这几页里，最该圈哪一处？",
+      "material": "后台流水索引: case1-bank-flow r04/r06/r09。",
+      "pityLine": "工资打款和人情打款，日子的性子不一样。",
+      "materialRows": [
+        "case1-bank-flow r04 · 05-08 · 入账 ¥10,000 · 个人转账·王** · 转账",
+        "case1-bank-flow r06 · 06-08 · 入账 ¥10,000 · 个人转账·王** · 转账",
+        "case1-bank-flow r09 · 07-08 · 空行 —— · (本月 8 号无入账) · ——"
+      ],
+      "options": [
+        {
+          "label": "五月、六月都在 8 日入账，七月中断",
+          "correct": true,
+          "contradiction": "五月、六月的 8 日都有王姓私人入账，七月贷款到账后，同日入账规律中断。",
+          "feedback": "两笔都在 8 号进来，七月断了。付款人是谁，流水没写。",
+          "reactionLine": "……每月 8 日那笔入账，我也看到了。我不敢猜是谁转的。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "交往之前的同款消费",
+          "correct": false,
+          "feedback": "这几笔的时候他还不认识她。以前也这么花，只说明这不是他第一次撑场面。",
+          "reactionLine": "看到这几笔的时候，我先想的居然是：原来那些安排，不是为我一个人练的。",
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "礼物分期一直都有",
+          "correct": false,
+          "feedback": "分期习惯说明他一直这么过日子，可日子怎么过不是这几页最扎的地方。",
+          "reactionLine": "他确实什么都爱分期。以前我觉得这叫会安排。",
+          "routeAxis": "outer-thread"
+        }
+      ]
+    }
+  ],
+  "investigationHooks": [
+    {
+      "id": "credit-friend-dm",
+      "speakerProfileId": "case1-friend",
+      "source": "dm",
+      "surface": "后台进来一条私信",
+      "title": "朋友圈补图",
+      "triggerContradiction": "8 万信用卡主要花在餐厅、礼物和酒店，不是房租医疗这类急事。",
+      "appearsNowBecause": "收麦后，咨询者的朋友补了一张当晚朋友圈截图。",
+      "prompt": "这张补图里，最该圈的是哪一处？",
+      "material": "闺蜜补来的朋友圈截图发在纪念日晚餐那晚，定位是她常去的那家店，配文写“终于有人把日子过得体面一点”。闺蜜补了句话：“那晚我跟着起哄了，‘这才像被认真对待’是我评的。昨天删了，怕她看见难堪。还有，她那阵子天天拍探店，灯和稳定器……是不是那笔分期买的？”",
+      "socialPost": {
+        "author": "咨询者",
+        "postedAt": "纪念日晚餐当晚",
+        "location": "她常去的那家店",
+        "caption": "终于有人把日子过得体面一点。",
+        "imageSrc": "./assets/generated/backgrounds/cafe_date.png?v=0.20.95",
+        "imageAlt": "窗边晚餐照片",
+        "commentAuthor": "闺蜜",
+        "comment": "这才像被认真对待",
+        "commentNote": "该评论已删除，由闺蜜补图保留。",
+        "followup": "她那阵子天天发探店视频，灯和稳定器还是那笔分期置的吧。"
+      },
+      "proves": "体面是两个人一起经营的，朋友当初也当过这份人设的观众。",
+      "stillCannotProve": "不能证明她该替对方还这八万，也不能证明他失业前的旧债从哪来。",
+      "routeAxis": "external-corroboration",
+      "options": [
+        {
+          "label": "删掉的起哄评论和探店设备",
+          "correct": true,
+          "contradiction": "闺蜜当初起哄“他真大方”，后来删评撇清，体面人设有过观众。",
+          "feedback": "她朋友当时也参与了探店号的起哄，第二天删了评论。但八万该不该还，不能算到她头上。",
+          "routeAxis": "external-corroboration"
+        },
+        {
+          "label": "朋友语气很替她生气",
+          "correct": false,
+          "feedback": "朋友生气很正常，账还是得回到谁刷、谁还。",
+          "routeAxis": "outer-thread"
+        },
+        {
+          "label": "照片看起来很贵",
+          "correct": false,
+          "feedback": "贵不贵只是第一眼的感觉，和账单同周出现才咬得上。",
+          "routeAxis": "document-edge"
+        }
+      ],
+      "replyChoices": [
+        {
+          "id": "blame-cheer",
+          "label": "你当时起哄也算观众",
+          "stanceNudge": "defensive"
+        },
+        {
+          "id": "protect-friend",
+          "label": "直播里先不提你",
+          "stanceNudge": "open"
+        }
+      ]
+    },
+    {
+      "id": "credit-ex-coworker-note",
+      "speakerProfileId": "case1-ex-coworker",
+      "source": "dm",
+      "surface": "前同事发来一句",
+      "title": "前同事的旧话",
+      "triggerContradiction": "交往之前的账单上也有同款体面消费。",
+      "appearsNowBecause": "往期账单翻出交往前的同款消费后，一位自称男方前同事的人留了话。",
+      "prompt": "这位前同事的话，哪一句能留下？",
+      "material": "前同事说：“他以前阔过，阔得早。请客、送礼、订酒店，真不是认识她以后才学会的。欠过他人情，我只能说到这儿。钱后来去哪儿、五月六月那两笔怎么回事，我不说，也别问我。”",
+      "proves": "同款体面消费早于这段关系，八万不能全写成她让他撑出来的。",
+      "stillCannotProve": "不能证明信用卡里至少三万五的用途，也不能说明每月 8 号的私人入账为什么在七月中断。",
+      "routeAxis": "external-corroboration",
+      "options": [
+        {
+          "label": "阔过，阔得早",
+          "correct": true,
+          "contradiction": "同款体面消费早于这段关系，旧洞不是认识咨询者以后才出现。",
+          "feedback": "他以前确实有钱。可为什么七月那笔入账没了，这句话还是解释不了。",
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "欠过他人情",
+          "correct": false,
+          "feedback": "这解释他为什么收着说，不解释钱。",
+          "routeAxis": "outer-thread"
+        },
+        {
+          "label": "七月 8 号为什么空了",
+          "correct": false,
+          "feedback": "他没有解释，这条仍然留白。",
+          "routeAxis": "money-flow"
+        }
+      ]
+    }
+  ],
+  "advisorNotes": [],
+  "hostDisclosure": {
+    "anchor": "afterScene:2",
+    "text": "“先帮我垫几天”，这话我听过。以前也有人这么跟我借钱，那笔后来没要回来。你刚才一重复，我手心还是会冒汗。"
+  },
+  "hostWoundHook": "失业慌了也正常，别逼太紧",
+  "deepFollowup": {
+    "question": "他按十四个月算，觉得你手里至少有十五万。你一直没给他看余额。那张卡现在还有多少？",
+    "resistanceBeat": {
+      "lines": [
+        {
+          "role": "caller",
+          "text": "一万……一万一千六百多。"
+        },
+        {
+          "role": "host",
+          "text": "十四个月的钱呢？"
+        },
+        {
+          "role": "caller",
+          "text": "花了。"
+        },
+        {
+          "role": "host",
+          "text": "花在哪儿？"
+        },
+        {
+          "role": "caller",
+          "text": "衣服、做脸，平时出门……你别让我一笔一笔念。"
+        }
+      ]
+    },
+    "answer": "我自己的工资也没存下来。余额没给他看。",
+    "note": "让咨询者报出实际余额，承认自己已经把男方的固定转账当成可持续收入并消费掉，也让男方索要八万的计算依据落地；玩家若在第二天追问房租，还会看到她的住房成本并不从这一万七千五中支出。累计给付仍不能把男方债务变成咨询者债务。"
+  },
+  "stageJudgement": "八万先别转。他签下的债，还是他还。你也别只盯那五千块男装：四万多共同消费，还有一万二的设备，都跟你有关。现在的余额和这一年多的钱花在哪儿，你自己告诉他。没说清的三万五，让他把账单讲清楚。你想让我替你把这些省掉，这个忙我不帮。",
+  "caseClosing": {
+    "title": "账单里的八万",
+      "verdict": "八万今天先别转。债在他名下，三万五去哪也没说清。可她开场只盯着男方五千元的衣服，把约四万元共同消费、一万二设备、十四个月固定转账和另付房租都压轻了。主播拒绝替她省掉这段解释。她要说清余额和花销；他要说清失业、贷款、信托和那三万五。",
+    "beats": [
+      {
+        "label": "来电",
+        "text": "他要她拿八万，还把过去给过的钱算进理由里；她来电想证明自己一分不出也不欠情分。"
+      },
+      {
+        "label": "麦上",
+        "text": "他连续十四个月每月转她一万七千五；他以为她至少存了十五万，她实际只剩一万一千六百多。"
+      },
+      {
+        "label": "离台核实",
+        "text": "第二夜的结算通知证明所谓奖金是待发离职补偿；更早的二十万借款已经进了两笔信托，信用卡里仍有至少三万五没有说明。"
+      }
+    ],
+    "confirmed": [
+      "他离职和债务压力都是真实存在的",
+      "失业早于第一次向她借钱",
+      "他离职前月薪约三万五，连续十四个月每月转她一万七千五，累计二十四万五",
+      "他按累计转账认定她至少存了十五万，因此开口向她要八万",
+      "她自己的月收入约八千，十四个月的固定转账已基本花完，实际只剩一万一千六百多；她没有告诉男方，来电时想获得的是一分钱也不用出的道德支持",
+      "所谓晚发奖金实际是预计七月底支付的离职补偿金",
+      "她一开始只盯着男方约五千元的男装，却把约四万元与自己有关的共同消费一句带过",
+      "信用卡里仍有至少三万五没有说明",
+      "对方承认三月借入二十万购买宸直信托产品"
+    ],
+    "unresolved": [
+      "尾号 3301 的账户归属仍无法确认",
+      "展示的流水只是关键交易摘录，没有期初余额和完整收支；五月、六月每月 8 号有王姓私人入账，七月中断，来源、中断原因及停薪后其余支出的资金来源仍无法确认",
+      "宸直信托具体产品、兑付状态和可追回金额仍无法确认",
+      "离职补偿金是否按通知在七月底实际到账仍无法确认",
+      "对方后续是否具备还款能力仍无法确认"
+    ],
+    "nextStep": "先关掉转账页。她把实际余额和这十四个月的花销整理出来，不再拿直播间的结论替自己回话；他把信用卡明细、借款合同、信托合同和补偿金到账记录拿齐。谁长期承担过哪些生活成本可以另列，不能拿来抵掉他名下的债。"
+  },
+  "careChoices": [
+    {
+      "id": "pragmatic",
+      "label": "先关掉转账页",
+      "hostLine": "回去先把转账页关了。饭吃了吗？没吃煮个面。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……嗯。我现在就关。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "面就算了，我现在吃不下。" }
+      ]
+    },
+    {
+      "id": "affirm",
+      "label": "把受益和债务分开",
+      "hostLine": "今晚先别把八万全算到自己头上。你收过东西，这一块可以谈；没答应替他还债，是另一回事。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……这句我存下了。语音的那种存。" }
+      ]
+    },
+    {
+      "id": "accompany",
+      "label": "给她一晚再决定",
+      "hostLine": "不急着决定。热线明晚还开，我们都在。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "明晚……明晚我大概不打了。但我会听。" }
+      ]
+    }
+  ],
+  "storyInterludeRecap": "收麦后，她承认男方连续十四个月每月转来一万七千五；二十四万五已经基本花完，账户只剩一万一千六百多。她原本想从主播这里拿到一句‘一分钱都不用出’，最后只得到‘八万先不转，自己的花销也得说清’。近五个月流水还写着二十万借款和两笔信托认购。",
+  "followupTwist": "双方都承认，男方连续十四个月每月转给她一万七千五，累计二十四万五。他因此认定她至少存了十五万，才开口要八万；她实际只剩一万一千六百多，一直没告诉他。近五个月关键交易摘录另外显示：五月、六月没有工资，给她的一万七千五却照常转出，七月才停下；摘录不含期初余额，不能凭这些行算出中间的全部资金来源。更早的三月十一日，澄川金融服务发放借款二十万，随后三天内账户分两次向宸直信托各转十万。七月五日新阳信贷五万入账，十九日又有 49,800 转向尾号 3301；相邻金额不能证明两行是同一笔钱。",
+  "dailyShareTitle": "8 万信用卡，到底该不该帮他还？",
+  "dailyShareBody": "他连续十四个月每月转给女友一万七千五，累计二十四万五。他以为她至少存了十五万，她实际只剩一万一千六百多。信用卡里约四万用于两人共同撑排场，能看清的男方个人男装约五千；她开场只追着问他的钱怎么花，还想让主播替她证明自己一分钱也不用出。与此同时，他借二十万买了两笔信托，把待发的离职补偿说成奖金。她要交代自己的花销，他签下的贷款也仍是他的。",
+  "dailyShareQuestion": "一个瞒着余额，一个瞒着失业和借款；这八万还该不该谈成两个人一起周转？",
+  "truth": "两人交往约一年半。男方离职前每月实发约三万五，从交往第五个月起连续十四个月转给咨询者一万七千五，累计二十四万五；银行流水还显示他在三月和五月分别向住房租赁公司支付一万元，咨询者被玩家追问后承认这是自己住处的房租，两个月一付，不含在一万七千五内。男方据此认定咨询者至少存了十五万，因此向她索要八万；咨询者月收入约八千，固定转账和自己的工资都已基本花完，实际只剩一万一千六百多。她没有把余额告诉男方，来电时想要的是主播替她确认过去的钱都算赠与、自己现在一分不出也不亏欠。男方第一夜收麦后已经把结算通知发给她，她当时没敢打开；第二夜男方同意遮名展示，她才点开。通知显示，所谓晚发奖金实际是预计七月底支付的离职补偿金；他既怕女友为失业着急，也怕固定给付停止后被问。信用卡八万出头可先分三块：餐厅、酒店、礼物和设备约四万，主要用于两人共同维持排场；能看清的男方个人男装约五千，其中一件大衣两千多，这部分不足以证明他个人挥霍；至少三万五未说明。咨询者开场只盯着五千元男装，把四万元左右的共同消费一句带过，也没有说明一万二的设备就是买给自己的。男方长期给出半薪、另付女方房租并承担共同排场，经济压力确实很重；但三月借款、宸直信托认购和继续刷卡仍是他自己的决定，不能因为咨询者消费依赖严重就把他名下的债改写成她的。节目展示的只是近五个月关键交易摘录，没有期初余额和完整收支，不能凭这些行算出他停薪后其余支出靠什么维持。五月、六月每月 8 号的王姓私人入账来源、七月 19 日转向尾号 3301 的 49,800 去向、补偿金是否实际到账及信托能否兑付，均无法确认。",
+  "respondentNote": {
+    "source": "respondent-note",
+    "appearsNowBecause": "第一夜收麦后，对方把通知发给咨询者；第二夜又给后台留了文字，并同意她把通知遮名展示，但仍不肯上麦。",
+    "teaseDuringSegment2": true,
+    "text": "十四个月就是二十四万五。我以为她最少能剩十五万，才开口要八万。奖金那句……不是奖金，是离职补偿。我不敢说自己被裁。三月那二十万是从澄川借的，后来买了宸直的产品。我当时真觉得能翻倍。借款是我签的，宸直也是我自己买的。三万五那部分，我不在这里说。"
+  },
+  "statementPatience": {
+    "night-a": 4,
+    "night-b": 4
+  },
+  "nightStructure": {
+    "enabled": true,
+      "segment1SceneIndexes": [
+        0,
+        1,
+        2
+      ],
+      "segment2SceneIndexes": [
+        3,
+        6,
+        7
+      ],
+    "hangup": {
+        "afterSceneIndex": 2,
+      "speaker": "咨询者",
+      "line": "他刚又发来一个文件，说我既然不信，就拿给你们看。姓名和卡号都遮了，只截了几个月的关键交易。我现在转后台。那三万五……我确实不知道，他不肯告诉我。我今晚再问一遍，明晚回来。",
+      "hostLine": "好，就看他发来的这几页。三万五不知道就是不知道，明晚把他怎么说的告诉我。",
+      "stageDirection": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下面紧跟着一句：“拿了他一年多的钱，这八万就该转。”",
+      "audioCueId": "sfx.phone.soft-hangup"
+    },
+    "interlude": {
+      "title": "收麦后·控台短查",
+      "kicker": "出门前只够做一件事。",
+      "budget": 1,
+      "minActions": 1,
+      "maxActions": 1,
+      "continueLabel": "进入白天调查",
+      "actions": [
+        {
+          "id": "recheck-history-pages",
+          "label": "先翻往期账页",
+          "summary": "自己按日期看看五月、六月和七月，不先让别人替你下结论。",
+          "cost": 1,
+          "kind": "evidencePass",
+          "focusCheckIds": [
+            "credit-history-pages"
+          ],
+          "grantsInventory": [
+            "history-pages-reviewed"
+          ]
+        },
+        {
+          "id": "friend-dm-early",
+          "label": "回闺蜜私信",
+          "summary": "闺蜜补来她删掉的那条评论截图，可以先回一句。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "credit-friend-dm",
+          "grantsInventory": [
+            "friend-dm-seen"
+          ]
+        }
+      ]
+    },
+    "returnStance": {
+      "default": "neutral",
+      "lines": {
+        "defensive": "我差点不打回来。弹幕说我贪体面……我认过探店，可八万我不替他还。",
+        "open": "我回来了。那三万五我又问了一遍。他怎么答的，我原话告诉你。",
+        "neutral": "我回来了。隔了一天，那三万五他还是没说清。"
+      }
+    }
+  },
+  "overnightStructure": {
+    "hangupAnchor": "别的我没细算",
+    "hangupLine": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下面紧跟着一句：“拿了他一年多的钱，这八万就该转。”",
+    "hangupAudioCueId": "sfx.phone.soft-hangup",
+    "hostHoldLine": "好，就看他发来的这几页。三万五不知道就是不知道，明晚把他怎么说的告诉我。",
+    "snapshotEcho": {
+      "caller-benefited": "还有件事。昨晚你们问八万里跟我有关的那些消费，我只说设备放在我家。今天我把分期页也找出来了，等会儿你问吧。那三万五，他还是没说。",
+      "respondent-shifted-debt": "还有。昨晚弹幕里那句“别转”，我听着挺解气。可账单里跟我有关的那些消费，我还没说完。等会儿你问吧。那三万五，他还是没说。",
+      "both-performed": "还有那顿饭。昨晚有人说，那些消费不只是他一个人的。我没接。今天我把订座短信翻出来，发到后台了。你按短信问吧。不过那三万五，他还是没讲。"
+    },
+    "liveCounterBeats": [
+      {
+        "id": "credit-live-listener-screenshot",
+        "kind": "emotionalChoice",
+        "cost": 0,
+        "afterSceneIndex": 6,
+        "from": "来电人转读手机",
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等等——他刚发我消息。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "一张截图。上面还有一句：‘你闺蜜把链接发我了。’他在听。"
+          }
+        ],
+        "choices": [
+          {
+            "id": "ask-to-continue",
+            "directionLabel": "把继续与否交还给她",
+            "label": "他已经在听了。你还愿意继续吗？你说停，我们现在就停。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "继续。我本来就是来问这笔账的，不能他一听见，我就不敢说了。"
+              }
+            ],
+            "recapAftertaste": "他发来直播截图以后，我先问她还愿不愿意继续。她说继续，我们才把账问完。",
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure"
+          },
+          {
+            "id": "mute-before-continuing",
+            "directionLabel": "先静音，让她自己决定",
+            "label": "我先关一分钟麦。你不用回他，想好了再告诉我还要不要继续。",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "直播静音。一分钟后，她重新开口。"
+              },
+              {
+                "role": "caller",
+                "text": "继续吧。我不回他，先把这笔账说完。"
+              }
+            ],
+            "recapAftertaste": "他闯进监听以后，我先关了一分钟麦。重新开口，是她自己做的决定。",
+            "stanceNudge": "neutral",
+            "routeAxis": "process-control",
+            "routeTone": "neutral"
+          },
+          {
+            "id": "ignore-screenshot",
+            "directionLabel": "不让截图替他插话",
+            "label": "截图先放着。你不用替他回话，只告诉我，你还要不要继续。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "要。后面他再发什么，我只念我愿意念的。"
+              }
+            ],
+            "recapAftertaste": "我没有拿他的截图替他插话。她愿意继续，也只念了自己愿意公开的消息。",
+            "stanceNudge": "defensive",
+            "routeAxis": "process-control",
+            "routeTone": "firm"
+          }
+        ]
+      }
+    ],
+    "dayIntro": "沈把遮掉姓名和完整账号的账页发到后台，同意节目只问日期、金额和付款项目。周会计答应只按日期看账页。下午最多处理两处。",
+    "dayBudget": 2,
+    "minDayScenes": 2,
+    "dayScenes": [
+      {
+        "id": "day-accounting",
+        "label": "周会计的档案室",
+        "backdropClass": "day-document",
+        "kind": "studio",
+        "body": {
+          "access": "周会计是节目的长期顾问，只看沈同意交给节目的遮名账页，不猜姓名和账户。",
+          "text": "旧厂房改的档案室，白炽灯照着一排铁柜。你把手机摘要递过去，周会计没接：「摘要不要。原件没拿到，就别拿半个姓猜人。先把四个日子排清楚，看看规律在哪儿断了。」",
+          "routeAxis": "money-flow",
+          "earnedItemId": "周会计的时间线",
+          "timelineSort": {
+            "cards": [
+              "他开口借八万",
+              "分期开通",
+              "社保断缴",
+              "每月 8 日的固定入账中断"
+            ],
+            "correctOrder": [
+              "社保断缴",
+              "分期开通",
+              "每月 8 日的固定入账中断",
+              "他开口借八万"
+            ],
+            "payoffLine": "周会计看完顺序，只点了点最后两张卡：「七月 8 号那笔固定入账没来，接着才是借八万。人是谁，手里这些东西看不出来。」",
+            "missLine": "周会计把纸转回来：「再排一次。先别猜转账的人，四张卡只看日期。」"
+          }
+        }
+      },
+      {
+        "id": "day-support-payments",
+        "label": "把两笔房租圈出来",
+        "backdropClass": "day-document",
+        "kind": "studio",
+        "body": {
+          "access": "沈同意节目核对她上传的遮名流水；这里只看已经出现的日期、金额和收款方，不先猜房子是谁住。",
+          "text": "回到工作室，你把三月九日和五月九日两行并排放大。两笔都是一万元，收款方都是安寓住房租赁，备注分别写着三至四月、五至六月。每月一万七千五的固定转账在另外几行。",
+          "routeAxis": "money-flow",
+          "choice": {
+            "prompt": "明晚先问她哪件事？",
+            "options": [
+              {
+                "id": "ask-rent-home",
+                "label": "这两笔房租付的是谁住的房子",
+                "grantsEarnedItemId": "两个月一次的房租",
+                "routeAxis": "caller-credibility",
+                "routeTone": "beneficiary-edge",
+                "resultText": "你在两笔住房租赁支出旁各画了一道线。"
+              },
+              {
+                "id": "compare-rent-transfer",
+                "label": "房租是否另算在每月一万七千五之外",
+                "grantsEarnedItemId": "房租是不是另外付的",
+                "routeAxis": "money-flow",
+                "routeTone": "amount-edge",
+                "resultText": "你把一万七千五的转账和次日的一万元房租并排标了出来。"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-bank-flow",
+        "label": "回后台审流水",
+        "backdropClass": "day-document",
+        "kind": "document",
+        "body": {
+          "access": "流水原页由沈本人上传，姓名和完整账号已经遮掉；节目只处理她明确同意公开的几行。",
+          "documentId": "case1-bank-flow",
+          "routeAxis": "money-flow",
+          "earnedItemId": "流水圈注"
+        }
+      }
+    ],
+    "callbackOpeners": {
+      "周会计的时间线": {
+        "line": "周会计那张时间线，我看了好几遍。五月 8 号、六月 8 号都有一万，翻到七月 8 号，空的。",
+        "firstConflict": {
+          "lines": [
+            {
+              "role": "host",
+              "text": "五月、六月都有一万进来，七月 8 号却空了。给你的那两笔也是这个月一起停的吗？"
+            },
+            {
+              "role": "caller",
+              "text": "对。一万七千五没来。我那天问了他好几次，他一直拿奖金晚发搪塞。"
+            },
+            {
+              "role": "host",
+              "text": "那你昨晚为什么只说他奖金晚发？"
+            }
+          ],
+          "callerLine": "……说成断了，话就重了。",
+          "pauseAfterCallerLine": true,
+          "callerFollowupLine": "我只敢跟自己说，他是奖金晚发。"
+        }
+      },
+      "两个月一次的房租": {
+        "line": "我又看了一遍流水。三月和五月那两笔一万，我知道你会问。",
+        "firstConflict": {
+          "lines": [
+            {
+              "role": "host",
+              "text": "那是你住的房子，还是他住的？"
+            },
+            {
+              "role": "caller",
+              "text": "是我住的。他两个月替我交一万，房租不在一万七千五里面。他自己住的地方也要另外花钱。"
+            },
+            {
+              "role": "host",
+              "text": "这件事你昨晚为什么没说？"
+            },
+            {
+              "role": "caller",
+              "text": "我昨天只想着八万不是我欠的。我知道一说房租，弹幕肯定要骂我。"
+            }
+          ]
+        }
+      },
+      "房租是不是另外付的": {
+        "line": "我又看了一遍流水。一万七千五的转账后面，还跟着一笔房租。",
+        "firstConflict": {
+          "lines": [
+            {
+              "role": "host",
+              "text": "房租算在每月一万七千五里面吗？"
+            },
+            {
+              "role": "caller",
+              "text": "不算。他每个月转一万七千五，两个月再替我交一万房租。可他当时说，房租算他帮我，不是我逼他给的。"
+            },
+            {
+              "role": "host",
+              "text": "你自己的八千多工资呢？"
+            },
+            {
+              "role": "caller",
+              "text": "也基本花完了。我平时没算过这些，真以为他手里还有钱。"
+            }
+          ]
+        }
+      },
+      "流水圈注": {
+        "line": "三月十一号那行我看见了。澄川金融打进来二十万，备注写的是借款。",
+        "firstConflict": {
+          "lines": [
+            {
+              "role": "host",
+              "text": "这二十万，他以前跟你提过吗？"
+            },
+            {
+              "role": "caller",
+              "text": "没有。他只说自己在看一个投资机会，没说钱是借来的。"
+            },
+            {
+              "role": "host",
+              "text": "后面两笔宸直信托呢？"
+            },
+            {
+              "role": "caller",
+              "text": "我也是昨天才看到。十二号十万，十四号又十万。"
+            },
+            {
+              "role": "host",
+              "text": "宸直这个名字，他以前说过吗？"
+            },
+            {
+              "role": "caller",
+              "text": "说过。他嫌十来个点太慢，说真想翻身就得找能翻倍的。我以为他只是嘴上说说。"
+            }
+          ]
+        }
+      },
+      "往期账页": {
+        "line": "前几个月还有两笔。五月 8 号、六月 8 号各进过一万，到了七月 8 号，那天是空的。",
+        "firstConflict": {
+          "hostLine": "前两笔是谁转的，你知道吗？",
+          "callerLine": "不知道。他不肯说，流水上也只看得到一个姓。"
+        }
+      },
+      "闺蜜删掉的那条评论": {
+        "line": "闺蜜把删掉的评论发回来了。我看着那句‘这才像被认真对待’，脸有点烫。那场面，我也撑过。",
+        "firstConflict": {
+          "hostLine": "她起哄，你也发了照片。可这些跟你今晚要不要转八万，不是一回事。",
+          "callerLine": "他在拿。我昨晚也差点拿它替自己装无辜。八万不抵。"
+        }
+      }
+    },
+    "callbackFallback": {
+      "line": "我想了一晚上，还是得把话说完——你接着问吧。"
+    },
+    "postures": {
+      "againstCaller": "我差点不打回来。刚才弹幕……我都听到了。你要是也觉得是我贪体面，这通我讲不下去。",
+      "withCaller": "我回来了。八万的事，你继续问。我把白天重新看过的流水也带来了。"
+    },
+    "callerQuestion": {
+      "prompt": "你都问到这里了，总不能还让我把这八万转过去吧？",
+      "options": [
+        {
+          "id": "not-your-debt",
+          "label": "八万别转。但你收过多少钱、花到哪，要自己跟他说。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "……我本来还想把你说的‘别转’直接发给他。可行，前面那些钱我自己跟他讲。"
+            }
+          ],
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "id": "ask-fifty-thousand",
+          "label": "这八万是他的债；以前给你的钱怎么算，你们另外谈。",
+          "callerLine": "好。八万我不转，之前的钱我也不拿这通直播直接堵他。我把花销列出来再谈。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "id": "dont-answer-for-her",
+          "label": "我只能告诉你今晚别转，不能替你证明自己一分钱都不欠。",
+          "callerLine": "……明白。贷款让他解释，我拿过的钱和剩下的钱，我自己说。",
+          "routeAxis": "process-control",
+          "recapAftertaste": "八万没有转，直播也没有替她把过去所有给付说成一笔勾销。"
+        }
+      ]
+    },
+    "interludeEarnedItemMap": {
+      "history-pages-reviewed": "往期账页",
+      "friend-dm-seen": "闺蜜删掉的那条评论"
+    }
+  },
+  "documents": [
+    {
+      "id": "case1-bank-flow",
+      "title": "他的银行流水（近五个月关键交易摘录）",
+      "intro": "第一夜挂断前，对方为了催她转账，发来这份遮去姓名和卡号的关键交易摘录，还说可以拿给节目核对。她随后转到后台。摘录没有余额列，也不是完整收支表；这次同意核的是这几页，不是其他账户。先看三月工资到账后的固定转出，再看借款、信托和尾号 3301。两笔住房租赁支出可以看见，但房子是谁住的不能靠流水判断。",
+      "rows": [
+        {
+          "rowId": "r01",
+          "date": "03-08",
+          "kind": "入账",
+          "amount": "¥35,000",
+          "party": "XX科技(深圳)有限公司",
+          "memo": "代发工资"
+        },
+        {
+          "rowId": "r01a",
+          "date": "03-08",
+          "kind": "支出",
+          "amount": "¥17,500",
+          "party": "转出·尾号 6624",
+          "memo": "转账"
+        },
+        {
+          "rowId": "r01b",
+          "date": "03-09",
+          "kind": "支出",
+          "amount": "¥10,000",
+          "party": "安寓住房租赁有限公司",
+          "memo": "房租（3—4月）"
+        },
+        {
+          "rowId": "r13",
+          "date": "03-11",
+          "kind": "入账",
+          "amount": "¥200,000",
+          "party": "澄川金融服务有限公司",
+          "memo": "借款发放"
+        },
+        {
+          "rowId": "r14",
+          "date": "03-12",
+          "kind": "支出",
+          "amount": "¥100,000",
+          "party": "宸直信托有限公司",
+          "memo": "产品认购"
+        },
+        {
+          "rowId": "r15",
+          "date": "03-14",
+          "kind": "支出",
+          "amount": "¥100,000",
+          "party": "宸直信托有限公司",
+          "memo": "产品认购"
+        },
+        {
+          "rowId": "r02",
+          "date": "04-08",
+          "kind": "入账",
+          "amount": "¥35,000",
+          "party": "XX科技(深圳)有限公司",
+          "memo": "代发工资"
+        },
+        {
+          "rowId": "r02a",
+          "date": "04-08",
+          "kind": "支出",
+          "amount": "¥17,500",
+          "party": "转出·尾号 6624",
+          "memo": "转账"
+        },
+        {
+          "rowId": "r03",
+          "date": "04-19",
+          "kind": "支出",
+          "amount": "¥4,280",
+          "party": "悦府餐饮",
+          "memo": "消费"
+        },
+        {
+          "rowId": "r04",
+          "date": "05-08",
+          "kind": "入账",
+          "amount": "¥10,000",
+          "party": "个人转账·王**",
+          "memo": "转账"
+        },
+        {
+          "rowId": "r04a",
+          "date": "05-08",
+          "kind": "支出",
+          "amount": "¥17,500",
+          "party": "转出·尾号 6624",
+          "memo": "转账"
+        },
+        {
+          "rowId": "r04b",
+          "date": "05-09",
+          "kind": "支出",
+          "amount": "¥10,000",
+          "party": "安寓住房租赁有限公司",
+          "memo": "房租（5—6月）"
+        },
+        {
+          "rowId": "r05",
+          "date": "05-15",
+          "kind": "支出",
+          "amount": "¥6,980",
+          "party": "星澜酒店",
+          "memo": "消费"
+        },
+        {
+          "rowId": "r06",
+          "date": "06-08",
+          "kind": "入账",
+          "amount": "¥10,000",
+          "party": "个人转账·王**",
+          "memo": "转账"
+        },
+        {
+          "rowId": "r06a",
+          "date": "06-08",
+          "kind": "支出",
+          "amount": "¥17,500",
+          "party": "转出·尾号 6624",
+          "memo": "转账"
+        },
+        {
+          "rowId": "r07",
+          "date": "06-21",
+          "kind": "支出",
+          "amount": "¥2,000",
+          "party": "短视频平台·分期首扣（总额一万二）",
+          "memo": "分期"
+        },
+        {
+          "rowId": "r08",
+          "date": "07-05",
+          "kind": "入账",
+          "amount": "¥50,000",
+          "party": "新阳信贷有限公司",
+          "memo": "贷款发放"
+        },
+        {
+          "rowId": "r09",
+          "date": "07-08",
+          "kind": "空行",
+          "amount": "——",
+          "party": "(本月 8 号无入账)",
+          "memo": "本月未见对尾号 6624 的固定转出；07-09 也未见双月房租"
+        },
+        {
+          "rowId": "r10",
+          "date": "07-12",
+          "kind": "支出",
+          "amount": "¥3,600",
+          "party": "悦府餐饮",
+          "memo": "消费"
+        },
+        {
+          "rowId": "r11",
+          "date": "07-19",
+          "kind": "支出",
+          "amount": "¥49,800",
+          "party": "转出·尾号 3301",
+          "memo": "转账"
+        },
+        {
+          "rowId": "r12",
+          "date": "07-26",
+          "kind": "提醒",
+          "amount": "¥8,214",
+          "party": "本期最低还款",
+          "memo": "账单"
+        }
+      ],
+      "rowQuestions": {
+        "r01a": [
+          {
+            "question": "这笔一万七千五，是转给你的吗？",
+            "answer": "是。尾号 6624 是我的。他说每个月工资分我一半，我就一直按这个数等。",
+            "contradiction": "咨询者没有拿工资卡，却长期把男方半薪视为自己每月固定会收到的钱",
+            "routeAxis": "money-flow",
+            "logicContract": {
+              "sourceRows": [
+                "r01",
+                "r01a"
+              ],
+              "sourceProves": "三月八日工资入账三万五，同日有一万七千五转向尾号 6624",
+              "sourceDoesNotProve": "同日和金额一半不能单独证明尾号 6624 属于咨询者，也不能证明此后每月都有同样约定",
+              "answerAnchor": "尾号 6624 是我的",
+              "answerAdds": "咨询者确认收款账户属于自己，并确认男方把这笔钱说成每月给她的一半工资",
+              "nextLegalQuestion": "可以继续比较后续月份与另付房租，不能据此替男方的借款和信托认购改写责任"
+            }
+          }
+        ],
+        "r13": [
+          {
+            "question": "澄川金融服务这二十万，他跟你说过吗？",
+            "answer": "没有。他只说自己在看投资机会，从没说钱是借来的。",
+            "contradiction": "对方在仍有工资入账时已经新增二十万元借款，债务并非失业后才突然出现",
+            "routeAxis": "money-flow",
+            "logicContract": {
+              "sourceRows": [
+                "r13"
+              ],
+              "sourceProves": "三月十一日有二十万元借款从澄川金融服务进入账户",
+              "sourceDoesNotProve": "不能证明咨询者此前知情，也不能证明借款的后续用途",
+              "answerAnchor": "从没说钱是借来的",
+              "answerAdds": "咨询者只听说对方在看投资机会，没有听说这笔钱来自借款",
+              "nextLegalQuestion": "可以继续问随后出现的信托转账，以及对方是否提过该机构"
+            }
+          }
+        ],
+        "r14": [
+          {
+            "question": "宸直信托这个名字，你以前听过吗？",
+            "answer": "听过一次。他说十来个点不算机会，真想翻身得找能翻倍的。我以为他只是吹牛。",
+            "contradiction": "对方曾主动表达对远超一般收益的期待，但隐瞒了实际认购",
+            "routeAxis": "caller-credibility",
+            "logicContract": {
+              "sourceRows": [
+                "r14"
+              ],
+              "sourceProves": "三月十二日账户向宸直信托转出十万元，备注为产品认购",
+              "sourceDoesNotProve": "不能证明咨询者听过该机构，也不能仅凭流水确定对方期待的收益",
+              "answerAnchor": "真想翻身得找能翻倍的",
+              "answerAdds": "咨询者确认对方曾提到宸直，并表达过追求翻倍收益的想法",
+              "nextLegalQuestion": "可以继续确认第二笔认购是否同样被隐瞒"
+            }
+          }
+        ],
+        "r15": [
+          {
+            "question": "隔两天又转了十万，这第二笔他提过吗？",
+            "answer": "没有。两笔我都是现在看流水才知道。",
+            "contradiction": "同一机构在三天内收到两笔十万元认购，咨询者此前并不知情",
+            "routeAxis": "document-edge",
+            "logicContract": {
+              "sourceRows": [
+                "r15"
+              ],
+              "sourceProves": "三月十四日账户再次向宸直信托转出十万元，备注为产品认购",
+              "sourceDoesNotProve": "不能证明第二笔与第一笔使用同一来源的资金，也不能证明咨询者知情",
+              "answerAnchor": "两笔我都是现在看流水才知道",
+              "answerAdds": "咨询者确认两笔认购此前都未向她说明",
+              "nextLegalQuestion": "可以把三行并列，询问她还能补充哪些亲耳听过的内容"
+            }
+          }
+        ],
+        "r08": [
+          {
+            "question": "七月这笔贷款进来时，他还在领工资吗？",
+            "answer": "早就没领了。社保是四月底断的，最后一笔工资是四月八号。中间靠什么续上，我现在也说不清。",
+            "contradiction": "离职在前、信贷在后，五万不是应急，是接续",
+            "routeAxis": "money-flow"
+          },
+          {
+            "question": "这五万，他跟你提过吗？",
+            "answer": "一个字没提。他嘴里只有“奖金晚发”。",
+            "contradiction": "五万贷款与奖金说法并存",
+            "routeAxis": "money-flow"
+          }
+        ],
+        "r11": [
+          {
+            "question": "尾号 3301，你有印象吗？",
+            "answer": "……不是我的卡。我的卡他存过，尾号我记得。",
+            "contradiction": "七月五日贷款到账；七月十九日账户另有 49,800 转出，收款账户身份不明，两行是否为同一笔资金仍无法证明",
+            "routeAxis": "money-flow"
+          }
+        ],
+        "r04": [
+          {
+            "question": "他身边姓王的人，你能想到谁？",
+            "answer": "他妈姓王。他表哥也姓王。……他前公司的领导，好像也姓王。",
+            "contradiction": "",
+            "routeAxis": "caller-credibility"
+          }
+        ],
+        "r06": [
+          {
+            "question": "他身边姓王的人，你能想到谁？",
+            "answer": "他妈姓王。他表哥也姓王。……他前公司的领导，好像也姓王。",
+            "contradiction": "",
+            "routeAxis": "caller-credibility"
+          }
+        ],
+        "r09": [
+          {
+            "question": "七月八号，这一行怎么是空的？",
+            "answer": "我也盯着这行看了很久。到点了，没人来。",
+            "contradiction": "按月的私人转账在贷款到账当月停止",
+            "routeAxis": "document-edge"
+          }
+        ],
+        "r12": [
+          {
+            "question": "最低还款八千二，他让你垫的是八万？",
+            "answer": "八万是总欠款。他原话：“一次清了才算帮。”",
+            "contradiction": "最低仅八千余，索要的却是全额八万",
+            "routeAxis": "money-flow"
+          }
+        ]
+      },
+      "crossQuestions": [
+        {
+          "rows": [
+            "r13",
+            "r14",
+            "r15"
+          ],
+          "question": "这三行挨得很近，可流水没写后面转出的就是那二十万。除了日期和金额，你还知道什么？",
+          "answer": "我不知道是不是同一笔。他提过宸直，还说想找个能翻倍的。别的我就不知道了。",
+          "contradiction": "借款与两笔认购在金额和日期上紧密相接，但资金同一性仍需由合同或当事人确认",
+          "logicContract": {
+            "sourceRows": [
+              "r13",
+              "r14",
+              "r15"
+            ],
+            "sourceProves": "二十万元借款入账后，三天内出现两笔合计二十万元的宸直信托认购",
+            "sourceDoesNotProve": "三行流水没有追踪编号，不能确认认购款就是前一笔借款",
+            "answerAnchor": "我不知道是不是同一笔",
+            "answerAdds": "咨询者只补充对方提过宸直及翻倍收益，明确不替资金同一性下结论",
+            "nextLegalQuestion": "需要借款合同、产品合同或对方承认，才能确认借款用途"
+          }
+        },
+        {
+          "rows": [
+            "r04",
+            "r04a",
+            "r04b"
+          ],
+          "question": "五月八号只进来一万，当天却转出去一万七千五，第二天又付了一万房租。这张摘录没写余额。多出来的钱从哪儿来的，你知道吗？",
+          "answer": "不知道。他没给我看过余额，那两笔私人转账他也没解释。我只知道那两个月，该给我的钱没停。",
+          "contradiction": "停薪后固定转账和房租仍在继续，但关键交易摘录无法说明完整资金来源",
+          "logicContract": {
+            "sourceRows": [
+              "r04",
+              "r04a",
+              "r04b"
+            ],
+            "sourceProves": "五月八日有一万元私人入账，同日转出一万七千五，次日另付一万元房租",
+            "sourceDoesNotProve": "摘录没有期初余额和完整收支，不能说明超出当月展示入账的资金来自哪里",
+            "answerAnchor": "不知道",
+            "answerAdds": "咨询者确认自己没有看过余额，也不知道两笔私人转账的来源",
+            "nextLegalQuestion": "需要完整流水、余额记录或当事人说明，才能核对停薪后的资金来源"
+          }
+        },
+        {
+          "rows": [
+            "r08",
+            "r11"
+          ],
+          "question": "七月五日五万进，七月十九日四万九千八出——这算周转吗？",
+          "answer": "他跟我说“周转”的时候，这两行已经在他流水里躺了半个月了。",
+          "contradiction": "所谓周转发生在借款请求之前，且资金已近全额流出"
+        }
+      ],
+      "markLimit": 4
+    }
+  ]
+}

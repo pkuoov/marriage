@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "statuses": [
+    "actor-required",
+    "temporary-system-master",
+    "approved-actor-master"
+  ],
+  "delivery": {
+    "source": "48 kHz / 24-bit mono WAV, dry voice, one file per cue, with 500 ms room tone at both ends",
+    "repositoryMaster": "48 kHz OGG Vorbis; preserve the exact targetPath and visible transcript",
+    "loudness": "Dialogue-normalized, true peak no higher than -3 dBTP; no baked-in music or location ambience",
+    "naming": "Use the basename from targetPath; do not add take numbers to approved repository masters"
+  },
+  "entries": [
+    {
+      "cueId": "voice.case1.loyalty-message",
+      "priority": 2,
+      "status": "actor-required",
+      "targetPath": "./assets/audio/voice/case1-loyalty-message.ogg",
+      "speaker": "案1男方，失业后仍在维持体面，二十至三十多岁",
+      "transcript": "我只是怕你知道我失业后就离开我。",
+      "direction": "先解释、后示弱，怕被追问但又知道这句话能让人心软；不要演成反派自白。",
+      "editNotes": "“失业后”略含混带过；“离开我”前允许一次短吸气。"
+    },
+    {
+      "cueId": "voice.case2.dryer-message",
+      "priority": 0,
+      "status": "temporary-system-master",
+      "targetPath": "./assets/audio/voice/case2-dryer-message.ogg",
+      "speaker": "案2男店员，二十多岁，忙完一阵后随手给熟客回语音",
+      "transcript": "今晚店长又说我了。也就你肯听我说这些。",
+      "direction": "像边做头发边回语音，疲惫里带一点熟练的亲近；不要刻意暧昧，也不要演成告白。",
+      "editNotes": "正式演员干声交付；吹风机持续声由混音阶段另加，不能盖住“也就你肯听”这句。"
+    },
+    {
+      "cueId": "voice.case3.dinner-pause",
+      "priority": 1,
+      "status": "actor-required",
+      "targetPath": "./assets/audio/voice/case3-dinner-pause.ogg",
+      "speaker": "案3饭局中的女性长辈，礼貌、理智，问完才察觉桌面冷掉",
+      "transcript": "本科也是那所学校吗？",
+      "direction": "真心核对，不带审讯口气；尾音自然落下，不预演自己问中了问题。",
+      "editNotes": "问句后保留 10 至 12 秒可感知的杯碟停顿；停车费转场不补新台词，可只用椅动或杯碟恢复。"
+    },
+    {
+      "cueId": "voice.case4.pad-message",
+      "priority": 1,
+      "status": "actor-required",
+      "targetPath": "./assets/audio/voice/case4-pad-message.ogg",
+      "speaker": "案4项目负责人，理性、忙、习惯用机会语言压缩别人的判断时间",
+      "transcript": "你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。",
+      "direction": "像在赶进度，不觉得自己在威胁；“先把场地和礼品费垫了”说得快，“执行主责可以写你”略放慢，像给补偿。",
+      "editNotes": "不要加笑声、叹气或反派停顿；保留手机语音的近讲感，线路滤波在混音阶段处理。"
+    },
+    {
+      "cueId": "voice.case4.supplier-message",
+      "priority": 1,
+      "status": "actor-required",
+      "targetPath": "./assets/audio/voice/case4-supplier-message.ogg",
+      "speaker": "供应商项目员，成年男性或女性，理智、流程化，认为自己只是在补充老做法",
+      "transcript": "服务协调费按老规矩返给对接人。",
+      "direction": "平铺直叙，不知道这句会成为关键；“老规矩”不做刻意重音。",
+      "editNotes": "一句到底，允许轻微办公室口腔噪声；不要在文件里混入键盘或环境底。"
+    }
+  ]
+}

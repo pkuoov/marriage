@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "深夜热线：直播间侦探",
+    "navigationBarBackgroundColor": "#120f12",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#120f12"
+  },
+  "sitemapLocation": "sitemap.json"
+}

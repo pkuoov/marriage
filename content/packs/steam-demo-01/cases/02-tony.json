@@ -1,0 +1,1887 @@
+{
+  "caseId": "02-tony",
+  "plotId": "tony-multi-dating",
+  "runtimeContentStatus": "runtime-loaded",
+  "texturePass": true,
+  "voiceTics": {
+    "何": []
+  },
+  "oneTimeTic": "你知道吧",
+  "voiceTicArc": {
+    "何": "全案只在第一夜承认恋爱位置时用一次『你知道吧』"
+  },
+  "driftComments": [
+    "插一句:大家平时剪头多少钱,我先看看我亏没亏",
+    "主播这个发型是不是也该修修了",
+    "刚进来,谁能告诉我她为什么一晚上没睡",
+    "蹲各位的Tony老师故事,我先来:我办卡那家跑路了"
+  ],
+  "dramaticAnchor": "Tony 的名单、恋爱名义下的相处、高息档一百万起投、她转到他户头的十二万、酒吧小姐妹的高息传闻、名单上另一位女客的认购回单",
+  "whyTonight": "她翻到 Tony 一份全是女人的名单，认定他以谈恋爱为名养鱼骗钱，钱还在他那儿，今晚想问直播间怎么要回来。",
+  "helpRequest": {
+    "kind": "interest",
+    "request": "她想让主播支持自己把转到 Tony 手里的钱要回来，并把这件事说成恋爱诈骗。"
+  },
+  "objectPurpose": "她第一夜只发出名单左半边，把姓名、亲密度和下次约讲成女友名册；金额、起投和账户备注所在的右半边被她裁掉。完整截图和十二万转账随后证明这是高息产品推销跟进表，也把“被骗的恋爱钱”改写成她主动要求的代投。",
+  "callMedium": "voice",
+  "callerStake": "她确实以谈恋爱名义和 Tony 相处，也确实觉得他长得好看。她想把转到他手里的十二万说成被养鱼骗走的钱，好在听说可能拿不回以后翻脸追讨。她不想让直播间先知道：高息档是她在酒吧听小姐妹说的，自己不够一百万起投，是她让男友帮她买。",
+  "callerIntentProfile": {
+    "openGoal": "让主播告诉她怎么把钱从 Tony 那儿要回来。",
+    "preferredAnswer": "Tony 以谈恋爱为名养鱼，名单上那些女人足以证明他在骗钱，所以她的钱该退。",
+    "audienceTilt": "让听众先把她看成被帅哥理发师吊着的受害者，不先问她自己有没有想过那档高息。",
+    "protectedInterest": "保住恋爱诈骗受害者的位置，也保住把十二万说成被骗、而不是自己找他代投的可能。",
+    "defaultTactic": "先砸裁过的名单和要钱；问到恋爱是不是真的，就承认他帅、自己也动心；问到截图为什么断在右边，才承认自己裁掉了金额栏；第二夜问到钱怎么到他手里，才说不够门槛。",
+    "concessionLimit": "可以承认约会、自己人、他真帅；在十二万转账被问实以前，不主动说是自己让他代买高息产品。",
+    "painPoints": [
+      {
+        "topic": "名单列到底在记什么",
+        "threatens": "会把女友名册拆成产品跟进表。",
+        "firstResponse": "先说全是女的、还写下次约。",
+        "afterProof": "被追问截图右边为什么齐齐断掉后，才承认自己只发了姓名和约会备注，金额栏没有发。",
+        "minimumLeak": "承认完整名单还有被她裁掉的右半边。"
+      },
+      {
+        "topic": "十二万怎么到 Tony 手里",
+        "threatens": "会把被骗改写成她主动找他跨过起投。",
+        "firstResponse": "先说钱在他那儿，要回来。",
+        "afterProof": "名单上自己那行和转账对上后，才说不够一百万、让他走他的户。",
+        "minimumLeak": "承认十二万是自己转给他的。"
+      },
+      {
+        "topic": "高息消息从哪听来",
+        "threatens": "会露出酒吧工作和她早就动心那档利息。",
+        "firstResponse": "只说小姐妹聊过，不说在哪儿。",
+        "afterProof": "被问听的地点后，才说酒吧做营销。",
+        "minimumLeak": "承认高息不是 Tony 第一次开口才听说的。"
+      },
+      {
+        "topic": "听说可能拿不回才翻脸",
+        "threatens": "会让直播间把她看成风险一来就改口的人。",
+        "firstResponse": "先把今晚说成发现名单、要讨回被骗的钱。",
+        "afterProof": "被问时机后，才承认小姐妹说这产品最近在拖。",
+        "minimumLeak": "承认翻脸是在听说钱可能有事后。"
+      },
+      {
+        "topic": "昨晚来找她的人",
+        "threatens": "会露出她借过涉案放贷人的钱，而不是名单女友找上门。",
+        "firstResponse": "第一夜只说临时有事，回拨时仍只说有人来问几句话。",
+        "afterProof": "被追问后才承认电话是警察打的，放款的人涉案了，按借款人来问。",
+        "minimumLeak": "承认来人不是名单上的女朋友。"
+      }
+    ]
+  },
+  "otherStake": "Tony 用好看和恋爱话术把熟客留在身边，也把高息产品推给剪头的人；他收下她的十二万，说帮她凑起投。他不愿上麦把代投、资格和钱进没进产品一次说清。",
+  "thirdPressure": "酒吧小姐妹的高息传闻、名单上另一位女客来问钱、店里不能卖理财的边界、宸直起投门槛，以及放款人涉案后按借款人找上门的核实。",
+  "runtimeLengthPlan": {
+    "liveBeatCount": 7,
+    "materialBoardCount": 2,
+    "backflowCount": 2,
+    "truthBoundaryPromptCount": 6,
+    "caseSpecificPressure": "第一夜先让裁过的名单被读成养鱼名册，再承认恋爱名义是真的、他确实帅；窗外强光和敲门声逼她突然下线。第二夜问出来人是警察，再拆出周只是剪头客户、十二万是她自己让他代投。",
+    "whatPlayerDoesBesidesRead": [
+      "问清名单怎么到她手里、她把列名读成了什么",
+      "核对两人是不是真以恋爱名义相处",
+      "发现她发来的名单截图右侧被裁掉",
+      "第一夜敲门打断后进入第二天下午",
+      "从敲门的人问出警察，再确认名单上的周只是剪头客户",
+      "在店外听他跟熟客聊的是息还是约会",
+      "向小姐妹核对高息档和一百万门槛",
+      "圈名单上她自己那行和十二万转账",
+      "选择听他谈息的语音、回女客私信或看店长说明",
+      "把要回钱、代投和恋爱诈骗分开处理"
+    ]
+  },
+  "taskProfile": {
+    "id": "emotion",
+    "label": "情绪卡住了",
+    "recommendedSpecialtyId": "emotion",
+    "summary": "情绪很满，有人一直把问题推回爱不爱。"
+  },
+  "routeAxisComments": {
+    "identity-wording": [
+      "自己人这词又来了",
+      "我怎么还嗑上了,快打我"
+    ],
+    "money-flow": [
+      "她一直不肯说到底转了多少",
+      "钱怎么到他手里还没讲完"
+    ],
+    "document-edge": [
+      "右边怎么每行都少一截",
+      "先问她为什么裁图"
+    ],
+    "caller-credibility": [
+      "她也顺着这个位置走了",
+      "风声一来才翻脸"
+    ],
+    "process-control": [
+      "店里到底认不认这件事",
+      "谁收的钱得问清楚"
+    ]
+  },
+  "stanceSnapshot": {
+    "afterScene": 3,
+    "kicker": "中段立场快照",
+    "prompt": "现在这通麦，你先站哪边？",
+    "note": "不判分。只记下你现在更相信名单、恋爱，还是那张被裁过的截图。",
+    "afterPickLine": "名单上全是女的，恋爱名义也像真的。可截图右边为什么没了，还没问完。",
+    "continueLabel": "继续听",
+    "recapKicker": "中段立场",
+    "options": [
+      {
+        "id": "respondent-problem",
+        "label": "他的问题更大",
+        "summary": "他把恋爱话术和客人名单放在一起。",
+        "feedback": "自己人和下次约都是真的。这一票先记他。",
+        "recap": "他真帅，也真用自己人叫她；截图右边却被她裁掉了。"
+      },
+      {
+        "id": "industry-gray",
+        "label": "行业就这样",
+        "summary": "理发店会维护熟客，收钱买产品是不是店里的事，还没问。",
+        "feedback": "店里能不能卖理财还没问。她为什么只发半张图，也没说。",
+        "recap": "熟客维护是真的；被裁掉的右半边还没见到。"
+      },
+      {
+        "id": "caller-complicit",
+        "label": "她也有份",
+        "summary": "她先发半张图，不想让人先问她那笔钱。",
+        "feedback": "她是动过心，也先砸了要钱；那笔钱怎么出去的，还没说清。",
+        "recap": "她以恋爱名义相处是真的；她把名单先讲成女友名册，也是真的。"
+      }
+    ]
+  },
+  "truthBoundary": {
+    "true": [
+      "咨询者翻到一份 Tony 的名单，上面多为女性客户，备注写着下次约、跟进和数字",
+      "咨询者确实以谈恋爱名义和 Tony 相处，Tony 也称她自己人、给她留最晚那档",
+      "咨询者承认最初固定找 Tony，也因为觉得他长得好看、会说话",
+      "名单列里有起投、金额和跟进，不像单纯的约会记录",
+      "高息档口头口径是一百万元起投",
+      "咨询者向 Tony 转过十二万元，自己那行写着不够起投、走 Tony 户",
+      "咨询者在酒吧做营销，高息传闻来自小姐妹闲聊，不是 Tony 第一次开口才听说",
+      "名单上的周是剪头客户，不是咨询者口中的那种女朋友；她也把钱给过 Tony",
+      "第一夜敲门的是警察；放款的人涉案，按借款人来问咨询者",
+      "店长称店里不卖理财，Tony 私下跟客人聊什么她不管"
+    ],
+    "edited": [
+      "咨询者把名单先讲成养鱼女友名册，只发姓名、亲密度和下次约，裁掉金额与产品跟进列",
+      "咨询者把以恋爱名义相处讲成他单方面骗色骗钱，淡化自己也要这个位置",
+      "咨询者开场只说钱在他那儿要回来，不说十二万是自己让他代买高息档",
+      "咨询者把小姐妹的高息闲聊压成“听说过”，不说自己听完就动心想买",
+      "咨询者把今晚来电讲成刚发现被骗，淡化自己是在听说可能拿不回以后才翻脸",
+      "咨询者第一夜听见敲门后突然下线，不说警察是因涉案放款人来核实借款"
+    ],
+    "unknown": [
+      "十二万是否已经买成宸直产品，还是仍在 Tony 个人账户",
+      "Tony 是否具备向顾客推介或代购这类理财的资格",
+      "其他名单行是否真的完成认购，节目没有逐笔合同",
+      "周转来的认购回单是不是她自己那笔钱",
+      "宸直该档产品此刻能否兑付、能否赎回",
+      "Tony 对她的喜欢有多少是真心，有多少是为了把人留在可推销的位置",
+      "她向放贷人借了多少、是否仍欠",
+      "警察把她当证人还是另有调查，节目不能确认"
+    ]
+  },
+  "selfServingOmission": "咨询者开场已经说出要回这笔钱，并把名单讲成养鱼女友名册；她只发左半边截图，裁掉金额、起投和账户备注。她不先说自己确实以恋爱名义和他相处、也觉得他帅，更不说高息是自己在酒吧听小姐妹聊的、十二万是因为不够一百万门槛才让他代投。她把今晚说成发现被骗，不说自己是听说可能拿不回才翻脸。第一夜敲门时，她也不说来人是警察，更不说自己借过涉案放贷人的钱。",
+  "deceptionChain": {
+    "owner": "caller",
+    "protectedPurpose": "让直播间把她认作被恋爱为名养鱼骗钱的人，从而支持她要回这笔钱；同时不把她主动约会、不够起投、自己让他代投、风声一来才翻脸、借过涉案放贷人的钱算进判断。",
+    "stages": [
+      {
+        "id": "tony-list-as-harem",
+        "pressureTrigger": "她需要一个能立刻支持要钱的故事，名单是最容易讲成诈骗的物件。",
+        "surfaceVersion": "名单上全是女的，他以谈恋爱为名养鱼，钱在他那儿，问怎么要回来。",
+        "editedFact": "名单是客户跟进表。她自己也在上面，而且不是作为被吊着的女友被记下来的。",
+        "immediateUtility": "先把要钱放进恋爱诈骗，而不是一笔她自己发起的转账。",
+        "fairTrace": "她先砸名单和要钱，发来的截图却在右侧齐齐断掉。",
+        "playerTest": "tony-list-as-dating：问她凭什么把名单上的名字读成他在谈的人，再追截图为什么只有左半边。",
+        "forcedRevision": "她承认自己只发了姓名和约会备注，右侧几列被她裁掉。",
+        "adviceImpact": "主播可以追名单来源，但不能把养鱼当成已经成立的事实。"
+      },
+      {
+        "id": "tony-dating-was-real",
+        "pressureTrigger": "名单故事站不住时，她改用“我们就是在谈”来保住被骗的位置。",
+        "surfaceVersion": "我当自己在谈。他叫我自己人，留最晚那档，也带我吃饭。",
+        "editedFact": "恋爱名义是真的，他确实帅；这只能证明相处方式，不能证明名单是女友名册，也不能证明十二万是被骗的恋爱钱。",
+        "immediateUtility": "用真约会给养鱼指控垫底，让要钱听起来像讨回被骗感情的代价。",
+        "fairTrace": "她承认他长得好看，也承认自己人、晚档和约会，却仍把钱说成他骗走的。",
+        "playerTest": "tony-exclusive-voice：问他亲口有没有说过在谈，再核她自己要的是不是这个位置。",
+        "forcedRevision": "她承认自己要这个恋爱位置，不是单方面被拖着。",
+        "adviceImpact": "约会和帅都可以成立，主播仍须把名单和钱单独问。"
+      },
+      {
+        "id": "tony-list-is-leads",
+        "pressureTrigger": "主播抓住截图右侧整齐的断边，女友名册开始裂。",
+        "surfaceVersion": "我先发的是名字、亲密度和下次约，右边没什么好看的。",
+        "editedFact": "她主动裁掉了金额、起投和跟进列；她那行写着不够一百万起投。",
+        "immediateUtility": "让节目和小姐妹先看到一张像女友名册的图，不必立刻解释自己的代投。",
+        "fairTrace": "截图里的每一行都在同一位置断掉，显然不是原表边缘。",
+        "playerTest": "tony-list-columns 与 case2-member-training：先问截图右边为什么断了，第二夜再让她念完整一行。",
+        "forcedRevision": "她承认右侧几列是自己裁掉的，但第一夜仍不念金额和账户备注。",
+        "adviceImpact": "主播可以把正常熟客记录和高息推销分开，不必把整张名单判成女友名册。"
+      },
+      {
+        "id": "tony-proxy-invest",
+        "pressureTrigger": "起投出现后，她必须解释自己为什么不够仍把钱给了他。",
+        "surfaceVersion": "小姐妹聊过有档高息。我钱不够那个数，就让他帮我买。",
+        "editedFact": "她主动要求跨过一百万门槛；十二万是她转的，不是他从恋爱里偷的。",
+        "immediateUtility": "把代投说成男友帮忙，仍把责任留在他身上。",
+        "fairTrace": "她先说听过起投，又说自己那行写着走他户；转账时间和名单备注对得上。",
+        "playerTest": "tony-caller-benefits：问十二万怎么到他手里，再核是谁先提代投。",
+        "forcedRevision": "她承认是自己开口，因为不够起投。",
+        "adviceImpact": "建议从追恋爱诈骗，改成追认购回单、合同户名和代投约定。"
+      },
+      {
+        "id": "tony-flip-on-rumor",
+        "pressureTrigger": "代投被问实后，她仍要把今晚说成刚发现被骗。",
+        "surfaceVersion": "我是看见名单才知道他养鱼。钱要回来是应该的。",
+        "editedFact": "她在酒吧已听过高息；转钱时知道这是理财；翻脸是在小姐妹说这产品最近在拖之后。",
+        "immediateUtility": "用发现名单的时间盖住她对风险的知情，保住受害者位置。",
+        "fairTrace": "她第一夜就说要钱；被问时机才承认听说可能拿不回。",
+        "playerTest": "tony-next-push-column 与 deepFollowup：问她若他肯给回单却不退现金，是否仍要按恋爱诈骗公开名单。",
+        "forcedRevision": "她承认风声一来才翻脸，公开名单会把自己的代投也摊开。",
+        "adviceImpact": "当场动作改成停转、要回单、不要把代投改口成恋爱诈骗；兑付结果今晚不判。"
+      }
+    ]
+  },
+  "quotePickCandidates": [
+    "一排女人的名字。越看越不对",
+    "不够起投，走我户",
+    "是我转的",
+    "他总给我留最晚那档"
+  ],
+  "accusationChoices": [
+    {
+      "label": "“一排女人的名字。越看越不对。”",
+      "quoteSourceSceneId": "tony-list-as-dating",
+      "accuseRole": "respondent",
+      "response": "名单上是女客，这一层看得到。可列里写的是起投和跟进，不是谁在跟他谈恋爱。养鱼这件事，今晚证明不了。"
+    },
+    {
+      "label": "“不够起投，走我户。”",
+      "quoteSourceSceneId": "tony-list-columns",
+      "accuseRole": "complainant",
+      "response": "这行是她自己的备注。十二万是她转的。把它讲成被骗的恋爱钱，说不通。"
+    },
+    {
+      "label": "“是我转的。”",
+      "quoteSourceSceneId": "tony-caller-benefits",
+      "accuse": "both",
+      "response": "钱是她亲手转的。是谁先提出代投、他收到以后做了什么，还得接着问。"
+    },
+    {
+      "label": "“他总给我留最晚那档。”",
+      "quoteSourceSceneId": "tony-exclusive-voice",
+      "accuse": "noPremeditated",
+      "response": "晚档是实打实的照顾。它能解释她为什么动心，证明不了十二万的去向，也证明不了名单是女友名册。"
+    }
+  ],
+  "label": "那张名单",
+  "storyArcTitle": "今日来电：那张名单",
+  "caseTitle": {
+    "title": "那张名单"
+  },
+  "publicHook": "她翻到一份全是女人的名单，说他以谈恋爱为名养鱼，钱还在他那儿，问怎么要回来。",
+  "storyArcSummary": "第一夜先让裁过的名单被读成养鱼名册，再承认恋爱名义和颜值都是真的；强光照进窗内，敲门声逼她突然下线。第二夜问出来人是警察，再问出周只是剪头客户、十二万是她自己因不够起投才让他代投。",
+  "storySuspense": "她为什么一开口就要钱，却只发名单左半边；昨晚是谁敲门，她为什么第二夜仍不愿说。",
+  "storyClueObject": "Tony 的名单、十二万转账、酒吧小姐妹的高息传闻、另一位女客转发的认购回单",
+  "openingComplaint": "她打来问：翻到 Tony 一份名单以后，怎样把钱要回来。",
+  "openingDialogue": [
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "主播，我有个事想找你分析一下。昨晚我在一个男的手机里看见一张名单，上面全是女的。我一晚上没睡。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "他是谁？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "给我剪头的那个，我平时叫他 Tony。我今天轮休，现在在家。一直没敢找他。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "他也认你这个女朋友？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "没公开过。可他一直叫我自己人。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "名单上写了什么？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "亲密度、下次约，一排女人的名字。越看越不对。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "你打来，是想问他是不是在养鱼？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "也不只是这个。我还有一笔钱在他那里，想拿回来。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "名单怎么到你手里的？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "他去洗澡，手机亮着，备忘录没锁。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "钱的事等会儿说。你先把名单发过来，名字遮掉。",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "我已经发后台了。那笔钱，我就是想拿回来。",
+      "mood": "anxious"
+    }
+  ],
+  "scene": {
+    "name": "直播连线"
+  },
+  "sceneVersions": [
+    {
+      "id": "tony-list-as-dating",
+      "interactionMode": "lineReplay",
+      "clueRole": "setup",
+      "falseFrame": "名单等于养鱼女友名册，足以支持立刻要钱。",
+      "payoffFor": [
+        "tony-list-columns"
+      ],
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "entryQuestion": "你怎么确定名单上的名字都是他在谈的人？",
+      "version": "我往下划，一排名字，全是女的。备注写着亲密度、下次约。我那行也在。我把截图发到后台了，钱还在他那儿，我才打进来。",
+      "helperHint": "先看她发来的图到哪里为止，再问她为什么把这些名字读成女友。",
+      "revisedVersion": "全是女的这一层是真的。可我发的只有左半边，右边几列没发。",
+      "doubt": "她把左半张名单讲成女友名册，原表右侧仍没出场。",
+      "contradiction": "开场用名单支持养鱼和要钱，发来的截图却在每一行同一个位置断掉。",
+      "reliability": "mixed",
+      "showsCard": "daily-tony-roster",
+      "casualQuestions": [
+        {
+          "question": "备忘录你存下来了吗？",
+          "answer": "截了。"
+        },
+        {
+          "question": "上面大概几个人？",
+          "answer": "我数过，八……不对，九个。连我。",
+          "lines": [
+            { "role": "caller", "text": "我数过，八……不对，九个。" },
+            { "role": "pause" },
+            { "role": "caller", "text": "连我。" }
+          ]
+        },
+        {
+          "question": "他回来以后发现你看了吗？",
+          "answer": "没有。我把屏幕按灭了。他出来还问我晚上吃什么。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "你发来的图，每一行怎么都在右边同一个地方断了？",
+          "sourceAnchor": "我把截图发到后台了",
+          "revisedSourceAnchor": "右边几列没发",
+          "suspicionLabel": "截图为什么只有左半边",
+          "answer": "我裁过。先发了名字、亲密度和下次约，右边没发。",
+          "guardedAnswer": "右边我没发。",
+          "lines": [
+            { "role": "caller", "text": "截得急。" },
+            { "role": "host", "text": "不是截得急。每一行都断在同一个地方。" },
+            { "role": "caller", "text": "……我裁过。右边几列没发。" }
+          ],
+          "logicContract": {
+            "premiseAnchor": "我把截图发到后台了",
+            "sourceKind": "document-readout",
+            "sourceProves": "咨询者发来的截图只保留姓名、亲密度和下次约，右侧各行在同一位置断开。",
+            "sourceDoesNotProve": "尚不知道右侧具体字段，也不能据半张图判断其他名字都是恋爱对象。",
+            "answerAnchor": "我裁过",
+            "answerAdds": "她承认右侧几列原本存在，是她自己没有发。",
+            "nextLegalQuestion": "可以追问她裁掉了什么，不能把左半张图当成完整名单。"
+          },
+          "contradiction": "她用半张截图概括整张名单，还隐瞒自己主动裁掉了右侧字段。",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "钱在他那儿，是你转的，还是他从你卡里划的？",
+          "suspicionLabel": "钱怎么到他手里",
+          "answer": "我转的。多少我今晚不想说。你先看名单。",
+          "guardedAnswer": "我转的。",
+          "logicContract": {
+            "premiseAnchor": "钱还在他那儿",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者主张 Tony 手里有她的钱。",
+            "sourceDoesNotProve": "尚不知道金额、用途与转账后的去向。",
+            "answerAnchor": "我转的",
+            "answerAdds": "她承认钱由自己操作转出，但第一夜拒绝说明数额。",
+            "nextLegalQuestion": "第二夜可以结合完整名单和转账追金额与用途。"
+          },
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "先砸名单再要钱",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "blink",
+          "text": "她盯着截图，没有立刻往下翻"
+        }
+      }
+    },
+    {
+      "id": "tony-exclusive-voice",
+      "interactionMode": "lineReplay",
+      "clueRole": "misdirect",
+      "falseFrame": "真约会和真帅足以证明他在用恋爱骗人。",
+      "payoffFor": [
+        "tony-list-as-dating"
+      ],
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "entryQuestion": "你说你当自己在谈。他怎么对你的？",
+      "version": "我一开始就是觉得他长得好看。后来他总给我留最晚那档，也叫我自己人。",
+      "helperHint": "约会和帅都可以是真的。先问他有没有亲口说过在谈，再看这能不能撑起养鱼。",
+      "revisedVersion": "我要这个位置，不是他单方面拖着我。他没带我见朋友，可自己人是他叫的。",
+      "doubt": "恋爱名义成立，仍不能证明名单是女友名册。",
+      "contradiction": "她用真约会给养鱼垫底，却说他从没公开。",
+      "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "你们最早怎么认识的？",
+          "answer": "同事推荐的，说他技术好。我第一次去就觉得他长得好看，后来剪头一直找他。"
+        },
+        {
+          "question": "你为什么一直固定找他？",
+          "answer": "手艺好。我上班时间跟别人不太一样，经常要见人，头发隔一阵就得弄。他肯给我留最晚的号。"
+        },
+        {
+          "question": "他有没有当着别人维护过你？",
+          "answer": "说女孩子半夜下班不像正经工作。他当场回了一句：“人家上自己的班，关你什么事。”我那时候真挺感激他的。"
+        },
+        {
+          "question": "你在他们店剪了多久头发？",
+          "answer": "一年多。最开始就是普通剪头，最近几个月才越走越近。"
+        },
+        {
+          "question": "除了剪头，你们单独出去过吗？",
+          "answer": "大概三个月前。他收店晚，我也刚下班，就在旁边吃了碗面。后来又吃过两次。"
+        },
+        {
+          "question": "他会不会私下找你说话？",
+          "answer": "会。有次他说店长又骂他了，最后来一句：“也就你肯听我说这些。”那条语音我一直留着。"
+        },
+        {
+          "question": "他多大？",
+          "answer": "二十九。",
+          "lines": [
+            { "role": "caller", "text": "二十九。" },
+            { "role": "pause" },
+            { "role": "caller", "text": "他自己说的。" }
+          ]
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "他亲口说过你们在谈吗？",
+          "sourceAnchor": "也叫我自己人",
+          "revisedSourceAnchor": "自己人是他叫的",
+          "suspicionLabel": "他有没有承认在谈",
+          "answer": "说过自己人。带我吃饭。没带见朋友。我当是在谈。我要这个位置，你知道吧，不是他一个人在演。",
+          "guardedAnswer": "叫过自己人。没公开。",
+          "lines": [
+            { "role": "caller", "text": "说过自己人。带我吃饭。没带见朋友。" },
+            { "role": "host", "text": "所以是你当自己在谈。" },
+            { "role": "caller", "text": "我要这个位置，你知道吧。不是他一个人在演。" }
+          ],
+          "logicContract": {
+            "premiseAnchor": "你当自己在谈",
+            "sourceKind": "caller-statement",
+            "sourceProves": "双方以恋爱名义相处，Tony 用过自己人并带她吃饭。",
+            "sourceDoesNotProve": "不能证明他承诺排他关系，也不能证明名单上其他人是女友。",
+            "answerAnchor": "我要这个位置",
+            "answerAdds": "咨询者承认自己不是单方面被拖着，恋爱位置是她要的。",
+            "nextLegalQuestion": "可以继续看名单字段，不能把真约会升级成已证实的养鱼诈骗。"
+          },
+          "contradiction": "她开场把自己写成被吊着的人，这里承认恋爱位置是她要的。",
+          "correct": true,
+          "routeAxis": "identity-wording",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "他叫你自己人时，你怎么回的？",
+          "suspicionLabel": "她怎么回应深夜倾诉",
+          "answer": "我没追问到底算什么，只会回他：有事你就找我。晚档他也留，我愿意信。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "真约会垫在养鱼下面",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "说到“我要这个位置”时，她停了一下"
+        }
+      }
+    },
+    {
+      "id": "tony-list-columns",
+      "interactionMode": "lineReplay",
+      "clueRole": "missing-edge",
+      "falseFrame": "她发来的左半张截图已经足够说明整张名单。",
+      "payoffFor": [
+        "tony-exclusive-voice"
+      ],
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "entryQuestion": "你裁掉的右半边，写的是什么？",
+      "version": "金额、产品、后面怎么跟。我没把那几列发给你们。小姐妹让我把原图留好，我跟她说，名字和亲密度还不够吗？她没理我。",
+      "helperHint": "先问她为什么只让节目看到像约会的部分，不急着逼出金额。",
+      "doubt": "完整名单在记钱和产品跟进；第一夜仍不知道她那行具体金额。",
+      "contradiction": "她明知表格右边还有钱和产品，还是主动裁掉了会改变名单性质的部分。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "小姐妹为什么让你留原图？",
+          "textureRole": "ramble",
+          "answer": "她只说别光留名字，原图别删。我问她什么意思，她说等见面再讲。"
+        },
+        {
+          "question": "你裁图的时候，知道右边跟钱有关吗？",
+          "answer": "知道。可我当时就想先让你们看他怎么记这些女的。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "你为什么偏偏把金额和产品那几列裁掉？",
+          "sourceAnchor": "金额、产品、后面怎么跟",
+          "suspicionLabel": "她为什么裁掉金额栏",
+          "answer": "因为一发全，你们肯定先问钱。我今晚是来问他是不是同时跟这些女人谈，不想一上来先解释我自己的那笔。",
+          "guardedAnswer": "我不想先谈钱。",
+          "lines": [
+            { "role": "caller", "text": "因为一发全，你肯定先问钱。" },
+            { "role": "host", "text": "钱跟这张名单没有关系？" },
+            { "role": "caller", "text": "有。可我今晚不想先解释那一笔。" }
+          ],
+          "logicContract": {
+            "premiseAnchor": "金额、产品、后面怎么跟",
+            "sourceKind": "document-readout",
+            "sourceProves": "她发给节目的截图主动省去了与钱和产品相关的列。",
+            "sourceDoesNotProve": "第一夜仍不能确认具体金额、产品名称或资金去向。",
+            "answerAnchor": "先问钱",
+            "answerAdds": "她承认裁图是为了让节目先按恋爱问题理解名单。",
+            "nextLegalQuestion": "可以追她何时知道产品与门槛，具体金额留到第二夜结合原图核对。"
+          },
+          "contradiction": "她把名单包装成单纯的感情证据，却有意裁去与自己利益直接相关的金额栏。",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你把左半张发给小姐妹以后，她说了什么？",
+          "suspicionLabel": "小姐妹当时怎么回",
+          "answer": "她让我留原图，别只发名字。别的没说。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "detour"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "起投不是约会词",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "承认自己裁过图时，她不再翻那张截图"
+        }
+      }
+    },
+    {
+      "id": "tony-bar-rumor-hangup",
+      "interactionMode": "lineReplay",
+      "clueRole": "misdirect",
+      "falseFrame": "她只是随耳听过高息，后来没有采取行动。",
+      "payoffFor": [
+        "tony-list-columns"
+      ],
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "entryQuestion": "你刚才说产品那一列。高息这件事，你以前听过吗？",
+      "version": "听过。小姐妹提过一嘴，说有个东西利息挺高。我当时就听了个热闹，没跟她细问。",
+      "helperHint": "她听过高息，却还没说门槛，也没说自己后来做了什么。",
+      "doubt": "高息消息早于她翻名单，完整门槛和她的转账仍留到第二夜。",
+      "contradiction": "她把今晚讲成刚发现被骗，却承认自己早已听过同类高息产品。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "小姐妹当时说了哪家吗？",
+          "answer": "没有，就说最近有人在买。"
+        },
+        {
+          "question": "你当时为什么没问是哪家？",
+          "answer": "她随口一说，我也没当场追着问。我只记住息挺高。"
+        }
+      ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "stage",
+            "text": "窗外忽然扫进一片白光。她起身把窗帘拉上。"
+          },
+          {
+            "role": "caller",
+            "text": "等一下。"
+          },
+          {
+            "role": "stage",
+            "text": "门外传来两下敲门声。",
+            "audioCueId": "sfx.case2.door-knock"
+          },
+          {
+            "role": "caller",
+            "text": "我这边真有事。明天再说。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "高息这件事",
+        "closerAnchor": "我这边真有事",
+        "adds": "第一夜在高息来源未说完时被强光和敲门打断；她没有解释门外是谁。",
+        "openEdge": "昨晚是谁敲门，她为什么立刻下线，来人跟她隐瞒的钱有没有关系。",
+        "routeIndependent": true
+      },
+      "questionOptions": [
+        {
+          "question": "小姐妹当时到底跟你说了多少？",
+          "sourceAnchor": "小姐妹提过一嘴",
+          "suspicionLabel": "高息消息从哪儿来的",
+          "answer": "就说有个东西利息高。她还笑我，这种东西不是我手里那点钱能买的。后来我又问过谁，今晚我不想说。",
+          "guardedAnswer": "她说利息高。别的不说。",
+          "lines": [
+            { "role": "caller", "text": "她说有个东西利息高。" },
+            { "role": "host", "text": "就这一句？" },
+            { "role": "caller", "text": "她还说，不是我手里那点钱能买的。后来我又问过谁，今晚不说。" }
+          ],
+          "logicContract": {
+            "premiseAnchor": "小姐妹提过一嘴",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者在翻名单以前就听过高息产品，也知道自己手里的钱够不上门槛。",
+            "sourceDoesNotProve": "尚未证明她听完后转了钱，也尚未证明产品就是宸直。",
+            "answerAnchor": "不是我手里那点钱能买的",
+            "answerAdds": "她知道自己够不上门槛，却把后来找谁帮忙掐断。",
+            "nextLegalQuestion": "可以问她后来做了什么，不能把听过传闻写成已经买成产品。"
+          },
+          "contradiction": "她开场把今晚写成刚发现被骗，这里承认自己早就听过高息，也知道手里的钱够不上门槛。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你是在店里听她说的，还是别处？",
+          "suspicionLabel": "传闻是在哪儿听的",
+          "answer": "别处。人多。今晚先不说哪。",
+          "correct": false,
+          "routeAxis": "identity-wording",
+          "routeTone": "detour"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "高息她早听过",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "敲门声响起时，她没有再看直播画面"
+        }
+      }
+    },
+    {
+      "id": "tony-who-messaged",
+      "interactionMode": "lineReplay",
+      "clueRole": "reversal",
+      "falseFrame": "昨晚只是临时有人找她，与她隐瞒的钱没有关系。",
+      "payoffFor": [
+        "tony-bar-rumor-hangup"
+      ],
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "entryQuestion": "昨晚是谁敲门？",
+      "version": "就是有人来问了几句话。跟他没直接关系。我现在不想说是谁。",
+      "helperHint": "先问昨晚来人是谁，再追她为什么借过这笔钱；不要替警方定性。",
+      "doubt": "警察上门与她借过钱有关，不是名单上的女友找来。",
+      "contradiction": "她第一夜用一句临时有事切断连线，第二夜才承认警方已经上门核实借款。",
+      "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "他们问了多久？",
+          "answer": "十来分钟。问我什么时候借的、怎么联系上的。"
+        },
+        {
+          "question": "你为什么搬到妈妈家？",
+          "answer": "昨晚那一下把我吓着了。一个人待着心里发慌。"
+        }
+      ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "你为什么会去借这种钱？"
+          },
+          {
+            "role": "caller",
+            "text": "那阵子手里正好空了。具体借了多少，我今晚不想说。"
+          },
+          {
+            "role": "host",
+            "text": "你到底做什么工作？"
+          },
+          {
+            "role": "caller",
+        "text": "我在酒吧做营销。订台、看桌，客人开的酒我有提成。"
+          },
+          {
+            "role": "host",
+            "text": "钱来得快，也花得快？"
+          },
+          {
+            "role": "caller",
+            "text": "嗯。有时候当晚结，第二天就花了。"
+          },
+          {
+            "role": "host",
+            "text": "高息也是在酒桌上听的？"
+          },
+          {
+            "role": "caller",
+            "text": "嗯。酒桌上听的。我后来才去问他。"
+          },
+          {
+            "role": "host",
+            "text": "好。你后来问了什么，接着说。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "昨晚是谁敲门",
+        "closerAnchor": "你后来问了什么",
+        "adds": "昨晚敲门的是警察，因放款人涉案来核实借款；她随后承认在酒吧做营销，高息传闻也来自酒桌。",
+        "openEdge": "她借了多少、有没有还清，以及后来找 Tony 做了什么。",
+        "routeIndependent": true
+      },
+      "questionOptions": [
+        {
+          "question": "你一直说只是临时有事。昨晚敲门的到底是谁？",
+          "sourceAnchor": "我现在不想说是谁",
+          "suspicionLabel": "昨晚敲门的人",
+          "answer": "警察。给我放高利贷的那个人涉案了，他们来问借过钱的人。",
+          "guardedAnswer": "来问我几句话的人。",
+          "lines": [
+            { "role": "caller", "text": "警察。" },
+            { "role": "host", "text": "为什么找你？" },
+            { "role": "caller", "text": "给我放高利贷的那个人涉案了。他们来问借过钱的人。" }
+          ],
+          "logicContract": {
+            "premiseAnchor": "昨晚是谁敲门",
+            "sourceKind": "caller-statement",
+            "sourceProves": "第一夜确实有人上门，咨询者第二夜承认来人是警察，原因与涉案放款人有关。",
+            "sourceDoesNotProve": "不能证明她涉嫌违法，也不知道她借了多少、是否仍欠。",
+            "answerAnchor": "放高利贷的那个人涉案了",
+            "answerAdds": "敲门伏笔闭合为警方核实借款人，而非恋爱纠纷。",
+            "nextLegalQuestion": "可以追她借款与工作的关系，再问她后来为什么找 Tony；不能替警方给她定性。"
+          },
+          "contradiction": "她把警方上门压成临时有事，隐瞒自己曾向涉案放款人借钱。",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你现在住妈妈家，是怕对方还会再来？",
+          "suspicionLabel": "她为什么换了住处",
+      "answer": "不是躲警察。给我放高利贷的那个人涉案了，他们昨晚来问过。我就是被吓着了，一个人待着慌。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "detour"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "来人不是名单女友",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "说出警察两个字以后，她先把电视声音关小了"
+        }
+      }
+    },
+    {
+      "id": "tony-caller-benefits",
+      "interactionMode": "lineReplay",
+      "clueRole": "reversal",
+      "falseFrame": "十二万是他从恋爱里骗走的钱。",
+      "payoffFor": [
+        "tony-who-messaged"
+      ],
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "entryQuestion": "你那十二万，怎么到他手里的？",
+      "version": "是我转的。他当时说可以帮忙，我就信了。",
+      "helperHint": "先问是谁提出代投，再问她何时开始觉得要翻脸。",
+      "doubt": "钱是她为了跨过起投主动转的。",
+      "contradiction": "开场要回被骗的钱，这里承认是自己让他代买。",
+      "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "转钱以前，你见过产品合同吗？",
+          "answer": "没有。他说先把钱并进去，材料后面给。"
+        },
+        {
+          "question": "转完他给你看过什么？",
+          "answer": "他发过一张提交页面，说已经帮我下了。产品全名、合同和回单，我手里都没有。"
+        },
+        {
+          "question": "你为什么一直找他做头发？",
+          "answer": "我下班晚，他肯留最后的号。染发、护理我都找他，酒吧一晚的提成有时候当晚就结，我花钱也快。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "是你开口让他帮你买，还是他先劝你把钱给他？",
+          "sourceAnchor": "是我转的",
+          "suspicionLabel": "代投是谁先提的",
+          "revealTransition": {
+            "id": "case2-proxy-invest",
+            "kind": "reveal",
+            "eyebrow": "钱怎么出去的",
+            "label": "我让他帮我买的",
+            "visualVariant": "proxy-ledger"
+          },
+          "answer": "我先问的。我说自己不够一百万，能不能跟着买。他说他那边已经够门槛，我这十二万可以并进去，走他户。",
+          "guardedAnswer": "我先问的。",
+          "lines": [
+            { "role": "caller", "text": "我先问的。" },
+            { "role": "host", "text": "你问的原话？" },
+            { "role": "caller", "text": "我说自己不够一百万，能不能跟着买。他说他那边已经够门槛，我这十二万可以并进去，走他户。" }
+          ],
+          "logicContract": {
+            "premiseAnchor": "是我转的",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者承认十二万由自己转给他，并称对方答应帮忙。",
+            "sourceDoesNotProve": "还不能判断是谁先提出代投、钱是否已经买成产品，也不能证明他有代销资格。",
+            "answerAnchor": "我先问的",
+            "answerAdds": "双方口头约定用他的账户绕过她个人不足一百万的门槛，不是他从恋爱里偷划。",
+            "nextLegalQuestion": "可以问她何时决定要回，不能把代投直接写成已证实的侵占。"
+          },
+          "contradiction": "她把十二万讲成被骗，实际是自己开口让他代投。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "转完以后，你还当自己在跟他谈吗？",
+          "suspicionLabel": "转钱之后关系怎么变",
+          "answer": "当。他还是留晚档，还是叫自己人。我没把这十二万从恋爱里拆出来。",
+          "correct": false,
+          "routeAxis": "identity-wording",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "十二万是她让他代投",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "承认“我先问的”之后，她不再看屏幕"
+        }
+      }
+    },
+    {
+      "id": "tony-next-push-column",
+      "interactionMode": "lineReplay",
+      "clueRole": "payoff",
+      "falseFrame": "发现名单的今晚，才是她第一次知道风险。",
+      "payoffFor": [
+        "tony-caller-benefits"
+      ],
+      "speakerId": "he",
+      "speaker": "咨询者",
+      "entryQuestion": "昨晚你已经看见这张名单了。现在把你自己那行念完。",
+      "version": "完整名单我昨晚就看完了。我那行写着十二万、不够起投、走我户。周那行是一百万、已买。我发给后台时把这些都裁掉了。",
+      "helperHint": "她昨晚已经看完全表。今晚要问的是：公开名单会带出她自己的哪一层。",
+      "doubt": "翻脸时机在风险传闻之后，不在刚发现恋爱破裂。",
+      "contradiction": "她用发现名单覆盖自己知情代投、又在风声后改口。",
+      "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "你现在还去那家店吗？",
+          "answer": "号还留着，人没去。头发长了，随便找了家快剪。"
+        },
+        {
+          "question": "小姐妹后来还找过你吗？",
+          "answer": "找了。她说这产品最近在拖，让我别再转。我才翻他手机的。"
+        },
+        {
+          "question": "这张名单你还转给过谁？",
+          "answer": "只发给小姐妹和你们后台。给你们之前我遮了名字，还没发到网上。"
+        }
+      ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "行，我看到你那一行了。今晚先到——"
+          },
+          {
+            "role": "caller",
+            "text": "最后说个事。跟名单没关系。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "上礼拜他还给我修过刘海，手特别轻。我就想不明白，他给我剪头发那么仔细，怎么又能一边跟我谈、一边让别人走他户。"
+          },
+          {
+            "role": "host",
+            "text": "我明白。先说到这儿。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "看到你那一行",
+        "closerAnchor": "修过刘海",
+        "adds": "证据讨论结束时她主动补回一次细致服务，手艺与推销同时存在。",
+        "openEdge": "钱进没进产品、他有没有资格、她还要不要把代投讲成恋爱诈骗。",
+        "routeIndependent": true
+      },
+      "questionOptions": [
+        {
+          "question": "这张表如果发出去，你让他代投、不够起投、走他户也会跟着出来。你想过吗？",
+          "sourceAnchor": "完整名单我昨晚就看完了",
+          "suspicionLabel": "公开名单会带出什么",
+          "answer": "想过，所以我才裁图。原图一发，我先找他代投的事也会出来。",
+          "guardedAnswer": "……会。走我户三个字在上面。",
+          "lines": [
+            { "role": "caller", "text": "想过。所以我才裁图。" },
+            { "role": "host", "text": "原图里有你的什么？" },
+            { "role": "caller", "text": "十二万，不够起投，走我户。" },
+            { "role": "host", "text": "直接发出去呢？" },
+            { "role": "caller", "text": "我先找他代投的事，也会出来。" }
+          ],
+          "logicContract": {
+            "premiseAnchor": "完整名单我昨晚就看完了",
+            "sourceKind": "caller-statement",
+            "sourceProves": "她第一夜已看完全表，公开会同时带出她的代投备注。",
+            "sourceDoesNotProve": "不能证明公开就能要回十二万，也不能证明产品已经损失。",
+            "answerAnchor": "所以我才裁图",
+            "answerAdds": "她承认裁图就是为了不让观众同时看到自己的代投。",
+            "nextLegalQuestion": "可以问她若只给回单不退现金还公开不明，不能替她决定是否报案。"
+          },
+          "contradiction": "她想用半张名单取得恋爱受害者位置，同时有意藏起自己主动代投的事实。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "小姐妹说产品在拖，是在你转钱之前，还是之后？",
+          "suspicionLabel": "她何时听说可能拿不回",
+          "answer": "之后。转的时候我还觉得息高。她一说拖，我才翻他手机，才打进来要钱。",
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "风声一来才翻脸",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "承认裁图是为了藏住代投时，她不再争养鱼"
+        }
+      }
+    }
+  ],
+  "evidenceCards": [
+    {
+      "id": "daily-tony-roster",
+      "type": "名单",
+      "title": "她发来的半张名单",
+      "front": "女性姓名、亲密度、下次约。每一行都在右侧同一个位置断掉。",
+      "detail": "第一夜只能看出截图被裁过，还不知道右边具体写了什么。",
+      "targets": ["truthWithGap", "sceneHint"],
+      "contradiction": "来电人用左半张图指认养鱼，却裁掉了改变整张表性质的金额栏。"
+    },
+    {
+      "id": "daily-tony-chat-copy",
+      "type": "聊天截图",
+      "title": "走我户",
+      "front": "咨询者说不够一百万，Tony 回不够起投、走我户。",
+      "detail": "这是代投约定，不是从恋爱账户偷划。",
+      "targets": ["halfLie"],
+      "contradiction": "十二万由她先开口转出。"
+    },
+    {
+      "id": "daily-tony-card",
+      "type": "转账记录",
+      "title": "十二万到他户",
+      "front": "咨询者向 Tony 转出十二万。名单同行写着不够起投。",
+      "detail": "转账能证明钱到了他那儿，不能证明已经买成宸直。",
+      "targets": ["sceneHint"],
+      "contradiction": "要回的钱和代投备注是同一笔，不是另一笔恋爱开销。"
+    }
+  ],
+  "evidenceChecks": [
+    {
+      "id": "tony-roster-column",
+      "revalues": ["tony-list-as-dating", "tony-list-columns"],
+      "title": "完整名单",
+      "prompt": "第一夜的截图，少了哪一部分？",
+      "material": "后台把第一夜截图与第二天补交的原图并排。",
+      "materialRows": [
+        "何｜12万｜不够100万起投｜走Tony户｜下次约",
+        "周｜100万｜已买｜跟进",
+        "林｜跟进｜未写金额",
+        "发型需求栏｜空"
+      ],
+      "options": [
+        {
+          "label": "右侧的金额与产品栏",
+          "correct": true,
+          "contradiction": "名单在记门槛和账户，不是女友名册。",
+          "feedback": "第一夜不是没看见，是她没发。金额、起投和账户备注都在右侧。",
+          "reactionLine": "是我裁的。我当时不想让你们先问钱。",
+          "revisesScene": 0,
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "下次约",
+          "correct": false,
+          "feedback": "下次约第一夜已经出现。少的是整片右栏。",
+          "reactionLine": "下次约这三个字，我第一眼就抓住了。",
+          "routeAxis": "identity-wording"
+        },
+        {
+          "label": "全是女的",
+          "correct": false,
+          "feedback": "女客多没有消失，但这不是第一夜截图少掉的部分。",
+          "reactionLine": "全是女的这一层，我到现在还觉得刺。",
+          "routeAxis": "caller-credibility"
+        }
+      ]
+    },
+    {
+      "id": "tony-spend-and-referrals",
+      "revalues": ["tony-caller-benefits"],
+      "title": "十二万转账",
+      "prompt": "谁先提出把钱交给 Tony？",
+      "material": "咨询者导出的转账与名单同行。",
+      "materialRows": [
+        "何→Tony｜¥120,000｜备注空",
+        "名单｜何｜不够起投，走Tony户",
+        "聊天｜我不够一百万，能不能帮我买"
+      ],
+      "options": [
+        {
+          "label": "她先问能不能帮我买",
+          "correct": true,
+          "contradiction": "十二万是她开口后的转账。",
+          "feedback": "她先问能不能跟着买，Tony 才说可以走他的户。",
+          "reactionLine": "我先问的。这句我认。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "备注空",
+          "correct": false,
+          "feedback": "转账备注空，解释不了是谁提出代投。",
+          "reactionLine": "备注是空的。他没写理财两个字。",
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "金额是十二万",
+          "correct": false,
+          "feedback": "十二万只能证明钱到了他那儿，不能证明是他偷划。",
+          "reactionLine": "金额我没否认。先开口的人是我。",
+          "routeAxis": "caller-credibility"
+        }
+      ]
+    }
+  ],
+  "investigationHooks": [
+    {
+      "id": "tony-manager-training-note",
+      "speakerProfileId": "case2-manager",
+      "source": "store-manager-note",
+      "surface": "后台收到门店说明",
+      "title": "门店说明",
+      "triggerContradiction": "店里不卖理财，不等于 Tony 没跟客人聊过产品。",
+      "appearsNowBecause": "收麦后，店长托人转来一段说明，不接受把整家店说成骗局。",
+      "prompt": "这段说明里，哪一句最该拎出来？",
+      "material": "店长说：“我们店只做美发，也没让员工替客人收钱。Tony 私下聊过什么、手机里记了什么，你们直接问他，别把整家店带进去。”",
+      "materialRows": [
+        "店里不卖理财",
+        "店里没让员工替客人收钱",
+        "Tony 私下聊过什么，直接问他",
+        "别把整家店带进去"
+      ],
+      "proves": "门店培训和卖理财不是一回事；店长拒绝替 Tony 的名单说明来源。",
+      "stillCannotProve": "不能证明 Tony 有或没有代销资格，也不能证明十二万的去向。",
+      "routeAxis": "process-control",
+      "options": [
+        {
+          "label": "店里不卖理财",
+          "correct": true,
+          "contradiction": "门店制度解释不了私人名单上的起投。",
+          "feedback": "门店不认这项业务。Tony 私下收钱和记名单，得由他自己解释。",
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "直接问 Tony",
+          "correct": false,
+          "feedback": "这是店长的处理态度，不能证明钱有没有进产品。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "别把整家店带进去",
+          "correct": false,
+          "feedback": "这是店长的态度。回答不了走我户三个字从哪来。",
+          "routeAxis": "money-flow"
+        }
+      ]
+    },
+    {
+      "id": "tony-other-caller-dm",
+      "speakerProfileId": "case2-other-customer",
+      "source": "dm",
+      "surface": "后台进来一条私信",
+      "title": "周发来的材料",
+      "triggerContradiction": "名单上另一行也是钱，不是女朋友。",
+      "appearsNowBecause": "收麦后，周私信进来。她想拉咨询者一起要说法；咨询者却只想把自己的十二万拿回来。",
+      "prompt": "周手里的哪一项，最值得和转账原件一起核？",
+      "material": "周说：“我那行写一百万、已买。他给我发过一张回单。我不去店里闹，材料可以交警方。回单是不是对应我那笔钱，让他们查。”",
+      "materialRows": [
+        "她那栏写着｜100万，已买",
+        "她收到的｜认购回单截图",
+        "她愿意做的｜把转账与回单交警方核原件",
+        "仍不知道｜回单是否对应她那一百万"
+      ],
+      "proves": "周也向 Tony 转过钱，并持有一张他转来的认购回单截图。",
+      "stillCannotProve": "不能证明两笔钱都买成同一产品，也不能证明已经损失。",
+      "routeAxis": "external-corroboration",
+      "options": [
+        {
+          "label": "名单写着100万已买",
+          "correct": false,
+          "feedback": "名单是 Tony 自己记的，不能替代转账与回单原件。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "转账与回单放在一起核",
+          "correct": true,
+          "contradiction": "Tony 说已经提交，仍只有逐笔核对原件才能确认钱去了哪里。",
+          "feedback": "转账证明钱给了 Tony；回单是否对应这笔钱，要看原件。",
+          "reactionLine": "她肯把原图交出去。我也交。",
+          "routeAxis": "external-corroboration"
+        },
+        {
+          "label": "名单上写着已买",
+          "correct": false,
+          "feedback": "已买是 Tony 的备注，不是机构回单。",
+          "routeAxis": "caller-credibility"
+        }
+      ],
+      "replyChoices": [
+        {
+          "id": "side-other",
+          "label": "支持她拉人要说法",
+          "grantsInventory": ["side-other-caller"],
+          "stanceNudge": "defensive"
+        },
+        {
+          "id": "side-caller",
+          "label": "劝她先要回单别闹店",
+          "grantsInventory": ["side-caller-stop"],
+          "stanceNudge": "open"
+        }
+      ]
+    }
+  ],
+  "respondentNote": {
+    "source": "respondent-note",
+    "appearsNowBecause": "收麦后，他给节目后台留了一段文字，说不上麦，就说这几句。",
+    "text": "是她先问能不能跟着买。十二万过到我户，我说过走我户，也跟她说过已经提交。名单是我记的客户跟进，不是女朋友名册。她叫我自己人，晚档我也留过。产品全名、合同和回单，我只给她本人，不发直播间。我不上麦。"
+  },
+  "crossCaseEchoes": [
+    {
+      "requiresCaseId": "03-profile",
+      "text": "怎么又是宸直。上一通女方家的三十万还等九月底，这通又有人把钱转进了别人的账户。"
+    },
+    {
+      "requiresCaseId": "04-workplace",
+      "text": "前面那通六万八至少还有公司抬头发票。这十二万只有转账和提交页，不能混成同一种要钱。"
+    }
+  ],
+  "hostDisclosure": {
+    "anchor": "afterBackflow",
+    "text": "昨晚敲门的是警察。名单上的周呢，她到底是来剪头的，还是你说的那种女朋友？",
+    "lines": [
+      { "role": "caller", "speaker": "咨询者", "text": "……来剪头的。她那行没有亲密度，只有一百万和已买。" },
+      { "role": "host", "text": "这两列你昨晚就看见了。" },
+      { "role": "caller", "speaker": "咨询者", "text": "看见了。可我那时候气疯了，就想让你们先看那一排女人。现在让我再说周是他女朋友……我说不出口。" }
+    ]
+  },
+  "hostWoundHook": "行业都这样，别上纲上线",
+  "deepFollowup": {
+    "question": "如果他明天给你一张他名下的认购回单，却不退十二万，你还会把那半张截图发出去，说自己碰上了恋爱诈骗吗？",
+    "resistanceBeat": {
+      "lines": [
+        { "role": "caller", "text": "……我还是想发。" },
+        { "role": "host", "text": "你那行写的是走我户，还是女朋友？" },
+        { "role": "caller", "text": "走我户。" },
+        { "role": "host", "text": "那先说你现在最要紧的。" }
+      ]
+    },
+    "answer": "先把回单和合同户名给我。名单我先不发。十二万怎么处理，等他把材料交出来再说。",
+    "note": "她第一次把要回单、要退现金和公开养鱼控诉拆开。"
+  },
+  "stageJudgement": "先别再给他转钱。让他把产品全名、合同、回单和实际下单账户发给你，“走我户”走的哪张卡，也写清楚。你那半张名单证明不了名单上每个人都在跟他谈，金额栏还是你自己裁的。你就是看中他长得好看，也享受他留晚档、叫你自己人。后来听说产品可能出事，你又把主动找他代投改成恋爱诈骗。这个说法我不认。他也别躲。十二万收进自己账户，还说已经提交，就得把钱去了哪儿交代清楚。这十二万到底有没有买成产品，等合同和回单。没有原件，今晚谁都别替它下结论。",
+  "caseClosing": {
+    "title": "名单里的起投",
+    "verdict": "别再给 Tony 转钱，先书面要产品全名、合同、回单和实际下单账户。她主动裁掉金额栏，半张名单证明不了 Tony 同时和那些女客谈恋爱；她也不能在听见产品可能出事后，把自己先开口的代投改成恋爱诈骗。Tony 收了十二万，又说已经提交，就必须把钱去了哪儿说清。宸直是否兑付、这笔钱是否入了产品、他有没有资格做这种安排，今晚都没有答案。",
+    "beats": [
+      {
+        "label": "来电",
+        "text": "她先把名单讲成养鱼女友名册，一开口就要钱。后来才承认自己也要恋爱这个位置，他确实帅。"
+      },
+      {
+        "label": "麦上",
+        "text": "昨晚敲门的是警察，因涉案放款人来核实借款。周只是剪头客户。第二夜完整名单和转账才对出：十二万是她因为不够一百万才让他代投。"
+      },
+      {
+        "label": "回看",
+        "text": "高息她在酒吧先听过。小姐妹说产品在拖以后，她才翻手机、才打进来把代投改口成被骗。"
+      }
+    ],
+    "confirmed": [
+      "咨询者确实以恋爱名义和 Tony 相处，并承认他长得好看",
+      "名单上多为女客，字段包含金额、起投、跟进和走他户",
+      "咨询者向 Tony 转过十二万，自己开口要求帮忙购买高息档",
+      "高息传闻来自酒吧小姐妹，咨询者在翻名单前就听过一百万起投",
+      "周是剪头客户，名单行写一百万已买，不是咨询者所说的女朋友",
+      "第一夜敲门的是警察；放款的人涉案，按借款人来问咨询者",
+      "店长称店里不卖理财，拒绝替 Tony 的私人名单作证"
+    ],
+    "unresolved": [
+      "十二万是否已经买成宸直产品",
+      "Tony 是否有向顾客推介或代购的资格",
+      "周的认购回单是不是她自己那笔钱",
+      "其他名单行是否完成认购",
+      "宸直该档产品能否兑付或赎回",
+      "Tony 对她的喜欢有多少是真心",
+      "她向放贷人借了多少、是否仍欠",
+      "警察把她当证人还是另有调查"
+    ],
+    "nextStep": "不再转钱。书面要求产品全名、认购合同、回单和实际下单账户；把自己与周的转账、聊天分别交给警方核原件。不要拿裁过的名单公开指认恋爱诈骗。"
+  },
+  "careChoices": [
+    {
+      "id": "pragmatic",
+      "label": "不再转钱、要回单",
+      "hostLine": "别再转钱。产品名、合同、回单和下单账户，一样一样让他发。头发还得剪——换家店。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……嗯。楼下新开了家，十五块快剪。就是不聊天。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "不聊挺好。" }
+      ]
+    },
+    {
+      "id": "affirm",
+      "label": "承认她确实动过心",
+      "hostLine": "他总给你留晚档，也会叫自己人。你会往那边想，不奇怪。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……我还真怕你也说我活该。你这么讲，我能听进去。" }
+      ]
+    },
+    {
+      "id": "accompany",
+      "label": "允许她回来再谈",
+      "hostLine": "材料先要。等他回了什么，你再来。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "行。想不好我就再打。" }
+      ]
+    }
+  ],
+  "storyInterludeRecap": "她先拿裁过的名单讲养鱼，后来才承认恋爱名义是真的、他确实帅。第一夜强光和敲门让她突然下线；第二夜才问出警方因涉案放款人来核实借款。完整名单和转账随后对出：周只是剪头客户，十二万是她自己因不够一百万才让他代投。风声一来，她才翻脸要钱。",
+  "followupTwist": "周又发来消息，说愿意把转账和回单原图交给警方。来电人也把自己的聊天和十二万转账整理了过去。两人都没有去店里堵人；他还是只说已经提交，没有发合同。",
+  "dailyShareTitle": "名单上的女人，是女友还是客户？",
+  "dailyShareBody": "她翻到一份全是女人的名单，只把姓名和下次约发到后台，说他在养鱼。第二夜完整截图才露出她那行：十二万，不够起投，走他户。恋爱是真的，代投也是她开口。风声一来，她才要钱。",
+  "dailyShareQuestion": "用恋爱关系跨过理财门槛的钱，还能不能按被骗全额讨回？",
+  "truth": "Tony 很帅，也确实以恋爱名义和咨询者相处，留最晚那档、叫她自己人。咨询者要这个位置，不是单方面被拖着。她翻到完整名单后，只把姓名、亲密度和下次约所在的左半边发给节目，裁掉金额、起投、跟进和走他户；周只是剪头客户，行内写一百万已买。高息档一百万起投，咨询者在酒吧听小姐妹说过，自己只有十二万，主动问 Tony 能不能跟着买。Tony 声称自己已经够门槛，可以把她的钱并进去、走自己账户；转账由她发起，他随后只发来一张提交页面，没有给产品全名、合同和回单。小姐妹后来说产品在拖，她才翻他手机，把代投改口成养鱼骗钱，打进直播间问怎么要回来。第一夜强光扫进窗内，敲门声后她突然下线；第二夜才承认来人是警察，因为她借过涉案放款人的钱。店长称店里不卖理财。节目不能确认十二万是否已经买成宸直、Tony 有无代销资格、周的回单是不是对应她的一百万，也不能确认该产品能否兑付，更不能确认咨询者借了多少、是否仍欠、警方如何看待她。两边在感情和经济上都不是善男信女：他用亲密话术向熟客推高息，她用恋爱关系跨过门槛，风险一来就裁图改口。",
+  "documents": [
+    {
+      "id": "case2-member-training",
+      "title": "名单与十二万转账",
+      "intro": "前四行来自她第二天补交的完整名单；后两行是转账和要钱草稿。第一夜她只发过左半边。先圈你要带回夜里的两行。",
+      "rows": [
+        {
+          "rowId": "m01",
+          "date": "07-11",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "下次约／亲密度",
+          "memo": "咨询者第一夜抓住的字段"
+        },
+        {
+          "rowId": "m02",
+          "date": "07-11",
+          "kind": "提醒",
+          "amount": "¥1,000,000",
+          "party": "周（遮名）",
+          "memo": "已买；跟进；无亲密度"
+        },
+        {
+          "rowId": "m03",
+          "date": "07-12",
+          "kind": "提醒",
+          "amount": "¥120,000",
+          "party": "何",
+          "memo": "不够100万起投；走Tony户"
+        },
+        {
+          "rowId": "m04",
+          "date": "07-12",
+          "kind": "提醒",
+          "amount": "100万起",
+          "party": "高息档口头口径",
+          "memo": "小姐妹先说过；名单上再出现"
+        },
+        {
+          "rowId": "m05",
+          "date": "07-13",
+          "kind": "支出",
+          "amount": "¥120,000",
+          "party": "何→Tony",
+          "memo": "转账备注空；聊天写帮我买"
+        },
+        {
+          "rowId": "m06",
+          "date": "07-13",
+          "kind": "提醒",
+          "amount": "要回",
+          "party": "何→节目",
+          "memo": "草稿把代投写成养鱼骗钱"
+        }
+      ],
+      "rowQuestions": {
+        "m03": [
+          {
+            "question": "走Tony户，是你同意的，还是他写给自己看的？",
+            "answer": "他回过我这四个字。我当时点头。现在看，像他写给自己的跟进。",
+            "contradiction": "代投约定先发生在聊天，再出现在名单备注。",
+            "routeAxis": "money-flow",
+            "logicContract": {
+              "premiseAnchor": "走Tony户",
+              "sourceKind": "document-readout",
+              "sourceProves": "名单把何的十二万标记为经 Tony 账户处理。",
+              "sourceDoesNotProve": "不能证明已经买成产品，也不能证明合同户名。",
+              "answerAnchor": "他回过我这四个字",
+              "answerAdds": "咨询者承认当时接受走他户。",
+              "nextLegalQuestion": "可以追认购回单，不能把备注写成已入宸直。"
+            }
+          }
+        ],
+        "m05": [
+          {
+            "question": "十二万是你主动转的吗？",
+            "answer": "转了。我先问他能不能帮我买。",
+            "contradiction": "转账由咨询者发起，不是被偷划。",
+            "routeAxis": "money-flow",
+            "logicContract": {
+              "premiseAnchor": "何→Tony",
+              "sourceKind": "document-readout",
+              "sourceProves": "存在一笔十二万从何到 Tony 的转账。",
+              "sourceDoesNotProve": "不能证明资金随后进入宸直。",
+              "answerAnchor": "转了",
+              "answerAdds": "她确认转账是自己操作。",
+              "nextLegalQuestion": "可以问有没有回单，不能把转账写成产品认购。"
+            }
+          }
+        ]
+      },
+      "markLimit": 2
+    }
+  ],
+  "statementPatience": {
+    "night-a": 4,
+    "night-b": 4
+  },
+  "nightStructure": {
+    "enabled": true,
+    "segment1SceneIndexes": [0, 1, 2, 3],
+    "segment2SceneIndexes": [4, 5, 6],
+    "hangup": {
+      "afterSceneIndex": 3,
+      "speaker": "咨询者",
+      "line": "我这边真有事。明天再说。",
+      "hostLine": "我听见敲门了。你先确认安全，方便的时候给后台留句话。",
+      "stageDirection": "她没有解释门外是谁，电话很快断了。",
+      "audioCueId": "sfx.phone.disconnect"
+    },
+    "interlude": {
+      "title": "收麦后·控台短查",
+      "kicker": "出门前只够处理一样：看门店说明、听回放，或回周的消息。",
+      "budget": 1,
+      "minActions": 1,
+      "maxActions": 1,
+      "continueLabel": "进入白天调查",
+      "actions": [
+        {
+          "id": "reopen-training",
+          "label": "看门店发来的说明",
+          "summary": "门店刚把一段说明转到后台，看看店里认不认这项业务。",
+          "cost": 1,
+          "kind": "evidencePass",
+          "grantsInventory": ["training-no-column"],
+          "focusCheckIds": ["tony-roster-column"]
+        },
+        {
+          "id": "other-caller-dm",
+          "label": "回女客私信",
+          "summary": "周发来材料，可以回一句。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "tony-other-caller-dm"
+        },
+        {
+          "id": "listen-dryer",
+          "label": "听回放",
+          "summary": "回听那条深夜语音，确认原始背景音。",
+          "cost": 1,
+          "kind": "playback",
+          "grantsInventory": ["吹风机回放"],
+          "script": {
+            "audioCueId": "voice.case2.dryer-message",
+            "clipLabel": "回放·深夜语音",
+            "clipLine": "“今晚店长又说我了。也就你肯听我说这些。”话音底下，吹风机一直没停。",
+            "hostNote": "这句话听着亲密。它能证明语音是他发的，证明不了名单上的别人也在跟他谈。"
+          }
+        }
+      ]
+    },
+    "returnStance": {
+      "fromSnapshotOptionIds": {
+        "respondent-problem": "open",
+        "industry-gray": "neutral",
+        "caller-complicit": "defensive"
+      },
+      "default": "neutral",
+      "lines": {
+        "defensive": "我差点不打回来。昨晚那张图是我裁的，这个我认。可他为什么收我的钱，也得问。",
+        "open": "我回来了。名单的事你继续问。这回我不先说他养鱼。",
+        "neutral": "我回来了。完整名单和转账都发后台了。"
+      }
+    }
+  },
+  "overnightStructure": {
+    "hangupAnchor": "门外传来两下敲门声",
+    "hangupLine": "她没有解释门外是谁，电话很快断了。",
+    "hangupAudioCueId": "sfx.phone.disconnect",
+    "hostHoldLine": "我听见敲门了。你先确认安全，方便的时候给后台留句话。",
+    "returnLead": {
+      "lines": [
+        {
+          "role": "caller",
+          "text": "我现在在我妈家，她电视还开着。要是吵，你跟我说。"
+        },
+        {
+          "role": "host",
+          "text": "昨晚窗外突然亮了一下，接着有人敲门。到底谁来了？"
+        },
+        {
+          "role": "caller",
+          "text": "有人来问了几句话。我现在不太想说。"
+        },
+        {
+          "role": "host",
+          "text": "你今天换到妈妈家，我先确认一句：你现在安全吗？"
+        },
+        {
+          "role": "caller",
+          "text": "安全。可再往下说，直播间里可能有人认出我。你先问别的，行吗？"
+        },
+        {
+          "role": "host",
+          "text": "行，店名和你现在住哪儿都不说。等会儿我只问谁来过、为什么来；不该公开的地方就停。"
+        }
+      ]
+    },
+    "snapshotEcho": {
+      "respondent-problem": "昨晚很多人先信了那半张名单。今晚把完整截图摆上来，再看。",
+      "industry-gray": "门店怎么维护熟客是一回事，Tony 私下收钱是另一回事。今晚分开问。",
+      "caller-complicit": "昨晚那张图是我裁的。你们要骂就骂，可他收了钱，也得说清楚。"
+    },
+    "liveCounterBeats": [
+      {
+        "id": "tony-trust-screenshot-followup",
+        "kind": "interruptToast",
+        "cost": 0,
+        "beforeSceneIndex": 6,
+        "from": "周的补充材料",
+        "lines": [
+          {
+            "role": "host",
+            "text": "周后来把材料转你了吗？"
+          },
+          {
+            "role": "caller",
+            "text": "转了三张图：她给他的一百万、他说先放进宸直的聊天，还有一张认购回单。"
+          },
+          {
+            "role": "host",
+            "text": "你能确定回单就是她转的那一百万吗？"
+          },
+          {
+            "role": "caller",
+            "text": "不能。我手里只有她转来的图。是不是同一笔钱，我看不出来。我那十二万进没进产品，更看不见。"
+          }
+        ]
+      },
+      {
+        "id": "tony-comment-benefit-blowup",
+        "kind": "emotionalChoice",
+        "cost": 0,
+        "beforeSceneIndex": 6,
+        "from": "来电人看见弹幕",
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等会儿。刚那条弹幕我看见了——『收了好处装什么受害者』。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "谁装了？！息是我自己想买的！你们倒是来一个人凑一百万试试啊！"
+          }
+        ],
+        "choices": [
+          {
+            "id": "soothe",
+            "directionLabel": "先把弹幕挡开",
+            "label": "弹幕我来管。你跟我说话，别跟屏幕吵。",
+            "lines": [
+              { "role": "caller", "text": "……嗯。你问吧。" }
+            ],
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure",
+            "recapAftertaste": "她被弹幕激怒时，我先把那条弹幕划掉，让她只跟我说。"
+          },
+          {
+            "id": "push-back",
+            "directionLabel": "继续追她开口代投",
+            "label": "这条说得难听，但问到了你自己想买。你愿意只答这一层吗？",
+            "lines": [
+              { "role": "caller", "text": "……我先问的。行了吧。" },
+              { "role": "pause" },
+              { "role": "caller", "text": "往下问。" }
+            ],
+            "stanceNudge": "defensive",
+            "routeAxis": "caller-credibility",
+            "routeTone": "pressure-point",
+            "recapAftertaste": "那条弹幕说得难听，我还是问了她是不是自己想买。她没有挂断，接着说了。"
+          },
+          {
+            "id": "silence",
+            "directionLabel": "不接这条弹幕",
+            "label": "(不接话)",
+            "silent": true,
+            "lines": [
+              { "role": "stage", "text": "你把那条弹幕划掉了，没念。" },
+              { "role": "caller", "text": "……算了。当我没看见。" }
+            ],
+            "stanceNudge": "neutral",
+            "routeAxis": "caller-credibility",
+            "routeTone": "neutral",
+            "recapAftertaste": "她看到那条弹幕时，我没有追着问。等她自己说继续，我们才往下走。"
+          }
+        ]
+      },
+      {
+        "id": "tony-business-letter",
+        "kind": "interruptToast",
+        "cost": 0,
+        "afterSceneIndex": 6,
+        "from": "老方（后台同步）",
+        "speakerProfileId": "producer-lao-fang",
+        "text": "店家商务函到平台了，点名这通。法务让缓。你要继续，数据得扛住。——方",
+        "choices": [
+          {
+            "id": "keep-asking-table",
+            "directionLabel": "顶着商务函继续问名单",
+            "label": "这张名单继续问。",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "后台的推荐提示从绿色变成灰色：本场停止推荐。"
+              }
+            ],
+            "routeTone": "pressure-point",
+            "endingImpact": "platform-data-loss",
+            "recapAftertaste": "商务函压过来那下，我没有换话题。后台随即停了这场的推荐。"
+          },
+          {
+            "id": "ask-person-not-shop",
+            "directionLabel": "收住店名，只问她自己那行",
+            "label": "店名先不说了，只问这张名单。",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "老方回了一个‘收到’，平台提示没有再升级。"
+              }
+            ],
+            "routeAxis": "identity-wording",
+            "recapAftertaste": "商务函压过来以后，我收了店名，只问那张名单是谁写的、写了什么。",
+            "questionOverride": {
+              "sceneId": "tony-next-push-column",
+              "optionIndex": 0,
+              "question": "店名不说了。那列备注，你念你自己那行就行。"
+            }
+          }
+        ]
+      }
+    ],
+    "interludeEarnedItemMap": {
+      "side-other-caller": "周发来的材料",
+      "side-caller-stop": "先要回单",
+      "training-no-column": "门店的说明"
+    },
+    "dayIntro": "何昨晚只交了裁过的名单，今天才补完整截图和转账。她同意你只看店门口公开发生的事，也让那位聊过高息的朋友见你一面。宸直窗口只回答认购规则，不查 Tony 的私人账户。下午最多处理两处。",
+    "dayBudget": 2,
+    "minDayScenes": 2,
+    "dayScenes": [
+      {
+        "id": "day-tony-shop-observe",
+        "label": "理发店外·隔窗观察",
+        "backdropClass": "day-city",
+        "kind": "observe",
+        "body": {
+          "access": "何同意你观察公开营业区；你不进店、不拍客人，也不向店员打听私人关系。",
+          "text": "傍晚五点，你坐在理发店同侧的奶茶店外摆位，离门三四步。隔着玻璃能看见动作；门开时，最多漏出一两句。你不进店，也不拦人。",
+          "routeAxis": "external-corroboration",
+          "cast": ["Tony（店内）", "熟客", "前台"],
+          "beats": [
+            { "speaker": "Tony（店内）", "text": "姐，先坐会儿。" }
+          ],
+          "choice": {
+            "prompt": "看到这里，你带哪一层回夜里？",
+            "options": [
+              {
+                "id": "note-shared-address",
+                "label": "留在门边，听他跟熟客聊什么",
+                "grantsEarnedItemId": "门边那句自己人",
+                "routeAxis": "external-corroboration",
+                "resultBeats": [
+                  { "speaker": "Tony（门边）", "text": "自己人还排什么队啊。我把手上这个做完就轮你。" },
+                  { "speaker": "熟客", "text": "你可少来。今天就补颜色，别又跟我说那个。我没钱。" },
+                  { "speaker": "Tony（门边）", "text": "行，不说那个。你先坐，我这边马上好。" }
+                ]
+              },
+              {
+                "id": "note-service-sequence",
+                "label": "绕到侧窗，看他在本子上写什么",
+                "grantsEarnedItemId": "他写下的跟进",
+                "routeAxis": "process-control",
+                "resultText": "你绕到侧窗。Tony 让刚到的熟客先坐，说做完手上这个就轮她。前台随后翻开蓝色《会员预约》册。他另拿出手机备忘录，在一格里落下几个字，隔着玻璃只认出“跟进”。"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-tony-friend-studio",
+        "label": "小姐妹的休息点",
+        "backdropClass": "day-studio",
+        "kind": "studio",
+        "body": {
+          "access": "何让那位聊过高息的朋友见你；朋友只肯说自己听过的门槛，不替 Tony 解释感情。",
+          "text": "她那位朋友在下午场开始前的休息点等你。她说只给十分钟，不想被写成证人。",
+          "routeAxis": "process-control",
+          "cast": ["小姐妹", "你"],
+          "beats": [
+            { "speaker": "小姐妹", "text": "息高那档我在酒桌上说过。一百万起。我没让她买。" },
+            { "speaker": "你", "text": "你先告诉我，她当时听完什么反应？" }
+          ],
+          "choice": {
+            "prompt": "你先拆哪件事带回夜里？",
+            "options": [
+              {
+                "id": "split-template",
+                "label": "先问清一百万门槛是谁说的",
+                "grantsEarnedItemId": "一百万门槛",
+                "routeAxis": "process-control",
+                "resultBeats": [
+                  { "speaker": "小姐妹", "text": "门槛是我听来的，不是 Tony 教我的。何听完就问够不够自己那点钱。我当时还笑她。" },
+                  { "speaker": "你", "text": "行。她什么时候动心想买，我回去问她。" }
+                ]
+              },
+              {
+                "id": "point-benefits",
+                "label": "先问她后来为什么说产品在拖",
+                "grantsEarnedItemId": "翻手机的时间",
+                "routeAxis": "caller-credibility",
+                "resultBeats": [
+                  { "speaker": "小姐妹", "text": "最近有人说赎回要排队。我怕她已经转了，才让她别再转。她回我一句：我去翻他手机。" },
+                  { "speaker": "你", "text": "明白。翻名单的时机，让她自己说。" }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-tony-manager-doorstep",
+        "label": "宸直咨询窗口",
+        "backdropClass": "day-city",
+        "kind": "doorstep",
+        "body": {
+          "access": "何把问题转成产品门槛咨询；窗口只回答对客口径，不查代投、不认私人名单。",
+          "text": "咨询窗口只开一条缝。柜员没让你进厅，手里捏着产品折页。",
+          "routeAxis": "external-corroboration",
+          "earnedItemId": "宸直窗口答复",
+          "cast": ["柜员", "你"],
+          "beats": [
+            { "speaker": "柜员", "text": "你问的那类产品，单笔认购至少一百万，还要做投资者资格和风险匹配。" },
+            { "speaker": "你", "text": "如果钱先转到别人户头，再由他来买呢？" },
+            { "speaker": "柜员", "text": "系统只认合同上的委托人。你没有产品全名和合同编号，我查不了。" },
+            { "speaker": "柜员", "text": "后面还有人办业务，先这样。" }
+          ]
+        }
+      },
+      {
+        "id": "day-tony-member-docs",
+        "label": "后台·名单与转账",
+        "backdropClass": "day-document",
+        "kind": "document",
+        "body": {
+          "access": "名单、转账和要钱草稿由何本人交给节目。所有姓名与联系方式已经遮掉。",
+          "documentId": "case2-member-training",
+          "routeAxis": "document-edge",
+          "earnedItemId": "完整名单与转账"
+        }
+      }
+    ],
+    "callbackOpeners": {
+      "门边那句自己人": {
+        "line": "门边那句我听见了。他也叫别人自己人。那个熟客一听他要聊别的，马上就拦了。",
+        "firstConflict": {
+          "hostLine": "他跟熟客也这么说。你以前听见自己人，后面的话还听吗？",
+          "callerLine": "有时候不听。我想听成关系。"
+        }
+      },
+      "他写下的跟进": {
+        "line": "隔着玻璃，只看见他让熟客提前做，自己又在备忘录里写跟进。没听见他怎么叫她。我就是觉得这两件事连得太快。",
+        "firstConflict": {
+          "hostLine": "他刚让熟客坐下，就在备忘录里写跟进。你以前被照顾时，问过他在记什么吗？",
+          "callerLine": "没问。他说自己人，我就没往下问。"
+        }
+      },
+      "完整名单与转账": {
+        "line": "我把完整图补上了。我那行是十二万、不够起投、走他户，下面就是我自己的转账。",
+        "firstConflict": {
+          "hostLine": "十二万是你转的。你为什么还是在草稿里写养鱼骗钱？",
+          "callerLine": "我一看名单就来气。可走他户是我点过头的，真让我一字一字说，也不能都算他偷的。"
+        }
+      },
+      "吹风机回放": {
+        "line": "吹风机那段我听清了。那句“也就你肯听我说这些”是他发的，背景一直是店里。",
+        "firstConflict": {
+          "hostLine": "这句听着很亲密。它能证明名单上的别人也在跟他谈吗？",
+          "callerLine": "不能。只能证明他对我说过。"
+        }
+      },
+      "周发来的材料": {
+        "line": "她要拉人去对材料。我不去店里。我只要回单。那张名单，她要留就留。",
+        "firstConflict": {
+          "hostLine": "你支持她留表，却不肯站到店门口。怕闹大，还是怕别人问你自己也转过？",
+          "callerLine": "都怕。十二万是我转的。我不想领头装成什么都没做。"
+        }
+      },
+      "先要回单": {
+        "line": "我劝她先要回单，别去堵门。我自己的预约也取消了。可我没让她删名单，这事他得自己说。",
+        "firstConflict": {
+          "hostLine": "你劝她要回单，自己也取消了预约。要是她把名单发出来，你会不会又劝她算了？",
+          "callerLine": "不会。我就是不想带头去店里堵人。"
+        }
+      },
+      "门店的说明": {
+        "line": "门店那段我看了。他们说店里没让员工收这种钱。他私下做的事，让他自己解释。",
+        "firstConflict": {
+          "hostLine": "所以这不是店里的项目。你把钱转给谁了？",
+          "callerLine": "转给他个人。"
+        }
+      },
+      "一百万门槛": {
+        "line": "小姐妹说，一百万门槛是她在酒桌上讲的。我听完就问自己那点钱够不够。",
+        "firstConflict": {
+          "hostLine": "现在再看，你还觉得高息是他后来才塞给你的吗？",
+          "callerLine": "不觉得了。是我先动心。他只是说可以走他户。"
+        }
+      },
+      "翻手机的时间": {
+        "line": "她说产品在拖，让我别再转。我回她：我去翻他手机。名单是那之后看见的。",
+        "firstConflict": {
+          "hostLine": "风声在前，翻手机在后。你还要把今晚说成刚发现被骗吗？",
+          "callerLine": "……我就是怕拿不回，才去翻的。"
+        }
+      },
+      "宸直窗口答复": {
+        "line": "窗口只说，你问的那类产品单笔至少一百万，还要核投资者资格；没有产品全名和合同编号，查不了他说的那一笔。",
+        "firstConflict": {
+          "hostLine": "窗口只认合同。他给过你合同吗？",
+          "callerLine": "没有。只有一张提交页面。"
+        }
+      }
+    },
+    "callbackFallback": {
+      "line": "我回来了。那张名单我又看了一遍。你白天先查了哪一处？"
+    },
+    "postures": {
+      "againstCaller": "代投是我问的，这我认。可我没答应被写成女朋友名册拿去养鱼。",
+      "withCaller": "昨晚下线以后，我折腾到很晚。白天你查到什么，等我先把昨晚的消息说完。"
+    }
+  }
+}

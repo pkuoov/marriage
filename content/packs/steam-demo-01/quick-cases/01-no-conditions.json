@@ -1,0 +1,426 @@
+{
+  "id": "01-no-conditions",
+  "caseNumber": "01",
+  "title": "什么都不图",
+  "label": "直播快案 01",
+  "castProfileId": "quick1-caller-luo",
+  "presentation": {
+    "backgroundSrc": "./assets/generated/backgrounds/livestream_studio_v2.png",
+    "artStyle": "pixel",
+    "host": {
+      "name": "林旭阳",
+      "roleLabel": "主播",
+      "artSrc": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png",
+      "artVariants": {
+        "listening": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png?v=0.27.0",
+        "questioning": "./assets/generated/host/lin_xuyang_questioning_pixel.png?v=0.27.0",
+        "pressing": "./assets/generated/host/lin_xuyang_pressing_pixel.png?v=0.27.0",
+        "verdict": "./assets/generated/host/lin_xuyang_verdict_pixel.png?v=0.27.0"
+      }
+    },
+    "caller": {
+      "name": "匿名来电人",
+      "roleLabel": "语音连线",
+      "artSrc": "./assets/generated/quick-detective/caller-luo-pixel.png",
+      "artVariants": {
+        "neutral": "./assets/generated/quick-detective/caller-luo-pixel.png?v=0.27.0",
+        "guarded": "./assets/generated/quick-detective/caller-luo-guarded-pixel.png?v=0.27.0",
+        "pause": "./assets/generated/quick-detective/caller-luo-pause-pixel.png?v=0.27.0"
+      }
+    }
+  },
+  "whyTonight": "她知道林旭阳除了做情感热线，也兼职替人介绍对象，登记的听众里有做生意、家境稳定的男性，想借直播间获得介绍。",
+  "helpRequest": {
+    "kind": "interest",
+    "request": "她想让林旭阳介绍对象。"
+  },
+  "callerStake": "她想进入主播筛过的优质对象范围，希望林旭阳先替她证明自己可靠，长期最好还能有人分担房贷。",
+  "callerIntentProfile": {
+    "openGoal": "让林旭阳帮她介绍对象。",
+    "preferredAnswer": "她有工作、有房、要求不高，主播可以放心把认识久、条件好的男性介绍给她。",
+    "audienceTilt": "让听众先同情她的家庭经历，相信她只看重患难相守。",
+    "protectedInterest": "借主播信誉接触条件更好的对象，也避免解释房款来源、生育检查和真实择偶门槛。",
+    "defaultTactic": "先讲凄惨家庭和低要求；被追到矛盾时重定义称呼、强调隐私，再用恭维争取主播背书。",
+    "concessionLimit": "可以承认给钱的人不是亲生父亲、自己做过检查，也可以承认希望有人减轻房贷；不主动说明双方具体关系或检查原因。",
+    "painPoints": [
+      {
+        "topic": "两个爸爸是不是同一个人",
+        "threatens": "会击穿亲生父亲无力工作却拿出一百万元的故事。",
+        "firstResponse": "先强调长期以父女相称，反问为什么一定要分清。",
+        "afterProof": "主播只问是否亲生后，才承认不是亲爸。",
+        "minimumLeak": "承认一百万元来自另一位年长男性。"
+      },
+      {
+        "topic": "不能生育的例子",
+        "threatens": "会暴露她早已知道相关风险。",
+        "firstResponse": "先质问主播为什么这样问，坚持只是顺嘴举例。",
+        "afterProof": "主播短追一句以后才承认做过检查。",
+        "minimumLeak": "承认医生说自然怀孕机会较低。"
+      },
+      {
+        "topic": "口头低要求与实际筛选",
+        "threatens": "会暴露她想进条件更好的对象池并分担房贷。",
+        "firstResponse": "先以不了解为由拒绝普通登记听众。",
+        "afterProof": "被比较前后条件后，才承认更想找主播熟悉、经商、家里省心的人。",
+        "minimumLeak": "承认希望对方减轻房贷压力。"
+      },
+      {
+        "topic": "不会说好听话是否导致分手",
+        "threatens": "会暴露她会在有利时熟练恭维，旧关系问题也不只是不善表达。",
+        "firstResponse": "先坚持自己只是不会哄人。",
+        "afterProof": "主播对照她求介绍时的软话后，才承认脾气和争吵也有影响。",
+        "minimumLeak": "承认不会说好听话不是上一段关系结束的唯一原因。"
+      }
+    ]
+  },
+  "selfServingOmission": "她用有工作、有房和低要求建立可信形象，却没有主动说明一百万元来自另一位被她称作“爸爸”的年长男性。她也没有说自己做过婚育检查，只在讲相互扶持时突然拿“我不能生孩子”举例，第一次回问仍然否认，直到主播再追一句才承认。",
+  "premise": "一个姑娘打进电话，想请你帮她介绍对象。",
+  "coverStrategy": {
+    "publicImage": "她把自己说成能养活自己、有房、要求低、看重患难相守，也不擅长说漂亮话的人。",
+    "honestDetails": [
+      "她二十四岁，在商场做服装销售，收入约六七千元。",
+      "亲生父亲腰伤后不能做重活，母亲在她上小学时离开。",
+      "她名下确实有一套仍需偿还少量贷款的小两居。"
+    ],
+    "layeredLeaks": [
+      "先说亲生父亲靠零工生活，再说爸爸给了一百万元；对质时先坚持两人一直以父女相称，被逼着只回答是否亲生以后才承认不是同一个人，再用隐私和自愿赠与挡住真实关系。",
+      "先借父亲经历说到“我不能生孩子”，首轮不解释；主播在对质时回问，她先反驳，主播再追一句才承认做过检查。",
+      "先说工资普通、没有房也可以、不会让男方养，再以不了解为由避开普通听众，转而指定主播熟悉的经商男性，还希望对方减轻房贷压力。",
+      "把上一段关系散掉归到不会说好听话，求主播背书时却立刻换成恭维和软话；被追问后才承认还有脾气和争吵的问题。"
+    ]
+  },
+  "disclosureRounds": [
+    {
+      "id": "family-version",
+      "label": "先听她怎么介绍自己",
+      "patience": 3,
+      "turnIds": ["greeting", "ask-for-match", "caller-profile", "birth-father", "million-from-dad", "which-dad"],
+      "issueOptionIds": ["benefactor-source", "mother-departure", "report-disclosure"],
+      "requiredConfrontationIds": ["two-fathers", "fertility-slip"]
+    },
+    {
+      "id": "actual-request",
+      "label": "再听她怎么说",
+      "patience": 3,
+      "turnIds": ["low-standards", "ordinary-match", "ordinary-caution", "home-price", "borrow-host-trust"],
+      "issueOptionIds": ["mortgage-pressure", "actual-standard", "soft-talk"],
+      "requiredConfrontationIds": ["hidden-standards", "useful-soft-talk"]
+    }
+  ],
+  "turns": [
+    {
+      "id": "greeting",
+      "host": "你好，能听见吗？",
+      "caller": "能听见。"
+    },
+    {
+      "id": "ask-for-match",
+      "host": "那你今天什么问题？",
+      "caller": "我想问下我的择偶定位。您这儿有合适的资源，当然更好。"
+    },
+    {
+      "id": "caller-profile",
+      "host": "先把你自己的情况，还有以前谈过的，大概说一下。",
+      "caller": "我二十四，在商场卖衣服，底薪加提成一个月六七千，自己能养活自己。以前谈过两个，一个去了外地，另一个总说我脾气硬。我不太会讲好听的，吵完也拉不下脸哄人，后来就散了。现在就想找个踏实点的，别赌，别动手，家里真遇上事也别瞒着我、转身就跑。"
+    },
+    {
+      "id": "birth-father",
+      "host": "你为什么把这个看得这么重？",
+      "caller": "我爸以前给人开货车，后来伤了腰，坐久一点都疼，重活也干不了。家里本来就没什么钱，他一伤，收入也断了。我妈看这日子过不下去，连句话都没多说，收拾东西就走了。那年我还在上小学，后来是我爸一个人把我带大的。现在他偶尔替熟人看看店，也挣不了多少。所以我就觉得，两个人真碰上病啊、没法上班啊，别说散就散。哪怕以后是他身体不好，或者是我不能生孩子，也能商量着过。"
+    },
+    {
+      "id": "million-from-dad",
+      "host": "你刚才说自己能养活自己。现在是租房，还是跟家里住？",
+      "caller": "我自己有套小两居，还有一点贷款。去年买的时候，我爸爸给了我一百万，我又添了一点才买下来。以后男方没房，也可以先住我这里。"
+    },
+    {
+      "id": "which-dad",
+      "host": "那你爸还挺疼你的，自己身体这样，还先把你的房子解决了。",
+      "caller": "嗯，他在我身上一直挺舍得的。钱的事您就别替我操心了，我不会让男方养我。"
+    },
+    {
+      "id": "low-standards",
+      "host": "那你愿意见什么样的？你一次说完。",
+      "caller": "一个月四五千也行，年龄大我五岁以内，没房也可以。学历、长相我真不挑。合适的话相处一两年就结婚。商场下班晚，我平时也没什么机会认识人，要不然也不会来找您。"
+    },
+    {
+      "id": "ordinary-match",
+      "host": "我这边正好有个登记过的听众。三十一，月薪六千，没房，在物流公司做调度。条件跟你刚才说的差不多，要不要先留个联系方式？",
+      "caller": "先别急吧。就这么几句话，我也不知道他平时是什么样的人。加了以后不合适，再删也挺麻烦的。"
+    },
+    {
+      "id": "ordinary-caution",
+      "host": "那什么样的介绍，你会更放心？",
+      "caller": "最好是您认识久一点、知道底细的。工作稳定当然好，要是自己做点生意，家里也省心，就更合适。不是非得有钱，我主要是怕遇到不靠谱的。能帮我减轻点房贷压力，那就更好了。"
+    },
+    {
+      "id": "home-price",
+      "host": "你那套房买下来一共多少钱？",
+      "caller": "总价两百万。"
+    },
+    {
+      "id": "borrow-host-trust",
+      "host": "你为什么一定想让我来介绍？",
+      "caller": "您做这个两年多了，看人肯定比我准。您要是先跟他说一句，我这人还可以，他至少愿意见我一面。旭阳哥，我条件真没那么多，您就帮我留意一下吧。"
+    }
+  ],
+  "issueOptions": [
+    {
+      "id": "benefactor-source",
+      "label": "买房的钱到底是谁出的",
+      "sourceAnchor": "我爸爸给了我一百万",
+      "confrontationId": "two-fathers"
+    },
+    {
+      "id": "mother-departure",
+      "label": "她母亲当年为什么离开",
+      "sourceAnchor": "我妈看这日子过不下去"
+    },
+    {
+      "id": "report-disclosure",
+      "label": "为什么偏偏拿自己不能生孩子举例",
+      "sourceAnchor": "或者是我不能生孩子",
+      "confrontationId": "fertility-slip"
+    },
+    {
+      "id": "mortgage-pressure",
+      "label": "她的收入能不能负担剩余房贷",
+      "sourceAnchor": "能帮我减轻点房贷压力"
+    },
+    {
+      "id": "actual-standard",
+      "label": "她说的条件和实际选择",
+      "sourceAnchor": "先别急吧",
+      "confrontationId": "hidden-standards"
+    },
+    {
+      "id": "soft-talk",
+      "label": "不会说好听话是不是分手的根本原因",
+      "sourceAnchor": "旭阳哥",
+      "confrontationId": "useful-soft-talk"
+    }
+  ],
+  "confrontations": [
+    {
+      "id": "two-fathers",
+      "basisTurnIds": ["birth-father", "million-from-dad", "which-dad"],
+      "revealTransition": {
+        "id": "quick-two-fathers",
+        "kind": "reveal",
+        "eyebrow": "称呼对不上",
+        "label": "两个“爸爸”",
+        "visualVariant": "two-fathers"
+      },
+      "lines": [
+        {
+          "role": "host",
+          "text": "先说买房那一百万。你亲爸伤了腰，现在只能偶尔替人看店。后面你又说“爸爸”给了你一百万。我顺着亲爸往下说，你也没纠正。给钱的到底是不是你亲爸？"
+        },
+        {
+          "role": "caller",
+          "text": "我一直叫他爸爸，他也一直把我当女儿。钱是他愿意给我的，你们为什么非要分得这么清？"
+        },
+        {
+          "role": "host",
+          "text": "我只问一句，他是不是你亲生父亲？"
+        },
+        {
+          "role": "caller",
+          "text": "……不是亲爸。可我叫了这么多年，跟亲爸有什么区别？"
+        },
+        {
+          "role": "host",
+          "text": "区别是你亲爸一个月挣不了多少钱，另一个人却能一次拿出一百万。他到底是你什么人？"
+        },
+        {
+          "role": "caller",
+          "text": "这是我的私事，我没必要在直播里全说。反正钱是他自愿给的，不是我偷的抢的，房子也在我名下。"
+        }
+      ]
+    },
+    {
+      "id": "fertility-slip",
+      "basisTurnIds": ["caller-profile", "birth-father"],
+      "lines": [
+        {
+          "role": "host",
+          "text": "还有一句，我刚才没接。你说两个人遇上事别散，偏偏举了“哪怕是我不能生孩子”。你这个年纪，想到的顶多是以后他有钱了会不会变心，怎么会先想到自己不能生孩子？"
+        },
+        {
+          "role": "caller",
+          "text": "你怎么能这么问？我就是顺嘴举个例子。"
+        },
+        {
+          "role": "host",
+          "text": "那到底有没有嘛？"
+        },
+        {
+          "role": "caller",
+          "text": "……我以前确实查过。医生说自然怀孕的机会低一点，又没说一定不能。我还年轻，后面也可以再复查。"
+        }
+      ]
+    },
+    {
+      "id": "hidden-standards",
+      "basisTurnIds": ["which-dad", "low-standards", "ordinary-match", "ordinary-caution", "home-price"],
+      "lines": [
+        {
+          "role": "host",
+          "text": "你说月薪四五千、没房、大你五岁以内都可以。我真给你一个月薪六千、没房的，你又不愿意留联系方式。"
+        },
+        {
+          "role": "caller",
+          "text": "我没说不要，我就是觉得只听几句话不稳妥。"
+        },
+        {
+          "role": "host",
+          "text": "可下一句你就要我介绍自己做生意、家里稳定的，最好还能帮你减轻房贷。你那套房总价两百万。这些才是你的要求，前面一直没说。"
+        },
+        {
+          "role": "caller",
+          "text": "我也没说一定要他替我还啊。以后两个人一起住，一起承担一点不是很正常吗？能找条件好一点的，谁会故意找差的？"
+        }
+      ]
+    },
+    {
+      "id": "useful-soft-talk",
+      "basisTurnIds": ["caller-profile", "borrow-host-trust"],
+      "lines": [
+        {
+          "role": "host",
+          "text": "你说那段感情慢慢散了，是因为自己不会讲好听话，吵完也不会哄人。可一到让我帮忙，你马上夸我看人准，叫我旭阳哥，还想让我先替你说好话。你明明知道什么时候该把话说软。"
+        },
+        {
+          "role": "caller",
+          "text": "我求人帮忙，客气一点怎么了？谈恋爱和求人能一样吗？"
+        },
+        {
+          "role": "host",
+          "text": "当然不一样。可你明明知道什么时候该把话说软。那段感情最后散了，根本原因真是你不会说好听话吗？"
+        },
+        {
+          "role": "caller",
+          "text": "感情里的事哪有一句两句说得清。我脾气也不好，吵起来谁都不让谁，后来就散了。你非要算我骗你，我也没办法。"
+        }
+      ]
+    }
+  ],
+  "ending": {
+    "verdictKicker": "主播结案复盘",
+    "summaryPages": [
+      {
+        "kicker": "结束通话",
+        "title": "先把这通电话收住",
+        "stageLabel": "通话收尾",
+        "lines": [
+          {
+            "role": "host",
+          "text": "给你一百万的不是亲爸。你主动拿自己不能生孩子举例，问回去才承认做过检查。想找条件好的人可以直接说，可你还要借我的信誉去认识人，这个忙我不能帮。"
+          },
+          {
+            "role": "caller",
+            "text": "我就是想让你帮忙介绍一下，又没让你替我保证一辈子。你不愿意就算了。"
+          },
+          {
+            "role": "host",
+            "text": "那就不介绍。今天到这儿。"
+          }
+        ]
+      },
+      {
+        "kicker": "主播复盘",
+        "title": "她的话哪里对不上",
+        "stageLabel": "结案复盘",
+        "lines": [
+          {
+            "role": "host",
+            "text": "我们来把这次这个连线复个盘。"
+          },
+          {
+            "role": "host",
+            "text": "电话挂了，我们把她刚才的话放在一起。亲爸伤了腰，只能偶尔替人看店；买房的一百万，却是另一个她也叫“爸爸”的人给的。我顺着亲爸往下说时，她没有纠正，直到被问住才承认不是同一个人。"
+          },
+          {
+            "role": "host",
+            "text": "她说月薪四五千、没房也能谈，还说不会让男方养她。真给她一个月薪六千的普通上班族，她却不肯接，下一句就要我介绍自己做生意、家里稳定的，最好还能帮她减轻房贷。她来这里，是想借我的名字接触条件更好的人。"
+          },
+          {
+            "role": "host",
+            "text": "她说找对象最怕别人瞒着她。可说到两个人遇上事别走散，她偏偏拿自己不能生孩子举例。我回头问，她第一反应是“你怎么能这么问”，然后才承认做过检查。"
+          }
+        ]
+      },
+      {
+        "kicker": "高概率判断",
+        "title": "这些话拼在一起，更像什么",
+        "stageLabel": "高概率判断",
+        "lines": [
+          {
+            "role": "host",
+            "text": "按现有信息，我能确认的是：她把亲生父亲和出资买房的另一位“爸爸”混在一起说，直到被追问才拆开。那一百万元从哪里来、双方是什么关系、现在是否还有往来，她都没有解释清楚。"
+          },
+          {
+            "role": "host",
+            "text": "她先把分手归到不会哄人，继续问才补出自己脾气不好、吵架时双方都不让步。求我帮忙时，她也知道怎么夸人、把话说软。至少可以判断，开场那句“不会说好听话”不是一段完整的分手原因。"
+          },
+          {
+            "role": "host",
+            "text": "她现在想从我认识的人里找一个条件不错的，还希望我先替她背书。可出资人的关系、她真正接受的对象条件，以及需要由她本人向未来伴侣说明的婚育信息都没有讲完整。这个背书我不能做。"
+          },
+          {
+            "role": "host",
+            "text": "她主动拿自己不能生孩子举例，回问以后才承认做过检查。检查究竟说明什么，要由医生和她本人说清；直播间不能替她下医学结论，更不能由此猜她的经历。能要求的只有一件事：进入认真关系前，相关信息要由她自己如实沟通。"
+          },
+        {
+          "role": "host",
+          "text": "信息没有讲完整之前，我不会替任何一方做婚恋背书。"
+        },
+        {
+          "role": "host",
+          "text": "这通电话足够让我拒绝介绍，但不够让我替她编出一段没有证据的人生。"
+        }
+        ]
+      }
+    ],
+    "riskReading": {
+      "title": "主播给出的风险判断",
+      "text": "她先用独立、有房、要求低和重感情建立可信形象；普通对象出现后，她用“不够了解”挡掉，转而要求主播介绍熟悉的经商男性、替她背书并帮她减轻房贷。两个“爸爸”、一百万元的来源、她真正接受的择偶条件和婚育检查都在追问后才逐步补出。主播因此拒绝替她介绍或背书；但出资人具体是谁、双方是什么关系、检查的医学含义以及她目前是否另有伴侣都仍然未知。"
+    },
+    "confirmedTitle": "为什么已经足够拒绝",
+    "confirmed": [
+      "她说亲生父亲腰伤后只能断断续续做零工；给她一百万元买房的是另一位被她称为“爸爸”的人。",
+      "被问到以后，她只承认出资人不是自己的亲生父亲，没有说明双方的具体关系。",
+      "她在原始连线里主动拿自己不能生孩子举例；主播回问以后，她才承认医生曾告诉她自然怀孕机会较低。",
+      "她以不了解为由暂缓接触符合口头标准的普通上班族，随后要求主播介绍熟悉的经商男性，还说能帮她减轻房贷更好；她说房屋总价约两百万元。",
+      "她希望主播先替自己告诉对方“这个姑娘人还可以”；求助时，她会使用恭维和软话。被追问分手原因后，她又承认自己脾气不好，吵架时双方都不让步。"
+    ],
+    "unknownTitle": "没查清，也不影响避雷",
+    "unknown": [
+      "给她一百万元的人具体是谁、双方是什么关系，以及现在是否仍有往来。",
+      "自然怀孕机会较低的医学原因；不能由此推断她的性经历。",
+      "她目前是否另有伴侣，以及她拒绝普通上班族时真正看重的条件。"
+    ]
+    ,
+    "partialSummaryPages": [
+      {
+        "kicker": "按现有信息收住",
+        "title": "暂不替她介绍",
+        "stageLabel": "谨慎收案",
+        "lines": [
+          { "role": "host", "text": "目前已经问到的矛盾，足够让我暂不替你介绍，也不替你向别人背书。" },
+          { "role": "host", "text": "给你一百万元的人是谁、你们是什么关系、你真正接受什么条件，都需要你自己一次讲清。" }
+        ]
+      },
+      {
+        "kicker": "事实边界",
+        "title": "拒绝背书，不替她编故事",
+        "stageLabel": "信息边界",
+        "lines": [
+          { "role": "host", "text": "现在不能证明存在经济交换，也不能凭称呼判断对方年龄。婚育检查的医学含义同样不能由直播间猜。" },
+          { "role": "host", "text": "如果进入认真关系，相关信息应在合适的时候由你本人如实沟通。今天先到这里。" }
+        ]
+      }
+    ]
+  },
+  "sourceBoundary": "本案为原创虚构文本，只借鉴公开直播中“主播听完一通咨询，再把同一人的多句话放回她面前追问”的互动结构。年长资助者、婚育报告与择偶池只按本案台词判断，不复刻参考视频人物，也不把网络评论中的包养、性经历或现有伴侣猜测写成事实。"
+}

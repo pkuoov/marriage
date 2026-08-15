@@ -1,0 +1,2318 @@
+{
+  "caseId": "03-profile",
+  "plotId": "education-income-fake-profile",
+  "runtimeContentStatus": "runtime-loaded",
+  "texturePass": true,
+  "voiceTics": {
+    "林": []
+  },
+  "oneTimeTic": "唉",
+  "oneTimeTicPath": "deepFollowup.answer",
+  "voiceTicArc": {
+    "林": "全案零语气词,只在深问报出工资后用一次『唉』"
+  },
+  "driftComments": [
+    "28.6万什么水平,在我们县城能付个首付了",
+    "MBA是啥,速成班吗,有没有懂哥",
+    "主播我妈也这样,我恋爱她比我上心",
+    "刷这么大一个礼物就能插麦吗",
+    "蹲一个审计小姐姐的记账模板"
+  ],
+  "dramaticAnchor": "名校 MBA、女方父母对男方普通家境的私下调查、领证前进女方个人账户的二十八万八、另算的婚宴首饰、只交出一张的工资账户流水、女方家锁在宸直的三十万元和一场礼物插麦",
+  "whyTonight": "女方家先把男方当成名校本科高材生。问清他是自费读 MBA、父母只是普通上班、家里也帮不上婚房以后，没有把前面的误会当成欺骗，反而借‘替女儿留保障’把彩礼加到二十八万八。条件还包括领证前打进女方个人账户、婚宴和首饰另算。咨询者嘴上说是父母定的，实际上没有叫停；男方明确说拿不出，她仍要求看银行流水。他最后只交出工资账户，期末余额恰好是二十八万六。两家周末见面的饭局因此停住。",
+  "helpRequest": {
+    "kind": "interest",
+    "request": "她想让主播判断，男方拒绝领证前支付二十八万八、又只交工资账户，是不是没有诚意；周末还要不要带他见父母。"
+  },
+  "objectPurpose": "学校图先制造名校本科的误会；父母托人查到他只是后来读 MBA、家庭出身普通后，没有喊被骗，转头借这个落差把彩礼往上加。工资账户流水是在男方说拿不出高彩礼、女方坚持要看账之后出现的，它既暴露女方不肯相信当事人的拒绝，也暴露男方只交一张工资卡、没有说明其他账户。家里群整页截图进一步写明二十八万八的收款账户、支付时点和另算项目，并揭出女方父母的二十万元即使到期也准备先留给女儿本人。",
+  "callMedium": "voice",
+  "callerStake": "咨询者嘴上说自己在意学历和收入是否真实，实际既认可父母按男方普通家境加价，也默认自己工作和家庭条件更好、男方多花钱多安抚是应该的。她想把二十八万八先放进自己的个人账户，婚宴和首饰继续另算；她不愿先说自己的八万四准备留多少，也不愿承认父母的二十万元既未到期、也没有承诺用于婚宴。",
+  "callerIntentProfile": {
+    "openGoal": "让主播判断男方拒绝二十八万八、只交工资账户是不是没有诚意，并决定周末是否继续见父母。",
+    "preferredAnswer": "男方有能力却故意少给、少展示，女方要求领证前获得保障是合理的。",
+    "audienceTilt": "让听众盯住男方的学历包装和选择性流水，不先计算女方实际准备拿多少钱。",
+    "protectedInterest": "保住二十八万八进入个人账户的安排，也保住自己是被母亲先斩后奏、只是核实诚意的说法；不让听众看出她也认定男方家境普通，所以应该多花钱、多哄她。",
+    "defaultTactic": "先报精确金额和日期，把要求推给母亲；被问到自己一侧的钱时骤然缩短，只承认眼前数字。",
+    "concessionLimit": "可以承认母亲报了价、自己没有叫停，也可以承认有八万四；不主动承认她赞成完整条件、最多只愿拿六万且要等领证后再用。",
+    "painPoints": [
+      {
+        "topic": "男方已经明确说拿不出",
+        "threatens": "会把她要求流水从核实诚信变成不肯接受拒绝。",
+        "firstResponse": "先把判断推给母亲，并反问工资卡为什么恰好有二十八万六。",
+        "afterProof": "主播把历史学费和当前余额分开后，只承认自己当时觉得男方在压价。",
+        "minimumLeak": "承认她没有相信男方的直接拒绝。"
+      },
+      {
+        "topic": "名校本科说法从谁开始",
+        "threatens": "会暴露她为了不在家人面前承认没问清而主动停下追问。",
+        "firstResponse": "先只说饭桌上没有继续问。",
+        "afterProof": "被问谁先对家里说名校后，才承认是自己。",
+        "minimumLeak": "承认她借服务员添水把话题停了。"
+      },
+      {
+        "topic": "父母查完家境后的加价",
+        "threatens": "会暴露女方家并没有认定男方欺骗，反倒把名校本科的落差和普通出身一起拿来抬高彩礼；她本人也认可这种条件比较。",
+        "firstResponse": "先说父母只是替她多打听了一下。",
+        "afterProof": "家里原话和她自己的动作对上后，才承认母亲借家境普通加价，自己嘴上劝过一句，却没有要求撤回。",
+        "minimumLeak": "承认父母查过男方家庭，她知道后仍让二十八万八继续传下去。"
+      },
+      {
+        "topic": "完整彩礼条件",
+        "threatens": "会证明她把本人赞成的整组条件缩成母亲报出的一个金额。",
+        "firstResponse": "先承认只发了二十八万八。",
+        "afterProof": "主播分别追问支付时点、账户和另算项目后，才承认自己同意。",
+        "minimumLeak": "承认领证前进个人账户、婚宴首饰另算没有一起告诉男方。"
+      },
+      {
+        "topic": "自己的八万四与父母的钱",
+        "threatens": "会暴露双方被要求承担的时点、用途和金额并不对等。",
+        "firstResponse": "只报八万四，句子变短。",
+        "afterProof": "逐项追问后才说最多拿六万、领证后用于家电和搬家。",
+        "minimumLeak": "承认婚宴和首饰不准备从自己的八万四里出。"
+      }
+    ]
+  },
+  "otherStake": "对方需要解释名校 MBA 不等于名校本科，也要说明自己已经拒绝二十八万八，为什么后来又只交出工资账户流水；他不愿把其他账户交给相亲对象或直播间，更不愿让一张工资卡余额替自己答应彩礼。",
+  "thirdPressure": "父母把学历换算成家底、母亲用‘女方要留保障’解释单向条件、介绍人替两家传价、男方家催婚，以及直播礼物带来的发言压力。",
+  "runtimeLengthPlan": {
+    "liveBeatCount": 7,
+    "materialBoardCount": 3,
+    "backflowCount": 2,
+    "truthBoundaryPromptCount": 6,
+    "caseSpecificPressure": "资料图先让女方家误认名校本科，自费 MBA 随后被换算成家底；介绍人带回二十八万八彩礼，男方说拿不出后被要求打流水，却只交工资账户。第二夜他刷礼物插麦，双方在公开授权范围内当场争到其他账户为何没交和女方家锁在宸直的三十万元。",
+    "whatPlayerDoesBesidesRead": [
+      "先问两句",
+      "定向追问",
+      "中段挂断进幕间",
+      "幕间回听冷场 / 提前看家里群",
+      "回拨开场与立场",
+      "圈学历与收入材料",
+      "在礼物插麦后划定调解和公开边界",
+      "归位事实边界",
+      "选一句往下追"
+    ]
+  },
+  "taskProfile": {
+    "id": "verification",
+    "label": "资料有雾",
+    "recommendedSpecialtyId": "verification",
+    "summary": "标签都好看，材料却总少一块。"
+  },
+  "routeAxisComments": {
+    "identity-wording": [
+      "名校两个字太省事",
+      "名校俩字我妈也爱说,说我邻居家孩子"
+    ],
+    "money-flow": [
+      "二十八万八是谁定的",
+      "宸直那三十万现在拿不出来"
+    ],
+    "document-edge": [
+      "资料图又少一截",
+      "这跟前面账单少页一个味"
+    ],
+    "caller-credibility": [
+      "她问诚信，也问钱",
+      "来电人没把收入诉求说满"
+    ],
+    "process-control": [
+      "介绍链也在抬价",
+      "资料不是一个人整理的"
+    ]
+  },
+  "stanceSnapshot": {
+    "afterScene": 5,
+    "kicker": "中段立场快照",
+    "prompt": "现在这通麦，你先站哪边？",
+    "note": "不判分。先记下此刻判断，介绍链和家里群会回看它。",
+    "afterPickLine": "你家那二十万还锁着。男方那边，也只拿出了一张工资卡。",
+    "continueLabel": "继续听",
+    "recapKicker": "中段立场",
+    "options": [
+      {
+        "id": "respondent-fraud",
+        "label": "他就是包装过头",
+        "summary": "名校和收入都挑好看的说，要求看流水时也只交了工资账户。",
+        "feedback": "材料确实挑过；但二十八万八是谁先托介绍人问的，还没有对上。",
+        "recap": "他没有及时说清本科和工资账户的边界；她家又把自费 MBA 直接换算成了彩礼能力。"
+      },
+      {
+        "id": "caller-control",
+        "label": "她家问太深",
+        "summary": "见面前已经问到二十八万八彩礼和个人流水，远远超过普通见家长。",
+        "feedback": "她家问得太深；男方也不能只交一张工资卡，让对方猜那是不是全部账户。",
+        "recap": "女方家把自费 MBA 当成有钱，男方说拿不出以后，又只交了工资账户。"
+      },
+      {
+        "id": "market-coauthored",
+        "label": "介绍人两头说好话",
+        "summary": "她既替双方加了好话，又替女方母亲把二十八万八递给男方家。",
+        "feedback": "介绍人确实让矛盾落了地，但彩礼数字不是她自己定的。",
+        "recap": "她替双方说过没确认的话，也把女方母亲的二十八万八原样传到了男方家。"
+      }
+    ]
+  },
+  "truthBoundary": {
+    "true": [
+      "MBA 项目和二十三万八的本人缴费记录都是真的",
+      "男方先明确说拿不出二十八万八，咨询者不信后才要求看银行流水",
+      "男方随后只提供工资账户近一个月的流水，期末余额为二十八万六",
+      "资料里的 MBA 项目和本科经历不是一回事",
+      "他吃饭算团购、停车问 AA，节俭是真的",
+      "第一次饭局上问到资料时冷场了十几秒",
+      "介绍人说“收入稳”和“不计较学历”之前，都没问过本人",
+      "女方母亲得知 MBA 学费由男方自己承担后，让介绍人去问二十八万八彩礼",
+      "女方父母托人查到男方父母只是普通上班、老家只有一套自住房、婚房帮不上；他们没有把学历落差定成欺骗，转头借此把彩礼加到二十八万八",
+      "男方平时承担大多数饭钱和展票，也接过咨询者下班、听她讲家里的烦恼；咨询者认为自己工作和家庭条件更好，曾把这些投入视为男方应该多做的部分",
+      "女方父母持有三十万元宸直产品，约定到期日在九月底",
+      "女方母亲提出二十八万八要在领证前打进女儿个人账户，婚宴和首饰另算",
+      "女方父亲说宸直到期后拿二十万元给女儿自己留着，没有承诺用来支付婚宴或首饰",
+      "男方表姐说资料是家里一起帮着整理的",
+      "第二夜男方刷礼物要求上麦，双方分别同意讨论已经公开的材料和各自原话"
+    ],
+    "edited": [
+      "对方最初发学校材料时没有主动说明本科另有学校",
+      "对方只提供工资账户流水，却没有主动说明其他账户未包含在内",
+      "咨询者把收入诉求说成只是家里想看稳定",
+      "咨询者把父母调查普通家境后的加价说成自己无可奈何；她没有制止母亲借自费 MBA 和出身差距抬高彩礼，也没有告诉男方，父母说的二十万元尚未到期，而且只准备留给她本人",
+      "咨询者把领证前进个人账户、婚宴首饰另算的完整条件压成了一个彩礼数字，也把父母留给她个人的钱说成女方家会为结婚出的钱",
+      "介绍人把两边短处都说轻了",
+      "男方家把资料整理说成他一个人周到"
+    ],
+    "unknown": [
+      "对方是否有持续真实收入",
+      "对方其他账户的余额、用途和真实总家底",
+      "双方如果坦白条件后是否还愿意继续",
+      "宸直产品九月底能否按约兑付",
+      "双方各自现在能拿出多少，以及愿意把多少钱用于两个人共同的生活",
+      "男方是否接受彩礼进入女方个人账户、婚宴首饰如何分担，以及双方是否能就这些条件达成一致"
+    ]
+  },
+  "selfServingOmission": "咨询者开场承认母亲已经托介绍人问二十八万八，却没有先说父母查到男方家境普通后借机加价、她本人也没有叫停，更没有说自己一直觉得工作和家庭条件胜过男方，因此把他多付饭钱、展票和情绪安抚当成理所应当。她也省掉了这笔钱要在领证前进自己的个人账户、婚宴和首饰另算；自己的八万四和父母未来二十万元都准备先留在女方一侧。",
+  "deceptionChain": {
+    "owner": "caller",
+    "protectedPurpose": "让主播把男方拒绝二十八万八、又只交工资账户解释成没有诚意，同时支持领证前把钱转进她个人账户；她要把父母按普通家境加价说成自己拦不住，也不想让人追问她为什么默认男方条件略差就该多花钱、多哄她，更不想先回答自己的八万四、父母未到期的二十万元和婚宴首饰由谁承担。",
+    "stages": [
+      {
+        "id": "profile-mother-as-source",
+        "pressureTrigger": "男方因为二十八万八停止周末见家长，咨询者需要解释这组条件是谁提出来的。",
+        "surfaceVersion": "她先说数字是母亲瞒着自己托介绍人问的，把自己放在被两家催着做决定的位置。",
+        "editedFact": "父母查到男方父母只是普通上班、老家一套自住房、婚房帮不上，便借这个落差把彩礼加到二十八万八；她知道以后没有叫停，也赞成用这笔钱检验男方的诚意。",
+        "immediateUtility": "把高彩礼的主动性推给母亲，先让主播审查男方为什么拒绝。",
+        "fairTrace": "她虽然说事先不知情，却立刻用学历、家境和工资卡替这个数字找理由。",
+        "playerTest": "profile-caller-repeats-label：追问父母查完家境后说的是被骗，还是借机加价；再问她有没有让母亲撤回二十八万八。",
+        "forcedRevision": "她承认父母没有定性欺骗，反倒觉得男方出身普通就该多拿保障；她自己嘴上劝过一句，却没有让母亲把数字收回来。",
+        "adviceImpact": "主播不能再把她当成条件的旁观者，必须让她用第一人称说明自己要求什么。"
+      },
+      {
+        "id": "profile-tuition-as-assets",
+        "pressureTrigger": "名校本科的误会被纠正，女方家失去用学历标签抬高预期的理由。",
+        "surfaceVersion": "她说自己已经向家里纠正本科，仿佛学历问题到此为止。",
+        "editedFact": "她和母亲把二十三万八的历史学费换算成男方现在仍有的积蓄，又把后来查到的普通家境当成让男方多付钱的理由；她本人也从学历疑问转去比较双方条件。",
+        "immediateUtility": "保住二十八万八看似有事实依据，而不是女方家单方面开出的条件。",
+        "fairTrace": "饭局问清本科后，她没有追问名校毕业从哪儿来，反而牢牢记住了学费数字。",
+        "playerTest": "profile-mba-wording 与 profile-dinner-pause：把本科答复、学费和她回家后的转述按顺序问清。",
+        "forcedRevision": "她承认听见二十三万八以后，第一反应是男方应该挺有钱；查到家境普通后，她又默认自己条件更好，男方多花钱、多安抚是应该的。",
+        "adviceImpact": "历史支出能确认学费由谁承担，不能继续作为当前彩礼能力的证明；家庭出身也不能被悄悄换成婚姻溢价。"
+      },
+      {
+        "id": "profile-salary-card-as-total",
+        "pressureTrigger": "男方已经明确说拿不出二十八万八，她仍需要证明这句话是在压价。",
+        "surfaceVersion": "她拿工资账户二十八万六的余额证明男方明明有钱，只是不愿意给。",
+        "editedFact": "她手里从头到尾只有一张工资账户，问过还有没有其他账户却没有得到回答。",
+        "immediateUtility": "把男方对付款条件的拒绝改写成财力隐瞒，让查流水显得理所当然。",
+        "fairTrace": "男方原话是‘你不是要看收入吗’，已经限定他为什么挑这张卡；她却继续把余额贴近彩礼数字来讲。",
+        "playerTest": "profile-proof-before-dinner 与 profile-income-and-card：分别核这张卡的范围和男方先前的直接拒绝。",
+        "forcedRevision": "她承认到昨晚为止手里就这一张，其他账户有没有、里面多少都不知道。",
+        "adviceImpact": "主播可以指出男方选择性提供材料，却不能把单卡余额变成彩礼承诺或完整家底。"
+      },
+      {
+        "id": "profile-family-money-as-shared",
+        "pressureTrigger": "男方家反问女方准备拿出多少，单向审查开始回到咨询者一侧。",
+        "surfaceVersion": "她告诉男方自己家以后也会给二十万，让条件听起来像两边都会为结婚出钱。",
+        "editedFact": "三十万元仍在宸直到期以前不能取，父亲只说到期后拿二十万给女儿自己留着，没有承诺付婚宴或首饰。",
+        "immediateUtility": "用一笔未来的个人赠与营造投入对等，同时继续要求男方现在付款。",
+        "fairTrace": "她一直说‘以后会给’，却不说到期日、收款人和具体用途。",
+        "playerTest": "profile-family-chat-origin 与 case3-credential-balance：把彩礼时点、收款账户、另算项目和宸直到期日连起来。",
+        "forcedRevision": "她承认父亲原话是给自己留着，也承认以前没有告诉男方这笔钱不一定用于结婚。",
+        "adviceImpact": "未到期且留给个人的钱不能算作女方家已经承诺的共同投入。"
+      },
+      {
+        "id": "profile-own-money-later",
+        "pressureTrigger": "彩礼完整条件和父母资金用途都公开后，主播把问题问到她自己的现有存款。",
+        "surfaceVersion": "她此前只问男方还有多少钱，从未给出自己现在能拿多少、什么时候拿。",
+        "editedFact": "她有八万四，最多愿意拿六万，而且准备领证以后才用于家电和搬家，婚宴首饰不从这里出。",
+        "immediateUtility": "让男方先承担明确、即时、进入她个人账户的付款义务，自己的投入则保留金额上限、较晚时点和个人决定权。",
+        "fairTrace": "她能精确复述男方工资卡余额，却始终没有主动报自己的余额和用途。",
+        "playerTest": "deepFollowup：在男方工资卡、女方家二十万元和另算项目都出现后，直接问她自己的钱。",
+        "forcedRevision": "她报出八万四和六万元上限，并承认这些安排从来没有告诉男方。",
+        "adviceImpact": "结案从判断谁有诚意，改成双方分别写清金额、时点、账户和用途；任何一方都可以拒绝。"
+      }
+    ]
+  },
+  "quotePickCandidates": [
+    "本科不是。我工作以后去读的 MBA",
+    "你不是要看收入吗？工资卡最清楚",
+    "彩礼先问二十八万八",
+    "彩礼领证前打到她自己的卡里，婚宴和首饰另算"
+  ],
+  "accusationChoices": [
+    {
+      "label": "“本科不是。我工作以后去读的 MBA。”",
+      "quoteSourceSceneId": "profile-dinner-pause",
+      "accuseRole": "respondent",
+      "response": "他这次把本科说清了。问题是女方家听见二十三万八由他自己出以后，又把历史支出当成了当前家底。"
+    },
+    {
+      "label": "“你不是要看收入吗？工资卡最清楚。”",
+      "quoteSourceSceneId": "profile-proof-before-dinner",
+      "accuse": "both",
+      "response": "女方要求看银行流水，男方却只交工资账户。她把这一张卡当成全部家底，他也没有说明其他账户不在里面。"
+    },
+    {
+      "label": "“彩礼先问二十八万八。”",
+      "quoteSourceSceneId": "profile-family-chat-origin",
+      "requiresRevisedSceneId": "profile-family-chat-origin",
+      "accuseRole": "complainant",
+      "response": "这不是男方凭空猜出来的数字，是女方母亲听说 MBA 学费由他自己承担以后，托介绍人问过去的。"
+    },
+    {
+      "label": "“彩礼领证前打到她自己的卡里，婚宴和首饰另算。”",
+      "quoteSourceSceneId": "profile-family-chat-origin",
+      "accuseRole": "complainant",
+      "response": "这句话把二十八万八放进女方个人账户，又把婚宴和首饰留给后面。她可以提出这样的条件，男方也可以拒绝；不能再把拒绝直接说成没有诚意。"
+    }
+  ],
+  "label": "彩礼与流水",
+  "storyArcTitle": "今日来电：彩礼与流水",
+  "caseTitle": {
+    "title": "彩礼与流水"
+  },
+  "publicHook": "女方家先以为他是名校本科，知道他自费读 MBA 后，反而认定他有家底，托介绍人问了二十八万八彩礼。他说拿不出，咨询者不信并要求看银行流水；他最后只交出工资账户，期末余额二十八万六。",
+  "storyArcSummary": "名校本科的误会没有及时纠正，自费 MBA 又被女方家换算成财力。男方拒绝二十八万八后，女方要求看流水，他却只交工资账户；随后女方家锁在宸直的三十万元也被翻了出来。",
+  "storySuspense": "工资账户流水是真的，女方父母也确实答应以后给女儿二十万；可一张工资卡不能代表男方全部账户，未到期理财已经锁住，眼下拿不出来。二十八万八却要先进入女方个人账户，婚宴和首饰另算，女方一侧的钱没有同样明确的共同用途。",
+  "storyClueObject": "MBA 项目与缴费记录、只提供一张的工资账户流水、二十八万八彩礼传话和宸直持有页",
+  "openingComplaint": "她打来问：这个周末原本要带相亲对象见父母，现在这顿饭还要不要继续？",
+  "openingDialogue": [
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "主播你好。我这周末本来要带相亲对象见父母，结果我妈背着我，把二十八万八先问出去了。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "二十八万八，问的什么钱？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "彩礼。她先托介绍人去问，男方今天才来找我。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "你们本来谈到哪一步了？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "这周末第一次正式见父母，双方家里都来。饭店还没订。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "这个数怎么来的？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "我妈一直以为他是名校本科。上周我才告诉她，本科不是那所。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "那她怎么会把数开到二十八万八？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "她说有她的理由，没先跟我商量。到底怎么算的，我也是后来翻家里群才看明白。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "男方怎么回？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "他说二十八万八拿不出来，也不能把手里的钱全拿去做彩礼。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "你信了？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "没信。我让他把银行流水打出来。",
+      "mood": "guarded"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "他发了什么？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "只发来一份工资账户流水。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "上面余额多少？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "二十八万六。",
+      "mood": "thinking"
+    }
+  ],
+  "scene": {
+    "name": "直播连线"
+  },
+  "sceneVersions": [
+    {
+      "id": "profile-proof-before-dinner",
+      "interactionMode": "lineReplay",
+      "clueRole": "setup",
+      "falseFrame": "工资账户里有二十八万六，就足以证明男方拿得出二十八万八，也足以代表他的全部家底。",
+      "payoffFor": [
+        "profile-mba-wording",
+        "profile-family-chat-origin"
+      ],
+      "speakerId": "lin",
+      "speaker": "咨询者",
+      "entryQuestion": "他把工资账户流水发来以后，你们怎么聊的？",
+      "version": "他已经说拿不出，我还是让他打了流水。发来以后，我先问：“只有这一张？”过了十几分钟，他才回：“你不是要看收入吗？工资卡最清楚。”我又问其他账户，他没接。到昨晚，我手里就这一张。我把这张转给我妈，她看过。",
+      "helperHint": "她不信男方说拿不出，男方又只交工资账户。先分开问：为什么不信，以及这一张卡能不能代表全部账户。",
+      "doubt": "男方先说拿不出二十八万八，工资账户却有二十八万六；咨询者把一张卡当成全部家底，男方也没有说明其他账户。",
+      "contradiction": "咨询者不相信男方对彩礼的直接拒绝，坚持要求流水；男方只交工资账户，也没有交代这不是全部账户。",
+      "reliability": "mixed",
+      "showsCard": "daily-profile-deposit",
+      "casualQuestions": [
+        {
+          "question": "你们相亲见了几次？",
+          "answer": "四次。两次饭，一次展，一次他接我下班。节奏不快不慢。"
+        },
+        {
+          "question": "你跟你妈平时什么都聊吗？",
+          "textureRole": "ramble",
+          "answer": "大事聊。她比我急。我 28，虚岁 29，她逢人就说我不挑，其实是她挑。上个月她把我照片发给三个介绍人，像素还调高了。我说妈，你这是发简历呢。她说简历怎么了，你爸当年也是我筛出来的。……筛出来的。她原话。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "他已经说拿不出二十八万八，你为什么还是不信，非要他把流水打出来？",
+          "sourceAnchor": "他已经说拿不出",
+          "suspicionLabel": "不信他说拿不出彩礼",
+          "answer": "没有。我当时觉得，他是在跟我压价。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "我妈一直这么说。你别只问我，先问他为什么卡上正好二十八万六。"
+            },
+            {
+              "role": "host",
+              "text": "那张卡我会问。可在看流水以前，他已经说拿不出。你信了吗？"
+            },
+            {
+              "role": "caller",
+              "text": "没有。我当时觉得，他是在跟我压价。"
+            },
+            {
+              "role": "host",
+              "text": "为什么觉得他在压价？"
+            },
+            {
+              "role": "caller",
+              "text": "二十三万八的学费都是他自己交的。我妈就说，能把这笔钱交清，不可能连彩礼都拿不出。"
+            }
+          ],
+          "guardedAnswer": "我妈一直这么说。你别只问我，先问他为什么卡上正好二十八万六。",
+          "logicContract": {
+            "premiseAnchor": "已经说拿不出",
+            "sourceKind": "caller-statement",
+            "sourceProves": "男方收到二十八万八要求后明确表示拿不出，咨询者随后要求看银行流水。",
+            "sourceDoesNotProve": "男方说拿不出不能自动证明他没有其他资产；自费 MBA 也不能证明他应当或能够支付这笔彩礼。",
+            "answerAnchor": "在跟我压价",
+            "answerAdds": "玩家追问后，咨询者才承认自己和母亲都把历史学费当成现有财力，因此不相信男方的直接拒绝。",
+            "nextLegalQuestion": "可以检查男方后来提供的流水范围，也要问女方家自己愿意拿出多少。"
+          },
+          "contradiction": "女方家先用历史学费推断男方有钱，再把他的拒绝理解成压价。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "你要看的是他的银行流水，他为什么只发工资账户？",
+          "sourceAnchor": "只有这一张",
+          "suspicionLabel": "只给了工资账户",
+          "answer": "我只说了“把流水给我看”，没限定哪张。他发工资卡，我问还有没有别的，他没回。到现在，我手里就这一张。其他账户……我真不知道。",
+          "guardedAnswer": "我问了，他没回。你要说我只看见一张，那就一张。",
+          "logicContract": {
+            "premiseAnchor": "只有这一张",
+            "sourceKind": "document-readout",
+            "sourceProves": "男方只提供工资账户近一个月流水，期末余额为二十八万六。",
+            "sourceDoesNotProve": "一张工资卡不能证明男方其他账户的余额、用途或全部可支配资产。",
+            "answerAnchor": "他发工资卡",
+            "answerAdds": "咨询者确认自己要求看流水后，男方选择性提供工资账户，并回避了是否还有其他账户。",
+            "nextLegalQuestion": "可以追问男方为何选择这张卡，不能猜测未提供账户里一定有钱或一定没钱。"
+          },
+          "contradiction": "男方把一张真实的工资账户流水放在台前，却把其他账户留在材料之外。",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "你妈妈看到那张工资卡的余额以后，问过这是不是他的全部账户吗？",
+          "suspicionLabel": "女方家有没有继续追问",
+          "answer": "没有。她只盯着那两千块，说：“差这么一点，怎么会拿不出？”我知道那只是工资卡，没提醒她。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "条件话被托了一层",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "blink",
+          "text": "报出二十八万六时，她把最后一个“六”字说得很轻"
+        }
+      }
+    },
+    {
+      "id": "profile-dinner-pause",
+      "interactionMode": "lineReplay",
+      "clueRole": "misdirect",
+      "falseFrame": "饭局冷场只是第一次见家长前问得太细，不能说明学历材料有问题。",
+      "payoffFor": [
+        "profile-mba-wording"
+      ],
+      "speakerId": "lin",
+      "speaker": "咨询者",
+      "entryQuestion": "他说这些材料能省掉饭桌上的解释。你们吃饭时，学历真的说清楚了吗？",
+      "version": "第一次正式吃饭，介绍人订了窗边。他先问我审计是不是总加班，我问他平时出差多不多。吃到一半，我还是问了：“你发的材料是那所学校，本科也是在那儿读的吗？”他筷子停了一下，才说：“本科不是。我工作以后去读的 MBA，学费二十三万八，是我自己出的。”正好服务员来添水，我没有接着问，之前那句“名校毕业”到底是谁说出来的。",
+      "helperHint": "停顿本身不是答案。你要找的是她在那十几秒后有没有把本科问到底。",
+      "doubt": "第一次饭局的冷场不是因为问太细，是因为名校这句第一次被拆开。",
+      "contradiction": "第一次饭局上问到资料时冷场了十几秒，服务员加水才把话岔过去。",
+      "reliability": "mixed",
+      "casualQuestions": [
+        {
+          "question": "他说完那几句话，你当时先记住了哪一句？",
+          "answer": "学费。二十三万八。我脑子里先过的是这个数，本科那句反而没追下去。"
+        },
+        {
+          "question": "开口问本科以前，你已经觉得那张学校图有问题了吗？",
+          "answer": "还没有。我只是想把介绍人那句“学校好”问得具体一点。结果他一停，我才觉得这事可能没说全。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "他已经承认本科不是那所。你当时为什么没接着问，前面那句“名校毕业”到底怎么来的？",
+          "sourceAnchor": "本科不是",
+          "suspicionLabel": "本科更正后她为什么没追问",
+          "answer": "觉得他手里应该还有钱。就这个。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "……没问。"
+            },
+            {
+              "role": "host",
+              "text": "为什么？"
+            },
+            {
+              "role": "caller",
+              "text": "‘名校毕业’是我先跟家里说的。再问下去，我妈就知道我没问清。"
+            },
+            {
+              "role": "host",
+              "text": "他又说学费是自己出的，你当时想到什么？"
+            },
+            {
+              "role": "caller",
+              "text": "觉得他手里应该还有钱。就这个。"
+            }
+          ],
+          "guardedAnswer": "没问。服务员一来，我就顺势把话停了。",
+          "logicContract": {
+            "premiseAnchor": "本科不是。我工作以后去读的 MBA",
+            "sourceKind": "quoted-message",
+            "sourceProves": "被问本科时，对方承认本科不是该校，并说 MBA 学费由自己承担。",
+            "sourceDoesNotProve": "自费二十三万八能确认当年发生过这笔支出，不能证明他现在积蓄很多。",
+            "answerAnchor": "我先跟家里说的",
+            "answerAdds": "咨询者没有继续追本科，也把自费 MBA 错当成当前财力的信号。",
+            "nextLegalQuestion": "可以核对学校与缴费记录，不能把自费 MBA 直接推成家底丰厚。"
+          },
+          "contradiction": "第一次饭局上问到资料时冷场了十几秒。",
+          "correct": true,
+          "routeAxis": "identity-wording",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "服务员走了以后，你们又聊本科了吗？",
+          "suspicionLabel": "饭桌上有没有继续谈本科",
+          "answer": "没有。他说菜快凉了，我也就跟着聊别的。那顿饭是我催着约的，我也怕当场问僵。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "softening"
+        },
+        {
+          "question": "那顿饭谁结的账？",
+          "suspicionLabel": "那顿饭最后是谁买单",
+          "answer": "他付的，用了团购券和积分。停车费一百多，他问我要不要 AA。单看都没问题。后来再想他的收入，我总会想起那张券。",
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "detour"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "饭局冷场露出来",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "停了很久才说完"
+        }
+      }
+    },
+    {
+      "id": "profile-caller-repeats-label",
+      "interactionMode": "lineReplay",
+      "clueRole": "missing-edge",
+      "falseFrame": "只要学校图是真图，“名校毕业”的说法就不算修剪。",
+      "payoffFor": [
+        "profile-mba-wording",
+        "profile-family-chat-origin"
+      ],
+      "speakerId": "lin",
+      "speaker": "咨询者",
+      "entryQuestion": "你回家以后是怎么跟家里说的？",
+      "version": "其实“名校毕业”最早也不是他说的。介绍人跟我家说的是：“学校好、收入稳，家里也省心。”我回去以后，把“学校好”说成了“名校毕业”。",
+      "afterVersion": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "你把本科学历改过来以后，你爸妈又查了什么？"
+          },
+          {
+            "role": "caller",
+            "text": "我爸妈托人去问了。问回来，我妈就一句：“他父母都是普通上班的，老家那套房自己要住，婚房也帮不上。”"
+          },
+          {
+            "role": "host",
+            "text": "他们说男方骗了你？"
+          },
+          {
+            "role": "caller",
+            "text": "没有。她说：“家里帮不上，以后真有事还得你们自己扛。彩礼就多问一点，至少钱先在你手里。”又拿他二十三万八的学费说，他手上不至于没有。"
+          },
+          {
+            "role": "host",
+            "text": "你怎么回的？"
+          },
+          {
+            "role": "caller",
+            "text": "我就说，别一下把人吓跑。可真让她把二十八万八收回来……我没开口。"
+          }
+        ]
+      },
+      "helperHint": "父母把学费当家底的原因已经问出来。现在要看的是，她知道二十八万八怎么来的以后做了什么。",
+      "doubt": "名校本科的误会被纠正后，女方父母查到男方家境普通，却没有主张受骗，反而借普通出身和自费 MBA 把彩礼往上加。",
+      "contradiction": "咨询者把父母调查后的加价说成自己无可奈何；她嘴上劝了一句，却没有让二十八万八撤回。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "介绍人跟男方家什么关系？",
+          "answer": "他妈的老同事。所以话肯定挑好的说，这我懂。"
+        },
+        {
+          "question": "“家里省心”这话你怎么理解？",
+          "answer": "就是独生子，爸妈有退休金，平时不用他贴钱。我妈一听这四个字，后面都没细问。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "后来你妈还是把彩礼加到二十八万八。你拦过吗？",
+          "sourceAnchor": "把“学校好”说成了“名校毕业”",
+          "suspicionLabel": "查完家境加价后有没有叫停",
+          "answer": "没说骗。她说他家里帮不上，以后真有事只能我们自己扛，彩礼就该多拿一点，先放在我手里。我嘴上说别把人吓跑，真让她撤回，我没说。",
+          "guardedAnswer": "没说骗。她说家里帮不上，钱更得先留在我手里。我……没叫她收。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "没有。我就说了一句，别把人吓跑。"
+            },
+            {
+              "role": "host",
+              "text": "你自己也认这个理由？"
+            },
+            {
+              "role": "caller",
+              "text": "……我觉得我工作和家里都比他稳一点。他多拿一点，我当时没觉得不对。"
+            }
+          ],
+          "logicContract": {
+            "premiseAnchor": "真让她把二十八万八收回来",
+            "sourceKind": "caller-statement",
+            "sourceProves": "咨询者知道父母查过男方普通家境，也知道二十八万八来自家境比较和自费 MBA 的财力推断。",
+            "sourceDoesNotProve": "咨询者没有亲自定价，不等于她知情后反对或撤回了这个要求。",
+            "answerAnchor": "工作和家里都比他稳一点",
+            "answerAdds": "咨询者承认父母没有定性欺骗，随后借普通出身加价；她本人也认可双方条件有高低，所以默许彩礼继续传递。",
+            "nextLegalQuestion": "可以继续问这种条件比较如何影响她看待男方平时的花钱和照顾，也要问女方家自己当下能拿出多少。"
+          },
+          "contradiction": "咨询者已经纠正本科学历，却默许父母把普通出身和自费 MBA 换成新的加价理由。",
+          "correct": true,
+          "routeAxis": "identity-wording",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你把本科说清以后，你妈妈当时怎么回的？",
+          "suspicionLabel": "母亲听完学历更正后的反应",
+          "answer": "她先说我没问清，又托人去问他家。知道他父母普通上班、婚房也帮不上以后，她没再提被骗，只说彩礼得多问一点。第二天她去找介绍人，我没拦。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "资料缺口压上来",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "pause",
+          "text": "纸张响了一下，她停了两秒"
+        }
+      }
+    },
+    {
+      "id": "profile-introducer-two-prices",
+      "interactionMode": "lineReplay",
+      "clueRole": "reversal",
+      "falseFrame": "介绍人只是偏男方、替男方抬条件。",
+      "payoffFor": [
+        "profile-dinner-pause",
+        "profile-caller-repeats-label"
+      ],
+      "speakerId": "lin",
+      "speaker": "咨询者",
+      "entryQuestion": "你妈妈把二十八万八递过去时，介绍人有没有问过你家准备出多少？",
+      "version": "没有问。她把我妈那条语音原样转给了男方家。后来她把两边聊天都发给我，我才知道，她在男方家那边也替我说过“工作稳定、家里事少、不太计较学历”。可她给我家的原话，只有“学校不错”。",
+      "helperHint": "先分清谁定数字、谁传话。再问自费读书为什么会被当成现成的彩礼钱。",
+      "doubt": "介绍人替两家加过好话，也替女方母亲把二十八万八送到了男方家。",
+      "contradiction": "女方母亲把二十三万八学费换算成男方家底，介绍人又把二十八万八彩礼原样递了过去。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "男方家的那张聊天，你以前见过吗？",
+          "answer": "没有。介绍人这次一起发出来，我才第一次看见。“家里事少”那句挺刺的，我家什么情况，她根本没认真问过。"
+        },
+        {
+          "question": "你当时觉得介绍人偏谁？",
+          "answer": "当时觉得她偏男方。看完另一段，我又觉得她就是太想把这顿饭约成，哪边难听就替哪边改一句。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "她为什么这么急着把你们撮合到一起？",
+          "sourceAnchor": "她把两边聊天都发给我",
+          "suspicionLabel": "介绍人急着撮合的好处",
+          "answer": "男方家以前帮过她，她一直想还这个人情。她说彩礼只是先问问，自己不好替我妈把数字压回去。我听着却觉得，她既然愿意替两家介绍，就不该只负责传最刺激人的那一句。",
+          "guardedAnswer": "她说男方家以前帮过她，想把这个人情还上。别的她没细讲。",
+          "logicContract": {
+            "premiseAnchor": "她把两边聊天都发给我",
+            "sourceKind": "document-readout",
+            "sourceProves": "两组截图显示介绍人分别给两家说了更顺耳的版本。",
+            "sourceDoesNotProve": "双边话术本身不能证明她偏向哪一家或收了什么利益。",
+            "answerAnchor": "男方家以前帮过她",
+            "answerAdds": "咨询者补充介绍人与男方家的旧人情，也确认介绍人没有对二十八万八提出异议。",
+            "nextLegalQuestion": "可以分开核对谁定价、谁传话，不能把介绍人写成彩礼数字的决定者。"
+          },
+          "contradiction": "介绍人对两边都说过更好听的版本。",
+          "correct": true,
+          "routeAxis": "process-control",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "二十八万八是介绍人加的，还是你妈妈的原话？",
+          "suspicionLabel": "二十八万八是谁先提的",
+          "answer": "我妈的原话。她说他能自己拿二十三万八读书，家里不会差；别按我表姐十八万八那份谈，先问二十八万八。介绍人原样转过去了。",
+          "correct": false,
+          "routeAxis": "identity-wording",
+          "routeTone": "trust-but-verify"
+        },
+        {
+          "question": "介绍人只说“学校不错”。你回家时，把这句话说成了什么？",
+          "sourceAnchor": "给我家的原话",
+          "suspicionLabel": "她把“学校不错”说成了什么",
+          "answer": "我跟我妈说：“名校毕业，条件不错。”后面这两个判断都是我自己加的。我妈一听，马上开始催我带人回家。",
+          "logicContract": {
+            "premiseAnchor": "给我家的原话，只有“学校不错”",
+            "sourceKind": "quoted-message",
+            "sourceProves": "介绍人给女方家的原话只到“学校好”。",
+            "sourceDoesNotProve": "“学校好”不能自动等同于本科名校毕业或整体条件不错。",
+            "answerAnchor": "名校毕业，条件不错",
+            "answerAdds": "咨询者承认回家转述时又增加了两个更强的判断。",
+            "nextLegalQuestion": "可以核对男方材料和她的转述各自加了什么，不能把介绍链写成单方撒谎。"
+          },
+          "contradiction": "介绍人、男方和咨询者都参与放大了体面标签，完整信息被层层修剪。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "caller-skeptical"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "介绍链开始翻面",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "把介绍人那段话又读了一遍"
+        }
+      }
+    },
+    {
+      "id": "profile-mba-wording",
+      "interactionMode": "lineReplay",
+      "clueRole": "payoff",
+      "falseFrame": "MBA 项目和校名都真实，因此“名校毕业”只是正常简称。",
+      "payoffFor": [
+        "profile-proof-before-dinner",
+        "profile-dinner-pause",
+        "profile-caller-repeats-label"
+      ],
+      "speakerId": "lin",
+      "speaker": "咨询者",
+      "entryQuestion": "那顿饭以后，你又问过本科吗？",
+      "version": "后来我在微信上又问了一次。他说本科不是那所，读的是那所学校的 MBA，学费二十三万八，是工作以后分三次交清的。学校查询页和缴费回单我都看了，项目是真的，钱也是从他账户出去的。我把这些发进家里群，本来是想把“名校毕业”纠正过来，没想到我妈盯住的是二十三万八。",
+      "helperHint": "先别算家底。问问她，那张学校图里到底有没有本科。",
+      "doubt": "名校这句有真东西，但别人听到的可能是另一层意思。",
+      "contradiction": "名校本科的误会刚被纠正，自费 MBA 又被女方家换算成当前家底。",
+      "reliability": "partial",
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "我把学费那句发进群以后，我妈回了句：“这事你别插嘴，我问介绍人。”她没说要问什么。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "学费那句发进群",
+        "closerAnchor": "我问介绍人",
+        "adds": "咨询者知道母亲因自费 MBA 私下联系了介绍人，但当时不知道母亲要谈彩礼。",
+        "openEdge": "女方母亲让介绍人带给男方家的具体条件。",
+        "routeIndependent": true
+      },
+      "casualQuestions": [
+        {
+          "question": "他解释 MBA 的时候，语气什么样？",
+          "answer": "校名和项目名，他一口气就说完了。问到本科，他才停了一下。"
+        },
+        {
+          "question": "你自己学历怎么样？",
+          "answer": "普通一本。我妈听见他名校毕业以后，逢人就说我眼光好。我没纠正，可能也舍不得她把这句收回去。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "只看那张学校图，能看出他本科在哪儿读吗？",
+          "sourceAnchor": "本科不是那所",
+          "suspicionLabel": "学校图能不能证明本科学历",
+          "answer": "看不出来。图上只有校名和 MBA 项目，本科、项目性质、读了多久都没有。那些是我后来一项一项问出来的。",
+          "guardedAnswer": "看不出来。图上只有校名和 MBA 项目。",
+          "logicContract": {
+            "premiseAnchor": "他说本科不是那所",
+            "sourceKind": "document-readout",
+            "sourceProves": "学校图能确认校名和MBA项目存在。",
+            "sourceDoesNotProve": "该图没有同时证明本科院校；缴费记录也不能证明他当前积蓄丰厚。",
+            "answerAnchor": "看不出来",
+            "answerAdds": "咨询者确认图片不能显示本科院校，其他限定也是后来才问到的。",
+            "nextLegalQuestion": "可以问这些限定是否转告家里，以及家里如何解读学费，不能把真图直接称作假证或财力证明。"
+          },
+          "contradiction": "男方用真标签保留了别人误会的空间。",
+          "correct": true,
+          "routeAxis": "identity-wording",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "后来问清的本科和学费，你怎么告诉家里的？",
+          "suspicionLabel": "她怎么向家里转述学历和学费",
+          "answer": "我原样发了。本科不是那所，MBA 二十三万八是他自己交的。我妈先说我没问清，过一会儿又说，能自己花这么多读书，家里总不会差。她后来去找介绍人，我那时候还不知道。",
+          "correct": false,
+          "routeAxis": "caller-credibility",
+          "routeTone": "detour"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "条件话被托了一层",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "shift",
+          "text": "她停了一下，重新念了页面抬头"
+        }
+      }
+    },
+    {
+      "id": "profile-family-chat-origin",
+      "interactionMode": "lineReplay",
+      "clueRole": "reversal",
+      "falseFrame": "女方母亲只是替女儿争取一份保障，女方父亲答应的二十万元也会对等地花在两个人身上。",
+      "payoffFor": [
+        "profile-proof-before-dinner",
+        "profile-caller-repeats-label"
+      ],
+      "speakerId": "lin",
+      "speaker": "咨询者",
+      "entryQuestion": "你妈妈去找介绍人以前，家里群还说过什么？",
+      "version": "我妈先发了一句：“彩礼领证前打到她自己的卡里，婚宴和首饰另算。”我爸紧跟着说，宸直那三十万九月底到期，拿二十万给我留着。我当时看见了。就这么看过去了。",
+      "helperHint": "别先争彩礼高低。问清钱什么时候给、进谁的账户，婚宴首饰是否包含在内，女方家的二十万又准备怎么用。",
+      "revisedVersion": "……我以前只告诉他，我妈说‘彩礼先问二十八万八’，我家以后也会给我二十万。领证前打进我卡、婚宴和首饰另算，还有那二十万是让我自己留着，这几句我都没说。",
+      "revisedVersionTriggers": {
+        "documentRows": [
+          "case3-credential-balance:p04"
+        ],
+        "callbackOpeners": [
+          "家里群原话"
+        ]
+      },
+      "beforeVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "text": "今天下午，介绍人又来问我。"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "男方家想知道，我家除了要二十八万八，准备给我多少。"
+          },
+          {
+            "role": "host",
+            "text": "你怎么回的？"
+          },
+          {
+            "role": "caller",
+            "text": "我没回。我爸妈说以后会给我二十万，可那笔钱现在还在宸直。就算九月底拿出来，他们原话也是给我自己留着。"
+          }
+        ]
+      },
+      "doubt": "女方家要求男方在领证前把二十八万八转进女方个人账户，婚宴和首饰另算；自己的二十万元却要等宸直到期，并先留给女儿本人。",
+      "contradiction": "咨询者只说“妈妈问了彩礼”，省掉钱要进自己的卡、婚宴首饰另算；父亲留给她个人的二十万元，又被她说成女方家也会为结婚出钱。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "那顿饭，他算钱时会跟你解释吗？",
+          "answer": "会。券怎么用、积分抵了多少、停车费怎么 AA，他都说得很清楚。我当时觉得这叫会过日子。"
+        },
+        {
+          "question": "你爸那二十万要等到九月底。彩礼为什么非得领证前进你的卡，不能等两边的钱都能拿出来再谈？",
+          "answer": "我问过。我妈说：“他先把彩礼给了，咱家的钱九月底到期再说。”她不肯等。我那时候听着，也没觉得哪里不对。"
+        },
+        {
+          "question": "你妈现在什么态度？",
+          "answer": "就一句：『过了年你就 29 了，先别把人得罪死。』……这话她今年说了四回。我记着次数呢。你看，职业病。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "你把二十八万八告诉男方时，有没有把“领证前进你卡、婚宴和首饰另算”也一起说清楚？",
+          "sourceAnchor": "彩礼领证前打到她自己的卡里",
+          "revisedSourceAnchor": "婚宴和首饰另算",
+          "suspicionLabel": "她没有说全的彩礼条件",
+          "answer": "……同意。彩礼先到我卡里，我才踏实。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "没有。只发了二十八万八。"
+            },
+            {
+              "role": "host",
+              "text": "后面那几条为什么不一起发？"
+            },
+            {
+              "role": "caller",
+              "text": "我怕他看完，周末这顿饭就不去了。"
+            },
+            {
+              "role": "host",
+              "text": "那你自己同意这些条件吗？"
+            },
+            {
+              "role": "caller",
+              "text": "……同意。彩礼先到我卡里，我才踏实。"
+            }
+          ],
+          "guardedAnswer": "我只把二十八万八发给他。后面的……我当时觉得还没谈到，不用一起说。",
+          "answerRequiresRevisedVersion": true,
+          "logicContract": {
+            "premiseAnchor": "彩礼领证前打到她自己的卡里",
+            "sourceKind": "quoted-message",
+            "sourceProves": "家里群写明女方家的完整要求包括领证前入个人账户，婚宴和首饰另算。",
+            "sourceDoesNotProve": "女方家提出条件不能证明男方已经同意，也不能把拒绝解释成欺骗或没有诚意。",
+            "answerAnchor": "没有",
+            "answerAdds": "咨询者承认自己向男方只转达了彩礼金额，没有说全收款账户、支付时点和另算项目，而且她本人赞成这组条件。",
+            "nextLegalQuestion": "可以继续问咨询者和父母各自准备拿多少钱、用于哪些项目，不能让她继续把个人保障和共同婚礼开支混说。"
+          },
+          "contradiction": "咨询者把自己赞成的一组单向条件压成母亲报出的一个数字。",
+          "correct": true,
+          "routeAxis": "money-flow",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "你爸说以后给你二十万。那笔钱是拿来付婚宴，还是给你自己留着？",
+          "suspicionLabel": "女方家的二十万准备怎么用",
+          "answer": "我爸原话是给我自己留着，怎么用以后再说。可我跟男方讲的是“我家也会出二十万”，没告诉他这钱不一定拿来结婚。他听了肯定不是这么理解的，我那时候也没纠正。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "我爸原话，是给我自己留着。"
+            },
+            {
+              "role": "host",
+              "text": "你跟男方怎么说的？"
+            },
+            {
+              "role": "caller",
+              "text": "我说我家也会出二十万。"
+            },
+            {
+              "role": "host",
+              "text": "“给你留着”说了吗？"
+            },
+            {
+              "role": "caller",
+              "text": "没有。"
+            }
+          ],
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "detour"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "彩礼问到了女方家的钱",
+        "callerGuard": "guarded",
+        "expression": {
+          "kind": "pause",
+          "text": "她说“等一下”，随后传来几下点按声"
+        }
+      }
+    },
+    {
+      "id": "profile-income-and-card",
+      "interactionMode": "lineReplay",
+      "clueRole": "payoff",
+      "falseFrame": "日常节省就能证明收入包装，或者拒绝流水就能证明心虚。",
+      "payoffFor": [
+        "profile-proof-before-dinner",
+        "profile-family-chat-origin"
+      ],
+      "speakerId": "lin",
+      "speaker": "咨询者",
+      "entryQuestion": "男方现在承认只发了工资账户。你收到那份流水时，是怎么理解的？",
+      "version": "工资账户结余二十八万六，只比彩礼少两千。他说‘拿不出’，我就认定他是不想给。直到刚才上麦，他才承认还有其他账户，只是不愿意交出来。里面有多少，我不知道。平时饭钱、展票大多是他出；我加班晚，他来接过几次。我跟我妈吵了，他也能听我讲很久。可他一用团购、积分，停车费跟我 AA，我还是会觉得他在跟我算。",
+      "afterVersion": {
+        "lines": [
+          {
+            "role": "caller",
+            "speaker": "男方",
+            "text": "你先说我拿不出是在骗你，又让我打流水。我发工资卡，是因为你问的是收入。其他账户是我的私事，我从来没答应全交给你。"
+          },
+          {
+            "role": "caller",
+            "speaker": "咨询者",
+            "text": "我说的是银行流水。你只给工资卡，也没有说其他账户不在里面。你前面说拿不出，卡上又有二十八万六，我当然觉得你是在跟我压价。"
+          },
+        {
+          "role": "host",
+          "text": "先停一下。今晚看见的只有这张工资卡，其他账户有多少，谁也不知道。他已经说了拿不出二十八万八；卡上差两千，不等于他答应把这笔钱交出来。"
+          },
+          {
+            "role": "caller",
+            "speaker": "男方",
+            "text": "那她家呢？一开口二十八万八，自己准备给她多少？那三十万宸直，为什么现在才说？"
+          },
+          {
+            "role": "caller",
+            "speaker": "咨询者",
+            "text": "我爸妈说以后给我二十万，让我自己留着。"
+          },
+          {
+            "role": "host",
+            "text": "彩礼呢？"
+          },
+          {
+            "role": "caller",
+            "speaker": "咨询者",
+            "text": "我妈说进我卡，婚宴和首饰另算。"
+          },
+          {
+            "role": "host",
+            "text": "这些你都说过吗？"
+          },
+          {
+            "role": "caller",
+            "speaker": "咨询者",
+            "text": "……没有。"
+          }
+        ]
+      },
+      "helperHint": "不要只算两千元差额。先让两边各说清：现在能拿多少，未来可能有多少，分别是谁的钱。",
+      "doubt": "男方只交工资账户，女方却把这张卡当成全部家底；女方还要求彩礼先进入个人账户，婚宴和首饰另算，却没有先说明自己一侧愿意承担哪些支出。",
+      "contradiction": "男方只用一张工资卡回答收入；女方只说家里以后会给二十万元，没说这笔钱准备留给自己，也没说婚宴和首饰还要男方另付。",
+      "reliability": "partial",
+      "casualQuestions": [
+        {
+          "question": "他问你家准备出多少以后，你多久没回？",
+          "answer": "到现在都没回。我爸说的是以后给我二十万，让我自己留着。那笔钱最快也要等九月底。我怕一说，他会问：那婚宴和首饰到底谁出？"
+        },
+        {
+          "question": "你身边有婚后一起管钱的例子吗？",
+          "textureRole": "ramble",
+          "answer": "我表姐。管得挺好，但她挣得比姐夫多。多百分之三十几吧，具体没算过——不对，我算过。百分之三十七。你看，我就是这样的人。这话我没跟我妈说过。我们家饭桌上，账是不能上桌的。"
+        },
+        {
+          "question": "他现在还给你发消息吗？",
+          "answer": "发。间隔很规律。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "发。"
+            },
+            {
+              "role": "pause"
+            },
+            {
+              "role": "caller",
+              "text": "间隔很规律。"
+            }
+          ]
+        },
+        {
+          "question": "周末那顿饭，你还想见吗？",
+          "answer": "不知道。"
+        }
+      ],
+      "questionOptions": [
+        {
+          "question": "二十八万八不含婚宴和首饰。你看到他工资卡只有二十八万六时，有没有想过彩礼给完以后，后面的钱怎么出？",
+          "sourceAnchor": "工资账户结余二十八万六",
+          "suspicionLabel": "彩礼之外的钱谁来出",
+          "answer": "没有。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "我当时就觉得，他还有别的钱。"
+            },
+            {
+              "role": "host",
+              "text": "所以婚宴和首饰，你默认谁出？"
+            },
+            {
+              "role": "caller",
+              "text": "他家。"
+            },
+            {
+              "role": "host",
+              "text": "跟他说过吗？"
+            },
+            {
+              "role": "caller",
+              "text": "没说。"
+            },
+            {
+              "role": "host",
+              "text": "饭钱、展票、接你下班，这些你怎么没算进去？"
+            },
+            {
+              "role": "caller",
+              "text": "我没觉得那算多大付出。"
+            },
+            {
+              "role": "host",
+              "text": "为什么？"
+            },
+            {
+              "role": "caller",
+              "text": "我工作比他稳，家里也比他家好一点。我觉得他多花一点、多听我说一点……挺正常的。"
+            }
+          ],
+          "guardedAnswer": "我当时就觉得他还有钱。婚宴首饰，不都是后面再谈的吗？",
+          "logicContract": {
+            "premiseAnchor": "婚宴和首饰另算",
+            "sourceKind": "quoted-message",
+            "sourceProves": "女方家明确把二十八万八与婚宴、首饰分成不同支出。",
+            "sourceDoesNotProve": "另算条件不能证明男方有其他账户、愿意承担后续支出或已经接受这组安排。",
+            "answerAnchor": "工作比他稳",
+            "answerAdds": "咨询者承认自己默认男方另有资金并会承担婚宴与首饰，也承认她觉得自己的工作和家庭条件更好，因此把男方平时花钱、接送和情绪安抚看成理所应当。",
+            "nextLegalQuestion": "可以问咨询者自己现在有多少、愿意为哪些项目出多少；也要把男方已经付出的相处成本放回关系里，不能只拿未知账户补齐后续费用。"
+          },
+          "contradiction": "咨询者要求男方先交一笔个人保障，又默认未知账户承担后续共同开支，还把对方已经给出的花钱和照顾视为条件较弱一方应付的成本。",
+          "correct": true,
+          "routeAxis": "caller-credibility",
+          "routeTone": "pressure-point"
+        },
+        {
+          "question": "他算得细，能证明收入有问题吗？",
+          "suspicionLabel": "他平时算小钱说明什么",
+          "answer": "不能。他可能只是会算钱。是我先怀疑他收入不稳，所以他连用团购、算停车费，我都往收入上猜。",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "不能。"
+            },
+            {
+              "role": "host",
+              "text": "那你为什么连团购和停车费也记上？"
+            },
+            {
+              "role": "caller",
+              "text": "我那时候已经认定他在压价。看什么都觉得不对。"
+            }
+          ],
+          "correct": false,
+          "routeAxis": "money-flow",
+          "routeTone": "softening"
+        }
+      ],
+      "pressureHint": {
+        "intentHook": "条件表面开始松动",
+        "callerGuard": "tense",
+        "expression": {
+          "kind": "blink",
+          "text": "说到宸直，她停了一会儿，才找到父亲那句"
+        }
+      }
+    }
+  ],
+  "explicitClueGroups": [
+    [
+      "女方家先把“学校不错”听成名校本科，问清是 MBA 后才纠正。",
+      "二十三万八学费由男方本人承担，但这笔历史支出不能证明他现在家底丰厚。"
+    ],
+    [
+      "咨询者把“学校不错”转述成“名校毕业”，本科学历落差被留在了标签外面。",
+      "咨询者把本科不是名校告诉了家里，却没有阻止母亲把自费 MBA 换算成财力。",
+      "名校误认和财力误判先后接替，推动了二十八万八彩礼。",
+      "第一次饭局上问到资料时冷场了十几秒。"
+    ],
+    [
+      "介绍人对两边都抬高好处、压低短处，又把女方母亲的二十八万八原样递给男方家。",
+      "介绍人把两边短处都说轻了。",
+      "男方表姐说资料是家里一起帮着整理的。"
+    ],
+    [
+      "男方先说拿不出二十八万八；咨询者不信并要求看银行流水。",
+      "男方只提供工资账户近一个月流水，期末余额二十八万六；其他账户余额仍未知。",
+      "女方父母说宸直到期后给女儿二十万元自己留着；这笔钱目前未到期，也没有承诺用于婚宴和首饰。",
+      "单张工资账户流水撑不起完整家底或长期收入判断。",
+      "双方都把一个真实数字说成了对自己有利的版本，却没有先回答眼下到底能拿出多少。"
+    ]
+  ],
+  "evidenceCards": [
+    {
+      "id": "daily-profile-deposit",
+      "type": "工资账户流水",
+      "title": "只交出一张的工资卡",
+      "front": "女方要求看银行流水后，男方只提供工资账户近一个月记录，期末余额 28.6 万。",
+      "detail": "它能证明这一张工资卡的到账与期末余额，不能代表男方其他账户，也不等于他答应把钱拿作彩礼。",
+      "targets": [
+        "truthWithGap",
+        "sceneHint"
+      ],
+      "contradiction": "男方用真实工资账户回应财力质疑，却把其他账户留在材料之外；女方又把一张卡当成了全部家底。"
+    },
+    {
+      "id": "daily-profile-scale",
+      "type": "聊天原话",
+      "title": "彩礼传话",
+      "front": "女方母亲让介绍人先问二十八万八，理由是男方能自己承担二十三万八的 MBA 学费。",
+      "detail": "这个数字来自女方母亲，不是介绍人加价；历史学费也不能直接证明当前财力。",
+      "targets": [
+        "truthWithGap"
+      ],
+      "contradiction": "女方母亲把自费 MBA 换算成家底，咨询者知情后没有叫停。"
+    },
+    {
+      "id": "daily-profile-mba",
+      "type": "学历材料",
+      "title": "名校毕业",
+      "front": "细问才知道是 MBA 项目，本科学历没有一起说。",
+      "detail": "图上写的是 MBA，本科另有学校；缴费回单显示二十三万八由本人分三次交清。",
+      "targets": [
+        "halfLie"
+      ],
+      "contradiction": "名校本科的误会被纠正后，自费 MBA 又被换算成了现成家底。"
+    },
+    {
+      "id": "daily-profile-spending",
+      "type": "消费细节",
+      "title": "收入和花销",
+      "front": "口头收入不错，日常小钱却反复算。",
+      "detail": "团购、积分和停车费 AA 能看出他算钱细，看不出他没有收入。",
+      "targets": [
+        "truthWithGap",
+        "sceneHint"
+      ],
+      "contradiction": "男方声称收入和日常花销、抠门细节不匹配。"
+    },
+    {
+      "id": "daily-profile-flow",
+      "type": "理财持有页",
+      "title": "女方家以后给她的钱",
+      "front": "女方父母持有宸直产品 30 万元，页面约定 9 月 30 日到期。",
+      "detail": "父亲说到期后给女儿二十万元自己留着；这笔钱现在不能取，也没有承诺用于婚宴和首饰。",
+      "targets": [
+        "sceneHint"
+      ],
+      "contradiction": "女方家要求男方先把钱转入女儿账户，却没有说明自己一侧的钱尚未到期，且准备继续由女儿个人持有。"
+    },
+    {
+      "id": "daily-profile-introducer",
+      "type": "聊天原话",
+      "title": "介绍人分别对两家说的话",
+      "front": "给女方家：学校好、收入稳。给男方家：女生稳定、不太计较学历；随后又转去女方母亲的二十八万八。",
+      "detail": "介绍人替双方说过没确认的话，也替女方家传了彩礼数字，但数字不是她定的。",
+      "targets": [
+        "halfLie",
+        "sceneHint"
+      ],
+      "contradiction": "介绍人对两边都抬高好处、压低短处，条件版本被介绍链共同加工。"
+    }
+  ],
+  "evidenceChecks": [
+    {
+      "id": "profile-mba-gap",
+      "revalues": [
+        "profile-dinner-pause",
+        "profile-caller-repeats-label"
+      ],
+      "title": "学历材料检视",
+      "prompt": "学校图和缴费回单一起看，最该分开什么？",
+      "material": "学校查询页和三笔缴费记录摆在一起。",
+      "materialRows": [
+        "校名｜已显示",
+        "项目｜MBA",
+        "本科｜未显示",
+        "学费｜¥238,000｜本人账户分三次支付",
+        "当前财力｜无法由学费推出"
+      ],
+      "options": [
+        {
+          "label": "本科经历和当前财力",
+          "correct": true,
+          "contradiction": "咨询者把“学校不错”转述成“名校毕业”，本科学历落差被留在了标签外面。",
+          "feedback": "MBA 项目和缴费都是真的。可学校图说的是 MBA，回单说的是过去交了多少学费；这两张都说不了本科，也说不了现在的家底。",
+          "reactionLine": "我原本是想纠正学历，结果我妈看到的全是二十三万八。",
+          "routeAxis": "identity-wording"
+        },
+        {
+          "label": "截图像不像修过",
+          "correct": false,
+          "feedback": "图片和回单都可以是真的，它们仍然不能证明他现在有多少积蓄。",
+          "reactionLine": "图是真的，缴费也是真的。是我们把它又往后推了一步。",
+          "routeAxis": "document-edge"
+        },
+        {
+          "label": "介绍人有没有夸张",
+          "correct": false,
+          "feedback": "介绍人的说法不能替学校图补本科，也不能替缴费回单证明家底。",
+          "reactionLine": "介绍人只说学校不错。名校毕业和有钱，是我们家自己接出来的。",
+          "routeAxis": "caller-credibility"
+        }
+      ]
+    },
+    {
+      "id": "profile-introducer-double-speak",
+      "revalues": [
+        "profile-introducer-two-prices"
+      ],
+      "title": "介绍链原话检视",
+      "prompt": "介绍人说男方“收入稳”，你先查哪一件事？",
+      "material": "两段聊天保留了发送人和前后文。",
+      "materialRows": [
+        "给女方家｜学校好、收入稳、家里省心",
+        "给男方家｜女生稳定、家里不折腾、对学历不会太计较",
+        "两段都没说明｜每月收入明细、本科信息"
+      ],
+      "options": [
+        {
+          "label": "她有没有看过工资或流水",
+          "correct": true,
+          "contradiction": "介绍人对两边都抬高好处、压低短处，条件版本被介绍链共同加工。",
+          "feedback": "她两样都没看过。“收入稳”只是听男方家说了以后，顺口转给女方家的。",
+          "reactionLine": "我以前以为她手里真有东西。原来她连工资都没见过。",
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "她是不是更偏男方家",
+          "correct": false,
+          "feedback": "另一段聊天里，她也替女方说过没确认的话。先查“收入稳”从哪儿来的。",
+          "reactionLine": "我一开始只觉得她偏他。看到另一段才知道，她也替我省掉了麻烦。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "她说的“稳定”是多少钱",
+          "correct": false,
+          "feedback": "她连工资和流水都没见过，现在还谈不上问具体数字。",
+          "reactionLine": "我后来问过，她连他哪家公司发工资都说不清。",
+          "routeAxis": "money-flow"
+        }
+      ]
+    },
+    {
+      "id": "profile-income-flow-gap",
+      "revalues": [
+        "profile-proof-before-dinner",
+        "profile-income-and-card"
+      ],
+      "title": "彩礼条件与两边的钱",
+      "selectionMode": "priority",
+      "prompt": "家里群和账户里有两处没说清。你先带哪一处上麦？",
+      "material": "男方只交了一个工资账户；女方家则要求领证前把彩礼打进女方个人账户，婚宴首饰另算。",
+      "materialRows": [
+        "女方要求｜看银行流水",
+        "男方提供｜仅工资账户近一个月｜期末余额 28.6 万",
+        "男方其他账户｜未提供｜余额与用途未知",
+        "彩礼条件｜28.8 万｜领证前进入女方个人账户",
+        "后续支出｜婚宴、首饰｜不包含在 28.8 万内",
+        "宸直产品｜本金 30 万｜9 月 30 日约定到期",
+        "女方父亲安排｜到期后给女儿 20 万｜先由女儿自己留着",
+        "当前可用金额｜未核实"
+      ],
+      "options": [
+        {
+          "label": "钱何时给、进谁账户、由谁来花",
+          "correct": true,
+          "contradiction": "女方要求男方现在把钱转到自己名下，婚宴首饰继续另算；自己和父母的钱却准备以后再拿，并先留在女方一侧。",
+          "feedback": "工资卡二十八万六不等于男方同意交出二十八万八；九月底可能到手的二十万元，也没有被女方家承诺用于婚宴、首饰或共同生活。",
+          "reactionLine": "我问了他好几遍还有多少钱。可二十八万八什么时候转、转给谁，还有我自己的钱怎么出，我当时都没跟他说。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "男方只交了工资账户",
+          "correct": true,
+          "contradiction": "男方用一张工资账户回答女方要求的银行流水，却没有说明还有其他账户；女方也不能把这一张卡当成他的全部家底。",
+          "feedback": "二十八万六只是一张工资账户里的余额。别的账户有多少、钱拿去做什么，现在都不知道。",
+          "reactionLine": "我拿到这一张，就当成他全部的钱。他也没告诉我，还有别的账户。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "截图是不是原图",
+          "correct": false,
+          "feedback": "原图也可能只截到最好看的那一页。",
+          "reactionLine": "原图。我检查过像素，没修。是我自己想歪了方向。",
+          "routeAxis": "document-edge"
+        }
+      ]
+    }
+  ],
+  "investigationHooks": [
+    {
+      "id": "profile-family-chat-backflow",
+      "voiceAttribution": "document",
+      "source": "dm",
+      "surface": "有人补了一张图",
+      "title": "家里群截图",
+      "triggerContradiction": "名校本科的误会被纠正后，自费 MBA 又被女方家换算成当前家底。",
+      "appearsNowBecause": "收麦后，一条私信进来：她表妹也在那个家里群，看了直播，把整页聊天拍了过来。",
+      "prompt": "这页家里群里，哪两句话必须连着看？",
+      "material": "她先发：“本科不是那所，是后来读的 MBA。二十三万八，都是他自己交的。”母亲回：“那说明手里不会差。彩礼先问二十八万八，领证前打进她自己的卡。婚宴和首饰另算。”父亲紧接着发：“咱家宸直那三十万九月底到期，到时候拿二十万给她，她自己留着。”",
+      "proves": "女方母亲因男方自费 MBA 推高彩礼，并要求领证前进女儿个人账户、婚宴首饰另算；与此同时，女方父亲给女儿的二十万元仍在宸直产品中。",
+      "stillCannotProve": "不能证明宸直到期一定无法兑付，也不能证明男方应当或有能力支付二十八万八。",
+      "routeAxis": "external-corroboration",
+      "options": [
+        {
+          "label": "领证前转账和九月底到期",
+          "correct": true,
+          "contradiction": "女方家要求男方在领证前把钱转入女儿账户，婚宴首饰另算；自己那二十万元不但要等九月底，还准备留给女儿本人。",
+          "feedback": "要求男方支付的时间、账户和额外项目都很清楚；轮到女方家的钱，只剩一个未来日期，而且没有共同用途。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "MBA 二十三万八是他自己交的",
+          "correct": false,
+          "feedback": "这能证明历史支出，不能单独证明他现在有钱。后来让婚事谈崩的是彩礼和宸直。",
+          "routeAxis": "external-corroboration"
+        },
+        {
+          "label": "九月底到期",
+          "correct": false,
+          "feedback": "约定日期不是兑付保证。还要把它和女方家当天问出的彩礼放在一起看。",
+          "routeAxis": "identity-wording"
+        }
+      ],
+      "replyChoices": [
+        {
+          "id": "ack-self-started",
+          "label": "直播里说清两家的钱",
+          "stanceNudge": "open"
+        },
+        {
+          "id": "blame-mom",
+          "label": "先说彩礼是妈妈定的",
+          "stanceNudge": "defensive"
+        }
+      ]
+    },
+    {
+      "id": "profile-introducer-double-note",
+      "speakerProfileId": "case3-introducer",
+      "source": "introducer-note",
+      "surface": "介绍人留了话",
+      "title": "介绍人分别对两家说的话",
+      "triggerContradiction": "介绍人对两边都抬高好处、压低短处，条件版本被介绍链共同加工。",
+      "appearsNowBecause": "材料板圈出介绍链原话后，介绍人通过后台补了一段解释。",
+      "prompt": "这段留言里，哪一句最该留下？",
+      "material": "介绍人留言：“‘收入稳’是听男方家说完，我顺嘴夸的；‘她不太计较学历’，我也没问过本人。二十八万八是她妈妈让我原话问的。我当时只想着先把人约到桌上，没拦，也没让两个孩子先谈。”",
+      "proves": "介绍人承认两句条件话没有问过本人，也确认二十八万八来自女方母亲。",
+      "stillCannotProve": "不能证明男方存心诈骗，也不能证明女方只图钱。",
+      "routeAxis": "external-corroboration",
+      "options": [
+        {
+          "label": "我先把两家约到桌上",
+          "correct": true,
+          "contradiction": "介绍人为了促成见面，替两个人都说了没确认的话。",
+          "feedback": "她想把饭局促成，既替双方添了好话，也没有拦住二十八万八这句先冲过去。",
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "收入稳",
+          "correct": false,
+          "feedback": "她这么说过，但她没有材料证明收入构成。",
+          "routeAxis": "money-flow"
+        },
+        {
+          "label": "对学历不会太计较",
+          "correct": false,
+          "feedback": "这句不是女方说的；还要继续查“收入稳”是谁告诉她的。",
+          "routeAxis": "identity-wording"
+        }
+      ]
+    }
+  ],
+  "advisorNotes": [
+    {
+      "advisorId": "lin-matchmaker",
+      "appearsNowBecause": "收麦后，那位婚介听友又留了话。",
+      "text": "我做婚介的，最怕两家隔着中间人传彩礼数字。你们俩要是还想往下谈，就自己见面，把能拿多少说清楚。家里答应的那份什么时候到，也别含糊。"
+    }
+  ],
+  "crossCaseEchoes": [
+    {
+      "requiresCaseId": "04-workplace",
+      "text": "刚才六万八要先找正式报销，这边二十八万八也得先问清是谁提的、准备怎么付。"
+    }
+  ],
+  "hostWoundHook": "相亲市场都这样，别只骂一方",
+  "deepFollowup": {
+    "question": "你把他工资卡上的二十八万六看得这么细。那你自己现在有多少存款，真结婚愿意先拿多少？",
+    "resistanceBeat": {
+      "lines": [
+        {
+          "role": "caller",
+          "text": "八万四。"
+        },
+        {
+          "role": "host",
+          "text": "准备先拿多少？"
+        },
+        {
+          "role": "caller",
+          "text": "六万。剩下的我得留着。"
+        },
+        {
+          "role": "host",
+          "text": "什么时候拿出来，用在哪儿？"
+        },
+        {
+          "role": "caller",
+          "text": "领证以后。添家电、搬家。婚宴和首饰不从这里出。"
+        }
+      ]
+    },
+    "answer": "唉，这些我也没跟他说。",
+    "note": "她报出八万四、六万元上限和使用顺序后，二十八万八不再是一个孤立的彩礼数字。"
+  },
+  "stageJudgement": "周末那顿饭先取消。你回去把自己的意思跟父母说，别再让介绍人替你报二十八万八。你妈查到他家境普通，转头把彩礼往上加；你知道，也没拦。你心里还觉得自己条件更好，他就该多花钱、多听你说。那今天就别再说全是父母的意思。彩礼怎么给、婚宴首饰谁出、你自己的六万什么时候拿，都用你自己的话谈。你可以开条件，他也可以不答应。不能因为他不答应，就说他骗你。其他账户里有什么，宸直那笔钱什么时候能拿到，今晚不知道。",
+  "caseClosing": {
+    "title": "周末那顿饭，先别急",
+    "verdict": "周末那顿饭先取消。女方父母查到男方家境普通后，没说被骗，转头借这个理由把彩礼加到二十八万八；她嘴上说无奈，实际上没有叫停，也一直觉得自己条件更好，男方多花钱、多照顾是应该的。男方只交了工资卡，也没说这不是全部。两个人先把这些话当面说全，再决定还谈不谈。",
+    "beats": [
+      {
+        "label": "来电",
+        "text": "名校本科的误会被纠正后，女方父母查到男方家境普通，又把自费 MBA 当成家底，借‘替女儿留保障’问了二十八万八。"
+      },
+      {
+        "label": "插麦",
+        "text": "男方刷礼物要求进麦；双方分别说清哪些材料和原话可以公开。"
+      },
+      {
+        "label": "回看",
+        "text": "咨询者默认自己条件更好，把男方平时付饭钱、买展票、接下班和听她倾诉看成应该；女方家又要男方先把彩礼转入女儿账户，婚宴首饰另算。"
+      }
+    ],
+    "confirmed": [
+      "学校图没有本科，收入图只有一个月",
+      "二十三万八学费由男方自己承担，但不能证明当前家底",
+      "女方父母查到男方父母普通上班、婚房帮不上，没有定性欺骗，转头借这个落差提高彩礼；咨询者没有叫停",
+      "男方平时承担多数饭钱和展票，也接过她下班、听她倾诉；咨询者曾认为自己条件更好，这些付出是应该的",
+      "二十八万八来自女方母亲；男方先说拿不出，女方要求流水后，他只提供工资账户",
+      "工资账户期末余额为二十八万六，其他账户没有提供",
+      "二十八万八要在领证前转进女方个人账户，婚宴和首饰另算",
+      "女方本人有八万四，最多愿意拿六万，准备领证后用于家电和搬家",
+      "女方父母的三十万元仍在宸直产品中，约定九月底到期；其中二十万元准备留给女儿本人"
+    ],
+    "unresolved": [
+      "男方是否有持续收入",
+      "男方其他账户里有多少，以及真实总家底",
+      "宸直产品九月底能否按约兑付",
+      "双方最终愿意拿多少、何时拿、进入谁的账户以及用于哪些项目",
+      "坦白条件后双方是否仍愿意继续"
+    ],
+    "nextStep": "周末饭局先取消。两个人各写一张清单：现在能拿多少、何时拿、钱进谁的账户、婚宴和首饰谁付。宸直没有兑付以前，不把那二十万元算成可用资金；任何一方不接受这组条件，都可以不继续。"
+  },
+  "careChoices": [
+    {
+      "id": "pragmatic",
+      "label": "带着表去谈",
+      "hostLine": "两个人谈的时候，把你那张表带上。别念，放包里就行。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "带表……你不是让我别发后台吗。" },
+        { "role": "host", "speaker": "林旭阳", "text": "放包里，不是放台上。" },
+        { "role": "caller", "speaker": "咨询者", "text": "……嗯。" }
+      ]
+    },
+    {
+      "id": "affirm",
+      "label": "让她自己开口问条件",
+      "hostLine": "想把条件问清楚不丢人。下次别借你妈的嘴，自己问。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "……谢谢。这句，我妈应该听听。" }
+      ]
+    },
+    {
+      "id": "accompany",
+      "label": "留一句回访",
+      "hostLine": "谈完什么结果，都可以来说一声。不用带材料。",
+      "lines": [
+        { "role": "caller", "speaker": "咨询者", "text": "不带材料。" },
+        { "role": "pause" },
+        { "role": "caller", "speaker": "咨询者", "text": "好。我试试。" }
+      ]
+    }
+  ],
+  "storyInterludeRecap": "学校图上只有 MBA。女方父母查到男方家境普通后，没有追究被骗，反而借这个落差问二十八万八；咨询者嘴上劝过一句，实际没有叫停。",
+  "conclusionWhenCleared": {
+    "summary": "女方父母查到男方只是名校 MBA、家境普通后，没有说被骗，转头把这个落差变成加价理由。咨询者没有叫停，还认为自己条件更好，男方平时多花钱、多照顾是应该的。",
+    "followup": "男方刷礼物要求上麦以后，承认自己只交了工资账户，其他账户不愿公开；咨询者也说出完整条件：二十八万八领证前进她的卡，婚宴首饰另算。她有八万四，最多愿意在领证后为家电和搬家拿六万；父母未来的二十万元准备留给她本人。学校、缴费和工资卡分别只证明自己的那一部分。",
+    "truth": "今晚还不知道男方其他账户有多少、收入能否持续，也不知道宸直九月底能否按约兑付。咨询者可以提出保障，男方也可以拒绝。两家若继续谈，必须把金额、付款时间、收款账户和共同支出逐项说清。"
+  },
+  "conclusionBranches": [
+    {
+      "match": "MBA|学历|本科|介绍",
+      "summary": "你这轮主要问了学历。学校和 MBA 都是真的，可“名校毕业”听起来更像本科也在那里读。",
+      "followup": "本科误会纠正后，女方母亲没有停下来，反而用二十三万八自费学费推断男方家底。",
+      "truth": "学历只是开头。后来把两家推开的是二十八万八要在领证前转进女方账户、婚宴首饰另算，以及女方一侧的钱没有对等的共同用途。"
+    },
+    {
+      "match": "流水|工资|收入|花销|存款|彩礼|宸直",
+      "summary": "你这轮主要问了两家的钱。男方只交了工资账户，期末余额二十八万六；女方家三十万元是尚未到期的宸直产品。",
+      "followup": "一个没有交代其他账户，另一家没有说清彩礼进谁的卡、额外支出谁付，也把留给女儿个人的钱说成家里会为结婚出的钱。",
+      "truth": "两边数字都是真的，却既不是完整家底，也不是双方已经同意的分配方案。男方其他账户、持续收入和宸直兑付，今晚仍然不知道。"
+    }
+  ],
+  "followupTwist": "回拨时，她先承认父母查到男方家境普通后没有喊被骗，转头借这个理由把彩礼往上加；随后亲口念出家里群连着的两段：母亲要求二十八万八领证前进女儿账户，婚宴首饰另算；父亲却说宸直九月底到期后拿二十万给女儿自己留着。白天看材料能确认 MBA 由男方自费；去见介绍人，则能确认彩礼数字确实来自女方母亲。",
+  "dailyShareTitle": "二十八万八，对上二十八万六",
+  "dailyShareBody": "女方父母查到男方只是名校 MBA、家境普通后，没有说被骗，反而借这个理由把彩礼加到二十八万八；她本人没有叫停，还觉得自己条件更好，男方多花钱、多照顾很正常。男方只交工资账户同样没有把自己的家底说全。",
+  "dailyShareQuestion": "如果心里已经把对方放在条件较弱的位置，还把他的付出当成补差价，这段关系到底在谈感情，还是在谈身价？",
+  "truth": "男方的 MBA 项目和二十三万八本人缴费记录都是真的，本科并不在那所名校。女方父母先把他当成名校本科高材生；纠正后又托人查到男方父母只是普通上班、老家一套自住房、婚房帮不上。他们没有把学历落差定成欺骗，转头拿普通出身和自费 MBA 推断男方应该多拿钱，托介绍人问二十八万八彩礼。咨询者嘴上说别把人吓跑，却没有要求撤回；她也一直认为自己的工作和家庭条件更好，男方承担多数饭钱和展票、接她下班、听她讲家里的烦恼，都是条件较弱一方应当多做的部分。完整彩礼条件是领证前打进女方个人账户，婚宴和首饰另算。咨询者赞成这组条件，却只把彩礼数字告诉男方，还把父母未来给她个人的二十万元说成女方家也会为结婚出钱。男方明确说拿不出二十八万八，咨询者认为他在压价，要求查看银行流水。男方随后只提供工资账户近一个月的流水，期末余额二十八万六；他没有主动说明其他账户未包含在内，咨询者也把这一张卡当成了他的全部家底。女方本人有八万四，最多愿意在领证后拿六万用于家电和搬家。女方父母的三十万元仍在宸直产品中，页面约定九月底到期；父亲说到期后拿二十万元给女儿自己留着，并未承诺支付婚宴或首饰。第二夜男方刷礼物要求上麦，承认自己还有其他账户但不愿公开；双方只同意讨论已经出现的材料和各自原话，礼物不能替材料增加证明力。今晚仍不知道男方其他账户的余额、真实总家底、收入能否持续，也不知道宸直能否按约兑付。",
+  "respondentNote": {
+    "source": "respondent-note",
+    "appearsNowBecause": "临时双人连麦结束后，男方又在后台补了一句，重申刚才答应公开到哪里。",
+    "teaseDuringSegment2": false,
+    "text": "学校页、MBA 缴费和工资卡是我发的，你们可以问。别的账户我没给她，也不想上直播。当时她要看收入，我就挑了工资卡，没提醒她这不是全部。饭、展票、接她下班，是我愿意做，不是因为我家境普通就欠她。卡上有二十八万六，也不代表我要拿二十八万八，更不代表后面婚宴首饰都我出。"
+  },
+  "documents": [
+    {
+      "id": "case3-credential-balance",
+      "title": "学历、彩礼与两家资金边界",
+      "intro": "七行不用一起算。先分开看：哪些是以前花掉的钱，哪些是现在真能拿出来的钱；再看彩礼何时支付、进入谁的账户、还不包括哪些支出。",
+      "rows": [
+        {
+          "rowId": "p01",
+          "date": "06-16",
+          "kind": "提醒",
+          "amount": "——",
+          "party": "某名校 MBA 项目",
+          "memo": "校名与项目可核"
+        },
+        {
+          "rowId": "p02",
+          "date": "06-16",
+          "kind": "提醒",
+          "amount": "¥238,000",
+          "party": "MBA 学费缴费回单",
+          "memo": "本人账户分三次支付；本科另有学校"
+        },
+        {
+          "rowId": "p04",
+          "date": "06-19",
+          "kind": "提醒",
+          "amount": "¥288,000",
+          "party": "女方母亲→介绍人",
+          "memo": "听说 MBA 自费后提出；要求领证前转入女方个人账户"
+        },
+        {
+          "rowId": "p06",
+          "date": "06-19",
+          "kind": "提醒",
+          "amount": "¥200,000",
+          "party": "女方父亲口头安排",
+          "memo": "从下述 30 万宸直中划出；到期后给女儿自己留着"
+        },
+        {
+          "rowId": "p07",
+          "date": "06-19",
+          "kind": "提醒",
+          "amount": "另算",
+          "party": "婚宴与首饰",
+          "memo": "不包含在 28.8 万内；女方家希望男方另行承担"
+        },
+        {
+          "rowId": "p03",
+          "date": "06-20",
+          "kind": "提醒",
+          "amount": "¥286,000",
+          "party": "男方工资账户",
+          "memo": "06-01 至 06-20；期末余额；其他账户未提供"
+        },
+        {
+          "rowId": "p05",
+          "date": "09-30",
+          "kind": "提醒",
+          "amount": "¥300,000",
+          "party": "女方父母·宸直产品",
+          "memo": "持有页列明到期日；当前不能取"
+        }
+      ],
+      "rowQuestions": {
+        "p01": [
+          {
+            "question": "这张查询页写的是毕业学历，还是项目经历？",
+            "answer": "项目经历。校名和项目都对，本科没在这一页。我以前把这页直接念成名校毕业。",
+            "contradiction": "真实项目经历被概括成更宽的学历标签。",
+            "routeAxis": "identity-wording"
+          }
+        ],
+        "p02": [
+          {
+            "question": "二十三万八由他自己支付，能直接证明现在有钱吗？",
+            "answer": "不能。它能证明当年这笔学费从他账户出去，也能证明 MBA 不是家里白送的；可花过多少钱，不等于现在还剩多少钱。",
+            "contradiction": "女方母亲把一笔历史支出直接换算成了当前家底。",
+            "routeAxis": "document-edge"
+          }
+        ],
+        "p03": [
+          {
+            "question": "这份工资账户流水能代表他的全部账户吗？",
+            "answer": "不能。它只显示这一张工资卡在所列期间的进出和期末余额。其他账户没有提供，里面有多少、用来做什么，都不知道。",
+            "contradiction": "男方选择性提供工资账户，女方却把一张卡当成了全部家底。",
+            "routeAxis": "money-flow"
+          }
+        ],
+        "p04": [
+          {
+            "question": "二十八万八是谁定的，什么时候给，打进谁的账户？",
+            "answer": "我妈定的。她听说二十三万八学费是他自己出的，就觉得他还有积蓄。她要求领证前打进我的卡，介绍人把这组话传了过去。",
+            "contradiction": "咨询者只向男方强调彩礼数额，没有说清付款时点和钱会进入她个人账户。",
+            "routeAxis": "caller-credibility"
+          }
+        ],
+        "p06": [
+          {
+            "question": "你爸说的二十万元，准备拿来付婚宴和首饰吗？",
+            "answer": "不是。他原话是宸直到期后拿二十万给我，让我自己留着。怎么花以后再说。",
+            "contradiction": "咨询者把留给自己个人的钱说成女方家也会为结婚出钱。",
+            "routeAxis": "money-flow"
+          }
+        ],
+        "p07": [
+          {
+            "question": "婚宴和首饰包含在二十八万八里吗？",
+            "answer": "不包含。我妈说另算，默认还是男方家出。我以前只把二十八万八告诉他，没把这句一起说。",
+            "contradiction": "咨询者要求男方证明能支付彩礼时，没有同时告诉他后面还有两项额外支出。",
+            "routeAxis": "money-flow"
+          }
+        ],
+        "p05": [
+          {
+            "question": "宸直三十万元现在能取出来吗？",
+            "answer": "不能。页面只写九月三十日到期，当前不能取；到期能不能按约兑付，这一页也保证不了。",
+            "contradiction": "女方家要求男方现在证明支付能力，自己的资金却仍依赖一笔未来兑付。",
+            "routeAxis": "money-flow"
+          }
+        ]
+      },
+      "crossQuestions": [
+        {
+          "rows": [
+            "p01",
+            "p03"
+          ],
+          "question": "这两份材料里，哪一份能说明他的本科和完整家底？",
+          "answer": "都不能。一张只有 MBA 项目，一份只有工资账户近一个月。我以前却拿着它们跟家里说，他学历和收入都不错。",
+          "contradiction": "两份真实材料被介绍链拼成了更完整的人设。",
+          "routeAxis": "process-control"
+        },
+        {
+          "rows": [
+            "p04",
+            "p06",
+            "p07"
+          ],
+          "question": "把这三行连起来，双方的钱怎么安排？",
+          "answer": "男方要在领证前把二十八万八转进我的卡，婚宴和首饰再另外出；我爸那二十万要等宸直到期，而且先给我自己留着。",
+          "contradiction": "男方的钱有明确的付款时间、收款账户和额外支出，女方家的钱却既在未来，也没有约定共同用途。",
+          "routeAxis": "money-flow"
+        }
+      ],
+      "markLimit": 2
+    }
+  ],
+  "statementPatience": {
+    "night-a": 4,
+    "night-b": 4
+  },
+  "nightStructure": {
+    "enabled": true,
+    "segment1SceneIndexes": [
+      0,
+      1,
+      2
+    ],
+    "segment2SceneIndexes": [
+      5,
+      6
+    ],
+    "hangup": {
+      "afterSceneIndex": 2,
+      "speaker": "咨询者",
+      "line": "家里群一直在 @ 我。最上面那几句……我得自己再看一遍。今晚先到这儿吧，明天我回来。",
+      "hostLine": "好。你先回群里看看。学费那句往后，每个人到底说了什么，明天回来我们再问。",
+      "stageDirection": "电话断了。屏幕上，家里群的新消息还在往外跳。",
+      "audioCueId": "sfx.phone.busy"
+    },
+    "interlude": {
+      "title": "收麦后·控台短查",
+      "kicker": "出门前只够打一通短电话，或先把家里群原话调出来。",
+      "budget": 1,
+      "minActions": 1,
+      "maxActions": 1,
+      "continueLabel": "进入白天调查",
+      "actions": [
+        {
+          "id": "profile-family-chat-late",
+          "label": "先在后台看表妹发来的群聊",
+          "summary": "整页聊天由来电人回拨时自己念，后台不替她解释彩礼和宸直。",
+          "cost": 1,
+          "kind": "backflowEarly",
+          "hookId": "profile-family-chat-backflow",
+          "grantsInventory": [
+            "family-chat-seen"
+          ]
+        },
+        {
+          "id": "profile-listen-dinner-pause",
+          "label": "回听饭局学历转向",
+          "summary": "只听问到本科后的停顿和原答，不替任何人改写。",
+          "cost": 1,
+          "kind": "playback",
+          "grantsInventory": [
+            "profile-dinner-pause-playback"
+          ],
+          "script": {
+            "audioCueId": "voice.case3.dinner-pause",
+            "clipLabel": "回放·第一次饭局",
+            "clipLine": "‘本科也是那所学校吗？’杯碟声停了十几秒。男方说：‘本科不是，是后来读的 MBA。学费二十三万八，我自己交的。’随后有人把话题转到停车费。",
+            "hostNote": "本科答了，前面那句“名校毕业”却没人往回问。"
+          }
+        }
+      ]
+    },
+    "returnStance": {
+      "fromSnapshotOptionIds": {
+        "respondent-fraud": "open",
+        "caller-control": "defensive",
+        "market-coauthored": "neutral"
+      },
+      "default": "neutral",
+      "lines": {
+        "defensive": "我差点没打回来。弹幕说我家问得太多，这话我听见了。群聊我带来了，你接着问吧。",
+        "open": "我回来了。昨晚挂完电话，我又看了学校图，也去找了介绍人。今天都带来了。",
+        "neutral": "我回来了。昨晚群里吵到很晚，我把那几张图又看了一遍。"
+      }
+    }
+  },
+  "overnightStructure": {
+    "hangupAnchor": "真让她把二十八万八收回来",
+    "hangupLine": "电话断了。屏幕上，家里群的新消息还在往外跳。",
+    "hangupAudioCueId": "sfx.phone.busy",
+    "hostHoldLine": "好。你先回群里看看。学费那句往后，每个人到底说了什么，明天回来我们再问。",
+    "snapshotEcho": {
+      "respondent-fraud": "昨晚不少人直接说他在包装。可图本身没改。他为什么只发工资账户，别的账户一句不提，我还是想问。",
+      "caller-control": "昨晚不少人说我家问得太多。这句我先认。二十八万八是谁定的，我家现在又能拿多少，今天都得说。",
+      "market-coauthored": "介绍人的两段聊天我看了。她替两边加过话，也确认二十八万八是我妈让她问的。"
+    },
+    "liveCounterBeats": [
+      {
+        "id": "profile-family-chat-blowup",
+        "kind": "emotionalChoice",
+        "cost": 0,
+        "afterSceneIndex": 5,
+        "from": "家里群反转",
+        "triggerAny": {
+          "documentRows": [
+            "case3-credential-balance:p04"
+          ],
+          "callbackOpeners": [
+            "家里群原话"
+          ]
+        },
+        "lines": [
+          {
+            "role": "caller",
+            "text": "等一下。那页群聊……是我表妹发给你们的？"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "她把我家的群发给一个直播间？"
+          },
+          {
+            "role": "pause"
+          },
+          {
+            "role": "caller",
+            "text": "你们等我一下，我要先给她打个电话。"
+          }
+        ],
+        "choices": [
+          {
+            "id": "soothe",
+            "directionLabel": "先处理越界截图",
+            "label": "这张截图没有经过你同意。后台先删掉，直播里也不说截图内容。你想暂停，随时可以。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "后台先删。不是，电话先别断，我把这段说完。播完我再找她。"
+              },
+              {
+                "role": "pause"
+              }
+            ],
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure",
+            "recapAftertaste": "她发现群聊截图是表妹发来的以后，我先从后台删掉，也没有在直播里念截图内容。她说继续，我们才往下谈。"
+          },
+          {
+            "id": "push-back",
+            "directionLabel": "把暂停权交给她",
+            "label": "你可以现在停。我等你处理完，我们再决定要不要继续。",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "先不打了。她多半跟我妈在一块儿，我现在打过去，最后还是我妈接。你先让我把这段说完。"
+              }
+            ],
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure",
+            "recapAftertaste": "她发现群聊截图没有经过自己同意，我把停不停交给了她。她决定先把这段说完。"
+          },
+          {
+            "id": "silence",
+            "directionLabel": "先静音，再决定是否继续",
+            "label": "我先把直播静音。你想好了，再告诉我继续还是挂断。",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "直播静音。十几秒后，她重新开口。"
+              },
+              {
+                "role": "caller",
+                "text": "继续吧。截图从后台删掉，直播里也别提内容。"
+              }
+            ],
+            "stanceNudge": "neutral",
+            "routeAxis": "caller-credibility",
+            "routeTone": "neutral",
+            "recapAftertaste": "群聊截图的来路露出来以后，我先把直播静音。她重新说继续，我们才恢复声音。"
+          }
+        ]
+      },
+      {
+        "id": "profile-gift-mic-request",
+        "kind": "interruptToast",
+        "cost": 0,
+        "afterSceneIndex": 5,
+        "from": "直播礼物",
+        "speakerProfileId": "case3-respondent",
+        "presentation": "gift",
+        "revealTransition": {
+          "id": "case3-second-mic",
+          "kind": "reveal",
+          "eyebrow": "礼物提示亮起",
+          "label": "第二路麦克风接通",
+          "visualVariant": "second-mic"
+        },
+        "lines": [
+          {
+            "role": "stage",
+            "text": "屏幕上铺开一层金色特效。账号“Z先生”送出“星河”×1，紧接着申请连麦。"
+          },
+          {
+            "role": "caller",
+            "speaker": "男方",
+            "text": "我是她说的那个人。介绍人把直播片段转给我了，我才进来的。礼物你先收着。"
+          },
+          {
+            "role": "caller",
+            "speaker": "男方",
+            "text": "我只问一句：你家要我领证前把二十八万八打进你的卡，你们家的三十万却要等到九月底，拿到以后还说是留给你自己的。这些话，你有没有一起告诉我？"
+          }
+        ],
+        "choices": [
+          {
+            "id": "refund-then-scope",
+            "directionLabel": "退回礼物，再划公开范围",
+            "label": "礼物我会退回。你想上麦，就先把愿意公开到哪儿说清楚。",
+            "lines": [
+              {
+                "role": "caller",
+                "speaker": "男方",
+                "text": "行。她手里那些材料，这几页可以：学校、学费、工资卡，还有彩礼那几句。其他账户不公开。她家的钱，也只说群里已经提过的。"
+              }
+            ],
+            "recapAftertaste": "刚才那份礼物我退了。后来接他上麦，是因为两个人都同意把话说开，不是因为他付了钱。",
+            "stanceNudge": "neutral",
+            "routeAxis": "process-control",
+            "routeTone": "firm"
+          },
+          {
+            "id": "hold-gift-then-scope",
+            "directionLabel": "暂挂礼物，先划公开范围",
+            "label": "礼物先挂着不动，也不算发言权。你先把能公开的范围打在后台。",
+            "lines": [
+              {
+                "role": "caller",
+                "speaker": "男方",
+                "text": "范围我打后台了。她已经拿到的学校图、学费单、工资卡，这几页可以；彩礼原话也能谈。其他账户不公开。她家的钱，只说群里那一句。"
+              }
+            ],
+            "recapAftertaste": "礼物还挂在后台待处理。它没替他多买一句，公开范围仍是双方自己划的。",
+            "stanceNudge": "neutral",
+            "routeAxis": "document-edge",
+            "routeTone": "neutral"
+          },
+          {
+            "id": "ask-caller-before-mic",
+            "directionLabel": "先问她是否同意连麦",
+            "label": "先别上麦。我先问她愿不愿意跟你同麦，再谈公开哪些材料。",
+            "lines": [
+              {
+                "role": "caller",
+                "speaker": "男方",
+                "text": "可以，你先问她。我这边同意谈学校、学费、那张工资卡和彩礼，这几页可以。其他账户不公开。她家的钱也只念群里出现过的。"
+              }
+            ],
+            "recapAftertaste": "我先问了她愿不愿意，才接他进来。礼物能让申请跳到眼前，不能替另一个人点头。",
+            "stanceNudge": "open",
+            "routeAxis": "caller-credibility",
+            "routeTone": "reassure"
+          }
+        ]
+      },
+      {
+        "id": "profile-mediation-consent",
+        "kind": "interruptToast",
+        "cost": 0,
+        "afterSceneIndex": 5,
+        "from": "临时双人连麦",
+        "speakerProfileId": "case3-respondent",
+        "lines": [
+          {
+            "role": "caller",
+            "speaker": "咨询者",
+            "text": "我的工资我自己说，存款也由我说。家里群那几句可以念。可我问你要流水，你只发工资卡，没告诉我别的账户不在里面。"
+          },
+          {
+            "role": "caller",
+            "speaker": "男方",
+            "text": "你们查完我家，转头就把彩礼加到二十八万八。我都说拿不出，你还觉得我在压价，非要查收入。你们到底是在谈结婚，还是看我还能拿多少？"
+          },
+          {
+            "role": "caller",
+            "speaker": "咨询者",
+            "text": "二十八万八要在领证前进我卡，婚宴和首饰另算。这个……我也同意。以前没一起告诉你。"
+          },
+          {
+            "role": "caller",
+            "speaker": "男方",
+            "text": "我说拿不出，不只是差两千，是我不接受这么给。二十八万八不是不能谈，真要结婚，就放共同账户里。你家九月底那笔怎么放、婚宴和首饰谁出，也一起摊开。只让我领证前打进你卡里，我不接受。"
+          },
+          {
+            "role": "host",
+            "text": "你们俩都愿意说，我才继续。礼物不算谁更有理。她先说自己能拿多少，你再说为什么只发工资卡。别再拿一张图，让对方猜剩下的。"
+          }
+        ]
+      },
+      {
+        "id": "profile-weekend-dinner-cancelled",
+        "kind": "interruptToast",
+        "cost": 0,
+        "afterSceneIndex": 5,
+        "from": "临时双人连麦",
+        "speakerProfileId": "case3-respondent",
+        "lines": [
+            {
+              "role": "caller",
+              "speaker": "男方",
+              "text": "周末包间的定金我来认。我回去跟我爸妈说，你也跟你家里说。饭先取消吧。我不想带着二十八万八去见你父母。"
+            },
+            {
+              "role": "caller",
+              "speaker": "咨询者",
+              "text": "好。我也得跟家里说清楚：这套条件他没有答应。还有那二十万，我爸原话是给我自己留着，不是拿来付婚宴和首饰。"
+            },
+            {
+              "role": "host",
+              "text": "那就先取消。你们把自己的钱说清楚，再决定下一步。"
+            }
+        ]
+      }
+    ],
+    "interludeEarnedItemMap": {
+      "family-chat-seen": "家里群原话",
+      "profile-dinner-pause-playback": "饭局停顿回放"
+    },
+    "dayIntro": "她把自己收到的学校页、缴费回单和工资账户流水交给节目。介绍人听过转发片段后主动约在茶馆；她代你把问题转给男方家，表姐只肯在门口说明为什么最后只发工资账户。男方回复：这三页可以看，其他账户不公开。后台还收到一张自称表妹的人发来的家里群截图，来电人并没有同意公开，只能先留在麦外。下午最多处理两处。",
+    "dayBudget": 2,
+    "minDayScenes": 2,
+    "dayScenes": [
+      {
+        "id": "day-profile-teahouse",
+        "label": "介绍人约的茶馆",
+        "backdropClass": "day-matchmaking",
+        "kind": "visit",
+        "body": {
+          "access": "介绍人听过来电人转发的直播片段后主动约见，同意只核自己发过的两段聊天和彩礼传话。",
+          "text": "临街的小茶馆里，介绍人坐下没点茶，先把手机推过来。两边家长从昨晚吵到今天，她说自己也烦了，要你把聊天从头看完。",
+          "routeAxis": "process-control",
+          "cast": [
+            "介绍人",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "介绍人",
+              "text": "你先看聊天。她妈妈现在一口一个我骗她，可“名校毕业”真不是我说的。我当时只说他学校不错。至于“收入挺稳”，是男方家先这么跟我讲的。"
+            },
+            {
+              "speaker": "你",
+              "text": "男方家这么讲，你就直接转给她家了？工资、流水，你一样都没见过？"
+            },
+            {
+              "speaker": "介绍人",
+              "text": "……没见过。这个是我话说快了。可我也不是只替男方说话。"
+            },
+            {
+              "speaker": "你",
+              "text": "你还替女方说过什么？"
+            },
+            {
+              "speaker": "介绍人",
+              "text": "我说她做审计，工作稳定，家里事少。男方家问她会不会嫌学历，我还说了句“她不太计较这个”。后来她妈妈听说 MBA 二十三万八是他自己交的，又让我去问二十八万八。我一个字没改，全转了。"
+            },
+            {
+              "speaker": "你",
+              "text": "你知道女方家准备给她多少吗？"
+            },
+            {
+              "speaker": "介绍人",
+              "text": "不知道。她妈妈只说家里不会亏待女儿。今天她又给我打电话，解释到最后才说，那笔钱还没到期。早知道是这样，我至少会先问一句：现在拿得出来吗？"
+            }
+          ],
+          "choice": {
+            "prompt": "你准备把哪部分带回直播间？",
+            "options": [
+              {
+                "id": "keep-both-records",
+                "label": "把两边聊天都带回去",
+                "grantsEarnedItemId": "两边的完整聊天",
+                "routeAxis": "external-corroboration",
+                "resultBeats": [
+                  {
+                    "speaker": "你",
+                    "text": "两边聊天和彩礼传话我都留着，前后几句也一起截。"
+                  },
+                  {
+                    "speaker": "介绍人",
+                    "text": "行。名校毕业我没说，二十八万八也不是我定的。可话都是从我这儿递过去的，这个躲不了。"
+                  }
+                ]
+              },
+              {
+                "id": "mark-added-claims",
+                "label": "标出她没问过的两句话",
+                "grantsEarnedItemId": "她没核实的两句话",
+                "routeAxis": "process-control",
+                "resultBeats": [
+                  {
+                    "speaker": "你",
+                    "text": "我先把“收入挺稳”“不太计较学历”和二十八万八标出来。前两句你没问本人，最后一句你没问女方家现在能拿多少。"
+                  },
+                  {
+                    "speaker": "介绍人",
+                    "text": "对。我先把人约到桌上，别的都没问。现在桌还没坐下，钱先把两家掀了。"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "day-profile-cousin-doorstep",
+        "label": "男方表姐家门口",
+        "backdropClass": "day-home",
+        "kind": "doorstep",
+        "body": {
+          "access": "来电人代你把问题转给男方家；表姐只答应说明工资账户流水的挑选和发送过程，不谈其他账户余额。",
+          "text": "门只开到防盗链。表姐没有请你进去，楼道声控灯灭了两次，她仍只肯认一件事。",
+          "routeAxis": "external-corroboration",
+          "earnedItemId": "表姐门口口供",
+          "cast": [
+            "男方表姐",
+            "你"
+          ],
+          "beats": [
+            {
+              "speaker": "男方表姐",
+              "text": "先说好，他其他账户里有多少，我不知道。学费是他自己交的，回单他已经同意给你们看，别再问我为什么读。"
+            },
+            {
+              "speaker": "你",
+              "text": "我只问他发给女方的那份流水。为什么最后只发工资账户？"
+            },
+            {
+              "speaker": "男方表姐",
+              "text": "他在家里群问过该发哪张。姑姑说工资卡最规整，别的卡不用给。我还提醒过他，至少跟人家说清这只是工资账户。他最后只把这张发了，没带那句话。"
+            },
+            {
+              "speaker": "男方表姐",
+              "text": "我能说的就这些。其他账户是什么、他愿意拿多少，你去问他，我不替他答。"
+            }
+          ]
+        }
+      },
+      {
+        "id": "day-profile-credential-docs",
+        "label": "后台·核验页与工资流水",
+        "backdropClass": "day-document",
+        "kind": "document",
+        "body": {
+          "access": "学校页、缴费回单和男方已经发给女方的工资账户流水由男方明确同意查看；其他账户从未提供，也不在授权范围内。家里群截图来自自称表妹的后台账号，来电人尚未同意公开，只能麦外查看，带回直播前必须先问她。",
+          "documentId": "case3-credential-balance",
+          "routeAxis": "document-edge",
+          "earnedItemId": "双份材料圈注"
+        }
+      }
+    ],
+    "callbackOpeners": {
+      "两边的完整聊天": {
+        "line": "我把介绍人两边的聊天都看完了。她替两边说过好话，也把我妈那句二十八万八原样转给了男方家。",
+        "firstConflict": {
+          "hostLine": "介绍人传二十八万八的时候，知道你家现在能拿多少吗？",
+          "callerLine": "不知道。我妈只说不会亏待我，没说那笔钱还在宸直。"
+        }
+      },
+      "她没核实的两句话": {
+        "line": "我把介绍人没问过的几句话标出来了。她没看过男方工资，也没问我家现在能拿多少，就把二十八万八递了过去。",
+        "firstConflict": {
+          "hostLine": "先不谈介绍人。你知道家里的钱还在宸直以后，为什么没让妈妈撤回二十八万八？",
+          "callerLine": "因为我也觉得，他能自己交二十三万八学费，应该拿得出来。"
+        }
+      },
+      "表姐门口口供": {
+        "line": "表姐没让进门，只隔着防盗链说，男方家商量过发哪张卡，最后只挑了工资账户。她提醒过要说清范围，那句话没有跟着流水一起发出来。",
+        "firstConflict": {
+          "hostLine": "你看到只有工资账户，为什么还是把它当成他的全部家底？",
+          "callerLine": "因为我先认定他是在压价。二十八万六又离二十八万八太近，我只顾着看那个数字。"
+        }
+      },
+      "双份材料圈注": {
+        "line": "那两份材料我又看了几遍。二十三万八的学费是他自己交的，我当时一听就觉得他手里肯定有钱。后来工资卡上又正好是二十八万六，我和我妈就盯着这个数，谁也没再问这是不是他全部的钱。",
+        "firstConflict": {
+          "hostLine": "你爸说的二十万，是准备拿来付婚宴和首饰吗？",
+          "callerLine": "不是。他说到期以后给我自己留着。以前我只跟男方说，我家也会给钱。"
+        }
+      },
+      "家里群原话": {
+        "line": "家里群我重新从头看了。我妈说，二十八万八领证前进我卡，婚宴首饰另算；我爸下一句却是，宸直到期后拿二十万给我自己留着。",
+        "firstConflict": {
+          "hostLine": "完整条件里，男方的钱什么时候给、给谁、还要另付什么都很清楚。你自己的钱怎么用，为什么没一起告诉他？",
+          "callerLine": "因为我想先把彩礼谈下来。自己的钱准备怎么用，我那时候根本没跟他说。"
+        }
+      },
+      "饭局停顿回放": {
+        "line": "饭局那十几秒我又听了一遍。我问本科，他承认不是那所，又说二十三万八学费是自己交的。我当时已经不再想学历，开始想他是不是很有钱。",
+        "firstConflict": {
+          "hostLine": "一笔花出去的学费，为什么在你们家变成了还能拿出来的彩礼？",
+          "callerLine": "我妈一说‘他都能拿二十三万八读书’，我就顺着算下去了。可那是已经交掉的学费，不是他卡里还放着的钱。"
+        }
+      }
+    },
+    "callbackFallback": {
+      "line": "我回来了。二十八万八和宸直那三十万，我都愿意说。你白天查到什么了？"
+    },
+    "postures": {
+      "againstCaller": "二十八万八是我妈定的，我知道以后没叫停。今晚我自己答。",
+      "withCaller": "家里群我没删。彩礼和宸直那几句，你看到哪儿，就问到哪儿吧。"
+    }
+  }
+}

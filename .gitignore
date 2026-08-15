@@ -13,3 +13,7 @@ assets/generated/**/contact_sheet.png
 *.local
 *.log
 node_modules/
+dist/
+assets/audio/source/
+assets/audio/review/
+assets/audio/reports/

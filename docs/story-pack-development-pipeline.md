@@ -1,0 +1,125 @@
+# 故事包开发流程
+
+这份文档约束从网络热点、内部草稿到可发内容包的完整流程。目标不是多写几个案子，而是做一组有主题、有递进、有玩家路线回收的章节式案件包。
+
+## 0. 先定包，不先定单案
+
+每次发版先写故事包，而不是先堆单案。
+
+- `storyKey`：稳定 id，例如 `steam-demo-01`。
+- `theme`：本集真正要反复追问的问题。
+- `caseCount`：按主题节奏决定，可以是 3、4、5 或序章加大案。
+- `commentWallSeed`：玩家打完以后评论区最该吵的 3-5 句话。
+- `valueBoundary`：打击哪些具体坏行为，避免哪些性别、职业、阶层或地域标签。
+
+当前 demo 是四案，只是本包规模，不是引擎规则。
+
+## 1. 热点素材卡
+
+热点只能做结构来源，不能做改名复刻。每张素材卡只保留：
+
+- 冲突类型：退款、押金、借贷、报销、学历包装、流程入口。
+- 话术：体面、自己人、条件好、主责、流程过了、正常不会算这么细。
+- 戏剧物件：截图、账单、审批页、排班表、报价单、流水、录音。
+- 误读风险：玩家第一眼容易站哪边，为什么会站早。
+- 第三压力源：父母、老板、平台、中介、朋友、期限。
+
+入库前必须去掉真实姓名、账号、地点、金额、完整时间线和可反推原案的原话。
+
+当前素材池入口：
+
+```text
+content/intelligence/plot-template-pool.json
+```
+
+它保存的是压力系统种子，不是可玩剧本。每个条目必须有 `dramaticAnchor`、`objectPurpose`、`callerBenefit`、`otherBenefit`、`thirdPressure`、`truthBoundary` 和 `routeAxes`。运行：
+
+```bash
+npm run verify:content-pipeline
+```
+
+可以校验模板池至少 12 个 plot id、非婚恋题材不少于一半、路线轴和事实边界完整。
+
+## 2. Showrunner Pass
+
+把 3-4 张素材卡融合成一个原创案：
+
+```text
+主热点 -> 案件骨架
+旁支热点 A -> 话术
+旁支热点 B -> 材料形态
+旁支热点 C -> 误读风险或第三压力
+```
+
+每案要回答：
+
+- 为什么是今晚连线？
+- 那个物件为什么会出现在关系里？
+- 来电人说法里哪一段对自己有利？
+- 对方少说哪一段能省掉钱、责任、边界或解释成本？
+- 当前电话能确认什么，什么仍然定不了？
+
+## 3. Ending-First Pass
+
+先写结尾，再写中段。
+
+- 最终评论区会吵什么？
+- 玩家最强的一句原话应该是哪句？
+- 如果玩家没问到核心，结果页还能留下些什么余味？
+- 满格路线多问的那一句，必须问出来电人自己的利益、面子、经济位置、机会成本或隐藏诉求。
+
+没有结尾争点的案子，不进入 beat ladder。
+
+## 4. Beat Ladder
+
+每案至少 5 段来电，正常目标 5-6 段：
+
+1. 表层不对劲：物件或原话第一次出现。
+2. 材料缺边：它能证明一件事，但不能证明对方想让它证明的事。
+3. 利益路径：钱、身份、机会、流程或情绪杠杆开始落到人身上。
+4. 来电人修剪：咨询者也藏了对自己不利或不体面的部分。
+5. 责任落点：谁把成本转出去，谁把边界说模糊，谁借第三方压力推进。
+6. 可选加深：只在不重复时加入，不能只是换说法再问一遍。
+
+每段只给玩家 2 个当前追问。问完就推进，不允许扫同节点剩余选项。
+
+## 5. 字段拆分
+
+整通电话串读通过后，再拆 JSON 字段：
+
+- `openingDialogue`
+- `sceneVersions`
+- `questionOptions`
+- `evidenceCards`
+- `evidenceChecks`
+- `investigationHooks`
+- `deepFollowup`
+- `accusationChoices`
+- `truthBoundary`
+- `conclusionWhenCleared` / `conclusionBranches`
+- `dailyShareTitle` / `dailyShareBody` / `dailyShareQuestion`
+- `storyInterludeRecap`
+
+最终收麦按钮必须是玩家已听过或高度贴近的原话，不写抽象结论。
+
+## 6. QA Gate
+
+每案进入 `runtime-loaded` 前必须过四道门：
+
+- 逻辑链：主播没有提前知道答案，每个追问只基于屏幕上已经出现的信息。
+- 角色链：来电人、对方、第三压力源都各自有利益，不是单方说教。
+- 玩法链：核心追问、外围追问、材料圈点、回流材料、原话收麦都有不同后果。
+- 文风链：没有教程腔、评分腔、AI 总结腔、性别对立钩子和“正确答案”提示。
+
+运行命令：
+
+```bash
+npm run content:index
+npm run verify:content-pipeline
+npm run verify:pack
+npm run check
+npm run build:h5
+npm run build:steam
+```
+
+`package:win` 只在 Node 22.12+ 且 devDependencies 安装完成的 Windows/CI 环境验收。

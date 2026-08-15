@@ -1,0 +1,85 @@
+{
+  "notes": [
+    "这些源用于每周热点观察。公开视频平台账号常常没有稳定 RSS，bing-web/bing-news 只负责抓公开索引结果。",
+    "抓不到时，用 manual 源做人工摘录：只写标题、链接、摘要，不保存原视频文案。",
+    "账号名只作为观察入口，入库时必须抽象成套路和方法论，不在游戏里展示真实账号。"
+  ],
+  "sources": [
+    {
+      "label": "鳌烨：相亲/婚恋案例",
+      "type": "bing-web",
+      "kind": "creator-watch",
+      "query": "鳌烨 相亲 婚恋 案例 彩礼 房产 共同还贷",
+      "tags": ["相亲", "婚恋案例", "房产", "彩礼"]
+    },
+    {
+      "label": "天书：婚恋方法论",
+      "type": "bing-web",
+      "kind": "creator-watch",
+      "query": "天书 婚恋 相亲 方法论 安全感 婚前协议",
+      "tags": ["婚恋方法论", "安全感", "婚前协议"]
+    },
+    {
+      "label": "陈楠：婚恋/相亲观察",
+      "type": "bing-web",
+      "kind": "creator-watch",
+      "query": "陈楠 婚恋 相亲 案例 择偶 彩礼",
+      "tags": ["相亲", "择偶", "彩礼"]
+    },
+    {
+      "label": "大超说媒：相亲现场争议",
+      "type": "bing-web",
+      "kind": "creator-watch",
+      "query": "大超说媒 相亲 彩礼 房子 要求 婚恋",
+      "tags": ["说媒", "相亲现场", "彩礼", "房产"]
+    },
+    {
+      "label": "杰哥相亲：相亲现场争议",
+      "type": "bing-web",
+      "kind": "creator-watch",
+      "query": "杰哥相亲 彩礼 房子 择偶要求 婚恋",
+      "tags": ["相亲现场", "择偶要求", "彩礼", "房产"]
+    },
+    {
+      "label": "律师号：婚前房产加名",
+      "type": "bing-news",
+      "kind": "lawyer-topic",
+      "query": "婚前房产 婚后加名 共同还贷 律师 2026",
+      "tags": ["房产", "共同还贷", "婚前协议"]
+    },
+    {
+      "label": "律师号：恋爱转账借赠",
+      "type": "bing-news",
+      "kind": "lawyer-topic",
+      "query": "恋爱转账 借款 赠与 聊天记录 律师 2026",
+      "tags": ["恋爱转账", "借款", "赠与"]
+    },
+    {
+      "label": "律师号：信托保险资产隔离",
+      "type": "bing-news",
+      "kind": "lawyer-topic",
+      "query": "婚前协议 信托 保险 受益人 资产隔离 婚恋",
+      "tags": ["婚前协议", "信托", "保险", "资产隔离"]
+    },
+    {
+      "label": "人工摘录兜底：公开视频平台账号",
+      "type": "manual",
+      "kind": "manual-creator-review",
+      "tags": ["人工审核", "账号热点"],
+      "items": [
+        {
+          "title": "示例：相亲现场把“房子写谁名”吵成“诚意够不够”",
+          "url": "https://example.com/manual/creator-house-sincerity",
+          "publishedAt": "2026-06-24",
+          "snippet": "从账号热点里只抽象争议结构：房本、首付、共同还贷、安全感话术。"
+        },
+        {
+          "title": "示例：律师号讲婚前协议被曲解成不信任",
+          "url": "https://example.com/manual/lawyer-agreement-trust",
+          "publishedAt": "2026-06-24",
+          "snippet": "只抽象方法论：协议条款、补偿上限、资金流水、情绪话术。"
+        }
+      ]
+    }
+  ]
+}

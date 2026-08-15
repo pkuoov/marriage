@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(grep -n \"liveCommentsFor\\\\|commentSeeds\" -A6 src/runtime/livePressure.js | sed -n '1,30p'; echo \"===boundary prompts build===\"; sed -n '/export function truthBoundaryReview/,/^}/p' src/runtime/recapModel.js | head -40)",
+      "Bash(sed -n '/function boundaryPrompts/,/^}/p' src/runtime/recapModel.js)",
+      "Bash(python3 -c \"import json; print\\(list\\(json.load\\(open\\('package.json'\\)\\)['scripts'].keys\\(\\)\\)\\)\")",
+      "Bash(git check-ignore *)",
+      "Bash(python3 -)",
+      "Bash(npm run *)",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:m.thepaper.cn)",
+      "WebFetch(domain:zhuanlan.zhihu.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:lab.indienova.com)",
+      "Bash(git checkout *)",
+      "Bash(rg -n \"helperHint|suspicionLabel|timelineSort|audioCueId\" src/ui/*.js src/app.js src/sound.js)",
+      "Bash(rg -n \"v-bro\" -A 8 content/characters/*.json src/generated/contentPackIndex.js)",
+      "Bash(rg -n \"3301|新阳信贷|吹风机\" content/packs/steam-demo-01/cases/*.json)",
+      "Bash(awk -F: '{print $1\" line \"$2}')",
+      "Bash(rg -c \"snapshotEcho\" content/packs/steam-demo-01/cases/*.json src/ -l)"
+    ],
+    "additionalDirectories": [
+      "/Users/pkuiloveoov/code/love/src/runtime"
+    ]
+  }
+}

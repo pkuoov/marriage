@@ -1,0 +1,29 @@
+{
+  "archetypes": [
+    {
+      "id": "money-flow",
+      "label": "先问钱去哪",
+      "recapTone": "你会先把好听话后面的现金流拆开。"
+    },
+    {
+      "id": "document-edge",
+      "label": "先看图少哪边",
+      "recapTone": "你不急着信截图，先看截图没截到哪里。"
+    },
+    {
+      "id": "caller-credibility",
+      "label": "先听来电人省了什么",
+      "recapTone": "你会怀疑来电人是不是也把自己那半句藏起来。"
+    },
+    {
+      "id": "process-control",
+      "label": "先查入口在谁手里",
+      "recapTone": "你会看谁控制流程、谁控制付款和对接。"
+    },
+    {
+      "id": "identity-wording",
+      "label": "先拆身份词",
+      "recapTone": "你对那些听上去很稳的身份词会多停一秒。"
+    }
+  ]
+}

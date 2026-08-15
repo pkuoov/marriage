@@ -1,0 +1,217 @@
+{
+  "enabled": true,
+  "segment1SceneIndexes": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "segment2SceneIndexes": [
+    4,
+    5,
+    6
+  ],
+  "hangup": {
+    "afterSceneIndex": 3,
+    "speaker": "咨询者",
+    "line": "……店里来电了。是他。我——我先接一下，别挂节目，我马上回来。",
+    "hostLine": "去吧。表和培训页先留在台上。",
+    "stageDirection": "忙音。弹幕还在刷「自己人」。"
+  },
+  "interlude": {
+    "title": "幕间·调查台",
+    "kicker": "她不在线。时间只够做两三件事。",
+    "budget": 3,
+    "minActions": 2,
+    "maxActions": 3,
+    "continueLabel": "回拨她",
+    "actions": [
+      {
+        "id": "send-appraisal",
+        "label": "送鉴定",
+        "summary": "把排班表那一列送给一位顾问。",
+        "cost": 1,
+        "kind": "delegation",
+        "grantsInventory": [
+          "delegation-return"
+        ]
+      },
+      {
+        "id": "call-lin",
+        "label": "打给小林",
+        "summary": "问「下一次推进」算不算行规——她不替你定性。",
+        "cost": 1,
+        "kind": "advisorCall",
+        "advisorId": "lin-matchmaker",
+        "npcVerb": "refuse",
+        "grantsInventory": [
+          "lin-hint-trade"
+        ],
+        "script": {
+          "open": "小林，店里维护表都这样写吗？「下一次推进」算行规吗？",
+          "reply": "维护表我见过几百张。能带客、能办卡，行里有。但「下一次推进」这写法——我不能替你们定性，你们自己去对表。话说回来，别因为一个人，把一行手艺人都钉死。",
+          "followupQuestion": "那我回拨该先追感情还是先追这一列？",
+          "followupReply": "我只翻译行话，不替你选刀口。小砸，这题你自己答。"
+        }
+      },
+      {
+        "id": "lin-interrupt",
+        "label": "小林短信（未邀）",
+        "summary": "幕间刚打开，后台弹出一条短信。",
+        "cost": 0,
+        "kind": "interruptToast",
+        "npcVerb": "interrupt",
+        "from": "小林老师",
+        "text": "小砸，我在听。先别在直播里把「手艺人」三个字骂脏——有话私下说。",
+        "choices": [
+          {
+            "id": "ack-protect-trade",
+            "label": "收到，先对表不骂行",
+            "grantsInventory": [
+              "lin-temper"
+            ]
+          },
+          {
+            "id": "push-anyway",
+            "label": "表上的列比行规重要",
+            "grantsInventory": [
+              "lin-push-hard"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "reopen-training",
+        "label": "重看培训材料",
+        "summary": "把店长培训页再翻一遍，看模板有没有那一列。",
+        "cost": 1,
+        "kind": "evidencePass",
+        "grantsInventory": [
+          "training-no-column"
+        ],
+        "focusCheckIds": [
+          "tony-training-system"
+        ]
+      },
+      {
+        "id": "other-caller-dm",
+        "label": "回女客私信",
+        "summary": "另一位女生发来同款表，可以回一句。",
+        "cost": 1,
+        "kind": "backflowEarly",
+        "hookId": "tony-other-caller-dm"
+      },
+      {
+        "id": "listen-dryer",
+        "label": "听回放",
+        "summary": "回听「下班陪我」那段，看背景音。",
+        "cost": 1,
+        "kind": "playback",
+        "grantsInventory": [
+          "吹风机回放"
+        ],
+        "script": {
+          "clipLabel": "回放·深夜语音",
+          "clipLine": "今晚店长又说我了。也就你肯听我说这些。",
+          "hostNote": "背景里吹风机没停——他说的下班，是手上正做着别人的头。"
+        }
+      },
+      {
+        "id": "manager-note-early",
+        "label": "看店长说明",
+        "summary": "店长托人转的说明，现在到了。",
+        "cost": 1,
+        "kind": "backflowEarly",
+        "hookId": "tony-manager-training-note",
+        "grantsInventory": [
+          "manager-note-seen"
+        ]
+      }
+    ]
+  },
+  "callbackOpeners": [
+    {
+      "id": "opener-delegation",
+      "requiresAny": [
+        "delegation-return",
+        "lin-hint-trade"
+      ],
+      "label": "用顾问回单开场",
+      "hostLine": "你接完电话回来了。排班表那列——小林说，模板里没有「下一次推进」。",
+      "callerRevisedOpening": "……你已经找人看过了？我以为那张表只有我和他看过。那一列，店长也说不是店里教的。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-dryer",
+      "requiresAny": [
+        "吹风机回放"
+      ],
+      "label": "用回放矛盾开场",
+      "hostLine": "回拨前我又听了一遍。你说他下班陪你——背景里吹风机一直在响。",
+      "callerRevisedOpening": "……我挂断就是为了接他电话。可你这一句，我又想起那条语音了。他手上做着别人的头，嘴上却说“也就你肯听我说这些”。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-other-caller-side",
+      "requiresAny": [
+        "side-other-caller"
+      ],
+      "label": "用女客要闹店开场",
+      "hostLine": "你挂着的时候，后台那位也收到同款表。她想拉群闹到店里——你怎么看？",
+      "callerRevisedOpening": "她跟你说了？……我不想闹店。我只想把自己的卡和朋友退出来。可那张表，确实不止我一个人。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-other-caller-stop",
+      "requiresAny": [
+        "side-caller-stop"
+      ],
+      "label": "用止损立场开场",
+      "hostLine": "有人想拉你出头。你刚才挂断，是不是也在躲这件事？",
+      "callerRevisedOpening": "……是。他来电，我慌。可我也不想被人绑去店里吵架。表的事，我自己还没理顺。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-manager",
+      "requiresAny": [
+        "manager-note-seen",
+        "training-no-column"
+      ],
+      "label": "用店长说明开场",
+      "hostLine": "店长托人说了：培训模板有，「下一次推进」不是模板。你怎么接这句？",
+      "callerRevisedOpening": "……所以我才卡在那儿。行业模板是真的，私加列也是真的。我接他电话之前，就想把这句说清楚。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-soft",
+      "requiresAny": [],
+      "label": "软开场",
+      "hostLine": "你回来了。表和培训页还在台上，我们从你挂断的地方继续。",
+      "callerRevisedOpening": "嗯。我接完电话了——他没上麦，就问我「你怎么还在直播里」。",
+      "appliesRevisedOnScenes": []
+    }
+  ],
+  "returnStance": {
+    "fromSnapshotOptionIds": {
+      "respondent-problem": "open",
+      "industry-gray": "neutral",
+      "caller-complicit": "defensive"
+    },
+    "default": "neutral",
+    "lines": {
+      "defensive": "我差点不打回来。弹幕说我也有份……我自己人那点儿好处，我又没否认。可那列推进，不是我自己写上去的。",
+      "open": "我回来了。表的事你继续问——这回我不替行业开脱。",
+      "neutral": "我回来了。接他电话那几分钟，我又把表看了一眼。那一列还在。"
+    }
+  }
+}

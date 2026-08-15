@@ -1,0 +1,30 @@
+{
+  "appId": "com.livestreamdetective.demo",
+  "productName": "Midnight Hotline Detective Demo",
+  "directories": {
+    "app": "dist/desktop-electron",
+    "output": "dist/steam"
+  },
+  "files": [
+    "**/*"
+  ],
+  "asar": true,
+  "compression": "maximum",
+  "win": {
+    "icon": "assets/icons/livestream-detective-app-icon.png",
+    "target": [
+      {
+        "target": "portable",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "LivestreamDetectiveDemo-${version}-${arch}.${ext}"
+  },
+  "extraMetadata": {
+    "name": "livestream-detective-demo",
+    "version": "0.1.0",
+    "main": "main.cjs"
+  }
+}

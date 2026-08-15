@@ -1,0 +1,209 @@
+{
+  "enabled": true,
+  "segment1SceneIndexes": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "segment2SceneIndexes": [
+    5,
+    6
+  ],
+  "hangup": {
+    "afterSceneIndex": 4,
+    "speaker": "咨询者",
+    "line": "我妈在家里群 @ 我了。你别挂节目——我回完她马上打回来。",
+    "hostLine": "去。学历和流水的事，台上先搁着。",
+    "stageDirection": "忙音。介绍人的名字还停在弹幕里。"
+  },
+  "interlude": {
+    "title": "幕间·调查台",
+    "kicker": "她不在线。时间只够做两三件事。",
+    "budget": 3,
+    "minActions": 2,
+    "maxActions": 3,
+    "continueLabel": "回拨她",
+    "actions": [
+      {
+        "id": "send-appraisal",
+        "label": "送鉴定",
+        "summary": "把他发来的学校图送给张法医。",
+        "cost": 1,
+        "kind": "delegation",
+        "grantsInventory": [
+          "delegation-return"
+        ]
+      },
+      {
+        "id": "zhang-refuse",
+        "label": "追问张法医",
+        "summary": "聊天截图不进链——要学信网或原件口径。",
+        "cost": 1,
+        "kind": "advisorCall",
+        "advisorId": "zhang-forensic",
+        "npcVerb": "refuse",
+        "grantsInventory": [
+          "zhang-fetch-original"
+        ],
+        "script": {
+          "open": "图你看过了。还能不能再往下鉴定？",
+          "reply": "哥们的忙照帮，检测费照记。聊天截图不进我的链条。要学信网或原件口径，让她回拨自己去要——我这边到此为止。",
+          "followupQuestion": "那 MBA 到底算不算假？",
+          "followupReply": "像素没动过，不等于话没动过。真假我只答到图。"
+        }
+      },
+      {
+        "id": "call-lin-grey",
+        "label": "听小林吵一句",
+        "summary": "先追流水还是先拆介绍人——你今晚采哪套？",
+        "cost": 1,
+        "kind": "advisorConflict",
+        "npcVerb": "conflict",
+        "options": [
+          {
+            "id": "chase-flow",
+            "label": "先追流水",
+            "advisorLine": "你先追流水，她家里更急，事更黄。介绍人这行，催不成是常态——别把同行骂成骗子。",
+            "grantsInventory": [
+              "chase-flow"
+            ],
+            "routeAxis": "money-flow"
+          },
+          {
+            "id": "chase-introducer",
+            "label": "先拆介绍人双面话",
+            "advisorLine": "双面抬价是行规，不是恩情。你要拆，就拆干净——但别指望我在直播里帮你骂同行。",
+            "grantsInventory": [
+              "chase-introducer"
+            ],
+            "routeAxis": "process-control"
+          }
+        ]
+      },
+      {
+        "id": "family-chat-early",
+        "label": "看家里群截图",
+        "summary": "表妹补了整页聊天——谁先发流水，图上写着。",
+        "cost": 1,
+        "kind": "backflowEarly",
+        "hookId": "profile-family-chat-backflow",
+        "grantsInventory": [
+          "family-chat-seen"
+        ]
+      },
+      {
+        "id": "introducer-early",
+        "label": "看介绍人留言",
+        "summary": "介绍人双面话，现在到了。",
+        "cost": 1,
+        "kind": "backflowEarly",
+        "hookId": "profile-introducer-double-note",
+        "grantsInventory": [
+          "introducer-note-seen"
+        ]
+      },
+      {
+        "id": "cousin-early",
+        "label": "看表姐说明",
+        "summary": "男方表姐只肯说资料怎么整理的。",
+        "cost": 1,
+        "kind": "backflowEarly",
+        "hookId": "profile-cousin-family-note",
+        "grantsInventory": [
+          "cousin-note-seen"
+        ]
+      },
+      {
+        "id": "reopen-mba",
+        "label": "重看学历材料",
+        "summary": "学校图缺的信息，再对一遍。",
+        "cost": 1,
+        "kind": "evidencePass",
+        "grantsInventory": [
+          "mba-gap-seen"
+        ],
+        "focusCheckIds": [
+          "profile-mba-gap"
+        ]
+      }
+    ]
+  },
+  "callbackOpeners": [
+    {
+      "id": "opener-family-chat",
+      "requiresAny": [
+        "family-chat-seen"
+      ],
+      "label": "用家里群开场",
+      "hostLine": "你回群那几分钟，表妹把截图发过来了。最上面那条——「妈，要不要把流水也问了？」",
+      "callerRevisedOpening": "……她连这个都拍给你了。流水是我先提的。我妈那句「婚后工资放一起管」，是我没敢在饭桌上说全的。",
+      "appliesRevisedOnScenes": [
+        5
+      ]
+    },
+    {
+      "id": "opener-zhang-fetch",
+      "requiresAny": [
+        "zhang-fetch-original"
+      ],
+      "requiresChoiceId": "chase-flow",
+      "blocksIfInventory": [
+        "chase-introducer"
+      ],
+      "label": "用张法医清单开场",
+      "hostLine": "张法医说聊天截图不进链。回拨你打算怎么要原件口径？",
+      "callerRevisedOpening": "……学信网那套我还没敢开口。他发图发得快，我追着问得慢。",
+      "appliesRevisedOnScenes": [
+        5
+      ]
+    },
+    {
+      "id": "opener-introducer",
+      "requiresAny": [
+        "introducer-note-seen",
+        "chase-introducer"
+      ],
+      "label": "用介绍人双面话开场",
+      "hostLine": "介绍人自己说了：相亲谁不先报个好价。你还打算只骂男方包装吗？",
+      "callerRevisedOpening": "……她两头做人，我两头也说过好听的。版本不是他一个人做出来的。",
+      "appliesRevisedOnScenes": [
+        5
+      ]
+    },
+    {
+      "id": "opener-delegation",
+      "requiresAny": [
+        "delegation-return"
+      ],
+      "label": "用鉴定回单开场",
+      "hostLine": "学校图鉴定过了：像素没动，口径动了。MBA 是真项目，「名校毕业」是另一层听法。",
+      "callerRevisedOpening": "……图是真的。是我自己把「名校」两个字说顺了。本科那截，我到现在没跟家里讲。",
+      "appliesRevisedOnScenes": [
+        5
+      ]
+    },
+    {
+      "id": "opener-soft",
+      "requiresAny": [],
+      "label": "软开场",
+      "hostLine": "你回来了。学历和流水，从群里那句继续。",
+      "callerRevisedOpening": "嗯。我妈 @ 我，问见父母定哪天。我回完才想起来——流水那事，我还没在直播里说全。",
+      "appliesRevisedOnScenes": []
+    }
+  ],
+  "returnStance": {
+    "fromSnapshotOptionIds": {
+      "respondent-fraud": "open",
+      "caller-control": "defensive",
+      "market-coauthored": "neutral"
+    },
+    "default": "neutral",
+    "lines": {
+      "defensive": "我差点不打回来。弹幕说我妈查太深……可查太深那半句，流水是我先开的口。",
+      "open": "我回来了。他的图你继续拆——介绍人那边我也摊。",
+      "neutral": "我回来了。群里吵完，我自己也把那几张图又翻了一遍。"
+    }
+  }
+}

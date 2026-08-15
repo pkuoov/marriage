@@ -1,0 +1,228 @@
+{
+  "enabled": true,
+  "segment1SceneIndexes": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "segment2SceneIndexes": [
+    4,
+    5,
+    6
+  ],
+  "hangup": {
+    "afterSceneIndex": 3,
+    "speaker": "咨询者",
+    "line": "活动总结表上多了条批注。我截一下——你别挂，我马上回来。",
+    "hostLine": "去截。审批图先留台上。",
+    "stageDirection": "忙音。付款状态那一栏仍然是空的。"
+  },
+  "interlude": {
+    "title": "幕间·调查台",
+    "kicker": "她不在线。时间只够做两三件事。",
+    "budget": 3,
+    "minActions": 2,
+    "maxActions": 3,
+    "continueLabel": "回拨她",
+    "actions": [
+      {
+        "id": "send-appraisal",
+        "label": "送鉴定",
+        "summary": "把审批截图送给一位顾问。",
+        "cost": 1,
+        "kind": "delegation",
+        "grantsInventory": [
+          "delegation-return"
+        ]
+      },
+      {
+        "id": "zhao-zhou-work",
+        "label": "今晚只问得动一个家人",
+        "summary": "赵要债权留痕，周要付款回单号。预算不够两个都深挖。",
+        "cost": 2,
+        "kind": "advisorConflict",
+        "npcVerb": "conflict",
+        "options": [
+          {
+            "id": "work-frame-zhao",
+            "label": "问赵：群里原话+转账",
+            "advisorLine": "群里「让我垫」的原话，加上转账记录，债权凭证够了。回拨逼他补一句欠条措辞——口说的不算，落纸的算数。",
+            "grantsInventory": [
+              "work-frame-zhao"
+            ],
+            "routeAxis": "process-control"
+          },
+          {
+            "id": "work-frame-zhou",
+            "label": "问周：只要回单号",
+            "advisorLine": "别问感受。回拨只问财务要这单的付款回单号——报得出是真在走，报不出就是没付。钱只认路径。",
+            "grantsInventory": [
+              "work-frame-zhou"
+            ],
+            "routeAxis": "money-flow"
+          }
+        ]
+      },
+      {
+        "id": "leader-interrupt",
+        "label": "领导批注（未邀）",
+        "summary": "后台同步了一条新批注。",
+        "cost": 0,
+        "kind": "interruptToast",
+        "npcVerb": "interrupt",
+        "from": "领导批注（后台同步）",
+      "text": "下周一照常开季度总结会，负责人就按现在这份名单写。你们没报备的那几项，开会前自己补上。",
+        "choices": [
+          {
+            "id": "bring-to-callback",
+            "label": "带回拨质问「老规矩」",
+            "grantsInventory": [
+              "leader-note-hot"
+            ]
+          },
+          {
+            "id": "hold-back",
+            "label": "先压下，怕影响她署名",
+            "grantsInventory": [
+              "leader-note-cold"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "reopen-timeline",
+        "label": "重看预算时间线",
+        "summary": "「来不及」和财务延后通知，谁在先？",
+        "cost": 1,
+        "kind": "evidencePass",
+        "grantsInventory": [
+          "timeline-delay-gap"
+        ],
+        "focusCheckIds": [
+          "work-budget-timeline"
+        ]
+      },
+      {
+        "id": "assistant-sample",
+        "label": "看助理流程样本",
+        "summary": "大群正常流程，现在补到了。",
+        "cost": 1,
+        "kind": "backflowEarly",
+        "hookId": "work-assistant-flow-sample",
+        "grantsInventory": [
+          "assistant-sample-seen"
+        ]
+      },
+      {
+        "id": "listen-pad",
+        "label": "听回放",
+        "summary": "回听私聊里「让我垫」原话。",
+        "cost": 1,
+        "kind": "playback",
+        "grantsInventory": [
+          "playback-pad"
+        ],
+        "script": {
+          "clipLabel": "回放·私聊",
+          "clipLine": "你先把场地和礼品费垫了。活动总结的‘执行主责’一栏，可以写你的名字。",
+          "hostNote": "署名和垫款在同一条消息里，表现机会压着资金风险。"
+        }
+      },
+      {
+        "id": "supplier-dm-early",
+        "label": "看供应商补话",
+        "summary": "返款打给对接人——匿名补了一句。",
+        "cost": 1,
+        "kind": "backflowEarly",
+        "hookId": "work-supplier-dm",
+        "grantsInventory": [
+          "supplier-dm-seen"
+        ]
+      }
+    ]
+  },
+  "callbackOpeners": [
+    {
+      "id": "opener-zhao-frame",
+      "requiresAny": [
+        "work-frame-zhao"
+      ],
+      "label": "用赵框架开场",
+      "hostLine": "回拨了。群里那句「让我垫」，你有没有留屏？他补过欠条没有？",
+      "callerRevisedOpening": "……留屏了。欠条没有。我当时怕一追就显得斤斤计较，活动都接下来了。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-zhou-frame",
+      "requiresAny": [
+        "work-frame-zhou"
+      ],
+      "label": "用周框架开场",
+      "hostLine": "回拨了。别跟我谈财务慢——付款回单号，你问过没有？",
+      "callerRevisedOpening": "没问过。财务我不认识人，一问又得经过他。截图我倒是收了三遍。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-timeline",
+      "requiresAny": [
+        "timeline-delay-gap"
+      ],
+      "label": "用时间线开场",
+      "hostLine": "预算记录对过了：他说来不及那天，财务延后通知还没发。",
+      "callerRevisedOpening": "……我一直把两件事混在一起。他让我别问的时候，财务根本还没说延后。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-leader-hot",
+      "requiresAny": [
+        "leader-note-hot"
+      ],
+      "label": "用领导批注开场",
+      "hostLine": "你截的那条批注写了你负责，垫款什么时候还却一个字都没有。你怎么回？",
+      "callerRevisedOpening": "……被夸住的时候，我真的高兴。高兴完才发现，批注里只有结果，没有垫款。",
+      "appliesRevisedOnScenes": [
+        5
+      ]
+    },
+    {
+      "id": "opener-supplier",
+      "requiresAny": [
+        "supplier-dm-seen"
+      ],
+      "label": "用供应商返款开场",
+      "hostLine": "供应商补了一句：服务协调费按老规矩返给对接人。对接人还是他。",
+      "callerRevisedOpening": "……审批图只到「通过」。返款这条路，我截批注的时候才真正看见。",
+      "appliesRevisedOnScenes": [
+        4
+      ]
+    },
+    {
+      "id": "opener-soft",
+      "requiresAny": [],
+      "label": "软开场",
+      "hostLine": "你回来了。审批图还在台上，从批注那儿继续。",
+      "callerRevisedOpening": "嗯。截完了。付款状态那栏——还是空的。",
+      "appliesRevisedOnScenes": []
+    }
+  ],
+  "returnStance": {
+    "fromSnapshotOptionIds": {
+      "respondent-problem": "open",
+      "caller-complicit": "defensive",
+      "unclear": "neutral"
+    },
+    "default": "neutral",
+    "lines": {
+      "defensive": "我差点不打回来。弹幕说这次活动是我自己想接的……是。可钱不能一直卡在他手里。",
+      "open": "我回来了。流程和截图你继续问——这回我不替财务慢开脱。",
+      "neutral": "我回来了。批注截完，我自己又把审批图看了一眼。少的那页还在。"
+    }
+  }
+}

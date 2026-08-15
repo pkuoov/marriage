@@ -1,0 +1,52 @@
+{
+  "sources": [
+    {
+      "label": "婚姻家事律师手工摘录",
+      "type": "manual",
+      "kind": "lawyer-video",
+      "tags": ["婚前协议", "房产", "彩礼", "恋爱转账"],
+      "items": [
+        {
+          "title": "婚前房写父母名下，婚后共同还贷要不要写清份额",
+          "url": "https://example.com/lawyer/house-boundary",
+          "publishedAt": "2026-06-21",
+          "snippet": "房本、首付、共同账户还贷、装修款、退出补偿。"
+        },
+        {
+          "title": "恋爱转账到底是借款还是赠与，备注和聊天记录很关键",
+          "url": "https://example.com/lawyer/transfer-gift-loan",
+          "publishedAt": "2026-06-22",
+          "snippet": "借条、赠与声明、转账备注、分手前最后一笔钱。"
+        }
+      ]
+    },
+    {
+      "label": "房产与资产隔离科普手工摘录",
+      "type": "manual",
+      "kind": "asset-education",
+      "tags": ["信托", "保险", "资产隔离", "受益人"],
+      "items": [
+        {
+          "title": "家族信托和保险安排被拿进婚前谈判时，先看谁是受益人",
+          "url": "https://example.com/asset/trust-beneficiary",
+          "publishedAt": "2026-06-23",
+          "snippet": "信托、保险、受益人、家族基金、资产隔离，可能是保护也可能遮蔽控制权。"
+        }
+      ]
+    },
+    {
+      "label": "情感博主手工摘录",
+      "type": "manual",
+      "kind": "relationship-video",
+      "tags": ["安全感", "不信任", "情绪价值"],
+      "items": [
+        {
+          "title": "对方说你提协议就是不信任，是真的伤感情还是回避核验",
+          "url": "https://example.com/relationship/agreement-trust",
+          "publishedAt": "2026-06-23",
+          "snippet": "安全感、诚意、太算计、正常夫妻不会算这么细。"
+        }
+      ]
+    }
+  ]
+}

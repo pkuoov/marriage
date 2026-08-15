@@ -1,0 +1,31 @@
+name: Behavior Gate
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Use project Node runtime
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install Chromium for browser smoke tests
+        run: npx playwright install --with-deps chromium
+
+      # Local work can use test:local's single-route smoke. CI intentionally
+      # keeps the complete smoke:browser matrix for flow and rendering drift.
+      - name: Run pull-request behavior gate
+        run: npm run test:pr
