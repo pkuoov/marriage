@@ -57,8 +57,9 @@ export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxTurnSentences = 
     const audioCueId = line.getAttribute?.("data-audio-cue-id") ?? "";
     const autoAdvanceNext = line.getAttribute?.("data-auto-advance-next") === "true";
     const statementBlock = line.getAttribute?.("data-dialogue-block") === "statement";
+    const speedTier = line.getAttribute?.("data-text-speed-tier") ?? "";
     return chunkDialogueTurn(
-      { speaker, role, text, audioCueId, autoAdvanceNext, statementBlock },
+      { speaker, role, text, audioCueId, autoAdvanceNext, statementBlock, speedTier },
       statementBlock ? Number.MAX_SAFE_INTEGER : maxTurnChars,
       statementBlock ? Number.MAX_SAFE_INTEGER : maxTurnSentences
     );
@@ -166,6 +167,8 @@ export function createDialogueController({
   autoDelay = 2,
   pairedAutoDelay = 450,
   pairedAutoAdvance = true,
+  presentationProfile = {},
+  onBlip = () => {},
   onPageStart = () => {},
   onShown = () => {},
   onChoicesShown = () => {}
@@ -181,12 +184,16 @@ export function createDialogueController({
   const indicator = box.querySelector(".avg-continue");
   const delays = { slow: 54, normal: 34, fast: 18, instant: 0 };
   const baseDelay = delays[speed] ?? delays.normal;
+  let activeDelay = baseDelay;
 
   function showPage() {
     clearAutoAdvance();
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
     const lines = normalizedPageLines(page);
+    const speedTier = lines.find((line) => line.speedTier)?.speedTier ?? "";
+    const tierProfile = presentationProfile.speedTiers?.[speedTier] ?? {};
+    activeDelay = Number.isFinite(Number(tierProfile.delay)) ? Number(tierProfile.delay) : baseDelay;
     visibleCount = 0;
     complete = false;
     const activeRole = dialoguePageRole(page);
@@ -205,8 +212,8 @@ export function createDialogueController({
     onPageStart(page, pageIndex);
     applyVisibleText(page, 0);
     indicator.hidden = true;
-    if (reduceMotion || baseDelay === 0) return finishPage();
-    lastAt = performance.now();
+    if (reduceMotion || activeDelay === 0) return finishPage();
+    lastAt = performance.now() + Math.max(0, Number(tierProfile.holdMs) || 0);
     frameId = requestAnimationFrame(typeFrame);
   }
 
@@ -215,9 +222,10 @@ export function createDialogueController({
     const fullText = typeablePageLines(page).map((entry) => entry.text).join("");
     const previous = fullText[Math.max(0, visibleCount - 1)] ?? "";
     const punctuationDelay = /[、，,]/.test(previous) ? 90 : /[—]/.test(previous) ? 120 : 0;
-    if (now - lastAt >= baseDelay + punctuationDelay) {
+    if (now - lastAt >= activeDelay + punctuationDelay) {
       visibleCount += 1;
       applyVisibleText(page, visibleCount);
+      if (visibleCount % 2 === 1) onBlip(presentationProfile.blipPitchHz?.[dialoguePageRole(page)] ?? 280);
       lastAt = now;
     }
     if (visibleCount >= fullText.length) finishPage();
@@ -238,7 +246,7 @@ export function createDialogueController({
   function scheduleAutoAdvance() {
     clearAutoAdvance();
     const nextPage = pages[pageIndex + 1];
-    const pairDelay = pairedAutoAdvance && !reduceMotion && baseDelay > 0 && shouldAutoAdvanceDialoguePair(pages[pageIndex], nextPage)
+    const pairDelay = pairedAutoAdvance && !reduceMotion && activeDelay > 0 && shouldAutoAdvanceDialoguePair(pages[pageIndex], nextPage)
       ? Math.max(250, Number(pairedAutoDelay) || 450)
       : null;
     const delay = autoMode

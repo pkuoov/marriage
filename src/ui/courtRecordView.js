@@ -31,7 +31,7 @@ export function courtRecordHtml(state = {}) {
 }
 
 export function avgSystemBarHtml(settings = {}) {
-  return `<div class="avg-system-bar"><button data-avg-setting="auto" type="button">自动 ${settings.autoMode ? "开" : "关"}</button><button data-avg-setting="fast" type="button">快进</button><button data-avg-setting="speed" type="button">字速 ${speedLabel(settings.textSpeed)}</button></div>`;
+  return `<div class="avg-system-bar"><button data-avg-setting="auto" type="button">自动 ${settings.autoMode ? "开" : "关"}</button><button data-avg-setting="fast" type="button">快进</button><button data-avg-setting="speed" type="button">字速 ${speedLabel(settings.textSpeed)}</button><button data-avg-setting="effects" type="button">闪烁/震动 ${effectsLabel(settings.screenEffects)}</button></div>`;
 }
 
 function tab(id, label, active = false) { return `<button class="${active ? "active" : ""}" data-record-tab="${id}" type="button">${label}</button>`; }
@@ -39,4 +39,5 @@ function page(id, rows, active = false) { return `<section data-record-page="${i
 function values(value) { return Object.values(value ?? {}).flat(); }
 function labelFor(value) { return typeof value === "string" ? value : value?.material ?? value?.label ?? value?.title ?? value?.question ?? ""; }
 function speedLabel(value) { return ({ slow: "慢", normal: "中", fast: "快", instant: "立即" })[value] ?? "中"; }
+function effectsLabel(value) { return ({ full: "完整", reduced: "减弱", off: "关闭" })[value] ?? "完整"; }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]); }

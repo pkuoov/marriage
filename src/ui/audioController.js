@@ -1,4 +1,5 @@
 import { seekVoiceCue, setAudioBusVolume, subscribeAudioState, syncAudioScene, toggleSound, toggleVoiceCue } from "../sound.js";
+import { audioCueAvailable } from "../audioCatalog.js";
 import { audioScenePlan } from "../runtime/audioSceneModel.js";
 
 export function bindAudioControls({ root = defaultRoot(), onToggleSound = () => {} } = {}) {
@@ -25,13 +26,23 @@ export function bindAudioControls({ root = defaultRoot(), onToggleSound = () => 
   });
 }
 
-export function syncSceneAudio({ briefId = "root", scene = "title", backdropClass = "", pressureLevel = "", audioEnterCueId = "", keepVoiceCueId = "" } = {}) {
-  const plan = audioScenePlan({ scene, backdropClass, pressureLevel });
-  syncAudioScene({ ...plan, enterSfxCueId: audioEnterCueId || plan.enterSfxCueId }, {
+export function syncSceneAudio({ briefId = "root", scene = "title", backdropClass = "", pressureLevel = "", musicPhase = "", audioEnterCueId = "", keepVoiceCueId = "" } = {}) {
+  const plan = audioScenePlan({ scene, backdropClass, pressureLevel, musicPhase });
+  const playablePlan = resolveSceneAudioFallback(plan);
+  syncAudioScene({ ...playablePlan, enterSfxCueId: audioEnterCueId || playablePlan.enterSfxCueId }, {
     sceneKey: `${briefId}:${scene}`,
     keepVoiceCueId
   });
-  return plan;
+  return playablePlan;
+}
+
+export function resolveSceneAudioFallback(plan = {}) {
+  if (!plan.bgmCueId || audioCueAvailable(plan.bgmCueId) || !plan.fallbackBgmCueId) return plan;
+  return {
+    ...plan,
+    requestedBgmCueId: plan.bgmCueId,
+    bgmCueId: plan.fallbackBgmCueId
+  };
 }
 
 export function watchAudioPlaybackControls({ getRoot = defaultRoot } = {}) {

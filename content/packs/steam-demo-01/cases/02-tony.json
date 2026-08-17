@@ -3,6 +3,13 @@
   "plotId": "tony-multi-dating",
   "runtimeContentStatus": "runtime-loaded",
   "texturePass": true,
+  "dialoguePresentation": {
+    "speedTiers": {
+      "strained": { "delay": 46, "holdMs": 0 },
+      "stalled": { "delay": 54, "holdMs": 1000 }
+    },
+    "blipPitchHz": { "host": 330, "caller": 302, "respondent": 224 }
+  },
   "voiceTics": {
     "何": []
   },
@@ -122,32 +129,32 @@
   "stanceSnapshot": {
     "afterScene": 3,
     "kicker": "中段立场快照",
-    "prompt": "现在这通麦，你先站哪边？",
-    "note": "不判分。只记下你现在更相信名单、恋爱，还是那张被裁过的截图。",
-    "afterPickLine": "名单上全是女的，恋爱名义也像真的。可截图右边为什么没了，还没问完。",
+    "prompt": "现在这通麦，你先咬住哪个动作？",
+    "note": "不判分。按下你现在最在意的那件事。",
+    "afterPickLine": "截图右边是她自己裁掉的。先问那几栏写了什么。",
     "continueLabel": "继续听",
     "recapKicker": "中段立场",
     "options": [
       {
         "id": "respondent-problem",
-        "label": "他的问题更大",
-        "summary": "他把恋爱话术和客人名单放在一起。",
-        "feedback": "自己人和下次约都是真的。这一票先记他。",
-        "recap": "他真帅，也真用自己人叫她；截图右边却被她裁掉了。"
+        "label": "他用亲密话术拉客",
+        "summary": "他留晚档、叫自己人，也把同一批熟客写进带金额的跟进名单。",
+        "feedback": "‘自己人’不只是甜话。它和下次约、客户跟进落在同一张表里。",
+        "recap": "他用留晚档和‘自己人’制造特殊感，名单却把关系和客户跟进放在一起。"
       },
       {
         "id": "industry-gray",
-        "label": "行业就这样",
-        "summary": "理发店会维护熟客，收钱买产品是不是店里的事，还没问。",
-        "feedback": "店里能不能卖理财还没问。她为什么只发半张图，也没说。",
-        "recap": "熟客维护是真的；被裁掉的右半边还没见到。"
+        "label": "她裁掉名单右半边",
+        "summary": "她只发姓名、亲密度和下次约，把金额、起投、跟进和账户栏裁掉。",
+        "feedback": "截图不是天然缺了一半，是她自己动手裁的。她不想让直播间先看钱。",
+        "recap": "她保留一排女人，裁掉金额和账户栏，再把半张名单发进直播间。"
       },
       {
         "id": "caller-complicit",
-        "label": "她也有份",
-        "summary": "她先发半张图，不想让人先问她那笔钱。",
-        "feedback": "她是动过心，也先砸了要钱；那笔钱怎么出去的，还没说清。",
-        "recap": "她以恋爱名义相处是真的；她把名单先讲成女友名册，也是真的。"
+        "label": "她拿半张名单先讲养鱼",
+        "summary": "她把客户表的左半边叫成女友名册，先让直播间按恋爱骗局理解。",
+        "feedback": "她先抢了受害者位置。名单里那些人到底是什么关系，半张图回答不了。",
+        "recap": "她先把客户名单讲成一排女友，再用这套说法向 Tony 要钱。"
       }
     ]
   },
@@ -929,7 +936,7 @@
     },
     {
       "id": "tony-next-push-column",
-      "interactionMode": "lineReplay",
+      "interactionMode": "testimonyWall",
       "clueRole": "payoff",
       "falseFrame": "发现名单的今晚，才是她第一次知道风险。",
       "payoffFor": [
@@ -939,6 +946,301 @@
       "speaker": "咨询者",
       "entryQuestion": "昨晚你已经看见这张名单了。现在把你自己那行念完。",
       "version": "完整名单我昨晚就看完了。我那行写着十二万、不够起投、走我户。周那行是一百万、已买。我发给后台时把这些都裁掉了。",
+      "testimonyWall": {
+        "title": "把半张名单补回右半边",
+        "intro": "四句先在墙上。追问她何时知道起投门槛，才会多出最后一句。",
+        "splitAfter": 3,
+        "midSummary": "名单能证明她裁过字段，也能证明代投备注存在；它仍不能证明产品是否真的买入。",
+        "softAnchorResponse": "代投备注和这句说法正面碰上了。正式指认前，先确认她愿不愿意把藏着的那句说全。",
+        "reliefBeat": {
+          "listenerId": "@刘海修歪也要留证",
+          "comment": "第一次见追款还得先把截图取消裁剪。",
+          "hostLine": "先别替截图伸冤，右半边是她自己裁的。"
+        },
+        "statements": [
+          {
+            "id": "tony-list-was-romantic",
+            "label": "证词 01",
+            "text": "我看到一排女人和亲密度，第一反应当然是他拿谈恋爱吊着人。",
+            "pressResponse": "她的第一反应可以是真的，但全表右侧同时写着金额、产品和跟进。",
+            "presentResponse": "这张材料能拆掉‘纯女友名册’，还不能替她确认关系或资金结果。"
+          },
+          {
+            "id": "tony-heard-threshold-before",
+            "label": "证词 02",
+            "text": "转钱以前，小姐妹提过高息档一百万起投，我只当听个热闹。",
+            "pressResponse": "她停了几秒，又补了一句：自己后来正是因为够不上门槛，才问 Tony 能不能代买。",
+            "presentResponse": "一百万门槛能解释她为什么找人代投，不能证明 Tony 后来怎么处置十二万。",
+            "reveals": ["tony-romance-only-claim"]
+          },
+          {
+            "id": "tony-transfer-was-hers",
+            "label": "证词 03",
+            "text": "十二万是我自己转的，备注没写，但聊天里有‘帮我买’。",
+            "pressResponse": "主动转账和聊天原话都要保留；这不等于 Tony 已经履行代投，也不等于钱已经损失。",
+            "presentResponse": "转账行能确认钱从她这里出去，不能单独确认进了哪一项产品。"
+          },
+          {
+            "id": "tony-cropped-to-protect-self",
+            "label": "证词 04",
+            "text": "我裁掉金额和‘走我户’，是因为原图发出去也会把我先找他代投的事带出来。",
+            "pressResponse": "她承认裁图不只是遮别人姓名，也是在保护自己的叙述位置。",
+            "presentResponse": "这句已经承认裁图动机，材料可以核对，但不是决定性冲突本身。"
+          },
+          {
+            "id": "tony-romance-only-claim",
+            "label": "补充证词",
+            "hidden": true,
+            "text": "这十二万就是他借谈恋爱骗走的，我只是把自己的钱要回来。",
+            "pressResponse": "她把主动询问、门槛不足和代投备注又压回了‘只剩恋爱被骗’。这句需要材料正面落上去。",
+            "presentResponse": "如果只拿恋爱称呼压这句，仍然会漏掉她主动绕过门槛的资金动作。"
+          }
+        ],
+        "acts": [
+          {
+            "id": "act1",
+            "title": "把半张名单补回右半边",
+            "intro": "四句先在墙上。追问她何时知道起投门槛，才会多出最后一句。",
+            "splitAfter": 3,
+            "midSummary": "名单能证明她裁过字段，也能证明代投备注存在；它仍不能证明产品是否真的买入。",
+            "softAnchorResponse": "代投备注和这句说法正面碰上了。正式指认前，先确认她愿不愿意把藏着的那句说全。",
+            "reliefBeat": {
+              "listenerId": "@刘海修歪也要留证",
+              "comment": "第一次见追款还得先把截图取消裁剪。",
+              "hostLine": "先别替截图伸冤，右半边是她自己裁的。"
+            },
+            "statements": [
+              {
+                "id": "tony-list-was-romantic",
+                "label": "证词 01",
+                "text": "我看到一排女人和亲密度，第一反应当然是他拿谈恋爱吊着人。",
+                "pressResponse": "她的第一反应可以是真的，但全表右侧同时写着金额、产品和跟进。",
+                "presentResponse": "这张材料能拆掉‘纯女友名册’，还不能替她确认关系或资金结果。"
+              },
+              {
+                "id": "tony-heard-threshold-before",
+                "label": "证词 02",
+                "text": "转钱以前，小姐妹提过高息档一百万起投，我只当听个热闹。",
+                "pressResponse": "她停了几秒，又补了一句：自己后来正是因为够不上门槛，才问 Tony 能不能代买。",
+                "presentResponse": "一百万门槛能解释她为什么找人代投，不能证明 Tony 后来怎么处置十二万。",
+                "reveals": [
+                  "tony-romance-only-claim"
+                ]
+              },
+              {
+                "id": "tony-transfer-was-hers",
+                "label": "证词 03",
+                "text": "十二万是我自己转的，备注没写，但聊天里有‘帮我买’。",
+                "pressResponse": "主动转账和聊天原话都要保留；这不等于 Tony 已经履行代投，也不等于钱已经损失。",
+                "presentResponse": "转账行能确认钱从她这里出去，不能单独确认进了哪一项产品。"
+              },
+              {
+                "id": "tony-cropped-to-protect-self",
+                "label": "证词 04",
+                "text": "我裁掉金额和‘走我户’，是因为原图发出去也会把我先找他代投的事带出来。",
+                "pressResponse": "她承认裁图不只是遮别人姓名，也是在保护自己的叙述位置。",
+                "presentResponse": "这句已经承认裁图动机，材料可以核对，但不是决定性冲突本身。"
+              },
+              {
+                "id": "tony-romance-only-claim",
+                "label": "补充证词",
+                "hidden": true,
+                "text": "这十二万就是他借谈恋爱骗走的，我只是把自己的钱要回来。",
+                "pressResponse": "她把主动询问、门槛不足和代投备注又压回了‘只剩恋爱被骗’。这句需要材料正面落上去。",
+                "presentResponse": "如果只拿恋爱称呼压这句，仍然会漏掉她主动绕过门槛的资金动作。"
+              }
+            ],
+            "decisivePresent": {
+              "maxAttempts": 2,
+              "evidenceId": "case2-member-training:m03",
+              "statementId": "tony-romance-only-claim",
+              "selectionReason": "m03 同时钉住 12 万、不够 100 万起投与‘走 Tony 户’，能把 A 面的纯恋爱受害叙述翻到 B 面的主动代投和绕门槛；它仍不证明产品已买入，也不替 Tony 免责。",
+              "materialCards": [
+                {
+                  "id": "case2-member-training:m03",
+                  "kind": "名单原行",
+                  "label": "何：12 万／不够 100 万起投／走 Tony 户",
+                  "excerpt": "她裁掉的右半边，把金额、门槛和代持账户写在同一行。",
+                  "sourceLabel": "名单与十二万转账"
+                },
+                {
+                  "id": "case2-member-training:m02",
+                  "kind": "名单原行",
+                  "label": "周：100 万／已买",
+                  "excerpt": "另一名顾客的行没有亲密度，不能直接套成恋爱关系。",
+                  "sourceLabel": "名单与十二万转账"
+                },
+                {
+                  "id": "case2-member-training:m05",
+                  "kind": "转账记录",
+                  "label": "何→Tony：¥120,000",
+                  "excerpt": "转账备注为空；聊天写‘帮我买’。",
+                  "sourceLabel": "名单与十二万转账"
+                }
+              ],
+              "callerLine": "……是我先问能不能跟着买。把这十二万全说成恋爱里骗走的，确实省了前面那一步。",
+              "hostLine": "名单右半边写得很清楚：十二万，不够一百万起投，走 Tony 户。是你先开口代投，不是他借恋爱偷划。把这十二万全改口成恋爱诈骗，这个说法我不认。",
+              "boundaryLine": "名单原行证明主动代投与门槛绕行，不证明认购完成、全部损失或 Tony 没有误导关系。",
+              "contradiction": "咨询者把主动要求的十二万元代投改写成只由恋爱欺骗造成的转款。",
+              "routeAxis": "money-flow",
+              "continueLabel": "继续追十二万的实际去向"
+            }
+          },
+          {
+            "id": "act2",
+            "statusLabel": "她改口了 · 第二段说法",
+            "title": "把‘都是他带的气氛’再问一遍",
+            "intro": "她认下主动代投，转而把决定全推给店里的气氛。第二段仍可自由追问、普通出示；正式指认另有两次机会。",
+            "openerFactKeywords": [
+              "十二万",
+              "代投"
+            ],
+            "openerLines": [
+              {
+                "role": "caller",
+                "text": "行，十二万是我自己问了以后转给他代投的，这一步我认。可那天店里一直在说高息档，Tony 又说机会难得，我当时真不好意思说不跟。"
+              },
+              {
+                "role": "host",
+                "text": "主动转和被气氛推着走可以同时有。现在只说，这个气氛是谁先带到你面前的。"
+              }
+            ],
+            "revisedFrame": "她承认自己主动要求代投，又把绕门槛的决定包装成 Tony 一个人营造的从众压力。",
+            "splitAfter": 2,
+            "midSummary": "她认了代投，却把一百万门槛说成 Tony 在店里才塞给她的念头。顺序得重新对。",
+            "softAnchorResponse": "小姐妹先提门槛这一行碰到了她的新说法。正式指认仍要落到‘全是 Tony 带的气氛’那句上。",
+            "comparison": [
+              {
+                "statementId": "tony-list-was-romantic",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "tony-heard-threshold-before",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "tony-transfer-was-hers",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "tony-cropped-to-protect-self",
+                "status": "她收回了"
+              },
+              {
+                "statementId": "tony-romance-only-claim",
+                "status": "被打破"
+              }
+            ],
+            "statements": [
+              {
+                "id": "tony-atmosphere-was-his-alone",
+                "label": "改口 01",
+                "text": "主动代投我认，可让我觉得不投就下不来台的气氛都是 Tony 带的，转钱前没人跟我讲过一百万门槛。",
+                "pressResponse": "她把‘不好意思拒绝’说得很真，却把小姐妹更早提过门槛这一段抹掉了。",
+                "presentResponse": "只拿 Tony 的名单还不够，得找出门槛第一次进到她耳朵里的时间。"
+              },
+              {
+                "id": "tony-transfer-instruction-admitted",
+                "label": "改口 02",
+                "text": "十二万是我转的，聊天里的‘帮我买’也是我发的，这些我不改。",
+                "pressResponse": "她把主动动作留了下来，Tony 是否照做、钱实际去哪仍在材料外。",
+                "presentResponse": "转账记录能核对金额和原话，不能直接补出产品去向。",
+                "survivesFromAct1": "tony-transfer-was-hers"
+              },
+              {
+                "id": "tony-product-result-still-unknown",
+                "label": "改口 03",
+                "text": "我主动不等于他做完了代投，这十二万到底进了什么，我还是要他回答。",
+                "pressResponse": "这条边界没变：主动委托不替受托人证明履行。",
+                "presentResponse": "名单和转账都没有认购回单，放在这里仍只能继续追钱路。",
+                "survivesFromAct1": "tony-romance-only-claim"
+              },
+              {
+                "id": "tony-crop-admission-kept",
+                "label": "改口 04",
+                "text": "我裁掉右半边，是怕大家先看到我自己绕门槛，这件事我也认。",
+                "pressResponse": "她不再把裁图只说成保护别人姓名，但这不替 Tony 解释关系暗示。",
+                "presentResponse": "原图能核对她裁了什么，不需要再用一次正式指认。",
+                "survivesFromAct1": "tony-cropped-to-protect-self"
+              }
+            ],
+            "decisivePresent": {
+              "maxAttempts": 2,
+              "evidenceId": "case2-member-training:m04",
+              "statementId": "tony-atmosphere-was-his-alone",
+              "boundaryLineKeyPhrases": [
+                "不替 Tony 免除",
+                "不能证明她没有受现场压力"
+              ],
+              "selectionReason": "m04 把一百万门槛的首次来源放回小姐妹口中，能打穿‘全是 Tony 在店里临时营造’的新框架；它仍保留 Tony 的关系暗示与资金去向责任。",
+              "materialCards": [
+                {
+                  "id": "case2-member-training:m04",
+                  "kind": "门槛来源圈注",
+                  "label": "高息档 100 万起投 · 小姐妹先提过",
+                  "excerpt": "转账前，小姐妹已经提过门槛；名单上随后再次出现。",
+                  "sourceLabel": "名单与十二万转账 m04"
+                },
+                {
+                  "id": "case2-member-training:m05",
+                  "kind": "转账记录",
+                  "label": "何→Tony：¥120,000",
+                  "excerpt": "能确认她主动发出‘帮我买’，不能单独说明门槛最初由谁提起。",
+                  "sourceLabel": "名单与十二万转账"
+                },
+                {
+                  "id": "case2-member-training:m03",
+                  "kind": "名单原行",
+                  "label": "不够 100 万起投／走 Tony 户",
+                  "excerpt": "能确认代投结构，不能把更早的口头来源改写成 Tony 一个人。",
+                  "sourceLabel": "名单与十二万转账"
+                }
+              ],
+              "callerLine": "……小姐妹是先提过一百万。我当时嘴上说听个热闹，后来真问代投，也不能全算 Tony 临时把我架上去。",
+              "hostLine": "一百万门槛不是 Tony 在店里第一次抛给你。小姐妹在你转钱前就提过；你后来主动问、主动转，不能把这一步全说成他营造气氛逼你。",
+              "boundaryLine": "m04 只推翻‘门槛和压力全由 Tony 临时制造’；不替 Tony 免除资金去向与关系暗示责任，也不能证明她没有受现场压力。",
+              "contradiction": "咨询者承认主动代投后，把绕门槛全解释成 Tony 营造的现场压力；更早的小姐妹口头提醒推翻了这层圆谎。",
+              "routeAxis": "money-flow",
+              "continueLabel": "继续追十二万的实际去向"
+            }
+          }
+        ]
+      },
+      "decisivePresent": {
+        "maxAttempts": 2,
+        "evidenceId": "case2-member-training:m03",
+        "statementId": "tony-romance-only-claim",
+        "selectionReason": "m03 同时钉住 12 万、不够 100 万起投与‘走 Tony 户’，能把 A 面的纯恋爱受害叙述翻到 B 面的主动代投和绕门槛；它仍不证明产品已买入，也不替 Tony 免责。",
+        "materialCards": [
+          {
+            "id": "case2-member-training:m03",
+            "kind": "名单原行",
+            "label": "何：12 万／不够 100 万起投／走 Tony 户",
+            "excerpt": "她裁掉的右半边，把金额、门槛和代持账户写在同一行。",
+            "sourceLabel": "名单与十二万转账"
+          },
+          {
+            "id": "case2-member-training:m02",
+            "kind": "名单原行",
+            "label": "周：100 万／已买",
+            "excerpt": "另一名顾客的行没有亲密度，不能直接套成恋爱关系。",
+            "sourceLabel": "名单与十二万转账"
+          },
+          {
+            "id": "case2-member-training:m05",
+            "kind": "转账记录",
+            "label": "何→Tony：¥120,000",
+            "excerpt": "转账备注为空；聊天写‘帮我买’。",
+            "sourceLabel": "名单与十二万转账"
+          }
+        ],
+        "callerLine": "……是我先问能不能跟着买。把这十二万全说成恋爱里骗走的，确实省了前面那一步。",
+        "hostLine": "名单右半边写得很清楚：十二万，不够一百万起投，走 Tony 户。是你先开口代投，不是他借恋爱偷划。把这十二万全改口成恋爱诈骗，这个说法我不认。",
+        "boundaryLine": "名单原行证明主动代投与门槛绕行，不证明认购完成、全部损失或 Tony 没有误导关系。",
+        "contradiction": "咨询者把主动要求的十二万元代投改写成只由恋爱欺骗造成的转款。",
+        "routeAxis": "money-flow",
+        "continueLabel": "继续追十二万的实际去向"
+      },
       "helperHint": "她昨晚已经看完全表。今晚要问的是：公开名单会带出她自己的哪一层。",
       "doubt": "翻脸时机在风险传闻之后，不在刚发现恋爱破裂。",
       "contradiction": "她用发现名单覆盖自己知情代投、又在风声后改口。",
@@ -1245,11 +1547,17 @@
   },
   "crossCaseEchoes": [
     {
+      "id": "case2-flashback-profile-fund",
       "requiresCaseId": "03-profile",
+      "quote": "宸直那三十万九月底到期，拿二十万给我留着。",
+      "sourceCaseLabel": "案3",
       "text": "怎么又是宸直。上一通女方家的三十万还等九月底，这通又有人把钱转进了别人的账户。"
     },
     {
+      "id": "case2-flashback-work-invoice",
       "requiresCaseId": "04-workplace",
+      "quote": "公司抬头发票原件还在我手里。",
+      "sourceCaseLabel": "案4",
       "text": "前面那通六万八至少还有公司抬头发票。这十二万只有转账和提交页，不能混成同一种要钱。"
     }
   ],
@@ -1262,7 +1570,7 @@
       { "role": "caller", "speaker": "咨询者", "text": "看见了。可我那时候气疯了，就想让你们先看那一排女人。现在让我再说周是他女朋友……我说不出口。" }
     ]
   },
-  "hostWoundHook": "行业都这样，别上纲上线",
+  "hostWoundHook": "Tony 对熟客都叫自己人，也许只是嘴甜",
   "deepFollowup": {
     "question": "如果他明天给你一张他名下的认购回单，却不退十二万，你还会把那半张截图发出去，说自己碰上了恋爱诈骗吗？",
     "resistanceBeat": {
@@ -1276,10 +1584,10 @@
     "answer": "先把回单和合同户名给我。名单我先不发。十二万怎么处理，等他把材料交出来再说。",
     "note": "她第一次把要回单、要退现金和公开养鱼控诉拆开。"
   },
-  "stageJudgement": "先别再给他转钱。让他把产品全名、合同、回单和实际下单账户发给你，“走我户”走的哪张卡，也写清楚。你那半张名单证明不了名单上每个人都在跟他谈，金额栏还是你自己裁的。你就是看中他长得好看，也享受他留晚档、叫你自己人。后来听说产品可能出事，你又把主动找他代投改成恋爱诈骗。这个说法我不认。他也别躲。十二万收进自己账户，还说已经提交，就得把钱去了哪儿交代清楚。这十二万到底有没有买成产品，等合同和回单。没有原件，今晚谁都别替它下结论。",
+  "stageJudgement": "十二万是你自己开口让他代投。风声一来，你裁掉金额栏，改口恋爱诈骗。这个说法我不认。他拿‘自己人’收钱、不给原件，也别装没事。别再转钱；产品名、合同、回单，让他书面发。进没进产品，等原件。",
   "caseClosing": {
-    "title": "名单里的起投",
-    "verdict": "别再给 Tony 转钱，先书面要产品全名、合同、回单和实际下单账户。她主动裁掉金额栏，半张名单证明不了 Tony 同时和那些女客谈恋爱；她也不能在听见产品可能出事后，把自己先开口的代投改成恋爱诈骗。Tony 收了十二万，又说已经提交，就必须把钱去了哪儿说清。宸直是否兑付、这笔钱是否入了产品、他有没有资格做这种安排，今晚都没有答案。",
+    "title": "裁掉金额栏之后",
+    "verdict": "咨询者主动请 Tony 代投十二万；听见产品可能出事后，她裁掉金额栏，改口称恋爱诈骗。Tony 用‘自己人’维持亲密感，收钱后未提供合同和回单。十二万是否入产品仍待原件。",
     "beats": [
       {
         "label": "来电",
@@ -1298,6 +1606,7 @@
       "咨询者确实以恋爱名义和 Tony 相处，并承认他长得好看",
       "名单上多为女客，字段包含金额、起投、跟进和走他户",
       "咨询者向 Tony 转过十二万，自己开口要求帮忙购买高息档",
+      "咨询者听说产品可能出事后才翻名单，并裁掉金额、起投、跟进和走他户等右半边，把主动代投改口成恋爱诈骗",
       "高息传闻来自酒吧小姐妹，咨询者在翻名单前就听过一百万起投",
       "周是剪头客户，名单行写一百万已买，不是咨询者所说的女朋友",
       "第一夜敲门的是警察；放款的人涉案，按借款人来问咨询者",
@@ -1548,9 +1857,9 @@
       ]
     },
     "snapshotEcho": {
-      "respondent-problem": "昨晚很多人先信了那半张名单。今晚把完整截图摆上来，再看。",
-      "industry-gray": "门店怎么维护熟客是一回事，Tony 私下收钱是另一回事。今晚分开问。",
-      "caller-complicit": "昨晚那张图是我裁的。你们要骂就骂，可他收了钱，也得说清楚。"
+      "respondent-problem": "昨晚有人咬住他拿‘自己人’拉熟客。今晚完整名单摆上来，看这句话后面接的是什么。",
+      "industry-gray": "昨晚有人咬住右半边是我裁的。是我裁的。今晚金额和账户栏一起摆。",
+      "caller-complicit": "昨晚有人咬住我拿半张名单先讲养鱼。完整图在这儿，我自己那行也不遮了。"
     },
     "liveCounterBeats": [
       {

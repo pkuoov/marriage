@@ -5,9 +5,11 @@ import { choiceButtonBodyHtml } from "./callFlowView.js";
 export function hangupBeatHtml(hangup = {}) {
   return `
     <section class="hangup-beat-card">
+      <div class="offair-ritual-visual" aria-hidden="true"><i></i><span>ON AIR</span><b>收麦</b></div>
       <span>${escapeHtml(hangup.stageDirection ?? "忙音。")}</span>
       ${callLineHtml({ role: "caller", speaker: hangup.speaker, text: hangup.line })}
       ${callLineHtml({ role: "host", text: hangup.hostLine })}
+      <div class="offair-comment-settle"><span>弹幕慢下来了</span><p>先把原话和材料留在台上，等回拨再接。</p></div>
     </section>
   `;
 }
@@ -130,6 +132,7 @@ export function callbackOpenerBeatHtml({ stanceLine = "", opener = {} } = {}) {
   return `
     <section class="callback-opener-card">
       <span class="source-badge">回拨已接入</span>
+      <div class="callback-ritual-strip" aria-hidden="true"><i></i><span>线路校准</span><b>重新接通</b></div>
       <div class="call-dialogue">
         ${stanceLine ? callLineHtml({ role: "caller", text: stanceLine }) : ""}
         ${callLineHtml({ role: "host", text: opener.hostLine })}

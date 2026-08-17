@@ -94,8 +94,10 @@ export function createOvernightScreens(ctx) {
       chapter: "第一夜",
       text: `
         <section class="hangup-beat-card">
+          <div class="offair-ritual-visual" aria-hidden="true"><i></i><span>ON AIR</span><b>收麦</b></div>
           ${callDialogueHtml(hangupDialogue)}
           <span>${escapeHtml(structure.hangupLine ?? "")}</span>
+          <div class="offair-comment-settle"><span>弹幕慢下来了</span><p>先把原话留在台上。第二晚回拨，再把材料带回来。</p></div>
         </section>
       `,
       choices: flowGroupHtml(

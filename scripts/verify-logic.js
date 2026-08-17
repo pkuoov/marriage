@@ -34,11 +34,13 @@ import { epilogueUnreadMessages, epilogueUnreadStage } from "../src/runtime/epil
 import { hostDisclosureLinesForAnchor } from "../src/runtime/hostDisclosureModel.js";
 import { advanceQuickConfrontation, advanceQuickTranscript, advanceQuickVerdict, applyQuickStatementLineSelection, endQuickCaseEarly, initialQuickDetectiveState, normalizeQuickDetectiveState, quickConfrontationLines, quickDetectiveIsComplete, quickDisclosureRounds, quickIssueOptionsForRound, quickRoundPatienceForState, quickStatementLinesForRound, quickVerdictPages, retryQuickStatement } from "../src/runtime/quickDetectiveModel.js";
 import { normalizeStatementPatience, spendStatementPatience, statementLinesFromText, statementNightKey, statementNightPatienceMax, statementOptionForLine, statementPressureFor } from "../src/runtime/statementReviewModel.js";
+import { advanceTestimonyAct, decisivePresentAvailability, decisivePresentOutcome, normalizeDecisivePresentProgress, pressTestimonyStatement, resetDecisivePresentProgress, testimonyActForScene, testimonyActIsFinal, testimonyStatementsForScene, testimonyWallKey } from "../src/runtime/decisivePresentModel.js";
 import { CHOICE_COST_META, choiceCostMeta } from "../src/runtime/choiceCostModel.js";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js";
 import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "../src/ui/callFlowView.js";
 import { audioSettingsPanelHtml } from "../src/ui/audioSettingsView.js";
-import { formatAudioTime } from "../src/ui/audioController.js";
+import { formatAudioTime, resolveSceneAudioFallback } from "../src/ui/audioController.js";
+import { clearPlayedCueKeysByPrefix, playAudioCueOnce } from "../src/sound.js";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js";
 import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialRows, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js";
 import { audioPlaybackControlsHtml, callbackOpenerChoiceHtml, interludePlaybackActionHtml } from "../src/ui/interludeDeskView.js";
@@ -294,9 +296,71 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
   );
 
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  let hiddenDecisiveStatementCount = 0;
   for (const brief of briefs) {
     const replayScenes = (brief.sceneVersions ?? []).filter((scene) => scene.interactionMode === "lineReplay");
-    assertEqual(replayScenes.length, brief.sceneVersions.length, `${brief.plotId} 的通麦场次必须全部采用整段听麦与逐句回放`);
+    const wallScenes = (brief.sceneVersions ?? []).filter((scene) => scene.interactionMode === "testimonyWall");
+    assertEqual(wallScenes.length, 1, `${brief.plotId} 必须且只能有一场证词墙`);
+    assertEqual(replayScenes.length, brief.sceneVersions.length - 1, `${brief.plotId} 除证词墙外的通麦场次必须采用整段听麦与逐句回放`);
+    const wall = wallScenes[0];
+    assertEqual(wall.testimonyWall?.acts?.length, 2, `${brief.plotId} 证词墙运行时必须暴露两幕`);
+    assert((wall.testimonyWall?.statements ?? []).length >= 4 && (wall.testimonyWall?.statements ?? []).length <= 6, `${brief.plotId} 证词墙必须有 4 到 6 句`);
+    assert((wall.testimonyWall?.statements ?? []).every((statement) => statement.pressResponse && statement.presentResponse), `${brief.plotId} 每句证词都必须有专属追问与普通出示回应`);
+    const initialStatements = testimonyStatementsForScene(wall, {});
+    const revealSource = (wall.testimonyWall?.statements ?? []).find((statement) => statement.reveals?.length);
+    const decisiveStatement = (wall.testimonyWall?.statements ?? []).find((statement) => statement.id === wall.decisivePresent?.statementId);
+    if (decisiveStatement?.hidden) {
+      hiddenDecisiveStatementCount += 1;
+      assertEqual(decisivePresentAvailability(wall, {}).canStart, false, `${brief.plotId} 隐藏决定性证词未揭出前不得发起正式指认`);
+    } else {
+      assertEqual(decisivePresentAvailability(wall, {}).canStart, true, `${brief.plotId} 可见决定性证词必须允许发起正式指认`);
+    }
+    if (revealSource) {
+      const afterPress = pressTestimonyStatement(wall, {}, revealSource.id);
+      assert(testimonyStatementsForScene(wall, afterPress).length > initialStatements.length, `${brief.plotId} 隐藏证词必须由 PRESS 后出现`);
+      if (decisiveStatement?.hidden) {
+        assertEqual(decisivePresentAvailability(wall, afterPress).canStart, true, `${brief.plotId} 隐藏决定性证词揭出后必须解锁正式指认`);
+      }
+    }
+    const present = wall.decisivePresent;
+    const missOne = decisivePresentOutcome(wall, {}, "wrong-evidence", present.statementId);
+    const missTwo = decisivePresentOutcome(wall, missOne.progress, "wrong-evidence", present.statementId);
+    const hit = decisivePresentOutcome(wall, normalizeDecisivePresentProgress({}, present.maxAttempts), present.evidenceId, present.statementId);
+    assertEqual(missOne.kind, "miss", `${brief.plotId} 第一次正式错证必须进入 guarded 收紧`);
+    assert(missOne.progress.guarded && missOne.progress.remaining === 1, `${brief.plotId} 第一次正式错证必须当场掉一大格`);
+    assertEqual(missTwo.kind, "exhausted", `${brief.plotId} 两次正式指认全错必须耗尽机会`);
+    assertEqual(hit.kind, "hit", `${brief.plotId} 唯一材料×证词组合必须命中`);
+    const act2Progress = advanceTestimonyAct(wall, {});
+    assertEqual(act2Progress.act, 2, `${brief.plotId} act1 命中后必须把墙推进 act2`);
+    assertEqual(testimonyActIsFinal(wall, {}), false, `${brief.plotId} act1 命中后不得直接进入 afterVersion`);
+    assertEqual(testimonyActIsFinal(wall, act2Progress), true, `${brief.plotId} act2 才是进入 afterVersion 前的最终幕`);
+    assertEqual(decisivePresentAvailability(wall, act2Progress).canStart, true, `${brief.plotId} act2 切入后必须按第二幕证词计算指认门禁`);
+    const act2 = testimonyActForScene(wall, act2Progress);
+    const act2Present = act2.decisivePresent;
+    const act1Key = testimonyWallKey(brief, wall, 0, 1);
+    const act2Key = testimonyWallKey(brief, wall, 0, 2);
+    assertEqual(act2Key, `${act1Key}:act2`, `${brief.plotId} act2 presentProgress key 必须使用 :act2 后缀`);
+    const act2MissOne = decisivePresentOutcome(wall, {}, "wrong-evidence", act2Present.statementId, act2Progress);
+    const act2MissTwo = decisivePresentOutcome(wall, act2MissOne.progress, "wrong-evidence", act2Present.statementId, act2Progress);
+    assertEqual(act2MissOne.progress.attempts, 1, `${brief.plotId} act2 第一次错误必须从自己的 0 次开始计数`);
+    assertEqual(hit.progress.attempts, 0, `${brief.plotId} act2 错误不得改写 act1 已命中的独立进度`);
+    assertEqual(act2MissTwo.kind, "exhausted", `${brief.plotId} act2 两次全错必须走 patienceLost`);
+    const retriedAct2 = resetDecisivePresentProgress(act2MissTwo.progress, act2Present.maxAttempts);
+    assertEqual(retriedAct2.attempts, 0, `${brief.plotId} patienceLost 重试必须只重置 act2 次数`);
+    assertEqual(retriedAct2.resolved, false, `${brief.plotId} act2 重试必须恢复为未命中`);
+    assert(hit.progress.resolved, `${brief.plotId} act2 重试后 act1 必须保持已完成`);
+    const retriedWallState = retryPatienceLostState({
+      state: { patienceLostContext: null },
+      brief,
+      context: { caseId: brief.id, area: "sceneReview", retryScene: "testimonyWall", index: 0, actionKeys: [], spent: false },
+      budget: { max: 2, remaining: 0, used: 2 },
+      areaTotal: brief.sceneVersions.length
+    });
+    assertEqual(retriedWallState.scene, "testimonyWall", `${brief.plotId} act2 耗尽后重试必须直接回当前证词墙，不得触发后续场景钩子`);
+    const afterVersionLine = wall.afterVersion?.lines?.find((line) => line.text)?.text;
+    if (afterVersionLine) {
+      assertIncludes(completedSceneExchangeHtml({ scene: wall }), afterVersionLine, `${brief.plotId} 决定性指认后的 sceneReview 必须续播 afterVersion`);
+    }
     for (const scene of replayScenes) {
       const loadBearing = (scene.questionOptions ?? []).filter((option) => option.contradiction);
       assert(loadBearing.length >= 1, `${scene.id} 至少要有一句能进入质问的原话`);
@@ -311,15 +375,24 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
       ["night-a", brief.nightStructure?.segment1SceneIndexes ?? []],
       ["night-b", brief.nightStructure?.segment2SceneIndexes ?? []]
     ]) {
-      const rounds = sceneIndexes.map((index) => brief.sceneVersions?.[index]).filter((scene) => scene?.interactionMode === "lineReplay");
-      assert(rounds.length >= 2, `${brief.plotId} ${nightKey} 每次连线至少要有两轮陈述与逐句追问`);
-      assert(rounds.some((scene) => statementLinesFromText(scene.version ?? "").length >= 3), `${brief.plotId} ${nightKey} 至少要有一段三句以上的完整陈述`);
+      const nightScenes = sceneIndexes.map((index) => brief.sceneVersions?.[index]).filter(Boolean);
+      const replayRounds = nightScenes.filter((scene) => scene.interactionMode === "lineReplay");
+      const wallRounds = nightScenes.filter((scene) => scene.interactionMode === "testimonyWall");
+      assert(replayRounds.length + wallRounds.length >= 2, `${brief.plotId} ${nightKey} 每次连线至少要有两轮陈述盘问`);
+      assert(
+        replayRounds.some((scene) => statementLinesFromText(scene.version ?? "").length >= 3) || wallRounds.some((scene) => (scene.testimonyWall?.statements ?? []).length >= 4),
+        `${brief.plotId} ${nightKey} 至少要有一段三句以上的完整陈述或四句证词墙`
+      );
     }
     const firstNightA = brief.nightStructure?.segment1SceneIndexes?.[0];
     const firstNightB = brief.nightStructure?.segment2SceneIndexes?.[0];
     if (Number.isInteger(firstNightA)) assertEqual(statementNightKey(brief, firstNightA), "night-a", `${brief.plotId} 第一夜场次必须共用 night-a 耐心`);
     if (Number.isInteger(firstNightB)) assertEqual(statementNightKey(brief, firstNightB), "night-b", `${brief.plotId} 第二夜场次必须共用 night-b 耐心`);
   }
+  assert(hiddenDecisiveStatementCount >= 1, "至少一案必须保留 PRESS 后才解锁决定性指认的二段发现");
+  const migratedWallState = migrateState({ testimonyWallProgress: { legacy: { pressedIds: ["old-line"] } } });
+  assertEqual(migratedWallState.testimonyWallProgress.legacy.act, 1, "旧版单幕 testimonyWall 存档必须迁移为 act1 进行中");
+  assertIncludes(screenSources[2], "wallContext.finalAct && wallContext.presentProgress.resolved", "旧版 act1 已写完成标记的存档也必须以 act2 命中作为证词墙最终门禁");
 
   for (const packet of quickDetectiveCasesFor("steam-demo-01")) {
     const rounds = quickDisclosureRounds(packet);
@@ -495,7 +568,7 @@ test("CARE-001", "closing care choices are complete, non-scored, and render auth
     assert(packet.careChoices.every((choice) => !("score" in choice) && !("correct" in choice)), `${packet.caseId} 关怀选择不得计分或标正确项`);
     assert(packet.careChoices.every((choice) => !JSON.stringify(choice).includes("(拍)")), `${packet.caseId} 停顿必须是独立拍，不能把(拍)写进台词`);
   });
-  assertEqual(careChoiceById(packets[0], "affirm")?.label, "把受益和债务分开", "关怀选择必须可按 id 读取且只展示处理方向");
+  assertEqual(careChoiceById(packets[0], "affirm")?.label, "八万不用你还", "关怀选择必须可按 id 读取且直接承接结案决定");
   assert(careChoiceLines(careChoiceById(packets[0], "pragmatic")).some((line) => line.role === "pause"), "务实支线必须保留独立停顿拍");
   assert(!JSON.stringify(packets[2].careChoices).includes("唉"), "案 3 关怀支线不得污染 oneTimeTic 唯一性");
   assertIncludes(packets[3].careChoices[0].lines[0].text, "呃", "案 4 务实支线必须保留陈的口癖");
@@ -1151,6 +1224,21 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   assertEqual(audioScenePlan({ scene: "nightShellPrologue" }).enterSfxCueId, undefined, "进入直播间时不能提前播放 ON AIR；提示音必须跟着倒计时台词出现");
   assertEqual(audioScenePlan({ scene: "caseOpen" }).enterSfxCueId, "sfx.phone.connect", "案件接线必须触发真实接通音效");
   assertEqual(audioScenePlan({ scene: "sceneReview", pressureLevel: "low" }).bgmCueId, "bgm.pressure-stem", "耐心偏低时必须切到压力层");
+  const allegroPlan = audioScenePlan({ scene: "testimonyWall", musicPhase: "allegro" });
+  const silentPlan = audioScenePlan({ scene: "decisivePresentHit", musicPhase: "silent" });
+  const pursuitPlan = audioScenePlan({ scene: "sceneReview", musicPhase: "pursuit" });
+  assertEqual(allegroPlan.bgmCueId, "bgm.live-call-allegro", "进入关键追问链必须切同旋律 Allegro 版");
+  assertEqual(allegroPlan.fallbackBgmCueId, "bgm.live-call", "Allegro 缺位时必须回退到直播连线底乐");
+  assertEqual(resolveSceneAudioFallback(allegroPlan).bgmCueId, "bgm.live-call", "planned Allegro 不得先停掉当前可用 BGM");
+  assertEqual(silentPlan.bgmCueId, "", "决定性命中必须先留出半秒静音窗口");
+  assertEqual(silentPlan.fallbackBgmCueId, undefined, "刻意静音计划不得声明 BGM 回退");
+  assertEqual(pursuitPlan.bgmCueId, "bgm.pursuit", "B 故事浮出后必须接 pursuit 循环");
+  assertEqual(pursuitPlan.fallbackBgmCueId, "bgm.accusation", "Pursuit 缺位时必须回退到高压追问底乐");
+  assertEqual(resolveSceneAudioFallback(pursuitPlan).bgmCueId, "bgm.accusation", "planned Pursuit 必须自动落到可用高压 BGM");
+  assertIncludes(screenSources[2], 'ctx.getState().scene !== "decisivePresentHit"', "命中 stinger 定时器必须校验仍停留在命中场景");
+  assert(!screenSources[2].includes('playAudioCue("bgm.pursuit")'), "命中页不得再用脱离场景同步的定时器手动切 pursuit");
+  assertIncludes(screenSources[2], '? "pursuit" : ""', "命中后的 sceneReview 必须通过 musicPhase 接管 pursuit 续播");
+  assertIncludes(screenSources[2], 'context.wallProgress.act > 1 ? "pursuit" : "allegro"', "act2 证词墙与材料选择必须切入 pursuit，并继续使用场景音频回退");
   assertEqual(audioScenePlan({ scene: "sceneLineReplay" }).ambienceCueId, "ambience.studio-line", "原话回放仍在连线中，不得掉到收麦声场");
   assertEqual(audioScenePlan({ scene: "afterSceneEvidence" }).ambienceCueId, "ambience.studio-line", "连线中插入材料不得误切后台声场");
   assertEqual(audioScenePlan({ scene: "overnightCallback" }).bgmCueId, "bgm.callback-return", "第二夜回拨必须使用回拨 cue");
@@ -1173,6 +1261,22 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   ["sfx.phone.connect", "sfx.phone.disconnect", "sfx.broadcast.on-air", "sfx.message.notification", "sfx.document.mark"].forEach((cueId) => {
     assertEqual(audioCueView(cueId)?.available, true, `试玩关键音效必须有可播放资产: ${cueId}`);
   });
+  ["sfx.present.hit", "sfx.present.miss"].forEach((cueId) => assertEqual(audioCueView(cueId)?.available, true, `决定性 PRESENT stinger 必须有合成回退: ${cueId}`));
+  ["bgm.live-call-allegro", "bgm.pursuit"].forEach((cueId) => {
+    assertEqual(AUDIO_CUES[cueId]?.status, "planned", `${cueId} 缺位时必须明确标为 planned`);
+    assertEqual(AUDIO_CUES[cueId]?.loopStart, 0, `${cueId} 必须从无前奏循环点接入`);
+    assertEqual(AUDIO_CUES[cueId]?.attackMs, 0, `${cueId} 必须支持 stinger 后无迟滞切入`);
+  });
+});
+
+test("AUDIO-004", "case retries can replay one-shot climax cues", () => {
+  const prefix = "unit-case-retry:";
+  clearPlayedCueKeysByPrefix(prefix);
+  assertEqual(playAudioCueOnce("missing.test-cue", `${prefix}hit`).reason, "unknown-cue", "首次一次性 cue 必须进入播放尝试");
+  assertEqual(playAudioCueOnce("missing.test-cue", `${prefix}hit`).reason, "duplicate", "同一次案件中必须拦截重复 cue");
+  assertEqual(clearPlayedCueKeysByPrefix(prefix), 1, "重开案件必须只清理该案件前缀的一次性 cue");
+  assertEqual(playAudioCueOnce("missing.test-cue", `${prefix}hit`).reason, "unknown-cue", "清理后高潮 cue 必须可再次播放");
+  clearPlayedCueKeysByPrefix(prefix);
 });
 
 test("AUDIO-003", "audio UI keeps visible transcripts and exposes accessible controls only for ready cues", () => {
@@ -1434,7 +1538,7 @@ test("PRESSURE-001", "live pressure profile unifies audience, comments, and call
     theme: {
       ...theme,
       commentSeeds: ["我站主播问账单，心疼可以，转账得慢一点。"],
-      highRevealTone: "你没有急着判人，几张图和几句话都被你接住了。"
+      highRevealTone: "该点的那句，你点到了。"
     },
     materialProfile,
     quoteProfile,
@@ -3249,6 +3353,9 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
   assertEqual(migrated.caseMode, "episode", "未知旧模式必须迁移为案件包入口");
   assertEqual(migrated.settings.textSpeed, "fast", "存档迁移必须保留文本速度设置");
   assertEqual(migrated.settings.contentWarningAccepted, false, "存档迁移必须补内容警示默认值");
+  assertEqual(migrated.settings.screenEffects, "full", "旧存档必须补默认完整演出设置");
+  assertEqual(typeof migrated.testimonyWallProgress, "object", "旧存档必须补证词墙进度记录");
+  assertEqual(typeof migrated.decisivePresentProgress, "object", "旧存档必须补决定性 PRESENT 进度记录");
   assertEqual(migrated.saveSlot, "slot1", "存档迁移必须补默认存档槽");
   assertEqual(migrated.playerName, DEFAULT_PLAYER_NAME, "旧存档必须补默认主播姓名");
   assertEqual(typeof migrated.truthBoundaryPicks, "object", "旧存档必须补 truthBoundaryPicks 记录");
@@ -3260,6 +3367,7 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
 
   const namedSave = migrateState({ playerName: "周明" });
   assertEqual(namedSave.playerName, "周明", "新存档必须保留玩家输入的主播姓名");
+  assertEqual(migrateState({ settings: { screenEffects: "off" } }).settings.screenEffects, "off", "减弱或关闭闪烁震动的设置必须跨存档保留");
 
   const dailyCallMigrated = migrateState({
     caseMode: "daily",
@@ -3876,23 +3984,23 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   ["顾问的回话", "赵律师的回话", "周会计排的日子"].forEach((removedOpener) => {
     assert(!overnightCallbackOpenerById(brief, removedOpener), `案1 不得残留无效顾问开场: ${removedOpener}`);
   });
-  const sharedPerformanceEcho = brief.overnightStructure?.snapshotEcho?.["both-performed"] ?? "";
-  assertIncludes(sharedPerformanceEcho, "订座短信", "共同参与路线只能把具体物件带回第二夜");
-  assertIncludes(sharedPerformanceEcho, "你按短信问吧", "共同参与路线必须把订座归属留给玩家追问");
-  assert(!/会员号是我的|用自己的会员号订的|订座也是我办的/.test(sharedPerformanceEcho), "共同参与路线不得在第二夜订座场开始前交付会员号和订座主语");
-  assert(!sharedPerformanceEcho.includes("男装"), "立场回应不能在一句里重抄信用卡三桶");
-  assertEqual((sharedPerformanceEcho.match(/三万五/g) ?? []).length, 1, "立场回应只用一个未决金额接回主线");
-  assert(!sharedPerformanceEcho.includes("还能留着"), "立场回应不能用指代不明的作者摘要连接两晚剧情");
+  const debtShiftEcho = brief.overnightStructure?.snapshotEcho?.["both-performed"] ?? "";
+  assertIncludes(debtShiftEcho, "失业和旧账逼我接盘", "债务转嫁路线必须在第二夜按原行为回应");
+  assertIncludes(debtShiftEcho, "八万我没转", "债务转嫁路线必须保留当场止转结果");
+  assert(!debtShiftEcho.includes("男装") && !debtShiftEcho.includes("三万五"), "立场回应不能重新朗读账单分桶或未决金额");
   Object.values(brief.overnightStructure?.snapshotEcho ?? {}).forEach((echo) => {
     assert(!echo.includes("给我买的") && !echo.includes("会员号是我的") && !echo.includes("用自己的会员号订的") && !echo.includes("订座也是我办的"), "案 1 夜 B 立场回应只能带回待问材料，不能提前交付后续固定场景的答案");
   });
   assert(!overnightCallbackOpenerById(brief, "他对三万五的沉默"), "删除同席旁听后不得残留由旁听生成的夜 B 开场");
   assert(!brief.lurkerNote, "删除同席原句后不得让麦外来信凭空复现该句");
   assertIncludes(brief.stageJudgement, "八万先别转", "案一结论必须先给出当前可执行决定");
-  assertIncludes(brief.stageJudgement, "现在的余额", "案一结论必须要求咨询者说明自己的余额与花销");
-  assertIncludes(brief.stageJudgement, "没说清的三万五", "案一结论必须保留信用卡未知缺口");
-  assertIncludes(brief.stageJudgement, "他签下的债", "案一结论必须明确男方签下的债不能转给伴侣");
-  assertIncludes(brief.stageJudgement, "四万多共同消费", "案一判词必须用具体消费反制咨询者只谈男方衣物");
+  assertIncludes(brief.stageJudgement, "花到哪", "案一结论必须要求咨询者自己说明十四个月的花销");
+  assertIncludes(brief.stageJudgement, "卡是他签的", "案一结论必须明确男方签下的债不能转给伴侣");
+  assertIncludes(brief.stageJudgement, "十四个月", "案一判词必须点名长期固定给付，不能缩回零散消费");
+  assertIncludes(brief.stageJudgement, "每月一万七千五", "案一判词必须用每月固定转账说出这笔钱长期进入她的生活");
+  assertIncludes(brief.stageJudgement, "房租另付", "案一判词必须保留房租不在每月转账中的具体物件");
+  assertIncludes(brief.stageJudgement, "不是查账", "案一判词必须点名来电人索取公开背书的真实用途");
+  assert(!/四万多共同消费|没说清的三万五|一万二的设备/.test(brief.stageJudgement), "案一结案口播金额最多保留两处，细账回到结案卡");
   assert(!/虚荣作祟|花不起的日子/.test(brief.stageJudgement), "案一判词不得用抽象道德标签代替已经闭合的具体账目");
   assertIncludes(brief.stageJudgement, "这个忙我不帮", "案一判词必须让主播拒绝替咨询者省掉解释");
   const creditJudgementBeats = splitDialogueSentences(brief.stageJudgement ?? "");
@@ -4018,7 +4126,8 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   assertEqual(daySceneById(brief, "day-tony-member-docs")?.kind, "document", "案 2 必须能核完整名单与转账");
   assert(!(structure.dayScenes ?? []).some((scene) => scene.kind === "sitIn"), "案 2 不得再消耗包级同席配额");
   assert(!(structure?.snapshotEcho?.["industry-gray"] ?? "").includes("今天拿培训页一对"), "案 2 固定立场回应不得默认玩家白天一定取得培训页");
-  assertIncludes(structure?.snapshotEcho?.["industry-gray"] ?? "", "Tony 私下收钱", "案 2 行业灰区立场回应必须把熟客维护与私人收钱拆开");
+  assertIncludes(structure?.snapshotEcho?.["industry-gray"] ?? "", "是我裁的", "案 2 裁图路线必须由咨询者在第二夜接回自己的动作");
+  assertIncludes(structure?.snapshotEcho?.["industry-gray"] ?? "", "金额和账户栏", "案 2 裁图路线必须说清被她遮掉的是哪部分");
   const initial = initialOvernightStateFor(brief);
   assert(!canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-tony-shop-observe"] }), "案 2 只去一处不能进入第二夜");
   assert(canEnterOvernightCallback(brief, { ...initial, dayScenesDone: ["day-tony-shop-observe", "day-tony-member-docs"] }), "案 2 去满两处后必须允许回拨");
@@ -4065,11 +4174,11 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   assertIncludes(JSON.stringify(callerBenefitsScene?.casualQuestions ?? []), "染发、护理", "案 2 必须把高频理发消费留给具体追问，不塞进初次职业自报");
   assertIncludes(brief.stageJudgement ?? "", "回单", "案 2 判词必须点明要追的材料是什么");
   assertIncludes(brief.stageJudgement ?? "", "十二万", "案 2 判词必须称量来电人转出的金额");
-  assertIncludes(brief.stageJudgement ?? "", "走我户", "案 2 判词必须把代投口径落到可执行的留证动作");
-  assert(/有没有买成产品/.test(brief.stageJudgement ?? ""), "案 2 判词必须把入产品与否另行留下");
+  assertIncludes(brief.stageJudgement ?? "", "让他书面发", "案 2 判词必须把代投材料落到可执行的书面留证动作");
+  assertIncludes(brief.stageJudgement ?? "", "进没进产品", "案 2 判词必须只留一件入产品与否的未知");
   assert(!/六折|免过一次护理|十八次|三张十万元/.test(brief.stageJudgement ?? ""), "案 2 结案口播不得重新朗读已进入结案卡的材料清单");
-  assertIncludes(brief.stageJudgement ?? "", "长得好看", "案 2 判词必须回收咨询者最初明确看中 Tony 外表的承认");
-  assertIncludes(brief.stageJudgement ?? "", "主动找他代投改成恋爱诈骗", "案 2 判词必须当面指出咨询者不能把主动代投全部甩成被骗");
+  assertIncludes(brief.stageJudgement ?? "", "自己开口让他代投", "案 2 判词必须当面指出十二万由咨询者主动提出代投");
+  assertIncludes(brief.stageJudgement ?? "", "改口恋爱诈骗", "案 2 判词必须当面指出咨询者在风声后裁图改口");
   assertIncludes(brief.stageJudgement ?? "", "这个说法我不认", "案 2 判词必须让主播对恋爱诈骗叙事作出人格化判断");
   assert(!(brief.stageJudgement ?? "").includes("自己的贪心"), "案 2 判词不得用抽象道德标签代替已经播出的代投事实");
   const judgementBeats = splitDialogueSentences(brief.stageJudgement ?? "");
@@ -4287,6 +4396,9 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
   assert(!incomeCardScene?.sceneCloser, "案 3 不得在最终对峙突然新增四次见面记录表");
   assert(!JSON.stringify(brief).includes("四次见面做了张表"), "案 3 不得用未参与证据链的新道具凑收束");
   assertIncludes(brief.stageJudgement ?? "", "周末那顿饭先取消", "案 3 判词必须落到双方当场可执行的决定");
+  assertIncludes(brief.stageJudgement ?? "", "按差价收费", "案 3 判词必须点名查完普通家境后的加价行为");
+  assertIncludes(brief.stageJudgement ?? "", "你赞成", "案 3 判词必须把完整付款条件归回咨询者本人");
+  assertIncludes(brief.stageJudgement ?? "", "他不答应二十八万八，不是骗你", "案 3 判词必须明确拒绝二十八万八的付款条件不等于欺骗");
   const giftMicBeat = structure?.liveCounterBeats?.find((beat) => beat.id === "profile-gift-mic-request");
   const giftMicText = JSON.stringify(giftMicBeat?.lines ?? []);
   assertIncludes(giftMicText, "领证前把二十八万八打进你的卡", "案 3 男方插麦必须把女方个人收款账户带入必经矛盾");
@@ -4385,8 +4497,10 @@ test("RUNTIME-011", "case 4 keeps interlude choices on evidence that changes the
   assertEqual(nightStructureFor(brief)?.hangup?.hostLine, structure?.hostHoldLine, "案 4 挂断主持句必须与 overnight 对齐");
   assert(!/活动立项|报销单|申请编号/.test(JSON.stringify(nightStructureFor(brief)?.hangup ?? {})), "案 4 挂断不得提前承认批的是立项");
   assertIncludes(brief.stageJudgement ?? "", "正式报销", "案 4 判词必须给出公司报销需要补齐的具体入口");
-  assertIncludes(brief.stageJudgement ?? "", "拿到单号", "案 4 判词必须要求取得可继续追踪的报销编号");
   assertIncludes(brief.stageJudgement ?? "", "看准你想表现", "案 4 判词必须点名同事如何利用新人想表现的心思");
+  assert(/流程都走完了.{0,8}假话/.test(brief.stageJudgement ?? ""), "案 4 判词必须直说流程完成是假话");
+  assertIncludes(brief.stageJudgement ?? "", "返费", "案 4 判词必须把公司层面的返费结构点出来");
+  assertIncludes(brief.stageJudgement ?? "", "个人垫钱", "案 4 判词必须把公司扩张与个人垫钱连接起来");
   assert(!brief.stageJudgement?.includes("供应商"), "案 4 供应商返利降为白天可选支线后，不得重新塞进固定判词");
   assert(!/四十三页|只改了字体/.test(brief.stageJudgement ?? ""), "案 4 判词不得用无关劳动怨气挤占两条资金路径");
   assert(!brief.evidenceChecks?.find((check) => check.id === "work-budget-timeline")?.options?.find((option) => option.correct)?.reactionLine?.includes("财务根本还没说延后"), "案 4 材料反应必须像人物现场想起来，而不是分析报告");

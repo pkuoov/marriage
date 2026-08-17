@@ -38,6 +38,11 @@ export function playSfx(kind = "click") {
   }[kind] ?? "ui.click");
 }
 
+export function playDialogueBlip(frequency = 280) {
+  if (!settings.enabled) return;
+  tone({ frequency: Math.max(120, Math.min(720, Number(frequency) || 280)), duration: 0.018, type: "square", gain: 0.0048 });
+}
+
 export function playAudioCue(cueId = "", callbacks = {}) {
   const cue = audioCueById(cueId);
   if (!cue || !settings.enabled) return { ok: false, reason: cue ? "muted" : "unknown-cue" };
@@ -103,6 +108,17 @@ export function resetAudioCueHistory() {
   lastSceneKey = "";
 }
 
+export function clearPlayedCueKeysByPrefix(prefix = "") {
+  if (!prefix) return 0;
+  let cleared = 0;
+  for (const key of [...playedCueKeys]) {
+    if (!key.startsWith(prefix)) continue;
+    playedCueKeys.delete(key);
+    cleared += 1;
+  }
+  return cleared;
+}
+
 export function subscribeAudioState(listener) {
   if (typeof listener !== "function") return () => {};
   audioListeners.add(listener);
@@ -164,6 +180,15 @@ function playSynth(kind = "click") {
   }
   if (kind === "page") {
     tone({ frequency: 300, duration: 0.05, type: "sine", gain: 0.012, slideTo: 360 });
+    return;
+  }
+  if (kind === "present-hit") {
+    tone({ frequency: 185, duration: 0.12, type: "square", gain: 0.032, slideTo: 370 });
+    globalThis.setTimeout(() => tone({ frequency: 370, duration: 0.18, type: "sawtooth", gain: 0.026, slideTo: 740 }), 85);
+    return;
+  }
+  if (kind === "present-miss") {
+    tone({ frequency: 150, duration: 0.24, type: "sawtooth", gain: 0.03, slideTo: 78 });
     return;
   }
   tone({ frequency: 440, duration: 0.055, type: "sine", gain: 0.026, slideTo: 520 });
@@ -272,6 +297,7 @@ function finishVoice(status = "ended", cueId = "") {
 function createAudioElement(cue) {
   const audio = new Audio(cue.src);
   audio.preload = "auto";
+  if (Number.isFinite(Number(cue.loopStart)) && Number(cue.loopStart) > 0) audio.currentTime = Number(cue.loopStart);
   audio.volume = effectiveCueVolume(cue);
   return audio;
 }

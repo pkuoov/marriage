@@ -51,8 +51,9 @@ export function callLineHtml(line = {}) {
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
   const autoAdvanceAttr = line.autoAdvanceNext === true ? ' data-auto-advance-next="true"' : "";
+  const speedTierAttr = line.textSpeedTier ? ` data-text-speed-tier="${escapeHtml(line.textSpeedTier)}"` : "";
   return `
-    <div class="call-line ${role}"${autoAdvanceAttr}>
+    <div class="call-line ${role}"${autoAdvanceAttr}${speedTierAttr}>
       <b>${speaker}</b>
       <p>${escapeHtml(text)}</p>
     </div>

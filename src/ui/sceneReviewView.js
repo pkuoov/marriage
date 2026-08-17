@@ -100,6 +100,7 @@ export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pic
       dialogueAnswerHtml(item)
     ]),
     keyChoiceExchangeHtml({ scene, pick, fallbackAnswer }),
+    scene.interactionMode === "testimonyWall" ? sceneBeatLinesHtml(scene.afterVersion) : "",
     sceneBeatLinesHtml(scene.sceneCloser)
   ].join("");
 }

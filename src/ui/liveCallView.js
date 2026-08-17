@@ -44,7 +44,8 @@ export function storyPackSummaryHudHtml({ total = 1, solved = 0 } = {}) {
 
 export function liveCommentStripHtml(pressure = {}) {
   const comments = Array.isArray(pressure.comments) ? pressure.comments : [];
-  return `<div class="live-comment-strip">${comments.map((item) => `<span class="live-comment">${escapeHtml(item)}</span>`).join("")}</div>`;
+  const flashback = pressure.flashback ?? null;
+  return `<div class="live-comment-strip">${flashback ? `<blockquote class="flashback-quote"><span>闪回引用 · ${escapeHtml(flashback.sourceCaseLabel ?? "前案")}</span><p>“${escapeHtml(flashback.quote ?? flashback.text ?? "")}”</p></blockquote>` : ""}${comments.map((item) => `<span class="live-comment">${escapeHtml(item)}</span>`).join("")}</div>`;
 }
 
 export function callerExpressionForView({ pressure = {}, budget = {}, scene = "", sceneIndex = 0, mood = "listening" } = {}) {
@@ -77,17 +78,21 @@ export function hostSpeakingStateForView({ scene = "", mood = "listening" } = {}
   return "questioning";
 }
 
-export function callerArtForExpression({ neutralSrc = "", variants = {}, expression = {} } = {}) {
+export function callerArtForExpression({ neutralSrc = "", variants = {}, variantPlan = {}, expression = {} } = {}) {
   const neutral = variants.neutral ?? neutralSrc ?? "";
   const expressionKind = expression.kind ?? "neutral";
   const variantKind = expressionKind === "pause"
     ? "pause"
+    : ["shaken", "broken"].includes(expressionKind)
+      ? expressionKind
     : ["shift", "guarded"].includes(expressionKind)
       ? "guarded"
       : "neutral";
+  const plannedFallback = variantPlan?.[variantKind]?.fallback;
   return {
     variantKind,
-    src: variants[variantKind] ?? neutral,
+    planned: variantPlan?.[variantKind]?.status === "planned",
+    src: variants[variantKind] ?? variants[plannedFallback] ?? neutral,
     fallbackSrc: neutral
   };
 }

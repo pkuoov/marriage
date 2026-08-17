@@ -1,5 +1,5 @@
 import { generateCasesForMode } from "./caseModes.js";
-import { getAudioSettings, playAudioCueOnce, playSfx, resetAudioCueHistory } from "./sound.js";
+import { clearPlayedCueKeysByPrefix, getAudioSettings, playAudioCueOnce, playDialogueBlip, playSfx, resetAudioCueHistory } from "./sound.js";
 import { audioCueView } from "./audioCatalog.js";
 import { baseState, clearStateSnapshot, loadMeta, loadState, normalizeRuntimeState, saveStateSnapshot } from "./state.js";
 import { NPCS } from "./story.js";
@@ -120,6 +120,7 @@ const {
   saveState,
   render,
   clearQuestionRewindHistory,
+  clearPlayedCueKeysByPrefix,
   areaTotalForRetry
 });
 const {
@@ -756,6 +757,11 @@ function renderDailyCase() {
   if (state.scene === "sceneQuestionAnswer") return screens.renderSceneQuestionAnswer(brief);
   if (state.scene === "sceneLineReplay") return screens.renderSceneLineReplay(brief);
   if (state.scene === "statementPatienceLost") return screens.renderStatementPatienceLost(brief);
+  if (state.scene === "testimonyWall") return screens.renderTestimonyWall(brief);
+  if (state.scene === "testimonyMaterials") return screens.renderTestimonyMaterials(brief, "soft");
+  if (state.scene === "decisivePresentMaterial") return screens.renderTestimonyMaterials(brief, "decisive");
+  if (state.scene === "decisivePresentTarget") return screens.renderDecisivePresentTarget(brief);
+  if (state.scene === "decisivePresentHit") return screens.renderDecisivePresentHit(brief);
   if (isSceneReviewScene(state.scene)) return screens.renderSceneReview(brief);
   if (state.scene === "nightShellPrologue") return screens.renderNightShellPrologue(brief);
   if (state.scene === "nightShellEpilogue") return screens.renderNightShellEpilogue(brief);
@@ -800,7 +806,7 @@ function renderDailyCase() {
 }
 
 function isSceneReviewScene(scene = "") {
-  return ["sceneReview", "sceneQuestionMenu", "sceneQuestionAnswer", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2"].includes(scene);
+  return ["sceneReview", "sceneQuestionMenu", "sceneQuestionAnswer", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2", "testimonyWall", "testimonyMaterials", "decisivePresentMaterial", "decisivePresentTarget", "decisivePresentHit"].includes(scene);
 }
 
 function liveChapterTitle(brief = {}) {
@@ -906,7 +912,7 @@ function sceneWithLiveCounterQuestionOverride(brief = {}, scene = {}) {
   };
 }
 
-function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen" }) {
+function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen", musicPhase = "" }) {
   const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
   const backdropClass = caseBackdropClass(brief);
   const pressure = showCaseHud ? (pressureOverride ?? currentLivePressure(brief, mood)) : {};
@@ -934,7 +940,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     screenEffect: state.lastScreenEffect ?? "",
     pixelTransition,
     rewindAvailable: canRewindQuestion(questionRewindHistory),
-    screenClass: `${screenClass} ${pixelTransition?.kind === "reveal" ? "key-reveal-answer" : ""} ${showCaseHud ? liveSceneClass(brief, mood, pressure) : ""}`.trim(),
+    screenClass: `${screenClass} effects-${state.settings?.screenEffects ?? "full"} ${pixelTransition?.kind === "reveal" ? "key-reveal-answer" : ""} ${showCaseHud ? liveSceneClass(brief, mood, pressure) : ""}`.trim(),
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
           onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
@@ -968,7 +974,8 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
   bind('[data-action="title"]', returnToTitle);
   bind('[data-action="reset"]', resetToTitle);
   bindAudioControls({ root: app, onToggleSound: render });
-  syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, pressureLevel: pressure.level, audioEnterCueId, keepVoiceCueId });
+  syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, pressureLevel: pressure.level, musicPhase, audioEnterCueId, keepVoiceCueId });
+  if (pressure.flashback?.id) playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:flashback:${pressure.flashback.id}`);
   resetViewportScroll();
   mountCurrentDialogue();
   queueDefaultFocus();
@@ -1045,6 +1052,8 @@ function mountCurrentDialogue() {
     speed: state.settings?.textSpeed ?? "normal",
     autoMode: Boolean(state.settings?.autoMode),
     autoDelay: state.settings?.autoDelay ?? 2,
+    presentationProfile: activeCaseBrief()?.dialoguePresentation ?? {},
+    onBlip: playDialogueBlip,
     onPageStart: (page) => {
       const pageLines = Array.isArray(page?.lines) ? page.lines : [page];
       pageLines.forEach((line) => {
@@ -1114,9 +1123,11 @@ function mountMaterialPanel() {
 
 function cycleAvgSetting(kind) {
   const speeds = ["slow", "normal", "fast", "instant"];
+  const effects = ["full", "reduced", "off"];
   if (kind === "auto") state.settings.autoMode = !state.settings.autoMode;
   if (kind === "speed") state.settings.textSpeed = speeds[(speeds.indexOf(state.settings.textSpeed) + 1) % speeds.length];
   if (kind === "fast") state.settings.fastForward = !state.settings.fastForward;
+  if (kind === "effects") state.settings.screenEffects = effects[(effects.indexOf(state.settings.screenEffects) + 1) % effects.length];
   saveState();
   render();
 }

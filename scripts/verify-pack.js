@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS } from "../src/runtime/contentCase.js";
 import { assertDialogueTexture, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js";
+import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js";
 import { STORY_PACKS } from "../src/storyPacks.js";
 import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js";
 
@@ -1391,6 +1392,10 @@ test("PACK-003", "case pressure packets are complete", () => {
 test("PACK-004", "comments and route archetypes are present", () => {
   assertEqual(comments.themeId, manifest.theme.id, "comments themeId 必须和 manifest theme 对齐");
   assert((comments.commentSeeds ?? []).length >= Math.min(4, manifest.size), "评论种子数量要覆盖当前故事包规模");
+  assert(manifest.theme?.thesis?.includes("对自己有利的那一截"), "包级主题必须点明来电人只展示对自己有利的部分");
+  assert(manifest.theme?.commentPrompt?.includes("材料对上的") && manifest.theme?.commentPrompt?.includes("材料没写的"), "观察题必须奖励已对上的直说、未写明的停住");
+  assert(comments.highRevealTone?.includes("该点的那句") && comments.highRevealTone?.includes("点到了"), "高揭示奖励必须回到玩家点中的具体说法");
+  assert(comments.lowRevealTone?.includes("省掉的那句") && comments.lowRevealTone?.includes("还没听出来"), "低揭示反馈必须指出来电人仍有没说出的话");
   const archetypes = routeArchetypes.archetypes ?? [];
   ["money-flow", "document-edge", "caller-credibility", "process-control", "identity-wording"].forEach((axis) => {
     assert(archetypes.some((item) => item.id === axis), `路线原型缺少 ${axis}`);
@@ -1597,6 +1602,113 @@ test("PACK-005", "runtime-loaded cases expose playable nested content", () => {
         assert(!/[,:;]/.test(prosePunctuation), `${casePacket.caseId} ${field} 玩家可见中文正文不得混入半角逗号、冒号或分号`);
       });
     });
+});
+
+test("PACK-005A", "each long case has one two-act testimony wall with bounded decisive presents", () => {
+  let hiddenStatementCount = 0;
+  const act2OpenerLocks = {
+    "01-credit": ["17500", "十四个月"],
+    "02-tony": ["十二万", "代投"],
+    "03-profile": ["二十八万八", "二十万", "不对等"],
+    "04-workplace": ["没走完", "付款"]
+  };
+  for (const packet of caseFiles) {
+    const walls = (packet.sceneVersions ?? []).filter((scene) => scene.interactionMode === "testimonyWall");
+    assertEqual(walls.length, 1, `${packet.caseId} 必须且只能有一场 testimonyWall`);
+    const scene = walls[0];
+    const legacyStatements = scene.testimonyWall?.statements ?? [];
+    const acts = scene.testimonyWall?.acts ?? [];
+    assertEqual(acts.length, 2, `${packet.caseId} 证词墙必须恰好两幕`);
+    const [act1, act2] = acts;
+    assertDeepEqual(act1.statements, legacyStatements, `${packet.caseId} act1 必须原样沿用旧 testimonyWall.statements`);
+    assertDeepEqual(act1.decisivePresent, scene.decisivePresent, `${packet.caseId} act1 必须原样沿用旧 decisivePresent 落点`);
+    assert(legacyStatements.length >= 4 && legacyStatements.length <= 6, `${packet.caseId} act1 证词墙必须有 4 到 6 句`);
+    assert((act2.statements ?? []).length >= 3 && (act2.statements ?? []).length <= 4, `${packet.caseId} act2 必须有 3 到 4 句`);
+    [act1, act2].forEach((act, actIndex) => {
+      (act.statements ?? []).forEach((statement, statementIndex) => {
+        assertNonEmptyString(statement.id, `${packet.caseId} acts[${actIndex}].statements[${statementIndex}] 缺少 id`);
+        assertNonEmptyString(statement.text, `${packet.caseId} acts[${actIndex}].statements[${statementIndex}] 缺少 text`);
+        assertNonEmptyString(statement.pressResponse, `${packet.caseId} acts[${actIndex}].statements[${statementIndex}] 缺少 pressResponse`);
+        assertNonEmptyString(statement.presentResponse, `${packet.caseId} acts[${actIndex}].statements[${statementIndex}] 缺少 presentResponse`);
+        if (statement.hidden) hiddenStatementCount += 1;
+      });
+      assertNonEmptyString(act.midSummary, `${packet.caseId} acts[${actIndex}] 缺少主播中场小结`);
+      const present = act.decisivePresent;
+      assertEqual(present?.maxAttempts, 2, `${packet.caseId} act${actIndex + 1} 决定性 PRESENT 必须严格限两次`);
+      assert((act.statements ?? []).some((statement) => statement.id === present?.statementId), `${packet.caseId} act${actIndex + 1} 决定性证词句不存在`);
+      assert((present?.materialCards ?? []).length >= 3, `${packet.caseId} act${actIndex + 1} 正式指认前必须展示材料卡选择器`);
+      const correctCard = present.materialCards.find((card) => card.id === present.evidenceId);
+      assert(correctCard, `${packet.caseId} act${actIndex + 1} 决定性材料不在选择器中`);
+      ["callerLine", "hostLine", "boundaryLine", "contradiction"].forEach((field) => assertNonEmptyString(present[field], `${packet.caseId} acts[${actIndex}].decisivePresent.${field} 不能为空`));
+      const documentId = String(present.evidenceId).split(":")[0];
+      const document = (packet.documents ?? []).find((item) => item.id === documentId);
+      assert(document, `${packet.caseId} act${actIndex + 1} 决定性材料必须来自已有 spine-audit 文档`);
+      const rowIds = correctCard.sourceRowIds ?? String(present.evidenceId).split(":").slice(1).join(":").split("+");
+      rowIds.forEach((rowId) => assert(document.rows.some((row) => row.rowId === rowId), `${packet.caseId} act${actIndex + 1} 决定性材料指向不存在的文档行 ${rowId}`));
+    });
+    assert(scene.testimonyWall?.reliefBeat?.comment && scene.testimonyWall?.reliefBeat?.hostLine, `${packet.caseId} climax 前缺少喜剧泄压拍`);
+    assertNonEmptyString(act2.revisedFrame, `${packet.caseId} act2 必须登记 revisedFrame`);
+    const act2OpenerText = (act2.openerLines ?? []).map((line) => line.text ?? "").join(" ");
+    assert((act2.openerLines ?? []).length >= 2, `${packet.caseId} act2 必须先播放来电人与主播的改口开场`);
+    assert((act2.openerFactKeywords ?? []).length >= 1, `${packet.caseId} act2 必须登记首幕决定性事实关键词`);
+    (act2.openerFactKeywords ?? []).forEach((keyword) => assert(act2OpenerText.includes(keyword), `${packet.caseId} act2 openerLines 必须承认首幕决定性事实 ${keyword}`));
+    (act2OpenerLocks[packet.caseId] ?? []).forEach((keyword) => assert(act2OpenerText.includes(keyword), `${packet.caseId} act2 openerLines 必须保留锁定承认词 ${keyword}`));
+    const act1Texts = new Set((act1.statements ?? []).map((statement) => statement.text));
+    const act2Bearing = (act2.statements ?? []).find((statement) => statement.id === act2.decisivePresent?.statementId);
+    assert(act2Bearing && !act1Texts.has(act2Bearing.text), `${packet.caseId} act2 承重句不得等于 act1 任一证词`);
+    assert((act2.decisivePresent?.boundaryLineKeyPhrases ?? []).length >= 1, `${packet.caseId} act2 必须登记 boundaryLine 关键短语锁`);
+    (act2.decisivePresent?.boundaryLineKeyPhrases ?? []).forEach((phrase) => {
+      assert(act2.decisivePresent.boundaryLine.includes(phrase), `${packet.caseId} act2 boundaryLine 必须包含登记短语 ${phrase}`);
+      assert(!act2Bearing.text.includes(phrase), `${packet.caseId} act2 承重句不得提前说出最终事实边界 ${phrase}`);
+    });
+    assert(act2.decisivePresent.evidenceId !== act1.decisivePresent.evidenceId, `${packet.caseId} act2 不得复用 act1 的决定性证据`);
+    const transformed = (act2.statements ?? []).filter((statement) => statement.survivesFromAct1);
+    assert(transformed.length >= 1, `${packet.caseId} act2 至少一条证词必须由 act1 存活说法变形而来`);
+    transformed.forEach((statement) => {
+      const source = (act1.statements ?? []).find((candidate) => candidate.id === statement.survivesFromAct1);
+      assert(source, `${packet.caseId} act2 变形证词指向不存在的 act1 句 ${statement.survivesFromAct1}`);
+      assert(statement.text !== source.text, `${packet.caseId} act2 变形证词必须改写措辞，不能原样重复`);
+    });
+    assertEqual((act2.comparison ?? []).length, (act1.statements ?? []).length, `${packet.caseId} act2 对照表必须覆盖 act1 每句证词`);
+    const profile = packet.dialoguePresentation ?? {};
+    assert(profile.speedTiers?.strained && profile.speedTiers?.stalled, `${packet.caseId} dialoguePresentation 必须有两档额外字速`);
+    ["host", "caller", "respondent"].forEach((role) => assert(Number(profile.blipPitchHz?.[role]) > 0, `${packet.caseId} 缺少 ${role} blip 音高`));
+    (packet.sceneVersions ?? []).filter((candidate) => candidate.interactionMode !== "testimonyWall").forEach((candidate) => {
+      assert(splitDialogueSentences(candidate.version ?? "").length <= 5, `${packet.caseId}/${candidate.id} version 超过 5 句`);
+    });
+  }
+  assert(hiddenStatementCount >= 1, "至少一案必须由 PRESS 揭出隐藏矛盾句");
+
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const caseOnePresent = caseOne.sceneVersions.find((scene) => scene.decisivePresent)?.decisivePresent;
+  assertEqual(caseOnePresent?.evidenceId, "case1-bank-flow:r16", "案1必须锁定月转 17500 × 14 个月流水行");
+  assertEqual(caseOnePresent?.statementId, "credit-consumption-gloss", "案1必须把流水出示在粉饰消费证词上");
+  assert(JSON.stringify(caseOne.documents).includes("月转 17500 × 14 个月"), "案1文档必须保留锁定原句");
+
+  const caseFour = caseFiles.find((packet) => packet.caseId === "04-workplace");
+  const caseFourScene = caseFour.sceneVersions.find((scene) => scene.decisivePresent);
+  assertEqual(caseFourScene?.decisivePresent?.evidenceId, "case4-payment-ledger:q07", "案4必须锁定缺失付款栏 q07");
+  assert(caseFourScene.testimonyWall.statements.find((statement) => statement.id === caseFourScene.decisivePresent.statementId)?.text.includes("流程都走完了"), "案4决定性证词必须保留‘流程都走完了’");
+
+  ["02-tony", "03-profile"].forEach((caseId) => {
+    const packet = caseFiles.find((candidate) => candidate.caseId === caseId);
+    const present = packet.sceneVersions.find((scene) => scene.decisivePresent)?.decisivePresent;
+    assertNonEmptyString(present?.selectionReason, `${caseId} 必须解释 A→B 翻转证据选择理由`);
+    assert(/不证明|保留|未知/.test(present.selectionReason), `${caseId} 选择理由必须写明事实边界`);
+  });
+
+  manifest.sequence.forEach((item) => {
+    assertDeepEqual(Object.keys(item.callerArtVariantPlan ?? {}).sort(), ["broken", "shaken"], `${item.caseId} 必须登记动摇与破防两档 planned 立绘`);
+    Object.values(item.callerArtVariantPlan).forEach((plan) => {
+      assertEqual(plan.status, "planned", `${item.caseId} 未交付立绘必须明确标成 planned`);
+      assert(["pause", "guarded"].includes(plan.fallback), `${item.caseId} planned 立绘必须有现有差分 fallback`);
+    });
+  });
+  caseFiles.flatMap((packet) => packet.crossCaseEchoes ?? []).forEach((echo) => {
+    assertNonEmptyString(echo.id, "跨案回收必须有稳定 flashback id");
+    assertNonEmptyString(echo.quote, "跨案回收必须带前案原句");
+    assertNonEmptyString(echo.sourceCaseLabel, "跨案回收必须显示案件编号");
+  });
 });
 
 test("PACK-006", "theatrical license lurker budget stays singular", () => {
@@ -1897,12 +2009,14 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const profileMotiveText = JSON.stringify({
     afterVersion: profileMotiveScene?.afterVersion,
     question: profileMotiveQuestion,
-    judgement: caseThree?.stageJudgement
+    judgement: caseThree?.stageJudgement,
+    closingBeats: caseThree?.caseClosing?.beats,
+    confirmed: caseThree?.caseClosing?.confirmed
   });
   assert(profileMotiveText.includes("父母都是普通上班") && profileMotiveText.includes("婚房也帮不上"), "案三必须由父母调查问出男方普通家境，不能只停在 MBA 标签");
   assert(profileMotiveText.includes("没说骗") && profileMotiveText.includes("彩礼就该多拿一点"), "案三父母必须借家境落差加价，不能继续把它写成单纯受骗反应");
   assert(profileMotiveQuestion?.suspicionLabel?.includes("有没有叫停"), "案三承重按钮必须让玩家判断咨询者知情后有没有叫停");
-  assert(profileMotiveText.includes("工作和家里都比他稳一点") && profileMotiveText.includes("多花钱、多听你说"), "案三必须落下咨询者的条件优越感及其对男方投入的理所当然");
+  assert(profileMotiveText.includes("条件更好") && profileMotiveText.includes("这些付出是应该的"), "案三必须在事实状态中保留咨询者的条件优越感及其对男方投入的理所当然");
 
   const firstTailText = JSON.stringify(interludesByCaseId.get("01-credit") ?? {});
   assert(firstTailText.includes("收益写得很高"), "案一小尾声必须由赵律师补入高收益合同风险");
@@ -2254,7 +2368,7 @@ test("PACK-019", "cases 2 and 3 keep countable benefit and remedy boundaries", (
   assert(caseTwoLedger?.rows?.some((row) => row.rowId === "m03" && String(row.memo ?? "").includes("走Tony户")), "案二行级材料必须保留走他户备注");
   assert(caseTwoLedger?.rows?.some((row) => row.rowId === "m02" && row.amount === "¥1,000,000"), "案二行级材料必须保留周的一百万已买行");
   assert(caseTwo?.stageJudgement?.includes("十二万") && caseTwo?.stageJudgement?.includes("回单"), "案二结案必须把要回单和十二万拆开处理");
-  assert(caseTwo?.stageJudgement?.includes("主动找他代投改成恋爱诈骗") && caseTwo?.stageJudgement?.includes("这个说法我不认"), "案二主播必须对恋爱诈骗叙事作出明确判断，不能只念处理清单");
+  assert(caseTwo?.stageJudgement?.includes("自己开口让他代投") && caseTwo?.stageJudgement?.includes("改口恋爱诈骗") && caseTwo?.stageJudgement?.includes("这个说法我不认"), "案二主播必须对主动代投后改口恋爱诈骗作出明确判断");
 
   const caseThree = caseFiles.find((packet) => packet.caseId === "03-profile");
   const caseThreeText = JSON.stringify(caseThree ?? {});
@@ -2269,7 +2383,9 @@ test("PACK-019", "cases 2 and 3 keep countable benefit and remedy boundaries", (
   assert(caseThreeDeepText.includes("八万四") && caseThreeDeepText.includes("六万") && caseThreeDeepText.includes("领证以后") && caseThreeDeepText.includes("添家电、搬家"), "案三必须通过短问短答问出咨询者自己的存款、上限和使用时点");
   assert(fundsRows.get("p04")?.memo?.includes("领证前转入女方个人账户"), "案三材料行必须写清彩礼进入谁的账户");
   assert(fundsRows.get("p07")?.memo?.includes("不包含在 28.8 万内"), "案三材料行必须单列婚宴与首饰");
-  assert(caseThree?.stageJudgement?.includes("他也可以不答应") && caseThree?.stageJudgement?.includes("不能因为他不答应，就说他骗你"), "案三结案必须承认男方可以拒绝未达成一致的付款条件");
+  assert(caseThree?.stageJudgement?.includes("他不答应二十八万八") && caseThree?.stageJudgement?.includes("不是骗你"), "案三结案必须明确拒绝二十八万八的付款条件不等于欺骗");
+  assert(caseThree?.stageJudgement?.includes("按差价收费") && caseThree?.stageJudgement?.includes("你赞成"), "案三结案必须点名查完普通家境后加价，并把条件归回咨询者本人");
+  assert(!caseThree?.investigationHooks?.some((hook) => hook?.stillCannotProve?.includes("女方只图钱")), "案三未知边界不得再用‘不能证明只图钱’替已锁死的加价行为免责");
 });
 
 test("PACK-019A", "spoken judgements do not read the whole closing card aloud", () => {
@@ -2303,6 +2419,59 @@ test("PACK-019B", "pressure dialogue does not regress to tidy self-analysis", ()
       assert(!spokenText.includes(line), `${casePacket.caseId} 高压台词不得退回完整自我分析：“${line}”`);
     });
   });
+});
+
+test("PACK-019C", "closing point surfaces name locked behavior before preserving unknowns", () => {
+  const decisiveHostLines = caseFiles.flatMap((casePacket) => (casePacket.sceneVersions ?? []).flatMap((scene) => [
+    scene?.decisivePresent?.hostLine,
+    ...(scene?.testimonyWall?.acts ?? []).map((act) => act?.decisivePresent?.hostLine)
+  ])).filter(Boolean);
+  const pointSurfaceText = JSON.stringify({
+    thesis: manifest.theme?.thesis,
+    commentPrompt: manifest.theme?.commentPrompt,
+    hiddenThread: manifest.theme?.hiddenThread,
+    highRevealTone: comments.highRevealTone,
+    lowRevealTone: comments.lowRevealTone,
+    cases: caseFiles.map((casePacket) => ({
+      caseId: casePacket.caseId,
+      hostWoundHook: casePacket.hostWoundHook,
+      stanceSnapshot: casePacket.stanceSnapshot,
+      stageJudgement: casePacket.stageJudgement,
+      caseClosing: casePacket.caseClosing,
+      careChoices: casePacket.careChoices
+    })),
+    decisiveHostLines
+  });
+  assert(!/先别替谁下结论|不能证明女方只图钱|别只骂一方|别上纲上线|你没有急着判人|今晚谁都别|先别急|谁也不容易|不宜定性|不好说死|比较复杂|先把话说开|市场都这样|双方都有问题|各打五十大板/.test(pointSurfaceText), "点名面不得再用和稀泥句撤销已经锁死的判断");
+  const spokenPointSurfaceText = JSON.stringify({
+    theme: manifest.theme,
+    commentSeeds: comments.commentSeeds,
+    highRevealTone: comments.highRevealTone,
+    lowRevealTone: comments.lowRevealTone,
+    cases: caseFiles.map((casePacket) => ({
+      stageJudgement: casePacket.stageJudgement,
+      closingTitle: casePacket.caseClosing?.title,
+      closingVerdict: casePacket.caseClosing?.verdict,
+      stanceNote: casePacket.stanceSnapshot?.note,
+      afterPickLine: casePacket.stanceSnapshot?.afterPickLine,
+      careHostLines: (casePacket.careChoices ?? []).map((choice) => choice.hostLine)
+    })),
+    decisiveHostLines
+  });
+  assert(!/站不住|开脱|锁死|留白|粉饰|受害者叙事|零散共同消费|由他解释|这两件另算|结案会.{0,8}点名|锁死哪件|这不是财务慢，也不是/.test(spokenPointSurfaceText), "主播与弹幕点名面不得使用模板判词或编剧工作词");
+  const sloganCount = [
+    ...caseFiles.map((casePacket) => casePacket.stageJudgement ?? ""),
+    ...decisiveHostLines
+  ].reduce((count, line) => count + (line.match(/这不是[^。！？]{0,32}[，,]是/g)?.length ?? 0), 0);
+  assertEqual(sloganCount, 1, "「这不是 A，是 B」口号只保留案三「这不是谈结婚，是按差价收费」一处");
+  caseFiles.forEach((casePacket) => {
+    assert(!casePacket.stanceSnapshot?.prompt?.includes("站哪边"), `${casePacket.caseId} 立场快照必须问行为，不问站队`);
+  });
+  const byId = new Map(caseFiles.map((casePacket) => [casePacket.caseId, casePacket]));
+  assert(byId.get("01-credit")?.stageJudgement?.includes("公开替你说") && byId.get("01-credit")?.stageJudgement?.includes("每月一万七千五") && byId.get("01-credit")?.stageJudgement?.includes("房租另付"), "案一必须用十四个月的固定转账与房租点名公开赦免用途");
+  assert(byId.get("04-workplace")?.stageJudgement?.includes("是假话") && byId.get("04-workplace")?.stageJudgement?.includes("返费") && byId.get("04-workplace")?.stageJudgement?.includes("垫钱"), "案四必须直说流程假话并点到公司返费与个人垫钱");
+  assert(byId.get("03-profile")?.stageJudgement?.includes("按差价收费") && byId.get("03-profile")?.stageJudgement?.includes("查完普通家境"), "案三必须点名查完普通家境后按差价收费");
+  assert(byId.get("02-tony")?.stageJudgement?.includes("裁掉金额栏") && byId.get("02-tony")?.stageJudgement?.includes("自己人") && byId.get("02-tony")?.stageJudgement?.includes("不给原件"), "案二必须分别点名来电人裁图和 Tony 拿亲密称呼收钱后不给材料");
 });
 
 test("PACK-020", "all four long cases keep one causal layered-disguise chain", () => {

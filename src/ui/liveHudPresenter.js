@@ -49,7 +49,7 @@ export function createLiveHudPresenter(ctx) {
     const comments = Array.isArray(pressure.comments) ? [...pressure.comments] : [];
     if (!echo || comments.length === 0) return pressure;
     comments[stableEchoIndex(`${brief.id}:${echo.requiresCaseId}:${echo.text}`, comments.length)] = echo.text;
-    return { ...pressure, comments };
+    return { ...pressure, comments, flashback: echo };
   }
 
   function eligibleCrossCaseEcho(brief = {}) {
@@ -160,6 +160,7 @@ export function createLiveHudPresenter(ctx) {
     return callerArtForExpression({
       neutralSrc: neutralArt,
       variants: brief.callerArtVariants,
+      variantPlan: brief.callerArtVariantPlan,
       expression
     });
   }

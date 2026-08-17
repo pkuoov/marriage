@@ -68,20 +68,20 @@
     "id": "identity-cost-demo",
     "title": "四通来电",
     "intro": "热线已经接进来。资料在后台，她已经开口了。",
-    "thesis": "账单、审批页、工资流水和店表都是真的，但没有一份能单独证明当事人的全部说法。",
-    "commentPrompt": "先别替谁下结论。把四样东西放在一起看。",
+    "thesis": "账单、审批页、工资流水和店表都是真的。来电人拿给直播间看的，却总是对自己有利的那一截。",
+    "commentPrompt": "材料对上的，就直说；材料没写的，到这儿为止。",
     "hiddenThread": {
-      "title": "四份材料",
-      "label": "各自只证明了一部分",
-      "reveal": "账单、审批页、资料图和店表都是真的。可它们一张也没有把当事人嘴里的那段故事独自证明完。",
-      "lowReveal": "四样材料已经摆到一起了。它们各自缺的那一块，还没有完全对上。",
+      "title": "她们省掉的那一句",
+      "label": "材料没错，话没说全",
+      "reveal": "四张材料都是真的。来电人给直播间看的，却总是对自己有利的那一截。",
+      "lowReveal": "材料都在，她们省掉的那句话，你还有没听出来的。",
       "beats": [
         "账单里有消费、借款和两笔认购，尾号 3301 仍没有名字。",
         "三张审批页都写着通过，付款账户和回单号仍是空的。",
         "学校图和工资卡都是真的，两边的全部家底仍没有摊开。",
         "店表写了起投和走他户，十二万是否入产品仍不知道。"
       ],
-      "comment": "「四张材料都是真的，偏偏没有一张能替人把整句话说完。」"
+      "comment": "「材料是真的。她没说的那截，才要紧。」"
     }
   },
   "caseLabels": [
@@ -117,6 +117,10 @@
         "guarded": "./assets/generated/callers/pixel-case01/caller_credit_guarded_pixel.png?v=0.26.0",
         "pause": "./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.26.0"
       },
+      "callerArtVariantPlan": {
+        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-case01/caller_credit_shaken_pixel.png" },
+        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-case01/caller_credit_broken_pixel.png" }
+      },
       "evidenceBoard": "./assets/generated/materials/case1-credit-evidence-board.png?v=0.27.0",
       "difficultyProfile": {
         "tier": 1,
@@ -151,6 +155,10 @@
         "guarded": "./assets/generated/callers/pixel-case04/caller_work_guarded_pixel.png?v=0.26.0",
         "pause": "./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.26.0"
       },
+      "callerArtVariantPlan": {
+        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-case04/caller_work_shaken_pixel.png" },
+        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-case04/caller_work_broken_pixel.png" }
+      },
       "evidenceBoard": "./assets/generated/materials/case4-workplace-evidence-board.png?v=0.27.0",
       "difficultyProfile": {
         "tier": 2,
@@ -181,6 +189,10 @@
         "neutral": "./assets/generated/callers/pixel-case03/caller_profile_neutral_pixel.png?v=0.26.0",
         "guarded": "./assets/generated/callers/pixel-case03/caller_profile_guarded_pixel.png?v=0.26.0",
         "pause": "./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.26.0"
+      },
+      "callerArtVariantPlan": {
+        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-case03/caller_profile_shaken_pixel.png" },
+        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-case03/caller_profile_broken_pixel.png" }
       },
       "respondentArt": "./assets/generated/respondents/pixel-case03/respondent_profile_neutral_pixel.png?v=0.27.0",
       "respondentArtVariants": {
@@ -220,6 +232,10 @@
         "neutral": "./assets/generated/callers/pixel-sample-case02/caller_salon_neutral_pixel.png?v=0.26.0",
         "guarded": "./assets/generated/callers/pixel-sample-case02/caller_salon_guarded_pixel.png?v=0.26.0",
         "pause": "./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.26.0"
+      },
+      "callerArtVariantPlan": {
+        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-sample-case02/caller_salon_shaken_pixel.png" },
+        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-sample-case02/caller_salon_broken_pixel.png" }
       },
       "evidenceBoard": "./assets/generated/materials/case2-tony-evidence-board.png?v=0.27.0",
       "difficultyProfile": {

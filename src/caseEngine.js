@@ -268,6 +268,7 @@ export function generateStoryPackSequence(npcs, attrs, options = {}) {
       callerArt: spec.callerArt ?? brief.callerArt,
       callerArtStyle: spec.callerArtStyle ?? brief.callerArtStyle ?? "",
       callerArtVariants: spec.callerArtVariants ?? brief.callerArtVariants ?? {},
+      callerArtVariantPlan: spec.callerArtVariantPlan ?? brief.callerArtVariantPlan ?? {},
       respondentArt: spec.respondentArt ?? brief.respondentArt ?? "",
       respondentArtVariants: spec.respondentArtVariants ?? brief.respondentArtVariants ?? {},
       evidenceBoard: spec.evidenceBoard ?? brief.evidenceBoard ?? "",

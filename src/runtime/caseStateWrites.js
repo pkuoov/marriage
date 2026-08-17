@@ -29,6 +29,7 @@ export function createCaseStateWrites(ctx) {
     saveState,
     render,
     clearQuestionRewindHistory,
+    clearPlayedCueKeysByPrefix = () => 0,
     areaTotalForRetry
   } = ctx;
 
@@ -50,6 +51,7 @@ export function createCaseStateWrites(ctx) {
     clearQuestionRewindHistory();
     const state = getState();
     const key = caseKey(brief);
+    clearPlayedCueKeysByPrefix(`${key}:`);
     state.scene = "caseOpen";
     state.sceneQuestionFocus = null;
     state.dialogueProgress = removeKeyPrefix(state.dialogueProgress, `${key}:`);
@@ -58,6 +60,8 @@ export function createCaseStateWrites(ctx) {
     state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
     state.statementReviewAttempts = removeKeyPrefix(state.statementReviewAttempts, `${key}:`);
     state.statementPatience = removeKeyPrefix(state.statementPatience, `${key}:`);
+    state.testimonyWallProgress = removeKeyPrefix(state.testimonyWallProgress, `${key}:`);
+    state.decisivePresentProgress = removeKeyPrefix(state.decisivePresentProgress, `${key}:`);
     state.activeStatementLineId = null;
     state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
     state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);

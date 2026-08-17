@@ -3,6 +3,13 @@
   "plotId": "workplace-reimbursement-screenshot",
   "runtimeContentStatus": "runtime-loaded",
   "texturePass": true,
+  "dialoguePresentation": {
+    "speedTiers": {
+      "strained": { "delay": 47, "holdMs": 0 },
+      "stalled": { "delay": 55, "holdMs": 1000 }
+    },
+    "blipPitchHz": { "host": 330, "caller": 294, "respondent": 218 }
+  },
   "voiceTics": {
     "陈": [
       "呃",
@@ -115,32 +122,32 @@
   "stanceSnapshot": {
     "afterScene": 2,
     "kicker": "中段立场快照",
-    "prompt": "现在这通麦，你先站哪边？",
-    "note": "不判分。先把此刻的判断按下来，后面的材料会回看它。",
-    "afterPickLine": "群流程刚发，他就在私聊里让她别问。接下来得看，他后来拿什么让她继续等。",
+    "prompt": "现在这通麦，你先咬住哪个动作？",
+    "note": "不判分。按下你现在最在意的那件事。",
+    "afterPickLine": "群里刚发报备，他转头就来私聊。先听他在私聊里怎么说。",
     "continueLabel": "继续听",
     "recapKicker": "中段立场",
     "options": [
       {
         "id": "respondent-problem",
-        "label": "他的问题更大",
-        "summary": "他绕开大群预算，把垫款放进私下流程。",
-        "feedback": "预算被挪进私聊，付款去向还没露。",
-        "recap": "14:22 的私聊和刚发过的群流程正好相反。"
+        "label": "他在绕开报备",
+        "summary": "公开流程刚要求先报预算，他就私聊让她别在群里问，改刷个人卡。",
+        "feedback": "14:22 那条私聊是在绕开公开报备，不是普通催进度。",
+        "recap": "群公告要求个人垫付先报备；十七分钟后，他让她别问预算、先刷个人卡。"
       },
       {
         "id": "caller-complicit",
-        "label": "她也有份",
-        "summary": "她确实想负责这次活动，也怕公开问预算显得不担事。",
-        "feedback": "活动是她争取来的，垫款该由谁承担却还没人写清楚。",
-        "recap": "她争取过这次活动，也看过群里的报备要求。"
+        "label": "她为署名主动提额",
+        "summary": "她想拿到负责人署名，也自己申请了临时额度，把垫款刷进个人卡。",
+        "feedback": "她不是完全被动垫款：机会是她争取的，临时额度也是她自己提的。",
+        "recap": "她为了负责人机会主动提额、回了‘我来扛’；这一步不能藏进‘让我垫’。"
       },
       {
         "id": "unclear",
-        "label": "还听不出来",
-        "summary": "公开预算被绕开是真的，但钱到底卡在哪里还没上桌。",
-        "feedback": "公开流程和私聊要求对不上。钱后来卡在哪儿，还得继续听。",
-        "recap": "眼下只能确认她绕开了公开流程，不能先替后面的截图下结论。"
+        "label": "她删掉了预算追问",
+        "summary": "她看见公开流程，也在群输入框里打过预算问题，最后还是自己删了。",
+        "feedback": "她怕显得不担事，亲手删掉了能留下预算责任的那句话。",
+        "recap": "公开规则就在群里，她仍删掉预算追问，选择先信同事活动后会补。"
       }
     ]
   },
@@ -817,7 +824,7 @@
     },
     {
       "id": "work-split-ownership",
-      "interactionMode": "lineReplay",
+      "interactionMode": "testimonyWall",
       "clueRole": "payoff",
       "falseFrame": "活动总结已经写咨询者负责，因此正式报销只剩执行细节。",
       "payoffFor": [
@@ -827,7 +834,294 @@
       "speakerId": "chen",
       "speaker": "咨询者",
     "entryQuestion": "他们发来让你确认的那张表，最后怎么写的？",
-    "version": "这份表的初稿是我写的。写到凌晨两点多，呃，写完还挺兴奋的。我给我妈发消息，说老板第一次让我独立负责这么大的活动。她第二天回了个大拇指。后来他拿去改，发回来让我确认：活动负责人写的是我，付款经办人写的是他。下周一开会前就得确认，我现在还没点。群里那句‘公司一直不给我报销’，我打好了，也一直没敢发。",
+      "version": "这份表的初稿是我写的，写到凌晨两点多，呃，写完还挺兴奋的。我给我妈发消息，说老板第一次让我独立负责这么大的活动，她第二天回了个大拇指。后来他拿去改，发回来让我确认：活动负责人写的是我，付款经办人写的是他。下周一开会前就得确认，我现在还没点。群里那句‘公司一直不给我报销’，我打好了，也一直没敢发。",
+      "testimonyWall": {
+        "title": "把‘流程都走完了’放回付款节点",
+        "intro": "审批通过、活动署名和实际付款是三个节点。逐句问，不把任何一张截图当成终点。",
+        "splitAfter": 3,
+        "midSummary": "她想保住负责人署名，也想拿回六万八；这两个诉求都是真的，但不能继续共用一张立项页。",
+        "softAnchorResponse": "缺失付款栏正好碰到这句。正式指认只证明流程没走到付款，不替公司判定最终责任。",
+        "reliefBeat": {
+          "listenerId": "@审批通过但钱包未通过",
+          "comment": "本直播间第一个到账的是大拇指。",
+          "hostLine": "大拇指先记精神奖励，六万八还得找回单。"
+        },
+        "statements": [
+          {
+            "id": "work-process-complete",
+            "label": "证词 01",
+            "text": "流程都走完了，就是公司一直不给我报销。",
+            "pressResponse": "她说的‘走完’其实只到活动立项和负责人确认，正式报销编号仍没出现。",
+            "presentResponse": "同一张审批页只能证明立项通过，不能把空着的付款栏说成到账。"
+          },
+          {
+            "id": "work-three-screenshots",
+            "label": "证词 02",
+            "text": "他把写着审批通过的同一张图发了三次，所以我以为只是在等财务。",
+            "pressResponse": "三次重复没有新增节点。她承认自己当时没有再问申请编号。",
+            "presentResponse": "重复截图能说明催问被同一页面挡回，不能单独证明钱在财务手里。"
+          },
+          {
+            "id": "work-title-matters",
+            "label": "证词 03",
+            "text": "活动负责人写的是我，我确实舍不得把这个机会一起丢掉。",
+            "pressResponse": "她想保住署名，不等于同意把付款风险也留在自己卡上。",
+            "presentResponse": "负责人字段和付款字段属于不同责任线，不能拿其中一个覆盖另一个。"
+          },
+          {
+            "id": "work-payment-handler-other",
+            "label": "证词 04",
+            "text": "总结表里付款经办人写的是他，可我的六万八还在信用卡上。",
+            "pressResponse": "这句把项目主责和资金入口拆开了，正是下一步要书面确认的内容。",
+            "presentResponse": "材料能支持继续追付款经办和回单，不能证明同事已经收走返款。"
+          },
+          {
+            "id": "work-unsent-group-message",
+            "label": "证词 05",
+            "text": "我把追款消息打进群里，一直没发，是怕以后不再让我接活动。",
+            "pressResponse": "她承认自己也用沉默换取机会，这不抵消同事绕开公开预算的责任。",
+            "presentResponse": "这句讲的是她的风险选择，付款栏只能帮她把问题问得更具体。"
+          }
+        ],
+        "acts": [
+          {
+            "id": "act1",
+            "title": "把‘流程都走完了’放回付款节点",
+            "intro": "审批通过、活动署名和实际付款是三个节点。逐句问，不把任何一张截图当成终点。",
+            "splitAfter": 3,
+            "midSummary": "她想保住负责人署名，也想拿回六万八；这两个诉求都是真的，但不能继续共用一张立项页。",
+            "softAnchorResponse": "缺失付款栏正好碰到这句。正式指认只证明流程没走到付款，不替公司判定最终责任。",
+            "reliefBeat": {
+              "listenerId": "@审批通过但钱包未通过",
+              "comment": "本直播间第一个到账的是大拇指。",
+              "hostLine": "大拇指先记精神奖励，六万八还得找回单。"
+            },
+            "statements": [
+              {
+                "id": "work-process-complete",
+                "label": "证词 01",
+                "text": "流程都走完了，就是公司一直不给我报销。",
+                "pressResponse": "她说的‘走完’其实只到活动立项和负责人确认，正式报销编号仍没出现。",
+                "presentResponse": "同一张审批页只能证明立项通过，不能把空着的付款栏说成到账。"
+              },
+              {
+                "id": "work-three-screenshots",
+                "label": "证词 02",
+                "text": "他把写着审批通过的同一张图发了三次，所以我以为只是在等财务。",
+                "pressResponse": "三次重复没有新增节点。她承认自己当时没有再问申请编号。",
+                "presentResponse": "重复截图能说明催问被同一页面挡回，不能单独证明钱在财务手里。"
+              },
+              {
+                "id": "work-title-matters",
+                "label": "证词 03",
+                "text": "活动负责人写的是我，我确实舍不得把这个机会一起丢掉。",
+                "pressResponse": "她想保住署名，不等于同意把付款风险也留在自己卡上。",
+                "presentResponse": "负责人字段和付款字段属于不同责任线，不能拿其中一个覆盖另一个。"
+              },
+              {
+                "id": "work-payment-handler-other",
+                "label": "证词 04",
+                "text": "总结表里付款经办人写的是他，可我的六万八还在信用卡上。",
+                "pressResponse": "这句把项目主责和资金入口拆开了，正是下一步要书面确认的内容。",
+                "presentResponse": "材料能支持继续追付款经办和回单，不能证明同事已经收走返款。"
+              },
+              {
+                "id": "work-unsent-group-message",
+                "label": "证词 05",
+                "text": "我把追款消息打进群里，一直没发，是怕以后不再让我接活动。",
+                "pressResponse": "她承认自己也用沉默换取机会，这不抵消同事绕开公开预算的责任。",
+                "presentResponse": "这句讲的是她的风险选择，付款栏只能帮她把问题问得更具体。"
+              }
+            ],
+            "decisivePresent": {
+              "maxAttempts": 2,
+              "evidenceId": "case4-payment-ledger:q07",
+              "statementId": "work-process-complete",
+              "materialCards": [
+                {
+                  "id": "case4-payment-ledger:q07",
+                  "kind": "付款栏核对",
+                  "label": "截至第二晚仍缺失的付款栏",
+                  "excerpt": "付款回单／预计付款日期：两项均未显示。",
+                  "sourceLabel": "她整理的七条报销记录"
+                },
+                {
+                  "id": "case4-payment-ledger:q04",
+                  "kind": "审批截图",
+                  "label": "旧立项页 LX-2407-018",
+                  "excerpt": "活动前一天通过；活动后同一张图重发三次。",
+                  "sourceLabel": "她整理的七条报销记录"
+                },
+                {
+                  "id": "case4-payment-ledger:q03",
+                  "kind": "刷卡记录",
+                  "label": "咨询者个人卡垫付 ¥68,000",
+                  "excerpt": "能确认垫付发生，不能确认公司付款已经进入哪一步。",
+                  "sourceLabel": "她整理的七条报销记录"
+                }
+              ],
+              "callerLine": "……对，流程没走完。至少付款那一段，我手里什么都没有。",
+              "hostLine": "‘流程都走完了’是假话。你手里只有活动立项页；正式报销编号、付款回单、预计日期，一个都没有。",
+              "boundaryLine": "缺失付款栏只证明现有材料没走到付款，不证明公司最终拒付，也不证明同事已拿到返款。",
+              "contradiction": "咨询者把立项审批和负责人署名说成完整报销流程，但付款栏始终缺失。",
+              "routeAxis": "process-control",
+              "continueLabel": "把项目主责和付款责任分开"
+            }
+          },
+          {
+            "id": "act2",
+            "statusLabel": "她改口了 · 第二段说法",
+            "title": "把‘经办说会补’放回公开流程",
+            "intro": "她认下付款流程没走完，转而把没继续追问的责任全推给经办承诺。第二段仍可自由追问、普通出示；正式指认另有两次机会。",
+            "openerFactKeywords": [
+              "没走完",
+              "付款"
+            ],
+            "openerLines": [
+              {
+                "role": "caller",
+                "text": "好，付款那段没走完，我认。可经办一直是他，14：22 也是他叫我先刷，说活动结束会补；我按他说的等，不能全怪我没盯。"
+              },
+              {
+                "role": "host",
+                "text": "他让你绕公开流程，这个责任不消失。现在看你答应绕开以前，已经知道什么。"
+              }
+            ],
+            "revisedFrame": "她承认付款流程未完成，却把自己未报备、未追编号和未发群消息全解释成经办同事承诺会补。",
+            "splitAfter": 2,
+            "midSummary": "她把经办承诺放在最前面，可公开群里的个人垫付规则早了十七分钟。先后顺序不能倒。",
+            "softAnchorResponse": "14:05 的公开报备要求碰到了她的新说法。正式指认只拆‘我只能按他说的等’，不替公司免除付款责任。",
+            "comparison": [
+              {
+                "statementId": "work-process-complete",
+                "status": "被打破"
+              },
+              {
+                "statementId": "work-three-screenshots",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "work-title-matters",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "work-payment-handler-other",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "work-unsent-group-message",
+                "status": "她收回了"
+              }
+            ],
+            "statements": [
+              {
+                "id": "work-handler-promise-cleared-her",
+                "label": "改口 01",
+                "text": "付款没走完我认，可经办说活动后会补，我按他的安排等就行，没再盯不能算我的问题。",
+                "pressResponse": "她把同事的私聊承诺当成唯一流程，却略过自己在更早的群公告里看过报备要求。",
+                "presentResponse": "要拆这句，得找她在私聊之前已经收到的公开规则，不能只重复付款栏为空。"
+              },
+              {
+                "id": "work-repeat-screenshot-no-number",
+                "label": "改口 02",
+                "text": "他后来三次发的都是同一张立项图，我那时也确实没再问正式报销编号。",
+                "pressResponse": "她不再把三次截图说成三个新进度，也认下自己没有把问题问到编号。",
+                "presentResponse": "q04 能核对重复截图，这句已经没有把旧页面说成付款进展。",
+                "survivesFromAct1": "work-three-screenshots"
+              },
+              {
+                "id": "work-title-and-payment-split",
+                "label": "改口 03",
+                "text": "负责人署名我还想保留，可付款责任不能因为署名也压在我个人卡上。",
+                "pressResponse": "她把机会和付款拆开，这正是下一步书面追责需要保留的边界。",
+                "presentResponse": "负责人字段不能代替付款字段，也不能反过来取消她的项目署名。",
+                "survivesFromAct1": "work-title-matters"
+              },
+              {
+                "id": "work-card-debt-needs-formal-entry",
+                "label": "改口 04",
+                "text": "六万八还在我信用卡上，我现在得拿到正式报销编号和预计日期。",
+                "pressResponse": "她终于把追问落到能继续查询的入口，而不是再等一张旧截图。",
+                "presentResponse": "现有记录能支持她去要编号和日期，不能预判公司最后怎么处理。",
+                "survivesFromAct1": "work-payment-handler-other"
+              }
+            ],
+            "decisivePresent": {
+              "maxAttempts": 2,
+              "evidenceId": "case4-payment-ledger:q01",
+              "statementId": "work-handler-promise-cleared-her",
+              "boundaryLineKeyPhrases": [
+                "不减轻同事绕流程",
+                "不证明公司可以拒付"
+              ],
+              "selectionReason": "q01 比 14:22 私聊早十七分钟，明确写着个人垫付需报备；它能打穿‘经办说会补，所以我只需等待’的新框架，同时保留同事诱导绕流程和公司最终付款责任。",
+              "materialCards": [
+                {
+                  "id": "case4-payment-ledger:q01",
+                  "kind": "公开流程原文",
+                  "label": "14:05 群公告 · 个人垫付需报备",
+                  "excerpt": "预算先填金额；个人垫付需报备；供应商对公付款需附报价比较。",
+                  "sourceLabel": "她整理的七条报销记录 q01"
+                },
+                {
+                  "id": "case4-payment-ledger:q02",
+                  "kind": "私聊指令",
+                  "label": "14:22 先刷，活动后补",
+                  "excerpt": "能确认同事要求绕开群内预算，不能抹掉她此前看到的公开规则。",
+                  "sourceLabel": "她整理的七条报销记录"
+                },
+                {
+                  "id": "case4-payment-ledger:q06",
+                  "kind": "财务窗口核对",
+                  "label": "正式报销申请编号未显示",
+                  "excerpt": "能确认缺少查询入口，不能说明她绕流程前知道什么。",
+                  "sourceLabel": "她整理的七条报销记录"
+                }
+              ],
+              "callerLine": "……14:05 那条我看见了。是先写了个人垫付要报备，后来他才私聊让我别在群里问。我当时是自己选了先信他。",
+              "hostLine": "报备你看见了。十七分钟后，是你自己答应刷卡。不能说他会补，你就不用盯。",
+              "boundaryLine": "q01 只推翻‘经办承诺后她无需再跟进’；不减轻同事绕流程和重复发旧图的责任，也不证明公司可以拒付。",
+              "contradiction": "咨询者承认付款流程没走完后，把未报备和未追编号全推给经办承诺；更早的公开流程公告证明她曾知情并选择绕开。",
+              "routeAxis": "process-control",
+              "continueLabel": "把项目主责和付款责任分开"
+            }
+          }
+        ]
+      },
+      "decisivePresent": {
+        "maxAttempts": 2,
+        "evidenceId": "case4-payment-ledger:q07",
+        "statementId": "work-process-complete",
+        "materialCards": [
+          {
+            "id": "case4-payment-ledger:q07",
+            "kind": "付款栏核对",
+            "label": "截至第二晚仍缺失的付款栏",
+            "excerpt": "付款回单／预计付款日期：两项均未显示。",
+            "sourceLabel": "她整理的七条报销记录"
+          },
+          {
+            "id": "case4-payment-ledger:q04",
+            "kind": "审批截图",
+            "label": "旧立项页 LX-2407-018",
+            "excerpt": "活动前一天通过；活动后同一张图重发三次。",
+            "sourceLabel": "她整理的七条报销记录"
+          },
+          {
+            "id": "case4-payment-ledger:q03",
+            "kind": "刷卡记录",
+            "label": "咨询者个人卡垫付 ¥68,000",
+            "excerpt": "能确认垫付发生，不能确认公司付款已经进入哪一步。",
+            "sourceLabel": "她整理的七条报销记录"
+          }
+        ],
+        "callerLine": "……对，流程没走完。至少付款那一段，我手里什么都没有。",
+        "hostLine": "‘流程都走完了’是假话。你手里只有活动立项页；正式报销编号、付款回单、预计日期，一个都没有。",
+        "boundaryLine": "缺失付款栏只证明现有材料没走到付款，不证明公司最终拒付，也不证明同事已拿到返款。",
+        "contradiction": "咨询者把立项审批和负责人署名说成完整报销流程，但付款栏始终缺失。",
+        "routeAxis": "process-control",
+        "continueLabel": "把项目主责和付款责任分开"
+      },
     "helperHint": "表上有两个位置：活动负责人和付款经办人。她的群消息必须只写自己能证明的刷卡和未到账，不能替缺失的报销单先判责任。",
       "doubt": "署名给了表面责任，付款入口仍在同事手里。",
       "contradiction": "咨询者拿到项目署名，却没有拿到正式报销和付款入口。",
@@ -1108,7 +1402,10 @@
   ],
   "crossCaseEchoes": [
     {
+      "id": "case4-flashback-credit-transfer",
       "requiresCaseId": "01-credit",
+      "quote": "八万太多，我先让他把账单发来。",
+      "sourceCaseLabel": "案1",
       "text": "上一通八万还停在转账页，这通六万八已经刷出去了。先问钱现在卡在哪一步。"
     }
   ],
@@ -1122,7 +1419,7 @@
       }
     ]
   },
-  "hostWoundHook": "财务慢很常见，别先定罪",
+  "hostWoundHook": "三周没打款，也许只是财务排得慢",
   "respondentNote": {
     "source": "respondent-note",
     "appearsNowBecause": "收麦后，那位同事托人给后台带了话。",
@@ -1154,7 +1451,7 @@
     "answer": "发了。周一老板怎么问，我自己答。",
     "note": "她删掉了无凭证的笼统指控，第一次把刷卡、发票和正式报销申请写进同一条可发送消息。"
   },
-  "stageJudgement": "你看过报备，“我来扛”也是你回的。这个得认。可他拿“来不及”催你刷个人卡，三个星期只发立项页，就是看准你想表现。明天带上发票，自己走正式报销。拿到单号以后，直接问财务哪天付款。",
+  "stageJudgement": "‘流程都走完了’是假话。你手里只有立项页，没有报销编号，也没有回单。他拿‘来不及’催你垫卡，三个星期只发这张旧图，就是看准你想表现。六万八不是你捐的。明天带发票走正式报销；这家公司一直靠个人垫钱和返费撑点位，不是财务慢。每笔返费进了谁的账户，今晚不知道。",
   "careChoices": [
     {
       "id": "pragmatic",
@@ -1279,8 +1576,8 @@
     }
   ],
   "caseClosing": {
-    "title": "负责人写了，报销单还没有",
-    "verdict": "六万八还压在她信用卡上。她想拿到负责人机会，看过报备以后仍回了“我来扛”；同事则用她怕显得不担事的心思催她垫钱，又连续三次拿活动立项页冒充报销进度。她删掉笼统指控，改成写清个人刷卡、公司抬头发票仍在手里，并要求先创建正式报销。",
+    "title": "旧立项页发了三次",
+    "verdict": "现有三张截图都是活动立项页，没有正式报销编号和付款回单。她为负责人机会主动提额、回了‘我来扛’；同事让她绕过报备，又用旧图回应催款。六万八仍是公司抬头支出。返费表列了三层返费，实际付款账户未知。",
     "beats": [
       {
         "label": "接活",
@@ -1300,12 +1597,15 @@
       "截图通过的是活动立项，编号以 LX 开头，没有报销申请编号",
       "发票抬头是公司，原件仍在她手里",
       "活动总结写她负责，付款经办仍由同事掌握",
-      "同事在大群承认六万八由她先垫，但‘月底一起办’没有写明提交时间或付款时间"
+      "同事在大群承认六万八由她先垫，但‘月底一起办’没有写明提交时间或付款时间",
+      "下麦前的供应商返费表写有招商主管、区域经理和采购经办三层返费规则",
+      "公开融资稿一直强调估值和点位增长，个人垫款与层层返费被用于维持铺点进度"
     ],
     "unresolved": [
       "同事是否另行创建过正式报销申请",
       "领导是否知道六万八来自她的个人卡",
-      "月底承诺能否按时兑现"
+      "月底承诺能否按时兑现",
+      "各层返费是否实际支付，以及最终进入谁的账户"
     ],
     "nextStep": "下周一开会前，在公司群里写清六万八由个人信用卡支付、公司抬头发票原件仍在手里，先确认正式报销怎么提交并取得申请编号，再问预计付款日期。"
   },
@@ -1443,9 +1743,9 @@
       ]
     },
     "snapshotEcho": {
-      "respondent-problem": "昨晚大家都在骂他。今天先别急，那张图批的是立项，正式报销单我还没拿到。",
-      "caller-complicit": "昨晚说我也有份的，我听见了。“我来扛”是我发的。可我当时想扛的是活，不是六万八。",
-      "unclear": "昨晚说听不出来的，今天再听听。我带回来的材料不一样，先看你手里那一份。"
+      "respondent-problem": "昨晚有人咬住他让我别在群里问预算。那条私聊还在，今天就从十七分钟的时间差问。",
+      "caller-complicit": "昨晚有人咬住我自己提了临时额度。是，我想拿这个活动，也确实自己去提了。",
+      "unclear": "昨晚有人咬住我删掉预算问题。那句话我又打了一遍，这次没有删。"
     },
     "liveCounterBeats": [
       {

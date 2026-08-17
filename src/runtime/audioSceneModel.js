@@ -17,7 +17,12 @@ const LIVE_SCENES = new Set([
   "liveCounterBeat",
   "documentReconcile",
   "callerQuestion",
-  "deepFollowup"
+  "deepFollowup",
+  "testimonyWall",
+  "testimonyMaterials",
+  "decisivePresentMaterial",
+  "decisivePresentTarget",
+  "decisivePresentHit"
 ]);
 
 const OFF_AIR_SCENES = new Set([
@@ -39,7 +44,7 @@ const NIGHT_B_SCENES = new Set([
   "callerQuestion"
 ]);
 
-export function audioScenePlan({ scene = "title", backdropClass = "", pressureLevel = "" } = {}) {
+export function audioScenePlan({ scene = "title", backdropClass = "", pressureLevel = "", musicPhase = "" } = {}) {
   if (scene === "title" || scene === "nightShellPrologue") {
     return {
       bgmCueId: "bgm.title-nightshift",
@@ -66,12 +71,24 @@ export function audioScenePlan({ scene = "title", backdropClass = "", pressureLe
     };
   }
   if (LIVE_SCENES.has(scene)) {
+    const bgmCueId = musicPhase === "silent"
+      ? ""
+      : musicPhase === "pursuit"
+        ? "bgm.pursuit"
+        : musicPhase === "allegro"
+          ? "bgm.live-call-allegro"
+          : pressureLevel === "low"
+            ? "bgm.pressure-stem"
+            : NIGHT_B_SCENES.has(scene)
+              ? "bgm.callback-return"
+              : "bgm.live-call";
     return {
-      bgmCueId: pressureLevel === "low"
-        ? "bgm.pressure-stem"
-        : NIGHT_B_SCENES.has(scene)
-          ? "bgm.callback-return"
-          : "bgm.live-call",
+      bgmCueId,
+      ...(musicPhase === "allegro"
+        ? { fallbackBgmCueId: "bgm.live-call" }
+        : musicPhase === "pursuit"
+          ? { fallbackBgmCueId: "bgm.accusation" }
+          : {}),
       ambienceCueId: "ambience.studio-line",
       enterSfxCueId: scene === "caseOpen" || scene === "callbackOpener" ? "sfx.phone.connect" : ""
     };

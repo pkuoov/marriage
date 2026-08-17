@@ -3,6 +3,13 @@
   "plotId": "education-income-fake-profile",
   "runtimeContentStatus": "runtime-loaded",
   "texturePass": true,
+  "dialoguePresentation": {
+    "speedTiers": {
+      "strained": { "delay": 50, "holdMs": 0 },
+      "stalled": { "delay": 56, "holdMs": 1000 }
+    },
+    "blipPitchHz": { "host": 330, "caller": 274, "respondent": 206 }
+  },
   "voiceTics": {
     "林": []
   },
@@ -123,32 +130,32 @@
   "stanceSnapshot": {
     "afterScene": 5,
     "kicker": "中段立场快照",
-    "prompt": "现在这通麦，你先站哪边？",
-    "note": "不判分。先记下此刻判断，介绍链和家里群会回看它。",
-    "afterPickLine": "你家那二十万还锁着。男方那边，也只拿出了一张工资卡。",
+    "prompt": "现在这通麦，你先咬住哪个动作？",
+    "note": "不判分。按下你现在最在意的那件事。",
+    "afterPickLine": "家里群里刚换了数字。工资卡发来以后，她又怎么说？",
     "continueLabel": "继续听",
     "recapKicker": "中段立场",
     "options": [
       {
         "id": "respondent-fraud",
-        "label": "他就是包装过头",
-        "summary": "名校和收入都挑好看的说，要求看流水时也只交了工资账户。",
-        "feedback": "材料确实挑过；但二十八万八是谁先托介绍人问的，还没有对上。",
-        "recap": "他没有及时说清本科和工资账户的边界；她家又把自费 MBA 直接换算成了彩礼能力。"
+        "label": "她赞成彩礼进自己卡",
+        "summary": "二十八万八要领证前转进她个人账户，婚宴首饰另算；她知道这组条件。",
+        "feedback": "她不是只替母亲传话。钱进她的卡，条件也有她本人赞成。",
+        "recap": "领证前进个人账户、婚宴首饰另算，这组条件由她继续传下去，也由她受益。"
       },
       {
         "id": "caller-control",
-        "label": "她家问太深",
-        "summary": "见面前已经问到二十八万八彩礼和个人流水，远远超过普通见家长。",
-        "feedback": "她家问得太深；男方也不能只交一张工资卡，让对方猜那是不是全部账户。",
-        "recap": "女方家把自费 MBA 当成有钱，男方说拿不出以后，又只交了工资账户。"
+        "label": "父母查完普通家境后加价，她没拦",
+        "summary": "学历误会纠正后，父母查到婚房帮不上，没有喊被骗，转头把彩礼往上加。",
+        "feedback": "加价发生在家境调查之后。她知道，也没有让母亲把数字收回去。",
+        "recap": "父母查完普通家境就提高彩礼；她嘴上怕吓跑人，实际让新数字继续传。"
       },
       {
         "id": "market-coauthored",
-        "label": "介绍人两头说好话",
-        "summary": "她既替双方加了好话，又替女方母亲把二十八万八递给男方家。",
-        "feedback": "介绍人确实让矛盾落了地，但彩礼数字不是她自己定的。",
-        "recap": "她替双方说过没确认的话，也把女方母亲的二十八万八原样传到了男方家。"
+        "label": "男方用一张工资卡应付审查",
+        "summary": "他说拿不出以后只交工资账户，没有主动说明其他账户不在这份材料里。",
+        "feedback": "一张工资卡不是全部家底。他挑了一张真的材料，让别人自己把范围想大。",
+        "recap": "工资账户余额是真的，材料范围也只有这一张；男方没有把其他账户一起交出来。"
       }
     ]
   },
@@ -413,7 +420,7 @@
       "speakerId": "lin",
       "speaker": "咨询者",
       "entryQuestion": "他把工资账户流水发来以后，你们怎么聊的？",
-      "version": "他已经说拿不出，我还是让他打了流水。发来以后，我先问：“只有这一张？”过了十几分钟，他才回：“你不是要看收入吗？工资卡最清楚。”我又问其他账户，他没接。到昨晚，我手里就这一张。我把这张转给我妈，她看过。",
+      "version": "他已经说拿不出，我还是让他打了流水。发来以后，我先问：“只有这一张？”过了十几分钟，他才回：“你不是要看收入吗？工资卡最清楚。”我又问其他账户，他没接；到昨晚，我手里就这一张。我把这张转给我妈，她看过。",
       "helperHint": "她不信男方说拿不出，男方又只交工资账户。先分开问：为什么不信，以及这一张卡能不能代表全部账户。",
       "doubt": "男方先说拿不出二十八万八，工资账户却有二十八万六；咨询者把一张卡当成全部家底，男方也没有说明其他账户。",
       "contradiction": "咨询者不相信男方对彩礼的直接拒绝，坚持要求流水；男方只交工资账户，也没有交代这不是全部账户。",
@@ -883,7 +890,7 @@
     },
     {
       "id": "profile-family-chat-origin",
-      "interactionMode": "lineReplay",
+      "interactionMode": "testimonyWall",
       "clueRole": "reversal",
       "falseFrame": "女方母亲只是替女儿争取一份保障，女方父亲答应的二十万元也会对等地花在两个人身上。",
       "payoffFor": [
@@ -894,6 +901,302 @@
       "speaker": "咨询者",
       "entryQuestion": "你妈妈去找介绍人以前，家里群还说过什么？",
       "version": "我妈先发了一句：“彩礼领证前打到她自己的卡里，婚宴和首饰另算。”我爸紧跟着说，宸直那三十万九月底到期，拿二十万给我留着。我当时看见了。就这么看过去了。",
+      "testimonyWall": {
+        "title": "把‘两边对等’拆成时间、账户和用途",
+        "intro": "彩礼数字先放一边，逐句确认两边的钱何时到、进谁账户、以后给谁用。",
+        "splitAfter": 3,
+        "midSummary": "男方工资卡只证明一个账户；女方家的三十万也只证明持有和到期日。对等不能靠把未来安排说成已经支付。",
+        "softAnchorResponse": "三行放在一起已经碰到‘对等’的说法。正式指认仍只能推翻这一句，不能替两家补完整资产。",
+        "reliefBeat": {
+          "listenerId": "@相亲局临时会计",
+          "comment": "我只是来看学历，怎么开始算资金久期了。",
+          "hostLine": "我也没想到，但钱什么时候到，确实不能靠气氛带过。"
+        },
+        "statements": [
+          {
+            "id": "profile-same-school-label",
+            "label": "证词 01",
+            "text": "学校和 MBA 项目都是真的，我只是把‘学校好’说得更满了。",
+            "pressResponse": "真项目不等于名校本科。她承认自己也参与了标签放大。",
+            "presentResponse": "学历材料能拆标签，放不到两家付款安排的核心矛盾上。"
+          },
+          {
+            "id": "profile-male-card-incomplete",
+            "label": "证词 02",
+            "text": "他只给工资账户，其他账户有多少，我现在还是不知道。",
+            "pressResponse": "这条未知边界必须保留；一张工资卡不能代替全部资产。",
+            "presentResponse": "材料能确认工资卡余额，不能推算他没交出的账户。"
+          },
+          {
+            "id": "profile-cash-before-registration",
+            "label": "证词 03",
+            "text": "我妈要的是领证前把二十八万八打进我个人账户，婚宴和首饰另算。",
+            "pressResponse": "她第一次把时间、账户和另算项目一口气说全。",
+            "presentResponse": "这句已经照着材料说全，不需要用同一行重复指认。"
+          },
+          {
+            "id": "profile-future-family-fund",
+            "label": "证词 04",
+            "text": "我爸说九月底以后从宸直三十万里拿二十万给我留着。",
+            "pressResponse": "是未来安排，且用途是给女儿自己留着；它不是领证前向共同事项支付。",
+            "presentResponse": "持有页能确认三十万和到期日，不能把父亲的口头安排提前兑现。"
+          },
+          {
+            "id": "profile-equal-conditions",
+            "label": "证词 05",
+            "text": "我家以后也会出二十万，所以两边的条件是对等的。",
+            "pressResponse": "她把未来、个人留存和另算项目一起略过，只留下两个看起来接近的数字。",
+            "presentResponse": "只放其中一行还不够，必须把领证前入账、未来留存和另算项目并排看。"
+          }
+        ],
+        "acts": [
+          {
+            "id": "act1",
+            "title": "把‘两边对等’拆成时间、账户和用途",
+            "intro": "彩礼数字先放一边，逐句确认两边的钱何时到、进谁账户、以后给谁用。",
+            "splitAfter": 3,
+            "midSummary": "男方工资卡只证明一个账户；女方家的三十万也只证明持有和到期日。对等不能靠把未来安排说成已经支付。",
+            "softAnchorResponse": "三行放在一起已经碰到‘对等’的说法。正式指认仍只能推翻这一句，不能替两家补完整资产。",
+            "reliefBeat": {
+              "listenerId": "@相亲局临时会计",
+              "comment": "我只是来看学历，怎么开始算资金久期了。",
+              "hostLine": "我也没想到，但钱什么时候到，确实不能靠气氛带过。"
+            },
+            "statements": [
+              {
+                "id": "profile-same-school-label",
+                "label": "证词 01",
+                "text": "学校和 MBA 项目都是真的，我只是把‘学校好’说得更满了。",
+                "pressResponse": "真项目不等于名校本科。她承认自己也参与了标签放大。",
+                "presentResponse": "学历材料能拆标签，放不到两家付款安排的核心矛盾上。"
+              },
+              {
+                "id": "profile-male-card-incomplete",
+                "label": "证词 02",
+                "text": "他只给工资账户，其他账户有多少，我现在还是不知道。",
+                "pressResponse": "这条未知边界必须保留；一张工资卡不能代替全部资产。",
+                "presentResponse": "材料能确认工资卡余额，不能推算他没交出的账户。"
+              },
+              {
+                "id": "profile-cash-before-registration",
+                "label": "证词 03",
+                "text": "我妈要的是领证前把二十八万八打进我个人账户，婚宴和首饰另算。",
+                "pressResponse": "她第一次把时间、账户和另算项目一口气说全。",
+                "presentResponse": "这句已经照着材料说全，不需要用同一行重复指认。"
+              },
+              {
+                "id": "profile-future-family-fund",
+                "label": "证词 04",
+                "text": "我爸说九月底以后从宸直三十万里拿二十万给我留着。",
+                "pressResponse": "是未来安排，且用途是给女儿自己留着；它不是领证前向共同事项支付。",
+                "presentResponse": "持有页能确认三十万和到期日，不能把父亲的口头安排提前兑现。"
+              },
+              {
+                "id": "profile-equal-conditions",
+                "label": "证词 05",
+                "text": "我家以后也会出二十万，所以两边的条件是对等的。",
+                "pressResponse": "她把未来、个人留存和另算项目一起略过，只留下两个看起来接近的数字。",
+                "presentResponse": "只放其中一行还不够，必须把领证前入账、未来留存和另算项目并排看。"
+              }
+            ],
+            "decisivePresent": {
+              "maxAttempts": 2,
+              "evidenceId": "case3-credential-balance:p04+p06+p07",
+              "statementId": "profile-equal-conditions",
+              "selectionReason": "p04、p06、p07 并排后同时暴露时间、账户和用途差异：男方 28.8 万须领证前进女方个人账户，婚宴首饰另算；女方 20 万只是九月底后的口头安排且给女儿自己留着。这比单看 28.6 万余额更能把‘验诚意’的 A 面翻到条件并不对称的 B 面，同时保留男方其他账户未知。",
+              "materialCards": [
+                {
+                  "id": "case3-credential-balance:p04+p06+p07",
+                  "kind": "资金边界对照",
+                  "label": "领证前 28.8 万 × 未来 20 万 × 婚宴首饰另算",
+                  "excerpt": "前者进女方个人账户；后者九月底后给女儿留着；婚宴首饰不含在 28.8 万内。",
+                  "sourceLabel": "学历、彩礼与两家资金边界",
+                  "sourceRowIds": [
+                    "p04",
+                    "p06",
+                    "p07"
+                  ]
+                },
+                {
+                  "id": "case3-credential-balance:p03",
+                  "kind": "工资账户",
+                  "label": "期末余额 ¥286,000",
+                  "excerpt": "只是一张工资账户；其他账户未提供。",
+                  "sourceLabel": "学历、彩礼与两家资金边界"
+                },
+                {
+                  "id": "case3-credential-balance:p05",
+                  "kind": "持有页",
+                  "label": "宸直产品 ¥300,000／09-30 到期",
+                  "excerpt": "能确认持有与到期，不能确认未来二十万已经支付。",
+                  "sourceLabel": "学历、彩礼与两家资金边界"
+                }
+              ],
+              "callerLine": "……不是同一时间，也不是同一个用途。把它们说成两边各出一笔，确实太省了。",
+              "hostLine": "工资卡只是一张卡。你家查完普通家境，才把二十八万八问过去，领证前进你卡，婚宴首饰另算。以后给你的二十万还没到期。两边不是一回事，你家还加了价。",
+              "boundaryLine": "三行只推翻‘条件对等’，不判断彩礼应不应该给，也不推定男方其他账户余额。",
+              "contradiction": "咨询者把时间、账户和用途不同的两家资金安排说成对等条件。",
+              "routeAxis": "process-control",
+              "continueLabel": "把两家的条件逐项说清"
+            }
+          },
+          {
+            "id": "act2",
+            "statusLabel": "她改口了 · 第二段说法",
+            "title": "把‘我家就是这么算’拆开",
+            "intro": "她认下两边资金安排不对等，转而把要求解释成自家检验诚意的规矩。第二段仍可自由追问、普通出示；正式指认另有两次机会。",
+            "openerFactKeywords": [
+              "二十八万八",
+              "二十万",
+              "不对等"
+            ],
+            "openerLines": [
+              {
+                "role": "caller",
+                "text": "不是同一时间，也不是一个用途，这个我认。二十八万八和以后那二十万不对等。可我家本来就这么算，先看男方领证前肯不肯把钱落下来。"
+              },
+              {
+                "role": "host",
+                "text": "家里的规矩可以说。现在把规矩和你手里那张工资卡分开，别让截图替你判断他的心。"
+              }
+            ],
+            "revisedFrame": "她承认两家资金不对等，又把单方先付款包装成自家一贯的诚意算法，并用一张工资账户截图替男方解释支付能力和动机。",
+            "splitAfter": 2,
+            "midSummary": "她不再说对等，改说这是家里的规矩；可‘卡里有钱’和‘不肯给’不是同一条事实。",
+            "softAnchorResponse": "工资账户余额碰到了她对‘差两千就是态度’的判断。正式指认只能拆这个推断，不能替男方补资产。",
+            "comparison": [
+              {
+                "statementId": "profile-same-school-label",
+                "status": "她收回了"
+              },
+              {
+                "statementId": "profile-male-card-incomplete",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "profile-cash-before-registration",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "profile-future-family-fund",
+                "status": "变了说法"
+              },
+              {
+                "statementId": "profile-equal-conditions",
+                "status": "被打破"
+              }
+            ],
+            "statements": [
+              {
+                "id": "profile-family-rule-proves-attitude",
+                "label": "改口 01",
+                "text": "我家规矩就是先看他愿不愿意拿出来。他工资卡有二十八万六，只差两千，不是拿不出，就是不肯。",
+                "pressResponse": "她把一个账户的期末余额直接念成支付能力，又把两千元差额直接念成态度。",
+                "presentResponse": "要拆这句，得回到账户页写了什么、没写什么，不能拿彩礼数字互相顶。"
+              },
+              {
+                "id": "profile-other-accounts-still-unknown",
+                "label": "改口 02",
+                "text": "他其他账户有多少我还是不知道，我也不能说他全部资产就这一张卡。",
+                "pressResponse": "这条未知边界保留下来，也正说明工资卡余额不能替他的全部财务状况发言。",
+                "presentResponse": "现有材料只列一张工资账户，放在这里是在守边界，不是矛盾。",
+                "survivesFromAct1": "profile-male-card-incomplete"
+              },
+              {
+                "id": "profile-payment-rule-stated",
+                "label": "改口 03",
+                "text": "我妈要他领证前把二十八万八打进我卡，婚宴首饰另算，这就是她开出的条件。",
+                "pressResponse": "她不再把条件说成双方已对等，只把自己家要求的时间和账户讲清。",
+                "presentResponse": "p04 和 p07 能核对条件本身，不能证明这套条件合理或不合理。",
+                "survivesFromAct1": "profile-cash-before-registration"
+              },
+              {
+                "id": "profile-family-fund-remains-future",
+                "label": "改口 04",
+                "text": "我爸那二十万要等九月底以后，而且是给我留着，不算领证前已经出了。",
+                "pressResponse": "她把未来安排留在未来，没有再拿它抵掉男方的先付款要求。",
+                "presentResponse": "持有页只能确认到期日，放在这里不会多出一笔已经支付的钱。",
+                "survivesFromAct1": "profile-future-family-fund"
+              }
+            ],
+            "decisivePresent": {
+              "maxAttempts": 2,
+              "evidenceId": "case3-credential-balance:p03",
+              "statementId": "profile-family-rule-proves-attitude",
+              "boundaryLineKeyPhrases": [
+                "不证明他能安全转出",
+                "不替他解释拒绝原因"
+              ],
+              "selectionReason": "p03 是她用来判断男方态度的同一张工资账户页；页面只给出 28.6 万期末余额并明确其他账户未提供，最适合打穿‘只差两千所以不是不能、只是不肯’的新承重推断，同时不否认她家可以提出自己的规则。",
+              "materialCards": [
+                {
+                  "id": "case3-credential-balance:p03",
+                  "kind": "工资账户边界",
+                  "label": "期末余额 ¥286,000 · 仅一张账户",
+                  "excerpt": "06-01 至 06-20 的期末余额；其他账户未提供，也没有可支配用途说明。",
+                  "sourceLabel": "学历、彩礼与两家资金边界 p03"
+                },
+                {
+                  "id": "case3-credential-balance:p05",
+                  "kind": "持有页",
+                  "label": "宸直产品 ¥300,000／09-30 到期",
+                  "excerpt": "这是女方父母的未来资金边界，不能解释男方工资卡的可支配性。",
+                  "sourceLabel": "学历、彩礼与两家资金边界"
+                },
+                {
+                  "id": "case3-credential-balance:p04",
+                  "kind": "条件原文",
+                  "label": "领证前转入女方个人账户 ¥288,000",
+                  "excerpt": "能确认女方家开出的条件，不能把二十八万六余额直接改写成男方态度。",
+                  "sourceLabel": "学历、彩礼与两家资金边界"
+                }
+              ],
+              "callerLine": "……卡里二十八万六，只能说明这张卡当时有这些钱。差两千到底是拿不出还是不愿意，截图上确实没写。",
+              "hostLine": "卡上差两千，不是他的态度。截图没写他肯不肯转。‘只差两千就是态度’，这句收回来。",
+              "boundaryLine": "p03 只推翻‘余额接近要求就能证明不肯’；不证明他能安全转出二十八万八，不替他解释拒绝原因，也不补全其他账户。",
+              "contradiction": "咨询者承认两家条件不对等后，又用单一工资账户余额把男方的支付能力和态度说成已知。",
+              "routeAxis": "process-control",
+              "continueLabel": "把规矩和事实边界分开"
+            }
+          }
+        ]
+      },
+      "decisivePresent": {
+        "maxAttempts": 2,
+        "evidenceId": "case3-credential-balance:p04+p06+p07",
+        "statementId": "profile-equal-conditions",
+        "selectionReason": "p04、p06、p07 并排后同时暴露时间、账户和用途差异：男方 28.8 万须领证前进女方个人账户，婚宴首饰另算；女方 20 万只是九月底后的口头安排且给女儿自己留着。这比单看 28.6 万余额更能把‘验诚意’的 A 面翻到条件并不对称的 B 面，同时保留男方其他账户未知。",
+        "materialCards": [
+          {
+            "id": "case3-credential-balance:p04+p06+p07",
+            "kind": "资金边界对照",
+            "label": "领证前 28.8 万 × 未来 20 万 × 婚宴首饰另算",
+            "excerpt": "前者进女方个人账户；后者九月底后给女儿留着；婚宴首饰不含在 28.8 万内。",
+            "sourceLabel": "学历、彩礼与两家资金边界",
+            "sourceRowIds": ["p04", "p06", "p07"]
+          },
+          {
+            "id": "case3-credential-balance:p03",
+            "kind": "工资账户",
+            "label": "期末余额 ¥286,000",
+            "excerpt": "只是一张工资账户；其他账户未提供。",
+            "sourceLabel": "学历、彩礼与两家资金边界"
+          },
+          {
+            "id": "case3-credential-balance:p05",
+            "kind": "持有页",
+            "label": "宸直产品 ¥300,000／09-30 到期",
+            "excerpt": "能确认持有与到期，不能确认未来二十万已经支付。",
+            "sourceLabel": "学历、彩礼与两家资金边界"
+          }
+        ],
+        "callerLine": "……不是同一时间，也不是同一个用途。把它们说成两边各出一笔，确实太省了。",
+        "hostLine": "工资卡只是一张卡。你家查完普通家境，才把二十八万八问过去，领证前进你卡，婚宴首饰另算。以后给你的二十万还没到期。两边不是一回事，你家还加了价。",
+        "boundaryLine": "三行只推翻‘条件对等’，不判断彩礼应不应该给，也不推定男方其他账户余额。",
+        "contradiction": "咨询者把时间、账户和用途不同的两家资金安排说成对等条件。",
+        "routeAxis": "process-control",
+        "continueLabel": "把两家的条件逐项说清"
+      },
       "helperHint": "别先争彩礼高低。问清钱什么时候给、进谁的账户，婚宴首饰是否包含在内，女方家的二十万又准备怎么用。",
       "revisedVersion": "……我以前只告诉他，我妈说‘彩礼先问二十八万八’，我家以后也会给我二十万。领证前打进我卡、婚宴和首饰另算，还有那二十万是让我自己留着，这几句我都没说。",
       "revisedVersionTriggers": {
@@ -1041,7 +1344,7 @@
       "speakerId": "lin",
       "speaker": "咨询者",
       "entryQuestion": "男方现在承认只发了工资账户。你收到那份流水时，是怎么理解的？",
-      "version": "工资账户结余二十八万六，只比彩礼少两千。他说‘拿不出’，我就认定他是不想给。直到刚才上麦，他才承认还有其他账户，只是不愿意交出来。里面有多少，我不知道。平时饭钱、展票大多是他出；我加班晚，他来接过几次。我跟我妈吵了，他也能听我讲很久。可他一用团购、积分，停车费跟我 AA，我还是会觉得他在跟我算。",
+      "version": "工资账户结余二十八万六，只比彩礼少两千；他说‘拿不出’，我就认定他是不想给。直到刚才上麦，他才承认还有其他账户，只是不愿意交出来，里面有多少我不知道。平时饭钱、展票大多是他出，我加班晚他也来接过。我跟我妈吵了，他能听我讲很久；可他一用团购、积分，停车费跟我 AA，我还是会觉得他在跟我算。",
       "afterVersion": {
         "lines": [
           {
@@ -1497,7 +1800,7 @@
       "prompt": "这段留言里，哪一句最该留下？",
       "material": "介绍人留言：“‘收入稳’是听男方家说完，我顺嘴夸的；‘她不太计较学历’，我也没问过本人。二十八万八是她妈妈让我原话问的。我当时只想着先把人约到桌上，没拦，也没让两个孩子先谈。”",
       "proves": "介绍人承认两句条件话没有问过本人，也确认二十八万八来自女方母亲。",
-      "stillCannotProve": "不能证明男方存心诈骗，也不能证明女方只图钱。",
+      "stillCannotProve": "不能证明男方其他账户余额、持续收入，也不能证明宸直到期一定兑付。",
       "routeAxis": "external-corroboration",
       "options": [
         {
@@ -1531,11 +1834,14 @@
   ],
   "crossCaseEchoes": [
     {
+      "id": "case3-flashback-work-payment",
       "requiresCaseId": "04-workplace",
+      "quote": "付款回单和预计付款日期，两项都没显示。",
+      "sourceCaseLabel": "案4",
       "text": "刚才六万八要先找正式报销，这边二十八万八也得先问清是谁提的、准备怎么付。"
     }
   ],
-  "hostWoundHook": "相亲市场都这样，别只骂一方",
+  "hostWoundHook": "他把学历说漂亮了，她家多要点保障也正常",
   "deepFollowup": {
     "question": "你把他工资卡上的二十八万六看得这么细。那你自己现在有多少存款，真结婚愿意先拿多少？",
     "resistanceBeat": {
@@ -1565,10 +1871,10 @@
     "answer": "唉，这些我也没跟他说。",
     "note": "她报出八万四、六万元上限和使用顺序后，二十八万八不再是一个孤立的彩礼数字。"
   },
-  "stageJudgement": "周末那顿饭先取消。你回去把自己的意思跟父母说，别再让介绍人替你报二十八万八。你妈查到他家境普通，转头把彩礼往上加；你知道，也没拦。你心里还觉得自己条件更好，他就该多花钱、多听你说。那今天就别再说全是父母的意思。彩礼怎么给、婚宴首饰谁出、你自己的六万什么时候拿，都用你自己的话谈。你可以开条件，他也可以不答应。不能因为他不答应，就说他骗你。其他账户里有什么，宸直那笔钱什么时候能拿到，今晚不知道。",
+  "stageJudgement": "查完普通家境就加价，这不是谈结婚，是按差价收费。你不是被你妈裹挟，你赞成。周末那顿饭先取消。他不答应二十八万八，不是骗你。他其他账户里有什么，今晚不知道。",
   "caseClosing": {
-    "title": "周末那顿饭，先别急",
-    "verdict": "周末那顿饭先取消。女方父母查到男方家境普通后，没说被骗，转头借这个理由把彩礼加到二十八万八；她嘴上说无奈，实际上没有叫停，也一直觉得自己条件更好，男方多花钱、多照顾是应该的。男方只交了工资卡，也没说这不是全部。两个人先把这些话当面说全，再决定还谈不谈。",
+    "title": "查完家境，彩礼加价",
+    "verdict": "女方父母查到男方家境普通后，把彩礼加到二十八万八，要求领证前进女方个人账户，婚宴首饰另算。她知道并赞成；自己最多婚后拿六万。男方只提供了工资卡，也没有先说明本科并非名校。其他账户和宸直兑付仍未知。",
     "beats": [
       {
         "label": "来电",
@@ -1586,7 +1892,7 @@
     "confirmed": [
       "学校图没有本科，收入图只有一个月",
       "二十三万八学费由男方自己承担，但不能证明当前家底",
-      "女方父母查到男方父母普通上班、婚房帮不上，没有定性欺骗，转头借这个落差提高彩礼；咨询者没有叫停",
+      "女方父母查到男方父母普通上班、婚房帮不上，没有定性欺骗，转头借这个落差提高彩礼；咨询者没有叫停，并赞成完整付款条件",
       "男方平时承担多数饭钱和展票，也接过她下班、听她倾诉；咨询者曾认为自己条件更好，这些付出是应该的",
       "二十八万八来自女方母亲；男方先说拿不出，女方要求流水后，他只提供工资账户",
       "工资账户期末余额为二十八万六，其他账户没有提供",
@@ -1891,9 +2197,9 @@
     "hangupAudioCueId": "sfx.phone.busy",
     "hostHoldLine": "好。你先回群里看看。学费那句往后，每个人到底说了什么，明天回来我们再问。",
     "snapshotEcho": {
-      "respondent-fraud": "昨晚不少人直接说他在包装。可图本身没改。他为什么只发工资账户，别的账户一句不提，我还是想问。",
-      "caller-control": "昨晚不少人说我家问得太多。这句我先认。二十八万八是谁定的，我家现在又能拿多少，今天都得说。",
-      "market-coauthored": "介绍人的两段聊天我看了。她替两边加过话，也确认二十八万八是我妈让她问的。"
+      "respondent-fraud": "昨晚有人咬住彩礼要进我个人账户。这句没错，我知道，也赞成。今天把完整条件说出来。",
+      "caller-control": "昨晚有人咬住我爸妈查完他家境普通就加价。我没让他们收回数字，这句我认。",
+      "market-coauthored": "昨晚有人咬住他只交一张工资卡。那张卡是真的，其他账户没在里面。今晚让他自己说。"
     },
     "liveCounterBeats": [
       {

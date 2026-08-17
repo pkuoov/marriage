@@ -48,6 +48,7 @@ export const baseState = {
     autoMode: false,
     autoDelay: 2,
     fastForward: false,
+    screenEffects: "full",
     contentWarningAccepted: false
   },
   caseMode: "episode",
@@ -65,6 +66,8 @@ export const baseState = {
   sceneDialoguePicks: {},
   statementReviewAttempts: {},
   statementPatience: {},
+  testimonyWallProgress: {},
+  decisivePresentProgress: {},
   activeStatementLineId: null,
   helperHintPicks: {},
   sceneQuestionFocus: null,
@@ -149,6 +152,7 @@ export function migrateState(saved) {
   next.saveLoadError = typeof next.saveLoadError === "string" && next.saveLoadError ? next.saveLoadError : null;
   next.playerName = normalizePlayerName(next.playerName);
   next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
+  if (!["full", "reduced", "off"].includes(next.settings.screenEffects)) next.settings.screenEffects = "full";
   if (!Array.isArray(next.dialogueBacklog)) next.dialogueBacklog = [];
   if (!("caseBrief" in next)) next.caseBrief = null;
   if (!Array.isArray(next.caseBriefs)) next.caseBriefs = [];
@@ -160,6 +164,13 @@ export function migrateState(saved) {
   if (!next.sceneDialoguePicks || Array.isArray(next.sceneDialoguePicks)) next.sceneDialoguePicks = {};
   if (!next.statementReviewAttempts || Array.isArray(next.statementReviewAttempts)) next.statementReviewAttempts = {};
   if (!next.statementPatience || Array.isArray(next.statementPatience)) next.statementPatience = {};
+  if (!next.testimonyWallProgress || Array.isArray(next.testimonyWallProgress)) next.testimonyWallProgress = {};
+  next.testimonyWallProgress = Object.fromEntries(Object.entries(next.testimonyWallProgress).map(([key, value]) => {
+    const progress = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    const act = Math.max(1, Math.floor(Number(progress.act) || 1));
+    return [key, { ...progress, act }];
+  }));
+  if (!next.decisivePresentProgress || Array.isArray(next.decisivePresentProgress)) next.decisivePresentProgress = {};
   if (!("activeStatementLineId" in next)) next.activeStatementLineId = null;
   if (!next.helperHintPicks || Array.isArray(next.helperHintPicks)) next.helperHintPicks = {};
   if (!next.sceneQuestionFocus || typeof next.sceneQuestionFocus !== "object" || Array.isArray(next.sceneQuestionFocus)) next.sceneQuestionFocus = null;

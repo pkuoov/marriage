@@ -95,6 +95,7 @@ export function retryPatienceLostState({ state = {}, brief = {}, context = null,
   }
 
   const area = retryContext.area ?? "sceneReview";
+  const retryScene = retryContext.retryScene === "testimonyWall" ? "testimonyWall" : area;
   if (Number.isInteger(retryContext.index)) {
     nextState.dialogueProgress = {
       ...(nextState.dialogueProgress ?? {}),
@@ -104,7 +105,7 @@ export function retryPatienceLostState({ state = {}, brief = {}, context = null,
 
   return {
     ...nextState,
-    scene: area,
+    scene: retryScene,
     lastReaction: null,
     lastPressureSignal: null,
     pendingQuestionPressureSignal: null,

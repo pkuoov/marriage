@@ -9,6 +9,17 @@ export const AUDIO_CUES = Object.freeze({
 
   "bgm.title-nightshift": readyLoop("霓虹雨夜标题", "bgm", "./assets/audio/bgm/title-neon-rain.ogg", 0.52),
   "bgm.live-call": readyLoop("直播连线", "bgm", "./assets/audio/bgm/live-call.ogg", 0.66),
+  "bgm.live-call-allegro": plannedLoop("直播连线·Allegro", "bgm", "./assets/audio/bgm/live-call-allegro.ogg", 0.7, {
+    loopStart: 0,
+    attackMs: 0,
+    productionNote: "与 live-call 同旋律，1.25 倍速并加鼓点；从循环点直接入拍"
+  }),
+  "bgm.pursuit": plannedLoop("追索线浮出", "bgm", "./assets/audio/bgm/pursuit.ogg", 0.72, {
+    loopStart: 0,
+    attackMs: 0,
+    durationTargetSeconds: [60, 90],
+    productionNote: "B 故事浮出水面用；无前奏，首拍可紧跟指认 stinger"
+  }),
   "bgm.pressure-stem": readyLoop("现场压力层", "bgm", "./assets/audio/bgm/pressure-stem.ogg", 0.48),
   "bgm.offair-desk": readyLoop("收麦调查台", "bgm", "./assets/audio/bgm/offair-desk.ogg", 0.62),
   "bgm.day-investigation": readyLoop("白天调查", "bgm", "./assets/audio/bgm/day-investigation.ogg", 0.64),
@@ -35,6 +46,8 @@ export const AUDIO_CUES = Object.freeze({
   "sfx.broadcast.on-air": readyOneShot("开播提示音", "./assets/audio/sfx/broadcast-on-air.ogg", 0.34),
   "sfx.message.notification": readyOneShot("后台消息", "./assets/audio/sfx/message-notification.ogg", 0.48),
   "sfx.document.mark": readyOneShot("材料圈点", "./assets/audio/sfx/document-mark.ogg", 0.46),
+  "sfx.present.hit": readySynth("指认命中", "present-hit"),
+  "sfx.present.miss": readySynth("指认失误", "present-miss"),
   "sfx.case2.door-knock": readyOneShot("门外敲门", "./assets/audio/sfx/case2-door-knock.ogg", 0.5),
 
   "voice.case1.loyalty-message": plannedVoice("案1·怕你离开", "./assets/audio/voice/case1-loyalty-message.ogg", "我只是怕你知道我失业后就离开我。"),
@@ -63,8 +76,8 @@ function readySynth(label, synth) {
   return Object.freeze({ label, bus: "sfx", status: "ready", synth, gain: 1, loop: false });
 }
 
-function plannedLoop(label, bus, src, gain) {
-  return Object.freeze({ label, bus, status: "planned", src, gain, loop: true });
+function plannedLoop(label, bus, src, gain, metadata = {}) {
+  return Object.freeze({ label, bus, status: "planned", src, gain, loop: true, ...metadata });
 }
 
 function readyLoop(label, bus, src, gain) {
