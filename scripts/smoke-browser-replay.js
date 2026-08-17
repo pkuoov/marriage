@@ -9,6 +9,16 @@ const storyManifest = JSON.parse(await readFile(resolve(root, "content", "packs"
 const authoredCasePackets = await Promise.all((storyManifest.sequence ?? []).map((item) => (
   readFile(resolve(root, "content", "packs", "steam-demo-01", "cases", `${item.caseId}.json`), "utf8").then(JSON.parse)
 )));
+const testimonySmokeActs = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
+  (scene.testimonyWall?.acts ?? []).map((act) => ({
+    caseId: packet.id ?? packet.caseId ?? "unknown-case",
+    sceneId: scene.id ?? "unknown-scene",
+    actId: act.id ?? `act-${act.act ?? "unknown"}`,
+    evidenceId: act.decisivePresent?.evidenceId ?? "",
+    statementId: act.decisivePresent?.statementId ?? "",
+    statementIds: (act.statements ?? []).map((statement) => statement.id).filter(Boolean)
+  }))
+))).filter((act) => act.evidenceId && act.statementId && act.statementIds.length);
 const loadBearingSourceAnchors = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
   (scene.questionOptions ?? [])
     .filter((option) => option.contradiction)
@@ -536,6 +546,10 @@ async function runRoute(route) {
 
     for (let beat = 0; beat < 48; beat += 1) {
       await collectLiveVisualState(page, visualStates, portraitStates);
+      if (await testimonyFlowIsVisible(page)) {
+        await completeTestimonyWall(page, route);
+        continue;
+      }
       if (route.name === "accounting-support" && !materialEntryChecked && await page.locator(".deck-card-material[data-material-open]").count()) {
         if (await page.locator("[data-material-open]").count() < 3) throw new Error("received material must be reachable from the control deck, dialogue bar, and active choice layer");
         if (!await page.locator(".choice-material-shortcut[data-material-open]").isVisible()) throw new Error("active choices must expose a visible received-material shortcut");
@@ -646,6 +660,10 @@ async function runRoute(route) {
         continue;
       }
       await drainDialogue(page, route);
+      if (await testimonyFlowIsVisible(page)) {
+        await completeTestimonyWall(page, route);
+        continue;
+      }
       await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
       await activate(page, route, "[data-scene-open-replay]");
       await page.locator("[data-scene-review-line]").first().waitFor({ state: "visible" });
@@ -811,6 +829,10 @@ async function advanceNightCaseToOvernightHangup(page, portraitAssets = null) {
   for (let beat = 0; beat < 48; beat += 1) {
     await collectPortraitAsset(page, portraitAssets);
     if (await page.locator("[data-enter-post-live], [data-enter-interlude]").count()) return;
+    if (await testimonyFlowIsVisible(page)) {
+      await completeTestimonyWall(page);
+      continue;
+    }
     if (await page.locator("[data-evidence-check]").count()) {
       await click(page, "[data-evidence-check]");
       continue;
@@ -833,6 +855,10 @@ async function advanceNightCaseToOvernightHangup(page, portraitAssets = null) {
       continue;
     }
     await drainDialogue(page, {});
+    if (await testimonyFlowIsVisible(page)) {
+      await completeTestimonyWall(page);
+      continue;
+    }
     if (await page.locator("[data-scene-open-replay]").count()) {
       await click(page, "[data-scene-open-replay]");
       const sourceLine = await currentLoadBearingStatementLine(page);
@@ -1014,6 +1040,10 @@ async function advanceToReactionBeat(page, expectedText, name) {
   for (let step = 0; step < 48; step += 1) {
     transcript += `\n${await drainDialogue(page, {})}`;
     if (transcript.includes(expectedText)) return;
+    if (await testimonyFlowIsVisible(page)) {
+      await completeTestimonyWall(page);
+      continue;
+    }
     for (const selector of [
       "[data-enter-overnight-night2]",
       "[data-enter-overnight-night2-direct]",
@@ -1037,6 +1067,67 @@ async function advanceToReactionBeat(page, expectedText, name) {
     }
   }
   throw new Error(`${name} did not reach reaction beat: ${expectedText}`);
+}
+
+async function testimonyFlowIsVisible(page) {
+  return Boolean(await page.locator([
+    "[data-decisive-present-start]",
+    "[data-decisive-material]",
+    "[data-decisive-present-target]",
+    "[data-after-decisive-present]"
+  ].join(", ")).count());
+}
+
+async function completeTestimonyWall(page, route = {}) {
+  let completedActs = 0;
+  for (let step = 0; step < 4; step += 1) {
+    if (await page.locator("[data-after-decisive-present]").count()) {
+      await waitForEnabled(page, "[data-after-decisive-present]");
+      await activate(page, route, "[data-after-decisive-present]");
+      completedActs += 1;
+      continue;
+    }
+    if (!await page.locator("[data-decisive-present-start]").count()) break;
+
+    const act = await currentTestimonySmokeAct(page);
+    const launch = page.locator("[data-decisive-present-start]");
+    if (await launch.isDisabled()) {
+      const visibleStatementIds = await page.locator("[data-testimony-press]").evaluateAll((buttons) => (
+        buttons.map((button) => button.dataset.testimonyPress).filter(Boolean)
+      ));
+      for (const statementId of visibleStatementIds) {
+        await activate(page, route, `[data-testimony-press="${statementId}"]`);
+        if (!await page.locator("[data-decisive-present-start]").isDisabled()) break;
+      }
+      if (await page.locator("[data-decisive-present-start]").isDisabled()) {
+        throw new Error(`${act.caseId}/${act.sceneId}/${act.actId} did not unlock decisive present after PRESS`);
+      }
+    }
+
+    await activate(page, route, "[data-decisive-present-start]");
+    await activate(page, route, `[data-decisive-material="${act.evidenceId}"]`);
+    await activate(page, route, `[data-decisive-present-target="${act.statementId}"]`);
+    await page.locator("[data-after-decisive-present]").waitFor({ state: "visible" });
+  }
+  if (!completedActs) throw new Error("testimony wall smoke helper did not complete an act");
+}
+
+async function currentTestimonySmokeAct(page) {
+  const visibleStatementIds = new Set(await page.locator("[data-testimony-press]").evaluateAll((buttons) => (
+    buttons.map((button) => button.dataset.testimonyPress).filter(Boolean)
+  )));
+  const matches = testimonySmokeActs.filter((act) => act.statementIds.some((statementId) => visibleStatementIds.has(statementId)));
+  if (matches.length !== 1) {
+    throw new Error(`expected one authored testimony act for visible statements, found ${matches.length}`);
+  }
+  return matches[0];
+}
+
+async function waitForEnabled(page, selector) {
+  await page.waitForFunction((targetSelector) => {
+    const button = document.querySelector(targetSelector);
+    return button instanceof HTMLButtonElement && !button.disabled;
+  }, selector);
 }
 
 async function completeOvernightDay(page, route) {
@@ -1121,7 +1212,7 @@ async function runCaseTransition() {
     await page.reload();
     await click(page, "[data-continue-story]");
     await assertVisibleText(page, "案件结案", "first case should enter a dedicated closure page before the next case");
-    await assertVisibleText(page, "账单里的八万", "first case closure should carry a case-specific title");
+    await assertVisibleText(page, authoredCasePackets[0].caseClosing?.title, "first case closure should carry its authored case-specific title");
     await assertVisibleText(page, "已经确认", "closure should distinguish confirmed facts from a raw evidence pile");
     await assertVisibleText(page, "还没弄清", "closure should preserve unresolved facts");
     await click(page, "[data-enter-story-interlude]");
@@ -1481,7 +1572,7 @@ async function activate(page, route, selector, index = 0) {
 
 async function drainDialogue(page, route) {
   const shownText = new Set();
-  for (let line = 0; line < 80; line += 1) {
+  for (let line = 0; line < 160; line += 1) {
     const box = page.locator("[data-dialogue-advance]:not([data-dialogue-done]):visible").first();
     if (!await box.count()) {
       await assertInlineContinuePlacement(page);
@@ -1505,7 +1596,7 @@ async function drainDialogue(page, route) {
     const pageText = (await box.locator(".avg-line").allTextContents()).join("\n").trim();
     if (pageText) shownText.add(pageText);
   }
-  throw new Error("per-line dialogue did not finish within 80 advances");
+  throw new Error("per-line dialogue did not finish within 160 advances");
 }
 
 async function assertInlineContinuePlacement(page) {
