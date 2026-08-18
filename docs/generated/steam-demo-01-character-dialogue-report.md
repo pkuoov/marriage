@@ -5,9 +5,9 @@
 ## 汇总
 
 - 固定人物卡：35
-- 收录台词／玩家可见人物材料：1150
+- 收录台词／玩家可见人物材料：1159
 - 本包实际出声人物：32
-- 句长节奏人工复核提示：21
+- 句长节奏人工复核提示：23
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
 
 # 全集外壳
@@ -96,10 +96,12 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[1]` 你转了没有？
-- `$case.openingDialogue[3]` 他怎么跟你开的口？
-- `$case.openingDialogue[5]` 你现在是不敢转，还是不想转？
-- `$case.openingDialogue[7]` 你们在一起多久了？
+- `$case.openingDialogue[1]` 你好，我在听。你说。
+- `$case.openingDialogue[3]` 你转了吗？
+- `$case.openingDialogue[5]` 那先别转。是什么钱？
+- `$case.openingDialogue[7]` 要你垫多少？
+- `$case.openingDialogue[9]` 他说什么时候还？
+- `$case.openingDialogue[11]` 那你自己怎么想？
 - `$case.sceneVersions[0].beforeVersion.lines[0]` 你们平时住在一起吗？
 - `$case.sceneVersions[0].questionOptions[0].lines[1]` 那你这边每个月收到多少？
 - `$case.sceneVersions[0].questionOptions[0].lines[3]` 转了多久？
@@ -221,11 +223,13 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[0]` 喂，能听见吧？我想咨询个事。你先别骂我，我男朋友突然让我替他还八万块信用卡。
-- `$case.openingDialogue[2]` 没有。转账页面都打开了，我还是没按下去。
-- `$case.openingDialogue[4]` 说奖金晚发，让我先垫几天。
-- `$case.openingDialogue[6]` 不想。他还一直提以前给我花过的钱。可这八万，我就是不想给。
-- `$case.openingDialogue[8]` 一年半左右。
+- `$case.openingDialogue[0]` 主播你好，我想问个自己的事。
+- `$case.openingDialogue[2]` 我男朋友刚才找我，说想让我替他垫一笔钱。
+- `$case.openingDialogue[4]` 没有。我把转账页面打开过，后来又退了。
+- `$case.openingDialogue[6]` 他信用卡该还了。说奖金晚发，让我帮他顶几天。
+- `$case.openingDialogue[8]` 八万。
+- `$case.openingDialogue[10]` 没说准，就说过几天。
+- `$case.openingDialogue[12]` 我不想转。他还提以前给我花过的钱，说得像我今天不转，这一年半都是我欠他的。
 - `$case.sceneVersions[0].questionOptions[0].lines[0]` 对，没给我。
 - `$case.sceneVersions[0].questionOptions[0].lines[2]` 工资一到账，转我一半。
 - `$case.sceneVersions[0].questionOptions[0].lines[4]` 一年多。十四个月。
@@ -436,13 +440,14 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[1]` 写的什么？
-- `$case.openingDialogue[3]` 信用卡账单已经出了？
-- `$case.openingDialogue[5]` 那你为什么还没发？
-- `$case.openingDialogue[7]` 你们公司做什么？
-- `$case.openingDialogue[9]` 这次也是铺点的活动？
-- `$case.openingDialogue[11]` 可这张卡你也得还。
-- `$case.openingDialogue[13]` 垫钱这件事，当时是谁先提的？
+- `$case.openingDialogue[1]` 在，你说。
+- `$case.openingDialogue[3]` 垫了多少？
+- `$case.openingDialogue[5]` 你催过吗？
+- `$case.openingDialogue[7]` 为什么还没发？
+- `$case.openingDialogue[9]` 你们公司做什么？
+- `$case.openingDialogue[11]` 这次也是铺点的活动？
+- `$case.openingDialogue[13]` 可这张卡你也得还。
+- `$case.openingDialogue[15]` 垫钱这件事，当时是谁先提的？
 - `$case.sceneVersions[0].questionOptions[0].lines[1]` 后面呢？
 - `$case.sceneVersions[0].questionOptions[0].lines[3]` 你回了什么？
 - `$case.sceneVersions[0].questionOptions[0].lines[5]` 额度不够呢？
@@ -543,14 +548,15 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[0]` 主播，我这边听得见吗？我说慢一点，这事绕在一张图上。我有句话打在工作群输入框里，一直没敢发。
-- `$case.openingDialogue[2]` “公司一直不给我报销。”
-- `$case.openingDialogue[4]` 出了。六万八，我自己的卡。钱还没回来。
-- `$case.openingDialogue[6]` 这次活动是我刚争来的。我怕一发出去，以后就不让我碰客户活动了。
-- `$case.openingDialogue[8]` 栖行共享科技，做共享充电柜和储物柜。宸直是主要股东之一，公司最近又在讲估值涨了、点位铺得快。
-- `$case.openingDialogue[10]` 城市合伙人的招商会，老板会到。我才想把它接下来。
-- `$case.openingDialogue[12]` 所以我才不知道怎么开口。
-- `$case.openingDialogue[14]` 一个同事私聊我，说今天来不及走流程，让我先垫上。
+- `$case.openingDialogue[0]` 主播，我想问个工作上的事。
+- `$case.openingDialogue[2]` 我替公司垫了一笔钱，三个星期了，还没报下来。
+- `$case.openingDialogue[4]` 六万八，我自己的卡。账单已经出了，钱还没回来。
+- `$case.openingDialogue[6]` 我有句话都打到工作群输入框里了：“公司一直不给我报销。”可我还没发。
+- `$case.openingDialogue[8]` 这次活动是我刚争来的。我怕一发出去，以后就不让我碰客户活动了。
+- `$case.openingDialogue[10]` 栖行共享科技，做共享充电柜和储物柜。宸直是主要股东之一，公司最近又在讲估值涨了、点位铺得快。
+- `$case.openingDialogue[12]` 城市合伙人的招商会，老板会到。我才想把它接下来。
+- `$case.openingDialogue[14]` 所以我才不知道怎么开口。
+- `$case.openingDialogue[16]` 一个同事私聊我，说今天来不及走流程，让我先垫上。
 - `$case.sceneVersions[0].casualQuestions[1].lines[0]` 有回我加班到十点，他给我留了盏灯，桌上还贴了张“早点回”。
 - `$case.sceneVersions[0].casualQuestions[1].lines[2]` 那张便利贴我留着，夹在工牌套后面。后来他让我别去群里问预算，我也更愿意信他会补流程。
 - `$case.sceneVersions[0].questionOptions[0].lines[0]` 先说垫钱。
@@ -780,14 +786,15 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[1]` 二十八万八，问的什么钱？
-- `$case.openingDialogue[3]` 你们本来谈到哪一步了？
-- `$case.openingDialogue[5]` 这个数怎么来的？
-- `$case.openingDialogue[7]` 那她怎么会把数开到二十八万八？
-- `$case.openingDialogue[9]` 男方怎么回？
-- `$case.openingDialogue[11]` 你信了？
-- `$case.openingDialogue[13]` 他发了什么？
-- `$case.openingDialogue[15]` 上面余额多少？
+- `$case.openingDialogue[1]` 好，你说。
+- `$case.openingDialogue[3]` 她问了多少？
+- `$case.openingDialogue[5]` 你们本来谈到哪一步了？
+- `$case.openingDialogue[7]` 这个数怎么来的？
+- `$case.openingDialogue[9]` 那她怎么会把数开到二十八万八？
+- `$case.openingDialogue[11]` 男方怎么回？
+- `$case.openingDialogue[13]` 你信了？
+- `$case.openingDialogue[15]` 他发了什么？
+- `$case.openingDialogue[17]` 上面余额多少？
 - `$case.sceneVersions[0].questionOptions[0].lines[1]` 那张卡我会问。可在看流水以前，他已经说拿不出。你信了吗？
 - `$case.sceneVersions[0].questionOptions[0].lines[3]` 为什么觉得他在压价？
 - `$case.sceneVersions[0].questionOptions[0].lines[5]` 阿姨这个算法，比银行风控还激进。
@@ -901,15 +908,16 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[0]` 喂，主播，能听见吧？我先说，数字有点绕。我这周末本来要带相亲对象见父母，结果我妈背着我，把二十八万八先问出去了。
-- `$case.openingDialogue[2]` 彩礼。她先托介绍人去问，男方今天才来找我。
-- `$case.openingDialogue[4]` 这周末第一次正式见父母，双方家里都来。饭店还没订。
-- `$case.openingDialogue[6]` 我妈一直以为他是名校本科。上周我才告诉她，本科不是那所。
-- `$case.openingDialogue[8]` 她说有她的理由，没先跟我商量。到底怎么算的，我也是后来翻家里群才看明白。
-- `$case.openingDialogue[10]` 他说二十八万八拿不出来，也不能把手里的钱全拿去做彩礼。
-- `$case.openingDialogue[12]` 没信。我让他把银行流水打出来。
-- `$case.openingDialogue[14]` 只发来一份工资账户流水。
-- `$case.openingDialogue[16]` 二十八万六。
+- `$case.openingDialogue[0]` 主播你好，我想请你帮我听听一件事。
+- `$case.openingDialogue[2]` 我这周末本来要带相亲对象见父母，结果我妈背着我，先去问了彩礼。
+- `$case.openingDialogue[4]` 二十八万八。她先托介绍人去问，男方今天才来找我。
+- `$case.openingDialogue[6]` 这周末第一次正式见父母，双方家里都来。饭店还没订。
+- `$case.openingDialogue[8]` 我妈一直以为他是名校本科。上周我才告诉她，本科不是那所。
+- `$case.openingDialogue[10]` 她说有她的理由，没先跟我商量。到底怎么算的，我也是后来翻家里群才看明白。
+- `$case.openingDialogue[12]` 他说二十八万八拿不出来，也不能把手里的钱全拿去做彩礼。
+- `$case.openingDialogue[14]` 没信。我让他把银行流水打出来。
+- `$case.openingDialogue[16]` 只发来一份工资账户流水。
+- `$case.openingDialogue[18]` 二十八万六。
 - `$case.sceneVersions[0].questionOptions[0].lines[0]` 我妈一直这么说。你别只问我，先问他为什么卡上正好二十八万六。
 - `$case.sceneVersions[0].questionOptions[0].lines[2]` 没有。我当时觉得，他是在跟我压价。
 - `$case.sceneVersions[0].questionOptions[0].lines[4]` 二十三万八的学费都是他自己交的。我妈就说，能把这笔钱交清，不可能连彩礼都拿不出。
@@ -1142,13 +1150,13 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[1]` 今晚第四通。水没了，嗓子还在。你说。
-- `$case.openingDialogue[2]` 他是谁？
-- `$case.openingDialogue[4]` 你们是什么关系？
-- `$case.openingDialogue[6]` 名单上写了什么？
-- `$case.openingDialogue[8]` 所以你打来，想先问这张名单，还是先问钱？
-- `$case.openingDialogue[10]` 名单怎么到你手里的？
-- `$case.openingDialogue[12]` 钱的事等会儿说。你先把名单发过来，名字遮掉。
+- `$case.openingDialogue[1]` 你在的，请讲。
+- `$case.openingDialogue[3]` 他是谁？
+- `$case.openingDialogue[5]` 你们是什么关系？
+- `$case.openingDialogue[7]` 名单上写了什么？
+- `$case.openingDialogue[9]` 所以你打来，想先问这张名单，还是先问钱？
+- `$case.openingDialogue[11]` 名单怎么到你手里的？
+- `$case.openingDialogue[13]` 钱的事等会儿说。你先把名单发过来，名字遮掉。
 - `$case.sceneVersions[0].questionOptions[0].lines[1]` 不是截得急。每一行都断在同一个地方。
 - `$case.sceneVersions[1].questionOptions[0].lines[1]` 所以是你当自己在谈。
 - `$case.sceneVersions[3].questionOptions[0].lines[1]` 就这一句？
@@ -1266,13 +1274,14 @@
 
 ### 夜 A
 
-- `$case.openingDialogue[0]` 主播，能听见吗？我这事说出来有点难看。昨晚我在一个男的手机里看见一张名单，上面全是女的。我一晚上没睡。
-- `$case.openingDialogue[3]` 给我剪头的那个，我平时叫他 Tony。我今天轮休，现在在家。一直没敢找他。
-- `$case.openingDialogue[5]` 没公开过。可他一直叫我自己人。
-- `$case.openingDialogue[7]` 亲密度、下次约，一排女人的名字。越看越不对。我当时就觉得，他是不是拿谈恋爱吊着一串人。
-- `$case.openingDialogue[9]` 也不只是这个。我还有一笔钱在他那里，想拿回来。
-- `$case.openingDialogue[11]` 他去洗澡，手机亮着，备忘录没锁。
-- `$case.openingDialogue[13]` 我已经发后台了。那笔钱，我就是想拿回来。
+- `$case.openingDialogue[0]` 主播，我在线上吗？
+- `$case.openingDialogue[2]` 我昨晚在一个男的手机里看见张名单，上面全是女的。我一晚上没睡。
+- `$case.openingDialogue[4]` 给我剪头的那个，我平时叫他 Tony。我今天轮休，现在在家。一直没敢找他。
+- `$case.openingDialogue[6]` 没公开过。可他一直叫我自己人。
+- `$case.openingDialogue[8]` 亲密度、下次约，一排女人的名字。越看越不对。我当时就觉得，他是不是拿谈恋爱吊着一串人。
+- `$case.openingDialogue[10]` 也不只是这个。我还有一笔钱在他那里，想拿回来。
+- `$case.openingDialogue[12]` 他去洗澡，手机亮着，备忘录没锁。
+- `$case.openingDialogue[14]` 我已经发后台了。那笔钱，我就是想拿回来。
 - `$case.sceneVersions[0].casualQuestions[1].lines[0]` 我数过，八……不对，九个。
 - `$case.sceneVersions[0].casualQuestions[1].lines[2]` 连我。
 - `$case.sceneVersions[0].questionOptions[0].lines[0]` 截得急。
@@ -1687,6 +1696,7 @@
 
 以下只是朗读提醒，不自动判错。三句服务于不同防御动作时可以保留。
 
+- 01-credit／案一咨询者·沈／nightA：20、19、22 字（$case.openingDialogue[2]；$case.openingDialogue[4]；$case.openingDialogue[6]）
 - 01-credit／林旭阳／nightB：19、18、20 字（$case.sceneVersions[7].casualQuestions[1].question；$case.sceneVersions[7].casualQuestions[2].question；$case.sceneVersions[7].casualQuestions[3].question）
 - 01-credit／林旭阳／nightB：28、28、24 字（$case.sceneVersions[7].questionOptions[0].question；$case.sceneVersions[7].questionOptions[1].question；$case.overnightStructure.callerQuestion.options[0].label）
 - 01-credit／林旭阳／nightB：28、24、24 字（$case.sceneVersions[7].questionOptions[1].question；$case.overnightStructure.callerQuestion.options[0].label；$case.overnightStructure.callerQuestion.options[1].label）
@@ -1703,6 +1713,7 @@
 - 04-workplace／林旭阳／day：29、32、32 字（$case.overnightStructure.dayScenes[1].body.beats[4]；$case.overnightStructure.dayScenes[1].body.choice.options[0].resultBeats[0]；$case.overnightStructure.dayScenes[1].body.choice.options[1].resultBeats[0]）
 - 04-workplace／职场案部门助理／day：31、33、35 字（$case.overnightStructure.dayScenes[2].body.beats[1]；$case.overnightStructure.dayScenes[2].body.beats[2]；$case.overnightStructure.dayScenes[2].body.beats[3]）
 - 04-workplace／职场案部门助理／day：35、38、36 字（$case.overnightStructure.dayScenes[2].body.beats[3]；$case.overnightStructure.dayScenes[2].body.choice.options[0].resultBeats[0]；$case.overnightStructure.dayScenes[2].body.choice.options[1].resultBeats[0]）
+- 03-profile／案三咨询者·林／nightA：24、25、28 字（$case.openingDialogue[4]；$case.openingDialogue[6]；$case.openingDialogue[8]）
 - 02-tony／第四通咨询者·何／nightA：33、34、35 字（$case.sceneVersions[1].version；$case.sceneVersions[1].revisedVersion；$case.sceneVersions[1].casualQuestions[0].answer）
 - 02-tony／第四通咨询者·何／nightB：36、33、34 字（$case.overnightStructure.callbackOpeners.门店的说明.line；$case.overnightStructure.callbackOpeners.一百万门槛.line；$case.overnightStructure.callbackOpeners.翻手机的时间.line）
 - 02-tony／第四通咨询者·何／nightB：33、34、37 字（$case.overnightStructure.callbackOpeners.一百万门槛.line；$case.overnightStructure.callbackOpeners.翻手机的时间.line；$case.overnightStructure.callbackOpeners.宸直窗口答复.line）

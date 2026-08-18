@@ -289,37 +289,49 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "主播，我这边听得见吗？我说慢一点，这事绕在一张图上。我有句话打在工作群输入框里，一直没敢发。",
+      "text": "主播，我想问个工作上的事。",
       "mood": "thinking"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "写的什么？",
+      "text": "在，你说。",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "“公司一直不给我报销。”",
+      "text": "我替公司垫了一笔钱，三个星期了，还没报下来。",
       "mood": "thinking"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "信用卡账单已经出了？",
+      "text": "垫了多少？",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "出了。六万八，我自己的卡。钱还没回来。",
+      "text": "六万八，我自己的卡。账单已经出了，钱还没回来。",
       "mood": "thinking"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "那你为什么还没发？",
+      "text": "你催过吗？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "我有句话都打到工作群输入框里了：“公司一直不给我报销。”可我还没发。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "为什么还没发？",
       "mood": "listening"
     },
     {

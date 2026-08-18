@@ -304,19 +304,31 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "喂，主播，能听见吧？我先说，数字有点绕。我这周末本来要带相亲对象见父母，结果我妈背着我，把二十八万八先问出去了。",
+      "text": "主播你好，我想请你帮我听听一件事。",
       "mood": "thinking"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "二十八万八，问的什么钱？",
+      "text": "好，你说。",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "彩礼。她先托介绍人去问，男方今天才来找我。",
+      "text": "我这周末本来要带相亲对象见父母，结果我妈背着我，先去问了彩礼。",
+      "mood": "thinking"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "她问了多少？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "二十八万八。她先托介绍人去问，男方今天才来找我。",
       "mood": "thinking"
     },
     {

@@ -2890,13 +2890,18 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertEqual(case1InlineBoards.join("|"), "credit-anniversary-footprint|credit-leveraged-trust|credit-fixed-support", "案一三块承重材料必须回到各自原话之后，不能在末尾五连排");
   assertEqual(afterSceneEvidenceFor(case1Opening, 6, (key) => key === "evidenceCheck:3"), null, "已经核过的宸直材料不得在后续场景重复出现");
   assertEqual(case1Opening.evidenceChecks.filter((_, index) => ![1, 2, 3].includes(index)).length, 2, "案一原地收尾材料板最多保留两块");
-  assertEqual(case1Opening?.openingDialogue?.length, 9, "案一开场必须把求助、金额、未转与拒绝诉求拆成四轮自然问答");
+  assertEqual(case1Opening?.openingDialogue?.length, 13, "案一开场必须按正常接线节奏逐层进入关系、用途、金额、期限与拒绝诉求");
   assert(case1Opening?.openingDialogue?.every((line, index, lines) => index === 0 || line.role !== lines[index - 1].role), "案一开场必须由主播与咨询者交替说话，不能连续塞入同一方的功能句");
-  assertIncludes(case1Opening?.openingDialogue?.[0]?.text ?? "", "想咨询个事", "案一第一句必须先有自然接通，再进入八万元问题");
-  assertIncludes(case1Opening?.openingDialogue?.[0]?.text ?? "", "八万", "案一第一句应在接通后交代金额，不再让主播按接待表追问数字");
-  assertIncludes(case1OpeningText, "你转了没有", "案一主播必须沿眼前动作确认钱是否已经转出");
-  assertIncludes(case1OpeningText, "他怎么跟你开的口", "案一确认未转后再追对方原话，不能一问收完整件事");
-  assertIncludes(case1OpeningText, "这八万，我就是不想给", "案一开场必须让来电人直接说出不想转账，不得绕成抽象道德判断");
+  assertIncludes(case1Opening?.openingDialogue?.[0]?.text ?? "", "主播你好", "案一第一句必须先用普通问候让接通成立");
+  assertIncludes(case1Opening?.openingDialogue?.[0]?.text ?? "", "问个自己的事", "案一第一句只说明来意，不直接递交案情摘要");
+  assert(!/(八万|男朋友|信用卡|转账页面|先别骂)/.test(case1Opening?.openingDialogue?.[0]?.text ?? ""), "案一第一句不得重新打包金额、关系、账单和预防挨骂");
+  assertIncludes(case1Opening?.openingDialogue?.[1]?.text ?? "", "我在听", "案一主播第一拍必须正常接线并把话头交还给咨询者");
+  assertIncludes(case1Opening?.openingDialogue?.[2]?.text ?? "", "男朋友刚才找我", "主播请讲以后，咨询者才说明男友提出代垫请求");
+  assertIncludes(case1OpeningText, "你转了吗", "男友提出代垫后，主播必须先确认钱是否已经转出");
+  assert(case1Opening.openingDialogue.findIndex((line) => line.text.includes("八万")) > case1Opening.openingDialogue.findIndex((line) => line.text.includes("信用卡")), "案一必须先问清代垫用途，再追金额");
+  assertIncludes(case1OpeningText, "他说什么时候还", "案一代垫说法出现后必须沿承诺追归还期限");
+  assertIncludes(case1OpeningText, "我不想转", "案一开场必须让来电人直接说出不想承担八万元，不得绕成抽象道德判断");
+  assertIncludes(case1OpeningText, "这一年半", "案一应在拒绝理由出现后才补交往时长，为首场同住追问留入口");
   assert(!/那你今天想问什么|借多少/.test(case1OpeningText), "案一开场有自然接通话，但不得退回由主播按接待表补问题");
   assert(!case1OpeningText.includes("不讲情分"), "案一开场不得用抽象的情分判断替代来电人的现实诉求");
   assert(!case1OpeningText.includes("先不急着说你有没有情分"), "案一不得再用一句模板缓冲代替逐轮追问");
@@ -2950,11 +2955,20 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
     .map((brief) => brief?.openingDialogue?.[0]?.text ?? "");
   assert(openingFirstLines.every((line) => /主播|咨询|分析/.test(line)), "四案第一句都必须先有自然接通感，不能从金额或证据物件硬切入");
   assertEqual(new Set(openingFirstLines.map((line) => line.split(/[。！？]/)[0])).size, 4, "四案不得共用同一句模板问候");
+  assertIncludes(case2?.openingDialogue?.[0]?.text ?? "", "我在线上吗", "案二应先确认自己已经接入，不得把名单和失眠塞进问候句");
+  assertIncludes(case2?.openingDialogue?.[1]?.text ?? "", "你在的，请讲", "案二主播必须先完成正常接线，再让名单进入");
+  assert(!/名单|女的|没睡/.test(case2?.openingDialogue?.[0]?.text ?? ""), "案二问候句不得兼做名单摘要");
   assert(!JSON.stringify(case2?.openingDialogue ?? []).includes("先缓口气"), "案二开场必须从名单和要钱直接追，不能保留模板式安抚");
   assertIncludes(JSON.stringify(case2?.openingDialogue ?? []), "钱在他那里", "案二开场必须在名单之后尽快砸出要钱，不能只填关系表");
+  assertIncludes(case3Opening?.openingDialogue?.[0]?.text ?? "", "帮我听听一件事", "案三应先用自己的措辞提出求助，不得从二十八万八硬切入");
+  assertIncludes(case3Opening?.openingDialogue?.[1]?.text ?? "", "好，你说", "案三主播必须先把话头交回给来电人");
+  assert(!/二十八万八|彩礼|见父母/.test(case3Opening?.openingDialogue?.[0]?.text ?? ""), "案三问候句不得兼做彩礼摘要");
   assert(!JSON.stringify(case3Opening?.openingDialogue ?? []).includes("你慢慢说"), "案三开场必须直接接住见父母和彩礼冲突，不能保留模板问候");
   assertIncludes(JSON.stringify(case3Opening?.openingDialogue ?? []), "饭店还没订", "案三开场必须交代饭局尚未落定");
   assertIncludes(JSON.stringify(case3Opening?.openingDialogue ?? []), "先托介绍人去问", "案三开场必须把彩礼越过当事人先传出去的时间冲突说清");
+  assertIncludes(case4Opening?.openingDialogue?.[0]?.text ?? "", "工作上的事", "案四应先正常提出工作咨询，不得用群输入框制造冷开场");
+  assertIncludes(case4Opening?.openingDialogue?.[1]?.text ?? "", "在，你说", "案四主播必须先确认接线，再让垫款进入");
+  assert(!/六万八|工作群|输入框|一张图/.test(case4Opening?.openingDialogue?.[0]?.text ?? ""), "案四问候句不得兼做垫款材料摘要");
   const case3ClosingAmounts = ["二十八万八", "二十八万六", "二十三万八", "三十万", "二十万"]
     .filter((amount) => `${case3Opening?.stageJudgement ?? ""}${case3Opening?.caseClosing?.verdict ?? ""}`.includes(amount));
   assert(case3ClosingAmounts.length <= 2, "案三结案口播不得连续复报材料板里的多个金额");
@@ -3092,7 +3106,7 @@ test("DAILY-005", "eight-day rotation never yields empty playable cases", () => 
   const ids = new Set(days.map((brief) => `${brief.plotId}:${brief.complainantId}:${brief.respondentId}`));
   assert(ids.size >= 6, "8 天轮换至少要避免同 plot 同角色组合直接重复");
   days.forEach((brief) => {
-    assert(brief.openingDialogue.length >= 2 && brief.openingDialogue.length <= 18, `${brief.plotId} 开场必须控制在 2-18 句，用短问答逐步交代而不是单句倾倒`);
+    assert(brief.openingDialogue.length >= 2 && brief.openingDialogue.length <= 20, `${brief.plotId} 开场必须控制在 2-20 句，给正常接线留出两拍，同时仍用短问答逐步交代而不是单句倾倒`);
     assert(brief.sceneVersions.every((item) => (item.questionOptions ?? []).length >= 2), `${brief.plotId} 每段必须至少有两个可问方向`);
     assert(brief.sceneVersions.every((item) => item.version && item.contradiction), `${brief.plotId} sceneVersion 不能缺文本或矛盾`);
   });

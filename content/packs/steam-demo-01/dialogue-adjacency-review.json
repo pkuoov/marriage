@@ -8,54 +8,74 @@
   ],
   "cases": {
     "01-credit": {
-      "reviewedAt": "2026-08-07",
+      "reviewedAt": "2026-08-18",
       "opening": [
         {
-          "fromAnchor": "替他还八万块信用卡",
-          "toAnchor": "你转了没有",
-          "relation": "咨询者先用自然的求助句接通，再交代八万元信用卡要求；主播不做金额讲评，只问转账是否已经发生。"
+          "fromAnchor": "问个自己的事",
+          "toAnchor": "我在听",
+          "relation": "咨询者用普通问候说明有私事想问；主播确认接通并请她继续，不替她预设问题。"
         },
         {
-          "fromAnchor": "你转了没有",
-          "toAnchor": "没按下去",
-          "relation": "主播问是否转账，咨询者只回答页面已打开但没有完成。"
+          "fromAnchor": "你说",
+          "toAnchor": "男朋友刚才找我",
+          "relation": "主播把话头交还给咨询者；她先说请求来自男友，以及对方要她垫钱。"
         },
         {
-          "fromAnchor": "没按下去",
-          "toAnchor": "怎么跟你开的口",
-          "relation": "未转账已经明确，主播追对方当时使用的具体说法。"
+          "fromAnchor": "垫一笔钱",
+          "toAnchor": "你转了吗",
+          "relation": "代垫请求出现后，主播先确认钱是否已经出去，问题直接承接当前风险。"
         },
         {
-          "fromAnchor": "怎么跟你开的口",
-          "toAnchor": "奖金晚发",
-          "relation": "咨询者只复述奖金晚发与先垫几天，不在一拍里倾倒关系账。"
+          "fromAnchor": "你转了吗",
+          "toAnchor": "没有",
+          "relation": "咨询者回答尚未转出，并说明自己打开过页面但已经退出；不是正在按确认键的危机状态。"
         },
         {
-          "fromAnchor": "先垫几天",
-          "toAnchor": "不敢转，还是不想转",
-          "relation": "对方的短期周转说法已经出现，主播把咨询者的犹豫收窄到现实选择。"
+          "fromAnchor": "又退了",
+          "toAnchor": "那先别转",
+          "relation": "主播确认她暂时不转，再追问这笔代垫的用途。"
         },
         {
-          "fromAnchor": "不敢转，还是不想转",
-          "toAnchor": "我就是不想给",
-          "relation": "咨询者正面承认不想转，同时补出男友正用过去花销施压。"
+          "fromAnchor": "是什么钱",
+          "toAnchor": "信用卡",
+          "relation": "咨询者回答信用卡到期，并复述奖金晚发、只顶几天的说法。"
         },
         {
-          "fromAnchor": "以前给我花过的钱",
-          "toAnchor": "在一起多久",
-          "relation": "既往花销已经被男友搬上桌，主播先问关系持续时长，为核对长期钱款来往留出依据。"
+          "fromAnchor": "顶几天",
+          "toAnchor": "垫多少",
+          "relation": "用途和暂借说法已经出现，主播自然追到金额。"
         },
         {
-          "fromAnchor": "在一起多久",
-          "toAnchor": "一年半左右",
-          "relation": "咨询者只回答交往时长，没有在同一句继续倾倒账单和关系背景。"
+          "fromAnchor": "垫多少",
+          "toAnchor": "八万",
+          "relation": "咨询者只回答金额，让八万元单独落一拍。"
+        },
+        {
+          "fromAnchor": "八万",
+          "toAnchor": "什么时候还",
+          "relation": "金额出现后，主播沿“顶几天”的说法确认有没有具体归还日期。"
+        },
+        {
+          "fromAnchor": "什么时候还",
+          "toAnchor": "没说准",
+          "relation": "咨询者直接承认没有明确日期，只复述对方说过几天。"
+        },
+        {
+          "fromAnchor": "说过几天",
+          "toAnchor": "自己怎么想",
+          "relation": "借款条件已经说清，主播把话题从信息核对转回咨询者本人的意愿。"
+        },
+        {
+          "fromAnchor": "自己怎么想",
+          "toAnchor": "我不想转",
+          "relation": "咨询者明确说不想转，再说男友如何拿过去花销和一年半关系向她施压。"
         }
       ],
       "scenes": {
         "credit-living-arrangement": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "一年半左右",
+            "fromAnchor": "这一年半",
             "toAnchor": "平时住在一起吗",
             "relation": "咨询者说两人交往一年半后，主播接着确认是否共同居住；此时还不能预设房租由谁承担。"
           },
@@ -388,17 +408,22 @@
       }
     },
     "02-tony": {
-      "reviewedAt": "2026-08-13",
+      "reviewedAt": "2026-08-18",
       "opening": [
         {
-          "fromAnchor": "一晚上没睡",
-          "toAnchor": "今晚第四通",
-          "relation": "咨询者先把昨晚看见名单、整夜没睡的急切一口交代出来；主播接起第四通时露出缺水和嗓子发干的夜班状态，但不抢她的问题。"
+          "fromAnchor": "我在线上吗",
+          "toAnchor": "你在的，请讲",
+          "relation": "咨询者先确认自己已经接入；主播用普通接线话请她继续。"
         },
         {
-          "fromAnchor": "水没了，嗓子还在",
+          "fromAnchor": "请讲",
+          "toAnchor": "昨晚在一个男的手机里",
+          "relation": "主播把话头交回去后，咨询者才说昨晚看见名单和整夜没睡。"
+        },
+        {
+          "fromAnchor": "一晚上没睡",
           "toAnchor": "他是谁",
-          "relation": "主播用一句狼狈的接麦话把节奏收短，随即从名单上的男人是谁开始核实，不对名单先作判断。"
+          "relation": "名单已经出现，主播从这个男人是谁开始核实，不先判断两人的关系。"
         },
         {
           "fromAnchor": "他是谁",
@@ -783,17 +808,27 @@
       }
     },
     "03-profile": {
-      "reviewedAt": "2026-08-15",
+      "reviewedAt": "2026-08-18",
       "opening": [
         {
-          "fromAnchor": "带相亲对象见父母",
-          "toAnchor": "问的什么钱",
-          "relation": "咨询者先说明原本要见父母，再交代母亲越过她问出二十八万八；主播只问钱的性质。"
+          "fromAnchor": "帮我听听一件事",
+          "toAnchor": "好，你说",
+          "relation": "咨询者用普通求助句开口；主播不预设她的问题，只请她继续。"
         },
         {
-          "fromAnchor": "什么钱",
-          "toAnchor": "彩礼",
-          "relation": "咨询者回答彩礼，并说明母亲先托介绍人越过双方问价。"
+          "fromAnchor": "你说",
+          "toAnchor": "带相亲对象见父母",
+          "relation": "主播把话头交回去后，咨询者才说明周末见父母和彩礼已经被母亲先问出去。"
+        },
+        {
+          "fromAnchor": "先去问了彩礼",
+          "toAnchor": "她问了多少",
+          "relation": "彩礼的性质已经明确，主播只追已经传出的具体数字。"
+        },
+        {
+          "fromAnchor": "她问了多少",
+          "toAnchor": "二十八万八",
+          "relation": "咨询者回答数字，再说明母亲先托介绍人传话、男方今天才来找她。"
         },
         {
           "fromAnchor": "男方今天才来找我",
@@ -904,7 +939,7 @@
               "relation": "彩礼已把周末饭局打断，补问实际相处次数以衡量关系进度。"
             },
             {
-              "contextAnchor": "把二十八万八先问出去了",
+              "contextAnchor": "先去问了彩礼",
               "questionAnchor": "平时什么都聊吗",
               "answerAnchor": "大事聊",
               "relation": "母亲直接介入彩礼后，补问母女平时的信息边界和筛选习惯。"
@@ -1171,32 +1206,42 @@
       }
     },
     "04-workplace": {
-      "reviewedAt": "2026-08-15",
+      "reviewedAt": "2026-08-18",
       "opening": [
         {
-          "fromAnchor": "工作群输入框里",
-          "toAnchor": "写的什么",
-          "relation": "咨询者先说明要问公司里的事，再交代一直没发送的输入框；主播只问原话。"
+          "fromAnchor": "工作上的事",
+          "toAnchor": "在，你说",
+          "relation": "咨询者先说自己想问工作上的事；主播确认在线并请她继续。"
         },
         {
-          "fromAnchor": "写的什么",
-          "toAnchor": "公司一直不给我报销",
-          "relation": "咨询者念出群消息，不先补流程和责任判断。"
+          "fromAnchor": "你说",
+          "toAnchor": "替公司垫了一笔钱",
+          "relation": "主播把话头交回去后，咨询者才说明垫款三周仍未报销。"
         },
         {
-          "fromAnchor": "不给我报销",
-          "toAnchor": "账单已经出了",
-          "relation": "报销未回已经成立，主播问眼前的信用卡压力。"
+          "fromAnchor": "还没报下来",
+          "toAnchor": "垫了多少",
+          "relation": "垫款未回已经成立，主播先问具体金额。"
         },
         {
-          "fromAnchor": "账单已经出了",
+          "fromAnchor": "垫了多少",
           "toAnchor": "六万八",
-          "relation": "咨询者报出个人信用卡和六万八，不在同一拍补垫款经过。"
+          "relation": "咨询者报出六万八和个人信用卡，并说明账单已出、钱仍未回来。"
         },
         {
           "fromAnchor": "钱还没回来",
+          "toAnchor": "你催过吗",
+          "relation": "钱未回已经成立，主播先问她有没有催过，不预设她为何沉默。"
+        },
+        {
+          "fromAnchor": "你催过吗",
+          "toAnchor": "工作群输入框",
+          "relation": "咨询者说自己已经打好追款原话，只是仍未发送。"
+        },
+        {
+          "fromAnchor": "还没发",
           "toAnchor": "为什么还没发",
-          "relation": "钱未回已经成立，主播追她停在发送前的原因。"
+          "relation": "未发送的动作已经出现，主播再追她顾虑什么。"
         },
         {
           "fromAnchor": "为什么还没发",

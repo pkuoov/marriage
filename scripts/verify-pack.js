@@ -2178,6 +2178,18 @@ test("PACK-017", "case 1 does not overcue the ordinary bonus excuse", () => {
   assert(!JSON.stringify(caseOne).includes("把“奖金晚发”四个字记在纸上"), "案一不得恢复记纸条式强调动作");
 });
 
+test("PACK-017A", "case 1 opening uses a normal call-in rhythm before relationship questions", () => {
+  const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
+  const opening = caseOne?.openingDialogue ?? [];
+  assert(opening.length >= 13, "案一开场必须留足接通、关系、用途、金额、期限与真实意愿的来回");
+  assert((opening[0]?.text ?? "").includes("主播你好") && (opening[0]?.text ?? "").includes("问个自己的事"), "案一第一句必须是正常问候和来意，不能硬造危机钩子");
+  assert(!/(八万|男朋友|信用卡|转账页面|先别骂)/.test(opening[0]?.text ?? ""), "案一第一句不得重新打包金额、关系、账单和预防挨骂");
+  assert((opening[1]?.text ?? "").includes("我在听") && (opening[2]?.text ?? "").includes("男朋友刚才找我"), "主播请讲后，咨询者才应逐层说明男友的代垫请求");
+  assert(opening.findIndex((line) => (line.text ?? "").includes("八万")) > opening.findIndex((line) => (line.text ?? "").includes("信用卡")), "案一必须先问清是什么钱，再自然追到金额");
+  assert(JSON.stringify(opening).includes("八万") && JSON.stringify(opening).includes("奖金晚发") && JSON.stringify(opening).includes("以前给我花过的钱"), "案一开场递进不能删掉既有金额、借口和施压来源");
+  assert((opening.at(-1)?.text ?? "").includes("一年半"), "案一开场最后才落到交往时长，随后才能追同住和固定给付");
+});
+
 test("PACK-017B", "case 1 wine-ordering actions stay causal and fit one reply page", () => {
   const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
   const anniversaryScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-anniversary-agency");
@@ -2190,7 +2202,7 @@ test("PACK-017B", "case 1 wine-ordering actions stay causal and fit one reply pa
 
 test("PACK-017C", "case 1 separates residence, salary control, and fixed support", () => {
   const caseOne = caseFiles.find((packet) => packet.caseId === "01-credit");
-  assert(JSON.stringify(caseOne?.openingDialogue ?? []).includes("一年半左右"), "交往时长必须覆盖十四个月固定转账，不能保留旧的半年设定");
+  assert(JSON.stringify(caseOne?.openingDialogue ?? []).includes("一年半"), "交往时长必须覆盖十四个月固定转账，不能保留旧的半年设定");
   const livingScene = caseOne?.sceneVersions?.find((scene) => scene.id === "credit-living-arrangement");
   assert(livingScene, "案一必须保留居住与日常支出场景");
   assert(JSON.stringify(livingScene.beforeVersion ?? {}).includes("你们平时住在一起吗"), "居住情况必须先由主播作流程问话确认");

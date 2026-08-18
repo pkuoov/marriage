@@ -306,55 +306,79 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "喂，能听见吧？我想咨询个事。你先别骂我，我男朋友突然让我替他还八万块信用卡。",
+      "text": "主播你好，我想问个自己的事。",
       "mood": "anxious"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "你转了没有？",
+      "text": "你好，我在听。你说。",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "没有。转账页面都打开了，我还是没按下去。",
+      "text": "我男朋友刚才找我，说想让我替他垫一笔钱。",
       "mood": "anxious"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "他怎么跟你开的口？",
+      "text": "你转了吗？",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "说奖金晚发，让我先垫几天。",
+      "text": "没有。我把转账页面打开过，后来又退了。",
       "mood": "anxious"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "你现在是不敢转，还是不想转？",
+      "text": "那先别转。是什么钱？",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "不想。他还一直提以前给我花过的钱。可这八万，我就是不想给。",
+      "text": "他信用卡该还了。说奖金晚发，让我帮他顶几天。",
       "mood": "anxious"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "你们在一起多久了？",
+      "text": "要你垫多少？",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "一年半左右。",
+      "text": "八万。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "他说什么时候还？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "没说准，就说过几天。",
+      "mood": "anxious"
+    },
+    {
+      "speaker": "林旭阳",
+      "role": "host",
+      "text": "那你自己怎么想？",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "我不想转。他还提以前给我花过的钱，说得像我今天不转，这一年半都是我欠他的。",
       "mood": "anxious"
     }
   ],

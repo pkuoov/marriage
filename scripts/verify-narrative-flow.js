@@ -124,7 +124,7 @@ function validateFlow(flow) {
   check(flow.scenes.every((scene) => scene.speaker === "咨询者"), "CALLER_SCENE_ONLY", "每日 sceneReview 的材料必须由咨询者说出，不能由后台/回拨/系统段落直接插入。");
   check(!hasRealNpcName(allText), "NO_REAL_NAMES", "直播间单案文本不能出现 NPC 真名。");
   check(!hasCallerPerspectiveLeak(allText), "CALLER_PERSPECTIVE", "咨询者语境下的反馈应使用第一人称或直接引语，不能写成第三人称旁白。");
-  check(Boolean(flow.opening.length >= 2 && flow.opening.length <= 18), "OPENING_LENGTH", "开场应控制在 2-18 句；需要更多铺垫时增加短问答，不把信息压进单个长回答。");
+  check(Boolean(flow.opening.length >= 2 && flow.opening.length <= 20), "OPENING_LENGTH", "开场应控制在 2-20 句；正常接线可占两拍，需要更多铺垫时仍用短问答，不把信息压进单个长回答。");
   check(flow.opening[0]?.speaker === "咨询者", "CALLER_FIRST", "第一句必须由咨询者开口。");
   check(flow.opening.some((line) => line.speaker === "你"), "HOST_AFTER_CALLER", "开场必须有主播接话，但不能抢在咨询者之前。");
   check(!renderedOpeningEndsOnHost(flow.opening), "OPENING_DANGLING_HOST", "首屏开场不能停在主播问句上，必须让咨询者答完再进入通话推进。");

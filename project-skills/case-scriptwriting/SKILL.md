@@ -796,7 +796,7 @@ Opening:
   - **Caller openings must be conversational and progressive**: Instead of keyword-heavy statements like `“我们谈了半年，之前约会一直挺体面。前几天他突然说信用卡要周转...”` (abrupt and robotic), write it with natural spoken transitions: `“我们谈了半年多，平时约会消费什么的都挺体面的，我也没觉得有什么问题。结果前几天他突然跟我说信用卡需要周转，想让我先帮他顶一下。”` (colloquial, natural pace).
   - **Host transitions must be warm and inquiry-based**: Instead of abrupt commands like `“先说第一次提钱，他原话怎么讲？”` (sounds like an interrogator), write it as an empathetic inquiry: `“晚上好。我想问一下，他提钱的时候，原话是怎么讲的？”` (natural hosting transition).
   - Avoid any Host or Caller lines that sound like system placeholders or prompt labels.
-  - **Pack-level opening variance**: a story pack must not let its opening first caller line collapse into one shared template with only the topic noun swapped (「主播你好，我想问一段...的事」×4). Vary the entry energy per caller: one直接说想咨询，one礼貌问候后犹豫，one请主播分析，one像事先排练过再开口。每一种都要有接通感，但不能只替换主题名词。Read all four openings back to back before shipping; if you can predict word six of case 3's opening from case 1's template, rewrite it.
+  - **同节奏、不同措辞**：同一档热线里的来电可以共享正常的接线节奏，例如「问候／确认在线 → 主播请讲 → 来电人说明来意」。差别应来自人物会不会客气、会不会犹豫、用什么词称呼自己的事，而不是每案强造一种“独特开场能量”。四案一字不差、只替换案情名词，判模板化；为了躲模板而硬写正在按确认键、突然甩文件或谜语式冷开场，也判失败。交付前把四案首轮并排朗读：节奏可以相近，句子必须像四个人各自正常开口。
 - Do not pack relationship source, relationship stage, family reaction, suspicious material, and caller doubt into the first caller line. One possible split for a relationship-stage call is:
   - caller: call reason only
   - host: how did you meet / where has it progressed
@@ -804,6 +804,9 @@ Opening:
   - host: what exactly happened at that stage
   - caller: trigger material / quote / pressure point
 - **Opening turn information budget**: a caller's first turn may do one job only: ask for help, name the amount, report the other person's reaction, or ask for a concrete decision. If one turn contains three or more of these jobs, split it into at least two or three alternating host-caller exchanges. The host asks for one missing piece at a time; the caller adds one layer at a time. Sentence pagination does not satisfy this rule: breaking an information dump into several bubbles without giving the other person a chance to respond is still an information dump.
+- **紧急动作只在真的发生时闭环**：只有来电人此刻确实停在转账、删除、公开材料或拨号页面，主播才先叫停，来电人下一句只确认已经停下。不能为了制造开场钩子，把已经退出的页面改写成正在按确认键。没有即时危险时，按普通咨询电话接线，让来电人先说来意。
+- **前十句不是案情压缩器，也不是行数配额**：逐句交替不等于节奏自然，但也不要为了把金额硬拖到第十一句而增写动作戏。关系、用途、金额、期限可以在正常追问中依次出现；判断标准是每一问都承接上一答，中间有人类会有的确认、迟疑或态度，而不是某个字段必须落在第几句。
+- **开场前十句冷读门禁**：审核时不要只看 `openingDialogue[0..1]`。从第一句人物口播开始，连同首场 `beforeVersion / version` 往后取满十个实际播放话轮，去掉标题、字段名和作者说明，单独朗读。十句内应让接通成立、让主播接住来意、让问题逐层具体；不能从第二句起机械执行“金额／原话／意愿／时长／同住”的登记表。主播前四次开口必须各自由紧邻上一答产生，至少一次是正常确认或回应，而不只是抽取新字段。十句结束时，新听众应知道谁为什么打来，但不应已经听完隐藏用途和最终判断。任何一项不成立，整段重排，不做逐句润色。
 - **开场阶梯按眼前缺口走，不按固定问卷走**：来电人说「男朋友找我借钱」以后，最自然的下一问可能是「借多少」，不是一律先问怎么认识、交往多久；金额出来以后再问转没转，施压方式出来以后再问她今天想要什么。关系时长、同住情况和材料来源在它们真正变得必要时进入。判断标准是上一答是否让下一问成为现场最想问的那一句，而不是模板字段是否已经填满。
 - **求助问句不许被主播提前批准**：当来电人用「行不行／可不可以／我该不该」索取决定，而事实尚未展开，主播不要用「行」「可以」「你没错」接话。直接追问一个会改变答案的事实，例如交往多久、钱由谁欠、是否已经转出。主播可以晚些给明确立场，但不能在开场用口头应答词无意中替玩家和证据下结论。
 - The trigger for suspicious material appears naturally, for example: "聊到见父母/以后安排时，对方主动发截图".
@@ -950,6 +953,8 @@ AI 或机械化剧本编写容易引入特定的“非人类思路”模板。Co
 1.  **角色互换测试 (Role-Swap Test)**：尝试将 Host 选项的问句与 Caller 的答句互换，或者将这起案件套在另外两个不同性格的角色身上。如果没有任何违和感，说明台词缺乏特定人设，过于泛化，必须打磨其口语特征。
 2.  **一口气朗读测试 (The Read-Aloud Test)**：所有翻译或重写的 JSON 台词，必须在脑中模拟真人电话朗读。如果一个句子过长、包含复杂的从句、修饰词，必须无条件拆分为 2-3 个碎片句。
 3.  **利益归属审查 (Stake Alignment Review)**：每一句台词，Codex 都必须回答一个问题：*“咨询者说出这句话，是在极力粉饰他自己的什么诉求？或者保护他什么面子？”* 如果一句话仅仅是为了给玩家交代背景事实而存在，那就是“非人类思路的说明书”，必须废除或融合。
+4.  **开场十句盲听测试 (Opening Ten-Turn Blind Read)**：复制实际播放的前十个口播话轮；`openingDialogue` 不足十句时，继续取首场 `beforeVersion / version`，不准用标题卡、`openingComplaint` 或作者元数据补语境。逐句标出 `接通 / 接住 / 新事实 / 求助收窄 / 首个必要追问`。若首句同时报关系、金额、道德防守和情绪，或主播前四次开口只是轮流抽取金额、原话、意愿、时长、同住等字段，即判失败。合格结果应让陌生听众在第十句前说清“谁卡在什么眼前动作上、为什么打来”，同时仍不知道本案的隐藏删减和最终判断。
+5.  **开场同节奏异措辞测试 (Shared Rhythm, Distinct Wording)**：把同一包的来电首轮并排读。允许它们都按正常热线的节奏完成「问候或确认在线 → 主播请讲 → 来电人说来意」，不必为了差异强造事故现场。检查差别是否来自人物声口、迟疑方式和用词；若只是复制同一句再替换案情名词，判模板化。再检查每个主播追问是否承接紧邻上一答；若为了凑“前十句不报金额”之类配额增写无事实依据的紧急动作，同样判失败。
 
 ## Diegetic Comment Hints
 

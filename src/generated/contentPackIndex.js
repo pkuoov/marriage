@@ -2455,55 +2455,79 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "喂，能听见吧？我想咨询个事。你先别骂我，我男朋友突然让我替他还八万块信用卡。",
+          "text": "主播你好，我想问个自己的事。",
           "mood": "anxious"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "你转了没有？",
+          "text": "你好，我在听。你说。",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "没有。转账页面都打开了，我还是没按下去。",
+          "text": "我男朋友刚才找我，说想让我替他垫一笔钱。",
           "mood": "anxious"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "他怎么跟你开的口？",
+          "text": "你转了吗？",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "说奖金晚发，让我先垫几天。",
+          "text": "没有。我把转账页面打开过，后来又退了。",
           "mood": "anxious"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "你现在是不敢转，还是不想转？",
+          "text": "那先别转。是什么钱？",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "不想。他还一直提以前给我花过的钱。可这八万，我就是不想给。",
+          "text": "他信用卡该还了。说奖金晚发，让我帮他顶几天。",
           "mood": "anxious"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "你们在一起多久了？",
+          "text": "要你垫多少？",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "一年半左右。",
+          "text": "八万。",
+          "mood": "anxious"
+        },
+        {
+          "speaker": "林旭阳",
+          "role": "host",
+          "text": "他说什么时候还？",
+          "mood": "listening"
+        },
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "没说准，就说过几天。",
+          "mood": "anxious"
+        },
+        {
+          "speaker": "林旭阳",
+          "role": "host",
+          "text": "那你自己怎么想？",
+          "mood": "listening"
+        },
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "我不想转。他还提以前给我花过的钱，说得像我今天不转，这一年半都是我欠他的。",
           "mood": "anxious"
         }
       ],
@@ -5245,37 +5269,49 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "主播，我这边听得见吗？我说慢一点，这事绕在一张图上。我有句话打在工作群输入框里，一直没敢发。",
+          "text": "主播，我想问个工作上的事。",
           "mood": "thinking"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "写的什么？",
+          "text": "在，你说。",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "“公司一直不给我报销。”",
+          "text": "我替公司垫了一笔钱，三个星期了，还没报下来。",
           "mood": "thinking"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "信用卡账单已经出了？",
+          "text": "垫了多少？",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "出了。六万八，我自己的卡。钱还没回来。",
+          "text": "六万八，我自己的卡。账单已经出了，钱还没回来。",
           "mood": "thinking"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "那你为什么还没发？",
+          "text": "你催过吗？",
+          "mood": "listening"
+        },
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "我有句话都打到工作群输入框里了：“公司一直不给我报销。”可我还没发。",
+          "mood": "thinking"
+        },
+        {
+          "speaker": "林旭阳",
+          "role": "host",
+          "text": "为什么还没发？",
           "mood": "listening"
         },
         {
@@ -7485,19 +7521,31 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "喂，主播，能听见吧？我先说，数字有点绕。我这周末本来要带相亲对象见父母，结果我妈背着我，把二十八万八先问出去了。",
+          "text": "主播你好，我想请你帮我听听一件事。",
           "mood": "thinking"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "二十八万八，问的什么钱？",
+          "text": "好，你说。",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "彩礼。她先托介绍人去问，男方今天才来找我。",
+          "text": "我这周末本来要带相亲对象见父母，结果我妈背着我，先去问了彩礼。",
+          "mood": "thinking"
+        },
+        {
+          "speaker": "林旭阳",
+          "role": "host",
+          "text": "她问了多少？",
+          "mood": "listening"
+        },
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "二十八万八。她先托介绍人去问，男方今天才来找我。",
           "mood": "thinking"
         },
         {
@@ -10059,13 +10107,20 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "主播，能听见吗？我这事说出来有点难看。昨晚我在一个男的手机里看见一张名单，上面全是女的。我一晚上没睡。",
+          "text": "主播，我在线上吗？",
           "mood": "anxious"
         },
         {
           "role": "host",
-          "speaker": "主播·林旭阳",
-          "text": "今晚第四通。水没了，嗓子还在。你说。"
+          "speaker": "林旭阳",
+          "text": "你在的，请讲。",
+          "mood": "listening"
+        },
+        {
+          "speaker": "咨询者",
+          "role": "caller",
+          "text": "我昨晚在一个男的手机里看见张名单，上面全是女的。我一晚上没睡。",
+          "mood": "anxious"
         },
         {
           "speaker": "林旭阳",

@@ -298,13 +298,20 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "主播，能听见吗？我这事说出来有点难看。昨晚我在一个男的手机里看见一张名单，上面全是女的。我一晚上没睡。",
+      "text": "主播，我在线上吗？",
       "mood": "anxious"
     },
     {
       "role": "host",
-      "speaker": "主播·林旭阳",
-      "text": "今晚第四通。水没了，嗓子还在。你说。"
+      "speaker": "林旭阳",
+      "text": "你在的，请讲。",
+      "mood": "listening"
+    },
+    {
+      "speaker": "咨询者",
+      "role": "caller",
+      "text": "我昨晚在一个男的手机里看见张名单，上面全是女的。我一晚上没睡。",
+      "mood": "anxious"
     },
     {
       "speaker": "林旭阳",
