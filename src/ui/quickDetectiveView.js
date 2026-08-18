@@ -158,17 +158,18 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
   `;
 }
 
-export function quickDetectivePatienceLostHtml(packet = {}, state = {}) {
+export function quickDetectivePatienceLostHtml(packet = {}, state = {}, { comment = null } = {}) {
   return `
     <section class="quick-detective-panel quick-patience-lost">
       <p>连续几次都没问到点上，直播间开始催你别再乱带节奏。电话还在，先把这段原话重新听一遍。</p>
+      ${comment?.text ? `<aside class="call-fixed-comment"><b>${escapeHtml(comment.listenerId ?? "@听众")}</b><p>${escapeHtml(comment.text)}</p></aside>` : ""}
       <button class="primary quick-main-action" data-quick-retry-statement type="button">重新听这段</button>
       ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `<button data-quick-end-early type="button">按现有信息收住</button>` : ""}
     </section>
   `;
 }
 
-export function quickDetectiveVerdictHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
+export function quickDetectiveVerdictHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME, returnLabel = "返回案件选择" } = {}) {
   const ending = packet.ending ?? {};
   const pages = quickVerdictPages(packet, state);
   const index = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
@@ -188,7 +189,7 @@ export function quickDetectiveVerdictHtml(packet = {}, state = {}, { hostName = 
       ${last ? `
         <div class="quick-ending-actions">
           <button class="primary" data-quick-restart type="button">再玩一次</button>
-          <button data-quick-select type="button">返回案件选择</button>
+          <button data-quick-select type="button">${escapeHtml(returnLabel)}</button>
         </div>
       ` : `<button class="primary quick-main-action" data-quick-next-verdict type="button">继续听</button>`}
     </section>

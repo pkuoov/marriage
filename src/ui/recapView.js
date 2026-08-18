@@ -58,6 +58,7 @@ export function solvedRecapPagesHtml({
     spokenConclusion ? `
       <section class="host-verdict-stage" data-recap-kind="verdict">
         ${callDialogueHtml(spokenConclusionLines, "host-verdict-dialogue")}
+        ${callDialogueHtml(conclusion.afterJudgementLines ?? [], "host-fatigue-beat")}
       </section>
     ` : "",
     `

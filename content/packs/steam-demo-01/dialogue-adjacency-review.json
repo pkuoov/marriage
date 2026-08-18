@@ -11,7 +11,7 @@
       "reviewedAt": "2026-08-07",
       "opening": [
         {
-          "fromAnchor": "想咨询个事",
+          "fromAnchor": "替他还八万块信用卡",
           "toAnchor": "你转了没有",
           "relation": "咨询者先用自然的求助句接通，再交代八万元信用卡要求；主播不做金额讲评，只问转账是否已经发生。"
         },
@@ -62,10 +62,10 @@
           "questionOptions": [
             {
               "contextAnchor": "他住他的，我住我的",
-              "questionAnchor": "发了工资，会交给你吗",
+              "questionAnchor": "工资卡一直在他自己手里",
               "answerAnchor": "工资一到账，转我一半",
               "guardedAnswerAnchor": "每个月会转一半",
-              "relation": "从没有同住追问是否共管工资；她先澄清工资卡不在自己手里，再被连续短问逼出固定转一半和十四个月。精确金额留给第二天流水，房租也尚未出现。"
+              "relation": "从没有同住追问工资卡是否在她手里；她确认不在，再沿每月到账数额问出固定转一半和十四个月。精确金额留给第二天流水，房租也尚未出现。"
             },
             {
               "contextAnchor": "他住他的，我住我的",
@@ -97,7 +97,7 @@
               "relation": "咨询者刚说四月以后仍每天听见加班，主播不复述前缀，直接核对借钱前是否交代工作异常。"
             },
             {
-              "contextAnchor": "工资记录他没发",
+              "contextAnchor": "工资记录没发",
               "questionAnchor": "为什么拿社保记录代替工资记录",
               "answerAnchor": "工资明细太私密",
               "relation": "咨询者已经说明自己索要工资记录却只收到社保记录，主播追问男方当时如何解释替代；回答保留其漏缴辩解，并落在自己始终没拿到工资记录，不由来电人替材料下结论。"
@@ -165,10 +165,10 @@
           "questionOptions": [
             {
               "contextAnchor": "跟他在一起以前就办了",
-              "questionAnchor": "只靠自己的收入",
+              "questionAnchor": "用你的会员号订的",
               "answerAnchor": "跟前任也来过几次",
-              "guardedAnswerAnchor": "以前有人请",
-              "relation": "她先承认自己交往前就是老会员，主播再问过去的高消费与收入是否匹配；回答说明会员等级主要由此前交往对象买单积累。"
+              "guardedAnswerAnchor": "不知道是谁操作",
+              "relation": "她先承认交往前就是老会员；主播先问订座操作由谁完成，回答守住不知道，再追收入能否负担，才补出过去由交往对象结账。"
             },
             {
               "contextAnchor": "我说太贵了",
@@ -268,7 +268,7 @@
             {
               "contextAnchor": "四万里，确实有我那一份",
               "questionAnchor": "加完还差至少三万五",
-              "answerAnchor": "问过一次",
+              "answerAnchor": "他没接",
               "guardedAnswerAnchor": "问过",
               "relation": "复述账单里已经拆出的未说明金额，询问她是否问过具体用途。"
             },
@@ -323,7 +323,12 @@
               "answerAnchor": "灯上个月还开过",
               "relation": "沿咨询者持续使用设备的事实询问近期使用状态。"
             }
-          ]
+          ],
+          "closer": {
+            "anchor": "两笔宸直",
+            "routeIndependent": true,
+            "relation": "无论玩家追问她为何省略设备受益，还是追共同还款，场尾都只把后台已经出现的两笔宸直带回桌面，随后进入借款与认购材料，不提前替材料下结论。"
+          }
         },
         "credit-loyalty-test": {
           "entry": {
@@ -343,8 +348,8 @@
             {
               "contextAnchor": "说的还是拿不出来，不是不想给",
               "questionAnchor": "怎么跟他谈前面那些钱",
-              "answerAnchor": "把回放发给他",
-              "relation": "玩家用结案后的具体行动检验她的来电目的；她承认会先发回放，余额仍没有准备说明。"
+              "answerAnchor": "听听，这八万该不该转",
+              "relation": "玩家用结案后的具体行动检验她的来电目的；她先否认要主播替她谈，只肯把问题收回这八万该不该转。"
             }
           ],
           "freeQuestions": [
@@ -386,9 +391,14 @@
       "reviewedAt": "2026-08-13",
       "opening": [
         {
-          "fromAnchor": "找你分析一下",
+          "fromAnchor": "一晚上没睡",
+          "toAnchor": "今晚第四通",
+          "relation": "咨询者先把昨晚看见名单、整夜没睡的急切一口交代出来；主播接起第四通时露出缺水和嗓子发干的夜班状态，但不抢她的问题。"
+        },
+        {
+          "fromAnchor": "水没了，嗓子还在",
           "toAnchor": "他是谁",
-          "relation": "咨询者先说明想请主播分析，再交代昨晚看见的名单；主播只问这个男人是谁。"
+          "relation": "主播用一句狼狈的接麦话把节奏收短，随即从名单上的男人是谁开始核实，不对名单先作判断。"
         },
         {
           "fromAnchor": "他是谁",
@@ -397,11 +407,11 @@
         },
         {
           "fromAnchor": "一直没敢找他",
-          "toAnchor": "认你这个女朋友",
+          "toAnchor": "你们是什么关系",
           "relation": "咨询者不敢直接找人，主播先核双方是否有共同关系口径。"
         },
         {
-          "fromAnchor": "认你这个女朋友",
+          "fromAnchor": "你们是什么关系",
           "toAnchor": "叫我自己人",
           "relation": "她没有明确承诺，只拿自己人作为恋爱判断。"
         },
@@ -417,11 +427,11 @@
         },
         {
           "fromAnchor": "越看越不对",
-          "toAnchor": "是不是在养鱼",
-          "relation": "名单异常已经成为来电钩子，主播确认她表面上要判断的事情。"
+          "toAnchor": "想先问这张名单",
+          "relation": "名单异常已经成为来电钩子，且‘拿谈恋爱吊着一串人’由咨询者先说出；主播只问她先谈名单还是先谈钱。"
         },
         {
-          "fromAnchor": "是不是在养鱼",
+          "fromAnchor": "想先问这张名单",
           "toAnchor": "不只是这个",
           "relation": "咨询者否认只为感情而来，开始漏出真正的资金诉求。"
         },
@@ -569,7 +579,7 @@
             {
               "contextAnchor": "金额、产品、后面怎么跟",
               "questionAnchor": "为什么偏偏把金额和产品那几列裁掉",
-              "answerAnchor": "先问钱",
+              "answerAnchor": "不想先谈钱",
               "guardedAnswerAnchor": "不想先谈钱",
               "relation": "右侧字段已经被她概括为钱和产品；主播追裁图动机，她承认想让节目先按感情问题理解名单。"
             },
@@ -683,7 +693,7 @@
           "entry": {
             "mode": "resumed-thread",
             "fromAnchor": "我后来才去问他",
-            "toAnchor": "你那十二万，怎么到他手里的",
+            "toAnchor": "你补来的转账我看了",
             "relation": "职业和高息来源刚由场尾问出；主播顺着她后来去问 Tony，追十二万如何实际转出。"
           },
           "questionOptions": [
@@ -740,8 +750,8 @@
             {
               "contextAnchor": "完整名单我昨晚就看完了",
               "questionAnchor": "是在你转钱之前，还是之后",
-              "answerAnchor": "之后",
-              "relation": "沿她看完名单后的翻脸时机追问；回答承认风声在后。"
+              "answerAnchor": "跟他该不该还我钱有什么关系",
+              "relation": "沿她看完名单后的翻脸时机追问；她没有交出时间，只把话顶回 Tony 是否该还钱。"
             }
           ],
           "freeQuestions": [
@@ -905,7 +915,7 @@
           "entry": {
             "mode": "continue",
             "fromAnchor": "手里就这一张",
-            "toAnchor": "学历真的说清楚了吗",
+            "toAnchor": "本科学历说清楚了吗",
             "relation": "第一段确认女方手里只有一张工资卡，主播回到她不相信男方拿不出的依据，核学历是否真的说清。"
           },
           "questionOptions": [
@@ -1127,8 +1137,8 @@
             {
               "contextAnchor": "停车费跟我 AA",
               "questionAnchor": "能证明收入有问题吗",
-              "answerAnchor": "不能",
-              "relation": "当前版本已经补回小额消费，主播问证据边界；回答承认自己先怀疑收入不稳，才把节省习惯也当成可疑迹象。"
+              "answerAnchor": "不代表我要拿二十八万八",
+              "relation": "当前版本已经补回小额消费，主播问它能否证明收入有问题；男方本人接话，把工资卡余额与是否答应支付彩礼分开，也指出团购和停车费只是自己的花钱习惯。"
             }
           ],
           "freeQuestions": [
@@ -1164,7 +1174,7 @@
       "reviewedAt": "2026-08-15",
       "opening": [
         {
-          "fromAnchor": "想问件公司里的事",
+          "fromAnchor": "工作群输入框里",
           "toAnchor": "写的什么",
           "relation": "咨询者先说明要问公司里的事，再交代一直没发送的输入框；主播只问原话。"
         },

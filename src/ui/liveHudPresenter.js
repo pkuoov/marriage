@@ -85,10 +85,15 @@ export function createLiveHudPresenter(ctx) {
 
   function materialPityLineFor(brief = {}, check = {}, checkIndex = 0, outcome = null) {
     const state = getState();
-    if (!check.pityLine || outcome?.correct) return null;
+    if (outcome?.correct) return null;
+    const driftComments = Array.isArray(brief.driftComments) ? brief.driftComments.filter(Boolean) : [];
+    const text = outcome
+      ? driftComments[checkIndex % Math.max(1, driftComments.length)] ?? check.pityLine
+      : check.pityLine;
+    if (!text) return null;
     const key = `${caseKey(brief)}:evidence:${checkIndex}`;
     if (state.materialPityLog?.[key]) return null;
-    return { key, text: check.pityLine };
+    return { key, text };
   }
 
   function caseProgressStrip(brief) {

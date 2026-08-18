@@ -29,11 +29,16 @@ export function statementTextFromTurns(packet = {}, round = {}) {
 }
 
 export function statementOptionForLine(options = [], line = {}) {
+  return statementOptionsForLine(options, line)[0] ?? null;
+}
+
+export function statementOptionsForLine(options = [], line = {}) {
   const text = String(line?.text ?? "");
   return (options ?? [])
     .map((option, index) => ({ option, index, anchor: String(option?.sourceAnchor ?? "").trim() }))
     .filter(({ anchor }) => anchor && text.includes(anchor))
-    .sort((left, right) => right.anchor.length - left.anchor.length || left.index - right.index)[0]?.option ?? null;
+    .sort((left, right) => right.anchor.length - left.anchor.length || left.index - right.index)
+    .map(({ option }) => option);
 }
 
 export function statementLineForId(lines = [], lineId = "") {

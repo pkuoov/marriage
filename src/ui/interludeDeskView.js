@@ -63,6 +63,10 @@ export function interruptToastHtml(action = {}, selectedChoiceId = "") {
     <section class="interlude-action-card interrupt-toast-card">
       <span class="source-badge">${escapeHtml(action.from ?? "后台新消息")}</span>
       <p><b>${escapeHtml(action.text ?? "")}</b></p>
+      <div class="call-dialogue">
+        ${(action.lines ?? []).map(callLineHtml).join("")}
+        ${(selected?.lines ?? []).map(callLineHtml).join("")}
+      </div>
       ${choices.length ? `
         <div class="reply-choice-grid">
           ${choices.map((choice) => replyChoiceButtonHtml(choice, selected, "interrupt-choice")).join("")}
@@ -209,6 +213,10 @@ function inventoryLabel(inventory = []) {
 }
 
 function callLineHtml(line = {}) {
+  if (line.role === "pause") return '<div class="call-stage-direction"><span>……</span></div>';
+  if (line.role === "stage" && line.listenerId) return `<div class="call-fixed-comment"><b>${escapeHtml(line.listenerId)}</b><p>${escapeHtml(line.text ?? "")}</p></div>`;
+  if (line.role === "stage") return `<div class="call-stage-direction"><span>${escapeHtml(line.text ?? "")}</span></div>`;
+  if (line.role === "comment") return `<div class="call-fixed-comment"><b>${escapeHtml(line.listenerId ?? line.speaker ?? "@听众")}</b><p>${escapeHtml(line.text ?? "")}</p></div>`;
   const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME ? "host" : "caller";
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   return `

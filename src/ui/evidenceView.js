@@ -81,12 +81,14 @@ export function evidenceMaterialRows(check = {}) {
 export function evidencePickFeedbackHtml(pick = {}, hostName = DEFAULT_PLAYER_NAME) {
   const hostLine = pick.correct ? pick.feedback : "这条先放着。";
   return `
-    <div class="call-line host evidence-host-line">
-      <b>${escapeHtml(normalizePlayerName(hostName))}</b>
-      <p>${escapeHtml(hostLine)}</p>
+    <div class="call-dialogue evidence-pick-feedback">
+      <div class="call-line host evidence-host-line">
+        <b>${escapeHtml(normalizePlayerName(hostName))}</b>
+        <p>${escapeHtml(hostLine)}</p>
+      </div>
+      ${pick.correct && pick.reactionLine ? evidenceReactionLineHtml(pick.reactionLine) : ""}
+      ${pick.correct && pick.revisedVersion ? evidenceReactionLineHtml(pick.revisedVersion) : ""}
     </div>
-    ${pick.correct && pick.reactionLine ? evidenceReactionLineHtml(pick.reactionLine) : ""}
-    ${pick.correct && pick.revisedVersion ? evidenceReactionLineHtml(pick.revisedVersion) : ""}
   `;
 }
 
@@ -99,6 +101,7 @@ export function evidenceCheckScreenHtml({
 } = {}) {
   return `
     <p><b>${escapeHtml(check.title ?? "材料检视")}</b></p>
+    ${!pick && check.startComment?.text ? `<aside class="call-fixed-comment material-board-comment"><b>${escapeHtml(check.startComment.listenerId ?? "@听众")}</b><p>${escapeHtml(check.startComment.text)}</p></aside>` : ""}
     ${evidenceOperationHtml(check, pick, index)}
     ${evidenceMaterialNoteHtml(check)}
     <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>

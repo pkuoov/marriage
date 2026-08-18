@@ -1608,7 +1608,7 @@ test("PACK-005A", "each long case has one two-act testimony wall with bounded de
   let hiddenStatementCount = 0;
   const act2OpenerLocks = {
     "01-credit": ["17500", "十四个月"],
-    "02-tony": ["十二万", "代投"],
+    "02-tony": ["十二万", "帮我买"],
     "03-profile": ["二十八万八", "二十万", "不对等"],
     "04-workplace": ["没走完", "付款"]
   };
@@ -1640,11 +1640,20 @@ test("PACK-005A", "each long case has one two-act testimony wall with bounded de
       const correctCard = present.materialCards.find((card) => card.id === present.evidenceId);
       assert(correctCard, `${packet.caseId} act${actIndex + 1} 决定性材料不在选择器中`);
       ["callerLine", "hostLine", "boundaryLine", "contradiction"].forEach((field) => assertNonEmptyString(present[field], `${packet.caseId} acts[${actIndex}].decisivePresent.${field} 不能为空`));
-      const documentId = String(present.evidenceId).split(":")[0];
+      const evidenceParts = String(present.evidenceId).split(":");
+      const documentId = evidenceParts[0];
       const document = (packet.documents ?? []).find((item) => item.id === documentId);
-      assert(document, `${packet.caseId} act${actIndex + 1} 决定性材料必须来自已有 spine-audit 文档`);
-      const rowIds = correctCard.sourceRowIds ?? String(present.evidenceId).split(":").slice(1).join(":").split("+");
-      rowIds.forEach((rowId) => assert(document.rows.some((row) => row.rowId === rowId), `${packet.caseId} act${actIndex + 1} 决定性材料指向不存在的文档行 ${rowId}`));
+      if (document) {
+        const rowIds = correctCard.sourceRowIds ?? evidenceParts.slice(1).join(":").split("+");
+        rowIds.forEach((rowId) => assert(document.rows.some((row) => row.rowId === rowId), `${packet.caseId} act${actIndex + 1} 决定性材料指向不存在的文档行 ${rowId}`));
+      } else {
+        const sourceScene = (packet.sceneVersions ?? []).find((item) => item.id === documentId);
+        const statementId = evidenceParts.slice(1).join(":");
+        const sourceStatement = sourceScene?.testimonyWall?.acts?.[0]?.statements?.find((statement) => statement.id === statementId);
+        assert(sourceScene && sourceStatement, `${packet.caseId} act${actIndex + 1} 决定性材料必须来自已有文档行或第一幕证词`);
+        assert(correctCard.kind?.includes("原话回放"), `${packet.caseId} act${actIndex + 1} 第一幕证词来源必须标为原话回放`);
+        assert(correctCard.excerpt?.includes(sourceStatement.text), `${packet.caseId} act${actIndex + 1} 原话回放必须逐字包含来源证词`);
+      }
     });
     assert(scene.testimonyWall?.reliefBeat?.comment && scene.testimonyWall?.reliefBeat?.hostLine, `${packet.caseId} climax 前缺少喜剧泄压拍`);
     assertNonEmptyString(act2.revisedFrame, `${packet.caseId} act2 必须登记 revisedFrame`);
@@ -2187,12 +2196,14 @@ test("PACK-017C", "case 1 separates residence, salary control, and fixed support
   assert(JSON.stringify(livingScene.beforeVersion ?? {}).includes("你们平时住在一起吗"), "居住情况必须先由主播作流程问话确认");
   assert((livingScene.version ?? "").includes("不住在一起"), "咨询者必须明确回答两人没有同住");
   assert(!(livingScene.version ?? "").includes("租"), "分住回答不得提前暴露咨询者租房，房租必须等第二天材料出现");
-  const salaryQuestion = livingScene.questionOptions?.find((option) => option.question?.includes("发了工资"));
-  assert(salaryQuestion, "玩家必须能追问对方是否上交工资");
+  const salaryQuestion = livingScene.questionOptions?.find((option) => option.correct && option.logicContract?.answerAnchor === "转我一半");
+  assert(salaryQuestion, "玩家必须能把工资卡控制与固定转账分开追问");
   assert(salaryQuestion?.correct === true, "固定半薪必须是本场承重追问");
+  assert((salaryQuestion?.question ?? "").includes("工资卡") && !(salaryQuestion?.question ?? "").includes("会交给你吗"), "工资追问必须先确认工资卡归谁持有，不得用含糊的上交问法");
   const salaryQuestionSurface = JSON.stringify({ answer: salaryQuestion.answer, lines: salaryQuestion.lines });
   assert(salaryQuestionSurface.includes("转我一半"), "工资追问必须先让咨询者承认男方固定转给她一半工资");
   assert(salaryQuestionSurface.includes("十四个月"), "工资追问必须补出一年多固定给付的可计算时长");
+  assert(!salaryQuestionSurface.includes("他会固定转钱给你吗"), "确认工资卡后不得用同义问题再问一次固定转账");
   assert(!/(一万七千五|实发三万五)/.test(salaryQuestionSurface), "首次问到固定给付时不得让咨询者立刻提交完整金额报告，具体金额由后续流水确认");
   assert(!/(房租|三次电话)/.test(salaryQuestionSurface), "工资追问只回答固定转账，不得把第二天房租线挤进同一屏");
   assert((salaryQuestion.logicContract?.sourceDoesNotProve ?? "").includes("不能证明双方日常收入与支出彼此独立"), "没有同住和没拿工资卡不得被误写为经济独立");

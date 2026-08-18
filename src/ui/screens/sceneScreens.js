@@ -146,9 +146,12 @@ export function createSceneScreens(ctx) {
         return renderTestimonyWall(brief);
       }
       if (!finalActResolved) {
-        state.scene = "testimonyWall";
+        const needsPrelude = wallContext.wallProgress.act === 1
+          && !wallContext.wallProgress.preludeSeen
+          && (wallContext.scene.beforeVersion?.lines ?? []).length > 0;
+        state.scene = needsPrelude ? "testimonyPrelude" : "testimonyWall";
         saveState();
-        return renderTestimonyWall(brief);
+        return needsPrelude ? renderTestimonyPrelude(brief) : renderTestimonyWall(brief);
       }
     }
     const pick = selectedScenePickForState(state, brief, index);
@@ -185,6 +188,30 @@ export function createSceneScreens(ctx) {
     bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
     bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, index));
     bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
+    bindSceneButtons();
+  }
+
+  function renderTestimonyPrelude(brief) {
+    const context = testimonyContext(brief);
+    const lines = context.scene?.beforeVersion?.lines ?? [];
+    if (!lines.length || context.wallProgress.preludeSeen) return renderTestimonyWall(brief);
+    frame({
+      brief,
+      mood: "focused",
+      label: "新消息进来",
+      chapter: liveChapterTitle(brief),
+      text: `<section class="testimony-prelude-card">${callDialogueHtml(lines)}</section>`,
+      choices: flowGroupHtml('<button class="primary" data-enter-testimony-wall type="button">把她刚才的话摊开</button>'),
+      controlMode: "listen",
+      musicPhase: "allegro"
+    });
+    bind("[data-enter-testimony-wall]", () => {
+      writeWallProgress(context.wallKey, { ...context.wallProgress, preludeSeen: true });
+      const pendingEvidence = afterSceneEvidenceFor(brief, context.index, (key) => actionDone(brief, key));
+      ctx.getState().scene = pendingEvidence ? "afterSceneEvidence" : "testimonyWall";
+      saveState();
+      render();
+    });
     bindSceneButtons();
   }
 
@@ -384,9 +411,7 @@ export function createSceneScreens(ctx) {
     const missIndex = outcome.progress.attempts;
     markAction(brief, `decisivePresentMiss:${context.index}:act${context.wallProgress.act}:${missIndex}`);
     playAudioCueOnce("sfx.present.miss", `${context.key}:miss:${missIndex}`);
-    ctx.getState().lastReaction = outcome.missKind === "evidence"
-      ? "这张材料压不到刚才那句上。她把回答收短了。"
-      : "材料碰到边了，但不是这句。她开始只答半句。";
+    ctx.getState().lastReaction = decisiveMissReaction(context, outcome);
     ctx.getState().lastScreenEffect = "patience-drop";
     if (outcome.kind === "exhausted") {
       return ctx.recordPatienceLost(brief, {
@@ -401,6 +426,26 @@ export function createSceneScreens(ctx) {
     ctx.getState().scene = "testimonyWall";
     saveState();
     render();
+  }
+
+  function decisiveMissReaction(context = {}, outcome = {}) {
+    const defaults = {
+      evidence: [
+        "这张材料压不到刚才那句上。她把回答收短了。",
+        "材料又没对上。她不再顺着这条回答。"
+      ],
+      statement: [
+        "材料碰到边了，但不是这句。她开始只答半句。",
+        "还是压错了原句。她把话收得更紧。"
+      ]
+    };
+    const authored = context.wallAct?.missFeedback?.[outcome.missKind]
+      ?? context.scene?.testimonyWall?.missFeedback?.[outcome.missKind]
+      ?? defaults[outcome.missKind]
+      ?? defaults.evidence;
+    const lines = Array.isArray(authored) ? authored.filter(Boolean) : [authored].filter(Boolean);
+    const index = Math.max(0, Number(outcome.progress?.attempts ?? 1) - 1);
+    return lines[Math.min(index, Math.max(0, lines.length - 1))] ?? defaults.evidence[0];
   }
 
   function continueAfterDecisivePresent(brief) {
@@ -472,12 +517,6 @@ export function createSceneScreens(ctx) {
     const focus = sceneQuestionFocusFor(brief, index);
     if (!focus) return closeSceneQuestionMenu(brief);
     const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
-    if (focus.kind === "dialogue" && sceneUsesLineReplay(scene)) {
-      state.sceneQuestionFocus = null;
-      state.scene = "sceneLineReplay";
-      saveState();
-      return renderSceneLineReplay(brief);
-    }
     const dialoguePicks = askedDialoguePicksForState(state, brief, index);
     const pick = focus.kind === "dialogue"
       ? dialoguePicks.find((item) => Number(item.optionIndex) === Number(focus.optionIndex))
@@ -509,10 +548,13 @@ export function createSceneScreens(ctx) {
       })}${focus.kind === "key" ? `${respondentTeaseHtml(brief, index)}${hostDisclosureForAnchor(brief, `afterScene:${index + 1}`)}` : ""}`,
       choices: focus.kind === "key"
         ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
+        : sceneUsesLineReplay(scene)
+          ? flowGroupHtml('<button class="primary" data-scene-open-replay type="button">回到刚才那段</button>')
         : flowGroupHtml(sceneQuestionChoicesHtml(index, scene, dialoguePicks))
     });
     bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
     bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
+    bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, index));
     bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
     bindSceneButtons();
   }
@@ -548,6 +590,8 @@ export function createSceneScreens(ctx) {
       pressureOverride: statementPressure(brief, sceneIndex, "replay"),
       pixelTransition: statementPhaseTransition(brief, scene, sceneIndex, "review")
     });
+    bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
+    bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
     bind("[data-scene-review-line]", (event) => handleSceneReviewLine(event.currentTarget, brief, scene));
     bindSceneButtons();
   }
@@ -930,7 +974,7 @@ export function createSceneScreens(ctx) {
     const state = ctx.getState();
     const [sceneIndex, optionIndex] = button.dataset.sceneDialogue.split(":").map(Number);
     const { brief, scene, options } = sceneChoiceContext(sceneIndex);
-    if (sceneUsesLineReplay(scene)) return;
+    if (sceneUsesLineReplay(scene) && button.dataset.sceneReplayDialogue !== "true") return;
     const dialogueRows = sceneDialogueOptions(scene, options);
     const option = dialogueRows[optionIndex]?.option ?? null;
     if (!brief || !option) return;
@@ -1081,6 +1125,7 @@ export function createSceneScreens(ctx) {
     renderSceneReview,
     renderSceneQuestionMenu,
     renderSceneQuestionAnswer,
+    renderTestimonyPrelude,
     renderTestimonyWall,
     renderTestimonyMaterials,
     renderDecisivePresentTarget,

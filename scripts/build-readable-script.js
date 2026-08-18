@@ -145,6 +145,8 @@ function renderScript() {
   renderNode(lines, manifest.caseLabels, "来电标签", 3);
   renderNode(lines, manifest.sequence, "案件顺序", 3);
   renderNode(lines, manifest.quickCases, "独立快案入口", 3);
+  renderNode(lines, manifest.quickDetective, "快案直播反馈", 3);
+  renderNode(lines, manifest.nightShell?.optionalQuickCalls, "主线可选插播", 3);
   add("");
 
   add("## 演员与声纹速查", "");
@@ -265,7 +267,7 @@ function renderScript() {
       for (const line of interlude.lines ?? []) renderSpokenLine(lines, line);
       if (interlude.line) add(interlude.line, "");
       for (const line of interlude.afterLines ?? []) renderSpokenLine(lines, line);
-      renderTransitionQuote(lines, interlude.transitionQuote);
+      renderTransitionQuote(lines, interlude.transitionQuote, true);
       renderWorldEcho(lines, interlude.worldEcho, true);
     }
   });
@@ -863,8 +865,16 @@ function renderWorldEcho(lines, worldEcho, includeBoundary = false, includeActio
   if (includeBoundary && worldEcho.doesNotProve) lines.push(`【不能倒推】${worldEcho.doesNotProve}`, "");
 }
 
-function renderTransitionQuote(lines, quote) {
+function renderTransitionQuote(lines, quote, includeMeta = false) {
   if (!quote?.text) return;
+  if (quote.kind === "news-push") {
+    lines.push("### 新闻推送", "");
+    if (includeMeta) lines.push(`- **类型：** ${quote.kind}`, "");
+    if (quote.headline) lines.push(`**${quote.headline}**`, "");
+    lines.push(quote.text, "");
+    if (quote.source) lines.push(`> ${quote.source}`, "");
+    return;
+  }
   lines.push("### 幕间引页", "", `> “${quote.text}”`, ">", `> ${quote.source ?? ""}`, "");
 }
 
@@ -1196,7 +1206,8 @@ function renderDirectorSpoken(lines, line) {
     return;
   }
   if (line.role === "stage") {
-    lines.push(`【${line.text ?? ""}】`, "");
+    if (line.listenerId) lines.push(`**${line.listenerId}：** ${line.text ?? ""}`, "");
+    else lines.push(`【${line.text ?? ""}】`, "");
     if (line.audioCueId) lines.push(`【音效：${line.audioCueId}】`, "");
     return;
   }
@@ -1349,7 +1360,8 @@ function renderSpokenLine(lines, line) {
     return;
   }
   if (line.role === "stage") {
-    lines.push(`【${line.text ?? ""}】`, "");
+    if (line.listenerId) lines.push(`**${line.listenerId}：** ${line.text ?? ""}`, "");
+    else lines.push(`【${line.text ?? ""}】`, "");
     if (line.audioCueId) lines.push(`【音效：${line.audioCueId}】`, "");
     return;
   }

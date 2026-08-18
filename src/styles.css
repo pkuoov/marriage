@@ -5657,6 +5657,47 @@ button.evidence-target {
   opacity: 0.55;
 }
 
+.call-fixed-comment {
+  margin: 0.65rem 0;
+  padding: 0.55rem 0.75rem;
+  border-left: 2px solid rgba(255, 215, 120, 0.72);
+  color: rgba(245, 238, 218, 0.86);
+  background: rgba(20, 17, 24, 0.46);
+}
+
+.call-fixed-comment b,
+.call-fixed-comment p {
+  display: inline;
+  margin: 0;
+}
+
+.call-fixed-comment b {
+  margin-right: 0.45rem;
+  color: rgba(255, 221, 142, 0.9);
+}
+
+.case-bridge-news {
+  width: min(36rem, 100%);
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(178, 202, 220, 0.28);
+  background: rgba(11, 18, 27, 0.82);
+}
+
+.case-bridge-news span,
+.case-bridge-news small,
+.case-bridge-news b {
+  display: block;
+}
+
+.case-bridge-news span,
+.case-bridge-news small {
+  color: rgba(190, 211, 224, 0.72);
+}
+
+.case-bridge-news b {
+  margin: 0.4rem 0;
+}
+
 .call-pause {
   height: 0.65rem;
 }

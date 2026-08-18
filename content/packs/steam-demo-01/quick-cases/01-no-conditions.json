@@ -95,7 +95,7 @@
       "label": "先听她怎么介绍自己",
       "patience": 3,
       "turnIds": ["greeting", "ask-for-match", "caller-profile", "birth-father", "million-from-dad", "which-dad"],
-      "issueOptionIds": ["benefactor-source", "mother-departure", "report-disclosure"],
+      "issueOptionIds": ["benefactor-source", "benefactor-generosity", "report-disclosure"],
       "requiredConfrontationIds": ["two-fathers", "fertility-slip"]
     },
     {
@@ -111,7 +111,7 @@
     {
       "id": "greeting",
       "host": "你好，能听见吗？",
-      "caller": "能听见。"
+      "caller": "能听见。那个……我这事从哪儿说呢。"
     },
     {
       "id": "ask-for-match",
@@ -121,7 +121,7 @@
     {
       "id": "caller-profile",
       "host": "先把你自己的情况，还有以前谈过的，大概说一下。",
-      "caller": "我二十四，在商场卖衣服，底薪加提成一个月六七千，自己能养活自己。以前谈过两个，一个去了外地，另一个总说我脾气硬。我不太会讲好听的，吵完也拉不下脸哄人，后来就散了。现在就想找个踏实点的，别赌，别动手，家里真遇上事也别瞒着我、转身就跑。"
+      "caller": "我二十四，在商场卖衣服，底薪加提成一个月六七千，自己能养活自己。闭店晚，回家我一般煮碗面，工作服攒到周一——也不一定周一，轮休那天一起洗。以前谈过两个，一个去了外地，另一个总说我脾气硬。我不太会讲好听的，吵完也拉不下脸哄人，后来就散了。现在就想找个踏实点的，别赌，别动手，家里真遇上事也别瞒着我、转身就跑。"
     },
     {
       "id": "birth-father",
@@ -140,7 +140,7 @@
     },
     {
       "id": "low-standards",
-      "host": "那你愿意见什么样的？你一次说完。",
+      "host": "一百万的出资人不是亲爸，你又不肯说关系。我不能替你把家境说成清楚。那你自己愿意见什么样的？",
       "caller": "一个月四五千也行，年龄大我五岁以内，没房也可以。学历、长相我真不挑。合适的话相处一两年就结婚。商场下班晚，我平时也没什么机会认识人，要不然也不会来找您。"
     },
     {
@@ -172,9 +172,10 @@
       "confrontationId": "two-fathers"
     },
     {
-      "id": "mother-departure",
-      "label": "她母亲当年为什么离开",
-      "sourceAnchor": "我妈看这日子过不下去"
+      "id": "benefactor-generosity",
+      "label": "这个一直舍得给钱的爸爸是谁",
+      "sourceAnchor": "他在我身上一直挺舍得的",
+      "confrontationId": "two-fathers"
     },
     {
       "id": "report-disclosure",
@@ -185,7 +186,8 @@
     {
       "id": "mortgage-pressure",
       "label": "她的收入能不能负担剩余房贷",
-      "sourceAnchor": "能帮我减轻点房贷压力"
+      "sourceAnchor": "能帮我减轻点房贷压力",
+      "confrontationId": "hidden-standards"
     },
     {
       "id": "actual-standard",
@@ -204,6 +206,13 @@
     {
       "id": "two-fathers",
       "basisTurnIds": ["birth-father", "million-from-dad", "which-dad"],
+      "logicContract": {
+        "premiseAnchor": "我爸爸给了我一百万",
+        "sourceProves": "她先说亲生父亲腰伤后收入很少，随后又说爸爸一次给了一百万元买房。",
+        "sourceDoesNotProve": "称呼相同不能证明两人关系，也不能证明这一百万元存在交换条件。",
+        "answerAdds": "她承认出资人不是亲生父亲，但拒绝公开双方具体关系。",
+        "nextLimit": "可以拒绝替她背书，不能替她编造出资人的身份和关系。"
+      },
       "revealTransition": {
         "id": "quick-two-fathers",
         "kind": "reveal",
@@ -241,6 +250,13 @@
     {
       "id": "fertility-slip",
       "basisTurnIds": ["caller-profile", "birth-father"],
+      "logicContract": {
+        "premiseAnchor": "或者是我不能生孩子",
+        "sourceProves": "她在讲相互扶持时主动拿自己不能生孩子举例。",
+        "sourceDoesNotProve": "一句举例不能证明具体诊断、成因或个人经历。",
+        "answerAdds": "她承认做过检查，医生说自然怀孕机会较低。",
+        "nextLimit": "医学含义由医生和她本人说明，直播间不作诊断。"
+      },
       "lines": [
         {
           "role": "host",
@@ -263,6 +279,13 @@
     {
       "id": "hidden-standards",
       "basisTurnIds": ["which-dad", "low-standards", "ordinary-match", "ordinary-caution", "home-price"],
+      "logicContract": {
+        "premiseAnchor": "一个月四五千也行",
+        "sourceProves": "她口头接受低门槛对象，却拒绝符合条件的普通听众，随后指定主播熟悉、经商、家里省心的人。",
+        "sourceDoesNotProve": "拒绝一个人不能证明她只认钱，也不能证明她必须接受任何介绍。",
+        "answerAdds": "她承认想找条件更好的人，也希望未来伴侣分担一点房贷。",
+        "nextLimit": "可以判断她没有把真实门槛先说全，不能强迫她接受具体对象。"
+      },
       "lines": [
         {
           "role": "host",
@@ -278,17 +301,24 @@
         },
         {
           "role": "caller",
-          "text": "我也没说一定要他替我还啊。以后两个人一起住，一起承担一点不是很正常吗？能找条件好一点的，谁会故意找差的？"
+          "text": "等一下，我也没说一定要他替我还。可对，能找条件好一点的，谁会故意找差的？最好以后能替我分一点房贷。这不等于我只认钱。"
         }
       ]
     },
     {
       "id": "useful-soft-talk",
       "basisTurnIds": ["caller-profile", "borrow-host-trust"],
+      "logicContract": {
+        "premiseAnchor": "我不太会讲好听的",
+        "sourceProves": "她把旧关系散掉归因于不会说软话，求主播介绍时却会恭维并要求主播先替她说好话。",
+        "sourceDoesNotProve": "求助时客气不能证明她在恋爱中没有沟通困难。",
+        "answerAdds": "她承认自己脾气不好，争吵时双方都不让步，不会说好听话并非唯一原因。",
+        "nextLimit": "可以收回单一分手原因，不能替前任判定全部责任。"
+      },
       "lines": [
         {
           "role": "host",
-          "text": "你说那段感情慢慢散了，是因为自己不会讲好听话，吵完也不会哄人。可一到让我帮忙，你马上夸我看人准，叫我旭阳哥，还想让我先替你说好话。你明明知道什么时候该把话说软。"
+          "text": "你说那段感情慢慢散了，是因为自己不会讲好听话。可一到让我帮忙，你马上夸我看人准，叫我旭阳哥，还想让我先替你说好话。"
         },
         {
           "role": "caller",
@@ -296,7 +326,7 @@
         },
         {
           "role": "host",
-          "text": "当然不一样。可你明明知道什么时候该把话说软。那段感情最后散了，根本原因真是你不会说好听话吗？"
+          "text": "当然不一样。那段感情最后散了，真就只是你不会哄人？"
         },
         {
           "role": "caller",
@@ -315,7 +345,7 @@
         "lines": [
           {
             "role": "host",
-          "text": "给你一百万的不是亲爸。你主动拿自己不能生孩子举例，问回去才承认做过检查。想找条件好的人可以直接说，可你还要借我的信誉去认识人，这个忙我不能帮。"
+          "text": "给你一百万的不是亲爸。你主动拿自己不能生孩子举例，问回去才承认做过检查。你让我从认识的人里替你介绍，这个忙我不能帮。"
           },
           {
             "role": "caller",
@@ -365,16 +395,8 @@
           },
           {
             "role": "host",
-            "text": "她现在想从我认识的人里找一个条件不错的，还希望我先替她背书。可出资人的关系、她真正接受的对象条件，以及需要由她本人向未来伴侣说明的婚育信息都没有讲完整。这个背书我不能做。"
+            "text": "我判断，她这通电话不只是问择偶定位，是想借我的名字接触条件更好的人。她先说月薪四五千、没房也行，普通对象递到面前又不接，转头要经商、家里省心，最好还能分担房贷；同时还想让我先替她说人可靠。这个背书我不能做。"
           },
-          {
-            "role": "host",
-            "text": "她主动拿自己不能生孩子举例，回问以后才承认做过检查。检查究竟说明什么，要由医生和她本人说清；直播间不能替她下医学结论，更不能由此猜她的经历。能要求的只有一件事：进入认真关系前，相关信息要由她自己如实沟通。"
-          },
-        {
-          "role": "host",
-          "text": "信息没有讲完整之前，我不会替任何一方做婚恋背书。"
-        },
         {
           "role": "host",
           "text": "这通电话足够让我拒绝介绍，但不够让我替她编出一段没有证据的人生。"
@@ -397,7 +419,7 @@
     "unknownTitle": "没查清，也不影响避雷",
     "unknown": [
       "给她一百万元的人具体是谁、双方是什么关系，以及现在是否仍有往来。",
-      "自然怀孕机会较低的医学原因；不能由此推断她的性经历。",
+      "自然怀孕机会较低的医学原因；直播间不能替她下医学结论，也不能由此推断她的性经历。",
       "她目前是否另有伴侣，以及她拒绝普通上班族时真正看重的条件。"
     ]
     ,

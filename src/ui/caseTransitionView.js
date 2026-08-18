@@ -12,6 +12,7 @@ export function caseClosingHtml({ caseNumber = 1, closing = {}, boundary = {} } 
         <h2>${escapeHtml(title)}</h2>
         <p>${escapeHtml(verdict)}</p>
       </div>
+      ${closing.notice?.text ? `<div class="case-closing-notice"><span>${escapeHtml(closing.notice.label ?? "后台消息")}</span><p>${escapeHtml(closing.notice.text)}</p></div>` : ""}
       <ol class="case-closing-beats">
         ${beats.map((beat) => `
           <li>
@@ -43,6 +44,9 @@ export function caseBridgeHtml({
   fromMaterialSrc = "",
   toMaterialSrc = ""
 } = {}) {
+  const bridgeCopy = quote.kind === "news-push"
+    ? `<div class="case-bridge-news"><span>财经推送</span><b>${escapeHtml(quote.headline ?? "新消息")}</b><p>${escapeHtml(quote.text ?? "")}</p><small>${escapeHtml(quote.source ?? "")}</small></div>`
+    : `<blockquote><p>“${escapeHtml(quote.text ?? "")}”</p><cite>${escapeHtml(quote.source ?? "")}</cite></blockquote>`;
   return `
     <section class="case-bridge-card">
       <div class="case-bridge-objects" aria-hidden="true">
@@ -50,10 +54,7 @@ export function caseBridgeHtml({
         <span><i></i></span>
         <figure class="case-bridge-object incoming">${toMaterialSrc ? `<img src="${escapeHtml(toMaterialSrc)}" alt="" onerror="this.hidden=true" />` : "<i></i>"}</figure>
       </div>
-      <blockquote>
-        <p>“${escapeHtml(quote.text ?? "")}”</p>
-        <cite>${escapeHtml(quote.source ?? "")}</cite>
-      </blockquote>
+      ${bridgeCopy}
     </section>
   `;
 }

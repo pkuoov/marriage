@@ -304,7 +304,12 @@ export function createInterludeScreens(ctx) {
   function renderAfterSceneEvidence(brief) {
     const state = ctx.getState();
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
-    const afterScene = afterSceneEvidenceFor(brief, sceneIndex, (key) => actionDone(brief, key));
+    const pendingAfterScene = afterSceneEvidenceFor(brief, sceneIndex, (key) => actionDone(brief, key));
+    // The click marks the check before the result frame renders. Keep that just-picked
+    // board alive for one render so its authored feedback is not skipped as "already done".
+    const afterScene = pendingAfterScene ?? (state.lastReaction || state.lastScreenEffect
+      ? afterSceneEvidenceFor(brief, sceneIndex, () => false)
+      : null);
     if (!afterScene?.check) {
       state.scene = "sceneReview";
       saveState();
@@ -500,7 +505,13 @@ export function createInterludeScreens(ctx) {
 
   function continueAfterSceneEvidence(brief, sceneIndex = 0) {
     const state = ctx.getState();
+    const afterScene = afterSceneEvidenceFor(brief, sceneIndex, () => false);
     markAction(brief, `afterScene:${sceneIndex}`);
+    if (afterScene?.returnScene) {
+      state.scene = afterScene.returnScene;
+      saveState();
+      return render();
+    }
     if (enterLiveCounterBeatAfterScene(brief, sceneIndex)) return;
     if (shouldEnterOvernightHangupAfterScene(brief, sceneIndex)) {
       state.scene = "overnightHangup";

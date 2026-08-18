@@ -13,7 +13,7 @@ import { materialPressureReaction, materialPressureSignal, pressuredAnswerVarian
 import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js";
 import { canRewindQuestion, popQuestionRewindPoint, pushQuestionRewindPoint } from "./runtime/questionRewind.js";
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canEnterOvernightCallback, caseKey, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nextPlayableSceneIndex, nightActionById, nightStructureFor, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, playableSceneCount, playableSceneIndexes, pressureSignalForLiveCounterChoice, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js";
-import { storyInterludeCaseId } from "./runtime/storyInterludeModel.js";
+import { storyInterludeCaseId, storyOptionalQuickCall } from "./runtime/storyInterludeModel.js";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js";
@@ -631,6 +631,7 @@ function createDailyScreenRenderers() {
     truthBoundaryReview,
     liveCounterBeatsFor,
     storyInterludeCaseId,
+    storyOptionalQuickCall,
     careChoiceById,
     careChoicesFor,
     epilogueUnreadStage,
@@ -682,6 +683,7 @@ function createDailyScreenRenderers() {
     isFinalStoryPackCase,
     advanceToNextStoryPackCase,
     resetCaseAttempt,
+    startQuickDetective: (...args) => quickScreenRenderersForRender().startQuickDetective(...args),
     dailyConclusion,
     liveCounterPickKey,
     liveCounterPickForState,
@@ -723,6 +725,7 @@ function createQuickScreenRenderers() {
     render,
     quickDetectiveCaseFor,
     quickDetectiveCasesFor,
+    quickPatienceLostComment: () => storyPackForKey(storyKeyFromUrl())?.quickDetective?.patienceLostComment ?? null,
     storyKeyFromUrl,
     renderTitle,
     personalizeHostHtml,
@@ -757,6 +760,7 @@ function renderDailyCase() {
   if (state.scene === "sceneQuestionAnswer") return screens.renderSceneQuestionAnswer(brief);
   if (state.scene === "sceneLineReplay") return screens.renderSceneLineReplay(brief);
   if (state.scene === "statementPatienceLost") return screens.renderStatementPatienceLost(brief);
+  if (state.scene === "testimonyPrelude") return screens.renderTestimonyPrelude(brief);
   if (state.scene === "testimonyWall") return screens.renderTestimonyWall(brief);
   if (state.scene === "testimonyMaterials") return screens.renderTestimonyMaterials(brief, "soft");
   if (state.scene === "decisivePresentMaterial") return screens.renderTestimonyMaterials(brief, "decisive");
@@ -806,7 +810,7 @@ function renderDailyCase() {
 }
 
 function isSceneReviewScene(scene = "") {
-  return ["sceneReview", "sceneQuestionMenu", "sceneQuestionAnswer", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2", "testimonyWall", "testimonyMaterials", "decisivePresentMaterial", "decisivePresentTarget", "decisivePresentHit"].includes(scene);
+  return ["sceneReview", "sceneQuestionMenu", "sceneQuestionAnswer", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2", "testimonyPrelude", "testimonyWall", "testimonyMaterials", "decisivePresentMaterial", "decisivePresentTarget", "decisivePresentHit"].includes(scene);
 }
 
 function liveChapterTitle(brief = {}) {

@@ -33,12 +33,13 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.clearQuestionRewindHistory();
     ctx.commitTitlePlayerName();
     ctx.resetQuickTransientState();
+    state.quickDetectiveReturn = null;
     state.screen = "quickDetectiveSelect";
     ctx.saveState();
     ctx.render();
   }
 
-  function startQuickDetective(caseId = "") {
+  function startQuickDetective(caseId = "", returnContext = undefined) {
     clearQuickAutoAdvance();
     const state = ctx.getState();
     const packet = ctx.quickDetectiveCaseFor(ctx.storyKeyFromUrl(), caseId);
@@ -47,6 +48,7 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.resetQuickTransientState();
     state.screen = "quickDetective";
     state.quickDetective = initialQuickDetectiveState(packet);
+    if (returnContext !== undefined) state.quickDetectiveReturn = returnContext;
     ctx.saveState();
     ctx.render();
   }
@@ -107,8 +109,11 @@ export function createQuickDetectiveScreens(ctx) {
       transcript: () => quickDetectiveTranscriptHtml(packet, quickState, { hostName: state.playerName }),
       issueSelection: () => quickDetectiveIssueSelectionHtml(packet, quickState),
       confrontation: () => quickDetectiveConfrontationHtml(packet, quickState, { hostName: state.playerName }),
-      patienceLost: () => quickDetectivePatienceLostHtml(packet, quickState),
-      verdict: () => quickDetectiveVerdictHtml(packet, quickState, { hostName: state.playerName })
+      patienceLost: () => quickDetectivePatienceLostHtml(packet, quickState, { comment: ctx.quickPatienceLostComment?.() ?? null }),
+      verdict: () => quickDetectiveVerdictHtml(packet, quickState, {
+        hostName: state.playerName,
+        returnLabel: state.quickDetectiveReturn ? "回到主线" : "返回案件选择"
+      })
     }[quickState.scene] ?? (() => quickDetectiveIntroHtml(packet, { hostName: state.playerName }));
     const quickTransition = quickScreenTransition(packet, quickState);
     root.innerHTML = ctx.personalizeHostHtml(ctx.liveFrameHtml({
@@ -146,12 +151,23 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.bind("[data-quick-end-early]", () => updateQuickDetective(endQuickCaseEarly(packet, quickState)));
     ctx.bind("[data-quick-next-verdict]", () => updateQuickDetective(advanceQuickVerdict(packet, quickState)));
     ctx.bind("[data-quick-restart]", () => startQuickDetective(packet.id));
-    ctx.bind("[data-quick-select]", openQuickDetectiveSelect);
+    ctx.bind("[data-quick-select]", finishQuickDetective);
     ctx.bindAudioControls({ root, onToggleSound: ctx.render });
     ctx.syncSceneAudio({ briefId: `quick-${packet.id}`, scene: "sceneReview", backdropClass: "backdrop-live" });
     ctx.resetViewportScroll();
     mountQuickDialogue(packet, quickState);
     ctx.queueDefaultFocus();
+  }
+
+  function finishQuickDetective() {
+    const state = ctx.getState();
+    const returnContext = state.quickDetectiveReturn;
+    if (!returnContext) return openQuickDetectiveSelect();
+    state.quickDetectiveReturn = null;
+    state.screen = "chapter";
+    state.scene = returnContext.scene ?? "caseBridge";
+    ctx.saveState();
+    ctx.render();
   }
 
   function updateQuickDetective(nextQuickState) {

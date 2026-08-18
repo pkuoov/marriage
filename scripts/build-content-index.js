@@ -64,6 +64,7 @@ async function loadContentPacks() {
       size: manifest.size,
       theme: manifest.theme,
       nightShell: manifest.nightShell,
+      quickDetective: manifest.quickDetective ?? {},
       comments,
       caseLabels: manifest.caseLabels,
       quickCases: manifest.quickCases ?? [],
@@ -206,7 +207,7 @@ function validateQuickCase(packet, cast) {
   assert(issueOptions.length > confrontations.length, `${packet.id} needs issue choices plus at least one plausible non-contradiction`);
   assert(issueIds.size === issueOptions.length, `${packet.id} issue option ids must be unique`);
   assert(issueOptions.every((item) => item.id && item.label && item.sourceAnchor), `${packet.id} issue options need ids, labels, and source-line anchors`);
-  assert(issueOptions.filter((item) => item.confrontationId).length === confrontations.length, `${packet.id} must expose exactly one issue direction for every confrontation`);
+  assert(confrontations.every((confrontation) => issueOptions.some((item) => item.confrontationId === confrontation.id)), `${packet.id} must expose at least one issue direction for every confrontation`);
   assert(issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine === undefined), `${packet.id} non-contradiction issue choices must not carry answer-explaining retry copy`);
   for (const issue of issueOptions) {
     if (issue.confrontationId) assert(confrontationIds.has(issue.confrontationId), `${packet.id} issue ${issue.id} references unknown confrontation ${issue.confrontationId}`);

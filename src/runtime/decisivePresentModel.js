@@ -72,13 +72,25 @@ export function normalizeTestimonyWallProgress(value = {}) {
   }
   const legacyProgress = normalizeActProgress(input);
   const active = actProgress[String(act)] ?? legacyProgress;
+  const preludeSeen = input.preludeSeen === true || act > 1 || hasTestimonyActivity(input);
   actProgress[String(act)] = active;
   return {
     act,
+    preludeSeen,
     completedActs: uniqueNumbers(input.completedActs),
     actProgress,
     ...active
   };
+}
+
+function hasTestimonyActivity(input = {}) {
+  return ["pressedIds", "revealedIds", "softPresentedIds"].some((key) => Array.isArray(input[key]) && input[key].length)
+    || Boolean(input.softEvidenceId || input.activeResponse)
+    || Object.keys(input.actProgress ?? {}).some((key) => {
+      const progress = input.actProgress?.[key] ?? {};
+      return ["pressedIds", "revealedIds", "softPresentedIds"].some((field) => Array.isArray(progress[field]) && progress[field].length)
+        || Boolean(progress.softEvidenceId || progress.activeResponse);
+    });
 }
 
 export function advanceTestimonyAct(scene = {}, wallProgress = {}) {

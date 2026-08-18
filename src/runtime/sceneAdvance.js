@@ -265,6 +265,7 @@ export function afterSceneEvidenceFor(brief = {}, sceneIndex = 0, actionDone = (
   const checks = evidenceChecksFor(brief);
   const checkIndex = checks.findIndex((check) => check.id === afterScene.checkId);
   if (checkIndex < 0) return null;
+  if (actionDone(`evidenceCheck:${checkIndex}`)) return null;
   return {
     ...afterScene,
     sceneIndex,

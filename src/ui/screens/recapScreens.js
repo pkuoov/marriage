@@ -20,6 +20,7 @@ export function createRecapScreens(ctx) {
     nightStructureFor,
     overnightCallerQuestionFor,
     storyInterludeCaseId,
+    storyOptionalQuickCall,
     careChoiceById,
     careChoicesFor,
     epilogueUnreadStage,
@@ -81,6 +82,7 @@ export function createRecapScreens(ctx) {
     isFinalStoryPackCase,
     advanceToNextStoryPackCase,
     resetCaseAttempt,
+    startQuickDetective,
     ensureBudget,
     dailyConclusion,
     escapeHtml
@@ -456,6 +458,7 @@ export function createRecapScreens(ctx) {
     const interlude = nightShellInterludeForBrief(brief);
     const finalCase = isFinalStoryPackCase();
     const interludeCaseId = storyInterludeCaseId(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
+    const optionalQuickCall = storyOptionalQuickCall(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
     const worldEchoRevealed = !interlude?.worldEcho || Boolean(state.storyWorldEchoes?.[interludeCaseId]);
     const worldEchoHypothesisId = state.storyWorldEchoHypotheses?.[interludeCaseId] ?? "";
     const worldEchoHypothesis = (interlude?.worldEcho?.hypotheses ?? []).find((item) => item.id === worldEchoHypothesisId) ?? null;
@@ -478,7 +481,7 @@ export function createRecapScreens(ctx) {
         worldEchoHypothesis,
         afterCaseId: interludeCaseId
       }),
-      choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed, worldEchoHypothesisId }))
+      choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed, worldEchoHypothesisId, optionalQuickCall }))
     });
     bind("[data-world-echo-hypothesis]", (event) => {
       const hypothesisId = event.currentTarget.getAttribute("data-world-echo-hypothesis") ?? "";
@@ -496,6 +499,11 @@ export function createRecapScreens(ctx) {
       state.scene = "caseBridge";
       saveState();
       render();
+    });
+    bind("[data-enter-optional-quick]", (event) => {
+      const quickCaseId = event.currentTarget.getAttribute("data-enter-optional-quick") ?? "";
+      if (!optionalQuickCall || quickCaseId !== optionalQuickCall.quickCaseId) return;
+      startQuickDetective(quickCaseId, { scene: "caseBridge", afterCaseId: interludeCaseId });
     });
     bind("[data-enter-night-epilogue]", () => {
       state.scene = nightShellForBrief(brief)?.epilogue ? "nightShellEpilogue" : "runComplete";

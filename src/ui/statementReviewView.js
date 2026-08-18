@@ -1,4 +1,4 @@
-import { statementLinesFromText, statementOptionForLine } from "../runtime/statementReviewModel.js";
+import { statementLinesFromText, statementOptionForLine, statementOptionsForLine } from "../runtime/statementReviewModel.js";
 
 export function statementReplayHtml({ scene = {}, sceneIndex = 0, attemptedLineIds = [] } = {}) {
   const lines = statementLinesFromText(scene.version ?? "", { prefix: scene.id ?? `scene-${sceneIndex}` });
@@ -7,7 +7,7 @@ export function statementReplayHtml({ scene = {}, sceneIndex = 0, attemptedLineI
     <section class="statement-replay-card" aria-label="通话回放">
       <div class="statement-replay-head" aria-hidden="true"><i>REC</i><span></span></div>
       <div class="statement-replay-lines">
-        ${lines.map((line) => statementReplayLineHtml(line, scene.questionOptions ?? [], sceneIndex, attempted)).join("")}
+        ${lines.map((line) => statementReplayLineHtml(line, scene, sceneIndex, attempted)).join("")}
       </div>
     </section>
   `;
@@ -31,9 +31,23 @@ export function statementPatienceLostHtml() {
   `;
 }
 
-function statementReplayLineHtml(line = {}, options = [], sceneIndex = 0, attempted = new Set()) {
-  const option = statementOptionForLine(options, line);
-  const missed = attempted.has(line.id) && !option;
+function statementReplayLineHtml(line = {}, scene = {}, sceneIndex = 0, attempted = new Set()) {
+  const keyOptions = scene.questionOptions ?? [];
+  const dialogueOptions = scene.casualQuestions ?? [];
+  const matches = [
+    ...statementOptionsForLine(keyOptions, line).map((option) => ({ kind: "key", option, optionIndex: keyOptions.indexOf(option) })),
+    ...statementOptionsForLine(dialogueOptions, line).map((option) => ({ kind: "dialogue", option, optionIndex: dialogueOptions.indexOf(option) }))
+  ];
+  if (matches.length) {
+    return matches.map(({ kind, option, optionIndex }) => `
+      <button class="statement-replay-line has-question" ${kind === "key" ? `data-scene-question="${sceneIndex}:${optionIndex}"` : `data-scene-dialogue="${sceneIndex}:${optionIndex}" data-scene-replay-dialogue="true"`} type="button">
+        <i aria-hidden="true"></i>
+        <span>${escapeHtml(line.text)}</span>
+        <small>${escapeHtml(option.suspicionLabel ?? option.question ?? "接着问")}</small>
+      </button>
+    `).join("");
+  }
+  const missed = attempted.has(line.id);
   return `
     <button class="statement-replay-line${missed ? " is-missed" : ""}" data-scene-review-line="${escapeHtml(line.id)}" data-scene-review-index="${sceneIndex}" type="button">
       <i aria-hidden="true"></i>

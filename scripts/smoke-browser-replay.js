@@ -166,7 +166,7 @@ async function assertAudioSettings(page) {
 }
 
 async function currentLoadBearingStatementLine(page) {
-  const lines = page.locator("[data-scene-review-line]:visible");
+  const lines = page.locator("[data-scene-question]:visible");
   const texts = await lines.allTextContents();
   const index = texts.findIndex((text) => loadBearingSourceAnchors.some((anchor) => text.includes(anchor)));
   if (index < 0) throw new Error(`current statement has no source-anchored line: ${texts.join(" | ")}`);
@@ -240,11 +240,11 @@ async function runQuickDetective() {
         rounds: [
           ["还有人说羡慕", "十一点五十二"],
           ["后面又有人点了一轮"],
-          ["六次酒吧或者 KTV", "顺嘴说了句‘他也不知道", "十号我发过一组 KTV"]
+          ["六次酒吧或者 KTV", "顺嘴说了句‘他也不知道", "他可能以为是喝断片那晚拍的"]
         ],
         decoyAnchor: "他三十五",
         expectedListen: ["本科和硕士都在一所985高校", "十一点五十二"],
-        expectedVerdict: ["我说实话，也建议男方退出", "不能证明她出轨、把谁当备选，或者由谁供养"]
+        expectedVerdict: ["他不回歌，倒是回了花", "我说实话，也建议男方退出", "酒桌上有没有发生别的事，不用猜"]
       });
       await click(page, "[data-quick-select]");
       if (await page.locator(".quick-case-card.is-complete").count() !== 2) throw new Error("两宗快案通关后都必须保留完成对勾");
@@ -270,8 +270,8 @@ async function playEarlyQuickCase(page, caseId, anchor) {
   await assertVisibleText(page, "拒绝背书，不替她编故事", "提前收案必须落到独立的事实边界结论");
 }
 
-async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, expectedListen, expectedVerdict }) {
-  await click(page, `[data-quick-case-id="${caseId}"]`);
+async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, expectedListen, expectedVerdict, alreadySelected = false }) {
+  if (!alreadySelected) await click(page, `[data-quick-case-id="${caseId}"]`);
   await assertVisibleText(page, "周明", "快案必须显示玩家保存的主播姓名");
   await assertNoPageText(page, "这次怎么玩", "快案入口不得解释内部机制");
   await click(page, "[data-quick-begin]");
@@ -543,6 +543,7 @@ async function runRoute(route) {
     let materialEntryChecked = false;
     let selectedCounterChoiceLabel = "";
     let sceneQuestionCount = 0;
+    const inlineEvidenceCheckIndexes = new Set();
 
     for (let beat = 0; beat < 48; beat += 1) {
       await collectLiveVisualState(page, visualStates, portraitStates);
@@ -559,7 +560,30 @@ async function runRoute(route) {
         await page.locator(".avg-material-panel [data-material-close]").click();
         materialEntryChecked = true;
       }
-      if (await page.locator("[data-evidence-check]").count()) break;
+      if (await page.locator("[data-next-scene-stage]").count()) {
+        await activate(page, route, "[data-next-scene-stage]");
+        continue;
+      }
+      if (await page.locator("[data-evidence-check]:visible").count()) {
+        const savedScene = await page.evaluate(() => {
+          const raw = window.localStorage?.getItem("livestream-detective-save-v1");
+          return raw ? JSON.parse(raw).scene ?? "" : "";
+        });
+        if (savedScene === "afterSceneEvidence") {
+          const checkIndex = Number((await page.locator("[data-evidence-check]").first().getAttribute("data-evidence-check"))?.split(":")[0]);
+          inlineEvidenceCheckIndexes.add(checkIndex);
+          await activate(page, route, "[data-evidence-check]", 0);
+          await drainDialogue(page, route);
+          if (!await page.locator("[data-after-scene-evidence]").count()) {
+            const afterState = await page.evaluate(() => JSON.parse(window.localStorage?.getItem("livestream-detective-save-v1") ?? "{}"));
+            const visibleButtons = await page.locator("button:visible").evaluateAll((buttons) => buttons.map((button) => button.outerHTML));
+            throw new Error(`inline evidence check ${checkIndex} returned to ${afterState.scene}: ${JSON.stringify(visibleButtons)}`);
+          }
+          await activate(page, route, "[data-after-scene-evidence]");
+          continue;
+        }
+        break;
+      }
       if (await page.locator("[data-enter-day-map]").count()) {
         await assertVisibleText(page, "把昨晚没问完的补上", "the second act opening should frame why the host is following up before the map");
         await activate(page, route, "[data-enter-day-map]");
@@ -666,7 +690,7 @@ async function runRoute(route) {
       }
       await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
       await activate(page, route, "[data-scene-open-replay]");
-      await page.locator("[data-scene-review-line]").first().waitFor({ state: "visible" });
+      await page.locator("[data-scene-question]").first().waitFor({ state: "visible" });
       await assertVisibleText(page, "REC", "main-case statement review must switch the control deck to replay");
       await assertNoPageText(page, "收束 · 未命中 −1 耐心", "原句回放不得把底层耐心成本写成按钮说明");
       if (!helperHiddenChecked && route.name === "accounting-support") {
@@ -712,14 +736,20 @@ async function runRoute(route) {
     if (route.name === "accounting-support" && (!helperHiddenChecked || !directionChoiceChecked || !materialEntryChecked)) {
       throw new Error("primary browser route must verify hidden V哥 UI, a direction-only question, and the received-material entry");
     }
+    if (route.name === "accounting-support" && ![1, 2, 3].every((index) => inlineEvidenceCheckIndexes.has(index))) {
+      throw new Error(`primary browser route must interleave all three case-1 material boards, got ${[...inlineEvidenceCheckIndexes].join(",")}`);
+    }
     const materialIndex = route.materialMode === "miss" ? 1 : 0;
     const materialButtons = page.locator("[data-evidence-check]");
     await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
+    const materialResultTranscript = await drainDialogue(page, route);
     if (route.name === "accounting-support") {
-      await assertVisibleText(page, "餐厅、酒店、礼物，还有设备", "perfect route should show testimony revision after the material hit");
+      if (!materialResultTranscript.includes("餐厅、酒店、礼物，还有设备")) {
+        throw new Error("perfect route should show testimony revision after the material hit");
+      }
     }
     if (route.name === "material-miss-accounting-support") {
-      await assertVisibleText(page, "一件大衣两千多，单看不算离谱", "material-miss route should show pity line after the first miss");
+      await assertVisibleText(page, "主播你身后那盏灯闪一晚上了,强迫症都看犯了", "material-miss route should release a case-flavored drift comment after the miss");
     }
 
     await advanceToAccusation(page, route);
@@ -798,7 +828,7 @@ async function runCase4DayRoutes() {
     ],
     opener: "她整理的报销时间线",
     openerText: "财务说延后，是九天以后",
-    conflictText: "财务那时还没说延后",
+    conflictText: "十四点二十二分那条私聊",
     reactionText: "弹幕里有人说我蠢。",
     reactionChoice: "silence",
     reactionResponse: "行，继续。",
@@ -882,7 +912,7 @@ async function runCase2DayMap() {
     expectedDaySceneCount: 4,
     dayScenes: [
       { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
-      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m04"] }
+      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m05"] }
     ],
     opener: "吹风机回放",
     openerText: "也就你肯听我说这些",
@@ -899,7 +929,7 @@ async function runCase2DayMap() {
     expectedDaySceneCount: 4,
     dayScenes: [
       { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
-      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m04"] }
+      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m05"] }
     ],
     opener: "周发来的材料",
     openerText: "你支持她留表"
@@ -913,7 +943,7 @@ async function runCase2DayMap() {
     expectedDaySceneCount: 4,
     dayScenes: [
       { id: "day-tony-shop-observe", text: "离门三四步", choice: "note-shared-address", choiceText: "自己人还排什么队啊", excludedChoiceText: "蓝色《会员预约》册" },
-      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m04"] }
+      { id: "day-tony-member-docs", text: "名单与十二万转账", rows: ["m02", "m05"] }
     ],
     opener: "先要回单",
     openerText: "我劝她先要回单"
@@ -1071,16 +1101,28 @@ async function advanceToReactionBeat(page, expectedText, name) {
 
 async function testimonyFlowIsVisible(page) {
   return Boolean(await page.locator([
-    "[data-decisive-present-start]",
-    "[data-decisive-material]",
-    "[data-decisive-present-target]",
-    "[data-after-decisive-present]"
+    ".dialogue-card > .testimony-prelude-card:visible",
+    ".dialogue-card > .testimony-wall:visible",
+    ".dialogue-card > .present-material-select:visible",
+    ".dialogue-card > .decisive-present-target:visible",
+    ".dialogue-card > .decisive-present-hit:visible"
   ].join(", ")).count());
 }
 
 async function completeTestimonyWall(page, route = {}) {
   let completedActs = 0;
-  for (let step = 0; step < 4; step += 1) {
+  let enteredPrelude = false;
+  for (let step = 0; step < 6; step += 1) {
+    if (await page.locator("[data-enter-testimony-wall]").count()) {
+      await page.locator(".testimony-prelude-card").waitFor({ state: "visible" });
+      const preludeText = await page.locator(".testimony-prelude-card").innerText();
+      if (preludeText.includes("企鹅") && !preludeText.includes("抱抱来得挺是时候")) {
+        throw new Error("case 1 must play its authored prelude before exposing the testimony wall");
+      }
+      await activate(page, route, "[data-enter-testimony-wall]");
+      enteredPrelude = true;
+      continue;
+    }
     if (await page.locator("[data-after-decisive-present]").count()) {
       await waitForEnabled(page, "[data-after-decisive-present]");
       await activate(page, route, "[data-after-decisive-present]");
@@ -1109,7 +1151,7 @@ async function completeTestimonyWall(page, route = {}) {
     await activate(page, route, `[data-decisive-present-target="${act.statementId}"]`);
     await page.locator("[data-after-decisive-present]").waitFor({ state: "visible" });
   }
-  if (!completedActs) throw new Error("testimony wall smoke helper did not complete an act");
+  if (!completedActs && !enteredPrelude) throw new Error("testimony wall smoke helper did not complete an act");
 }
 
 async function currentTestimonySmokeAct(page) {
@@ -1197,6 +1239,7 @@ async function runCaseTransition() {
   page.setDefaultTimeout(8000);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-case-transition-${Date.now()}&storyKey=steam-demo-01`);
+    await page.locator("[data-player-name]").fill("周明");
     await click(page, "[data-start-story]");
     await page.evaluate(() => {
       const key = "livestream-detective-save-v1";
@@ -1262,7 +1305,21 @@ async function runCaseTransition() {
     await click(page, "[data-enter-story-interlude]");
     await assertVisibleText(page, "广告间隙", "second case must close without an authorial case-tail label");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
-    await click(page, "[data-enter-case-bridge]");
+    await assertVisibleText(page, "接一通插播", "second act interlude must expose the optional quick-call pressure valve");
+    await click(page, "[data-enter-optional-quick]");
+    await playStatementQuickCase(page, { width: 390, height: 844 }, {
+      caseId: "01-no-conditions",
+      alreadySelected: true,
+      rounds: [
+        ["我爸爸给了我一百万", "或者是我不能生孩子"],
+        ["先别急吧", "您就帮我留意一下吧"]
+      ],
+      decoyAnchor: "我妈看这日子过不下去",
+      expectedListen: ["我二十四，在商场卖衣服", "我爸爸给了我一百万"],
+      expectedVerdict: ["这个背书我不能做", "不够让我替她编出一段没有证据的人生"]
+    });
+    await assertVisibleText(page, "回到主线", "optional quick call must offer a main-story return instead of the standalone case picker");
+    await click(page, "[data-quick-select]");
     await assertVisibleText(page, transitionQuoteByCaseId["04-workplace"].text, "case two and case three must use the authored quote transition");
     await click(page, "[data-enter-next-case]");
     await assertVisibleText(page, "CASE 03", "case two tail must return to the normal case transition");
@@ -1429,6 +1486,14 @@ async function runPortraitViewports() {
 async function advanceToAccusation(page, route) {
   for (let step = 0; step < 16; step += 1) {
     if (await page.locator("[data-accuse]").count()) return;
+    if (await testimonyFlowIsVisible(page)) {
+      await completeTestimonyWall(page, route);
+      continue;
+    }
+    if (await page.locator("[data-after-scene-evidence]").count()) {
+      await activate(page, route, "[data-after-scene-evidence]");
+      continue;
+    }
     if (await page.locator("[data-delegation-advisor]").count()) {
       if (route.name === "accounting-support") {
         await activate(page, route, '[data-delegation-advisor="zhou-accountant"]');

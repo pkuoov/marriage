@@ -83,6 +83,7 @@ export function dailyConclusionModel(brief = {}, result = {}, issue = {}, { pick
   if (issue.badge && brief.conclusionWhenCleared) {
     return {
       ...brief.conclusionWhenCleared,
+      afterJudgementLines: brief.afterJudgementLines ?? [],
       deepQuestion: deep?.question ?? brief.conclusionWhenCleared.deepQuestion ?? ""
     };
   }
@@ -93,6 +94,7 @@ export function dailyConclusionModel(brief = {}, result = {}, issue = {}, { pick
       summary: branch.summary ?? "",
       deepQuestion: branch.deepQuestion ?? "",
       followup: branch.followup ?? "",
+      afterJudgementLines: brief.afterJudgementLines ?? [],
       truth: branch.truth ?? brief.truth ?? ""
     };
   }
@@ -102,6 +104,7 @@ export function dailyConclusionModel(brief = {}, result = {}, issue = {}, { pick
       summary: brief.stageJudgement ?? "这一轮几个别扭点都问到了。",
       deepQuestion: deep?.question ?? "",
       followup: brief.followupTwist ?? "后续回拨里，咨询者愿意把刚才没说出口的部分补上。",
+      afterJudgementLines: brief.afterJudgementLines ?? [],
       truth: brief.truth ?? "别急着站一边，先把双方没说全的地方补齐。"
     };
   }
@@ -110,6 +113,7 @@ export function dailyConclusionModel(brief = {}, result = {}, issue = {}, { pick
     summary: issue.revealed?.length ? `这轮摆到台面上的是：${issue.revealed.join(" / ")}。` : "这一轮听到了委屈，别扭的地方还没上桌。",
     deepQuestion: "",
     followup: issue.revealed?.length ? "后续回拨里，话还没完，评论区会继续抓着没说出口的地方吵。" : brief.followupTwist ?? "",
+    afterJudgementLines: brief.afterJudgementLines ?? [],
     truth: brief.truth ?? "这案不能只按第一印象走，得看每个人少说了哪半截。"
   };
 }

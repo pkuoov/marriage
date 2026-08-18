@@ -78,7 +78,7 @@ export function storyWorldEchoStageHtml(worldEcho = null) {
   `;
 }
 
-export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null, worldEchoRevealed = false, worldEchoHypothesisId = "" } = {}) {
+export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null, worldEchoRevealed = false, worldEchoHypothesisId = "", optionalQuickCall = null } = {}) {
   if (worldEcho && !worldEchoRevealed) {
     if (worldEcho.hypotheses?.length && !worldEchoHypothesisId) {
       return `<div class="world-echo-hypothesis-choices"><p>推送点开前，你先把哪条风险假设压在桌面上？</p>${worldEcho.hypotheses.map((item) => `<button data-world-echo-hypothesis="${escapeHtml(item.id)}" type="button">${escapeHtml(item.label)}</button>`).join("")}</div><button data-retry-case type="button">回看这通</button>`;
@@ -88,7 +88,10 @@ export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null,
   const primary = finalCase
     ? `<button class="primary" data-enter-night-epilogue type="button">收播</button>`
     : `<button class="primary" data-enter-case-bridge type="button">接下一通</button>`;
-  return `${primary}<button data-retry-case type="button">回看这通</button>`;
+  const optional = !finalCase && optionalQuickCall?.quickCaseId
+    ? `<button data-enter-optional-quick="${escapeHtml(optionalQuickCall.quickCaseId)}" type="button">${escapeHtml(optionalQuickCall.actionLabel ?? "接一通插播")}</button>`
+    : "";
+  return `${primary}${optional}<button data-retry-case type="button">回看这通</button>`;
 }
 
 function escapeHtml(value) {

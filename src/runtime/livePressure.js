@@ -52,7 +52,8 @@ export function pressuredAnswerVariant(option = {}, { pressureSignal = "" } = {}
 export function questionPressureReaction(option = {}, routeTone = "") {
   const tone = routeTone || option.routeTone || "";
   if (option.pressureReaction) return option.pressureReaction;
-  if (tone === "softening" || tone === "detour") return "";
+  if (tone === "softening") return "你把语气放缓，她没有立刻顶回来。";
+  if (tone === "detour") return "话题岔开了一点，弹幕跟着聊起别的。";
   if (tone === "caller-skeptical") return "你把话问回咨询者这边，她停了一下。";
   if (tone === "pressure-point" || tone === "trust-but-verify") return "";
   return option.contradiction ? "这句问到了口子上。" : "";

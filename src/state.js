@@ -53,6 +53,7 @@ export const baseState = {
   },
   caseMode: "episode",
   quickDetective: null,
+  quickDetectiveReturn: null,
   quickDetectiveCompletedIds: [],
   chapter: 1,
   scene: "caseOpen",
@@ -215,6 +216,7 @@ export function migrateState(saved) {
   if (Array.isArray(next.earnedItems)) next.earnedItems = migrateIdList(next.earnedItems, LEGACY_CALLBACK_ITEMS);
   next.caseMode = normalizeCaseMode(next.caseMode);
   if (!next.quickDetective || typeof next.quickDetective !== "object" || Array.isArray(next.quickDetective)) next.quickDetective = null;
+  if (!next.quickDetectiveReturn || typeof next.quickDetectiveReturn !== "object" || Array.isArray(next.quickDetectiveReturn)) next.quickDetectiveReturn = null;
   if (!Array.isArray(next.quickDetectiveCompletedIds)) next.quickDetectiveCompletedIds = [];
   next.quickDetectiveCompletedIds = [...new Set(next.quickDetectiveCompletedIds.filter((caseId) => typeof caseId === "string" && caseId))];
   if (next.caseBriefs.length && !validCaseBriefCount(next.caseBriefs.length, next.caseMode)) {

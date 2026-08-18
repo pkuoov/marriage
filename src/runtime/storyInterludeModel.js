@@ -7,3 +7,10 @@ export function storyInterludeCaseId(pack = {}, brief = {}) {
   const spec = (pack.sequence ?? []).find((item) => item.plotId === brief.plotId);
   return spec?.caseId ?? brief.id ?? "";
 }
+
+export function storyOptionalQuickCall(pack = {}, brief = {}) {
+  const caseId = storyInterludeCaseId(pack, brief);
+  const calls = pack?.nightShell?.optionalQuickCalls;
+  if (!Array.isArray(calls)) return null;
+  return calls.find((item) => item?.afterCaseId === caseId && item?.quickCaseId) ?? null;
+}
