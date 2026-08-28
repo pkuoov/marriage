@@ -622,6 +622,7 @@ button:active:not(:disabled) {
 
 .title-host-name-field input {
   width: min(13rem, 100%);
+  min-height: 44px;
   min-width: 0;
   padding: 5px 8px;
   border: 1px solid rgba(255, 204, 128, .28);
@@ -872,7 +873,7 @@ button:active:not(:disabled) {
 }
 
 .audio-settings-panel header button {
-  min-height: 32px;
+  min-height: 44px;
   padding: 5px 9px;
   font-size: 12px;
 }
@@ -3348,6 +3349,17 @@ button.choice-question.choice-question-direction {
   background: rgba(6, 12, 12, .42);
 }
 
+@media (max-width: 720px) {
+  .bank-flow-table {
+    padding-bottom: 8px;
+    background:
+      linear-gradient(90deg, rgba(6, 12, 12, .42) 0, rgba(6, 12, 12, .42) calc(100% - 24px), rgba(101, 214, 194, .12)),
+      rgba(6, 12, 12, .42);
+    scrollbar-color: rgba(101, 214, 194, .72) rgba(255, 255, 255, .08);
+    scrollbar-width: auto;
+  }
+}
+
 .bank-flow-head,
 .bank-flow-row {
   display: grid;
@@ -4450,7 +4462,7 @@ button.evidence-target {
 }
 
 .truth-boundary-options button {
-  min-height: 36px;
+  min-height: 44px;
   padding: 8px;
   border-color: rgba(237, 241, 238, .12);
   border-radius: 8px;
@@ -4930,6 +4942,755 @@ button.evidence-target {
   font-size: 16px;
   font-weight: 700;
   line-height: 1.55;
+}
+
+.cafe-prologue-screen .vn-stage {
+  min-height: min(760px, calc(100dvh - 7rem));
+}
+
+.cafe-prologue-screen .vn-stage .dialogue-card {
+  max-height: min(58dvh, 560px);
+  overflow: auto;
+  border-color: rgba(223, 184, 118, .28);
+  background: linear-gradient(180deg, rgba(16, 17, 19, .88), rgba(8, 10, 13, .97));
+  backdrop-filter: blur(8px);
+}
+
+/* The evidence-pair step has no spoken line to mount as an AVG overlay. Treat
+   it as a compact document desk instead of leaving a full-height empty cafe
+   shot above the only playable controls. */
+.cafe-prologue-step-1 .vn-stage,
+.cafe-prologue-screen.cafe-prologue-step-1 .vn-stage[data-live-stage] {
+  min-height: 0;
+  grid-template-rows: 22px minmax(150px, 22svh) auto auto;
+  overflow: visible;
+}
+
+.cafe-prologue-step-1 .vn-stage .visual-scene {
+  min-height: 150px;
+}
+
+.cafe-prologue-step-1 .vn-stage .dialogue-card {
+  max-height: none;
+  margin: -3rem 8px 0;
+  padding: 10px 12px;
+  overflow: visible;
+}
+
+.cafe-prologue-step-1 .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+  margin-top: 8px;
+}
+
+.cafe-prologue-screen .cafe-prologue-dialogue[hidden] {
+  display: none !important;
+}
+
+.cafe-negotiation-portraits {
+  position: absolute;
+  inset: 46px 1% 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cafe-negotiation-portrait {
+  position: absolute;
+  bottom: 0;
+  width: min(25vw, 300px);
+  height: 88%;
+  margin: 0;
+  opacity: .32;
+  filter: saturate(.34) brightness(.48);
+  transform: translateY(18px) scale(.9);
+  transform-origin: 50% 100%;
+  transition: opacity .2s ease, filter .2s ease, transform .2s ease;
+}
+
+.cafe-negotiation-portrait:nth-child(1) { left: -2%; }
+.cafe-negotiation-portrait:nth-child(2) { left: 14%; }
+.cafe-negotiation-portrait:nth-child(3) { right: 27%; }
+.cafe-negotiation-portrait:nth-child(4) { right: 11%; }
+.cafe-negotiation-portrait:nth-child(5) { right: -4%; }
+
+.cafe-negotiation-portrait.active {
+  z-index: 4;
+  opacity: 1;
+  filter: saturate(1.04) brightness(1.02) contrast(1.08);
+  transform: translateY(0) scale(1.04);
+}
+
+.cafe-negotiation-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, .48));
+}
+
+.cafe-negotiation-portrait:has(img:not([hidden])) .anonymous-portrait-placeholder {
+  display: none;
+}
+
+.cafe-negotiation-portrait figcaption {
+  position: absolute;
+  right: 50%;
+  bottom: 18px;
+  min-width: 112px;
+  padding: 6px 9px;
+  border: 1px solid rgba(237, 241, 238, .14);
+  border-radius: 999px;
+  color: rgba(247, 244, 233, .94);
+  background: rgba(9, 13, 14, .78);
+  text-align: center;
+  transform: translateX(50%);
+  backdrop-filter: blur(8px);
+}
+
+.cafe-negotiation-portrait figcaption small,
+.cafe-negotiation-portrait figcaption b {
+  display: block;
+}
+
+.cafe-negotiation-portrait figcaption small {
+  color: rgba(237, 241, 238, .52);
+  font-size: 9px;
+}
+
+.cafe-negotiation-portrait figcaption b {
+  font-size: 13px;
+}
+
+.cafe-material-prompt {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(223, 184, 118, .38);
+  border-top-width: 2px;
+  border-radius: 3px;
+  background: #151511;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .34);
+}
+
+.cafe-material-prompt > span {
+  display: grid;
+  place-items: center;
+  padding: 7px 9px;
+  border-right: 1px solid rgba(223, 184, 118, .24);
+  color: rgba(237, 207, 151, .92);
+  background: #242016;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .12em;
+  writing-mode: vertical-rl;
+}
+
+.cafe-material-prompt > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.cafe-material-prompt b {
+  display: grid;
+  min-width: 0;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-right: 1px solid rgba(237, 241, 238, .09);
+  color: rgba(247, 244, 233, .78);
+  background: #191b18;
+  font-size: 10px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.cafe-material-prompt b:last-child { border-right: 0; }
+
+.cafe-material-prompt i {
+  color: rgba(223, 184, 118, .76);
+  font-size: 8px;
+  font-style: normal;
+}
+
+.cafe-opening-action {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  align-items: start;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(237, 241, 238, .12);
+  border-radius: 8px;
+  background: #090d0c;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .36);
+}
+
+.cafe-statement-board {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.cafe-statement-board > header span {
+  color: rgba(223, 184, 118, .88);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+
+.cafe-statement-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.cafe-statement {
+  min-width: 0;
+  min-height: 64px;
+  padding: 9px 10px;
+  color: rgba(247, 244, 233, .84);
+  text-align: left;
+  line-height: 1.4;
+  border: 1px solid rgba(237, 241, 238, .13);
+  background: rgba(255, 255, 255, .035);
+}
+
+.cafe-statement:hover,
+.cafe-statement:focus-visible,
+.cafe-statement.selected {
+  border-color: rgba(101, 214, 194, .62);
+  background: rgba(101, 214, 194, .1);
+}
+
+.cafe-statement-reaction {
+  margin: 0;
+  padding: 8px 10px;
+  color: rgba(247, 244, 233, .84);
+  border-left: 2px solid rgba(223, 184, 118, .62);
+  background: rgba(223, 184, 118, .06);
+}
+
+.cafe-statement-reaction b {
+  margin-right: 8px;
+  color: rgba(223, 184, 118, .88);
+}
+
+.cafe-opening-tutorial {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-width: 122px;
+  padding: 7px 10px;
+  border-left: 3px solid rgba(101, 214, 194, .72);
+  background: #111917;
+}
+
+.cafe-opening-tutorial span {
+  color: rgba(101, 214, 194, .84);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.cafe-opening-tutorial b {
+  color: rgba(247, 244, 233, .86);
+  font-size: 12px;
+}
+
+.cafe-opening-action > button.primary {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding-left: 24px;
+  text-align: left;
+  border: 1px solid rgba(101, 214, 194, .2);
+  background: #10231f;
+}
+
+.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) .cafe-opening-action {
+  width: 100%;
+}
+
+.cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay .cafe-opening-action) {
+  padding-bottom: 96px;
+  translate: 0 -36px;
+}
+
+.cafe-prologue-screen .flow-group .choice-stack {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+}
+
+.cafe-prologue-screen .flow-group .cafe-evidence-board,
+.cafe-prologue-screen .flow-group .cafe-present-board,
+.cafe-prologue-screen .flow-group .cafe-legal-board {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.cafe-prologue-screen .flow-group .choice-stack > button:last-child {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.cafe-prologue-header {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(223, 184, 118, .24);
+}
+
+.cafe-prologue-header span,
+.cafe-route-result > span {
+  color: rgba(223, 184, 118, .9);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .12em;
+}
+
+.cafe-prologue-header h2,
+.cafe-route-result h3 {
+  margin: 0;
+  color: rgba(250, 246, 234, .96);
+}
+
+.cafe-prologue-header p,
+.cafe-route-result p {
+  margin: 0;
+  color: rgba(237, 241, 238, .58);
+  font-size: 12px;
+}
+
+.cafe-prologue-dialogue {
+  display: grid;
+  gap: 8px;
+}
+
+.cafe-prologue-line {
+  display: grid;
+  grid-template-columns: minmax(78px, auto) 1fr;
+  gap: 10px;
+  padding: 9px 11px;
+  border-left: 2px solid rgba(237, 241, 238, .12);
+  background: rgba(255, 255, 255, .035);
+}
+
+.cafe-prologue-line b {
+  color: rgba(223, 184, 118, .9);
+  font-size: 12px;
+}
+
+.cafe-prologue-line p {
+  margin: 0;
+  color: rgba(247, 244, 233, .9);
+  line-height: 1.55;
+}
+
+.cafe-prologue-line.line-narration,
+.cafe-prologue-line.line-stage {
+  grid-template-columns: 1fr;
+  border-left-color: rgba(101, 214, 194, .38);
+  background: rgba(101, 214, 194, .045);
+}
+
+.cafe-prologue-line.line-narration b,
+.cafe-prologue-line.line-stage b {
+  display: none;
+}
+
+.cafe-prologue-line.line-narration p,
+.cafe-prologue-line.line-stage p {
+  color: rgba(237, 241, 238, .62);
+  font-size: 13px;
+}
+
+.cafe-evidence-board,
+.cafe-account-board,
+.cafe-final-boundary,
+.cafe-investigation-choices,
+.cafe-present-board,
+.cafe-legal-board {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(101, 214, 194, .22);
+  border-radius: 8px;
+  background: rgba(7, 14, 17, .72);
+}
+
+.cafe-evidence-board > header,
+.cafe-account-board > header,
+.cafe-legal-board > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cafe-evidence-board > header span,
+.cafe-account-board > header span,
+.cafe-legal-board > header span {
+  color: rgba(237, 241, 238, .52);
+  font-size: 11px;
+}
+
+.cafe-evidence-board > header strong,
+.cafe-account-board > header strong,
+.cafe-legal-board > header strong {
+  color: rgba(101, 214, 194, .94);
+}
+
+.cafe-legal-board > p {
+  margin: 0 0 10px;
+  color: rgba(237, 241, 238, .58);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.cafe-legal-board > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cafe-legal-request {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(237, 241, 238, .1);
+  background: rgba(255, 255, 255, .035);
+}
+
+.cafe-legal-request small {
+  color: rgba(223, 184, 118, .88);
+  font-size: 10px;
+  letter-spacing: .05em;
+}
+
+.cafe-legal-request b {
+  color: rgba(250, 246, 234, .94);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.cafe-legal-request span,
+.cafe-legal-request em {
+  color: rgba(237, 241, 238, .62);
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.cafe-legal-request em {
+  padding-top: 6px;
+  border-top: 1px solid rgba(237, 241, 238, .08);
+  color: rgba(101, 214, 194, .78);
+}
+
+.cafe-evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cafe-evidence-card {
+  position: relative;
+  display: grid;
+  gap: 5px;
+  min-height: 112px;
+  padding: 11px;
+  color: rgba(247, 244, 233, .88);
+  text-align: left;
+  border: 1px solid rgba(237, 241, 238, .14);
+  background: rgba(255, 255, 255, .035);
+}
+
+.cafe-evidence-card.selected {
+  border-color: rgba(101, 214, 194, .72);
+  box-shadow: inset 0 0 0 1px rgba(101, 214, 194, .22);
+  background: rgba(101, 214, 194, .1);
+  transform: translateY(-2px);
+}
+
+.cafe-evidence-card small,
+.cafe-present-evidence small,
+.cafe-final-boundary small {
+  color: rgba(223, 184, 118, .86);
+  font-size: 10px;
+  letter-spacing: .06em;
+}
+
+.cafe-evidence-card span,
+.cafe-board-note,
+.cafe-present-evidence p,
+.cafe-investigation-choices p {
+  margin: 0;
+  color: rgba(237, 241, 238, .58);
+  font-size: 12px;
+}
+
+.cafe-evidence-card em {
+  align-self: end;
+  color: rgba(237, 241, 238, .44);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.cafe-evidence-card.selected em {
+  color: rgba(101, 214, 194, .9);
+}
+
+.cafe-board-note {
+  margin-top: 8px;
+}
+
+.cafe-present-board {
+  display: block;
+}
+
+.cafe-present-evidence {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 10px;
+  color: rgba(247, 244, 233, .88);
+  text-align: left;
+  border: 1px solid rgba(237, 241, 238, .14);
+  background: rgba(255, 255, 255, .035);
+}
+
+.cafe-present-evidence.selected {
+  border-color: rgba(101, 214, 194, .72);
+  background: rgba(101, 214, 194, .1);
+}
+
+.cafe-present-evidence em {
+  margin-top: 5px;
+  color: rgba(101, 214, 194, .88);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.cafe-transfer-rows {
+  display: grid;
+  gap: 4px;
+  margin-top: 7px;
+}
+
+.cafe-transfer-rows span {
+  padding: 6px 8px;
+  border-top: 1px solid rgba(237, 241, 238, .08);
+  color: rgba(247, 244, 233, .82);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cafe-present-arrow {
+  color: rgba(101, 214, 194, .78);
+  font-size: 22px;
+}
+
+.cafe-present-board blockquote {
+  margin: 0;
+  padding: 10px;
+  border-left: 2px solid rgba(223, 184, 118, .7);
+  color: rgba(250, 246, 234, .96);
+  font-weight: 800;
+}
+
+.cafe-investigation-choices h3 {
+  margin: 0 0 4px;
+}
+
+.cafe-investigation-choices > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cafe-investigation-choices button {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+}
+
+.cafe-investigation-choices button span {
+  color: rgba(237, 241, 238, .58);
+  font-size: 11px;
+}
+
+.cafe-route-result {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+
+.cafe-account-row {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) minmax(120px, auto);
+  gap: 8px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(237, 241, 238, .09);
+}
+
+.cafe-account-row span,
+.cafe-account-row em {
+  color: rgba(237, 241, 238, .58);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.cafe-account-row.focus {
+  color: rgba(250, 246, 234, .98);
+  background: linear-gradient(90deg, rgba(223, 184, 118, .11), transparent);
+}
+
+.cafe-final-boundary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  border-color: rgba(223, 184, 118, .34);
+}
+
+.cafe-final-boundary > div {
+  display: grid;
+  gap: 4px;
+  padding: 11px;
+  border: 1px solid rgba(237, 241, 238, .1);
+  background: rgba(255, 255, 255, .035);
+}
+
+.cafe-final-boundary > div:only-of-type {
+  grid-column: 1 / -1;
+}
+
+.cafe-single-evidence > .cafe-evidence-card {
+  width: 100%;
+}
+
+.cafe-final-boundary > div strong {
+  color: rgba(250, 246, 234, .96);
+}
+
+.cafe-final-boundary > p {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: rgba(237, 241, 238, .56);
+  line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+  .cafe-evidence-grid,
+  .cafe-investigation-choices > div,
+  .cafe-final-boundary,
+  .cafe-present-board,
+  .cafe-legal-board > div {
+    grid-template-columns: 1fr;
+  }
+
+  .cafe-present-arrow {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+
+  .cafe-prologue-line {
+    grid-template-columns: 1fr;
+  }
+
+  .cafe-account-row {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .cafe-account-row em {
+    grid-column: 2;
+  }
+
+  .cafe-negotiation-portraits {
+    inset: 48px -8% 0;
+  }
+
+  .cafe-negotiation-portrait {
+    width: 48vw;
+    height: 84%;
+    opacity: 0;
+    transform: translateY(14px) scale(.92);
+  }
+
+  .cafe-negotiation-portrait:nth-child(1),
+  .cafe-negotiation-portrait:nth-child(2) { left: -4%; right: auto; }
+
+  .cafe-negotiation-portrait:nth-child(3),
+  .cafe-negotiation-portrait:nth-child(4),
+  .cafe-negotiation-portrait:nth-child(5) { right: -4%; left: auto; }
+
+  .cafe-negotiation-portrait.active {
+    opacity: 1;
+  }
+
+  .cafe-negotiation-portrait figcaption {
+    bottom: 12px;
+  }
+
+  .cafe-prologue-screen .flow-group .choice-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .cafe-prologue-screen .flow-group .choice-stack > button:last-child {
+    grid-column: 1;
+    justify-self: stretch;
+  }
+
+  .cafe-opening-action {
+    grid-template-columns: 1fr;
+  }
+
+  .cafe-opening-tutorial {
+    grid-area: tutorial;
+    min-width: 0;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 9px;
+    padding-block: 5px;
+  }
+
+  .cafe-statement-list { grid-template-columns: 1fr; }
+
+  .cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay .cafe-opening-action) {
+    /* The source-line board stacks on narrow screens. Reserve its actual
+       height so the dialogue box stays above the playable statements. */
+    padding-bottom: 300px;
+    translate: 0 -12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cafe-opening-action {
+    grid-template-columns: 1fr;
+  }
+
+  .cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay .cafe-opening-action) {
+    padding-bottom: 380px;
+    translate: 0 -60px;
+  }
+
+  .cafe-evidence-card {
+    min-height: 98px;
+    padding: 9px;
+    gap: 3px;
+  }
+
+  .cafe-evidence-card span {
+    font-size: 11px;
+    line-height: 1.35;
+  }
 }
 
 .story-interlude-card span {
@@ -6267,13 +7028,13 @@ button.evidence-target {
 .court-record-panel section { height: calc(100% - 7rem); overflow: auto; }
 .record-backlog p { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; padding: .5rem; border-bottom: 1px solid rgba(255,255,255,.1); }
 .avg-system-bar { display: flex; justify-content: flex-end; gap: .35rem; margin-top: .35rem; }
-.avg-system-bar button { min-height: 1.8rem; padding: .15rem .45rem; font-size: .78rem; }
+.avg-system-bar button { min-height: 44px; padding: .35rem .55rem; font-size: .78rem; }
 
 @media (max-width: 860px) {
   .topbar { grid-template-columns: auto minmax(0, 1fr) repeat(3, auto); gap: 6px; }
-  .topbar button { min-height: 36px; padding: 6px 8px; font-size: 12px; white-space: nowrap; }
+  .topbar button { min-height: 44px; padding: 6px 8px; font-size: 12px; white-space: nowrap; }
   .topbar > button[data-action="title"] { overflow: hidden; text-overflow: ellipsis; }
-  .audio-settings > summary { min-height: 36px; padding: 6px 8px; font-size: 12px; }
+  .audio-settings > summary { min-height: 44px; padding: 6px 8px; font-size: 12px; }
   .audio-settings-panel { position: fixed; top: 58px; right: 8px; left: auto; }
   .audio-playback { grid-template-columns: auto minmax(80px, 1fr); }
   .audio-playback output { grid-column: 1 / -1; text-align: right; }
@@ -6469,6 +7230,10 @@ button.evidence-target {
 .quick-case-library > footer {
   display: flex;
   justify-content: flex-end;
+}
+
+.quick-case-library > footer button {
+  min-height: 44px;
 }
 
 .quick-detective-screen .vn-stage {
@@ -7256,9 +8021,166 @@ button.evidence-target {
   justify-content: flex-end;
 }
 
+/* The cafe prologue uses document boards inside the same choice layer. Keep
+   those boards full-width instead of inheriting the compact question layout. */
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group,
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group .choice-stack {
+  width: 100%;
+}
+
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group .choice-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active {
+  padding-bottom: 84px;
+}
+
+.cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay .cafe-present-board),
+.cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay .cafe-legal-board) {
+  padding-bottom: 84px;
+  transform: translate(-50%, -236px);
+}
+
+.cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay [data-cafe-pressure]) {
+  padding-bottom: 184px;
+}
+
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group {
+  display: grid;
+  grid-template-columns: minmax(180px, .52fr) minmax(0, 1.48fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(101, 214, 194, .26);
+  border-radius: 10px;
+  background: rgba(6, 11, 12, .96);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .5);
+}
+
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 8px;
+}
+
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack > button,
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack > button:last-child {
+  grid-column: auto;
+  width: 100%;
+  min-width: 0;
+  height: 72px;
+  min-height: 72px;
+  justify-self: stretch;
+  padding: 10px 30px 10px 24px;
+  text-align: left;
+}
+
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) button b,
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) button span {
+  display: block;
+}
+
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) button span {
+  margin-top: 3px;
+  color: rgba(237, 241, 238, .58);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.cafe-prologue-screen.choices-open:has([data-cafe-pressure]) .cafe-negotiation-portrait figcaption {
+  opacity: 0;
+}
+
+@media (max-width: 760px) {
+  .cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay [data-cafe-pressure]) {
+    padding-bottom: 252px;
+    transform: translateY(-6px);
+  }
+
+  .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group,
+  .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack > button,
+  .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack > button:last-child {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 860px) {
+  .cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay .cafe-present-board),
+  .cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay .cafe-legal-board) {
+    transform: translateY(-204px);
+  }
+}
+
+@media (max-width: 480px) {
+  .cafe-prologue-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay [data-cafe-pressure]) {
+    transform: translateY(-24px);
+  }
+}
+
+@media (max-width: 720px) {
+  .cafe-prologue-screen .cafe-evidence-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cafe-aftermath-screen .vn-stage .dialogue-card.avg-dialogue-active {
+  max-height: none;
+  overflow: visible;
+}
+
+.cafe-aftermath-step-6.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay [data-cafe-investigation]) {
+  padding-bottom: 178px;
+}
+
+.cafe-aftermath-step-6 .avg-choice-overlay.inline-choice-flow:has([data-cafe-investigation]) .flow-group {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cafe-aftermath-step-6 .avg-choice-overlay.inline-choice-flow:has([data-cafe-investigation]) .choice-stack {
+  display: block;
+  width: 100%;
+}
+
+.cafe-aftermath-step-6 .avg-choice-overlay.inline-choice-flow:has([data-cafe-investigation]) .cafe-investigation-choices {
+  width: 100%;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid rgba(101, 214, 194, .26);
+  background: rgba(6, 11, 12, .96);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .48);
+}
+
+@media (max-width: 720px) {
+  .cafe-aftermath-step-6.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active:has(+ .avg-choice-overlay [data-cafe-investigation]) {
+    padding-bottom: 278px;
+  }
+}
+
 .dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) button {
   width: min(100%, 22rem);
   min-width: 10rem;
+}
+
+/* This choice is a balanced fork, not a primary action plus a compact escape.
+   Keep both options the same size after the generic dialogue button cap above. */
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack > button,
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has([data-cafe-pressure]) .flow-group .choice-stack > button:last-child {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
 }
 
 .dialogue-focus-stage.choices-open .avg-system-bar {
@@ -7279,7 +8201,7 @@ button.evidence-target {
   bottom: 0;
   z-index: 5;
   display: flex;
-  min-height: 28px;
+  min-height: 44px;
   align-items: center;
   justify-content: flex-end;
 }
@@ -7308,7 +8230,7 @@ button.evidence-target {
 
 .dialogue-focus-stage .dialogue-card.avg-dialogue-active .avg-material-card {
   min-width: 4.4rem;
-  min-height: 1.8rem;
+  min-height: 44px;
   padding: 2px 8px;
   pointer-events: auto;
 }
@@ -8656,6 +9578,12 @@ button.evidence-target {
   .story-grid.case-vn-grid.live-console-shell.has-control-deck {
     width: 100%;
     padding: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .live-console-shell.has-control-deck > .control-deck,
+  .live-console-shell.has-control-deck > .vn-stage {
+    grid-column: 1;
   }
 
   .case-vn-grid .control-deck {
@@ -8679,8 +9607,13 @@ button.evidence-target {
     padding: 7px 8px;
   }
 
-  .vn-stage[data-live-stage] {
-    min-height: max(600px, calc(100svh - 8.8rem));
+  .vn-stage[data-live-stage],
+  .dialogue-focus-stage .vn-stage[data-live-stage],
+  .quick-detective-screen.quick-scene-transcript .vn-stage[data-live-stage],
+  .quick-detective-screen.quick-scene-issueSelection .vn-stage[data-live-stage],
+  .quick-detective-screen.quick-scene-confrontation .vn-stage[data-live-stage],
+  .quick-detective-screen.quick-scene-verdict .vn-stage[data-live-stage] {
+    min-height: max(600px, calc(100svh - 13.5rem));
     border-radius: 0;
   }
 
@@ -9490,6 +10423,7 @@ button.evidence-target {
 }
 
 @media (max-width: 760px) {
+  .testimony-wall--voice-matrix .testimony-wall-group { grid-template-columns: 1fr; }
   .dialogue-mode-replay .dialogue-card,
   .quick-scene-issueSelection .dialogue-card,
   .quick-scene-patienceLost .dialogue-card {
@@ -9577,6 +10511,28 @@ button.evidence-target {
 
 .testimony-wall-group { display: grid; gap: 9px; }
 
+.testimony-wall--voice-matrix .testimony-wall-group {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.testimony-wall--voice-matrix .testimony-statement {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, transparent 0 8%, rgba(231, 195, 151, .07) 8% 10%, transparent 10% 18%, rgba(231, 195, 151, .04) 18% 21%, transparent 21%),
+    rgba(10, 18, 23, .58);
+}
+
+.testimony-wall--voice-matrix .testimony-statement::before {
+  content: "VOICE";
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  color: rgba(231, 195, 151, .32);
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
 .testimony-act-status {
   display: flex;
   align-items: center;
@@ -9623,7 +10579,7 @@ button.evidence-target {
 .testimony-statement i { color: rgba(144, 210, 194, .72); font-size: 11px; font-style: normal; }
 .testimony-statement p { margin: 5px 0 0; line-height: 1.55; }
 .testimony-statement nav { display: flex; align-items: center; gap: 7px; }
-.testimony-statement nav button { min-height: 34px; padding: 6px 9px; font-size: 11px; }
+.testimony-statement nav button { min-height: 44px; padding: 8px 10px; font-size: 11px; }
 
 .testimony-response {
   grid-column: 1 / -1;
@@ -9648,6 +10604,14 @@ button.evidence-target {
 .offair-comment-settle p { margin: 3px 0 0; }
 .climax-relief-beat span { color: rgba(117, 212, 190, .78); font-size: 11px; }
 
+.testimony-wink {
+  padding: 10px 12px;
+  border-left: 2px solid rgba(117, 212, 190, .72);
+  background: linear-gradient(90deg, rgba(117, 212, 190, .1), rgba(10, 18, 23, .24));
+}
+.testimony-wink span { color: rgba(117, 212, 190, .82); font-size: 11px; letter-spacing: .08em; }
+.testimony-wink p { margin: 4px 0 0; line-height: 1.5; }
+
 .testimony-wall > footer { display: grid; grid-template-columns: 1fr 1.25fr; gap: 10px; }
 .decisive-present-launch { display: grid; text-align: left; border-color: rgba(224, 130, 92, .55); }
 .decisive-present-launch span { color: rgba(239, 151, 112, .9); font-size: 10px; letter-spacing: .14em; }
@@ -9664,7 +10628,7 @@ button.evidence-target {
 .present-material-card { display: grid; align-content: start; gap: 8px; min-height: 150px; text-align: left; }
 .present-material-card.selected { border-color: rgba(231, 195, 151, .72); }
 .present-material-card small { align-self: end; color: rgba(144, 210, 194, .66); }
-.present-cancel { justify-self: start; }
+.present-cancel { min-height: 44px; justify-self: start; padding: 8px 12px; }
 
 .decisive-target-material {
   padding: 12px;

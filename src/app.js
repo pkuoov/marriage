@@ -16,6 +16,7 @@ import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, an
 import { storyInterludeCaseId, storyOptionalQuickCall } from "./runtime/storyInterludeModel.js";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
+import { cafePrologueCanOpenForensic, cafePrologueCanPresentEvidence, cafePrologueRemainingEvidenceId, cafePrologueSceneForStep, cafePrologueStatementReady, normalizedCafePrologueProgress } from "./runtime/prologueCafeModel.js";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js";
 import { normalizePlayerName, personalizeHostHtml, personalizeHostText, playerFamiliarName } from "./playerIdentity.js";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js";
@@ -38,6 +39,7 @@ import { storyInterludeChoicesHtml, storyInterludeHtml, storyInterludeStageHtml,
 import { caseBridgeChoicesHtml, caseBridgeHtml, caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js";
+import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeSingleEvidenceHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "./ui/prologueCafeView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "./ui/titleView.js";
 import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js";
@@ -146,8 +148,6 @@ const {
   activeCaseBrief
 });
 const {
-  audiencePatienceHud,
-  caseProgressStrip,
   currentLivePressure,
   escapeHtml: appEscapeHtml,
   hostPortraitLayer,
@@ -201,11 +201,6 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.defaultPrevented || keyEventInTextInput(event)) return;
-  if (event.key === "a" || event.key === "A") {
-    event.preventDefault();
-    cycleAvgSetting("auto");
-    return;
-  }
   const intent = keyboardNavigationIntent(event.key);
   if (intent === "confirm") {
     const dialogue = currentDialogueAdvance();
@@ -345,7 +340,13 @@ function startStoryPack() {
     playerName: state.playerName,
     quickDetectiveCompletedIds,
     screen: "chapter",
-    scene: mode === "daily" || !nightShellForStoryKey(caseBriefs[0]?.storyKey ?? storyKeyFromUrl())?.prologue ? "caseOpen" : "nightShellPrologue",
+    scene: mode === "daily"
+      ? "caseOpen"
+      : nightShellForStoryKey(caseBriefs[0]?.storyKey ?? storyKeyFromUrl())?.cafePrologue
+        ? "cafePrologue"
+        : nightShellForStoryKey(caseBriefs[0]?.storyKey ?? storyKeyFromUrl())?.prologue
+          ? "nightShellPrologue"
+          : "caseOpen",
     profileDone: true,
     caseMode: mode,
     chapter: 1,
@@ -470,6 +471,8 @@ function resumeStageLabel() {
   if (scene === "caseBridge") return "上次停在：幕间引页";
   if (scene === "caseTitle") return "上次停在：幕标题";
   if (["caseSolved", "careChoice", "caseClosure", "storyInterlude"].includes(scene)) return "上次停在：收麦回看";
+  if (["cafePrologue", "cafePrologueAftermath"].includes(scene)) return "上次停在：开播前的咖啡厅";
+  if (scene === "cafePrologueForensic") return "上次停在：鉴定回告";
   if (["nightShellEpilogue", "runComplete"].includes(scene)) return "上次停在：天亮前";
   return "上次停在：直播连线";
 }
@@ -519,6 +522,7 @@ function createDailyScreenRenderers() {
     frame,
     dayFrame,
     hostPortraitLayer,
+    liveCommentStrip,
     bind,
     stanceSnapshotPickForState,
     setIndexValue,
@@ -635,6 +639,12 @@ function createDailyScreenRenderers() {
     careChoiceById,
     careChoicesFor,
     epilogueUnreadStage,
+    normalizedCafePrologueProgress,
+    cafePrologueStatementReady,
+    cafePrologueCanPresentEvidence,
+    cafePrologueRemainingEvidenceId,
+    cafePrologueCanOpenForensic,
+    cafePrologueSceneForStep,
     hostDisclosureLinesForAnchor,
     storyBoundaryRows,
     storyMaterialRows,
@@ -661,6 +671,18 @@ function createDailyScreenRenderers() {
     careChoiceHtml,
     epilogueUnreadContinueHtml,
     epilogueUnreadHtml,
+    cafePrologueHeaderHtml,
+    cafePrologueDialogueHtml,
+    cafeProloguePortraitStageHtml,
+    cafeMaterialPromptHtml,
+    cafeStatementReplayHtml,
+    cafeEvidencePairHtml,
+    cafeSingleEvidenceHtml,
+    cafeTransferPresentHtml,
+    cafeLegalRequestsHtml,
+    cafeInvestigationChoicesHtml,
+    cafeAccountBoardHtml,
+    cafeFinalBoundaryHtml,
     storyPackCompleteHtml,
     storyPackShareText,
     storyPackForKey,
@@ -769,6 +791,9 @@ function renderDailyCase() {
   if (isSceneReviewScene(state.scene)) return screens.renderSceneReview(brief);
   if (state.scene === "nightShellPrologue") return screens.renderNightShellPrologue(brief);
   if (state.scene === "nightShellEpilogue") return screens.renderNightShellEpilogue(brief);
+  if (state.scene === "cafePrologue") return screens.renderCafePrologue(brief);
+  if (state.scene === "cafePrologueAftermath") return screens.renderCafePrologueAftermath(brief);
+  if (state.scene === "cafePrologueForensic") return screens.renderCafePrologueForensic(brief);
   if (state.scene === "stanceSnapshot") return screens.renderStanceSnapshot(brief);
   if (state.scene === "overnightHangup") return screens.renderOvernightHangup(brief);
   if (state.scene === "overnightPostLive") return screens.renderOvernightPostLive(brief);
@@ -869,7 +894,8 @@ function sceneWithCallbackRevision(brief = {}, scene = {}, sceneIndex = 0) {
         version: scene.revisedVersion,
         questionOptions: (scene.questionOptions ?? []).map((option) => ({
           ...option,
-          sourceAnchor: option.revisedSourceAnchor ?? option.sourceAnchor
+          sourceAnchor: option.revisedSourceAnchor ?? option.sourceAnchor,
+          question: option.revisedQuestion ?? option.question
         }))
       }
     : scene;
@@ -916,12 +942,12 @@ function sceneWithLiveCounterQuestionOverride(brief = {}, scene = {}) {
   };
 }
 
-function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen", musicPhase = "" }) {
+function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", backdropClass: backdropClassOverride = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen", musicPhase = "" }) {
   const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
-  const backdropClass = caseBackdropClass(brief);
+  const backdropClass = backdropClassOverride || caseBackdropClass(brief);
   const pressure = showCaseHud ? (pressureOverride ?? currentLivePressure(brief, mood)) : {};
   const visualHud = visualHudOverride ?? (showCaseHud
-    ? `${caseProgressStrip(brief)}${audiencePatienceHud(pressure)}${liveCommentStrip(pressure)}${portraitLayer(brief, mood, pressure)}`
+    ? `${liveCommentStrip(pressure)}${portraitLayer(brief, mood, pressure)}`
     : storyPackSummaryHud());
   const total = Math.max(1, playableSceneCount(brief));
   const materialProfile = unlockedMaterialProfile({ state, brief, visible: showCaseHud });
@@ -1114,7 +1140,7 @@ function mountMaterialPanel() {
 
   triggers.forEach((trigger) => trigger.addEventListener("click", () => {
     const record = app?.querySelector(".court-record:not([hidden])");
-    if (record) record.hidden = true;
+    record?.querySelector("[data-record-close]")?.click();
     lastFocused = document.activeElement;
     modal.hidden = false;
     shell?.classList.add("material-open");
@@ -1122,6 +1148,18 @@ function mountMaterialPanel() {
     focusButton(modal.querySelector(".avg-material-panel [data-material-close]"));
   }));
   modal.querySelectorAll("[data-material-close]").forEach((button) => button.addEventListener("click", () => close()));
+  modal.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(modal.querySelectorAll("button:not(:disabled), input:not(:disabled), [tabindex]:not([tabindex='-1'])"))
+      .filter((element) => element.getClientRects().length > 0);
+    if (!focusable.length) return;
+    const currentIndex = focusable.indexOf(document.activeElement);
+    const nextIndex = event.shiftKey
+      ? (currentIndex <= 0 ? focusable.length - 1 : currentIndex - 1)
+      : (currentIndex < 0 || currentIndex >= focusable.length - 1 ? 0 : currentIndex + 1);
+    event.preventDefault();
+    focusable[nextIndex].focus?.();
+  });
   return { close, syncChoices };
 }
 

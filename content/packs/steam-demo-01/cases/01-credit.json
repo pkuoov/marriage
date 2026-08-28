@@ -20,12 +20,36 @@
     "沈": "夜 A 密,夜 B 干净"
   },
   "driftComments": [
-    "主播你身后那盏灯闪一晚上了,强迫症都看犯了",
+    "他都失业了,先听他把话说完吧",
+    "卡是他的,怎么先让她转八万",
     "蹲一个主播同款保温杯",
     "课代表呢?进来就看见八万",
     "刚下夜班,他还了吗"
   ],
   "dramaticAnchor": "信用卡账单、社保断缴截图、离职结算通知、十四个月固定转账与实际余额、二十万借款与两笔信托转账、老会员身份和开箱视频",
+  "rageBaitContract": {
+    "tierPlan": ["Tier 1", "Tier 2"],
+    "activeProvocationSceneId": "credit-loyalty-test",
+    "tier4Assets": [],
+    "debts": [
+      {
+        "id": "credit-lost-job-voice",
+        "tier": "Tier 1",
+        "issue": { "location": "nightShell.prologue.coldOpen", "quote": "我只是怕你知道我失业后就离开我。" },
+        "interest": { "location": "nightShell.prologue.coldOpen", "trigger": "player-input", "payoff": "玩家听完整条语音，最低还款金额随即出现，先前的同情开始动摇。", "holdingLimit": "同一屏" },
+        "principal": { "location": "credit-loyalty-test:act2", "trigger": "player-input", "payoff": "两次决定性指认后，判词拒绝替她做公开赦免。" },
+        "nextDebt": { "location": "01-credit:hangup", "quote": "拿了他一年多的钱，这八万就该转。" }
+      },
+      {
+        "id": "credit-separate-homes",
+        "tier": "Tier 2",
+        "issue": { "location": "credit-living-arrangement", "quote": "不住在一起。他住他的，我住我的。" },
+        "interest": { "location": "credit-night-b-first-interest", "trigger": "fixed-beat", "payoff": "弹幕补回房租另付，她承认自己开场没有讲。", "holdingLimit": "夜 B 第一场后" },
+        "principal": { "location": "credit-loyalty-test:act1", "trigger": "player-input", "payoff": "玩家把十四个月流水压到共同消费说法上。" },
+        "nextDebt": { "location": "credit-loyalty-test:act2", "quote": "钱是他自己说要给的。" }
+      }
+    ]
+  },
   "whyTonight": "对方再次要求咨询者拿八万处理信用卡，还把过去给她的钱也算了进来。她本来就不想给，账户里也根本拿不出八万；她没准备查清账，只想让主播替她确认：那些钱既然是男方自愿给的，她现在一分不出也不算亏欠。",
   "helpRequest": {
     "kind": "interest",
@@ -115,12 +139,15 @@
     "process-control": [
       "订座号也有名字",
       "一万二的设备是买给她的"
+    ],
+    "active-provocation": [
+      "刚才那句挺可怜,可她要拿回放去说什么?"
     ]
   },
   "stanceSnapshot": {
     "afterScene": 4,
     "kicker": "中段立场快照",
-    "prompt": "现在这通麦，你先咬住哪个动作？",
+    "prompt": "现在你最想先问哪一件？",
     "note": "不判分。按下你现在最在意的那件事。",
     "afterPickLine": "八万为什么正好找她要？他发来的那页账，还没读完。",
     "continueLabel": "继续听",
@@ -130,7 +157,7 @@
         "id": "caller-benefited",
         "label": "她在要公开赦免",
         "summary": "她不只是不转八万，还想让直播间替她证明过去十四个月一分不用解释。",
-        "feedback": "她来电的用途露头了：她要的不只是停转，是一段能发给男友的公开背书。",
+        "feedback": "她承认了：她不只想停转，还想拿一段回放去跟男友说。",
         "recap": "她想让直播间替她说，过去的钱全是男方自愿给的，她不用交代余额和花销。"
       },
       {
@@ -222,7 +249,7 @@
         "immediateUtility": "阻止直播间把她当成长期固定受益人，也暂时躲开钱是否存下的问题。",
         "fairTrace": "她说这个月的钱第一次没来，说明自己一直在等一笔固定到账。",
         "playerTest": "credit-living-arrangement 追问固定转账；case1-bank-flow 的住房支出行再追问房租受益人。",
-        "forcedRevision": "她先承认十四个月半薪，看到两笔双月房租后才承认那也是男友替她付的。",
+        "forcedRevision": "她第一夜只承认固定半薪持续了一年多；流水出现后才确认十四个月和具体金额，看到两笔双月房租后再承认那也是男友替她付的。",
         "adviceImpact": "男方长期压力和索要八万的计算来源变得可解释，但名下债务仍不能自动转给她。"
       },
       {
@@ -318,13 +345,13 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "我男朋友刚才找我，说想让我替他垫一笔钱。",
+      "text": "我刚转到后台那段，你听见了吧？我男朋友刚才找我，就是想让我先垫一笔钱。",
       "mood": "anxious"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "你转了吗？",
+      "text": "听见了。后半段他还在催你今晚转。你转了吗？",
       "mood": "listening"
     },
     {
@@ -388,6 +415,7 @@
   "sceneVersions": [
     {
       "id": "credit-living-arrangement",
+      "noClueReaction": { "role": "caller", "text": "住址我说了。钱不是一回事，别现在就往我身上算。" },
       "interactionMode": "lineReplay",
       "clueRole": "setup",
       "falseFrame": "两人没有住在一起，日常的钱也就完全分开。",
@@ -406,9 +434,9 @@
         ]
       },
       "version": "不住在一起。他住他的，我住我的。",
-      "helperHint": "没住在一起，只说明住址分开。她每个月等的是哪笔钱，得继续问。",
+      "helperHint": "没住在一起，只说明住址分开。平时的钱是不是也完全分开，还得继续问。",
       "doubt": "两人没有同住，但这不等于日常支出完全分开。",
-      "contradiction": "男方工资卡没有交给她，却连续十四个月把一半工资转给她；她没有留下男方以为的十五万。银行流水还会在第二天暴露另一笔她没有主动提的固定住房支出。",
+      "contradiction": "男方工资卡没有交给她，却固定把一半工资转给她，持续了一年多；具体月数和金额留给后续流水。银行流水还会在第二天暴露另一笔她没有主动提的固定住房支出。",
       "reliability": "mixed",
       "questionOptions": [
         {
@@ -435,7 +463,7 @@
             },
             {
               "role": "caller",
-              "text": "一年多。十四个月。"
+              "text": "一年多。每个月都转。"
             }
           ],
           "guardedAnswer": "对，没给我。他每个月会转一半，转了一年多。",
@@ -445,7 +473,7 @@
             "sourceProves": "咨询者与对方没有同住，男方也没有把工资卡交给咨询者。",
             "sourceDoesNotProve": "没有同住、没有交工资卡，不能证明双方日常收入与支出彼此独立。",
             "answerAnchor": "转我一半",
-            "answerAdds": "男方连续十四个月把一半工资转给咨询者；具体金额会由后续流水确认。",
+            "answerAdds": "男方固定把一半工资转给咨询者，持续了一年多；具体月数和金额仍待后续流水确认。",
             "nextLegalQuestion": "可以继续核对固定转账和咨询者如何使用这笔钱，不能据此把男方自行签下的借款与信托认购归给咨询者。"
           },
           "contradiction": "她说工资卡不在自己手里，却早已把男方半薪当成每月应到的钱。",
@@ -455,6 +483,7 @@
         },
         {
           "question": "你们没住一起，平时的钱也完全分开吗？",
+          "missReaction": { "role": "caller", "text": "我没说完全分开。你别一听没住一起，就先算我欠了他多少。" },
           "sourceAnchor": "他住他的，我住我的",
           "suspicionLabel": "没住一起时两个人怎么管钱",
           "answer": "也不是。他固定给我转过钱，前后有一年多。",
@@ -480,7 +509,7 @@
         "entryAnchor": "他住他的，我住我的",
         "closerAnchor": "这个月第一次没来",
         "adds": "咨询者确认固定的半薪转账此前按月到账，本月第一次中断。",
-        "openEdge": "她如何使用十四个月固定转账，以及男方流水里是否还有她没有说的支出。",
+        "openEdge": "这笔固定转账究竟持续了多久、她如何使用，以及男方流水里是否还有她没有说的支出。",
         "routeIndependent": true
       },
       "pressureHint": {
@@ -490,6 +519,7 @@
     },
     {
       "id": "credit-layoff-gap",
+      "noClueReaction": { "role": "caller", "text": "这个我真不知道。他当时就说奖金，我手里没有别的话。" },
       "interactionMode": "lineReplay",
       "clueRole": "setup",
       "falseFrame": "奖金晚发只是短暂周转。",
@@ -502,20 +532,20 @@
         "lines": [
           {
             "role": "host",
-            "text": "那八万，他有没有说哪天还你？"
+            "text": "这个月的钱没来，他又让你垫八万。你后来是怎么发现工作不对的？"
           }
         ]
       },
-      "version": "没说具体哪天。他只说：“你先帮我垫几天，钱下来就还你。”我问是哪笔钱，他才说奖金。我当时就信了，以为真是临时周转。",
+      "version": "这个月那笔没来，我问他，他还是说奖金晚发。我不放心，才让他把工资记录发来。工资记录没发，只给了我一份从电子社保卡导出的缴费记录，说公司漏缴了两个月。我翻到最后，才发现缴费停在四月。可四月以后，他还天天跟我说加班。",
       "afterVersion": {
         "lines": [
           {
             "role": "host",
-            "text": "那你后来怎么没转？"
+            "text": "你拿这张社保记录问过他吗？"
           },
           {
             "role": "caller",
-            "text": "八万太多，我先让他把账单发来。工资记录没发，只给了我一份从电子社保卡导出的缴费记录，说公司漏缴了两个月。我看了一下，最后一笔其实停在四月。可四月以后，他还天天跟我说加班。"
+            "text": "问了。他说工资明细太私密，停两个月只是漏缴。我还是觉得不对，八万也没转。"
           }
         ]
       },
@@ -527,14 +557,14 @@
       "casualQuestions": [
         {
           "question": "他丢工作前，加班是什么样子？",
-          "sourceAnchor": "他才说奖金",
+          "sourceAnchor": "还天天跟我说加班",
           "answer": "天天说忙。可几点下班、跟谁吃饭，我都不知道。我们没住一起，他说加班，我就回“早点睡”。"
         }
       ],
       "questionOptions": [
         {
           "question": "借钱以前，他跟你提过工作出了问题吗？",
-          "sourceAnchor": "才说奖金",
+          "sourceAnchor": "还天天跟我说加班",
           "suspicionLabel": "加班说法和失业时间",
           "answer": "没有。他还是天天说忙，项目要上线。有一回我说给他送点吃的，他让我别去，说公司门禁严。可那阵子，他可能已经不去公司了。",
           "textureRole": "ramble",
@@ -555,7 +585,8 @@
         },
         {
           "question": "他为什么拿社保记录代替工资记录？",
-          "sourceAnchor": "他才说奖金",
+          "missReaction": { "role": "caller", "text": "他为什么给社保记录，你问我也没用。他没跟我说。" },
+          "sourceAnchor": "从电子社保卡导出的缴费记录",
           "suspicionLabel": "为什么用社保记录代替工资",
           "answer": "他说工资明细太私密，社保那张就够了，停两个月只是漏缴。我盯着那页看了半天，最后还是没拿到工资记录。",
           "correct": false,
@@ -584,6 +615,7 @@
     },
     {
       "id": "credit-eight-wan-bill",
+      "noClueReaction": { "role": "caller", "text": "你问哪一笔？我刚翻开账单，先看见的就是那几件男装。" },
       "interactionMode": "lineReplay",
       "clueRole": "misdirect",
       "falseFrame": "八万主要是两人维持体面的消费。",
@@ -613,7 +645,7 @@
           },
           {
             "role": "stage",
-            "text": "几秒后，后台多了一份账单，姓名和卡号都遮住了。"
+            "text": "几秒后，后台多了一份账单，姓名和卡号都遮住了。页面按日期、商户、金额和备注四列展开，右上角先亮出总额。"
           }
         ]
       },
@@ -669,8 +701,8 @@
             "label": "还差至少三万五",
             "visualVariant": "amount-gap"
           },
-          "answer": "问过一次。他当时愣了一下，说‘反正不是乱来的钱’。然后我再问，他就把话岔到‘别拖，今晚先转’上去了。",
-          "guardedAnswer": "问过，他没细说，只说不是我该管的那部分。",
+          "answer": "问过一次。他当时愣了一下，说‘反正不是乱来的钱’。我再问，他就岔开了。后面那句我开播前已经转给你了：‘别拖，今晚先转。’",
+          "guardedAnswer": "问过，他没细说。开播前那句你们也听见了，他只顾着催我转。",
           "logicContract": {
             "premiseAnchor": "别的我没细算",
             "sourceKind": "host-calculation",
@@ -687,7 +719,10 @@
         },
         {
           "question": "后面男装加起来也就五千，一件大衣两千多。单看这些，能说明他平时挥霍吗？",
+          "missReaction": { "role": "caller", "text": "一件衣服当然不能。可我当时往下一翻，先看见的就是它，我能不生气吗？" },
           "sourceAnchor": "男装一共五千左右",
+          "revisedSourceAnchor": "两个人一起出去的也有",
+          "revisedQuestion": "两个人一起出去的消费，能不能都算到你一个人头上？",
           "suspicionLabel": "五千元男装是不是挥霍",
           "answer": "单看五千，确实说不上挥霍。可他那时候已经没工作了，我看到以后还是会不舒服。",
           "correct": false,
@@ -710,6 +745,7 @@
     },
     {
       "id": "credit-anniversary-agency",
+      "noClueReaction": { "role": "caller", "text": "那晚就这些。别的我现在想不起来。" },
       "interactionMode": "lineReplay",
       "clueRole": "reversal",
       "falseFrame": "纪念日完全由对方单方面安排。",
@@ -819,6 +855,7 @@
         },
         {
           "question": "那晚他说过手头紧吗？",
+          "missReaction": { "role": "caller", "text": "他没说手头紧。那晚一直说的是纪念日。" },
           "sourceAnchor": "总不能太寒酸",
           "suspicionLabel": "纪念日晚餐前有没有说手头紧",
           "answer": "没有。他还说这顿算他的，叫我别看价格。我还挺高兴，真没看。现在账单摆出来，我才知道那句话也是刷卡。",
@@ -828,6 +865,7 @@
         },
         {
           "question": "朋友羡慕你时，你有没有说过那个位置其实是你订的？",
+          "missReaction": { "role": "caller", "text": "我朋友怎么想，跟这笔账有什么关系？" },
           "sourceAnchor": "身边朋友都挺羡慕我的",
           "suspicionLabel": "朋友是否知道靠窗位是她订的",
           "answer": "没有。她们都说我没看错人，我听着挺高兴，就没解释。",
@@ -862,6 +900,7 @@
     },
     {
       "id": "credit-device-benefit",
+      "noClueReaction": { "role": "caller", "text": "账号的事先别扯远。灯在我家，这个我认。" },
       "interactionMode": "lineReplay",
       "clueRole": "missing-edge",
       "falseFrame": "设备是对方送她的礼物，所以分期和她完全无关。",
@@ -933,6 +972,7 @@
         },
         {
           "question": "他把这笔分期叫“投资”。你当时有没有觉得，自己也该担一点？",
+          "missReaction": { "role": "caller", "text": "我当时真不知道是分期，也没跟他谈过要一起还。" },
           "sourceAnchor": "还说这是在投资我",
           "suspicionLabel": "她把设备当礼物还是共同投入",
           "answer": "没有。我当时听见的是他要支持我做账号。东西送到我这儿以后，我也一直在用，可我真以为是他全款买来送我的，没想过还款会落到我头上。",
@@ -986,6 +1026,7 @@
     },
     {
       "id": "credit-five-wan-gap",
+      "noClueReaction": { "role": "caller", "text": "……这几笔我现在不想一条条念。让我先把这页看完。" },
       "interactionMode": "lineReplay",
       "clueRole": "reversal",
       "falseFrame": "可见消费足以解释八万。",
@@ -1030,6 +1071,7 @@
         },
         {
           "question": "这些账单上的日子，你们当时在一起吗？",
+          "missReaction": { "role": "caller", "text": "有些时候在一起，有些我记不清。你现在让我一笔笔对，我对不上。" },
           "sourceAnchor": "四万里，确实有我那一份",
           "suspicionLabel": "账单日期和交往时间",
           "answer": "近几个月能对上。再往前……我把页面关了。一个人没敢看完。",
@@ -1063,6 +1105,7 @@
     },
     {
       "id": "credit-bank-flow",
+      "noClueReaction": { "role": "caller", "text": "灯在我家。我现在能说的就是这个。" },
       "interactionMode": "lineReplay",
       "clueRole": "missing-edge",
       "falseFrame": "分期由对方操作，所以八万元里没有任何一笔是直接花给咨询者的。",
@@ -1147,6 +1190,7 @@
         },
         {
           "question": "他买设备的时候，有没有跟你说过要一起还分期？",
+          "missReaction": { "role": "caller", "text": "他从没跟我说一起还。你别先把这个前提放进去。" },
           "sourceAnchor": "分期那两个字",
           "suspicionLabel": "设备分期有没有说过一起还",
           "answer": "没有。他说的是买来支持我做账号。我没签，也没答应一起还。这一万二确实花给了我，可他办分期的时候没跟我商量。",
@@ -1241,12 +1285,13 @@
           }
         ]
       },
-      "version": "现在又来了一条语音。他说：“我只是怕你知道我失业后就离开我。”语音放完，下一条还是最低还款金额。昨晚他还发过一份文件，我一直没点开。他刚才才说，那是离职结算通知，名字已经遮了，可以给节目看。",
+      "version": "他又把开播前那条语音发了一遍：“我只是怕你知道我失业后就离开我。”语音放完，下一条还是最低还款金额。昨晚他还发过一份文件，我一直没点开。他刚才才说，那是离职结算通知，名字已经遮了，可以给节目看。",
       "testimonyWall": {
+        "presentationSkin": "voice-matrix",
         "title": "把‘都是一起消费’逐句摊开",
         "intro": "流水已经进后台。先追问哪句都行，普通出示也不扣耐心；只有正式指认会压上两次机会。",
         "splitAfter": 3,
-        "midSummary": "她把共同消费、固定转账和今晚这八万揉成了同一笔。先把三件事拆开。",
+    "midSummary": "餐厅和礼物是一块，十四个月的固定转账是一块，今晚这八万又是另一块。",
         "softAnchorResponse": "这一行确实碰到她省掉的固定给付。要正式打断这段说法，还得把材料压到那句原话上。",
         "missFeedback": {
           "evidence": [
@@ -1268,45 +1313,48 @@
             "id": "credit-consumption-gloss",
             "label": "证词 01",
             "text": "我没占他什么固定便宜，账单里的餐厅、礼物，都是两个人一起消费。",
-            "pressResponse": "她抢着补了一句：‘餐厅和礼物本来就是两个人用的。’再问每月那笔，她没接。",
+        "pressResponse": "‘餐厅和礼物本来就是两个人用的。每月那笔……你先问别的。’",
             "presentResponse": "这份材料能问消费构成，却还没有直接碰到她省掉的固定转账。"
           },
           {
             "id": "credit-gift-was-voluntary",
             "label": "证词 02",
             "text": "灯和稳定器是他自己说要送我的，我没签过分期。",
-            "pressResponse": "她先说‘灯现在还在我家’，说到分期，又马上补：‘可不是我签的。’",
+        "pressResponse": "‘灯现在还在我家，可分期不是我签的。’",
             "presentResponse": "材料能确认设备受益人，不能单独替任何人认定还款责任。"
           },
           {
             "id": "credit-eight-wan-separate",
             "label": "证词 03",
             "text": "他今晚要的八万，不能因为以前花过钱就算成我欠他的。",
-            "pressResponse": "她咬住‘八万不是我的卡’，再问以前的钱，只回了一句：‘那是以前。’",
+        "pressResponse": "‘八万不是我的卡。以前的钱……那是以前。’",
             "presentResponse": "这张材料只够继续问钱路，不能把八万直接改写成债务。"
           },
           {
             "id": "credit-savings-unknown",
             "label": "证词 04",
             "text": "我手里剩多少一直没给他看，因为那是我的账户。",
-            "pressResponse": "她说：‘我没给他看过余额。’停了一下，又补：‘他自己猜的。’",
+        "pressResponse": "‘我没给他看过余额。十五万是他自己猜的。’",
             "presentResponse": "材料没有她的余额列，放在这里也补不出她账户里的未知数。"
           },
           {
             "id": "credit-wants-no-transfer",
             "label": "证词 05",
-            "text": "我今晚就是……算了，你问吧。",
-            "pressResponse": "她话到一半收住，只肯说：‘反正今晚我不转。’",
-            "presentResponse": "这句是她现在的选择，不需要拿别人的流水替她盖章。"
+            "text": "我不是要钱，我是要个态度。以前那些钱，不能拿来逼我转这八万。",
+        "pressResponse": "‘八万我不转。你就告诉他，以前那些钱都是他自愿给的。’",
+            "presentResponse": "这是她今晚想带走的说法。要核固定给付，仍得回到她前面那句‘没占固定便宜’。"
           }
         ],
         "acts": [
           {
             "id": "act1",
+            "presentationSkin": "voice-matrix",
             "title": "把‘都是一起消费’逐句摊开",
+            "winkLine": "等一下。先看她刚才那句。",
+            "winkTier": "tier2-player-cue",
             "intro": "流水已经进后台。先追问哪句都行，普通出示也不扣耐心；只有正式指认会压上两次机会。",
             "splitAfter": 3,
-            "midSummary": "她把共同消费、固定转账和今晚这八万揉成了同一笔。先把三件事拆开。",
+        "midSummary": "餐厅和礼物是一块，十四个月的固定转账是一块，今晚这八万又是另一块。",
             "softAnchorResponse": "这一行确实碰到她省掉的固定给付。要正式打断这段说法，还得把材料压到那句原话上。",
             "reliefBeat": {
               "listenerId": "@账单翻到第十七页",
@@ -1318,36 +1366,36 @@
                 "id": "credit-consumption-gloss",
                 "label": "证词 01",
                 "text": "我没占他什么固定便宜，账单里的餐厅、礼物，都是两个人一起消费。",
-                "pressResponse": "她抢着补了一句：‘餐厅和礼物本来就是两个人用的。’再问每月那笔，她没接。",
+            "pressResponse": "‘餐厅和礼物本来就是两个人用的。每月那笔……你先问别的。’",
                 "presentResponse": "这份材料能问消费构成，却还没有直接碰到她省掉的固定转账。"
               },
               {
                 "id": "credit-gift-was-voluntary",
                 "label": "证词 02",
                 "text": "灯和稳定器是他自己说要送我的，我没签过分期。",
-                "pressResponse": "她先说‘灯现在还在我家’，说到分期，又马上补：‘可不是我签的。’",
+            "pressResponse": "‘灯现在还在我家，可分期不是我签的。’",
                 "presentResponse": "材料能确认设备受益人，不能单独替任何人认定还款责任。"
               },
               {
                 "id": "credit-eight-wan-separate",
                 "label": "证词 03",
                 "text": "他今晚要的八万，不能因为以前花过钱就算成我欠他的。",
-                "pressResponse": "她咬住‘八万不是我的卡’，再问以前的钱，只回了一句：‘那是以前。’",
+            "pressResponse": "‘八万不是我的卡。以前的钱……那是以前。’",
                 "presentResponse": "这张材料只够继续问钱路，不能把八万直接改写成债务。"
               },
               {
                 "id": "credit-savings-unknown",
                 "label": "证词 04",
                 "text": "我手里剩多少一直没给他看，因为那是我的账户。",
-                "pressResponse": "她说：‘我没给他看过余额。’停了一下，又补：‘他自己猜的。’",
+            "pressResponse": "‘我没给他看过余额。十五万是他自己猜的。’",
                 "presentResponse": "材料没有她的余额列，放在这里也补不出她账户里的未知数。"
               },
               {
                 "id": "credit-wants-no-transfer",
                 "label": "证词 05",
-                "text": "我今晚就是……算了，你问吧。",
-                "pressResponse": "她话到一半收住，只肯说：‘反正今晚我不转。’",
-                "presentResponse": "这句是她现在的选择，不需要拿别人的流水替她盖章。"
+                "text": "我不是要钱，我是要个态度。以前那些钱，不能拿来逼我转这八万。",
+            "pressResponse": "‘八万我不转。你就告诉他，以前那些钱都是他自愿给的。’",
+                "presentResponse": "这是她今晚想带走的说法。要核固定给付，仍得回到她前面那句‘没占固定便宜’。"
               }
             ],
             "decisivePresent": {
@@ -1378,7 +1426,7 @@
                 }
               ],
               "callerLine": "……这十四个月，确实不是几顿饭能带过去的。",
-              "hostLine": "十四个月，每月一万七千五，房租另付。不是几顿饭。这句改了再往下。",
+              "hostLine": "十四个月，每个月一万七千五，房租还是他另付。怎么会只是几顿饭？你先把这句话改过来，我们再往下聊。",
               "boundaryLine": "这行流水只推翻‘没有固定便宜’；它不证明八万已经变成她的债，也不替男方解释未知去向。",
               "contradiction": "咨询者把十四个月每月一万七千五的固定转账粉饰成零散共同消费。",
               "routeAxis": "money-flow",
@@ -1387,6 +1435,7 @@
           },
           {
             "id": "act2",
+            "presentationSkin": "voice-matrix",
             "statusLabel": "她改口了 · 第二段说法",
             "title": "把‘我只是收着’再摊一遍",
             "intro": "她认了固定转账，却换了一种说法解释自己和这笔钱的关系。第二段仍可自由追问、普通出示；正式指认另有两次机会。",
@@ -1394,19 +1443,23 @@
               "17500",
               "十四个月"
             ],
-            "openerLines": [
-              {
-                "role": "caller",
-                "text": "等等。17500，十四个月，这个我认。七月没来，我那天也问了他好几次。可那是因为他又瞒事，不是我每个月等着这笔钱。"
-              },
-              {
-                "role": "host",
-                "text": "好，金额先不动。你把‘不是那么回事’重新说完整。"
-              }
-            ],
+        "openerLines": [
+          {
+            "role": "caller",
+            "text": "等一下，你别把我说成每个月伸手等钱的人。17500，十四个月，我认；七月没来，我也问了。可这钱一开始就是他自己说要给的，说让我把探店号做起来，别老看别人脸色。我从来没开口跟他要。"
+          },
+          {
+            "role": "host",
+            "text": "行。你从第一笔开始说，钱怎么成了每个月都会来的？"
+          },
+          {
+            "role": "caller",
+            "text": "开始是他说每个月给我，我就收了，后来也确实拿去过日子。七月那天他又不回消息，钱也没来，我连着问了几次，是怕他又瞒着我。以前的钱我会跟他讲，今晚这八万不是我的卡，我不替他还。"
+          }
+        ],
             "revisedFrame": "她承认十四个月固定转账，却把自己长期等待、断供后追问的参与压成‘他坚持给，我只是收’。",
             "splitAfter": 2,
-            "midSummary": "她认了钱一直来，也认了七月追问，剩下只往动机上躲。别替她猜，听她自己怎么说。",
+        "midSummary": "她现在的说法是：钱一直收着，七月追问却只是怕他瞒事。先听这两句话能不能同时成立。",
             "reliefBeat": {
               "listenerId": "@工资没它准时",
               "comment": "一万七千五按月来，我工资都没这么准。",
@@ -1440,14 +1493,14 @@
                 "id": "credit-transfer-was-his-idea",
                 "label": "改口 01",
                 "text": "钱是他自己说要给的。七月多问几句，是怕他又瞒事，不是我每个月等着这笔钱。",
-                "pressResponse": "她马上接话：‘我问的是他为什么又撒谎。’至于钱没来，她绕开了。",
+            "pressResponse": "‘我问的是他为什么又瞒我。钱没来……对，我也问了钱。’",
                 "presentResponse": "缺转能碰到她一直等没等，不能替直播间猜她心里到底怕什么。"
               },
               {
                 "id": "credit-eight-wan-still-separate",
                 "label": "改口 02",
                 "text": "八万我不转。这个没变。",
-                "pressResponse": "她只重复‘卡不是我的’，以前的固定转账一句没接。",
+            "pressResponse": "‘卡不是我的，这八万我不转。以前的钱我会跟他讲。’",
                 "presentResponse": "材料可以拆钱路，不能替任何一边把今晚八万直接定成债。",
                 "survivesFromAct1": "credit-eight-wan-separate"
               },
@@ -1455,7 +1508,7 @@
                 "id": "credit-balance-needs-explaining",
                 "label": "改口 03",
                 "text": "余额……我会跟他说，不在直播里报。",
-                "pressResponse": "她把声音压低：‘这数我只跟当事人说。’再多一句都不肯。",
+            "pressResponse": "‘余额我只跟他本人说。直播里别再问了。’",
                 "presentResponse": "现有流水没有她的余额，不能拿来替她报数。",
                 "survivesFromAct1": "credit-savings-unknown"
               },
@@ -1463,7 +1516,7 @@
                 "id": "credit-shared-spending-limited",
                 "label": "改口 04",
                 "text": "灯在我家，餐厅也有我的份。可他借钱买信托，别往我这边算。",
-                "pressResponse": "她先认下自己用的东西，提到信托又立刻把话推回他那边。",
+            "pressResponse": "‘灯是我在用。可信托是他自己借钱买的，别混在一起。’",
                 "presentResponse": "这张材料只能确认其中一段消费，不能把整份账单一次结清。",
                 "survivesFromAct1": "credit-gift-was-voluntary"
               }
@@ -1499,8 +1552,8 @@
                   "sourceLabel": "信用卡账单"
                 }
               ],
-              "callerLine": "……我等了。七月一断，我先问的就是这笔钱。",
-              "hostLine": "谁先提，材料没写。可七月一断，你就追着问。你一直在等这笔钱，不是‘只是收着’。",
+          "callerLine": "……我等了。七月没来，我第一句问的就是钱怎么没了。",
+          "hostLine": "七月钱一断，你连着问了好几次。你不是‘只是收着’。这句话别再说了。",
               "boundaryLine": "缺转行和她的原话只推翻‘没当固定收入、没追着要’；不证明最初是谁提议，也不把八万变成她的债。",
               "contradiction": "咨询者认下长期固定给付后，又否认自己把它当成按月会来的收入；七月缺转后的连续追问推翻了这层圆谎。",
               "routeAxis": "money-flow",
@@ -1537,7 +1590,7 @@
           }
         ],
         "callerLine": "……这十四个月，确实不是几顿饭能带过去的。",
-        "hostLine": "十四个月，每月一万七千五，房租另付。不是几顿饭。这句改了再往下。",
+        "hostLine": "十四个月，每个月一万七千五，房租还是他另付。怎么会只是几顿饭？你先把这句话改过来，我们再往下聊。",
         "boundaryLine": "这行流水只推翻‘没有固定便宜’；它不证明八万已经变成她的债，也不替男方解释未知去向。",
         "contradiction": "咨询者把十四个月每月一万七千五的固定转账粉饰成零散共同消费。",
         "routeAxis": "money-flow",
@@ -1563,7 +1616,7 @@
           },
           {
             "role": "host",
-            "text": "补偿金是真的，可他后面紧接着发了最低还款金额。你当时怎么想的？"
+            "text": "补偿金是真的。语音放完，他就发了最低还款金额。你当时怎么想的？"
           },
           {
             "role": "caller",
@@ -1618,7 +1671,7 @@
         },
         {
           "question": "那条语音你还留着？",
-          "sourceAnchor": "一条语音",
+          "sourceAnchor": "开播前那条语音",
           "answer": "留着。",
           "routeAxis": "caller-credibility",
           "routeTone": "detour"
@@ -1626,9 +1679,9 @@
       ],
       "questionOptions": [
         {
-          "question": "你今晚打进来，是想问清这八万，还是想让我替你说一句别转？",
+          "question": "刚才那句我再放一遍：‘我只是怕你知道我失业后就离开我。’你今晚打进来，是想问这八万该不该转，还是想让我替你跟他说别转？",
           "sourceAnchor": "下一条还是最低还款金额",
-          "suspicionLabel": "她想从主播这里拿走什么",
+          "suspicionLabel": "重放‘怕你离开’那句",
           "answer": "前面那十四个月的钱，我不想再跟他一笔一笔讲。",
           "lines": [
             {
@@ -1653,6 +1706,18 @@
             }
           ],
           "guardedAnswer": "我想把回放发给他。前面那些钱，我不想跟他讲。",
+          "resistanceBeat": {
+            "lines": [
+              {
+                "role": "caller",
+                "text": "你非要当着这么多人再放一遍吗？"
+              },
+              {
+                "role": "host",
+                "text": "你也准备把这段回放发给他。那就先说清楚，你想让我在回放里说什么。"
+              }
+            ]
+          },
           "logicContract": {
             "premiseAnchor": "说的还是拿不出来，不是不想给",
             "sourceKind": "caller-statement",
@@ -1664,8 +1729,8 @@
           },
           "contradiction": "咨询者把明确的不愿出钱说成拿不准，试图借直播间的判断回避自己长期受益和花销。",
           "correct": true,
-          "routeAxis": "caller-credibility",
-          "routeTone": "pressure-point"
+          "routeAxis": "active-provocation",
+          "routeTone": "caller-skeptical"
         },
         {
           "question": "如果我现在只说一句‘别转’，你准备怎么跟他谈前面那些钱？",
@@ -2106,7 +2171,7 @@
     "answer": "我自己的工资也没存下来。余额没给他看。",
     "note": "让咨询者报出实际余额，承认自己已经把男方的固定转账当成可持续收入并消费掉，也让男方索要八万的计算依据落地；玩家若在第二天追问房租，还会看到她的住房成本并不从这一万七千五中支出。累计给付仍不能把男方债务变成咨询者债务。"
   },
-  "stageJudgement": "你打进来不是查账，是要我公开替你说：这些钱都是他自愿给的，你一分不用解释。这个忙我不帮。十四个月，每月一万七千五，房租另付，灯也在你家。八万先别转，卡是他签的；花到哪，你自己跟他说。信用卡里没说清的那截，让他讲。",
+  "stageJudgement": "你打进来不是查账，是想让我公开替你说：这些钱都是他自愿给的，你一分不用解释。这种话，我不会替你说的。十四个月，每月一万七千五，房租另付，灯也在你家。八万先别转，卡是他签的；花到哪，你自己跟他说。信用卡里没说清的那截，让他讲。",
   "caseClosing": {
     "title": "十四个月，每月一万七千五",
       "notice": {
@@ -2209,7 +2274,7 @@
       "speaker": "咨询者",
       "line": "他刚又发来一个文件，说我既然不信，就拿给你们看。姓名和卡号都遮了，只截了几个月的关键交易。我现在转后台。那三万五……我确实不知道，他不肯告诉我。我今晚再问一遍，明晚回来。",
       "hostLine": "好，就看他发来的这几页。三万五不知道就是不知道，明晚把他怎么说的告诉我。",
-      "stageDirection": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下面紧跟着一句：“拿了他一年多的钱，这八万就该转。”",
+      "stageDirection": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下一条是：“拿了他一年多的钱，这八万就该转。”",
       "audioCueId": "sfx.phone.soft-hangup"
     },
     "interlude": {
@@ -2257,15 +2322,36 @@
   },
   "overnightStructure": {
     "hangupAnchor": "别的我没细算",
-    "hangupLine": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下面紧跟着一句：“拿了他一年多的钱，这八万就该转。”",
+    "hangupLine": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下一条是：“拿了他一年多的钱，这八万就该转。”",
     "hangupAudioCueId": "sfx.phone.soft-hangup",
     "hostHoldLine": "好，就看他发来的这几页。三万五不知道就是不知道，明晚把他怎么说的告诉我。",
     "snapshotEcho": {
-      "caller-benefited": "昨晚有人说，我打进来就是想让你替我说一分钱不用出。我不爱听。可那十四个月的钱，我确实得自己讲。",
-      "respondent-shifted-debt": "昨晚有人咬住我把固定转账说成几次消费。今天流水在后台，你按十四个月问。",
-      "both-performed": "昨晚有人说，他拿失业和旧账逼我接盘。八万我没转；过去的钱花在哪儿，我也不躲。"
+      "caller-benefited": "昨晚你说，我打进来就是想让你替我说一分钱不用出。我不爱听。可那十四个月的钱，我确实得自己讲。",
+      "respondent-shifted-debt": "昨晚你说，我把固定转账讲成了几次消费。今天流水在后台，你按十四个月问。",
+      "both-performed": "昨晚你说，他拿失业和旧账逼我接盘。八万我没转；过去的钱花在哪儿，我也不躲。"
     },
     "liveCounterBeats": [
+      {
+        "id": "credit-night-b-first-interest",
+        "kind": "interruptToast",
+        "cost": 0,
+        "afterSceneIndex": 3,
+        "from": "弹幕风向",
+        "lines": [
+          {
+            "role": "stage",
+            "text": "房租还是另付的？前面没听见啊。"
+          },
+          {
+            "role": "stage",
+            "text": "等下，每月一万七千五还不含房租？"
+          },
+          {
+            "role": "caller",
+            "text": "房租另付。我刚才确实没讲。"
+          }
+        ]
+      },
       {
         "id": "credit-live-listener-screenshot",
         "kind": "emotionalChoice",

@@ -61,7 +61,11 @@ export function createLiveHudPresenter(ctx) {
       .filter((item) => (state.solvedCaseIds ?? []).includes(item.id))
       .map((item) => item.runtimeContentCaseId ?? item.caseId)
       .filter(Boolean));
-    return echoes.find((echo) => solvedContentCaseIds.has(echo.requiresCaseId)) ?? null;
+    const inventory = new Set(Object.values(state.caseNights ?? {}).flatMap((night) => night?.inventory ?? []));
+    return echoes.find((echo) =>
+      solvedContentCaseIds.has(echo.requiresCaseId) &&
+      (!echo.requiresInventoryId || inventory.has(echo.requiresInventoryId))
+    ) ?? null;
   }
 
   function withMaterialPityLine(pressure = {}, brief = {}) {

@@ -3,9 +3,12 @@ import {
   resetStatementPatience,
   sceneUsesLineReplay,
   spendStatementPatience,
+  statementMissReactionForOption,
   statementNightKey,
   statementNightPatienceMax,
-  statementPressureFor
+  statementNoClueReactionFor,
+  statementPressureFor,
+  statementReactionDisplayText
 } from "../../runtime/statementReviewModel.js";
 import {
   statementPatienceLostHtml,
@@ -621,6 +624,8 @@ export function createSceneScreens(ctx) {
       [patienceKey]: nextPatience
     };
     state.lastScreenEffect = "patience-drop";
+    state.lastReaction = statementReactionDisplayText(statementNoClueReactionFor(scene));
+    state.lastPressureSignal = "drift";
     state.scene = nextPatience.remaining <= 0 ? "statementPatienceLost" : "sceneLineReplay";
     saveState();
     render();
@@ -918,9 +923,10 @@ export function createSceneScreens(ctx) {
     const option = options[optionIndex] ?? options[0];
     if (!brief || !option) return;
     const answerVariant = pressuredAnswerVariant(option, { pressureSignal: nextQuestionPressureSignal(state) });
+    const missReaction = option.correct === false ? statementMissReactionForOption(option) : null;
     state.pendingQuestionPressureSignal = null;
     state.pendingQuestionPressureSource = null;
-    const answer = answerVariant.answer;
+    const answer = missReaction?.text ? "" : answerVariant.answer;
     markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: !option.contradiction });
     markAction(brief, `version:${sceneIndex}`);
     if (option.contradiction) {
@@ -928,7 +934,7 @@ export function createSceneScreens(ctx) {
       recordContradiction(brief, scene.contradiction);
     }
     else {
-      state.lastReaction = questionPressureReaction({ ...option, answer }, option.routeTone ?? routeToneForChoice(option));
+      state.lastReaction = statementReactionDisplayText(missReaction);
       state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
     }
     state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
@@ -947,10 +953,10 @@ export function createSceneScreens(ctx) {
         routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
         routeTone: option.routeTone ?? routeToneForChoice(option),
         correct: Boolean(option.contradiction),
-        guarded: answerVariant.guarded || Boolean(option.forcedGuardedAnswer),
+        guarded: Boolean(missReaction?.text) || answerVariant.guarded || Boolean(option.forcedGuardedAnswer),
         resistanceBeat: option.resistanceBeat ?? null,
-        lines: answerVariant.guarded ? null : option.lines ?? null,
-        reactionLine: option.reactionLine ?? "",
+        lines: missReaction?.text || answerVariant.guarded ? null : option.lines ?? null,
+        reactionLine: missReaction?.text ? "" : option.reactionLine ?? "",
         sceneVersionKind: scene.version === brief.sceneVersions?.[sceneIndex]?.revisedVersion ? "revised" : "base"
       }
     };

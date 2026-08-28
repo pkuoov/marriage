@@ -105,12 +105,14 @@ export function audioPlaybackControlsHtml(audioCue = {}) {
 export function replyChoicesHtml(choices = [], selectedChoiceId = "") {
   const selected = choices.find((choice) => choice.id === selectedChoiceId) ?? null;
   if (!choices.length) return "";
+  const actionOnly = choices.some((choice) => choice.actionOnly === true);
   return `
     <section class="interlude-action-card reply-choice-card">
-      <span class="source-badge">回一句</span>
+      <span class="source-badge">${actionOnly ? "怎么处理" : "回一句"}</span>
       <div class="reply-choice-grid">
         ${choices.map((choice) => replyChoiceButtonHtml(choice, selected, "reply-choice")).join("")}
       </div>
+      ${selected?.aftertaste ? `<p class="reply-choice-aftertaste">${escapeHtml(selected.aftertaste)}</p>` : ""}
     </section>
   `;
 }

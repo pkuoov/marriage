@@ -5,10 +5,32 @@ export function mountCourtRecord(root, { state, onSettingsChange = () => {}, onB
   overlay.hidden = true;
   overlay.innerHTML = courtRecordHtml(state);
   root.append(overlay);
-  const open = () => { onBeforeOpen(); overlay.hidden = false; overlay.querySelector("button")?.focus(); };
-  const close = () => { overlay.hidden = true; };
+  let lastFocused = null;
+  const open = () => {
+    onBeforeOpen();
+    lastFocused = document.activeElement;
+    overlay.hidden = false;
+    overlay.querySelector("button")?.focus();
+  };
+  const close = ({ restoreFocus = true } = {}) => {
+    if (overlay.hidden) return;
+    overlay.hidden = true;
+    if (restoreFocus && lastFocused?.isConnected) lastFocused.focus?.({ preventScroll: true });
+  };
   root.querySelectorAll("[data-record-open]").forEach((button) => button.addEventListener("click", open));
   overlay.querySelector("[data-record-close]")?.addEventListener("click", close);
+  overlay.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(overlay.querySelectorAll("button:not(:disabled), input:not(:disabled), [tabindex]:not([tabindex='-1'])"))
+      .filter((element) => element.getClientRects().length > 0);
+    if (!focusable.length) return;
+    const currentIndex = focusable.indexOf(document.activeElement);
+    const nextIndex = event.shiftKey
+      ? (currentIndex <= 0 ? focusable.length - 1 : currentIndex - 1)
+      : (currentIndex < 0 || currentIndex >= focusable.length - 1 ? 0 : currentIndex + 1);
+    event.preventDefault();
+    focusable[nextIndex].focus?.();
+  });
   overlay.querySelectorAll("[data-record-tab]").forEach((button) => button.addEventListener("click", () => {
     overlay.querySelectorAll("[data-record-tab]").forEach((item) => item.classList.toggle("active", item === button));
     overlay.querySelectorAll("[data-record-page]").forEach((page) => { page.hidden = page.dataset.recordPage !== button.dataset.recordTab; });
@@ -22,7 +44,7 @@ export function courtRecordHtml(state = {}) {
   const materialRows = values(state.evidenceCheckPicks).map(labelFor).filter(Boolean);
   const documentRows = values(state.documentRowPicks ?? state.investigationPicks).map(labelFor).filter(Boolean);
   const earnedRows = [...(state.earnedItems ?? []), ...values(state.delegationPicks).map(labelFor)].filter(Boolean);
-  return `<div class="court-record-panel" role="dialog" aria-label="案卷">
+  return `<div class="court-record-panel" role="dialog" aria-modal="true" aria-label="案卷">
     <header><h2>案卷</h2><button data-record-close type="button">关闭</button></header>
     <nav>${tab("materials", "材料", true)}${tab("documents", "文档")}${tab("earned", "收获")}${tab("backlog", "对话记录")}</nav>
     ${page("materials", materialRows, true)}${page("documents", documentRows)}${page("earned", earnedRows)}

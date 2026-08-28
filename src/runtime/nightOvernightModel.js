@@ -19,6 +19,7 @@ export function initialNightStateFor(brief = {}) {
     interludeBudget: { max, remaining: max, used: 0 },
     interludeActionsDone: [],
     interludeChoicesDone: [],
+    investigationReplyChoices: {},
     inventory: [],
     callbackOpenerId: null,
     callerStanceOnReturn: "neutral",

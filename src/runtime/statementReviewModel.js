@@ -41,6 +41,42 @@ export function statementOptionsForLine(options = [], line = {}) {
     .map(({ option }) => option);
 }
 
+export function normalizeStatementReaction(value = null, { role = "caller", text = "" } = {}) {
+  const source = typeof value === "string"
+    ? { role, text: value }
+    : value && typeof value === "object" && !Array.isArray(value)
+      ? value
+      : {};
+  const safeRole = ["caller", "host", "comment"].includes(source.role) ? source.role : role;
+  return {
+    role: safeRole,
+    speaker: String(source.speaker ?? "").trim(),
+    text: String(source.text ?? text).trim()
+  };
+}
+
+export function statementMissReactionForOption(option = {}) {
+  return normalizeStatementReaction(option.missReaction);
+}
+
+export function statementNoClueReactionFor(source = {}) {
+  return normalizeStatementReaction(source.noClueReaction, {
+    role: "caller",
+    text: "这句我现在接不上。你先把刚才那段听完。"
+  });
+}
+
+export function statementReactionDisplayText(reaction = {}) {
+  const safe = normalizeStatementReaction(reaction);
+  if (!safe.text) return "";
+  const label = safe.speaker || {
+    caller: "咨询者",
+    host: "林旭阳",
+    comment: "弹幕"
+  }[safe.role] || "现场";
+  return `${label}：${safe.text}`;
+}
+
 export function statementLineForId(lines = [], lineId = "") {
   return (lines ?? []).find((line) => line.id === lineId) ?? null;
 }

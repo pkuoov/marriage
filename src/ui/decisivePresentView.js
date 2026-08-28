@@ -1,5 +1,7 @@
 export function testimonyWallHtml({ scene = {}, wallAct = null, statements = [], comparisonRows = [], wallProgress = {}, presentProgress = {}, presentAvailability = {} } = {}) {
   const wall = wallAct ?? scene.testimonyWall ?? {};
+  const presentationSkin = wall.presentationSkin ?? scene.testimonyWall?.presentationSkin ?? "";
+  const wallClass = presentationSkin === "voice-matrix" ? " testimony-wall--voice-matrix" : "";
   const present = wall.decisivePresent ?? scene.decisivePresent ?? {};
   const materialCards = present.materialCards ?? [];
   const selectedMaterial = materialCards.find((card) => card.id === wallProgress.softEvidenceId) ?? null;
@@ -7,9 +9,9 @@ export function testimonyWallHtml({ scene = {}, wallAct = null, statements = [],
   const firstGroup = statements.slice(0, splitAfter);
   const secondGroup = statements.slice(splitAfter);
   return `
-    <section class="testimony-wall" aria-label="证词墙">
+    <section class="testimony-wall${wallClass}" aria-label="证词墙">
       <header>
-        <span>证词墙 · 第 ${Number(wall.act ?? 1)} 幕 · ${statements.length} 句</span>
+        <span>${presentationSkin === "voice-matrix" ? "语音方阵" : "证词墙"} · 第 ${Number(wall.act ?? 1)} 幕 · ${statements.length} 句</span>
         <b>${escapeHtml(wall.title ?? "把她刚才的话逐句摊开")}</b>
         <p>${escapeHtml(wall.intro ?? "先追问任何一句，也可以选一份材料试着放上去。普通试问不会扣耐心。")}</p>
       </header>
@@ -25,6 +27,12 @@ export function testimonyWallHtml({ scene = {}, wallAct = null, statements = [],
         <div class="testimony-wall-group is-second">
           ${secondGroup.map((statement) => testimonyStatementHtml(statement, wallProgress, selectedMaterial)).join("")}
         </div>
+      ` : ""}
+      ${wall.winkLine ? `
+        <aside class="testimony-wink" aria-label="主播对弹幕">
+          <span>主播 · 对弹幕</span>
+          <p>${escapeHtml(wall.winkLine)}</p>
+        </aside>
       ` : ""}
       <footer>
         <button data-testimony-materials type="button">${selectedMaterial ? `更换普通材料 · ${escapeHtml(selectedMaterial.label)}` : "选择材料，普通出示"}</button>

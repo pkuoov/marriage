@@ -52,7 +52,7 @@ export function dailyLostJobCreditTemplate(brief, names) {
       {
         speakerId: brief.complainantId,
         speaker: name,
-        version: "我后来又对了一遍日期。他第一次说周转那天，账单还有三天才到期。他先催我“今晚就要”，后面又改成“这几天都行”。我问急什么，他回我一句：“我只是怕你知道我失业后就离开我。”说完，紧接着把最低还款金额发了过来。",
+        version: "我后来又对了一遍日期。他第一次说周转那天，账单还有三天才到期。他先催我“今晚就要”，后面又改成“这几天都行”。我问急什么，他回我一句：“我只是怕你知道我失业后就离开我。”语音一停，最低还款金额就发过来了。",
         doubt: "时间被说急了，咨询者更容易先转钱。",
         contradiction: "对方 把还款截止时间说急，制造咨询者当晚转钱的压力。",
         reliability: "partial",

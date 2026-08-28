@@ -94,6 +94,16 @@ export const baseState = {
   storyWorldEchoHypotheses: {},
   careChoices: {},
   epilogueUnreadStep: 0,
+  cafePrologueVersion: 2,
+  cafePrologueStep: 0,
+  cafePrologueMarks: [],
+  cafePrologueOrder: [],
+  cafePrologueStatementId: "",
+  cafePrologueStatementReaction: "",
+  cafePrologueEvidenceId: "",
+  cafePrologueTransferSelected: false,
+  cafePrologueLegalBriefSeen: false,
+  cafeProloguePressureChoice: "",
   lastReaction: null,
   lastPressureSignal: null,
   pendingQuestionPressureSignal: null,
@@ -144,6 +154,9 @@ export function normalizeRuntimeState(saved = {}) {
 }
 
 export function migrateState(saved) {
+  const legacyCafePrologue = !Object.prototype.hasOwnProperty.call(saved ?? {}, "cafePrologueVersion");
+  const legacyCafeStep = Math.max(0, Math.floor(Number(saved?.cafePrologueStep) || 0));
+  const legacyCafeMarks = Array.isArray(saved?.cafePrologueMarks) ? saved.cafePrologueMarks : [];
   const next = {
     ...structuredClone(baseState),
     ...saved,
@@ -197,6 +210,32 @@ export function migrateState(saved) {
   if (!next.storyWorldEchoHypotheses || Array.isArray(next.storyWorldEchoHypotheses)) next.storyWorldEchoHypotheses = {};
   if (!next.careChoices || Array.isArray(next.careChoices)) next.careChoices = {};
   if (!Number.isFinite(Number(next.epilogueUnreadStep))) next.epilogueUnreadStep = 0;
+  if (!Number.isFinite(Number(next.cafePrologueStep))) next.cafePrologueStep = 0;
+  next.cafePrologueStep = Math.max(0, Math.floor(Number(next.cafePrologueStep) || 0));
+  if (!Array.isArray(next.cafePrologueMarks)) next.cafePrologueMarks = [];
+  next.cafePrologueMarks = [...new Set(next.cafePrologueMarks.filter((id) => ["chat", "hotel"].includes(id)))];
+  if (!Array.isArray(next.cafePrologueOrder)) next.cafePrologueOrder = [];
+  next.cafePrologueOrder = [...new Set(next.cafePrologueOrder.filter((id) => ["toy", "account"].includes(id)))];
+  if (legacyCafePrologue) {
+    const firstLegacyEvidence = legacyCafeMarks.find((id) => ["chat", "hotel"].includes(id)) ?? "chat";
+    next.cafePrologueStatementId = legacyCafeStep >= 1 ? "hotel-denial" : "";
+    next.cafePrologueStatementReaction = "";
+    next.cafePrologueEvidenceId = legacyCafeStep >= 2 ? firstLegacyEvidence : "";
+    next.cafePrologueTransferSelected = legacyCafeStep >= 3;
+    if (legacyCafeStep === 1) next.cafePrologueMarks = [];
+    if (legacyCafeStep === 2) next.cafePrologueMarks = [firstLegacyEvidence, firstLegacyEvidence === "chat" ? "hotel" : "chat"];
+    if (legacyCafeStep === 3) next.cafePrologueStep = next.cafePrologueLegalBriefSeen ? 5 : 4;
+    else if (legacyCafeStep === 4) next.cafePrologueStep = 6;
+    else if (legacyCafeStep >= 5 && legacyCafeStep <= 7) next.cafePrologueStep = 7;
+    else if (legacyCafeStep >= 8) next.cafePrologueStep = 8;
+  }
+  next.cafePrologueVersion = 2;
+  if (typeof next.cafePrologueStatementId !== "string") next.cafePrologueStatementId = "";
+  if (typeof next.cafePrologueStatementReaction !== "string") next.cafePrologueStatementReaction = "";
+  if (!["chat", "hotel"].includes(next.cafePrologueEvidenceId)) next.cafePrologueEvidenceId = "";
+  if (typeof next.cafePrologueTransferSelected !== "boolean") next.cafePrologueTransferSelected = false;
+  if (typeof next.cafePrologueLegalBriefSeen !== "boolean") next.cafePrologueLegalBriefSeen = false;
+  if (typeof next.cafeProloguePressureChoice !== "string") next.cafeProloguePressureChoice = "";
   if (!("lastReaction" in next)) next.lastReaction = null;
   if (!("lastPressureSignal" in next)) next.lastPressureSignal = null;
   if (!("pendingQuestionPressureSignal" in next)) next.pendingQuestionPressureSignal = null;
@@ -349,13 +388,17 @@ function migrateCaseNightRecord(record) {
     const activeActionId = LEGACY_INTERLUDE_ACTIONS[night.activeActionId] ?? night.activeActionId ?? null;
     const actionChoices = Object.fromEntries(Object.entries(night.interludeActionChoices ?? {})
       .filter(([actionId]) => !LEGACY_INTERLUDE_ACTIONS[actionId]));
+    const investigationReplyChoices = night.investigationReplyChoices && typeof night.investigationReplyChoices === "object" && !Array.isArray(night.investigationReplyChoices)
+      ? night.investigationReplyChoices
+      : {};
     return [key, {
       ...night,
       activeActionId: actionsDone.includes(activeActionId) ? null : activeActionId,
       inventory: migrateIdList(night.inventory, LEGACY_INTERLUDE_INVENTORY),
       interludeActionsDone: actionsDone,
       interludeChoicesDone: (night.interludeChoicesDone ?? []).filter((choiceId) => !RETIRED_INTERLUDE_CHOICES.has(choiceId)),
-      interludeActionChoices: actionChoices
+      interludeActionChoices: actionChoices,
+      investigationReplyChoices
     }];
   }));
 }

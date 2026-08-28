@@ -177,6 +177,7 @@ function delegationAdvisorButtonHtml(advisor = {}) {
 
 const INVESTIGATION_SOURCE_BADGES = {
   dm: "后台私信",
+  "mixed-inbox": "混合收件箱",
   "respondent-note": "对方留言",
   "store-manager-note": "店长留言",
   "leader-note": "领导批注",

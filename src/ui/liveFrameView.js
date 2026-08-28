@@ -8,7 +8,9 @@ export function liveControlDeckHtml({
   pressure = {},
   mode = "listen",
   material = "",
-  materialCount = 1
+  materialCount = 1,
+  progressLabel = "",
+  progressNote = ""
 } = {}) {
   const safeTotal = Math.max(1, Number(total ?? 1));
   const safeSegment = Math.max(1, Math.min(safeTotal, Number(segment ?? 1)));
@@ -18,7 +20,11 @@ export function liveControlDeckHtml({
   const pressurePercent = pressureMax > 0
     ? Math.round((Math.max(0, Math.min(pressureMax, pressureRemaining)) / pressureMax) * 100)
     : 0;
-  const progressState = deckProgressState(safeSegment, safeTotal);
+  const defaultProgressState = deckProgressState(safeSegment, safeTotal);
+  const progressState = {
+    label: progressLabel || defaultProgressState.label,
+    note: progressNote || defaultProgressState.note
+  };
   const patienceState = deckPatienceState(pressure);
   const materialKind = materialKindForLabel(material);
   const hasMaterial = Boolean(material && Number(materialCount) > 0);
@@ -171,7 +177,7 @@ export function liveFrameHtml({
   const materialKind = materialKindForLabel(material);
   const choiceMarkup = String(choices ?? "");
   const hasChoices = Boolean(choiceMarkup.trim());
-  const choicesAreFlow = hasChoices && choiceMarkup.includes("flow-group");
+  const choicesAreFlow = hasChoices && (choiceMarkup.includes("flow-group") || choiceMarkup.includes("cafe-opening-action"));
   const materialShortcut = material && !choicesAreFlow
     ? `<button class="choice-material-shortcut" data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="选择前查看材料：${escapeHtml(material)}" type="button"><span>查看材料</span><b>${Math.max(1, Number(materialCount) || 1)}</b></button>`
     : "";
@@ -274,7 +280,8 @@ function revealPerformanceHtml(transition = {}) {
     "second-mic": `<div class="reveal-gift">✦</div><div class="reveal-mics"><i></i><i></i></div>`,
     "approval-split": `${art}<div class="reveal-approval-split"><span>活动负责人</span><i></i><span>付款经办人</span></div>`,
     "two-fathers": `<div class="reveal-father-card"><small>亲生父亲</small><b>零工</b></div><div class="reveal-father-link">≠</div><div class="reveal-father-card"><small>另一位“爸爸”</small><b>1,000,000</b></div>`,
-    "third-chair": `<div class="reveal-chairs"><i></i><i></i><i class="appears"></i></div>`
+    "third-chair": `<div class="reveal-chairs"><i></i><i></i><i class="appears"></i></div>`,
+    "labeled-fiction": `<div class="reveal-father-card"><small>文末</small><b>虚构</b></div><div class="reveal-father-link">≠</div><div class="reveal-father-card"><small>正文</small><b>点名</b></div>`
   }[variant] ?? "";
   return inner ? `<div class="reveal-performance reveal-${escapeHtml(variant)}">${inner}</div>` : "";
 }

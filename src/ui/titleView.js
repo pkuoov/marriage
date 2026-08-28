@@ -73,7 +73,7 @@ export function titleScreenHtml({
                     <button class="primary title-journey-action title-journey-new title-journey-new-only" ${saveLoadError ? "data-request-new-game" : "data-start-story"} type="button">
                       <span>NEW GAME</span>
                       <b>${storyPack ? "新游戏" : "开始今日来电"}</b>
-                      <small>${storyPack ? "从今晚 20:00 推门进直播间" : "接入今天这通匿名来电"}</small>
+                      <small>${storyPack ? "从开播前的咖啡厅开始" : "接入今天这通匿名来电"}</small>
                     </button>
                   `}
                   ${quickModeAvailable ? `

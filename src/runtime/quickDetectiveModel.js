@@ -5,10 +5,12 @@ import {
   spendStatementPatience,
   statementLineForId,
   statementLinesFromTurns,
+  statementMissReactionForOption,
+  statementNoClueReactionFor,
   statementOptionForLine
 } from "./statementReviewModel.js";
 
-const QUICK_SCENES = new Set(["intro", "transcript", "issueSelection", "confrontation", "patienceLost", "verdict"]);
+const QUICK_SCENES = new Set(["intro", "transcript", "issueSelection", "missReaction", "confrontation", "patienceLost", "verdict"]);
 const LEGACY_REVIEW_SCENES = new Set(["investigation", "feedback", "crowdAssist", "crowdFeedback"]);
 
 export function initialQuickDetectiveState(packet = {}) {
@@ -21,6 +23,8 @@ export function initialQuickDetectiveState(packet = {}) {
     turnLineIndex: 0,
     activeConfrontationId: null,
     activeSourceLineId: null,
+    activeMissReaction: null,
+    afterMissScene: "issueSelection",
     resolvedConfrontationIds: [],
     attemptedIssueIds: [],
     attemptedLineIds: [],
@@ -52,6 +56,10 @@ export function normalizeQuickDetectiveState(value, packet = {}) {
     turnLineIndex: boundedLineIndex(value.turnLineIndex, 2),
     activeConfrontationId: confrontationIds.has(value.activeConfrontationId) ? value.activeConfrontationId : null,
     activeSourceLineId: typeof value.activeSourceLineId === "string" ? value.activeSourceLineId : null,
+    activeMissReaction: value.activeMissReaction && typeof value.activeMissReaction === "object"
+      ? value.activeMissReaction
+      : null,
+    afterMissScene: value.afterMissScene === "patienceLost" ? "patienceLost" : "issueSelection",
     resolvedConfrontationIds: uniqueKnown(value.resolvedConfrontationIds, confrontationIds),
     attemptedIssueIds: uniqueKnown(value.attemptedIssueIds, issueIds),
     attemptedLineIds: uniqueStrings(value.attemptedLineIds),
@@ -85,12 +93,16 @@ export function applyQuickStatementLineSelection(packet = {}, state = {}, lineId
     const nextBudget = spendStatementPatience(state.roundPatience?.[roundId], max);
     return {
       ...state,
-      scene: nextBudget.remaining <= 0 ? "patienceLost" : "issueSelection",
+      scene: "missReaction",
       attemptedLineIds,
       attemptedIssueIds: issue?.id
         ? [...new Set([...(state.attemptedIssueIds ?? []), issue.id])]
         : [...(state.attemptedIssueIds ?? [])],
       activeSourceLineId: lineId,
+      activeMissReaction: issue
+        ? statementMissReactionForOption(issue)
+        : statementNoClueReactionFor(round),
+      afterMissScene: nextBudget.remaining <= 0 ? "patienceLost" : "issueSelection",
       roundPatience: {
         ...(state.roundPatience ?? {}),
         [roundId]: nextBudget
@@ -103,6 +115,15 @@ export function applyQuickStatementLineSelection(packet = {}, state = {}, lineId
     attemptedLineIds,
     activeSourceLineId: lineId
   };
+}
+
+export function advanceQuickMissReaction(packet = {}, state = {}) {
+  return resumeSolvedQuickRound(packet, {
+    ...state,
+    scene: state.afterMissScene === "patienceLost" ? "patienceLost" : "issueSelection",
+    activeMissReaction: null,
+    afterMissScene: "issueSelection"
+  });
 }
 
 export function applyQuickIssueSelection(packet = {}, state = {}, issueId = "") {
@@ -177,6 +198,8 @@ export function retryQuickStatement(packet = {}, state = {}) {
     ...state,
     scene: "transcript",
     activeSourceLineId: null,
+    activeMissReaction: null,
+    afterMissScene: "issueSelection",
     attemptedLineIds: (state.attemptedLineIds ?? []).filter((lineId) => !lineIds.has(lineId)),
     roundPatience: {
       ...(state.roundPatience ?? {}),
@@ -229,7 +252,7 @@ export function quickFlowVersion(packet = {}) {
     ...(quickIssueOptionsForRound(packet, { roundIndex: rounds.indexOf(round) }).map((option) => `${option.id}:${option.sourceAnchor ?? ""}`))
   ].join(":"));
   const confrontationShape = (packet.confrontations ?? []).map((item) => item.id).join(":");
-  return `quick-v4|${roundShape.join("|")}|${confrontationShape}`;
+  return `quick-v5|${roundShape.join("|")}|${confrontationShape}`;
 }
 
 export function quickDisclosureRoundForState(packet = {}, state = {}) {

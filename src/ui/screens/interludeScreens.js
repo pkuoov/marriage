@@ -395,6 +395,9 @@ export function createInterludeScreens(ctx) {
       saveState();
       return render();
     }
+    const replyChoices = hook.replyChoices ?? [];
+    const replyChoiceId = ensureNight(brief).investigationReplyChoices?.[hook.id] ?? "";
+    const needsReply = Boolean(pick && replyChoices.length && !replyChoiceId);
     frame({
       brief,
       mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
@@ -408,15 +411,43 @@ export function createInterludeScreens(ctx) {
           hostName: state.playerName,
           reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
         })}
+        ${pick ? replyChoicesHtml(replyChoices, replyChoiceId) : ""}
         ${pick ? hostDisclosureForAnchor(brief, "afterBackflow") : ""}
       `,
-      choices: pick
+      choices: pick && !needsReply
         ? flowGroupHtml(`<button class="primary" data-after-investigation type="button">${nextLabel}</button>`)
         : ""
     });
     bindInvestigationButtons(brief, hook, index);
+    bind("[data-reply-choice]", (event) => recordInvestigationReplyChoice(brief, hook, replyChoices, event.currentTarget?.getAttribute("data-reply-choice") ?? ""));
     bind("[data-after-investigation]", () => moveScene("caseSolved"));
     bindSceneButtons();
+  }
+
+  function recordInvestigationReplyChoice(brief, hook = {}, choices = [], choiceId = "") {
+    const choice = choices.find((item) => item.id === choiceId);
+    if (!choice) return;
+    const state = ctx.getState();
+    const night = ensureNight(brief);
+    updateNight(brief, {
+      inventory: [...new Set([...(night.inventory ?? []), ...(choice.grantsInventory ?? [])])],
+      investigationReplyChoices: {
+        ...(night.investigationReplyChoices ?? {}),
+        [hook.id]: choice.id
+      },
+      stanceNudge: choice.stanceNudge ?? night.stanceNudge ?? null
+    });
+    recordRouteChoice(brief, investigationRouteIndexBase(brief) + (brief.investigationHooks ?? []).indexOf(hook), {
+      question: hook.title ?? "后台收件箱",
+      answer: choice.label ?? "",
+      routeAxis: choice.routeAxis ?? hook.routeAxis ?? "outer-thread",
+      routeTone: "reply-choice"
+    }, { version: hook.material ?? "" });
+    state.lastReaction = choice.aftertaste ?? "这封先按你选的方式处理。";
+    state.lastPressureSignal = choice.pressureSignal ?? "";
+    state.lastScreenEffect = choice.screenEffect ?? "";
+    saveState();
+    render();
   }
 
   function renderDelegation(brief) {

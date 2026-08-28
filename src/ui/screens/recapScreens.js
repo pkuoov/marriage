@@ -24,6 +24,12 @@ export function createRecapScreens(ctx) {
     careChoiceById,
     careChoicesFor,
     epilogueUnreadStage,
+    normalizedCafePrologueProgress,
+    cafePrologueStatementReady,
+    cafePrologueCanPresentEvidence,
+    cafePrologueRemainingEvidenceId,
+    cafePrologueCanOpenForensic,
+    cafePrologueSceneForStep,
     hostDisclosureLinesForAnchor,
     storyBoundaryRows,
     storyMaterialRows,
@@ -52,6 +58,18 @@ export function createRecapScreens(ctx) {
     careChoiceHtml,
     epilogueUnreadContinueHtml,
     epilogueUnreadHtml,
+    cafePrologueHeaderHtml,
+    cafePrologueDialogueHtml,
+    cafeProloguePortraitStageHtml,
+    cafeMaterialPromptHtml,
+    cafeStatementReplayHtml,
+    cafeEvidencePairHtml,
+    cafeSingleEvidenceHtml,
+    cafeTransferPresentHtml,
+    cafeLegalRequestsHtml,
+    cafeInvestigationChoicesHtml,
+    cafeAccountBoardHtml,
+    cafeFinalBoundaryHtml,
     storyPackCompleteHtml,
     storyPackShareText,
     CONTENT_ADVISORS,
@@ -68,6 +86,7 @@ export function createRecapScreens(ctx) {
     nightShellEndingKey,
     frame,
     hostPortraitLayer,
+    liveCommentStrip,
     compactDialogueLines,
     bind,
     bindSceneButtons,
@@ -77,6 +96,8 @@ export function createRecapScreens(ctx) {
     currentIndex,
     normalizedDailyResult,
     issueCompletion,
+    markAction,
+    actionDone,
     routeProfileForBrief,
     postDailySharePayload,
     isFinalStoryPackCase,
@@ -104,20 +125,56 @@ export function createRecapScreens(ctx) {
   function renderNightShellPrologue(brief) {
     const state = ctx.getState();
     const prologue = nightShellForBrief(brief)?.prologue ?? {};
-    const lines = [...(prologue.lines ?? []), prologue.hostLine].filter(Boolean);
+    const coldOpen = prologue.coldOpen ?? null;
+    const entryActionKey = prologue.entryActionKey ?? null;
+    const coldOpenDone = coldOpen
+      ? actionDone(brief, coldOpen.actionKey ?? "golden-90-first-interest")
+      : true;
+    const entryDone = !entryActionKey
+      || coldOpenDone
+      || actionDone(brief, entryActionKey);
+    const regularLines = [...(prologue.lines ?? []), prologue.hostLine].filter(Boolean);
+    let lines = regularLines;
+    let label = "开播前";
+    let choices = flowGroupHtml(
+      `<button class="primary" data-start-night-broadcast type="button">${escapeHtml(prologue.entryActionLabel ?? "开始直播")}</button>`
+    );
+    if (entryDone && coldOpen && !coldOpenDone) {
+      lines = [...(coldOpen.setupLines ?? []), coldOpen.line, ...(coldOpen.baitComments ?? [])].filter(Boolean);
+      label = "第一通来电";
+      choices = flowGroupHtml(
+        `<button class="primary" data-reveal-cold-open type="button">${escapeHtml(coldOpen.actionLabel ?? "听完这条语音")}</button>`
+      );
+    } else if (entryDone) {
+      lines = coldOpen ? [...(coldOpen.interestLines ?? [])] : regularLines;
+      label = coldOpen ? "第一通来电" : "开播前";
+      choices = flowGroupHtml(
+        `<button class="primary" data-enter-first-case type="button">接入第一通来电</button>`,
+        { label: "直播已经开始", note: "第一位咨询者正在等待接通。" }
+      );
+    }
+    const commentLines = lines.filter((line) => typeof line === "object" && line?.type === "comment");
+    const dialogueLines = lines.filter((line) => typeof line !== "object" || line?.type !== "comment");
     frame({
       brief,
       mood: "focused",
-      label: "开播前",
+      label,
       chapter: "晚间热线",
       showCaseHud: false,
-      visualHud: hostPortraitLayer(),
+      visualHud: `${hostPortraitLayer()}${liveCommentStrip({ comments: commentLines.map((line) => line.text).filter(Boolean) })}`,
       screenClass: "night-shell-prologue-screen",
-      text: nightShellHtml(lines),
-      choices: flowGroupHtml(
-        `<button class="primary" data-enter-first-case type="button">接入第一通来电</button>`,
-        { label: "直播已经开始", note: "第一位咨询者正在等待接通。" }
-      )
+      text: nightShellHtml(dialogueLines),
+      choices
+    });
+    bind("[data-start-night-broadcast]", () => {
+      if (entryActionKey) markAction(brief, entryActionKey, { spend: false });
+      saveState();
+      render();
+    });
+    bind("[data-reveal-cold-open]", () => {
+      markAction(brief, coldOpen.actionKey ?? "golden-90-first-interest", { spend: false });
+      saveState();
+      render();
     });
     bind("[data-enter-first-case]", () => {
       state.scene = "caseTitle";
@@ -157,8 +214,296 @@ export function createRecapScreens(ctx) {
       saveState();
       render();
     });
-    bind("[data-finish-night-shell]", () => moveScene("runComplete"));
+    bind("[data-finish-night-shell]", () => {
+      const cafePrologue = nightShellForBrief(brief)?.cafePrologue;
+      const progress = normalizedCafePrologueProgress(state);
+      if (cafePrologue && progress.step === 7 && cafePrologueCanOpenForensic(progress)) {
+        setCafePrologueStep(state, 8);
+        return;
+      }
+      if (cafePrologue && progress.step < 7) {
+        moveScene(cafePrologueSceneForStep(progress.step));
+        return;
+      }
+      moveScene("runComplete");
+    });
     bindSceneButtons();
+  }
+
+  function renderCafePrologue(brief) {
+    const state = ctx.getState();
+    const prologue = nightShellForBrief(brief)?.cafePrologue ?? {};
+    const cafe = prologue.cafe ?? {};
+    const progress = normalizedCafePrologueProgress(state);
+    const step = Math.min(5, progress.step);
+    const correctStatement = (cafe.claimStatements ?? []).find((statement) => statement.correct)
+      ?? (cafe.claimStatements ?? []).find((statement) => statement.id === "hotel-denial");
+    const firstEvidence = (cafe.evidencePair ?? []).find((evidence) => evidence.id === (progress.marks[0] ?? progress.evidenceId));
+    const remainingEvidenceId = cafePrologueRemainingEvidenceId(progress);
+    const remainingEvidence = (cafe.evidencePair ?? []).find((evidence) => evidence.id === remainingEvidenceId);
+    let text = cafePrologueHeaderHtml({ timeline: prologue.timeline, title: prologue.title, subtitle: prologue.subtitle });
+    let choices = "";
+
+    if (step === 0) {
+      text += cafePrologueDialogueHtml(progress.statementReaction
+        ? [{
+            speaker: "妻子",
+            speakerProfileId: "prologue-cafe-wife",
+            type: "participant",
+            text: (cafe.claimStatements ?? []).find((statement) => statement.id === progress.statementReaction)?.missLine ?? "你要问哪句，就把那句说清楚。"
+          }]
+        : cafe.openingLines ?? []);
+      choices = `
+        <section class="cafe-opening-action" aria-label="咖啡厅对质">
+          ${cafeStatementReplayHtml({
+            statements: cafe.claimStatements,
+            selectedId: progress.statementId,
+            reactionId: ""
+          })}
+          ${cafeMaterialPromptHtml({ evidencePair: cafe.evidencePair })}
+        </section>
+      `;
+    } else if (step === 1) {
+      choices = flowGroupHtml(`
+        ${cafeEvidencePairHtml(cafe.evidencePair ?? [], progress.evidenceId, correctStatement?.text ?? cafe.firstClaim)}
+        <button class="primary" data-cafe-evidence-present type="button"${cafePrologueCanPresentEvidence(progress, correctStatement?.id) ? "" : " disabled"}>把这张材料压上去</button>
+      `);
+    } else if (step === 2) {
+      text += cafePrologueDialogueHtml(firstEvidence?.hitLines ?? []);
+      choices = flowGroupHtml(`
+        ${cafeSingleEvidenceHtml({ evidence: remainingEvidence, action: "remaining" })}
+      `);
+    } else if (step === 3) {
+      text += cafePrologueDialogueHtml([...(remainingEvidence?.remainingLines ?? []), ...(cafe.remainingEvidenceLines ?? []), ...(cafe.moneyClaimLines ?? [])]);
+      choices = flowGroupHtml(`
+        ${cafeTransferPresentHtml({ evidence: cafe.transferEvidence, selected: progress.transferSelected })}
+        <button class="primary" data-cafe-present-transfer type="button"${progress.transferSelected ? "" : " disabled"}>拿这张流水问她</button>
+      `);
+    } else if (step === 4) {
+      text += cafePrologueDialogueHtml([
+        ...(cafe.transferHitLines ?? []),
+        ...(cafe.legalClaimLines ?? [])
+      ]);
+      choices = flowGroupHtml(`
+        ${cafeLegalRequestsHtml({
+          ...(cafe.legalRequests ?? {}),
+          items: (cafe.legalRequests?.items ?? []).filter((item) => ["divorce-evidence", "marital-property"].includes(item.id))
+        })}
+        <button class="primary" data-cafe-legal-brief type="button">赵，把离婚和家账记下来</button>
+      `);
+    } else {
+      text += cafePrologueDialogueHtml([
+        ...(cafe.parentageBlockLines ?? []),
+        ...(cafe.cameraBreakLines ?? [])
+      ]);
+      choices = flowGroupHtml((cafe.pressureChoices ?? []).map((choice) => `
+        <button class="secondary" data-cafe-pressure="${escapeHtml(choice.id)}" type="button">
+          <b>${escapeHtml(choice.label)}</b><span>${escapeHtml(choice.note)}</span>
+        </button>
+      `).join(""), {
+        label: "表哥手里也录了一份",
+        note: "关掉桌边录像继续谈，还是结束这次谈判？"
+      });
+    }
+
+    frame({
+      brief,
+      mood: "focused",
+      label: step < 5 ? "开播前 · 咖啡厅" : "咖啡厅 · 录像中断",
+      chapter: "试玩序章",
+      showCaseHud: false,
+      visualHud: cafeProloguePortraitStageHtml({ activeRole: step <= 1 ? "wife" : "" }),
+      backdropClass: prologue.backdropClass ?? "day-cafe",
+      screenClass: `cafe-prologue-screen cafe-prologue-step-${step}`,
+      text,
+      choices,
+      pixelTransition: step === 0 ? { kind: "soft-fade" } : undefined
+    });
+
+    document.querySelectorAll("[data-cafe-statement-id]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.getAttribute("data-cafe-statement-id") ?? "";
+        const statement = (cafe.claimStatements ?? []).find((item) => item.id === id);
+        if (!statement) return;
+        if (statement.correct) {
+          state.cafePrologueStatementId = id;
+          state.cafePrologueStatementReaction = "";
+          state.cafePrologueEvidenceId = "";
+          setCafePrologueStep(state, 1);
+          return;
+        }
+        state.cafePrologueStatementId = "";
+        state.cafePrologueStatementReaction = id;
+        saveState();
+        render();
+      });
+    });
+    document.querySelectorAll("[data-cafe-evidence-select]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.getAttribute("data-cafe-evidence-select") ?? "";
+        if (!(cafe.evidencePair ?? []).some((item) => item.id === id)) return;
+        state.cafePrologueEvidenceId = id;
+        saveState();
+        render();
+      });
+    });
+    bind("[data-cafe-evidence-present]", () => {
+      const current = normalizedCafePrologueProgress(state);
+      if (!cafePrologueCanPresentEvidence(current, correctStatement?.id)) return;
+      state.cafePrologueMarks = [current.evidenceId];
+      setCafePrologueStep(state, 2);
+    });
+    bind("[data-cafe-present-remaining]", () => {
+      const current = normalizedCafePrologueProgress(state);
+      const remainingId = cafePrologueRemainingEvidenceId(current);
+      if (!remainingId) return;
+      state.cafePrologueMarks = [...new Set([...(state.cafePrologueMarks ?? []), remainingId])];
+      setCafePrologueStep(state, 3);
+    });
+    bind("[data-cafe-transfer-select]", (event) => {
+      state.cafePrologueTransferSelected = true;
+      saveState();
+      const button = event.currentTarget;
+      button.classList.add("selected");
+      button.setAttribute("aria-pressed", "true");
+      const label = button.querySelector("em");
+      if (label) label.textContent = "已拿起";
+      const presentButton = document.querySelector("[data-cafe-present-transfer]");
+      if (presentButton) presentButton.disabled = false;
+    });
+    bind("[data-cafe-present-transfer]", () => {
+      if (state.cafePrologueTransferSelected !== true) return;
+      setCafePrologueStep(state, 4);
+    });
+    bind("[data-cafe-legal-brief]", () => {
+      state.cafePrologueLegalBriefSeen = true;
+      setCafePrologueStep(state, 5);
+    });
+    document.querySelectorAll("[data-cafe-pressure]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const choiceId = button.getAttribute("data-cafe-pressure") ?? "";
+        if (!(cafe.pressureChoices ?? []).some((choice) => choice.id === choiceId)) return;
+        state.cafeProloguePressureChoice = choiceId;
+        setCafePrologueStep(state, 6);
+      });
+    });
+    bindSceneButtons();
+  }
+
+  function renderCafePrologueAftermath(brief) {
+    const state = ctx.getState();
+    const prologue = nightShellForBrief(brief)?.cafePrologue ?? {};
+    const aftermath = prologue.aftermath ?? {};
+    const progress = normalizedCafePrologueProgress(state);
+    const step = Math.max(6, Math.min(7, progress.step));
+    const routes = aftermath.routes ?? [];
+    const pressureChoice = (prologue.cafe?.pressureChoices ?? []).find((choice) => choice.id === progress.pressureChoice);
+    let text = cafePrologueHeaderHtml({ timeline: "同一晚", title: "序章后续", subtitle: "咖啡厅散场以后" });
+    let choices = "";
+
+    if (step === 6) {
+      text += cafePrologueDialogueHtml([
+        ...(pressureChoice?.echo ? [{ speaker: "旁白", type: "stage", text: pressureChoice.echo }] : []),
+        ...(aftermath.openingLines ?? [])
+      ]);
+      choices = flowGroupHtml(cafeInvestigationChoicesHtml(routes));
+    } else {
+      const route = routes.find((item) => item.id === progress.order[0]) ?? routes[0];
+      text += cafeInvestigationResultHtml(route, "今晚先查");
+      text += cafePrologueDialogueHtml(route?.handoffLines ?? []);
+      choices = flowGroupHtml(`<button class="primary" data-cafe-enter-night type="button"${cafePrologueCanOpenForensic(progress) ? "" : " disabled"}>回直播间开播</button>`, {
+        label: route?.title ?? "麦外核对",
+        note: "这条先留在麦外，回告要等几天。"
+      });
+    }
+
+    frame({
+      brief,
+      mood: "focused",
+      label: step === 6 ? "同一晚 · 语音否认" : "同一晚 · 麦外核对",
+      chapter: "试玩序章后续",
+      showCaseHud: false,
+      visualHud: "",
+      backdropClass: step === 6 ? "day-home cafe-aftermath-home" : "day-document cafe-aftermath-document",
+      screenClass: `cafe-prologue-screen cafe-aftermath-screen cafe-aftermath-step-${step}`,
+      text,
+      choices
+    });
+
+    document.querySelectorAll("[data-cafe-investigation]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.getAttribute("data-cafe-investigation") ?? "";
+        if (!routes.some((route) => route.id === id)) return;
+        state.cafePrologueOrder = [id];
+        setCafePrologueStep(state, 7);
+      });
+    });
+    bind("[data-cafe-enter-night]", () => {
+      if (!cafePrologueCanOpenForensic(normalizedCafePrologueProgress(state))) return;
+      const allCasesSolved = (state.caseBriefs ?? []).length > 0
+        && (state.caseBriefs ?? []).every((caseBrief) => (state.solvedCaseIds ?? []).includes(caseBrief.id));
+      if (allCasesSolved) {
+        setCafePrologueStep(state, 8);
+        return;
+      }
+      moveScene("nightShellPrologue");
+    });
+    bindSceneButtons();
+  }
+
+  function renderCafePrologueForensic(brief) {
+    const state = ctx.getState();
+    const prologue = nightShellForBrief(brief)?.cafePrologue ?? {};
+    const forensic = prologue.forensic ?? {};
+    const progress = normalizedCafePrologueProgress(state);
+    const routeId = progress.order[0] ?? "toy";
+    const isToyRoute = routeId === "toy";
+    let text = cafePrologueHeaderHtml({
+      timeline: forensic.timeline ?? "数日后",
+      title: "私下回告",
+      subtitle: isToyRoute ? "个人委托初检" : "家庭卡电子回单"
+    });
+    text += cafePrologueDialogueHtml(isToyRoute ? forensic.openingLines ?? [] : forensic.accountClueLines ?? []);
+    text += cafeFinalBoundaryHtml({
+      result: isToyRoute ? forensic.finalCards?.result : "",
+      openAccount: isToyRoute ? "" : forensic.finalCards?.openAccount,
+      unknown: forensic.unknownByRoute?.[routeId] ?? []
+    });
+    const choices = flowGroupHtml(`<button class="primary" data-cafe-finish type="button">结束试玩</button>`, {
+      label: "结果只到这里",
+      note: isToyRoute ? "生父是谁，这份初检没有回答。" : "收款人是谁，节目里没有公开。"
+    });
+    frame({
+      brief,
+      mood: "focused",
+      label: isToyRoute ? "数日后 · 鉴定回告" : "数日后 · 回单回告",
+      chapter: "试玩序章尾声",
+      showCaseHud: false,
+      visualHud: "",
+      backdropClass: "day-document cafe-forensic-document",
+      screenClass: "cafe-prologue-screen cafe-forensic-screen",
+      text,
+      choices,
+      pixelTransition: { kind: "soft-fade" }
+    });
+    bind("[data-cafe-finish]", () => moveScene("runComplete"));
+    bindSceneButtons();
+  }
+
+  function cafeInvestigationResultHtml(route, kicker = "先查的是") {
+    if (!route) return "";
+    return `
+      <section class="cafe-route-result"><span>${escapeHtml(kicker)}</span><h3>${escapeHtml(route.title ?? route.label ?? "")}</h3></section>
+      ${route.id === "account" ? cafeAccountBoardHtml(route.rows ?? []) : ""}
+      ${cafePrologueDialogueHtml(route.lines ?? [])}
+    `;
+  }
+
+  function setCafePrologueStep(state, step) {
+    state.cafePrologueStep = Math.max(0, Math.floor(Number(step) || 0));
+    state.scene = cafePrologueSceneForStep(state.cafePrologueStep);
+    saveState();
+    render();
   }
 
   function nightShellHtml(lines = []) {
@@ -666,6 +1011,9 @@ export function createRecapScreens(ctx) {
     renderCaseOpen,
     renderNightShellPrologue,
     renderNightShellEpilogue,
+    renderCafePrologue,
+    renderCafePrologueAftermath,
+    renderCafePrologueForensic,
     renderSolved,
     renderCareChoice,
     renderCaseClosure,

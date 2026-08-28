@@ -1,5 +1,6 @@
 import {
   advanceQuickConfrontation,
+  advanceQuickMissReaction,
   advanceQuickTranscript,
   advanceQuickVerdict,
   applyQuickStatementLineSelection,
@@ -16,13 +17,14 @@ import {
   quickDetectiveConfrontationHtml,
   quickDetectiveIntroHtml,
   quickDetectiveIssueSelectionHtml,
+  quickDetectiveMissReactionHtml,
   quickDetectivePatience,
   quickDetectivePatienceLostHtml,
   quickDetectiveStageHtml,
   quickDetectiveTranscriptHtml,
   quickDetectiveVerdictHtml
 } from "../quickDetectiveView.js";
-import { createDialogueController } from "../../runtime/dialoguePresentation.js";
+import { createDialogueController, syncDialoguePortraitFocus } from "../../runtime/dialoguePresentation.js";
 
 export function createQuickDetectiveScreens(ctx) {
   let quickAutoTimerId = 0;
@@ -108,6 +110,7 @@ export function createQuickDetectiveScreens(ctx) {
       intro: () => quickDetectiveIntroHtml(packet, { hostName: state.playerName }),
       transcript: () => quickDetectiveTranscriptHtml(packet, quickState, { hostName: state.playerName }),
       issueSelection: () => quickDetectiveIssueSelectionHtml(packet, quickState),
+      missReaction: () => quickDetectiveMissReactionHtml(packet, quickState, { hostName: state.playerName }),
       confrontation: () => quickDetectiveConfrontationHtml(packet, quickState, { hostName: state.playerName }),
       patienceLost: () => quickDetectivePatienceLostHtml(packet, quickState, { comment: ctx.quickPatienceLostComment?.() ?? null }),
       verdict: () => quickDetectiveVerdictHtml(packet, quickState, {
@@ -134,7 +137,9 @@ export function createQuickDetectiveScreens(ctx) {
         segment: Math.max(1, Number(quickState.roundIndex ?? 0) + 1),
         total: Math.max(1, packet.disclosureRounds?.length ?? 1),
         pressure: statementPressureFor(quickDetectivePatience(packet, quickState), { mode: quickDialogueMode(quickState) }),
-        mode: quickDialogueMode(quickState)
+        mode: quickDialogueMode(quickState),
+        progressLabel: quickState.scene === "intro" ? "等待接通" : "",
+        progressNote: quickState.scene === "intro" ? "线路还没接进来。" : ""
       }),
       showRecordButton: false
     }), state.playerName);
@@ -146,6 +151,7 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0, turnLineIndex: 0 }));
     ctx.bind("[data-quick-next-turn]", () => updateQuickDetective(advanceQuickTranscript(packet, quickState)));
     ctx.bind("[data-quick-review-line]", (event) => updateQuickDetective(applyQuickStatementLineSelection(packet, quickState, event.currentTarget.dataset.quickReviewLine)));
+    ctx.bind("[data-quick-after-miss]", () => updateQuickDetective(advanceQuickMissReaction(packet, quickState)));
     ctx.bind("[data-quick-next-confrontation]", () => updateQuickDetective(advanceQuickConfrontation(packet, quickState)));
     ctx.bind("[data-quick-retry-statement]", () => updateQuickDetective(retryQuickStatement(packet, quickState)));
     ctx.bind("[data-quick-end-early]", () => updateQuickDetective(endQuickCaseEarly(packet, quickState)));
@@ -191,6 +197,7 @@ export function createQuickDetectiveScreens(ctx) {
     const actionButton = root.querySelector({
       transcript: "[data-quick-next-turn]",
       confrontation: "[data-quick-next-confrontation]",
+      missReaction: "[data-quick-after-miss]",
       verdict: "[data-quick-next-verdict]"
     }[quickState.scene] ?? "");
     if (actionButton) actionButton.hidden = true;
@@ -204,9 +211,14 @@ export function createQuickDetectiveScreens(ctx) {
       choices: null,
       speed,
       hostName: ctx.getState().playerName,
+      onPageStart: (page) => syncDialoguePortraitFocus(root, page),
       onShown: () => {
         if (!autoPair) {
-          if (actionButton) actionButton.hidden = false;
+          if (actionButton) {
+            actionButton.hidden = false;
+            actionButton.focus?.({ preventScroll: true });
+          }
+          box.dataset.dialogueDone = "true";
           return;
         }
         const indicator = box.querySelector(".avg-continue");
@@ -223,7 +235,10 @@ export function createQuickDetectiveScreens(ctx) {
         controller.advance();
         return;
       }
-      if (!autoPair) return;
+      if (!autoPair) {
+        actionButton?.focus?.({ preventScroll: true });
+        return;
+      }
       clearQuickAutoAdvance();
       advanceQuickLine(packet, quickState);
     });
@@ -234,6 +249,7 @@ export function createQuickDetectiveScreens(ctx) {
     const next = {
       transcript: () => advanceQuickTranscript(packet, quickState),
       confrontation: () => advanceQuickConfrontation(packet, quickState),
+      missReaction: () => advanceQuickMissReaction(packet, quickState),
       verdict: () => advanceQuickVerdict(packet, quickState)
     }[quickState.scene]?.();
     if (next) updateQuickDetective(next);
@@ -266,19 +282,21 @@ export function createQuickDetectiveScreens(ctx) {
     if (!ctx.consumePixelTransition(key)) return null;
     return phase === "review"
       ? { kind: "phase", visualVariant: "review", eyebrow: "回到刚才那段", label: "逐句追问" }
-      : { kind: "phase", visualVariant: "listen", eyebrow: "先听她说完", label: "来电人陈述" };
+      : { kind: "phase", visualVariant: "listen", eyebrow: "先听完这段", label: "来电人陈述" };
   }
 
   function quickDialogueMode(quickState = {}) {
     if (quickState.scene === "issueSelection" || quickState.scene === "patienceLost") return "replay";
+    if (quickState.scene === "missReaction") return "interrupt";
     if (quickState.scene === "confrontation") return "interrupt";
     return "listen";
   }
 
   function quickDeckLabel(quickState = {}) {
     return {
-      transcript: "听她说完",
+      transcript: "听完这段",
       issueSelection: "拉回刚才那段",
+      missReaction: "来电人把话收紧",
       confrontation: "打断这一句",
       patienceLost: "这段已经问散",
       verdict: "收住这通电话"

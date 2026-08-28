@@ -54,6 +54,15 @@ export function audioScenePlan({ scene = "title", backdropClass = "", pressureLe
   if (scene === "nightShellEpilogue" || scene === "runComplete") {
     return { bgmCueId: "bgm.epilogue-dawn", ambienceCueId: "ambience.studio-room" };
   }
+  if (scene === "cafePrologue") {
+    return { bgmCueId: "bgm.day-investigation", ambienceCueId: "ambience.cafe" };
+  }
+  if (scene === "cafePrologueAftermath") {
+    return { bgmCueId: "bgm.offair-desk", ambienceCueId: "ambience.apartment-hall" };
+  }
+  if (scene === "cafePrologueForensic") {
+    return { bgmCueId: "bgm.epilogue-dawn", ambienceCueId: "ambience.document-desk" };
+  }
   if (scene === "accusation") {
     return { bgmCueId: "bgm.accusation", ambienceCueId: "ambience.studio-line" };
   }

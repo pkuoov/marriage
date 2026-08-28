@@ -53,7 +53,10 @@ export function createFocusInputControl({ app }) {
     closeMaterialPanel();
     const record = app?.querySelector(".court-record");
     if (record) {
-      record.hidden = !record.hidden;
+      const toggle = record.hidden
+        ? app?.querySelector("[data-record-open]:not(:disabled)")
+        : record.querySelector("[data-record-close]:not(:disabled)");
+      toggle?.click();
       return true;
     }
     const panel = app?.querySelector(".choice-review");

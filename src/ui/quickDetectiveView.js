@@ -101,6 +101,19 @@ export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostN
   `;
 }
 
+export function quickDetectiveMissReactionHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
+  const reaction = state.activeMissReaction ?? {};
+  const role = reaction.role === "host" ? "host" : "caller";
+  const speaker = reaction.speaker || (role === "host" ? hostName : "来电人");
+  return `
+    <section class="quick-detective-panel quick-miss-reaction">
+      <header><span>这句问早了</span></header>
+      ${quickSpeechBubbleHtml({ role, speaker, text: reaction.text ?? "这句我现在不想往下说。" }, "quick-miss-bubble", hostName)}
+      <button class="primary quick-main-action" data-quick-after-miss type="button">回到刚才那段</button>
+    </section>
+  `;
+}
+
 export function quickDetectiveActiveLine(packet = {}, state = {}, hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME) {
   if (state.scene === "transcript") {
     const round = quickDisclosureRoundForState(packet, state);
@@ -112,6 +125,15 @@ export function quickDetectiveActiveLine(packet = {}, state = {}, hostName = pac
     const index = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.confrontationLineIndex ?? 0)));
     const line = lines[index] ?? {};
     return { ...line, speaker: line.role === "caller" ? "来电人" : hostName };
+  }
+  if (state.scene === "missReaction") {
+    const reaction = state.activeMissReaction ?? {};
+    const role = reaction.role === "host" ? "host" : "caller";
+    return {
+      role,
+      speaker: reaction.speaker || (role === "host" ? hostName : "来电人"),
+      text: reaction.text ?? ""
+    };
   }
   if (state.scene === "verdict") {
     const pages = quickVerdictPages(packet, state);
@@ -215,6 +237,7 @@ function quickCaseCardHtml(packet = {}, index = 0, completed = false) {
 function quickStageFocus(packet = {}, state = {}) {
   if (state.scene === "transcript") return "caller";
   if (state.scene === "issueSelection" || state.scene === "patienceLost") return "host";
+  if (state.scene === "missReaction") return state.activeMissReaction?.role === "host" ? "host" : "caller";
   if (state.scene === "confrontation") {
     const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId) ?? {};
     const lines = quickConfrontationLines(confrontation);
@@ -250,6 +273,8 @@ function quickCallerArtSrc(caller = {}, state = {}, focus = "caller") {
   const confrontationLineIndex = Number(state.confrontationLineIndex ?? 0);
   const variant = state.scene === "verdict"
     ? "pause"
+    : state.scene === "missReaction"
+      ? "guarded"
     : state.scene === "confrontation" && focus === "caller"
       ? confrontationLineIndex >= 3 ? "pause" : "guarded"
       : "neutral";
@@ -259,7 +284,7 @@ function quickCallerArtSrc(caller = {}, state = {}, focus = "caller") {
 function quickSpeechBubbleHtml(line = {}, className = "", hostName = DEFAULT_PLAYER_NAME) {
   const role = line.role === "caller" ? "caller" : "host";
   return `
-    <section class="quick-exchange quick-single-bubble avg-textbox ${escapeHtml(className)}" data-quick-dialogue-box data-quick-speaking="${role}" data-quick-speaker="${escapeHtml(line.speaker ?? (role === "caller" ? "来电人" : hostName))}" data-quick-line-text="${escapeHtml(line.text)}" tabindex="0">
+    <section class="quick-exchange quick-single-bubble avg-textbox ${escapeHtml(className)}" data-quick-dialogue-box data-dialogue-advance data-quick-speaking="${role}" data-quick-speaker="${escapeHtml(line.speaker ?? (role === "caller" ? "来电人" : hostName))}" data-quick-line-text="${escapeHtml(line.text)}" tabindex="0">
       <div class="avg-page-lines"></div>
       <i class="avg-continue" aria-label="继续">▼</i>
     </section>
@@ -276,6 +301,7 @@ function quickStageStatus(packet = {}, state = {}) {
     intro: "等待接通",
     transcript: "监听",
     issueSelection: "REC 回放",
+    missReaction: "LINE 收紧",
     confrontation: "LINE 打断",
     patienceLost: "线路发散"
   }[state.scene] ?? "语音连线中";
@@ -289,7 +315,7 @@ function quickStatementLineButton(line = {}, options = [], attempted = new Set()
     <button class="quick-statement-line${solved ? " is-resolved" : ""}${missed ? " is-missed" : ""}" data-quick-review-line="${escapeHtml(line.id)}" type="button" ${solved ? "disabled" : ""}>
       <i aria-hidden="true"></i>
       <span>${escapeHtml(line.text)}</span>
-      ${missed ? "<small>这句没有可追问的线索 · 耐心 −1</small>" : ""}
+      ${missed ? `<small>${option ? "这个问法被挡回来了 · 耐心 −1" : "这句没有可追问的线索 · 耐心 −1"}</small>` : ""}
     </button>
   `;
 }

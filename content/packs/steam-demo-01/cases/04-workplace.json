@@ -20,15 +20,39 @@
     "陈": "全程密,深问答应在群里写明垫款后的最后一句干净"
   },
   "voiceTicCleanLines": [
-    "发了。周一老板怎么问，我自己答。"
+    "发了。周一老板问起来，我就这么答。"
   ],
   "driftComments": [
-    "打工人打卡,刚加完班,这单我熟",
+    "他也许真是急着交差",
+    "她自己答应刷的,这笔不能全推给公司",
     "弱弱问下:垫付报备流程哪里有模板,我司也没有",
     "主播喝口水吧,嗓子听着冒烟了",
     "刚才谁说眉笔的,链接呢"
   ],
   "dramaticAnchor": "群输入框里没有发出的追款消息、栖行共享科技的铺点活动、预算沟通记录、被当成报销凭证的活动立项页、公司抬头发票和活动总结表",
+  "rageBaitContract": {
+    "tierPlan": ["Tier 1", "Tier 2", "Tier 3"],
+    "activeProvocationSceneId": "work-leader-note",
+    "tier4Assets": [],
+    "debts": [
+      {
+        "id": "work-company-wont-reimburse",
+        "tier": "Tier 1",
+        "issue": { "location": "04-workplace:opening", "quote": "公司一直不给我报销。" },
+        "interest": { "location": "work-comment-stupid-blowup", "trigger": "player-input", "payoff": "玩家追到报备后，她承认刷卡时没有报备，带偏观众撤回原话。", "holdingLimit": "夜 B 第一场后" },
+        "principal": { "location": "work-split-ownership:act1", "trigger": "player-input", "payoff": "玩家把缺失付款栏压到‘流程都走完了’上。" },
+        "nextDebt": { "location": "work-split-ownership:act2", "quote": "经办说活动后会补，我按他的安排等就行。" }
+      },
+      {
+        "id": "work-process-finished",
+        "tier": "Tier 3",
+        "issue": { "location": "work-split-ownership:act1", "quote": "流程都走完了，就是公司一直不给我报销。" },
+        "interest": { "location": "work-split-ownership:act1", "trigger": "player-input", "payoff": "玩家正式指认后，她承认没有报销编号、回单和日期。", "holdingLimit": "同一场景" },
+        "principal": { "location": "04-workplace:stageJudgement", "trigger": "player-input", "payoff": "判词直说这是假话，并让她带发票走正式报销。" },
+        "nextDebt": { "location": "04-workplace:stageJudgement", "quote": "每笔返费进了谁的账户，今晚不知道。" }
+      }
+    ]
+  },
   "whyTonight": "栖行共享科技下周一要开季度总结会，活动总结和负责人名单会在会前确认；六万八已经进了她的信用卡账单。她把“公司一直不给我报销”打进工作群输入框，却既怕这句话没有凭证，也怕发出去以后再也接不到客户活动。",
   "helpRequest": {
     "kind": "interest",
@@ -80,7 +104,7 @@
   "runtimeLengthPlan": {
     "liveBeatCount": 5,
     "materialBoardCount": 2,
-    "backflowCount": 2,
+    "backflowCount": 3,
     "truthBoundaryPromptCount": 6,
     "caseSpecificPressure": "终案只让预算时间线和活动立项页承担主证据：第一夜问出公开流程与私聊命令相反，材料板再揭开财务通知晚了九天；第二夜把负责人署名、个人垫款和正式报销入口放到同一条群消息里。供应商返利降为白天可选支线，不再挤进固定对质。",
     "whatPlayerDoesBesidesRead": [
@@ -104,7 +128,7 @@
   "routeAxisComments": {
     "process-control": [
       "入口在谁手里",
-      "这套话术我上周刚听过一遍"
+      "能扛事后面接的是谁的卡"
     ],
     "document-edge": [
       "三张图有没有变化",
@@ -117,12 +141,15 @@
     "caller-credibility": [
       "她也想负责这次活动",
       "表现机会不是免费午餐"
+    ],
+    "active-provocation": [
+      "群里那句没说谁还,也没说哪天"
     ]
   },
   "stanceSnapshot": {
     "afterScene": 2,
     "kicker": "中段立场快照",
-    "prompt": "现在这通麦，你先咬住哪个动作？",
+    "prompt": "现在这几件事，你最想先问哪件？",
     "note": "不判分。按下你现在最在意的那件事。",
     "afterPickLine": "群里刚发报备，他转头就来私聊。先听他在私聊里怎么说。",
     "continueLabel": "继续听",
@@ -301,19 +328,19 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "我替公司垫了一笔钱，三个星期了，还没报下来。",
+      "text": "我替公司垫了六万八，三个星期了，还没报下来。",
       "mood": "thinking"
     },
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "垫了多少？",
+      "text": "钱刷在哪儿？",
       "mood": "listening"
     },
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "六万八，我自己的卡。账单已经出了，钱还没回来。",
+      "text": "我自己的信用卡。账单已经出了，钱还没回来。",
       "mood": "thinking"
     },
     {
@@ -337,7 +364,7 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "这次活动是我刚争来的。我怕一发出去，以后就不让我碰客户活动了。",
+      "text": "这次城市合伙人的招商会是我刚争来的。我怕一发出去，以后就不让我碰客户活动了。",
       "mood": "thinking"
     },
     {
@@ -349,31 +376,7 @@
     {
       "speaker": "咨询者",
       "role": "caller",
-      "text": "栖行共享科技，做共享充电柜和储物柜。宸直是主要股东之一，公司最近又在讲估值涨了、点位铺得快。",
-      "mood": "thinking"
-    },
-    {
-      "speaker": "林旭阳",
-      "role": "host",
-      "text": "这次也是铺点的活动？",
-      "mood": "listening"
-    },
-    {
-      "speaker": "咨询者",
-      "role": "caller",
-      "text": "城市合伙人的招商会，老板会到。我才想把它接下来。",
-      "mood": "thinking"
-    },
-    {
-      "speaker": "林旭阳",
-      "role": "host",
-      "text": "可这张卡你也得还。",
-      "mood": "listening"
-    },
-    {
-      "speaker": "咨询者",
-      "role": "caller",
-      "text": "所以我才不知道怎么开口。",
+      "text": "公司叫栖行共享科技，做商场里的共享充电柜和储物柜。宸直是主要股东之一，最近一直催着铺点。",
       "mood": "thinking"
     },
     {
@@ -395,6 +398,7 @@
   "sceneVersions": [
     {
       "id": "work-title-for-advance",
+      "noClueReaction": { "role": "caller", "text": "我没问。他只说活动后补，我当时就回了。" },
       "interactionMode": "lineReplay",
       "clueRole": "setup",
       "falseFrame": "咨询者主动争取负责这次活动，因此个人垫款只是她为机会自愿承担的成本。",
@@ -489,6 +493,7 @@
         },
         {
           "question": "你答应先垫时，有没有问这钱最后谁来还？",
+          "missReaction": { "role": "caller", "text": "我没问。他只说活动后补，我当时就回了。" },
           "sourceAnchor": "我几乎马上就回了",
           "suspicionLabel": "答应前的还款安排",
           "answer": "没有。他说活动后补流程，我回了句：‘我来扛。’消息发出去，我又把‘这钱谁还’打了一遍，最后删了。",
@@ -521,31 +526,12 @@
       ],
       "pressureHint": {
         "intentHook": "流程词说得太熟",
-        "callerGuard": "tense",
-        "expression": {
-          "kind": "blink",
-          "text": "流程词说得很顺"
-        }
+        "callerGuard": "tense"
       }
     },
     {
       "id": "work-private-process",
-      "beforeVersion": {
-        "lines": [
-          {
-            "role": "host",
-            "text": "你说流程表是四点零五发的？"
-          },
-          {
-            "role": "caller",
-            "text": "十四点零五。下午两点零五。"
-          },
-          {
-            "role": "host",
-            "text": "行，我看串了。你接着说。"
-          }
-        ]
-      },
+      "noClueReaction": { "role": "caller", "text": "我当时没想谁来补。看见他私聊说能处理，我就没再看那一格。" },
       "interactionMode": "lineReplay",
       "clueRole": "reversal",
       "falseFrame": "财务当时已经通知延后，所以先办活动、后补流程是临时应急。",
@@ -614,7 +600,10 @@
         },
         {
           "question": "你回了‘收到’，当时以为表里空着的预算会由谁补？",
+          "missReaction": { "role": "caller", "text": "我当时没想谁来补。看见他私聊说能处理，我就没再看那一格。" },
           "sourceAnchor": "预算要填金额",
+          "revisedSourceAnchor": "那时候我还没看见通知",
+          "revisedQuestion": "你说没看见通知，是不是想把前面的群流程先放过去？",
           "suspicionLabel": "她以为谁会补完流程表",
           "answer": "我以为是他。供应商是他找的，预算也在他手里。",
           "lines": [
@@ -655,6 +644,7 @@
     },
     {
       "id": "work-approval-only",
+      "noClueReaction": { "role": "caller", "text": "我现在就是拿不出日期。他每次只说‘在走’。" },
       "interactionMode": "lineReplay",
       "clueRole": "missing-edge",
       "falseFrame": "财务延后通知是真的，审批也通过了，因此钱只是晚几天。",
@@ -736,6 +726,7 @@
         },
         {
           "question": "他每次把这张图发回来，有没有说过具体哪天到账？",
+          "missReaction": { "role": "caller", "text": "没有日期。他每次都只说‘在走’，我手里就这张图。" },
           "sourceAnchor": "每次都说“流程在走”",
           "suspicionLabel": "审批通过后的付款凭证",
           "answer": "没有。每次就那四个字：“流程在走。”我也真没往下看。后来财务一说延后，我更觉得只是晚几天。",
@@ -769,6 +760,7 @@
     },
     {
       "id": "work-leader-note",
+      "noClueReaction": { "role": "caller", "text": "领导点了我的名。我当时光顾着高兴，别的真没看进去。" },
       "interactionMode": "lineReplay",
       "clueRole": "misdirect",
       "falseFrame": "领导公开夸了咨询者，并在活动总结里写她负责，说明组织认可她承担这单，流程只是内部补齐。",
@@ -802,10 +794,10 @@
       ],
       "questionOptions": [
         {
-          "question": "领导那句里，提没提这六万八什么时候还？",
+          "question": "我把领导原话再放一遍：‘流程该补的补齐。’这句话里，提没提这六万八什么时候还？",
           "sourceAnchor": "这次活动负责人写小陈",
           "revisedSourceAnchor": "付款那一栏空着",
-          "suspicionLabel": "领导有没有承诺六万八的还款时间",
+          "suspicionLabel": "重放‘流程该补的补齐’",
           "answer": "没提。谁来还、哪天还，都没说。我当时只顾着截自己的名字。",
           "lines": [
             {
@@ -830,6 +822,18 @@
             }
           ],
           "guardedAnswer": "写了我名字。我那时候只顾着截图。",
+          "resistanceBeat": {
+            "lines": [
+              {
+                "role": "caller",
+                "text": "这句他是当着所有人说的。"
+              },
+              {
+                "role": "host",
+                "text": "所以更要把‘负责活动’和‘什么时候还钱’分开。"
+              }
+            ]
+          },
           "logicContract": {
             "premiseAnchor": "这次活动负责人写小陈",
             "sourceKind": "document-readout",
@@ -841,12 +845,15 @@
           },
           "contradiction": "领导只确认结果和署名，没有确认垫款与流程责任。",
           "correct": true,
-          "routeAxis": "process-control",
-          "routeTone": "pressure-point"
+          "routeAxis": "active-provocation",
+          "routeTone": "caller-skeptical"
         },
         {
           "question": "被点名以后，你为什么又等了一天？",
+          "missReaction": { "role": "caller", "text": "因为领导点了我的名。我当时光顾着截图，没往前翻。" },
           "sourceAnchor": "马上截了图发给朋友",
+          "revisedSourceAnchor": "我点了确认",
+          "revisedQuestion": "你点了确认以后，是不是又把追款往后放了？",
           "suspicionLabel": "被点名后为什么继续等",
           "answer": "……因为我高兴。领导念到我名字，我先截图了。可真要追钱，别人就会问我为什么没报备。我一想到这儿，又拖了一天。",
           "correct": false,
@@ -903,35 +910,35 @@
             "id": "work-process-complete",
             "label": "证词 01",
             "text": "流程都走完了，就是公司一直不给我报销。",
-            "pressResponse": "她马上说：‘图上就是审批通过。’再问报销编号，她没念出来。",
+        "pressResponse": "‘图上就是审批通过。报销编号……我没看见。’",
             "presentResponse": "同一张审批页只能证明立项通过，不能把空着的付款栏说成到账。"
           },
           {
             "id": "work-three-screenshots",
             "label": "证词 02",
             "text": "他一共发了三次。三次都是同一张活动立项页，编号没变。",
-            "pressResponse": "她数了一遍：‘三次，都是 LX 那张。’问有没有新编号，她说没有。",
+        "pressResponse": "‘三次，都是LX那张。没有新编号。’",
             "presentResponse": "重复截图能说明催问被同一页面挡回，不能单独证明钱在财务手里。"
           },
           {
             "id": "work-title-matters",
             "label": "证词 03",
             "text": "活动负责人写的是我，我确实舍不得把这个机会一起丢掉。",
-            "pressResponse": "她很快接话：‘这个负责人是我争来的。’说到刷卡，声音就低了。",
+        "pressResponse": "‘这个负责人是我争来的。刷卡……也是我自己刷的。’",
             "presentResponse": "负责人字段和付款字段属于不同责任线，不能拿其中一个覆盖另一个。"
           },
           {
             "id": "work-payment-handler-other",
             "label": "证词 04",
             "text": "活动总结初稿上，活动负责人是我，付款经办人是他。六万八刷在我的信用卡上。",
-            "pressResponse": "她把两个字段重新念了一遍，念到自己的信用卡时停了。",
+        "pressResponse": "‘负责人是我，经办是他。六万八，刷的是我的卡。’",
             "presentResponse": "材料能支持继续追付款经办和回单，不能证明同事已经收走返款。"
           },
           {
             "id": "work-unsent-group-message",
             "label": "证词 05",
             "text": "我把追款消息打进群里，一直没发，是怕以后不再让我接活动。",
-            "pressResponse": "她说：‘消息还在输入框。’问为什么不发，只回：‘怕以后没活动。’",
+        "pressResponse": "‘消息还在输入框。我怕发了以后，再也轮不到我。’",
             "presentResponse": "这句讲的是她的风险选择，付款栏只能帮她把问题问得更具体。"
           }
         ],
@@ -939,6 +946,8 @@
           {
             "id": "act1",
             "title": "把‘流程都走完了’放回付款节点",
+            "winkLine": "我把审批页再打开。",
+            "winkTier": "tier3-accomplice",
             "intro": "审批通过、活动署名和实际付款是三个节点。逐句问，不把任何一张截图当成终点。",
             "splitAfter": 3,
             "midSummary": "她想保住负责人署名，也想拿回六万八；这两个诉求都是真的，但不能继续共用一张立项页。",
@@ -953,35 +962,35 @@
                 "id": "work-process-complete",
                 "label": "证词 01",
                 "text": "流程都走完了，就是公司一直不给我报销。",
-                "pressResponse": "她马上说：‘图上就是审批通过。’再问报销编号，她没念出来。",
+            "pressResponse": "‘图上就是审批通过。报销编号……我没看见。’",
                 "presentResponse": "同一张审批页只能证明立项通过，不能把空着的付款栏说成到账。"
               },
               {
                 "id": "work-three-screenshots",
                 "label": "证词 02",
                 "text": "他一共发了三次。三次都是同一张活动立项页，编号没变。",
-                "pressResponse": "她数了一遍：‘三次，都是 LX 那张。’问有没有新编号，她说没有。",
+            "pressResponse": "‘三次，都是LX那张。没有新编号。’",
                 "presentResponse": "重复截图能说明催问被同一页面挡回，不能单独证明钱在财务手里。"
               },
               {
                 "id": "work-title-matters",
                 "label": "证词 03",
                 "text": "活动负责人写的是我，我确实舍不得把这个机会一起丢掉。",
-                "pressResponse": "她很快接话：‘这个负责人是我争来的。’说到刷卡，声音就低了。",
+            "pressResponse": "‘这个负责人是我争来的。刷卡……也是我自己刷的。’",
                 "presentResponse": "负责人字段和付款字段属于不同责任线，不能拿其中一个覆盖另一个。"
               },
               {
                 "id": "work-payment-handler-other",
                 "label": "证词 04",
                 "text": "活动总结初稿上，活动负责人是我，付款经办人是他。六万八刷在我的信用卡上。",
-                "pressResponse": "她把两个字段重新念了一遍，念到自己的信用卡时停了。",
+            "pressResponse": "‘负责人是我，经办是他。六万八，刷的是我的卡。’",
                 "presentResponse": "材料能支持继续追付款经办和回单，不能证明同事已经收走返款。"
               },
               {
                 "id": "work-unsent-group-message",
                 "label": "证词 05",
                 "text": "我把追款消息打进群里，一直没发，是怕以后不再让我接活动。",
-                "pressResponse": "她说：‘消息还在输入框。’问为什么不发，只回：‘怕以后没活动。’",
+            "pressResponse": "‘消息还在输入框。我怕发了以后，再也轮不到我。’",
                 "presentResponse": "这句讲的是她的风险选择，付款栏只能帮她把问题问得更具体。"
               }
             ],
@@ -1029,19 +1038,23 @@
               "没走完",
               "付款"
             ],
-            "openerLines": [
-              {
-                "role": "caller",
-                "text": "好，付款那段没走完，我认。可经办一直是他，14：22 也是他叫我先刷，说活动结束会补；我按他说的等，不能全怪我没盯。"
-              },
-              {
-                "role": "host",
-                "text": "他让你绕公开流程，这个责任不消失。现在看你答应绕开以前，已经知道什么。"
-              }
-            ],
+        "openerLines": [
+          {
+            "role": "caller",
+            "text": "好，付款那段没走完，我认。可那天下午客户突然提前，他是经办，14：22 又私聊我，说先刷，活动结束他会补。我第一次独立负责这么大的活动，老板还在等结果，我能当场说不做吗？"
+          },
+          {
+            "role": "host",
+            "text": "那就按时间说。客户改期以后，第一条消息是谁发的？"
+          },
+          {
+            "role": "caller",
+            "text": "客户把活动提前，他私聊说别在群里问预算，先刷，活动后补。我当时想先把活动做下来，负责人也能写我。付款一直是他经办，后来他又反复说会补，我当然就按他说的等。"
+          }
+        ],
             "revisedFrame": "她承认付款流程未完成，却把自己未报备、未追编号和未发群消息全解释成经办同事承诺会补。",
             "splitAfter": 2,
-            "midSummary": "她把经办承诺放在最前面，可公开群里的个人垫付规则早了十七分钟。先后顺序不能倒。",
+        "midSummary": "她现在把经办的承诺放在前面。可在那条私聊之前，她已经看见报备要求，还回了‘收到’。",
             "reliefBeat": {
               "listenerId": "@月底到底哪月底",
               "comment": "‘月底会补’是不是公司免密支付。",
@@ -1075,14 +1088,14 @@
                 "id": "work-handler-promise-cleared-her",
                 "label": "改口 01",
                 "text": "付款没走完我认，可经办说活动后会补，我按他的安排等就行，没再盯不能算我的问题。",
-                "pressResponse": "她抢着说：‘他就是这么答应我的。’问到群公告，她停了一拍。",
+            "pressResponse": "‘他就是这么答应我的。群公告我看见了，可当时客户已经提前了。’",
                 "presentResponse": "要拆这句，得找她在私聊之前已经收到的公开规则，不能只重复付款栏为空。"
               },
               {
                 "id": "work-repeat-screenshot-no-number",
                 "label": "改口 02",
                 "text": "他后来三次发的都是同一张立项图，我那时也确实没再问正式报销编号。",
-                "pressResponse": "她说：‘对，三张一样。’至于为什么没问编号，只回了句‘我当时信了’。",
+            "pressResponse": "‘对，三张都一样。我没再问编号，因为我当时信他会补。’",
                 "presentResponse": "q04 能核对重复截图，这句已经没有把旧页面说成付款进展。",
                 "survivesFromAct1": "work-three-screenshots"
               },
@@ -1090,7 +1103,7 @@
                 "id": "work-title-and-payment-split",
                 "label": "改口 03",
                 "text": "负责人署名我还想保留，可付款责任不能因为署名也压在我个人卡上。",
-                "pressResponse": "她先护住负责人署名：‘这个别给我撤。’又补：‘可卡也不能一直压我这儿。’",
+            "pressResponse": "‘负责人别给我撤。可六万八也不能一直压在我卡上。’",
                 "presentResponse": "负责人字段不能代替付款字段，也不能反过来取消她的项目署名。",
                 "survivesFromAct1": "work-title-matters"
               },
@@ -1098,7 +1111,7 @@
                 "id": "work-card-debt-needs-formal-entry",
                 "label": "改口 04",
                 "text": "六万八还在我信用卡上，我现在得拿到正式报销编号和预计日期。",
-                "pressResponse": "她把两个词念得很慢：‘报销编号，预计日期。明天我就问这两个。’",
+            "pressResponse": "‘报销编号，预计日期。明天我就问这两个。’",
                 "presentResponse": "现有记录能支持她去要编号和日期，不能预判公司最后怎么处理。",
                 "survivesFromAct1": "work-payment-handler-other"
               }
@@ -1135,8 +1148,8 @@
                   "sourceLabel": "她整理的七条报销记录"
                 }
               ],
-              "callerLine": "……14:05 那条我看见了。是先写了个人垫付要报备，后来他才私聊让我别在群里问。我当时是自己选了先信他。",
-              "hostLine": "报备你看见了。十七分钟后，是你自己答应刷卡。不能说他会补，你就不用盯。",
+          "callerLine": "……14：05那条我看见了，也回了收到。后来他让我别在群里问，是我自己答应先刷的。",
+          "hostLine": "14：05 的报备你看见了，还回了‘收到’。十七分钟后，是你自己答应刷卡。你不能再说，有他一句‘会补’，你就什么都不用管。",
               "boundaryLine": "q01 只推翻‘经办承诺后她无需再跟进’；不减轻同事绕流程和重复发旧图的责任，也不证明公司可以拒付。",
               "contradiction": "咨询者承认付款流程没走完后，把未报备和未追编号全推给经办承诺；更早的公开流程公告证明她曾知情并选择绕开。",
               "routeAxis": "process-control",
@@ -1354,6 +1367,102 @@
   ],
   "investigationHooks": [
     {
+      "id": "work-postcase-inbox",
+      "voiceAttribution": "document",
+      "source": "mixed-inbox",
+      "surface": "后台收件箱 · 四分钟内六封新消息",
+      "title": "哪一封值得留下",
+      "triggerContradiction": "咨询者把立项审批和负责人署名说成完整报销流程，但付款栏始终缺失。",
+      "appearsNowBecause": "主播结案后，节目切片把‘流程都走完了’和空着的支付状态并排放出，后台收件箱立刻挤满。",
+      "prompt": "六封消息里，哪一封能带回材料板？",
+      "material": "前四分钟共收到六封：两封只骂小陈，一封索要节目里的追款原话，一封推销‘职场翻盘课’，一封自称法务要求删稿；最后一封来自供应商项目组，对方愿意提交返费表原页。",
+      "materialRows": [
+        "@职场先懂事：新人抢功，现在装受害者",
+        "匿名：六万八都敢刷，怪谁",
+        "@求原话：你们追报销那句能发我吗，我照着说",
+        "@上岸训练营：三节课教你从背锅到升职",
+        "自称法务：限节目立即删除相关内容",
+        "供应商项目组：返费表原页还在，支付状态和收款账户仍为空"
+      ],
+      "proves": "供应商项目组愿意提供返费表原页；原页的支付状态和收款账户仍为空，不能把旧图说成已付款。",
+      "stillCannotProve": "不能证明返费最终进了谁的账户，也不能凭其余五封消息判断公司、同事或来信者的真实身份。",
+      "routeAxis": "document-edge",
+      "options": [
+        {
+          "label": "新人抢功，现在装受害者",
+          "correct": false,
+          "feedback": "只骂人，没有来源，也没有一项能核。存档，不回。",
+          "routeAxis": "outer-thread"
+        },
+        {
+          "label": "六万八都敢刷，怪谁",
+          "correct": false,
+          "feedback": "这是态度，不是材料。存档，不回。",
+          "routeAxis": "outer-thread"
+        },
+        {
+          "label": "把追款原话发我，我照着说",
+          "correct": false,
+          "feedback": "节目可以教她核对单号和回单，不替陌生人写一套拿去套用的台词。",
+          "routeAxis": "caller-credibility"
+        },
+        {
+          "label": "三节职场翻盘课",
+          "correct": false,
+          "feedback": "广告只说明有人趁热招生，不能反推来电人或公司买过课。",
+          "routeAxis": "identity-wording"
+        },
+        {
+          "label": "自称法务要求删稿",
+          "correct": false,
+          "feedback": "没有主体、姓名和授权。原信留存，交赵律师看，不在直播里对骂。",
+          "routeAxis": "process-control"
+        },
+        {
+          "label": "供应商项目组愿交返费表原页",
+          "correct": true,
+          "contradiction": "旧截图始终没有支付状态；能核的是原页，不是收件箱里谁嗓门大。",
+          "feedback": "请对方保留原文件和发送记录。它只能确认支付状态仍空着，返费去了谁的账户还不知道。",
+          "routeAxis": "document-edge"
+        }
+      ],
+      "replyChoices": [
+        {
+          "id": "inbox-no-reply",
+          "label": "不回，先归档",
+          "actionOnly": true,
+          "routeAxis": "process-control",
+          "aftertaste": "六封都留在后台，不给骂声、广告和套话的人续一轮流量。"
+        },
+        {
+          "id": "inbox-preserve-originals",
+          "label": "留原件和发送记录",
+          "actionOnly": true,
+          "grantsInventory": ["work-inbox-originals"],
+          "routeAxis": "document-edge",
+          "aftertaste": "原信、附件和发送时间一起留存。下一步只核能对上的原页。"
+        },
+        {
+          "id": "inbox-send-zhao",
+          "label": "把自称法务那封转给赵",
+          "actionOnly": true,
+          "grantsInventory": ["work-inbox-to-zhao"],
+          "routeAxis": "process-control",
+          "aftertaste": "那封没有主体和授权的信转给赵律师，直播间不跟它对骂。"
+        },
+        {
+          "id": "inbox-fire-back",
+          "label": "回一句：先把六万八还了再说",
+          "actionOnly": true,
+          "grantsInventory": ["work-inbox-replied"],
+          "routeAxis": "caller-credibility",
+          "pressureSignal": "drift",
+          "screenEffect": "patience-drop",
+          "aftertaste": "这句回出去了。对方没交原件，只截了你的回复。"
+        }
+      ]
+    },
+    {
       "id": "work-assistant-flow-sample",
       "speakerProfileId": "case4-department-assistant",
       "source": "department-assistant",
@@ -1503,14 +1612,22 @@
         },
         {
           "role": "host",
-          "text": "行，发。"
+          "text": "老板问你为什么没走报备呢？"
+        },
+        {
+          "role": "caller",
+          "text": "流程表我看见了。我当时想拿负责人，还是答应自己先刷。这句我认。"
+        },
+        {
+          "role": "host",
+          "text": "好。别省这句。发吧。"
         }
       ]
     },
-    "answer": "发了。周一老板怎么问，我自己答。",
-    "note": "她删掉了无凭证的笼统指控，第一次把刷卡、发票和正式报销申请写进同一条可发送消息。"
+    "answer": "发了。周一老板问起来，我就这么答。",
+    "note": "她删掉了无凭证的笼统指控，第一次把刷卡、发票、正式报销申请和自己绕过报备的原因放进同一轮回答。"
   },
-  "stageJudgement": "‘流程都走完了’是假话。你手里只有立项页，没有报销编号，也没有回单。他拿‘来不及’催你垫卡，三个星期只发这张旧图，就是看准你想表现。六万八不是你捐的。明天带发票走正式报销；这单靠你个人垫钱和层层返费往前走，不是财务慢。每笔返费进了谁的账户，今晚不知道。",
+  "stageJudgement": "‘流程都走完了’是假话。你手里只有立项页，没有报销编号，也没有回单。他拿‘来不及’催你垫卡，三个星期以后还只发这张旧图，就是看准你想把这次活动扛下来。六万八是你个人垫的钱，不是你捐的。明天拿发票走正式报销。这事已经不能再说只是财务慢了。那张返费表也留好，每笔钱最后进了谁的账户，今晚还不知道。",
   "careChoices": [
     {
       "id": "pragmatic",
@@ -1802,9 +1919,9 @@
       ]
     },
     "snapshotEcho": {
-      "respondent-problem": "昨晚有人咬住他让我别在群里问预算。那条私聊还在，今天就从十七分钟的时间差问。",
-      "caller-complicit": "昨晚有人咬住我自己提了临时额度。是，我想拿这个活动，也确实自己去提了。",
-      "unclear": "昨晚有人咬住我删掉预算问题。那句话我又打了一遍，这次没有删。"
+      "respondent-problem": "昨晚你问他为什么不让我在群里问预算。那条私聊还在，今天就问那十七分钟。",
+      "caller-complicit": "昨晚你问临时额度是不是我自己提的。是，我想拿这个活动，也确实自己去提了。",
+      "unclear": "昨晚你问我为什么删掉预算问题。那句话我又打了一遍，这次没有删。"
     },
     "liveCounterBeats": [
       {
@@ -1815,6 +1932,14 @@
         "from": "来电人看见弹幕",
         "lines": [
           {
+            "role": "stage",
+            "text": "流程都走完了？那报销编号呢。"
+          },
+          {
+            "role": "stage",
+            "text": "六万八刷了三个星期，群里没人说哪天还。"
+          },
+          {
             "role": "caller",
             "text": "弹幕里有人说我蠢。"
           },
@@ -1823,14 +1948,14 @@
           },
           {
             "role": "caller",
-            "text": "看见了。你们肯定觉得，六万八怎么能就这么刷出去。可他当时说会在活动总结里写我负责，我脑子里就只剩这句话了。"
+            "text": "我知道六万八刷得离谱。可他当时说会在活动总结里写我负责，我就没再想别的。"
           },
           {
             "role": "pause"
           },
           {
             "role": "caller",
-            "text": "这六万八，我刷卡的时候连报备都没做。你们骂得难听，可这句我没法反驳。你听我——算了，你问。"
+            "text": "这六万八，我刷卡的时候连报备都没做。那句说得难听，我还真反驳不了。你听我——算了，你问。"
           }
         ],
         "choices": [
@@ -1910,8 +2035,8 @@
           }
         ],
         "choices": [
-          {
-            "id": "read-before-ad",
+      {
+        "id": "read-before-ad",
             "directionLabel": "先念完原话，承担停推",
             "label": "先把这条念完。",
             "lines": [
@@ -1919,13 +2044,13 @@
                 "role": "caller",
                 "text": "‘陈先垫的六万八，等月底财务集中报销时一起办，大家辛苦。’他终于肯在群里认这六万八了。那我是不是就不用再单独发了？"
               },
-              {
-                "role": "host",
-                "text": "他只认了你垫过，没说报销单在哪儿，也没说月底是提交还是打钱。"
-              },
-              {
-                "role": "stage",
-                "text": "贴片提示归零。后台曲线骤然少了一截，本场推荐关闭。"
+          {
+            "role": "host",
+            "text": "他只认了你垫过，没说报销单在哪儿，也没说月底是提交还是打钱。"
+          },
+          {
+            "role": "stage",
+            "text": "群消息随即撤回。她截到了；贴片同时归零，后台曲线骤降，本场推荐关闭。"
               }
             ],
             "routeAxis": "process-control",
@@ -1953,10 +2078,43 @@
             ],
             "routeAxis": "document-edge",
             "routeTone": "trust-but-verify",
-            "recapAftertaste": "强制贴片下来时，我先静音保住连线。群消息被撤回，后台留下了截图。"
-          }
-        ]
+        "recapAftertaste": "强制贴片下来时，我先静音保住连线。群消息被撤回，后台留下了截图。"
       }
+    ]
+  },
+  {
+    "id": "work-private-warning-voice",
+    "kind": "interruptToast",
+    "cost": 0,
+    "afterSceneIndex": 3,
+    "from": "同事私聊语音",
+    "lines": [
+      {
+        "role": "caller",
+        "text": "他又私聊了。语音，刚发的。"
+      },
+      {
+        "role": "stage",
+        "text": "她把手机贴近麦克风。"
+      },
+      {
+        "role": "caller",
+        "speaker": "同事托话（手机）",
+        "text": "群里那句你截图就算了。负责人名单还没定，你真把这事捅到老板那儿，以后活动别找我。"
+      },
+      {
+        "role": "pause"
+      },
+      {
+        "role": "caller",
+        "text": "他就是拿这个压我。"
+      },
+      {
+        "role": "host",
+        "text": "语音留着。明天拿发票提正式报销，别再等他替你办。"
+      }
+    ]
+  }
     ],
     "interludeEarnedItemMap": {
       "approval-page-reviewed": "立项页不是报销单",

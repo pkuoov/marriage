@@ -2,7 +2,7 @@ export function keyboardNavigationIntent(key = "") {
   if (key === "Enter" || key === " ") return "confirm";
   if (["ArrowDown", "ArrowRight", "s", "S", "d", "D"].includes(key)) return "next";
   if (["ArrowUp", "ArrowLeft", "w", "W", "a", "A"].includes(key)) return "previous";
-  if (key === "Tab") return "review";
+  if (key === "r" || key === "R") return "review";
   if (key === "Escape") return "back";
   return "";
 }

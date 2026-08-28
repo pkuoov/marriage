@@ -39,20 +39,21 @@ export function splitDialogueSentences(value = "") {
 }
 
 export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxTurnSentences = 2, maxPageChars = 156, hostName = DEFAULT_PLAYER_NAME } = {}) {
-  return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction") ?? []).flatMap((line) => {
+  return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction, .cafe-prologue-line") ?? []).flatMap((line) => {
     const isCallStage = line.classList.contains("call-stage-direction");
     const isNarration = line.classList.contains("shell-narration") || line.classList.contains("shell-stage");
     const isStage = isCallStage || isNarration;
     const speaker = isCallStage
       ? "现场"
       : line.querySelector("b")?.textContent?.trim() || (isNarration ? "旁白" : "咨询者");
-    const role = isStage
+    const authoredRole = line.getAttribute?.("data-dialogue-role") ?? "";
+    const role = authoredRole || (isStage
       ? "stage"
       : line.classList.contains("host") || line.classList.contains("shell-host") || speaker === DEFAULT_PLAYER_NAME || speaker === hostName
         ? "host"
         : speaker === "男方"
           ? "respondent"
-          : "caller";
+          : "caller");
     const text = isCallStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
     const audioCueId = line.getAttribute?.("data-audio-cue-id") ?? "";
     const autoAdvanceNext = line.getAttribute?.("data-auto-advance-next") === "true";
@@ -117,7 +118,7 @@ function splitLongSentence(value = "", maxChars = 92) {
 
 export function mountDialoguePresentation(root, options = {}) {
   const card = root?.querySelector?.(".dialogue-card");
-  const sources = Array.from(card?.querySelectorAll?.(".call-dialogue, .night-shell-card") ?? [])
+  const sources = Array.from(card?.querySelectorAll?.(".call-dialogue, .night-shell-card, .cafe-prologue-dialogue") ?? [])
     .filter((candidate) => !candidate.closest("details:not([open])"));
   const pages = groupDialogueTurns(sources.flatMap((source) => dialogueTurnsFrom(source, options)), options);
   if (!card || !sources.length || !pages.length) return null;
@@ -147,7 +148,6 @@ export function mountDialoguePresentation(root, options = {}) {
       options.onPageStart?.(page, pageIndex);
     },
     onChoicesShown: (shownChoices) => {
-      syncDialoguePortraitFocus(root, { lines: [{ role: "host" }] });
       inlineChoiceRegions.forEach((region) => { region.hidden = false; });
       options.onChoicesShown?.(shownChoices);
     }
@@ -204,7 +204,7 @@ export function createDialogueController({
     box.dataset.activeSpeaker = activeRole;
     box.classList.toggle("reduced-fade", reduceMotion);
     pageLines.innerHTML = lines.map((entry) => `
-      <div class="avg-page-line speaker-${entry.role === "host" ? "host" : entry.role === "respondent" ? "respondent" : entry.role === "stage" ? "stage" : "caller"}${entry.repeatedContext ? " context-repeat" : ""}">
+      <div class="avg-page-line speaker-${safeRoleClass(entry.role)}${entry.repeatedContext ? " context-repeat" : ""}" data-dialogue-role="${safeRoleClass(entry.role)}">
         <b>${entry.repeatedContext ? "上一问 · " : ""}${escapeHtml(entry.role === "host" ? hostName : entry.speaker)}</b>
         <p class="avg-line"></p>
       </div>
@@ -299,6 +299,11 @@ export function createDialogueController({
   return { start: showPage, advance, finish: finishPage, destroy: clearAutoAdvance, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
 }
 
+function safeRoleClass(value = "caller") {
+  const role = String(value ?? "caller").toLowerCase();
+  return /^[a-z][a-z0-9-]*$/.test(role) ? role : "caller";
+}
+
 export function shouldAutoAdvanceDialoguePair(page = {}, nextPage = null) {
   if (!nextPage) return false;
   const lines = normalizedPageLines(page);
@@ -309,7 +314,7 @@ export function shouldAutoAdvanceDialoguePair(page = {}, nextPage = null) {
 }
 
 export function dialoguePageRole(page = {}) {
-  const roles = normalizedPageLines(page).map((line) => line?.role).filter((role) => role === "host" || role === "caller" || role === "respondent");
+  const roles = [...new Set(normalizedPageLines(page).map((line) => line?.role).filter((role) => role && role !== "stage"))];
   return roles.length === 1 ? roles[0] : "stage";
 }
 
