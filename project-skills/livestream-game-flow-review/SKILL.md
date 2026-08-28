@@ -27,6 +27,15 @@ Do not review from code alone. Play the flow like a first-time player, capture w
 
 For all case creation and any dialogue change larger than typo polish — story packet, stitched transcript, field split, dialogue rewrite rules, de-AI language rules, clue insertion, guarded answers, and comment-hint gating — use `project-skills/case-scriptwriting/SKILL.md`. Its integrated writing loop is mandatory for any change that touches motive, pressure, object purpose, or responsibility balance: never generate or repair case text one field or one sentence at a time. This flow skill owns the played-through review: playtest loop, UI regressions, and continuity checks.
 
+## 体验验收（不问口号）
+
+Playtest these as on-screen facts, not as design essays. Writing-side contracts live in `case-scriptwriting` (`玩家身份门禁`, `失败即传感器律`, `选择重量律`).
+
+- 好玩拆三问：这拍是给 15–25 的直播观众，还是给作者自己？黄金九十秒内有没有第一次亲手打脸？第四案是否仍在用同一套按钮换皮，却没有新的解释方式？
+- 新功能必须放大旧功能（话术回声、弹幕反转、错选人物反应），禁止为新题材单开平行主案。堆了白天小游戏、第二套 UI、第三种结局，但没有改任何旧循环的参数，视为堆量。
+- 调了耐心格数、没调错选无聊感，视为未完成。点一条 `correct:false` 或无线索原句后，必须看到角色反应；只有 `耐心 −1` 就回到选句，判失败。反应不得泄正确锚点。
+- 决定性按钮删掉文案后局面无变化，视为点一下。玩家必须始终是主播林旭阳，不能在选项里变成受害者或来电人。
+
 ## Review Loop
 
 1. Start from the new-player path.
@@ -34,6 +43,7 @@ For all case creation and any dialogue change larger than typo polish — story 
    - Use "重开" if local state is mid-flow.
    - Walk through homepage, entry page, opening call, every current-node question set, every feedback line, conditional deep question, quote-pick page, recap/share pages, retry/failure if present.
    - For a story-pack single case with 5-6 scene beats, do not stop at the happy path. Reopen/retry enough times to click every scene option and verify each answer advances forward. Also run one perfect core-hit route to verify the single non-choice deep question appears, and one outer route to verify it is skipped.
+   - Click at least one no-clue sentence and one `correct:false` option with a `sourceAnchor`. Confirm the runtime actually matches the line, then confirm a character reaction plays. Silence plus patience −1 is a fail. If the option cannot be clicked because it has no anchor or a longer sibling anchor swallows it, that is also a fail.
    - In every large playtest pass, inspect at least three current-node choice panels across different cases. Confirm they are one panel, use equal visual weight for all current-node choices, and do not contain route-axis hints or "how to play" copy. A node may show short suspicion directions instead of full host questions only when every committed option in that node has a corresponding full spoken question.
 
 2. Capture raw screen text.
@@ -133,6 +143,8 @@ Use this checklist whenever playtesting exposes a bad-feeling call flow:
 - Story-pack live screens should also avoid directory language. The player can know a new call is coming, but should not see act names, case titles, "case 1/4", or package labels while still inside the live-call flow.
 - Story-pack interludes should feel like a live program cut, not a content directory. The previous card should name what changed in the last call; the next card should use a dramatic object such as "表格", "资料图", or "审批截图", not "下一案 / 下一通来电" as a title.
 - Each scene adds one new pressure or fact. If two major facts appear in the same caller statement, split or move one later.
+- Tutorial dialogue must still be character dialogue. Page counts, material names, selected-card state, target quotes, and click instructions belong to the interface; keep only real consent, privacy, refusal, and conflict in the speakers' mouths. A material click must visibly move, expand, mark, sound, or unlock something on the same screen.
+- Evidence cards show raw fields before interpretation. If the card itself states a cross-page match, calculates the decisive interval, or prints the correct testimony target beside the evidence, the player has not discovered anything; move that conclusion behind the player's compare/present action.
 - The dramatic object should be layered: first the object appears, then its missing edge, then its purpose or payoff.
 - Caller self-interest belongs in the back half or the full-hit deep question unless the case is explicitly about the caller's opening confession.
 - Host questions can only use facts already visible on screen. If a host question assumes a later reveal, move the question later or seed the fact earlier.

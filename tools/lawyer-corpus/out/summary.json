@@ -1,0 +1,75 @@
+{
+  "collectedAt": "2026-08-22T16:17:17.336Z",
+  "domain": "lawyer",
+  "totals": {
+    "videos": 90,
+    "comments": 1057,
+    "danmaku": 80481,
+    "turns": 0,
+    "revisions": 0,
+    "matchmakerNegatives": 0,
+    "lawyerIsolated": 2
+  },
+  "hosts": [
+    {
+      "id": "feng-yuxi",
+      "coverage": "official",
+      "videoCount": 30,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 30,
+      "subtitleAvailable": 0,
+      "loginRequired": 30,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    },
+    {
+      "id": "guo-qingzi",
+      "coverage": "official",
+      "videoCount": 30,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 29,
+      "subtitleAvailable": 0,
+      "loginRequired": 30,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    },
+    {
+      "id": "guo-yanjiao",
+      "coverage": "clip-up",
+      "videoCount": 30,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 30,
+      "subtitleAvailable": 0,
+      "loginRequired": 30,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    }
+  ]
+}

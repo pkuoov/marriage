@@ -1,0 +1,135 @@
+{
+  "collectedAt": "2026-08-22T16:41:21.374Z",
+  "domain": "matchmaker",
+  "totals": {
+    "videos": 120,
+    "comments": 976,
+    "danmaku": 70168,
+    "turns": 0,
+    "revisions": 0,
+    "matchmakerNegatives": 14,
+    "lawyerIsolated": 0
+  },
+  "hosts": [
+    {
+      "id": "jie-ge",
+      "coverage": "talk-up",
+      "videoCount": 20,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 20,
+      "subtitleAvailable": 0,
+      "loginRequired": 20,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    },
+    {
+      "id": "da-chao",
+      "coverage": "no-official-traffic",
+      "videoCount": 20,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 5,
+      "subtitleAvailable": 0,
+      "loginRequired": 20,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    },
+    {
+      "id": "ao-ye",
+      "coverage": "official",
+      "videoCount": 20,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 20,
+      "subtitleAvailable": 0,
+      "loginRequired": 20,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    },
+    {
+      "id": "jin-da-wang",
+      "coverage": "official",
+      "videoCount": 20,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 20,
+      "subtitleAvailable": 0,
+      "loginRequired": 20,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    },
+    {
+      "id": "tian-shu",
+      "coverage": "official",
+      "videoCount": 20,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 20,
+      "subtitleAvailable": 0,
+      "loginRequired": 20,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    },
+    {
+      "id": "chen-nan",
+      "coverage": "desk-repost",
+      "videoCount": 20,
+      "multiTurnCount": 0,
+      "turnCount": 0,
+      "danmakuAvailable": 13,
+      "subtitleAvailable": 0,
+      "loginRequired": 20,
+      "gap": "无登录字幕，话轮不足",
+      "phenomena": {
+        "followWord": 0,
+        "dodge": 0,
+        "interruptNarrow": 0,
+        "fullRevision": 0,
+        "suddenShort": 0,
+        "objectFirst": 0,
+        "stopAfterJudgment": 0
+      }
+    }
+  ]
+}

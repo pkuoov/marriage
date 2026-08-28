@@ -1,0 +1,64 @@
+{
+  "platform": "bilibili",
+  "hosts": [
+    {
+      "id": "jie-ge",
+      "name": "杰哥相亲",
+      "coverage": "talk-up",
+      "shopDefaultDating": false,
+      "talkOnly": true,
+      "requireAuthors": ["杰哥相亲"],
+      "preferAuthors": ["杰哥相亲"],
+      "mustPhraseAny": ["杰哥相亲", "杰哥"],
+      "excludeTitleAny": ["大超说媒", "社会博弈", "杰哥讲", "粉丝连麦"],
+      "keywords": ["杰哥相亲", "杰哥相亲现场", "杰哥 普通姑娘", "杰哥 向上择偶"]
+    },
+    {
+      "id": "da-chao",
+      "name": "大超说媒",
+      "coverage": "no-official-traffic",
+      "shopDefaultDating": false,
+      "preferAuthors": ["大超说媒", "大超说媒北京", "超超说媒", "事成有我", "文言文练习生"],
+      "mustPhraseAny": ["大超说媒", "超超说媒"],
+      "excludeTitleAny": ["被封杀", "被封，", "被封 ", "真相", "聊聊", "背后", "争议", "价值观", "杰哥讲"],
+      "keywords": ["大超说媒直播回放", "大超说媒中产局", "大超说媒五千万局", "大超说媒单身大集", "大超说媒", "超超说媒"]
+    },
+    {
+      "id": "ao-ye",
+      "name": "月老鳌烨",
+      "coverage": "official",
+      "shopDefaultDating": true,
+      "preferAuthors": ["月老鳌烨"],
+      "mustPhraseAny": ["鳌烨", "月老鳌烨"],
+      "keywords": ["月老鳌烨", "鳌烨相亲", "鳌烨连麦", "月老鳌烨 连过"]
+    },
+    {
+      "id": "jin-da-wang",
+      "name": "金大王说媒",
+      "coverage": "official",
+      "shopDefaultDating": true,
+      "preferAuthors": ["金大王说媒"],
+      "mustPhraseAny": ["金大王"],
+      "keywords": ["金大王说媒", "金大王连麦", "金大王 短择"]
+    },
+    {
+      "id": "tian-shu",
+      "name": "天书定位",
+      "coverage": "official",
+      "shopDefaultDating": true,
+      "preferAuthors": ["天书定位"],
+      "mustPhraseAny": ["天书"],
+      "keywords": ["天书定位", "天书连麦", "天书 画像"]
+    },
+    {
+      "id": "chen-nan",
+      "name": "陈楠说媒",
+      "coverage": "desk-repost",
+      "shopDefaultDating": true,
+      "preferAuthors": ["陈楠说媒", "天书定位"],
+      "mustPhraseAny": ["陈楠说媒", "陈楠天书"],
+      "excludeTitleAny": ["陈楠茜"],
+      "keywords": ["陈楠说媒", "陈楠天书联合会诊"]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "matchmaker-corpus",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "collect": "node src/collect-bilibili.js --top=20",
+    "enrich": "node src/collect-bilibili.js --enrich-only --resume",
+    "analyze": "node src/analyze.js"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "platform": "bilibili",
+  "hosts": [
+    {
+      "id": "feng-yuxi",
+      "name": "183的冯予希律师",
+      "coverage": "official",
+      "preferAuthors": ["183的冯予希律师"],
+      "mustPhraseAny": ["冯予希", "183冯律师", "183的冯"],
+      "keywords": ["183的冯予希律师", "冯予希律师", "183冯律师", "冯予希 普法"]
+    },
+    {
+      "id": "guo-qingzi",
+      "name": "郭庆梓律师",
+      "coverage": "official",
+      "preferAuthors": ["郭庆梓律师"],
+      "mustPhraseAny": ["郭庆梓"],
+      "excludeTitleAny": ["郭延娇"],
+      "keywords": ["郭庆梓律师", "郭庆梓连麦", "郭庆梓 会见"]
+    },
+    {
+      "id": "guo-yanjiao",
+      "name": "郭延娇郭律",
+      "coverage": "clip-up",
+      "preferAuthors": [
+        "郭延娇唯一账号",
+        "郭延娇郭律",
+        "郭律郭延娇",
+        "郭律在线",
+        "郭律普法",
+        "郭律说法",
+        "郭延娇律师"
+      ],
+      "mustPhraseAny": ["郭延娇", "郭律"],
+      "excludeTitleAny": ["郭庆梓", "郭律梓"],
+      "keywords": ["郭延娇郭律", "郭延娇律师", "郭延娇唯一账号", "郭律在线", "郭律普法"]
+    }
+  ]
+}
