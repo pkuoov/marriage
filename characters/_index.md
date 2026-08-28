@@ -21,8 +21,12 @@ story: midnight-hotline-livestream-detective
 | 小林老师 | supporting | alive | [lin-matchmaker](lin-matchmaker.md) |
 | 旁白 | narrator | alive | [narrator](narrator.md) |
 | 老方 | supporting | alive | [producer-lao-fang](producer-lao-fang.md) |
+| 咖啡厅男方 | supporting | alive | [prologue-cafe-husband](prologue-cafe-husband.md) |
+| 咖啡厅妻子 | supporting | alive | [prologue-cafe-wife](prologue-cafe-wife.md) |
+| 咖啡厅表哥 | supporting | alive | [prologue-cafe-cousin](prologue-cafe-cousin.md) |
 | 快案来电人·罗 | supporting | alive | [quick1-caller-luo](quick1-caller-luo.md) |
 | 快案来电人·周女士 | supporting | alive | [quick2-caller-zhou](quick2-caller-zhou.md) |
+| 快案来电人·顾 | supporting | alive | [quick3-caller-gu](quick3-caller-gu.md) |
 | V哥 | supporting | alive | [v-bro](v-bro.md) |
 | 张法医 | supporting | alive | [zhang-forensic](zhang-forensic.md) |
 | 赵律师 | deuteragonist | alive | [zhao-lawyer](zhao-lawyer.md) |
@@ -30,11 +34,12 @@ story: midnight-hotline-livestream-detective
 
 ## Relationship Map
 
-- 林旭阳 ↔ 赵律师：大学同学，后来成为夫妻。她替他的判断划法律边界，他让她的锋利只落在证据上；生活关心先于专业讨论。
+- 林旭阳 ↔ 赵律师：大学同学，后来成为夫妻。试玩开篇的咖啡厅由两人同行赴约；她替他的判断划法律边界，他让她的锋利只落在证据上，生活关心先于专业讨论。
 - 林旭阳 ↔ 老方：主播与平台运营。老方用指标施压，林旭阳用事实边界抵抗节目判决化。
 - 林旭阳 ↔ V哥：自愿求助关系。V哥只提示比较方向，不替玩家发问或给答案。
+- 咖啡厅男方 ↔ 咖啡厅妻子：作者真相中，女方孕期已知孩子不是男方的，仍借婚姻取得钱款并准备离开；试玩玩家尚不能证明她的知情时间和婚姻目的。两人现已进入分居与材料核对阶段，孩子安排、亲子关系和家庭账不能混成一项公开判决。
 - 四案咨询者与主要对方不是简单的受害者／反派配对；双方都有欲望、恐惧、防御和不能越过的知识边界。
 
 ## Family Trees
 
-试玩版没有需要维护的血缘树；亲属只在对应案件中作为压力来源或麦外证人。
+数日后的初检回告确认男方与孩子不存在生物学父子关系，但孩子的生父身份仍未知；不得据此补写新的家庭树。

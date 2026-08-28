@@ -27,13 +27,14 @@ import { assertDialogueTexture, dialogueTextureMetrics, spokenPunctuationLeaks }
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js";
 import { canRewindQuestion, popQuestionRewindPoint, pushQuestionRewindPoint, QUESTION_REWIND_LIMIT } from "../src/runtime/questionRewind.js";
 import { routeTrailModel } from "../src/runtime/routeMapModel.js";
-import { afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, earnedDocumentQuestionsFor, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, firstUnansweredSceneIndex, initialCaseBudget, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatTriggerMet, nextPlayableSceneIndex, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, playableSceneCount, playableSceneIndexes, pressureSignalForLiveCounterChoice, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js";
+import { afterSceneEvidenceFor, answerKey, applyActionMark, availableCallbackOpeners, availableOvernightCallbackOpeners, canEnterOvernightCallback, casePatienceLost, completeNightAction, dailyAccusationReadiness as accusationReadinessForCase, daySceneById, earnedDocumentQuestionsFor, evidenceAnsweredCount, evidenceAnswerKey, evidenceCheckModel, firstUnansweredSceneIndex, initialCaseBudget, initialNightStateFor, initialOvernightStateFor, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatTriggerMet, nextPlayableSceneIndex, nightActionById, nightStructureFor, overnightAnchorSceneIndex, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, playableSceneCount, playableSceneIndexes, pressureSignalForLiveCounterChoice, recordPatienceLostState, retryPatienceLostState, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, unlockedInvestigationEntries } from "../src/runtime/sceneAdvance.js";
 import { storyInterludeCaseId, storyInterludeObjectLabel, storyOptionalQuickCall } from "../src/runtime/storyInterludeModel.js";
 import { CARE_CHOICE_IDS, careChoiceById, careChoiceIsComplete, careChoiceLines } from "../src/runtime/careChoiceModel.js";
 import { epilogueUnreadMessages, epilogueUnreadStage } from "../src/runtime/epilogueUnreadModel.js";
+import { cafePrologueCanOpenForensic, cafePrologueCanPresentEvidence, cafePrologueRemainingEvidenceId, cafePrologueSceneForStep, cafePrologueStatementReady, normalizedCafePrologueProgress } from "../src/runtime/prologueCafeModel.js";
 import { hostDisclosureLinesForAnchor } from "../src/runtime/hostDisclosureModel.js";
-import { advanceQuickConfrontation, advanceQuickTranscript, advanceQuickVerdict, applyQuickStatementLineSelection, endQuickCaseEarly, initialQuickDetectiveState, normalizeQuickDetectiveState, quickConfrontationLines, quickDetectiveIsComplete, quickDisclosureRounds, quickIssueOptionsForRound, quickRoundPatienceForState, quickStatementLinesForRound, quickVerdictPages, retryQuickStatement } from "../src/runtime/quickDetectiveModel.js";
-import { normalizeStatementPatience, spendStatementPatience, statementLinesFromText, statementNightKey, statementNightPatienceMax, statementOptionForLine, statementOptionsForLine, statementPressureFor } from "../src/runtime/statementReviewModel.js";
+import { advanceQuickConfrontation, advanceQuickMissReaction, advanceQuickTranscript, advanceQuickVerdict, applyQuickStatementLineSelection, endQuickCaseEarly, initialQuickDetectiveState, normalizeQuickDetectiveState, quickConfrontationLines, quickDetectiveIsComplete, quickDisclosureRounds, quickIssueOptionsForRound, quickRoundPatienceForState, quickStatementLinesForRound, quickVerdictPages, retryQuickStatement } from "../src/runtime/quickDetectiveModel.js";
+import { normalizeStatementPatience, normalizeStatementReaction, spendStatementPatience, statementLinesFromText, statementMissReactionForOption, statementNightKey, statementNightPatienceMax, statementNoClueReactionFor, statementOptionForLine, statementOptionsForLine, statementPressureFor } from "../src/runtime/statementReviewModel.js";
 import { advanceTestimonyAct, decisivePresentAvailability, decisivePresentOutcome, normalizeDecisivePresentProgress, normalizeTestimonyWallProgress, pressTestimonyStatement, resetDecisivePresentProgress, testimonyActForScene, testimonyActIsFinal, testimonyStatementsForScene, testimonyWallKey } from "../src/runtime/decisivePresentModel.js";
 import { CHOICE_COST_META, choiceCostMeta } from "../src/runtime/choiceCostModel.js";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js";
@@ -43,7 +44,7 @@ import { formatAudioTime, resolveSceneAudioFallback } from "../src/ui/audioContr
 import { clearPlayedCueKeysByPrefix, playAudioCueOnce } from "../src/sound.js";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "../src/ui/dailyCompleteView.js";
 import { evidenceCheckScreenHtml, evidenceMaterialKind, evidenceMaterialRows, evidenceMaterialThumbHtml, evidenceOperationHtml, investigationBackflowScreenHtml } from "../src/ui/evidenceView.js";
-import { audioPlaybackControlsHtml, callbackOpenerChoiceHtml, interludePlaybackActionHtml } from "../src/ui/interludeDeskView.js";
+import { audioPlaybackControlsHtml, callbackOpenerChoiceHtml, interludePlaybackActionHtml, replyChoicesHtml } from "../src/ui/interludeDeskView.js";
 import { audiencePatienceHudHtml, callerArtForExpression, callerExpressionForView, caseProgressStripHtml, hostSpeakingStateForView, liveCommentStripHtml, portraitLayerHtml, storyPackSummaryHudHtml } from "../src/ui/liveCallView.js";
 import { liveCounterBeatHtml } from "../src/ui/liveCounterBeatView.js";
 import { liveControlDeckHtml, liveFrameHtml, pixelTransitionHtml } from "../src/ui/liveFrameView.js";
@@ -52,13 +53,15 @@ import { routeTrailHtml } from "../src/ui/routeTrailView.js";
 import { focusedQuestionOptions, playerQuestionLabel, sceneDialogueOptions, sceneQuestionChoicesHtml } from "../src/ui/sceneQuestions.js";
 import { activeSceneExchangeHtml, completedSceneExchangeHtml, keyChoiceExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "../src/ui/sceneReviewView.js";
 import { statementReplayHtml } from "../src/ui/statementReviewView.js";
+import { testimonyWallHtml } from "../src/ui/decisivePresentView.js";
 import { storyInterludeChoicesHtml, storyInterludeHtml, storyInterludeStageHtml, storyWorldEchoStageHtml } from "../src/ui/storyInterludeView.js";
 import { caseBridgeChoicesHtml, caseBridgeHtml, caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "../src/ui/caseTransitionView.js";
 import { careChoiceContinueHtml, careChoiceHtml } from "../src/ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "../src/ui/epilogueUnreadView.js";
+import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeSingleEvidenceHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "../src/ui/prologueCafeView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "../src/ui/titleView.js";
-import { quickDetectiveActiveLine, quickDetectiveCaseSelectHtml, quickDetectiveConfrontationHtml, quickDetectiveIntroHtml, quickDetectiveIssueSelectionHtml, quickDetectivePatienceLostHtml, quickDetectiveShouldAutoContinue, quickDetectiveStageHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "../src/ui/quickDetectiveView.js";
+import { quickDetectiveActiveLine, quickDetectiveCaseSelectHtml, quickDetectiveConfrontationHtml, quickDetectiveIntroHtml, quickDetectiveIssueSelectionHtml, quickDetectiveMissReactionHtml, quickDetectivePatienceLostHtml, quickDetectiveShouldAutoContinue, quickDetectiveStageHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "../src/ui/quickDetectiveView.js";
 import { createRecapScreens } from "../src/ui/screens/recapScreens.js";
 import { readFileSync, readdirSync } from "node:fs";
 
@@ -89,6 +92,9 @@ const courtRecordUiSource = readFileSync(new URL("../src/ui/courtRecordView.js",
 test("INPUT-000", "mouse wheel never opens the court record", () => {
   assert(!courtRecordUiSource.includes('addEventListener("wheel"'), "鼠标滚轮只能滚动页面，不能打开案卷");
   assertIncludes(courtRecordUiSource, 'querySelectorAll("[data-record-open]")', "案卷必须保留明确的打开入口");
+  assertIncludes(courtRecordUiSource, 'aria-modal="true"', "案卷必须声明为模态对话框");
+  assertIncludes(courtRecordUiSource, 'event.key !== "Tab"', "案卷打开后必须把 Tab 焦点留在弹层内");
+  assertIncludes(courtRecordUiSource, "lastFocused", "关闭案卷后必须把焦点还给打开它的按钮");
 });
 
 test("ARCH-001", "screen modules depend on an injected context instead of app.js", () => {
@@ -381,6 +387,41 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
           assertIncludes(replayHtml, binding, `${scene.id} ${kind} ${optionIndex} 必须从逐句回放实际渲染为可点击入口`);
         }
       }
+      const wrongOptions = (scene.questionOptions ?? []).filter((option) => option.correct === false);
+      for (const option of wrongOptions) {
+        assert(option.sourceAnchor, `${scene.id} 可见错问必须有 sourceAnchor`);
+        const sourceLine = replayLines.find((line) => line.text.includes(option.sourceAnchor));
+        assert(sourceLine, `${scene.id} 可见错问的 sourceAnchor 必须逐字落在当前陈述`);
+        assert(statementOptionsForLine(scene.questionOptions ?? [], sourceLine).includes(option), `${scene.id} 可见错问不得被同句更长 anchor 吞掉`);
+        const reaction = statementMissReactionForOption(option);
+        assert(reaction.text && ["caller", "host", "comment"].includes(reaction.role), `${scene.id} 可见错问必须有带角色的 missReaction`);
+        assert(!/(正确答案|你该点|点另一句|换一条线索)/.test(reaction.text), `${scene.id} 错问反应不得教玩家改点答案`);
+        const answerAnchors = (scene.questionOptions ?? [])
+          .filter((candidate) => candidate.correct === true)
+          .flatMap((candidate) => [candidate.logicContract?.answerAnchor, candidate.revisedSourceAnchor])
+          .filter((value) => String(value ?? "").length >= 6);
+        assert(answerAnchors.every((anchor) => !reaction.text.includes(anchor)), `${scene.id} 错问反应不得顺手泄出正确锚点`);
+        if (scene.revisedVersion) {
+          assert(option.revisedSourceAnchor, `${scene.id} 改口场的可见错问必须另有 revisedSourceAnchor`);
+          const revisedLines = statementLinesFromText(scene.revisedVersion, { prefix: `${scene.id}:revised` });
+          const revisedLine = revisedLines.find((line) => line.text.includes(option.revisedSourceAnchor));
+          assert(revisedLine, `${scene.id} 可见错问的 revisedSourceAnchor 必须逐字落在改口陈述`);
+          const revisedOptions = (scene.questionOptions ?? []).map((candidate) => ({
+            ...candidate,
+            sourceAnchor: candidate.revisedSourceAnchor ?? candidate.sourceAnchor
+          }));
+          const revisedOption = revisedOptions[(scene.questionOptions ?? []).indexOf(option)];
+          assert(statementOptionsForLine(revisedOptions, revisedLine).includes(revisedOption), `${scene.id} 改口后的可见错问不得被更长 anchor 吞掉`);
+        }
+      }
+      const noClueLines = replayLines.filter((line) =>
+        !statementOptionsForLine(scene.questionOptions ?? [], line).length &&
+        !statementOptionsForLine(scene.casualQuestions ?? [], line).length
+      );
+      if (noClueLines.length) {
+        const reaction = statementNoClueReactionFor(scene);
+        assert(reaction.text && ["caller", "host", "comment"].includes(reaction.role), `${scene.id} 无线索原句扣耐心后必须接角色反应`);
+      }
       if (scene.revisedVersion) {
         assert(loadBearing.every((option) => scene.revisedVersion.includes(option.revisedSourceAnchor ?? option.sourceAnchor)), `${scene.id} 的改口陈述也必须保留可点中的承重原句`);
       }
@@ -417,11 +458,59 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
     assert(rounds.length >= 2, `${packet.id} 每通快案至少要有两轮陈述与逐句追问`);
     rounds.forEach((round, roundIndex) => {
       assert(quickStatementLinesForRound(packet, { roundIndex }).length >= 2, `${packet.id} ${round.id ?? roundIndex} 必须能拆成至少两句逐句追问`);
+      const state = { ...initialQuickDetectiveState(packet), scene: "issueSelection", roundIndex };
+      const lines = quickStatementLinesForRound(packet, state);
+      const options = quickIssueOptionsForRound(packet, state);
+      for (const option of options.filter((item) => item.correct === false)) {
+        assert(option.sourceAnchor, `${packet.id}/${round.id} 快案错问必须有 sourceAnchor`);
+        const sourceLine = lines.find((line) => line.text.includes(option.sourceAnchor));
+        assert(sourceLine, `${packet.id}/${round.id} 快案错问必须逐字落在本轮原话`);
+        assertEqual(statementOptionForLine(options, sourceLine), option, `${packet.id}/${round.id} 快案错问不得被同句更长 anchor 吞掉`);
+        const reaction = statementMissReactionForOption(option);
+        assert(reaction.text && ["caller", "host", "comment"].includes(reaction.role), `${packet.id}/${round.id} 快案错问必须有非讲解式角色反应`);
+        assert(!/(正确答案|你该点|点另一句|换一条线索)/.test(reaction.text), `${packet.id}/${round.id} 快案错问反应不得教答案`);
+        const miss = applyQuickStatementLineSelection(packet, state, sourceLine.id);
+        assertEqual(miss.scene, "missReaction", `${packet.id}/${round.id} 快案错问必须先播角色反应，不能只扣耐心`);
+        assertEqual(quickRoundPatienceForState(packet, miss).remaining, Math.max(0, Number(round.patience ?? 3) - 1), `${packet.id}/${round.id} 快案错问仍只扣一格耐心`);
+        assertIncludes(quickDetectiveMissReactionHtml(packet, miss), reaction.text, `${packet.id}/${round.id} 快案错问反应必须在下一屏可见`);
+        assertEqual(advanceQuickMissReaction(packet, miss).scene, "issueSelection", `${packet.id}/${round.id} 错问反应播完必须回到当前回放`);
+      }
+      const noClueLine = lines.find((line) => !statementOptionForLine(options, line));
+      if (noClueLine) {
+        const reaction = statementNoClueReactionFor(round);
+        assert(reaction.text, `${packet.id}/${round.id} 无线索原句必须配置角色反应`);
+        const miss = applyQuickStatementLineSelection(packet, state, noClueLine.id);
+        assertEqual(miss.scene, "missReaction", `${packet.id}/${round.id} 无线索原句不得只扣耐心后静默返回`);
+        const afterReaction = advanceQuickMissReaction(packet, miss);
+        assertIncludes(quickDetectiveIssueSelectionHtml(packet, afterReaction), "这句没有可追问的线索 · 耐心 −1", `${packet.id}/${round.id} 无线索原句必须保留统一脚注`);
+      }
     });
   }
 
   assert(screenSources.join("\n").includes("来电人陈述"), "主案与快案屏幕必须接入陈述阶段提示");
   assert(screenSources.join("\n").includes("逐句追问"), "主案与快案屏幕必须接入逐句追问阶段提示");
+});
+
+test("VIEW-TESTIMONY-003", "voice matrix is a visual skin on the existing testimony wall", () => {
+  const statement = { id: "s1", label: "证词 01", text: "我不是要钱，我是要个态度。" };
+  const html = testimonyWallHtml({
+    scene: { testimonyWall: { presentationSkin: "voice-matrix" } },
+    wallAct: {
+      act: 1,
+      presentationSkin: "voice-matrix",
+      title: "把原话摊开",
+      statements: [statement],
+      decisivePresent: { materialCards: [] }
+    },
+    statements: [statement],
+    wallProgress: {},
+    presentProgress: { remaining: 2 },
+    presentAvailability: { canStart: true }
+  });
+  assertIncludes(html, "testimony-wall--voice-matrix", "语音方阵必须复用证词墙并只增加外观类");
+  assertIncludes(html, "语音方阵 · 第 1 幕", "语音方阵必须在现有证词墙标题上给出玩家可见状态");
+  assertIncludes(html, "data-testimony-press=\"s1\"", "语音方阵必须保留原有 PRESS 操作");
+  assertIncludes(html, "data-decisive-present-start", "语音方阵必须保留原有正式指认入口");
 });
 
 test("AVG-002B", "night-shell narration keeps narrator attribution instead of becoming caller speech", () => {
@@ -641,6 +730,110 @@ test("CARE-002", "epilogue unread callbacks echo care choices before the data cu
   assertIncludes(runtimeSource, "pick?.endingImpact === \"platform-data-loss\"", "整晚尾声必须读取已经发生的平台代价");
 });
 
+test("PROLOGUE-CAFE-001", "the opening cafe loop gates statement and evidence, preserves one real route, and migrates old saves", () => {
+  const empty = normalizedCafePrologueProgress({});
+  assertEqual(empty.step, 0, "旧档进入咖啡厅序章时必须从第一步开始");
+  assertEqual(empty.marks.join("|"), "", "旧档不得凭空获得咖啡厅对时材料");
+  assert(!cafePrologueStatementReady(empty), "没有点中否认原句时不能进入材料出示");
+  assert(!cafePrologueCanPresentEvidence(empty), "没有点原句、没有拿材料时不能正式出示");
+  const oneMark = normalizedCafePrologueProgress({ cafePrologueMarks: ["chat", "unknown", "chat"] });
+  assertEqual(oneMark.marks.join("|"), "chat", "材料标记迁移必须去重并清掉未知 id");
+  const statementOnly = normalizedCafePrologueProgress({ cafePrologueVersion: 2, cafePrologueStep: 1, cafePrologueStatementId: "hotel-denial" });
+  assert(cafePrologueStatementReady(statementOnly), "点中‘没去酒店’原句后必须解锁材料选择");
+  assert(!cafePrologueCanPresentEvidence(statementOnly), "尚未拿起材料时不能出示");
+  const ready = normalizedCafePrologueProgress({ cafePrologueVersion: 2, cafePrologueStep: 1, cafePrologueStatementId: "hotel-denial", cafePrologueEvidenceId: "hotel" });
+  assert(cafePrologueCanPresentEvidence(ready), "点中原句并拿起任一有效材料后必须允许出示");
+  assertEqual(cafePrologueRemainingEvidenceId({ marks: ["hotel"] }), "chat", "第一张出示订单后，聊天截图必须留给改口后的第二拍");
+  assertEqual(ready.legalBriefSeen, false, "旧档不得跳过赵律师当面说明法律诉求的独立一拍");
+  const briefSeen = normalizedCafePrologueProgress({ cafePrologueVersion: 2, cafePrologueStep: 5, cafePrologueLegalBriefSeen: true });
+  assertEqual(briefSeen.legalBriefSeen, true, "法律诉求清单确认后必须保存在序章进度中");
+  const firstRoute = normalizedCafePrologueProgress({ cafePrologueVersion: 2, cafePrologueStep: 7, cafePrologueOrder: ["account"] });
+  assert(cafePrologueCanOpenForensic(firstRoute), "先查路线必须成为真选择，一条完成即可进入对应回告");
+  assertEqual(cafePrologueSceneForStep(0), "cafePrologue", "咖啡厅对质必须有独立场景");
+  assertEqual(cafePrologueSceneForStep(4), "cafePrologue", "流水命中与律师记录仍属于咖啡厅对质");
+  assertEqual(cafePrologueSceneForStep(6), "cafePrologueAftermath", "同晚否认与路线选择必须切到麦外场景");
+  assertEqual(cafePrologueSceneForStep(8), "cafePrologueForensic", "亲子初步结果必须只出现在个人委托检测场景");
+  const migrated = migrateState({
+    cafePrologueStep: "6",
+    cafePrologueMarks: ["chat", "bad"],
+    cafePrologueOrder: ["toy", "bad", "toy"],
+    cafePrologueLegalBriefSeen: "yes",
+    cafeProloguePressureChoice: 7
+  });
+  assertEqual(migrated.cafePrologueStep, 7, "旧版已进入第二条路线的存档必须迁到新版单路线完成态");
+  assertEqual(migrated.cafePrologueVersion, 2, "序章新增字段必须通过 migrateState 升到第二版");
+  assertEqual(migrated.cafePrologueStatementId, "hotel-denial", "旧版已过材料桌的存档不得卡回原句门禁");
+  assertEqual(migrated.cafePrologueMarks.join("|"), "chat", "序章材料标记必须安全迁移");
+  assertEqual(migrated.cafePrologueOrder.join("|"), "toy", "序章路线顺序必须安全迁移");
+  assertEqual(migrated.cafePrologueLegalBriefSeen, false, "非法法律诉求进度必须回落为未读");
+  assertEqual(migrated.cafeProloguePressureChoice, "", "非法镜头选择必须回落为空");
+});
+
+test("PROLOGUE-CAFE-002", "the cafe prologue UI keeps the player's evidence actions and a non-verdict ending visible", () => {
+  assertIncludes(cafePrologueHeaderHtml({ timeline: "开播前 · 傍晚", title: "序章" }), "开播前 · 傍晚", "咖啡厅页必须先交代这是当晚开播前");
+  const dialogue = cafePrologueDialogueHtml([{ speaker: "妻子", speakerProfileId: "prologue-cafe-wife", type: "participant", text: "那晚我没去酒店。" }]);
+  assertIncludes(dialogue, "那晚我没去酒店", "咖啡厅对质必须由人物原话开口");
+  assertIncludes(dialogue, "data-dialogue-role=\"wife\"", "咖啡厅对白必须把当前说话人交给立绘舞台");
+  const portraits = cafeProloguePortraitStageHtml();
+  for (const role of ["host", "advisor", "husband", "wife", "cousin"]) {
+    assertIncludes(portraits, `data-dialogue-portrait=\"${role}\"`, `咖啡厅立绘舞台必须保留 ${role} 说话位`);
+  }
+  const prompt = cafeMaterialPromptHtml({ evidencePair: [{ kicker: "聊天截图" }, { kicker: "酒店订单" }], transferEvidence: { kicker: "遮名银行流水" } });
+  assertIncludes(prompt, "桌面", "材料名称必须进入场景物件提示而非人物对白");
+  assert(!prompt.includes("遮名银行流水"), "酒店对质结束前桌面不得提前亮出第三张流水");
+  const statements = cafeStatementReplayHtml({ statements: [
+    { id: "hotel-denial", text: "我没去澜桥酒店。", correct: true },
+    { id: "screenshot-dismissal", text: "他就是自己越想越多。", missLine: "你要问这句就问。" }
+  ] });
+  assertIncludes(statements, "data-cafe-statement-id=\"hotel-denial\"", "玩家必须先从刚听过的话里点原句");
+  assertIncludes(statements, "我没去澜桥酒店", "正确锚点必须显示为人物原话，不能改成说明书按钮");
+  const pair = cafeEvidencePairHtml([
+    { id: "chat", title: "聊天定位" },
+    { id: "hotel", title: "酒店订单" }
+  ], "chat", "我没去澜桥酒店。");
+  assertIncludes(pair, "data-cafe-evidence-select=\"chat\"", "两张材料必须允许玩家一次拿起一张");
+  assertIncludes(pair, "aria-pressed=\"true\"", "已选材料必须呈现可访问的选中状态");
+  assertIncludes(pair, "已拿起", "点击材料后必须有当场可见的选择反馈");
+  assert(!pair.includes("依次点击") && !pair.includes("教学 ·"), "正式循环不得继续伪装成两页签收教学");
+  const remaining = cafeSingleEvidenceHtml({ evidence: { id: "hotel", title: "酒店订单" } });
+  assertIncludes(remaining, "data-cafe-present-remaining", "第二张材料必须留到来电人整套改口以后再出示");
+  const present = cafeTransferPresentHtml({ evidence: { title: "三笔双向转账", detail: "保留日期、方向和交易对手。", rows: ["4 月 12 日｜转出｜顾*"] } });
+  assertIncludes(present, "三笔双向转账", "正式出示前必须看见材料卡");
+  assertIncludes(present, "4 月 12 日｜转出｜顾*", "转账卡必须呈现原始日期、方向和遮名户名");
+  assert(!present.includes("钱上没有") && !present.includes("我跟顾*之间没转过钱"), "材料卡不得把正确目标句贴在证据旁边替玩家推理");
+  const legalBrief = cafeLegalRequestsHtml({
+    zhaoRole: "赵律师与林旭阳同行到场，不代理男方。",
+    items: [{ title: "共同财产", request: "申请调查", nextAction: "列账户", boundary: "怀疑不足以冻结" }]
+  });
+  assertIncludes(legalBrief, "列账户", "法律记录板只保留人物已经谈到的眼前动作");
+  const routes = cafeInvestigationChoicesHtml([{ id: "toy", label: "先看旧物", note: "保留来源" }]);
+  assertIncludes(routes, "data-cafe-investigation=\"toy\"", "同晚后续必须让玩家选择先查哪一边");
+  assert(!routes.includes("两边都会查"), "先查路线必须是真选择，界面不得宣布两边都会补做");
+  assertIncludes(cafeAccountBoardHtml([{ when: "每月", label: "固定转出", status: "户名遮蔽", focus: true }]), "cafe-account-row focus", "固定转账必须在家庭账上可见但保持遮名");
+  const ending = cafeFinalBoundaryHtml({ result: "排除生物学父子关系", openAccount: "还有一笔账", unknown: ["生父未知", "收款人未知"] });
+  assertIncludes(ending, "生父未知", "结果卡必须把未知放在判断之后");
+  assert(!ending.includes("GUILTY") && !ending.includes("胜利"), "试玩序章不得回退到胜负或判罪收尾");
+  assertIncludes(runtimeSource, "? \"cafePrologue\"", "新游戏必须优先进入咖啡厅序章");
+  assertIncludes(runtimeSource, "renderCafePrologue,", "咖啡厅序章渲染器必须从 recap screen 工厂导出");
+  assertIncludes(runtimeSource, "renderCafePrologueAftermath,", "同晚后续渲染器必须从 recap screen 工厂导出");
+  assertIncludes(runtimeSource, "renderCafePrologueForensic,", "私下回告渲染器必须从 recap screen 工厂导出");
+  assertIncludes(runtimeSource, "data-cafe-pressure", "录像与剪辑压力必须交给玩家处理");
+  assertIncludes(runtimeSource, "cafe-aftermath-step-${step}", "序章后续必须按步骤提供独立布局钩子，不能继续挤在通用选择层");
+  assertIncludes(runtimeSource, "cafeProloguePortraitStageHtml", "咖啡厅必须使用多人立绘舞台而非纯文字清单");
+  assertIncludes(runtimeSource, "data-cafe-legal-brief", "转账命中后必须先由玩家确认法律诉求清单，不能把律师台词塞进镜头中断页");
+  assertIncludes(runtimeSource, "data-cafe-statement-id", "咖啡厅第一动必须由玩家点人物原句");
+  assertIncludes(runtimeSource, "data-cafe-evidence-present", "点中原句后必须由玩家正式出示一张材料");
+  assertIncludes(readFileSync(new URL("../src/ui/liveFrameView.js", import.meta.url), "utf8"), "choiceMarkup.includes(\"cafe-opening-action\")", "序章材料托盘必须留在场内操作层，不能触发压暗全景的模态遮罩");
+  assertIncludes(runtimeSource, "data-cafe-enter-night", "咖啡厅同晚核对完成后必须由玩家操作进入夜间直播");
+  assertIncludes(runtimeSource, "setCafePrologueStep(state, 8)", "整晚尾声必须只在咖啡厅两条线完成后打开数日后的鉴定回告");
+});
+
+test("PROLOGUE-CAFE-003", "cafe, aftermath, and forensic scenes use distinct audio spaces", () => {
+  assertEqual(audioScenePlan({ scene: "cafePrologue" }).ambienceCueId, "ambience.cafe", "咖啡厅必须接入已有咖啡环境声");
+  assertEqual(audioScenePlan({ scene: "cafePrologueAftermath" }).ambienceCueId, "ambience.apartment-hall", "同晚回家调查不得继续响咖啡厅环境声");
+  assertEqual(audioScenePlan({ scene: "cafePrologueForensic" }).ambienceCueId, "ambience.document-desk", "私下回告必须切到文档桌环境声");
+});
+
 test("CARE-003", "soup arc, solo-host pause, and case-file hook keep their authored order", () => {
   const manifest = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/manifest.json", import.meta.url), "utf8"));
   const caseThree = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/cases/03-profile.json", import.meta.url), "utf8"));
@@ -654,7 +847,7 @@ test("CARE-003", "soup arc, solo-host pause, and case-file hook keep their autho
   const interlude = manifest.nightShell.interludes.find((entry) => entry.afterCaseId === "03-profile");
   const interludeHtml = storyInterludeHtml({ kicker: interlude.kicker, shellLine: interlude.line, shellLines: interlude.lines, shellAfterLines: interlude.afterLines });
   assertIncludes(interludeHtml, "第一次去我家", "案三小尾声必须让赵律师以伴侣身份进入生活场景");
-  assert(interludeHtml.indexOf("第一次去我家") < interludeHtml.indexOf("饭还是吃完了"), "案三小尾声必须按问话与回应顺序展开");
+  assert(interludeHtml.indexOf("第一次去我家") < interludeHtml.indexOf("那顿饭吃完"), "案三小尾声必须按问话与回应顺序展开");
   assertIncludes(interludeHtml, "热过的汤又凉了", "汤的物件弧必须继续留在案三收尾");
   assertIncludes(manifest.nightShell.epilogue.home, "保温盒空了。你顺手洗了", "回家段必须收回空保温盒，并保持玩家行动视角");
   assertIncludes(manifest.nightShell.epilogue.close, "牛皮纸文件袋", "收束必须用文件袋回收序章托放动作");
@@ -816,8 +1009,15 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   assertEqual(quickRevealConfrontations[0]?.revealTransition?.kind, "reveal", "快案核心重击必须使用统一 reveal 过场类型");
   assert((packet.ending?.summaryPages ?? []).length >= 3, "快案结尾必须分开结束通话、矛盾复盘和高概率判断");
   const quickOneRecapPage = packet.ending.summaryPages.find((page) => page.stageLabel === "结案复盘");
-  assertEqual(quickOneRecapPage?.lines?.[0]?.text, "我们来把这次这个连线复个盘。", "首宗快案挂断后必须用固定口头标记进入主播复盘");
+  assert(/(电话挂了|收麦了)/.test(quickOneRecapPage?.lines?.[0]?.text ?? ""), "首宗快案挂断后必须用口语接回逐项回看");
+  assert(!quickOneRecapPage?.lines?.[0]?.text?.includes("我们来把这次这个连线复个盘"), "首宗快案不得恢复共用复盘模板句");
   assert(packet.issueOptions.length > packet.confrontations.length, "快案必须让玩家在矛盾方向和合理干扰项之间判断，不能自动播放答案");
+  for (const issueId of ["benefactor-generosity", "mortgage-pressure"]) {
+    const issue = packet.issueOptions.find((item) => item.id === issueId);
+    const roundIndex = quickDisclosureRounds(packet).findIndex((round) => round.issueOptionIds?.includes(issueId));
+    const line = quickStatementLinesForRound(packet, { roundIndex }).find((item) => item.text.includes(issue.sourceAnchor));
+    assertEqual(statementOptionForLine(quickIssueOptionsForRound(packet, { roundIndex }), line), issue, `${issueId} 必须从原句实际可点，不能再被当成无线索`);
+  }
   assert(packet.confrontations.every((confrontation) => packet.issueOptions.some((item) => item.confrontationId === confrontation.id)), "每项对质必须至少有一个玩家可选的问题方向，允许不同原话通向同一对质");
   assert(packet.issueOptions.every((item) => item.label && !/[？?。！!]$/.test(item.label)), "快案玩家按钮必须只写疑点方向，不直接展示完整问句");
   assert(packet.issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine === undefined), "干扰方向不得携带系统讲解");
@@ -842,9 +1042,10 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   assert(!/主播你好|主播哥|我想问/.test(packet.turns[0].caller), "快案首次接通不能使用接待表式开场");
   assertEqual(packet.turns[0].id, "greeting", "快案第一页只能完成接通与互相问候");
   const askForMatchTurn = packet.turns.find((turn) => turn.id === "ask-for-match");
-  assertEqual(askForMatchTurn?.host, "那你今天什么问题？", "问候结束后，主播才正式询问来意");
-  assertIncludes(askForMatchTurn?.caller, "我想问下我的择偶定位", "来电人必须先说自己的求助，不得开场就塞完人物背景");
-  assertIncludes(askForMatchTurn?.caller, "有合适的资源，当然更好", "快案开场必须保留来电人希望获得介绍资源的利益诉求");
+  assertEqual(askForMatchTurn?.host, "好，你今天想问什么事？", "问候结束后，主播才用自然口气询问来意");
+  assertIncludes(askForMatchTurn?.caller, "我想找个对象", "来电人必须先说自己的求助，不得开场就塞完人物背景");
+  assertIncludes(askForMatchTurn?.caller, "也可以给我介绍一下", "快案开场必须保留来电人希望获得介绍对象的利益诉求");
+  assert(!/择偶定位|合适的资源/.test(askForMatchTurn?.caller ?? ""), "来电人不得把自己的求助说成婚恋业务表格");
   assertIncludes(packet.whyTonight, "兼职替人介绍对象", "快案必须固定主播兼职红娘的业务入口，不能临时获得介绍资源");
   const callerProfileTurn = packet.turns.find((turn) => turn.id === "caller-profile");
   assertIncludes(callerProfileTurn?.caller, "在商场卖衣服", "快案必须先给来电人一条普通、可理解的生活线，不能直接进入破绽清单");
@@ -915,8 +1116,8 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   const fertilitySlip = packet.confrontations.find((item) => item.id === "fertility-slip");
   const fertilityLines = quickConfrontationLines(fertilitySlip);
   assertEqual(fertilityLines.length, 4, "婚育疑点必须拆成否认、主播短追问、最小承认两个来回");
-  assertIncludes(fertilityLines[0]?.text, "还有一句，我刚才没接", "主播必须明确把首轮暂未追问的不能生育例子留到对质阶段");
-  assertIncludes(fertilityLines[0]?.text, "他有钱了会不会变心", "婚育回问必须先说明这个举例为什么反常，再追问检查结果");
+  assertIncludes(fertilityLines[0]?.text, "还有一句", "主播必须明确把首轮暂未追问的不能生育例子留到对质阶段");
+  assertIncludes(fertilityLines[0]?.text, "为什么会先想到这个", "婚育回问必须先追问举例来源，不能替来电人预设另一种担心");
   assertIncludes(fertilityLines[1]?.text, "你怎么能这么问", "来电人第一次被问婚育疑点时必须先反驳提问");
   assertEqual(fertilityLines[2]?.text, "那到底有没有嘛？", "来电人只否认提问方式时，主播必须补一句短追问");
   assertIncludes(fertilityLines[3]?.text, "我以前确实查过", "来电人只能在主播短追问后首次承认做过检查");
@@ -924,7 +1125,7 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   const hiddenStandards = packet.confrontations.find((item) => item.id === "hidden-standards");
   const hiddenStandardLines = quickConfrontationLines(hiddenStandards);
   assertIncludes(hiddenStandardLines.map((line) => line.text).join(" "), "总价两百万", "口头低要求对质必须把房价和分担房贷诉求带回现场");
-  assertIncludes(hiddenStandardLines.map((line) => line.text).join(" "), "这些才是你的要求，前面一直没说", "主播必须当面指出口头低要求与真实筛选标准的差别");
+  assertIncludes(hiddenStandardLines.map((line) => line.text).join(" "), "也是在我追问以后才说的", "主播必须当面指出口头低要求与真实筛选标准的差别");
   assertIncludes(hiddenStandardLines.map((line) => line.text).join(" "), "谁会故意找差的", "来电人被问穿后应露出真实偏好，而不是突然认错");
   const usefulSoftTalk = packet.confrontations.find((item) => item.id === "useful-soft-talk");
   const softTalkLines = quickConfrontationLines(usefulSoftTalk);
@@ -945,6 +1146,7 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   assertIncludes(firstPage, firstRoundTurns.at(-1).caller, "第一次播放必须把同一轮陈述作为整块给出");
   assert(!firstPage.includes(firstRoundTurns[0].host), "整段听麦不再把主播登记式问句混进陈述块");
   assertIncludes(firstPage, "把刚才那段拉回来", "听完陈述后只提供回放入口");
+  assertIncludes(firstPage, "data-dialogue-advance", "快案对白必须接入统一的键盘和手柄推进入口");
   quick = advanceQuickTranscript(packet, quick);
   assertEqual(quick.scene, "issueSelection", "整段听完后必须回放同一批原话，不能直接播放答案");
   const issueSelection = quickDetectiveIssueSelectionHtml(packet, quick);
@@ -959,8 +1161,11 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   assert(neutralLine, "快案回放必须保留至少一句暂时接不上议题的普通原话");
   const patienceBefore = quickRoundPatienceForState(packet, quick);
   quick = applyQuickStatementLineSelection(packet, quick, neutralLine.id);
-  assertEqual(quick.scene, "issueSelection", "按住暂时接不上的原话不得触发主播揭底");
+  assertEqual(quick.scene, "missReaction", "按住暂时接不上的原话必须先接人物反应，不能只扣耐心");
+  assertIncludes(quickDetectiveMissReactionHtml(packet, quick), statementNoClueReactionFor(firstRound).text, "无线索原话后的角色反应必须实际播出");
   assertEqual(quickRoundPatienceForState(packet, quick).remaining, patienceBefore.remaining - 1, "快案错按原话必须只消耗当前陈述的耐心");
+  quick = advanceQuickMissReaction(packet, quick);
+  assertEqual(quick.scene, "issueSelection", "人物反应说完必须回到原话回放，不得触发主播揭底");
   const neutralResult = quickDetectiveIssueSelectionHtml(packet, quick);
   assertIncludes(neutralResult, "这句没有可追问的线索 · 耐心 −1", "无充分依据时只在原话上扣一格耐心，不解释正确答案");
   const firstValidIssue = quickIssueOptionsForRound(packet, quick).find((item) => item.confrontationId);
@@ -979,7 +1184,9 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
     roundPatience: { [firstRound.id]: normalizeStatementPatience({ remaining: 1 }, firstRound.patience) }
   };
   exhausted = applyQuickStatementLineSelection(packet, exhausted, neutralLine.id);
-  assertEqual(exhausted.scene, "patienceLost", "当前陈述的耐心耗尽后必须停下这一轮");
+  assertEqual(exhausted.scene, "missReaction", "最后一次错按也必须先把人物反应播完");
+  exhausted = advanceQuickMissReaction(packet, exhausted);
+  assertEqual(exhausted.scene, "patienceLost", "人物反应播完后，当前陈述的耐心耗尽必须停下这一轮");
   assertIncludes(quickDetectivePatienceLostHtml(), "重新听这段", "耐心耗尽后必须允许重新听当前陈述");
   exhausted = retryQuickStatement(packet, exhausted);
   assertEqual(exhausted.scene, "transcript", "重试必须回到整段听麦，而不是直接把答案列表退回来");
@@ -1029,15 +1236,16 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   for (let index = 1; index < verdictLineCount; index += 1) quick = advanceQuickVerdict(packet, quick);
   assertIncludes(quickDetectiveVerdictHtml(packet, quick), "返回案件选择", "主播总结逐句说完以后才能返回带完成标记的案件选择页");
   const spokenSummary = packet.ending.summaryPages.flatMap((page) => page.lines ?? []).map((line) => line.text).join(" ");
-  assertIncludes(spokenSummary, "这个忙我不能帮", "主播必须依据风险作出明确行动决定");
+  assertIncludes(spokenSummary, "我不会帮你做这种介绍的", "主播必须依据风险作出明确行动决定");
   assert(!spokenSummary.includes("原因我不能猜") && !spokenSummary.includes("关系走深了再讲"), "婚育结论不得用原因未知或披露时点撤回已经作出的判断");
   assertIncludes(spokenSummary, "电话挂了", "拒绝帮助以后必须另起一段复盘已经成立的矛盾");
-  assertIncludes(spokenSummary, "按现有信息，我能确认的是", "主播必须把高概率故事版收回到现有证据允许的判断");
-  assertIncludes(spokenSummary, "双方是什么关系", "主播必须明确指出一百万元和出资关系仍未解释清楚");
-  assertIncludes(spokenSummary, "不是一段完整的分手原因", "主播仍须指出不会哄人只是被缩小过的分手版本");
-  assertIncludes(spokenSummary, "这个背书我不能做", "主播必须依据未解决的信息风险拒绝婚恋背书");
+  assertIncludes(spokenSummary, "不是她亲爸给的", "主播必须把高概率故事版收回到现有证据允许的判断");
+  assertIncludes(spokenSummary, "给钱的人到底是谁", "主播必须明确指出一百万元和出资关系仍未解释清楚");
+  assertIncludes(spokenSummary, "上一段感情说成自己不会哄人", "主播仍须指出不会哄人只是被缩小过的分手版本");
+  assertIncludes(spokenSummary, "我不会做这种背书的", "主播必须依据未解决的信息风险拒绝婚恋背书");
   assertIncludes(JSON.stringify(packet.ending?.unknown ?? []), "不能替她下医学结论", "婚育边界必须留在未知卡，不用来冲淡高概率判断");
-  assertIncludes(spokenSummary, "不够让我替她编出一段没有证据的人生", "最终行动决定必须同时保留拒绝权与事实边界");
+  assertIncludes(spokenSummary, "她不说，我也不会替她编", "最终行动决定必须同时保留拒绝权与事实边界");
+  assert(!/这个背书我不做|这个忙我不能帮|先记买房款|再记择偶条件/.test(spokenSummary), "快案一不得把主播拒绝和逐项回看写成电报标签");
   assert(!spokenSummary.includes("经济交换关系") && !spokenSummary.includes("年纪肯定不小") && !spokenSummary.includes("找人接盘"), "主播不得把称呼、资助和房贷诉求升级成没有证据的人生故事");
   assertIncludes(quickDetectiveStageHtml(packet, { scene: "verdict", verdictIndex: 1, verdictLineIndex: 0 }), "结案复盘", "挂断后的矛盾复盘必须有独立舞台状态");
   assertIncludes(quickDetectiveStageHtml(packet, { scene: "verdict", verdictIndex: 2, verdictLineIndex: 0 }), "高概率判断", "高概率故事版本必须有独立舞台状态");
@@ -1048,7 +1256,7 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   const quickCases = quickDetectiveCasesFor("steam-demo-01");
   const packet = quickCases.find((item) => item.id === "02-one-missed-message");
   assert(packet, "试玩包必须加载第二宗快案");
-  assertEqual(quickCases.map((item) => item.caseNumber).join("|"), "01|02", "快案选择页必须按 manifest 保持 01、02 的稳定顺序");
+  assertEqual(quickCases.map((item) => item.caseNumber).join("|"), "01|02|03", "快案选择页必须按 manifest 保持 01、02、03 的稳定顺序");
   assertEqual(packet.caseNumber, "02", "第二宗快案必须使用稳定编号 02");
   assertEqual(packet.premise, "一个姑娘打进电话，想问问她和男朋友接下来该怎么办。", "第二宗快案入口只能交代表面求助，不得提前剧透学历、婚介、创业者、送花和失联原因");
   assertEqual(packet.turns.length, 13, "第二宗快案必须把登记式问卷收成三轮陈述与少量追问");
@@ -1059,6 +1267,12 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assert(packet.issueOptions.length > packet.confrontations.length, "第二宗快案必须混入合理但不能互证的方向，不能直接把六个矛盾答案交给玩家");
   assert(packet.issueOptions.filter((item) => !item.confrontationId).length >= 2, "第二宗快案至少需要两个合理干扰方向");
   assert(packet.issueOptions.every((item) => item.sourceAnchor), "第二宗快案每个判断点都必须绑定本轮已经播出的原话");
+  for (const issueId of ["flower-request", "age-gap"]) {
+    const issue = packet.issueOptions.find((item) => item.id === issueId);
+    const roundIndex = quickDisclosureRounds(packet).findIndex((round) => round.issueOptionIds?.includes(issueId));
+    const line = quickStatementLinesForRound(packet, { roundIndex }).find((item) => item.text.includes(issue.sourceAnchor));
+    assertEqual(statementOptionForLine(quickIssueOptionsForRound(packet, { roundIndex }), line), issue, `${issueId} 必须绑定独立原句，不得再被同句更长锚点遮住`);
+  }
   assertEqual(packet.confrontations.filter((item) => item.revealTransition).length, 1, "第二宗快案只能给最大反转播放一次重击过场");
   assertEqual(packet.confrontations.find((item) => item.revealTransition)?.id, "third-person-at-table", "第二宗快案的重击必须落在姐妹小聚出现第三个人的整体重估上");
   assertEqual(packet.confrontations.find((item) => item.revealTransition)?.revealTransition?.lineIndex, 4, "第三人重击必须等来电人承认男性在场以后再播放，不能由动画提前给答案");
@@ -1108,23 +1322,26 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assert((packet.ending?.unknown ?? []).some((item) => item.includes("是否发生过暧昧")), "结案制作边界必须保留酒局内容未知");
   assert((packet.ending?.summaryPages ?? []).length >= 3, "第二宗快案结尾必须分开结束通话、矛盾复盘和高概率判断");
   const quickTwoRecapPage = packet.ending.summaryPages.find((page) => page.stageLabel === "结案复盘");
-  assertEqual(quickTwoRecapPage?.lines?.[0]?.text, "我们来把这次这个连线复个盘。", "第二宗快案挂断后必须用固定口头标记进入主播复盘");
+  assert(/(电话挂了|收麦了)/.test(quickTwoRecapPage?.lines?.[0]?.text ?? ""), "第二宗快案挂断后必须用口语接回逐项回看");
+  assert(!quickTwoRecapPage?.lines?.[0]?.text?.includes("我们来把这次这个连线复个盘"), "第二宗快案不得恢复共用复盘模板句");
   const spokenSummary = packet.ending.summaryPages.flatMap((page) => page.lines ?? []).map((line) => line.text).join(" ");
   assertIncludes(spokenSummary, "八号、九号、十号连起来看", "第二宗快案复盘必须从本案三天动作落下判断");
   const removedRecapSlogan = ["动作倒推发心", "逻辑要闭环"].join("，");
   assert(!spokenSummary.includes(removedRecapSlogan), "第二宗快案复盘不得把作者工作词当成主播口头禅");
   assertIncludes(spokenSummary, "八号，她和师姐去 KTV", "结案必须按原始时间线先复盘前一晚，不能只复盘漏回消息");
-  assertIncludes(spokenSummary, "把长期生活状态说成了一次偶然", "结案必须把风险落在信息缩小和长期生活方式不合，不能给夜生活本身定罪");
-  assertIncludes(spokenSummary, "问题不在她是学生还是女性", "第二宗快案不得用性别或学生身份放大夜生活风险");
-  assertIncludes(spokenSummary, "酒桌上有没有发生别的事，不用猜", "主播必须在不虚构酒局细节的前提下完成判断");
-  assertIncludes(spokenSummary, "我说实话，也建议男方退出", "第二宗快案结案必须给出主播明确建议，不能只说男方有理由退出");
-  assertIncludes(spokenSummary, "想让我把原因归到男方不理解她，再帮她想办法复合", "第二宗快案结案必须说清来电人希望主播提供的实际帮助");
+  assertIncludes(spokenSummary, "自己平时常不常出去，她也换了好几遍说法", "结案必须把风险落在信息缩小和长期生活方式不合，不能给夜生活本身定罪");
+  assertIncludes(spokenSummary, "她是学生也好", "第二宗快案不得用性别或学生身份放大夜生活风险");
+  assertIncludes(spokenSummary, "我不猜酒桌上还有没有别的事", "主播必须在不虚构酒局细节的前提下完成判断");
+  assertIncludes(spokenSummary, "换成我，我也会劝他退出", "第二宗快案结案必须给出主播明确建议，不能只说男方有理由退出");
+  assertIncludes(spokenSummary, "她打来是想让我说，男方就是不理解她", "第二宗快案结案必须说清来电人希望主播提供的实际帮助");
   assertIncludes(packet.ending?.riskReading?.text ?? "", "不能据此证明出轨、把谁当备选或存在供养关系", "出轨、备选和供养边界必须留在结案事实卡，不冲淡口播判断");
   assert(!spokenSummary.includes("骑驴找马") && !spokenSummary.includes("供养者") && !spokenSummary.includes("潜在的雷"), "第二宗快案不得把信息缩小升级成供养、备选或性别化污名判断");
   assert(!spokenSummary.includes("男方不会提供情绪价值") && !spokenSummary.includes("前后原话放在一起，这个说法站不住"), "第二宗快案结案不得残留报告式的情绪价值与说法站不住表述");
-  assertIncludes(spokenSummary, "他信不信、还愿不愿意继续", "第二宗快案通话收尾必须让这次联系同时问清事实接受度和是否继续，不能只让来电人单方面补充");
+  assertIncludes(spokenSummary, "这些话他信不信", "第二宗快案通话收尾必须问清男方是否接受这次说明，不能只让来电人单方面补充");
+  assertIncludes(spokenSummary, "还愿不愿意继续", "第二宗快案通话收尾必须问清男方是否还愿意继续，不能只让来电人单方面补充");
   assertIncludes(spokenSummary, "别再来回猜了", "第二宗快案通话收尾必须给追回诉求一个可执行的结束点");
-  assertIncludes(spokenSummary, "别再遮遮掩掩，拿一个谎话去圆另一个谎话", "第二宗快案通话收尾必须直说连续改口的问题，不能再把整案缩回六分钟消息差");
+  assertIncludes(spokenSummary, "别再拿一个谎去圆另一个了", "第二宗快案通话收尾必须直说连续改口的问题，不能再把整案缩回六分钟消息差");
+  assert(!/这期对账，不给话术|按日期把这三天放回去/.test(spokenSummary), "快案二不得把拒绝和复盘写成栏目标签");
   assert(!spokenSummary.includes("别再把原因缩回那六分钟"), "第二宗快案结案不得用抽象缩回措辞弱化连续隐瞒");
   const displayConfrontation = quickConfrontationLines(packet.confrontations.find((item) => item.id === "care-or-display"));
   assertEqual(displayConfrontation.length, 6, "展示需求必须经过辩解、截图核对、再次反驳和最小承认三轮攻防");
@@ -1132,8 +1349,8 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assertIncludes(displayConfrontation[1]?.text, "我在柜台前多看了几眼", "包的来源必须由来电人在对质中亲口确认");
   assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "朋友圈截图我看了", "主播必须说明自己的判断来自刚收到的截图");
   assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "新包也是他送的", "展示需求对质必须带回朋友圈图片里新发现的包");
-  assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "漂亮饭、演唱会", "展示需求必须落到她实际发布的具体内容，不能空说她很受用");
-  assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "我们不脱离感情只谈钱", "主播必须在感情与物质同时成立时使用固定判断口头禅");
+  assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "花、包、他的车", "展示需求必须落到她实际发布的具体内容，不能空说她很受用");
+  assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "别只说他没听懂你的歌", "主播必须在感情与物质同时成立时把两种需求一并问出来，不使用固定口号");
   const discoveryConfrontation = quickConfrontationLines(packet.confrontations.find((item) => item.id === "how-he-knew"));
   assertEqual(discoveryConfrontation.length, 4, "男方发现第三个人必须经过追问、解释和最小承认，不能用反馈文案代替对质");
   assertIncludes(discoveryConfrontation.map((line) => line.text).join(" "), "这个‘他’是谁", "男方的怀疑必须来自她说漏的具体代词");
@@ -1143,21 +1360,22 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assertIncludes(nightlifeDialogue, "男的女的都有", "夜生活对质必须由来电人自己承认同行者来自不同性别，不能由主播凭空定性");
   assertIncludes(nightlifeDialogue, "读研以后聚会一直不少", "夜生活对质必须把近两个月截图追到更长期的生活习惯");
   assertIncludes(nightlifeDialogue, "婚介跟他说你生活简单", "主播必须把长期夜场与婚介版本直接对照，不能只谈一次喝多");
-  assertIncludes(nightlifeDialogue, "到现在你还往‘偶尔一次’上说", "夜生活对质必须指出来电人在被追问后仍继续缩小说法");
-  assertIncludes(nightlifeDialogue, "男方看到了当然不可能信啊", "夜生活对质必须落到男方为何不再相信，而不是抽象说两个版本不同");
+  assertIncludes(nightlifeDialogue, "前面那些话全变了", "夜生活对质必须指出来电人在被追问后已经换了说法");
+  assertIncludes(nightlifeDialogue, "我问一句，你补一句", "夜生活对质必须指出来电人仍在被动补充，不能把整套改口拆成逐句辩论");
+  assertIncludes(nightlifeDialogue, "我们还怎么聊", "夜生活对质必须让主播对连续改口作出当场反应，不能写成抽象版本比较");
   assert(!nightlifeDialogue.includes("男方看到的当然不是同一个说法"), "夜生活对质不得残留抽象的版本比较句");
   assert(!packet.issueOptions.some((item) => item.id === "bar-judgment" || item.label.includes("去酒吧本身")), "第二宗快案不得再用去酒吧是否正确充当无效选项");
   assertIncludes(packet.issueOptions.find((item) => item.id === "how-he-knew")?.label, "男方怎么发现", "第三轮必须把无效价值判断换成可调查的发现来源");
   const apologyConfrontation = quickConfrontationLines(packet.confrontations.find((item) => item.id === "apology-and-post"));
   const apologyDialogue = apologyConfrontation.map((line) => line.text).join(" ");
-  assertIncludes(apologyDialogue, "哪知道那是八号拍的", "道歉动态对质必须按男方当时能看到的信息说话，不能假定他知道照片拍摄日期");
-  assertIncludes(apologyDialogue, "对方又不傻", "主播必须直接指出道歉以后继续发喝酒照片缺乏说服力，不能用抽象总结代替人话");
+  assertIncludes(apologyDialogue, "照片是哪天拍的，你知道，他不知道", "道歉动态对质必须按男方当时能看到的信息说话，不能假定他知道照片拍摄日期");
+  assertIncludes(apologyDialogue, "他当然会怀疑", "主播必须直接指出道歉以后继续发喝酒照片会引发什么反应，不能用抽象总结代替人话");
   assert(!apologyDialogue.includes("日期能对上") && !apologyDialogue.includes("道歉变轻"), "道歉动态对质不得退回错误日期判断或 AI 式抽象措辞");
 
   let state = { ...initialQuickDetectiveState(packet), scene: "transcript" };
   while (state.scene === "transcript") state = advanceQuickTranscript(packet, state);
   assertEqual(state.roundIndex, 0, "第一轮听完必须停在初问阶段");
-  assertEqual(quickIssueOptionsForRound(packet, state).map((item) => item.id).join("|"), "emotion-or-display|flower-request|missed-message-state|founder-busy|family-level", "第一轮只能开放已经说出口的关系期待、消息状态与合理旁支，不能提前出现第三人和朋友圈问题");
+  assertEqual(quickIssueOptionsForRound(packet, state).map((item) => item.id).join("|"), "emotion-or-display|flower-request|missed-message-state|founder-busy|family-level|age-gap", "第一轮只能开放已经说出口的关系期待、消息状态与合理旁支，不能提前出现第三人和朋友圈问题");
   for (const issueId of ["emotion-or-display", "missed-message-state"]) {
     const issue = packet.issueOptions.find((item) => item.id === issueId);
     const line = quickStatementLinesForRound(packet, state).find((item) => item.text.includes(issue.sourceAnchor));
@@ -1185,6 +1403,45 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
     while (state.scene === "confrontation") state = advanceQuickConfrontation(packet, state);
   }
   assertEqual(state.scene, "verdict", "第二宗快案六处对质完成后必须进入主播结案，不能卡在选择页");
+});
+
+test("QUICK-004", "third quick case keeps named-fiction versus lawsuit numbers inside the spoken record", () => {
+  const quickCases = quickDetectiveCasesFor("steam-demo-01");
+  const packet = quickCases.find((item) => item.id === "03-labeled-fiction");
+  assert(packet, "试玩包必须加载第三宗快案");
+  assertEqual(packet.caseNumber, "03", "第三宗快案必须使用稳定编号 03");
+  assertEqual(packet.premise, "一个男生打进电话，想请你今晚帮他说句话。", "第三宗快案入口只能交代表面求助，不得提前剧透金额、虚构标注或生育方案");
+  assertEqual(quickDisclosureRounds(packet).length, 3, "第三宗快案必须分成听长文、听回复、对起诉状三轮");
+  assertEqual(quickDisclosureRounds(packet)[0]?.turnIds?.length, 6, "第一轮只能用六组话建立公开版本");
+  assertEqual(quickDisclosureRounds(packet)[1]?.turnIds?.length, 2, "第二轮必须由对方回复和双轨口径组成");
+  assertEqual(packet.confrontations.length, 6, "第三宗快案必须让主播问回六处彼此不同的前后矛盾");
+  assert(packet.issueOptions.length > packet.confrontations.length, "第三宗快案必须混入合理但不能互证的方向");
+  assert(packet.issueOptions.filter((item) => !item.confrontationId).length >= 2, "第三宗快案至少需要两个合理干扰方向");
+  assertEqual(packet.confrontations.filter((item) => item.revealTransition).length, 1, "第三宗快案只能给最大反转播放一次重击过场");
+  assertEqual(packet.confrontations.find((item) => item.revealTransition)?.id, "labeled-fiction", "第三宗快案的重击必须落在标了虚构却点名的承认之后");
+  assertEqual(packet.confrontations.find((item) => item.revealTransition)?.revealTransition?.lineIndex, 4, "虚构重击必须等来电人承认名字照片为真以后再播放");
+  assertIncludes(packet.presentation?.caller?.artSrc, "caller-gu-pixel", "第三宗快案必须使用自己的匿名男性来电人立绘，不能串用前两宗角色");
+  assertIncludes(quickDetectiveCaseSelectHtml(quickCases, []), "CASE</small><b>03", "案件选择页必须实际渲染 CASE 03");
+  assertIncludes(packet.sourceBoundary, "公开讨论中常见", "第三宗快案必须说明结构参考来自公开讨论中的常见模式");
+  assertIncludes(packet.sourceBoundary, "虚构合成", "来源边界必须声明人物和台词已经虚构合成");
+  assert(!/孙宇晨|景甜|张继科|TRON|波多黎各|Claude|我的女友/.test(JSON.stringify(packet)), "运行时内容不得出现可检索真名、原标题或原事件地标");
+
+  const spoken = [
+    ...packet.turns.flatMap((turn) => [turn.host, turn.caller]),
+    ...packet.confrontations.flatMap((item) => quickConfrontationLines(item).map((line) => line.text)),
+    ...(packet.ending?.summaryPages ?? []).flatMap((page) => (page.lines ?? []).map((line) => line.text))
+  ].join(" ");
+  assertIncludes(spoken, "『纯属虚构』", "第一轮必须让虚构标注出现在原话里");
+  assertIncludes(spoken, "五张卡一起打", "第一轮必须让五张卡打法出现在原话里");
+  assertIncludes(spoken, "一句转账数目都没对上", "第二轮必须让没对账出现在原话里");
+  assertIncludes(spoken, "跟我起诉状上写的数对得上", "第三轮必须让长文与起诉状对上的数出现在原话里");
+  assertIncludes(spoken, "我不会对着直播间替你宣", "结案必须拒绝用节目替未开庭的案子定罪");
+  assertIncludes(spoken, "彩礼不彩礼，法院没判", "高概率判断不得把彩礼说成已经成立");
+  const recapPage = packet.ending.summaryPages.find((page) => page.stageLabel === "结案复盘");
+  assert(/(电话挂了|收麦了)/.test(recapPage?.lines?.[0]?.text ?? ""), "第三宗快案挂断后必须用口语接回逐项回看");
+  assert(!recapPage?.lines?.[0]?.text?.includes("我们来把这次这个连线复个盘"), "第三宗快案不得恢复共用复盘模板句");
+  assert((packet.ending?.unknown ?? []).some((item) => item.includes("应退彩礼") || item.includes("该退彩礼")), "制作边界必须保留法律定性未知");
+  assert(!(packet.rageBaitContract?.tierPlan ?? []).includes("Tier 4"), "第三宗快案不得使用 Tier 4");
 });
 
 test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage bridge", () => {
@@ -1589,7 +1846,8 @@ test("INPUT-001", "keyboard and gamepad navigation has pure focus rules", () => 
   assertEqual(keyboardNavigationIntent("Enter"), "confirm", "Enter 必须确认当前按钮");
   assertEqual(keyboardNavigationIntent("ArrowRight"), "next", "右方向键必须移动到下一个按钮");
   assertEqual(keyboardNavigationIntent("a"), "previous", "WASD/方向键必须共用上一项/下一项规则");
-  assertEqual(keyboardNavigationIntent("Tab"), "review", "Tab 必须进入回看意图");
+  assertEqual(keyboardNavigationIntent("Tab"), "", "Tab 必须保留浏览器原生焦点导航，不能被案卷快捷键劫持");
+  assertEqual(keyboardNavigationIntent("r"), "review", "R 键必须进入回看意图");
   assertEqual(keyboardNavigationIntent("Escape"), "back", "Esc 必须进入返回意图");
   assertEqual(nextFocusIndex({ currentIndex: 1, total: 3, direction: 1 }), 2, "焦点向前移动必须落到下一个按钮");
   assertEqual(nextFocusIndex({ currentIndex: 2, total: 3, direction: 1 }), 0, "焦点必须能从末尾循环到开头");
@@ -2465,6 +2723,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(titleHtml, "data-start-quick-detective", "试玩标题页必须提供独立快案入口");
   assertIncludes(titleHtml, "选择一宗短案，当面问穿前后矛盾", "快案入口必须先说明可选案件，再交代主播对质动作");
   assertIncludes(titleHtml, "新游戏", "无存档时标题页必须用标准游戏入口文案");
+  assertIncludes(titleHtml, "从开播前的咖啡厅开始", "试玩标题页必须把玩家带进真正的咖啡厅序章，不能仍承诺直接进入直播间");
   assertIncludes(titleHtml, "data-audio-settings", "标题页必须能在开始前调声音");
   assert(!/四案|4\s*案|故事集目录|第一案|第二案|第三案|第四案|主题论点/.test(titleHtml), "标题页不能提前暴露案数、目录或主题论点");
   const readableScriptBuilderSource = readFileSync(new URL("./build-readable-script.js", import.meta.url), "utf8");
@@ -2604,8 +2863,10 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(appSource, "handleGamepadButton(gamepad, 0", "手柄 A 键必须能确认当前按钮");
   assertIncludes(appSource, "handleGamepadButton(gamepad, 1", "手柄 B 键必须能返回或重试");
   assertIncludes(appSource, "handleGamepadButton(gamepad, 3", "手柄 Y 键必须预留给回看/复盘入口");
-  assertIncludes(appSource, "intent === \"review\"", "Tab 必须能通过键盘意图打开或收起当前回看面板");
-  assertIncludes(appSource, "toggleReviewPanel", "键盘 Tab 和手柄 Y 必须复用同一套回看切换逻辑");
+  assertIncludes(appSource, "intent === \"review\"", "R 键必须能通过键盘意图打开或收起当前回看面板");
+  assertIncludes(appSource, "toggleReviewPanel", "键盘 R 和手柄 Y 必须复用同一套回看切换逻辑");
+  assert(!appSource.includes('event.key === "a" || event.key === "A"'), "A 键必须只用于向左移动，不能再与自动播放设置冲突");
+  assertIncludes(appSource, 'modal.addEventListener("keydown"', "材料弹层必须把 Tab 焦点留在弹层内");
   assertIncludes(appSource, "closeTopOverlay", "Esc 与手柄 B 必须先关闭材料或案卷顶层");
   assertIncludes(appSource, "onChoicesShown", "对白结束展示选项时必须同步材料层状态");
   assertIncludes(appSource, "resetViewportScroll", "SPA 切换场景后必须回到新画面顶部，不能继承上一页滚动位置");
@@ -2674,7 +2935,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assert((a[2].evidenceChecks ?? []).length >= 2, "第三案必须至少两份材料检视，把收入和流水缺口做成玩法");
   assert((a[3].evidenceChecks ?? []).length >= 2, "第四通 Tony 案必须至少有两份材料检视，把名单与资金记录做成玩法");
   a.forEach((brief, index) => {
-    assert(Object.values(brief.routeAxisComments ?? {}).flat().length >= 4, `第 ${index + 1} 案必须有按路线轴反应的弹幕池`);
+    assert(Object.values(brief.routeAxisComments ?? {}).flat().every((comment) => typeof comment === "string" && comment.trim()), `第 ${index + 1} 案已配置的路线评论必须是有效文本`);
     assert((brief.sceneVersions ?? []).some((scene) => (scene.questionOptions ?? []).some((option) => option.guardedAnswer)), `第 ${index + 1} 案必须至少有一条收紧版回答，让现场防备进入玩法而不只停在表情`);
     assert((brief.truthBoundary?.true ?? []).length > 0, `第 ${index + 1} 案必须把实锤边界带进运行时`);
     assert((brief.truthBoundary?.edited ?? []).length > 0, `第 ${index + 1} 案必须把修剪边界带进运行时`);
@@ -2688,7 +2949,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
     assertEqual(brief.storyArcTitle, "热线连线", "故事包案内眉题不能显示案名或进度");
     assertEqual(brief.storyCaseLabel, "匿名来电", "故事包通话 HUD 不能提前显示案名");
     assert(brief.storyThemeTitle && brief.storyThemeIntro && brief.storyThemeThesis, "故事包必须携带主题、开场引子和主题论点");
-    assert((brief.storyCommentSeeds ?? []).length >= 4, "故事包必须把评论种子带进运行时 brief");
+    assert((brief.storyCommentSeeds ?? []).every((comment) => typeof comment === "string" && comment.trim()), "故事包已配置的评论种子必须以有效文本进入运行时 brief");
     const preachyOpeningBits = [`${"这些词"}${"都不坏"}`, `${"坏的是"}`, `${"四通来电"}${"放在一起看"}`, `${"四通"}${"匿名来电"}`, `${"四案"}${"故事集"}`];
     assert(!preachyOpeningBits.some((phrase) => brief.storyThemeIntro.includes(phrase)), "故事集开场引子不能先下主题判断");
     assert(brief.storyThemeCommentPrompt, "故事包必须携带评论区提示");
@@ -2897,7 +3158,9 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assert(!/(八万|男朋友|信用卡|转账页面|先别骂)/.test(case1Opening?.openingDialogue?.[0]?.text ?? ""), "案一第一句不得重新打包金额、关系、账单和预防挨骂");
   assertIncludes(case1Opening?.openingDialogue?.[1]?.text ?? "", "我在听", "案一主播第一拍必须正常接线并把话头交还给咨询者");
   assertIncludes(case1Opening?.openingDialogue?.[2]?.text ?? "", "男朋友刚才找我", "主播请讲以后，咨询者才说明男友提出代垫请求");
-  assertIncludes(case1OpeningText, "你转了吗", "男友提出代垫后，主播必须先确认钱是否已经转出");
+  assertIncludes(case1Opening?.openingDialogue?.[2]?.text ?? "", "转到后台那段", "咨询者接通后必须记得自己已经把语音转到后台");
+  assertIncludes(case1Opening?.openingDialogue?.[3]?.text ?? "", "今晚转", "主播接通后必须接住冷开场已经听过的催款原话");
+  assertIncludes(case1OpeningText, "你转了吗", "主播接住开播前语音后，必须确认钱是否已经转出");
   assert(case1Opening.openingDialogue.findIndex((line) => line.text.includes("八万")) > case1Opening.openingDialogue.findIndex((line) => line.text.includes("信用卡")), "案一必须先问清代垫用途，再追金额");
   assertIncludes(case1OpeningText, "他说什么时候还", "案一代垫说法出现后必须沿承诺追归还期限");
   assertIncludes(case1OpeningText, "我不想转", "案一开场必须让来电人直接说出不想承担八万元，不得绕成抽象道德判断");
@@ -2910,8 +3173,10 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assert(!case1OpeningText.includes("换我也得先把手缩回来"), "案一主播接金额时不使用刻意比喻替来电人表态");
   const case1LayoffGap = case1Opening?.sceneVersions?.find((scene) => scene.id === "credit-layoff-gap");
   const case1LayoffGapText = JSON.stringify(case1LayoffGap ?? {});
-  assertIncludes(case1LayoffGapText, "他有没有说哪天还你", "案一主播应沿借款承诺直接追问日期");
-  assertIncludes(case1LayoffGapText, "那你后来怎么没转", "案一主播在还款承诺后应直接追问未转原因");
+  assert(!/他有没有说哪天还你|那你后来怎么没转/.test(case1LayoffGapText), "案一开场已经问过还款日期和转账意愿，后续不得再问一遍");
+  assertIncludes(case1LayoffGapText, "怎么发现工作不对", "案一应从固定转账中断自然转入她怀疑失业的过程");
+  assertIncludes(case1LayoffGapText, "从电子社保卡导出的缴费记录", "案一必须让来电人先交代自己实际收到的材料");
+  assertIncludes(case1LayoffGapText, "你拿这张社保记录问过他吗", "材料出现后主播只能追当时发生的回应，不替页面直接下结论");
   assert(!case1LayoffGapText.includes("先垫着”我听见了"), "案一主播不得用关键词回声证明自己听见上一句");
   assert(!case1LayoffGapText.includes("钱下来”是哪笔钱、哪天下来"), "案一主播不得把来电人刚说完的缺项重新归纳一遍再提问");
   assert(!JSON.stringify(case1Opening).includes("挡几天"), "案一代垫款语境不得为了避词重复改用不自然的‘挡几天’");
@@ -2924,8 +3189,8 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(case1LivingText, "那你这边每个月收到多少", "案一主播必须沿工资卡控制继续追固定转账数额");
   assert(!case1LivingText.includes("他会固定转钱给你吗"), "案一不得在工资卡回答后用同义问句重复追问");
   assertIncludes(case1LivingText, "工资一到账，转我一半", "案一工资线必须先补出固定半薪关系");
-  assertIncludes(case1LivingText, "一年多。十四个月", "案一工资线必须覆盖一年多固定给付");
-  assert(!/一万七千五|实发三万五/.test(JSON.stringify(case1Living?.questionOptions ?? [])), "案一首次问到收过的钱时必须先短答，精确金额留给后续流水");
+  assertIncludes(case1LivingText, "一年多。每个月都转", "案一第一夜只能确认固定半薪持续一年多");
+  assert(!/十四个月|一万七千五|17500|实发三万五/.test(case1LivingText), "案一第一夜不得提前报出精确月数和金额，必须把发现权留给后续流水");
   const case1Rent = case1Opening?.sceneVersions?.find((scene) => scene.id === "credit-rent-beneficiary");
   assert(!case1Rent, "案一不得保留为房租线索硬造的独立口供场景");
   const case1BankFlow = case1Opening?.documents?.find((document) => document.id === "case1-bank-flow");
@@ -2937,9 +3202,10 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(JSON.stringify(case1RentOpener?.firstConflict ?? {}), "是我住的", "案一房租受益人必须在第二天玩家带回问题后才揭示");
   assertIncludes(JSON.stringify(case1RentOpener?.firstConflict ?? {}), "房租不在一万七千五里面", "案一必须把双月房租与固定半薪拆开");
   const case1Loyalty = case1Opening?.sceneVersions?.find((scene) => scene.id === "credit-loyalty-test");
-  const endorsementQuestion = case1Loyalty?.questionOptions?.find((option) => option.suspicionLabel === "她想从主播这里拿走什么");
+  const endorsementQuestion = case1Loyalty?.questionOptions?.find((option) => option.routeAxis === "active-provocation");
   assert(endorsementQuestion?.correct, "案一第二夜必须允许玩家追问来电人的真实利益诉求");
-  assertIncludes(endorsementQuestion?.question ?? "", "想让我替你说一句别转", "案一第二夜追问必须回扣来电人想让主播替她拒绝转账的现实诉求");
+  assertIncludes(endorsementQuestion?.suspicionLabel ?? "", "重放", "案一公开背书追问必须由玩家主动复读原话");
+  assertIncludes(endorsementQuestion?.question ?? "", "想让我替你跟他说别转", "案一第二夜追问必须回扣来电人想让主播替她拒绝转账的现实诉求");
   assertIncludes(JSON.stringify({ answer: endorsementQuestion?.answer, lines: endorsementQuestion?.lines }), "把回放发给他", "案一咨询者必须在追加追问后承认想把主播判断当成替自己拒绝的工具");
   assert(!JSON.stringify(case1Opening).includes("帮我挡"), "案一代垫款语境不得再出现‘帮我挡’");
   const case2 = briefs.find((brief) => brief.runtimeContentCaseId === "02-tony");
@@ -2948,6 +3214,11 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   [case1Opening, case2, case3Opening, case4Opening].forEach((brief) => {
     const wall = brief.sceneVersions.find((scene) => scene.testimonyWall)?.testimonyWall;
     assert((wall?.missFeedback?.evidence ?? []).length >= 2 && (wall?.missFeedback?.statement ?? []).length >= 2, `${brief.runtimeContentCaseId} 决定性指认失误必须按错误类型和次数提供案件化反馈`);
+    const act2HostLines = (wall?.acts?.[1]?.openerLines ?? [])
+      .filter((line) => line.role === "host")
+      .map((line) => line.text)
+      .join(" ");
+    assert(!/一句一句往回补|哪儿问到哪儿|从头讲一遍|我们就真的没法聊/.test(act2HostLines), `${brief.runtimeContentCaseId} 第二幕开场必须追本案事件，不得复用作者式审稿模板`);
   });
   assertIncludes(JSON.stringify(case3Opening), "卡上有二十八万六，也不代表我要拿二十八万八", "案三男方必须在错误追问路线也能当场反驳工资卡推断");
   assertIncludes(JSON.stringify(case3Opening.sceneVersions.find((scene) => scene.testimonyWall)?.testimonyWall?.acts?.[1]?.missFeedback ?? {}), "男方", "案三第二幕第二次指认失误必须由已上麦男方接住");
@@ -2994,7 +3265,7 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(byPlot["lost-job-hidden-credit"], "我真以为那是他全款买来送我的", "案一必须让咨询者用当时的赠礼理解解释行为，而不是用作者式总结拖延揭示");
   assertIncludes(byPlot["tony-multi-dating"], "你说你当自己在谈。他怎么对你的", "案二第一段必须先核对恋爱名义再进入名单字段");
   assertIncludes(byPlot["tony-multi-dating"], "昨晚你已经看见这张名单了", "案二必须固定第一夜已知名单，第二夜不得再演第一次发现");
-  assertIncludes(byPlot["tony-multi-dating"], "这张表如果发出去", "案二第二夜必须追公开名单会同时带出咨询者自己的哪些信息");
+  assertIncludes(byPlot["tony-multi-dating"], "原图要是发出去", "案二第二夜必须追公开名单会同时带出咨询者自己的哪些信息");
   assertIncludes(byPlot["tony-multi-dating"], "十二万是否已经买成宸直产品", "案二必须把代投与入产品拆开，不能拿名单替认购作证");
   assertIncludes(byPlot["tony-multi-dating"], "今天就补颜色，别又跟我说那个", "案二熟客必须用眼前需求拒绝再次推介，不能替作者解释上一次发生了什么");
   assertIncludes(byPlot["tony-multi-dating"], "行，不说那个", "Tony 必须接住熟客的拒绝，不能用空话掐断相邻话轮");
@@ -3004,10 +3275,17 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(byPlot["education-income-fake-profile"], "后来问清的本科和学费", "案三各选项必须从已问清的本科自然接到自费 MBA");
   assertIncludes(byPlot["education-income-fake-profile"], "工资、流水，你一样都没见过", "案三茶馆必须先追介绍人说法的依据，不能让她进场自报完整审查结论");
   assertIncludes(byPlot["education-income-fake-profile"], "两边聊天和彩礼传话我都留着", "案三保存材料必须写成具体动作，并把彩礼传话纳入来源链");
+  const case3DepositCard = case3Opening?.evidenceCards?.find((card) => card.id === "daily-profile-deposit");
+  assertIncludes(case3DepositCard?.front ?? "", "工资账户期末余额 28.6 万", "案三材料卡正面必须先展示页面原始字段");
+  assertIncludes(case3DepositCard?.front ?? "", "页面没有列出其他账户", "案三材料卡正面只能写页面可见范围，不替玩家推断全部家底");
+  assert(!/女方要求|男方只提供/.test(case3DepositCard?.front ?? ""), "案三材料卡正面不得把双方行为判断混进原始页面");
   assertIncludes(byPlot["workplace-reimbursement-screenshot"], "哪一笔付了、最后进谁账户，我没经手", "案四供应商返费表只能确认三层规则，不能替支付与账户作证");
   assertIncludes(byPlot["workplace-reimbursement-screenshot"], "她那六万八是公司报销，两件事别混着问", "案四可选调查必须把公司报销与供应商三层返费拆成两条资金路径");
   assertIncludes(byPlot["workplace-reimbursement-screenshot"], "有没有说过具体哪天到账", "案四首夜仍要保留咨询者当时就能追问的到账时间，不能只靠白天学到的报销术语");
   assert(!byPlot["workplace-reimbursement-screenshot"].includes("欠条"), "案四公司报销关系不得被写成私人借贷欠条");
+  const case4PrivateProcess = case4Opening?.sceneVersions?.find((scene) => scene.id === "work-private-process");
+  assertEqual(case4PrivateProcess?.beforeVersion?.lines?.length ?? 0, 0, "案四公开流程场不得在 entryQuestion 前再播一遍同义问题");
+  assert(!/我看串了|流程词说得很顺/.test(JSON.stringify(case4Opening)), "案四不得用假口误或作者批注伪造口语感");
   const case2Hook = briefs.find((brief) => brief.runtimeContentCaseId === "02-tony")?.investigationHooks?.find((hook) => hook.id === "tony-other-caller-dm");
   assert(!(case2Hook?.options ?? []).some((option) => option.correct === false && option.contradiction), "案二同款表误选项不得同时携带可结算矛盾，避免两项都对却只认一个");
   const case3 = briefs.find((brief) => brief.runtimeContentCaseId === "03-profile");
@@ -3156,10 +3434,9 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assertEqual(brief.premeditated, false, "三张截图不应强行写成预谋犯罪");
   const openingText = brief.openingDialogue.map((line) => line.text).join(" ");
   assertIncludes(openingText, "见父母", "截图出现必须有关系阶段触发");
-  assertIncludes(openingText, "名校本科", "外层说法必须先出现父母对名校本科的误认，再揭示 MBA");
-  assertIncludes(openingText, "本科不是那所", "开场必须给出学历已经纠正这一可观察前提");
+  assertIncludes(openingText, "本科不是她以为的那所名校", "外层说法必须先出现母亲对名校本科的误认，再揭示 MBA");
   assertIncludes(openingText, "二十八万八拿不出来", "案三必须先让男方直接拒绝高彩礼");
-  assertIncludes(openingText, "让他把银行流水打出来", "流水必须由咨询者不相信拒绝后主动索要");
+  assertIncludes(openingText, "我让他打流水", "流水必须由咨询者不相信拒绝后主动索要");
   assertIncludes(openingText, "只发来一份工资账户流水", "男方必须选择性提供工资账户，不能再主动交完整家底");
   assert(!openingText.includes("家里肯定不会差") && !openingText.includes("手里肯定还有积蓄"), "开场不能替玩家揭示女方父母把自费 MBA 当成家底");
   const sceneVersionsText = brief.sceneVersions.map((scene) => scene.version).join(" ");
@@ -3189,7 +3466,7 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assertIncludes(requestedFlowQuestion?.suspicionLabel, "不信他说拿不出", "玩家按钮必须只点出男方已经拒绝、女方仍要求流水的怀疑方向");
   assertIncludes(requestedFlowQuestion?.question, "为什么还是不信", "财力误判必须由玩家选择后交给主播问出");
   assertIncludes(JSON.stringify({ answer: requestedFlowQuestion?.answer, lines: requestedFlowQuestion?.lines }), "不可能连彩礼都拿不出", "玩家追问后才可暴露女方父母把自费 MBA 当成现有家底");
-  assertIncludes(complicityQuestion?.suspicionLabel, "有没有叫停", "后续玩家问题必须推进到咨询者知情后的动作，不能重复揭示财力推断");
+  assertIncludes(complicityQuestion?.suspicionLabel, "拦没拦", "后续玩家问题必须推进到咨询者知情后的动作，不能重复揭示财力推断");
   assertIncludes(complicityQuestion?.answer, "真让她撤回，我没说", "咨询者必须承认自己没有叫停二十八万八");
   assert(spendingScene, "收入疑点必须来自日常观察而不只是截图缺边");
   assertIncludes(bridePriceFlow, "二十八万八拿不出来", "案三必须先让男方拒绝二十八万八");
@@ -4029,6 +4306,7 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assert(!JSON.stringify(creditBillScene?.questionOptions ?? []).includes("又刷了哪些消费"), "账单固定陈述已经报过消费项目，玩家追问不得再整表复挖");
   assertIncludes(creditBillScene?.questionOptions?.find((option) => option.correct)?.question ?? "", "还剩至少三万五", "第一夜第三个承重问题必须落在八万元的金额缺口");
   assertIncludes(creditBillScene?.questionOptions?.find((option) => option.correct)?.answer ?? "", "反正不是乱来的钱", "金额缺口必须逼出男方回避用途、继续催款的原话");
+  assertIncludes(creditBillScene?.questionOptions?.find((option) => option.correct)?.answer ?? "", "开播前已经转给你", "第一夜再提‘今晚先转’时必须明确是在核对开播前旧句");
   assertIncludes(creditBillScene?.questionOptions?.find((option) => !option.correct)?.question ?? "", "男装加起来也就五千", "五千元男装只保留为可讨论的外围问题，不能挤占第一夜承重名额");
   const flowOpener = overnightCallbackOpenerById(brief, "流水圈注");
   assertIncludes(flowOpener?.line ?? "", "三月十一号", "流水回拨必须从最早的二十万借款开始");
@@ -4069,7 +4347,7 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assertIncludes(brief.stageJudgement, "不是查账", "案一判词必须点名来电人索取公开背书的真实用途");
   assert(!/四万多共同消费|没说清的三万五|一万二的设备/.test(brief.stageJudgement), "案一结案口播金额最多保留两处，细账回到结案卡");
   assert(!/虚荣作祟|花不起的日子/.test(brief.stageJudgement), "案一判词不得用抽象道德标签代替已经闭合的具体账目");
-  assertIncludes(brief.stageJudgement, "这个忙我不帮", "案一判词必须让主播拒绝替咨询者省掉解释");
+  assertIncludes(brief.stageJudgement, "这种话，我不会替你说的", "案一判词必须让主播拒绝替咨询者省掉解释");
   const creditJudgementBeats = splitDialogueSentences(brief.stageJudgement ?? "");
   assert(creditJudgementBeats.length >= 4, "案一结案必须分开决定、人物批评、责任和行动，不能压回一句审计结论");
   assert(creditJudgementBeats.every((beat) => beat.length <= 72), "案一结案每一拍只能推进一个意思");
@@ -4079,6 +4357,8 @@ test("RUNTIME-008", "overnight helpers gate day budget and callback openers", ()
   assert(deviceSeed, "案 1 夜 A 必须保留设备受益种子");
   assert(deviceReveal, "案 1 夜 B 必须保留设备受益揭示");
   assert(loyaltyPayoff, "案 1 夜 B 必须保留催款消息回收");
+  assertIncludes(loyaltyPayoff?.version ?? "", "又把开播前那条语音发了一遍", "案一夜 B 的失业语音必须明确是旧句再发");
+  assert(!(loyaltyPayoff?.version ?? "").includes("现在又来了一条语音"), "案一夜 B 不得把同一句失业语音写成新消息");
   assert(!JSON.stringify(deviceSeed?.sceneCloser ?? {}).includes("两件事我听明白了"), "案一设备场尾不得用审计清单复述刚听完的两项事实");
   assertIncludes(deviceSeed.version, "投资", "案 1 夜 A 只能先种下投资话术");
   const deviceRevealText = JSON.stringify(deviceReveal ?? {});
@@ -4244,7 +4524,7 @@ test("RUNTIME-009", "case 2 moves shop observation and table comparison into a t
   assertIncludes(JSON.stringify(callerBenefitsScene?.casualQuestions ?? []), "染发、护理", "案 2 必须把高频理发消费留给具体追问，不塞进初次职业自报");
   assertIncludes(brief.stageJudgement ?? "", "回单", "案 2 判词必须点明要追的材料是什么");
   assertIncludes(brief.stageJudgement ?? "", "十二万", "案 2 判词必须称量来电人转出的金额");
-  assertIncludes(brief.stageJudgement ?? "", "让他书面发", "案 2 判词必须把代投材料落到可执行的书面留证动作");
+  assertIncludes(brief.stageJudgement ?? "", "书面发过来", "案 2 判词必须把代投材料落到可执行的书面留证动作");
   assertIncludes(brief.stageJudgement ?? "", "进没进产品", "案 2 判词必须只留一件入产品与否的未知");
   assert(!/六折|免过一次护理|十八次|三张十万元/.test(brief.stageJudgement ?? ""), "案 2 结案口播不得重新朗读已进入结案卡的材料清单");
   assertIncludes(brief.stageJudgement ?? "", "自己开口让他代投", "案 2 判词必须当面指出十二万由咨询者主动提出代投");
@@ -4423,10 +4703,81 @@ test("RUNTIME-008C", "conditional reaction beats trigger from either a marked ro
       (counterBeat.choices ?? []).forEach((choice) => {
         assert(choice.directionLabel, `${caseBrief.runtimeContentCaseId} 的现场压力选择 ${counterBeat.id}/${choice.id} 必须提供方向按钮`);
         assert(choice.directionLabel !== choice.label, `${caseBrief.runtimeContentCaseId} 的现场压力选择不得把主播完整台词写在按钮上`);
+        assert((choice.lines ?? []).length >= 1, `${caseBrief.runtimeContentCaseId} 的现场压力选择 ${counterBeat.id}/${choice.id} 必须在点击后的第一屏改变人物或现场状态`);
+        const choiceResultHtml = liveCounterBeatHtml(counterBeat, { choiceId: choice.id });
+        assertIncludes(choiceResultHtml, choice.lines[0].text ?? "", `${caseBrief.runtimeContentCaseId} 的现场压力选择 ${counterBeat.id}/${choice.id} 必须立即渲染所选后果`);
         assert(choice.recapAftertaste, `${caseBrief.runtimeContentCaseId} 的现场压力选择 ${counterBeat.id}/${choice.id} 必须在回看留下余味`);
         assert(!choice.recapAftertaste.includes("主播"), `${caseBrief.runtimeContentCaseId} 的现场压力回看必须使用林旭阳第一人称`);
       });
     });
+  });
+});
+
+test("RAGE-001", "rage-bait payoff stays player-led, bounded, and visible in runtime plans", () => {
+  const pack = storyPackForKey("steam-demo-01");
+  const prologue = pack.nightShell?.prologue;
+  const coldOpen = prologue?.coldOpen;
+  assertEqual(prologue?.entryActionKey, "night-shell-broadcast-opened", "冷开场前必须先让玩家完成开播动作");
+  assertIncludes(screenSources[3], "data-start-night-broadcast", "开播动作必须有独立可操作按钮，不能由冷开场倒叙代劳");
+  assertIncludes(JSON.stringify(coldOpen?.setupLines ?? []), "第一位来电人", "失业语音前必须先交代它来自第一位来电人");
+  assertIncludes(JSON.stringify(coldOpen?.setupLines ?? []), "男朋友", "失业语音前必须先交代说话人与来电人的关系");
+  assertEqual(coldOpen?.line?.speakerProfileId, "case1-respondent", "失业语音必须绑定案一男方，不能误用来电人声纹");
+  assertEqual(coldOpen?.line?.text, "我只是怕你知道我失业后就离开我。", "黄金九十秒必须以失业语音发债");
+  assertEqual(coldOpen?.actionLabel, "听完这条语音", "首期付息必须由玩家主动听完原话触发");
+  assert(!/替(?:他|她|谁)收口|紧跟着|紧接着/.test(JSON.stringify(coldOpen)), "冷开场不得让主播说作者衔接词");
+  assert(!screenSources[3].includes("先让弹幕把这句话听全"), "冷开场按钮旁不得再放编导式操作说明");
+  assertIncludes(JSON.stringify(coldOpen?.interestLines ?? []), "反正不是乱来的钱", "首期付息后必须立即增发下一笔债");
+
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  briefs.forEach((brief) => {
+    const activeScene = brief.sceneVersions?.find((scene) => (scene.questionOptions ?? []).some((option) => option.routeAxis === "active-provocation"));
+    const activeOption = activeScene?.questionOptions?.find((option) => option.routeAxis === "active-provocation");
+    if (!activeOption) return;
+    assert(activeOption.correct, `${brief.runtimeContentCaseId} 已使用主动复读时必须走已有正确问答通道`);
+    assert(/重放|重读|读全|听完/.test(activeOption.suspicionLabel ?? ""), `${brief.runtimeContentCaseId} 主动回放按钮必须写主播的具体动作`);
+    assert(!/弹幕|课代表|替我选|替我下手/.test(activeOption.suspicionLabel ?? ""), `${brief.runtimeContentCaseId} 主动回放按钮不得写成编导口令`);
+    assert((activeOption.resistanceBeat?.lines ?? []).some((line) => line.role === "caller"), `${brief.runtimeContentCaseId} 主动回放后必须有来电人应激或信息变化`);
+    const reaction = (brief.routeAxisComments?.["active-provocation"] ?? []).join("\n");
+    assert(!/@讲道理先劝和|@他也是为你好|前面那句我收回|当我没说/.test(reaction), `${brief.runtimeContentCaseId} 若有现场评论，不得套用固定账号整齐败退模板`);
+  });
+
+  const case1 = briefs.find((brief) => brief.runtimeContentCaseId === "01-credit");
+  assertEqual(liveCounterBeatAfterScene(case1, 3, () => false)?.id, "credit-night-b-first-interest", "案一夜 B 长段必须在第一场后付息");
+  assertEqual(liveCounterBeatAfterScene(case1, 3, (key) => key === "liveCounterBeat:credit-night-b-first-interest"), null, "案一付息拍播过后不得重复");
+  const case3 = briefs.find((brief) => brief.runtimeContentCaseId === "03-profile");
+  assertIncludes(JSON.stringify(case3.overnightStructure?.liveCounterBeats ?? []), "刷这么大一个礼物就能插麦吗", "案三长对质必须保留礼物弹幕付息拍");
+  const case4 = briefs.find((brief) => brief.runtimeContentCaseId === "04-workplace");
+  assertIncludes(JSON.stringify(case4.overnightStructure?.liveCounterBeats ?? []), "连报备都没做", "案四四压连排前必须让来电人承认自己没有报备");
+});
+
+test("FABLE-001", "old-case welds stay actionable, visible, and save-compatible", () => {
+  const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const case3 = briefs.find((brief) => brief.runtimeContentCaseId === "03-profile");
+  const case4 = briefs.find((brief) => brief.runtimeContentCaseId === "04-workplace");
+  const profileLedger = case3?.documents?.find((document) => document.id === "case3-credential-balance");
+  const inbox = case4?.investigationHooks?.find((hook) => hook.id === "work-postcase-inbox");
+  const fireBack = inbox?.replyChoices?.find((choice) => choice.id === "inbox-fire-back");
+
+  assert(profileLedger?.rows?.some((row) => row.rowId === "p08"), "案三‘差两千’出处必须进入现有材料板，不得另开解释场");
+  assert(profileLedger?.rowQuestions?.p08?.length, "案三出处页必须能在现有圈行交互中追问");
+  assertEqual((inbox?.replyChoices ?? []).length, 4, "案四收件箱必须在旧后台材料场提供四种处理动作");
+  assertIncludes(replyChoicesHtml(inbox?.replyChoices, fireBack?.id), fireBack?.aftertaste ?? "", "案四处理动作选中后必须第一屏显示后果，不能只改隐藏标签");
+  assertIncludes(replyChoicesHtml(inbox?.replyChoices), "怎么处理", "案四收件箱按钮必须描述主播当场能做的动作");
+  assertEqual(JSON.stringify(initialNightStateFor(case4).investigationReplyChoices), "{}", "新开案件必须初始化后台处理记录");
+  assertEqual(
+    JSON.stringify(migrateState({ caseNights: { workplace: { investigationReplyChoices: { [inbox.id]: fireBack.id } } } }).caseNights.workplace.investigationReplyChoices),
+    JSON.stringify({ [inbox.id]: fireBack.id }),
+    "案四收件箱处理必须随旧存档迁移保留"
+  );
+  assertIncludes(runtimeSource, "echo.requiresInventoryId", "跨案回声必须检查玩家是否真的执行过对应处理动作");
+  assertIncludes(runtimeSource, "inventory.has(echo.requiresInventoryId)", "未执行案四错回时不得播放被截句的下一案回声");
+
+  briefs.forEach((brief) => {
+    const activeScene = brief.sceneVersions?.find((scene) => (scene.questionOptions ?? []).some((option) => option.routeAxis === "active-provocation"));
+    const activeOption = activeScene?.questionOptions?.find((option) => option.routeAxis === "active-provocation");
+    if (!activeOption) return;
+    assert((activeOption?.lines ?? []).some((line) => line.role === "caller") || activeOption?.answer, `${brief.runtimeContentCaseId} 主动拱火后必须立刻改变来电人开口`);
+    assert((activeOption?.resistanceBeat?.lines ?? []).some((line) => line.role === "caller"), `${brief.runtimeContentCaseId} 主动拱火后必须第一屏显示来电人应激`);
   });
 });
 
@@ -4483,6 +4834,8 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
   assertIncludes(giftMicText, "领证前把二十八万八打进你的卡", "案 3 男方插麦必须把女方个人收款账户带入必经矛盾");
   assertIncludes(giftMicText, "等到九月底", "案 3 男方插麦必须把女方家资金的较晚时点带入必经矛盾");
   assertIncludes(giftMicText, "有没有一起告诉我", "案 3 插麦问句必须修正为男方追问自己是否被告知");
+  const refundGiftChoice = giftMicBeat?.choices?.find((choice) => choice.id === "refund-then-scope");
+  assertEqual(pressureSignalForLiveCounterChoice(refundGiftChoice), "guarded", "案 3 退回礼物后男方必须进入防御态，下一问不能与其他处理路线完全相同");
   const mediationBeat = structure?.liveCounterBeats?.find((beat) => beat.id === "profile-mediation-consent");
   assertIncludes(JSON.stringify(mediationBeat?.lines ?? []), "共同账户", "案 3 男方必须提出可谈方案，不能只情绪性拒绝");
   const dinnerCancelBeat = structure?.liveCounterBeats?.find((beat) => beat.id === "profile-weekend-dinner-cancelled");
@@ -4497,6 +4850,17 @@ test("RUNTIME-010", "case 3 offers tea house, doorstep, and credential compariso
 test("RUNTIME-011", "case 4 keeps interlude choices on evidence that changes the callback", () => {
   const brief = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" })
     .find((item) => item.runtimeContentCaseId === "04-workplace");
+  const deepFollowupText = JSON.stringify(brief.deepFollowup ?? {});
+  assertIncludes(deepFollowupText, "为什么没走报备", "案 4 深问必须让咨询者当场回答为何绕开流程，不能只说周一自己答");
+  assertIncludes(deepFollowupText, "想拿负责人", "案 4 深问必须把绕开流程与争取负责人机会接回同一条因果链");
+  const privateWarningBeat = brief.overnightStructure?.liveCounterBeats?.find((beat) => beat.id === "work-private-warning-voice");
+  assert(privateWarningBeat?.lines?.some((line) => line.speaker === "同事托话（手机）"), "案 4 群消息撤回后必须由同事本人发来私聊压力，不能只靠主播或弹幕概括");
+  assertIncludes(JSON.stringify(privateWarningBeat?.lines ?? []), "以后活动别找我", "案 4 私聊压力必须落到咨询者真正害怕失去的活动机会");
+  const inboxHook = brief.investigationHooks?.find((hook) => hook.id === "work-postcase-inbox");
+  const actOneContradiction = brief.sceneVersions?.find((scene) => scene.testimonyWall)?.testimonyWall?.acts?.[0]?.decisivePresent?.contradiction;
+  assertEqual(inboxHook?.triggerContradiction, actOneContradiction, "案 4 收件箱必须由第一幕决定性指认解锁");
+  assert(!unlockedInvestigationEntries(brief, { foundContradictions: [], actionDone: () => false }).some((entry) => entry.hook.id === "work-postcase-inbox"), "案 4 收件箱不得在第一夜幕间提前出现");
+  assert(unlockedInvestigationEntries(brief, { foundContradictions: [actOneContradiction], actionDone: () => false }).some((entry) => entry.hook.id === "work-postcase-inbox"), "案 4 完成‘流程都走完了’指认后必须解锁收件箱");
   assert(!brief.delegation, "案 4 不得保留与审批页复核重复的顾问委托");
   assert(!nightActionById(brief, "zhao-zhou-work"), "案 4 不得再用三位顾问包装同一组材料问题");
   const approvalAction = nightActionById(brief, "recheck-approval-page");
@@ -4579,10 +4943,10 @@ test("RUNTIME-011", "case 4 keeps interlude choices on evidence that changes the
   assertEqual(nightStructureFor(brief)?.hangup?.hostLine, structure?.hostHoldLine, "案 4 挂断主持句必须与 overnight 对齐");
   assert(!/活动立项|报销单|申请编号/.test(JSON.stringify(nightStructureFor(brief)?.hangup ?? {})), "案 4 挂断不得提前承认批的是立项");
   assertIncludes(brief.stageJudgement ?? "", "正式报销", "案 4 判词必须给出公司报销需要补齐的具体入口");
-  assertIncludes(brief.stageJudgement ?? "", "看准你想表现", "案 4 判词必须点名同事如何利用新人想表现的心思");
+  assertIncludes(brief.stageJudgement ?? "", "看准你想把这次活动扛下来", "案 4 判词必须点名同事如何利用新人想表现的心思");
   assert(/流程都走完了.{0,8}假话/.test(brief.stageJudgement ?? ""), "案 4 判词必须直说流程完成是假话");
   assertIncludes(brief.stageJudgement ?? "", "返费", "案 4 判词必须把公司层面的返费结构点出来");
-  assertIncludes(brief.stageJudgement ?? "", "个人垫钱", "案 4 判词必须把公司扩张与个人垫钱连接起来");
+  assert(/个人垫.{0,2}钱/.test(brief.stageJudgement ?? ""), "案 4 判词必须把公司扩张与个人垫钱连接起来");
   assert(!brief.stageJudgement?.includes("供应商"), "案 4 供应商返利降为白天可选支线后，不得重新塞进固定判词");
   assert(!/四十三页|只改了字体/.test(brief.stageJudgement ?? ""), "案 4 判词不得用无关劳动怨气挤占两条资金路径");
   assert(!brief.evidenceChecks?.find((check) => check.id === "work-budget-timeline")?.options?.find((option) => option.correct)?.reactionLine?.includes("财务根本还没说延后"), "案 4 材料反应必须像人物现场想起来，而不是分析报告");
@@ -4612,21 +4976,35 @@ test("DOCS-001", "AI intent and large playtest templates stay explicit", () => {
   assertIncludes(skillSource, "docs/playtest-report-template.md", "大测试 skill 必须引用统一记录模板");
 });
 
-test("DOCS-002", "case writing law keeps reciprocity, callbacks, care echoes, exceptions, and active tails", () => {
+test("DOCS-002", "case writing law prioritizes mainline, fair discovery, emotional truth, and optional atmosphere", () => {
   const scriptwritingSkill = readFileSync(new URL("../project-skills/case-scriptwriting/SKILL.md", import.meta.url), "utf8");
-  assertIncludes(scriptwritingSkill, "## 温情与尾巴法条", "案本 skill 必须有温情与尾巴法条专节");
-  assertIncludes(scriptwritingSkill, "**互惠律**:每包主角至少被照顾 2 次", "互惠律必须要求主角也被照顾");
-  assertIncludes(scriptwritingSkill, "**回访律**:结案不等于人物结束", "回访律必须让人物在结案后留下生活信息");
-  assertIncludes(scriptwritingSkill, "**关怀动词律**:玩家每案至少一个非侦探动词", "关怀动词必须进入玩家操作");
-  assertIncludes(scriptwritingSkill, "**破例即温情条款**:声纹破例是最强温情载体", "声纹破例必须受单次预算约束");
-  assertIncludes(scriptwritingSkill, "**活性尾巴律**:钩子=再来动因+信物+兑现形态", "活性尾巴必须具备三件套");
+  assertIncludes(scriptwritingSkill, "## Decision Priority（冲突时从上到下裁决）", "案本 skill 必须提供明确的优先级裁决入口");
+  assertIncludes(scriptwritingSkill, "P0 主线与矛盾", "案本 skill 必须把主线因果和矛盾列为最高创作优先级");
+  assertIncludes(scriptwritingSkill, "P1 玩家发现与证据公平", "案本 skill 必须让玩家发现权和证据公平高于氛围");
+  assertIncludes(scriptwritingSkill, "P2 人物与情绪交付", "案本 skill 必须保留人物情绪强度");
+  assertIncludes(scriptwritingSkill, "P3 氛围与纹理", "案本 skill 必须把弹幕、眨眼和固定 ID 归入低优先级氛围层");
+  assertIncludes(scriptwritingSkill, "五句答不清，先修故事", "主线未理顺时不得先补弹幕和口癖");
+  assertIncludes(scriptwritingSkill, "允许愤怒、讽刺、难听和失控", "去 AI 不得退化成去情绪");
+  assertIncludes(scriptwritingSkill, "是否过度冒犯", "主播力度必须按攻击对象、证据和比例裁决");
+  assertIncludes(scriptwritingSkill, "不强制回暖", "证据成立后的判断不得被模板安慰撤回");
+  assertIncludes(scriptwritingSkill, "不设“每案几拍风趣、几拍变脸”的配额", "主播声线不得按寄存器配额硬拼");
+  assertIncludes(scriptwritingSkill, "Do not manufacture vanity or complicity", "相对受害者不得为了强行灰区被安上污点");
+  assertIncludes(scriptwritingSkill, "主动回放是可选实现", "主动复读不得成为每案固定仪式");
+  assertIncludes(scriptwritingSkill, "固定听众 ID 是可选的熟悉感", "固定弹幕反派不得成为编制");
+  assertIncludes(scriptwritingSkill, "一个案件没有眨眼台词或固定反派", "缺少氛围配件不得判定案件不完整");
+  assert(!scriptwritingSkill.includes("每案 ≥3 条与案情无关"), "写作规范不得强制每案凑跑题弹幕");
+  assert(!scriptwritingSkill.includes("每案至少 1 次:情绪打在不该打的人身上"), "写作规范不得强制每案安排迁怒");
+  assert(!scriptwritingSkill.includes("每案至少一个非侦探动词"), "写作规范不得强制每案装配关怀按钮");
   assertIncludes(scriptwritingSkill, "Keep embodiment in generated reading copies", "玩家身份规则必须覆盖自动生成的连续阅读版");
   assertIncludes(scriptwritingSkill, "Close every branch of the identity loop", "现场压力选择的每一条分支都必须留下回声");
   assertIncludes(scriptwritingSkill, "Establish livelihood pressure once per continuous night", "连续直播不能为了结构重复履历或硬造压力");
-  assertIncludes(scriptwritingSkill, "### 慌乱失稳律（来电人）", "案本 skill 必须要求来电人在急压拍出现可听见的失稳");
-  assertIncludes(scriptwritingSkill, "逻辑/细节露馅 ≥1 处/案", "慌乱失稳必须落到每案至少一处自利粉饰滑动");
-  assertIncludes(scriptwritingSkill, "### 抓破绽·主播加压", "主播双寄存器必须包含抓破绽加压相位");
-  assertIncludes(scriptwritingSkill, "攻击对象是那处矛盾/粉饰,不是她这个人", "主播加压必须逼逻辑而不是攻击求助者");
+  assertIncludes(scriptwritingSkill, "## P2 情绪债与爽点兑付（“拱火契约”）", "案本 skill 必须保留气→爽的主线兑付规则");
+  assertIncludes(scriptwritingSkill, "从发债到第一次付息不得跨过一个完整场景", "每笔情绪债必须在一个场景内先还一次");
+  assertIncludes(scriptwritingSkill, "操作后的第一屏就交付人物、材料或局面变化", "玩家亲手出招后不能延迟兑付");
+  assertIncludes(scriptwritingSkill, "不得按配额安排主播对弹幕眨眼", "高潮口播不得按模板强塞主播与弹幕默契");
+  assert(!scriptwritingSkill.includes("每案至少让固定反派"), "写作规范不得再强制固定弹幕账号每案出场败退");
+  assertIncludes(scriptwritingSkill, "同形可以形成仪式，也可能暴露模板", "同形骨架必须按案件效果判断，不能自动豁免");
+  assertIncludes(scriptwritingSkill, "P3 deletion test", "验收必须实际删除测试氛围资产，而不是数配额");
 });
 
 test("DOCS-003", "case writing law requires audited adjacent-turn causality", () => {
@@ -4716,7 +5094,7 @@ test("DETECTIVE-001", "detective plot coupling method stays explicit", () => {
   assertIncludes(detectiveSkill, "实物-言语死锁", "侦探结构 skill 必须要求材料边缘和口头说法互相卡死");
   assertIncludes(detectiveSkill, "No pristine victims", "侦探结构 skill 必须禁止无瑕受害者");
   assertIncludes(detectiveSkill, "Ambient promises count too", "侦探结构 skill 必须把被强调的声音、来电和地点变化登记进承诺账本");
-  assertIncludes(scriptwritingSkill, "绝不提供“无瑕受害者”", "案本 skill 必须在写作规则中禁止无瑕受害者");
+  assertIncludes(scriptwritingSkill, "Do not manufacture vanity or complicity", "案本 skill 必须防止为强行灰区给相对受害者编造污点");
   assertIncludes(scriptwritingSkill, "实物-言语死锁", "案本 skill 必须要求材料板物理疑点锁住口头谎言");
   assertIncludes(patternReference, "Sherlock Holmes", "侦探模式参考必须包含经典可见线索模型");
   assertIncludes(patternReference, "Agatha Christie", "侦探模式参考必须包含群像隐瞒模型");

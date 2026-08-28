@@ -224,7 +224,8 @@ function validateQuickCase(packet, cast) {
   }
   const recapPage = (packet.ending?.summaryPages ?? []).find((page) => page.stageLabel === "结案复盘");
   assert(recapPage, `${packet.id} quick case must include a separate recap page after the call ends`);
-  assert(recapPage.lines?.[0]?.role === "host" && recapPage.lines[0].text === "我们来把这次这个连线复个盘。", `${packet.id} recap page must open with the fixed host handoff`);
+  assert(recapPage.lines?.[0]?.role === "host" && /(电话挂了|收麦了)/.test(recapPage.lines[0].text), `${packet.id} recap page must open with a spoken post-call handoff`);
+  assert(!recapPage.lines[0].text.includes("我们来把这次这个连线复个盘"), `${packet.id} recap page must not restore the shared recap template`);
   assert(packet.sourceBoundary, `${packet.id} must record its adaptation boundary`);
   for (const confrontation of confrontations) {
     const lines = quickConfrontationLines(confrontation);

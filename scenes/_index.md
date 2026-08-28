@@ -26,3 +26,6 @@ story: midnight-hotline-livestream-detective
 | chapter-04 | 3 | 来人核实与职业隐瞒 | host-lin-xuyang | revised | [chapter-04-scene-03](chapter-04-scene-03.md) |
 | chapter-04 | 4 | 半张名单之后与宸直新闻 | host-lin-xuyang | revised | [chapter-04-scene-04](chapter-04-scene-04.md) |
 | chapter-05 | 1 | 三次圈句与评论接力 | host-lin-xuyang | revised | [chapter-05-scene-01](chapter-05-scene-01.md) |
+| chapter-06 | 1 | 咖啡厅离婚谈判 | host-lin-xuyang | revised | [chapter-06-scene-01](chapter-06-scene-01.md) |
+| chapter-06 | 2 | 同晚旧物与家庭账 | host-lin-xuyang | revised | [chapter-06-scene-02](chapter-06-scene-02.md) |
+| chapter-06 | 3 | 个人委托初检回告 | host-lin-xuyang | revised | [chapter-06-scene-03](chapter-06-scene-03.md) |

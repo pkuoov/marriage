@@ -157,9 +157,12 @@ function renderScript() {
   }
   add("");
 
-  add("## 序幕：晚上八点，开播", "");
-  for (const line of manifest.nightShell?.prologue?.lines ?? []) renderSpokenLine(lines, line);
-  if (manifest.nightShell?.prologue?.hostLine) renderSpokenLine(lines, manifest.nightShell.prologue.hostLine);
+  add("## 咖啡厅序章：开播前", "");
+  renderNode(lines, manifest.nightShell?.cafePrologue, "离婚谈判、同晚核对与数日后回告", 3);
+  add("");
+
+  add("## 晚上八点：回到直播间", "");
+  renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderSpokenLine, { includeMetadata: true });
   add("");
 
   casePackets.forEach((packet, caseIndex) => {
@@ -254,7 +257,7 @@ function renderScript() {
     add("## 【编剧资料】事实边界与运行规则", "");
     if (packet.openingComplaint) renderNode(lines, packet.openingComplaint, "内部来电索引", 3);
     const alreadyRendered = new Set([
-      "caseId", "plotId", "label", "storyArcTitle", "caseTitle", "dramaticAnchor", "whyTonight", "helpRequest", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject", "openingComplaint", "openingDialogue", "sceneVersions", "nightStructure", "overnightStructure", "stanceSnapshot", "delegation", "evidenceCards", "evidenceChecks", "investigationHooks", "documents", "advisorNotes", "respondentNote", "lurkerNote", "crossCaseEchoes", "hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "careChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"
+      "caseId", "plotId", "label", "storyArcTitle", "caseTitle", "dramaticAnchor", "rageBaitContract", "whyTonight", "helpRequest", "objectPurpose", "callerStake", "otherStake", "thirdPressure", "selfServingOmission", "publicHook", "storyArcSummary", "storySuspense", "storyClueObject", "openingComplaint", "openingDialogue", "sceneVersions", "nightStructure", "overnightStructure", "stanceSnapshot", "delegation", "evidenceCards", "evidenceChecks", "investigationHooks", "documents", "advisorNotes", "respondentNote", "lurkerNote", "crossCaseEchoes", "hostDisclosure", "hostWoundHook", "deepFollowup", "stageJudgement", "quotePickCandidates", "accusationChoices", "careChoices", "caseClosing", "storyInterludeRecap", "conclusionWhenCleared", "conclusionBranches", "followupTwist", "dailyShareTitle", "dailyShareBody", "dailyShareQuestion", "truth"
     ]);
     for (const [key, value] of Object.entries(packet)) {
       if (!alreadyRendered.has(key)) renderNode(lines, value, key, 3);
@@ -358,6 +361,9 @@ function renderReadableQuickRounds(lines, packet) {
 
   rounds.forEach((round, roundIndex) => {
     lines.push(`### 第 ${roundIndex + 1} 轮｜${round.label ?? round.id}（${round.id}）`, "");
+    if (round.noClueReaction?.text) {
+      lines.push(`【无线索原句后的反应】 **${round.noClueReaction.role === "host" ? "林旭阳" : "来电人"}：** ${round.noClueReaction.text}`, "");
+    }
     lines.push("#### 普通问话", "");
     for (const turnId of round.turnIds ?? []) {
       const entry = turnsById.get(turnId);
@@ -373,6 +379,9 @@ function renderReadableQuickRounds(lines, packet) {
       const option = optionsById.get(optionId);
       if (!option) continue;
       lines.push(`- **${option.id}**：${option.label}${option.confrontationId ? ` → 对质 ${option.confrontationId}` : " → 不触发对质"}`, "");
+      if (option.correct === false && option.missReaction?.text) {
+        lines.push(`  - 【错方向后的反应】**${option.missReaction.role === "host" ? "林旭阳" : "来电人"}：** ${option.missReaction.text}`, "");
+      }
     }
 
     lines.push("#### 本轮当面对质", "");
@@ -408,9 +417,9 @@ function renderPureStoryScript() {
     "> 本稿是玩家可见内容的分支汇编，不是某一次游玩的逐屏录像。它保留故事、台词、动作、材料内容与玩家可能听见的分支，移除内部 ID、数值、判定规则、作者真相和工程字段；`【另一种接法】` 表示同一处互斥台词。需要按实际界面顺序连续阅读时，请看“连续故事台本”。本文由当前内容包自动生成，请修改 JSON 真源后运行 `npm run content:script`。",
     ""
   );
-  lines.push("# 序幕｜晚上八点，开麦", "", "【直播间。控台灯亮，热线接入。】", "");
-  for (const line of manifest.nightShell?.prologue?.lines ?? []) renderDirectorSpoken(lines, line);
-  if (manifest.nightShell?.prologue?.hostLine) renderDirectorSpoken(lines, manifest.nightShell.prologue.hostLine);
+  renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { phase: "opening" });
+  lines.push("# 当晚｜晚上八点，开麦", "", "【你和赵律师回到直播间。控台灯亮，第一通热线已经在等。】", "");
+  renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderDirectorSpoken);
 
   casePackets.forEach((packet, caseIndex) => {
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? `第${caseIndex + 1}案`;
@@ -473,6 +482,7 @@ function renderPureStoryScript() {
   });
 
   renderPureStoryEpilogue(lines, manifest.nightShell?.epilogue);
+  renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { phase: "forensic" });
   return `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd()}\n`;
 }
 
@@ -484,9 +494,9 @@ function renderContinuousStoryScript() {
     "> 固定一条完整可玩路线，按实机先后收录夜间问答、材料圈选、深入追问、最终追问、后台回流、连线回看、最后一句与案件结案，供连续阅读和流程核对。其他分支见“纯故事台本”和“全量可读文字剧本”。本文由 JSON 真源生成，请勿手改。",
     ""
   );
-  lines.push("# 序幕｜晚上八点，开麦", "", "【直播间。控台灯亮，热线接入。】", "");
-  for (const line of manifest.nightShell?.prologue?.lines ?? []) renderContinuousSpoken(lines, line);
-  if (manifest.nightShell?.prologue?.hostLine) renderContinuousSpoken(lines, manifest.nightShell.prologue.hostLine);
+  renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { includeAlternatives: false, actionActor: "林旭阳", phase: "opening" });
+  lines.push("# 当晚｜晚上八点，开麦", "", "【林旭阳和赵律师回到直播间。控台灯亮，第一通热线已经在等。】", "");
+  renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderContinuousSpoken, { actionMarker: "林旭阳操作" });
 
   casePackets.forEach((packet, caseIndex) => {
     const route = continuousStoryRoutes[packet.caseId];
@@ -566,6 +576,7 @@ function renderContinuousStoryScript() {
   });
 
   renderContinuousEpilogue(lines, manifest.nightShell?.epilogue);
+  renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { includeAlternatives: false, actionActor: "林旭阳", phase: "forensic" });
   return `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd()}\n`;
 }
 
@@ -1026,6 +1037,71 @@ function renderPureStoryEpilogue(lines, epilogue) {
   if (epilogue.close) lines.push(`【收束】${epilogue.close}`, "");
 }
 
+function renderCafePrologueStory(lines, prologue, { includeAlternatives = true, includeMetadata = false, actionActor = "玩家", phase = "all" } = {}) {
+  if (!prologue) return;
+  const cafe = prologue.cafe ?? {};
+  const aftermath = prologue.aftermath ?? {};
+  const forensic = prologue.forensic ?? {};
+  if (phase !== "forensic") {
+    lines.push(`# ${prologue.timeline ?? "开播前 · 傍晚"}｜${prologue.title ?? "序章"}`, "");
+    if (prologue.subtitle) lines.push(`【${prologue.subtitle}】`, "");
+    for (const line of cafe.openingLines ?? []) renderDirectorSpoken(lines, line);
+    lines.push(`【${actionActor}操作：把聊天定位和酒店订单的时间并到一起。】`, "");
+    for (const card of cafe.evidencePair ?? []) lines.push(`- ${card.kicker ?? "材料"}｜${card.title ?? ""}：${card.detail ?? ""}`);
+    if (cafe.evidencePair?.length) lines.push("");
+    for (const line of cafe.pairHitLines ?? []) renderDirectorSpoken(lines, line);
+    for (const line of cafe.moneyClaimLines ?? []) renderDirectorSpoken(lines, line);
+    if (cafe.transferEvidence) {
+      lines.push(`【${actionActor}操作：打开${cafe.transferEvidence.title ?? "转账流水"}，拿这张流水追问。】`, "");
+      lines.push(`【材料】${cafe.transferEvidence.detail ?? ""}`, "");
+      for (const row of cafe.transferEvidence.rows ?? []) lines.push(`- ${row}`);
+      if (cafe.transferEvidence.rows?.length) lines.push("");
+    }
+    for (const line of cafe.transferHitLines ?? []) renderDirectorSpoken(lines, line);
+    for (const line of cafe.legalClaimLines ?? []) renderDirectorSpoken(lines, line);
+    const firstRequests = (cafe.legalRequests?.items ?? []).filter((item) => ["divorce-evidence", "marital-property"].includes(item.id));
+    if (firstRequests.length) {
+      lines.push(`【${actionActor}操作：把离婚和家账先记下。】`, "");
+      for (const item of firstRequests) {
+        lines.push(`- ${item.title ?? "诉求"}：${item.uiNote ?? item.nextAction ?? ""}`);
+      }
+      lines.push("");
+    }
+    for (const line of cafe.parentageBlockLines ?? []) renderDirectorSpoken(lines, line);
+    for (const line of cafe.cameraBreakLines ?? []) renderDirectorSpoken(lines, line);
+    const pressureChoices = cafe.pressureChoices ?? [];
+    for (const [index, choice] of pressureChoices.entries()) {
+      if (!includeAlternatives && index > 0) break;
+      lines.push(`【${index > 0 ? "另一种处理：" : `${actionActor}处理镜头：`}${choice.label ?? ""}】${choice.echo ?? ""}`, "");
+    }
+
+    lines.push("# 同一晚｜咖啡厅散场以后", "");
+    for (const line of aftermath.openingLines ?? []) renderDirectorSpoken(lines, line);
+    const routes = aftermath.routes ?? [];
+    for (const [index, route] of routes.entries()) {
+      lines.push(`## ${includeAlternatives && index > 0 ? "另一种先手｜" : "先查｜"}${route.title ?? route.label ?? ""}`, "");
+      for (const row of route.rows ?? []) lines.push(`- ${row.when ?? ""}｜${row.label ?? ""}｜${row.status ?? ""}`);
+      if (route.rows?.length) lines.push("");
+      for (const line of route.lines ?? []) renderDirectorSpoken(lines, line);
+    }
+    for (const line of aftermath.bridgeLines ?? []) renderDirectorSpoken(lines, line);
+    lines.push(`【${actionActor}操作：把两条线交给专业人核，回直播间开播。】`, "");
+  }
+
+  if (phase !== "opening") {
+    lines.push(`# ${forensic.timeline ?? "数日后"}｜私下回告`, "");
+    lines.push(`【${actionActor}操作：打开机构回告。录制关闭。】`, "");
+    for (const line of forensic.openingLines ?? []) renderDirectorSpoken(lines, line);
+    lines.push(`【${actionActor}操作：再看家庭账户的固定转账回单。】`, "");
+    for (const line of forensic.accountClueLines ?? []) renderDirectorSpoken(lines, line);
+    if (prologue.truthBoundary?.endingLine) lines.push(`【试玩收束】${prologue.truthBoundary.endingLine}`, "");
+  }
+  if (includeMetadata) {
+    renderNode(lines, prologue.puzzleLedger, "谜题耦合账本", 2);
+    renderNode(lines, prologue.truthBoundary, "事实边界", 2);
+  }
+}
+
 function renderDirectorScript() {
   const lines = [];
   const sequenceByCaseId = new Map(manifest.sequence.map((item) => [item.caseId, item]));
@@ -1041,9 +1117,9 @@ function renderDirectorScript() {
   lines.push(`- **主题句：** ${manifest.theme?.thesis ?? ""}`);
   lines.push("- 夜 A 让人物按自己的防御讲故事；白天让物件和第三方改变主语；夜 B 才让省略重新回到人物嘴里。", "- 方括号为舞台、表演或玩家操作，不念出。`【防备分支】` 只在压力不足时使用。", "");
 
-  lines.push("# 序幕", "", "【晚上八点。控台灯亮，直播间连线。】", "");
-  for (const line of manifest.nightShell?.prologue?.lines ?? []) renderDirectorSpoken(lines, line);
-  if (manifest.nightShell?.prologue?.hostLine) renderDirectorSpoken(lines, manifest.nightShell.prologue.hostLine);
+  renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { phase: "opening" });
+  lines.push("# 当晚开播", "", "【晚上八点。林旭阳和赵律师回到直播间。】", "");
+  renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderDirectorSpoken);
 
   casePackets.forEach((packet, caseIndex) => {
     const item = sequenceByCaseId.get(packet.caseId) ?? {};
@@ -1158,6 +1234,7 @@ function renderDirectorScript() {
   if (epilogue?.bad) lines.push(`【数据较差分支】${epilogue.bad}`, "");
   if (epilogue?.home) lines.push(`【回家】${epilogue.home}`, "");
   if (epilogue?.close) lines.push(`【收束】${epilogue.close}`, "");
+  renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { includeMetadata: true, phase: "forensic" });
   return `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd()}\n`;
 }
 
@@ -1197,6 +1274,27 @@ function renderDirectorCareChoices(lines, choices = []) {
     lines.push(`#### ${choice.label}`, "", `**林旭阳：** ${choice.hostLine}`, "");
     for (const line of choice.lines ?? []) renderDirectorSpoken(lines, line);
   }
+}
+
+function renderNightShellPrologue(lines, prologue = {}, renderLine = renderDirectorSpoken, options = {}) {
+  const { includeMetadata = false, actionMarker = "玩家操作" } = options;
+  for (const line of prologue?.lines ?? []) renderLine(lines, line);
+  if (includeMetadata && prologue?.entryActionKey) lines.push(`- **行动标记：** ${prologue.entryActionKey}`, "");
+  if (prologue?.entryActionLabel) lines.push(`【${actionMarker}：${prologue.entryActionLabel}】`, "");
+  if (prologue?.hostLine) renderLine(lines, prologue.hostLine);
+  renderColdOpen(lines, prologue?.coldOpen, renderLine, options);
+}
+
+function renderColdOpen(lines, coldOpen = null, renderLine = renderDirectorSpoken, { includeMetadata = false, actionMarker = "玩家操作" } = {}) {
+  if (!coldOpen?.line) return;
+  lines.push("### 冷开场｜发债到首期付息", "");
+  if (includeMetadata && coldOpen.actionKey) lines.push(`- **行动标记：** ${coldOpen.actionKey}`, "");
+  for (const line of coldOpen.setupLines ?? []) renderLine(lines, line);
+  renderLine(lines, coldOpen.line);
+  for (const line of coldOpen.baitComments ?? []) renderLine(lines, line);
+  if (coldOpen.actionLabel) lines.push(`【${actionMarker}：${coldOpen.actionLabel}】`, "");
+  for (const line of coldOpen.interestLines ?? []) renderLine(lines, line);
+  lines.push("【首期付息后，接入第一通来电。】", "");
 }
 
 function renderDirectorSpoken(lines, line) {
@@ -1602,6 +1700,7 @@ function assertSourceCompleteness(markdown, sources) {
         if (key === "answer" && Array.isArray(value.lines) && value.lines.length) return;
         if (key === "helperHint" && !vBroPlayerVisible) return;
         if (key === "callerIntentProfile") return;
+        if (key === "rageBaitContract") return;
         if (["src", "artSrc", "alt", "artAlt"].includes(key)) return;
         visit(entry, `${path}.${key}`);
       });

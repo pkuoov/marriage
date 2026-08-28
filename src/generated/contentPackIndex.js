@@ -85,7 +85,7 @@ export const CONTENT_CAST = {
         "X归X，Y是Y",
         "先别定",
         "把这两件事分开",
-        "这个忙我不帮",
+        "这种话，我不会替你说的",
         "我们不脱离感情只谈钱"
       ],
       "habits": [
@@ -115,7 +115,7 @@ export const CONTENT_CAST = {
     },
     "exampleLines": [
       "体面归体面，账单归账单。先把四月以后这几笔钱说清。",
-      "你想把自己的贪心全改成‘他骗我’，这个忙我不帮。",
+      "你想把自己的贪心全改成‘他骗我’，这种话我不会替你说的。",
       "她先裁掉金额栏，风声一来才改口。这两个动作连起来看。"
     ]
   },
@@ -239,7 +239,7 @@ export const CONTENT_CAST = {
       ],
       "stressResponse": "听见无证据定性会立刻打断，并补适用条件。"
     },
-    "motivation": "把口头说法压回法律后果和书面证据。",
+    "motivation": "接受男方当场咨询，协助把离婚和家账先谈清；把口头说法压回法律后果和书面证据。",
     "fear": "情绪化定罪再次毁掉无辜者。",
     "defense": "短句、免责、拒猜动机。",
     "voice": {
@@ -261,7 +261,7 @@ export const CONTENT_CAST = {
       ]
     },
     "relationshipVoice": "和林旭阳私下说话时先说吃饭、汤、包和等人，不用案卷交接或律师函口吻；工作内容只说成“有个东西”，让他忙完自己看。",
-    "knowledgeBoundary": "只解释法律与责任效果，不替案件当事人作证，不指点玩家圈哪一栏。",
+    "knowledgeBoundary": "在咖啡厅协助男方理清已有材料，但不代理诉讼；只解释法律与责任效果，不替案件当事人作证，不指点玩家圈哪一栏。",
     "exampleLines": [
       "口说的不算，落纸的算数。至于为什么这么说，我不猜。"
     ]
@@ -486,7 +486,7 @@ export const CONTENT_CAST = {
     },
     "knowledgeBoundary": "知道十四个月固定转账累计二十四万五、自己只剩一万一千六百多，也知道自己的消费、催款动作、见过的流水与对方说法；不知道尾号 3301 的主人。",
     "voiceArc": {
-      "nightA": "先用分住和没拿工资卡制造各花各的印象；被追问后才说男友月薪三万五、连续十四个月每月转她一万七千五。房租完全不说。",
+      "nightA": "先用分住和没拿工资卡制造各花各的印象；被追问后只承认男友固定转一半、持续一年多，不报具体月数和金额。房租完全不说。",
       "day": "她先用约五千男装指责男方失业后乱花，主播追问后才承认信用卡里约四万共同消费与自己有关；银行流水另出现三月、五月各一万元住房支出，只有玩家额外追问才确认是男方替她付的房租。",
       "nightB": "句子缩短，称呼退成‘他’；报出一万一千六百多的余额，承认十四个月的钱基本花完，也承认打来是为了拿到一句可转发的公开支持。",
       "ending": "拒绝继续转账，也停止把男友半薪当成自己的固定收入；不把自己整理成毫无选择的受害者。"
@@ -705,9 +705,9 @@ export const CONTENT_CAST = {
       ],
       "stressResponse": "被逼着定义关系时退回服务和店务，把情绪词说成维护。"
     },
-    "motivation": "维持高频顾客的信任，也把高息产品推给剪头的熟客；收下何的十二万，声称自己已经够门槛，可以把她的钱并进去。",
-    "fear": "不同对象听见彼此版本，名单被说成女友名册，代投被说成偷钱。",
-    "defense": "先认自己人、晚档、走我户和已经提交，再把名单说成跟进不是女朋友；声称产品材料只给何本人，不向节目交代。不上麦。",
+    "motivation": "维持熟客信任，把愿意买高息的人留在自己的私人代投入口；收下何的十二万，让钱走个人账户，产品材料和后续查询也都经过自己。",
+    "fear": "熟客绕过他直接找门店或产品方核对，不同对象又听见彼此版本，名单被说成女友名册，代投被说成偷钱。",
+    "defense": "把走他户说成替自己人凑门槛的顺手帮忙；先认自己人、晚档、走我户和已经提交，再把名单说成客户跟进。声称材料只给何本人，不向节目交代。不上麦。",
     "voice": {
       "rhythm": "轻松、顺口，像边做事边聊。",
       "lexicon": [
@@ -728,9 +728,9 @@ export const CONTENT_CAST = {
     "knowledgeBoundary": "知道自己的聊天、会员记录、私人名单、何转到自己户头的十二万，以及自己把钱实际送去了哪里；不知道产品最终能否兑付，也不能代表门店对外卖理财。节目没有拿到他所称的产品全名、合同和回单。他不上麦。",
     "voiceArc": {
       "nightA": "以轻松的专属感留在转述里，从不把两人的关系说成明确名词。",
-      "day": "当面仍像聊店务，重复“自己人”后自然转向会员与业绩。",
-      "nightB": "被表格和录音逼住后退回服务口径，承认动作而回避关系定义。",
-      "ending": "只认自己剪过、记过、推进过的事，不交付一段宏大的感情供词。"
+      "day": "用插号和‘自己人’稳住熟客；对方一拦‘那个’，他立刻不再说，私人备忘录仍继续写跟进。",
+      "nightB": "被名单和转账逼住后，承认钱走个人户、自己说过已经提交，仍回避关系定义和原件去向。",
+      "ending": "只认自己收过钱、记过客户、答应过代投；把材料说成只给何本人，不交代报酬，也不上麦。"
     },
     "exampleLines": [
       "我早说过，我看不懂你那边谁是客人、谁是朋友。花我收了，头我也给你做，可我没答应过谈恋爱。"
@@ -970,7 +970,7 @@ export const CONTENT_CAST = {
         "怕越权",
         "不评代购"
       ],
-      "stressResponse": "一碰到代持代购就收口，没有合同编号就结束谈话。"
+      "stressResponse": "一碰到代持代购就不再回答，没有合同编号就结束谈话。"
     },
     "motivation": "只确认公开产品门槛，不替私人转账作证。",
     "fear": "被写成默许代购或泄露客户合同。",
@@ -1656,6 +1656,64 @@ export const CONTENT_CAST = {
       "时间上是连续两晚，可真的是碰巧。八号和师姐唱歌，九号才喝多，这怎么能算一件事？"
     ]
   },
+  "quick3-caller-gu": {
+    "id": "quick3-caller-gu",
+    "name": "快案来电人·顾",
+    "kind": "caller",
+    "caseIds": [
+      "quick-03-labeled-fiction"
+    ],
+    "surfaceNames": [
+      "快案来电人",
+      "顾",
+      "咨询者",
+      "匿名来电人"
+    ],
+    "personality": {
+      "core": "先把故事、彩礼和公平递到麦前，再把点名、打法和双轨拆开讲的自保者",
+      "secondary": [
+        "要公众站台",
+        "习惯用标签保护自己",
+        "数字说得清，定性抢得很急"
+      ],
+      "stressResponse": "第一轮先坚持长文是故事、三千万是彩礼；被问虚构和点名时才承认名字照片是真的；被问五张卡时才承认卡是自己去办的。第二轮把对方回复说成不敢对账，把起诉说成另走。第三轮主动把生育方案划出证据边界，仍要主播当众说她那句是假的。"
+    },
+    "motivation": "让林旭阳今晚对着直播间说对方不为钱出卖爱情是假的，并把三千万说成该退的彩礼。",
+    "fear": "虚构标注、家里账、五张卡、未打出的更大一笔和未开庭的起诉放在一起后，自己‘只要公平’的说法会变成要节目提前站台。",
+    "defense": "先要一句当众的话，再补经历；被卡住时改口承认最小事实，再用公平、退路和法院太慢把问题推回去。",
+    "voice": {
+      "rhythm": "半句，先报物件和数字，再补立场。",
+      "lexicon": [
+        "纯属虚构",
+        "三千万",
+        "五张卡",
+        "我只要公平",
+        "法院太慢"
+      ],
+      "habits": [
+        "先要主播替自己说话",
+        "用虚构两个字挡点名",
+        "把开口说成已经发生的账",
+        "把没对数目说成不敢对"
+      ],
+      "avoid": [
+        "承认自己在碰瓷",
+        "把生育方案当已证事实",
+        "交出法院尚未认定的法律结论",
+        "使用咨询报告式心理词"
+      ]
+    },
+    "knowledgeBoundary": "知道长文怎么写、钱打到哪个家里账、五张卡怎么来、最后一笔有没有打出、起诉状上写了什么数；不知道法院会怎么判，也不能把对方的公开回复说成对账结果。生育方案只听到过一句要求，自己没答应。",
+    "voiceArc": {
+      "nightA": "第一轮先要当众定性，再把长文说成故事，把三千万说成彩礼。",
+      "day": "第二轮补对方回复没对数目，再露出直播间先说、起诉另走。",
+      "nightB": "第三轮把长文数字对上起诉状，主动把生育方案划出证据边界，仍要主播喊那一句。",
+      "ending": "没有拿到当众定罪；主播把点名文和对得上的数钉住，拒绝替法院定性。"
+    },
+    "exampleLines": [
+      "文末我标了『纯属虚构』。正文里我写了她的名字，还配了我们的照片。"
+    ]
+  },
   "quick1-caller-luo": {
     "id": "quick1-caller-luo",
     "name": "快案来电人·罗",
@@ -1709,6 +1767,142 @@ export const CONTENT_CAST = {
     "exampleLines": [
       "你就说我人挺好的，让他愿意见一面。见了以后我会跟他聊，哄人我还是会的。哥，你就帮我一次嘛。"
     ]
+  },
+  "prologue-cafe-husband": {
+    "id": "prologue-cafe-husband",
+    "name": "咖啡厅男方",
+    "kind": "participant",
+    "caseIds": [
+      "prologue-cafe-opening"
+    ],
+    "surfaceNames": [
+      "男方",
+      "男方（电话）"
+    ],
+    "personality": {
+      "core": "压着火、急于拿到确定结果的人",
+      "secondary": [
+        "克制",
+        "怕再被瞒",
+        "愿意按程序走"
+      ],
+      "stressResponse": "材料被逐页缩窄时会突然跳到孩子，句子从完整请求变成短问句。"
+    },
+    "motivation": "先把离婚、家庭账户和孩子安排谈清；妻子改口以后，再把能保留的原材料带进后续程序，并取得支持亲子怀疑的初步意见。",
+    "fear": "咖啡厅只留下一场争吵；妻子带走孩子后再回来清走旧物，他连支持亲子怀疑的初步材料都拿不到。",
+    "defense": "反复强调自己不想再听解释，把愤怒压成离婚、查账和孩子安排；被亲子问题击中时会当面追问妻子敢不敢鉴定，谈判吵散后才私下问赵律师下一步怎么办。",
+    "voice": {
+      "rhythm": "开场礼貌完整，诉求一多会挤在一句里，越靠近孩子越短。",
+      "lexicon": [
+        "我准备离婚",
+        "那孩子呢",
+        "我没动"
+      ],
+      "habits": [
+        "先说自己今天要谈什么",
+        "被制止后愿意按眼前一步走"
+      ],
+      "avoid": [
+        "朗读材料页数",
+        "辱骂妻子",
+        "猜孩子生父",
+        "把酒店订单说成性关系实锤",
+        "把个人委托意见说成生效裁判"
+      ]
+    },
+    "knowledgeBoundary": "知道自己持有并获授权核对的聊天、订单和流水，也能下载本人名下家庭支出卡的电子回单；不知道酒店内具体发生了什么和孩子生父身份，固定转账收款人的完整姓名只交给赵律师，不向林旭阳公开。",
+    "exampleLines": [
+      "她跟别的男人聊天、去酒店，我不想再听她绕了。今天把家里的账算清，孩子以后怎么安排，也谈清楚。"
+    ]
+  },
+  "prologue-cafe-wife": {
+    "id": "prologue-cafe-wife",
+    "name": "咖啡厅妻子",
+    "kind": "participant",
+    "caseIds": [
+      "prologue-cafe-opening"
+    ],
+    "surfaceNames": [
+      "妻子",
+      "妻子（语音）"
+    ],
+    "personality": {
+      "core": "把每一页材料单独降格的强防御者",
+      "secondary": [
+        "镇定",
+        "善于缩窄定义",
+        "护住孩子"
+      ],
+      "stressResponse": "时间和户名被并看后不再否认材料本身，改说材料只能证明最低限度。"
+    },
+    "motivation": "她怀孕时已经知道孩子不是男方的，仍然与他结婚，打算取得婚内钱款后离开；咖啡厅当下则要阻止丈夫和节目把聊天、住宿、转账与亲子问题合成一个公开结论。",
+    "fear": "丈夫在她清走孩子旧物前拿到可送检样本，也怕财产线在她带钱离开前被查住。",
+    "defense": "先否认去过酒店；时间对上后承认房是自己开的、改称独自入住；流水出现后承认三笔转账、改称已经还清的借款。",
+    "voice": {
+      "rhythm": "句子短，先否定提问范围，再给一个最小解释。",
+      "lexicon": [
+        "只能说明",
+        "那是借的",
+        "孩子别碰"
+      ],
+      "habits": [
+        "把合并证据重新拆开",
+        "用孩子隐私终止公开追问"
+      ],
+      "avoid": [
+        "完整承认婚外关系",
+        "替固定转账命名",
+        "在咖啡厅讨论亲子样本"
+      ]
+    },
+    "knowledgeBoundary": "从怀孕时就知道孩子不是男方的，也知道自己借婚姻取得钱款后离开的计划、酒店往来和家庭固定转账缘由；她只会在材料已锁定处作最小承认，不会公开这些事实。",
+    "exampleLines": [
+      "房是我开的。可我一个人住，他没上去。"
+    ]
+  },
+  "prologue-cafe-cousin": {
+    "id": "prologue-cafe-cousin",
+    "name": "咖啡厅表哥",
+    "kind": "participant",
+    "caseIds": [
+      "prologue-cafe-opening"
+    ],
+    "surfaceNames": [
+      "表哥"
+    ],
+    "personality": {
+      "core": "会用证据效力争回场面控制的人",
+      "secondary": [
+        "护亲属",
+        "好胜",
+        "熟悉直播话术"
+      ],
+      "stressResponse": "材料越对得上，越不谈内容，转而追问录像、录屏和后续剪辑。"
+    },
+    "motivation": "让咖啡厅约谈停止公开，把妻子从材料对照转回程序争议。",
+    "fear": "自己带来的程序质疑挡不住聊天、订单和流水，反而让妻子的改口被直播看见。",
+    "defense": "逐项强调材料的证明上限，最后拿自己的录屏和剪辑风险质疑主播动机。",
+    "voice": {
+      "rhythm": "先接一句‘对’，再用反问夺话。",
+      "lexicon": [
+        "不等于",
+        "能不能用",
+        "你是来调解还是来播出的"
+      ],
+      "habits": [
+        "不直接替妻子解释钱",
+        "内容失守后攻击程序和镜头"
+      ],
+      "avoid": [
+        "提前说出孩子身世",
+        "替材料做技术鉴定",
+        "辱骂孩子或男方"
+      ]
+    },
+    "knowledgeBoundary": "知道咖啡厅桌上的聊天、订单、流水和自己手机里的录屏；不知道亲子鉴定结果与固定转账真实收款人。",
+    "exampleLines": [
+      "她开过房，只能到这儿。你别往后说。"
+    ]
   }
 };
 
@@ -1734,7 +1928,22 @@ export const CONTENT_PACKS = {
           "学校图和工资卡都是真的，两边的全部家底仍没有摊开。",
           "店表写了起投和走他户，十二万是否入产品仍不知道。"
         ],
-        "comment": "图没假,她就是没把右边一起发啊"
+        "comment": "图没假,她就是没把右边一起发啊",
+        "phraseEcho": {
+          "label": "好听话后面接了什么",
+          "revealOrder": [
+            "04-workplace",
+            "03-profile",
+            "02-tony"
+          ],
+          "rule": "相似措辞只能提示继续核对来源，不能证明来电人买过课、彼此认识或受同一人指使。",
+          "terms": [
+            "安全感",
+            "态度",
+            "自己人",
+            "退出"
+          ]
+        }
       }
     },
     "nightShell": {
@@ -1746,11 +1955,62 @@ export const CONTENT_PACKS = {
         }
       ],
       "prologue": {
+        "entryActionKey": "night-shell-broadcast-opened",
+        "entryActionLabel": "开始直播",
+        "coldOpen": {
+          "actionKey": "golden-90-first-interest",
+          "setupLines": [
+            {
+              "speaker": "旁白",
+              "type": "stage",
+              "text": "你点下“开始直播”。屏幕上的三秒倒计时归零，开播提示音响了一声。",
+              "audioCueId": "sfx.broadcast.on-air"
+            },
+            {
+              "speaker": "主播·林旭阳",
+              "type": "host",
+              "text": "晚上好，我是林旭阳。第一位来电人还没接进来，她先把男朋友刚发来的一段语音转到了后台。"
+            }
+          ],
+          "line": {
+            "speaker": "男方语音（来电人转发）",
+            "speakerProfileId": "case1-respondent",
+            "type": "caller",
+            "text": "我只是怕你知道我失业后就离开我。",
+            "audioCueId": "voice.case1.loyalty-message"
+          },
+          "baitComments": [
+            {
+              "speaker": "@还没下班",
+              "type": "comment",
+              "text": "听着怪难受的。"
+            }
+          ],
+          "actionLabel": "听完这条语音",
+          "interestLines": [
+            {
+              "speaker": "主播·林旭阳",
+              "type": "host",
+              "text": "她把后半段也转来了。她问钱花去哪儿，男友没答。"
+            },
+            {
+              "speaker": "第一位来电人（后台文字）",
+              "speakerProfileId": "case1-caller-shen",
+              "type": "caller",
+              "text": "他就回我：‘反正不是乱来的钱。别拖，今晚先转。’"
+            },
+            {
+              "speaker": "@卡里没钱",
+              "type": "comment",
+              "text": "等下，还在催她转钱？"
+            }
+          ]
+        },
         "lines": [
           {
-            "speaker": "林旭阳",
-            "type": "background",
-            "text": "我把旧工牌从转接线下面抽出来。以前在互联网大厂做法务，失业以后才开了这个不温不火的直播间，一坐就是两年半。三十三岁，还是得开麦。我老婆姓赵，我们是大学同学，她现在是执业律师；开播前最常问的也不是案子，是我吃没吃饭。"
+            "speaker": "旁白",
+            "type": "narration",
+            "text": "晚上八点，你推开直播间的门。旧工牌还压着转接线，桌上的显示器已经亮了。"
           },
           {
             "speaker": "运营 · 老方（工作消息）",
@@ -1758,27 +2018,17 @@ export const CONTENT_PACKS = {
             "text": "深夜档这个月再不达标，就并进娱乐区。改版方案，下周一前给我。"
           },
           {
-            "speaker": "旁白",
-            "type": "narration",
-            "text": "晚上八点，你推开直播间的门。走廊坏着半截灯，桌上的显示器还亮着。"
-          },
-          {
             "speaker": "老婆",
+            "speakerProfileId": "zhao-lawyer",
             "type": "message",
             "text": "吃饭没有？汤在冰箱，记得热。还有个东西我塞你包里了，忙完再看。"
           },
           {
-            "speaker": "旁白",
-            "type": "stage",
-            "text": "你点下“开始直播”。屏幕上的三秒倒计时归零，开播提示音响了一声。",
-            "audioCueId": "sfx.broadcast.on-air"
+            "speaker": "林旭阳",
+            "type": "background",
+            "text": "我把工牌挪到一边，戴上耳机。改版的事，等下播再说。"
           }
-        ],
-        "hostLine": {
-          "speaker": "主播·林旭阳",
-          "type": "host",
-          "text": "改版又催上了，先让他催着。又要打 PK，又要搞团播，真烦啊。开播了哈，今天继续连麦。"
-        }
+        ]
       },
       "interludes": [
         {
@@ -1828,17 +2078,17 @@ export const CONTENT_PACKS = {
             {
               "speaker": "赵律师",
               "role": "advisor",
-              "text": "不过那姑娘也不能躲在‘没住一起’后面。十四个月就是二十四万五，房租还没算。他觉得她至少能剩十五万，不算瞎猜。"
+              "text": "还有，她账户只剩一万一千六百多。这句别替她藏，让她自己跟男友说。"
             },
             {
               "speaker": "林旭阳",
               "role": "host",
-              "text": "可她只剩一万一千六百多，还一直没告诉他。"
+              "text": "八万先不转，但她账户还剩多少，也得自己跟男友说清楚。"
             },
             {
               "speaker": "赵律师",
               "role": "advisor",
-              "text": "她得先把自己的花销收住。至于那八万，他签的贷款和信托合同照样得拿出来。"
+              "text": "对。至于那八万，债签在谁名下，合同就该由谁拿出来。"
             },
             {
               "speaker": "赵律师",
@@ -1885,12 +2135,27 @@ export const CONTENT_PACKS = {
             {
               "speaker": "老方（语音）",
               "role": "production",
-              "text": "栖行那份融资稿我也翻到了：押金二十九，一次一块五，维护费和场地分成还没扣，估值倒一路往上写。宸直是主要股东。老板儿子身边的人换得比柜机广告还快；宸直那位坐私人飞机去法国看酒庄，也被拍到了。"
+              "text": "栖行那份融资稿我翻到了。押金二十九，一次一块五，维护费和场地分成还没扣。估值那页我没看懂，发你了。"
+            },
+            {
+              "speaker": "老方（语音）",
+              "role": "production",
+              "text": "还有张公开照片：宸直那位坐私人飞机去法国看酒庄。先说好，这就是八卦。"
             },
             {
               "speaker": "林旭阳",
               "role": "host",
-              "text": "八卦不能拿来算公司的账。融资稿和返费表，先留桌上。"
+              "text": "那张照片先别往案子里放。融资稿和返费表留下，我待会儿再看。"
+            },
+            {
+              "speaker": "老方（语音）",
+              "role": "production",
+              "text": "刚才后台有人说，前一通是‘要态度’，这一通是‘想表现、能扛事’。好听话后面怎么都跟着让人掏钱。"
+            },
+            {
+              "speaker": "林旭阳",
+              "role": "host",
+              "text": "这句话先留着吧。几个人说话听着像，也不能就说她们认识。"
             }
           ],
           "line": "你掀开保温盒，面已经坨成一团。广告快结束了。",
@@ -1922,12 +2187,22 @@ export const CONTENT_PACKS = {
             {
               "speaker": "赵律师（语音）",
               "role": "advisor",
-              "text": "那现在只能说没到期，不能说拿不回来。宸直老板确实挺能折腾，商场、地产、理财，什么都做。摊子看着大，里面不少钱都是融来的。"
+              "text": "那就先看持有页。三十万还在，写着九月底到期。没合同，别先算它能不能兑。"
             },
             {
               "speaker": "林旭阳",
               "role": "host",
               "text": "她爸原话是给女儿自己留着，不是拿来办婚礼。九月底到底能不能兑，还得等。"
+            },
+            {
+              "speaker": "老方（语音）",
+              "role": "production",
+              "text": "后台有人丢来一页打码课纲，标题和来源都遮了，只剩四个词：安全感、态度、向上社交、退出。"
+            },
+            {
+              "speaker": "赵律师（语音）",
+              "role": "advisor",
+              "text": "原图先别删。这页一共就剩四个词，连是谁发的都不知道。今天这个人买没买过课，前两通认不认识发图的人，都不能从这页上猜。"
             },
             {
               "speaker": "赵律师（语音）",
@@ -1937,7 +2212,7 @@ export const CONTENT_PACKS = {
             {
               "speaker": "林旭阳",
               "role": "host",
-              "text": "会。饭还是吃完了，钱也得我自己说。"
+              "text": "还是会去。可那顿饭吃完，我有多少钱、愿意怎么花，得由我自己说。"
             }
           ],
           "line": "语音停了，你把保温盒重新扣好。",
@@ -2095,6 +2370,734 @@ export const CONTENT_PACKS = {
           "kicker": "2019-11-08",
           "caption": "你当年没问完的那通"
         }
+      },
+      "cafePrologue": {
+        "id": "prologue-cafe-opening",
+        "timeline": "开播前 · 傍晚",
+        "title": "序章：还有一笔账",
+        "subtitle": "咖啡厅 · 离婚谈判",
+        "backdropClass": "day-cafe cafe-prologue-backdrop",
+        "puzzleLedger": {
+          "playerGoal": "把妻子承认的聊天、酒店订单和钱款往来固定下来，再让男方把离婚、财产和亲子诉求逐项说清；亲子线必须赶在孩子旧物被带走前保住可核来源的样本，账户线只看男方本人名下的家庭支出卡。",
+          "adversaryGoal": "妻子想把同日酒店与钱款往来分别降格成可编辑截图、普通住宿和私人借款；表哥则借证据效力争议逼节目停播。",
+          "mechanicalCoupling": [
+            "玩家必须先点出‘没去过酒店’这句原话，再亲手出示聊天截图或酒店订单；任一张都只能逼她承认开房，剩下那张仍不能证明顾*上过楼。",
+            "玩家打开逐行流水追问‘没跟顾*转过钱’，只打穿没有钱款往来，不越级证明借款性质或酒店内行为。",
+            "玩家决定开播前先查孩子旧物还是男方名下的家庭支出卡；当晚只走选中的一条，数日后的回告也只兑付这条。"
+          ],
+          "pressure": "桌边录像、表哥手机里的另一份录屏和双方对后续剪辑的争夺同时压上来；妻子带孩子离开后，留在共同住所的孩子旧物也可能随时被取走。",
+          "failureBoundary": "不能在咖啡厅公开亲子结果，不能把酒店同住写成已经证明发生性关系，也不能用个人委托初检倒推女方何时知道孩子身世、为何结婚或给固定转账收款人补身份。"
+        },
+        "cafe": {
+          "clipDraft": {
+            "duration": "15 秒",
+            "title": "她说没去酒店，怎么让她当场改口",
+            "status": "待双方确认"
+          },
+          "openingLines": [
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "narration",
+              "text": "傍晚。你和妻子赵律师按约来到咖啡厅。男方的妻子和她表哥已经坐在靠窗那桌。几张遮过名字的材料压在咖啡杯下，桌边录像机的红灯还亮着。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "林老师，赵律师，麻烦你们跑一趟。我准备离婚。"
+            },
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "就昨天电话里聊的那些？"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "对。她跟别的男人聊天、去酒店，我不想再听她绕了。今天把家里的账算清，孩子以后怎么安排，也谈清楚。"
+            },
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "昨天也说好了：今天可以先录，哪一段能播，当场再确认。"
+            },
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "我只答应把话说清楚，没答应你拿孩子做节目。离婚可以谈，孩子你别拿来吓我。"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "镜头先压到桌面。孩子不上镜，手机也不拍。你们愿意公开什么，等会儿自己点头。"
+            },
+            {
+              "speaker": "表哥",
+              "speakerProfileId": "prologue-cafe-cousin",
+              "type": "participant",
+              "text": "我们是来谈的，不是来给你做节目素材。"
+            },
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "可以。镜头只拍桌面。你们不同意公开的，我不会放出去。"
+            },
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "要谈就先把那晚说清楚。我没去澜桥酒店。他就是看见几张截图，自己越想越多。"
+            }
+          ],
+          "firstClaim": "那晚我没去澜桥酒店。",
+          "claimStatements": [
+            {
+              "id": "child-boundary",
+              "text": "离婚可以谈，孩子你别拿来吓我。",
+              "missLine": "孩子那句我已经说清楚了。你要问酒店，就别绕到孩子身上。"
+            },
+            {
+              "id": "hotel-denial",
+              "text": "我没去澜桥酒店。",
+              "correct": true
+            },
+            {
+              "id": "screenshot-dismissal",
+              "text": "他就是看见几张截图，自己越想越多。",
+              "missLine": "我说的是他看完截图以后自己乱想。你要问这句就问，别替他往下编。"
+            }
+          ],
+          "evidencePair": [
+            {
+              "id": "chat",
+              "kicker": "聊天截图",
+              "title": "联系人：顾*",
+              "detail": "妻子发送｜21:18｜“我到澜桥酒店了”",
+              "remainingLines": [
+                {
+                  "speaker": "妻子",
+                  "speakerProfileId": "prologue-cafe-wife",
+                  "type": "participant",
+                  "text": "等一下，你怎么会有我手机里的截图？"
+                },
+                {
+                  "speaker": "男方",
+                  "speakerProfileId": "prologue-cafe-husband",
+                  "type": "participant",
+                  "text": "家里的平板还登着你的账号。那天消息自己同步过来，我截下来的。"
+                }
+              ],
+              "hitLines": [
+                {
+                  "speaker": "妻子",
+                  "speakerProfileId": "prologue-cafe-wife",
+                  "type": "participant",
+                  "text": "等一下，你怎么会有我手机里的截图？"
+                },
+                {
+                  "speaker": "男方",
+                  "speakerProfileId": "prologue-cafe-husband",
+                  "type": "participant",
+                  "text": "家里的平板还登着你的账号。那天消息自己同步过来，我截下来的。"
+                },
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "这是你自己发的，‘我到澜桥酒店了’。你刚说没去过，房是谁开的？"
+                },
+                {
+                  "speaker": "妻子",
+                  "speakerProfileId": "prologue-cafe-wife",
+                  "type": "participant",
+                  "text": "房是我开的。可我一个人住，他没上去。"
+                }
+              ]
+            },
+            {
+              "id": "hotel",
+              "kicker": "酒店订单",
+              "title": "澜桥酒店",
+              "detail": "21:24｜入住人：妻子本人｜大床房 1 间",
+              "remainingLines": [
+                {
+                  "speaker": "妻子",
+                  "speakerProfileId": "prologue-cafe-wife",
+                  "type": "participant",
+                  "text": "这个订单你又是哪儿来的？"
+                },
+                {
+                  "speaker": "男方",
+                  "speakerProfileId": "prologue-cafe-husband",
+                  "type": "participant",
+                  "text": "预订邮件同步到家里的平板，订单还在。"
+                }
+              ],
+              "hitLines": [
+                {
+                  "speaker": "妻子",
+                  "speakerProfileId": "prologue-cafe-wife",
+                  "type": "participant",
+                  "text": "这个订单你又是哪儿来的？"
+                },
+                {
+                  "speaker": "男方",
+                  "speakerProfileId": "prologue-cafe-husband",
+                  "type": "participant",
+                  "text": "预订邮件同步到家里的平板，订单还在。"
+                },
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "入住人写的是你。你刚说没去过，房是谁开的？"
+                },
+                {
+                  "speaker": "妻子",
+                  "speakerProfileId": "prologue-cafe-wife",
+                  "type": "participant",
+                  "text": "房是我开的。可我一个人住，他没上去。"
+                }
+              ]
+            }
+          ],
+          "remainingEvidenceLines": [
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "两张都摆出来也一样。上面只有我，没有顾*。"
+            },
+            {
+              "speaker": "表哥",
+              "speakerProfileId": "prologue-cafe-cousin",
+              "type": "participant",
+              "text": "到这儿。你们没有他上楼的东西，别往下说。"
+            }
+          ],
+          "moneyClaimLines": [
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "我没往后说。你刚才说没去，现在改成一个人住。那钱呢？你和顾*之间转过吗？"
+            },
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "没有。我跟顾*之间没转过钱。"
+            }
+          ],
+          "moneyClaim": "我跟顾*之间没转过钱。",
+          "transferEvidence": {
+            "id": "parallel-transfer-ledger",
+            "kicker": "遮名银行流水",
+            "title": "三笔双向转账",
+            "detail": "公开副本遮去金额，保留日期、方向和交易对手。",
+            "rows": [
+              "4 月 12 日｜转出｜顾*",
+              "5 月 3 日｜转入｜顾*",
+              "6 月 17 日｜转出｜顾*"
+            ]
+          },
+          "transferHitLines": [
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "你刚说没转过钱。流水里有三笔，交易对手都是顾*。这个怎么说？"
+            },
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "那是借的。有进有出，早就平了。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "你看，又变成借的了。完整流水我问了几次，她都不给。"
+            }
+          ],
+          "legalRequests": {
+            "zhaoRole": "赵律师接受男方当场咨询，与林旭阳一同到场，协助把离婚和家账先谈清；她不代理诉讼，不替任何一方下裁判，亲子初检路径只在谈判吵散后私下告诉男方。",
+            "items": [
+              {
+                "id": "divorce-evidence",
+                "title": "离婚与电子材料",
+                "uiNote": "留原手机、完整页面和订单来源",
+                "request": "男方准备起诉离婚，并把完整聊天、酒店订单来源和银行原始流水提交诉讼。",
+                "nextAction": "保留原手机、完整页面和来源信息，截图只作为桌边展示。",
+                "boundary": "同日酒店和转账不当然证明持续、稳定共同居住，也不直接等于离婚损害赔偿成立。"
+              },
+              {
+                "id": "marital-property",
+                "title": "共同财产",
+                "uiNote": "先记已知账户和转账日期",
+                "request": "男方要求查明三笔转账和婚内共同财产范围；发现具体转移风险时申请财产保全。",
+                "nextAction": "先写明已知账户、转账日期和收款线索，再由诉讼程序调查。",
+                "boundary": "只有怀疑不能当场冻结全部财产，借款、赠与和共同财产性质仍需材料。"
+              },
+              {
+                "id": "parentage-and-child-contact",
+                "title": "亲子关系与孩子见面",
+                "uiNote": "先取得能说明怀疑来源的初步材料",
+                "request": "男方先取得有来源记录的初步排除意见；结果支持怀疑后，再向法院提出亲子关系异议并申请法院委托鉴定。孩子见面另行书面约时间。",
+                "nextAction": "先保全可核来源的样本，走个人委托的初步检测；委托、来源和流转记录一起留存。",
+                "boundary": "个人委托意见只建立可审查的怀疑基础，不能直接改变法律亲子关系；法院是否准许鉴定仍要审查材料。"
+              }
+            ]
+          },
+          "legalClaimLines": [
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "酒店我不想再吵了。我现在就想离婚，把家里的账查清。"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "那就把原手机、完整聊天和银行流水都留好。她刚才前后说了两套，这些先别丢。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "这两个月，她一直不让我看账户。我怕她还会往外转。"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "把你知道的账户和日期写下来。哪一笔还在转，先找出来。有具体风险，再申请保全。"
+            },
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "你们今天是来劝我们谈，还是来帮他告我？"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "他请我来，就是想把离婚和家里的账先谈清楚。你肯拿完整流水，我们现在对；不肯，我就按现有材料准备。今天我只帮他把手里的东西理清，不是他的诉讼代理人。"
+            }
+          ],
+          "parentageBlockLines": [
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "钱的事先这么办。那孩子呢？你看着我说，他到底是不是我的？"
+            },
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "你有完没完？当着镜头问这个，你让孩子以后怎么做人？"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "我问了半年，你每次都拿孩子堵我。你要说是我的，就跟我去做鉴定。敢不敢？"
+            },
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "我不做。你爱信不信。这个婚我离，孩子我带走。"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "你俩先别吵。孩子是不是他的，在这儿也掰扯不明白。"
+            },
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "stage",
+              "text": "妻子猛地推开椅子。表哥也跟着站了起来。"
+            }
+          ],
+          "cameraBreakLines": [
+            {
+              "speaker": "表哥",
+              "speakerProfileId": "prologue-cafe-cousin",
+              "type": "participant",
+              "text": "你们两口子合着伙逼她是吧？录像别关，刚才的话一段都别少。"
+            },
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "stage",
+              "text": "表哥把自己的手机举起来。屏幕上也是刚才那段录像，进度条还在往前走。"
+            },
+            {
+              "speaker": "表哥",
+              "speakerProfileId": "prologue-cafe-cousin",
+              "type": "participant",
+              "text": "大主播也不过如此。你们敢只剪问赢的那几句，我就把这份原片发出去。"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "他那部手机你管不了，自己的录像先停。林旭阳，关掉镜头继续谈，还是今天就到这儿？"
+            }
+          ],
+          "pressureChoices": [
+            {
+              "id": "camera-off",
+              "label": "关录像，继续谈",
+              "note": "桌边不再录，剩下的条件不公开。",
+              "echo": "你关掉桌边录像。后面的争吵不再录，已经拍下的片段暂不剪、不发。剩下的条件改为私下谈。"
+            },
+            {
+              "id": "stop-stream",
+              "label": "结束这次谈判",
+              "note": "录像到此为止，双方带走材料清单。",
+              "echo": "你结束了这次录像和谈判。已经拍下的片段暂不剪、不发，双方各自带走一份材料清单。"
+            }
+          ]
+        },
+        "aftermath": {
+          "openingLines": [
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "narration",
+              "text": "同一晚，咖啡厅那桌彻底吵散。妻子和表哥先走。你和赵律师把男方送到停车场。半小时后，妻子已经把孩子接走，又发来一条语音。"
+            },
+            {
+              "speaker": "妻子（语音）",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "message",
+              "text": "酒店那天我自己住，三笔钱是借的。你们敢剪成别的，我就告。孩子的东西谁也别动。"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "她不肯做，桌上再吵也没用。你以后要向法院申请鉴定，不能只拿一句‘我怀疑’去。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "那我现在还能做什么？"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "先做个人委托初检，这是现在最可行的。你先联系正规机构，问家里孩子留下的旧物能不能用。她已经说谁也别动，晚了东西可能就没了。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "那我现在回家？"
+            },
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "现在回。机构让你怎么留，你就怎么留。别追她，也别碰孩子。"
+            }
+          ],
+          "routes": [
+            {
+              "id": "toy",
+              "label": "先联系机构，再看家里的旧物",
+              "note": "由机构判断什么能收，男方只报告原位置。",
+              "title": "沙发缝里的咬胶",
+              "lines": [
+                {
+                  "speaker": "男方（电话）",
+                  "speakerProfileId": "prologue-cafe-husband",
+                  "type": "participant",
+                  "text": "我到家了。沙发靠背缝里还有个硅胶咬胶，应该是她走得急，忘了拿。"
+                },
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "先跟机构说清它放在哪、是谁用过。能不能收，让他们判断。"
+                },
+                {
+                  "speaker": "赵律师",
+                  "speakerProfileId": "zhao-lawyer",
+                  "type": "advisor",
+                  "text": "机构愿意接，就按他们的登记走。现在只叫个人委托初检，别叫司法鉴定。"
+                }
+              ],
+              "handoffLines": [
+                {
+                  "speaker": "赵律师",
+                  "speakerProfileId": "zhao-lawyer",
+                  "type": "advisor",
+                  "text": "机构回话要几天。电话先留着，你去开播吧。"
+                }
+              ]
+            },
+            {
+              "id": "account",
+              "label": "先看男方名下的家庭支出卡",
+              "note": "只看男方本人能下载的明细，不碰妻子的个人账户。",
+              "title": "家庭支出卡",
+              "rows": [
+                {
+                  "when": "每月 5 日",
+                  "label": "住房贷款",
+                  "status": "银行自动扣款"
+                },
+                {
+                  "when": "四个月前",
+                  "label": "车辆贷款",
+                  "status": "已结清"
+                },
+                {
+                  "when": "每月 18 日",
+                  "label": "固定同额转出",
+                  "status": "摘要‘私教课时’ · 个人账户 · 户名未显示全",
+                  "focus": true
+                }
+              ],
+              "lines": [
+                {
+                  "speaker": "男方（电话）",
+                  "speakerProfileId": "prologue-cafe-husband",
+                  "type": "participant",
+                  "text": "家里有张日常开销卡，在我名下。房贷和平时家里花的钱都从这张卡走，近一年的明细我能下载。"
+                },
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "那就只看你这张卡。她自己的账户先别碰。"
+                },
+                {
+                  "speaker": "周会计",
+                  "speakerProfileId": "zhou-accountant",
+                  "type": "advisor",
+                  "text": "明细我收到了。五号是房贷，十八号还有一笔固定转出。"
+                },
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "车贷呢？"
+                },
+                {
+                  "speaker": "周会计",
+                  "speakerProfileId": "zhou-accountant",
+                  "type": "advisor",
+                  "text": "四个月前就结清了，跟十八号这笔对不上。"
+                },
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "十八号那笔备注写的什么？"
+                },
+                {
+                  "speaker": "周会计",
+                  "speakerProfileId": "zhou-accountant",
+                  "type": "advisor",
+                  "text": "‘私教课时’。连续四个月，都是同一天、同一个数。收款人的名字没显示全。"
+                },
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "你自己的卡，电子回单能下载吗？"
+                },
+                {
+                  "speaker": "男方（电话）",
+                  "speakerProfileId": "prologue-cafe-husband",
+                  "type": "participant",
+                  "text": "能。我自己去银行APP里下。"
+                }
+              ],
+              "handoffLines": [
+                {
+                  "speaker": "林旭阳",
+                  "speakerProfileId": "host-lin-xuyang",
+                  "type": "host",
+                  "text": "回单你自己下，先留在麦外。时间到了，我得回去开播。"
+                }
+              ]
+            }
+          ]
+        },
+        "forensic": {
+          "timeline": "数日后",
+          "openingLines": [
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "narration",
+              "text": "数日后。录制关闭，屏幕上只留张法医和当事人的个人委托检测回告。"
+            },
+            {
+              "speaker": "张法医",
+              "speakerProfileId": "zhang-forensic",
+              "type": "advisor",
+              "text": "这是个人委托的初步检测，不是法院鉴定。咬胶样本和男方样本都有登记。结果是排除生物学父子关系。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "那我能不能拿这个结果，直接把孩子的关系改掉？"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "不能。它只能让你的怀疑不再是一句空话。你可以带着它去法院提出亲子关系异议，再申请由法院委托鉴定。法院准不准，还要看其他材料。"
+            },
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "这份初检只排除了他。生父是谁，我们不猜。孩子以后怎么安排，也不是这通电话能定的。"
+            }
+          ],
+          "accountClueLines": [
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "家庭卡的电子回单我从自己的银行APP里下来了。完整版给了赵律师。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "发给你们看的这份，我把名字遮了，只留了姓。"
+            },
+            {
+              "speaker": "周会计",
+              "speakerProfileId": "zhou-accountant",
+              "type": "advisor",
+              "text": "我看过了。十八号那笔，收款人不是顾*。"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "回单留好。这笔钱为什么每月都转，后面再查。"
+            },
+            {
+              "speaker": "林旭阳",
+              "speakerProfileId": "host-lin-xuyang",
+              "type": "host",
+              "text": "那就先别把这笔钱也算到顾*头上。"
+            }
+          ],
+          "finalCards": {
+            "result": "个人委托初检：排除生物学父子关系",
+            "openAccount": "固定转账收款人另有其人"
+          },
+          "unknownByRoute": {
+            "toy": [
+              "孩子的生物学父亲是谁。",
+              "女方何时知道孩子与男方不存在生物学父子关系，以及她为什么仍然结婚。"
+            ],
+            "account": [
+              "固定转账收款人的身份没有向节目公开。",
+              "‘私教课时’是否对应真实课程、为什么持续支付、妻子是否知情。"
+            ]
+          }
+        },
+        "truthBoundary": {
+          "confirmed": [
+            "妻子否认去过澜桥酒店，随后承认房是自己开的；她否认与顾*转账，流水显示两人之间有三笔双向记录。",
+            "个人委托的初步检测中，机构登记的咬胶咬合面样本与男方对照样本排除生物学父子关系；该意见尚未替代法院委托鉴定或生效裁判。",
+            "男方名下的家庭支出卡里有一笔每月同日的固定转账，不是房贷或未结清车贷；摘要写着‘私教课时’，电子回单上的收款姓氏也不是顾。"
+          ],
+          "unknown": [
+            "酒店内具体发生了什么，三笔钱各自是借款、赠与还是其他用途。",
+            "孩子的生物学父亲是谁。",
+            "女方何时知道孩子与男方不存在生物学父子关系，以及她为什么仍然结婚；个人委托初检不能证明她此前的知情和婚姻目的。",
+            "固定转账收款人的身份没有向节目公开；‘私教课时’是否对应真实课程、为什么持续支付、妻子是否知情。"
+          ],
+          "endingLine": "初步排除亲生，还有一笔账没对上。"
+        },
+        "authorTruth": {
+          "wifePregnancyKnowledge": "女方怀孕时已经知道孩子不是男方的。",
+          "wifeMarriageMotive": "她仍然与男方结婚，目的就是取得婚内钱款后离开。",
+          "disclosureBoundary": "这是后续主线的作者真相。试玩现有材料只证明个人委托样本组合排除生物学父子关系，尚不能证明女方何时知情或为何结婚。"
+        },
+        "rageBaitContract": {
+          "tierPlan": [
+            "Tier 2",
+            "Tier 3"
+          ],
+          "debts": [
+            {
+              "id": "cafe-only-close-chat",
+              "tier": "Tier 2",
+              "issue": {
+                "location": "cafePrologue.cafe.openingLines",
+                "quote": "那晚我没去澜桥酒店。"
+              },
+              "interest": {
+                "location": "cafePrologue.cafe.evidencePair",
+                "trigger": "player-input",
+                "payoff": "玩家先点出她否认去酒店的原话，再亲手压上一张能直接反驳它的材料；她被迫承认房是自己开的。",
+                "holdingLimit": "同一场"
+              },
+              "principal": {
+                "location": "cafePrologue.cafe.transferEvidence",
+                "trigger": "player-input",
+                "payoff": "玩家打开三笔双向转账，主播让她解释‘没跟顾*转过钱’，同时保留借款性质与酒店内行为未知。"
+              },
+              "nextDebt": {
+                "location": "cafePrologue.cafe.cameraBreakLines",
+                "quote": "大主播也不过如此。"
+              }
+            },
+            {
+              "id": "cafe-recording-control",
+              "tier": "Tier 3",
+              "issue": {
+                "location": "cafePrologue.cafe.cameraBreakLines",
+                "quote": "你们敢只剪问赢的那几句，我就把这份原片发出去。"
+              },
+              "interest": {
+                "location": "cafePrologue.cafe.pressureChoices",
+                "trigger": "player-input",
+                "payoff": "玩家亲手关掉桌边录像继续谈，或直接结束这次谈判；未确认的片段不进入剪辑和发布。",
+                "holdingLimit": "同一屏"
+              },
+              "principal": {
+                "location": "cafePrologue.forensic",
+                "trigger": "player-input",
+                "payoff": "玩家先查咬胶，数日后只收到支持亲子怀疑的初步排除意见；先查家庭卡，则只收到十八日回单。两条都不在同一关同时兑付。"
+              },
+              "nextDebt": {
+                "location": "cafePrologue.forensic.accountClueLines",
+                "quote": "十八号那笔，收款人不是顾*。"
+              }
+            }
+          ]
+        }
       }
     },
     "quickDetective": {
@@ -2132,7 +3135,8 @@ export const CONTENT_PACKS = {
     ],
     "quickCases": [
       "01-no-conditions",
-      "02-one-missed-message"
+      "02-one-missed-message",
+      "03-labeled-fiction"
     ],
     "sequence": [
       {
@@ -2360,10 +3364,14 @@ export const CONTENT_CASES = {
         "process-control": [
           "订座号也有名字",
           "一万二的设备是买给她的"
+        ],
+        "active-provocation": [
+          "刚才那句挺可怜,可她要拿回放去说什么?"
         ]
       },
       "driftComments": [
-        "主播你身后那盏灯闪一晚上了,强迫症都看犯了",
+        "他都失业了,先听他把话说完吧",
+        "卡是他的,怎么先让她转八万",
         "蹲一个主播同款保温杯",
         "课代表呢?进来就看见八万",
         "刚下夜班,他还了吗"
@@ -2467,13 +3475,13 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "我男朋友刚才找我，说想让我替他垫一笔钱。",
+          "text": "我刚转到后台那段，你听见了吧？我男朋友刚才找我，就是想让我先垫一笔钱。",
           "mood": "anxious"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "你转了吗？",
+          "text": "听见了。后半段他还在催你今晚转。你转了吗？",
           "mood": "listening"
         },
         {
@@ -2537,6 +3545,10 @@ export const CONTENT_CASES = {
       "sceneVersions": [
         {
           "id": "credit-living-arrangement",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "住址我说了。钱不是一回事，别现在就往我身上算。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "setup",
           "falseFrame": "两人没有住在一起，日常的钱也就完全分开。",
@@ -2555,9 +3567,9 @@ export const CONTENT_CASES = {
             ]
           },
           "version": "不住在一起。他住他的，我住我的。",
-          "helperHint": "没住在一起，只说明住址分开。她每个月等的是哪笔钱，得继续问。",
+          "helperHint": "没住在一起，只说明住址分开。平时的钱是不是也完全分开，还得继续问。",
           "doubt": "两人没有同住，但这不等于日常支出完全分开。",
-          "contradiction": "男方工资卡没有交给她，却连续十四个月把一半工资转给她；她没有留下男方以为的十五万。银行流水还会在第二天暴露另一笔她没有主动提的固定住房支出。",
+          "contradiction": "男方工资卡没有交给她，却固定把一半工资转给她，持续了一年多；具体月数和金额留给后续流水。银行流水还会在第二天暴露另一笔她没有主动提的固定住房支出。",
           "reliability": "mixed",
           "questionOptions": [
             {
@@ -2584,7 +3596,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "role": "caller",
-                  "text": "一年多。十四个月。"
+                  "text": "一年多。每个月都转。"
                 }
               ],
               "guardedAnswer": "对，没给我。他每个月会转一半，转了一年多。",
@@ -2594,7 +3606,7 @@ export const CONTENT_CASES = {
                 "sourceProves": "咨询者与对方没有同住，男方也没有把工资卡交给咨询者。",
                 "sourceDoesNotProve": "没有同住、没有交工资卡，不能证明双方日常收入与支出彼此独立。",
                 "answerAnchor": "转我一半",
-                "answerAdds": "男方连续十四个月把一半工资转给咨询者；具体金额会由后续流水确认。",
+                "answerAdds": "男方固定把一半工资转给咨询者，持续了一年多；具体月数和金额仍待后续流水确认。",
                 "nextLegalQuestion": "可以继续核对固定转账和咨询者如何使用这笔钱，不能据此把男方自行签下的借款与信托认购归给咨询者。"
               },
               "contradiction": "她说工资卡不在自己手里，却早已把男方半薪当成每月应到的钱。",
@@ -2604,6 +3616,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你们没住一起，平时的钱也完全分开吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我没说完全分开。你别一听没住一起，就先算我欠了他多少。"
+              },
               "sourceAnchor": "他住他的，我住我的",
               "suspicionLabel": "没住一起时两个人怎么管钱",
               "answer": "也不是。他固定给我转过钱，前后有一年多。",
@@ -2629,7 +3645,7 @@ export const CONTENT_CASES = {
             "entryAnchor": "他住他的，我住我的",
             "closerAnchor": "这个月第一次没来",
             "adds": "咨询者确认固定的半薪转账此前按月到账，本月第一次中断。",
-            "openEdge": "她如何使用十四个月固定转账，以及男方流水里是否还有她没有说的支出。",
+            "openEdge": "这笔固定转账究竟持续了多久、她如何使用，以及男方流水里是否还有她没有说的支出。",
             "routeIndependent": true
           },
           "pressureHint": {
@@ -2639,6 +3655,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "credit-layoff-gap",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "这个我真不知道。他当时就说奖金，我手里没有别的话。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "setup",
           "falseFrame": "奖金晚发只是短暂周转。",
@@ -2651,20 +3671,20 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "那八万，他有没有说哪天还你？"
+                "text": "这个月的钱没来，他又让你垫八万。你后来是怎么发现工作不对的？"
               }
             ]
           },
-          "version": "没说具体哪天。他只说：“你先帮我垫几天，钱下来就还你。”我问是哪笔钱，他才说奖金。我当时就信了，以为真是临时周转。",
+          "version": "这个月那笔没来，我问他，他还是说奖金晚发。我不放心，才让他把工资记录发来。工资记录没发，只给了我一份从电子社保卡导出的缴费记录，说公司漏缴了两个月。我翻到最后，才发现缴费停在四月。可四月以后，他还天天跟我说加班。",
           "afterVersion": {
             "lines": [
               {
                 "role": "host",
-                "text": "那你后来怎么没转？"
+                "text": "你拿这张社保记录问过他吗？"
               },
               {
                 "role": "caller",
-                "text": "八万太多，我先让他把账单发来。工资记录没发，只给了我一份从电子社保卡导出的缴费记录，说公司漏缴了两个月。我看了一下，最后一笔其实停在四月。可四月以后，他还天天跟我说加班。"
+                "text": "问了。他说工资明细太私密，停两个月只是漏缴。我还是觉得不对，八万也没转。"
               }
             ]
           },
@@ -2676,14 +3696,14 @@ export const CONTENT_CASES = {
           "casualQuestions": [
             {
               "question": "他丢工作前，加班是什么样子？",
-              "sourceAnchor": "他才说奖金",
+              "sourceAnchor": "还天天跟我说加班",
               "answer": "天天说忙。可几点下班、跟谁吃饭，我都不知道。我们没住一起，他说加班，我就回“早点睡”。"
             }
           ],
           "questionOptions": [
             {
               "question": "借钱以前，他跟你提过工作出了问题吗？",
-              "sourceAnchor": "才说奖金",
+              "sourceAnchor": "还天天跟我说加班",
               "suspicionLabel": "加班说法和失业时间",
               "answer": "没有。他还是天天说忙，项目要上线。有一回我说给他送点吃的，他让我别去，说公司门禁严。可那阵子，他可能已经不去公司了。",
               "textureRole": "ramble",
@@ -2704,7 +3724,11 @@ export const CONTENT_CASES = {
             },
             {
               "question": "他为什么拿社保记录代替工资记录？",
-              "sourceAnchor": "他才说奖金",
+              "missReaction": {
+                "role": "caller",
+                "text": "他为什么给社保记录，你问我也没用。他没跟我说。"
+              },
+              "sourceAnchor": "从电子社保卡导出的缴费记录",
               "suspicionLabel": "为什么用社保记录代替工资",
               "answer": "他说工资明细太私密，社保那张就够了，停两个月只是漏缴。我盯着那页看了半天，最后还是没拿到工资记录。",
               "correct": false,
@@ -2733,6 +3757,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "credit-eight-wan-bill",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "你问哪一笔？我刚翻开账单，先看见的就是那几件男装。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "misdirect",
           "falseFrame": "八万主要是两人维持体面的消费。",
@@ -2762,7 +3790,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "stage",
-                "text": "几秒后，后台多了一份账单，姓名和卡号都遮住了。"
+                "text": "几秒后，后台多了一份账单，姓名和卡号都遮住了。页面按日期、商户、金额和备注四列展开，右上角先亮出总额。"
               }
             ]
           },
@@ -2818,8 +3846,8 @@ export const CONTENT_CASES = {
                 "label": "还差至少三万五",
                 "visualVariant": "amount-gap"
               },
-              "answer": "问过一次。他当时愣了一下，说‘反正不是乱来的钱’。然后我再问，他就把话岔到‘别拖，今晚先转’上去了。",
-              "guardedAnswer": "问过，他没细说，只说不是我该管的那部分。",
+              "answer": "问过一次。他当时愣了一下，说‘反正不是乱来的钱’。我再问，他就岔开了。后面那句我开播前已经转给你了：‘别拖，今晚先转。’",
+              "guardedAnswer": "问过，他没细说。开播前那句你们也听见了，他只顾着催我转。",
               "logicContract": {
                 "premiseAnchor": "别的我没细算",
                 "sourceKind": "host-calculation",
@@ -2836,7 +3864,13 @@ export const CONTENT_CASES = {
             },
             {
               "question": "后面男装加起来也就五千，一件大衣两千多。单看这些，能说明他平时挥霍吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "一件衣服当然不能。可我当时往下一翻，先看见的就是它，我能不生气吗？"
+              },
               "sourceAnchor": "男装一共五千左右",
+              "revisedSourceAnchor": "两个人一起出去的也有",
+              "revisedQuestion": "两个人一起出去的消费，能不能都算到你一个人头上？",
               "suspicionLabel": "五千元男装是不是挥霍",
               "answer": "单看五千，确实说不上挥霍。可他那时候已经没工作了，我看到以后还是会不舒服。",
               "correct": false,
@@ -2859,6 +3893,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "credit-anniversary-agency",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "那晚就这些。别的我现在想不起来。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "reversal",
           "falseFrame": "纪念日完全由对方单方面安排。",
@@ -2968,6 +4006,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "那晚他说过手头紧吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "他没说手头紧。那晚一直说的是纪念日。"
+              },
               "sourceAnchor": "总不能太寒酸",
               "suspicionLabel": "纪念日晚餐前有没有说手头紧",
               "answer": "没有。他还说这顿算他的，叫我别看价格。我还挺高兴，真没看。现在账单摆出来，我才知道那句话也是刷卡。",
@@ -2977,6 +4019,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "朋友羡慕你时，你有没有说过那个位置其实是你订的？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我朋友怎么想，跟这笔账有什么关系？"
+              },
               "sourceAnchor": "身边朋友都挺羡慕我的",
               "suspicionLabel": "朋友是否知道靠窗位是她订的",
               "answer": "没有。她们都说我没看错人，我听着挺高兴，就没解释。",
@@ -3011,6 +4057,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "credit-device-benefit",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "账号的事先别扯远。灯在我家，这个我认。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "missing-edge",
           "falseFrame": "设备是对方送她的礼物，所以分期和她完全无关。",
@@ -3082,6 +4132,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "他把这笔分期叫“投资”。你当时有没有觉得，自己也该担一点？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我当时真不知道是分期，也没跟他谈过要一起还。"
+              },
               "sourceAnchor": "还说这是在投资我",
               "suspicionLabel": "她把设备当礼物还是共同投入",
               "answer": "没有。我当时听见的是他要支持我做账号。东西送到我这儿以后，我也一直在用，可我真以为是他全款买来送我的，没想过还款会落到我头上。",
@@ -3135,6 +4189,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "credit-five-wan-gap",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "……这几笔我现在不想一条条念。让我先把这页看完。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "reversal",
           "falseFrame": "可见消费足以解释八万。",
@@ -3179,6 +4237,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "这些账单上的日子，你们当时在一起吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "有些时候在一起，有些我记不清。你现在让我一笔笔对，我对不上。"
+              },
               "sourceAnchor": "四万里，确实有我那一份",
               "suspicionLabel": "账单日期和交往时间",
               "answer": "近几个月能对上。再往前……我把页面关了。一个人没敢看完。",
@@ -3212,6 +4274,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "credit-bank-flow",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "灯在我家。我现在能说的就是这个。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "missing-edge",
           "falseFrame": "分期由对方操作，所以八万元里没有任何一笔是直接花给咨询者的。",
@@ -3296,6 +4362,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "他买设备的时候，有没有跟你说过要一起还分期？",
+              "missReaction": {
+                "role": "caller",
+                "text": "他从没跟我说一起还。你别先把这个前提放进去。"
+              },
               "sourceAnchor": "分期那两个字",
               "suspicionLabel": "设备分期有没有说过一起还",
               "answer": "没有。他说的是买来支持我做账号。我没签，也没答应一起还。这一万二确实花给了我，可他办分期的时候没跟我商量。",
@@ -3390,12 +4460,13 @@ export const CONTENT_CASES = {
               }
             ]
           },
-          "version": "现在又来了一条语音。他说：“我只是怕你知道我失业后就离开我。”语音放完，下一条还是最低还款金额。昨晚他还发过一份文件，我一直没点开。他刚才才说，那是离职结算通知，名字已经遮了，可以给节目看。",
+          "version": "他又把开播前那条语音发了一遍：“我只是怕你知道我失业后就离开我。”语音放完，下一条还是最低还款金额。昨晚他还发过一份文件，我一直没点开。他刚才才说，那是离职结算通知，名字已经遮了，可以给节目看。",
           "testimonyWall": {
+            "presentationSkin": "voice-matrix",
             "title": "把‘都是一起消费’逐句摊开",
             "intro": "流水已经进后台。先追问哪句都行，普通出示也不扣耐心；只有正式指认会压上两次机会。",
             "splitAfter": 3,
-            "midSummary": "她把共同消费、固定转账和今晚这八万揉成了同一笔。先把三件事拆开。",
+            "midSummary": "餐厅和礼物是一块，十四个月的固定转账是一块，今晚这八万又是另一块。",
             "softAnchorResponse": "这一行确实碰到她省掉的固定给付。要正式打断这段说法，还得把材料压到那句原话上。",
             "missFeedback": {
               "evidence": [
@@ -3417,45 +4488,48 @@ export const CONTENT_CASES = {
                 "id": "credit-consumption-gloss",
                 "label": "证词 01",
                 "text": "我没占他什么固定便宜，账单里的餐厅、礼物，都是两个人一起消费。",
-                "pressResponse": "她抢着补了一句：‘餐厅和礼物本来就是两个人用的。’再问每月那笔，她没接。",
+                "pressResponse": "‘餐厅和礼物本来就是两个人用的。每月那笔……你先问别的。’",
                 "presentResponse": "这份材料能问消费构成，却还没有直接碰到她省掉的固定转账。"
               },
               {
                 "id": "credit-gift-was-voluntary",
                 "label": "证词 02",
                 "text": "灯和稳定器是他自己说要送我的，我没签过分期。",
-                "pressResponse": "她先说‘灯现在还在我家’，说到分期，又马上补：‘可不是我签的。’",
+                "pressResponse": "‘灯现在还在我家，可分期不是我签的。’",
                 "presentResponse": "材料能确认设备受益人，不能单独替任何人认定还款责任。"
               },
               {
                 "id": "credit-eight-wan-separate",
                 "label": "证词 03",
                 "text": "他今晚要的八万，不能因为以前花过钱就算成我欠他的。",
-                "pressResponse": "她咬住‘八万不是我的卡’，再问以前的钱，只回了一句：‘那是以前。’",
+                "pressResponse": "‘八万不是我的卡。以前的钱……那是以前。’",
                 "presentResponse": "这张材料只够继续问钱路，不能把八万直接改写成债务。"
               },
               {
                 "id": "credit-savings-unknown",
                 "label": "证词 04",
                 "text": "我手里剩多少一直没给他看，因为那是我的账户。",
-                "pressResponse": "她说：‘我没给他看过余额。’停了一下，又补：‘他自己猜的。’",
+                "pressResponse": "‘我没给他看过余额。十五万是他自己猜的。’",
                 "presentResponse": "材料没有她的余额列，放在这里也补不出她账户里的未知数。"
               },
               {
                 "id": "credit-wants-no-transfer",
                 "label": "证词 05",
-                "text": "我今晚就是……算了，你问吧。",
-                "pressResponse": "她话到一半收住，只肯说：‘反正今晚我不转。’",
-                "presentResponse": "这句是她现在的选择，不需要拿别人的流水替她盖章。"
+                "text": "我不是要钱，我是要个态度。以前那些钱，不能拿来逼我转这八万。",
+                "pressResponse": "‘八万我不转。你就告诉他，以前那些钱都是他自愿给的。’",
+                "presentResponse": "这是她今晚想带走的说法。要核固定给付，仍得回到她前面那句‘没占固定便宜’。"
               }
             ],
             "acts": [
               {
                 "id": "act1",
+                "presentationSkin": "voice-matrix",
                 "title": "把‘都是一起消费’逐句摊开",
+                "winkLine": "等一下。先看她刚才那句。",
+                "winkTier": "tier2-player-cue",
                 "intro": "流水已经进后台。先追问哪句都行，普通出示也不扣耐心；只有正式指认会压上两次机会。",
                 "splitAfter": 3,
-                "midSummary": "她把共同消费、固定转账和今晚这八万揉成了同一笔。先把三件事拆开。",
+                "midSummary": "餐厅和礼物是一块，十四个月的固定转账是一块，今晚这八万又是另一块。",
                 "softAnchorResponse": "这一行确实碰到她省掉的固定给付。要正式打断这段说法，还得把材料压到那句原话上。",
                 "reliefBeat": {
                   "listenerId": "@账单翻到第十七页",
@@ -3467,36 +4541,36 @@ export const CONTENT_CASES = {
                     "id": "credit-consumption-gloss",
                     "label": "证词 01",
                     "text": "我没占他什么固定便宜，账单里的餐厅、礼物，都是两个人一起消费。",
-                    "pressResponse": "她抢着补了一句：‘餐厅和礼物本来就是两个人用的。’再问每月那笔，她没接。",
+                    "pressResponse": "‘餐厅和礼物本来就是两个人用的。每月那笔……你先问别的。’",
                     "presentResponse": "这份材料能问消费构成，却还没有直接碰到她省掉的固定转账。"
                   },
                   {
                     "id": "credit-gift-was-voluntary",
                     "label": "证词 02",
                     "text": "灯和稳定器是他自己说要送我的，我没签过分期。",
-                    "pressResponse": "她先说‘灯现在还在我家’，说到分期，又马上补：‘可不是我签的。’",
+                    "pressResponse": "‘灯现在还在我家，可分期不是我签的。’",
                     "presentResponse": "材料能确认设备受益人，不能单独替任何人认定还款责任。"
                   },
                   {
                     "id": "credit-eight-wan-separate",
                     "label": "证词 03",
                     "text": "他今晚要的八万，不能因为以前花过钱就算成我欠他的。",
-                    "pressResponse": "她咬住‘八万不是我的卡’，再问以前的钱，只回了一句：‘那是以前。’",
+                    "pressResponse": "‘八万不是我的卡。以前的钱……那是以前。’",
                     "presentResponse": "这张材料只够继续问钱路，不能把八万直接改写成债务。"
                   },
                   {
                     "id": "credit-savings-unknown",
                     "label": "证词 04",
                     "text": "我手里剩多少一直没给他看，因为那是我的账户。",
-                    "pressResponse": "她说：‘我没给他看过余额。’停了一下，又补：‘他自己猜的。’",
+                    "pressResponse": "‘我没给他看过余额。十五万是他自己猜的。’",
                     "presentResponse": "材料没有她的余额列，放在这里也补不出她账户里的未知数。"
                   },
                   {
                     "id": "credit-wants-no-transfer",
                     "label": "证词 05",
-                    "text": "我今晚就是……算了，你问吧。",
-                    "pressResponse": "她话到一半收住，只肯说：‘反正今晚我不转。’",
-                    "presentResponse": "这句是她现在的选择，不需要拿别人的流水替她盖章。"
+                    "text": "我不是要钱，我是要个态度。以前那些钱，不能拿来逼我转这八万。",
+                    "pressResponse": "‘八万我不转。你就告诉他，以前那些钱都是他自愿给的。’",
+                    "presentResponse": "这是她今晚想带走的说法。要核固定给付，仍得回到她前面那句‘没占固定便宜’。"
                   }
                 ],
                 "decisivePresent": {
@@ -3527,7 +4601,7 @@ export const CONTENT_CASES = {
                     }
                   ],
                   "callerLine": "……这十四个月，确实不是几顿饭能带过去的。",
-                  "hostLine": "十四个月，每月一万七千五，房租另付。不是几顿饭。这句改了再往下。",
+                  "hostLine": "十四个月，每个月一万七千五，房租还是他另付。怎么会只是几顿饭？你先把这句话改过来，我们再往下聊。",
                   "boundaryLine": "这行流水只推翻‘没有固定便宜’；它不证明八万已经变成她的债，也不替男方解释未知去向。",
                   "contradiction": "咨询者把十四个月每月一万七千五的固定转账粉饰成零散共同消费。",
                   "routeAxis": "money-flow",
@@ -3536,6 +4610,7 @@ export const CONTENT_CASES = {
               },
               {
                 "id": "act2",
+                "presentationSkin": "voice-matrix",
                 "statusLabel": "她改口了 · 第二段说法",
                 "title": "把‘我只是收着’再摊一遍",
                 "intro": "她认了固定转账，却换了一种说法解释自己和这笔钱的关系。第二段仍可自由追问、普通出示；正式指认另有两次机会。",
@@ -3546,16 +4621,20 @@ export const CONTENT_CASES = {
                 "openerLines": [
                   {
                     "role": "caller",
-                    "text": "等等。17500，十四个月，这个我认。七月没来，我那天也问了他好几次。可那是因为他又瞒事，不是我每个月等着这笔钱。"
+                    "text": "等一下，你别把我说成每个月伸手等钱的人。17500，十四个月，我认；七月没来，我也问了。可这钱一开始就是他自己说要给的，说让我把探店号做起来，别老看别人脸色。我从来没开口跟他要。"
                   },
                   {
                     "role": "host",
-                    "text": "好，金额先不动。你把‘不是那么回事’重新说完整。"
+                    "text": "行。你从第一笔开始说，钱怎么成了每个月都会来的？"
+                  },
+                  {
+                    "role": "caller",
+                    "text": "开始是他说每个月给我，我就收了，后来也确实拿去过日子。七月那天他又不回消息，钱也没来，我连着问了几次，是怕他又瞒着我。以前的钱我会跟他讲，今晚这八万不是我的卡，我不替他还。"
                   }
                 ],
                 "revisedFrame": "她承认十四个月固定转账，却把自己长期等待、断供后追问的参与压成‘他坚持给，我只是收’。",
                 "splitAfter": 2,
-                "midSummary": "她认了钱一直来，也认了七月追问，剩下只往动机上躲。别替她猜，听她自己怎么说。",
+                "midSummary": "她现在的说法是：钱一直收着，七月追问却只是怕他瞒事。先听这两句话能不能同时成立。",
                 "reliefBeat": {
                   "listenerId": "@工资没它准时",
                   "comment": "一万七千五按月来，我工资都没这么准。",
@@ -3589,14 +4668,14 @@ export const CONTENT_CASES = {
                     "id": "credit-transfer-was-his-idea",
                     "label": "改口 01",
                     "text": "钱是他自己说要给的。七月多问几句，是怕他又瞒事，不是我每个月等着这笔钱。",
-                    "pressResponse": "她马上接话：‘我问的是他为什么又撒谎。’至于钱没来，她绕开了。",
+                    "pressResponse": "‘我问的是他为什么又瞒我。钱没来……对，我也问了钱。’",
                     "presentResponse": "缺转能碰到她一直等没等，不能替直播间猜她心里到底怕什么。"
                   },
                   {
                     "id": "credit-eight-wan-still-separate",
                     "label": "改口 02",
                     "text": "八万我不转。这个没变。",
-                    "pressResponse": "她只重复‘卡不是我的’，以前的固定转账一句没接。",
+                    "pressResponse": "‘卡不是我的，这八万我不转。以前的钱我会跟他讲。’",
                     "presentResponse": "材料可以拆钱路，不能替任何一边把今晚八万直接定成债。",
                     "survivesFromAct1": "credit-eight-wan-separate"
                   },
@@ -3604,7 +4683,7 @@ export const CONTENT_CASES = {
                     "id": "credit-balance-needs-explaining",
                     "label": "改口 03",
                     "text": "余额……我会跟他说，不在直播里报。",
-                    "pressResponse": "她把声音压低：‘这数我只跟当事人说。’再多一句都不肯。",
+                    "pressResponse": "‘余额我只跟他本人说。直播里别再问了。’",
                     "presentResponse": "现有流水没有她的余额，不能拿来替她报数。",
                     "survivesFromAct1": "credit-savings-unknown"
                   },
@@ -3612,7 +4691,7 @@ export const CONTENT_CASES = {
                     "id": "credit-shared-spending-limited",
                     "label": "改口 04",
                     "text": "灯在我家，餐厅也有我的份。可他借钱买信托，别往我这边算。",
-                    "pressResponse": "她先认下自己用的东西，提到信托又立刻把话推回他那边。",
+                    "pressResponse": "‘灯是我在用。可信托是他自己借钱买的，别混在一起。’",
                     "presentResponse": "这张材料只能确认其中一段消费，不能把整份账单一次结清。",
                     "survivesFromAct1": "credit-gift-was-voluntary"
                   }
@@ -3648,8 +4727,8 @@ export const CONTENT_CASES = {
                       "sourceLabel": "信用卡账单"
                     }
                   ],
-                  "callerLine": "……我等了。七月一断，我先问的就是这笔钱。",
-                  "hostLine": "谁先提，材料没写。可七月一断，你就追着问。你一直在等这笔钱，不是‘只是收着’。",
+                  "callerLine": "……我等了。七月没来，我第一句问的就是钱怎么没了。",
+                  "hostLine": "七月钱一断，你连着问了好几次。你不是‘只是收着’。这句话别再说了。",
                   "boundaryLine": "缺转行和她的原话只推翻‘没当固定收入、没追着要’；不证明最初是谁提议，也不把八万变成她的债。",
                   "contradiction": "咨询者认下长期固定给付后，又否认自己把它当成按月会来的收入；七月缺转后的连续追问推翻了这层圆谎。",
                   "routeAxis": "money-flow",
@@ -3686,7 +4765,7 @@ export const CONTENT_CASES = {
               }
             ],
             "callerLine": "……这十四个月，确实不是几顿饭能带过去的。",
-            "hostLine": "十四个月，每月一万七千五，房租另付。不是几顿饭。这句改了再往下。",
+            "hostLine": "十四个月，每个月一万七千五，房租还是他另付。怎么会只是几顿饭？你先把这句话改过来，我们再往下聊。",
             "boundaryLine": "这行流水只推翻‘没有固定便宜’；它不证明八万已经变成她的债，也不替男方解释未知去向。",
             "contradiction": "咨询者把十四个月每月一万七千五的固定转账粉饰成零散共同消费。",
             "routeAxis": "money-flow",
@@ -3712,7 +4791,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "补偿金是真的，可他后面紧接着发了最低还款金额。你当时怎么想的？"
+                "text": "补偿金是真的。语音放完，他就发了最低还款金额。你当时怎么想的？"
               },
               {
                 "role": "caller",
@@ -3767,7 +4846,7 @@ export const CONTENT_CASES = {
             },
             {
               "question": "那条语音你还留着？",
-              "sourceAnchor": "一条语音",
+              "sourceAnchor": "开播前那条语音",
               "answer": "留着。",
               "routeAxis": "caller-credibility",
               "routeTone": "detour"
@@ -3775,9 +4854,9 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "你今晚打进来，是想问清这八万，还是想让我替你说一句别转？",
+              "question": "刚才那句我再放一遍：‘我只是怕你知道我失业后就离开我。’你今晚打进来，是想问这八万该不该转，还是想让我替你跟他说别转？",
               "sourceAnchor": "下一条还是最低还款金额",
-              "suspicionLabel": "她想从主播这里拿走什么",
+              "suspicionLabel": "重放‘怕你离开’那句",
               "answer": "前面那十四个月的钱，我不想再跟他一笔一笔讲。",
               "lines": [
                 {
@@ -3802,6 +4881,18 @@ export const CONTENT_CASES = {
                 }
               ],
               "guardedAnswer": "我想把回放发给他。前面那些钱，我不想跟他讲。",
+              "resistanceBeat": {
+                "lines": [
+                  {
+                    "role": "caller",
+                    "text": "你非要当着这么多人再放一遍吗？"
+                  },
+                  {
+                    "role": "host",
+                    "text": "你也准备把这段回放发给他。那就先说清楚，你想让我在回放里说什么。"
+                  }
+                ]
+              },
               "logicContract": {
                 "premiseAnchor": "说的还是拿不出来，不是不想给",
                 "sourceKind": "caller-statement",
@@ -3813,8 +4904,8 @@ export const CONTENT_CASES = {
               },
               "contradiction": "咨询者把明确的不愿出钱说成拿不准，试图借直播间的判断回避自己长期受益和花销。",
               "correct": true,
-              "routeAxis": "caller-credibility",
-              "routeTone": "pressure-point"
+              "routeAxis": "active-provocation",
+              "routeTone": "caller-skeptical"
             },
             {
               "question": "如果我现在只说一句‘别转’，你准备怎么跟他谈前面那些钱？",
@@ -4607,7 +5698,7 @@ export const CONTENT_CASES = {
           "speaker": "咨询者",
           "line": "他刚又发来一个文件，说我既然不信，就拿给你们看。姓名和卡号都遮了，只截了几个月的关键交易。我现在转后台。那三万五……我确实不知道，他不肯告诉我。我今晚再问一遍，明晚回来。",
           "hostLine": "好，就看他发来的这几页。三万五不知道就是不知道，明晚把他怎么说的告诉我。",
-          "stageDirection": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下面紧跟着一句：“拿了他一年多的钱，这八万就该转。”",
+          "stageDirection": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下一条是：“拿了他一年多的钱，这八万就该转。”",
           "audioCueId": "sfx.phone.soft-hangup"
         },
         "interlude": {
@@ -4655,15 +5746,36 @@ export const CONTENT_CASES = {
       },
       "overnightStructure": {
         "hangupAnchor": "别的我没细算",
-        "hangupLine": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下面紧跟着一句：“拿了他一年多的钱，这八万就该转。”",
+        "hangupLine": "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明。弹幕还在往上滚：“别转。”下一条是：“拿了他一年多的钱，这八万就该转。”",
         "hangupAudioCueId": "sfx.phone.soft-hangup",
         "hostHoldLine": "好，就看他发来的这几页。三万五不知道就是不知道，明晚把他怎么说的告诉我。",
         "snapshotEcho": {
-          "caller-benefited": "昨晚有人说，我打进来就是想让你替我说一分钱不用出。我不爱听。可那十四个月的钱，我确实得自己讲。",
-          "respondent-shifted-debt": "昨晚有人咬住我把固定转账说成几次消费。今天流水在后台，你按十四个月问。",
-          "both-performed": "昨晚有人说，他拿失业和旧账逼我接盘。八万我没转；过去的钱花在哪儿，我也不躲。"
+          "caller-benefited": "昨晚你说，我打进来就是想让你替我说一分钱不用出。我不爱听。可那十四个月的钱，我确实得自己讲。",
+          "respondent-shifted-debt": "昨晚你说，我把固定转账讲成了几次消费。今天流水在后台，你按十四个月问。",
+          "both-performed": "昨晚你说，他拿失业和旧账逼我接盘。八万我没转；过去的钱花在哪儿，我也不躲。"
         },
         "liveCounterBeats": [
+          {
+            "id": "credit-night-b-first-interest",
+            "kind": "interruptToast",
+            "cost": 0,
+            "afterSceneIndex": 3,
+            "from": "弹幕风向",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "房租还是另付的？前面没听见啊。"
+              },
+              {
+                "role": "stage",
+                "text": "等下，每月一万七千五还不含房租？"
+              },
+              {
+                "role": "caller",
+                "text": "房租另付。我刚才确实没讲。"
+              }
+            ]
+          },
           {
             "id": "credit-live-listener-screenshot",
             "kind": "emotionalChoice",
@@ -4972,7 +6084,7 @@ export const CONTENT_CASES = {
       "stanceSnapshot": {
         "afterScene": 4,
         "kicker": "中段立场快照",
-        "prompt": "现在这通麦，你先咬住哪个动作？",
+        "prompt": "现在你最想先问哪一件？",
         "note": "不判分。按下你现在最在意的那件事。",
         "afterPickLine": "八万为什么正好找她要？他发来的那页账，还没读完。",
         "continueLabel": "继续听",
@@ -4982,7 +6094,7 @@ export const CONTENT_CASES = {
             "id": "caller-benefited",
             "label": "她在要公开赦免",
             "summary": "她不只是不转八万，还想让直播间替她证明过去十四个月一分不用解释。",
-            "feedback": "她来电的用途露头了：她要的不只是停转，是一段能发给男友的公开背书。",
+            "feedback": "她承认了：她不只想停转，还想拿一段回放去跟男友说。",
             "recap": "她想让直播间替她说，过去的钱全是男方自愿给的，她不用交代余额和花销。"
           },
           {
@@ -5062,7 +6174,7 @@ export const CONTENT_CASES = {
         "answer": "我自己的工资也没存下来。余额没给他看。",
         "note": "让咨询者报出实际余额，承认自己已经把男方的固定转账当成可持续收入并消费掉，也让男方索要八万的计算依据落地；玩家若在第二天追问房租，还会看到她的住房成本并不从这一万七千五中支出。累计给付仍不能把男方债务变成咨询者债务。"
       },
-      "stageJudgement": "你打进来不是查账，是要我公开替你说：这些钱都是他自愿给的，你一分不用解释。这个忙我不帮。十四个月，每月一万七千五，房租另付，灯也在你家。八万先别转，卡是他签的；花到哪，你自己跟他说。信用卡里没说清的那截，让他讲。",
+      "stageJudgement": "你打进来不是查账，是想让我公开替你说：这些钱都是他自愿给的，你一分不用解释。这种话，我不会替你说的。十四个月，每月一万七千五，房租另付，灯也在你家。八万先别转，卡是他签的；花到哪，你自己跟他说。信用卡里没说清的那截，让他讲。",
       "careChoices": [
         {
           "id": "pragmatic",
@@ -5180,7 +6292,7 @@ export const CONTENT_CASES = {
       "routeAxisComments": {
         "process-control": [
           "入口在谁手里",
-          "这套话术我上周刚听过一遍"
+          "能扛事后面接的是谁的卡"
         ],
         "document-edge": [
           "三张图有没有变化",
@@ -5193,10 +6305,14 @@ export const CONTENT_CASES = {
         "caller-credibility": [
           "她也想负责这次活动",
           "表现机会不是免费午餐"
+        ],
+        "active-provocation": [
+          "群里那句没说谁还,也没说哪天"
         ]
       },
       "driftComments": [
-        "打工人打卡,刚加完班,这单我熟",
+        "他也许真是急着交差",
+        "她自己答应刷的,这笔不能全推给公司",
         "弱弱问下:垫付报备流程哪里有模板,我司也没有",
         "主播喝口水吧,嗓子听着冒烟了",
         "刚才谁说眉笔的,链接呢"
@@ -5281,19 +6397,19 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "我替公司垫了一笔钱，三个星期了，还没报下来。",
+          "text": "我替公司垫了六万八，三个星期了，还没报下来。",
           "mood": "thinking"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "垫了多少？",
+          "text": "钱刷在哪儿？",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "六万八，我自己的卡。账单已经出了，钱还没回来。",
+          "text": "我自己的信用卡。账单已经出了，钱还没回来。",
           "mood": "thinking"
         },
         {
@@ -5317,7 +6433,7 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "这次活动是我刚争来的。我怕一发出去，以后就不让我碰客户活动了。",
+          "text": "这次城市合伙人的招商会是我刚争来的。我怕一发出去，以后就不让我碰客户活动了。",
           "mood": "thinking"
         },
         {
@@ -5329,31 +6445,7 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "栖行共享科技，做共享充电柜和储物柜。宸直是主要股东之一，公司最近又在讲估值涨了、点位铺得快。",
-          "mood": "thinking"
-        },
-        {
-          "speaker": "林旭阳",
-          "role": "host",
-          "text": "这次也是铺点的活动？",
-          "mood": "listening"
-        },
-        {
-          "speaker": "咨询者",
-          "role": "caller",
-          "text": "城市合伙人的招商会，老板会到。我才想把它接下来。",
-          "mood": "thinking"
-        },
-        {
-          "speaker": "林旭阳",
-          "role": "host",
-          "text": "可这张卡你也得还。",
-          "mood": "listening"
-        },
-        {
-          "speaker": "咨询者",
-          "role": "caller",
-          "text": "所以我才不知道怎么开口。",
+          "text": "公司叫栖行共享科技，做商场里的共享充电柜和储物柜。宸直是主要股东之一，最近一直催着铺点。",
           "mood": "thinking"
         },
         {
@@ -5375,6 +6467,10 @@ export const CONTENT_CASES = {
       "sceneVersions": [
         {
           "id": "work-title-for-advance",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我没问。他只说活动后补，我当时就回了。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "setup",
           "falseFrame": "咨询者主动争取负责这次活动，因此个人垫款只是她为机会自愿承担的成本。",
@@ -5469,6 +6565,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你答应先垫时，有没有问这钱最后谁来还？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我没问。他只说活动后补，我当时就回了。"
+              },
               "sourceAnchor": "我几乎马上就回了",
               "suspicionLabel": "答应前的还款安排",
               "answer": "没有。他说活动后补流程，我回了句：‘我来扛。’消息发出去，我又把‘这钱谁还’打了一遍，最后删了。",
@@ -5501,30 +6601,14 @@ export const CONTENT_CASES = {
           ],
           "pressureHint": {
             "intentHook": "流程词说得太熟",
-            "callerGuard": "tense",
-            "expression": {
-              "kind": "blink",
-              "text": "流程词说得很顺"
-            }
+            "callerGuard": "tense"
           }
         },
         {
           "id": "work-private-process",
-          "beforeVersion": {
-            "lines": [
-              {
-                "role": "host",
-                "text": "你说流程表是四点零五发的？"
-              },
-              {
-                "role": "caller",
-                "text": "十四点零五。下午两点零五。"
-              },
-              {
-                "role": "host",
-                "text": "行，我看串了。你接着说。"
-              }
-            ]
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我当时没想谁来补。看见他私聊说能处理，我就没再看那一格。"
           },
           "interactionMode": "lineReplay",
           "clueRole": "reversal",
@@ -5594,7 +6678,13 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你回了‘收到’，当时以为表里空着的预算会由谁补？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我当时没想谁来补。看见他私聊说能处理，我就没再看那一格。"
+              },
               "sourceAnchor": "预算要填金额",
+              "revisedSourceAnchor": "那时候我还没看见通知",
+              "revisedQuestion": "你说没看见通知，是不是想把前面的群流程先放过去？",
               "suspicionLabel": "她以为谁会补完流程表",
               "answer": "我以为是他。供应商是他找的，预算也在他手里。",
               "lines": [
@@ -5635,6 +6725,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "work-approval-only",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我现在就是拿不出日期。他每次只说‘在走’。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "missing-edge",
           "falseFrame": "财务延后通知是真的，审批也通过了，因此钱只是晚几天。",
@@ -5716,6 +6810,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "他每次把这张图发回来，有没有说过具体哪天到账？",
+              "missReaction": {
+                "role": "caller",
+                "text": "没有日期。他每次都只说‘在走’，我手里就这张图。"
+              },
               "sourceAnchor": "每次都说“流程在走”",
               "suspicionLabel": "审批通过后的付款凭证",
               "answer": "没有。每次就那四个字：“流程在走。”我也真没往下看。后来财务一说延后，我更觉得只是晚几天。",
@@ -5749,6 +6847,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "work-leader-note",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "领导点了我的名。我当时光顾着高兴，别的真没看进去。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "misdirect",
           "falseFrame": "领导公开夸了咨询者，并在活动总结里写她负责，说明组织认可她承担这单，流程只是内部补齐。",
@@ -5782,10 +6884,10 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "领导那句里，提没提这六万八什么时候还？",
+              "question": "我把领导原话再放一遍：‘流程该补的补齐。’这句话里，提没提这六万八什么时候还？",
               "sourceAnchor": "这次活动负责人写小陈",
               "revisedSourceAnchor": "付款那一栏空着",
-              "suspicionLabel": "领导有没有承诺六万八的还款时间",
+              "suspicionLabel": "重放‘流程该补的补齐’",
               "answer": "没提。谁来还、哪天还，都没说。我当时只顾着截自己的名字。",
               "lines": [
                 {
@@ -5810,6 +6912,18 @@ export const CONTENT_CASES = {
                 }
               ],
               "guardedAnswer": "写了我名字。我那时候只顾着截图。",
+              "resistanceBeat": {
+                "lines": [
+                  {
+                    "role": "caller",
+                    "text": "这句他是当着所有人说的。"
+                  },
+                  {
+                    "role": "host",
+                    "text": "所以更要把‘负责活动’和‘什么时候还钱’分开。"
+                  }
+                ]
+              },
               "logicContract": {
                 "premiseAnchor": "这次活动负责人写小陈",
                 "sourceKind": "document-readout",
@@ -5821,12 +6935,18 @@ export const CONTENT_CASES = {
               },
               "contradiction": "领导只确认结果和署名，没有确认垫款与流程责任。",
               "correct": true,
-              "routeAxis": "process-control",
-              "routeTone": "pressure-point"
+              "routeAxis": "active-provocation",
+              "routeTone": "caller-skeptical"
             },
             {
               "question": "被点名以后，你为什么又等了一天？",
+              "missReaction": {
+                "role": "caller",
+                "text": "因为领导点了我的名。我当时光顾着截图，没往前翻。"
+              },
               "sourceAnchor": "马上截了图发给朋友",
+              "revisedSourceAnchor": "我点了确认",
+              "revisedQuestion": "你点了确认以后，是不是又把追款往后放了？",
               "suspicionLabel": "被点名后为什么继续等",
               "answer": "……因为我高兴。领导念到我名字，我先截图了。可真要追钱，别人就会问我为什么没报备。我一想到这儿，又拖了一天。",
               "correct": false,
@@ -5883,35 +7003,35 @@ export const CONTENT_CASES = {
                 "id": "work-process-complete",
                 "label": "证词 01",
                 "text": "流程都走完了，就是公司一直不给我报销。",
-                "pressResponse": "她马上说：‘图上就是审批通过。’再问报销编号，她没念出来。",
+                "pressResponse": "‘图上就是审批通过。报销编号……我没看见。’",
                 "presentResponse": "同一张审批页只能证明立项通过，不能把空着的付款栏说成到账。"
               },
               {
                 "id": "work-three-screenshots",
                 "label": "证词 02",
                 "text": "他一共发了三次。三次都是同一张活动立项页，编号没变。",
-                "pressResponse": "她数了一遍：‘三次，都是 LX 那张。’问有没有新编号，她说没有。",
+                "pressResponse": "‘三次，都是LX那张。没有新编号。’",
                 "presentResponse": "重复截图能说明催问被同一页面挡回，不能单独证明钱在财务手里。"
               },
               {
                 "id": "work-title-matters",
                 "label": "证词 03",
                 "text": "活动负责人写的是我，我确实舍不得把这个机会一起丢掉。",
-                "pressResponse": "她很快接话：‘这个负责人是我争来的。’说到刷卡，声音就低了。",
+                "pressResponse": "‘这个负责人是我争来的。刷卡……也是我自己刷的。’",
                 "presentResponse": "负责人字段和付款字段属于不同责任线，不能拿其中一个覆盖另一个。"
               },
               {
                 "id": "work-payment-handler-other",
                 "label": "证词 04",
                 "text": "活动总结初稿上，活动负责人是我，付款经办人是他。六万八刷在我的信用卡上。",
-                "pressResponse": "她把两个字段重新念了一遍，念到自己的信用卡时停了。",
+                "pressResponse": "‘负责人是我，经办是他。六万八，刷的是我的卡。’",
                 "presentResponse": "材料能支持继续追付款经办和回单，不能证明同事已经收走返款。"
               },
               {
                 "id": "work-unsent-group-message",
                 "label": "证词 05",
                 "text": "我把追款消息打进群里，一直没发，是怕以后不再让我接活动。",
-                "pressResponse": "她说：‘消息还在输入框。’问为什么不发，只回：‘怕以后没活动。’",
+                "pressResponse": "‘消息还在输入框。我怕发了以后，再也轮不到我。’",
                 "presentResponse": "这句讲的是她的风险选择，付款栏只能帮她把问题问得更具体。"
               }
             ],
@@ -5919,6 +7039,8 @@ export const CONTENT_CASES = {
               {
                 "id": "act1",
                 "title": "把‘流程都走完了’放回付款节点",
+                "winkLine": "我把审批页再打开。",
+                "winkTier": "tier3-accomplice",
                 "intro": "审批通过、活动署名和实际付款是三个节点。逐句问，不把任何一张截图当成终点。",
                 "splitAfter": 3,
                 "midSummary": "她想保住负责人署名，也想拿回六万八；这两个诉求都是真的，但不能继续共用一张立项页。",
@@ -5933,35 +7055,35 @@ export const CONTENT_CASES = {
                     "id": "work-process-complete",
                     "label": "证词 01",
                     "text": "流程都走完了，就是公司一直不给我报销。",
-                    "pressResponse": "她马上说：‘图上就是审批通过。’再问报销编号，她没念出来。",
+                    "pressResponse": "‘图上就是审批通过。报销编号……我没看见。’",
                     "presentResponse": "同一张审批页只能证明立项通过，不能把空着的付款栏说成到账。"
                   },
                   {
                     "id": "work-three-screenshots",
                     "label": "证词 02",
                     "text": "他一共发了三次。三次都是同一张活动立项页，编号没变。",
-                    "pressResponse": "她数了一遍：‘三次，都是 LX 那张。’问有没有新编号，她说没有。",
+                    "pressResponse": "‘三次，都是LX那张。没有新编号。’",
                     "presentResponse": "重复截图能说明催问被同一页面挡回，不能单独证明钱在财务手里。"
                   },
                   {
                     "id": "work-title-matters",
                     "label": "证词 03",
                     "text": "活动负责人写的是我，我确实舍不得把这个机会一起丢掉。",
-                    "pressResponse": "她很快接话：‘这个负责人是我争来的。’说到刷卡，声音就低了。",
+                    "pressResponse": "‘这个负责人是我争来的。刷卡……也是我自己刷的。’",
                     "presentResponse": "负责人字段和付款字段属于不同责任线，不能拿其中一个覆盖另一个。"
                   },
                   {
                     "id": "work-payment-handler-other",
                     "label": "证词 04",
                     "text": "活动总结初稿上，活动负责人是我，付款经办人是他。六万八刷在我的信用卡上。",
-                    "pressResponse": "她把两个字段重新念了一遍，念到自己的信用卡时停了。",
+                    "pressResponse": "‘负责人是我，经办是他。六万八，刷的是我的卡。’",
                     "presentResponse": "材料能支持继续追付款经办和回单，不能证明同事已经收走返款。"
                   },
                   {
                     "id": "work-unsent-group-message",
                     "label": "证词 05",
                     "text": "我把追款消息打进群里，一直没发，是怕以后不再让我接活动。",
-                    "pressResponse": "她说：‘消息还在输入框。’问为什么不发，只回：‘怕以后没活动。’",
+                    "pressResponse": "‘消息还在输入框。我怕发了以后，再也轮不到我。’",
                     "presentResponse": "这句讲的是她的风险选择，付款栏只能帮她把问题问得更具体。"
                   }
                 ],
@@ -6012,16 +7134,20 @@ export const CONTENT_CASES = {
                 "openerLines": [
                   {
                     "role": "caller",
-                    "text": "好，付款那段没走完，我认。可经办一直是他，14：22 也是他叫我先刷，说活动结束会补；我按他说的等，不能全怪我没盯。"
+                    "text": "好，付款那段没走完，我认。可那天下午客户突然提前，他是经办，14：22 又私聊我，说先刷，活动结束他会补。我第一次独立负责这么大的活动，老板还在等结果，我能当场说不做吗？"
                   },
                   {
                     "role": "host",
-                    "text": "他让你绕公开流程，这个责任不消失。现在看你答应绕开以前，已经知道什么。"
+                    "text": "那就按时间说。客户改期以后，第一条消息是谁发的？"
+                  },
+                  {
+                    "role": "caller",
+                    "text": "客户把活动提前，他私聊说别在群里问预算，先刷，活动后补。我当时想先把活动做下来，负责人也能写我。付款一直是他经办，后来他又反复说会补，我当然就按他说的等。"
                   }
                 ],
                 "revisedFrame": "她承认付款流程未完成，却把自己未报备、未追编号和未发群消息全解释成经办同事承诺会补。",
                 "splitAfter": 2,
-                "midSummary": "她把经办承诺放在最前面，可公开群里的个人垫付规则早了十七分钟。先后顺序不能倒。",
+                "midSummary": "她现在把经办的承诺放在前面。可在那条私聊之前，她已经看见报备要求，还回了‘收到’。",
                 "reliefBeat": {
                   "listenerId": "@月底到底哪月底",
                   "comment": "‘月底会补’是不是公司免密支付。",
@@ -6055,14 +7181,14 @@ export const CONTENT_CASES = {
                     "id": "work-handler-promise-cleared-her",
                     "label": "改口 01",
                     "text": "付款没走完我认，可经办说活动后会补，我按他的安排等就行，没再盯不能算我的问题。",
-                    "pressResponse": "她抢着说：‘他就是这么答应我的。’问到群公告，她停了一拍。",
+                    "pressResponse": "‘他就是这么答应我的。群公告我看见了，可当时客户已经提前了。’",
                     "presentResponse": "要拆这句，得找她在私聊之前已经收到的公开规则，不能只重复付款栏为空。"
                   },
                   {
                     "id": "work-repeat-screenshot-no-number",
                     "label": "改口 02",
                     "text": "他后来三次发的都是同一张立项图，我那时也确实没再问正式报销编号。",
-                    "pressResponse": "她说：‘对，三张一样。’至于为什么没问编号，只回了句‘我当时信了’。",
+                    "pressResponse": "‘对，三张都一样。我没再问编号，因为我当时信他会补。’",
                     "presentResponse": "q04 能核对重复截图，这句已经没有把旧页面说成付款进展。",
                     "survivesFromAct1": "work-three-screenshots"
                   },
@@ -6070,7 +7196,7 @@ export const CONTENT_CASES = {
                     "id": "work-title-and-payment-split",
                     "label": "改口 03",
                     "text": "负责人署名我还想保留，可付款责任不能因为署名也压在我个人卡上。",
-                    "pressResponse": "她先护住负责人署名：‘这个别给我撤。’又补：‘可卡也不能一直压我这儿。’",
+                    "pressResponse": "‘负责人别给我撤。可六万八也不能一直压在我卡上。’",
                     "presentResponse": "负责人字段不能代替付款字段，也不能反过来取消她的项目署名。",
                     "survivesFromAct1": "work-title-matters"
                   },
@@ -6078,7 +7204,7 @@ export const CONTENT_CASES = {
                     "id": "work-card-debt-needs-formal-entry",
                     "label": "改口 04",
                     "text": "六万八还在我信用卡上，我现在得拿到正式报销编号和预计日期。",
-                    "pressResponse": "她把两个词念得很慢：‘报销编号，预计日期。明天我就问这两个。’",
+                    "pressResponse": "‘报销编号，预计日期。明天我就问这两个。’",
                     "presentResponse": "现有记录能支持她去要编号和日期，不能预判公司最后怎么处理。",
                     "survivesFromAct1": "work-payment-handler-other"
                   }
@@ -6115,8 +7241,8 @@ export const CONTENT_CASES = {
                       "sourceLabel": "她整理的七条报销记录"
                     }
                   ],
-                  "callerLine": "……14:05 那条我看见了。是先写了个人垫付要报备，后来他才私聊让我别在群里问。我当时是自己选了先信他。",
-                  "hostLine": "报备你看见了。十七分钟后，是你自己答应刷卡。不能说他会补，你就不用盯。",
+                  "callerLine": "……14：05那条我看见了，也回了收到。后来他让我别在群里问，是我自己答应先刷的。",
+                  "hostLine": "14：05 的报备你看见了，还回了‘收到’。十七分钟后，是你自己答应刷卡。你不能再说，有他一句‘会补’，你就什么都不用管。",
                   "boundaryLine": "q01 只推翻‘经办承诺后她无需再跟进’；不减轻同事绕流程和重复发旧图的责任，也不证明公司可以拒付。",
                   "contradiction": "咨询者承认付款流程没走完后，把未报备和未追编号全推给经办承诺；更早的公开流程公告证明她曾知情并选择绕开。",
                   "routeAxis": "process-control",
@@ -6333,6 +7459,108 @@ export const CONTENT_CASES = {
         }
       ],
       "investigationHooks": [
+        {
+          "id": "work-postcase-inbox",
+          "voiceAttribution": "document",
+          "source": "mixed-inbox",
+          "surface": "后台收件箱 · 四分钟内六封新消息",
+          "title": "哪一封值得留下",
+          "triggerContradiction": "咨询者把立项审批和负责人署名说成完整报销流程，但付款栏始终缺失。",
+          "appearsNowBecause": "主播结案后，节目切片把‘流程都走完了’和空着的支付状态并排放出，后台收件箱立刻挤满。",
+          "prompt": "六封消息里，哪一封能带回材料板？",
+          "material": "前四分钟共收到六封：两封只骂小陈，一封索要节目里的追款原话，一封推销‘职场翻盘课’，一封自称法务要求删稿；最后一封来自供应商项目组，对方愿意提交返费表原页。",
+          "materialRows": [
+            "@职场先懂事：新人抢功，现在装受害者",
+            "匿名：六万八都敢刷，怪谁",
+            "@求原话：你们追报销那句能发我吗，我照着说",
+            "@上岸训练营：三节课教你从背锅到升职",
+            "自称法务：限节目立即删除相关内容",
+            "供应商项目组：返费表原页还在，支付状态和收款账户仍为空"
+          ],
+          "proves": "供应商项目组愿意提供返费表原页；原页的支付状态和收款账户仍为空，不能把旧图说成已付款。",
+          "stillCannotProve": "不能证明返费最终进了谁的账户，也不能凭其余五封消息判断公司、同事或来信者的真实身份。",
+          "routeAxis": "document-edge",
+          "options": [
+            {
+              "label": "新人抢功，现在装受害者",
+              "correct": false,
+              "feedback": "只骂人，没有来源，也没有一项能核。存档，不回。",
+              "routeAxis": "outer-thread"
+            },
+            {
+              "label": "六万八都敢刷，怪谁",
+              "correct": false,
+              "feedback": "这是态度，不是材料。存档，不回。",
+              "routeAxis": "outer-thread"
+            },
+            {
+              "label": "把追款原话发我，我照着说",
+              "correct": false,
+              "feedback": "节目可以教她核对单号和回单，不替陌生人写一套拿去套用的台词。",
+              "routeAxis": "caller-credibility"
+            },
+            {
+              "label": "三节职场翻盘课",
+              "correct": false,
+              "feedback": "广告只说明有人趁热招生，不能反推来电人或公司买过课。",
+              "routeAxis": "identity-wording"
+            },
+            {
+              "label": "自称法务要求删稿",
+              "correct": false,
+              "feedback": "没有主体、姓名和授权。原信留存，交赵律师看，不在直播里对骂。",
+              "routeAxis": "process-control"
+            },
+            {
+              "label": "供应商项目组愿交返费表原页",
+              "correct": true,
+              "contradiction": "旧截图始终没有支付状态；能核的是原页，不是收件箱里谁嗓门大。",
+              "feedback": "请对方保留原文件和发送记录。它只能确认支付状态仍空着，返费去了谁的账户还不知道。",
+              "routeAxis": "document-edge"
+            }
+          ],
+          "replyChoices": [
+            {
+              "id": "inbox-no-reply",
+              "label": "不回，先归档",
+              "actionOnly": true,
+              "routeAxis": "process-control",
+              "aftertaste": "六封都留在后台，不给骂声、广告和套话的人续一轮流量。"
+            },
+            {
+              "id": "inbox-preserve-originals",
+              "label": "留原件和发送记录",
+              "actionOnly": true,
+              "grantsInventory": [
+                "work-inbox-originals"
+              ],
+              "routeAxis": "document-edge",
+              "aftertaste": "原信、附件和发送时间一起留存。下一步只核能对上的原页。"
+            },
+            {
+              "id": "inbox-send-zhao",
+              "label": "把自称法务那封转给赵",
+              "actionOnly": true,
+              "grantsInventory": [
+                "work-inbox-to-zhao"
+              ],
+              "routeAxis": "process-control",
+              "aftertaste": "那封没有主体和授权的信转给赵律师，直播间不跟它对骂。"
+            },
+            {
+              "id": "inbox-fire-back",
+              "label": "回一句：先把六万八还了再说",
+              "actionOnly": true,
+              "grantsInventory": [
+                "work-inbox-replied"
+              ],
+              "routeAxis": "caller-credibility",
+              "pressureSignal": "drift",
+              "screenEffect": "patience-drop",
+              "aftertaste": "这句回出去了。对方没交原件，只截了你的回复。"
+            }
+          ]
+        },
         {
           "id": "work-assistant-flow-sample",
           "speakerProfileId": "case4-department-assistant",
@@ -6720,9 +7948,9 @@ export const CONTENT_CASES = {
           ]
         },
         "snapshotEcho": {
-          "respondent-problem": "昨晚有人咬住他让我别在群里问预算。那条私聊还在，今天就从十七分钟的时间差问。",
-          "caller-complicit": "昨晚有人咬住我自己提了临时额度。是，我想拿这个活动，也确实自己去提了。",
-          "unclear": "昨晚有人咬住我删掉预算问题。那句话我又打了一遍，这次没有删。"
+          "respondent-problem": "昨晚你问他为什么不让我在群里问预算。那条私聊还在，今天就问那十七分钟。",
+          "caller-complicit": "昨晚你问临时额度是不是我自己提的。是，我想拿这个活动，也确实自己去提了。",
+          "unclear": "昨晚你问我为什么删掉预算问题。那句话我又打了一遍，这次没有删。"
         },
         "liveCounterBeats": [
           {
@@ -6733,6 +7961,14 @@ export const CONTENT_CASES = {
             "from": "来电人看见弹幕",
             "lines": [
               {
+                "role": "stage",
+                "text": "流程都走完了？那报销编号呢。"
+              },
+              {
+                "role": "stage",
+                "text": "六万八刷了三个星期，群里没人说哪天还。"
+              },
+              {
                 "role": "caller",
                 "text": "弹幕里有人说我蠢。"
               },
@@ -6741,14 +7977,14 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "caller",
-                "text": "看见了。你们肯定觉得，六万八怎么能就这么刷出去。可他当时说会在活动总结里写我负责，我脑子里就只剩这句话了。"
+                "text": "我知道六万八刷得离谱。可他当时说会在活动总结里写我负责，我就没再想别的。"
               },
               {
                 "role": "pause"
               },
               {
                 "role": "caller",
-                "text": "这六万八，我刷卡的时候连报备都没做。你们骂得难听，可这句我没法反驳。你听我——算了，你问。"
+                "text": "这六万八，我刷卡的时候连报备都没做。那句说得难听，我还真反驳不了。你听我——算了，你问。"
               }
             ],
             "choices": [
@@ -6843,7 +8079,7 @@ export const CONTENT_CASES = {
                   },
                   {
                     "role": "stage",
-                    "text": "贴片提示归零。后台曲线骤然少了一截，本场推荐关闭。"
+                    "text": "群消息随即撤回。她截到了；贴片同时归零，后台曲线骤降，本场推荐关闭。"
                   }
                 ],
                 "routeAxis": "process-control",
@@ -6872,6 +8108,39 @@ export const CONTENT_CASES = {
                 "routeAxis": "document-edge",
                 "routeTone": "trust-but-verify",
                 "recapAftertaste": "强制贴片下来时，我先静音保住连线。群消息被撤回，后台留下了截图。"
+              }
+            ]
+          },
+          {
+            "id": "work-private-warning-voice",
+            "kind": "interruptToast",
+            "cost": 0,
+            "afterSceneIndex": 3,
+            "from": "同事私聊语音",
+            "lines": [
+              {
+                "role": "caller",
+                "text": "他又私聊了。语音，刚发的。"
+              },
+              {
+                "role": "stage",
+                "text": "她把手机贴近麦克风。"
+              },
+              {
+                "role": "caller",
+                "speaker": "同事托话（手机）",
+                "text": "群里那句你截图就算了。负责人名单还没定，你真把这事捅到老板那儿，以后活动别找我。"
+              },
+              {
+                "role": "pause"
+              },
+              {
+                "role": "caller",
+                "text": "他就是拿这个压我。"
+              },
+              {
+                "role": "host",
+                "text": "语音留着。明天拿发票提正式报销，别再等他替你办。"
               }
             ]
           }
@@ -7208,7 +8477,7 @@ export const CONTENT_CASES = {
       "stanceSnapshot": {
         "afterScene": 2,
         "kicker": "中段立场快照",
-        "prompt": "现在这通麦，你先咬住哪个动作？",
+        "prompt": "现在这几件事，你最想先问哪件？",
         "note": "不判分。按下你现在最在意的那件事。",
         "afterPickLine": "群里刚发报备，他转头就来私聊。先听他在私聊里怎么说。",
         "continueLabel": "继续听",
@@ -7297,14 +8566,22 @@ export const CONTENT_CASES = {
             },
             {
               "role": "host",
-              "text": "行，发。"
+              "text": "老板问你为什么没走报备呢？"
+            },
+            {
+              "role": "caller",
+              "text": "流程表我看见了。我当时想拿负责人，还是答应自己先刷。这句我认。"
+            },
+            {
+              "role": "host",
+              "text": "好。别省这句。发吧。"
             }
           ]
         },
-        "answer": "发了。周一老板怎么问，我自己答。",
-        "note": "她删掉了无凭证的笼统指控，第一次把刷卡、发票和正式报销申请写进同一条可发送消息。"
+        "answer": "发了。周一老板问起来，我就这么答。",
+        "note": "她删掉了无凭证的笼统指控，第一次把刷卡、发票、正式报销申请和自己绕过报备的原因放进同一轮回答。"
       },
-      "stageJudgement": "‘流程都走完了’是假话。你手里只有立项页，没有报销编号，也没有回单。他拿‘来不及’催你垫卡，三个星期只发这张旧图，就是看准你想表现。六万八不是你捐的。明天带发票走正式报销；这单靠你个人垫钱和层层返费往前走，不是财务慢。每笔返费进了谁的账户，今晚不知道。",
+      "stageJudgement": "‘流程都走完了’是假话。你手里只有立项页，没有报销编号，也没有回单。他拿‘来不及’催你垫卡，三个星期以后还只发这张旧图，就是看准你想把这次活动扛下来。六万八是你个人垫的钱，不是你捐的。明天拿发票走正式报销。这事已经不能再说只是财务慢了。那张返费表也留好，每笔钱最后进了谁的账户，今晚还不知道。",
       "careChoices": [
         {
           "id": "pragmatic",
@@ -7440,10 +8717,14 @@ export const CONTENT_CASES = {
         "process-control": [
           "介绍链也在抬价",
           "资料不是一个人整理的"
+        ],
+        "active-provocation": [
+          "所以她听见加价,当时没拦?"
         ]
       },
       "driftComments": [
-        "28.6万什么水平,在我们县城能付个首付了",
+        "她妈怕女儿吃亏,这也正常吧",
+        "结婚本来就要谈条件,先别急",
         "MBA是啥,速成班吗,有没有懂哥",
         "主播我妈也这样,我恋爱她比我上心",
         "刷这么大一个礼物就能插麦吗",
@@ -7533,55 +8814,19 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "我这周末本来要带相亲对象见父母，结果我妈背着我，先去问了彩礼。",
+          "text": "我这周末本来要带相亲对象见父母。今天他突然问我，二十八万八是谁定的，我才知道我妈已经先托介绍人去问了彩礼。",
           "mood": "thinking"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "她问了多少？",
+          "text": "你之前不知道？",
           "mood": "listening"
         },
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "二十八万八。她先托介绍人去问，男方今天才来找我。",
-          "mood": "thinking"
-        },
-        {
-          "speaker": "林旭阳",
-          "role": "host",
-          "text": "你们本来谈到哪一步了？",
-          "mood": "listening"
-        },
-        {
-          "speaker": "咨询者",
-          "role": "caller",
-          "text": "这周末第一次正式见父母，双方家里都来。饭店还没订。",
-          "mood": "thinking"
-        },
-        {
-          "speaker": "林旭阳",
-          "role": "host",
-          "text": "这个数怎么来的？",
-          "mood": "listening"
-        },
-        {
-          "speaker": "咨询者",
-          "role": "caller",
-          "text": "我妈一直以为他是名校本科。上周我才告诉她，本科不是那所。",
-          "mood": "thinking"
-        },
-        {
-          "speaker": "林旭阳",
-          "role": "host",
-          "text": "那她怎么会把数开到二十八万八？",
-          "mood": "listening"
-        },
-        {
-          "speaker": "咨询者",
-          "role": "caller",
-          "text": "她说有她的理由，没先跟我商量。到底怎么算的，我也是后来翻家里群才看明白。",
+          "text": "不知道。饭店还没订，她已经把数报出去了。上周我才告诉她，男方本科不是她以为的那所名校。",
           "mood": "thinking"
         },
         {
@@ -7605,19 +8850,7 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "没信。我让他把银行流水打出来。",
-          "mood": "guarded"
-        },
-        {
-          "speaker": "林旭阳",
-          "role": "host",
-          "text": "他发了什么？",
-          "mood": "listening"
-        },
-        {
-          "speaker": "咨询者",
-          "role": "caller",
-          "text": "只发来一份工资账户流水。",
+          "text": "没信。我让他打流水，他只发来一份工资账户流水。",
           "mood": "thinking"
         },
         {
@@ -7639,6 +8872,10 @@ export const CONTENT_CASES = {
       "sceneVersions": [
         {
           "id": "profile-proof-before-dinner",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我妈怎么想，你得问她。她没跟我解释。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "setup",
           "falseFrame": "工资账户里有二十八万六，就足以证明男方拿得出二十八万八，也足以代表他的全部家底。",
@@ -7673,7 +8910,7 @@ export const CONTENT_CASES = {
               "question": "他已经说拿不出二十八万八，你为什么还是不信，非要他把流水打出来？",
               "sourceAnchor": "他已经说拿不出",
               "suspicionLabel": "不信他说拿不出彩礼",
-              "answer": "没有。我当时觉得，他是在跟我压价。",
+              "answer": "因为我当时觉得，他是在跟我压价。",
               "lines": [
                 {
                   "role": "caller",
@@ -7737,6 +8974,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你妈妈看到那张工资卡的余额以后，问过这是不是他的全部账户吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "她看完没跟我说这些。你现在问我，我也说不出她怎么想。"
+              },
               "sourceAnchor": "我把这张转给我妈",
               "suspicionLabel": "女方家有没有继续追问",
               "answer": "没有。她只盯着那两千块，说：“差这么一点，怎么会拿不出？”我知道那只是工资卡，没提醒她。",
@@ -7756,6 +8997,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "profile-dinner-pause",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "那顿饭已经够尴尬了。你还想问什么？"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "misdirect",
           "falseFrame": "饭局冷场只是第一次见家长前问得太细，不能说明学历材料有问题。",
@@ -7827,6 +9072,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "服务员走了以后，你们又聊本科了吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "没有。服务员走了，谁也没再提本科。"
+              },
               "sourceAnchor": "正好服务员来添水",
               "suspicionLabel": "饭桌上有没有继续谈本科",
               "answer": "没有。他说菜快凉了，我也就跟着聊别的。那顿饭是我催着约的，我也怕当场问僵。",
@@ -7836,6 +9085,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "那顿饭谁结的账？",
+              "missReaction": {
+                "role": "caller",
+                "text": "谁结账跟本科有什么关系？我不想算那顿饭。"
+              },
               "sourceAnchor": "第一次正式吃饭",
               "suspicionLabel": "那顿饭最后是谁买单",
               "answer": "他付的，用了团购券和积分。停车费一百多，他问我要不要 AA。单看都没问题。后来再想他的收入，我总会想起那张券。",
@@ -7855,6 +9108,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "profile-caller-repeats-label",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "介绍人的话我就听到这些。再让我念，也还是这几句。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "missing-edge",
           "falseFrame": "只要学校图是真图，“名校毕业”的说法就不算修剪。",
@@ -7912,11 +9169,23 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "后来你妈还是把彩礼加到二十八万八。你拦过吗？",
+              "question": "你刚才自己说：‘“名校毕业”是我加的。’后来你妈把彩礼加到二十八万八，你拦过吗？",
               "sourceAnchor": "把“学校好”说成了“名校毕业”",
-              "suspicionLabel": "查完家境加价后有没有叫停",
+              "suspicionLabel": "重放‘名校毕业’，问她拦没拦",
               "answer": "没说骗。她说他家里帮不上，以后真有事只能我们自己扛，彩礼就该多拿一点，先放在我手里。我嘴上说别把人吓跑，真让她撤回，我没说。",
               "guardedAnswer": "没说骗。她说家里帮不上，钱更得先留在我手里。我……没叫她收。",
+              "resistanceBeat": {
+                "lines": [
+                  {
+                    "role": "caller",
+                    "text": "你把这句单独拎出来，谁都会觉得是我抬的价。"
+                  },
+                  {
+                    "role": "host",
+                    "text": "我只问你，当时有没有拦。"
+                  }
+                ]
+              },
               "lines": [
                 {
                   "role": "caller",
@@ -7942,11 +9211,15 @@ export const CONTENT_CASES = {
               },
               "contradiction": "咨询者已经纠正本科学历，却默许父母把普通出身和自费 MBA 换成新的加价理由。",
               "correct": true,
-              "routeAxis": "identity-wording",
-              "routeTone": "pressure-point"
+              "routeAxis": "active-provocation",
+              "routeTone": "caller-skeptical"
             },
             {
               "question": "你把本科说清以后，你妈妈当时怎么回的？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我妈那会儿只催我带人回家。别的我记不清了。"
+              },
               "sourceAnchor": "我回去以后",
               "suspicionLabel": "母亲听完学历更正后的反应",
               "answer": "她先说我没问清，又托人去问他家。知道他父母普通上班、婚房也帮不上以后，她没再提被骗，只说彩礼得多问一点。第二天她去找介绍人，我没拦。",
@@ -7966,6 +9239,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "profile-introducer-two-prices",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "谁先开的口，我得看聊天。别让我凭记忆说。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "reversal",
           "falseFrame": "介绍人只是偏男方、替男方抬条件。",
@@ -8016,6 +9293,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "二十八万八是介绍人加的，还是你妈妈的原话？",
+              "missReaction": {
+                "role": "caller",
+                "text": "聊天在后台，你们自己看。我现在分不清她们谁先说的。"
+              },
               "sourceAnchor": "她把我妈那条语音原样转给了男方家",
               "suspicionLabel": "二十八万八是谁先提的",
               "answer": "我妈的原话。她说他能自己拿二十三万八读书，家里不会差；别按我表姐十八万八那份谈，先问二十八万八。介绍人原样转过去了。",
@@ -8054,6 +9335,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "profile-mba-wording",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "群里一长串，我现在不想从头念。让我先把学费这句说完。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "payoff",
           "falseFrame": "MBA 项目和校名都真实，因此“名校毕业”只是正常简称。",
@@ -8120,6 +9405,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "后来问清的本科和学费，你怎么告诉家里的？",
+              "missReaction": {
+                "role": "caller",
+                "text": "群里一长串，我现在不想从头念。让我先把学费这句说完。"
+              },
               "sourceAnchor": "我把这些发进家里群",
               "suspicionLabel": "她怎么向家里转述学历和学费",
               "answer": "我原样发了。本科不是那所，MBA 二十三万八是他自己交的。我妈先说我没问清，过一会儿又说，能自己花这么多读书，家里总不会差。她后来去找介绍人，我那时候还不知道。",
@@ -8149,7 +9438,7 @@ export const CONTENT_CASES = {
           "speakerId": "lin",
           "speaker": "咨询者",
           "entryQuestion": "你妈妈去找介绍人以前，家里群还说过什么？",
-          "version": "我妈先发了一句：“彩礼领证前打到她自己的卡里，婚宴和首饰另算。”我爸紧跟着说，宸直那三十万九月底到期，拿二十万给我留着。我当时看见了。就这么看过去了。",
+          "version": "我妈先发了一句：“彩礼领证前打到她自己的卡里，婚宴和首饰另算。”我爸又说，宸直那三十万九月底到期，拿二十万给我留着。我当时看见了。就这么看过去了。",
           "testimonyWall": {
             "title": "把‘两边对等’拆成时间、账户和用途",
             "intro": "彩礼数字先放一边，逐句确认两边的钱何时到、进谁账户、以后给谁用。",
@@ -8176,35 +9465,35 @@ export const CONTENT_CASES = {
                 "id": "profile-same-school-label",
                 "label": "证词 01",
                 "text": "学校和 MBA 项目都是真的，我只是把‘学校好’说得更满了。",
-                "pressResponse": "她马上补：‘MBA 确实在那里读。’再问本科，她没接。",
+                "pressResponse": "‘MBA 确实在那里读。本科……本科我前面说过了。’",
                 "presentResponse": "学历材料能拆标签，放不到两家付款安排的核心矛盾上。"
               },
               {
                 "id": "profile-male-card-incomplete",
                 "label": "证词 02",
                 "text": "他只给工资账户，其他账户有多少，我现在还是不知道。",
-                "pressResponse": "她说：‘别的账户我没见过。’说完又把二十八万六念了一遍。",
+                "pressResponse": "‘别的账户我没见过。我手里只有这张二十八万六。’",
                 "presentResponse": "材料能确认工资卡余额，不能推算他没交出的账户。"
               },
               {
                 "id": "profile-cash-before-registration",
                 "label": "证词 03",
                 "text": "我妈要的是领证前把二十八万八打进我个人账户，婚宴和首饰另算。",
-                "pressResponse": "她念到‘进我卡’时停了一下，婚宴和首饰说得很快。",
+                "pressResponse": "‘领证前进我卡。婚宴和首饰……另外算。’",
                 "presentResponse": "这句已经照着材料说全，不需要用同一行重复指认。"
               },
               {
                 "id": "profile-future-family-fund",
                 "label": "证词 04",
                 "text": "我爸说九月底以后从宸直三十万里拿二十万给我留着。",
-                "pressResponse": "她低声补了一句：‘我爸原话就是给我留着。’",
+                "pressResponse": "‘我爸原话就是给我留着。’",
                 "presentResponse": "持有页能确认三十万和到期日，不能把父亲的口头安排提前兑现。"
               },
               {
                 "id": "profile-equal-conditions",
                 "label": "证词 05",
                 "text": "我爸说，宸直到期后拿二十万给我自己留着。我当时看见了。就这么看过去了，后来只跟他说我家也会出钱。",
-                "pressResponse": "她说完‘给我留着’，马上又补：‘可这也算我家出钱吧。’",
+                "pressResponse": "‘是给我留着。可这也算我家出了钱吧？’",
                 "presentResponse": "只放其中一行还不够，必须把领证前入账、未来留存和另算项目并排看。"
               }
             ],
@@ -8212,6 +9501,8 @@ export const CONTENT_CASES = {
               {
                 "id": "act1",
                 "title": "把‘两边对等’拆成时间、账户和用途",
+                "winkLine": "我把家里群那页打开。",
+                "winkTier": "tier3-accomplice",
                 "intro": "彩礼数字先放一边，逐句确认两边的钱何时到、进谁账户、以后给谁用。",
                 "splitAfter": 3,
                 "midSummary": "男方工资卡只证明一个账户；女方家的三十万也只证明持有和到期日。对等不能靠把未来安排说成已经支付。",
@@ -8226,35 +9517,35 @@ export const CONTENT_CASES = {
                     "id": "profile-same-school-label",
                     "label": "证词 01",
                     "text": "学校和 MBA 项目都是真的，我只是把‘学校好’说得更满了。",
-                    "pressResponse": "她马上补：‘MBA 确实在那里读。’再问本科，她没接。",
+                    "pressResponse": "‘MBA 确实在那里读。本科……本科我前面说过了。’",
                     "presentResponse": "学历材料能拆标签，放不到两家付款安排的核心矛盾上。"
                   },
                   {
                     "id": "profile-male-card-incomplete",
                     "label": "证词 02",
                     "text": "他只给工资账户，其他账户有多少，我现在还是不知道。",
-                    "pressResponse": "她说：‘别的账户我没见过。’说完又把二十八万六念了一遍。",
+                    "pressResponse": "‘别的账户我没见过。我手里只有这张二十八万六。’",
                     "presentResponse": "材料能确认工资卡余额，不能推算他没交出的账户。"
                   },
                   {
                     "id": "profile-cash-before-registration",
                     "label": "证词 03",
                     "text": "我妈要的是领证前把二十八万八打进我个人账户，婚宴和首饰另算。",
-                    "pressResponse": "她念到‘进我卡’时停了一下，婚宴和首饰说得很快。",
+                    "pressResponse": "‘领证前进我卡。婚宴和首饰……另外算。’",
                     "presentResponse": "这句已经照着材料说全，不需要用同一行重复指认。"
                   },
                   {
                     "id": "profile-future-family-fund",
                     "label": "证词 04",
                     "text": "我爸说九月底以后从宸直三十万里拿二十万给我留着。",
-                    "pressResponse": "她低声补了一句：‘我爸原话就是给我留着。’",
+                    "pressResponse": "‘我爸原话就是给我留着。’",
                     "presentResponse": "持有页能确认三十万和到期日，不能把父亲的口头安排提前兑现。"
                   },
                   {
                     "id": "profile-equal-conditions",
                     "label": "证词 05",
                     "text": "我爸说，宸直到期后拿二十万给我自己留着。我当时看见了。就这么看过去了，后来只跟他说我家也会出钱。",
-                    "pressResponse": "她说完‘给我留着’，马上又补：‘可这也算我家出钱吧。’",
+                    "pressResponse": "‘是给我留着。可这也算我家出了钱吧？’",
                     "presentResponse": "只放其中一行还不够，必须把领证前入账、未来留存和另算项目并排看。"
                   }
                 ],
@@ -8292,7 +9583,7 @@ export const CONTENT_CASES = {
                     }
                   ],
                   "callerLine": "……对。那二十万还没到，也不是拿来办婚礼的。",
-                  "hostLine": "工资卡只是一张卡。你家查完普通家境，才把二十八万八问过去，领证前进你卡，婚宴首饰另算。以后给你的二十万还没到期。两边不是一回事，你家还加了价。",
+                  "hostLine": "他只给了一张工资卡。你家查完他家境普通，才把彩礼加到二十八万八，还要领证前打进你卡，婚宴首饰另算。可你家那二十万还没到期，拿到以后也只说给你留着。这两边怎么能叫一样？",
                   "boundaryLine": "三行只推翻‘条件对等’，不判断彩礼应不应该给，也不推定男方其他账户余额。",
                   "contradiction": "咨询者把时间、账户和用途不同的两家资金安排说成对等条件。",
                   "routeAxis": "process-control",
@@ -8312,16 +9603,20 @@ export const CONTENT_CASES = {
                 "openerLines": [
                   {
                     "role": "caller",
-                    "text": "不是同一时间，也不是一个用途，这个我认。二十八万八和以后那二十万不对等。可我家本来就这么算，先看男方领证前肯不肯把钱落下来。"
+                    "text": "行，二十八万八和以后那二十万，不是同一时间，也不是一个用途，我认。可我家一直觉得，结婚前男方肯不肯先把钱拿出来，就是态度。我们查过他家，条件普通，他又只给了一张二十八万六的工资卡。就差两千，我当然会觉得他不是没有，是不肯。"
                   },
                   {
                     "role": "host",
-                    "text": "截图上没写他肯不肯转。我们只问这张卡上能看见的。"
+                    "text": "那你就回答一个问题：查完他家以后，二十八万八怎么成了‘态度’？"
+                  },
+                  {
+                    "role": "caller",
+                    "text": "我爸妈查完，觉得他家帮不上什么，可他能自己交二十三万八学费，工资卡又有二十八万六。我妈就说，先拿二十八万八，至少证明他真想结婚。我当时也赞成。现在你们说两边不对等，我听见了，可我还是觉得只差两千，他是在拿态度跟我耗。"
                   }
                 ],
                 "revisedFrame": "她承认两家资金不对等，又把单方先付款包装成自家一贯的诚意算法，并用一张工资账户截图替男方解释支付能力和动机。",
                 "splitAfter": 2,
-                "midSummary": "她不再说对等，改说这是家里的规矩；可‘卡里有钱’和‘不肯给’不是同一条事实。",
+                "midSummary": "她不再说两边对等，改用家里的规矩解释先付款。现在只看工资卡能不能替男方回答‘肯不肯’。",
                 "reliefBeat": {
                   "listenerId": "@相亲先看计算器",
                   "comment": "差两千开始算态度了。",
@@ -8365,14 +9660,14 @@ export const CONTENT_CASES = {
                     "id": "profile-family-rule-proves-attitude",
                     "label": "改口 01",
                     "text": "我家规矩就是先看他愿不愿意拿出来。他工资卡有二十八万六，只差两千，不是拿不出，就是不肯。",
-                    "pressResponse": "她立刻说：‘就差两千。’再问这两千怎么等于态度，她声音小了。",
+                    "pressResponse": "‘就差两千。你让我怎么不往态度上想？’",
                     "presentResponse": "要拆这句，得回到账户页写了什么、没写什么，不能拿彩礼数字互相顶。"
                   },
                   {
                     "id": "profile-other-accounts-still-unknown",
                     "label": "改口 02",
                     "text": "他其他账户有多少我还是不知道，我也不能说他全部资产就这一张卡。",
-                    "pressResponse": "她说：‘对，别的我不知道。’可下一句又绕回这张工资卡。",
+                    "pressResponse": "‘别的账户我不知道。可这张卡上的二十八万六总是真的。’",
                     "presentResponse": "现有材料只列一张工资账户，放在这里是在守边界，不是矛盾。",
                     "survivesFromAct1": "profile-male-card-incomplete"
                   },
@@ -8380,7 +9675,7 @@ export const CONTENT_CASES = {
                     "id": "profile-payment-rule-stated",
                     "label": "改口 03",
                     "text": "我妈要他领证前把二十八万八打进我卡，婚宴首饰另算，这就是她开出的条件。",
-                    "pressResponse": "她把条件重新念了一遍，没有再说男方答应过。",
+                    "pressResponse": "‘领证前进我卡，婚宴首饰另算。是我家开的条件，我没说他答应了。’",
                     "presentResponse": "p04 和 p07 能核对条件本身，不能证明这套条件合理或不合理。",
                     "survivesFromAct1": "profile-cash-before-registration"
                   },
@@ -8388,7 +9683,7 @@ export const CONTENT_CASES = {
                     "id": "profile-family-fund-remains-future",
                     "label": "改口 04",
                     "text": "我爸那二十万要等九月底以后，而且是给我留着，不算领证前已经出了。",
-                    "pressResponse": "她只说：‘九月底，还没到。给我留着。’",
+                    "pressResponse": "‘九月底以后，给我留着。现在确实还没到。’",
                     "presentResponse": "持有页只能确认到期日，放在这里不会多出一笔已经支付的钱。",
                     "survivesFromAct1": "profile-future-family-fund"
                   }
@@ -8403,6 +9698,13 @@ export const CONTENT_CASES = {
                   ],
                   "selectionReason": "p03 是她用来判断男方态度的同一张工资账户页；页面只给出 28.6 万期末余额并明确其他账户未提供，最适合打穿‘只差两千所以不是不能、只是不肯’的新承重推断，同时不否认她家可以提出自己的规则。",
                   "materialCards": [
+                    {
+                      "id": "case3-credential-balance:p08",
+                      "kind": "介绍人转发页",
+                      "label": "‘只差两千，不是拿不出，就是不肯’",
+                      "excerpt": "母亲先发给介绍人；介绍人原样转回；咨询者回复‘嗯，我也觉得是态度’。这是转述，不是银行字段。",
+                      "sourceLabel": "学历、彩礼与两家资金边界 p08"
+                    },
                     {
                       "id": "case3-credential-balance:p03",
                       "kind": "工资卡覆盖范围",
@@ -8425,8 +9727,8 @@ export const CONTENT_CASES = {
                       "sourceLabel": "学历、彩礼与两家资金边界"
                     }
                   ],
-                  "callerLine": "……卡里二十八万六，只能说明这张卡当时有这些钱。差两千到底是拿不出还是不愿意，截图上确实没写。",
-                  "hostLine": "卡上差两千，不是他的态度。截图没写他肯不肯转。‘只差两千就是态度’，这句收回来。",
+                  "callerLine": "……截图只写了卡里有二十八万六。那两千是拿不出，还是他不愿意，卡上没写。",
+                  "hostLine": "卡上差两千，跟他的态度没关系。截图也没写他肯不肯转。你说‘只差两千就是态度’，这句话得收回去。",
                   "boundaryLine": "p03 只推翻‘余额接近要求就能证明不肯’；不证明他能安全转出二十八万八，不替他解释拒绝原因，也不补全其他账户。",
                   "contradiction": "咨询者承认两家条件不对等后，又用单一工资账户余额把男方的支付能力和态度说成已知。",
                   "routeAxis": "process-control",
@@ -8469,7 +9771,7 @@ export const CONTENT_CASES = {
               }
             ],
             "callerLine": "……对。那二十万还没到，也不是拿来办婚礼的。",
-            "hostLine": "工资卡只是一张卡。你家查完普通家境，才把二十八万八问过去，领证前进你卡，婚宴首饰另算。以后给你的二十万还没到期。两边不是一回事，你家还加了价。",
+            "hostLine": "他只给了一张工资卡。你家查完他家境普通，才把彩礼加到二十八万八，还要领证前打进你卡，婚宴首饰另算。可你家那二十万还没到期，拿到以后也只说给你留着。这两边怎么能叫一样？",
             "boundaryLine": "三行只推翻‘条件对等’，不判断彩礼应不应该给，也不推定男方其他账户余额。",
             "contradiction": "咨询者把时间、账户和用途不同的两家资金安排说成对等条件。",
             "routeAxis": "process-control",
@@ -8616,6 +9918,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "profile-income-and-card",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "他怎么花钱，我有我的感受。你别一句话替我算完。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "payoff",
           "falseFrame": "日常节省就能证明收入包装，或者拒绝流水就能证明心虚。",
@@ -8758,6 +10064,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "他算得细，能证明收入有问题吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我没说团购能证明收入。可每次都算到停车费，我就是不舒服。"
+              },
               "sourceAnchor": "我还是会觉得他在跟我算",
               "suspicionLabel": "他平时算小钱说明什么",
               "answer": "卡上有二十八万六，也不代表我要拿二十八万八。团购和停车费算得细，是我的花钱习惯，不是收入证明。",
@@ -8816,8 +10126,8 @@ export const CONTENT_CASES = {
         {
           "id": "daily-profile-deposit",
           "type": "工资账户流水",
-          "title": "只交出一张的工资卡",
-          "front": "女方要求看银行流水后，男方只提供工资账户近一个月记录，期末余额 28.6 万。",
+          "title": "工资账户流水",
+          "front": "06-01 至 06-20；工资账户期末余额 28.6 万。页面没有列出其他账户。",
           "detail": "它能证明这一张工资卡的到账与期末余额，不能代表男方其他账户，也不等于他答应把钱拿作彩礼。",
           "targets": [
             "truthWithGap",
@@ -9020,7 +10330,7 @@ export const CONTENT_CASES = {
           "triggerContradiction": "名校本科的误会被纠正后，自费 MBA 又被女方家换算成当前家底。",
           "appearsNowBecause": "收麦后，一条私信进来：她表妹也在那个家里群，看了直播，把整页聊天拍了过来。",
           "prompt": "这页家里群里，哪两句话必须连着看？",
-          "material": "她先发：“本科不是那所，是后来读的 MBA。二十三万八，都是他自己交的。”母亲回：“那说明手里不会差。彩礼先问二十八万八，领证前打进她自己的卡。婚宴和首饰另算。”父亲紧接着发：“咱家宸直那三十万九月底到期，到时候拿二十万给她，她自己留着。”",
+          "material": "她先发：“本科不是那所，是后来读的 MBA。二十三万八，都是他自己交的。”母亲回：“那说明手里不会差。彩礼先问二十八万八，领证前打进她自己的卡。婚宴和首饰另算。”父亲又发：“咱家宸直那三十万九月底到期，到时候拿二十万给她，她自己留着。”",
           "proves": "女方母亲因男方自费 MBA 推高彩礼，并要求领证前进女儿个人账户、婚宴首饰另算；与此同时，女方父亲给女儿的二十万元仍在宸直产品中。",
           "stillCannotProve": "不能证明宸直到期一定无法兑付，也不能证明男方应当或有能力支付二十八万八。",
           "routeAxis": "external-corroboration",
@@ -9149,6 +10459,14 @@ export const CONTENT_CASES = {
               "memo": "06-01 至 06-20；期末余额；其他账户未提供"
             },
             {
+              "rowId": "p08",
+              "date": "06-20",
+              "kind": "提醒",
+              "amount": "差 ¥2,000",
+              "party": "女方母亲→介绍人→咨询者",
+              "memo": "母亲：只差两千，不是拿不出，就是不肯；咨询者回复：嗯，我也觉得是态度"
+            },
+            {
               "rowId": "p05",
               "date": "09-30",
               "kind": "提醒",
@@ -9212,6 +10530,14 @@ export const CONTENT_CASES = {
                 "answer": "不能。页面只写九月三十日到期，当前不能取；到期能不能按约兑付，这一页也保证不了。",
                 "contradiction": "女方家要求男方现在证明支付能力，自己的资金却仍依赖一笔未来兑付。",
                 "routeAxis": "money-flow"
+              }
+            ],
+            "p08": [
+              {
+                "question": "‘只差两千就是态度’最早是谁写的？",
+                "answer": "我妈先发给介绍人，介绍人原样转回来。我回了句‘嗯，我也觉得是态度’。这不是工资卡上写的。",
+                "contradiction": "‘差两千就是态度’来自女方家和介绍人的转述，不是银行流水的事实字段。",
+                "routeAxis": "identity-wording"
               }
             ]
           },
@@ -9321,9 +10647,9 @@ export const CONTENT_CASES = {
         "hangupAudioCueId": "sfx.phone.busy",
         "hostHoldLine": "好。你先回群里看看。学费那句往后，每个人到底说了什么，明天回来我们再问。",
         "snapshotEcho": {
-          "respondent-fraud": "昨晚有人咬住彩礼要进我个人账户。这句没错，我知道，也赞成。今天把完整条件说出来。",
-          "caller-control": "昨晚有人咬住我爸妈查完他家境普通就加价。我没让他们收回数字，这句我认。",
-          "market-coauthored": "昨晚有人咬住他只交一张工资卡。那张卡是真的，其他账户没在里面。今晚让他自己说。"
+          "respondent-fraud": "昨晚你先问彩礼为什么要进我个人账户。这句没错，我知道，也赞成。今天把完整条件说出来。",
+          "caller-control": "昨晚你说我爸妈查完他家境普通就加价。我没让他们改数字，这句我认。",
+          "market-coauthored": "昨晚你问他为什么只交一张工资卡。那张卡是真的，其他账户没在里面。今晚让他自己说。"
         },
         "liveCounterBeats": [
           {
@@ -9433,7 +10759,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "stage",
-                "text": "屏幕上铺开一层金色特效。账号“Z先生”送出“星河”×1，紧接着申请连麦。"
+                "text": "金色特效铺开，账号“Z先生”送出“星河”×1。特效还没散，他又申请了连麦。"
               },
               {
                 "role": "stage",
@@ -9464,11 +10790,11 @@ export const CONTENT_CASES = {
                   {
                     "role": "caller",
                     "speaker": "男方",
-                    "text": "行。她手里那些材料，这几页可以：学校、学费、工资卡，还有彩礼那几句。其他账户不公开。她家的钱，也只说群里已经提过的。"
+                    "text": "行，退吧。可别拿礼物把我的问题也一起退了。她手里那些材料，学校、学费、工资卡，还有彩礼那几句，可以谈。其他账户不公开。她家的钱，也只说群里已经提过的。"
                   }
                 ],
                 "recapAftertaste": "刚才那份礼物我退了。后来接他上麦，是因为两个人都同意把话说开，不是因为他付了钱。",
-                "stanceNudge": "neutral",
+                "stanceNudge": "defensive",
                 "routeAxis": "process-control",
                 "routeTone": "firm"
               },
@@ -9775,7 +11101,7 @@ export const CONTENT_CASES = {
       "stanceSnapshot": {
         "afterScene": 5,
         "kicker": "中段立场快照",
-        "prompt": "现在这通麦，你先咬住哪个动作？",
+        "prompt": "走到这儿，你最想先问哪件？",
         "note": "不判分。按下你现在最在意的那件事。",
         "afterPickLine": "家里群里刚换了数字。工资卡发来以后，她又怎么说？",
         "continueLabel": "继续听",
@@ -9818,6 +11144,14 @@ export const CONTENT_CASES = {
         "text": "学校页、MBA 缴费和工资卡是我发的，你们可以问。别的账户我没给她，也不想上直播。当时她要看收入，我就挑了工资卡，没提醒她这不是全部。饭、展票、接她下班，是我愿意做，不是因为我家境普通就欠她。卡上有二十八万六，也不代表我要拿二十八万八，更不代表后面婚宴首饰都我出。"
       },
       "crossCaseEchoes": [
+        {
+          "id": "case3-echo-work-inbox-reply",
+          "requiresCaseId": "04-workplace",
+          "requiresInventoryId": "work-inbox-replied",
+          "quote": "先把六万八还了再说。",
+          "sourceCaseLabel": "案4",
+          "text": "刚才有人把主播那句截出来，说节目已经判公司欠款。原件没跟来，只剩这句在群里转。"
+        },
         {
           "id": "case3-flashback-work-payment",
           "requiresCaseId": "04-workplace",
@@ -10002,9 +11336,9 @@ export const CONTENT_CASES = {
       "label": "那张名单",
       "storyArcTitle": "今日来电：那张名单",
       "publicHook": "她翻到一份全是女人的名单，说他以谈恋爱为名养鱼，钱还在他那儿，问怎么要回来。",
-      "storyArcSummary": "第一夜先让裁过的名单被读成养鱼名册，再承认恋爱名义和颜值都是真的；强光照进窗内，敲门声逼她突然下线。第二夜问出来人是警察，再问出周只是剪头客户、十二万是她自己因不够起投才让他代投。",
-      "storySuspense": "她为什么一开口就要钱，却只发名单左半边；昨晚是谁敲门，她为什么第二夜仍不愿说。",
-      "storyClueObject": "Tony 的名单、十二万转账、酒吧小姐妹的高息传闻、另一位女客转发的认购回单",
+      "storyArcSummary": "第一夜先让裁过的名单被读成养鱼名册，再承认恋爱名义和真实照顾都发生过；强光照进窗内，敲门声逼她突然下线。第二夜问出来人是警察，再把门店预约册、Tony 的私人跟进、完整名单和十二万转账放到一起：她主动绕门槛，他则把熟客、钱和产品材料都留在自己的私人代投入口。",
+      "storySuspense": "她为什么一开口就要钱，却只发名单左半边；Tony 为什么让十二万走个人户，声称已经提交后又迟迟不交原件。",
+      "storyClueObject": "Tony 的私人名单、门店预约册与私人备忘录、十二万转账、酒吧小姐妹的高息传闻、另一位女客转发的认购回单",
       "callMedium": "voice",
       "taskProfile": {
         "id": "emotion",
@@ -10032,10 +11366,14 @@ export const CONTENT_CASES = {
         "process-control": [
           "店里到底认不认这件事",
           "谁收的钱得问清楚"
+        ],
+        "active-provocation": [
+          "等等,右半张是她自己写的?"
         ]
       },
       "driftComments": [
-        "插一句:大家平时剪头多少钱,我先看看我亏没亏",
+        "留熟客资料也不一定是骗吧",
+        "钱是她自己转的,先问她当时知不知道",
         "主播这个发型是不是也该修修了",
         "刚进来,谁能告诉我她为什么一晚上没睡",
         "蹲各位的Tony老师故事,我先来:我办卡那家跑路了"
@@ -10052,6 +11390,7 @@ export const CONTENT_CASES = {
           "名单列里有起投、金额和跟进，不像单纯的约会记录",
           "高息档口头口径是一百万元起投",
           "咨询者向 Tony 转过十二万元，自己那行写着不够起投、走 Tony 户",
+          "Tony 承认十二万元经过自己的账户，也声称产品材料在他手里；节目和咨询者仍未拿到产品全名、合同、回单与实际下单账户",
           "咨询者在酒吧做营销，高息传闻来自小姐妹闲聊，不是 Tony 第一次开口才听说",
           "名单上的周是剪头客户，不是咨询者口中的那种女朋友；她也把钱给过 Tony",
           "第一夜敲门的是警察；放款的人涉案，按借款人来问咨询者",
@@ -10072,6 +11411,7 @@ export const CONTENT_CASES = {
           "周转来的认购回单是不是她自己那笔钱",
           "宸直该档产品此刻能否兑付、能否赎回",
           "Tony 对她的喜欢有多少是真心，有多少是为了把人留在可推销的位置",
+          "Tony 是否因这类私人代投获得佣金或其他报酬",
           "她向放贷人借了多少、是否仍欠",
           "警察把她当证人还是另有调查，节目不能确认"
         ]
@@ -10155,25 +11495,13 @@ export const CONTENT_CASES = {
         {
           "speaker": "咨询者",
           "role": "caller",
-          "text": "亲密度、下次约，一排女人的名字。越看越不对。我当时就觉得，他是不是拿谈恋爱吊着一串人。",
+          "text": "亲密度、下次约，一排女人的名字。越看越不对。我当时就觉得，他是不是拿谈恋爱吊着一串人。而且我还有一笔钱在他那里。",
           "mood": "anxious"
         },
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "所以你打来，想先问这张名单，还是先问钱？",
-          "mood": "listening"
-        },
-        {
-          "speaker": "咨询者",
-          "role": "caller",
-          "text": "也不只是这个。我还有一笔钱在他那里，想拿回来。",
-          "mood": "anxious"
-        },
-        {
-          "speaker": "林旭阳",
-          "role": "host",
-          "text": "名单怎么到你手里的？",
+          "text": "先把名单说清。它怎么到你手里的？",
           "mood": "listening"
         },
         {
@@ -10185,7 +11513,7 @@ export const CONTENT_CASES = {
         {
           "speaker": "林旭阳",
           "role": "host",
-          "text": "钱的事等会儿说。你先把名单发过来，名字遮掉。",
+          "text": "把名单发过来，名字遮掉。",
           "mood": "listening"
         },
         {
@@ -10201,6 +11529,10 @@ export const CONTENT_CASES = {
       "sceneVersions": [
         {
           "id": "tony-list-as-dating",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "名单上的人我不认识。我只能说我那一行。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "setup",
           "falseFrame": "名单等于养鱼女友名册，足以支持立刻要钱。",
@@ -10284,19 +11616,24 @@ export const CONTENT_CASES = {
               "routeTone": "pressure-point"
             },
             {
-              "question": "钱在他那儿，是你转的，还是他从你卡里划的？",
-              "sourceAnchor": "钱还在他那儿",
-              "suspicionLabel": "钱怎么到他手里",
-              "answer": "我转的。多少我今晚不想说。你先看名单。",
-              "guardedAnswer": "我转的。",
+              "question": "名单全是女的，所以你先认定她们都是恋爱关系？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我看到的全是女的，又写着亲密度。你让我当时怎么想？"
+              },
+              "sourceAnchor": "全是女的",
+              "revisedSourceAnchor": "全是女的这一层是真的",
+              "suspicionLabel": "女客名单是不是恋爱名单",
+              "answer": "我现在不替其他人讲。你先说我这一行。",
+              "guardedAnswer": "我现在不替其他人讲。",
               "logicContract": {
-                "premiseAnchor": "钱还在他那儿",
+                "premiseAnchor": "全是女的",
                 "sourceKind": "caller-statement",
-                "sourceProves": "咨询者主张 Tony 手里有她的钱。",
-                "sourceDoesNotProve": "尚不知道金额、用途与转账后的去向。",
-                "answerAnchor": "我转的",
-                "answerAdds": "她承认钱由自己操作转出，但第一夜拒绝说明数额。",
-                "nextLegalQuestion": "第二夜可以结合完整名单和转账追金额与用途。"
+                "sourceProves": "名单可见行都是女性姓名，咨询者自己的名字也在其中。",
+                "sourceDoesNotProve": "姓名性别不能证明每个人都和 Tony 建立了恋爱关系。",
+                "answerAnchor": "不替其他人讲",
+                "answerAdds": "这个问法只让她把话收回自己一行，没有带出名单右侧字段。",
+                "nextLegalQuestion": "仍需从截图本身追问她没有发出的部分。"
               },
               "correct": false,
               "routeAxis": "money-flow",
@@ -10314,6 +11651,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "tony-exclusive-voice",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "他就是这么叫的。别的我现在不想说。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "misdirect",
           "falseFrame": "真约会和真帅足以证明他在用恋爱骗人。",
@@ -10417,7 +11758,13 @@ export const CONTENT_CASES = {
             },
             {
               "question": "他叫你自己人时，你怎么回的？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我怎么回很重要吗？现在是他拿‘自己人’哄了多少人。"
+              },
               "sourceAnchor": "也叫我自己人",
+              "revisedSourceAnchor": "他没带我见朋友",
+              "revisedQuestion": "他没带你见朋友，你还拿‘自己人’确认关系？",
               "suspicionLabel": "她怎么回应深夜倾诉",
               "answer": "我没追问到底算什么，只会回他：有事你就找我。晚档他也留，我愿意信。",
               "correct": false,
@@ -10436,6 +11783,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "tony-list-columns",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "右边我没发，我承认。先看我发来的这半张行不行？"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "missing-edge",
           "falseFrame": "她发来的左半张截图已经足够说明整张名单。",
@@ -10492,6 +11843,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你把左半张发给小姐妹以后，她说了什么？",
+              "missReaction": {
+                "role": "caller",
+                "text": "她没回我。你别一直追她，图是我自己发的。"
+              },
               "sourceAnchor": "小姐妹让我把原图留好",
               "suspicionLabel": "小姐妹当时怎么回",
               "answer": "她让我留原图，别只发名字。别的没说。",
@@ -10511,6 +11866,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "tony-bar-rumor-hangup",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "她就提过一句。那晚还有谁，我不想说。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "misdirect",
           "falseFrame": "她只是随耳听过高息，后来没有采取行动。",
@@ -10602,6 +11961,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你是在店里听她说的，还是别处？",
+              "missReaction": {
+                "role": "caller",
+                "text": "在哪儿听见的有那么重要吗？反正是她随口提了一嘴。"
+              },
               "sourceAnchor": "小姐妹提过一嘴",
               "suspicionLabel": "传闻是在哪儿听的",
               "answer": "别处。人多。今晚先不说哪。",
@@ -10621,6 +11984,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "tony-who-messaged",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我说了，现在不想讲是谁。你别逼我。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "reversal",
           "falseFrame": "昨晚只是临时有人找她，与她隐瞒的钱没有关系。",
@@ -10731,6 +12098,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "你现在住妈妈家，是怕对方还会再来？",
+              "missReaction": {
+                "role": "caller",
+                "text": "我住我妈家怎么了？昨晚来的是谁，我现在不说。"
+              },
               "sourceAnchor": "跟他没直接关系",
               "suspicionLabel": "她为什么换了住处",
               "answer": "不是怕谁再来。我昨晚被吓着了，一个人待着慌，就先搬回我妈这儿住两天。",
@@ -10750,6 +12121,10 @@ export const CONTENT_CASES = {
         },
         {
           "id": "tony-caller-benefits",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "钱是钱，关系是关系。你别一句话把两件事并了。"
+          },
           "interactionMode": "lineReplay",
           "clueRole": "reversal",
           "falseFrame": "十二万是他从恋爱里骗走的钱。",
@@ -10825,6 +12200,10 @@ export const CONTENT_CASES = {
             },
             {
               "question": "转完以后，你还当自己在跟他谈吗？",
+              "missReaction": {
+                "role": "caller",
+                "text": "那时候我自己也乱。你非要把钱和关系一起问，我答不了。"
+              },
               "sourceAnchor": "他当时说可以帮忙",
               "suspicionLabel": "转钱之后关系怎么变",
               "answer": "当。他还是留晚档，还是叫自己人。我没把这十二万从恋爱里拆出来。",
@@ -10900,14 +12279,14 @@ export const CONTENT_CASES = {
                 "id": "tony-list-was-romantic",
                 "label": "证词 01",
                 "text": "我看到一排女人和亲密度，第一反应当然是他拿谈恋爱吊着人。",
-                "pressResponse": "她立刻说：‘那排名字就是全是女的。’问到右边的钱，她停了。",
+                "pressResponse": "‘那排名字就是全是女的。右边的钱……我等会儿说。’",
                 "presentResponse": "这张材料能拆掉‘纯女友名册’，还不能替她确认关系或资金结果。"
               },
               {
                 "id": "tony-heard-threshold-before",
                 "label": "证词 02",
                 "text": "转钱以前，小姐妹提过高息档一百万起投，我只当听个热闹。",
-                "pressResponse": "她停了几秒，才补：‘我后来确实问过 Tony，能不能让我跟着买。’",
+                "pressResponse": "‘小姐妹是提过一百万。后来……后来我确实问过 Tony，能不能让我跟着买。’",
                 "presentResponse": "一百万门槛能解释她为什么找人帮买，不能证明 Tony 后来怎么处置十二万。",
                 "reveals": [
                   "tony-romance-only-claim"
@@ -10917,14 +12296,14 @@ export const CONTENT_CASES = {
                 "id": "tony-transfer-was-hers",
                 "label": "证词 03",
                 "text": "十二万是我自己转的，备注没写，但聊天里有‘帮我买’。",
-                "pressResponse": "她重复了一遍：‘钱是我转的。可他收了以后，合同呢？’",
+                "pressResponse": "‘钱是我转的。可他收了以后，合同呢？’",
                 "presentResponse": "转账行能确认钱从她这里出去，不能单独确认进了哪一项产品。"
               },
               {
                 "id": "tony-cropped-to-protect-self",
                 "label": "证词 04",
                 "text": "我裁掉金额和‘走我户’，是怕原图一发，大家先问我为什么把钱转给他。",
-                "pressResponse": "她先说‘我不想被围着骂’，再问为什么裁得这么齐，她没否认。",
+                "pressResponse": "‘我不想一发出来就被围着骂。右边是我裁的。’",
                 "presentResponse": "这句已经承认裁图动机，材料可以核对，但不是决定性冲突本身。"
               },
               {
@@ -10932,7 +12311,7 @@ export const CONTENT_CASES = {
                 "label": "补充证词",
                 "hidden": true,
                 "text": "这十二万就是他借谈恋爱骗走的，我只是把自己的钱要回来。",
-                "pressResponse": "她把声音抬高：‘他就是拿谈恋爱收的钱。’问是谁先说帮买，她没答。",
+                "pressResponse": "‘他就是拿谈恋爱收的钱！谁先说帮买……你别又绕回我。’",
                 "presentResponse": "如果只拿恋爱称呼压这句，仍然会漏掉她主动绕过门槛的资金动作。"
               }
             ],
@@ -10940,6 +12319,8 @@ export const CONTENT_CASES = {
               {
                 "id": "act1",
                 "title": "把半张名单补回右半边",
+                "winkLine": "先把原图放完整。",
+                "winkTier": "tier3-accomplice",
                 "intro": "四句先在墙上。追问她何时知道起投门槛，才会多出最后一句。",
                 "splitAfter": 3,
                 "midSummary": "名单能证明她裁过字段，也有‘帮我买’的原话；钱到底进没进产品，还是不知道。",
@@ -10954,14 +12335,14 @@ export const CONTENT_CASES = {
                     "id": "tony-list-was-romantic",
                     "label": "证词 01",
                     "text": "我看到一排女人和亲密度，第一反应当然是他拿谈恋爱吊着人。",
-                    "pressResponse": "她立刻说：‘那排名字就是全是女的。’问到右边的钱，她停了。",
+                    "pressResponse": "‘那排名字就是全是女的。右边的钱……我等会儿说。’",
                     "presentResponse": "这张材料能拆掉‘纯女友名册’，还不能替她确认关系或资金结果。"
                   },
                   {
                     "id": "tony-heard-threshold-before",
                     "label": "证词 02",
                     "text": "转钱以前，小姐妹提过高息档一百万起投，我只当听个热闹。",
-                    "pressResponse": "她停了几秒，才补：‘我后来确实问过 Tony，能不能让我跟着买。’",
+                    "pressResponse": "‘小姐妹是提过一百万。后来……后来我确实问过 Tony，能不能让我跟着买。’",
                     "presentResponse": "一百万门槛能解释她为什么找人帮买，不能证明 Tony 后来怎么处置十二万。",
                     "reveals": [
                       "tony-romance-only-claim"
@@ -10971,14 +12352,14 @@ export const CONTENT_CASES = {
                     "id": "tony-transfer-was-hers",
                     "label": "证词 03",
                     "text": "十二万是我自己转的，备注没写，但聊天里有‘帮我买’。",
-                    "pressResponse": "她重复了一遍：‘钱是我转的。可他收了以后，合同呢？’",
+                    "pressResponse": "‘钱是我转的。可他收了以后，合同呢？’",
                     "presentResponse": "转账行能确认钱从她这里出去，不能单独确认进了哪一项产品。"
                   },
                   {
                     "id": "tony-cropped-to-protect-self",
                     "label": "证词 04",
                     "text": "我裁掉金额和‘走我户’，是怕原图一发，大家先问我为什么把钱转给他。",
-                    "pressResponse": "她先说‘我不想被围着骂’，再问为什么裁得这么齐，她没否认。",
+                    "pressResponse": "‘我不想一发出来就被围着骂。右边是我裁的。’",
                     "presentResponse": "这句已经承认裁图动机，材料可以核对，但不是决定性冲突本身。"
                   },
                   {
@@ -10986,7 +12367,7 @@ export const CONTENT_CASES = {
                     "label": "补充证词",
                     "hidden": true,
                     "text": "这十二万就是他借谈恋爱骗走的，我只是把自己的钱要回来。",
-                    "pressResponse": "她把声音抬高：‘他就是拿谈恋爱收的钱。’问是谁先说帮买，她没答。",
+                    "pressResponse": "‘他就是拿谈恋爱收的钱！谁先说帮买……你别又绕回我。’",
                     "presentResponse": "如果只拿恋爱称呼压这句，仍然会漏掉她主动绕过门槛的资金动作。"
                   }
                 ],
@@ -11019,7 +12400,7 @@ export const CONTENT_CASES = {
                     }
                   ],
                   "callerLine": "……是我先问能不能跟着买。把这十二万全说成恋爱里骗走的，确实省了前面那一步。",
-                  "hostLine": "名单右半边写得很清楚：十二万，不够一百万起投，走 Tony 户。是你先开口让他帮你买，不是他借恋爱偷划。把这十二万全改口成恋爱诈骗，这个说法我不认。",
+                  "hostLine": "右半边写着十二万、不够一百万起投、走 Tony 户。是你先开口让他代投的。后来你把金额裁掉，再把这十二万全说成恋爱诈骗，这个说法我不认。",
                   "boundaryLine": "名单原行证明主动代投与门槛绕行，不证明认购完成、全部损失或 Tony 没有误导关系。",
                   "contradiction": "咨询者把主动要求的十二万元代投改写成只由恋爱欺骗造成的转款。",
                   "routeAxis": "money-flow",
@@ -11038,16 +12419,20 @@ export const CONTENT_CASES = {
                 "openerLines": [
                   {
                     "role": "caller",
-                    "text": "你听我——行，十二万是我自己问了以后转给他的，我让他帮我买，这一步我认。可那天店里一直在说高息档，Tony 又说机会难得，我当时真不好意思说不跟。"
+                    "text": "你先听我说完。十二万是我转的，‘帮我买’也是我发的，这些我认。可那天店里一直在聊高息档，Tony 又把我叫自己人，说能带我进去。周围的人都像听懂了，就我一个人说不买，我当时真的张不开嘴。转钱以前，我根本不知道还有一百万这道门槛。"
                   },
                   {
                     "role": "host",
-                    "text": "主动转和被气氛推着走可以同时有。现在只说，这个气氛是谁先带到你面前的。"
+                    "text": "那就从你进店那天说。高息档是谁先提起来的？"
+                  },
+                  {
+                    "role": "caller",
+                    "text": "Tony 先说高息档，又说自己已经够门槛，我才问能不能把我的十二万一起放进去。他说可以，我就转了。那天以前，没人跟我讲过一百万。要不是他一直叫我自己人，我也不会把钱直接转到他个人账户。"
                   }
                 ],
                 "revisedFrame": "她承认自己主动要求代投，又把绕门槛的决定包装成 Tony 一个人营造的从众压力。",
                 "splitAfter": 2,
-                "midSummary": "她认了是自己开口，却把一百万门槛说成 Tony 在店里才塞给她的念头。顺序得重新对。",
+                "midSummary": "她这次认了小姐妹先提门槛，也认了自己去问 Tony；现在争的是，十二万到底有多少是她自己的决定。",
                 "softAnchorResponse": "小姐妹先提门槛这一行碰到了她的新说法。正式指认仍要落到‘全是 Tony 带的气氛’那句上。",
                 "comparison": [
                   {
@@ -11075,15 +12460,15 @@ export const CONTENT_CASES = {
                   {
                     "id": "tony-atmosphere-was-his-alone",
                     "label": "改口 01",
-                    "text": "是我先问他能不能帮我买。可那天不跟，好像就我一个人不识货。转钱以前，没人认真跟我讲过一百万门槛。",
-                    "pressResponse": "她急着说：‘那种场面你不在。’再问小姐妹早先说过什么，她只回‘随口聊过’。",
+                    "text": "是我先问他能不能帮我买。可那天不跟，好像就我一个人不识货。转钱以前，我根本没听过一百万门槛。",
+                    "pressResponse": "‘那种场面你不在。小姐妹是随口一说，Tony 才是当着我的面说能带我进去。’",
                     "presentResponse": "只拿 Tony 的名单还不够，得找出门槛第一次进到她耳朵里的时间。"
                   },
                   {
                     "id": "tony-transfer-instruction-admitted",
                     "label": "改口 02",
                     "text": "十二万是我转的，聊天里的‘帮我买’也是我发的，这些我不改。",
-                    "pressResponse": "她点了两次头：‘这两句都是我发的。’再往后，她只问合同在哪。",
+                    "pressResponse": "‘钱是我转的，话也是我发的。可他收了以后，合同呢？’",
                     "presentResponse": "转账记录能核对金额和原话，不能直接补出产品去向。",
                     "survivesFromAct1": "tony-transfer-was-hers"
                   },
@@ -11091,7 +12476,7 @@ export const CONTENT_CASES = {
                     "id": "tony-product-result-still-unknown",
                     "label": "改口 03",
                     "text": "我是让他帮我买，可钱到底进了什么，他到现在没给我看。",
-                    "pressResponse": "她把话压回原件：‘我只要产品名、合同、回单。’",
+                    "pressResponse": "‘我现在只要产品名、合同、回单。别的先不谈。’",
                     "presentResponse": "名单和转账都没有认购回单，放在这里仍只能继续追钱路。",
                     "survivesFromAct1": "tony-romance-only-claim"
                   },
@@ -11099,7 +12484,7 @@ export const CONTENT_CASES = {
                     "id": "tony-crop-admission-kept",
                     "label": "改口 04",
                     "text": "右半边是我裁的。我怕大家一上来先骂我贪利息。",
-                    "pressResponse": "她顿了一下：‘这点我不躲。’可名单上的‘自己人’，她还是要 Tony 解释。",
+                    "pressResponse": "‘右边是我裁的，这点我不躲。可“自己人”是他说的。’",
                     "presentResponse": "原图能核对她裁了什么，不需要再用一次正式指认。",
                     "survivesFromAct1": "tony-cropped-to-protect-self"
                   }
@@ -11112,7 +12497,7 @@ export const CONTENT_CASES = {
                     "不替 Tony 免除",
                     "不能证明她没有受现场压力"
                   ],
-                  "selectionReason": "第一段里她亲口承认，转钱前小姐妹已经提过一百万起投。把这句原话放回第二段，能打穿‘转钱前没人讲过门槛’的新框架；同时保留 Tony 的关系暗示和资金去向责任。",
+                  "selectionReason": "第一段里她亲口承认，转钱前小姐妹已经提过一百万起投。把这句原话放回第二段，能打穿‘转钱前根本没听过门槛’的新框架；同时保留 Tony 的关系暗示和资金去向责任。",
                   "materialCards": [
                     {
                       "id": "tony-next-push-column:tony-heard-threshold-before",
@@ -11136,8 +12521,8 @@ export const CONTENT_CASES = {
                       "sourceLabel": "名单与十二万转账"
                     }
                   ],
-                  "callerLine": "小姐妹先提过一百万。我当时……算了，我后来又去问 Tony。这一步不能全推给店里的气氛。",
-                  "hostLine": "一百万门槛不是 Tony 在店里第一次抛给你。小姐妹在你转钱前就提过；你后来主动问、主动转，不能把这一步全说成他营造气氛逼你。",
+                  "callerLine": "小姐妹先提过一百万。后来是我自己又去问 Tony，也是我转的钱。这个不能全算成他逼我。",
+                  "hostLine": "小姐妹先提过一百万，是你自己又去问 Tony，钱也是你转的。你不能一听说产品在拖，就把前面两步全改成店里逼你。",
                   "boundaryLine": "她第一段的原话只推翻‘转钱前没人讲过门槛’；不替 Tony 免除资金去向与关系暗示责任，也不能证明她没有受现场压力。",
                   "contradiction": "咨询者承认主动代投后，把绕门槛全解释成 Tony 营造的现场压力；更早的小姐妹口头提醒推翻了这层圆谎。",
                   "routeAxis": "money-flow",
@@ -11175,7 +12560,7 @@ export const CONTENT_CASES = {
               }
             ],
             "callerLine": "……是我先问能不能跟着买。把这十二万全说成恋爱里骗走的，确实省了前面那一步。",
-            "hostLine": "名单右半边写得很清楚：十二万，不够一百万起投，走 Tony 户。是你先开口让他帮你买，不是他借恋爱偷划。把这十二万全改口成恋爱诈骗，这个说法我不认。",
+            "hostLine": "右半边写着十二万、不够一百万起投、走 Tony 户。是你先开口让他代投的。后来你把金额裁掉，再把这十二万全说成恋爱诈骗，这个说法我不认。",
             "boundaryLine": "名单原行证明主动代投与门槛绕行，不证明认购完成、全部损失或 Tony 没有误导关系。",
             "contradiction": "咨询者把主动要求的十二万元代投改写成只由恋爱欺骗造成的转款。",
             "routeAxis": "money-flow",
@@ -11234,11 +12619,23 @@ export const CONTENT_CASES = {
           },
           "questionOptions": [
             {
-              "question": "这张表如果发出去，你让他代投、不够起投、走他户也会跟着出来。你想过吗？",
+              "question": "你自己写的是：‘十二万、不够起投、走我户。’原图要是发出去，你还会说这十二万是他借谈恋爱骗走的吗？",
               "sourceAnchor": "完整名单我昨晚就看完了",
-              "suspicionLabel": "公开名单会带出什么",
+              "suspicionLabel": "重读‘走我户’那行",
               "answer": "想过，所以我才裁图。原图一发，大家会先看见我知道一百万门槛，还自己问他能不能帮我买。小姐妹一说产品在拖，我才翻他手机、打进来要钱；这时候再说他借谈恋爱把钱划走，谁还信。",
               "guardedAnswer": "……会。走我户三个字在上面。",
+              "resistanceBeat": {
+                "lines": [
+                  {
+                    "role": "caller",
+                    "text": "非得现在念这一行吗？"
+                  },
+                  {
+                    "role": "host",
+                    "text": "右半张是你裁掉的。我只是把原图读全。"
+                  }
+                ]
+              },
               "lines": [
                 {
                   "role": "caller",
@@ -11280,8 +12677,8 @@ export const CONTENT_CASES = {
               },
               "contradiction": "她想用半张名单取得恋爱受害者位置，同时有意藏起自己主动代投的事实。",
               "correct": true,
-              "routeAxis": "caller-credibility",
-              "routeTone": "pressure-point"
+              "routeAxis": "active-provocation",
+              "routeTone": "caller-skeptical"
             },
             {
               "question": "小姐妹说产品在拖，是在你转钱之前，还是之后？",
@@ -11425,32 +12822,36 @@ export const CONTENT_CASES = {
           "id": "tony-manager-training-note",
           "speakerProfileId": "case2-manager",
           "source": "store-manager-note",
-          "surface": "后台收到门店说明",
-          "title": "门店说明",
-          "triggerContradiction": "店里不卖理财，不等于 Tony 没跟客人聊过产品。",
-          "appearsNowBecause": "收麦后，店长托人转来一段说明，不接受把整家店说成骗局。",
-          "prompt": "这段说明里，哪一句最该拎出来？",
-          "material": "店长说：“我们店只做美发，也没让员工替客人收这种钱。Tony 私下跟客人说了什么，你们问他本人，别把店也写进去。”",
+          "surface": "后台收到话术卡和一张熟客截图",
+          "title": "门店话术卡 · 上周预约截图",
+          "triggerContradiction": "Tony 把门店里维系熟客的称呼和排期方式，接进了自己的产品跟进；店里并不承认理财业务。",
+          "appearsNowBecause": "收麦后，店长发来公开培训卡；一位熟客也补了上周的预约截图。店长不接受把整家店说成骗局。",
+          "prompt": "把话术卡和上周截图并排，哪一处最该留下？",
+          "material": "门店培训卡只写‘记需求、约下次、晚档优先’。熟客补来的上周截图里，Tony 问：‘上周那个，你听完了吗？自己人，晚档给你留。’对方回：‘听过了，没钱。剪头就剪头，别又跟我说那个。’店长另说：‘我们店只做美发，也没让员工替客人收这种钱。Tony 私下跟客人说了什么，你们问他本人，别把店也写进去。’",
           "materialRows": [
+            "门店培训卡｜记需求、约下次、晚档优先",
+            "熟客上周截图｜上周那个，你听完了吗",
+            "熟客回复｜听过了，没钱；别又跟我说那个",
+            "熟客上周截图｜自己人，晚档给你留",
             "店里只做美发",
             "店里没让员工替客人收这种钱",
             "Tony 私下说了什么，问他本人"
           ],
-          "proves": "门店培训和卖理财不是一回事；店长拒绝替 Tony 的名单说明来源。",
-          "stillCannotProve": "不能证明 Tony 有或没有代销资格，也不能证明十二万的去向。",
+          "proves": "Tony 会把‘自己人’、晚档和一次未写明内容的后续跟进连着使用；至少一位熟客明确说上周听过、这次不想再听。门店只认美发业务，没有让员工替客人收这种钱。",
+          "stillCannotProve": "截图没写上周听的是什么，不能证明每个被叫自己人的熟客都听过产品，也不能证明 Tony 的资格和十二万去向。",
           "routeAxis": "process-control",
           "options": [
             {
-              "label": "店里不卖理财",
+              "label": "上周听过，这次先拦",
               "correct": true,
-              "contradiction": "门店制度解释不了私人名单上的起投。",
-              "feedback": "门店不认这项业务。Tony 私下收钱和记名单，得由他自己解释。",
+              "contradiction": "另一位熟客明确说上周听过、这次没钱，不想再听；Tony 又把‘自己人’和晚档接在同一段跟进里。",
+              "feedback": "她确实听过一次，也在这次开口前先拦了。截图没写上周听的是什么，不能替它补成理财；Tony 私下怎么接，仍要问他本人。",
               "routeAxis": "process-control"
             },
             {
-              "label": "直接问 Tony",
+              "label": "店里只做美发",
               "correct": false,
-              "feedback": "这是店长的处理态度，不能证明钱有没有进产品。",
+              "feedback": "这句划清门店边界，但没有解释 Tony 为什么把同样的称呼接到私人名单和账户上。",
               "routeAxis": "caller-credibility"
             },
             {
@@ -11728,9 +13129,9 @@ export const CONTENT_CASES = {
           ]
         },
         "snapshotEcho": {
-          "respondent-problem": "昨晚有人咬住他拿‘自己人’拉熟客。今晚完整名单摆上来，看这句话后面接的是什么。",
-          "industry-gray": "昨晚有人咬住右半边是我裁的。是我裁的。今晚金额和账户栏一起摆。",
-          "caller-complicit": "昨晚有人咬住我拿半张名单先讲养鱼。完整图在这儿，我自己那行也不遮了。"
+          "respondent-problem": "昨晚你问他为什么总说‘自己人’。今晚完整名单摆上来，再看这句话后面接的是什么。",
+          "industry-gray": "昨晚你说右半张是我裁的。是我裁的。今晚金额和账户栏一起摆。",
+          "caller-complicit": "昨晚你说我拿半张名单先讲养鱼。完整图在这儿，我自己那行也不遮了。"
         },
         "liveCounterBeats": [
           {
@@ -12136,7 +13537,7 @@ export const CONTENT_CASES = {
       "stanceSnapshot": {
         "afterScene": 3,
         "kicker": "中段立场快照",
-        "prompt": "现在这通麦，你先咬住哪个动作？",
+        "prompt": "名单和转账都在这儿，你先问哪件？",
         "note": "不判分。按下你现在最在意的那件事。",
         "afterPickLine": "截图右边是她自己裁掉的。先问那几栏写了什么。",
         "continueLabel": "继续听",
@@ -12168,7 +13569,9 @@ export const CONTENT_CASES = {
       "respondentNote": {
         "source": "respondent-note",
         "appearsNowBecause": "收麦后，他给节目后台留了一段文字，说不上麦，就说这几句。",
-        "text": "十二万过到我户没错，可先问能不能跟着买的是她。我说过走我户，也说过已经提交。名单就是我记客户的，不是什么女朋友名册。‘自己人’我叫过，晚档我也留过，怎么了？产品名、合同、回单我会给她本人，不给直播间。我不上麦。"
+        "text": "十二万过到我户没错，可先问能不能跟着买的是她。我说过走我户，也说过已经提交。名单就是我记客户的，不是什么女朋友名册。‘自己人’我叫过，晚档我也留过，怎么了？钱走我户，材料当然先在我这儿。她要看，我会发给她本人，不发直播间。我不上麦。",
+        "proves": "Tony 承认十二万元经过自己的账户，也把产品材料视为由自己掌握和交付。",
+        "stillCannotProve": "这段留言不能证明认购完成、资金仍在、Tony 具备资格或他因代投获得了报酬。"
       },
       "crossCaseEchoes": [
         {
@@ -12205,7 +13608,7 @@ export const CONTENT_CASES = {
       },
       "hostDisclosure": {
         "anchor": "afterBackflow",
-        "text": "‘自己人’这三个字，我以前上班时也听过。通常下一句就是‘这次你先帮我’。所以这张表，我还得往下问。",
+        "text": "‘自己人’这三个字，我以前上班时也听过。好听是好听，钱一旦要走个人账户，就得问合同和回单。",
         "lines": [
           {
             "role": "caller",
@@ -12214,7 +13617,7 @@ export const CONTENT_CASES = {
           },
           {
             "role": "host",
-            "text": "被叫过，也替别人收过尾。好听话能让人点头，不能替合同和回单。"
+            "text": "叫过。可我不会因为这三个字，就把十二万和一张提交页当成一回事。"
           }
         ]
       },
@@ -12243,7 +13646,7 @@ export const CONTENT_CASES = {
         "answer": "先把回单和合同户名给我。名单我先不发。十二万怎么处理，等他把材料交出来再说。",
         "note": "她第一次把要回单、要退现金和公开养鱼控诉拆开。"
       },
-      "stageJudgement": "十二万是你自己开口让他代投。风声一来，你裁掉金额栏，改口恋爱诈骗。这个说法我不认。他拿‘自己人’收钱、不给原件，也别装没事。别再转钱；产品名、合同、回单，让他书面发。进没进产品，等原件。",
+      "stageJudgement": "十二万是你自己开口让他代投的。风声一来，你裁掉金额栏，改口恋爱诈骗。这个说法我不认。别再转钱，让他把产品名、合同和回单书面发过来。他拿‘自己人’收钱，收钱以后却不给原件，这件事也别想躲。钱到底进没进产品，等原件。",
       "careChoices": [
         {
           "id": "pragmatic",
@@ -12291,8 +13694,8 @@ export const CONTENT_CASES = {
         }
       ],
       "caseClosing": {
-        "title": "裁掉金额栏之后",
-        "verdict": "咨询者主动请 Tony 代投十二万；听见产品可能出事后，她裁掉金额栏，改口称恋爱诈骗。Tony 用‘自己人’维持亲密感，收钱后未提供合同和回单。十二万是否入产品仍待原件。",
+        "title": "钱走他户之后",
+        "verdict": "咨询者主动请 Tony 代投十二万；听见产品可能出事后，她裁掉金额栏，改口称恋爱诈骗。Tony 把熟客关系接到个人账户代投上，收钱后没有交产品全名、合同和回单。十二万是否入产品仍待原件。",
         "beats": [
           {
             "label": "来电",
@@ -12304,7 +13707,7 @@ export const CONTENT_CASES = {
           },
           {
             "label": "回看",
-            "text": "高息她在酒吧先听过。小姐妹说产品在拖以后，她才翻手机、才打进来把代投改口成被骗。"
+            "text": "高息她在酒吧先听过。小姐妹说产品在拖以后，她才翻手机。Tony 承认钱走他户，合同和回单却一直没交。"
           }
         ],
         "confirmed": [
@@ -12315,7 +13718,8 @@ export const CONTENT_CASES = {
           "高息传闻来自酒吧小姐妹，咨询者在翻名单前就听过一百万起投",
           "周是剪头客户，名单行写一百万已买，不是咨询者所说的女朋友",
           "第一夜敲门的是警察；放款的人涉案，按借款人来问咨询者",
-          "店长称店里不卖理财，拒绝替 Tony 的私人名单作证"
+          "店长称店里不卖理财，拒绝替 Tony 的私人名单作证",
+          "Tony 承认十二万经过个人账户，并声称材料由自己交给何；截至结案仍未提供产品全名、合同和回单"
         ],
         "unresolved": [
           "十二万是否已经买成宸直产品",
@@ -12324,6 +13728,7 @@ export const CONTENT_CASES = {
           "其他名单行是否完成认购",
           "宸直该档产品能否兑付或赎回",
           "Tony 对她的喜欢有多少是真心",
+          "Tony 是否因私人代投获得佣金或其他报酬",
           "她向放贷人借了多少、是否仍欠",
           "警察把她当证人还是另有调查"
         ],
@@ -12332,12 +13737,12 @@ export const CONTENT_CASES = {
       "caseTitle": {
         "title": "那张名单"
       },
-      "storyInterludeRecap": "她先拿裁过的名单讲养鱼，后来才承认恋爱名义是真的、他确实帅。第一夜强光和敲门让她突然下线；第二夜才问出警方因涉案放款人来核实借款。完整名单和转账随后对出：周只是剪头客户，十二万是她自己因不够一百万才让他代投。风声一来，她才翻脸要钱。",
+      "storyInterludeRecap": "她先拿裁过的名单讲养鱼，后来才承认恋爱名义和真实照顾都发生过。第一夜强光和敲门让她突然下线；第二夜才问出警方因涉案放款人来核实借款。完整名单和转账随后对出：她主动让 Tony 代投十二万，钱走他的个人账户，合同和回单仍在他手里。风声一来，她才裁图改口。",
       "followupTwist": "周又发来消息，说愿意把转账和回单原图交给警方。来电人也把自己的聊天和十二万转账整理了过去。两人都没有去店里堵人；他还是只说已经提交，没有发合同。",
-      "dailyShareTitle": "名单上的女人，是女友还是客户？",
-      "dailyShareBody": "她翻到一份全是女人的名单，只把姓名和下次约发到后台，说他在养鱼。第二夜完整截图才露出她那行：十二万，不够起投，走他户。恋爱是真的，代投也是她开口。风声一来，她才要钱。",
-      "dailyShareQuestion": "用恋爱关系跨过理财门槛的钱，还能不能按被骗全额讨回？",
-      "truth": "Tony 很帅，也确实以恋爱名义和咨询者相处，留最晚那档、叫她自己人。咨询者要这个位置，不是单方面被拖着。她翻到完整名单后，只把姓名、亲密度和下次约所在的左半边发给节目，裁掉金额、起投、跟进和走他户；周只是剪头客户，行内写一百万已买。高息档一百万起投，咨询者在酒吧听小姐妹说过，自己只有十二万，主动问 Tony 能不能跟着买。Tony 声称自己已经够门槛，可以把她的钱并进去、走自己账户；转账由她发起，他随后只发来一张提交页面，没有给产品全名、合同和回单。小姐妹后来说产品在拖，她才翻他手机，把代投改口成养鱼骗钱，打进直播间问怎么要回来。第一夜强光扫进窗内，敲门声后她突然下线；第二夜才承认来人是警察，因为她借过涉案放款人的钱。店长称店里不卖理财。节目不能确认十二万是否已经买成宸直、Tony 有无代销资格、周的回单是不是对应她的一百万，也不能确认该产品能否兑付，更不能确认咨询者借了多少、是否仍欠、警方如何看待她。两边在感情和经济上都不是善男信女：他用亲密话术向熟客推高息，她用恋爱关系跨过门槛，风险一来就裁图改口。"
+      "dailyShareTitle": "十二万为什么要走 Tony 户？",
+      "dailyShareBody": "她把名单左半边发进直播间，说 Tony 在养鱼。完整图却写着：十二万，不够起投，走 Tony 户。她主动要求代投；Tony 收钱后只给提交页，产品名、合同和回单一直没交。",
+      "dailyShareQuestion": "Tony 说自己只是帮熟客代投。钱走他的账户，合同和回单又迟迟不交，他要拿什么证明这笔钱去了产品？",
+      "truth": "Tony 很帅，也确实以恋爱名义和咨询者相处，留最晚那档、叫她自己人。咨询者要这个位置，不是单方面被拖着。她翻到完整名单后，只把姓名、亲密度和下次约所在的左半边发给节目，裁掉金额、起投、跟进和走他户；周只是剪头客户，行内写一百万已买。高息档一百万起投，咨询者在酒吧听小姐妹说过，自己只有十二万，主动问 Tony 能不能跟着买。Tony 声称自己已经够门槛，可以把她的钱并进去、走自己账户；转账由她发起，他随后只发来一张提交页面，没有给产品全名、合同和回单。他的私人名单把熟客称呼、金额、起投和账户去向记在一起，钱与后续查询都要先经过他。小姐妹后来说产品在拖，她才翻他手机，把代投改口成养鱼骗钱，打进直播间问怎么要回来。第一夜强光扫进窗内，敲门声后她突然下线；第二夜才承认来人是警察，因为她借过涉案放款人的钱。店长称店里不卖理财。节目不能确认十二万是否已经买成宸直、Tony 有无代销资格、是否因代投获得报酬、周的回单是不是对应她的一百万，也不能确认该产品能否兑付，更不能确认咨询者借了多少、是否仍欠、警方如何看待她。她用恋爱关系跨过门槛，风险一来就裁图改口；Tony 则把亲密熟客接到自己的账户和材料控制下。"
     }
   }
 };
@@ -12374,6 +13779,69 @@ export const CONTENT_QUICK_CASES = {
             "pause": "./assets/generated/quick-detective/caller-luo-pause-pixel.png"
           }
         }
+      },
+      "rageBaitContract": {
+        "tierPlan": [
+          "Tier 2",
+          "Tier 4"
+        ],
+        "tier4Assets": [
+          {
+            "id": "quick1-no-conditions-reversal",
+            "label": "‘什么都不图’反转",
+            "availableAfterCaseNumber": 2,
+            "playerPrediction": "她的低要求只是普通客套。",
+            "reversal": "符合口头条件的普通对象出现后，她不接，转而要经商、家里省心并能分担房贷的人。"
+          }
+        ],
+        "debts": [
+          {
+            "id": "quick1-million-from-dad",
+            "tier": "Tier 2",
+            "issue": {
+              "location": "million-from-dad",
+              "quote": "去年买的时候，我爸爸给了我一百万。"
+            },
+            "interest": {
+              "location": "two-fathers",
+              "trigger": "player-input",
+              "payoff": "玩家追问同一个称呼对应的收入落差，她承认出资人不是亲爸。",
+              "holdingLimit": "第一轮内"
+            },
+            "principal": {
+              "location": "quick1:ending",
+              "trigger": "player-input",
+              "payoff": "主播拒绝替她介绍和背书。"
+            },
+            "nextDebt": {
+              "location": "quick1:ending",
+              "quote": "那一百万元从哪里来、双方是什么关系，仍然未知。"
+            }
+          },
+          {
+            "id": "quick1-low-standards",
+            "tier": "Tier 4",
+            "issue": {
+              "location": "low-standards",
+              "quote": "一个月四五千也行，没房也可以。"
+            },
+            "interest": {
+              "location": "hidden-standards",
+              "trigger": "player-input",
+              "payoff": "普通对象递到面前后，玩家追出经商、家里省心和分担房贷的真实门槛。",
+              "holdingLimit": "第二轮内"
+            },
+            "principal": {
+              "location": "quick1:ending",
+              "trigger": "player-input",
+              "payoff": "主播直说她想借自己的名字接触条件更好的人。"
+            },
+            "nextDebt": {
+              "location": "quick1:ending",
+              "quote": "她真正接受的择偶条件仍未全部说清。"
+            }
+          }
+        ]
       },
       "whyTonight": "她知道林旭阳除了做情感热线，也兼职替人介绍对象，登记的听众里有做生意、家境稳定的男性，想借直播间获得介绍。",
       "helpRequest": {
@@ -12438,6 +13906,10 @@ export const CONTENT_QUICK_CASES = {
       "disclosureRounds": [
         {
           "id": "family-version",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "你突然问这个，我有点跟不上。家里的事我还没说完。"
+          },
           "label": "先听她怎么介绍自己",
           "patience": 3,
           "turnIds": [
@@ -12460,6 +13932,10 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "actual-request",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "你是不是没听完？我想找什么样的人，还没说完呢。"
+          },
           "label": "再听她怎么说",
           "patience": 3,
           "turnIds": [
@@ -12488,12 +13964,12 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "ask-for-match",
-          "host": "那你今天什么问题？",
-          "caller": "我想问下我的择偶定位。您这儿有合适的资源，当然更好。"
+          "host": "好，你今天想问什么事？",
+          "caller": "我想找个对象，也想让你帮我看看，我这样的适合找什么样的。你手里要真有合适的，也可以给我介绍一下。"
         },
         {
           "id": "caller-profile",
-          "host": "先把你自己的情况，还有以前谈过的，大概说一下。",
+          "host": "先说说你自己。以前谈过的，也带一句。",
           "caller": "我二十四，在商场卖衣服，底薪加提成一个月六七千，自己能养活自己。闭店晚，回家我一般煮碗面，工作服攒到周一——也不一定周一，轮休那天一起洗。以前谈过两个，一个去了外地，另一个总说我脾气硬。我不太会讲好听的，吵完也拉不下脸哄人，后来就散了。现在就想找个踏实点的，别赌，别动手，家里真遇上事也别瞒着我、转身就跑。"
         },
         {
@@ -12513,7 +13989,7 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "low-standards",
-          "host": "一百万的出资人不是亲爸，你又不肯说关系。我不能替你把家境说成清楚。那你自己愿意见什么样的？",
+          "host": "行，这个人你不想讲，我先不追。你刚才说想让我介绍，那你愿意见什么样的人？",
           "caller": "一个月四五千也行，年龄大我五岁以内，没房也可以。学历、长相我真不挑。合适的话相处一两年就结婚。商场下班晚，我平时也没什么机会认识人，要不然也不会来找您。"
         },
         {
@@ -12600,7 +14076,7 @@ export const CONTENT_QUICK_CASES = {
           "lines": [
             {
               "role": "host",
-              "text": "先说买房那一百万。你亲爸伤了腰，现在只能偶尔替人看店。后面你又说“爸爸”给了你一百万。我顺着亲爸往下说，你也没纠正。给钱的到底是不是你亲爸？"
+              "text": "你前面说亲爸伤了腰，只能偶尔替人看店。后面又说‘爸爸’给了你一百万。我问清楚：给钱的到底是不是你亲爸？"
             },
             {
               "role": "caller",
@@ -12640,7 +14116,7 @@ export const CONTENT_QUICK_CASES = {
           "lines": [
             {
               "role": "host",
-              "text": "还有一句，我刚才没接。你说两个人遇上事别散，偏偏举了“哪怕是我不能生孩子”。你这个年纪，想到的顶多是以后他有钱了会不会变心，怎么会先想到自己不能生孩子？"
+              "text": "还有一句。你说两个人遇上事别散，举的例子是‘哪怕我不能生孩子’。你为什么会先想到这个？"
             },
             {
               "role": "caller",
@@ -12683,7 +14159,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "可下一句你就要我介绍自己做生意、家里稳定的，最好还能帮你减轻房贷。你那套房总价两百万。这些才是你的要求，前面一直没说。"
+              "text": "可我问你到底想找什么样的，你说要自己做生意、家里省心，最好还能分担房贷。那套房总价两百万，也是在我追问以后才说的。"
             },
             {
               "role": "caller",
@@ -12734,7 +14210,7 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "给你一百万的不是亲爸。你主动拿自己不能生孩子举例，问回去才承认做过检查。你让我从认识的人里替你介绍，这个忙我不能帮。"
+                "text": "你前面说月薪四五千、没房也行，真给你一个月薪六千的，你又不愿意接。后来你要的是自己做生意、家里省心，还能帮你分房贷。我不会帮你做这种介绍的。"
               },
               {
                 "role": "caller",
@@ -12742,7 +14218,7 @@ export const CONTENT_QUICK_CASES = {
               },
               {
                 "role": "host",
-                "text": "那就不介绍。今天到这儿。"
+                "text": "我不是怕替你保证一辈子。我连这一次也不会替你介绍。今天就到这儿。"
               }
             ]
           },
@@ -12753,19 +14229,27 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "我们来把这次这个连线复个盘。"
+                "text": "电话挂了。我把她刚才说的几件事重新捋一遍。"
               },
               {
                 "role": "host",
-                "text": "电话挂了，我们把她刚才的话放在一起。亲爸伤了腰，只能偶尔替人看店；买房的一百万，却是另一个她也叫“爸爸”的人给的。我顺着亲爸往下说时，她没有纠正，直到被问住才承认不是同一个人。"
+                "text": "买房那一百万，不是她亲爸给的。给钱的人到底是谁，她没说。"
               },
               {
                 "role": "host",
-                "text": "她说月薪四五千、没房也能谈，还说不会让男方养她。真给她一个月薪六千的普通上班族，她却不肯接，下一句就要我介绍自己做生意、家里稳定的，最好还能帮她减轻房贷。她来这里，是想借我的名字接触条件更好的人。"
+                "text": "她嘴上说月薪四五千、没房也行，真递来一个月薪六千的普通上班族，她又不接。"
               },
               {
                 "role": "host",
-                "text": "她说找对象最怕别人瞒着她。可说到两个人遇上事别走散，她偏偏拿自己不能生孩子举例。我回头问，她第一反应是“你怎么能这么问”，然后才承认做过检查。"
+                "text": "后来再问，她要的是自己做生意、家里省心，最好还能帮她分担房贷。"
+              },
+              {
+                "role": "host",
+                "text": "还有她自己提到的检查。医生到底怎么说，让她自己去问清楚，我不在直播间猜。"
+              },
+              {
+                "role": "host",
+                "text": "她还把上一段感情说成自己不会哄人。再问下去，她才承认脾气和争吵也有关系。"
               }
             ]
           },
@@ -12776,19 +14260,11 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "按现有信息，我能确认的是：她把亲生父亲和出资买房的另一位“爸爸”混在一起说，直到被追问才拆开。那一百万元从哪里来、双方是什么关系、现在是否还有往来，她都没有解释清楚。"
+                "text": "她想通过我认识条件更好的对象，还想让我先替她说一句‘这个姑娘可靠’。我不会做这种背书的。"
               },
               {
                 "role": "host",
-                "text": "她先把分手归到不会哄人，继续问才补出自己脾气不好、吵架时双方都不让步。求我帮忙时，她也知道怎么夸人、把话说软。至少可以判断，开场那句“不会说好听话”不是一段完整的分手原因。"
-              },
-              {
-                "role": "host",
-                "text": "我判断，她这通电话不只是问择偶定位，是想借我的名字接触条件更好的人。她先说月薪四五千、没房也行，普通对象递到面前又不接，转头要经商、家里省心，最好还能分担房贷；同时还想让我先替她说人可靠。这个背书我不能做。"
-              },
-              {
-                "role": "host",
-                "text": "这通电话足够让我拒绝介绍，但不够让我替她编出一段没有证据的人生。"
+                "text": "刚才这些已经够我拒绝介绍了。那一百万是谁给的，她不说，我也不会替她编。"
               }
             ]
           }
@@ -12819,11 +14295,11 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "目前已经问到的矛盾，足够让我暂不替你介绍，也不替你向别人背书。"
+                "text": "你前面说月薪四五千、没房也行，后来又只接条件更好的。人我不会替你介绍，也不会替你向别人保证。"
               },
               {
                 "role": "host",
-                "text": "给你一百万元的人是谁、你们是什么关系、你真正接受什么条件，都需要你自己一次讲清。"
+                "text": "至少先把给你一百万的人是谁说清楚，再谈介绍。"
               }
             ]
           },
@@ -12834,11 +14310,11 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "现在不能证明存在经济交换，也不能凭称呼判断对方年龄。婚育检查的医学含义同样不能由直播间猜。"
+                "text": "那一百万为什么给，今晚没问清。没问清的，我不会替你往下说。"
               },
               {
                 "role": "host",
-                "text": "如果进入认真关系，相关信息应在合适的时候由你本人如实沟通。今天先到这里。"
+                "text": "真准备跟谁认真谈，这件事该什么时候说，你自己提前想好。今天先到这里。"
               }
             ]
           }
@@ -12876,6 +14352,61 @@ export const CONTENT_QUICK_CASES = {
             "pause": "./assets/generated/quick-detective/caller-zhou-female-pause-pixel.png"
           }
         }
+      },
+      "rageBaitContract": {
+        "tierPlan": [
+          "Tier 1",
+          "Tier 2"
+        ],
+        "tier4Assets": [],
+        "debts": [
+          {
+            "id": "quick2-one-message",
+            "tier": "Tier 2",
+            "issue": {
+              "location": "help-request",
+              "quote": "最近突然不联系了。我想问，是不是我对交流要求太高了。"
+            },
+            "interest": {
+              "location": "message-or-drunkenness",
+              "trigger": "player-input",
+              "payoff": "玩家对上十一点五十二与六分钟后的记录，她承认‘还行’不是真实状态。",
+              "holdingLimit": "第一轮内"
+            },
+            "principal": {
+              "location": "quick2:ending",
+              "trigger": "player-input",
+              "payoff": "主播判断问题不只是一条未回消息，而是连续缩小当晚事实。"
+            },
+            "nextDebt": {
+              "location": "quick2:ending",
+              "quote": "男方退出时最看重哪一项，今晚不知道。"
+            }
+          },
+          {
+            "id": "quick2-rare-night-out",
+            "tier": "Tier 1",
+            "issue": {
+              "location": "missed-message-version",
+              "quote": "我已经很久没出去了。"
+            },
+            "interest": {
+              "location": "nightlife-pattern",
+              "trigger": "player-input",
+              "payoff": "玩家对照朋友圈，追出近两个月六次夜场和连续两晚外出。",
+              "holdingLimit": "第三轮内"
+            },
+            "principal": {
+              "location": "quick2:ending",
+              "trigger": "player-input",
+              "payoff": "主播直说她把长期生活状态说成一次偶然。"
+            },
+            "nextDebt": {
+              "location": "quick2:ending",
+              "quote": "酒桌上有没有发生别的事，不用猜。"
+            }
+          }
+        ]
       },
       "whyTonight": "她通过婚恋机构认识了一位创业者。两个人相处一个月，男方却在一次周末聚会后停下了联系。她认为自己只是有一晚喝多了、漏回一条消息，想问主播是不是自己对情绪交流要求太高。",
       "helpRequest": {
@@ -12964,6 +14495,10 @@ export const CONTENT_QUICK_CASES = {
       "disclosureRounds": [
         {
           "id": "surface-story",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我当时就是难受。别的我真没往那儿想。"
+          },
           "label": "先听她怎么讲",
           "patience": 4,
           "turnIds": [
@@ -12979,7 +14514,8 @@ export const CONTENT_QUICK_CASES = {
             "flower-request",
             "missed-message-state",
             "founder-busy",
-            "family-level"
+            "family-level",
+            "age-gap"
           ],
           "requiredConfrontationIds": [
             "care-or-display",
@@ -12988,6 +14524,10 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "changed-version",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我已经说记不清了。你一直追，我更不想讲。"
+          },
           "label": "继续问当晚的情况",
           "patience": 3,
           "turnIds": [
@@ -13003,6 +14543,10 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "social-feed",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我能找到的都发了。你还要我答什么？"
+          },
           "label": "再看她发来的朋友圈截图",
           "patience": 4,
           "turnIds": [
@@ -13126,17 +14670,17 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "relationship-version",
-          "host": "这一个月怎么相处的？你为什么觉得他不懂你？",
+          "host": "你说他不懂你的感受，哪件事让你这么觉得？",
           "caller": "我们一周见两三次，吃饭、散步，他也会开车来接我。我说累，他就把餐厅换到学校附近。可我发一首歌给他，他隔很久只回一句‘听了’，从来不问我为什么发。我有次刷到一束花，顺口问他能不能也送我一束，下次他真带了一大束来。花是有了，可两个人还是聊不到里面去。"
         },
         {
           "id": "public-photo-screenshot",
-          "host": "花发出去以后呢？那条动态还找得到吗？",
+          "host": "那条花的动态，你现在还能找到吗？",
           "caller": "我挺高兴的，坐在他车里拍了照片。朋友在下面问是不是谈恋爱了，还有人说羡慕，我回了几个表情。现在朋友圈三天可见。你这边看不到以前的。我自己还能翻。我把花那条和前面几条都截了，刚发后台，前面就是吃饭、演唱会这些。"
         },
         {
           "id": "missed-message-version",
-          "host": "他是从哪件事以后不联系的？那晚你从头说一下。",
+          "host": "你说他突然不联系了。那晚发生了什么？",
           "caller": "我妹妹叫我出去坐坐。我已经很久没出去了，正好她想喝一点，我们就去了一家清吧。我后来翻记录数过。十一点五十二，他问我喝得怎么样，我回‘还行’；十一点五十八，他又问我准备几点回去。后面那条我没看见，早上七点多才回。第二天我解释了，他还是越来越冷。"
         },
         {
@@ -13172,7 +14716,7 @@ export const CONTENT_QUICK_CASES = {
         {
           "id": "closing-request",
           "host": "所以你现在希望我帮你判断什么？",
-          "caller": "我想知道他是不是把这件事看得太重，也想问我还要不要联系。他条件确实合适，我也是真想认真谈。可如果在一起以后连跟妹妹出去都要这样，我也会累。"
+          "caller": "我想知道他是不是把这件事看得太重，也想问我还要不要联系。他条件确实合适，我也是真想认真谈。你能不能帮我写一句，我照着发给他？"
         }
       ],
       "issueOptions": [
@@ -13209,12 +14753,32 @@ export const CONTENT_QUICK_CASES = {
         {
           "id": "founder-busy",
           "label": "创业者是不是都没时间听歌",
-          "sourceAnchor": "自己开公司"
+          "sourceAnchor": "自己开公司",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "他创业是忙，可我打来不是替他解释工作的。"
+          }
         },
         {
           "id": "family-level",
           "label": "双方家庭条件差多少",
-          "sourceAnchor": "我们家就普通家庭，A7吧"
+          "sourceAnchor": "我们家就普通家庭，A7吧",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "怎么又问到家境了？我想问的是他为什么突然不理我。"
+          }
+        },
+        {
+          "id": "age-gap",
+          "label": "九岁年龄差是不是根本问题",
+          "sourceAnchor": "我二十六",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "我们差九岁，他一开始就知道。这不是他这次不回我的理由。"
+          }
         },
         {
           "id": "how-he-knew",
@@ -13254,7 +14818,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "你刚发来的朋友圈截图我看了。朋友问你是不是谈恋爱了，下面有人点赞，有人说羡慕，你回得挺开心。再往前几条，也都是漂亮饭、演唱会这些。看得出来，你很在意别人觉得你过得好不好。"
+              "text": "你发来的朋友圈截图我看了。花、包、他的车都在一张。朋友说羡慕，你回得也挺开心。你很在意别人看见这些，对吧？"
             },
             {
               "role": "caller",
@@ -13262,7 +14826,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "我们不脱离感情只谈钱。你希望他懂你，可以；可你也喜欢他送花、送包，还希望别人羡慕他给你的生活。这部分不能不说，别只剩一句他听不懂你的歌。"
+              "text": "那就别只说他没听懂你的歌。你也喜欢花和包，喜欢朋友羡慕。这些一起说。"
             },
             {
               "role": "caller",
@@ -13342,7 +14906,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "你前面一直说是姐妹俩小聚。现在桌上多出一个男的。男的在场不能证明你们发生过什么，可这件事不该问到这里才有。"
+              "text": "你刚才说的是姐妹俩。现在多出一个男的。别急，我没说发生过什么。我问的是，你为什么没提他？"
             },
             {
               "role": "caller",
@@ -13367,7 +14931,7 @@ export const CONTENT_QUICK_CASES = {
           "lines": [
             {
               "role": "host",
-              "text": "你说朋友圈只是几张照片。可近两个月有六次酒吧或者 KTV，三条发在凌晨四点以后，照片里也不是每次都跟同一拨人。你都跟谁去的，那几次回宿舍了吗？"
+              "text": "婚介跟他说你生活简单，你自己也说很久没出去。可截图里，两个月六次酒吧或者KTV，三次过了凌晨四点。那几次你跟谁去的？"
             },
             {
               "role": "caller",
@@ -13375,7 +14939,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "婚介跟他说你生活简单，你刚接通又说自己很久没出去，只碰巧喝多一次。可照你自己说的，读研以后一直跟不同的人喝酒、唱歌，有几次还玩到天亮。到现在你还往‘偶尔一次’上说。男方看到了当然不可能信啊。"
+              "text": "你开场说很久没出去。现在是两个月六次，读研以后也一直不少。你还是我问一句，你补一句。前面那些话全变了，我们还怎么聊？"
             },
             {
               "role": "caller",
@@ -13432,7 +14996,7 @@ export const CONTENT_QUICK_CASES = {
           "lines": [
             {
               "role": "host",
-              "text": "十号你跟他解释九号喝多了。同一天，你又发了八号在 KTV 的照片。他看见的就是：你刚为一晚喝酒道歉，转头又在展示另一晚。"
+              "text": "十号你一边为九号喝多道歉，一边发了八号在 KTV 的照片。照片是哪天拍的，你知道，他不知道。"
             },
             {
               "role": "caller",
@@ -13440,7 +15004,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "可他看到的是你十号发了一组 KTV 的照片，哪知道那是八号拍的？你刚为喝断片道歉，转头又在发喝酒的照片。对方又不傻，你这道歉还能有多少分量？"
+              "text": "所以在他那儿，就是你刚为喝断片道歉，又发了一组喝酒的照片。他当然会怀疑，你这句道歉到底有多少分量。"
             },
             {
               "role": "caller",
@@ -13467,7 +15031,15 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "我不建议你再拿‘你为什么不懂我’去问他。你真要联系，就把八号、九号、桌上那个人，还有你当时已经喝到什么程度，一次说清。他信不信、还愿不愿意继续，这次也一起问清楚，别再来回猜了。"
+                "text": "你要我替你写一段把他劝回来的话，这种话我不会替你写的。"
+              },
+              {
+                "role": "host",
+                "text": "你真还想联系，就只发一次，把八号和九号的事从头说清楚。桌上有谁，你醉到什么程度，都别再等他追问。"
+              },
+              {
+                "role": "host",
+                "text": "最后问他一句，这些话他信不信，还愿不愿意继续。发完就停，别再来回猜了。"
               },
               {
                 "role": "caller",
@@ -13475,7 +15047,7 @@ export const CONTENT_QUICK_CASES = {
               },
               {
                 "role": "host",
-                "text": "你是每问到一步才多说一点，这跟一开始就把事情说完整是两码事。他要不要继续是他的选择。你要做的，是别再遮遮掩掩，拿一个谎话去圆另一个谎话。"
+                "text": "你那不叫一次解释清楚。每次都是他问到哪儿，你才补到哪儿。别再拿一个谎去圆另一个了。要说就一次说完，然后停。他回不回，是他的事。"
               },
               {
                 "role": "caller",
@@ -13490,7 +15062,7 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "我们来把这次这个连线复个盘。"
+                "text": "电话挂了。我把八号、九号、十号重新捋一遍。"
               },
               {
                 "role": "host",
@@ -13502,15 +15074,23 @@ export const CONTENT_QUICK_CASES = {
               },
               {
                 "role": "host",
-                "text": "八号，她和师姐去 KTV。九号，她跟妹妹以及妹妹的一名男性朋友去酒吧，混着喝到吐；十一点五十二还回‘还行’，六分钟后不再回。十号，她道歉，当天又发了八号的 KTV 照片。"
+                "text": "八号，她和师姐去 KTV。"
               },
               {
                 "role": "host",
-                "text": "婚介跟男方说她生活简单，她今晚也先说自己很久没出去。对质以后，桌上多出一个男的；再看她发来的旧动态截图，近两个月有六次酒吧或者 KTV。继续问，她才承认读研以后聚会一直不少，同行的男男女女也不是固定一拨。"
+                "text": "九号，她和妹妹、妹妹的一名男性朋友喝酒。十一点五十二还回‘还行’，六分钟后没再回。"
               },
               {
                 "role": "host",
-                "text": "再往前看，她说自己只想要深度交流，可花是她开口要的，包也是对方送的，花、包和车又被她放进了同一条动态。她不只想被理解，也很享受男方的条件和这段关系被别人看见。"
+                "text": "十号，她道歉，同时发了八号那晚的KTV照片。"
+              },
+              {
+                "role": "host",
+                "text": "她发来的旧动态里，近两个月有六次夜场。她后来承认，读研以后聚会一直不少。"
+              },
+              {
+                "role": "host",
+                "text": "她也承认，自己很在意别人羡不羡慕这段关系。"
               }
             ]
           },
@@ -13521,15 +15101,15 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "男方原本按认真结婚的方向慢慢相处，婚介告诉他的也是学历好、生活简单。这个周末以后，他先问出酒桌上的第三个人，又在她道歉那天看见一组 KTV 照片。我再看她发来的旧动态，近两个月有六次夜场；继续问，她才承认读研以后聚会一直不少。问题不在她是学生还是女性，而在她把长期生活状态说成了一次偶然。"
+                "text": "她是学生也好，平时爱出去也好，我都不拿这些给她定罪。婚介跟男方说她生活简单，她自己也一直说很久没出去，这次只是碰巧。可男方后来看到的不是这样。"
               },
               {
                 "role": "host",
-                "text": "她今晚想让我把原因归到男方不理解她，再帮她想办法复合。可她开场把醉酒程度、第三个人和长期聚会频率都缩小了，后面也是问到一步才多说一点。这种解释很难让对方继续信任。"
+                "text": "她打来是想让我说，男方就是不理解她，再教她怎么把人追回来。可她醉成什么样、桌上还有谁，全是男方追问以后才补出来的。连自己平时常不常出去，她也换了好几遍说法。"
               },
               {
                 "role": "host",
-                "text": "酒桌上有没有发生别的事，不用猜，也不影响现在的判断。她嘴里说的自己，和那个周末做的事对不上，男方有足够理由退出。我说实话，也建议男方退出。"
+                "text": "我不猜酒桌上还有没有别的事。就她已经说出来的这些，男方要退出是有理由的。换成我，我也会劝他退出。"
               }
             ]
           }
@@ -13561,11 +15141,11 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "如果还要联系，就把连续两晚外出、当时的醉酒程度和桌上还有第三个人一次说清，别再等对方问一句补一句。"
+                "text": "你真还想联系，就把那个周末从头到尾说一遍。别再等他问一句，你补一句。"
               },
               {
                 "role": "host",
-                "text": "他说不继续，是他的选择。你先别再把整件事缩成漏看了六分钟消息。"
+                "text": "他不想继续，是他的选择。你先别再说只是漏回了六分钟，那不是他当时看到的全部。"
               }
             ]
           },
@@ -13576,17 +15156,866 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "目前能判断的是，你的开场版本省略了会影响对方判断的信息，两个人的生活方式也可能不合。"
+                "text": "你开场那套说法省了太多。男方要退出，我能理解。"
               },
               {
                 "role": "host",
-                "text": "但男性在场、夜生活频繁和一次醉酒都不能证明出轨、备选关系或供养。今天先收到这里。"
+                "text": "酒桌上还有没有别的事，今晚不知道，我也不猜。今天到这儿。"
               }
             ]
           }
         ]
       },
       "sourceBoundary": "本案以公开讨论中常见的相亲沟通、醉酒失联与信息逐步补充模式为结构参考，人物、机构、具体时间、聊天措辞、对质台词与舞台结论均为虚构合成。当前朋友圈三天可见、两批旧动态均由她本人翻出后截屏发给后台，主播没有直接浏览其历史朋友圈；纹身不作为品行证据，也不把异性在场单独写成越界证据。"
+    },
+    "03-labeled-fiction": {
+      "id": "03-labeled-fiction",
+      "caseNumber": "03",
+      "title": "帮我说一句",
+      "label": "直播快案 03",
+      "castProfileId": "quick3-caller-gu",
+      "presentation": {
+        "backgroundSrc": "./assets/generated/backgrounds/livestream_studio_v2.png",
+        "artStyle": "pixel",
+        "host": {
+          "name": "林旭阳",
+          "roleLabel": "主播",
+          "artSrc": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png",
+          "artVariants": {
+            "listening": "./assets/generated/quick-detective/lin-xuyang-host-pixel.png",
+            "questioning": "./assets/generated/host/lin_xuyang_questioning_pixel.png",
+            "pressing": "./assets/generated/host/lin_xuyang_pressing_pixel.png",
+            "verdict": "./assets/generated/host/lin_xuyang_verdict_pixel.png"
+          }
+        },
+        "caller": {
+          "name": "匿名来电人",
+          "roleLabel": "语音连线",
+          "artSrc": "./assets/generated/quick-detective/caller-gu-pixel.png",
+          "artVariants": {
+            "neutral": "./assets/generated/quick-detective/caller-gu-pixel.png",
+            "guarded": "./assets/generated/quick-detective/caller-gu-guarded-pixel.png",
+            "pause": "./assets/generated/quick-detective/caller-gu-pause-pixel.png"
+          }
+        }
+      },
+      "rageBaitContract": {
+        "tierPlan": [
+          "Tier 1",
+          "Tier 2"
+        ],
+        "tier4Assets": [],
+        "debts": [
+          {
+            "id": "quick3-labeled-fiction",
+            "tier": "Tier 2",
+            "issue": {
+              "location": "help-request",
+              "quote": "她那句『不为钱出卖爱情』，是假的。"
+            },
+            "interest": {
+              "location": "essay-version",
+              "trigger": "player-input",
+              "payoff": "玩家对上‘纯属虚构’和点名配图，他承认名字、照片都是真的。",
+              "holdingLimit": "第一轮内"
+            },
+            "principal": {
+              "location": "quick3:ending",
+              "trigger": "player-input",
+              "payoff": "主播拒绝替他当众宣判，只把点名长文和起诉状对上的数钉住。"
+            },
+            "nextDebt": {
+              "location": "quick3:ending",
+              "quote": "这笔钱法律上算不算该退的彩礼，今晚没有判决。"
+            }
+          },
+          {
+            "id": "quick3-five-cards",
+            "tier": "Tier 1",
+            "issue": {
+              "location": "last-ask-version",
+              "quote": "彩礼该退。"
+            },
+            "interest": {
+              "location": "transfer-version",
+              "trigger": "player-input",
+              "payoff": "玩家对上家里账和五张卡，他承认钱打到她家账上、卡是自己去办的。",
+              "holdingLimit": "第一轮内"
+            },
+            "principal": {
+              "location": "quick3:ending",
+              "trigger": "player-input",
+              "payoff": "主播把三千万进家里账说成已播出事实，不把彩礼定性提前判给直播间。"
+            },
+            "nextDebt": {
+              "location": "quick3:ending",
+              "quote": "更大那笔五千万美元，他自己说没打出去。"
+            }
+          }
+        ]
+      },
+      "whyTonight": "他刚发出一篇点了名、配了照片、文末却标了虚构的长文。对方公开回了一句不会为钱出卖爱情。他要林旭阳今晚对着直播间先把她那句说成假的，也把三千万说成该退的彩礼。",
+      "helpRequest": {
+        "kind": "interest",
+        "request": "他想让林旭阳今晚对着直播间说：她那句不为钱出卖爱情是假的，三千万是该退的彩礼。"
+      },
+      "callerStake": "他要直播间先替他做还没开庭的定性，同时保住‘我只是写了个故事、我只要公平’的公开说法。只要主播当众说她为钱出卖爱情，他的长文和起诉就能互相供养。",
+      "callerIntentProfile": {
+        "openGoal": "让林旭阳今晚对着直播间说她不为钱出卖爱情是假的。",
+        "preferredAnswer": "那篇长文只是故事，三千万是该退的彩礼，直播间应当站在他这边。",
+        "audienceTilt": "让听众先同情被越要越多的一方，不先核对虚构标注、账户和起诉是不是同一套动作。",
+        "protectedInterest": "要公众站台和彩礼定性，也避免把‘让我想想’、未打出的更大一笔和生育方案拿去当已证事实。",
+        "defaultTactic": "先把长文说成故事，把转账说成彩礼，把对方的回复说成不敢对账；被追问时才承认点名是真的、卡是自己办的、更大那笔没打出去。",
+        "concessionLimit": "可以承认名字照片是真的、钱打到家里账、五张卡是自己去办的、最后一笔没打、回复没对数目；不承认自己在碰瓷，也不让主播把生育方案或未判决结果说成证据。",
+        "painPoints": [
+          {
+            "topic": "文末虚构和正文点名是不是一回事",
+            "threatens": "会击穿‘我只写了个故事’的公开保护。",
+            "firstResponse": "先说文末那句是保护，正文才是经历。",
+            "afterProof": "主播把点名、配图和当众定性放在一起后，才承认名字、照片都是真的。",
+            "minimumLeak": "承认虚构两个字是自己留的退路。"
+          },
+          {
+            "topic": "三千万进家里账和五张卡",
+            "threatens": "会让‘普通彩礼’听起来像赶限额的打法。",
+            "firstResponse": "先说谈婚论嫁都这样。",
+            "afterProof": "被问一天限额一百万为何要五张卡后，才承认她嫌慢、卡是自己去办的。",
+            "minimumLeak": "承认钱确实打到她家账上。"
+          },
+          {
+            "topic": "让我想想之后发生了什么",
+            "threatens": "会把未打出的更大一笔从已发生的账里拆出去。",
+            "firstResponse": "先强调她开口了。",
+            "afterProof": "主播追问答应过没有后，才承认没答应、钱也没打出去。",
+            "minimumLeak": "承认那笔五千万美元没有打出。"
+          },
+          {
+            "topic": "她的回复有没有对上转账",
+            "threatens": "会阻止他把‘出卖爱情’那句当成否认到账。",
+            "firstResponse": "先说她不敢对，对上就完了。",
+            "afterProof": "主播把没对数目和否认拆开后，才停在‘那你要我怎么办’。",
+            "minimumLeak": "承认她一句转账数目都没对上。"
+          },
+          {
+            "topic": "一边起诉一边要直播间先说",
+            "threatens": "会把公平改写成要节目提前站台。",
+            "firstResponse": "先说法院太慢，直播间今晚就能把话说出去。",
+            "afterProof": "主播把未判决和当众定性拆开后，仍追问今晚到底说不说。",
+            "minimumLeak": "承认自己已经起诉，还要直播间先说清楚。"
+          }
+        ]
+      },
+      "selfServingOmission": "他先要主播当众说她不为钱出卖爱情是假的，却把点名长文说成故事；把打到家里账、一天限额一百万、五张卡一起打说成普通彩礼；把‘让我想想’之后的挂断说成她要钱；把她没对数目的回复说成不敢对账。起诉和直播间双轨，要追问才并在一起。",
+      "premise": "一个男生打进电话，想请你今晚帮他说句话。",
+      "caseLedger": {
+        "surfaceClaim": "他只写了个故事，他喜欢她，她越要越多，最后一笔他想了想她就走了；他只要公平，彩礼该退。",
+        "dramaticObject": "文末的虚构标注，正文里的名字和照片，打到家里账上的三千万，一天限额一百万逼出的五张卡，以及她那句没对数目的回复。",
+        "falseSolution": "她就是为钱出卖爱情；直播间应当先替他定性，法院只是走个手续。",
+        "missingEdge": "他把标了虚构的点名文、赶限额的打法、未打出的更大一笔、没对账的回复和未开庭的起诉拆开讲，只把对自己有利的那一截递到麦前。",
+        "interestPath": "如果主播接受他的版本，他就能拿到公众站台，把还没判决的彩礼争议说成已经成立的道德结论。",
+        "callerEdit": "先要当众宣判，再补虚构标注；先说彩礼，再补五张卡；先说她开口要五千万美元，再承认没打出去；先说她不敢对账，再停在数目没对上。",
+        "thirdPressure": "法院尚未实体审理；对方工作室把来电人的动作说成碰瓷，并表示交给法院。",
+        "physicalVerbalLock": "他自己说名字、照片、三千万跟起诉状上写的数对得上；文末仍标着虚构。",
+        "reversal": "‘我写了个故事’变成‘我要用一篇自己标了虚构的点名文，让直播间替还没开庭的案子先定性’。",
+        "boundary": "能确认他发了点名配图并自标虚构、自称谈婚期间打了三千万到家里账、她回了出卖爱情那句且没对数目、他已起诉并要直播间先说；不能确认法律上是否彩礼、更大一笔是否发生、生育方案含义、判决结果。",
+        "quotePayoff": "我不会对着直播间替你宣。账拿到法院去对。",
+        "coverLayer": "感性诡计：用‘我喜欢她’和‘我只要公平’先把讨论带到被辜负的一方。",
+        "loadBearingLayer": "标签诡计：用文末虚构、彩礼口径和未打出的更大一笔，把已经点名的账和尚未发生的账混在一起。"
+      },
+      "coverStrategy": {
+        "publicImage": "他把自己说成只写了个故事、仍然喜欢对方、只要公平退彩礼的人，不提这篇文已经点名、配图，也不提直播间和法庭要一起走。",
+        "honestDetails": [
+          "他三十出头，做科技创业。",
+          "两个人谈了七个多月，见过家长，谈过婚。",
+          "对方是圈内女演员，已经公开回过一句不会为钱出卖爱情。"
+        ],
+        "layeredLeaks": [
+          "先把长文说成故事；被问到文末虚构和正文点名时，才承认名字、照片都是真的。",
+          "先把三千万说成彩礼；被问一天限额一百万为何要五张卡后，才承认她嫌慢、卡是自己去办的。",
+          "先说最后一笔她开口要五千万美元；被问答应过没有后，才承认让我想想之后钱没打出去。",
+          "先把她的回复说成不敢对账；被拆开后，才停在一句转账数目都没对上。",
+          "先说已经起诉、只要公平；被问直播间为什么要先说时，才承认法院太慢、今晚就要把话说出去。",
+          "先把起诉状上的数和长文对上；被问还能不能叫虚构时，仍抓住文末两个字，不让主播把彩礼定性说成已成立。"
+        ]
+      },
+      "disclosureRounds": [
+        {
+          "id": "public-essay",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "我先把事说完。你别打岔。"
+          },
+          "label": "先听他怎么讲",
+          "patience": 3,
+          "turnIds": [
+            "greeting",
+            "help-request",
+            "essay-version",
+            "liking-version",
+            "transfer-version",
+            "last-ask-version"
+          ],
+          "issueOptionIds": [
+            "labeled-fiction",
+            "household-cards",
+            "last-ask-pause",
+            "love-sincerity",
+            "age-gap"
+          ],
+          "requiredConfrontationIds": [
+            "labeled-fiction",
+            "household-cards",
+            "last-ask-pause"
+          ]
+        },
+        {
+          "id": "public-reply",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "她就回了那些。别的我没听见。"
+          },
+          "label": "再听她怎么回",
+          "patience": 2,
+          "turnIds": [
+            "her-reply-version",
+            "dual-track-version"
+          ],
+          "issueOptionIds": [
+            "reply-not-ledger",
+            "courtroom-and-stream",
+            "moral-scam"
+          ],
+          "requiredConfrontationIds": [
+            "reply-not-ledger",
+            "courtroom-and-stream"
+          ]
+        },
+        {
+          "id": "suit-numbers",
+          "noClueReaction": {
+            "role": "caller",
+            "text": "状子上能对的，我都说了。"
+          },
+          "label": "把文和状子对上",
+          "patience": 2,
+          "turnIds": [
+            "numbers-match-version",
+            "child-limit-version",
+            "closing-request"
+          ],
+          "issueOptionIds": [
+            "numbers-on-suit",
+            "child-method",
+            "marketing-heat"
+          ],
+          "requiredConfrontationIds": [
+            "numbers-on-suit"
+          ]
+        }
+      ],
+      "deceptionChain": [
+        {
+          "id": "just-a-story",
+          "surfaceVersion": "那篇长文只是故事，文末已经标了虚构。",
+          "omittedFact": "正文写了她的名字，还配了两个人的照片。",
+          "immediateBenefit": "让主播先把点名文当成创作，而不是当众定性的材料。",
+          "traceTurnIds": [
+            "help-request",
+            "essay-version"
+          ],
+          "playerTest": "虚构标注和点名配图能不能同时成立",
+          "minimumAdmission": "承认名字、照片都是真的，虚构两个字是自己留的退路。",
+          "adviceChange": "主播不再把这篇文当成可以随便当众宣判的故事。"
+        },
+        {
+          "id": "ordinary-bride-price",
+          "surfaceVersion": "三千万是谈婚期间的彩礼，该退。",
+          "omittedFact": "钱打到她家里账上；银行一天限额一百万，她嫌慢，让他准备五张卡一起打。",
+          "immediateBenefit": "让转账先获得婚约名义，不先核对打法和收款账户。",
+          "traceTurnIds": [
+            "transfer-version",
+            "last-ask-version"
+          ],
+          "playerTest": "家里账和五张卡是不是普通彩礼口径能盖住的",
+          "minimumAdmission": "承认钱打到她家账上，卡是自己去办的。",
+          "adviceChange": "主播可以把打法钉住，不能把彩礼法律定性说成已成立。"
+        },
+        {
+          "id": "think-then-gone",
+          "surfaceVersion": "最后一笔她开口要五千万美元，他说想了想，她就走了。",
+          "omittedFact": "他没有答应，钱也没有打出去。",
+          "immediateBenefit": "把未发生的更大一笔混进已经打出的三千万里，加重量。",
+          "traceTurnIds": [
+            "last-ask-version"
+          ],
+          "playerTest": "让我想想是不是已经发生的账",
+          "minimumAdmission": "承认那笔五千万美元没有打出。",
+          "adviceChange": "主播把开口和到账拆开，不拿未打出的钱证她出卖爱情。"
+        },
+        {
+          "id": "reply-as-denial",
+          "surfaceVersion": "她回了不为钱出卖爱情，就是不敢对账。",
+          "omittedFact": "她一句转账数目都没对上，既没有认，也没有否。",
+          "immediateBenefit": "把声誉表态直接解释成心虚。",
+          "traceTurnIds": [
+            "her-reply-version"
+          ],
+          "playerTest": "没对数目能不能当成否认到账",
+          "minimumAdmission": "承认她没有对上任何一笔转账数目。",
+          "adviceChange": "主播只钉她回了什么，不把没对账写成认账或否账。"
+        },
+        {
+          "id": "two-tracks",
+          "surfaceVersion": "他只要公平，法院他另走。",
+          "omittedFact": "他已经起诉，还要直播间先说清楚，因为法院太慢。",
+          "immediateBenefit": "让节目在判决前先替他完成公众定性。",
+          "traceTurnIds": [
+            "last-ask-version",
+            "dual-track-version"
+          ],
+          "playerTest": "直播间先说和起诉另走是不是同一套动作",
+          "minimumAdmission": "承认今晚就要直播间把话说出去。",
+          "adviceChange": "主播拒绝用节目替未开庭的案子宣判。"
+        },
+        {
+          "id": "same-numbers",
+          "surfaceVersion": "文末仍写着虚构，所以这篇还是故事。",
+          "omittedFact": "名字、照片、三千万跟起诉状上写的数对得上。",
+          "immediateBenefit": "继续用虚构两个字挡住已经对齐的账。",
+          "traceTurnIds": [
+            "essay-version",
+            "numbers-match-version"
+          ],
+          "playerTest": "对得上的数能不能让虚构标注继续当保护",
+          "minimumAdmission": "承认数是真的，仍抓住文末两个字。",
+          "adviceChange": "主播只把对得上的数钉住，不把彩礼或出卖爱情说成已判决。"
+        }
+      ],
+      "turns": [
+        {
+          "id": "greeting",
+          "host": "你好，能听见吗？",
+          "caller": "能听见。我……我不是来让你评我们有没有爱情的。"
+        },
+        {
+          "id": "help-request",
+          "host": "你说吧，今晚想问什么？",
+          "caller": "我要你今晚对着直播间说一句：她那句『不为钱出卖爱情』，是假的。"
+        },
+        {
+          "id": "essay-version",
+          "host": "你先把事情说清楚。",
+          "caller": "我写过一篇长文。文末我标了『纯属虚构』。正文里我写了她的名字，还配了我们的照片。"
+        },
+        {
+          "id": "liking-version",
+          "host": "那你为什么还要写？",
+          "caller": "我喜欢她。这段日子里，她要的越来越多。她比我大几岁，这不是今晚的重点。"
+        },
+        {
+          "id": "transfer-version",
+          "host": "越来越多，是指什么？",
+          "caller": "谈婚论嫁那阵，我打了三千万到她家里账上。银行一天限额一百万，她嫌慢，让我准备五张卡一起打。"
+        },
+        {
+          "id": "last-ask-version",
+          "host": "后来呢？",
+          "caller": "最后一笔她开口要五千万美元。我说让我想想。她把电话挂了。我只要公平。彩礼该退。我已经起诉了。"
+        },
+        {
+          "id": "her-reply-version",
+          "host": "你说你已经起诉了。她那边怎么回？",
+          "caller": "她回了。过去、现在、往后，都不会为钱出卖爱情，也不会出卖灵魂。她说她还信爱情，眼光一直不行。一句转账数目都没对上。"
+        },
+        {
+          "id": "dual-track-version",
+          "host": "她没对数目，你就要我今晚替你宣？",
+          "caller": "她工作室对外说，对碰瓷说不，剩下交给法院。我这边直播间先说清楚，起诉我另走。"
+        },
+        {
+          "id": "numbers-match-version",
+          "host": "你起诉状上写的，和这篇文是同一笔数？",
+          "caller": "钉那篇标了虚构的长文。名字、照片、三千万，跟我起诉状上写的数对得上。"
+        },
+        {
+          "id": "child-limit-version",
+          "host": "状子里还写了别的吗？",
+          "caller": "孩子没写进去。她提过，孩子必须按她指定的方式来。我没答应。这事今晚我不能拿去当证据。"
+        },
+        {
+          "id": "closing-request",
+          "host": "所以你还是要我当众说她那句是假的？",
+          "caller": "有人说我发文是炒作。热度我要，账我也要。你今晚就当众说她那句是假的。"
+        }
+      ],
+      "issueOptions": [
+        {
+          "id": "labeled-fiction",
+          "label": "文末虚构和正文点名",
+          "sourceAnchor": "文末我标了『纯属虚构』",
+          "confrontationId": "labeled-fiction"
+        },
+        {
+          "id": "household-cards",
+          "label": "家里账和五张卡",
+          "sourceAnchor": "让我准备五张卡一起打",
+          "confrontationId": "household-cards"
+        },
+        {
+          "id": "last-ask-pause",
+          "label": "让我想想之后有没有打出",
+          "sourceAnchor": "我说让我想想",
+          "confrontationId": "last-ask-pause"
+        },
+        {
+          "id": "love-sincerity",
+          "label": "这段感情是不是真心的",
+          "sourceAnchor": "我喜欢她",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "我喜欢她。这跟三千万是两件事。"
+          }
+        },
+        {
+          "id": "age-gap",
+          "label": "年龄差是不是根本问题",
+          "sourceAnchor": "她比我大几岁",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "差几岁一开始就知道。今晚不是评这个。"
+          }
+        },
+        {
+          "id": "reply-not-ledger",
+          "label": "她的回复有没有对上转账",
+          "sourceAnchor": "一句转账数目都没对上",
+          "confrontationId": "reply-not-ledger"
+        },
+        {
+          "id": "courtroom-and-stream",
+          "label": "直播间先说和起诉另走",
+          "sourceAnchor": "直播间先说清楚，起诉我另走",
+          "confrontationId": "courtroom-and-stream"
+        },
+        {
+          "id": "moral-scam",
+          "label": "她是不是在碰瓷",
+          "sourceAnchor": "对碰瓷说不",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "碰瓷是她那边的定性。今晚先问账和文。"
+          }
+        },
+        {
+          "id": "numbers-on-suit",
+          "label": "长文数字和起诉状是否对上",
+          "sourceAnchor": "跟我起诉状上写的数对得上",
+          "confrontationId": "numbers-on-suit"
+        },
+        {
+          "id": "child-method",
+          "label": "生育方案能不能当证据",
+          "sourceAnchor": "必须按她指定的方式来",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "这事我没答应。今晚当不了证据。别往下编。"
+          }
+        },
+        {
+          "id": "marketing-heat",
+          "label": "发文是不是为了炒作",
+          "sourceAnchor": "热度我要，账我也要",
+          "correct": false,
+          "missReaction": {
+            "role": "caller",
+            "text": "热度我要。账我也要。两件事我都认。"
+          }
+        }
+      ],
+      "confrontations": [
+        {
+          "id": "labeled-fiction",
+          "basisTurnIds": [
+            "help-request",
+            "essay-version"
+          ],
+          "revealTransition": {
+            "id": "quick-labeled-fiction",
+            "kind": "reveal",
+            "lineIndex": 4,
+            "eyebrow": "标签对不上",
+            "label": "点了名还标虚构",
+            "visualVariant": "labeled-fiction"
+          },
+          "logicContract": {
+            "premiseAnchor": "他要主播当众说她不为钱出卖爱情是假的；自己又说文末标了虚构，正文却写了名字、配了照片。",
+            "sourceProves": "这篇文同时带有虚构标注和可识别的点名、配图，不能再被说成与真人无关的故事。",
+            "sourceDoesNotProve": "点名和配图不能证明法院已经认定诽谤、敲诈，也不能证明她为钱出卖爱情已经成立。",
+            "answerAdds": "他承认名字、照片都是真的，虚构两个字是自己留的退路。",
+            "nextLimit": "主播只拆开故事标签和点名事实，不替法院定性。"
+          },
+          "lines": [
+            {
+              "role": "host",
+              "text": "文末你标了虚构。正文里又写了她的名字，还配了照片。这还能叫故事？"
+            },
+            {
+              "role": "caller",
+              "text": "文末那句是保护。正文是我的经历。"
+            },
+            {
+              "role": "host",
+              "text": "保护谁？点开就能对上人。你要我今晚说她那句是假的，依据就是这篇你自己标了虚构的文？"
+            },
+            {
+              "role": "caller",
+              "text": "……对。名字、照片都是真的。虚构那两个字，是我留的退路。"
+            },
+            {
+              "role": "host",
+              "text": "那你今晚要我钉的，就不是一篇随便写的故事。"
+            },
+            {
+              "role": "caller",
+              "text": "我要公平。"
+            }
+          ]
+        },
+        {
+          "id": "household-cards",
+          "basisTurnIds": [
+            "transfer-version",
+            "last-ask-version"
+          ],
+          "logicContract": {
+            "premiseAnchor": "他把三千万说成该退的彩礼；同一段里又说钱打到她家里账上，一天限额一百万，她让他准备五张卡一起打。",
+            "sourceProves": "这笔钱的打法不是随口一转：收款进家里账，还因限额改成多卡齐打。",
+            "sourceDoesNotProve": "打到家里账、准备五张卡，不能单独证明法律上已经定性为彩礼。",
+            "answerAdds": "他承认她嫌慢，卡是自己去办的，钱确实打到她家账上。",
+            "nextLimit": "主播只钉打法和账户，不把彩礼二字说成已判决。"
+          },
+          "lines": [
+            {
+              "role": "host",
+              "text": "三千万打到她家里账上。一天限额一百万，她让你准备五张卡一起打。这还是普通往来？"
+            },
+            {
+              "role": "caller",
+              "text": "谈婚论嫁嘛。彩礼不都这样。"
+            },
+            {
+              "role": "host",
+              "text": "普通彩礼会因为一天限额一百万，临时改成五张卡一起打吗？"
+            },
+            {
+              "role": "caller",
+              "text": "……她嫌慢。卡是我去办的。钱确实打到她家账上了。"
+            }
+          ]
+        },
+        {
+          "id": "last-ask-pause",
+          "basisTurnIds": [
+            "help-request",
+            "last-ask-version"
+          ],
+          "logicContract": {
+            "premiseAnchor": "他要主播证明她为钱出卖爱情；最后一笔却是她开口要五千万美元，他说让我想想，她把电话挂了。",
+            "sourceProves": "更大那一笔在他口中停在‘让我想想’，需要当面问有没有打出。",
+            "sourceDoesNotProve": "开口要钱不等于钱已经打出，也不能用未发生的账证明她出卖爱情。",
+            "answerAdds": "他承认那笔没有答应，也没有打出去。",
+            "nextLimit": "主播把开口和到账拆开，不拿未打出的钱加码。"
+          },
+          "lines": [
+            {
+              "role": "host",
+              "text": "最后那笔五千万美元，你说让我想想。她就把电话挂了。你答应过没有？"
+            },
+            {
+              "role": "caller",
+              "text": "我没答应。钱也没打出去。"
+            },
+            {
+              "role": "host",
+              "text": "所以那笔还不是已经发生的账。你却要我拿它去证她为钱出卖爱情？"
+            },
+            {
+              "role": "caller",
+              "text": "她开口了。这还不够吗？"
+            },
+            {
+              "role": "host",
+              "text": "开口是开口。打没打出去，是另一回事。"
+            },
+            {
+              "role": "caller",
+              "text": "……行。那笔没打。前面三千万打了。"
+            }
+          ]
+        },
+        {
+          "id": "reply-not-ledger",
+          "basisTurnIds": [
+            "her-reply-version",
+            "dual-track-version"
+          ],
+          "logicContract": {
+            "premiseAnchor": "她回了不会为钱出卖爱情；他自己又说一句转账数目都没对上。",
+            "sourceProves": "公开回复是声誉表态，没有在麦上核对任何一笔转账数目。",
+            "sourceDoesNotProve": "没对数目不等于她承认收到过钱，也不等于她否认收到过钱。",
+            "answerAdds": "他先说她不敢对，被拆开后仍停在数目没对上。",
+            "nextLimit": "主播只钉她回了什么，不把没对账写成认账或否账。"
+          },
+          "lines": [
+            {
+              "role": "host",
+              "text": "她回了不会为钱出卖爱情。一句转账数目都没对上。这能当否认吗？"
+            },
+            {
+              "role": "caller",
+              "text": "她不敢对。对上就完了。"
+            },
+            {
+              "role": "host",
+              "text": "不敢对是你的判断。麦上只有一句：数目没对上。没对上，不等于她认了，也不等于她否了。"
+            },
+            {
+              "role": "caller",
+              "text": "那你要我怎么办？她都这样回了。"
+            },
+            {
+              "role": "host",
+              "text": "我只钉她回了什么。账还在不在，今晚不能靠这一句下定。"
+            },
+            {
+              "role": "caller",
+              "text": "……所以你不肯说她那句是假的。"
+            }
+          ]
+        },
+        {
+          "id": "courtroom-and-stream",
+          "basisTurnIds": [
+            "last-ask-version",
+            "dual-track-version"
+          ],
+          "logicContract": {
+            "premiseAnchor": "他已经起诉，又要直播间先说清楚；对方工作室的口径是对碰瓷说不，剩下交给法院。",
+            "sourceProves": "他要节目和诉讼同时走，而且要直播间走在判决前面。",
+            "sourceDoesNotProve": "双轨不等于他会赢，也不等于她在碰瓷。",
+            "answerAdds": "他承认法院太慢，今晚就要直播间把话说出去。",
+            "nextLimit": "主播可以拒绝提前站台，不能替任何一方预判判决。"
+          },
+          "lines": [
+            {
+              "role": "host",
+              "text": "她工作室说对碰瓷说不，剩下交给法院。你这边已经起诉，还要直播间先说清楚。你要两头一起走？"
+            },
+            {
+              "role": "caller",
+              "text": "法院太慢。直播间今晚就能把话说出去。"
+            },
+            {
+              "role": "host",
+              "text": "法院没判，你就要我当众定性。这不是帮你要公平，这是要节目替你站台。"
+            },
+            {
+              "role": "caller",
+              "text": "我只要公平。"
+            },
+            {
+              "role": "host",
+              "text": "公平在账和状子上。不在我今晚替你喊一句。"
+            },
+            {
+              "role": "caller",
+              "text": "那你今晚到底说不说？"
+            }
+          ]
+        },
+        {
+          "id": "numbers-on-suit",
+          "basisTurnIds": [
+            "essay-version",
+            "numbers-match-version"
+          ],
+          "logicContract": {
+            "premiseAnchor": "文末仍标着虚构；他又说名字、照片、三千万跟起诉状上写的数对得上。",
+            "sourceProves": "发文和起诉使用的是同一套可对上的数目与身份，虚构标注不能把它们说成无关创作。",
+            "sourceDoesNotProve": "数字对得上不等于法律上已定性为彩礼，也不等于她为钱出卖爱情已经成立。",
+            "answerAdds": "他承认数是真的，仍抓住文末两个字。",
+            "nextLimit": "主播只把对得上的数钉住，不替法院下判。"
+          },
+          "lines": [
+            {
+              "role": "host",
+              "text": "你说名字、照片、三千万，跟起诉状上写的数对得上。那这篇文还是虚构吗？"
+            },
+            {
+              "role": "caller",
+              "text": "文末那两个字还在。数是真的。"
+            },
+            {
+              "role": "host",
+              "text": "数对得上，只能说明你发文和起诉用的是同一笔账。不能说明这笔已经是该退的彩礼。"
+            },
+            {
+              "role": "caller",
+              "text": "那还要怎样才算？"
+            },
+            {
+              "role": "host",
+              "text": "法院认不认，今晚没有。我只能把对得上的数钉住。"
+            },
+            {
+              "role": "caller",
+              "text": "……你就是不肯说她那句是假的。"
+            }
+          ]
+        }
+      ],
+      "ending": {
+        "verdictKicker": "主播结案复盘",
+        "summaryPages": [
+          {
+            "kicker": "结束通话",
+            "title": "这句我不会替你喊",
+            "stageLabel": "通话收尾",
+            "lines": [
+              {
+                "role": "host",
+                "text": "你要我今晚对着直播间说她那句是假的，这种话我不会替你说的。"
+              },
+              {
+                "role": "host",
+                "text": "三千万进了谁的账，五张卡怎么打的，你拿到法院去对。直播间不替没开庭的案子宣。"
+              },
+              {
+                "role": "caller",
+                "text": "那我打来是干什么的？你就看着？"
+              },
+              {
+                "role": "host",
+                "text": "我看着你自己说出口的事。虚构两个字、家里账、她没对的数目，我都能钉。当众给她定罪，我不能。"
+              },
+              {
+                "role": "caller",
+                "text": "……行。那你今晚就到这儿。"
+              }
+            ]
+          },
+          {
+            "kicker": "主播复盘",
+            "title": "文、账、回复",
+            "stageLabel": "结案复盘",
+            "lines": [
+              {
+                "role": "host",
+                "text": "电话挂了。我把这篇文、那三千万和她那句回复重新捋一遍。"
+              },
+              {
+                "role": "host",
+                "text": "文末标了虚构。正文写了名字，还配了照片。"
+              },
+              {
+                "role": "host",
+                "text": "谈婚那阵，三千万进了她家里账。一天限额一百万，她让他准备五张卡一起打。"
+              },
+              {
+                "role": "host",
+                "text": "最后一笔她开口要五千万美元。他说让我想想。她把电话挂了。"
+              },
+              {
+                "role": "host",
+                "text": "她回了：不会为钱出卖爱情。一句转账数目都没对上。"
+              },
+              {
+                "role": "host",
+                "text": "工作室说对碰瓷说不，交给法院。他已经起诉，还要直播间先说清楚。"
+              }
+            ]
+          },
+          {
+            "kicker": "高概率判断",
+            "title": "他要的是站台",
+            "stageLabel": "高概率判断",
+            "lines": [
+              {
+                "role": "host",
+                "text": "他打来，是要我今晚当众说：她那句是假的，三千万是该退的彩礼。"
+              },
+              {
+                "role": "host",
+                "text": "我能说的是：这篇文已经点了名。名字、照片、三千万，他自己都对上起诉状了。"
+              },
+              {
+                "role": "host",
+                "text": "彩礼不彩礼，法院没判，我不能替法院定性。更大那笔他自己说没打出去。孩子按什么方式来，今晚也当不了证据。"
+              },
+              {
+                "role": "host",
+                "text": "所以我不会对着直播间替你宣。账拿到法院去对。直播间只把已经说出口的事钉住。"
+              }
+            ]
+          }
+        ],
+        "riskReading": {
+          "title": "主播给出的风险判断",
+          "text": "来电人更可能不是来求证一段故事，而是要用点名长文和直播间，在判决前先完成公众定性。现有事实足以拒绝替他当众宣判，也足以把虚构标注、家里账、没对数目的回复和双轨动作钉住；但不能据此证明法律上已是该退彩礼，不能证明更大一笔已经发生，也不能证明生育方案或包养关系。"
+        },
+        "confirmedTitle": "这通电话已经说清的事",
+        "confirmed": [
+          "他发过一篇长文：文末标了虚构，正文写了对方名字并配了照片；后来承认名字、照片都是真的。",
+          "他自称谈婚期间打了三千万到对方家里账上；一天限额一百万，对方嫌慢，他准备五张卡一起打。",
+          "最后一笔对方开口要五千万美元，他说让我想想，对方挂了；他承认那笔没有打出。",
+          "对方公开回了不会为钱出卖爱情，一句转账数目都没对上。",
+          "对方工作室的口径是对碰瓷说不、交给法院；他已经起诉，并要求直播间先说清楚。"
+        ],
+        "unknownTitle": "今晚不需要继续猜的部分",
+        "unknown": [
+          "这笔三千万在法律上是否构成应退彩礼，以及法院会如何认定。",
+          "五千万美元是否在其他场合实际发生过；他今晚只承认这一笔没有打出。",
+          "对方所说‘指定的方式’具体指什么，有没有落实，不能当成已证事实。",
+          "对方为何与他交往、有没有为钱出卖感情，不能用那句公开回复坐实或坐空。"
+        ],
+        "partialSummaryPages": [
+          {
+            "kicker": "按现有信息收住",
+            "title": "先别替法院喊",
+            "stageLabel": "谨慎收案",
+            "lines": [
+              {
+                "role": "host",
+                "text": "你已经把文和账递到麦前了。直播间不能替没开庭的案子先定性。"
+              },
+              {
+                "role": "host",
+                "text": "要退那笔钱，走状子。别再要我当众说她那句是假的。"
+              }
+            ]
+          },
+          {
+            "kicker": "事实边界",
+            "title": "能钉文和账，不能定罪名",
+            "stageLabel": "信息边界",
+            "lines": [
+              {
+                "role": "host",
+                "text": "虚构两个字盖不住点名。家里账和五张卡，也盖不住‘随便一转’。"
+              },
+              {
+                "role": "host",
+                "text": "彩礼、更大那笔、孩子怎么来，今晚不知道。今天到这儿。"
+              }
+            ]
+          }
+        ]
+      },
+      "sourceBoundary": "本案以公开讨论中常见的点名长文、文末虚构标注与大额婚恋转账争议为结构参考，人物、平台、机构、可识别标题、对质台词与舞台结论均为虚构合成。不把文末虚构标注写成已生效的法律定性，也不把未打出的更大一笔或生育安排写成已证事实。"
     }
   }
 };

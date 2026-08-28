@@ -217,13 +217,13 @@ function collectShellDialogue() {
     }
     return matches[0].id;
   };
-  const add = (profileId, path, text, surface) => {
+  const add = (profileId, path, text, surface, caseId = "_shell") => {
     if (typeof text !== "string" || !text.trim()) return;
     const normalized = text.trim();
-    const key = `_shell\u0000${profileId}\u0000${path}\u0000${normalized}`;
+    const key = `${caseId}\u0000${profileId}\u0000${path}\u0000${normalized}`;
     if (seen.has(key)) return;
     seen.add(key);
-    lines.push({ caseId: "_shell", profileId, phase: "other", path, text: normalized, surface });
+    lines.push({ caseId, profileId, phase: "other", path, text: normalized, surface });
   };
   const visit = (value, path) => {
     if (Array.isArray(value)) {
@@ -231,7 +231,14 @@ function collectShellDialogue() {
       return;
     }
     if (!value || typeof value !== "object") return;
-    if (typeof value.speaker === "string" && (typeof value.text === "string" || typeof value.line === "string")) {
+    if (typeof value.speakerProfileId === "string" && (typeof value.text === "string" || typeof value.line === "string")) {
+      const profile = profilesById.get(value.speakerProfileId);
+      if (!profile) errors.push(`shell ${path}: speakerProfileId “${value.speakerProfileId}” missing`);
+      else {
+        const caseId = profile.caseIds.includes("01-credit") ? "01-credit" : "_shell";
+        add(profile.id, path, value.text ?? value.line, value.speaker ?? profile.name, caseId);
+      }
+    } else if (value.type !== "comment" && typeof value.speaker === "string" && (typeof value.text === "string" || typeof value.line === "string")) {
       const profileId = resolveSurface(value.speaker, `${path}.speaker`);
       if (profileId) add(profileId, path, value.text ?? value.line, value.speaker);
     }
@@ -248,6 +255,7 @@ function collectShellDialogue() {
   visit(manifest.nightShell?.prologue, "$manifest.nightShell.prologue");
   visit(manifest.nightShell?.interludes, "$manifest.nightShell.interludes");
   visit(manifest.nightShell?.epilogue, "$manifest.nightShell.epilogue");
+  visit(manifest.nightShell?.cafePrologue, "$manifest.nightShell.cafePrologue");
 }
 
 function findCaseRole(item, kind) {
