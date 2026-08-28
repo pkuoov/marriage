@@ -83,5 +83,5 @@
 
 | 债务 | 层级 | 发债 | 首期付息 | 持债上限 | 本金结清 | 下一笔债 |
 |---|---|---|---|---|---|---|
-| quick3-labeled-fiction | Tier 2 | help-request：“她那句『不为钱出卖爱情』，是假的。” | essay-version（player-input）：玩家对上‘纯属虚构’和点名配图，他承认名字、照片都是真的。 | 第一轮内 | quick3:ending（player-input）：主播拒绝替他当众宣判，只把点名长文和起诉状对上的数钉住。 | quick3:ending：“这笔钱法律上算不算该退的彩礼，今晚没有判决。” |
-| quick3-five-cards | Tier 1 | last-ask-version：“彩礼该退。” | transfer-version（player-input）：玩家对上家里账和五张卡，他承认钱打到她家账上、卡是自己去办的。 | 第一轮内 | quick3:ending（player-input）：主播把三千万进家里账说成已播出事实，不把彩礼定性提前判给直播间。 | quick3:ending：“更大那笔五千万美元，他自己说没打出去。” |
+| quick3-labeled-fiction | Tier 2 | help-request：“她那句『不为钱出卖爱情』，是假的。” | essay-version（player-input）：玩家对上‘纯属虚构’和点名配图，他承认名字、照片都是真的。 | 第一轮内 | quick3:ending（player-input）：主播拒绝替他当第二锤，同时判断她厌人要钱、他借节目砸人。 | quick3:ending：“这笔钱法律上算不算该退的彩礼，今晚没有判决。” |
+| quick3-five-cards | Tier 1 | last-ask-version：“彩礼该退。” | transfer-version（player-input）：玩家对上家里账和五张卡，他承认钱打到她家账上、卡是自己去办的。 | 第一轮内 | quick3:ending（player-input）：主播把催卡、抬价和往后躲并成她要钱；法律上是否彩礼仍留给法院。 | quick3:ending：“更大那笔五千万美元，他自己说没打出去。” |
