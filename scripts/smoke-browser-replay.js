@@ -226,7 +226,7 @@ async function runQuickDetective() {
       await page.locator("[data-player-name]").fill("周明");
       await click(page, "[data-start-quick-detective]");
       await assertVisibleText(page, "今晚先接哪一通", "快案入口必须先进入案件选择页");
-      if (await page.locator(".quick-case-card").count() !== 2) throw new Error("快案选择页必须从 manifest 加载两宗案件");
+      if (await page.locator(".quick-case-card").count() !== 3) throw new Error("快案选择页必须从 manifest 加载三宗案件");
 
       await playStatementQuickCase(page, viewport, {
         caseId: "01-no-conditions",
@@ -257,7 +257,7 @@ async function runQuickDetective() {
         decoyAnchor: "他三十五",
         decoyKind: "anchored",
         expectedListen: ["本科和硕士都在一所985高校", "十一点五十二"],
-        expectedVerdict: ["他不回歌，倒是回了花", "换成我，我也会劝他退出", "我不猜酒桌上还有没有别的事"]
+        expectedVerdict: ["那首歌，他隔了很久只回‘听了’", "换成我，我也会劝他退出", "我不猜酒桌上还有没有别的事"]
       });
       await click(page, "[data-quick-select]");
       await playStatementQuickCase(page, viewport, {
@@ -268,8 +268,8 @@ async function runQuickDetective() {
           ["跟我起诉状上写的数对得上"]
         ],
         decoyAnchor: "我写过一篇长文",
-        expectedListen: ["文末我标了『纯属虚构』", "打了三千万到她家里账上"],
-        expectedVerdict: ["我不会对着直播间替你宣", "彩礼不彩礼", "法院没判"]
+        expectedListen: ["文末我标了『纯属虚构』", "打了三千万到她家里账上", "见面她往后躲"],
+        expectedVerdict: ["我不会对着直播间替你宣", "彩礼不彩礼", "法院没判", "厌的是这个人", "借节目砸人"]
       });
       await click(page, "[data-quick-select]");
       if (await page.locator(".quick-case-card.is-complete").count() !== 3) throw new Error("三宗快案通关后都必须保留完成对勾");

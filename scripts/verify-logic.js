@@ -986,7 +986,7 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   assert(!quickDetectiveUiSource.includes("圈这句话"), "快案不得保留圈句操作");
   assert(!(packet.issueOptions ?? []).some((option) => option.id === "mother-departure"), "快案一不得保留只有标签、没有对质回应的母亲离开耐心税");
   const quickTwo = quickDetectiveCaseFor("steam-demo-01", "02-one-missed-message");
-  assertIncludes(JSON.stringify(quickTwo?.ending ?? {}), "他不回歌，倒是回了花", "快案二复盘必须回收创业忙与送花之间的反差");
+  assertIncludes(JSON.stringify(quickTwo?.ending ?? {}), "那首歌，他隔了很久只回‘听了’；花倒是很快送到", "快案二复盘必须准确回收迟回歌曲与送花之间的反差");
   assertIncludes(quickDetectivePatienceLostHtml(packet, initialQuickDetectiveState(packet), { comment: storyPackForKey("steam-demo-01").quickDetective?.patienceLostComment }), "先倒回去", "快案耐心耗尽后必须显示包级弹幕反应");
   const intro = quickDetectiveIntroHtml(packet);
   assert(!intro.includes("这次怎么玩") && !intro.includes("每轮") && !intro.includes("按钮") && !intro.includes("对质"), "快案开场只交代来电背景，不得向玩家解释游戏机制");
@@ -1074,6 +1074,8 @@ test("QUICK-001", "quick detective mode alternates bounded disclosure rounds wit
   assertIncludes(lowStandardsTurn?.caller, "相处一两年", "第二轮初始陈述必须把普通恋爱节奏一起说清");
   assertIncludes(lowStandardsTurn?.caller, "商场下班晚", "第二轮初始陈述必须顺带说明她为什么需要主播介绍，不能再另开生活圈问卷");
   const ordinaryMatchTurn = packet.turns.find((turn) => turn.id === "ordinary-match");
+  assertIncludes(ordinaryMatchTurn?.host, "二十九", "普通对象必须落在来电人口头接受的大五岁以内，试金石本身先要合格");
+  assert(!ordinaryMatchTurn?.host.includes("三十一"), "二十四岁来电人的试金石不得超出大五岁的口头年龄上限");
   assertIncludes(ordinaryMatchTurn?.caller, "我也不知道他平时是什么样的人", "来电人必须先用安全顾虑挡下普通对象，不能像傻子一样直接承认嫌条件差");
   const ordinaryCautionTurn = packet.turns.find((turn) => turn.id === "ordinary-caution");
   assertIncludes(ordinaryCautionTurn?.caller, "自己做点生意", "优质对象偏好必须在合理顾虑之后逐步加码");
@@ -1351,6 +1353,11 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "新包也是他送的", "展示需求对质必须带回朋友圈图片里新发现的包");
   assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "花、包、他的车", "展示需求必须落到她实际发布的具体内容，不能空说她很受用");
   assertIncludes(displayConfrontation.map((line) => line.text).join(" "), "别只说他没听懂你的歌", "主播必须在感情与物质同时成立时把两种需求一并问出来，不使用固定口号");
+  const messageConfrontation = quickConfrontationLines(packet.confrontations.find((item) => item.id === "message-or-drunkenness"));
+  const messageDialogue = messageConfrontation.map((line) => line.text).join(" ");
+  assertIncludes(messageConfrontation[0]?.text, "身体到底怎么样", "六分钟记录只能引出对身体状态的追问，不能让主播先替她承认已经喝醉");
+  assert(!messageConfrontation[0]?.text.includes("已经喝得难受"), "主播首问不得把合同写明尚未证明的醉酒状态塞进前提");
+  assertIncludes(messageDialogue, "已经有点难受了", "真实身体状态必须由来电人在追问后亲口补出");
   const discoveryConfrontation = quickConfrontationLines(packet.confrontations.find((item) => item.id === "how-he-knew"));
   assertEqual(discoveryConfrontation.length, 4, "男方发现第三个人必须经过追问、解释和最小承认，不能用反馈文案代替对质");
   assertIncludes(discoveryConfrontation.map((line) => line.text).join(" "), "这个‘他’是谁", "男方的怀疑必须来自她说漏的具体代词");
@@ -1360,6 +1367,8 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assertIncludes(nightlifeDialogue, "男的女的都有", "夜生活对质必须由来电人自己承认同行者来自不同性别，不能由主播凭空定性");
   assertIncludes(nightlifeDialogue, "读研以后聚会一直不少", "夜生活对质必须把近两个月截图追到更长期的生活习惯");
   assertIncludes(nightlifeDialogue, "婚介跟他说你生活简单", "主播必须把长期夜场与婚介版本直接对照，不能只谈一次喝多");
+  assertIncludes(nightlifeDialogue, "最晚一张到凌晨五点十七分", "主播只能引用玩家已经看过的截图时间，再由来电人补充其他彻夜次数");
+  assert(!nightlifeDialogue.includes("三次过了凌晨四点"), "三张具体时间没有上场前，主播不得凭内部账本报出三次凌晨四点");
   assertIncludes(nightlifeDialogue, "前面那些话全变了", "夜生活对质必须指出来电人在被追问后已经换了说法");
   assertIncludes(nightlifeDialogue, "我问一句，你补一句", "夜生活对质必须指出来电人仍在被动补充，不能把整套改口拆成逐句辩论");
   assertIncludes(nightlifeDialogue, "我们还怎么聊", "夜生活对质必须让主播对连续改口作出当场反应，不能写成抽象版本比较");
@@ -1437,6 +1446,8 @@ test("QUICK-004", "third quick case keeps named-fiction versus lawsuit numbers i
   assertIncludes(spoken, "跟我起诉状上写的数对得上", "第三轮必须让长文与起诉状对上的数出现在原话里");
   assertIncludes(spoken, "我不会对着直播间替你宣", "结案必须拒绝用节目替未开庭的案子定罪");
   assertIncludes(spoken, "彩礼不彩礼，法院没判", "高概率判断不得把彩礼说成已经成立");
+  assertIncludes(spoken, "厌的是这个人", "高概率必须钉她厌人要钱，不能听起来像在护她");
+  assertIncludes(spoken, "借节目砸人", "高概率必须钉他是来借节目砸人，不能把他写成只求公平");
   const recapPage = packet.ending.summaryPages.find((page) => page.stageLabel === "结案复盘");
   assert(/(电话挂了|收麦了)/.test(recapPage?.lines?.[0]?.text ?? ""), "第三宗快案挂断后必须用口语接回逐项回看");
   assert(!recapPage?.lines?.[0]?.text?.includes("我们来把这次这个连线复个盘"), "第三宗快案不得恢复共用复盘模板句");
