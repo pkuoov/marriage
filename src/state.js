@@ -94,13 +94,15 @@ export const baseState = {
   storyWorldEchoHypotheses: {},
   careChoices: {},
   epilogueUnreadStep: 0,
-  cafePrologueVersion: 2,
+  cafePrologueVersion: 3,
   cafePrologueStep: 0,
+  cafePrologueAct: 1,
   cafePrologueMarks: [],
   cafePrologueOrder: [],
   cafePrologueStatementId: "",
   cafePrologueStatementReaction: "",
   cafePrologueEvidenceId: "",
+  cafePrologueEvidenceReaction: "",
   cafePrologueTransferSelected: false,
   cafePrologueLegalBriefSeen: false,
   cafeProloguePressureChoice: "",
@@ -154,6 +156,7 @@ export function normalizeRuntimeState(saved = {}) {
 }
 
 export function migrateState(saved) {
+  const savedCafePrologueVersion = Math.max(0, Math.floor(Number(saved?.cafePrologueVersion) || 0));
   const legacyCafePrologue = !Object.prototype.hasOwnProperty.call(saved ?? {}, "cafePrologueVersion");
   const legacyCafeStep = Math.max(0, Math.floor(Number(saved?.cafePrologueStep) || 0));
   const legacyCafeMarks = Array.isArray(saved?.cafePrologueMarks) ? saved.cafePrologueMarks : [];
@@ -213,7 +216,7 @@ export function migrateState(saved) {
   if (!Number.isFinite(Number(next.cafePrologueStep))) next.cafePrologueStep = 0;
   next.cafePrologueStep = Math.max(0, Math.floor(Number(next.cafePrologueStep) || 0));
   if (!Array.isArray(next.cafePrologueMarks)) next.cafePrologueMarks = [];
-  next.cafePrologueMarks = [...new Set(next.cafePrologueMarks.filter((id) => ["chat", "hotel"].includes(id)))];
+  next.cafePrologueMarks = [...new Set(next.cafePrologueMarks.filter((id) => ["chat", "hotel", "parallel-transfer-ledger"].includes(id)))];
   if (!Array.isArray(next.cafePrologueOrder)) next.cafePrologueOrder = [];
   next.cafePrologueOrder = [...new Set(next.cafePrologueOrder.filter((id) => ["toy", "account"].includes(id)))];
   if (legacyCafePrologue) {
@@ -229,10 +232,25 @@ export function migrateState(saved) {
     else if (legacyCafeStep >= 5 && legacyCafeStep <= 7) next.cafePrologueStep = 7;
     else if (legacyCafeStep >= 8) next.cafePrologueStep = 8;
   }
-  next.cafePrologueVersion = 2;
+  if (savedCafePrologueVersion < 3) {
+    if (next.cafePrologueStep >= 2) next.cafePrologueAct = 2;
+    else next.cafePrologueAct = 1;
+    if (next.cafePrologueStep === 2) {
+      next.cafePrologueStatementId = "";
+      next.cafePrologueEvidenceId = "";
+    } else if (next.cafePrologueStep === 3) {
+      next.cafePrologueStatementId = "money-denial";
+      next.cafePrologueEvidenceId = "";
+    }
+    next.cafePrologueEvidenceReaction = "";
+  }
+  next.cafePrologueVersion = 3;
+  if (!Number.isFinite(Number(next.cafePrologueAct))) next.cafePrologueAct = next.cafePrologueStep >= 2 ? 2 : 1;
+  next.cafePrologueAct = Math.max(1, Math.min(2, Math.floor(Number(next.cafePrologueAct) || 1)));
   if (typeof next.cafePrologueStatementId !== "string") next.cafePrologueStatementId = "";
   if (typeof next.cafePrologueStatementReaction !== "string") next.cafePrologueStatementReaction = "";
-  if (!["chat", "hotel"].includes(next.cafePrologueEvidenceId)) next.cafePrologueEvidenceId = "";
+  if (!["chat", "hotel", "parallel-transfer-ledger"].includes(next.cafePrologueEvidenceId)) next.cafePrologueEvidenceId = "";
+  if (typeof next.cafePrologueEvidenceReaction !== "string") next.cafePrologueEvidenceReaction = "";
   if (typeof next.cafePrologueTransferSelected !== "boolean") next.cafePrologueTransferSelected = false;
   if (typeof next.cafePrologueLegalBriefSeen !== "boolean") next.cafePrologueLegalBriefSeen = false;
   if (typeof next.cafeProloguePressureChoice !== "string") next.cafeProloguePressureChoice = "";

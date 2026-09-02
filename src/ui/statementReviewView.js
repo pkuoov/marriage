@@ -1,15 +1,87 @@
 import { statementLinesFromText, statementOptionForLine, statementOptionsForLine } from "../runtime/statementReviewModel.js";
 
 export function statementReplayHtml({ scene = {}, sceneIndex = 0, attemptedLineIds = [] } = {}) {
-  const lines = statementLinesFromText(scene.version ?? "", { prefix: scene.id ?? `scene-${sceneIndex}` });
-  const attempted = new Set(attemptedLineIds ?? []);
+  return statementStageReplayHtml({
+    entries: [{ scene, sceneIndex, attemptedLineIds }]
+  });
+}
+
+export function statementStageReplayHtml({ entries = [] } = {}) {
   return `
     <section class="statement-replay-card" aria-label="通话回放">
       <div class="statement-replay-head" aria-hidden="true"><i>REC</i><span></span></div>
       <div class="statement-replay-lines">
-        ${lines.map((line) => statementReplayLineHtml(line, scene, sceneIndex, attempted)).join("")}
+        ${(entries ?? []).map((entry, entryIndex) => statementReplayBlockHtml(entry, entryIndex)).join("")}
       </div>
     </section>
+  `;
+}
+
+export function statementReplayPageHtml({ line = {}, speaker = "咨询者" } = {}) {
+  return `
+    <section class="statement-replay-page" aria-label="逐句回放">
+      <div class="statement-replay-head" aria-hidden="true"><i>REC</i><span></span></div>
+      <div class="call-dialogue">
+        <div class="call-line caller" data-dialogue-block="statement">
+          <b>${escapeHtml(speaker)}</b>
+          <p>${escapeHtml(line.text ?? "")}</p>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+export function statementReplayPageChoicesHtml({
+  scene = {},
+  sceneIndex = 0,
+  line = {},
+  attempted = false,
+  keyResolved = false,
+  resolvedDialogueOptionIndexes = [],
+  stageKeysRemaining = 0,
+  nextLabel = "继续回放"
+} = {}) {
+  const keyOptions = scene.questionOptions ?? [];
+  const dialogueOptions = scene.casualQuestions ?? [];
+  const resolvedDialogue = new Set((resolvedDialogueOptionIndexes ?? []).map(Number));
+  const matches = [
+    ...statementOptionsForLine(keyOptions, line).map((option) => ({
+      kind: "key",
+      option,
+      optionIndex: keyOptions.indexOf(option),
+      resolved: keyResolved
+    })),
+    ...statementOptionsForLine(dialogueOptions, line).map((option) => {
+      const optionIndex = dialogueOptions.indexOf(option);
+      return {
+        kind: "dialogue",
+        option,
+        optionIndex,
+        resolved: resolvedDialogue.has(optionIndex)
+      };
+    })
+  ];
+  const available = matches.filter((item) => !item.resolved);
+  const keyAvailable = available.filter((item) => item.kind === "key");
+  const visibleAvailable = keyAvailable.length ? keyAvailable : available.filter((item) => item.kind === "dialogue").slice(0, 1);
+  const questionButtons = visibleAvailable.map(({ kind, option, optionIndex }) => `
+    <button class="choice-question statement-replay-question" ${kind === "key"
+      ? `data-scene-question="${sceneIndex}:${optionIndex}"${option.correct === true ? ' data-statement-key-correct="true"' : ""}`
+      : `data-scene-dialogue="${sceneIndex}:${optionIndex}" data-scene-replay-dialogue="true" data-stage-keys-remaining="${Math.max(0, Number(stageKeysRemaining) || 0)}"`} type="button">
+      ${escapeHtml(option.question ?? option.suspicionLabel ?? "接着问")}
+    </button>
+  `).join("");
+  const noClueButton = !matches.length && !attempted
+    ? `<button class="secondary statement-replay-press" data-scene-review-line="${escapeHtml(line.id)}" data-scene-review-index="${sceneIndex}" type="button">就这句追问</button>`
+    : "";
+  return `
+    <div class="flow-group statement-replay-actions">
+      <div class="choice-stack">
+        ${questionButtons}
+        ${noClueButton}
+        <button class="secondary statement-replay-next" data-scene-replay-next type="button">${escapeHtml(nextLabel)}</button>
+      </div>
+    </div>
   `;
 }
 
@@ -31,19 +103,59 @@ export function statementPatienceLostHtml() {
   `;
 }
 
-function statementReplayLineHtml(line = {}, scene = {}, sceneIndex = 0, attempted = new Set()) {
+function statementReplayBlockHtml(entry = {}, entryIndex = 0) {
+  const scene = entry.scene ?? {};
+  const sceneIndex = Number(entry.sceneIndex ?? 0);
+  const lines = statementLinesFromText(scene.version ?? "", { prefix: scene.id ?? `scene-${sceneIndex}` });
+  const attempted = new Set(entry.attemptedLineIds ?? []);
+  const resolvedDialogueOptionIndexes = new Set((entry.resolvedDialogueOptionIndexes ?? []).map(Number));
+  return `
+    <div class="statement-replay-block${entryIndex > 0 ? " is-following" : ""}">
+      ${lines.map((line) => statementReplayLineHtml(
+        line,
+        scene,
+        sceneIndex,
+        attempted,
+        Boolean(entry.keyResolved),
+        resolvedDialogueOptionIndexes
+      )).join("")}
+    </div>
+  `;
+}
+
+function statementReplayLineHtml(
+  line = {},
+  scene = {},
+  sceneIndex = 0,
+  attempted = new Set(),
+  keyResolved = false,
+  resolvedDialogueOptionIndexes = new Set()
+) {
   const keyOptions = scene.questionOptions ?? [];
   const dialogueOptions = scene.casualQuestions ?? [];
   const matches = [
-    ...statementOptionsForLine(keyOptions, line).map((option) => ({ kind: "key", option, optionIndex: keyOptions.indexOf(option) })),
-    ...statementOptionsForLine(dialogueOptions, line).map((option) => ({ kind: "dialogue", option, optionIndex: dialogueOptions.indexOf(option) }))
+    ...statementOptionsForLine(keyOptions, line).map((option) => ({
+      kind: "key",
+      option,
+      optionIndex: keyOptions.indexOf(option),
+      resolved: keyResolved
+    })),
+    ...statementOptionsForLine(dialogueOptions, line).map((option) => {
+      const optionIndex = dialogueOptions.indexOf(option);
+      return {
+        kind: "dialogue",
+        option,
+        optionIndex,
+        resolved: resolvedDialogueOptionIndexes.has(optionIndex)
+      };
+    })
   ];
   if (matches.length) {
-    return matches.map(({ kind, option, optionIndex }) => `
-      <button class="statement-replay-line has-question" ${kind === "key" ? `data-scene-question="${sceneIndex}:${optionIndex}"` : `data-scene-dialogue="${sceneIndex}:${optionIndex}" data-scene-replay-dialogue="true"`} type="button">
+    return matches.map(({ kind, option, optionIndex, resolved }) => `
+      <button class="statement-replay-line has-question${resolved ? " is-resolved" : ""}" ${kind === "key" ? `data-scene-question="${sceneIndex}:${optionIndex}"` : `data-scene-dialogue="${sceneIndex}:${optionIndex}" data-scene-replay-dialogue="true"`} type="button" ${resolved ? "disabled" : ""}>
         <i aria-hidden="true"></i>
         <span>${escapeHtml(line.text)}</span>
-        <small>${escapeHtml(option.suspicionLabel ?? option.question ?? "接着问")}</small>
+        <small>${resolved ? "已经问过" : escapeHtml(option.suspicionLabel ?? option.question ?? "接着问")}</small>
       </button>
     `).join("");
   }

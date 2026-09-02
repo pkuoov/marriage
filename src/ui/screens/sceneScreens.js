@@ -4,15 +4,19 @@ import {
   sceneUsesLineReplay,
   spendStatementPatience,
   statementMissReactionForOption,
+  statementLinesFromText,
   statementNightKey,
   statementNightPatienceMax,
   statementNoClueReactionFor,
   statementPressureFor,
-  statementReactionDisplayText
+  statementReactionDisplayText,
+  statementStageForScene,
+  statementStageProgress
 } from "../../runtime/statementReviewModel.js";
 import {
   statementPatienceLostHtml,
-  statementReplayHtml,
+  statementReplayPageChoicesHtml,
+  statementReplayPageHtml,
   statementReplayLineForScene,
   statementReplayOptionIndex
 } from "../statementReviewView.js";
@@ -80,6 +84,7 @@ export function createSceneScreens(ctx) {
     sceneQuestionChoicesHtml,
     completedSceneExchangeHtml,
     scenePromptExchangeHtml,
+    statementStagePromptExchangeHtml,
     sceneQuestionAnswerHtml,
     sceneReviewDoneChoicesHtml,
     sceneReviewHtml,
@@ -102,6 +107,7 @@ export function createSceneScreens(ctx) {
     enterLiveCounterBeatAfterScene,
     moveScene,
     setIndex,
+    setIndexValue,
     currentIndex,
     firstUnansweredSceneIndex,
     nextPlayableSceneIndex,
@@ -127,6 +133,8 @@ export function createSceneScreens(ctx) {
     const state = ctx.getState();
     const currentSceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     if (enterLiveCounterBeatBeforeScene(brief, currentSceneIndex)) return;
+    const currentScene = brief.sceneVersions?.[currentSceneIndex] ?? {};
+    if (sceneUsesLineReplay(currentScene)) return renderStatementStageReview(brief, currentSceneIndex);
     const review = sceneReviewModel({
       brief,
       index: currentSceneIndex,
@@ -189,8 +197,58 @@ export function createSceneScreens(ctx) {
     playAudioCueOnce(sceneForView.audioCueId, `${caseKey(brief)}:scene:${index}:${sceneForView.id ?? "beat"}`);
     bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
     bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
-    bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, index));
+    bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, index, { reset: true }));
     bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
+    bindSceneButtons();
+  }
+
+  function renderStatementStageReview(brief, currentSceneIndex) {
+    const state = ctx.getState();
+    const context = statementStageContext(brief, currentSceneIndex);
+    if (!context) return;
+    if (context.progress.started && !context.progress.complete) {
+      state.scene = "sceneLineReplay";
+      saveState();
+      return renderSceneLineReplay(brief);
+    }
+    const review = sceneReviewModel({
+      brief,
+      index: context.stage.endIndex,
+      actionDone: (key) => actionDone(brief, key),
+      issueBadge: issueCompletion(brief).badge,
+      hasDeepFollowup: !nightStructureFor(brief) && !overnightStructureFor(brief) && hasDeepFollowup(brief)
+    });
+    const completedExchangeHtml = context.progress.complete
+      ? context.entries.map(({ scene, sceneIndex }) => {
+          const pick = selectedScenePickForState(state, brief, sceneIndex);
+          return `${completedSceneExchangeHtml(completedSceneExchangeForState(state, brief, scene, sceneIndex, pick))}${respondentTeaseHtml(brief, sceneIndex)}${hostDisclosureForAnchor(brief, `afterScene:${sceneIndex + 1}`)}`;
+        }).join("")
+      : "";
+    frame({
+      brief,
+      mood: "thinking",
+      label: context.progress.complete ? "这一段问完了" : "先听她说完",
+      chapter: liveChapterTitle(brief),
+      screenClass: "dialogue-mode-listen statement-stage-listen",
+      controlMode: "listen",
+      pressureOverride: statementPressure(brief, context.stage.startIndex, "listen"),
+      pixelTransition: statementPhaseTransition(brief, context.stage, context.stage.startIndex, "listen"),
+      text: sceneReviewHtml({
+        index: context.stage.startIndex,
+        displayIndex: Math.max(0, playableSceneIndexes(brief).indexOf(context.stage.startIndex)),
+        done: context.progress.complete,
+        completedExchangeHtml,
+        activeExchangeHtml: context.progress.complete ? "" : statementStagePromptExchangeHtml({ entries: context.entries }),
+        reviewHtml: context.progress.complete ? "" : choiceReviewHtml(latestChoiceReviewRowsForState(state, brief, { excludeIndex: context.stage.startIndex }))
+      }),
+      choices: context.progress.complete
+        ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
+        : flowGroupHtml(`<button class="primary" data-scene-open-replay type="button">${context.entries.length > 1 ? "回放刚才几段" : "回放刚才这段"}</button>`)
+    });
+    const firstEntry = context.entries[0];
+    playAudioCueOnce(firstEntry?.scene?.audioCueId, `${caseKey(brief)}:stage:${context.stage.id}`);
+    bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, context.stage.startIndex, { reset: true }));
+    bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, context.stage.endIndex));
     bindSceneButtons();
   }
 
@@ -525,13 +583,17 @@ export function createSceneScreens(ctx) {
       ? dialoguePicks.find((item) => Number(item.optionIndex) === Number(focus.optionIndex))
       : selectedScenePickForState(state, brief, index);
     if (!pick?.question || (!pick?.answer && !pick?.lines?.length)) return closeSceneQuestionMenu(brief);
+    const stageContext = sceneUsesLineReplay(scene) ? statementStageContext(brief, index) : null;
+    const stageComplete = Boolean(stageContext?.progress.complete);
+    const reviewIndex = stageComplete ? stageContext.stage.endIndex : index;
     const review = sceneReviewModel({
       brief,
-      index,
+      index: reviewIndex,
       actionDone: (key) => actionDone(brief, key),
       issueBadge: issueCompletion(brief).badge,
       hasDeepFollowup: !nightStructureFor(brief) && !overnightStructureFor(brief) && hasDeepFollowup(brief)
     });
+    if (stageComplete) setIndexValue(brief, "sceneReview", reviewIndex);
     frame({
       brief,
       mood: focus.kind === "key" ? "focused" : "thinking",
@@ -549,7 +611,7 @@ export function createSceneScreens(ctx) {
         reactionLine: pick.reactionLine,
         sceneCloser: focus.kind === "key" ? scene.sceneCloser : null
       })}${focus.kind === "key" ? `${respondentTeaseHtml(brief, index)}${hostDisclosureForAnchor(brief, `afterScene:${index + 1}`)}` : ""}`,
-      choices: focus.kind === "key"
+      choices: stageComplete
         ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
         : sceneUsesLineReplay(scene)
           ? flowGroupHtml('<button class="primary" data-scene-open-replay type="button">回到刚才那段</button>')
@@ -557,15 +619,24 @@ export function createSceneScreens(ctx) {
     });
     bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
     bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
-    bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, index));
-    bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, index));
+    bind("[data-scene-open-replay]", () => advanceStatementReplay(brief, index));
+    bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, reviewIndex));
     bindSceneButtons();
   }
 
-  function openSceneLineReplay(brief, sceneIndex) {
+  function openSceneLineReplay(brief, sceneIndex, { reset = false } = {}) {
     const state = ctx.getState();
+    const stage = statementStageForScene(brief, sceneIndex);
+    const targetIndex = reset ? (stage?.startIndex ?? sceneIndex) : sceneIndex;
+    setIndexValue(brief, "sceneReview", targetIndex);
     state.scene = "sceneLineReplay";
-    state.activeStatementLineId = null;
+    if (reset || !state.activeStatementLineId) {
+      const targetScene = sceneWithShownCard(
+        brief,
+        sceneWithCallbackRevision(brief, brief.sceneVersions?.[targetIndex] ?? {}, targetIndex)
+      );
+      state.activeStatementLineId = statementLinesFromText(targetScene.version ?? "", { prefix: targetScene.id ?? `scene-${targetIndex}` })[0]?.id ?? null;
+    }
     saveState();
     render();
   }
@@ -573,35 +644,95 @@ export function createSceneScreens(ctx) {
   function renderSceneLineReplay(brief) {
     const state = ctx.getState();
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
-    const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[sceneIndex] ?? {}, sceneIndex));
-    if (!sceneUsesLineReplay(scene)) {
+    const context = statementStageContext(brief, sceneIndex);
+    if (!context) {
       state.scene = "sceneReview";
       saveState();
       return renderSceneReview(brief);
     }
-    const attempts = state.statementReviewAttempts?.[answerKey(brief, sceneIndex)] ?? [];
+    const position = statementReplayPosition(brief, context, sceneIndex);
+    if (!position) {
+      state.scene = "sceneReview";
+      saveState();
+      return renderSceneReview(brief);
+    }
+    const attemptedLineIds = state.statementReviewAttempts?.[answerKey(brief, position.sceneIndex)] ?? [];
+    const resolvedDialogueOptionIndexes = askedDialoguePicksForState(state, brief, position.sceneIndex)
+      .map((pick) => Number(pick.optionIndex));
+    const atStageEnd = position.entryIndex === context.entries.length - 1
+      && position.lineIndex === position.lines.length - 1;
     frame({
       brief,
       mood: "focused",
-      label: "回放",
+      label: context.entries.length > 1
+        ? `回放 · 第 ${position.entryIndex + 1} 段`
+        : "回放这一段",
       chapter: liveChapterTitle(brief),
-      text: statementReplayHtml({ scene, sceneIndex, attemptedLineIds: attempts }),
-      choices: "",
+      text: statementReplayPageHtml({
+        line: position.line,
+        speaker: position.scene.speaker ?? "咨询者"
+      }),
+      choices: statementReplayPageChoicesHtml({
+        scene: position.scene,
+        sceneIndex: position.sceneIndex,
+        line: position.line,
+        attempted: attemptedLineIds.includes(position.line.id),
+        keyResolved: actionDone(brief, `version:${position.sceneIndex}`),
+        resolvedDialogueOptionIndexes,
+        stageKeysRemaining: context.progress.unresolvedSceneIndexes.length,
+        nextLabel: atStageEnd && !context.progress.complete ? "从前面再听" : "继续回放"
+      }),
       screenClass: "dialogue-mode-replay",
       controlMode: "replay",
       musicPhase: "allegro",
-      pressureOverride: statementPressure(brief, sceneIndex, "replay"),
-      pixelTransition: statementPhaseTransition(brief, scene, sceneIndex, "review")
+      pressureOverride: statementPressure(brief, context.stage.startIndex, "replay"),
+      pixelTransition: statementPhaseTransition(brief, context.stage, context.stage.startIndex, "review")
     });
     bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
     bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
-    bind("[data-scene-review-line]", (event) => handleSceneReviewLine(event.currentTarget, brief, scene));
+    bind("[data-scene-review-line]", (event) => handleSceneReviewLine(event.currentTarget, brief));
+    bind("[data-scene-replay-next]", () => advanceStatementReplay(brief, position.sceneIndex));
     bindSceneButtons();
   }
 
-  function handleSceneReviewLine(button, brief, scene) {
+  function statementReplayPosition(brief, context, sceneIndex) {
+    const state = ctx.getState();
+    let entryIndex = context.entries.findIndex((entry) => entry.sceneIndex === Number(sceneIndex));
+    if (entryIndex < 0) entryIndex = 0;
+    const entry = context.entries[entryIndex];
+    if (!entry) return null;
+    const lines = statementLinesFromText(entry.scene.version ?? "", { prefix: entry.scene.id ?? `scene-${entry.sceneIndex}` });
+    if (!lines.length) return null;
+    let lineIndex = lines.findIndex((line) => line.id === state.activeStatementLineId);
+    if (lineIndex < 0) lineIndex = 0;
+    state.activeStatementLineId = lines[lineIndex].id;
+    return { ...entry, entryIndex, lines, lineIndex, line: lines[lineIndex] };
+  }
+
+  function advanceStatementReplay(brief, sceneIndex) {
+    const state = ctx.getState();
+    const context = statementStageContext(brief, sceneIndex);
+    const position = context ? statementReplayPosition(brief, context, sceneIndex) : null;
+    if (!context || !position) return openSceneLineReplay(brief, sceneIndex, { reset: true });
+    let nextEntryIndex = position.entryIndex;
+    let nextLineIndex = position.lineIndex + 1;
+    if (nextLineIndex >= position.lines.length) {
+      nextEntryIndex = (position.entryIndex + 1) % context.entries.length;
+      nextLineIndex = 0;
+    }
+    const nextEntry = context.entries[nextEntryIndex];
+    const nextLines = statementLinesFromText(nextEntry.scene.version ?? "", { prefix: nextEntry.scene.id ?? `scene-${nextEntry.sceneIndex}` });
+    setIndexValue(brief, "sceneReview", nextEntry.sceneIndex);
+    state.activeStatementLineId = nextLines[nextLineIndex]?.id ?? nextLines[0]?.id ?? null;
+    state.scene = "sceneLineReplay";
+    saveState();
+    render();
+  }
+
+  function handleSceneReviewLine(button, brief) {
     const state = ctx.getState();
     const sceneIndex = Number(button.dataset.sceneReviewIndex ?? currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1));
+    const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[sceneIndex] ?? {}, sceneIndex));
     const lineId = button.dataset.sceneReviewLine ?? "";
     const line = statementReplayLineForScene(scene, lineId);
     const optionIndex = statementReplayOptionIndex(scene, line);
@@ -627,6 +758,7 @@ export function createSceneScreens(ctx) {
     state.lastReaction = statementReactionDisplayText(statementNoClueReactionFor(scene));
     state.lastPressureSignal = "drift";
     state.scene = nextPatience.remaining <= 0 ? "statementPatienceLost" : "sceneLineReplay";
+    setIndexValue(brief, "sceneReview", sceneIndex);
     saveState();
     render();
   }
@@ -650,20 +782,44 @@ export function createSceneScreens(ctx) {
 
   function retryStatementReview(brief, sceneIndex) {
     const state = ctx.getState();
+    const stage = statementStageForScene(brief, sceneIndex);
     const patienceKey = statementPatienceKey(brief, sceneIndex);
     state.statementPatience = {
       ...(state.statementPatience ?? {}),
       [patienceKey]: resetStatementPatience(statementPatienceMax(brief, sceneIndex))
     };
-    state.statementReviewAttempts = {
-      ...(state.statementReviewAttempts ?? {}),
-      [answerKey(brief, sceneIndex)]: []
-    };
+    state.statementReviewAttempts = { ...(state.statementReviewAttempts ?? {}) };
+    for (const stageSceneIndex of stage?.sceneIndexes ?? [sceneIndex]) {
+      state.statementReviewAttempts[answerKey(brief, stageSceneIndex)] = [];
+    }
     state.activeStatementLineId = null;
     state.lastScreenEffect = null;
-    state.scene = "sceneReview";
+    state.scene = "sceneLineReplay";
     saveState();
     render();
+  }
+
+  function statementStageContext(brief, sceneIndex) {
+    const state = ctx.getState();
+    const stage = statementStageForScene(brief, sceneIndex);
+    if (!stage) return null;
+    const entries = stage.sceneIndexes.map((entrySceneIndex) => ({
+      sceneIndex: entrySceneIndex,
+      scene: sceneWithShownCard(
+        brief,
+        sceneWithCallbackRevision(brief, brief.sceneVersions?.[entrySceneIndex] ?? {}, entrySceneIndex)
+      )
+    }));
+    return {
+      stage,
+      entries,
+      progress: statementStageProgress({
+        brief,
+        stage,
+        actionDone: (key) => actionDone(brief, key),
+        dialoguePicksForScene: (entrySceneIndex) => askedDialoguePicksForState(state, brief, entrySceneIndex)
+      })
+    };
   }
 
   function statementPatienceKey(brief, sceneIndex) {
@@ -692,8 +848,8 @@ export function createSceneScreens(ctx) {
     const key = `${caseKey(brief)}:statement:${scene?.id ?? sceneIndex}:${phase}`;
     if (!consumePixelTransition(key)) return null;
     return phase === "review"
-      ? { kind: "phase", visualVariant: "review", eyebrow: "回到刚才那段", label: "逐句追问" }
-      : { kind: "phase", visualVariant: "listen", eyebrow: "先听她说完", label: "来电人陈述" };
+      ? { kind: "phase", visualVariant: "review", eyebrow: "回到刚才的话", label: "集中回放" }
+      : { kind: "phase", visualVariant: "listen", eyebrow: "这一段先别打断", label: "来电人陈述" };
   }
 
   function renderStanceSnapshot(brief) {
@@ -922,6 +1078,7 @@ export function createSceneScreens(ctx) {
     const { brief, scene, options } = sceneChoiceContext(sceneIndex);
     const option = options[optionIndex] ?? options[0];
     if (!brief || !option) return;
+    setIndexValue(brief, "sceneReview", sceneIndex);
     const answerVariant = pressuredAnswerVariant(option, { pressureSignal: nextQuestionPressureSignal(state) });
     const missReaction = option.correct === false ? statementMissReactionForOption(option) : null;
     state.pendingQuestionPressureSignal = null;
@@ -984,6 +1141,7 @@ export function createSceneScreens(ctx) {
     const dialogueRows = sceneDialogueOptions(scene, options);
     const option = dialogueRows[optionIndex]?.option ?? null;
     if (!brief || !option) return;
+    setIndexValue(brief, "sceneReview", sceneIndex);
     const key = answerKey(brief, sceneIndex);
     const current = state.sceneDialoguePicks?.[key] ?? [];
     if (current.some((pick) => Number(pick.optionIndex) === Number(optionIndex))) return;
@@ -1017,8 +1175,9 @@ export function createSceneScreens(ctx) {
 
   function closeSceneQuestionMenu(brief) {
     const state = ctx.getState();
+    const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     state.sceneQuestionFocus = null;
-    state.scene = "sceneReview";
+    state.scene = statementStageForScene(brief, sceneIndex) ? "sceneLineReplay" : "sceneReview";
     saveState();
     render();
   }

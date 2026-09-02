@@ -181,7 +181,8 @@ function collectQuickCaseDialogue(packet) {
   };
   for (const [index, turn] of (packet.turns ?? []).entries()) {
     add(hostId, `$quick.turns[${index}].host`, turn.host, "林旭阳");
-    add(callerId, `$quick.turns[${index}].caller`, turn.caller, "来电人");
+    if (packet.format === "solo-commentary") add(hostId, `$quick.turns[${index}].source`, turn.source, "林旭阳");
+    else add(callerId, `$quick.turns[${index}].caller`, turn.caller, "来电人");
   }
   for (const [index, confrontation] of (packet.confrontations ?? []).entries()) {
     for (const [lineIndex, line] of quickConfrontationLines(confrontation).entries()) {

@@ -2,7 +2,7 @@
 
 > 本表由咖啡厅序章、四主案和三快案的 JSON 真源自动生成。发债是让玩家生气或产生确定预判的原句；付息是同场或同段的小反转；本金是玩家亲手触发的决定性指认、对质或判词；挂钩只发行下一笔债，不提前替未知事实下结论。
 
-## 试玩序章｜prologue-cafe-opening｜序章：还有一笔账
+## 试玩序章｜prologue-cafe-opening｜序章
 
 - 投放层级：Tier 2 → Tier 3
 - Tier 4 资产：无
@@ -21,7 +21,7 @@
 | 债务 | 层级 | 发债 | 首期付息 | 持债上限 | 本金结清 | 下一笔债 |
 |---|---|---|---|---|---|---|
 | credit-lost-job-voice | Tier 1 | nightShell.prologue.coldOpen：“我只是怕你知道我失业后就离开我。” | nightShell.prologue.coldOpen（player-input）：玩家听完整条语音，最低还款金额随即出现，先前的同情开始动摇。 | 同一屏 | credit-loyalty-test:act2（player-input）：两次决定性指认后，判词拒绝替她做公开赦免。 | 01-credit:hangup：“拿了他一年多的钱，这八万就该转。” |
-| credit-separate-homes | Tier 2 | credit-living-arrangement：“不住在一起。他住他的，我住我的。” | credit-night-b-first-interest（fixed-beat）：弹幕补回房租另付，她承认自己开场没有讲。 | 夜 B 第一场后 | credit-loyalty-test:act1（player-input）：玩家把十四个月流水压到共同消费说法上。 | credit-loyalty-test:act2：“钱是他自己说要给的。” |
+| credit-separate-homes | Tier 2 | credit-living-arrangement：“不住在一起。他住他的，我住我的。” | credit-night-b-first-interest（fixed-beat）：弹幕追问房租，她把答案留到男友随后发来的消息。 | 夜 B 第一场后 | credit-loyalty-test:act1（player-input）：玩家把十四个月流水压到共同消费说法上。 | credit-loyalty-test:act2：“钱是他自己说要给的。” |
 
 ## 主案｜04-workplace｜职场报销截图
 
@@ -76,12 +76,13 @@
 | quick2-one-message | Tier 2 | help-request：“最近突然不联系了。我想问，是不是我对交流要求太高了。” | message-or-drunkenness（player-input）：玩家对上十一点五十二与六分钟后的记录，她承认‘还行’不是真实状态。 | 第一轮内 | quick2:ending（player-input）：主播判断问题不只是一条未回消息，而是连续缩小当晚事实。 | quick2:ending：“男方退出时最看重哪一项，今晚不知道。” |
 | quick2-rare-night-out | Tier 1 | missed-message-version：“我已经很久没出去了。” | nightlife-pattern（player-input）：玩家对照朋友圈，追出近两个月六次夜场和连续两晚外出。 | 第三轮内 | quick2:ending（player-input）：主播直说她把长期生活状态说成一次偶然。 | quick2:ending：“酒桌上有没有发生别的事，不用猜。” |
 
-## 快案｜03-labeled-fiction｜帮我说一句
+## 快案｜03-labeled-fiction｜某流量明星的小作文
 
 - 投放层级：Tier 1 → Tier 2
 - Tier 4 资产：无
 
 | 债务 | 层级 | 发债 | 首期付息 | 持债上限 | 本金结清 | 下一笔债 |
 |---|---|---|---|---|---|---|
-| quick3-labeled-fiction | Tier 2 | help-request：“她那句『不为钱出卖爱情』，是假的。” | essay-version（player-input）：玩家对上‘纯属虚构’和点名配图，他承认名字、照片都是真的。 | 第一轮内 | quick3:ending（player-input）：主播拒绝替他当第二锤，同时判断她厌人要钱、他借节目砸人。 | quick3:ending：“这笔钱法律上算不算该退的彩礼，今晚没有判决。” |
-| quick3-five-cards | Tier 1 | last-ask-version：“彩礼该退。” | transfer-version（player-input）：玩家对上家里账和五张卡，他承认钱打到她家账上、卡是自己去办的。 | 第一轮内 | quick3:ending（player-input）：主播把催卡、抬价和往后躲并成她要钱；法律上是否彩礼仍留给法院。 | quick3:ending：“更大那笔五千万美元，他自己说没打出去。” |
+| quick3-labeled-fiction | Tier 2 | essay-label：“正文指向现实人物并配图，文末却留了一句『纯属虚构』。” | labeled-fiction（player-input）：玩家选择先看长文怎样一面指向真人、一面给作者留退路。 | 第一段内 | public-leverage（player-input）：玩家把虚构标注和认全文条件放回同一张桌上，主播直接评价这种舆论打法。 | quick3:ending：“三千万该不该退，法院判。” |
+| quick3-five-cards | Tier 1 | money-transferred：“让我准备五张卡一起打。” | money-split（player-input）：玩家选择把已转出的三千万、未转出的五千万美元与女方未回应的数字拆开。 | 第二段内 | quick3:ending（player-input）：主播既不接受女方绕开三千万，也不把男方单方写下的更大开价当成第二份材料。 | quick3:ending：“这笔钱没有转出去。” |
+| quick3-public-leverage | Tier 2 | early-rumor：“网上已经出现代孕传闻。” | settlement-inference（player-input）：玩家可以先说求和推断为什么可信，再由主播补上本人授权仍缺材料。 | 第四段内 | quick3:ending（player-input）：主播把高概率推断与已经确认的公开动作分开，再给出个人结论。 | quick3:ending：“但高概率推断仍不是本人授权。” |

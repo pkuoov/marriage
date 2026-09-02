@@ -16,7 +16,7 @@ import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, an
 import { storyInterludeCaseId, storyOptionalQuickCall } from "./runtime/storyInterludeModel.js";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
-import { cafePrologueCanOpenForensic, cafePrologueCanPresentEvidence, cafePrologueRemainingEvidenceId, cafePrologueSceneForStep, cafePrologueStatementReady, normalizedCafePrologueProgress } from "./runtime/prologueCafeModel.js";
+import { cafePrologueCanOpenForensic, cafePrologueCanPresentEvidence, cafePrologueCanPresentRevisionEvidence, cafePrologueRemainingEvidenceId, cafePrologueRevisionEvidenceHit, cafePrologueRevisedStatementReady, cafePrologueSceneForStep, cafePrologueStatementReady, normalizedCafePrologueProgress } from "./runtime/prologueCafeModel.js";
 import { hostDisclosureLinesForAnchor } from "./runtime/hostDisclosureModel.js";
 import { normalizePlayerName, personalizeHostHtml, personalizeHostText, playerFamiliarName } from "./playerIdentity.js";
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js";
@@ -34,12 +34,12 @@ import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js";
 import { routeTrailHtml } from "./ui/routeTrailView.js";
 import { focusedQuestionOptions, sceneDialogueOptions, sceneQuestionChoicesHtml } from "./ui/sceneQuestions.js";
-import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml } from "./ui/sceneReviewView.js";
+import { completedSceneExchangeHtml, scenePromptExchangeHtml, sceneQuestionAnswerHtml, sceneReviewDoneChoicesHtml, sceneReviewHtml, stanceSnapshotHtml, statementStagePromptExchangeHtml } from "./ui/sceneReviewView.js";
 import { storyInterludeChoicesHtml, storyInterludeHtml, storyInterludeStageHtml, storyWorldEchoStageHtml } from "./ui/storyInterludeView.js";
 import { caseBridgeChoicesHtml, caseBridgeHtml, caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js";
-import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeSingleEvidenceHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "./ui/prologueCafeView.js";
+import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeRevisionStatusHtml, cafeSingleEvidenceHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "./ui/prologueCafeView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "./ui/titleView.js";
 import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js";
@@ -573,6 +573,7 @@ function createDailyScreenRenderers() {
     liveChapterTitle,
     moveScene,
     setIndex,
+    setIndexValue,
     issueCompletion,
     recordPatienceLost,
     ensureBudget,
@@ -605,6 +606,7 @@ function createDailyScreenRenderers() {
     sceneQuestionChoicesHtml,
     completedSceneExchangeHtml,
     scenePromptExchangeHtml,
+    statementStagePromptExchangeHtml,
     sceneQuestionAnswerHtml,
     sceneReviewDoneChoicesHtml,
     sceneReviewHtml,
@@ -642,6 +644,9 @@ function createDailyScreenRenderers() {
     normalizedCafePrologueProgress,
     cafePrologueStatementReady,
     cafePrologueCanPresentEvidence,
+    cafePrologueRevisedStatementReady,
+    cafePrologueCanPresentRevisionEvidence,
+    cafePrologueRevisionEvidenceHit,
     cafePrologueRemainingEvidenceId,
     cafePrologueCanOpenForensic,
     cafePrologueSceneForStep,
@@ -674,6 +679,7 @@ function createDailyScreenRenderers() {
     cafePrologueHeaderHtml,
     cafePrologueDialogueHtml,
     cafeProloguePortraitStageHtml,
+    cafeRevisionStatusHtml,
     cafeMaterialPromptHtml,
     cafeStatementReplayHtml,
     cafeEvidencePairHtml,

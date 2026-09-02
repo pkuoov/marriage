@@ -36,9 +36,29 @@ export function createFocusInputControl({ app }) {
   }
 
   function preferredDefaultButton() {
-    return topInteractiveScope()?.querySelector(
-      "button.primary:not(:disabled), button[data-primary='true']:not(:disabled), button:not(:disabled)"
-    ) ?? null;
+    const scope = topInteractiveScope();
+    if (!scope) return null;
+    if (scope === app) {
+      const dialogue = currentDialogueAdvance();
+      if (dialogue) return dialogue;
+    }
+    const selectors = [
+      "[data-live-stage] .quick-main-action:not(:disabled)",
+      "[data-live-stage] .quick-case-card:not(:disabled)",
+      "[data-live-stage] .avg-choice-overlay button.primary:not(:disabled)",
+      "[data-live-stage] .avg-choice-overlay button:not(:disabled)",
+      "[data-live-stage] button.primary:not(:disabled)",
+      ".quick-case-library button:not(:disabled)",
+      "button.primary:not(:disabled)",
+      "button[data-primary='true']:not(:disabled)",
+      ".story-grid button:not(:disabled)",
+      "button:not(:disabled)"
+    ];
+    for (const selector of selectors) {
+      const match = scope.querySelector(selector);
+      if (match) return match;
+    }
+    return null;
   }
 
   function preferredBackButton() {

@@ -26,11 +26,6 @@ const loadBearingQuestionSignatures = authoredCasePackets.flatMap((packet) => (p
       .filter(Boolean)
       .map((anchor) => ({ anchor, label: option.suspicionLabel ?? option.question ?? "" })))
 )));
-const transitionQuoteByCaseId = Object.fromEntries(
-  (storyManifest.nightShell?.interludes ?? [])
-    .filter((interlude) => interlude.transitionQuote)
-    .map((interlude) => [interlude.afterCaseId, interlude.transitionQuote])
-);
 const caseOneMaterialMissDrift = String(authoredCasePackets.find((packet) => packet.caseId === "01-credit")?.driftComments?.[0] ?? "")
   .split(":")
   .slice(1)
@@ -176,11 +171,22 @@ async function assertAudioSettings(page) {
 }
 
 async function currentLoadBearingStatementLine(page) {
-  const lines = page.locator("[data-scene-question]:visible");
-  const texts = await lines.allTextContents();
-  const index = texts.findIndex((text) => loadBearingQuestionSignatures.some(({ anchor, label }) => text.includes(anchor) && text.includes(label)));
-  if (index < 0) throw new Error(`current statement has no source-anchored line: ${texts.join(" | ")}`);
-  return lines.nth(index);
+  const visited = [];
+  for (let step = 0; step < 48; step += 1) {
+    await drainDialogue(page, {});
+    const authoredKey = page.locator('[data-statement-key-correct="true"]:visible:not(:disabled)');
+    if (await authoredKey.count()) return authoredKey.first();
+    const lines = page.locator("[data-scene-question]:visible:not(:disabled)");
+    const texts = await lines.allTextContents();
+    const index = texts.findIndex((text) => loadBearingQuestionSignatures.some(({ anchor, label }) => text.includes(anchor) && text.includes(label)));
+    if (index >= 0) return lines.nth(index);
+    const followups = page.locator('[data-scene-dialogue][data-stage-keys-remaining="0"]:visible:not(:disabled)');
+    if (await followups.count()) return followups.first();
+    visited.push((await page.locator(".statement-replay-page .avg-line:visible").first().textContent().catch(() => ""))?.trim() ?? "");
+    if (!await page.locator("[data-scene-replay-next]:visible:not(:disabled)").count()) break;
+    await click(page, "[data-scene-replay-next]");
+  }
+  throw new Error(`current statement stage has no unresolved source-anchored line after sequential replay: ${visited.filter(Boolean).join(" | ")}`);
 }
 
 async function launchBrowser() {
@@ -225,7 +231,7 @@ async function runQuickDetective() {
       await page.goto(`${playableUrl}?playtest=quick-statement-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
       await page.locator("[data-player-name]").fill("周明");
       await click(page, "[data-start-quick-detective]");
-      await assertVisibleText(page, "今晚先接哪一通", "快案入口必须先进入案件选择页");
+      await assertVisibleText(page, "今晚先看哪一案", "快案入口必须先进入案件选择页");
       if (await page.locator(".quick-case-card").count() !== 3) throw new Error("快案选择页必须从 manifest 加载三宗案件");
 
       await playStatementQuickCase(page, viewport, {
@@ -262,14 +268,16 @@ async function runQuickDetective() {
       await click(page, "[data-quick-select]");
       await playStatementQuickCase(page, viewport, {
         caseId: "03-labeled-fiction",
+        soloCommentary: true,
         rounds: [
-          ["文末我标了『纯属虚构』", "让我准备五张卡一起打", "我说让我想想"],
-          ["一句转账数目都没对上", "直播间先说清楚，起诉我另走"],
-          ["跟我起诉状上写的数对得上"]
+          ["先看长文怎样给自己留门"],
+          ["先看前例为什么让女方可能着急"],
+          ["先评价女方这份回应"],
+          ["先说为什么求和推断很可信"],
+          ["先评价『我手里还有』这套玩法"]
         ],
-        decoyAnchor: "我写过一篇长文",
-        expectedListen: ["文末我标了『纯属虚构』", "打了三千万到她家里账上", "见面她往后躲"],
-        expectedVerdict: ["我不会对着直播间替你宣", "彩礼不彩礼", "法院没判", "厌的是这个人", "借节目砸人"]
+        expectedListen: ["男方是高流量科技创业者", "女方是曾经站在流量顶端的演员", "文末却留了一句『纯属虚构』"],
+        expectedVerdict: ["我不会帮你催", "男方在骗舆论，女方在躲金钱账", "是否由她授权中间人，目前仍缺本人材料", "三千万该不该退，法院判"]
       });
       await click(page, "[data-quick-select]");
       if (await page.locator(".quick-case-card.is-complete").count() !== 3) throw new Error("三宗快案通关后都必须保留完成对勾");
@@ -310,6 +318,10 @@ async function runCafePrologue() {
       if (cafePortraitRoles.join("|") !== "host|advisor|husband|wife|cousin") throw new Error(`cafe negotiation must keep five cross-talking portraits, got ${cafePortraitRoles.join("|")}`);
       await assertVisibleText(page, "桌面", "the material names must stay in a compact scene-prop dock after the negotiation");
       await assertVisibleText(page, "我没去澜桥酒店。", "the first action must expose the caller's exact denial as a selectable line");
+      await assertVisibleText(page, "入住人：妻子本人", "the right-hand hotel material must expose a readable raw booking field");
+      if (await page.locator("[data-cafe-material-preview]").count() !== 2) throw new Error("both opening materials must be clickable before the first presentation");
+      await click(page, '[data-cafe-material-preview="hotel"]');
+      if (!await page.locator('[data-cafe-material-preview="hotel"].inspected').count()) throw new Error("clicking the hotel material must leave an immediate inspected state");
       await assertNoPageText(page, "遮名银行流水", "the transfer evidence must stay off the table until the hotel exchange ends");
       for (const banned of ["教学 ·", "两边都会查", "依次点击两张材料确认", "先核她刚才那句"]) {
         await assertNoPageText(page, banned, `the cafe loop must not expose instruction copy: ${banned}`);
@@ -342,18 +354,28 @@ async function runCafePrologue() {
       await assertVisibleText(page, "已拿起", "selecting one material must have an immediate visible response");
       await click(page, "[data-cafe-evidence-present]");
       const pairText = await drainDialogue(page, {});
-      if (!pairText.includes("房是我开的") || !pairText.includes("我一个人住")) throw new Error("either first material must puncture the hotel denial and force the full revised account");
-      if (pairText.includes("没转过钱")) throw new Error("the money claim must wait until the second hotel material reaches its proof boundary");
-      await assertVisibleText(page, viewport.firstEvidence === "chat" ? "酒店订单" : "联系人：顾*", "the unused hotel material must remain for the revised claim");
-      await click(page, "[data-cafe-present-remaining]");
-      const remainingText = await drainDialogue(page, {});
-      if (!remainingText.includes("上面只有我，没有顾*") || !remainingText.includes("没有他上楼的东西") || !remainingText.includes("没转过钱")) throw new Error("the second material must stop at the companion unknown before the money denial begins");
-      if (remainingText.includes("调监控") || remainingText.includes("敢不敢嘛")) throw new Error("the host must not auto-escalate beyond the material the player presented");
+      for (const line of ["房是我开的", "自己住了一晚", "顾*知道我到了", "我跟顾*之间没转过钱", "别把聊天、酒店和钱全拧在一起"]) {
+        if (!pairText.includes(line)) throw new Error(`the first hit must let the wife finish her revised account before review: ${line}`);
+      }
+      await assertVisibleText(page, "她刚改口的几句", "the revised account must finish before the second replay opens");
+      if (await page.locator("[data-cafe-statement-id]").count() !== 4) throw new Error("the revised account must return as four separately selectable statements");
+      await assertVisibleText(page, "三笔双向转账", "the transfer material may enter only after the wife has denied money in the revised account");
+      await click(page, '[data-cafe-statement-id="alone-stay"]');
+      const revisedMissText = await drainDialogue(page, {});
+      if (!revisedMissText.includes("你手里的东西也只能看到我")) throw new Error("a wrong revised statement must receive an in-character boundary response");
+      await click(page, '[data-cafe-statement-id="money-denial"]');
+      const revisedLeadText = await drainDialogue(page, {});
+      if (!revisedLeadText.includes("你跟顾*之间没转过钱")) throw new Error("the host must replay the selected revised sentence before the second material choice");
+      await assertVisibleText(page, "4 月 12 日｜转出｜顾*", "the transfer card must show raw rows instead of a cross-document inference");
+      await click(page, '[data-cafe-evidence-select="hotel"]');
+      await click(page, "[data-cafe-revised-present]");
+      const revisedEvidenceMissText = await drainDialogue(page, {});
+      if (!revisedEvidenceMissText.includes("你拿它问转账，也问不着")) throw new Error("the old hotel material must remain clickable without pretending it proves the money claim");
       await assertVisibleText(page, "4 月 12 日｜转出｜顾*", "the transfer card must show raw rows instead of a cross-document inference");
       await assertNoPageText(page, "交易对手户名与聊天联系人同名", "the transfer card must not solve the cross-document match for the player");
       await assertCafeViewport(page, viewport, "transfer presentation board");
-      await click(page, "[data-cafe-transfer-select]");
-      await click(page, "[data-cafe-present-transfer]");
+      await click(page, '[data-cafe-evidence-select="parallel-transfer-ledger"]');
+      await click(page, "[data-cafe-revised-present]");
       const legalText = await drainDialogue(page, {});
       if (!legalText.includes("他请我来") || !legalText.includes("按现有材料准备") || !legalText.includes("不是他的诉讼代理人")) throw new Error("Zhao must make the on-site consultation clear without presenting herself as litigation counsel");
       await assertVisibleText(page, "共同财产", "the cafe must turn the husband's legal demands into a visible request list");
@@ -415,10 +437,18 @@ async function runCafePrologue() {
           order: save.cafePrologueOrder,
           legalBriefSeen: save.cafePrologueLegalBriefSeen,
           statementId: save.cafePrologueStatementId,
-          evidenceId: save.cafePrologueEvidenceId
+          evidenceId: save.cafePrologueEvidenceId,
+          marks: save.cafePrologueMarks
         };
       });
-      if (!savedProgress.legalBriefSeen || savedProgress.pressureChoice !== viewport.pressureChoice || savedProgress.statementId !== "hotel-denial" || savedProgress.evidenceId !== viewport.firstEvidence || savedProgress.order?.[0] !== viewport.firstRoute || savedProgress.order?.length !== 1) {
+      if (!savedProgress.legalBriefSeen
+        || savedProgress.pressureChoice !== viewport.pressureChoice
+        || savedProgress.statementId !== "money-denial"
+        || savedProgress.evidenceId !== "parallel-transfer-ledger"
+        || !savedProgress.marks?.includes(viewport.firstEvidence)
+        || !savedProgress.marks?.includes("parallel-transfer-ledger")
+        || savedProgress.order?.[0] !== viewport.firstRoute
+        || savedProgress.order?.length !== 1) {
         throw new Error(`${viewport.width} cafe choices must survive state writes: ${JSON.stringify(savedProgress)}`);
       }
       await click(page, "[data-cafe-finish]");
@@ -434,8 +464,9 @@ async function assertCafeViewport(page, viewport, label) {
     const screen = document.querySelector(".cafe-prologue-screen");
     const textbox = screen?.querySelector(".avg-textbox");
     const overlay = screen?.querySelector(".avg-choice-overlay.inline-choice-flow:not([hidden])");
-    const board = overlay?.querySelector(".cafe-statement-board, .cafe-evidence-board, .cafe-present-board, .cafe-legal-board");
-    const textboxRect = textbox?.getBoundingClientRect();
+    const board = overlay?.querySelector(".cafe-opening-action, .cafe-statement-board, .cafe-evidence-board, .cafe-present-board, .cafe-legal-board");
+    const rawTextboxRect = textbox?.getBoundingClientRect();
+    const textboxRect = rawTextboxRect && rawTextboxRect.width > 0 && rawTextboxRect.height > 0 ? rawTextboxRect : null;
     const overlayRect = overlay?.getBoundingClientRect();
     const boardRect = board?.getBoundingClientRect();
     const screenRect = screen?.getBoundingClientRect();
@@ -444,9 +475,8 @@ async function assertCafeViewport(page, viewport, label) {
       "[data-cafe-statement-id]",
       "[data-cafe-evidence-select]",
       "[data-cafe-evidence-present]:not(:disabled)",
-      "[data-cafe-present-remaining]",
-      "[data-cafe-transfer-select]",
-      "[data-cafe-present-transfer]:not(:disabled)",
+      "[data-cafe-material-preview]",
+      "[data-cafe-revised-present]:not(:disabled)",
       "[data-cafe-legal-brief]",
       "[data-cafe-pressure]",
       "[data-cafe-investigation]",
@@ -500,15 +530,15 @@ async function playEarlyQuickCase(page, caseId, anchor) {
   await clickQuickSourceLine(page, anchor);
   await finishQuickConfrontation(page);
   await page.locator("[data-quick-end-early]").waitFor({ state: "visible" });
+  await assertVisibleText(page, "先收麦", "快案抓到一个关键矛盾后必须允许提前收麦");
   await click(page, "[data-quick-end-early]");
-  await assertVisibleText(page, "按现有信息收住", "快案抓到一个关键矛盾后必须允许谨慎提前收案");
   while (!await page.locator(".quick-ending-actions").count()) {
     await advanceQuickLine(page, "[data-quick-next-verdict]");
   }
   await assertVisibleText(page, "拒绝背书，不替她编故事", "提前收案必须落到独立的事实边界结论");
 }
 
-async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, decoyKind = "no-clue", expectedListen, expectedVerdict, alreadySelected = false }) {
+async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, decoyKind = "no-clue", expectedListen, expectedVerdict, alreadySelected = false, soloCommentary = false }) {
   if (!alreadySelected) await click(page, `[data-quick-case-id="${caseId}"]`);
   await assertVisibleText(page, "周明", "快案必须显示玩家保存的主播姓名");
   await assertNoPageText(page, "这次怎么玩", "快案入口不得解释内部机制");
@@ -516,11 +546,11 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
 
   let verdictText = "";
   for (const [roundIndex, anchors] of rounds.entries()) {
-    await assertQuickLayout(page, viewport, `${caseId} round ${roundIndex + 1} listen`, "caller");
+    await assertQuickLayout(page, viewport, `${caseId} round ${roundIndex + 1} listen`, soloCommentary ? "host" : "caller", soloCommentary ? 1 : 2);
     if (roundIndex === 0) {
       for (const text of expectedListen) await assertVisibleText(page, text, `${caseId} 首次听麦必须保留整段陈述内容`);
     }
-    await assertVisibleText(page, "监听", "首次整段陈述必须点亮监听状态");
+    await assertVisibleText(page, soloCommentary ? "READ 长文" : "监听", soloCommentary ? "口播材料必须点亮长文状态" : "首次整段陈述必须点亮监听状态");
     if (roundIndex === 0 && viewport.width === 592) {
       await page.locator("[data-quick-next-turn]:visible").waitFor({ state: "visible" });
       await page.keyboard.press("Enter");
@@ -529,7 +559,7 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
       await advanceQuickLine(page, "[data-quick-next-turn]");
     }
     await page.locator("[data-quick-review-line]").first().waitFor({ state: "visible" });
-    await assertVisibleText(page, "REC 回放", "找问题时必须切换为逐句回放状态");
+    await assertVisibleText(page, soloCommentary ? "PAUSE 评议" : "REC 回放", soloCommentary ? "口播暂停点必须进入主播评议状态" : "找问题时必须切换为逐句回放状态");
     await assertNoPageText(page, "先问哪件事", "回放不得退回抽象问题方向菜单");
     await assertNoPageText(page, "只选怀疑的方向", "回放不得添加操作教程");
     if (roundIndex === 0 && decoyAnchor) {
@@ -539,6 +569,7 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
       const missText = (await page.locator(".quick-miss-bubble").getAttribute("data-quick-line-text"))?.trim() ?? "";
       if (!missText) throw new Error("快案错误原句必须显示来电人或主播的具体反应");
       await click(page, "[data-quick-after-miss]");
+      await page.locator(".quick-scene-issueSelection").waitFor({ state: "visible" });
       await assertVisibleText(
         page,
         decoyKind === "anchored" ? "这个问法被挡回来了 · 耐心 −1" : "这句没有可追问的线索 · 耐心 −1",
@@ -547,7 +578,7 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
     }
     for (const anchor of anchors) {
       await clickQuickSourceLine(page, anchor);
-      await assertVisibleText(page, "LINE 打断", "按中原句以后必须切到短问打断状态");
+      await assertVisibleText(page, soloCommentary ? "主播点评" : "LINE 打断", soloCommentary ? "选择切口后必须进入主播点评" : "按中原句以后必须切到短问打断状态");
       await finishQuickConfrontation(page);
       if (await page.locator(".quick-scene-issueSelection").count()) {
         await page.locator("[data-quick-review-line]").first().waitFor({ state: "visible" });
@@ -584,7 +615,7 @@ async function finishQuickConfrontation(page) {
   }
 }
 
-async function assertQuickLayout(page, viewport, label, expectedRole) {
+async function assertQuickLayout(page, viewport, label, expectedRole, expectedPortraitCount = 2) {
   const layout = await page.evaluate(() => {
     const shellRect = document.querySelector("[data-live-shell]")?.getBoundingClientRect();
     const stageRect = document.querySelector("[data-live-stage]")?.getBoundingClientRect();
@@ -606,7 +637,7 @@ async function assertQuickLayout(page, viewport, label, expectedRole) {
     };
   });
   if (layout.overflow > 2) throw new Error(`${viewport.width}x${viewport.height} quick ${label} overflows horizontally by ${layout.overflow}px`);
-  if (layout.portraitCount !== 2) throw new Error(`${viewport.width}x${viewport.height} quick ${label} must keep exactly two portraits`);
+  if (layout.portraitCount !== expectedPortraitCount) throw new Error(`${viewport.width}x${viewport.height} quick ${label} must keep exactly ${expectedPortraitCount} portrait(s)`);
   if (layout.activePortraitCount !== 1) throw new Error(`${viewport.width}x${viewport.height} quick ${label} must highlight exactly one portrait`);
   if (layout.lineCount !== 1) throw new Error(`${viewport.width}x${viewport.height} quick ${label} must show exactly one current speech bubble`);
   if (expectedRole && (layout.stageFocus !== expectedRole || layout.speakingRole !== expectedRole)) {
@@ -879,7 +910,7 @@ async function runRoute(route) {
         continue;
       }
       if (await page.locator("[data-enter-post-live], [data-enter-interlude]").count()) {
-        await assertVisibleText(page, "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，至少三万五没有说明", "overnight route should identify the caller-authorized transaction excerpt before the show ends");
+        await assertVisibleText(page, "电话断了。后台多出一份遮名交易摘录，信用卡账单还亮着，账单总额和已分项对不上", "overnight route should identify the caller-authorized transaction excerpt before the show ends");
         await assertVisibleText(page, "别转", "case 1 hangup should retain the audience warning not to transfer");
         await assertVisibleText(page, "这八万就该转", "case 1 hangup should also show the opposing audience view after both sides are exposed");
         await assertNoPageText(page, "账单、到期日、她要垫多少", "Zhao's private call must not happen while the show is still live");
@@ -949,9 +980,9 @@ async function runRoute(route) {
           : "";
         const liveCounterTranscript = await drainDialogue(page, route);
         if (route.name === "accounting-support") {
-          const firstInterest = liveCounterTranscript.includes("房租还是另付的") || liveCounterTranscript.includes("房租另付。我刚才确实没讲");
+          const firstInterest = liveCounterTranscript.includes("房租是不是另付的") || liveCounterTranscript.includes("我刚才没说房租");
           if (firstInterest) {
-            if (!liveCounterTranscript.includes("每月一万七千五还不含房租") || !liveCounterTranscript.includes("我刚才确实没讲")) {
+            if (!liveCounterTranscript.includes("每月一万七千五里，到底算没算房租") || !liveCounterTranscript.includes("我刚才没说房租")) {
               throw new Error("night-B first interest must show the room noticing the rent and the caller's small admission");
             }
           } else if (!liveCounterTranscript.includes("他在听。")) {
@@ -980,7 +1011,6 @@ async function runRoute(route) {
       }
       await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
       await activate(page, route, "[data-scene-open-replay]");
-      await page.locator("[data-scene-question]").first().waitFor({ state: "visible" });
       await assertVisibleText(page, "REC", "main-case statement review must switch the control deck to replay");
       await assertNoPageText(page, "收束 · 未命中 −1 耐心", "原句回放不得把底层耐心成本写成按钮说明");
       if (!helperHiddenChecked && route.name === "accounting-support") {
@@ -991,7 +1021,7 @@ async function runRoute(route) {
         helperHiddenChecked = true;
       }
       const sourceLine = await currentLoadBearingStatementLine(page);
-      const sourceText = (await sourceLine.locator("span").textContent())?.trim() ?? "";
+      const sourceText = (await page.locator(".statement-replay-page .avg-line:visible").first().textContent())?.trim() ?? "";
       await sourceLine.click();
       sceneQuestionCount += 1;
       if (sourceText && !directionChoiceChecked) {
@@ -1189,7 +1219,10 @@ async function advanceNightCaseToOvernightHangup(page, portraitAssets = null) {
     }
     await collectPortraitAsset(page, portraitAssets);
     await drainDialogue(page, {});
-    await click(page, "[data-next-scene-stage], button[data-scene]");
+    // A statement stage can require several separate replay actions. Return to
+    // the loop and let the current screen decide whether there is another line
+    // to press or the stage has actually exposed its continuation gate.
+    continue;
   }
   throw new Error("targeted case did not reach overnight hangup");
 }
@@ -1559,12 +1592,7 @@ async function runCaseTransition() {
     if (await page.locator('.interlude-zhao img[src*="zhao-lawyer-teasing-pixel"]').count() !== 1) throw new Error("first case interlude must use Zhao's teasing portrait state");
     if (await page.locator(".pixel-transition-signal-disconnect").count() !== 1) throw new Error("program interlude should use one short disconnect signal transition");
     await click(page, "[data-enter-case-bridge]");
-    const firstTransitionQuote = transitionQuoteByCaseId["01-credit"];
-    await assertVisibleText(page, firstTransitionQuote.text, "case one and case two must be joined by the authored classic quote");
-    await assertVisibleText(page, firstTransitionQuote.source, "inter-case quote must display its source");
-    if (await page.locator(".case-bridge-handoff").count()) throw new Error("inter-case quote page must not add a next-case synopsis or author-written bridge");
-    if (await page.locator(".case-bridge-objects .case-bridge-object img").count() !== 2) throw new Error("inter-case quote must share the stage with outgoing and incoming case objects");
-    await click(page, "[data-enter-next-case]");
+    await assertNoPageText(page, "祸莫大于不知足", "first interlude must not append the removed classic quote");
     await assertVisibleText(page, "CASE 02", "second case must open on a numbered case title card");
     await assertVisibleText(page, "职场报销截图", "second case title card should name the workplace case");
     await assertNoPageText(page, "02 / 04", "case title must not expose the whole-night directory");
@@ -1611,8 +1639,7 @@ async function runCaseTransition() {
     });
     await assertVisibleText(page, "回到主线", "optional quick call must offer a main-story return instead of the standalone case picker");
     await click(page, "[data-quick-select]");
-    await assertVisibleText(page, transitionQuoteByCaseId["04-workplace"].text, "case two and case three must use the authored quote transition");
-    await click(page, "[data-enter-next-case]");
+    await assertNoPageText(page, "名不正，则言不顺", "second interlude must not append the removed classic quote");
     await assertVisibleText(page, "CASE 03", "case two tail must return to the normal case transition");
 
     await page.evaluate(() => {
@@ -1798,7 +1825,9 @@ async function runPortraitViewports() {
       if (viewport.width >= 1440 && layout.shellWidth < viewport.width * 0.9) {
         throw new Error(`${viewport.label} live stage uses only ${Math.round(layout.shellWidth)}px of a ${viewport.width}px fullscreen viewport`);
       }
-      if (layout.rect.left < -1 || layout.rect.right > viewport.width + 1) throw new Error(`${viewport.label} portrait escapes the viewport horizontally`);
+      if (layout.rect.left < -1 || layout.rect.right > viewport.width + 1) {
+        throw new Error(`${viewport.label} portrait escapes the viewport horizontally: ${JSON.stringify(layout.rect)}`);
+      }
       if (layout.rect.width > Math.min(viewport.width * 0.5, 420)) throw new Error(`${viewport.label} portrait is too wide for the full-stage dialogue composition`);
       if (layout.actionBottomOverflow !== null && layout.actionBottomOverflow > 2) {
         throw new Error(`${viewport.label} live dialogue pushes the next action ${layout.actionBottomOverflow.toFixed(1)}px below the viewport`);
@@ -2002,13 +2031,16 @@ async function assertInlineContinuePlacement(page) {
     return {
       insideRecord: Boolean(element.closest(".court-record")),
       multiQuestionBar: Boolean(element.querySelector(".scene-question-group")),
+      replayQuestionBar: Boolean(element.querySelector(".statement-replay-actions")),
       documentBoard: Boolean(element.querySelector(".cafe-evidence-board, .cafe-present-board, .cafe-legal-board")),
+      statementBoard: Boolean(element.querySelector(".cafe-opening-action")),
       stageRatio: stageRect && buttonRect ? (buttonRect.top - stageRect.top) / Math.max(1, stageRect.height) : -1,
       bottomOverflow: stageRect && buttonRect ? buttonRect.bottom - stageRect.bottom : 999
     };
   });
-  const minimumStageRatio = placement.multiQuestionBar || placement.documentBoard ? 0.44 : 0.55;
-  if (placement.insideRecord || placement.stageRatio < minimumStageRatio || placement.bottomOverflow > 2) {
+  const minimumStageRatio = placement.multiQuestionBar || placement.replayQuestionBar ? 0.44 : 0.55;
+  const structuredBoard = placement.statementBoard || placement.documentBoard;
+  if (placement.insideRecord || (!structuredBoard && placement.stageRatio < minimumStageRatio) || placement.bottomOverflow > 2) {
     throw new Error(`main continue action must stay in the lower dialogue stage, got ${JSON.stringify(placement)}`);
   }
 }
@@ -2076,9 +2108,9 @@ async function enterNightFromCafePrologue(page, route = {}) {
   await activate(page, route, '[data-cafe-statement-id="hotel-denial"]');
   await activate(page, route, '[data-cafe-evidence-select="chat"]');
   await activate(page, route, "[data-cafe-evidence-present]");
-  await activate(page, route, "[data-cafe-present-remaining]");
-  await activate(page, route, "[data-cafe-transfer-select]");
-  await activate(page, route, "[data-cafe-present-transfer]");
+  await activate(page, route, '[data-cafe-statement-id="money-denial"]');
+  await activate(page, route, '[data-cafe-evidence-select="parallel-transfer-ledger"]');
+  await activate(page, route, "[data-cafe-revised-present]");
   await activate(page, route, "[data-cafe-legal-brief]");
   await activate(page, route, '[data-cafe-pressure="camera-off"]');
   await activate(page, route, '[data-cafe-investigation="toy"]');
@@ -2123,7 +2155,7 @@ async function revealGolden90(page, route = {}, { assertContract = false } = {})
   const interestTranscript = (await drainDialogue(page, route)).replace(/\s+/g, "");
   const interestComments = (await page.locator(".live-comment-strip").innerText().catch(() => "")).replace(/\s+/g, "");
   if (assertContract) {
-    if (!interestTranscript.includes("反正不是乱来的钱")) throw new Error("golden 90 payoff must escalate into the caller's next excuse");
+    if (!interestTranscript.includes("今晚转我行不行")) throw new Error("golden 90 payoff must escalate into the caller's next excuse");
     if (!interestComments.includes("还在催她转钱")) throw new Error("golden 90 payoff must let the room react in the comment layer to the newly heard context");
   }
   return { preludeTranscript, preludeKinds, debtTranscript, debtKinds, interestTranscript };

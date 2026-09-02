@@ -15,17 +15,22 @@ export function statementLinesFromTurns(packet = {}, round = {}) {
   const turnById = new Map((packet.turns ?? []).map((turn) => [turn.id, turn]));
   return (round.turnIds ?? []).flatMap((turnId) => {
     const turn = turnById.get(turnId);
-    if (!turn?.caller) return [];
-    return statementLinesFromText(turn.caller, { prefix: turnId });
+    const text = statementTurnText(turn);
+    if (!text) return [];
+    return statementLinesFromText(text, { prefix: turnId });
   });
 }
 
 export function statementTextFromTurns(packet = {}, round = {}) {
   const turnById = new Map((packet.turns ?? []).map((turn) => [turn.id, turn]));
   return (round.turnIds ?? [])
-    .map((turnId) => String(turnById.get(turnId)?.caller ?? "").trim())
+    .map((turnId) => statementTurnText(turnById.get(turnId)))
     .filter(Boolean)
     .join("\n\n");
+}
+
+function statementTurnText(turn = {}) {
+  return String(turn?.source ?? turn?.caller ?? "").trim();
 }
 
 export function statementOptionForLine(options = [], line = {}) {
@@ -132,6 +137,85 @@ export function statementPressureFor(value = null, { mode = "listen", max = valu
 
 export function sceneUsesLineReplay(scene = {}) {
   return scene.interactionMode === "lineReplay";
+}
+
+export function statementStagesForBrief(brief = {}) {
+  const scenes = brief.sceneVersions ?? [];
+  const configured = Array.isArray(brief.statementStages) ? brief.statementStages : [];
+  const stages = configured.map((stage, stageIndex) => {
+    const sceneIndexes = [...new Set((stage.sceneIndexes ?? [])
+      .map(Number)
+      .filter((index) => Number.isInteger(index) && index >= 0 && sceneUsesLineReplay(scenes[index])))]
+      .sort((left, right) => left - right);
+    if (!sceneIndexes.length) return null;
+    return {
+      ...stage,
+      id: String(stage.id ?? `statement-stage-${stageIndex + 1}`),
+      sceneIndexes,
+      startIndex: sceneIndexes[0],
+      endIndex: sceneIndexes[sceneIndexes.length - 1],
+      minimumReviewCount: Math.max(2, Number(stage.minimumReviewCount) || sceneIndexes.length)
+    };
+  }).filter(Boolean);
+  if (stages.length) return stages;
+
+  const structure = brief.nightStructure ?? {};
+  const playable = [
+    ...(structure.segment1SceneIndexes ?? []),
+    ...(structure.segment2SceneIndexes ?? [])
+  ];
+  const indexes = (playable.length ? playable : scenes.map((_, index) => index))
+    .map(Number)
+    .filter((index) => Number.isInteger(index) && index >= 0 && sceneUsesLineReplay(scenes[index]));
+  return [...new Set(indexes)].map((sceneIndex, stageIndex) => ({
+    id: `statement-stage-${stageIndex + 1}`,
+    sceneIndexes: [sceneIndex],
+    startIndex: sceneIndex,
+    endIndex: sceneIndex,
+    minimumReviewCount: 2
+  }));
+}
+
+export function statementStageForScene(brief = {}, sceneIndex = 0) {
+  return statementStagesForBrief(brief)
+    .find((stage) => stage.sceneIndexes.includes(Number(sceneIndex))) ?? null;
+}
+
+export function statementStageProgress({
+  brief = {},
+  stage = null,
+  actionDone = () => false,
+  dialoguePicksForScene = () => []
+} = {}) {
+  const current = stage ?? null;
+  if (!current) {
+    return {
+      started: false,
+      complete: false,
+      keyReviewCount: 0,
+      dialogueReviewCount: 0,
+      reviewCount: 0,
+      minimumReviewCount: 0,
+      unresolvedSceneIndexes: []
+    };
+  }
+  const keyReviewCount = current.sceneIndexes
+    .filter((sceneIndex) => actionDone(`version:${sceneIndex}`)).length;
+  const dialogueReviewCount = current.sceneIndexes
+    .reduce((total, sceneIndex) => total + (dialoguePicksForScene(sceneIndex) ?? []).length, 0);
+  const reviewCount = keyReviewCount + dialogueReviewCount;
+  const minimumReviewCount = Math.max(2, Number(current.minimumReviewCount) || current.sceneIndexes.length);
+  const unresolvedSceneIndexes = current.sceneIndexes
+    .filter((sceneIndex) => !actionDone(`version:${sceneIndex}`));
+  return {
+    started: reviewCount > 0,
+    complete: unresolvedSceneIndexes.length === 0 && reviewCount >= minimumReviewCount,
+    keyReviewCount,
+    dialogueReviewCount,
+    reviewCount,
+    minimumReviewCount,
+    unresolvedSceneIndexes
+  };
 }
 
 export function statementNightKey(brief = {}, sceneIndex = 0) {

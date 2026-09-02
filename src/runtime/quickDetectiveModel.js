@@ -168,7 +168,7 @@ export function advanceQuickConfrontation(packet = {}, state = {}) {
   const roundIndex = boundedIndex(state.roundIndex, rounds.length);
   const round = rounds[roundIndex] ?? {};
   const roundRequiredIds = quickRequiredConfrontationIds(packet, round);
-  const roundSolved = roundRequiredIds.every((id) => resolvedConfrontationIds.includes(id));
+  const roundSolved = quickRoundIsSolved(round, roundRequiredIds, resolvedConfrontationIds);
   if (roundSolved && roundIndex < rounds.length - 1) {
     const nextRoundIndex = roundIndex + 1;
     const nextTurnIndex = quickTurnIndexesForRound(packet, rounds[nextRoundIndex])[0] ?? 0;
@@ -184,7 +184,11 @@ export function advanceQuickConfrontation(packet = {}, state = {}) {
       confrontationLineIndex: 0
     };
   }
-  const solved = resolvedConfrontationIds.length >= (packet.confrontations?.length ?? 0);
+  const solved = rounds.every((item) => quickRoundIsSolved(
+    item,
+    quickRequiredConfrontationIds(packet, item),
+    resolvedConfrontationIds
+  ));
   return solved
     ? { ...state, scene: "verdict", activeConfrontationId: null, activeSourceLineId: null, resolvedConfrontationIds, verdictIndex: 0, verdictLineIndex: 0 }
     : { ...state, scene: "issueSelection", activeConfrontationId: null, activeSourceLineId: null, resolvedConfrontationIds, confrontationLineIndex: 0 };
@@ -243,6 +247,7 @@ export function quickFlowVersion(packet = {}) {
   const rounds = quickDisclosureRounds(packet);
   const roundShape = rounds.map((round) => [
     round.id,
+    round.completionMode ?? "all",
     ...(round.turnIds ?? []),
     "?",
     ...(round.issueOptionIds ?? []),
@@ -292,12 +297,18 @@ function quickRequiredConfrontationIds(packet = {}, round = {}) {
     .map((option) => option.confrontationId);
 }
 
+function quickRoundIsSolved(round = {}, requiredIds = [], resolvedIds = []) {
+  if (!requiredIds.length) return true;
+  if (round.completionMode === "any") return requiredIds.some((id) => resolvedIds.includes(id));
+  return requiredIds.every((id) => resolvedIds.includes(id));
+}
+
 function resumeSolvedQuickRound(packet = {}, state = {}) {
   if (state.scene !== "issueSelection") return state;
   const rounds = quickDisclosureRounds(packet);
   const roundIndex = boundedIndex(state.roundIndex, rounds.length);
   const requiredIds = quickRequiredConfrontationIds(packet, rounds[roundIndex] ?? {});
-  if (!requiredIds.length || !requiredIds.every((id) => state.resolvedConfrontationIds?.includes(id))) return state;
+  if (!quickRoundIsSolved(rounds[roundIndex] ?? {}, requiredIds, state.resolvedConfrontationIds ?? [])) return state;
   if (roundIndex < rounds.length - 1) {
     const nextRoundIndex = roundIndex + 1;
     return {
@@ -310,8 +321,11 @@ function resumeSolvedQuickRound(packet = {}, state = {}) {
       confrontationLineIndex: 0
     };
   }
-  const allConfrontationsSolved = (packet.confrontations ?? [])
-    .every((item) => state.resolvedConfrontationIds?.includes(item.id));
+  const allConfrontationsSolved = rounds.every((round) => quickRoundIsSolved(
+    round,
+    quickRequiredConfrontationIds(packet, round),
+    state.resolvedConfrontationIds ?? []
+  ));
   return allConfrontationsSolved
     ? { ...state, scene: "verdict", activeConfrontationId: null, verdictIndex: 0, verdictLineIndex: 0 }
     : state;

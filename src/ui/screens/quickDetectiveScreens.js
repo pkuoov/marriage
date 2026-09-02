@@ -125,21 +125,23 @@ export function createQuickDetectiveScreens(ctx) {
       audioSettings: ctx.getAudioSettings(),
       backdropClass: "backdrop-live quick-detective-backdrop",
       label: packet.label,
-      chapter: packet.title,
+      chapter: quickState.scene === "intro"
+        ? (packet.format === "solo-commentary" ? "主播复盘" : "来电接入")
+        : packet.title,
       text: body(),
       visualHud: quickDetectiveStageHtml(packet, quickState, { hostName: state.playerName }),
-      screenClass: `quick-detective-screen quick-scene-${quickState.scene} dialogue-mode-${quickDialogueMode(quickState)}${quickTransition ? " key-reveal-answer" : ""}`,
+      screenClass: `quick-detective-screen quick-scene-${quickState.scene} dialogue-mode-${quickDialogueMode(quickState)}${packet.format === "solo-commentary" ? " quick-format-solo-commentary" : ""}${quickTransition ? " key-reveal-answer" : ""}`,
       pixelTransition: quickTransition,
       rewindAvailable: ctx.canRewindQuestionNow(),
       controlDeckHtml: ctx.liveControlDeckHtml({
         onAirLabel: "直播快案",
-        label: quickDeckLabel(quickState),
+        label: quickDeckLabel(packet, quickState),
         segment: Math.max(1, Number(quickState.roundIndex ?? 0) + 1),
         total: Math.max(1, packet.disclosureRounds?.length ?? 1),
         pressure: statementPressureFor(quickDetectivePatience(packet, quickState), { mode: quickDialogueMode(quickState) }),
         mode: quickDialogueMode(quickState),
-        progressLabel: quickState.scene === "intro" ? "等待接通" : "",
-        progressNote: quickState.scene === "intro" ? "线路还没接进来。" : ""
+        progressLabel: quickState.scene === "intro" ? (packet.format === "solo-commentary" ? "材料待上屏" : "等待接通") : "",
+        progressNote: quickState.scene === "intro" ? (packet.format === "solo-commentary" ? "今晚由主播独立复盘。" : "线路还没接进来。") : ""
       }),
       showRecordButton: false
     }), state.playerName);
@@ -280,6 +282,11 @@ export function createQuickDetectiveScreens(ctx) {
     const phase = quickState.scene === "issueSelection" ? "review" : "listen";
     const key = `quick:${packet.id}:${round.id ?? quickState.roundIndex ?? 0}:${phase}`;
     if (!ctx.consumePixelTransition(key)) return null;
+    if (packet.format === "solo-commentary") {
+      return phase === "review"
+        ? { kind: "phase", visualVariant: "review", eyebrow: "看到这里先停", label: "选择点评切口" }
+        : { kind: "phase", visualVariant: "listen", eyebrow: "精华段落上屏", label: "主播读长文" };
+    }
     return phase === "review"
       ? { kind: "phase", visualVariant: "review", eyebrow: "回到刚才那段", label: "逐句追问" }
       : { kind: "phase", visualVariant: "listen", eyebrow: "先听完这段", label: "来电人陈述" };
@@ -292,7 +299,17 @@ export function createQuickDetectiveScreens(ctx) {
     return "listen";
   }
 
-  function quickDeckLabel(quickState = {}) {
+  function quickDeckLabel(packet = {}, quickState = {}) {
+    if (packet.format === "solo-commentary") {
+      return {
+        transcript: "主播读精华段落",
+        issueSelection: "选这一拍怎么评",
+        missReaction: "主播收回跑偏角度",
+        confrontation: "主播给出评价",
+        patienceLost: "重看公开原文",
+        verdict: "主播个人结论"
+      }[quickState.scene] ?? "长文复盘";
+    }
     return {
       transcript: "听完这段",
       issueSelection: "拉回刚才那段",

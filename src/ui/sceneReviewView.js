@@ -1,4 +1,5 @@
 import { HOST_NAME } from "../hostProfile.js";
+import { statementLinesFromText } from "../runtime/statementReviewModel.js";
 
 export function sceneReviewHtml({
   index = 0,
@@ -65,6 +66,18 @@ export function scenePromptExchangeHtml({ scene = {} } = {}) {
     sceneBeatLinesHtml(scene.afterVersion),
     sceneEvidenceCardHtml(scene.shownCard)
   ].join("");
+}
+
+export function statementStagePromptExchangeHtml({ entries = [] } = {}) {
+  return (entries ?? []).map(({ scene = {} }) => [
+    sceneBeatLinesHtml(scene.beforeVersion),
+    sceneEntryQuestionHtml(scene),
+    statementLinesFromText(scene.version ?? "", { prefix: scene.id ?? "scene" })
+      .map((line) => callLineHtml({ ...scene, text: line.text, role: "caller", statementBlock: false }))
+      .join(""),
+    sceneBeatLinesHtml(scene.afterVersion),
+    sceneEvidenceCardHtml(scene.shownCard)
+  ].join("")).join("");
 }
 
 export function sceneQuestionAnswerHtml({

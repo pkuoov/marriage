@@ -5,22 +5,27 @@ export const CAFE_PROLOGUE_SCENES = Object.freeze({
 });
 
 export const CAFE_PROLOGUE_INVESTIGATIONS = Object.freeze(["toy", "account"]);
+export const CAFE_PROLOGUE_EVIDENCE_IDS = Object.freeze(["chat", "hotel", "parallel-transfer-ledger"]);
 
 export function normalizedCafePrologueProgress(state = {}) {
-  const marks = uniqueKnownValues(state.cafePrologueMarks, ["chat", "hotel"]);
+  const marks = uniqueKnownValues(state.cafePrologueMarks, CAFE_PROLOGUE_EVIDENCE_IDS);
   const order = uniqueKnownValues(state.cafePrologueOrder, CAFE_PROLOGUE_INVESTIGATIONS);
   return {
     step: Math.max(0, Math.floor(Number(state.cafePrologueStep) || 0)),
     marks,
     order,
+    act: Math.max(1, Math.min(2, Math.floor(Number(state.cafePrologueAct) || (Number(state.cafePrologueStep) >= 2 ? 2 : 1)))),
     statementId: typeof state.cafePrologueStatementId === "string"
       ? state.cafePrologueStatementId
       : "",
     statementReaction: typeof state.cafePrologueStatementReaction === "string"
       ? state.cafePrologueStatementReaction
       : "",
-    evidenceId: ["chat", "hotel"].includes(state.cafePrologueEvidenceId)
+    evidenceId: CAFE_PROLOGUE_EVIDENCE_IDS.includes(state.cafePrologueEvidenceId)
       ? state.cafePrologueEvidenceId
+      : "",
+    evidenceReaction: typeof state.cafePrologueEvidenceReaction === "string"
+      ? state.cafePrologueEvidenceReaction
       : "",
     transferSelected: state.cafePrologueTransferSelected === true,
     legalBriefSeen: state.cafePrologueLegalBriefSeen === true,
@@ -37,6 +42,19 @@ export function cafePrologueStatementReady(progress = {}, correctStatementId = "
 export function cafePrologueCanPresentEvidence(progress = {}, correctStatementId = "hotel-denial") {
   return cafePrologueStatementReady(progress, correctStatementId)
     && ["chat", "hotel"].includes(progress.evidenceId);
+}
+
+export function cafePrologueRevisedStatementReady(progress = {}, correctStatementId = "money-denial") {
+  return progress.act === 2 && progress.statementId === correctStatementId;
+}
+
+export function cafePrologueCanPresentRevisionEvidence(progress = {}, correctStatementId = "money-denial") {
+  return cafePrologueRevisedStatementReady(progress, correctStatementId)
+    && CAFE_PROLOGUE_EVIDENCE_IDS.includes(progress.evidenceId);
+}
+
+export function cafePrologueRevisionEvidenceHit(progress = {}, correctEvidenceId = "parallel-transfer-ledger") {
+  return progress.evidenceId === correctEvidenceId;
 }
 
 export function cafePrologueRemainingEvidenceId(progress = {}) {

@@ -142,7 +142,7 @@ export function mountDialoguePresentation(root, options = {}) {
     pages,
     choices,
     ...options,
-    pairedAutoAdvance: options.pairedAutoAdvance ?? !shell?.classList.contains("dialogue-mode-listen"),
+    pairedAutoAdvance: options.pairedAutoAdvance === true,
     onPageStart: (page, pageIndex) => {
       syncDialoguePortraitFocus(root, page);
       options.onPageStart?.(page, pageIndex);
@@ -166,7 +166,7 @@ export function createDialogueController({
   autoMode = false,
   autoDelay = 2,
   pairedAutoDelay = 450,
-  pairedAutoAdvance = true,
+  pairedAutoAdvance = false,
   presentationProfile = {},
   onBlip = () => {},
   onPageStart = () => {},

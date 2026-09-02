@@ -15,7 +15,7 @@ export function quickDetectiveCaseSelectHtml(packets = [], completedIds = []) {
     <section class="quick-case-library" aria-labelledby="quick-case-library-title">
       <header>
         <p class="quick-mode-kicker">DETECTIVE MODE</p>
-        <h1 id="quick-case-library-title">今晚先接哪一通？</h1>
+        <h1 id="quick-case-library-title">今晚先看哪一案？</h1>
       </header>
       <div class="quick-case-grid">
         ${packets.map((packet, index) => quickCaseCardHtml(packet, index, completed.has(packet.id))).join("")}
@@ -34,6 +34,24 @@ export function quickDetectiveStageHtml(packet = {}, state = {}, { hostName = pa
   const focus = quickStageFocus(packet, state);
   const status = quickStageStatus(packet, state);
   const hostArtSrc = quickHostArtSrc(host, state, focus);
+  if (isSoloCommentary(packet)) {
+    const source = presentation.source ?? {};
+    return `
+      <div class="quick-duel-stage quick-solo-stage focus-host" data-quick-stage-focus="host">
+        ${presentation.backgroundSrc ? `<img class="quick-stage-backdrop" src="${escapeHtml(presentation.backgroundSrc)}" alt="" onerror="this.hidden=true" />` : ""}
+        <div class="quick-stage-vignette"></div>
+        <figure class="quick-stage-speaker quick-stage-host is-active" data-dialogue-portrait="host">
+          ${hostArtSrc ? `<img src="${escapeHtml(hostArtSrc)}" alt="" onerror="this.hidden=true" />` : ""}
+          <figcaption><small>${escapeHtml(host.roleLabel ?? "主播")}</small><b>${escapeHtml(hostName)}</b></figcaption>
+        </figure>
+        <section class="quick-source-card" data-quick-source-panel aria-label="本期上屏材料">
+          <small>${escapeHtml(source.roleLabel ?? "公开材料")}</small>
+          <b>${escapeHtml(source.name ?? "某流量明星的小作文")}</b>
+          <span>${escapeHtml(status)}</span>
+        </section>
+      </div>
+    `;
+  }
   const callerArtSrc = quickCallerArtSrc(caller, state, focus);
   return `
     <div class="quick-duel-stage focus-${escapeHtml(focus)}" data-quick-stage-focus="${escapeHtml(focus)}">
@@ -56,24 +74,25 @@ export function quickDetectiveStageHtml(packet = {}, state = {}, { hostName = pa
 }
 
 export function quickDetectiveIntroHtml(packet = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
+  const solo = isSoloCommentary(packet);
   return `
     <section class="quick-detective-panel quick-intro">
-      <p class="quick-mode-kicker">${escapeHtml(packet.label)}</p>
-      <h2>${escapeHtml(packet.title)}</h2>
+      <h2 class="visually-hidden">${escapeHtml(packet.title)}</h2>
       <p class="quick-intro-host"><span>本场主播</span><b>${escapeHtml(hostName)}</b></p>
       <p>${escapeHtml(packet.premise)}</p>
-      <button class="primary quick-main-action" data-quick-begin type="button">接入这通电话</button>
+      <button class="primary quick-main-action" data-quick-begin type="button">${solo ? "开始看这篇长文" : "接入这通电话"}</button>
     </section>
   `;
 }
 
 export function quickDetectiveTranscriptHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
   const round = quickDisclosureRoundForState(packet, state);
-  const line = { role: "caller", speaker: "来电人", text: statementTextFromTurns(packet, round) };
+  const solo = isSoloCommentary(packet);
+  const line = { role: solo ? "host" : "caller", speaker: solo ? hostName : "来电人", text: statementTextFromTurns(packet, round) };
   return `
     <section class="quick-detective-panel quick-transcript quick-statement-listen">
       ${quickSpeechBubbleHtml(line, "quick-statement-bubble", hostName)}
-      <button class="primary quick-main-action" data-quick-next-turn type="button">把刚才那段拉回来</button>
+      <button class="primary quick-main-action" data-quick-next-turn type="button">${solo ? "这一段，怎么评" : "把刚才那段拉回来"}</button>
     </section>
   `;
 }
@@ -85,15 +104,17 @@ export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostN
   const lines = quickConfrontationLines(confrontation);
   const lineIndex = Math.max(0, Math.min(Math.max(0, lines.length - 1), Number(state.confrontationLineIndex ?? 0)));
   const last = (state.resolvedConfrontationIds?.length ?? 0) + 1 >= confrontations.length;
+  const solo = isSoloCommentary(packet);
+  const finalSoloRound = solo && Number(state.roundIndex ?? 0) >= (packet.disclosureRounds?.length ?? 1) - 1;
   const line = lines[lineIndex] ?? {};
   const nextLine = lines[lineIndex + 1];
   const advanceLabel = nextLine
     ? "继续"
-    : last ? "听最后一句" : "继续听";
+    : solo ? (finalSoloRound ? "听主播结论" : "继续看下一段") : last ? "听最后一句" : "继续听";
   return `
     <section class="quick-detective-panel quick-confrontation">
       <header>
-        <span>当面对质</span>
+        <span>${solo ? "主播点评" : "当面对质"}</span>
       </header>
       ${quickSpeechBubbleHtml({ ...line, speaker: line.role === "caller" ? "来电人" : hostName }, "", hostName)}
       <button class="primary quick-main-action" data-quick-next-confrontation type="button">${advanceLabel}</button>
@@ -107,9 +128,9 @@ export function quickDetectiveMissReactionHtml(packet = {}, state = {}, { hostNa
   const speaker = reaction.speaker || (role === "host" ? hostName : "来电人");
   return `
     <section class="quick-detective-panel quick-miss-reaction">
-      <header><span>这句问早了</span></header>
+      <header><span>${isSoloCommentary(packet) ? "这个角度先放下" : "这句问早了"}</span></header>
       ${quickSpeechBubbleHtml({ role, speaker, text: reaction.text ?? "这句我现在不想往下说。" }, "quick-miss-bubble", hostName)}
-      <button class="primary quick-main-action" data-quick-after-miss type="button">回到刚才那段</button>
+      <button class="primary quick-main-action" data-quick-after-miss type="button">${isSoloCommentary(packet) ? "换个切口" : "回到刚才那段"}</button>
     </section>
   `;
 }
@@ -117,7 +138,7 @@ export function quickDetectiveMissReactionHtml(packet = {}, state = {}, { hostNa
 export function quickDetectiveActiveLine(packet = {}, state = {}, hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME) {
   if (state.scene === "transcript") {
     const round = quickDisclosureRoundForState(packet, state);
-    return { role: "caller", speaker: "来电人", text: statementTextFromTurns(packet, round) };
+    return { role: isSoloCommentary(packet) ? "host" : "caller", speaker: isSoloCommentary(packet) ? hostName : "来电人", text: statementTextFromTurns(packet, round) };
   }
   if (state.scene === "confrontation") {
     const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId) ?? {};
@@ -164,6 +185,25 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
   const options = quickIssueOptionsForRound(packet, state);
   const attempted = new Set(state.attemptedLineIds ?? []);
   const lines = quickStatementLinesForRound(packet, state);
+  if (isSoloCommentary(packet)) {
+    return `
+      <section class="quick-detective-panel quick-issue-selection quick-commentary-selection" aria-label="选择主播点评角度">
+        <div class="quick-review-strip" aria-hidden="true"><i>PAUSE</i><span></span></div>
+        <header class="quick-commentary-prompt">
+          <small>${escapeHtml(round.label ?? "看到这里")}</small>
+          <b>这一段，你会让主播先说什么？</b>
+        </header>
+        <div class="quick-commentary-options">
+          ${options.map((option) => quickCommentaryOptionButton(option, lines, attempted, resolved)).join("")}
+        </div>
+        ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `
+          <div class="quick-early-verdict">
+            <button data-quick-end-early type="button">先下结论</button>
+          </div>
+        ` : ""}
+      </section>
+    `;
+  }
   return `
     <section class="quick-detective-panel quick-issue-selection quick-statement-replay" aria-label="通话回放">
       <div class="quick-review-strip" aria-hidden="true"><i>REC</i><span></span></div>
@@ -172,8 +212,7 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
       </div>
       ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `
         <div class="quick-early-verdict">
-          <p>已经有足够理由先做谨慎判断，也可以继续追完整条线。</p>
-          <button data-quick-end-early type="button">按现有信息收住</button>
+          <button data-quick-end-early type="button">先收麦</button>
         </div>
       ` : ""}
     </section>
@@ -181,12 +220,21 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
 }
 
 export function quickDetectivePatienceLostHtml(packet = {}, state = {}, { comment = null } = {}) {
+  if (isSoloCommentary(packet)) {
+    return `
+      <section class="quick-detective-panel quick-patience-lost">
+        <p>这几个角度都把话带远了。先别替任何一边补动机，把这一段原文再看一次。</p>
+        <button class="primary quick-main-action" data-quick-retry-statement type="button">重看这一段</button>
+        ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `<button data-quick-end-early type="button">先下结论</button>` : ""}
+      </section>
+    `;
+  }
   return `
     <section class="quick-detective-panel quick-patience-lost">
       <p>连续几次都没问到点上，直播间开始催你别再乱带节奏。电话还在，先把这段原话重新听一遍。</p>
       ${comment?.text ? `<aside class="call-fixed-comment"><b>${escapeHtml(comment.listenerId ?? "@听众")}</b><p>${escapeHtml(comment.text)}</p></aside>` : ""}
       <button class="primary quick-main-action" data-quick-retry-statement type="button">重新听这段</button>
-      ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `<button data-quick-end-early type="button">按现有信息收住</button>` : ""}
+      ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `<button data-quick-end-early type="button">先收麦</button>` : ""}
     </section>
   `;
 }
@@ -224,7 +272,7 @@ function quickCaseCardHtml(packet = {}, index = 0, completed = false) {
     <button class="quick-case-card${completed ? " is-complete" : ""}" data-quick-case-id="${escapeHtml(packet.id)}" type="button">
       <span class="quick-case-number"><small>CASE</small><b>${escapeHtml(number)}</b></span>
       <span class="quick-case-copy">
-        <small>${escapeHtml(packet.label ?? `直播快案 ${number}`)}</small>
+        <small>直播快案</small>
         <strong>${escapeHtml(packet.title)}</strong>
       </span>
       <span class="quick-case-status" aria-label="${completed ? "已完成" : "尚未完成"}">
@@ -235,6 +283,7 @@ function quickCaseCardHtml(packet = {}, index = 0, completed = false) {
 }
 
 function quickStageFocus(packet = {}, state = {}) {
+  if (isSoloCommentary(packet)) return "host";
   if (state.scene === "transcript") return "caller";
   if (state.scene === "issueSelection" || state.scene === "patienceLost") return "host";
   if (state.scene === "missReaction") return state.activeMissReaction?.role === "host" ? "host" : "caller";
@@ -297,6 +346,16 @@ function quickStageStatus(packet = {}, state = {}) {
     const index = Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(state.verdictIndex ?? 0)));
     return pages[index]?.stageLabel ?? "最后总结";
   }
+  if (isSoloCommentary(packet)) {
+    return {
+      intro: "材料待上屏",
+      transcript: "READ 长文",
+      issueSelection: "PAUSE 评议",
+      missReaction: "换个切口",
+      confrontation: "主播点评",
+      patienceLost: "重看原文"
+    }[state.scene] ?? "长文复盘中";
+  }
   return {
     intro: "等待接通",
     transcript: "监听",
@@ -318,6 +377,24 @@ function quickStatementLineButton(line = {}, options = [], attempted = new Set()
       ${missed ? `<small>${option ? "这个问法被挡回来了 · 耐心 −1" : "这句没有可追问的线索 · 耐心 −1"}</small>` : ""}
     </button>
   `;
+}
+
+function quickCommentaryOptionButton(option = {}, lines = [], attempted = new Set(), resolved = new Set()) {
+  const line = lines.find((item) => item.text.includes(String(option.sourceAnchor ?? "")));
+  if (!line) return "";
+  const solved = Boolean(option.confrontationId && resolved.has(option.confrontationId));
+  const missed = attempted.has(line.id) && !solved;
+  return `
+    <button class="quick-commentary-option${solved ? " is-resolved" : ""}${missed ? " is-missed" : ""}" data-quick-review-line="${escapeHtml(line.id)}" type="button" ${solved ? "disabled" : ""}>
+      <b>${escapeHtml(option.label)}</b>
+      <small>${escapeHtml(line.text)}</small>
+      ${missed ? `<em>这个角度带远了 · 判断力 −1</em>` : ""}
+    </button>
+  `;
+}
+
+function isSoloCommentary(packet = {}) {
+  return packet.format === "solo-commentary";
 }
 
 export function quickDetectivePatience(packet = {}, state = {}) {

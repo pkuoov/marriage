@@ -319,7 +319,7 @@
             "speaker": "第一位来电人（后台文字）",
             "speakerProfileId": "case1-caller-shen",
             "type": "caller",
-            "text": "他就回我：‘反正不是乱来的钱。别拖，今晚先转。’"
+            "text": "他就回我：‘我又没拿钱出去乱花，奖金这两天就发了。你先帮我把这期卡还上，别真拖到逾期，今晚转我行不行？’"
           },
           {
             "speaker": "@卡里没钱",
@@ -429,11 +429,7 @@
           "role": "stage",
           "text": "监听音箱里的音乐慢慢起来。"
           }
-        ],
-      "transitionQuote": {
-        "text": "祸莫大于不知足，咎莫大于欲得。",
-        "source": "老子 ·《道德经》第四十六章"
-        }
+        ]
       },
       {
         "afterCaseId": "04-workplace",
@@ -486,11 +482,7 @@
           "role": "stage",
           "text": "广告音乐换成一段轻一点的钢琴。"
           }
-        ],
-      "transitionQuote": {
-        "text": "名不正，则言不顺；言不顺，则事不成。",
-        "source": "孔子 ·《论语·子路》"
-        }
+        ]
       },
       {
         "afterCaseId": "03-profile",
@@ -696,8 +688,8 @@
     "cafePrologue": {
       "id": "prologue-cafe-opening",
       "timeline": "开播前 · 傍晚",
-      "title": "序章：还有一笔账",
-      "subtitle": "咖啡厅 · 离婚谈判",
+      "title": "序章",
+      "subtitle": "咖啡厅 · 谈离婚",
       "backdropClass": "day-cafe cafe-prologue-backdrop",
       "puzzleLedger": {
         "playerGoal": "把妻子承认的聊天、酒店订单和钱款往来固定下来，再让男方把离婚、财产和亲子诉求逐项说清；亲子线必须赶在孩子旧物被带走前保住可核来源的样本，账户线只看男方本人名下的家庭支出卡。",
@@ -739,13 +731,13 @@
             "speaker": "男方",
             "speakerProfileId": "prologue-cafe-husband",
             "type": "participant",
-            "text": "对。她跟别的男人聊天、去酒店，我不想再听她绕了。今天把家里的账算清，孩子以后怎么安排，也谈清楚。"
+            "text": "对。她跟别的男人聊天，酒店订单也在。我不想再听她绕了。今天把家里的账算清，孩子以后怎么安排，也谈清楚。"
           },
           {
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "昨天也说好了：今天可以先录，哪一段能播，当场再确认。"
+            "text": "桌边这台先录着，省得回头谁说谁没说过。真要剪进节目，我会先给你们看。"
           },
           {
             "speaker": "妻子",
@@ -757,33 +749,51 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "镜头先压到桌面。孩子不上镜，手机也不拍。你们愿意公开什么，等会儿自己点头。"
+            "text": "你们先别吵孩子。孩子不拍，你们的手机也不拍。"
           },
           {
             "speaker": "表哥",
             "speakerProfileId": "prologue-cafe-cousin",
             "type": "participant",
-            "text": "我们是来谈的，不是来给你做节目素材。"
+            "text": "那就把镜头往桌上压。别拍到她的脸。"
           },
           {
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "可以。镜头只拍桌面。你们不同意公开的，我不会放出去。"
+            "text": "行，只拍桌面。你们没看过、没点头的，我不会放出去。"
           },
           {
             "speaker": "妻子",
             "speakerProfileId": "prologue-cafe-wife",
             "type": "participant",
-            "text": "要谈就先把那晚说清楚。我没去澜桥酒店。他就是看见几张截图，自己越想越多。"
+            "text": "那我把话一次说完。顾*就是认识久一点，平时聊得多。"
+          },
+          {
+            "speaker": "妻子",
+            "speakerProfileId": "prologue-cafe-wife",
+            "type": "participant",
+            "text": "那晚我没去澜桥酒店。"
+          },
+          {
+            "speaker": "妻子",
+            "speakerProfileId": "prologue-cafe-wife",
+            "type": "participant",
+            "text": "他就是看见几张截图，自己越想越多。"
+          },
+          {
+            "speaker": "妻子",
+            "speakerProfileId": "prologue-cafe-wife",
+            "type": "participant",
+            "text": "我跟顾*也没转过钱。你要谈离婚，就谈我们俩的账。"
           }
         ],
     "firstClaim": "那晚我没去澜桥酒店。",
     "claimStatements": [
       {
-        "id": "child-boundary",
-        "text": "离婚可以谈，孩子你别拿来吓我。",
-        "missLine": "孩子那句我已经说清楚了。你要问酒店，就别绕到孩子身上。"
+        "id": "long-acquaintance",
+        "text": "顾*就是认识久一点，平时聊得多。",
+        "missLine": "认识多久、聊了什么，你可以问。别把没问的先塞进我嘴里。"
       },
       {
         "id": "hotel-denial",
@@ -794,6 +804,11 @@
         "id": "screenshot-dismissal",
         "text": "他就是看见几张截图，自己越想越多。",
         "missLine": "我说的是他看完截图以后自己乱想。你要问这句就问，别替他往下编。"
+      },
+      {
+        "id": "money-denial-early",
+        "text": "我跟顾*也没转过钱。",
+        "missLine": "钱的事我刚说了没有。你想问什么就问清楚。"
       }
     ],
     "evidencePair": [
@@ -834,12 +849,6 @@
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
             "text": "这是你自己发的，‘我到澜桥酒店了’。你刚说没去过，房是谁开的？"
-          },
-          {
-            "speaker": "妻子",
-            "speakerProfileId": "prologue-cafe-wife",
-            "type": "participant",
-            "text": "房是我开的。可我一个人住，他没上去。"
           }
         ]
       },
@@ -880,44 +889,84 @@
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
             "text": "入住人写的是你。你刚说没去过，房是谁开的？"
-          },
-          {
-            "speaker": "妻子",
-            "speakerProfileId": "prologue-cafe-wife",
-            "type": "participant",
-            "text": "房是我开的。可我一个人住，他没上去。"
           }
         ]
       }
     ],
-    "remainingEvidenceLines": [
+    "revisedAccountLines": [
       {
         "speaker": "妻子",
         "speakerProfileId": "prologue-cafe-wife",
         "type": "participant",
-        "text": "两张都摆出来也一样。上面只有我，没有顾*。"
+        "text": "行，房是我开的。那天我跟家里吵完，不想回去，就自己住了一晚。"
       },
       {
-        "speaker": "表哥",
-        "speakerProfileId": "prologue-cafe-cousin",
+        "speaker": "妻子",
+        "speakerProfileId": "prologue-cafe-wife",
         "type": "participant",
-        "text": "到这儿。你们没有他上楼的东西，别往下说。"
+        "text": "顾*知道我到了，但他没上楼。订单上也只有我一个人的名字。"
+      },
+      {
+        "speaker": "妻子",
+        "speakerProfileId": "prologue-cafe-wife",
+        "type": "participant",
+        "text": "钱上也一样。我跟顾*之间没转过钱。"
+      },
+      {
+        "speaker": "妻子",
+        "speakerProfileId": "prologue-cafe-wife",
+        "type": "participant",
+        "text": "你们别把聊天、酒店和钱全拧在一起。"
       }
     ],
-        "moneyClaimLines": [
-          {
-            "speaker": "林旭阳",
-            "speakerProfileId": "host-lin-xuyang",
-            "type": "host",
-        "text": "我没往后说。你刚才说没去，现在改成一个人住。那钱呢？你和顾*之间转过吗？"
-          },
-          {
-            "speaker": "妻子",
-            "speakerProfileId": "prologue-cafe-wife",
-            "type": "participant",
-            "text": "没有。我跟顾*之间没转过钱。"
-          }
-        ],
+    "revisedClaimStatements": [
+      {
+        "id": "room-admission",
+        "text": "房是我开的。",
+        "missLine": "房是我开的，这句我已经认了。你还想问什么？"
+      },
+      {
+        "id": "alone-stay",
+        "text": "那晚我自己住了一晚。",
+        "missLine": "订单上写的是我。你手里的东西也只能看到我。"
+      },
+      {
+        "id": "no-upstairs",
+        "text": "顾*没上楼。",
+        "missLine": "你们手里没有他上楼的东西。别拿猜的来问我。"
+      },
+      {
+        "id": "money-denial",
+        "text": "我跟顾*之间没转过钱。",
+        "correct": true
+      }
+    ],
+    "revisedEvidenceMissLines": {
+      "chat": [
+        {
+          "speaker": "妻子",
+          "speakerProfileId": "prologue-cafe-wife",
+          "type": "participant",
+          "text": "这张图只能说明我说过自己到了酒店。你拿它问转账，问不着。"
+        }
+      ],
+      "hotel": [
+        {
+          "speaker": "妻子",
+          "speakerProfileId": "prologue-cafe-wife",
+          "type": "participant",
+          "text": "订单上只有我的名字。你拿它问转账，也问不着。"
+        }
+      ]
+    },
+    "revisedPresentLeadLines": [
+      {
+        "speaker": "林旭阳",
+        "speakerProfileId": "host-lin-xuyang",
+        "type": "host",
+        "text": "你刚才说得很清楚：你跟顾*之间没转过钱。"
+      }
+    ],
         "moneyClaim": "我跟顾*之间没转过钱。",
         "transferEvidence": {
           "id": "parallel-transfer-ledger",
@@ -990,7 +1039,13 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "那就把原手机、完整聊天和银行流水都留好。她刚才前后说了两套，这些先别丢。"
+            "text": "原手机先留好。她刚才前后说了两套，这个别丢。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "完整聊天和银行流水也别删。"
           },
           {
             "speaker": "男方",
@@ -1002,7 +1057,19 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "把你知道的账户和日期写下来。哪一笔还在转，先找出来。有具体风险，再申请保全。"
+            "text": "把你知道的账户和日期写下来。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "先找哪一笔还在往外转。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "有具体风险，再申请保全。"
           },
           {
             "speaker": "妻子",
@@ -1014,7 +1081,31 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "他请我来，就是想把离婚和家里的账先谈清楚。你肯拿完整流水，我们现在对；不肯，我就按现有材料准备。今天我只帮他把手里的东西理清，不是他的诉讼代理人。"
+            "text": "他请我来，是想先把离婚和家里的账谈清楚。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "你肯拿完整流水，我们现在对。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "你不肯，我就按现有材料准备。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "今天我只帮他理桌上这些。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "我不是他的诉讼代理人。"
           }
         ],
         "parentageBlockLines": [
@@ -1078,7 +1169,7 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "他那部手机你管不了，自己的录像先停。林旭阳，关掉镜头继续谈，还是今天就到这儿？"
+            "text": "表哥，你那边先别录了。林旭阳，我们这边也关。关掉以后继续谈，还是今天就到这儿？"
           }
         ],
         "pressureChoices": [
@@ -1114,7 +1205,7 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "她不肯做，桌上再吵也没用。你以后要向法院申请鉴定，不能只拿一句‘我怀疑’去。"
+            "text": "她不肯做，桌上再吵也没用。你真要去法院申请鉴定，不能只拿一句‘我怀疑’过去，手上得先有能支撑这个怀疑的具体东西。"
           },
           {
             "speaker": "男方",

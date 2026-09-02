@@ -76,21 +76,30 @@ export function cafeProloguePortraitStageHtml({ activeRole = "" } = {}) {
   `;
 }
 
-export function cafeMaterialPromptHtml({ evidencePair = [] } = {}) {
-  const materials = (evidencePair ?? []).map((item) => item.kicker ?? item.title).filter(Boolean);
+export function cafeMaterialPromptHtml({ evidencePair = [], label = "桌面", usedIds = [] } = {}) {
+  const materials = (evidencePair ?? []).filter(Boolean);
+  const used = new Set(usedIds ?? []);
   return `
-    <aside class="cafe-material-prompt" aria-label="桌上材料：${escapeHtml(materials.join("、"))}">
-      <span>桌面</span>
-      <div>${materials.map((item, index) => `<b><i>${String(index + 1).padStart(2, "0")}</i>${escapeHtml(item)}</b>`).join("")}</div>
+    <aside class="cafe-material-prompt" aria-label="桌上材料：${escapeHtml(materials.map((item) => item.kicker ?? item.title).join("、"))}">
+      <span>${escapeHtml(label)}</span>
+      <div>${materials.map((item, index) => `
+        <button class="cafe-material-preview${used.has(item.id) ? " used" : ""}" data-cafe-material-preview="${escapeHtml(item.id)}" type="button" aria-expanded="false">
+          <i>${String(index + 1).padStart(2, "0")}</i>
+          <small>${escapeHtml(item.kicker ?? "材料")}</small>
+          <b>${escapeHtml(item.title ?? "")}</b>
+          <em>${escapeHtml(item.detail ?? "")}</em>
+          <strong>${used.has(item.id) ? "已经出示" : "查看"}</strong>
+        </button>
+      `).join("")}</div>
     </aside>
   `;
 }
 
-export function cafeStatementReplayHtml({ statements = [], selectedId = "", reactionId = "" } = {}) {
+export function cafeStatementReplayHtml({ statements = [], selectedId = "", reactionId = "", label = "回放刚才那段" } = {}) {
   const reaction = (statements ?? []).find((statement) => statement.id === reactionId)?.missLine ?? "";
   return `
     <section class="cafe-statement-board" aria-label="刚才听到的几句话">
-      <header><span>刚才她说过</span></header>
+      <header><span>${escapeHtml(label)}</span></header>
       <div class="cafe-statement-list">
         ${(statements ?? []).map((statement) => `
           <button class="cafe-statement${selectedId === statement.id ? " selected" : ""}" data-cafe-statement-id="${escapeHtml(statement.id)}" type="button" aria-pressed="${selectedId === statement.id}">
@@ -113,10 +122,19 @@ export function cafeEvidencePairHtml(cards = [], selectedId = "", statementText 
             <small>${escapeHtml(card.kicker ?? "材料")}</small>
             <b>${escapeHtml(card.title ?? "")}</b>
             <span>${escapeHtml(card.detail ?? "")}</span>
+            ${(card.rows ?? []).length ? `<div class="cafe-transfer-rows">${card.rows.map((row) => `<span>${escapeHtml(row)}</span>`).join("")}</div>` : ""}
             <em>${selectedId === card.id ? "已拿起" : "拿起"}</em>
           </button>
         `).join("")}
       </div>
+    </section>
+  `;
+}
+
+export function cafeRevisionStatusHtml({ title = "她改口了", note = "第二段说法" } = {}) {
+  return `
+    <section class="cafe-revision-status" aria-label="${escapeHtml(title)}：${escapeHtml(note)}">
+      <i aria-hidden="true"></i><b>${escapeHtml(title)}</b><span>${escapeHtml(note)}</span>
     </section>
   `;
 }

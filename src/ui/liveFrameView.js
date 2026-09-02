@@ -95,7 +95,7 @@ function deckProgressState(segment = 1, total = 1) {
   if (total <= 1 || ratio >= 1) return { label: "这一段问完", note: "来电人的这段话已经说完。" };
   if (segment <= 1) return { label: "刚接进来", note: "来电人还在讲自己的版本。" };
   if (ratio <= 0.55) return { label: "还在往下问", note: "问题已经问开，麦还在继续。" };
-  return { label: "接近收束", note: "剩下的话不多了，先别替她收尾。" };
+  return { label: "接近收束", note: "还剩几句，麦没挂。" };
 }
 
 function deckPatienceState(pressure = {}) {
@@ -178,7 +178,7 @@ export function liveFrameHtml({
   const choiceMarkup = String(choices ?? "");
   const hasChoices = Boolean(choiceMarkup.trim());
   const choicesAreFlow = hasChoices && (choiceMarkup.includes("flow-group") || choiceMarkup.includes("cafe-opening-action"));
-  const materialShortcut = material && !choicesAreFlow
+  const materialShortcut = material && !String(screenClass ?? "").split(/\s+/).includes("dialogue-mode-replay")
     ? `<button class="choice-material-shortcut" data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="选择前查看材料：${escapeHtml(material)}" type="button"><span>查看材料</span><b>${Math.max(1, Number(materialCount) || 1)}</b></button>`
     : "";
   const choiceLayer = hasChoices
@@ -281,7 +281,8 @@ function revealPerformanceHtml(transition = {}) {
     "approval-split": `${art}<div class="reveal-approval-split"><span>活动负责人</span><i></i><span>付款经办人</span></div>`,
     "two-fathers": `<div class="reveal-father-card"><small>亲生父亲</small><b>零工</b></div><div class="reveal-father-link">≠</div><div class="reveal-father-card"><small>另一位“爸爸”</small><b>1,000,000</b></div>`,
     "third-chair": `<div class="reveal-chairs"><i></i><i></i><i class="appears"></i></div>`,
-    "labeled-fiction": `<div class="reveal-father-card"><small>文末</small><b>虚构</b></div><div class="reveal-father-link">≠</div><div class="reveal-father-card"><small>正文</small><b>点名</b></div>`
+    "labeled-fiction": `<div class="reveal-father-card"><small>文末</small><b>虚构</b></div><div class="reveal-father-link">≠</div><div class="reveal-father-card"><small>正文</small><b>点名</b></div>`,
+    "settlement-terms": `<div class="reveal-father-card"><small>文末</small><b>虚构</b></div><div class="reveal-father-link">≠</div><div class="reveal-father-card"><small>和解</small><b>认全文</b></div>`
   }[variant] ?? "";
   return inner ? `<div class="reveal-performance reveal-${escapeHtml(variant)}">${inner}</div>` : "";
 }

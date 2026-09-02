@@ -27,6 +27,9 @@ export function createRecapScreens(ctx) {
     normalizedCafePrologueProgress,
     cafePrologueStatementReady,
     cafePrologueCanPresentEvidence,
+    cafePrologueRevisedStatementReady,
+    cafePrologueCanPresentRevisionEvidence,
+    cafePrologueRevisionEvidenceHit,
     cafePrologueRemainingEvidenceId,
     cafePrologueCanOpenForensic,
     cafePrologueSceneForStep,
@@ -61,6 +64,7 @@ export function createRecapScreens(ctx) {
     cafePrologueHeaderHtml,
     cafePrologueDialogueHtml,
     cafeProloguePortraitStageHtml,
+    cafeRevisionStatusHtml,
     cafeMaterialPromptHtml,
     cafeStatementReplayHtml,
     cafeEvidencePairHtml,
@@ -238,9 +242,10 @@ export function createRecapScreens(ctx) {
     const step = Math.min(5, progress.step);
     const correctStatement = (cafe.claimStatements ?? []).find((statement) => statement.correct)
       ?? (cafe.claimStatements ?? []).find((statement) => statement.id === "hotel-denial");
+    const revisedCorrectStatement = (cafe.revisedClaimStatements ?? []).find((statement) => statement.correct)
+      ?? (cafe.revisedClaimStatements ?? []).find((statement) => statement.id === "money-denial");
     const firstEvidence = (cafe.evidencePair ?? []).find((evidence) => evidence.id === (progress.marks[0] ?? progress.evidenceId));
-    const remainingEvidenceId = cafePrologueRemainingEvidenceId(progress);
-    const remainingEvidence = (cafe.evidencePair ?? []).find((evidence) => evidence.id === remainingEvidenceId);
+    const allEvidence = [...(cafe.evidencePair ?? []), cafe.transferEvidence].filter(Boolean);
     let text = cafePrologueHeaderHtml({ timeline: prologue.timeline, title: prologue.title, subtitle: prologue.subtitle });
     let choices = "";
 
@@ -258,7 +263,8 @@ export function createRecapScreens(ctx) {
           ${cafeStatementReplayHtml({
             statements: cafe.claimStatements,
             selectedId: progress.statementId,
-            reactionId: ""
+            reactionId: "",
+            label: "第一段说法"
           })}
           ${cafeMaterialPromptHtml({ evidencePair: cafe.evidencePair })}
         </section>
@@ -266,18 +272,36 @@ export function createRecapScreens(ctx) {
     } else if (step === 1) {
       choices = flowGroupHtml(`
         ${cafeEvidencePairHtml(cafe.evidencePair ?? [], progress.evidenceId, correctStatement?.text ?? cafe.firstClaim)}
-        <button class="primary" data-cafe-evidence-present type="button"${cafePrologueCanPresentEvidence(progress, correctStatement?.id) ? "" : " disabled"}>把这张材料压上去</button>
+        <button class="primary" data-cafe-evidence-present type="button"${cafePrologueCanPresentEvidence(progress, correctStatement?.id) ? "" : " disabled"}>出示此份材料</button>
       `);
     } else if (step === 2) {
-      text += cafePrologueDialogueHtml(firstEvidence?.hitLines ?? []);
-      choices = flowGroupHtml(`
-        ${cafeSingleEvidenceHtml({ evidence: remainingEvidence, action: "remaining" })}
-      `);
+      text += cafeRevisionStatusHtml({ title: "她改口了", note: "第二段说法" });
+      const revisedReaction = (cafe.revisedClaimStatements ?? []).find((statement) => statement.id === progress.statementReaction)?.missLine;
+      text += cafePrologueDialogueHtml(revisedReaction
+        ? [{ speaker: "妻子", speakerProfileId: "prologue-cafe-wife", type: "participant", text: revisedReaction }]
+        : [...(firstEvidence?.hitLines ?? []), ...(cafe.revisedAccountLines ?? [])]);
+      choices = `
+        <section class="cafe-opening-action cafe-revised-action" aria-label="第二段说法">
+          ${cafeStatementReplayHtml({
+            statements: cafe.revisedClaimStatements,
+            selectedId: progress.statementId,
+            reactionId: "",
+            label: "她刚改口的几句"
+          })}
+          ${cafeMaterialPromptHtml({ evidencePair: allEvidence, usedIds: progress.marks, label: "桌上材料" })}
+        </section>
+      `;
     } else if (step === 3) {
-      text += cafePrologueDialogueHtml([...(remainingEvidence?.remainingLines ?? []), ...(cafe.remainingEvidenceLines ?? []), ...(cafe.moneyClaimLines ?? [])]);
+      text += cafeRevisionStatusHtml({ title: "第二段说法", note: revisedCorrectStatement?.text ?? cafe.moneyClaim });
+      const revisedPresentLines = progress.evidenceReaction
+        ? (cafe.revisedEvidenceMissLines?.[progress.evidenceReaction] ?? [])
+        : (progress.evidenceId ? [] : (cafe.revisedPresentLeadLines ?? []));
+      if (revisedPresentLines.length) {
+        text += cafePrologueDialogueHtml(revisedPresentLines);
+      }
       choices = flowGroupHtml(`
-        ${cafeTransferPresentHtml({ evidence: cafe.transferEvidence, selected: progress.transferSelected })}
-        <button class="primary" data-cafe-present-transfer type="button"${progress.transferSelected ? "" : " disabled"}>拿这张流水问她</button>
+        ${cafeEvidencePairHtml(allEvidence, progress.evidenceId, revisedCorrectStatement?.text ?? cafe.moneyClaim)}
+        <button class="primary" data-cafe-revised-present type="button"${cafePrologueCanPresentRevisionEvidence(progress, revisedCorrectStatement?.id) ? "" : " disabled"}>出示此份材料</button>
       `);
     } else if (step === 4) {
       text += cafePrologueDialogueHtml([
@@ -312,7 +336,7 @@ export function createRecapScreens(ctx) {
       label: step < 5 ? "开播前 · 咖啡厅" : "咖啡厅 · 录像中断",
       chapter: "试玩序章",
       showCaseHud: false,
-      visualHud: cafeProloguePortraitStageHtml({ activeRole: step <= 1 ? "wife" : "" }),
+      visualHud: cafeProloguePortraitStageHtml({ activeRole: [0, 2].includes(step) ? "wife" : "" }),
       backdropClass: prologue.backdropClass ?? "day-cafe",
       screenClass: `cafe-prologue-screen cafe-prologue-step-${step}`,
       text,
@@ -323,26 +347,50 @@ export function createRecapScreens(ctx) {
     document.querySelectorAll("[data-cafe-statement-id]").forEach((button) => {
       button.addEventListener("click", () => {
         const id = button.getAttribute("data-cafe-statement-id") ?? "";
-        const statement = (cafe.claimStatements ?? []).find((item) => item.id === id);
+        const revisedAct = step === 2;
+        const statements = revisedAct ? (cafe.revisedClaimStatements ?? []) : (cafe.claimStatements ?? []);
+        const statement = statements.find((item) => item.id === id);
         if (!statement) return;
         if (statement.correct) {
           state.cafePrologueStatementId = id;
           state.cafePrologueStatementReaction = "";
           state.cafePrologueEvidenceId = "";
-          setCafePrologueStep(state, 1);
+          state.cafePrologueEvidenceReaction = "";
+          state.cafePrologueAct = revisedAct ? 2 : 1;
+          setCafePrologueStep(state, revisedAct ? 3 : 1);
           return;
         }
         state.cafePrologueStatementId = "";
         state.cafePrologueStatementReaction = id;
+        state.cafePrologueEvidenceId = "";
+        state.cafePrologueEvidenceReaction = "";
         saveState();
         render();
+      });
+    });
+    document.querySelectorAll("[data-cafe-material-preview]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        document.querySelectorAll("[data-cafe-material-preview]").forEach((item) => {
+          item.classList.remove("inspected");
+          item.setAttribute("aria-expanded", "false");
+          const action = item.querySelector("strong");
+          if (action && !item.classList.contains("used")) action.textContent = "查看";
+        });
+        if (expanded) return;
+        button.classList.add("inspected");
+        button.setAttribute("aria-expanded", "true");
+        const action = button.querySelector("strong");
+        if (action && !button.classList.contains("used")) action.textContent = "已查看";
       });
     });
     document.querySelectorAll("[data-cafe-evidence-select]").forEach((button) => {
       button.addEventListener("click", () => {
         const id = button.getAttribute("data-cafe-evidence-select") ?? "";
-        if (!(cafe.evidencePair ?? []).some((item) => item.id === id)) return;
+        const availableEvidence = step === 3 ? allEvidence : (cafe.evidencePair ?? []);
+        if (!availableEvidence.some((item) => item.id === id)) return;
         state.cafePrologueEvidenceId = id;
+        state.cafePrologueEvidenceReaction = "";
         saveState();
         render();
       });
@@ -351,28 +399,26 @@ export function createRecapScreens(ctx) {
       const current = normalizedCafePrologueProgress(state);
       if (!cafePrologueCanPresentEvidence(current, correctStatement?.id)) return;
       state.cafePrologueMarks = [current.evidenceId];
+      state.cafePrologueAct = 2;
+      state.cafePrologueStatementId = "";
+      state.cafePrologueStatementReaction = "";
+      state.cafePrologueEvidenceId = "";
+      state.cafePrologueEvidenceReaction = "";
       setCafePrologueStep(state, 2);
     });
-    bind("[data-cafe-present-remaining]", () => {
+    bind("[data-cafe-revised-present]", () => {
       const current = normalizedCafePrologueProgress(state);
-      const remainingId = cafePrologueRemainingEvidenceId(current);
-      if (!remainingId) return;
-      state.cafePrologueMarks = [...new Set([...(state.cafePrologueMarks ?? []), remainingId])];
-      setCafePrologueStep(state, 3);
-    });
-    bind("[data-cafe-transfer-select]", (event) => {
+      if (!cafePrologueCanPresentRevisionEvidence(current, revisedCorrectStatement?.id)) return;
+      if (!cafePrologueRevisionEvidenceHit(current, cafe.transferEvidence?.id)) {
+        state.cafePrologueEvidenceReaction = current.evidenceId;
+        state.cafePrologueEvidenceId = "";
+        saveState();
+        render();
+        return;
+      }
       state.cafePrologueTransferSelected = true;
-      saveState();
-      const button = event.currentTarget;
-      button.classList.add("selected");
-      button.setAttribute("aria-pressed", "true");
-      const label = button.querySelector("em");
-      if (label) label.textContent = "已拿起";
-      const presentButton = document.querySelector("[data-cafe-present-transfer]");
-      if (presentButton) presentButton.disabled = false;
-    });
-    bind("[data-cafe-present-transfer]", () => {
-      if (state.cafePrologueTransferSelected !== true) return;
+      state.cafePrologueEvidenceReaction = "";
+      state.cafePrologueMarks = [...new Set([...(state.cafePrologueMarks ?? []), current.evidenceId])];
       setCafePrologueStep(state, 4);
     });
     bind("[data-cafe-legal-brief]", () => {
@@ -411,10 +457,7 @@ export function createRecapScreens(ctx) {
       const route = routes.find((item) => item.id === progress.order[0]) ?? routes[0];
       text += cafeInvestigationResultHtml(route, "今晚先查");
       text += cafePrologueDialogueHtml(route?.handoffLines ?? []);
-      choices = flowGroupHtml(`<button class="primary" data-cafe-enter-night type="button"${cafePrologueCanOpenForensic(progress) ? "" : " disabled"}>回直播间开播</button>`, {
-        label: route?.title ?? "麦外核对",
-        note: "这条先留在麦外，回告要等几天。"
-      });
+      choices = flowGroupHtml(`<button class="primary" data-cafe-enter-night type="button"${cafePrologueCanOpenForensic(progress) ? "" : " disabled"}>回直播间开播</button>`);
     }
 
     frame({

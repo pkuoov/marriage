@@ -277,14 +277,16 @@ function renderScript() {
 
   if (quickCasePackets.length) {
     add("# 独立模式：直播快案", "");
-    add("> 快案不属于四幕主线。每听完一个局部段落，玩家判断当前已经出现的问题；当面对质逼出的改口，再带出下一段。", "");
+    add("> 快案不属于四幕主线。来电案由玩家按住原话追问；单人口播案由玩家在每段材料后选择主播先评价的成立角度。", "");
     for (const packet of quickCasePackets) {
       add(`## ${packet.label}：${packet.title}`, "");
       add(`- **开场：** ${packet.premise}`, "");
       renderNode(lines, {
+        format: packet.format,
         whyTonight: packet.whyTonight,
         helpRequest: packet.helpRequest,
         callerStake: packet.callerStake,
+        sourceStake: packet.sourceStake,
         selfServingOmission: packet.selfServingOmission,
         coverStrategy: packet.coverStrategy,
         caseLedger: packet.caseLedger,
@@ -370,21 +372,25 @@ function renderReadableQuickRounds(lines, packet) {
       if (!entry) continue;
       const { turn, index } = entry;
       lines.push(`##### 第 ${index + 1} 组（${turn.id}）`, "");
-      lines.push(`**林旭阳：** ${turn.host}`, "", `**来电人：** ${turn.caller}`, "");
+      if (packet.format === "solo-commentary") {
+        lines.push(`**林旭阳：** ${turn.host}`, "", `【上屏长文】${turn.source}`, "");
+      } else {
+        lines.push(`**林旭阳：** ${turn.host}`, "", `**来电人：** ${turn.caller}`, "");
+      }
       if (turn.ambientComments?.length) lines.push(`【实时评论】${turn.ambientComments.join("／")}`, "");
     }
 
-    lines.push("#### 本轮玩家可选的问题方向", "");
+    lines.push(packet.format === "solo-commentary" ? "#### 本段玩家可选的点评切口" : "#### 本轮玩家可选的问题方向", "");
     for (const optionId of round.issueOptionIds ?? []) {
       const option = optionsById.get(optionId);
       if (!option) continue;
-      lines.push(`- **${option.id}**：${option.label}${option.confrontationId ? ` → 对质 ${option.confrontationId}` : " → 不触发对质"}`, "");
+      lines.push(`- **${option.id}**：${option.label}${option.confrontationId ? ` → ${packet.format === "solo-commentary" ? "点评" : "对质"} ${option.confrontationId}` : " → 不触发对质"}`, "");
       if (option.correct === false && option.missReaction?.text) {
         lines.push(`  - 【错方向后的反应】**${option.missReaction.role === "host" ? "林旭阳" : "来电人"}：** ${option.missReaction.text}`, "");
       }
     }
 
-    lines.push("#### 本轮当面对质", "");
+    lines.push(packet.format === "solo-commentary" ? "#### 本段主播点评" : "#### 本轮当面对质", "");
     for (const confrontationId of round.requiredConfrontationIds ?? []) {
       const confrontation = confrontationsById.get(confrontationId);
       if (!confrontation) continue;
@@ -1046,13 +1052,14 @@ function renderCafePrologueStory(lines, prologue, { includeAlternatives = true, 
     lines.push(`# ${prologue.timeline ?? "开播前 · 傍晚"}｜${prologue.title ?? "序章"}`, "");
     if (prologue.subtitle) lines.push(`【${prologue.subtitle}】`, "");
     for (const line of cafe.openingLines ?? []) renderDirectorSpoken(lines, line);
-    lines.push(`【${actionActor}操作：把聊天定位和酒店订单的时间并到一起。】`, "");
+    lines.push(`【${actionActor}操作：从第一段说法里点中“${cafe.firstClaim ?? "那晚我没去酒店"}”，再从桌上选一张材料出示。】`, "");
     for (const card of cafe.evidencePair ?? []) lines.push(`- ${card.kicker ?? "材料"}｜${card.title ?? ""}：${card.detail ?? ""}`);
     if (cafe.evidencePair?.length) lines.push("");
-    for (const line of cafe.pairHitLines ?? []) renderDirectorSpoken(lines, line);
-    for (const line of cafe.moneyClaimLines ?? []) renderDirectorSpoken(lines, line);
+    for (const line of cafe.evidencePair?.[0]?.hitLines ?? []) renderDirectorSpoken(lines, line);
+    for (const line of cafe.revisedAccountLines ?? []) renderDirectorSpoken(lines, line);
+    lines.push(`【${actionActor}操作：等她把第二段说法讲完，回放“${cafe.moneyClaim ?? "我跟顾*之间没转过钱"}”，再选材料。】`, "");
     if (cafe.transferEvidence) {
-      lines.push(`【${actionActor}操作：打开${cafe.transferEvidence.title ?? "转账流水"}，拿这张流水追问。】`, "");
+      lines.push(`【${actionActor}操作：出示${cafe.transferEvidence.title ?? "转账流水"}。】`, "");
       lines.push(`【材料】${cafe.transferEvidence.detail ?? ""}`, "");
       for (const row of cafe.transferEvidence.rows ?? []) lines.push(`- ${row}`);
       if (cafe.transferEvidence.rows?.length) lines.push("");
@@ -1699,7 +1706,7 @@ function assertSourceCompleteness(markdown, sources) {
       Object.entries(value).forEach(([key, entry]) => {
         if (key === "answer" && Array.isArray(value.lines) && value.lines.length) return;
         if (key === "helperHint" && !vBroPlayerVisible) return;
-        if (key === "callerIntentProfile") return;
+        if (["callerIntentProfile", "sourceIntentProfile"].includes(key)) return;
         if (key === "rageBaitContract") return;
         if (["src", "artSrc", "alt", "artAlt"].includes(key)) return;
         visit(entry, `${path}.${key}`);
