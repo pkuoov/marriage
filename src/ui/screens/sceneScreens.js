@@ -298,7 +298,10 @@ export function createSceneScreens(ctx) {
       screenClass: `dialogue-mode-testimony testimony-present-${pressure.guarded ? "guarded" : "open"}`,
       controlMode: "interrupt",
       pressureOverride: pressure,
-      musicPhase: context.wallProgress.act > 1 ? "pursuit" : "allegro"
+      musicPhase: context.wallProgress.act > 1 ? "pursuit" : "allegro",
+      pixelTransition: context.wallProgress.act > 1 && consumePixelTransition(`${caseKey(brief)}:testimony:${context.scene.id}:act2`)
+        ? { kind: "phase", visualVariant: "listen", eyebrow: "她换了一套说法", label: "改口陈述" }
+        : undefined
     });
     bind("[data-testimony-press]", (event) => updateTestimonyPress(brief, event.currentTarget?.dataset.testimonyPress ?? ""));
     bind("[data-testimony-present]", (event) => updateSoftPresent(brief, event.currentTarget?.dataset.testimonyPresent ?? ""));
@@ -848,7 +851,7 @@ export function createSceneScreens(ctx) {
     const key = `${caseKey(brief)}:statement:${scene?.id ?? sceneIndex}:${phase}`;
     if (!consumePixelTransition(key)) return null;
     return phase === "review"
-      ? { kind: "phase", visualVariant: "review", eyebrow: "回到刚才的话", label: "集中回放" }
+      ? { kind: "phase", visualVariant: "review", eyebrow: "回到刚才的话", label: "逐句追问" }
       : { kind: "phase", visualVariant: "listen", eyebrow: "这一段先别打断", label: "来电人陈述" };
   }
 

@@ -1886,7 +1886,8 @@
     "night-b": 4
   },
   "statementStages": [
-    { "id": "tony-night-a-account", "sceneIndexes": [0, 1, 2], "minimumReviewCount": 3 },
+    { "id": "tony-night-a-account", "sceneIndexes": [0, 1], "minimumReviewCount": 2 },
+    { "id": "tony-night-a-message", "sceneIndexes": [2], "minimumReviewCount": 2 },
     { "id": "tony-night-a-rumor", "sceneIndexes": [3], "minimumReviewCount": 2 },
     { "id": "tony-night-b-account", "sceneIndexes": [4, 5], "minimumReviewCount": 2 }
   ],

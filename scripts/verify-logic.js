@@ -58,7 +58,7 @@ import { storyInterludeChoicesHtml, storyInterludeHtml, storyInterludeStageHtml,
 import { caseBridgeChoicesHtml, caseBridgeHtml, caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "../src/ui/caseTransitionView.js";
 import { careChoiceContinueHtml, careChoiceHtml } from "../src/ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "../src/ui/epilogueUnreadView.js";
-import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeRevisionStatusHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "../src/ui/prologueCafeView.js";
+import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialDetailModalHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeRevisionStatusHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "../src/ui/prologueCafeView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "../src/ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "../src/ui/titleView.js";
 import { quickDetectiveActiveLine, quickDetectiveCaseSelectHtml, quickDetectiveConfrontationHtml, quickDetectiveIntroHtml, quickDetectiveIssueSelectionHtml, quickDetectiveMissReactionHtml, quickDetectivePatienceLostHtml, quickDetectiveShouldAutoContinue, quickDetectiveStageHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "../src/ui/quickDetectiveView.js";
@@ -293,8 +293,10 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
   assertEqual(emptyPressure.crowd, "散了", "只有耐心耗尽后才允许出现直播间反应");
   const listenTransition = pixelTransitionHtml({ kind: "phase", visualVariant: "listen", eyebrow: "先听她说完", label: "来电人陈述" });
   const reviewTransition = pixelTransitionHtml({ kind: "phase", visualVariant: "review", eyebrow: "回到刚才那段", label: "逐句追问" });
+  const revisionTransition = pixelTransitionHtml({ kind: "phase", visualVariant: "listen", eyebrow: "她换了一套说法", label: "改口陈述" });
   assert(listenTransition.includes('data-transition-kind="phase"') && listenTransition.includes("来电人陈述"), "进入陈述必须出现独立全屏阶段提示");
   assert(reviewTransition.includes('data-transition-variant="review"') && reviewTransition.includes("逐句追问"), "进入逐句追问必须出现独立全屏阶段提示");
+  assert(revisionTransition.includes("改口陈述"), "整套说法被打穿后必须用独立过场进入改口陈述");
   assertEqual(
     statementOptionForLine([
       { id: "short", sourceAnchor: "他三十五" },
@@ -830,13 +832,13 @@ test("PROLOGUE-CAFE-001", "the opening cafe loop gates statement and evidence, p
     cafeProloguePressureChoice: 7
   });
   assertEqual(migrated.cafePrologueStep, 7, "旧版已进入第二条路线的存档必须迁到新版单路线完成态");
-  assertEqual(migrated.cafePrologueVersion, 3, "序章新增字段必须通过 migrateState 升到第三版");
+  assertEqual(migrated.cafePrologueVersion, 4, "序章新增字段必须通过 migrateState 升到第四版");
   assertEqual(migrated.cafePrologueAct, 2, "旧版已走过第一次出示的存档必须迁到第二段说法之后");
   assertEqual(migrated.cafePrologueStatementId, "hotel-denial", "旧版已过材料桌的存档不得卡回原句门禁");
   assertEqual(migrated.cafePrologueMarks.join("|"), "chat", "序章材料标记必须安全迁移");
   assertEqual(migrated.cafePrologueOrder.join("|"), "toy", "序章路线顺序必须安全迁移");
   assertEqual(migrated.cafePrologueLegalBriefSeen, false, "非法法律诉求进度必须回落为未读");
-  assertEqual(migrated.cafeProloguePressureChoice, "", "非法镜头选择必须回落为空");
+  assertEqual(migrated.cafeProloguePressureChoice, "camera-off", "旧版已离开咖啡厅的非法镜头选择必须迁到唯一有效的关录像路径");
 });
 
 test("PROLOGUE-CAFE-002", "the cafe prologue UI keeps the player's evidence actions and a non-verdict ending visible", () => {
@@ -850,7 +852,13 @@ test("PROLOGUE-CAFE-002", "the cafe prologue UI keeps the player's evidence acti
   }
   const prompt = cafeMaterialPromptHtml({ evidencePair: [{ id: "chat", kicker: "聊天截图", detail: "21:18" }, { id: "hotel", kicker: "酒店订单", detail: "入住人：妻子本人" }] });
   assertIncludes(prompt, "桌面", "材料名称必须进入场景物件提示而非人物对白");
-  assertIncludes(prompt, "data-cafe-material-preview=\"hotel\"", "右侧桌面材料必须可以点击查看，不能只放一行小字");
+  assertIncludes(prompt, "data-cafe-material-open=\"hotel\"", "右侧桌面材料必须可以打开原件，不能只放一行小字");
+  const materialModal = cafeMaterialDetailModalHtml([
+    { id: "chat", documentKind: "chat", title: "联系人：顾*", detail: "21:18" },
+    { id: "hotel", documentKind: "hotel", title: "澜桥酒店", detail: "入住人：妻子本人" }
+  ]);
+  assertIncludes(materialModal, "material-chat", "聊天截图必须有可读的聊天原件视图");
+  assertIncludes(materialModal, "入住人", "酒店订单必须展开到可读字段");
   assertIncludes(prompt, "入住人：妻子本人", "酒店材料入口必须直接显示可读的原始入住字段");
   assert(!prompt.includes("遮名银行流水"), "酒店对质结束前桌面不得提前亮出第三张流水");
   const statements = cafeStatementReplayHtml({ statements: [
@@ -865,7 +873,7 @@ test("PROLOGUE-CAFE-002", "the cafe prologue UI keeps the player's evidence acti
   ], "chat", "我没去澜桥酒店。");
   assertIncludes(pair, "data-cafe-evidence-select=\"chat\"", "两张材料必须允许玩家一次拿起一张");
   assertIncludes(pair, "aria-pressed=\"true\"", "已选材料必须呈现可访问的选中状态");
-  assertIncludes(pair, "已拿起", "点击材料后必须有当场可见的选择反馈");
+  assertIncludes(pair, "已选择", "点击材料后必须有当场可见的选择反馈");
   assert(!pair.includes("依次点击") && !pair.includes("教学 ·"), "正式循环不得继续伪装成两页签收教学");
   assertIncludes(cafeRevisionStatusHtml(), "她改口了", "第一次命中后必须明确进入第二段完整说法");
   const revisedPair = cafeEvidencePairHtml([

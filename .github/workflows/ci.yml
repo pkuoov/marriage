@@ -28,4 +28,9 @@ jobs:
       # Local work can use test:local's single-route smoke. CI intentionally
       # keeps the complete smoke:browser matrix for flow and rendering drift.
       - name: Run pull-request behavior gate
+        env:
+          # Hosted runners can be slower than local machines. Keep every
+          # assertion, but give each browser action and route enough headroom.
+          SMOKE_ACTION_TIMEOUT_MS: 15000
+          SMOKE_STEP_TIMEOUT_MS: 180000
         run: npm run test:pr

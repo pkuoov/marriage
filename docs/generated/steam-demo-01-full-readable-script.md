@@ -482,7 +482,7 @@
 
 ###### 5. opening Lines 5
 
-**林旭阳：** 桌边这台先录着，省得回头谁说谁没说过。真要剪进节目，我会先给你们看。
+**林旭阳：** 先用桌边架好的手机录，省得后面谁说了又不承认。
 
 #### 舞台标记
 
@@ -491,7 +491,7 @@
 
 ###### 6. opening Lines 6
 
-**妻子：** 我只答应把话说清楚，没答应你拿孩子做节目。离婚可以谈，孩子你别拿来吓我。
+**妻子：** 我只答应把话说清楚，没答应拿孩子做节目。离婚可以谈，孩子的事没什么好谈的。
 
 #### 舞台标记
 
@@ -500,7 +500,7 @@
 
 ###### 7. opening Lines 7
 
-**赵律师：** 你们先别吵孩子。孩子不拍，你们的手机也不拍。
+**赵律师：** 孩子的事后面再说。你们愿意的话，你们也可以拍。
 
 #### 舞台标记
 
@@ -509,7 +509,7 @@
 
 ###### 8. opening Lines 8
 
-**表哥：** 那就把镜头往桌上压。别拍到她的脸。
+**表哥：** 那就把镜头挪开，只录声音。
 
 #### 舞台标记
 
@@ -518,32 +518,34 @@
 
 ###### 9. opening Lines 9
 
-**林旭阳：** 行，只拍桌面。你们没看过、没点头的，我不会放出去。
+**林旭阳：** 行，不拍脸。后续剪完的片子也会给你们看，你们不点头，我们也不会发。
 
 #### 舞台标记
 
 - **声纹卡 ID：** host-lin-xuyang
 - **表现类型：** host
 
-###### 10. opening Lines 10
+##### initial Account Lines
 
-**妻子：** 那我把话一次说完。顾*就是认识久一点，平时聊得多。
+###### 1. initial Account Lines 1
 
-#### 舞台标记
-
-- **声纹卡 ID：** prologue-cafe-wife
-- **表现类型：** participant
-
-###### 11. opening Lines 11
-
-**妻子：** 那晚我没去澜桥酒店。
+**妻子：** 那我把话一次性说完。我和顾*就是认识得久一点，平时聊得多，没有其他关系。
 
 #### 舞台标记
 
 - **声纹卡 ID：** prologue-cafe-wife
 - **表现类型：** participant
 
-###### 12. opening Lines 12
+###### 2. initial Account Lines 2
+
+**妻子：** 我也没偷着去澜桥酒店。
+
+#### 舞台标记
+
+- **声纹卡 ID：** prologue-cafe-wife
+- **表现类型：** participant
+
+###### 3. initial Account Lines 3
 
 **妻子：** 他就是看见几张截图，自己越想越多。
 
@@ -552,7 +554,7 @@
 - **声纹卡 ID：** prologue-cafe-wife
 - **表现类型：** participant
 
-###### 13. opening Lines 13
+###### 4. initial Account Lines 4
 
 **妻子：** 我跟顾*也没转过钱。你要谈离婚，就谈我们俩的账。
 
@@ -561,20 +563,20 @@
 - **声纹卡 ID：** prologue-cafe-wife
 - **表现类型：** participant
 
-- **first Claim：** 那晚我没去澜桥酒店。
+- **first Claim：** 我也没偷着去澜桥酒店。
 ##### claim Statements
 
 ###### 1. long acquaintance
 
 - **内部 ID：** long-acquaintance
-顾*就是认识久一点，平时聊得多。
+我和顾*就是认识得久一点，平时聊得多，没有其他关系。
 
 - **miss Line：** 认识多久、聊了什么，你可以问。别把没问的先塞进我嘴里。
 
 ###### 2. hotel denial
 
 - **内部 ID：** hotel-denial
-我没去澜桥酒店。
+我也没偷着去澜桥酒店。
 
 - **是否核心项：** true
 
@@ -597,6 +599,7 @@
 ###### 1. 联系人：顾*
 
 - **内部 ID：** chat
+- **document Kind：** chat
 - **kicker：** 聊天截图
 - **标题：** 联系人：顾*
 - **detail：** 妻子发送｜21:18｜“我到澜桥酒店了”
@@ -652,6 +655,7 @@
 ###### 2. 澜桥酒店
 
 - **内部 ID：** hotel
+- **document Kind：** hotel
 - **kicker：** 酒店订单
 - **标题：** 澜桥酒店
 - **detail：** 21:24｜入住人：妻子本人｜大床房 1 间
@@ -708,7 +712,7 @@
 
 ###### 1. revised Account Lines 1
 
-**妻子：** 行，房是我开的。那天我跟家里吵完，不想回去，就自己住了一晚。
+**妻子：** 那天是我自己住的酒店。我跟家里吵完，不想回去，就在那里住了一晚。
 
 #### 舞台标记
 
@@ -717,7 +721,7 @@
 
 ###### 2. revised Account Lines 2
 
-**妻子：** 顾*知道我到了，但他没上楼。订单上也只有我一个人的名字。
+**妻子：** 顾*跟这件事没关系，他没有上去。订单上也只有我一个人的名字。
 
 #### 舞台标记
 
@@ -747,21 +751,21 @@
 ###### 1. room admission
 
 - **内部 ID：** room-admission
-房是我开的。
+那天是我自己住的酒店。
 
-- **miss Line：** 房是我开的，这句我已经认了。你还想问什么？
+- **miss Line：** 那天是我自己住的酒店，这句我已经说了。你还想问什么？
 
 ###### 2. alone stay
 
 - **内部 ID：** alone-stay
-那晚我自己住了一晚。
+我在那里住了一晚。
 
 - **miss Line：** 订单上写的是我。你手里的东西也只能看到我。
 
 ###### 3. no upstairs
 
 - **内部 ID：** no-upstairs
-顾*没上楼。
+顾*没有上去。
 
 - **miss Line：** 你们手里没有他上楼的东西。别拿猜的来问我。
 
@@ -811,6 +815,7 @@
 ##### transfer Evidence
 
 - **内部 ID：** parallel-transfer-ledger
+- **document Kind：** ledger
 - **kicker：** 遮名银行流水
 - **标题：** 三笔双向转账
 - **detail：** 公开副本遮去金额，保留日期、方向和交易对手。
@@ -894,7 +899,7 @@
 
 ###### 2. legal Claim Lines 2
 
-**赵律师：** 原手机先留好。她刚才前后说了两套，这个别丢。
+**赵律师：** 她说的自己都对不上了。聊下一个问题吧。
 
 #### 舞台标记
 
@@ -903,15 +908,6 @@
 
 ###### 3. legal Claim Lines 3
 
-**赵律师：** 完整聊天和银行流水也别删。
-
-#### 舞台标记
-
-- **声纹卡 ID：** zhao-lawyer
-- **表现类型：** advisor
-
-###### 4. legal Claim Lines 4
-
 **男方：** 这两个月，她一直不让我看账户。我怕她还会往外转。
 
 #### 舞台标记
@@ -919,34 +915,16 @@
 - **声纹卡 ID：** prologue-cafe-husband
 - **表现类型：** participant
 
+###### 4. legal Claim Lines 4
+
+**赵律师：** 具体证据的事，我们回头再说。
+
+#### 舞台标记
+
+- **声纹卡 ID：** zhao-lawyer
+- **表现类型：** advisor
+
 ###### 5. legal Claim Lines 5
-
-**赵律师：** 把你知道的账户和日期写下来。
-
-#### 舞台标记
-
-- **声纹卡 ID：** zhao-lawyer
-- **表现类型：** advisor
-
-###### 6. legal Claim Lines 6
-
-**赵律师：** 先找哪一笔还在往外转。
-
-#### 舞台标记
-
-- **声纹卡 ID：** zhao-lawyer
-- **表现类型：** advisor
-
-###### 7. legal Claim Lines 7
-
-**赵律师：** 有具体风险，再申请保全。
-
-#### 舞台标记
-
-- **声纹卡 ID：** zhao-lawyer
-- **表现类型：** advisor
-
-###### 8. legal Claim Lines 8
 
 **妻子：** 你们今天是来劝我们谈，还是来帮他告我？
 
@@ -955,7 +933,7 @@
 - **声纹卡 ID：** prologue-cafe-wife
 - **表现类型：** participant
 
-###### 9. legal Claim Lines 9
+###### 6. legal Claim Lines 6
 
 **赵律师：** 他请我来，是想先把离婚和家里的账谈清楚。
 
@@ -964,7 +942,7 @@
 - **声纹卡 ID：** zhao-lawyer
 - **表现类型：** advisor
 
-###### 10. legal Claim Lines 10
+###### 7. legal Claim Lines 7
 
 **赵律师：** 你肯拿完整流水，我们现在对。
 
@@ -973,7 +951,7 @@
 - **声纹卡 ID：** zhao-lawyer
 - **表现类型：** advisor
 
-###### 11. legal Claim Lines 11
+###### 8. legal Claim Lines 8
 
 **赵律师：** 你不肯，我就按现有材料准备。
 
@@ -982,18 +960,18 @@
 - **声纹卡 ID：** zhao-lawyer
 - **表现类型：** advisor
 
-###### 12. legal Claim Lines 12
+###### 9. legal Claim Lines 9
 
-**赵律师：** 今天我只帮他理桌上这些。
+**赵律师：** 今天我们只聊现有的这些事。
 
 #### 舞台标记
 
 - **声纹卡 ID：** zhao-lawyer
 - **表现类型：** advisor
 
-###### 13. legal Claim Lines 13
+###### 10. legal Claim Lines 10
 
-**赵律师：** 我不是他的诉讼代理人。
+**赵律师：** 我们还没到起诉离婚的程度。
 
 #### 舞台标记
 
@@ -1022,7 +1000,7 @@
 
 ###### 3. parentage Block Lines 3
 
-**男方：** 我问了半年，你每次都拿孩子堵我。你要说是我的，就跟我去做鉴定。敢不敢？
+**男方：** 我问了半年，你每次都拿些乱七八糟的理由堵我。你要说是我的，就跟我去做鉴定。敢不敢？
 
 #### 舞台标记
 
@@ -1087,7 +1065,7 @@
 
 ###### 4. camera Break Lines 4
 
-**赵律师：** 表哥，你那边先别录了。林旭阳，我们这边也关。关掉以后继续谈，还是今天就到这儿？
+**赵律师：** 表哥，你那边先别录了。林旭阳，我们这边也关。还要谈就继续谈。
 
 #### 舞台标记
 
@@ -1096,19 +1074,12 @@
 
 ##### pressure Choices
 
-###### 1. 关录像，继续谈
+###### 1. 继续谈
 
 - **内部 ID：** camera-off
-- **标签：** 关录像，继续谈
+- **标签：** 继续谈
 - **说明：** 桌边不再录，剩下的条件不公开。
 - **echo：** 你关掉桌边录像。后面的争吵不再录，已经拍下的片段暂不剪、不发。剩下的条件改为私下谈。
-
-###### 2. 结束这次谈判
-
-- **内部 ID：** stop-stream
-- **标签：** 结束这次谈判
-- **说明：** 录像到此为止，双方带走材料清单。
-- **echo：** 你结束了这次录像和谈判。已经拍下的片段暂不剪、不发，双方各自带走一份材料清单。
 
 #### aftermath
 
@@ -1125,7 +1096,7 @@
 
 ###### 2. opening Lines 2
 
-**妻子（语音）：** 酒店那天我自己住，三笔钱是借的。你们敢剪成别的，我就告。孩子的东西谁也别动。
+**妻子（语音）：** 那天是我自己住的酒店，三笔钱是借的。你们敢剪成别的，我就闹给你们看。孩子的事没得商量。
 
 #### 舞台标记
 
@@ -1152,7 +1123,7 @@
 
 ###### 5. opening Lines 5
 
-**赵律师：** 先做个人委托初检，这是现在最可行的。你先联系正规机构，问家里孩子留下的旧物能不能用。她已经说谁也别动，晚了东西可能就没了。
+**赵律师：** 你先去问我给你的那家机构。他们让你怎么留，你就怎么留。说不定她明天就把孩子的东西都带走。
 
 #### 舞台标记
 
@@ -1170,7 +1141,7 @@
 
 ###### 7. opening Lines 7
 
-**林旭阳：** 现在回。机构让你怎么留，你就怎么留。别追她，也别碰孩子。
+**林旭阳：** 那你现在回家。别私下找她理论，也别碰孩子。
 
 #### 舞台标记
 
@@ -1518,7 +1489,7 @@
 
 - **location：** cafePrologue.cafe.pressureChoices
 - **trigger：** player-input
-- **payoff：** 玩家亲手关掉桌边录像继续谈，或直接结束这次谈判；未确认的片段不进入剪辑和发布。
+- **payoff：** 玩家亲手关掉桌边录像，随后继续谈；未确认的片段不进入剪辑和发布。
 - **holding Limit：** 同一屏
 
 ###### principal
@@ -4604,11 +4575,19 @@
 
 - 0
 - 1
+
+- **minimum Review Count：** 2
+
+#### 2. credit night a living
+
+- **内部 ID：** credit-night-a-living
+##### scene Indexes
+
 - 2
 
-- **minimum Review Count：** 3
+- **minimum Review Count：** 2
 
-#### 2. credit night b anniversary
+#### 3. credit night b anniversary
 
 - **内部 ID：** credit-night-b-anniversary
 ##### scene Indexes
@@ -4617,7 +4596,7 @@
 
 - **minimum Review Count：** 2
 
-#### 3. credit night b benefit
+#### 4. credit night b benefit
 
 - **内部 ID：** credit-night-b-benefit
 ##### scene Indexes
@@ -10134,11 +10113,19 @@
 
 - 0
 - 1
+
+- **minimum Review Count：** 2
+
+#### 2. profile night a price
+
+- **内部 ID：** profile-night-a-price
+##### scene Indexes
+
 - 2
 
-- **minimum Review Count：** 3
+- **minimum Review Count：** 2
 
-#### 2. profile night b card account
+#### 3. profile night b card account
 
 - **内部 ID：** profile-night-b-card-account
 ##### scene Indexes
@@ -12947,11 +12934,19 @@
 
 - 0
 - 1
+
+- **minimum Review Count：** 2
+
+#### 2. tony night a message
+
+- **内部 ID：** tony-night-a-message
+##### scene Indexes
+
 - 2
 
-- **minimum Review Count：** 3
+- **minimum Review Count：** 2
 
-#### 2. tony night a rumor
+#### 3. tony night a rumor
 
 - **内部 ID：** tony-night-a-rumor
 ##### scene Indexes
@@ -12960,7 +12955,7 @@
 
 - **minimum Review Count：** 2
 
-#### 3. tony night b account
+#### 4. tony night b account
 
 - **内部 ID：** tony-night-b-account
 ##### scene Indexes

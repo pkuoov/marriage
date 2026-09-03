@@ -2416,43 +2416,45 @@ export const CONTENT_PACKS = {
               "speaker": "林旭阳",
               "speakerProfileId": "host-lin-xuyang",
               "type": "host",
-              "text": "桌边这台先录着，省得回头谁说谁没说过。真要剪进节目，我会先给你们看。"
+              "text": "先用桌边架好的手机录，省得后面谁说了又不承认。"
             },
             {
               "speaker": "妻子",
               "speakerProfileId": "prologue-cafe-wife",
               "type": "participant",
-              "text": "我只答应把话说清楚，没答应你拿孩子做节目。离婚可以谈，孩子你别拿来吓我。"
+              "text": "我只答应把话说清楚，没答应拿孩子做节目。离婚可以谈，孩子的事没什么好谈的。"
             },
             {
               "speaker": "赵律师",
               "speakerProfileId": "zhao-lawyer",
               "type": "advisor",
-              "text": "你们先别吵孩子。孩子不拍，你们的手机也不拍。"
+              "text": "孩子的事后面再说。你们愿意的话，你们也可以拍。"
             },
             {
               "speaker": "表哥",
               "speakerProfileId": "prologue-cafe-cousin",
               "type": "participant",
-              "text": "那就把镜头往桌上压。别拍到她的脸。"
+              "text": "那就把镜头挪开，只录声音。"
             },
             {
               "speaker": "林旭阳",
               "speakerProfileId": "host-lin-xuyang",
               "type": "host",
-              "text": "行，只拍桌面。你们没看过、没点头的，我不会放出去。"
+              "text": "行，不拍脸。后续剪完的片子也会给你们看，你们不点头，我们也不会发。"
+            }
+          ],
+          "initialAccountLines": [
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "那我把话一次性说完。我和顾*就是认识得久一点，平时聊得多，没有其他关系。"
             },
             {
               "speaker": "妻子",
               "speakerProfileId": "prologue-cafe-wife",
               "type": "participant",
-              "text": "那我把话一次说完。顾*就是认识久一点，平时聊得多。"
-            },
-            {
-              "speaker": "妻子",
-              "speakerProfileId": "prologue-cafe-wife",
-              "type": "participant",
-              "text": "那晚我没去澜桥酒店。"
+              "text": "我也没偷着去澜桥酒店。"
             },
             {
               "speaker": "妻子",
@@ -2467,16 +2469,16 @@ export const CONTENT_PACKS = {
               "text": "我跟顾*也没转过钱。你要谈离婚，就谈我们俩的账。"
             }
           ],
-          "firstClaim": "那晚我没去澜桥酒店。",
+          "firstClaim": "我也没偷着去澜桥酒店。",
           "claimStatements": [
             {
               "id": "long-acquaintance",
-              "text": "顾*就是认识久一点，平时聊得多。",
+              "text": "我和顾*就是认识得久一点，平时聊得多，没有其他关系。",
               "missLine": "认识多久、聊了什么，你可以问。别把没问的先塞进我嘴里。"
             },
             {
               "id": "hotel-denial",
-              "text": "我没去澜桥酒店。",
+              "text": "我也没偷着去澜桥酒店。",
               "correct": true
             },
             {
@@ -2493,6 +2495,7 @@ export const CONTENT_PACKS = {
           "evidencePair": [
             {
               "id": "chat",
+              "documentKind": "chat",
               "kicker": "聊天截图",
               "title": "联系人：顾*",
               "detail": "妻子发送｜21:18｜“我到澜桥酒店了”",
@@ -2533,6 +2536,7 @@ export const CONTENT_PACKS = {
             },
             {
               "id": "hotel",
+              "documentKind": "hotel",
               "kicker": "酒店订单",
               "title": "澜桥酒店",
               "detail": "21:24｜入住人：妻子本人｜大床房 1 间",
@@ -2577,13 +2581,13 @@ export const CONTENT_PACKS = {
               "speaker": "妻子",
               "speakerProfileId": "prologue-cafe-wife",
               "type": "participant",
-              "text": "行，房是我开的。那天我跟家里吵完，不想回去，就自己住了一晚。"
+              "text": "那天是我自己住的酒店。我跟家里吵完，不想回去，就在那里住了一晚。"
             },
             {
               "speaker": "妻子",
               "speakerProfileId": "prologue-cafe-wife",
               "type": "participant",
-              "text": "顾*知道我到了，但他没上楼。订单上也只有我一个人的名字。"
+              "text": "顾*跟这件事没关系，他没有上去。订单上也只有我一个人的名字。"
             },
             {
               "speaker": "妻子",
@@ -2601,17 +2605,17 @@ export const CONTENT_PACKS = {
           "revisedClaimStatements": [
             {
               "id": "room-admission",
-              "text": "房是我开的。",
-              "missLine": "房是我开的，这句我已经认了。你还想问什么？"
+              "text": "那天是我自己住的酒店。",
+              "missLine": "那天是我自己住的酒店，这句我已经说了。你还想问什么？"
             },
             {
               "id": "alone-stay",
-              "text": "那晚我自己住了一晚。",
+              "text": "我在那里住了一晚。",
               "missLine": "订单上写的是我。你手里的东西也只能看到我。"
             },
             {
               "id": "no-upstairs",
-              "text": "顾*没上楼。",
+              "text": "顾*没有上去。",
               "missLine": "你们手里没有他上楼的东西。别拿猜的来问我。"
             },
             {
@@ -2649,6 +2653,7 @@ export const CONTENT_PACKS = {
           "moneyClaim": "我跟顾*之间没转过钱。",
           "transferEvidence": {
             "id": "parallel-transfer-ledger",
+            "documentKind": "ledger",
             "kicker": "遮名银行流水",
             "title": "三笔双向转账",
             "detail": "公开副本遮去金额，保留日期、方向和交易对手。",
@@ -2718,13 +2723,7 @@ export const CONTENT_PACKS = {
               "speaker": "赵律师",
               "speakerProfileId": "zhao-lawyer",
               "type": "advisor",
-              "text": "原手机先留好。她刚才前后说了两套，这个别丢。"
-            },
-            {
-              "speaker": "赵律师",
-              "speakerProfileId": "zhao-lawyer",
-              "type": "advisor",
-              "text": "完整聊天和银行流水也别删。"
+              "text": "她说的自己都对不上了。聊下一个问题吧。"
             },
             {
               "speaker": "男方",
@@ -2736,19 +2735,7 @@ export const CONTENT_PACKS = {
               "speaker": "赵律师",
               "speakerProfileId": "zhao-lawyer",
               "type": "advisor",
-              "text": "把你知道的账户和日期写下来。"
-            },
-            {
-              "speaker": "赵律师",
-              "speakerProfileId": "zhao-lawyer",
-              "type": "advisor",
-              "text": "先找哪一笔还在往外转。"
-            },
-            {
-              "speaker": "赵律师",
-              "speakerProfileId": "zhao-lawyer",
-              "type": "advisor",
-              "text": "有具体风险，再申请保全。"
+              "text": "具体证据的事，我们回头再说。"
             },
             {
               "speaker": "妻子",
@@ -2778,13 +2765,13 @@ export const CONTENT_PACKS = {
               "speaker": "赵律师",
               "speakerProfileId": "zhao-lawyer",
               "type": "advisor",
-              "text": "今天我只帮他理桌上这些。"
+              "text": "今天我们只聊现有的这些事。"
             },
             {
               "speaker": "赵律师",
               "speakerProfileId": "zhao-lawyer",
               "type": "advisor",
-              "text": "我不是他的诉讼代理人。"
+              "text": "我们还没到起诉离婚的程度。"
             }
           ],
           "parentageBlockLines": [
@@ -2804,7 +2791,7 @@ export const CONTENT_PACKS = {
               "speaker": "男方",
               "speakerProfileId": "prologue-cafe-husband",
               "type": "participant",
-              "text": "我问了半年，你每次都拿孩子堵我。你要说是我的，就跟我去做鉴定。敢不敢？"
+              "text": "我问了半年，你每次都拿些乱七八糟的理由堵我。你要说是我的，就跟我去做鉴定。敢不敢？"
             },
             {
               "speaker": "妻子",
@@ -2848,21 +2835,15 @@ export const CONTENT_PACKS = {
               "speaker": "赵律师",
               "speakerProfileId": "zhao-lawyer",
               "type": "advisor",
-              "text": "表哥，你那边先别录了。林旭阳，我们这边也关。关掉以后继续谈，还是今天就到这儿？"
+              "text": "表哥，你那边先别录了。林旭阳，我们这边也关。还要谈就继续谈。"
             }
           ],
           "pressureChoices": [
             {
               "id": "camera-off",
-              "label": "关录像，继续谈",
+              "label": "继续谈",
               "note": "桌边不再录，剩下的条件不公开。",
               "echo": "你关掉桌边录像。后面的争吵不再录，已经拍下的片段暂不剪、不发。剩下的条件改为私下谈。"
-            },
-            {
-              "id": "stop-stream",
-              "label": "结束这次谈判",
-              "note": "录像到此为止，双方带走材料清单。",
-              "echo": "你结束了这次录像和谈判。已经拍下的片段暂不剪、不发，双方各自带走一份材料清单。"
             }
           ]
         },
@@ -2878,7 +2859,7 @@ export const CONTENT_PACKS = {
               "speaker": "妻子（语音）",
               "speakerProfileId": "prologue-cafe-wife",
               "type": "message",
-              "text": "酒店那天我自己住，三笔钱是借的。你们敢剪成别的，我就告。孩子的东西谁也别动。"
+              "text": "那天是我自己住的酒店，三笔钱是借的。你们敢剪成别的，我就闹给你们看。孩子的事没得商量。"
             },
             {
               "speaker": "赵律师",
@@ -2896,7 +2877,7 @@ export const CONTENT_PACKS = {
               "speaker": "赵律师",
               "speakerProfileId": "zhao-lawyer",
               "type": "advisor",
-              "text": "先做个人委托初检，这是现在最可行的。你先联系正规机构，问家里孩子留下的旧物能不能用。她已经说谁也别动，晚了东西可能就没了。"
+              "text": "你先去问我给你的那家机构。他们让你怎么留，你就怎么留。说不定她明天就把孩子的东西都带走。"
             },
             {
               "speaker": "男方",
@@ -2908,7 +2889,7 @@ export const CONTENT_PACKS = {
               "speaker": "林旭阳",
               "speakerProfileId": "host-lin-xuyang",
               "type": "host",
-              "text": "现在回。机构让你怎么留，你就怎么留。别追她，也别碰孩子。"
+              "text": "那你现在回家。别私下找她理论，也别碰孩子。"
             }
           ],
           "routes": [
@@ -3175,7 +3156,7 @@ export const CONTENT_PACKS = {
               "interest": {
                 "location": "cafePrologue.cafe.pressureChoices",
                 "trigger": "player-input",
-                "payoff": "玩家亲手关掉桌边录像继续谈，或直接结束这次谈判；未确认的片段不进入剪辑和发布。",
+                "payoff": "玩家亲手关掉桌边录像，随后继续谈；未确认的片段不进入剪辑和发布。",
                 "holdingLimit": "同一屏"
               },
               "principal": {
@@ -5770,10 +5751,16 @@ export const CONTENT_CASES = {
           "id": "credit-night-a-account",
           "sceneIndexes": [
             0,
-            1,
+            1
+          ],
+          "minimumReviewCount": 2
+        },
+        {
+          "id": "credit-night-a-living",
+          "sceneIndexes": [
             2
           ],
-          "minimumReviewCount": 3
+          "minimumReviewCount": 2
         },
         {
           "id": "credit-night-b-anniversary",
@@ -10711,10 +10698,16 @@ export const CONTENT_CASES = {
           "id": "profile-night-a-account",
           "sceneIndexes": [
             0,
-            1,
+            1
+          ],
+          "minimumReviewCount": 2
+        },
+        {
+          "id": "profile-night-a-price",
+          "sceneIndexes": [
             2
           ],
-          "minimumReviewCount": 3
+          "minimumReviewCount": 2
         },
         {
           "id": "profile-night-b-card-account",
@@ -13171,10 +13164,16 @@ export const CONTENT_CASES = {
           "id": "tony-night-a-account",
           "sceneIndexes": [
             0,
-            1,
+            1
+          ],
+          "minimumReviewCount": 2
+        },
+        {
+          "id": "tony-night-a-message",
+          "sceneIndexes": [
             2
           ],
-          "minimumReviewCount": 3
+          "minimumReviewCount": 2
         },
         {
           "id": "tony-night-a-rumor",

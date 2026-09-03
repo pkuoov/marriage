@@ -39,7 +39,7 @@ import { storyInterludeChoicesHtml, storyInterludeHtml, storyInterludeStageHtml,
 import { caseBridgeChoicesHtml, caseBridgeHtml, caseClosingChoicesHtml, caseClosingHtml, caseTitleChoicesHtml, caseTitleHtml } from "./ui/caseTransitionView.js";
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js";
-import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeRevisionStatusHtml, cafeSingleEvidenceHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "./ui/prologueCafeView.js";
+import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialDetailModalHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeRevisionStatusHtml, cafeSingleEvidenceHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "./ui/prologueCafeView.js";
 import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "./ui/titleView.js";
 import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js";
@@ -680,6 +680,7 @@ function createDailyScreenRenderers() {
     cafePrologueDialogueHtml,
     cafeProloguePortraitStageHtml,
     cafeRevisionStatusHtml,
+    cafeMaterialDetailModalHtml,
     cafeMaterialPromptHtml,
     cafeStatementReplayHtml,
     cafeEvidencePairHtml,

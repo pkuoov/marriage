@@ -94,8 +94,10 @@ export const baseState = {
   storyWorldEchoHypotheses: {},
   careChoices: {},
   epilogueUnreadStep: 0,
-  cafePrologueVersion: 3,
+  cafePrologueVersion: 4,
   cafePrologueStep: 0,
+  cafePrologueOpeningSeen: false,
+  cafePrologueRevisionSeen: false,
   cafePrologueAct: 1,
   cafePrologueMarks: [],
   cafePrologueOrder: [],
@@ -244,7 +246,11 @@ export function migrateState(saved) {
     }
     next.cafePrologueEvidenceReaction = "";
   }
-  next.cafePrologueVersion = 3;
+  if (savedCafePrologueVersion < 4) {
+    next.cafePrologueOpeningSeen = next.cafePrologueStep > 0;
+    next.cafePrologueRevisionSeen = next.cafePrologueStep > 2;
+  }
+  next.cafePrologueVersion = 4;
   if (!Number.isFinite(Number(next.cafePrologueAct))) next.cafePrologueAct = next.cafePrologueStep >= 2 ? 2 : 1;
   next.cafePrologueAct = Math.max(1, Math.min(2, Math.floor(Number(next.cafePrologueAct) || 1)));
   if (typeof next.cafePrologueStatementId !== "string") next.cafePrologueStatementId = "";
@@ -253,7 +259,11 @@ export function migrateState(saved) {
   if (typeof next.cafePrologueEvidenceReaction !== "string") next.cafePrologueEvidenceReaction = "";
   if (typeof next.cafePrologueTransferSelected !== "boolean") next.cafePrologueTransferSelected = false;
   if (typeof next.cafePrologueLegalBriefSeen !== "boolean") next.cafePrologueLegalBriefSeen = false;
-  if (typeof next.cafeProloguePressureChoice !== "string") next.cafeProloguePressureChoice = "";
+  if (next.cafeProloguePressureChoice !== "camera-off") {
+    next.cafeProloguePressureChoice = next.cafePrologueStep >= 6 ? "camera-off" : "";
+  }
+  if (typeof next.cafePrologueOpeningSeen !== "boolean") next.cafePrologueOpeningSeen = false;
+  if (typeof next.cafePrologueRevisionSeen !== "boolean") next.cafePrologueRevisionSeen = false;
   if (!("lastReaction" in next)) next.lastReaction = null;
   if (!("lastPressureSignal" in next)) next.lastPressureSignal = null;
   if (!("pendingQuestionPressureSignal" in next)) next.pendingQuestionPressureSignal = null;

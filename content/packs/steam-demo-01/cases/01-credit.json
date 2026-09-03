@@ -2258,7 +2258,8 @@
     "night-b": 4
   },
   "statementStages": [
-    { "id": "credit-night-a-account", "sceneIndexes": [0, 1, 2], "minimumReviewCount": 3 },
+    { "id": "credit-night-a-account", "sceneIndexes": [0, 1], "minimumReviewCount": 2 },
+    { "id": "credit-night-a-living", "sceneIndexes": [2], "minimumReviewCount": 2 },
     { "id": "credit-night-b-anniversary", "sceneIndexes": [3], "minimumReviewCount": 2 },
     { "id": "credit-night-b-benefit", "sceneIndexes": [6], "minimumReviewCount": 2 }
   ],

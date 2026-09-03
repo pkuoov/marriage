@@ -77,18 +77,18 @@ export function cafeProloguePortraitStageHtml({ activeRole = "" } = {}) {
 }
 
 export function cafeMaterialPromptHtml({ evidencePair = [], label = "桌面", usedIds = [] } = {}) {
-  const materials = (evidencePair ?? []).filter(Boolean);
   const used = new Set(usedIds ?? []);
+  const materials = (evidencePair ?? []).filter((item) => item && !used.has(item.id));
   return `
     <aside class="cafe-material-prompt" aria-label="桌上材料：${escapeHtml(materials.map((item) => item.kicker ?? item.title).join("、"))}">
       <span>${escapeHtml(label)}</span>
       <div>${materials.map((item, index) => `
-        <button class="cafe-material-preview${used.has(item.id) ? " used" : ""}" data-cafe-material-preview="${escapeHtml(item.id)}" type="button" aria-expanded="false">
+        <button class="cafe-material-preview" data-cafe-material-open="${escapeHtml(item.id)}" type="button">
           <i>${String(index + 1).padStart(2, "0")}</i>
           <small>${escapeHtml(item.kicker ?? "材料")}</small>
           <b>${escapeHtml(item.title ?? "")}</b>
           <em>${escapeHtml(item.detail ?? "")}</em>
-          <strong>${used.has(item.id) ? "已经出示" : "查看"}</strong>
+          <strong>打开原件</strong>
         </button>
       `).join("")}</div>
     </aside>
@@ -115,16 +115,19 @@ export function cafeStatementReplayHtml({ statements = [], selectedId = "", reac
 export function cafeEvidencePairHtml(cards = [], selectedId = "", statementText = "") {
   return `
     <section class="cafe-evidence-board" aria-label="咖啡厅材料板">
-      <header><span>压在这句上</span><strong>${escapeHtml(statementText)}</strong></header>
+      <header><span>出示给这句话</span><strong>${escapeHtml(statementText)}</strong></header>
       <div class="cafe-evidence-grid">
         ${(cards ?? []).map((card) => `
-          <button class="cafe-evidence-card${selectedId === card.id ? " selected" : ""}" data-cafe-evidence-select="${escapeHtml(card.id)}" aria-pressed="${selectedId === card.id}" type="button">
-            <small>${escapeHtml(card.kicker ?? "材料")}</small>
-            <b>${escapeHtml(card.title ?? "")}</b>
-            <span>${escapeHtml(card.detail ?? "")}</span>
-            ${(card.rows ?? []).length ? `<div class="cafe-transfer-rows">${card.rows.map((row) => `<span>${escapeHtml(row)}</span>`).join("")}</div>` : ""}
-            <em>${selectedId === card.id ? "已拿起" : "拿起"}</em>
-          </button>
+          <article class="cafe-evidence-choice${selectedId === card.id ? " selected" : ""}">
+            <button class="cafe-evidence-card${selectedId === card.id ? " selected" : ""}" data-cafe-evidence-select="${escapeHtml(card.id)}" aria-pressed="${selectedId === card.id}" type="button">
+              <small>${escapeHtml(card.kicker ?? "材料")}</small>
+              <b>${escapeHtml(card.title ?? "")}</b>
+              <span>${escapeHtml(card.detail ?? "")}</span>
+              ${(card.rows ?? []).length ? `<div class="cafe-transfer-rows">${card.rows.map((row) => `<span>${escapeHtml(row)}</span>`).join("")}</div>` : ""}
+              <em>${selectedId === card.id ? "已选择" : "选择"}</em>
+            </button>
+            <button class="cafe-evidence-inspect" data-cafe-material-open="${escapeHtml(card.id)}" type="button">查看原件</button>
+          </article>
         `).join("")}
       </div>
     </section>
@@ -147,7 +150,7 @@ export function cafeSingleEvidenceHtml({ evidence = {}, action = "remaining" } =
         <small>${escapeHtml(evidence.kicker ?? "材料")}</small>
         <b>${escapeHtml(evidence.title ?? "")}</b>
         <span>${escapeHtml(evidence.detail ?? "")}</span>
-        <em>压到她改口的那句上</em>
+        <em>出示这份材料</em>
       </button>
     </section>
   `;
@@ -161,9 +164,52 @@ export function cafeTransferPresentHtml({ evidence = {}, selected = false } = {}
         <b>${escapeHtml(evidence.title ?? "转账流水")}</b>
         <p>${escapeHtml(evidence.detail ?? "")}</p>
         ${(evidence.rows ?? []).length ? `<div class="cafe-transfer-rows">${evidence.rows.map((row) => `<span>${escapeHtml(row)}</span>`).join("")}</div>` : ""}
-        <em>${selected ? "已拿起" : "拿起这张流水"}</em>
+        <em>${selected ? "已选择" : "选择这份流水"}</em>
       </button>
     </section>
+  `;
+}
+
+export function cafeMaterialDetailModalHtml(cards = []) {
+  return `
+    <aside class="cafe-material-modal" data-cafe-material-modal hidden aria-hidden="true">
+      <button class="cafe-material-modal-backdrop" data-cafe-material-close type="button" aria-label="关闭材料"></button>
+      <section class="cafe-material-sheet" role="dialog" aria-modal="true" aria-label="材料原件">
+        <header><span>材料原件</span><button data-cafe-material-close type="button">关闭</button></header>
+        ${(cards ?? []).filter(Boolean).map((card) => cafeMaterialDocumentHtml(card)).join("")}
+      </section>
+    </aside>
+  `;
+}
+
+function cafeMaterialDocumentHtml(card = {}) {
+  const kind = card.documentKind ?? (card.id === "chat" ? "chat" : card.id === "hotel" ? "hotel" : "ledger");
+  const rows = card.rows ?? [];
+  if (kind === "chat") {
+    return `
+      <article class="cafe-material-document material-chat" data-cafe-material-document="${escapeHtml(card.id)}" hidden>
+        <div class="material-chat-top"><b>${escapeHtml(card.title ?? "联系人")}</b><span>聊天记录</span></div>
+        <time>21:18</time>
+        <p>我到澜桥酒店了</p>
+        <small>${escapeHtml(card.detail ?? "")}</small>
+      </article>
+    `;
+  }
+  if (kind === "hotel") {
+    return `
+      <article class="cafe-material-document material-hotel" data-cafe-material-document="${escapeHtml(card.id)}" hidden>
+        <header><small>预订记录</small><b>${escapeHtml(card.title ?? "酒店订单")}</b></header>
+        <dl><div><dt>入住时间</dt><dd>21:24</dd></div><div><dt>入住人</dt><dd>妻子本人</dd></div><div><dt>房型</dt><dd>大床房 1 间</dd></div></dl>
+        <small>${escapeHtml(card.detail ?? "")}</small>
+      </article>
+    `;
+  }
+  return `
+    <article class="cafe-material-document material-ledger" data-cafe-material-document="${escapeHtml(card.id)}" hidden>
+      <header><small>${escapeHtml(card.kicker ?? "银行流水")}</small><b>${escapeHtml(card.title ?? "转账记录")}</b></header>
+      <p>${escapeHtml(card.detail ?? "")}</p>
+      <div>${rows.map((row) => `<span>${escapeHtml(row)}</span>`).join("")}</div>
+    </article>
   `;
 }
 

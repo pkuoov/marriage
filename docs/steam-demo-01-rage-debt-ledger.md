@@ -10,7 +10,7 @@
 | 债务 | 层级 | 发债 | 首期付息 | 持债上限 | 本金结清 | 下一笔债 |
 |---|---|---|---|---|---|---|
 | cafe-only-close-chat | Tier 2 | cafePrologue.cafe.openingLines：“那晚我没去澜桥酒店。” | cafePrologue.cafe.evidencePair（player-input）：玩家先点出她否认去酒店的原话，再亲手压上一张能直接反驳它的材料；她被迫承认房是自己开的。 | 同一场 | cafePrologue.cafe.transferEvidence（player-input）：玩家打开三笔双向转账，主播让她解释‘没跟顾*转过钱’，同时保留借款性质与酒店内行为未知。 | cafePrologue.cafe.cameraBreakLines：“大主播也不过如此。” |
-| cafe-recording-control | Tier 3 | cafePrologue.cafe.cameraBreakLines：“你们敢只剪问赢的那几句，我就把这份原片发出去。” | cafePrologue.cafe.pressureChoices（player-input）：玩家亲手关掉桌边录像继续谈，或直接结束这次谈判；未确认的片段不进入剪辑和发布。 | 同一屏 | cafePrologue.forensic（player-input）：玩家先查咬胶，数日后只收到支持亲子怀疑的初步排除意见；先查家庭卡，则只收到十八日回单。两条都不在同一关同时兑付。 | cafePrologue.forensic.accountClueLines：“十八号那笔，收款人不是顾*。” |
+| cafe-recording-control | Tier 3 | cafePrologue.cafe.cameraBreakLines：“你们敢只剪问赢的那几句，我就把这份原片发出去。” | cafePrologue.cafe.pressureChoices（player-input）：玩家亲手关掉桌边录像，随后继续谈；未确认的片段不进入剪辑和发布。 | 同一屏 | cafePrologue.forensic（player-input）：玩家先查咬胶，数日后只收到支持亲子怀疑的初步排除意见；先查家庭卡，则只收到十八日回单。两条都不在同一关同时兑付。 | cafePrologue.forensic.accountClueLines：“十八号那笔，收款人不是顾*。” |
 
 ## 主案｜01-credit｜账单里的八万
 

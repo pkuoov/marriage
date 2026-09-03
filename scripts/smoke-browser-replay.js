@@ -53,6 +53,7 @@ const supportedSmokeTargets = new Set([
   "cafe-prologue"
 ]);
 const smokeStepTimeoutMs = Math.max(1000, Number(process.env.SMOKE_STEP_TIMEOUT_MS) || 90000);
+const browserActionTimeoutMs = Math.max(1000, Number(process.env.SMOKE_ACTION_TIMEOUT_MS) || 8000);
 const gamepadDialogueSamples = new WeakMap();
 const gamepadDialogueSampleLimit = 4;
 const smokeStartedAt = Date.now();
@@ -226,7 +227,7 @@ async function runQuickDetective() {
     smokeProgress(`START quick detective ${viewport.width}x${viewport.height}`);
     const context = await browser.newContext({ viewport, reducedMotion: viewport.width === 390 ? "no-preference" : "reduce" });
     const page = await context.newPage();
-    page.setDefaultTimeout(8000);
+    page.setDefaultTimeout(browserActionTimeoutMs);
     try {
       await page.goto(`${playableUrl}?playtest=quick-statement-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
       await page.locator("[data-player-name]").fill("周明");
@@ -292,14 +293,14 @@ async function runCafePrologue() {
   for (const viewport of [
     { width: 390, height: 844, pressureChoice: "camera-off", firstRoute: "toy", firstEvidence: "chat" },
     { width: 592, height: 920, pressureChoice: "camera-off", firstRoute: "account", firstEvidence: "hotel" },
-    { width: 1280, height: 720, pressureChoice: "stop-stream", firstRoute: "toy", firstEvidence: "hotel" },
-    { width: 1280, height: 800, pressureChoice: "stop-stream", firstRoute: "account", firstEvidence: "chat" }
+    { width: 1280, height: 720, pressureChoice: "camera-off", firstRoute: "toy", firstEvidence: "hotel" },
+    { width: 1280, height: 800, pressureChoice: "camera-off", firstRoute: "account", firstEvidence: "chat" }
   ]) {
     const context = await browser.newContext({ viewport, reducedMotion: viewport.width === 390 ? "no-preference" : "reduce" });
     const page = await context.newPage();
     const pageErrors = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
-    page.setDefaultTimeout(8000);
+    page.setDefaultTimeout(browserActionTimeoutMs);
     try {
       await page.goto(`${playableUrl}?playtest=cafe-prologue-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
       await click(page, "[data-start-story]");
@@ -312,16 +313,19 @@ async function runCafePrologue() {
       const openingText = await drainDialogue(page, {});
       if (!openingText.includes("我准备离婚")) throw new Error("the husband must state the divorce request before the first tutorial action");
       if (!openingText.includes("孩子以后怎么安排")) throw new Error("the child arrangement conflict must be part of the opening negotiation");
-      if (!openingText.includes("我没去澜桥酒店")) throw new Error("the first evidence action must answer the wife's explicit hotel denial");
       if (openingText.includes("哪三页") || openingText.includes("只看这三页")) throw new Error("participants must not recite the tutorial material count");
+      await click(page, "[data-cafe-opening-seen]");
+      const firstAccountText = await drainDialogue(page, {});
+      if (!firstAccountText.includes("我也没偷着去澜桥酒店")) throw new Error("the first statement phase must include the wife's explicit hotel denial");
       const cafePortraitRoles = await page.locator(".cafe-negotiation-portrait[data-dialogue-portrait]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-dialogue-portrait")));
       if (cafePortraitRoles.join("|") !== "host|advisor|husband|wife|cousin") throw new Error(`cafe negotiation must keep five cross-talking portraits, got ${cafePortraitRoles.join("|")}`);
       await assertVisibleText(page, "桌面", "the material names must stay in a compact scene-prop dock after the negotiation");
-      await assertVisibleText(page, "我没去澜桥酒店。", "the first action must expose the caller's exact denial as a selectable line");
+      await assertVisibleText(page, "我也没偷着去澜桥酒店。", "the first action must expose the caller's exact denial as a selectable line");
       await assertVisibleText(page, "入住人：妻子本人", "the right-hand hotel material must expose a readable raw booking field");
-      if (await page.locator("[data-cafe-material-preview]").count() !== 2) throw new Error("both opening materials must be clickable before the first presentation");
-      await click(page, '[data-cafe-material-preview="hotel"]');
-      if (!await page.locator('[data-cafe-material-preview="hotel"].inspected').count()) throw new Error("clicking the hotel material must leave an immediate inspected state");
+      if (await page.locator("[data-cafe-material-open]").count() < 2) throw new Error("both opening materials must open into readable originals before the first presentation");
+      await click(page, '[data-cafe-material-open="hotel"]');
+      await assertVisibleText(page, "预订记录", "opening the hotel material must show a readable document view");
+      await click(page, "[data-cafe-material-close]");
       await assertNoPageText(page, "遮名银行流水", "the transfer evidence must stay off the table until the hotel exchange ends");
       for (const banned of ["教学 ·", "两边都会查", "依次点击两张材料确认", "先核她刚才那句"]) {
         await assertNoPageText(page, banned, `the cafe loop must not expose instruction copy: ${banned}`);
@@ -351,14 +355,18 @@ async function runCafePrologue() {
       await assertVisibleText(page, "入住人：妻子本人", "the hotel card must show its raw booking field");
       await assertCafeViewport(page, viewport, "evidence pair board");
       await click(page, `[data-cafe-evidence-select="${viewport.firstEvidence}"]`);
-      await assertVisibleText(page, "已拿起", "selecting one material must have an immediate visible response");
+      await assertVisibleText(page, "已选择", "selecting one material must have an immediate visible response");
       await click(page, "[data-cafe-evidence-present]");
+      const firstHitText = await drainDialogue(page, {});
+      if (!firstHitText.includes("你刚说没去过")) throw new Error("the first material hit must answer the selected denial before the revised statement starts");
+      await click(page, "[data-cafe-revision-seen]");
       const pairText = await drainDialogue(page, {});
-      for (const line of ["房是我开的", "自己住了一晚", "顾*知道我到了", "我跟顾*之间没转过钱", "别把聊天、酒店和钱全拧在一起"]) {
+      for (const line of ["自己住的酒店", "顾*跟这件事没关系", "我跟顾*之间没转过钱", "别把聊天、酒店和钱全拧在一起"]) {
         if (!pairText.includes(line)) throw new Error(`the first hit must let the wife finish her revised account before review: ${line}`);
       }
-      await assertVisibleText(page, "她刚改口的几句", "the revised account must finish before the second replay opens");
+      await assertVisibleText(page, "回放她改口后的话", "the revised account must finish before the second replay opens");
       if (await page.locator("[data-cafe-statement-id]").count() !== 4) throw new Error("the revised account must return as four separately selectable statements");
+      if (await page.locator(`[data-cafe-material-open="${viewport.firstEvidence}"]`).count()) throw new Error("a successfully presented material must leave the current material tray");
       await assertVisibleText(page, "三笔双向转账", "the transfer material may enter only after the wife has denied money in the revised account");
       await click(page, '[data-cafe-statement-id="alone-stay"]');
       const revisedMissText = await drainDialogue(page, {});
@@ -367,17 +375,18 @@ async function runCafePrologue() {
       const revisedLeadText = await drainDialogue(page, {});
       if (!revisedLeadText.includes("你跟顾*之间没转过钱")) throw new Error("the host must replay the selected revised sentence before the second material choice");
       await assertVisibleText(page, "4 月 12 日｜转出｜顾*", "the transfer card must show raw rows instead of a cross-document inference");
-      await click(page, '[data-cafe-evidence-select="hotel"]');
+      const remainingOpeningEvidence = viewport.firstEvidence === "chat" ? "hotel" : "chat";
+      await click(page, `[data-cafe-evidence-select="${remainingOpeningEvidence}"]`);
       await click(page, "[data-cafe-revised-present]");
       const revisedEvidenceMissText = await drainDialogue(page, {});
-      if (!revisedEvidenceMissText.includes("你拿它问转账，也问不着")) throw new Error("the old hotel material must remain clickable without pretending it proves the money claim");
+      if (!revisedEvidenceMissText.includes("问转账") || !revisedEvidenceMissText.includes("问不着")) throw new Error("the remaining opening material must stay clickable without pretending it proves the money claim");
       await assertVisibleText(page, "4 月 12 日｜转出｜顾*", "the transfer card must show raw rows instead of a cross-document inference");
       await assertNoPageText(page, "交易对手户名与聊天联系人同名", "the transfer card must not solve the cross-document match for the player");
       await assertCafeViewport(page, viewport, "transfer presentation board");
       await click(page, '[data-cafe-evidence-select="parallel-transfer-ledger"]');
       await click(page, "[data-cafe-revised-present]");
       const legalText = await drainDialogue(page, {});
-      if (!legalText.includes("他请我来") || !legalText.includes("按现有材料准备") || !legalText.includes("不是他的诉讼代理人")) throw new Error("Zhao must make the on-site consultation clear without presenting herself as litigation counsel");
+      if (!legalText.includes("他请我来") || !legalText.includes("按现有材料准备") || !legalText.includes("还没到起诉离婚的程度")) throw new Error("Zhao must make the on-site consultation clear without presenting herself as litigation counsel");
       await assertVisibleText(page, "共同财产", "the cafe must turn the husband's legal demands into a visible request list");
       await assertCafeViewport(page, viewport, "legal request board");
       await click(page, "[data-cafe-legal-brief]");
@@ -389,8 +398,8 @@ async function runCafePrologue() {
       await assertCafeViewport(page, viewport, "recording pressure choices");
       await click(page, `[data-cafe-pressure="${viewport.pressureChoice}"]`);
       const aftermathText = await drainDialogue(page, {});
-      if (!aftermathText.includes("孩子的东西谁也别动")) throw new Error("the wife must continue resisting after she leaves the cafe");
-      if (!aftermathText.includes("不能只拿一句‘我怀疑’") || !aftermathText.includes("最可行的") || !aftermathText.includes("正规机构") || !aftermathText.includes("东西可能就没了")) throw new Error("Zhao must explain the practical path and timing risk privately after the argument");
+      if (!aftermathText.includes("孩子的事没得商量")) throw new Error("the wife must continue resisting after she leaves the cafe");
+      if (!aftermathText.includes("不能只拿一句‘我怀疑’") || !aftermathText.includes("那家机构") || !aftermathText.includes("明天就把孩子的东西都带走")) throw new Error("Zhao must explain the practical path and timing risk privately after the argument");
       await assertCafeViewport(page, viewport, "investigation order choices");
       await click(page, `[data-cafe-investigation="${viewport.firstRoute}"]`);
       const firstRouteText = await drainDialogue(page, {});
@@ -473,9 +482,11 @@ async function assertCafeViewport(page, viewport, label) {
     const dialogueCard = screen?.querySelector(".dialogue-card.avg-dialogue-active");
     const actionSelector = [
       "[data-cafe-statement-id]",
+      "[data-cafe-opening-seen]",
+      "[data-cafe-revision-seen]",
       "[data-cafe-evidence-select]",
       "[data-cafe-evidence-present]:not(:disabled)",
-      "[data-cafe-material-preview]",
+      "[data-cafe-material-open]",
       "[data-cafe-revised-present]:not(:disabled)",
       "[data-cafe-legal-brief]",
       "[data-cafe-pressure]",
@@ -681,7 +692,7 @@ async function runStateReplacementRoutes() {
     reducedMotion: "reduce"
   });
   const page = await context.newPage();
-  page.setDefaultTimeout(8000);
+  page.setDefaultTimeout(browserActionTimeoutMs);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-state-replacement-${Date.now()}&storyKey=steam-demo-01`);
     await click(page, "[data-start-story]");
@@ -793,7 +804,7 @@ async function runRoute(route) {
       browserMessages.push(`${message.type()}: ${message.text()}`);
     }
   });
-  page.setDefaultTimeout(8000);
+  page.setDefaultTimeout(browserActionTimeoutMs);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-${route.name}-${Date.now()}&storyKey=steam-demo-01`);
     if (route.name === "accounting-support") {
@@ -1009,8 +1020,10 @@ async function runRoute(route) {
         await completeTestimonyWall(page, route);
         continue;
       }
-      await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
-      await activate(page, route, "[data-scene-open-replay]");
+      if (!await page.locator(".statement-replay-page").count()) {
+        await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
+        await activate(page, route, "[data-scene-open-replay]");
+      }
       await assertVisibleText(page, "REC", "main-case statement review must switch the control deck to replay");
       await assertNoPageText(page, "收束 · 未命中 −1 耐心", "原句回放不得把底层耐心成本写成按钮说明");
       if (!helperHiddenChecked && route.name === "accounting-support") {
@@ -1211,6 +1224,8 @@ async function advanceNightCaseToOvernightHangup(page, portraitAssets = null) {
     }
     if (await page.locator("[data-scene-open-replay]").count()) {
       await click(page, "[data-scene-open-replay]");
+    }
+    if (await page.locator(".statement-replay-page").count()) {
       const sourceLine = await currentLoadBearingStatementLine(page);
       await sourceLine.click();
     } else {
@@ -1279,7 +1294,7 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     reducedMotion: "reduce"
   });
   const page = await context.newPage();
-  page.setDefaultTimeout(8000);
+  page.setDefaultTimeout(browserActionTimeoutMs);
   try {
     await openCaseAtChapter(page, chapter, name);
     const portraitAssets = new Set();
@@ -1559,7 +1574,7 @@ async function runCaseTransition() {
     reducedMotion: "reduce"
   });
   const page = await context.newPage();
-  page.setDefaultTimeout(8000);
+  page.setDefaultTimeout(browserActionTimeoutMs);
   try {
     await page.goto(`${playableUrl}?playtest=browser-smoke-case-transition-${Date.now()}&storyKey=steam-demo-01`);
     await page.locator("[data-player-name]").fill("周明");
@@ -1696,7 +1711,7 @@ async function runHostVerdictPresentation() {
     smokeProgress(`START host verdict ${viewport.width}x${viewport.height}`);
     const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
     const page = await context.newPage();
-    page.setDefaultTimeout(8000);
+    page.setDefaultTimeout(browserActionTimeoutMs);
     try {
       await page.goto(`${playableUrl}?playtest=browser-smoke-host-verdict-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
       await click(page, "[data-start-story]");
@@ -1768,7 +1783,7 @@ async function runPortraitViewports() {
     smokeProgress(`START portrait viewport ${viewport.label} ${viewport.width}x${viewport.height}`);
     const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
     const page = await context.newPage();
-    page.setDefaultTimeout(8000);
+    page.setDefaultTimeout(browserActionTimeoutMs);
     try {
       await page.goto(`${playableUrl}?playtest=portrait-${viewport.label}-${Date.now()}&storyKey=steam-demo-01`);
       await click(page, "[data-start-story]");
@@ -2105,9 +2120,11 @@ async function enterNightFromCafePrologue(page, route = {}) {
   if (!openingText.includes("我准备离婚") || !openingText.includes("孩子以后怎么安排")) {
     throw new Error("the playable opening must establish divorce and the child-arrangement conflict before evidence selection");
   }
+  await activate(page, route, "[data-cafe-opening-seen]");
   await activate(page, route, '[data-cafe-statement-id="hotel-denial"]');
   await activate(page, route, '[data-cafe-evidence-select="chat"]');
   await activate(page, route, "[data-cafe-evidence-present]");
+  await activate(page, route, "[data-cafe-revision-seen]");
   await activate(page, route, '[data-cafe-statement-id="money-denial"]');
   await activate(page, route, '[data-cafe-evidence-select="parallel-transfer-ledger"]');
   await activate(page, route, "[data-cafe-revised-present]");

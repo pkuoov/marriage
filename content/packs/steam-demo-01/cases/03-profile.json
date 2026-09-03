@@ -2221,7 +2221,8 @@
     "night-b": 4
   },
   "statementStages": [
-    { "id": "profile-night-a-account", "sceneIndexes": [0, 1, 2], "minimumReviewCount": 3 },
+    { "id": "profile-night-a-account", "sceneIndexes": [0, 1], "minimumReviewCount": 2 },
+    { "id": "profile-night-a-price", "sceneIndexes": [2], "minimumReviewCount": 2 },
     { "id": "profile-night-b-card-account", "sceneIndexes": [6], "minimumReviewCount": 2 }
   ],
   "nightStructure": {

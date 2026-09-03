@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：39
-- 收录台词／玩家可见人物材料：1395
+- 收录台词／玩家可见人物材料：1392
 - 本包实际出声人物：37
 - 句长节奏人工复核提示：24
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -38,13 +38,13 @@
 - `$manifest.nightShell.interludes[2].lines[7]` 还是会去。可那顿饭吃完，我有多少钱、愿意怎么花，得由我自己说。
 - `$manifest.nightShell.interludes[3].lines[1]` 我洗。你站旁边监督。
 - `$manifest.nightShell.cafePrologue.cafe.openingLines[2]` 就昨天电话里聊的那些？
-- `$manifest.nightShell.cafePrologue.cafe.openingLines[4]` 桌边这台先录着，省得回头谁说谁没说过。真要剪进节目，我会先给你们看。
-- `$manifest.nightShell.cafePrologue.cafe.openingLines[8]` 行，只拍桌面。你们没看过、没点头的，我不会放出去。
+- `$manifest.nightShell.cafePrologue.cafe.openingLines[4]` 先用桌边架好的手机录，省得后面谁说了又不承认。
+- `$manifest.nightShell.cafePrologue.cafe.openingLines[8]` 行，不拍脸。后续剪完的片子也会给你们看，你们不点头，我们也不会发。
 - `$manifest.nightShell.cafePrologue.cafe.evidencePair[0].hitLines[2]` 这是你自己发的，‘我到澜桥酒店了’。你刚说没去过，房是谁开的？
 - `$manifest.nightShell.cafePrologue.cafe.evidencePair[1].hitLines[2]` 入住人写的是你。你刚说没去过，房是谁开的？
 - `$manifest.nightShell.cafePrologue.cafe.revisedPresentLeadLines[0]` 你刚才说得很清楚：你跟顾*之间没转过钱。
 - `$manifest.nightShell.cafePrologue.cafe.transferHitLines[0]` 你刚说没转过钱。流水里有三笔，交易对手都是顾*。这个怎么说？
-- `$manifest.nightShell.cafePrologue.aftermath.openingLines[6]` 现在回。机构让你怎么留，你就怎么留。别追她，也别碰孩子。
+- `$manifest.nightShell.cafePrologue.aftermath.openingLines[6]` 那你现在回家。别私下找她理论，也别碰孩子。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[0].lines[1]` 先跟机构说清它放在哪、是谁用过。能不能收，让他们判断。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[1]` 那就只看你这张卡。她自己的账户先别碰。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[3]` 车贷呢？
@@ -111,21 +111,18 @@
 - `$manifest.nightShell.interludes[2].lines[6]` 先别替人家发愁。你第一次去我家的时候，我爸妈要是先问你能拿多少，你还会来吗？
 - `$manifest.nightShell.interludes[3].lines[0]` 今晚这些杯子，谁洗？
 - `$manifest.nightShell.interludes[3].lines[2]` 不监督。我在门口等你。
-- `$manifest.nightShell.cafePrologue.cafe.openingLines[6]` 你们先别吵孩子。孩子不拍，你们的手机也不拍。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[1]` 原手机先留好。她刚才前后说了两套，这个别丢。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[2]` 完整聊天和银行流水也别删。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[4]` 把你知道的账户和日期写下来。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[5]` 先找哪一笔还在往外转。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[6]` 有具体风险，再申请保全。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[8]` 他请我来，是想先把离婚和家里的账谈清楚。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[9]` 你肯拿完整流水，我们现在对。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[10]` 你不肯，我就按现有材料准备。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[11]` 今天我只帮他理桌上这些。
-- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[12]` 我不是他的诉讼代理人。
+- `$manifest.nightShell.cafePrologue.cafe.openingLines[6]` 孩子的事后面再说。你们愿意的话，你们也可以拍。
+- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[1]` 她说的自己都对不上了。聊下一个问题吧。
+- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[3]` 具体证据的事，我们回头再说。
+- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[5]` 他请我来，是想先把离婚和家里的账谈清楚。
+- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[6]` 你肯拿完整流水，我们现在对。
+- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[7]` 你不肯，我就按现有材料准备。
+- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[8]` 今天我们只聊现有的这些事。
+- `$manifest.nightShell.cafePrologue.cafe.legalClaimLines[9]` 我们还没到起诉离婚的程度。
 - `$manifest.nightShell.cafePrologue.cafe.parentageBlockLines[4]` 你俩先别吵。孩子是不是他的，在这儿也掰扯不明白。
-- `$manifest.nightShell.cafePrologue.cafe.cameraBreakLines[3]` 表哥，你那边先别录了。林旭阳，我们这边也关。关掉以后继续谈，还是今天就到这儿？
+- `$manifest.nightShell.cafePrologue.cafe.cameraBreakLines[3]` 表哥，你那边先别录了。林旭阳，我们这边也关。还要谈就继续谈。
 - `$manifest.nightShell.cafePrologue.aftermath.openingLines[2]` 她不肯做，桌上再吵也没用。你真要去法院申请鉴定，不能只拿一句‘我怀疑’过去，手上得先有能支撑这个怀疑的具体东西。
-- `$manifest.nightShell.cafePrologue.aftermath.openingLines[4]` 先做个人委托初检，这是现在最可行的。你先联系正规机构，问家里孩子留下的旧物能不能用。她已经说谁也别动，晚了东西可能就没了。
+- `$manifest.nightShell.cafePrologue.aftermath.openingLines[4]` 你先去问我给你的那家机构。他们让你怎么留，你就怎么留。说不定她明天就把孩子的东西都带走。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[0].lines[2]` 机构愿意接，就按他们的登记走。现在只叫个人委托初检，别叫司法鉴定。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[0].handoffLines[0]` 机构回话要几天。电话先留着，你去开播吧。
 - `$manifest.nightShell.cafePrologue.forensic.openingLines[3]` 不能。它只能让你的怀疑不再是一句空话。你可以带着它去法院提出亲子关系异议，再申请由法院委托鉴定。法院准不准，还要看其他材料。
@@ -1928,9 +1925,8 @@
 以下只是朗读提醒，不自动判错。三句服务于不同防御动作时可以保留。
 
 - _shell／林旭阳／other：29、27、26 字（$manifest.nightShell.interludes[1].lines[5]；$manifest.nightShell.interludes[1].lines[7]；$manifest.nightShell.interludes[2].lines[1]）
-- _shell／林旭阳／other：30、28、27 字（$manifest.nightShell.cafePrologue.cafe.transferHitLines[0]；$manifest.nightShell.cafePrologue.aftermath.openingLines[6]；$manifest.nightShell.cafePrologue.aftermath.routes[0].lines[1]）
-- _shell／咖啡厅男方／other：25、25、24 字（$manifest.nightShell.cafePrologue.cafe.transferHitLines[2]；$manifest.nightShell.cafePrologue.cafe.legalClaimLines[0]；$manifest.nightShell.cafePrologue.cafe.legalClaimLines[3]）
-- _shell／咖啡厅男方／other：25、24、28 字（$manifest.nightShell.cafePrologue.cafe.legalClaimLines[0]；$manifest.nightShell.cafePrologue.cafe.legalClaimLines[3]；$manifest.nightShell.cafePrologue.cafe.parentageBlockLines[0]）
+- _shell／咖啡厅男方／other：25、25、24 字（$manifest.nightShell.cafePrologue.cafe.transferHitLines[2]；$manifest.nightShell.cafePrologue.cafe.legalClaimLines[0]；$manifest.nightShell.cafePrologue.cafe.legalClaimLines[2]）
+- _shell／咖啡厅男方／other：25、24、28 字（$manifest.nightShell.cafePrologue.cafe.legalClaimLines[0]；$manifest.nightShell.cafePrologue.cafe.legalClaimLines[2]；$manifest.nightShell.cafePrologue.cafe.parentageBlockLines[0]）
 - 01-credit／案一咨询者·沈／nightB：26、25、22 字（$case.overnightStructure.callbackOpeners.房租是不是另外付的.firstConflict.lines[3]；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[1]；$case.overnightStructure.callbackOpeners.流水圈注.firstConflict.lines[3]）
 - 01-credit／案一咨询者·沈／nightB：27、28、31 字（$case.overnightStructure.callbackOpeners.两个月一次的房租.line；$case.overnightStructure.callbackOpeners.房租是不是另外付的.line；$case.overnightStructure.callbackOpeners.流水圈注.line）
 - 01-credit／案一咨询者·沈／nightB：31、32、29 字（$case.overnightStructure.postures.withCaller；$case.nightStructure.returnStance.lines.defensive；$case.nightStructure.returnStance.lines.open）
@@ -1951,3 +1947,4 @@
 - 03-profile／案三咨询者·林／nightB：28、24、27 字（$case.sceneVersions[6].questionOptions[1].missReaction；$case.overnightStructure.callbackOpeners.两边的完整聊天.firstConflict.callerLine；$case.overnightStructure.callbackOpeners.她没核实的两句话.firstConflict.callerLine）
 - 02-tony／第四通咨询者·何／nightA：21、25、23 字（$case.sceneVersions[1].questionOptions[0].lines[2]；$case.sceneVersions[1].questionOptions[1].missReaction；$case.sceneVersions[2].noClueReaction）
 - 02-tony／第四通咨询者·何／nightA：33、34、35 字（$case.sceneVersions[1].version；$case.sceneVersions[1].revisedVersion；$case.sceneVersions[1].casualQuestions[0].answer）
+- 02-tony／第四通咨询者·何／nightB：24、22、22 字（$case.sceneVersions[4].questionOptions[0].lines[2]；$case.sceneVersions[4].questionOptions[1].missReaction；$case.sceneVersions[5].noClueReaction）

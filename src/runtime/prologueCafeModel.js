@@ -12,6 +12,8 @@ export function normalizedCafePrologueProgress(state = {}) {
   const order = uniqueKnownValues(state.cafePrologueOrder, CAFE_PROLOGUE_INVESTIGATIONS);
   return {
     step: Math.max(0, Math.floor(Number(state.cafePrologueStep) || 0)),
+    openingSeen: state.cafePrologueOpeningSeen === true,
+    revisionSeen: state.cafePrologueRevisionSeen === true,
     marks,
     order,
     act: Math.max(1, Math.min(2, Math.floor(Number(state.cafePrologueAct) || (Number(state.cafePrologueStep) >= 2 ? 2 : 1)))),
@@ -29,8 +31,8 @@ export function normalizedCafePrologueProgress(state = {}) {
       : "",
     transferSelected: state.cafePrologueTransferSelected === true,
     legalBriefSeen: state.cafePrologueLegalBriefSeen === true,
-    pressureChoice: typeof state.cafeProloguePressureChoice === "string"
-      ? state.cafeProloguePressureChoice
+    pressureChoice: state.cafeProloguePressureChoice === "camera-off"
+      ? "camera-off"
       : ""
   };
 }
