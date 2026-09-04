@@ -22,6 +22,7 @@ import { actionDoneForState, answeredEvidenceCountForState, answeredSceneCountFo
 import { dailyConclusionModel, dailyPlayerType, dailyRouteProfile as buildDailyRouteProfile, finalQuoteComparison, investigationBackflowProfile, investigationPickReaction, recapRankLabel, storyCallCountText, storyCommentWall, storyHiddenThreadProfile, storyMaterialProfile, storyObjectProfile, storyPackAftertaste, storyPackAxes, storyPackBestAxis, storyPackClosingLine, storyPlayerType, storyQuoteProfile, storyShareTitle, storyThemeProfile, truthBoundaryAftertaste, truthBoundaryPackProfile, truthBoundaryReview } from "../src/runtime/recapModel.js";
 import { livePressureProfile, materialPressureReaction, materialPressureSignal, nextQuestionPressureSignal, pressuredAnswerVariant, pressurePackProfile, pressureRecapProfile, questionPressureReaction, questionPressureSignal } from "../src/runtime/livePressure.js";
 import { gamepadAxisDirection, keyboardNavigationIntent, nextFocusIndex } from "../src/runtime/inputNavigation.js";
+import { gamepadHapticPlan, triggerGamepadHaptic } from "../src/runtime/haptics.js";
 import { chunkDialogueTurn, dialoguePageRole, dialogueTurnsFrom, groupDialogueTurns, shouldAutoAdvanceDialoguePair, splitDialogueSentences } from "../src/runtime/dialoguePresentation.js";
 import { assertDialogueTexture, dialogueTextureMetrics, spokenPunctuationLeaks } from "../src/runtime/dialogueTexture.js";
 import { normalizeRouteChoice, routeAxisForChoice, routeAxisProfileFromChoices, routeToneForChoice } from "../src/runtime/routeLog.js";
@@ -64,6 +65,7 @@ import { titleScreenHtml } from "../src/ui/titleView.js";
 import { quickDetectiveActiveLine, quickDetectiveCaseSelectHtml, quickDetectiveConfrontationHtml, quickDetectiveIntroHtml, quickDetectiveIssueSelectionHtml, quickDetectiveMissReactionHtml, quickDetectivePatienceLostHtml, quickDetectiveShouldAutoContinue, quickDetectiveStageHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "../src/ui/quickDetectiveView.js";
 import { createRecapScreens } from "../src/ui/screens/recapScreens.js";
 import { readFileSync, readdirSync } from "node:fs";
+import { bundleCssSync } from "./css-bundle.js";
 import { assetReferencesInText } from "./runtime-assets.js";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
@@ -1723,6 +1725,12 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   assertEqual(pursuitPlan.bgmCueId, "bgm.pursuit", "B 故事浮出后必须接 pursuit 循环");
   assertEqual(pursuitPlan.fallbackBgmCueId, "bgm.accusation", "Pursuit 缺位时必须回退到高压追问底乐");
   assertEqual(resolveSceneAudioFallback(pursuitPlan).bgmCueId, "bgm.accusation", "planned Pursuit 必须自动落到可用高压 BGM");
+  const cafePlan = audioScenePlan({ scene: "cafePrologue" });
+  assertEqual(cafePlan.fallbackAmbienceCueId, "ambience.city-afternoon", "咖啡厅环境声缺位时必须声明可用的室外城市底噪回退");
+  assertEqual(resolveSceneAudioFallback(cafePlan).ambienceCueId, "ambience.city-afternoon", "planned 咖啡厅环境声不得造成环境总线整段静音");
+  const epiloguePlan = audioScenePlan({ scene: "nightShellEpilogue" });
+  assertEqual(epiloguePlan.fallbackBgmCueId, "bgm.recap-afterhours", "天亮前曲目缺位时必须延续可用的收麦回看音乐");
+  assertEqual(resolveSceneAudioFallback(epiloguePlan).bgmCueId, "bgm.recap-afterhours", "planned 天亮前曲目不得让尾声整段静音");
   assertIncludes(screenSources[7], 'ctx.getState().scene !== "decisivePresentHit"', "命中 stinger 定时器必须校验仍停留在命中场景");
   assert(!screenSources[7].includes('playAudioCue("bgm.pursuit")'), "命中页不得再用脱离场景同步的定时器手动切 pursuit");
   assertIncludes(screenSources[2], '? "pursuit" : ""', "命中后的 sceneReview 必须通过 musicPhase 接管 pursuit 续播");
@@ -1749,6 +1757,8 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   ["sfx.phone.connect", "sfx.phone.disconnect", "sfx.broadcast.on-air", "sfx.message.notification", "sfx.document.mark"].forEach((cueId) => {
     assertEqual(audioCueView(cueId)?.available, true, `试玩关键音效必须有可播放资产: ${cueId}`);
   });
+  assertEqual(AUDIO_CUES["sfx.phone.soft-hangup"]?.fallbackCueId, "sfx.phone.disconnect", "轻挂电话缺位时必须回退到现有挂断音");
+  assertEqual(AUDIO_CUES["sfx.phone.busy"]?.fallbackCueId, "sfx.phone.disconnect", "忙音缺位时必须回退到现有挂断音");
   ["sfx.present.hit", "sfx.present.miss"].forEach((cueId) => assertEqual(audioCueView(cueId)?.available, true, `决定性 PRESENT stinger 必须有合成回退: ${cueId}`));
   ["bgm.live-call-allegro", "bgm.pursuit"].forEach((cueId) => {
     assertEqual(AUDIO_CUES[cueId]?.status, "planned", `${cueId} 缺位时必须明确标为 planned`);
@@ -2058,6 +2068,19 @@ test("INPUT-001", "keyboard and gamepad navigation has pure focus rules", () => 
   assert(gamepadHandler.indexOf("const dialogue = currentDialogueAdvance()") < gamepadHandler.indexOf("const focusedButton"), "手柄 A 键必须先推进正在播放的 AVG 对白，不能误点全局按钮");
 });
 
+test("INPUT-002", "decisive feedback uses optional, reduced-motion-aware gamepad haptics", () => {
+  assertEqual(JSON.stringify(gamepadHapticPlan("hit", "full")), JSON.stringify({ duration: 260, strongMagnitude: 0.72, weakMagnitude: 0.38 }), "完整演出必须给命中明确但短促的手柄反馈");
+  const reduced = gamepadHapticPlan("hit", "reduced");
+  assert(reduced.duration < 260 && reduced.strongMagnitude < 0.72, "减弱演出必须同步降低手柄震动时长和强度");
+  assertEqual(gamepadHapticPlan("hit", "off"), null, "关闭闪烁/震动时不得触发手柄震动");
+  let requested = null;
+  const actuator = { playEffect: (kind, plan) => { requested = { kind, plan }; return Promise.resolve(); } };
+  const result = triggerGamepadHaptic({ kind: "miss", effects: "full", gamepads: [{ connected: true, vibrationActuator: actuator }] });
+  assertEqual(result.ok, true, "支持 dual-rumble 的手柄必须能触发反馈");
+  assertEqual(requested?.kind, "dual-rumble", "手柄反馈必须使用标准 dual-rumble effect");
+  assertEqual(triggerGamepadHaptic({ kind: "hit", effects: "full", gamepads: [] }).reason, "no-gamepad", "未连接手柄时必须静默降级");
+});
+
 test("REWIND-001", "question rewind restores the complete pre-choice checkpoint without cloning static case content", () => {
   const brief = { id: "case-1" };
   const before = {
@@ -2110,7 +2133,7 @@ test("REWIND-001", "question rewind restores the complete pre-choice checkpoint 
 });
 
 test("MATERIAL-002", "material inspection renders as an in-document markable board", () => {
-  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const stylesSource = bundleCssSync(new URL("../src/styles.css", import.meta.url));
   const html = evidenceOperationHtml({
     title: "后台补充",
     material: "上一句只说已经转交，下一句没有说明谁接手。",
@@ -2164,7 +2187,7 @@ test("MATERIAL-002", "material inspection renders as an in-document markable boa
 });
 
 test("MATERIAL-003", "material board uses distinct visual layouts by material type", () => {
-  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const stylesSource = bundleCssSync(new URL("../src/styles.css", import.meta.url));
   assertEqual(evidenceMaterialKind({ title: "信用卡账单", material: "餐厅消费，礼物分期。" }), "bill", "账单材料必须识别为 bill");
   assertEqual(evidenceMaterialKind({ title: "排班表", material: "预约表列了能办卡。" }), "table", "表格材料必须识别为 table");
   assertEqual(evidenceMaterialKind({ title: "学校截图", material: "图里只有 MBA 项目。" }), "shot", "截图材料必须识别为 shot");
@@ -2254,7 +2277,7 @@ test("MATERIAL-005", "material toolbar unlocks only after the player has actuall
 });
 
 test("UI-004", "inline transition buttons keep a normal CTA shape", () => {
-  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const stylesSource = bundleCssSync(new URL("../src/styles.css", import.meta.url));
   const recapScreenSource = readFileSync(new URL("../src/ui/screens/recapScreens.js", import.meta.url), "utf8");
   const inlineFlowRule = stylesSource.slice(
     stylesSource.indexOf(".avg-choice-overlay.inline-choice-flow:not([hidden]) {"),
@@ -2347,7 +2370,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   const storyInterludeViewSource = readFileSync(new URL("../src/ui/storyInterludeView.js", import.meta.url), "utf8");
   const storyPackCompleteViewSource = readFileSync(new URL("../src/ui/storyPackCompleteView.js", import.meta.url), "utf8");
   const interludeDeskViewSource = readFileSync(new URL("../src/ui/interludeDeskView.js", import.meta.url), "utf8");
-  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const stylesSource = bundleCssSync(new URL("../src/styles.css", import.meta.url));
   const questionOptions = focusedQuestionOptions([
     { question: "你当时有没有起疑心？", answer: "有一点。" },
     { question: "他开口借钱之前，有没有跟你说过工作最近不稳定？", answer: "没有。", contradiction: "失业早于借钱。" },
@@ -2644,7 +2667,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
 
 test("UI-003", "decision buttons expose cost, lock, or scoring consequences before activation", () => {
   const appSource = runtimeSource;
-  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const stylesSource = bundleCssSync(new URL("../src/styles.css", import.meta.url));
   const metaValues = Object.values(CHOICE_COST_META);
   assert(metaValues.length >= 12, "按钮代价词典必须覆盖追问、材料、白天、回拨、顾问、终局与关怀");
   assertEqual(new Set(metaValues).size, metaValues.length, "不同决策类型不能复用模糊的同一句代价文案");
@@ -2660,7 +2683,7 @@ test("UI-003", "decision buttons expose cost, lock, or scoring consequences befo
 
 test("UI-002", "live-call screens keep a broadcast control-desk identity", () => {
   const appSource = runtimeSource;
-  const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const stylesSource = bundleCssSync(new URL("../src/styles.css", import.meta.url));
   const cssDefinitions = new Set([...stylesSource.matchAll(/--([a-zA-Z0-9_-]+)\s*:/g)].map((match) => match[1]));
   const cssVariables = new Set([...stylesSource.matchAll(/var\(--([a-zA-Z0-9_-]+)/g)].map((match) => match[1]));
   const undefinedCssVariables = [...cssVariables].filter((name) => !cssDefinitions.has(name)).sort();

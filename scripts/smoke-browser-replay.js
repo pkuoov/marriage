@@ -788,11 +788,19 @@ async function runRoute(route) {
     reducedMotion: route.name === "accounting-support" ? "no-preference" : "reduce"
   });
   await context.addInitScript(() => {
+    const hapticCalls = [];
     window.__smokeGamepad = {
       connected: false,
       index: 0,
       axes: [0, 0],
-      buttons: Array.from({ length: 16 }, () => ({ pressed: false }))
+      buttons: Array.from({ length: 16 }, () => ({ pressed: false })),
+      hapticCalls,
+      vibrationActuator: {
+        playEffect: (kind, plan) => {
+          hapticCalls.push({ kind, plan });
+          return Promise.resolve("complete");
+        }
+      }
     };
     Object.defineProperty(navigator, "getGamepads", {
       configurable: true,
@@ -1096,6 +1104,12 @@ async function runRoute(route) {
     await assertVisibleText(page, "收麦回看", `${route.name} route should reach recap`);
     if (route.name === "accounting-support") {
       await exerciseTruthBoundary(page, route);
+    }
+    if (route.inputMode === "gamepad") {
+      const hapticCalls = await page.evaluate(() => window.__smokeGamepad?.hapticCalls ?? []);
+      if (!hapticCalls.some((call) => call.kind === "dual-rumble" && Number(call.plan?.duration) > 0)) {
+        throw new Error("gamepad route must receive decisive dual-rumble feedback");
+      }
     }
     await assertNoPageText(page, "undefined", `${route.name} route rendered undefined text`);
     await assertNoPageText(page, "NaN", `${route.name} route rendered NaN text`);

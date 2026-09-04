@@ -51,6 +51,10 @@ export function playAudioCue(cueId = "", callbacks = {}) {
     return { ok: true, cueId, synthetic: true };
   }
   if (!audioCueAvailable(cueId) || typeof Audio === "undefined") {
+    if (cue.fallbackCueId && cue.fallbackCueId !== cueId && audioCueAvailable(cue.fallbackCueId)) {
+      const result = playAudioCue(cue.fallbackCueId, callbacks);
+      return { ...result, requestedCueId: cueId, fallbackCueId: cue.fallbackCueId };
+    }
     return { ok: false, reason: "asset-unavailable", cueId };
   }
   if (cue.loop && LOOP_BUSES.includes(cue.bus)) return setLoopCue(cue.bus, cueId);

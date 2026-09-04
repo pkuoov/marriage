@@ -4,6 +4,8 @@
 制作参数与当前可用 Prompt：[udio-bgm-production-prompts-v2.md](udio-bgm-production-prompts-v2.md)
 成品:`assets/audio/bgm/title-neon-rain.ogg`(2:22,opus 160k;源档见 `assets/audio/source/bgm-title-neon-rain/`,已 gitignore)
 
+> 2026-09-04 母带归档：7 个已采用的非标题曲源 WAV 已逐文件核对 SHA-256，并复制到 `~/Documents/love-audio-archive/2026-09-04/selected-masters/`。仓库内本地副本保留但不再由 Git 跟踪；5 个备用母版继续跟踪；9 个明确淘汰母版已删除。未重写 Git 历史。
+
 > 2026-07-21 更新：下面的“九曲家族总表”保留为历史记录。当前运行时九槽位和可直接投喂 Udio 的细化参数，以 [udio-bgm-production-prompts-v2.md](udio-bgm-production-prompts-v2.md) 为准。
 
 > 2026-07-21 时长纠偏：此前出现的 32 秒文件是完整成曲的 Udio Remix 片段，不是原曲长度，也不是后续 BGM 的统一交付规格。完整曲保留为母版；32 秒 Remix 只用于局部方向验收，最终循环时长按实际场景重新设计。

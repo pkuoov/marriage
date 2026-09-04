@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promise
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copyRuntimeAssets } from "./runtime-assets.js";
+import { bundleCssSync } from "./css-bundle.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = resolve(root, "dist", "playable");
@@ -13,7 +14,7 @@ export async function buildPlayable() {
   const tempDir = await mkdtemp(tempRoot);
   try {
     const bundle = await bundleModule(entry);
-    const css = await readFile(resolve(root, "src", "styles.css"), "utf8");
+    const css = bundleCssSync(resolve(root, "src", "styles.css"));
     const playableCss = css.replaceAll("../assets/", "./assets/");
     const html = `<!doctype html>
 <html lang="zh-CN">

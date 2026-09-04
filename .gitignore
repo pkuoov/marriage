@@ -18,3 +18,24 @@ output/
 assets/audio/source/
 assets/audio/review/
 assets/audio/reports/
+
+# Raw audio masters kept outside normal Git. The seven approved masters are
+# archived under Documents/love-audio-archive/2026-09-04/selected-masters.
+assets/audio/unchanged/music_2_1.wav
+assets/audio/unchanged/music_2_2.wav
+assets/audio/unchanged/music_4_3.wav
+assets/audio/unchanged/music_5_2.wav
+assets/audio/unchanged/music_6_2.wav
+assets/audio/unchanged/b8ab6093-e42b-4b0e-93b8-07c89763d584.wav
+assets/audio/unchanged/c077d327-3120-404e-9fe0-4bd48f7841be.wav
+
+# Rejected raw generations. Keep these ignored after deleting their tracked copies.
+assets/audio/unchanged/music_4_2.wav
+assets/audio/unchanged/music_5_1.wav
+assets/audio/unchanged/music_6_1.wav
+assets/audio/unchanged/971ea0f2-1825-44b9-a475-ed45435f8f0c.wav
+assets/audio/unchanged/63715782-9244-4b36-b0ca-c53fb611d675.wav
+assets/audio/unchanged/98386987-dbbd-4468-ae03-ff7ecebf9edb.wav
+assets/audio/unchanged/10bff78d-d89c-4b3e-ae5a-ccb809b2666a.wav
+assets/audio/unchanged/5c95284e-4137-4ab4-ab9a-6fd35c66979e.wav
+assets/audio/unchanged/85d90004-e44e-4d2b-b34d-8beacbc3d7c2.wav

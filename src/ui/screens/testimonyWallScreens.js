@@ -15,6 +15,7 @@ import {
   testimonyStatementsForScene,
   testimonyWallKey
 } from "../../runtime/decisivePresentModel.js";
+import { triggerGamepadHaptic } from "../../runtime/haptics.js";
 import {
   decisivePresentHitHtml,
   decisivePresentTargetHtml,
@@ -180,6 +181,7 @@ export function createTestimonyWallScreens(ctx) {
     globalThis.setTimeout(() => {
       if (ctx.getState().scene !== "decisivePresentHit") return;
       playAudioCueOnce("sfx.present.hit", `${context.key}:hit-stinger`);
+      triggerGamepadHaptic({ kind: "hit", effects });
     }, stingerMs);
     const button = document.querySelector("[data-after-decisive-present]");
     globalThis.setTimeout(() => {
@@ -271,6 +273,7 @@ export function createTestimonyWallScreens(ctx) {
     const missIndex = outcome.progress.attempts;
     markAction(brief, `decisivePresentMiss:${context.index}:act${context.wallProgress.act}:${missIndex}`);
     playAudioCueOnce("sfx.present.miss", `${context.key}:miss:${missIndex}`);
+    triggerGamepadHaptic({ kind: "miss", effects: ctx.getState().settings?.screenEffects ?? "full" });
     ctx.getState().lastReaction = decisiveMissReaction(context, outcome);
     ctx.getState().lastScreenEffect = "patience-drop";
     if (outcome.kind === "exhausted") {

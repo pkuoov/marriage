@@ -41,8 +41,8 @@ export const AUDIO_CUES = Object.freeze({
 
   "sfx.phone.connect": readyOneShot("热线接通", "./assets/audio/sfx/phone-connect.ogg", 0.4),
   "sfx.phone.disconnect": readyOneShot("连线断开", "./assets/audio/sfx/phone-disconnect.ogg", 0.44),
-  "sfx.phone.soft-hangup": plannedOneShot("轻挂电话", "./assets/audio/sfx/phone-soft-hangup.ogg", 0.76),
-  "sfx.phone.busy": plannedOneShot("忙音", "./assets/audio/sfx/phone-busy.ogg", 0.72),
+  "sfx.phone.soft-hangup": plannedOneShot("轻挂电话", "./assets/audio/sfx/phone-soft-hangup.ogg", 0.76, { fallbackCueId: "sfx.phone.disconnect" }),
+  "sfx.phone.busy": plannedOneShot("忙音", "./assets/audio/sfx/phone-busy.ogg", 0.72, { fallbackCueId: "sfx.phone.disconnect" }),
   "sfx.broadcast.on-air": readyOneShot("开播提示音", "./assets/audio/sfx/broadcast-on-air.ogg", 0.34),
   "sfx.message.notification": readyOneShot("后台消息", "./assets/audio/sfx/message-notification.ogg", 0.48),
   "sfx.document.mark": readyOneShot("材料圈点", "./assets/audio/sfx/document-mark.ogg", 0.46),
@@ -84,8 +84,8 @@ function readyLoop(label, bus, src, gain) {
   return Object.freeze({ label, bus, status: "ready", src, gain, loop: true });
 }
 
-function plannedOneShot(label, src, gain) {
-  return Object.freeze({ label, bus: "sfx", status: "planned", src, gain, loop: false });
+function plannedOneShot(label, src, gain, metadata = {}) {
+  return Object.freeze({ label, bus: "sfx", status: "planned", src, gain, loop: false, ...metadata });
 }
 
 function readyOneShot(label, src, gain) {

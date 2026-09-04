@@ -52,25 +52,37 @@ export function audioScenePlan({ scene = "title", backdropClass = "", pressureLe
     };
   }
   if (scene === "nightShellEpilogue" || scene === "runComplete") {
-    return { bgmCueId: "bgm.epilogue-dawn", ambienceCueId: "ambience.studio-room" };
+    return { bgmCueId: "bgm.epilogue-dawn", fallbackBgmCueId: "bgm.recap-afterhours", ambienceCueId: "ambience.studio-room" };
   }
   if (scene === "cafePrologue") {
-    return { bgmCueId: "bgm.day-investigation", ambienceCueId: "ambience.cafe" };
+    return { bgmCueId: "bgm.day-investigation", ambienceCueId: "ambience.cafe", fallbackAmbienceCueId: "ambience.city-afternoon" };
   }
   if (scene === "cafePrologueAftermath") {
-    return { bgmCueId: "bgm.offair-desk", ambienceCueId: "ambience.apartment-hall" };
+    return { bgmCueId: "bgm.offair-desk", ambienceCueId: "ambience.apartment-hall", fallbackAmbienceCueId: "ambience.studio-room" };
   }
   if (scene === "cafePrologueForensic") {
-    return { bgmCueId: "bgm.epilogue-dawn", ambienceCueId: "ambience.document-desk" };
+    return {
+      bgmCueId: "bgm.epilogue-dawn",
+      fallbackBgmCueId: "bgm.recap-afterhours",
+      ambienceCueId: "ambience.document-desk",
+      fallbackAmbienceCueId: "ambience.studio-room"
+    };
   }
   if (scene === "accusation") {
-    return { bgmCueId: "bgm.accusation", ambienceCueId: "ambience.studio-line" };
+    return { bgmCueId: "bgm.accusation", ambienceCueId: "ambience.studio-line", fallbackAmbienceCueId: "ambience.studio-room" };
   }
   if (RECAP_SCENES.has(scene)) {
     return { bgmCueId: "bgm.recap-afterhours", ambienceCueId: "ambience.studio-room" };
   }
   if (DAY_SCENES.has(scene)) {
-    return { bgmCueId: "bgm.day-investigation", ambienceCueId: ambienceCueForBackdrop(backdropClass) };
+    const ambienceCueId = ambienceCueForBackdrop(backdropClass);
+    return {
+      bgmCueId: "bgm.day-investigation",
+      ambienceCueId,
+      ...(ambienceCueId === "ambience.city-afternoon" || ambienceCueId === "ambience.studio-room"
+        ? {}
+        : { fallbackAmbienceCueId: dayAmbienceFallback(ambienceCueId) })
+    };
   }
   if (OFF_AIR_SCENES.has(scene) || scene.startsWith("interlude")) {
     return {
@@ -99,6 +111,7 @@ export function audioScenePlan({ scene = "title", backdropClass = "", pressureLe
           ? { fallbackBgmCueId: "bgm.accusation" }
           : {}),
       ambienceCueId: "ambience.studio-line",
+      fallbackAmbienceCueId: "ambience.studio-room",
       enterSfxCueId: scene === "caseOpen" || scene === "callbackOpener" ? "sfx.phone.connect" : ""
     };
   }
@@ -116,4 +129,10 @@ export function ambienceCueForBackdrop(backdropClass = "") {
   if (value.includes("document")) return "ambience.document-desk";
   if (value.includes("city")) return "ambience.city-afternoon";
   return "ambience.studio-room";
+}
+
+function dayAmbienceFallback(cueId = "") {
+  return ["ambience.restaurant", "ambience.cafe", "ambience.teahouse"].includes(cueId)
+    ? "ambience.city-afternoon"
+    : "ambience.studio-room";
 }

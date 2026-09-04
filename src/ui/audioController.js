@@ -37,12 +37,14 @@ export function syncSceneAudio({ briefId = "root", scene = "title", backdropClas
 }
 
 export function resolveSceneAudioFallback(plan = {}) {
-  if (!plan.bgmCueId || audioCueAvailable(plan.bgmCueId) || !plan.fallbackBgmCueId) return plan;
-  return {
-    ...plan,
-    requestedBgmCueId: plan.bgmCueId,
-    bgmCueId: plan.fallbackBgmCueId
-  };
+  let resolved = plan;
+  if (plan.bgmCueId && !audioCueAvailable(plan.bgmCueId) && plan.fallbackBgmCueId) {
+    resolved = { ...resolved, requestedBgmCueId: plan.bgmCueId, bgmCueId: plan.fallbackBgmCueId };
+  }
+  if (plan.ambienceCueId && !audioCueAvailable(plan.ambienceCueId) && plan.fallbackAmbienceCueId) {
+    resolved = { ...resolved, requestedAmbienceCueId: plan.ambienceCueId, ambienceCueId: plan.fallbackAmbienceCueId };
+  }
+  return resolved;
 }
 
 export function watchAudioPlaybackControls({ getRoot = defaultRoot } = {}) {

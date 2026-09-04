@@ -91,9 +91,13 @@ function stampJavaScriptReferences(source, token) {
 }
 
 function stampCssReferences(source, token) {
-  return source.replace(/(url\(\s*["']?)(\.{1,2}\/[^"'?#)]+)(["']?\s*\))/g, (_, before, specifier, after) => (
-    `${before}${withCacheToken(specifier, token)}${after}`
-  ));
+  return source
+    .replace(/(@import\s+(?:url\(\s*)?["'])(\.{1,2}\/[^"'?#)]+)(["']\s*\)?\s*;)/g, (_, before, specifier, after) => (
+      `${before}${withCacheToken(specifier, token)}${after}`
+    ))
+    .replace(/(url\(\s*["']?)(\.{1,2}\/[^"'?#)]+)(["']?\s*\))/g, (_, before, specifier, after) => (
+      `${before}${withCacheToken(specifier, token)}${after}`
+    ));
 }
 
 function withCacheToken(specifier, token) {
