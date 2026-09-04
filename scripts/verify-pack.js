@@ -1960,7 +1960,7 @@ test("PACK-012", "epilogue unread callbacks stay typed, attributed, and non-evid
     assertNonEmptyString(message.speakerProfileId, `epilogue.unreadMessages[${index}] 必须固定声纹`);
     assert(profilesById.has(message.speakerProfileId), `epilogue.unreadMessages[${index}] speakerProfileId 不存在`);
     const typedStrings = [message.base, ...Object.values(message.echoes ?? {})];
-    assert(typedStrings.every((text) => !/[，：；]/.test(text)), `epilogue.unreadMessages[${index}] 打字面标点不合规`);
+    assert(typedStrings.every((text) => !/[,:;]/.test(text)), `epilogue.unreadMessages[${index}] 打字面必须统一使用中文全角标点`);
     assert(typedStrings.every((text) => !/3301|王\*\*|新阳信贷|返点账户|学费来源/.test(text)), `epilogue.unreadMessages[${index}] 不得夹带未决事实或新证据`);
     if (message.caseId) {
       assertDeepEqual(Object.keys(message.echoes ?? {}), ["pragmatic", "affirm", "accompany"], `epilogue.unreadMessages[${index}] 必须回声三种关怀选择`);
@@ -1976,7 +1976,7 @@ test("PACK-012", "epilogue unread callbacks stay typed, attributed, and non-evid
   assert(caseTwoCallback?.base?.includes("没去店里堵人"), "案二行动落地必须保持克制，不能写成胜利式围堵");
   const caseOneCallback = messages.find((message) => message.caseId === "01-credit");
   assert(caseOneCallback?.base?.includes("二十万现在动不了") && caseOneCallback?.base?.includes("什么时候能拿回来他也不知道"), "宸直新闻后必须回到案一人物，同时保留清偿时间未知");
-  assert(caseTwoCallback?.base?.includes("Tony 还是只说已经提交") && caseTwoCallback?.base?.includes("到底进没进产品,还是不知道"), "宸直新闻后必须回到案二材料，同时保留资金是否入产品未知");
+  assert(caseTwoCallback?.base?.includes("Tony 还是只说已经提交") && caseTwoCallback?.base?.includes("到底进没进产品，还是不知道"), "宸直新闻后必须回到案二材料，同时保留资金是否入产品未知");
 });
 
 test("PACK-012B", "the opening cafe tutorial establishes divorce and parentage conflict without overclaiming the later result", () => {

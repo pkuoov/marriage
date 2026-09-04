@@ -53,7 +53,7 @@ export function courtRecordHtml(state = {}) {
 }
 
 export function avgSystemBarHtml(settings = {}) {
-  return `<div class="avg-system-bar"><button data-avg-setting="auto" type="button">自动 ${settings.autoMode ? "开" : "关"}</button><button data-avg-setting="fast" type="button">快进</button><button data-avg-setting="speed" type="button">字速 ${speedLabel(settings.textSpeed)}</button><button data-avg-setting="effects" type="button">闪烁/震动 ${effectsLabel(settings.screenEffects)}</button></div>`;
+  return `<div class="avg-system-bar"><button data-avg-setting="auto" type="button">自动 ${settings.autoMode ? "开" : "关"}</button><button data-avg-setting="fast" type="button">快进 ${settings.fastForward ? "开" : "关"}</button><button data-avg-setting="speed" type="button">字速 ${speedLabel(settings.textSpeed)}</button><button data-avg-setting="effects" type="button">闪烁/震动 ${effectsLabel(settings.screenEffects)}</button></div>`;
 }
 
 function tab(id, label, active = false) { return `<button class="${active ? "active" : ""}" data-record-tab="${id}" type="button">${label}</button>`; }

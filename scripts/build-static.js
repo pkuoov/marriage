@@ -3,6 +3,7 @@ import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
+import { copyRuntimeAssets } from "./runtime-assets.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = resolve(root, "dist");
@@ -13,13 +14,16 @@ await cleanStaticBuildTargets();
 
 await cp(resolve(root, "index.html"), resolve(dist, "index.html"));
 await cp(resolve(root, "src"), resolve(dist, "src"), { recursive: true });
-await cp(resolve(root, "assets"), resolve(dist, "assets"), { recursive: true });
-await cp(resolve(root, "content"), resolve(dist, "content"), { recursive: true });
 
 const cacheToken = await resolveCacheToken();
 await stampStaticReferences(cacheToken);
+const assets = await copyRuntimeAssets({
+  root,
+  targetRoot: dist,
+  sourcePaths: [resolve(dist, "index.html"), resolve(dist, "src")]
+});
 
-console.log(`Static H5 build ready: ${dist} (cache token: ${cacheToken})`);
+console.log(`Static H5 build ready: ${dist} (cache token: ${cacheToken}, ${assets.copied.length} assets, ${assets.skippedPlanned.length} planned placeholders)`);
 
 async function cleanStaticBuildTargets() {
   const targets = ["index.html", "src", "assets", "content"];

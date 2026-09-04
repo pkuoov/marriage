@@ -33,17 +33,24 @@ function statementTurnText(turn = {}) {
   return String(turn?.source ?? turn?.caller ?? "").trim();
 }
 
-export function statementOptionForLine(options = [], line = {}) {
-  return statementOptionsForLine(options, line)[0] ?? null;
+export function statementOptionForLine(options = [], line = {}, context = {}) {
+  return statementOptionsForLine(options, line, context)[0] ?? null;
 }
 
-export function statementOptionsForLine(options = [], line = {}) {
+export function statementOptionsForLine(options = [], line = {}, { allLines = [] } = {}) {
   const text = String(line?.text ?? "");
   return (options ?? [])
     .map((option, index) => ({ option, index, anchor: String(option?.sourceAnchor ?? "").trim() }))
     .filter(({ anchor }) => anchor && text.includes(anchor))
+    .filter(({ anchor }) => !allLines.length || statementAnchorLineMatches(allLines, anchor).length === 1)
     .sort((left, right) => right.anchor.length - left.anchor.length || left.index - right.index)
     .map(({ option }) => option);
+}
+
+export function statementAnchorLineMatches(lines = [], anchor = "") {
+  const needle = String(anchor ?? "").trim();
+  if (!needle) return [];
+  return (lines ?? []).filter((line) => String(line?.text ?? "").includes(needle));
 }
 
 export function normalizeStatementReaction(value = null, { role = "caller", text = "" } = {}) {

@@ -2,7 +2,7 @@ import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBrief
 import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js";
 import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase, resolveFinalQuoteForCase } from "../src/caseRuntime.js";
 import { requiredContradictionsForCase, truthBoundaryPromptLimitForCase } from "../src/difficulty.js";
-import { migrateState, normalizeRuntimeState, parseStateSnapshot } from "../src/state.js";
+import { migrateState, normalizeRuntimeState, parseStateSnapshot, stateSnapshotForPersistence } from "../src/state.js";
 import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js";
 import { DEFAULT_STORY_PACK_KEY, quickDetectiveCaseFor, quickDetectiveCasesFor, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js";
 import { NPCS } from "../src/story.js";
@@ -34,7 +34,7 @@ import { epilogueUnreadMessages, epilogueUnreadStage } from "../src/runtime/epil
 import { cafePrologueCanOpenForensic, cafePrologueCanPresentEvidence, cafePrologueCanPresentRevisionEvidence, cafePrologueRemainingEvidenceId, cafePrologueRevisionEvidenceHit, cafePrologueRevisedStatementReady, cafePrologueSceneForStep, cafePrologueStatementReady, normalizedCafePrologueProgress } from "../src/runtime/prologueCafeModel.js";
 import { hostDisclosureLinesForAnchor } from "../src/runtime/hostDisclosureModel.js";
 import { advanceQuickConfrontation, advanceQuickMissReaction, advanceQuickTranscript, advanceQuickVerdict, applyQuickStatementLineSelection, endQuickCaseEarly, initialQuickDetectiveState, normalizeQuickDetectiveState, quickConfrontationLines, quickDetectiveIsComplete, quickDisclosureRounds, quickIssueOptionsForRound, quickRoundPatienceForState, quickStatementLinesForRound, quickVerdictPages, retryQuickStatement } from "../src/runtime/quickDetectiveModel.js";
-import { normalizeStatementPatience, normalizeStatementReaction, spendStatementPatience, statementLinesFromText, statementMissReactionForOption, statementNightKey, statementNightPatienceMax, statementNoClueReactionFor, statementOptionForLine, statementOptionsForLine, statementPressureFor, statementStageForScene, statementStageProgress, statementStagesForBrief } from "../src/runtime/statementReviewModel.js";
+import { normalizeStatementPatience, normalizeStatementReaction, spendStatementPatience, statementAnchorLineMatches, statementLinesFromText, statementMissReactionForOption, statementNightKey, statementNightPatienceMax, statementNoClueReactionFor, statementOptionForLine, statementOptionsForLine, statementPressureFor, statementStageForScene, statementStageProgress, statementStagesForBrief } from "../src/runtime/statementReviewModel.js";
 import { advanceTestimonyAct, decisivePresentAvailability, decisivePresentOutcome, normalizeDecisivePresentProgress, normalizeTestimonyWallProgress, pressTestimonyStatement, resetDecisivePresentProgress, testimonyActForScene, testimonyActIsFinal, testimonyStatementsForScene, testimonyWallKey } from "../src/runtime/decisivePresentModel.js";
 import { CHOICE_COST_META, choiceCostMeta } from "../src/runtime/choiceCostModel.js";
 import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "../src/runtime/storyPackSummaryModel.js";
@@ -64,6 +64,7 @@ import { titleScreenHtml } from "../src/ui/titleView.js";
 import { quickDetectiveActiveLine, quickDetectiveCaseSelectHtml, quickDetectiveConfrontationHtml, quickDetectiveIntroHtml, quickDetectiveIssueSelectionHtml, quickDetectiveMissReactionHtml, quickDetectivePatienceLostHtml, quickDetectiveShouldAutoContinue, quickDetectiveStageHtml, quickDetectiveTranscriptHtml, quickDetectiveVerdictHtml } from "../src/ui/quickDetectiveView.js";
 import { createRecapScreens } from "../src/ui/screens/recapScreens.js";
 import { readFileSync, readdirSync } from "node:fs";
+import { assetReferencesInText } from "./runtime-assets.js";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const results = [];
@@ -75,7 +76,8 @@ const screenSourcePaths = [
   "../src/ui/screens/recapScreens.js",
   "../src/ui/screens/quickDetectiveScreens.js",
   "../src/ui/screens/overnightDocumentScreens.js",
-  "../src/ui/screens/liveCounterScreens.js"
+  "../src/ui/screens/liveCounterScreens.js",
+  "../src/ui/screens/testimonyWallScreens.js"
 ];
 const screenSources = screenSourcePaths.map((path) => readFileSync(new URL(path, import.meta.url), "utf8"));
 const runtimeSource = [
@@ -165,13 +167,15 @@ test("ARCH-003", "large runtime domains stay split behind injected boundaries", 
   const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
   const caseEngineSource = readFileSync(new URL("../src/caseEngine.js", import.meta.url), "utf8");
   const overnightSource = readFileSync(new URL("../src/ui/screens/overnightScreens.js", import.meta.url), "utf8");
+  const sceneSource = readFileSync(new URL("../src/ui/screens/sceneScreens.js", import.meta.url), "utf8");
   const splitSources = [
     "../src/ui/focusInputControl.js",
     "../src/ui/liveHudPresenter.js",
     "../src/runtime/caseStateWrites.js",
     "../src/runtime/caseOutcome.js",
     "../src/ui/screens/overnightDocumentScreens.js",
-    "../src/ui/screens/liveCounterScreens.js"
+    "../src/ui/screens/liveCounterScreens.js",
+    "../src/ui/screens/testimonyWallScreens.js"
   ].map((path) => ({ path, source: readFileSync(new URL(path, import.meta.url), "utf8") }));
 
   assertIncludes(caseEngineSource, "./caseTemplates/index.js", "caseEngine 必须通过模板注册表生成每日案");
@@ -180,6 +184,9 @@ test("ARCH-003", "large runtime domains stay split behind injected boundaries", 
   assertIncludes(overnightSource, "createLiveCounterScreens", "隔夜屏幕必须把实时追问委托给独立工厂");
   assert(!overnightSource.includes("function renderDocumentReconcile"), "材料对账实现不能重新塞回 overnightScreens");
   assert(!overnightSource.includes("function renderLiveCounterBeat"), "实时追问实现不能重新塞回 overnightScreens");
+  assertIncludes(sceneSource, "createTestimonyWallScreens", "主场景必须把证词墙与决定性指认委托给独立工厂");
+  assert(!sceneSource.includes("function renderTestimonyWall"), "证词墙实现不能重新塞回 sceneScreens");
+  assert(!sceneSource.includes("function renderDecisivePresentHit"), "决定性指认演出不能重新塞回 sceneScreens");
 
   [
     "createFocusInputControl",
@@ -305,6 +312,10 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
     "long",
     "同一句命中多个短键时必须优先最长原话锚点，不能受 JSON 顺序影响"
   );
+  const repeatedAnchorLines = statementLinesFromText("他说钱已经转了。后来他又说钱已经转了。", { prefix: "ambiguous" });
+  const repeatedAnchorOption = { id: "repeated", sourceAnchor: "钱已经转了" };
+  assertEqual(statementAnchorLineMatches(repeatedAnchorLines, repeatedAnchorOption.sourceAnchor).length, 2, "作者工具必须识别跨句重复的 sourceAnchor");
+  assertEqual(statementOptionForLine([repeatedAnchorOption], repeatedAnchorLines[0], { allLines: repeatedAnchorLines }), null, "跨句重复的 sourceAnchor 不得在运行时随便绑到第一句");
 
   const sampleStageBrief = {
     sceneVersions: [
@@ -443,7 +454,9 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
         for (const [optionIndex, option] of options.entries()) {
           if (!option.answer && !option.lines?.length) continue;
           assert(option.sourceAnchor, `${scene.id} ${kind} ${optionIndex} 有回答却没有 sourceAnchor，玩家会看见死内容`);
-          const sourceLine = replayLines.find((line) => line.text.includes(option.sourceAnchor));
+          const anchorMatches = statementAnchorLineMatches(replayLines, option.sourceAnchor);
+          assertEqual(anchorMatches.length, 1, `${scene.id} ${kind} ${optionIndex} 的 sourceAnchor 必须只命中当前陈述的一句`);
+          const sourceLine = anchorMatches[0];
           assert(sourceLine, `${scene.id} ${kind} ${optionIndex} 的 sourceAnchor 不在当前陈述原句里`);
           assert(statementOptionsForLine(options, sourceLine).includes(option), `${scene.id} ${kind} ${optionIndex} 被同句更长 anchor 遮住，无法从回放发起`);
           const binding = kind === "question" ? `data-scene-question=\"0:${optionIndex}\"` : `data-scene-dialogue=\"0:${optionIndex}\"`;
@@ -453,7 +466,9 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
       const wrongOptions = (scene.questionOptions ?? []).filter((option) => option.correct === false);
       for (const option of wrongOptions) {
         assert(option.sourceAnchor, `${scene.id} 可见错问必须有 sourceAnchor`);
-        const sourceLine = replayLines.find((line) => line.text.includes(option.sourceAnchor));
+        const anchorMatches = statementAnchorLineMatches(replayLines, option.sourceAnchor);
+        assertEqual(anchorMatches.length, 1, `${scene.id} 可见错问的 sourceAnchor 必须只命中当前陈述的一句`);
+        const sourceLine = anchorMatches[0];
         assert(sourceLine, `${scene.id} 可见错问的 sourceAnchor 必须逐字落在当前陈述`);
         assert(statementOptionsForLine(scene.questionOptions ?? [], sourceLine).includes(option), `${scene.id} 可见错问不得被同句更长 anchor 吞掉`);
         const reaction = statementMissReactionForOption(option);
@@ -467,7 +482,9 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
         if (scene.revisedVersion) {
           assert(option.revisedSourceAnchor, `${scene.id} 改口场的可见错问必须另有 revisedSourceAnchor`);
           const revisedLines = statementLinesFromText(scene.revisedVersion, { prefix: `${scene.id}:revised` });
-          const revisedLine = revisedLines.find((line) => line.text.includes(option.revisedSourceAnchor));
+          const revisedAnchorMatches = statementAnchorLineMatches(revisedLines, option.revisedSourceAnchor);
+          assertEqual(revisedAnchorMatches.length, 1, `${scene.id} 可见错问的 revisedSourceAnchor 必须只命中改口陈述的一句`);
+          const revisedLine = revisedAnchorMatches[0];
           assert(revisedLine, `${scene.id} 可见错问的 revisedSourceAnchor 必须逐字落在改口陈述`);
           const revisedOptions = (scene.questionOptions ?? []).map((candidate) => ({
             ...candidate,
@@ -515,6 +532,7 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
   assertEqual(normalizeTestimonyWallProgress(migratedWallState.testimonyWallProgress.legacy).preludeSeen, true, "已经在旧证词墙操作过的存档不能倒退重播前置陈述");
   assertEqual(normalizeTestimonyWallProgress({}).preludeSeen, false, "新证词墙必须先播放承重前置陈述再开放逐句盘问");
   assertIncludes(screenSources[2], "wallContext.finalAct && wallContext.presentProgress.resolved", "旧版 act1 已写完成标记的存档也必须以 act2 命中作为证词墙最终门禁");
+  assertIncludes(screenSources[7], "function advanceWallAct", "证词墙模块必须保留 act1 命中后推进到 act2 的独立入口");
 
   for (const packet of quickDetectiveCasesFor("steam-demo-01")) {
     const rounds = quickDisclosureRounds(packet);
@@ -524,9 +542,14 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
       const state = { ...initialQuickDetectiveState(packet), scene: "issueSelection", roundIndex };
       const lines = quickStatementLinesForRound(packet, state);
       const options = quickIssueOptionsForRound(packet, state);
+      for (const [optionIndex, option] of options.entries()) {
+        assertEqual(statementAnchorLineMatches(lines, option.sourceAnchor).length, 1, `${packet.id}/${round.id} 快案选项 ${optionIndex} 的 sourceAnchor 必须只命中本轮一句原话`);
+      }
       for (const option of options.filter((item) => item.correct === false)) {
         assert(option.sourceAnchor, `${packet.id}/${round.id} 快案错问必须有 sourceAnchor`);
-        const sourceLine = lines.find((line) => line.text.includes(option.sourceAnchor));
+        const anchorMatches = statementAnchorLineMatches(lines, option.sourceAnchor);
+        assertEqual(anchorMatches.length, 1, `${packet.id}/${round.id} 快案错问的 sourceAnchor 必须只命中本轮一句原话`);
+        const sourceLine = anchorMatches[0];
         assert(sourceLine, `${packet.id}/${round.id} 快案错问必须逐字落在本轮原话`);
         assertEqual(statementOptionForLine(options, sourceLine), option, `${packet.id}/${round.id} 快案错问不得被同句更长 anchor 吞掉`);
         const reaction = statementMissReactionForOption(option);
@@ -765,7 +788,7 @@ test("CARE-002", "epilogue unread callbacks echo care choices before the data cu
   };
   const messages = epilogueUnreadMessages(epilogue, careChoices);
   assertEqual(messages.length, 5, "尾声必须依次有四条回访和一条陌生号码");
-  assertIncludes(messages[0].text, "面煮了,放了两个蛋。", "案 1 未读必须回声务实选择");
+  assertIncludes(messages[0].text, "面煮了，放了两个蛋。", "案 1 未读必须回声务实选择");
   assertIncludes(messages[1].text, "就是你说的顺序。", "第二通职场回访必须回声务实选择");
   assertIncludes(messages[2].text, "你们等着。", "案 3 未读必须回声陪伴选择");
   assertIncludes(messages[3].text, "不丢人。", "第四通 Tony 回访必须回声肯定选择");
@@ -779,7 +802,7 @@ test("CARE-002", "epilogue unread callbacks echo care choices before the data cu
   assertIncludes(epilogue.unreadMessages.find((message) => message.caseId === "04-workplace")?.echoes?.affirm ?? "", "六万八是六万八", "案 4 尾声引语必须追溯到肯定选择原句");
   assertEqual(messages[4].echo, "", "陌生号码不得拼接关怀回声");
   const typedStrings = epilogue.unreadMessages.flatMap((message) => [message.base, ...Object.values(message.echoes ?? {})]);
-  assert(typedStrings.every((text) => !/[，：；]/.test(text)), "后台未读的打字面不得混入全角逗号、冒号或分号");
+  assert(typedStrings.every((text) => !/[,:;]/.test(text)), "后台未读的打字面必须统一使用中文全角标点");
   const unreadStage = epilogueUnreadStage(epilogue, careChoices, 5);
   assertEqual(unreadStage.visibleMessages.length, 5, "第五步必须先显示完所有未读");
   assertEqual(unreadStage.complete, false, "未读显示完时数据曲线仍不得提前出现");
@@ -1654,6 +1677,22 @@ test("PLATFORM-002", "save store wraps storage for future desktop saves", () => 
   fileStore.remove("desktop-save");
   assertEqual(fileStore.read("desktop-save"), null, "桌面文件桥缺失值必须归一成 null");
   assertEqual(touchedStorage.length, 0, "桌面文件桥存在时不能再落回 localStorage");
+  const failedStore = createSaveStore({
+    storage: {
+      get: () => null,
+      set: () => { throw new Error("quota"); },
+      remove: () => true
+    }
+  });
+  assertEqual(failedStore.write("save", "value"), false, "存档后端写失败必须返回 false，不能静默假装成功");
+});
+
+test("PLATFORM-003", "release builds copy referenced assets while allowing declared planned placeholders", () => {
+  const references = assetReferencesInText(`
+    <img src="./assets/generated/host.png?v=7" />
+    .scene { background: url('../assets/backgrounds/cafe.png#night'); }
+  `);
+  assertEqual(JSON.stringify(references), JSON.stringify(["assets/backgrounds/cafe.png", "assets/generated/host.png"]), "资产扫描必须覆盖 HTML/CSS 并去掉缓存参数");
 });
 
 test("AUDIO-001", "audio buses clamp, persist independently, and duck scene beds under voice", () => {
@@ -1684,10 +1723,10 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   assertEqual(pursuitPlan.bgmCueId, "bgm.pursuit", "B 故事浮出后必须接 pursuit 循环");
   assertEqual(pursuitPlan.fallbackBgmCueId, "bgm.accusation", "Pursuit 缺位时必须回退到高压追问底乐");
   assertEqual(resolveSceneAudioFallback(pursuitPlan).bgmCueId, "bgm.accusation", "planned Pursuit 必须自动落到可用高压 BGM");
-  assertIncludes(screenSources[2], 'ctx.getState().scene !== "decisivePresentHit"', "命中 stinger 定时器必须校验仍停留在命中场景");
-  assert(!screenSources[2].includes('playAudioCue("bgm.pursuit")'), "命中页不得再用脱离场景同步的定时器手动切 pursuit");
+  assertIncludes(screenSources[7], 'ctx.getState().scene !== "decisivePresentHit"', "命中 stinger 定时器必须校验仍停留在命中场景");
+  assert(!screenSources[7].includes('playAudioCue("bgm.pursuit")'), "命中页不得再用脱离场景同步的定时器手动切 pursuit");
   assertIncludes(screenSources[2], '? "pursuit" : ""', "命中后的 sceneReview 必须通过 musicPhase 接管 pursuit 续播");
-  assertIncludes(screenSources[2], 'context.wallProgress.act > 1 ? "pursuit" : "allegro"', "act2 证词墙与材料选择必须切入 pursuit，并继续使用场景音频回退");
+  assertIncludes(screenSources[7], 'context.wallProgress.act > 1 ? "pursuit" : "allegro"', "act2 证词墙与材料选择必须切入 pursuit，并继续使用场景音频回退");
   assertEqual(audioScenePlan({ scene: "sceneLineReplay" }).ambienceCueId, "ambience.studio-line", "原话回放仍在连线中，不得掉到收麦声场");
   assertEqual(audioScenePlan({ scene: "afterSceneEvidence" }).ambienceCueId, "ambience.studio-line", "连线中插入材料不得误切后台声场");
   assertEqual(audioScenePlan({ scene: "overnightCallback" }).bgmCueId, "bgm.callback-return", "第二夜回拨必须使用回拨 cue");
@@ -2539,7 +2578,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assert(!/http\.server|127\.0\.0\.1|localhost/i.test(windowsPlaySource), "Windows 一键试玩不能依赖本地端口或 dev server");
   assert(!buildStaticSource.includes("rm(dist"), "H5 构建不能删除整个 dist，否则会和 dist/playable 构建互相踩目录");
   assertIncludes(buildStaticSource, "cleanStaticBuildTargets", "H5 构建必须只清理自己的静态目标");
-  assertIncludes(buildStaticSource, 'resolve(root, "assets")', "H5 构建必须递归带上音频资产目录");
+  assertIncludes(buildStaticSource, "copyRuntimeAssets", "H5 构建必须只复制运行时实际引用的资产");
   const desktopMainSource = readFileSync(new URL("../desktop/electron/main.cjs", import.meta.url), "utf8");
   const desktopPreloadSource = readFileSync(new URL("../desktop/electron/preload.cjs", import.meta.url), "utf8");
   const desktopBuilderSource = readFileSync(new URL("../desktop/electron-builder.json", import.meta.url), "utf8");
@@ -2556,9 +2595,16 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(desktopMainSource, "setZoomFactor", "桌面壳必须支持缩放调节");
   assertIncludes(desktopMainSource, "crash-logs", "桌面壳必须把崩溃日志写到用户数据目录");
   assertIncludes(desktopMainSource, "render-process-gone", "桌面壳必须记录渲染进程崩溃");
+  assertIncludes(desktopMainSource, "atomicWriteFile", "桌面文件存档必须先写临时文件再原子替换");
+  assertIncludes(desktopMainSource, "MAX_SAVE_BYTES", "桌面存档桥必须限制渲染进程可写入的数据体积");
+  assertIncludes(desktopMainSource, "JSON.parse(serialized)", "桌面存档桥必须拒绝非 JSON 数据");
+  assertIncludes(desktopMainSource, "sandbox: true", "桌面渲染进程必须启用 Electron sandbox");
+  assertIncludes(desktopMainSource, "setWindowOpenHandler", "桌面壳必须拒绝页面任意打开新窗口");
+  assertIncludes(desktopMainSource, "will-navigate", "桌面壳必须拒绝离开本地试玩入口的导航");
   assertIncludes(desktopMainSource, "requestSingleInstanceLock", "桌面壳必须避免重复启动多个实例抢存档");
   assertIncludes(desktopPreloadSource, "livestreamDetectiveDesktop", "preload 必须暴露平台桥给游戏运行时");
   assertIncludes(desktopPreloadSource, "saveFiles", "preload 必须暴露文件存档桥");
+  assertIncludes(desktopPreloadSource, "reportError", "preload 必须把渲染异常交给桌面日志通道");
   assertIncludes(buildDesktopSource, "dist\", \"desktop-electron", "桌面构建必须输出到独立目录，不能覆盖 H5/playable");
   assertIncludes(buildDesktopSource, "buildPlayable", "桌面构建必须在同一脚本内生成 playable，避免 npm 串联命令之间被并发构建插队");
   assertIncludes(buildDesktopSource, "withBuildLock", "桌面构建必须串行化 playable 和 desktop staging");
@@ -2569,7 +2615,7 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assertIncludes(buildPlayableSource, "mkdtemp", "离线 playable 构建必须先写临时目录，避免并发写 dist/playable");
   assertIncludes(buildPlayableSource, "rename(tempDir, outDir)", "离线 playable 构建必须以临时目录替换目标目录");
   assertIncludes(buildPlayableSource, "importAliasDeclarations", "离线 playable bundler 必须保留 import alias，避免 app 运行时 undefined");
-  assertIncludes(buildPlayableSource, 'copyTree(resolve(root, "assets")', "离线 playable 必须递归带上音频资产目录");
+  assertIncludes(buildPlayableSource, "copyRuntimeAssets", "离线 playable 必须只复制运行时实际引用的资产");
   assertIncludes(browserSmokeSource, "accounting-support", "浏览器回放必须覆盖周会计档案室+房租账页白天路线");
   assertIncludes(browserSmokeSource, "support-document", "浏览器回放必须覆盖房租账页+独立审流水路线");
   assertIncludes(browserSmokeSource, "day map must not allow skipping the required two daytime actions", "浏览器回放必须覆盖白天调查的两处最低门槛");
@@ -2663,6 +2709,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertEqual(callerExpressionForView({ mood: "thinking", sceneIndex: 1 }).kind, "shift", "来电人表情 fallback 必须可脱离 app 状态测试");
   assertEqual(hostSpeakingStateForView({ scene: "sceneReview", mood: "thinking" }), "listening", "整段听麦时主播必须保持倾听立绘");
   assertEqual(hostSpeakingStateForView({ scene: "sceneLineReplay", mood: "focused" }), "questioning", "拉回原话时主播必须切到找问题立绘");
+  assertEqual(hostSpeakingStateForView({ scene: "sceneReview", mood: "focused", controlMode: "replay" }), "questioning", "回放操作必须切到找问题立绘");
+  assertEqual(hostSpeakingStateForView({ scene: "sceneReview", mood: "focused", controlMode: "present" }), "pressing", "出示材料时主播必须切到施压立绘");
   assertEqual(hostSpeakingStateForView({ scene: "sceneQuestionAnswer", mood: "focused" }), "pressing", "打断质问时主播必须切到追问立绘");
   assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: { guarded: "guarded.png", pause: "pause.png" }, expression: { kind: "shift" } }).src, "guarded.png", "shift 表演必须切到 guarded 立绘");
   assertEqual(callerArtForExpression({ neutralSrc: "neutral.png", variants: { pause: "pause.png" }, expression: { kind: "pause" } }).src, "pause.png", "pause 表演必须切到 pause 立绘");
@@ -3028,6 +3076,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(appSource, "onChoicesShown", "对白结束展示选项时必须同步材料层状态");
   assertIncludes(appSource, "resetViewportScroll", "SPA 切换场景后必须回到新画面顶部，不能继承上一页滚动位置");
   assertIncludes(dialoguePresentationSource, ".night-shell-line", "夜班序章必须进入逐句 AVG 分页，不能在手机端堆成长页");
+  assertIncludes(dialoguePresentationSource, "destroyed || box.isConnected === false", "旧对白控制器离开页面后必须停止动画和自动推进");
+  assertIncludes(dialoguePresentationSource, "setFastForward", "快进按钮必须真正改变当前对白控制器，不能只保存一个死设置");
   assertIncludes(appSource, "handleGamepadAxis", "左摇杆必须能移动焦点");
   assertIncludes(appSource, "gamepadAxisDirection", "摇杆方向和冷却必须走可测试纯函数");
   assertIncludes(stylesSource, "button:focus-visible", "键盘和手柄焦点必须有可见焦点环");
@@ -3844,7 +3894,7 @@ test("ROUTE-001", "every playable choice records a hidden route axis and tone", 
 
 test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
   const stateSource = readFileSync(new URL("../src/state.js", import.meta.url), "utf8");
-  assert(!/plotId/.test(stateSource), "旧存档迁移不能继续按具体 plotId 写分支；应按旧文本或统一 route schema 迁移");
+  assert(!/if\s*\([^)]*plotId|switch\s*\([^)]*plotId/.test(stateSource), "旧存档迁移不能按具体 plotId 写分支；但保存内容刷新键不应被误判");
   const migrated = migrateState({
     profileDone: true,
     caseMode: "unknown-mode",
@@ -4053,6 +4103,35 @@ test("STATE-001B", "damaged or unrefreshable saves stop at a visible recovery st
   const recoveryTitle = titleScreenHtml({ canContinue: false, saveLoadError: damaged.saveLoadError, confirmNewGame: false });
   assertIncludes(recoveryTitle, "data-request-new-game", "损坏存档状态下点新游戏必须先进确认层");
   assert(!recoveryTitle.includes("data-start-story"), "损坏存档不得被一次点击直接覆盖");
+});
+
+test("STATE-001C", "persisted state keeps progress but replaces authored case payloads with refresh keys", () => {
+  const [brief] = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
+  const snapshot = stateSnapshotForPersistence({
+    screen: "chapter",
+    chapter: 1,
+    caseMode: "episode",
+    caseBriefs: [brief],
+    caseBrief: brief,
+    sceneAnswers: { kept: "玩家选择" },
+    saveLoadError: "transient",
+    saveWriteError: "transient"
+  });
+  assertEqual(snapshot.sceneAnswers.kept, "玩家选择", "存档瘦身必须保留玩家进度");
+  assertEqual(snapshot.caseBriefs[0].storyKey, "steam-demo-01", "存档必须保留内容包刷新键");
+  assertEqual("sceneVersions" in snapshot.caseBriefs[0], false, "存档不得重复写入整份作者台词");
+  assertEqual("caseBrief" in snapshot, false, "当前案卷可由 caseBriefs 和章节号恢复，不应重复持久化");
+  assertEqual("saveLoadError" in snapshot, false, "读取错误提示不得写回永久存档");
+  assertEqual("saveWriteError" in snapshot, false, "写入错误提示不得写回永久存档");
+  const serialized = JSON.stringify(snapshot);
+  assert(!serialized.includes(brief.openingDialogue?.[0]?.text ?? "__missing__"), "序列化进度不得夹带作者台词");
+  assert(serialized.length < 30_000, `空进度案件包存档应低于 30KB，当前 ${serialized.length} bytes`);
+  const restored = refreshSavedCaseContent(parseStateSnapshot(serialized, "slot1"), {
+    generateCases: (npcs, savedAttrs, options) => generateCasesForMode("episode", npcs, savedAttrs, options),
+    npcs: NPCS
+  });
+  assertEqual(restored.sceneAnswers.kept, "玩家选择", "瘦身存档刷新内容后必须保留玩家进度");
+  assert((restored.caseBriefs[0].sceneVersions ?? []).length > 0, "瘦身存档读回后必须重建完整台本");
 });
 
 test("STATE-002", "saved progress refreshes authored case copy from the current content pack", () => {

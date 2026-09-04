@@ -162,6 +162,7 @@ export function createDialogueController({
   pages,
   choices,
   speed = "normal",
+  fastForward = false,
   hostName = DEFAULT_PLAYER_NAME,
   autoMode = false,
   autoDelay = 2,
@@ -179,6 +180,8 @@ export function createDialogueController({
   let autoTimerId = 0;
   let lastAt = 0;
   let complete = false;
+  let destroyed = false;
+  let fastForwardEnabled = Boolean(fastForward);
   const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
   const pageLines = box.querySelector(".avg-page-lines");
   const indicator = box.querySelector(".avg-continue");
@@ -187,13 +190,14 @@ export function createDialogueController({
   let activeDelay = baseDelay;
 
   function showPage() {
+    if (destroyed) return;
     clearAutoAdvance();
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
     const lines = normalizedPageLines(page);
     const speedTier = lines.find((line) => line.speedTier)?.speedTier ?? "";
     const tierProfile = presentationProfile.speedTiers?.[speedTier] ?? {};
-    activeDelay = Number.isFinite(Number(tierProfile.delay)) ? Number(tierProfile.delay) : baseDelay;
+    activeDelay = fastForwardEnabled ? 0 : Number.isFinite(Number(tierProfile.delay)) ? Number(tierProfile.delay) : baseDelay;
     visibleCount = 0;
     complete = false;
     const activeRole = dialoguePageRole(page);
@@ -218,6 +222,7 @@ export function createDialogueController({
   }
 
   function typeFrame(now) {
+    if (destroyed || box.isConnected === false) return;
     const page = pages[pageIndex];
     const fullText = typeablePageLines(page).map((entry) => entry.text).join("");
     const previous = fullText[Math.max(0, visibleCount - 1)] ?? "";
@@ -233,6 +238,7 @@ export function createDialogueController({
   }
 
   function finishPage() {
+    if (destroyed || complete || box.isConnected === false) return;
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
     visibleCount = typeablePageLines(page).reduce((sum, entry) => sum + entry.text.length, 0);
@@ -244,6 +250,7 @@ export function createDialogueController({
   }
 
   function scheduleAutoAdvance() {
+    if (destroyed) return;
     clearAutoAdvance();
     const nextPage = pages[pageIndex + 1];
     const pairDelay = pairedAutoAdvance && !reduceMotion && activeDelay > 0 && shouldAutoAdvanceDialoguePair(pages[pageIndex], nextPage)
@@ -255,7 +262,7 @@ export function createDialogueController({
     if (delay === null) return;
     autoTimerId = globalThis.setTimeout(() => {
       autoTimerId = 0;
-      if (box.isConnected === false) return;
+      if (destroyed || box.isConnected === false) return;
       advance();
     }, delay);
   }
@@ -282,6 +289,7 @@ export function createDialogueController({
   }
 
   function advance() {
+    if (destroyed || box.isConnected === false) return;
     clearAutoAdvance();
     if (!complete) return finishPage();
     if (pageIndex < pages.length - 1) {
@@ -296,7 +304,19 @@ export function createDialogueController({
     choices?.querySelector("button:not(:disabled)")?.focus?.({ preventScroll: true });
   }
 
-  return { start: showPage, advance, finish: finishPage, destroy: clearAutoAdvance, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
+  function setFastForward(enabled) {
+    fastForwardEnabled = Boolean(enabled);
+    if (fastForwardEnabled && !complete) finishPage();
+  }
+
+  function destroy() {
+    destroyed = true;
+    clearAutoAdvance();
+    cancelAnimationFrame(frameId);
+    frameId = 0;
+  }
+
+  return { start: showPage, advance, finish: finishPage, destroy, setFastForward, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
 }
 
 function safeRoleClass(value = "caller") {

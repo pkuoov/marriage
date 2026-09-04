@@ -726,14 +726,15 @@ async function runStateReplacementRoutes() {
     await assertVisibleText(page, "CASE 01", "memoized screens must render the first case from the new state");
     await click(page, "[data-enter-case-live]");
 
-    await page.evaluate(() => {
+    await page.evaluate((legacySceneVersions) => {
       const storageKey = "livestream-detective-save-v1";
       const save = JSON.parse(localStorage.getItem(storageKey) ?? "{}");
-      const brief = save.caseBriefs?.[0] ?? {};
+      const brief = { ...(save.caseBriefs?.[0] ?? {}), sceneVersions: legacySceneVersions };
+      const staleOpeningScene = brief.sceneVersions?.find((scene) => scene.id === "credit-living-arrangement");
+      if (staleOpeningScene) staleOpeningScene.version = "我们一直住在一起，这是一条已经淘汰的旧台词。";
+      save.caseBriefs = [brief, ...(save.caseBriefs ?? []).slice(1)];
       const caseId = brief.id;
       const answerKey = `${caseId}:scene:0`;
-      const staleAnniversary = brief.sceneVersions?.find((scene) => scene.id === "credit-anniversary-agency");
-      if (staleAnniversary) staleAnniversary.version = "他把酒单推到我面前。酒是他点的，我当时也没拦。";
       save.screen = "chapter";
       save.chapter = 1;
       save.caseBrief = brief;
@@ -751,19 +752,21 @@ async function runStateReplacementRoutes() {
       save.sceneAnswers = { ...(save.sceneAnswers ?? {}), [answerKey]: "old-state" };
       save.caseBudgets = { ...(save.caseBudgets ?? {}), [caseId]: { max: 7, remaining: 0, used: 7 } };
       localStorage.setItem(storageKey, JSON.stringify(save));
-    });
+    }, structuredClone(authoredCasePackets[0].sceneVersions ?? []));
     await page.reload();
     await click(page, "[data-continue-story]");
     await assertVisibleText(page, "这通断了", "seeded patience loss must render before retry");
     await click(page, "[data-retry-lost-step]");
-    await drainDialogue(page, {});
+    const retryTranscript = await drainDialogue(page, {});
     await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
     const retriedState = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
     const retriedCaseId = retriedState.caseBriefs?.[0]?.id;
     const retriedAnswerKey = `${retriedCaseId}:scene:0`;
-    const refreshedAnniversary = retriedState.caseBriefs?.[0]?.sceneVersions?.find((scene) => scene.id === "credit-anniversary-agency");
-    if (!refreshedAnniversary?.version?.includes("他看中一瓶，我说太贵了") || refreshedAnniversary.version.includes("他把酒单推到我面前")) {
+    if (!["不住在一起。", "他住他的，我住我的。"].every((line) => retryTranscript.includes(line)) || retryTranscript.includes("这是一条已经淘汰的旧台词")) {
       throw new Error("continuing a save must refresh stale authored dialogue from the current content pack");
+    }
+    if (retriedState.caseBriefs?.[0]?.sceneVersions) {
+      throw new Error("refreshed saves must return to progress-only case stubs instead of persisting authored dialogue");
     }
     if (retriedState.scene !== "sceneReview" || retriedState.patienceLostContext !== null) {
       throw new Error("patience retry must render from the replacement state and clear its retry context");

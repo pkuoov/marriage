@@ -43,15 +43,16 @@ export function statementReplayPageChoicesHtml({
 } = {}) {
   const keyOptions = scene.questionOptions ?? [];
   const dialogueOptions = scene.casualQuestions ?? [];
+  const allLines = statementLinesFromText(scene.version ?? "", { prefix: scene.id ?? "scene" });
   const resolvedDialogue = new Set((resolvedDialogueOptionIndexes ?? []).map(Number));
   const matches = [
-    ...statementOptionsForLine(keyOptions, line).map((option) => ({
+    ...statementOptionsForLine(keyOptions, line, { allLines }).map((option) => ({
       kind: "key",
       option,
       optionIndex: keyOptions.indexOf(option),
       resolved: keyResolved
     })),
-    ...statementOptionsForLine(dialogueOptions, line).map((option) => {
+    ...statementOptionsForLine(dialogueOptions, line, { allLines }).map((option) => {
       const optionIndex = dialogueOptions.indexOf(option);
       return {
         kind: "dialogue",
@@ -91,7 +92,8 @@ export function statementReplayLineForScene(scene = {}, lineId = "") {
 }
 
 export function statementReplayOptionIndex(scene = {}, line = {}) {
-  const option = statementOptionForLine(scene.questionOptions ?? [], line);
+  const allLines = statementLinesFromText(scene.version ?? "", { prefix: scene.id ?? "scene" });
+  const option = statementOptionForLine(scene.questionOptions ?? [], line, { allLines });
   return option ? (scene.questionOptions ?? []).indexOf(option) : -1;
 }
 
@@ -117,7 +119,8 @@ function statementReplayBlockHtml(entry = {}, entryIndex = 0) {
         sceneIndex,
         attempted,
         Boolean(entry.keyResolved),
-        resolvedDialogueOptionIndexes
+        resolvedDialogueOptionIndexes,
+        lines
       )).join("")}
     </div>
   `;
@@ -129,18 +132,19 @@ function statementReplayLineHtml(
   sceneIndex = 0,
   attempted = new Set(),
   keyResolved = false,
-  resolvedDialogueOptionIndexes = new Set()
+  resolvedDialogueOptionIndexes = new Set(),
+  allLines = []
 ) {
   const keyOptions = scene.questionOptions ?? [];
   const dialogueOptions = scene.casualQuestions ?? [];
   const matches = [
-    ...statementOptionsForLine(keyOptions, line).map((option) => ({
+    ...statementOptionsForLine(keyOptions, line, { allLines }).map((option) => ({
       kind: "key",
       option,
       optionIndex: keyOptions.indexOf(option),
       resolved: keyResolved
     })),
-    ...statementOptionsForLine(dialogueOptions, line).map((option) => {
+    ...statementOptionsForLine(dialogueOptions, line, { allLines }).map((option) => {
       const optionIndex = dialogueOptions.indexOf(option);
       return {
         kind: "dialogue",

@@ -18,8 +18,11 @@ export function createSaveStore({ storage = platformRuntime.storage, saveFiles =
       return null;
     },
     write(key, value) {
-      if (fileBackend) fileBackend.write(key, value);
-      else storage.set(key, value);
+      try {
+        return fileBackend ? fileBackend.write(key, value) : storage.set(key, value) !== false;
+      } catch {
+        return false;
+      }
     },
     remove(key) {
       if (fileBackend) fileBackend.remove(key);
@@ -48,7 +51,7 @@ function createFileSaveBackend(saveFiles) {
       return normalizeMissing(saveFiles.read(key));
     },
     write(key, value) {
-      saveFiles.write(key, value);
+      return saveFiles.write(key, value) !== false;
     },
     remove(key) {
       if (typeof saveFiles.remove === "function") saveFiles.remove(key);

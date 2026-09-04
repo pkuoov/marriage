@@ -137,7 +137,7 @@ export function createLiveHudPresenter(ctx) {
     });
   }
 
-  function portraitLayer(brief, mood = "listening", pressure = null) {
+  function portraitLayer(brief, mood = "listening", pressure = null, controlMode = "") {
     const state = getState();
     const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
@@ -150,7 +150,7 @@ export function createLiveHudPresenter(ctx) {
       artStyle: brief.callerArtStyle,
       hostName: normalizePlayerName(state.playerName),
       hostArtVariants: DEFAULT_HOST_ART_VARIANTS,
-      hostSpeakingState: hostSpeakingStateForCurrentScene(mood),
+      hostSpeakingState: hostSpeakingStateForCurrentScene(mood, controlMode),
       respondentArtSrc: respondentJoined ? brief.respondentArtVariants?.neutral ?? brief.respondentArt ?? "" : "",
       respondentFallbackSrc: brief.respondentArt ?? "",
       respondentArtVariants: respondentJoined ? brief.respondentArtVariants ?? {} : {},
@@ -160,8 +160,8 @@ export function createLiveHudPresenter(ctx) {
     });
   }
 
-  function hostSpeakingStateForCurrentScene(mood = "listening") {
-    return hostSpeakingStateForView({ scene: getState().scene, mood });
+  function hostSpeakingStateForCurrentScene(mood = "listening", controlMode = "") {
+    return hostSpeakingStateForView({ scene: getState().scene, mood, controlMode });
   }
 
   function casePortraitArt(brief, npc, expression = {}) {
@@ -184,7 +184,9 @@ export function createLiveHudPresenter(ctx) {
 
   function currentScenePressureHint(brief) {
     const state = getState();
-    if (!isSceneReviewScene(state.scene)) return {};
+    const keepsScenePressure = isSceneReviewScene(state.scene)
+      || ["sceneLineReplay", "stanceSnapshot", "afterSceneEvidence"].includes(state.scene);
+    if (!keepsScenePressure) return {};
     const scenes = brief?.sceneVersions ?? [];
     const index = currentIndex(brief, "sceneReview", scenes.length || 1);
     return scenes[index]?.pressureHint ?? {};

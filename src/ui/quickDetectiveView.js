@@ -6,7 +6,7 @@ import {
   quickStatementLinesForRound,
   quickVerdictPages
 } from "../runtime/quickDetectiveModel.js";
-import { statementOptionForLine, statementTextFromTurns } from "../runtime/statementReviewModel.js";
+import { statementAnchorLineMatches, statementOptionForLine, statementTextFromTurns } from "../runtime/statementReviewModel.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
 export function quickDetectiveCaseSelectHtml(packets = [], completedIds = []) {
@@ -208,7 +208,7 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
     <section class="quick-detective-panel quick-issue-selection quick-statement-replay" aria-label="通话回放">
       <div class="quick-review-strip" aria-hidden="true"><i>REC</i><span></span></div>
       <div class="quick-statement-lines">
-        ${lines.map((line) => quickStatementLineButton(line, options, attempted, resolved)).join("")}
+        ${lines.map((line) => quickStatementLineButton(line, options, attempted, resolved, lines)).join("")}
       </div>
       ${(state.resolvedConfrontationIds?.length ?? 0) > 0 ? `
         <div class="quick-early-verdict">
@@ -366,8 +366,8 @@ function quickStageStatus(packet = {}, state = {}) {
   }[state.scene] ?? "语音连线中";
 }
 
-function quickStatementLineButton(line = {}, options = [], attempted = new Set(), resolved = new Set()) {
-  const option = statementOptionForLine(options, line);
+function quickStatementLineButton(line = {}, options = [], attempted = new Set(), resolved = new Set(), allLines = []) {
+  const option = statementOptionForLine(options, line, { allLines });
   const solved = Boolean(option?.confrontationId && resolved.has(option.confrontationId));
   const missed = attempted.has(line.id) && !solved;
   return `
@@ -380,8 +380,9 @@ function quickStatementLineButton(line = {}, options = [], attempted = new Set()
 }
 
 function quickCommentaryOptionButton(option = {}, lines = [], attempted = new Set(), resolved = new Set()) {
-  const line = lines.find((item) => item.text.includes(String(option.sourceAnchor ?? "")));
-  if (!line) return "";
+  const anchorMatches = statementAnchorLineMatches(lines, option.sourceAnchor);
+  if (anchorMatches.length !== 1) return "";
+  const line = anchorMatches[0];
   const solved = Boolean(option.confrontationId && resolved.has(option.confrontationId));
   const missed = attempted.has(line.id) && !solved;
   return `

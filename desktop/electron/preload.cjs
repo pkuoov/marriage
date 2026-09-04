@@ -5,7 +5,8 @@ const CHANNELS = {
   write: "livestream-detective:save-write",
   remove: "livestream-detective:save-remove",
   list: "livestream-detective:save-list",
-  exportForCloud: "livestream-detective:save-export"
+  exportForCloud: "livestream-detective:save-export",
+  reportError: "livestream-detective:report-error"
 };
 
 function sendSync(channel, ...args) {
@@ -32,5 +33,8 @@ contextBridge.exposeInMainWorld("livestreamDetectiveDesktop", {
   },
   postMessage(data) {
     ipcRenderer.send("livestream-detective:message", data);
+  },
+  reportError(data) {
+    ipcRenderer.send(CHANNELS.reportError, data);
   }
 });

@@ -163,7 +163,10 @@ export function createLiveCounterScreens(ctx) {
     const nextSceneIndex = nextPlayableSceneIndex(brief, Number(beat.afterSceneIndex ?? 0));
     if (nextSceneIndex >= 0) {
       setIndexValue(brief, "sceneReview", nextSceneIndex);
-      state.scene = "overnightNight2";
+      state.scene = liveSceneForCurrentSegment(brief, {
+        night: ensureNight(brief),
+        overnight: ensureOvernight(brief)
+      });
     } else {
       state.scene = sceneAfterEvidenceFor(brief);
     }

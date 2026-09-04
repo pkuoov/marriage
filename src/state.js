@@ -42,6 +42,7 @@ export const baseState = {
   screen: "title",
   saveSlot: "slot1",
   saveLoadError: null,
+  saveWriteError: null,
   playerName: DEFAULT_PLAYER_NAME,
   settings: {
     textSpeed: "normal",
@@ -169,6 +170,7 @@ export function migrateState(saved) {
   };
   next.saveSlot = activeSaveSlot();
   next.saveLoadError = typeof next.saveLoadError === "string" && next.saveLoadError ? next.saveLoadError : null;
+  next.saveWriteError = null;
   next.playerName = normalizePlayerName(next.playerName);
   next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
   if (!["full", "reduced", "off"].includes(next.settings.screenEffects)) next.settings.screenEffects = "full";
@@ -483,16 +485,56 @@ export function loadMeta() {
     const raw = saveStore.read(META_STORAGE_KEY, [LEGACY_META_STORAGE_KEY]);
     return raw ? JSON.parse(raw) : { runs: 0, bonusPoints: 0, history: [] };
   } catch {
-    return { runs: 0, bonusPoints: 0, history: [] };
+    return { runs: 0, bonusPoints: 0, history: [], loadError: "corrupt-meta" };
   }
 }
 
 export function saveStateSnapshot(state) {
-  saveStore.write(STORAGE_KEY, JSON.stringify({ ...state, saveSlot: activeSaveSlot() }));
+  let saved = false;
+  try {
+    const snapshot = stateSnapshotForPersistence(state);
+    saved = saveStore.write(STORAGE_KEY, JSON.stringify(snapshot));
+  } catch {
+    saved = false;
+  }
+  state.saveWriteError = saved ? null : "save-write-failed";
+  return saved;
+}
+
+export function stateSnapshotForPersistence(state = {}) {
+  const snapshot = structuredClone({ ...state, saveSlot: activeSaveSlot() });
+  delete snapshot.saveLoadError;
+  delete snapshot.saveWriteError;
+  snapshot.caseBriefs = (snapshot.caseBriefs ?? []).map(caseBriefPersistenceStub);
+  delete snapshot.caseBrief;
+  return snapshot;
+}
+
+const PERSISTED_CASE_BRIEF_KEYS = Object.freeze([
+  "id",
+  "storyKey",
+  "weeklyKey",
+  "dailyKey",
+  "plotId",
+  "complainantId",
+  "respondentId",
+  "caseId",
+  "runtimeContentCaseId",
+  "caseMode"
+]);
+
+function caseBriefPersistenceStub(brief = {}) {
+  return Object.fromEntries(PERSISTED_CASE_BRIEF_KEYS
+    .filter((key) => brief[key] !== undefined && brief[key] !== null && brief[key] !== "")
+    .map((key) => [key, brief[key]]));
 }
 
 export function saveMetaSnapshot(meta) {
-  saveStore.write(META_STORAGE_KEY, JSON.stringify(meta));
+  try {
+    return saveStore.write(META_STORAGE_KEY, JSON.stringify(meta));
+  } catch {
+    return false;
+  }
 }
 
 export function clearStateSnapshot() {

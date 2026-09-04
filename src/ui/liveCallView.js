@@ -71,8 +71,11 @@ export function callerExpressionForView({ pressure = {}, budget = {}, scene = ""
   return { kind: "blink", text: "麦里轻轻吸气" };
 }
 
-export function hostSpeakingStateForView({ scene = "", mood = "listening" } = {}) {
+export function hostSpeakingStateForView({ scene = "", mood = "listening", controlMode = "" } = {}) {
   if (/recap|ending|epilogue|storyInterlude|caseConclusion/i.test(String(scene))) return "verdict";
+  if (["present", "press", "interrupt"].includes(controlMode)) return "pressing";
+  if (controlMode === "replay") return "questioning";
+  if (controlMode === "listen") return "listening";
   if (["sceneQuestionAnswer", "liveCounterBeat", "callerQuestion", "deepFollowup"].includes(scene) || ["tense", "anxious"].includes(mood)) return "pressing";
   if (["sceneReview", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2"].includes(scene)) return "listening";
   return "questioning";

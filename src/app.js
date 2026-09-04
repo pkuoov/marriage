@@ -54,6 +54,7 @@ import { createFocusInputControl } from "./ui/focusInputControl.js";
 import { createLiveHudPresenter } from "./ui/liveHudPresenter.js";
 import { createCaseStateWrites } from "./runtime/caseStateWrites.js";
 import { createCaseOutcome } from "./runtime/caseOutcome.js";
+import { platformRuntime } from "./platformRuntime.js";
 
 const app = document.querySelector("#app");
 const PRODUCT_NAME = "深夜热线：直播间侦探";
@@ -95,6 +96,10 @@ let titleNewGameConfirmation = false;
 let titlePlayerNameDraft = null;
 let questionRewindHistory = [];
 let lastQuestionRewindCapture = { target: null, at: 0 };
+let activeDialogueController = null;
+let runtimeErrorNotice = meta.loadError ? "以前的通关统计没能读出来；本局进度不受影响。" : "";
+installRuntimeErrorReporting();
+syncRuntimeWarningBanner();
 const {
   actionDone,
   audiencePatienceLost,
@@ -246,7 +251,44 @@ globalThis.addEventListener?.("gamepadconnected", () => startGamepadPolling());
 startGamepadPolling();
 
 function saveState() {
-  saveStateSnapshot(state);
+  const saved = saveStateSnapshot(state);
+  syncRuntimeWarningBanner();
+  return saved;
+}
+
+function installRuntimeErrorReporting() {
+  globalThis.addEventListener?.("error", (event) => {
+    reportRuntimeError("renderer-error", event.error ?? new Error(event.message ?? "Unknown renderer error"));
+  });
+  globalThis.addEventListener?.("unhandledrejection", (event) => {
+    reportRuntimeError("renderer-unhandled-rejection", event.reason);
+  });
+}
+
+function reportRuntimeError(kind, error) {
+  const normalized = error instanceof Error ? error : new Error(String(error ?? "Unknown renderer error"));
+  runtimeErrorNotice = "这一屏出了点问题。你可以回到标题页再继续，进度不会因此被清掉。";
+  syncRuntimeWarningBanner();
+  platformRuntime.reportError({ kind, message: normalized.message, stack: normalized.stack ?? "" });
+}
+
+function syncRuntimeWarningBanner() {
+  const message = state?.saveWriteError
+    ? "刚才的进度没有存进去。请先不要关闭游戏，检查磁盘空间后再试一次。"
+    : runtimeErrorNotice;
+  let banner = document.querySelector("#runtime-status-warning");
+  if (!message) {
+    banner?.remove();
+    return;
+  }
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "runtime-status-warning";
+    banner.className = "runtime-status-warning";
+    banner.setAttribute("role", "alert");
+    document.body.append(banner);
+  }
+  banner.textContent = message;
 }
 
 function captureQuestionRewindFromEvent(event) {
@@ -406,6 +448,7 @@ function resetToTitle() {
 
 function render() {
   if (!app) return;
+  destroyActiveDialogueController();
   if (state.screen === "title") return renderTitle();
   if (state.screen === "quickDetectiveSelect") return quickScreenRenderersForRender().renderQuickDetectiveSelect();
   if (state.screen === "quickDetective") return quickScreenRenderersForRender().renderQuickDetective();
@@ -954,7 +997,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
   const backdropClass = backdropClassOverride || caseBackdropClass(brief);
   const pressure = showCaseHud ? (pressureOverride ?? currentLivePressure(brief, mood)) : {};
   const visualHud = visualHudOverride ?? (showCaseHud
-    ? `${liveCommentStrip(pressure)}${portraitLayer(brief, mood, pressure)}`
+    ? `${liveCommentStrip(pressure)}${portraitLayer(brief, mood, pressure, controlMode)}`
     : storyPackSummaryHud());
   const total = Math.max(1, playableSceneCount(brief));
   const materialProfile = unlockedMaterialProfile({ state, brief, visible: showCaseHud });
@@ -1080,6 +1123,7 @@ function keyRevealTransitionForCurrentScene(brief = {}) {
 }
 
 function mountCurrentDialogue() {
+  destroyActiveDialogueController();
   const card = app?.querySelector(".dialogue-card");
   if (card) card.insertAdjacentHTML("beforeend", avgSystemBarHtml(state.settings));
   const materialPanel = mountMaterialPanel();
@@ -1087,6 +1131,7 @@ function mountCurrentDialogue() {
   controller = mountDialoguePresentation(app, {
     hostName: normalizePlayerName(state.playerName),
     speed: state.settings?.textSpeed ?? "normal",
+    fastForward: Boolean(state.settings?.fastForward),
     autoMode: Boolean(state.settings?.autoMode),
     autoDelay: state.settings?.autoDelay ?? 2,
     presentationProfile: activeCaseBrief()?.dialoguePresentation ?? {},
@@ -1109,12 +1154,18 @@ function mountCurrentDialogue() {
       keepInlineChoicesVisible(shownChoices);
     }
   });
+  activeDialogueController = controller;
   materialPanel.syncChoices();
   mountCourtRecord(app, {
     state,
     onSettingsChange: cycleAvgSetting,
     onBeforeOpen: () => materialPanel.close({ restoreFocus: false })
   });
+}
+
+function destroyActiveDialogueController() {
+  activeDialogueController?.destroy?.();
+  activeDialogueController = null;
 }
 
 function keepInlineChoicesVisible(choices) {
@@ -1175,7 +1226,15 @@ function cycleAvgSetting(kind) {
   const effects = ["full", "reduced", "off"];
   if (kind === "auto") state.settings.autoMode = !state.settings.autoMode;
   if (kind === "speed") state.settings.textSpeed = speeds[(speeds.indexOf(state.settings.textSpeed) + 1) % speeds.length];
-  if (kind === "fast") state.settings.fastForward = !state.settings.fastForward;
+  if (kind === "fast") {
+    state.settings.fastForward = !state.settings.fastForward;
+    activeDialogueController?.setFastForward?.(state.settings.fastForward);
+    document.querySelectorAll('[data-avg-setting="fast"]').forEach((button) => {
+      button.textContent = `快进 ${state.settings.fastForward ? "开" : "关"}`;
+    });
+    saveState();
+    return;
+  }
   if (kind === "effects") state.settings.screenEffects = effects[(effects.indexOf(state.settings.screenEffects) + 1) % effects.length];
   saveState();
   render();

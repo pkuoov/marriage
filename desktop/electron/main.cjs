@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const fs = require("node:fs");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 
 let mainWindow = null;
 const releaseSmokeReportPath = process.argv.find((argument) => argument.startsWith("--release-smoke-report="))?.slice("--release-smoke-report=".length) ?? "";
@@ -14,7 +15,8 @@ const CHANNELS = {
   write: "livestream-detective:save-write",
   remove: "livestream-detective:save-remove",
   list: "livestream-detective:save-list",
-  exportForCloud: "livestream-detective:save-export"
+  exportForCloud: "livestream-detective:save-export",
+  reportError: "livestream-detective:report-error"
 };
 
 const DEFAULT_WINDOW_STATE = {
@@ -25,6 +27,7 @@ const DEFAULT_WINDOW_STATE = {
   fullscreen: false,
   zoomFactor: 1
 };
+const MAX_SAVE_BYTES = 5 * 1024 * 1024;
 
 function userDataPath(...parts) {
   return path.join(app.getPath("userData"), ...parts);
@@ -58,8 +61,26 @@ function readSave(key) {
 
 function writeSave(key, value) {
   ensureSaveDir();
-  fs.writeFileSync(savePath(key), String(value ?? ""), "utf8");
+  const serialized = String(value ?? "");
+  if (Buffer.byteLength(serialized, "utf8") > MAX_SAVE_BYTES) throw new Error("Save payload exceeds 5 MB");
+  JSON.parse(serialized);
+  atomicWriteFile(savePath(key), serialized);
   return true;
+}
+
+function atomicWriteFile(targetPath, value) {
+  const tempPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
+  try {
+    fs.writeFileSync(tempPath, value, "utf8");
+    fs.renameSync(tempPath, targetPath);
+  } catch (error) {
+    try {
+      fs.rmSync(tempPath, { force: true });
+    } catch {
+      // Preserve the original error; cleanup is best-effort only.
+    }
+    throw error;
+  }
 }
 
 function removeSave(key) {
@@ -111,7 +132,7 @@ function writeWindowState(window) {
     zoomFactor: clampZoom(window.webContents.getZoomFactor())
   };
   fs.mkdirSync(app.getPath("userData"), { recursive: true });
-  fs.writeFileSync(settingsPath(), `${JSON.stringify(state, null, 2)}\n`, "utf8");
+  atomicWriteFile(settingsPath(), `${JSON.stringify(state, null, 2)}\n`);
 }
 
 function clampZoom(value) {
@@ -136,20 +157,26 @@ function writeCrashLog(source, error) {
 }
 
 function registerSaveIpc() {
-  ipcMain.on(CHANNELS.read, (event, key) => {
-    event.returnValue = readSave(key);
+  registerSyncIpc(CHANNELS.read, readSave, null);
+  registerSyncIpc(CHANNELS.write, writeSave, false);
+  registerSyncIpc(CHANNELS.remove, removeSave, false);
+  registerSyncIpc(CHANNELS.list, listSaves, []);
+  registerSyncIpc(CHANNELS.exportForCloud, exportSaves, {});
+  ipcMain.on(CHANNELS.reportError, (_event, payload) => {
+    const source = safeKey(payload?.kind ?? "renderer-error");
+    const message = [payload?.message, payload?.stack].filter(Boolean).join("\n").slice(0, 32_000);
+    writeCrashLog(source, new Error(message || "Renderer reported an unknown error"));
   });
-  ipcMain.on(CHANNELS.write, (event, key, value) => {
-    event.returnValue = writeSave(key, value);
-  });
-  ipcMain.on(CHANNELS.remove, (event, key) => {
-    event.returnValue = removeSave(key);
-  });
-  ipcMain.on(CHANNELS.list, (event) => {
-    event.returnValue = listSaves();
-  });
-  ipcMain.on(CHANNELS.exportForCloud, (event, keys) => {
-    event.returnValue = exportSaves(keys);
+}
+
+function registerSyncIpc(channel, handler, fallbackValue) {
+  ipcMain.on(channel, (event, ...args) => {
+    try {
+      event.returnValue = handler(...args);
+    } catch (error) {
+      writeCrashLog(channel, error);
+      event.returnValue = fallbackValue;
+    }
   });
 }
 
@@ -216,7 +243,7 @@ function createWindow() {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false
+      sandbox: true
     }
   };
   if (Number.isFinite(savedWindow.x) && Number.isFinite(savedWindow.y)) {
@@ -224,10 +251,17 @@ function createWindow() {
     options.y = savedWindow.y;
   }
   const window = new BrowserWindow(options);
+  const playableUrl = pathToFileURL(path.join(__dirname, "playable", "index.html"));
   window.setFullScreen(Boolean(savedWindow.fullscreen));
   window.webContents.setZoomFactor(clampZoom(savedWindow.zoomFactor));
   registerWindowControls(window);
   registerCrashLogging(window);
+  window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+  window.webContents.on("will-navigate", (event, nextUrl) => {
+    const next = new URL(nextUrl);
+    if (next.protocol === playableUrl.protocol && next.pathname === playableUrl.pathname) return;
+    event.preventDefault();
+  });
   window.once("ready-to-show", () => {
     if (!releaseSmokeReportPath) window.show();
   });

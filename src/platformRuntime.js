@@ -9,15 +9,19 @@ const browserStorage = {
   set(key, value) {
     try {
       globalThis.localStorage?.setItem(key, value);
+      return true;
     } catch {
       // Storage can be blocked in some embedded browsers; keep gameplay running.
+      return false;
     }
   },
   remove(key) {
     try {
       globalThis.localStorage?.removeItem(key);
+      return true;
     } catch {
       // Ignore unavailable storage.
+      return false;
     }
   }
 };
@@ -41,6 +45,13 @@ export const platformRuntime = {
     if (isWechatMiniProgramWebView) {
       wechatMiniProgram?.postMessage?.({ data });
     }
+  },
+  reportError(data) {
+    if (typeof nativeBridge?.reportError === "function") {
+      nativeBridge.reportError(data);
+      return;
+    }
+    globalThis.console?.error?.("Runtime error", data);
   },
   achievements: nativeBridge?.achievements ?? {
     unlock() {},

@@ -84,7 +84,7 @@ export function applyQuickStatementLineSelection(packet = {}, state = {}, lineId
   const lines = quickStatementLinesForRound(packet, state);
   const line = statementLineForId(lines, lineId);
   if (!line) return state;
-  const issue = statementOptionForLine(quickIssueOptionsForRound(packet, state), line);
+  const issue = statementOptionForLine(quickIssueOptionsForRound(packet, state), line, { allLines: lines });
   if (!issue?.confrontationId && state.attemptedLineIds?.includes(lineId)) return state;
   const attemptedLineIds = [...new Set([...(state.attemptedLineIds ?? []), lineId])];
   if (!issue?.confrontationId) {
