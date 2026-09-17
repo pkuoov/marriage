@@ -11,7 +11,7 @@
 }
 
 .evidence-workbench {
-  grid-template-columns: minmax(0, 1fr) minmax(170px, 220px);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   gap: 12px;
   padding: 12px;
   align-items: stretch;
@@ -52,6 +52,7 @@
 .evidence-document {
   position: relative;
   display: grid;
+  min-width: 0;
   grid-template-rows: auto minmax(118px, 1fr);
   min-height: 196px;
   overflow: hidden;
@@ -566,6 +567,27 @@
   gap: 12px;
 }
 
+/* A document uses the available reading space; it has no portrait performance
+   to reserve a half-screen stage for. Scope this to the playable document page. */
+.document-review-screen .vn-stage {
+  min-height: 0;
+  grid-template-rows: 22px 64px auto auto;
+}
+
+.document-review-screen .vn-stage > .visual-scene {
+  height: 64px;
+  min-height: 64px;
+}
+
+.document-review-screen .vn-stage > .dialogue-card {
+  margin: 8px;
+}
+
+.document-review-screen .document-viewer-card > h3,
+.document-review-screen .document-viewer-card > p {
+  margin: 0;
+}
+
 .document-mark-limit {
   display: flex;
   flex-wrap: wrap;
@@ -588,6 +610,8 @@
 
 .bank-flow-table {
   display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
   max-height: min(48vh, 460px);
   overflow: auto;
   border: 1px solid rgba(237, 241, 238, .13);
@@ -873,7 +897,7 @@
 }
 
 .social-post-shot figure::after {
-  content: "纪念日晚餐";
+  content: attr(data-caption);
   position: absolute;
   right: 8px;
   bottom: 7px;
@@ -980,6 +1004,7 @@
 
 .evidence-target-board {
   display: grid;
+  min-width: 0;
   gap: 8px;
   align-content: start;
   min-height: 196px;
@@ -991,7 +1016,7 @@
 
 .evidence-target-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
 }
 
@@ -1017,6 +1042,16 @@
 
 button.evidence-target {
   width: 100%;
+  text-align: left;
+}
+
+.evidence-target .choice-button-body {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+}
+
+.evidence-target .choice-cost-meta {
+  justify-self: start;
   text-align: left;
 }
 
@@ -1064,10 +1099,9 @@ button.evidence-target {
 }
 
 .evidence-annotation {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  max-width: min(280px, calc(100% - 28px));
+  position: relative;
+  margin: 14px;
+  max-width: calc(100% - 28px);
   display: grid;
   gap: 2px;
   padding: 11px 14px 11px 42px;
@@ -1310,4 +1344,17 @@ button.evidence-target {
 }
 
 
-
+/* Long source documents keep every field visible on narrow screens. */
+@media (max-width: 520px) {
+  .bank-flow-head { display: none; }
+  .bank-flow-row {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 7px;
+    padding: 14px 12px;
+  }
+  .bank-flow-row span { display: grid; grid-template-columns: 5em minmax(0, 1fr); gap: 10px; font-size: 14px; }
+  .bank-flow-row span::before { content: attr(data-column-label); color: #a7b5b2; }
+  .bank-flow-row:disabled { opacity: .8; }
+  .bank-flow-row.marked { border-left: 3px solid #65d6c2; }
+}

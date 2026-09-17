@@ -33,6 +33,7 @@ export function solvedRecapPagesHtml({
           <span><b>${result.dailyBadge ? "能挂麦" : "还会吵"}</b><small>弹幕</small></span>
         </div>
         <p>${escapeHtml(issueLineText)}</p>
+        <details class="recap-detail-fold"><summary>追问路线与现场压力</summary>
         <div class="route-map-card">
           <span>你的追问习惯</span>
           <b>${escapeHtml(route.label)}</b>
@@ -45,6 +46,7 @@ export function solvedRecapPagesHtml({
           <small>${escapeHtml(pressure.line)}</small>
         </div>
         ${stanceSnapshot ? stanceSnapshotRecapHtml(stanceSnapshot) : ""}
+        </details>
         <p><strong>你接住的那句</strong>：${escapeHtml(result.dailyAccuseLabel ?? "还没选最后那句")}。</p>
         ${result.dailyResponse ? `<p><strong>主播接法</strong>：${escapeHtml(result.dailyResponse)}</p>` : ""}
         ${quoteComparison ? finalQuoteComparisonHtml(quoteComparison) : ""}

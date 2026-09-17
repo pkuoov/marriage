@@ -1,110 +1,13 @@
-# Case Spine Ledger
+# 案件审读记录
 
-Complete this ledger before editing story scenes or dialogue.
+遵循[当前方向](../../case-scriptwriting/references/current-project-direction.md)。这是按需记录工具，不是剧情配额；没有的栏目留空，不据此增设金钱动机、双方过错、第二夜或更多说辞。
 
-## 1. Case core
+| 段落／稳定 ID | 当前诉求 | 已知原话／材料及来源 | 为何问这句 | 回答新增、承认或拒绝什么 | 下一步是否必要 | 处理 |
+| --- | --- | --- | --- | --- | --- | --- |
+| | | | | | | 保留／移前／合并／删减／重写 |
 
-| Field | Answer |
-| --- | --- |
-| Caller asks for | |
-| Caller actually wants the host to authorize, provide or believe | |
-| Caller wants to obtain or avoid | |
-| Caller already obtained | |
-| Caller still wants | |
-| Caller refuses to pay, return or surrender | |
-| Caller's moral wrapper | |
-| Other party already obtained | |
-| Other party still wants | |
-| Other party refuses to pay, return or surrender | |
-| Other party's moral wrapper | |
-| Countable behavior (money / visits / contacts / labor / account control / timing) | |
-| Why tonight | |
-| Surface version (A story) | |
-| Established chronology (B story) | |
-| Caller omission | |
-| Initial misleading claim or agency edit | |
-| Later slip, revision or refusal | |
-| Other party's omission or defense | |
-| Action the final evidence permits | |
-| Remedy split (completed exchange / unauthorized use / shared benefit / personal obligation / proposed term) | |
-| Confirmed boundary | |
-| Shaped unknown | |
+整案只需补充会影响顺序的事实时间、说话人知识和最后实际发生的动作。不同来源的独立核实按结论需要记录，不强制两处来源。人物说辞改变时记下保护的利益；不强制每个新版本由上版崩溃产生，也不要求层层升级。
 
-## 1A. Layered disguise chain
+问题分为事实冲突、来源或动作缺口、无依据推断、人物有意辩解、表面差异。不能把全部断线解释成撒谎。已经承认的事实不再当初次揭露；后续追新用途、新对象或新变化。
 
-Write one stable `Protected purpose` for the whole chain. A flagship case normally has 3–5 surface versions including the opening frame; do not invent random lies to fill rows.
-
-| Field | Answer |
-| --- | --- |
-| Chain owner | caller / respondent / other |
-| Protected purpose | |
-
-| Stage | Pressure trigger | Surface version | Edited fact | Immediate utility | Fair trace | Player test | Forced revision | Advice impact |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| D1 | | | | | | | | |
-
-Chain checks:
-
-- Does every stage serve the same protected purpose?
-- Does Stage N+1 occur because Stage N became unsafe?
-- Does the speaker concede only what the player has earned?
-- Does maintaining the version become harder as visible evidence accumulates?
-- Do at least two stages change advice, action or remedy rather than only credibility?
-
-## 2. Claim and evidence ledger
-
-| ID | Claim | Source | Earliest visible beat | Supporting source | Counterevidence | Limitation / does not prove | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| C1 | | | | | | | confirmed / edited / unknown |
-
-Independence check for every core conclusion:
-
-| Conclusion | Source A | Source B | Different origin? | Earned? |
-| --- | --- | --- | --- | --- |
-
-## 3. Contradiction audit
-
-| Problem | Class | Why | Repair |
-| --- | --- | --- | --- |
-| | hard contradiction / designed testimony contradiction / causal gap / unsupported inference / apparent conflict | | |
-
-For every `designed testimony contradiction`, also record:
-
-| Early version | Protected interest | Fair trace | Player test | Later version | Advice-changing payoff |
-| --- | --- | --- | --- | --- | --- |
-| | | | | | |
-
-## 4. Causal mainline
-
-1. Before the call:
-2. Why tonight:
-3. Opening version:
-4. First incompleteness:
-5. First-call turn or interruption:
-6. Player test:
-7. Callback reinterpretation:
-8. Available decision:
-9. Unknown left open:
-10. Aftermath payoff:
-
-For every arrow, write “because,” not merely “after.”
-
-## 5. Scene disposition
-
-| Scene / clue | Unique job | Depends on | Changes later | Decision |
-| --- | --- | --- | --- | --- |
-| | | | | keep / repair / move / merge / cut |
-
-## 6. Revision lock
-
-Before line editing, confirm:
-
-- The B story contains no unresolved hard contradiction.
-- The A story has not been polished into perfect consistency.
-- Every intentional contradiction has a motive, fair trace, player test and later consequence.
-- Every registered disguise stage has an immediate utility and is causally forced by visible pressure; the stages are not unrelated twists.
-- Every core conclusion has two independent visible sources.
-- The caller's omission changes the advice or action.
-- The first-night interruption has a causal payoff.
-- No scene repeats an already admitted fact through performance or exposition.
-- Unknown facts remain unknown in dialogue, recap and aftermath.
+收尾分别记确认事实与尚未知道的事，只保留接续需要的内容，不要求唯一未知、不生成玩家总结页。审查输出引用路径、原句、原因与具体建议，说明实际播放字段和未走过的分支。

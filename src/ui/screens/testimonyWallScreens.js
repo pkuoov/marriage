@@ -1,3 +1,5 @@
+import { decisiveHitTiming, mountDecisiveHitPresentation } from "../../runtime/decisiveHitPresentation.js";
+import { formalPresentLabel } from "../decisivePresentView.js";
 import {
   advanceTestimonyAct,
   decisivePresentAvailability,
@@ -59,7 +61,7 @@ export function createTestimonyWallScreens(ctx) {
       label: "新消息进来",
       chapter: liveChapterTitle(brief),
       text: `<section class="testimony-prelude-card">${callDialogueHtml(lines)}</section>`,
-      choices: flowGroupHtml('<button class="primary" data-enter-testimony-wall type="button">把她刚才的话摊开</button>'),
+      choices: flowGroupHtml('<button class="primary" data-enter-testimony-wall type="button">继续</button>'),
       controlMode: "listen",
       musicPhase: "allegro"
     });
@@ -76,6 +78,7 @@ export function createTestimonyWallScreens(ctx) {
   function renderTestimonyWall(brief) {
     const context = testimonyContext(brief);
     if (!context.scene?.testimonyWall) return renderSceneReview(brief);
+    if (context.wallAct.inquiry) return renderEvidenceInquiry(brief, context);
     const pressure = decisivePresentPressure(context.presentProgress, context.present?.maxAttempts);
     frame({
       brief,
@@ -100,6 +103,14 @@ export function createTestimonyWallScreens(ctx) {
         ? { kind: "phase", visualVariant: "listen", eyebrow: "她换了一套说法", label: "改口陈述" }
         : undefined
     });
+    bind("[data-inline-present-material]", (event) => {
+      const evidenceId = event.currentTarget.value;
+      if (evidenceId && !context.present.materialCards.some(card => card.id === evidenceId)) return;
+      writePresentProgress(context.key, { ...context.presentProgress, selectedEvidenceId: evidenceId });
+      saveState();
+      render();
+    }, "change");
+    bind("[data-decisive-present-target]", (event) => commitDecisivePresent(brief, event.currentTarget.dataset.decisivePresentTarget));
     bind("[data-testimony-press]", (event) => updateTestimonyPress(brief, event.currentTarget?.dataset.testimonyPress ?? ""));
     bind("[data-testimony-present]", (event) => updateSoftPresent(brief, event.currentTarget?.dataset.testimonyPresent ?? ""));
     bind("[data-testimony-materials]", () => openTestimonyMaterials(brief, "soft"));
@@ -109,12 +120,13 @@ export function createTestimonyWallScreens(ctx) {
 
   function renderTestimonyMaterials(brief, mode = "soft") {
     const context = testimonyContext(brief);
+    if (context.wallAct.inquiry) return returnToTestimonyWall(brief);
     const hard = mode === "decisive" || ctx.getState().scene === "decisivePresentMaterial";
     if (hard && !context.presentAvailability.canStart) return returnToTestimonyWall(brief);
     frame({
       brief,
       mood: "focused",
-      label: hard ? "正式指认" : "材料试问",
+      label: hard ? formalPresentLabel(context.present) : "材料试问",
       chapter: liveChapterTitle(brief),
       text: testimonyMaterialSelectHtml({
         scene: context.scene,
@@ -137,12 +149,13 @@ export function createTestimonyWallScreens(ctx) {
 
   function renderDecisivePresentTarget(brief) {
     const context = testimonyContext(brief);
+    if (context.wallAct.inquiry) return returnToTestimonyWall(brief);
     if (!context.presentAvailability.canStart) return returnToTestimonyWall(brief);
     if (!context.presentProgress.selectedEvidenceId) return openTestimonyMaterials(brief, "decisive");
     frame({
       brief,
       mood: "tense",
-      label: "正式指认",
+      label: formalPresentLabel(context.present),
       chapter: liveChapterTitle(brief),
       text: decisivePresentTargetHtml({ scene: context.scene, wallAct: context.wallAct, statements: context.statements, progress: context.presentProgress }),
       choices: "",
@@ -158,9 +171,12 @@ export function createTestimonyWallScreens(ctx) {
 
   function renderDecisivePresentHit(brief) {
     const context = testimonyContext(brief);
-    const effects = ctx.getState().settings?.screenEffects ?? "full";
-    const settleMs = effects === "full" ? 3400 : effects === "reduced" ? 1200 : 0;
-    const stingerMs = effects === "full" ? 700 : effects === "reduced" ? 250 : 0;
+    if (context.wallAct.inquiry) return renderEvidenceInquiryAnswer(brief, context, true);
+    const timing = decisiveHitTiming({
+      ...(ctx.getState().settings ?? {}),
+      reducedMotion: globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
+    });
+    const effects = timing.effects;
     const hitPressure = {
       ...decisivePresentPressure(context.presentProgress, context.present?.maxAttempts),
       callerGuard: "动摇",
@@ -171,26 +187,84 @@ export function createTestimonyWallScreens(ctx) {
       mood: "tense",
       label: "指认命中",
       chapter: liveChapterTitle(brief),
-      text: decisivePresentHitHtml({ scene: context.scene, wallAct: context.wallAct }),
-      choices: flowGroupHtml('<button class="primary" data-after-decisive-present type="button" disabled>等她把这句说完</button>'),
+      text: decisivePresentHitHtml({ scene: context.scene, wallAct: context.wallAct, selectedEvidenceId: context.presentProgress.selectedEvidenceId }),
+      choices: flowGroupHtml('<button class="secondary" data-skip-hit-presentation type="button">跳过演出，显示完整回应</button><button class="primary" data-after-decisive-present type="button" disabled>等她把这句说完</button>'),
       screenClass: `dialogue-mode-present decisive-present-sequence effects-${effects}`,
       controlMode: "interrupt",
       pressureOverride: hitPressure,
       musicPhase: "silent"
     });
-    globalThis.setTimeout(() => {
-      if (ctx.getState().scene !== "decisivePresentHit") return;
-      playAudioCueOnce("sfx.present.hit", `${context.key}:hit-stinger`);
-      triggerGamepadHaptic({ kind: "hit", effects });
-    }, stingerMs);
     const button = document.querySelector("[data-after-decisive-present]");
-    globalThis.setTimeout(() => {
-      if (ctx.getState().scene !== "decisivePresentHit" || !button?.isConnected) return;
-      button.disabled = false;
-      button.textContent = context.finalAct ? context.present?.continueLabel ?? "把后半段听完" : "听她重新说一遍";
-    }, settleMs);
+    mountDecisiveHitPresentation({
+      root: button?.closest("[data-live-shell]"),
+      button,
+      skipButton: document.querySelector("[data-skip-hit-presentation]"),
+      timing,
+      continueLabel: context.finalAct || brief.dialoguePresentation?.focusedInquiry ? context.present?.continueLabel ?? "继续问" : "听她重新说一遍",
+      onStinger: () => {
+        if (ctx.getState().scene !== "decisivePresentHit") return;
+        playAudioCueOnce("sfx.present.hit", `${context.key}:hit-stinger`);
+        triggerGamepadHaptic({ kind: "hit", effects });
+      }
+    });
     bind("[data-after-decisive-present]", () => continueAfterDecisivePresent(brief));
     bindSceneButtons();
+  }
+
+  function inquiryPick(context) {
+    return context.wallAct.inquiry.options.find(option => option.id === ctx.getState().evidenceInquiryPicks?.[context.key]);
+  }
+
+  function renderEvidenceInquiry(brief, context) {
+    if (context.presentProgress.resolved) return renderEvidenceInquiryAnswer(brief, context, true);
+    if (inquiryPick(context)) return renderEvidenceInquiryAnswer(brief, context, false);
+    frame({ brief, mood: "focused", label: "接着问", chapter: liveChapterTitle(brief),
+      screenClass: "dialogue-mode-listen focused-evidence-inquiry", controlMode: "listen", pixelTransition: null,
+      text: `${ctx.getState().evidenceInquiryHeard?.[context.key] ? `<aside class="inquiry-context" data-inquiry-context><b>刚才的说法</b><p>${inquiryEscape(context.wallAct.inquiry.openingLines.filter(line => line.role === "caller").at(-1)?.text ?? "继续核对当前材料。")}</p></aside>` : callDialogueHtml(context.wallAct.inquiry.openingLines)}
+        <section class="inquiry-materials" aria-label="当前材料">${context.present.materialCards.map(card =>
+          `<article><b>${inquiryEscape(card.label)}</b><p>${inquiryEscape(card.excerpt)}</p><small>${inquiryEscape(card.sourceLabel)}</small></article>`).join("")}</section>`,
+      choices: flowGroupHtml(context.wallAct.inquiry.options.map(option =>
+        `<button data-evidence-inquiry="${inquiryEscape(option.id)}" type="button">${inquiryEscape(option.question)}${ctx.getState().evidenceInquiryAsked?.[context.key]?.includes(option.id) ? '<small>已问</small>' : ''}</button>`).join(""))
+    });
+    bind("[data-evidence-inquiry]", event => {
+      const option = context.wallAct.inquiry.options.find(item => item.id === event.currentTarget.dataset.evidenceInquiry);
+      if (!option) return;
+      ctx.getState().evidenceInquiryHeard = { ...ctx.getState().evidenceInquiryHeard, [context.key]: true };
+      ctx.getState().evidenceInquiryPicks = { ...ctx.getState().evidenceInquiryPicks, [context.key]: option.id };
+      ctx.getState().evidenceInquiryAsked = { ...ctx.getState().evidenceInquiryAsked,
+        [context.key]: [...new Set([...(ctx.getState().evidenceInquiryAsked?.[context.key] ?? []), option.id])] };
+      if (option.correct) {
+        writePresentProgress(context.key, { ...context.presentProgress, selectedEvidenceId: context.present.evidenceId });
+        return commitDecisivePresent(brief, context.present.statementId);
+      }
+      saveState(); render();
+    });
+    bindSceneButtons();
+  }
+
+  function renderEvidenceInquiryAnswer(brief, context, correct) {
+    const option = inquiryPick(context) ?? context.wallAct.inquiry.options.find(item => item.correct);
+    const lines = [{ role: "host", text: option.question }, ...option.lines,
+      ...(correct && context.finalAct ? [...(context.scene.afterVersion?.lines ?? []), ...(context.scene.sceneCloser?.lines ?? [])] : [])];
+    frame({ brief, mood: "focused", label: "连线继续", chapter: liveChapterTitle(brief),
+      screenClass: "dialogue-mode-listen focused-evidence-response", controlMode: "listen", pixelTransition: null,
+      text: callDialogueHtml(lines),
+      choices: flowGroupHtml(`<button class="primary" data-inquiry-continue type="button">${correct ? "继续" : option.supplementary ? "接着问" : "换个问法"}</button>`)
+    });
+    bind("[data-inquiry-continue]", () => {
+      if (!correct) {
+        const picks = { ...ctx.getState().evidenceInquiryPicks }; delete picks[context.key];
+        ctx.getState().evidenceInquiryPicks = picks;
+        ctx.getState().scene = "testimonyWall"; saveState(); return render();
+      }
+      if (context.finalAct) return ctx.continueAfterFocusedEvidence(brief, context.index);
+      advanceWallAct(context); ctx.getState().scene = "testimonyWall"; saveState(); render();
+    });
+    bindSceneButtons();
+  }
+
+  function inquiryEscape(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
   }
 
   function updateTestimonyPress(brief, statementId) {
@@ -254,7 +328,8 @@ export function createTestimonyWallScreens(ctx) {
         state.sceneQuestionPicks = {
           ...(state.sceneQuestionPicks ?? {}),
           [answerKey(brief, context.index)]: {
-            question: present.hostLine ?? "这两处得放在一起说。",
+            question: inquiryPick(context)?.question ?? present.hostLine ?? "这两处得放在一起说。",
+            lines: inquiryPick(context)?.lines,
             answer: present.callerLine ?? "……",
             contradiction: present.contradiction ?? context.scene.contradiction ?? "",
             routeAxis: present.routeAxis ?? "document-edge",
@@ -294,12 +369,12 @@ export function createTestimonyWallScreens(ctx) {
   function decisiveMissReaction(context = {}, outcome = {}) {
     const defaults = {
       evidence: [
-        "这张材料压不到刚才那句上。她把回答收短了。",
-        "材料又没对上。她不再顺着这条回答。"
+        "这次出示没有成立。",
+        "这次出示仍未成立。"
       ],
       statement: [
-        "材料碰到边了，但不是这句。她开始只答半句。",
-        "还是压错了原句。她把话收得更紧。"
+        "这次出示没有成立。",
+        "这次出示仍未成立。"
       ]
     };
     const authored = context.wallAct?.missFeedback?.[outcome.missKind]

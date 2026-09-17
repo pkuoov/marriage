@@ -4,10 +4,13 @@ import {
   advanceQuickTranscript,
   advanceQuickVerdict,
   applyQuickStatementLineSelection,
+  applyQuickIssueSelection,
   endQuickCaseEarly,
   initialQuickDetectiveState,
   normalizeQuickDetectiveState,
   quickDetectiveIsComplete,
+  quickAvailableInquiryOptions,
+  quickStatementLinesForRound,
   retryQuickStatement
 } from "../../runtime/quickDetectiveModel.js";
 import { statementPressureFor } from "../../runtime/statementReviewModel.js";
@@ -102,6 +105,10 @@ export function createQuickDetectiveScreens(ctx) {
     }
     state.quickDetective = normalizeQuickDetectiveState(state.quickDetective, packet);
     const quickState = state.quickDetective;
+    if (packet.focusedInquiry && quickState.scene === "issueSelection") {
+      const options = quickAvailableInquiryOptions(packet, quickState);
+      if (options.length === 1 && options[0].confrontationId) return updateQuickDetective(applyQuickIssueSelection(packet, quickState, options[0].id));
+    }
     if (quickDetectiveIsComplete(packet, quickState) && !(state.quickDetectiveCompletedIds ?? []).includes(packet.id)) {
       state.quickDetectiveCompletedIds = [...(state.quickDetectiveCompletedIds ?? []), packet.id];
       ctx.saveState();
@@ -130,18 +137,20 @@ export function createQuickDetectiveScreens(ctx) {
         : packet.title,
       text: body(),
       visualHud: quickDetectiveStageHtml(packet, quickState, { hostName: state.playerName }),
-      screenClass: `quick-detective-screen quick-scene-${quickState.scene} dialogue-mode-${quickDialogueMode(quickState)}${packet.format === "solo-commentary" ? " quick-format-solo-commentary" : ""}${quickTransition ? " key-reveal-answer" : ""}`,
+      screenClass: `quick-detective-screen quick-scene-${quickState.scene} dialogue-mode-${quickDialogueMode(quickState, packet)}${packet.format === "solo-commentary" ? " quick-format-solo-commentary" : ""}${quickTransition ? " key-reveal-answer" : ""}`,
       pixelTransition: quickTransition,
       rewindAvailable: ctx.canRewindQuestionNow(),
       controlDeckHtml: ctx.liveControlDeckHtml({
-        onAirLabel: "直播快案",
+        simpleInquiry: true,
+        onAirLabel: packet.format === "solo-commentary" ? "公开文本点评" : "直播快案",
+        soloCommentary: packet.format === "solo-commentary",
         label: quickDeckLabel(packet, quickState),
         segment: Math.max(1, Number(quickState.roundIndex ?? 0) + 1),
         total: Math.max(1, packet.disclosureRounds?.length ?? 1),
-        pressure: statementPressureFor(quickDetectivePatience(packet, quickState), { mode: quickDialogueMode(quickState) }),
-        mode: quickDialogueMode(quickState),
-        progressLabel: quickState.scene === "intro" ? (packet.format === "solo-commentary" ? "材料待上屏" : "等待接通") : "",
-        progressNote: quickState.scene === "intro" ? (packet.format === "solo-commentary" ? "今晚由主播独立复盘。" : "线路还没接进来。") : ""
+        pressure: { ...statementPressureFor(quickDetectivePatience(packet, quickState), { mode: quickDialogueMode(quickState, packet) }), ...(packet.focusedInquiry ? { focusedInquiry: true } : {}) },
+        mode: quickDialogueMode(quickState, packet),
+        progressLabel: packet.format === "solo-commentary" ? (quickState.scene === "intro" ? "准备读材料" : `第 ${Number(quickState.roundIndex ?? 0) + 1} 段点评`) : quickState.scene === "intro" ? "等待接通" : "",
+        progressNote: packet.format === "solo-commentary" ? "本案由我阅读公开文本并点评。" : quickState.scene === "intro" ? "线路还没接进来。" : ""
       }),
       showRecordButton: false
     }), state.playerName);
@@ -152,7 +161,13 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.bind('[data-action="reset"]', () => startQuickDetective(packet.id));
     ctx.bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0, turnLineIndex: 0 }));
     ctx.bind("[data-quick-next-turn]", () => updateQuickDetective(advanceQuickTranscript(packet, quickState)));
+    ctx.bind("[data-quick-issue]", (event) => updateQuickDetective(applyQuickIssueSelection(packet, quickState, event.currentTarget.dataset.quickIssue)));
     ctx.bind("[data-quick-review-line]", (event) => updateQuickDetective(applyQuickStatementLineSelection(packet, quickState, event.currentTarget.dataset.quickReviewLine)));
+    ctx.bind('[data-quick-replay-next]', () => {
+      const lines = quickStatementLinesForRound(packet, quickState);
+      const index = Math.max(0, lines.findIndex((line) => line.id === quickState.activeSourceLineId));
+      updateQuickDetective({ ...quickState, activeSourceLineId: lines[(index + 1) % lines.length]?.id ?? null });
+    });
     ctx.bind("[data-quick-after-miss]", () => updateQuickDetective(advanceQuickMissReaction(packet, quickState)));
     ctx.bind("[data-quick-next-confrontation]", () => updateQuickDetective(advanceQuickConfrontation(packet, quickState)));
     ctx.bind("[data-quick-retry-statement]", () => updateQuickDetective(retryQuickStatement(packet, quickState)));
@@ -161,7 +176,11 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.bind("[data-quick-restart]", () => startQuickDetective(packet.id));
     ctx.bind("[data-quick-select]", finishQuickDetective);
     ctx.bindAudioControls({ root, onToggleSound: ctx.render });
-    ctx.syncSceneAudio({ briefId: `quick-${packet.id}`, scene: "sceneReview", backdropClass: "backdrop-live" });
+    ctx.syncSceneAudio({
+      briefId: `quick-${packet.id}`,
+      scene: quickState.scene === "verdict" ? "caseClosure" : "sceneReview",
+      backdropClass: "backdrop-live"
+    });
     ctx.resetViewportScroll();
     mountQuickDialogue(packet, quickState);
     ctx.queueDefaultFocus();
@@ -267,7 +286,8 @@ export function createQuickDetectiveScreens(ctx) {
     if (quickState.scene !== "confrontation") return null;
     const confrontation = (packet.confrontations ?? []).find((item) => item.id === quickState.activeConfrontationId);
     const transition = confrontation?.revealTransition;
-    if (Number(quickState.confrontationLineIndex ?? 0) !== Number(transition?.lineIndex ?? 0)) return null;
+    const openingLength = (packet.issueOptions ?? []).find((item) => item.id === quickState.activeIssueId)?.confrontationOpeningLines?.length ?? 0;
+    if (Number(quickState.confrontationLineIndex ?? 0) !== Number(transition?.lineIndex ?? 0) + openingLength) return null;
     if (!transition?.id) return null;
     const key = `quick:${packet.id}:${transition.id}`;
     if (!ctx.consumePixelTransition(key)) return null;
@@ -276,6 +296,7 @@ export function createQuickDetectiveScreens(ctx) {
 
   function quickScreenTransition(packet = {}, quickState = {}) {
     const reveal = quickRevealTransition(packet, quickState);
+    if (packet.focusedInquiry && quickState.scene === "issueSelection") return null;
     if (reveal) return reveal;
     if (!["transcript", "issueSelection"].includes(quickState.scene)) return null;
     const round = packet.disclosureRounds?.[Number(quickState.roundIndex ?? 0)] ?? {};
@@ -292,14 +313,16 @@ export function createQuickDetectiveScreens(ctx) {
       : { kind: "phase", visualVariant: "listen", eyebrow: "先听完这段", label: "来电人陈述" };
   }
 
-  function quickDialogueMode(quickState = {}) {
-    if (quickState.scene === "issueSelection" || quickState.scene === "patienceLost") return "replay";
+  function quickDialogueMode(quickState = {}, packet = {}) {
+    if (quickState.scene === "confrontation" && packet.confrontations?.some((item) => item.id === quickState.activeConfrontationId && item.kind === "conversation")) return "listen";
+    if (quickState.scene === "issueSelection" || quickState.scene === "patienceLost") return packet.focusedInquiry ? "listen" : "replay";
     if (quickState.scene === "missReaction") return "interrupt";
     if (quickState.scene === "confrontation") return "interrupt";
     return "listen";
   }
 
   function quickDeckLabel(packet = {}, quickState = {}) {
+    if (quickState.scene === "confrontation" && packet.confrontations?.some((item) => item.id === quickState.activeConfrontationId && item.kind === "conversation")) return "连线继续";
     if (packet.format === "solo-commentary") {
       return {
         transcript: "主播读精华段落",
@@ -312,7 +335,7 @@ export function createQuickDetectiveScreens(ctx) {
     }
     return {
       transcript: "听完这段",
-      issueSelection: "拉回刚才那段",
+      issueSelection: packet.focusedInquiry ? "继续问清这一段" : "拉回刚才那段",
       missReaction: "来电人把话收紧",
       confrontation: "打断这一句",
       patienceLost: "这段已经问散",

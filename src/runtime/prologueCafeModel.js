@@ -67,7 +67,7 @@ export function cafePrologueRemainingEvidenceId(progress = {}) {
 }
 
 export function cafePrologueCanOpenForensic(progress = {}) {
-  return CAFE_PROLOGUE_INVESTIGATIONS.includes(progress.order?.[0]);
+  return CAFE_PROLOGUE_INVESTIGATIONS.every((id) => progress.order?.includes(id));
 }
 
 export function cafePrologueSceneForStep(step = 0) {

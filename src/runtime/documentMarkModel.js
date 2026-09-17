@@ -28,7 +28,7 @@ export function earnedDocumentQuestionsFor(document = {}, markedRows = []) {
     rowQuestions.forEach((question) => {
       questions.push({
         ...question,
-        id: documentQuestionId(document.id, "row", [rowId], question.question),
+        id: question.id ?? documentQuestionId(document.id, "row", [rowId], question.question),
         documentId: document.id,
         kind: "row",
         rows: [rowId]
@@ -40,7 +40,7 @@ export function earnedDocumentQuestionsFor(document = {}, markedRows = []) {
     if (!rows.length || !rows.every((rowId) => marked.has(rowId))) return;
     questions.push({
       ...question,
-      id: documentQuestionId(document.id, "cross", rows, question.question),
+      id: question.id ?? documentQuestionId(document.id, "cross", rows, question.question),
       documentId: document.id,
       kind: "cross",
       routeAxis: question.routeAxis ?? "money-flow"
@@ -53,4 +53,19 @@ export function earnedDocumentQuestionsFor(document = {}, markedRows = []) {
     seen.add(key);
     return true;
   });
+}
+
+// Marks are editable until the document scene is confirmed.
+export function toggleDocumentMarks(document = {}, previous = [], rowId = "") {
+  if (!documentRowById(document, rowId)) return previous;
+  if (previous.includes(rowId)) return previous.filter((id) => id !== rowId);
+  const limit = Math.max(0, Number(document.markLimit ?? 3));
+  return previous.length >= limit ? previous : [...previous, rowId];
+}
+
+export function replaceDocumentQuestions(current = [], document = {}, markedRows = []) {
+  return [
+    ...current.filter((question) => question.documentId !== document.id && !question.id?.startsWith(`${document.id}:`)),
+    ...earnedDocumentQuestionsFor(document, markedRows)
+  ];
 }

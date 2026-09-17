@@ -4,6 +4,19 @@ import { audioScenePlan } from "../runtime/audioSceneModel.js";
 
 export function bindAudioControls({ root = defaultRoot(), onToggleSound = () => {} } = {}) {
   if (!root) return;
+  root.querySelectorAll("[data-audio-settings]").forEach((details) => {
+    const close = () => {
+      details.open = false;
+      details.querySelector("summary")?.focus?.({ preventScroll: true });
+    };
+    details.querySelector("[data-audio-close]")?.addEventListener("click", close);
+    details.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !details.open) return;
+      event.preventDefault();
+      event.stopPropagation();
+      close();
+    });
+  });
   root.querySelectorAll("[data-audio-mute]").forEach((button) => {
     button.addEventListener("click", () => {
       toggleSound();
@@ -26,8 +39,8 @@ export function bindAudioControls({ root = defaultRoot(), onToggleSound = () => 
   });
 }
 
-export function syncSceneAudio({ briefId = "root", scene = "title", backdropClass = "", pressureLevel = "", musicPhase = "", audioEnterCueId = "", keepVoiceCueId = "" } = {}) {
-  const plan = audioScenePlan({ scene, backdropClass, pressureLevel, musicPhase });
+export function syncSceneAudio({ briefId = "root", scene = "title", backdropClass = "", pressureLevel = "", musicPhase = "", liveNight = "", audioEnterCueId = "", keepVoiceCueId = "" } = {}) {
+  const plan = audioScenePlan({ scene, backdropClass, pressureLevel, musicPhase, liveNight });
   const playablePlan = resolveSceneAudioFallback(plan);
   syncAudioScene({ ...playablePlan, enterSfxCueId: audioEnterCueId || playablePlan.enterSfxCueId }, {
     sceneKey: `${briefId}:${scene}`,

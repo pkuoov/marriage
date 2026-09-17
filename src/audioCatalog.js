@@ -9,16 +9,18 @@ export const AUDIO_CUES = Object.freeze({
 
   "bgm.title-nightshift": readyLoop("霓虹雨夜标题", "bgm", "./assets/audio/bgm/title-neon-rain.ogg", 0.52),
   "bgm.live-call": readyLoop("直播连线", "bgm", "./assets/audio/bgm/live-call.ogg", 0.66),
-  "bgm.live-call-allegro": plannedLoop("直播连线·Allegro", "bgm", "./assets/audio/bgm/live-call-allegro.ogg", 0.7, {
+  "bgm.live-call-allegro": readyLoop("直播连线·Allegro", "bgm", "./assets/audio/bgm/live-call-allegro.ogg", 0.6, {
     loopStart: 0,
     attackMs: 0,
-    productionNote: "与 live-call 同旋律，1.25 倍速并加鼓点；从循环点直接入拍"
+    productionNote: "late night 1 中段，约 80 BPM 的独立编曲；从循环点直接入拍，同旋律关系与听感待复核",
+    auditoryReview: "pending"
   }),
-  "bgm.pursuit": plannedLoop("追索线浮出", "bgm", "./assets/audio/bgm/pursuit.ogg", 0.72, {
+  "bgm.pursuit": readyLoop("追索线浮出", "bgm", "./assets/audio/bgm/pursuit.ogg", 0.6, {
     loopStart: 0,
     attackMs: 0,
     durationTargetSeconds: [60, 90],
-    productionNote: "B 故事浮出水面用；无前奏，首拍可紧跟指认 stinger"
+    productionNote: "1 号中后段 72 秒循环；去掉渐强前奏，紧跟指认 stinger；听感待复核",
+    auditoryReview: "pending"
   }),
   "bgm.pressure-stem": readyLoop("现场压力层", "bgm", "./assets/audio/bgm/pressure-stem.ogg", 0.48),
   "bgm.offair-desk": readyLoop("收麦调查台", "bgm", "./assets/audio/bgm/offair-desk.ogg", 0.62),
@@ -26,7 +28,11 @@ export const AUDIO_CUES = Object.freeze({
   "bgm.callback-return": readyLoop("夜间回拨", "bgm", "./assets/audio/bgm/callback-return.ogg", 0.68),
   "bgm.accusation": readyLoop("最终追问", "bgm", "./assets/audio/bgm/accusation.ogg", 0.7),
   "bgm.recap-afterhours": readyLoop("收麦回看", "bgm", "./assets/audio/bgm/recap-afterhours.ogg", 0.58),
-  "bgm.epilogue-dawn": plannedLoop("天亮前", "bgm", "./assets/audio/bgm/epilogue-dawn.ogg", 0.62),
+  "bgm.epilogue-dawn": readyLoop("天亮前", "bgm", "./assets/audio/bgm/epilogue-dawn.ogg", 0.54, {
+    attackMs: 900,
+    productionNote: "quiet dawn 中段，保留原有约 64 BPM 脉冲；全局尾声使用，单案回看沿用 recap；听感待复核",
+    auditoryReview: "pending"
+  }),
 
   "ambience.studio-room": readyLoop("直播棚室内底噪", "ambience", "./assets/audio/ambience/studio-room.ogg", 0.46),
   "ambience.studio-line": plannedLoop("热线线路底噪", "ambience", "./assets/audio/ambience/studio-line.ogg", 0.42),
@@ -52,9 +58,9 @@ export const AUDIO_CUES = Object.freeze({
 
   "voice.case1.loyalty-message": plannedVoice("案1·怕你离开", "./assets/audio/voice/case1-loyalty-message.ogg", "我只是怕你知道我失业后就离开我。"),
   "voice.case2.dryer-message": readyVoice("案2·吹风机回放", "./assets/audio/voice/case2-dryer-message.ogg", "今晚店长又说我了。也就你肯听我说这些。"),
-  "voice.case3.dinner-pause": plannedVoice("案3·饭局停顿", "./assets/audio/voice/case3-dinner-pause.ogg", "本科也是那所学校吗？"),
-  "voice.case4.pad-message": plannedVoice("案4·垫款私聊", "./assets/audio/voice/case4-pad-message.ogg", "你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。"),
-  "voice.case4.supplier-message": plannedVoice("案4·供应商补话", "./assets/audio/voice/case4-supplier-message.ogg", "服务协调费按老规矩返给对接人。")
+  "voice.case3.dinner-pause": plannedVoice("案3·饭局停顿", "./assets/audio/voice/case3-dinner-pause.ogg", "你发的材料是那所学校，本科也是在那儿读的吗？"),
+  "voice.case4.pad-message": plannedVoice("案4·垫款私聊", "./assets/audio/voice/case4-pad-message.ogg", "你先把场地和礼品费垫了，这场就交给你。"),
+  "voice.case4.supplier-message": plannedVoice("案4·供应商补话", "./assets/audio/voice/case4-supplier-message.ogg", "每一层的返费结完，下一批点位才往下走。")
 });
 
 export function audioCueById(cueId = "") {
@@ -80,8 +86,8 @@ function plannedLoop(label, bus, src, gain, metadata = {}) {
   return Object.freeze({ label, bus, status: "planned", src, gain, loop: true, ...metadata });
 }
 
-function readyLoop(label, bus, src, gain) {
-  return Object.freeze({ label, bus, status: "ready", src, gain, loop: true });
+function readyLoop(label, bus, src, gain, metadata = {}) {
+  return Object.freeze({ label, bus, status: "ready", src, gain, loop: true, ...metadata });
 }
 
 function plannedOneShot(label, src, gain, metadata = {}) {

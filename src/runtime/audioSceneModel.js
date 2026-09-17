@@ -1,29 +1,4 @@
-const LIVE_SCENES = new Set([
-  "caseOpen",
-  "sceneReview",
-  "sceneQuestionMenu",
-  "sceneQuestionAnswer",
-  "sceneLineReplay",
-  "statementPatienceLost",
-  "stanceSnapshot",
-  "afterSceneEvidence",
-  "callSegment1",
-  "callSegment2",
-  "overnightNight1",
-  "overnightNight2",
-  "callbackOpener",
-  "callbackOpenerBeat",
-  "overnightCallback",
-  "liveCounterBeat",
-  "documentReconcile",
-  "callerQuestion",
-  "deepFollowup",
-  "testimonyWall",
-  "testimonyMaterials",
-  "decisivePresentMaterial",
-  "decisivePresentTarget",
-  "decisivePresentHit"
-]);
+import { LIVE_SCENES } from "./liveSceneKinds.js";
 
 const OFF_AIR_SCENES = new Set([
   "hangupBeat",
@@ -40,11 +15,10 @@ const NIGHT_B_SCENES = new Set([
   "callbackOpenerBeat",
   "overnightNight2",
   "documentReconcile",
-  "liveCounterBeat",
   "callerQuestion"
 ]);
 
-export function audioScenePlan({ scene = "title", backdropClass = "", pressureLevel = "", musicPhase = "" } = {}) {
+export function audioScenePlan({ scene = "title", backdropClass = "", pressureLevel = "", musicPhase = "", liveNight = "" } = {}) {
   if (scene === "title" || scene === "nightShellPrologue") {
     return {
       bgmCueId: "bgm.title-nightshift",
@@ -100,7 +74,7 @@ export function audioScenePlan({ scene = "title", backdropClass = "", pressureLe
           ? "bgm.live-call-allegro"
           : pressureLevel === "low"
             ? "bgm.pressure-stem"
-            : NIGHT_B_SCENES.has(scene)
+            : (liveNight ? liveNight === "night2" : NIGHT_B_SCENES.has(scene))
               ? "bgm.callback-return"
               : "bgm.live-call";
     return {

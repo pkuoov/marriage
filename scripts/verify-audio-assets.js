@@ -67,6 +67,9 @@ const requiredReadyP1 = [
   "bgm.callback-return",
   "bgm.accusation",
   "bgm.recap-afterhours",
+  "bgm.live-call-allegro",
+  "bgm.pursuit",
+  "bgm.epilogue-dawn",
   "ambience.studio-room",
   "ambience.city-afternoon",
   "voice.case2.dryer-message",
@@ -85,11 +88,8 @@ for (const recipe of approvedBgmRecipes) {
   if (cue?.status !== "ready") fail(`${recipe.cueId}: approved BGM recipe must map to a ready cue`);
   if (cue?.src !== `./${recipe.output}`) fail(`${recipe.cueId}: approved recipe output must match audio catalog source`);
 }
-for (const cueId of ["bgm.live-call", "bgm.pressure-stem", "bgm.offair-desk", "bgm.day-investigation", "bgm.callback-return", "bgm.accusation", "bgm.recap-afterhours"]) {
+for (const cueId of ["bgm.live-call", "bgm.pressure-stem", "bgm.offair-desk", "bgm.day-investigation", "bgm.callback-return", "bgm.accusation", "bgm.recap-afterhours", "bgm.live-call-allegro", "bgm.pursuit", "bgm.epilogue-dawn"]) {
   if (!approvedBgmCueIds.has(cueId)) fail(`${cueId}: ready Udio loop requires an approved reproducible recipe`);
-}
-for (const cueId of ["bgm.epilogue-dawn"]) {
-  if (AUDIO_CUES[cueId]?.status !== "planned") fail(`${cueId}: missing source music must stay planned instead of using a false placeholder`);
 }
 const referencedCueIds = new Set(references.map(({ cueId }) => cueId));
 for (const cueId of requiredContentCues) {

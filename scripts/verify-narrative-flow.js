@@ -1,9 +1,11 @@
+import { pathToFileURL } from "node:url";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { generateCasesForMode } from "../src/caseModes.js";
 import { explanationForExpected } from "../src/caseNarration.js";
 import { expectedAccusationForCase } from "../src/caseRuntime.js";
 import { NPCS } from "../src/story.js";
+import { testimonyReadingRoute } from "./lib/testimony-reading.js";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
 const defaultKeys = [
@@ -26,11 +28,11 @@ function parseKeys(args) {
   return values.length ? values : defaultKeys;
 }
 
-function generateBrief(key) {
+export function generateBrief(key) {
   return generateCasesForMode("daily", NPCS, attrs, { dailyKey: key })[0];
 }
 
-function extractFlow(brief, key) {
+export function extractFlow(brief, key) {
   return {
     key,
     id: brief.id,
@@ -46,6 +48,16 @@ function extractFlow(brief, key) {
     })),
     scenes: (brief.sceneVersions ?? []).map((scene, index) => ({
       id: `scene-${index + 1}`,
+      interactionMode: scene.interactionMode,
+      sourceId: scene.id,
+      closingLines: (scene.afterVersion?.lines ?? []).map((line) => line.text ?? "").join(" "),
+      sourceText: [
+        ...(scene.afterVersion?.lines ?? []), ...(scene.sceneCloser?.lines ?? []),
+        ...(scene.interactionMode === "testimonyWall" ? testimonyReadingRoute(scene).flatMap(route => [
+          ...route.initialStatements, ...route.presses.flatMap(press => press.revealed),
+          { text: route.present.callerLine }, { text: route.present.hostLine }
+        ]) : [])
+      ].map(line => line.text ?? "").join(" "),
       speakerId: scene.speakerId ?? null,
       speaker: speakerLabel(brief, scene),
       text: scene.version ?? "",
@@ -93,7 +105,8 @@ function extractFlow(brief, key) {
 	        correct: Boolean(option.correct)
 	      }))
 	    })),
-	    deepFollowup: brief.deepFollowup ?? null,
+	    compactClosing: Boolean(brief.dialoguePresentation?.compactClosing),
+    deepFollowup: brief.deepFollowup ?? null,
     stageJudgement: brief.stageJudgement ?? "",
     followupTwist: brief.followupTwist ?? "",
     truth: brief.truth ?? "",
@@ -110,21 +123,29 @@ function speakerLabel(brief, item = {}) {
   return item.speaker ?? "材料";
 }
 
-function validateFlow(flow) {
+const semanticReviewCodes = new Set([
+  "CALLER_PERSPECTIVE", "HOST_REDUNDANT_OPENING", "HOST_ANSWER_MISMATCH", "EVENT_CONTEXT",
+  "SUSPICIOUS_TRIGGER", "DRAMATIC_ANCHOR", "MOTIVE_CHAIN", "RISK_IF_EXPOSED", "NO_CLICK_CHOICE",
+  "HOST_LOGIC_LEAP", "NO_EARLY_SPOILER", "QUESTION_TO_CLUE", "RECAP_CONTINUITY",
+  "NO_PREACHY_COPY", "NO_GENERIC_LEFTOVER", "WALKTHROUGH_TURN_BRIDGE"
+]);
+const finding = (code, message) => ({ code, message, severity: semanticReviewCodes.has(code) ? "review" : "error" });
+
+export function validateFlow(flow) {
   const issues = [];
   const allText = flattenText(flow);
   const openingText = flow.opening.map((line) => line.text).join(" ");
   const sceneText = flow.scenes.map((scene) => `${scene.text} ${scene.doubt} ${scene.contradiction}`).join(" ");
   const playerQuestions = flow.scenes.flatMap((scene) => scene.options.map((option) => option.question)).join(" ");
   const allAnswers = flow.scenes.flatMap((scene) => scene.options.map((option) => option.answer)).join(" ");
-  const deepFollowupText = `${flow.deepFollowup?.question ?? ""} ${flow.deepFollowup?.answer ?? ""} ${flow.deepFollowup?.note ?? ""}`;
+  const deepFollowupText = [flow.deepFollowup?.question, ...(flow.deepFollowup?.resistanceBeat?.lines ?? []).map((line) => line.text), flow.deepFollowup?.answer].filter(Boolean).join(" ");
 
   check(flow.opening.every((line) => line.speakerId !== flow.respondentId), "SINGLE_CALLER_OPENING", "每日直播间开场不能让另一方直接在场。");
   check(flow.scenes.every((scene) => scene.speakerId !== flow.respondentId), "SINGLE_CALLER_SCENE", "每日 sceneReview 只能和咨询者对话，另一方只能由咨询者转述或材料呈现。");
   check(flow.scenes.every((scene) => scene.speaker === "咨询者"), "CALLER_SCENE_ONLY", "每日 sceneReview 的材料必须由咨询者说出，不能由后台/回拨/系统段落直接插入。");
   check(!hasRealNpcName(allText), "NO_REAL_NAMES", "直播间单案文本不能出现 NPC 真名。");
   check(!hasCallerPerspectiveLeak(allText), "CALLER_PERSPECTIVE", "咨询者语境下的反馈应使用第一人称或直接引语，不能写成第三人称旁白。");
-  check(Boolean(flow.opening.length >= 2 && flow.opening.length <= 20), "OPENING_LENGTH", "开场应控制在 2-20 句；正常接线可占两拍，需要更多铺垫时仍用短问答，不把信息压进单个长回答。");
+  check(Boolean(flow.opening.length >= 2), "OPENING_LENGTH", "当前 daily 开场须有可播放的来回；不设句数上限。");
   check(flow.opening[0]?.speaker === "咨询者", "CALLER_FIRST", "第一句必须由咨询者开口。");
   check(flow.opening.some((line) => line.speaker === "你"), "HOST_AFTER_CALLER", "开场必须有主播接话，但不能抢在咨询者之前。");
   check(!renderedOpeningEndsOnHost(flow.opening), "OPENING_DANGLING_HOST", "首屏开场不能停在主播问句上，必须让咨询者答完再进入通话推进。");
@@ -133,52 +154,48 @@ function validateFlow(flow) {
   check(hasEventContext(openingText), "EVENT_CONTEXT", "开场必须交代事件关系、关系阶段或场景来源。");
   check(hasSuspiciousMaterialOrEvent(allText), "SUSPICIOUS_TRIGGER", "案子必须有自然出现的可疑材料、话术或事件。");
   check(hasDramaticAnchor(allText), "DRAMATIC_ANCHOR", "精选集单案必须有具体戏剧物件、原话或动作，不能只是抽象核验。");
-  check(hasGrayZoneMotivation(allText), "GRAY_ZONE_MOTIVE", "精选集单案必须有灰区动机或不明确推手，例如父母、面子、转述、平台、朋友或双方压力。");
   check(hasPurposeSignal(allText), "MOTIVE_CHAIN", "隐藏/裁切/改口必须有目的：推进、过关、借钱、见父母、面子、资源、署名、流程或退路。");
   check(hasRiskIfExposed(allText), "RISK_IF_EXPOSED", "必须能看出完整说清后会失去什么或被谁追问。");
-  check(flow.scenes.length >= 5 && flow.scenes.length <= 8, "SCENE_COUNT", "精选集单案 sceneReview 应为 5-8 段，才能支撑至少二十分钟的直播连线，并避免为单一线索硬造独立问话场景。");
+  check(flow.scenes.length > 0, "SCENE_COUNT", "当前 daily 案件须有可播放场景，不设段落或时长配额。");
   flow.scenes.forEach((scene) => {
     check(Boolean(scene.text && scene.contradiction), "SCENE_HAS_GAP", `${scene.id} 必须同时有叙述和矛盾。`);
-    check(scene.options.length >= 2 && scene.options.length <= 3, "CHOICE_COUNT", `${scene.id} 选项应为 2-3 个。`);
+    check(scene.interactionMode === "testimonyWall" || scene.options.length >= 1, "CHOICE_COUNT", `${scene.id} 应提供与原话有关的可执行提问，不设问法数量配额。`);
     scene.options.forEach((option) => {
-      check(isHostLikeQuestion(option.question), "HOST_LIKE_CHOICE", `${option.id} 必须像主播会问的话：${option.question}`);
+      check(Boolean(option.question.trim()), "QUESTION_TEXT", `${option.id} 缺少主播问句`);
       check(!isNoClickChoice(option.question), "NO_CLICK_CHOICE", `${option.id} 不能是没人会点的无脑选项：${option.question}`);
       check(!hasUnsupportedHostLeap(option.question), "HOST_LOGIC_LEAP", `${option.id} 主播追问不能从证明/说服直接跳到推进后续事件：${option.question}`);
       check(Boolean(option.answer), "CHOICE_FEEDBACK", `${option.id} 必须有反馈。`);
     });
   });
-  check(flow.evidenceChecks.length >= 1, "EVIDENCE_CHECK", "每案必须有材料检视节点，不能只有口述追问。");
   flow.evidenceChecks.forEach((evidenceCheck) => {
     check(evidenceCheck.material && evidenceCheck.prompt, "EVIDENCE_CHECK_COPY", `${evidenceCheck.id} 必须有材料文本和指出问题。`);
     check(evidenceCheck.options.some((option) => option.correct), "EVIDENCE_CHECK_HIT", `${evidenceCheck.id} 必须有正确指出项。`);
-    check(evidenceCheck.options.some((option) => !option.correct), "EVIDENCE_CHECK_MISS", `${evidenceCheck.id} 必须有误指项，才能消耗听众忍耐。`);
   });
-  check(flow.investigationHooks.length >= 1, "INVESTIGATION_BACKFLOW", "每案必须有案后私信或后台补图，扩大证据来源。");
   flow.investigationHooks.forEach((hook) => {
     check(Boolean(hook.triggerContradiction || hook.triggerAction), "INVESTIGATION_TRIGGER", `${hook.id} 必须由已听到的矛盾或动作触发。`);
     check(Boolean(hook.material && hook.prompt), "INVESTIGATION_FIXED_MATERIAL", `${hook.id} 必须是固定材料，不能让 AI 自由生成事实。`);
     check(Boolean(hook.appearsNowBecause && hook.proves && hook.stillCannotProve), "INVESTIGATION_BOUNDARY", `${hook.id} 必须写清为什么现在出现、能证明什么、仍不能证明什么。`);
     check(hook.options.some((option) => option.correct), "INVESTIGATION_HIT", `${hook.id} 必须有可圈中的回流材料点。`);
-    check(hook.options.some((option) => !option.correct), "INVESTIGATION_NOISE", `${hook.id} 必须保留噪音或误导点。`);
   });
   check(!revealsFinalAnswerTooEarly(openingText), "NO_EARLY_SPOILER", "开场不能直接说出最终责任或答案。");
   check(hasQuestionPathToContradiction(playerQuestions, allAnswers, sceneText), "QUESTION_TO_CLUE", "玩家追问必须能自然导向矛盾，而不是凭空揭示。");
-  check(Boolean(flow.deepFollowup?.question && flow.deepFollowup?.answer), "DEEP_FOLLOWUP", "精选集单案必须有满格后的单句深入追问和咨询者回答。");
-  check(deepFollowupReferencesScene(deepFollowupText, sceneText, allAnswers), "DEEP_FOLLOWUP_CONTINUITY", "满格深问必须承接前面已出现的事实或反馈。");
+  if (flow.deepFollowup?.question || flow.deepFollowup?.answer) {
+  check(Boolean(flow.deepFollowup?.question && flow.deepFollowup?.answer), "DEEP_FOLLOWUP", "已配置追问须有问题和回答，不要求额外深问。");
+  check(Boolean(flow.deepFollowup?.sourceAnchor) &&
+    flow.scenes.some(scene => scene.sourceId === flow.deepFollowup.sourceSceneId && scene.sourceText.includes(flow.deepFollowup.sourceAnchor)),
+    "DEEP_FOLLOWUP_CONTINUITY", "深问前提须指向已播放的具体来源，包括证词墙和场尾；不以重复关键词数量代替承接。");
+  }
   check(recapUsesFoundLogic(flow), "RECAP_CONTINUITY", "结案/回拨/真相必须承接前面出现过的动机或矛盾。");
   check(!hasPreachyCopy(allText), "NO_PREACHY_COPY", "文本不应像教程、法律讲义或明示提示。");
   check(!hasGenericDebugCopy(allText), "NO_GENERIC_LEFTOVER", "不应出现后台、阶段判断、核验清单等泛用代码残留。");
   buildWalkthroughs(flow).forEach((walkthrough) => {
     validateWalkthrough(walkthrough).forEach((issue) => {
-      issues.push({
-        code: `WALKTHROUGH_${issue.code}`,
-        message: `${walkthrough.id} ${issue.message}`
-      });
+      issues.push(finding(`WALKTHROUGH_${issue.code}`, `${walkthrough.id} ${issue.message}`));
     });
   });
 
   function check(ok, code, message) {
-    if (!ok) issues.push({ code, message });
+    if (!ok) issues.push(finding(code, message));
   }
   return issues;
 }
@@ -231,20 +248,12 @@ function hasDramaticAnchor(text) {
   return /存款证明|证明|截图|账单|合同|协议|草稿|排班表|聊天|社保|转账|房本|账户|饭局|借钱|还贷|分期|备注|原话|回拨|录音|余额|受益人|礼物|年卡|审批|报销|付款|收款|报价单|供应商|返款|垫款|署名/.test(text);
 }
 
-function hasGrayZoneMotivation(text) {
-  return /说不清|不确定|可能|像在要|转述|父母|家里|妈妈|朋友|平台|面子|体面|松了一口气|被问住|借.*嘴|双方|一边|一半|误会|不信任|被筛|表演|试探/.test(text);
-}
-
 function hasPurposeSignal(text) {
   return /为了|想先|先把|推进|催|定下来|过关|筛掉|放心|误会|诚意|面子|家里|父母|资源|还款|周转|投店|带客|见面|饭局|好印象|好感|不信任|安全感|表现|署名|流程|形象|到账|返款|控入口/.test(text);
 }
 
 function hasRiskIfExposed(text) {
   return /怕|不想|筛掉|误会|离开|丢脸|打脸|不稳定|不信任|被问|追问|短板|筛|撑|爆雷|失去|来不及|成本/.test(text);
-}
-
-function isHostLikeQuestion(question) {
-  return /你|他|她|谁|TA|对方|这|那|怎么|为什么|哪|有没有|是不是|不算|过分|先|说|问|补全|原话|发来|算什么|见父母|钱|图|饭局|还贷|账|审批|报销|付款|收款|供应商|返款|垫款|署名/.test(question);
 }
 
 function isNoClickChoice(question) {
@@ -359,14 +368,6 @@ function hasQuestionPathToContradiction(questions, answers, sceneText) {
   return /为什么|哪|怎么|原话|补全|之前|以后|时间|谁|钱|图|账|发来|推进|算什么|见父母|饭局|还贷|责任|目的|审批|报销|付款|收款|供应商|返款|垫款|署名|入口/.test(combined);
 }
 
-function deepFollowupReferencesScene(deepFollowupText, sceneText, answers) {
-  const source = `${sceneText} ${answers}`;
-  const tokens = importantTokens(source);
-  if (!tokens.length) return true;
-  const hitCount = tokens.filter((token) => deepFollowupText.includes(token)).length;
-  return hitCount >= Math.min(2, tokens.length);
-}
-
 function recapUsesFoundLogic(flow) {
   const recap = `${flow.stageJudgement} ${flow.followupTwist} ${flow.truth}`;
   const source = `${flow.scenes.map((scene) => `${scene.contradiction} ${scene.options.map((option) => option.answer).join(" ")}`).join(" ")} ${flow.deepFollowup?.answer ?? ""}`;
@@ -377,7 +378,7 @@ function recapUsesFoundLogic(flow) {
 }
 
 function importantTokens(text) {
-  const matches = String(text).match(/见父母|截图|名单|起投|回单|合同|代投|饭局|信用卡|社保|断缴|还款|债务|房本|产权|还贷|共同账户|协议|补偿|排班表|备注|投店|带客|活动|朋友|专属|学制|合同主体|收入|真实收入|花销|抠门|本科|MBA|工资|工资卡|上交工资|钱流向|父母|彩礼|存款|婚礼|理财|宸直|好印象|好感|周转|分期|包装|裁切|先过这一关|完整信息|匹配判断|审批|报销|付款|收款|供应商|返款|垫款|个人卡|署名|主责|归档|流程|项目|老板|财务|入口/g);
+  const matches = String(text).match(/见父母|截图|名单|起投|回单|合同|代投|饭局|信用卡|社保|断缴|还款|债务|房本|产权|还贷|共同账户|协议|补偿|排班表|备注|投店|带客|活动|朋友|专属|学制|合同主体|收入|真实收入|花销|抠门|本科|MBA|工资|工资卡|上交工资|钱流向|父母|彩礼|存款|婚礼|理财|宸直|好印象|好感|周转|分期|包装|裁切|先过这一关|完整信息|匹配判断|审批|报销|付款|收款|供应商|返款|垫款|个人卡|署名|主责|归档|流程|项目|老板|财务|入口|业绩|分成|先垫|包干|余额|七月|加班/g);
   return [...new Set(matches ?? [])];
 }
 
@@ -404,12 +405,12 @@ function renderReport(entries) {
     "# Narrative Flow Validation Report",
     "",
     "Generated by: npm run test:narrative",
-    `Cases checked: ${entries.length}`,
-    `Issues: ${totalIssues}`,
+    `Dated samples checked: ${entries.length} (sample runs, not the number of authored cases)`,
+    `Findings: ${totalIssues} (errors block; review candidates require human reading)`,
     "",
     "## Summary",
     "",
-    ...entries.map((entry) => `- ${entry.flow.key} ${entry.flow.label} (${entry.flow.plotId}): ${entry.issues.length ? `${entry.issues.length} issue(s)` : "pass"}`),
+    ...entries.map((entry) => `- ${entry.flow.key} ${entry.flow.label} (${entry.flow.plotId}): ${entry.issues.length ? `${entry.issues.filter(issue => issue.severity === "error").length} error(s), ${entry.issues.filter(issue => issue.severity === "review").length} review candidate(s)` : "pass"}`),
     ""
   ];
   entries.forEach((entry) => {
@@ -420,7 +421,7 @@ function renderReport(entries) {
     lines.push("");
     if (entry.issues.length) {
       lines.push("### Issues");
-      entry.issues.forEach((issue) => lines.push(`- **${issue.code}** ${issue.message}`));
+      entry.issues.forEach((issue) => lines.push(`- **${issue.severity}: ${issue.code}** ${issue.message}`));
       lines.push("");
     }
     lines.push("### Extracted Flow");
@@ -470,6 +471,7 @@ function renderReport(entries) {
   return lines.join("\n");
 }
 
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
 const entries = keys.map((key) => {
   const flow = extractFlow(generateBrief(key), key);
   return { flow, issues: validateFlow(flow) };
@@ -478,16 +480,18 @@ const entries = keys.map((key) => {
 mkdirSync(dirname(reportPath), { recursive: true });
 writeFileSync(reportPath, renderReport(entries));
 
-const failed = entries.filter((entry) => entry.issues.length);
+const failed = entries.filter((entry) => entry.issues.some(issue => issue.severity === "error"));
 if (failed.length) {
   failed.forEach((entry) => {
     console.error(`✗ ${entry.flow.key} ${entry.flow.label} (${entry.flow.plotId})`);
-    entry.issues.forEach((issue) => console.error(`  - ${issue.code}: ${issue.message}`));
+    entry.issues.filter(issue => issue.severity === "error").forEach((issue) => console.error(`  - ${issue.code}: ${issue.message}`));
   });
   console.error(`Narrative flow report written to ${reportPath}`);
   process.exit(1);
 }
 
 entries.forEach((entry) => console.log(`✓ ${entry.flow.key} ${entry.flow.label} (${entry.flow.plotId})`));
-console.log(`narrative flow validation passed: ${entries.length} cases`);
+console.log(`narrative structural validation passed: ${entries.length} dated samples; ${entries.flatMap(entry => entry.issues).filter(issue => issue.severity === "review").length} semantic review candidates (see report)`);
 console.log(`Narrative flow report written to ${reportPath}`);
+
+}

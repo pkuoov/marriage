@@ -2,6 +2,7 @@ import { normalizeCaseMode, validCaseBriefCount } from "./caseModes.js";
 import { activeSaveSlot, saveStore } from "./platform/saveStore.js";
 import { routeAxisForChoice } from "./runtime/routeLog.js";
 import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "./playerIdentity.js";
+import { caseContentIdentity } from "./runtime/savedContentIdentity.js";
 
 export const STORAGE_KEY = "livestream-detective-save-v1";
 export const META_STORAGE_KEY = "livestream-detective-meta-v1";
@@ -63,6 +64,7 @@ export const baseState = {
   caseBriefs: [],
   dialogueProgress: {},
   dialogueBacklog: [],
+  dialogueReading: null,
   sceneAnswers: {},
   sceneQuestionPicks: {},
   sceneDialoguePicks: {},
@@ -70,6 +72,11 @@ export const baseState = {
   statementPatience: {},
   testimonyWallProgress: {},
   decisivePresentProgress: {},
+  evidenceInquiryPicks: {},
+  evidenceInquiryHeard: {},
+  evidenceInquiryAsked: {},
+  cafeInquiryPicks: {},
+  cafeInquiryHeard: {},
   activeStatementLineId: null,
   helperHintPicks: {},
   sceneQuestionFocus: null,
@@ -101,6 +108,7 @@ export const baseState = {
   cafePrologueRevisionSeen: false,
   cafePrologueAct: 1,
   cafePrologueMarks: [],
+  cafePrologueInspectedIds: [],
   cafePrologueOrder: [],
   cafePrologueStatementId: "",
   cafePrologueStatementReaction: "",
@@ -175,6 +183,7 @@ export function migrateState(saved) {
   next.settings = { ...baseState.settings, ...(next.settings ?? {}) };
   if (!["full", "reduced", "off"].includes(next.settings.screenEffects)) next.settings.screenEffects = "full";
   if (!Array.isArray(next.dialogueBacklog)) next.dialogueBacklog = [];
+  if (!next.dialogueReading || typeof next.dialogueReading !== "object" || Array.isArray(next.dialogueReading)) next.dialogueReading = null;
   if (!("caseBrief" in next)) next.caseBrief = null;
   if (!Array.isArray(next.caseBriefs)) next.caseBriefs = [];
   next.caseBriefs = next.caseBriefs.map(migrateCaseBrief);
@@ -191,6 +200,12 @@ export function migrateState(saved) {
     const act = Math.max(1, Math.floor(Number(progress.act) || 1));
     return [key, { ...progress, act }];
   }));
+  for (const key of ["evidenceInquiryPicks", "evidenceInquiryHeard", "evidenceInquiryAsked", "cafeInquiryPicks", "cafeInquiryHeard"]) {
+    if (!next[key] || typeof next[key] !== "object" || Array.isArray(next[key])) next[key] = {};
+  }
+  for (const key of Object.keys(next.evidenceInquiryPicks)) next.evidenceInquiryHeard[key] = true;
+  next.evidenceInquiryAsked = Object.fromEntries(Object.entries(next.evidenceInquiryAsked)
+    .filter(([, ids]) => Array.isArray(ids)).map(([key, ids]) => [key, [...new Set(ids.filter(id => typeof id === "string"))]]));
   if (!next.decisivePresentProgress || Array.isArray(next.decisivePresentProgress)) next.decisivePresentProgress = {};
   if (!("activeStatementLineId" in next)) next.activeStatementLineId = null;
   if (!next.helperHintPicks || Array.isArray(next.helperHintPicks)) next.helperHintPicks = {};
@@ -219,6 +234,7 @@ export function migrateState(saved) {
   if (!Number.isFinite(Number(next.epilogueUnreadStep))) next.epilogueUnreadStep = 0;
   if (!Number.isFinite(Number(next.cafePrologueStep))) next.cafePrologueStep = 0;
   next.cafePrologueStep = Math.max(0, Math.floor(Number(next.cafePrologueStep) || 0));
+  next.cafePrologueInspectedIds = [...new Set((Array.isArray(next.cafePrologueInspectedIds) ? next.cafePrologueInspectedIds : []).filter((id) => ["chat", "hotel", "parallel-transfer-ledger"].includes(id)))];
   if (!Array.isArray(next.cafePrologueMarks)) next.cafePrologueMarks = [];
   next.cafePrologueMarks = [...new Set(next.cafePrologueMarks.filter((id) => ["chat", "hotel", "parallel-transfer-ledger"].includes(id)))];
   if (!Array.isArray(next.cafePrologueOrder)) next.cafePrologueOrder = [];
@@ -489,11 +505,26 @@ export function loadMeta() {
   }
 }
 
+let lastPersistedSnapshot = null;
+
+export function saveReadingBeforeExit(state) {
+  try {
+    if (lastPersistedSnapshot !== null && saveStore.read(STORAGE_KEY) === lastPersistedSnapshot) {
+      return saveStateSnapshot(state);
+    }
+  } catch {
+    // An exit checkpoint must not replace a newer save or block navigation.
+  }
+  return false;
+}
+
 export function saveStateSnapshot(state) {
   let saved = false;
   try {
     const snapshot = stateSnapshotForPersistence(state);
-    saved = saveStore.write(STORAGE_KEY, JSON.stringify(snapshot));
+    const serialized = JSON.stringify(snapshot);
+    saved = saveStore.write(STORAGE_KEY, serialized);
+    if (saved) lastPersistedSnapshot = serialized;
   } catch {
     saved = false;
   }
@@ -524,9 +555,12 @@ const PERSISTED_CASE_BRIEF_KEYS = Object.freeze([
 ]);
 
 function caseBriefPersistenceStub(brief = {}) {
-  return Object.fromEntries(PERSISTED_CASE_BRIEF_KEYS
+  const stub = Object.fromEntries(PERSISTED_CASE_BRIEF_KEYS
     .filter((key) => brief[key] !== undefined && brief[key] !== null && brief[key] !== "")
     .map((key) => [key, brief[key]]));
+  if (brief.sceneVersions) stub.contentIdentity = caseContentIdentity(brief);
+  else if (brief.contentIdentity) stub.contentIdentity = brief.contentIdentity;
+  return stub;
 }
 
 export function saveMetaSnapshot(meta) {

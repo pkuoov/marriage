@@ -106,7 +106,7 @@ export function createSceneScreens(ctx) {
     deepFollowupFor,
     escapeHtml
   } = ctx;
-  const testimonyScreens = createTestimonyWallScreens(ctx);
+  const testimonyScreens = createTestimonyWallScreens({ ...ctx, continueAfterFocusedEvidence: continueAfterSceneReview });
   const {
     renderTestimonyPrelude,
     renderTestimonyWall,
@@ -129,6 +129,7 @@ export function createSceneScreens(ctx) {
       index: currentSceneIndex,
       actionDone: (key) => actionDone(brief, key),
       issueBadge: issueCompletion(brief).badge,
+      overnight: ensureOvernight(brief),
       hasDeepFollowup: !nightStructureFor(brief) && !overnightStructureFor(brief) && hasDeepFollowup(brief)
     });
     const { index, scene, done, lastStage, nextStage, nextLabel } = review;
@@ -200,14 +201,18 @@ export function createSceneScreens(ctx) {
       saveState();
       return renderSceneLineReplay(brief);
     }
+    if (context.progress.complete && brief.dialoguePresentation?.focusedInquiry) return continueAfterSceneReview(brief, context.stage.endIndex);
     const review = sceneReviewModel({
       brief,
       index: context.stage.endIndex,
       actionDone: (key) => actionDone(brief, key),
       issueBadge: issueCompletion(brief).badge,
+      overnight: ensureOvernight(brief),
       hasDeepFollowup: !nightStructureFor(brief) && !overnightStructureFor(brief) && hasDeepFollowup(brief)
     });
-    const completedExchangeHtml = context.progress.complete
+    const completedExchangeHtml = context.progress.complete && brief.dialoguePresentation?.focusedInquiry
+      ? '<p>这一段已经问清。</p>'
+      : context.progress.complete
       ? context.entries.map(({ scene, sceneIndex }) => {
           const pick = selectedScenePickForState(state, brief, sceneIndex);
           return `${completedSceneExchangeHtml(completedSceneExchangeForState(state, brief, scene, sceneIndex, pick))}${respondentTeaseHtml(brief, sceneIndex)}${hostDisclosureForAnchor(brief, `afterScene:${sceneIndex + 1}`)}`;
@@ -216,12 +221,12 @@ export function createSceneScreens(ctx) {
     frame({
       brief,
       mood: "thinking",
-      label: context.progress.complete ? "这一段问完了" : "先听她说完",
+      label: context.progress.complete ? "这一段问完了" : "听完这段",
       chapter: liveChapterTitle(brief),
       screenClass: "dialogue-mode-listen statement-stage-listen",
       controlMode: "listen",
       pressureOverride: statementPressure(brief, context.stage.startIndex, "listen"),
-      pixelTransition: statementPhaseTransition(brief, context.stage, context.stage.startIndex, "listen"),
+      pixelTransition: null,
       text: sceneReviewHtml({
         index: context.stage.startIndex,
         displayIndex: Math.max(0, playableSceneIndexes(brief).indexOf(context.stage.startIndex)),
@@ -232,7 +237,7 @@ export function createSceneScreens(ctx) {
       }),
       choices: context.progress.complete
         ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
-        : flowGroupHtml(`<button class="primary" data-scene-open-replay type="button">${context.entries.length > 1 ? "回放刚才几段" : "回放刚才这段"}</button>`)
+        : flowGroupHtml(`<button class="primary" data-scene-open-replay type="button">${brief.dialoguePresentation?.focusedInquiry ? "继续" : context.entries.length > 1 ? "回放刚才几段" : "回放刚才这段"}</button>`)
     });
     const firstEntry = context.entries[0];
     playAudioCueOnce(firstEntry?.scene?.audioCueId, `${caseKey(brief)}:stage:${context.stage.id}`);
@@ -253,47 +258,55 @@ export function createSceneScreens(ctx) {
     if (!focus) return closeSceneQuestionMenu(brief);
     const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[index] ?? {}, index));
     const dialoguePicks = askedDialoguePicksForState(state, brief, index);
-    const pick = focus.kind === "dialogue"
+    const pick = focus.kind === "probe" ? focus.pick : focus.kind === "dialogue"
       ? dialoguePicks.find((item) => Number(item.optionIndex) === Number(focus.optionIndex))
       : selectedScenePickForState(state, brief, index);
     if (!pick?.question || (!pick?.answer && !pick?.lines?.length)) return closeSceneQuestionMenu(brief);
+    const sequence = sceneQuestionSequence(scene);
+    const nextQuestion = focus.kind === "key" && sequence.length ? nextSequentialChoice(sequence, pick.completedOptionIds) : null;
     const stageContext = sceneUsesLineReplay(scene) ? statementStageContext(brief, index) : null;
-    const stageComplete = Boolean(stageContext?.progress.complete);
+    const stageComplete = !focus.pendingPenalty && Boolean(stageContext?.progress.complete);
     const reviewIndex = stageComplete ? stageContext.stage.endIndex : index;
     const review = sceneReviewModel({
       brief,
       index: reviewIndex,
       actionDone: (key) => actionDone(brief, key),
       issueBadge: issueCompletion(brief).badge,
+      overnight: ensureOvernight(brief),
       hasDeepFollowup: !nightStructureFor(brief) && !overnightStructureFor(brief) && hasDeepFollowup(brief)
     });
-    if (stageComplete) setIndexValue(brief, "sceneReview", reviewIndex);
     frame({
       brief,
       mood: focus.kind === "key" ? "focused" : "thinking",
       label: "连线继续",
       chapter: liveChapterTitle(brief),
+      pixelTransition: null,
       screenClass: focus.kind === "key" && sceneUsesLineReplay(scene) ? "dialogue-mode-interrupt" : "",
       controlMode: focus.kind === "key" && sceneUsesLineReplay(scene) ? "interrupt" : "listen",
       pressureOverride: focus.kind === "key" && sceneUsesLineReplay(scene) ? statementPressure(brief, index, "interrupt") : null,
-      musicPhase: focus.kind === "key" ? "allegro" : "",
+      musicPhase: "",
       text: `${sceneQuestionAnswerHtml({
         question: pick.question,
         answer: pick.answer,
         lines: pick.lines,
         resistanceBeat: pick.resistanceBeat,
         reactionLine: pick.reactionLine,
-        sceneCloser: focus.kind === "key" ? scene.sceneCloser : null
-      })}${focus.kind === "key" ? `${respondentTeaseHtml(brief, index)}${hostDisclosureForAnchor(brief, `afterScene:${index + 1}`)}` : ""}`,
-      choices: stageComplete
+        sceneCloser: focus.kind === "key" && !nextQuestion ? scene.sceneCloser : null
+      })}${focus.kind === "key" && !nextQuestion ? `${respondentTeaseHtml(brief, index)}${hostDisclosureForAnchor(brief, `afterScene:${index + 1}`)}` : ""}`,
+      choices: nextQuestion
+        ? flowGroupHtml(`<button class="primary" data-scene-open-replay type="button">${brief.dialoguePresentation?.focusedInquiry ? '继续问' : '继续逐句回放'}</button>`)
+        : focus.pendingPenalty
+        ? flowGroupHtml('<button class="primary" data-finish-question type="button">继续</button>')
+        : stageComplete
         ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
         : sceneUsesLineReplay(scene)
-          ? flowGroupHtml('<button class="primary" data-scene-open-replay type="button">回到刚才那段</button>')
+          ? flowGroupHtml(`<button class="primary" data-scene-open-replay type="button">${brief.dialoguePresentation?.focusedInquiry ? '继续问清这一段' : '回到刚才那段'}</button>`)
         : flowGroupHtml(sceneQuestionChoicesHtml(index, scene, dialoguePicks))
     });
+    bind("[data-finish-question]", () => finishQuestionPenalty(brief, index, focus));
     bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
     bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
-    bind("[data-scene-open-replay]", () => advanceStatementReplay(brief, index));
+    bind("[data-scene-open-replay]", () => openSceneLineReplay(brief, index));
     bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, reviewIndex));
     bindSceneButtons();
   }
@@ -324,6 +337,23 @@ export function createSceneScreens(ctx) {
       saveState();
       return renderSceneReview(brief);
     }
+    if (brief.dialoguePresentation?.focusedInquiry) return renderFocusedInquiry(brief, context);
+    if (state.activeStatementLineId === `${context.stage.id}:end`) {
+      const review = sceneReviewModel({ brief, index: context.stage.endIndex,
+        actionDone: (key) => actionDone(brief, key), issueBadge: issueCompletion(brief).badge,
+        overnight: ensureOvernight(brief), hasDeepFollowup: hasDeepFollowup(brief) });
+      frame({ brief, mood: "thinking", label: "本段回放结束", chapter: liveChapterTitle(brief),
+        pixelTransition: null, screenClass: "dialogue-mode-replay", controlMode: "replay",
+        text: statementReplayPageHtml({ speaker: "回放", line: { text: context.progress.complete
+          ? "这一段已经问完。" : "已经听到这段末尾。还有没问完的事情，可以返回查看。" } }),
+        choices: context.progress.complete
+          ? sceneReviewDoneChoicesHtml({ lastStage: review.lastStage, nextStage: review.nextStage, nextLabel: review.nextLabel })
+          : flowGroupHtml('<button class="primary" data-scene-replay-restart type="button">重新查看这段</button><button class="secondary" data-action="title" type="button">保存并回标题</button>') });
+      bind("[data-scene-replay-restart]", () => openSceneLineReplay(brief, context.stage.startIndex, { reset: true }));
+      bind('[data-action="title"]', ctx.returnToTitle);
+      bind("[data-next-scene-stage]", () => continueAfterSceneReview(brief, context.stage.endIndex));
+      return;
+    }
     const position = statementReplayPosition(brief, context, sceneIndex);
     if (!position) {
       state.scene = "sceneReview";
@@ -352,20 +382,41 @@ export function createSceneScreens(ctx) {
         line: position.line,
         attempted: attemptedLineIds.includes(position.line.id),
         keyResolved: actionDone(brief, `version:${position.sceneIndex}`),
+        completedOptionIds: selectedScenePickForState(state, brief, position.sceneIndex)?.completedOptionIds ?? [],
         resolvedDialogueOptionIndexes,
         stageKeysRemaining: context.progress.unresolvedSceneIndexes.length,
         nextLabel: atStageEnd && !context.progress.complete ? "从前面再听" : "继续回放"
       }),
       screenClass: "dialogue-mode-replay",
       controlMode: "replay",
-      musicPhase: "allegro",
+      musicPhase: "",
       pressureOverride: statementPressure(brief, context.stage.startIndex, "replay"),
-      pixelTransition: statementPhaseTransition(brief, context.stage, context.stage.startIndex, "review")
+      pixelTransition: position.lineIndex === 0 ? statementPhaseTransition(brief, position.scene, position.sceneIndex, "review") : null
     });
     bindChoiceActivation("[data-scene-question]", (button) => handleSceneQuestionButton(button));
     bindChoiceActivation("[data-scene-dialogue]", (button) => handleSceneDialogueButton(button));
     bind("[data-scene-review-line]", (event) => handleSceneReviewLine(event.currentTarget, brief));
     bind("[data-scene-replay-next]", () => advanceStatementReplay(brief, position.sceneIndex));
+    bind("[data-scene-replay-previous]", () => advanceStatementReplay(brief, position.sceneIndex, -1));
+    bindSceneButtons();
+  }
+
+  function renderFocusedInquiry(brief, context) {
+    const entry = context.entries.find(({ sceneIndex }) => !actionDone(brief, `version:${sceneIndex}`));
+    if (!entry) return continueAfterSceneReview(brief, context.stage.endIndex);
+    const { scene, sceneIndex } = entry;
+    setIndexValue(brief, "sceneReview", sceneIndex);
+    const completed = selectedScenePickForState(ctx.getState(), brief, sceneIndex)?.completedOptionIds ?? [];
+    const sequence = sceneQuestionSequence(scene);
+    const next = nextSequentialChoice(sequence, completed);
+    const options = (scene.questionOptions ?? []).filter(option => !completed.includes(option.id)
+      && (!option.correct || !sequence.length || option.id === next?.id));
+    if (options.length === 1 && options[0].correct) return handleSceneQuestionButton({ dataset: { sceneQuestion: `${sceneIndex}:${scene.questionOptions.indexOf(options[0])}` } });
+    frame({ brief, mood: "focused", label: "继续问清这一段", chapter: liveChapterTitle(brief),
+      pixelTransition: null, screenClass: "dialogue-mode-listen focused-inquiry", controlMode: "listen",
+      text: statementReplayPageHtml({ speaker: scene.speaker ?? "咨询者", line: { text: scene.version } }),
+      choices: flowGroupHtml(options.map(option => `<button data-scene-question="${sceneIndex}:${scene.questionOptions.indexOf(option)}" type="button">${escapeHtml(option.question)}</button>`).join("")) });
+    bindChoiceActivation("[data-scene-question]", button => handleSceneQuestionButton(button));
     bindSceneButtons();
   }
 
@@ -383,16 +434,28 @@ export function createSceneScreens(ctx) {
     return { ...entry, entryIndex, lines, lineIndex, line: lines[lineIndex] };
   }
 
-  function advanceStatementReplay(brief, sceneIndex) {
+  function advanceStatementReplay(brief, sceneIndex, direction = 1) {
     const state = ctx.getState();
     const context = statementStageContext(brief, sceneIndex);
     const position = context ? statementReplayPosition(brief, context, sceneIndex) : null;
     if (!context || !position) return openSceneLineReplay(brief, sceneIndex, { reset: true });
     let nextEntryIndex = position.entryIndex;
-    let nextLineIndex = position.lineIndex + 1;
+    let nextLineIndex = position.lineIndex + direction;
     if (nextLineIndex >= position.lines.length) {
-      nextEntryIndex = (position.entryIndex + 1) % context.entries.length;
+      if (position.entryIndex === context.entries.length - 1) {
+        state.activeStatementLineId = `${context.stage.id}:end`;
+        state.scene = "sceneLineReplay";
+        saveState();
+        return render();
+      }
+      nextEntryIndex = position.entryIndex + 1;
       nextLineIndex = 0;
+    }
+    if (nextLineIndex < 0) {
+      nextEntryIndex = Math.max(0, position.entryIndex - 1);
+      const previous = context.entries[nextEntryIndex];
+      nextLineIndex = position.entryIndex > 0
+        ? statementLinesFromText(previous.scene.version).length - 1 : 0;
     }
     const nextEntry = context.entries[nextEntryIndex];
     const nextLines = statementLinesFromText(nextEntry.scene.version ?? "", { prefix: nextEntry.scene.id ?? `scene-${nextEntry.sceneIndex}` });
@@ -409,43 +472,86 @@ export function createSceneScreens(ctx) {
     const scene = sceneWithShownCard(brief, sceneWithCallbackRevision(brief, brief.sceneVersions?.[sceneIndex] ?? {}, sceneIndex));
     const lineId = button.dataset.sceneReviewLine ?? "";
     const line = statementReplayLineForScene(scene, lineId);
-    const optionIndex = statementReplayOptionIndex(scene, line);
     const key = answerKey(brief, sceneIndex);
     state.activeStatementLineId = lineId;
-    if (optionIndex >= 0) {
+    const sequence = sceneQuestionSequence(scene);
+    const next = nextSequentialChoice(sequence, selectedScenePickForState(state, brief, sceneIndex)?.completedOptionIds);
+    const optionIndex = statementReplayOptionIndex(scene, line, next?.id);
+    if (optionIndex >= 0 && !actionDone(brief, `version:${sceneIndex}`)
+      && (!sequence.length || scene.questionOptions[optionIndex].id === next?.id)) {
       saveState();
       return handleSceneQuestionButton({ dataset: { sceneQuestion: `${sceneIndex}:${optionIndex}` } });
     }
-    if ((state.statementReviewAttempts?.[key] ?? []).includes(lineId)) {
-      state.lastReaction = statementReactionDisplayText(statementNoClueReactionFor(scene));
-      state.scene = "sceneLineReplay";
-      setIndexValue(brief, "sceneReview", sceneIndex);
-      saveState();
-      render();
-      return;
+    if (!line) return;
+    const repeated = (state.statementReviewAttempts?.[key] ?? []).includes(lineId);
+    const probe = (scene.reviewProbes ?? []).find((item) => line.text.includes(item.sourceAnchor));
+    const resolvedOption = optionIndex >= 0 && (actionDone(brief, `version:${sceneIndex}`)
+      || selectedScenePickForState(state, brief, sceneIndex)?.completedOptionIds?.includes(scene.questionOptions[optionIndex].id))
+      ? scene.questionOptions[optionIndex] : null;
+    state.sceneQuestionFocus = {
+      caseId: caseKey(brief), sceneIndex, kind: "probe", lineId, sceneId: scene.id,
+      probeId: resolvedOption ? null : probe?.id,
+      resolvedOptionId: resolvedOption?.id ?? null,
+      pendingPenalty: resolvedOption || probe?.keyChoice || repeated || !probe ? null : "statement",
+      pick: {
+        question: resolvedOption?.question ?? probe?.question ?? "嗯，你接着说。",
+        answer: resolvedOption?.answer ?? probe?.answer ?? statementNoClueReactionFor(scene).text,
+        lines: resolvedOption?.lines ?? probe?.lines
+      }
+    };
+    if (probe?.keyChoice) {
+      state.statementReviewAttempts = { ...(state.statementReviewAttempts ?? {}), [key]: [...(state.statementReviewAttempts?.[key] ?? []), lineId] };
     }
-    state.statementReviewAttempts = {
-      ...(state.statementReviewAttempts ?? {}),
-      [key]: [...new Set([...(state.statementReviewAttempts?.[key] ?? []), lineId])]
-    };
-    const patienceKey = statementPatienceKey(brief, sceneIndex);
-    const max = statementPatienceMax(brief, sceneIndex);
-    const nextPatience = spendStatementPatience(state.statementPatience?.[patienceKey], max);
-    state.statementPatience = {
-      ...(state.statementPatience ?? {}),
-      [patienceKey]: nextPatience
-    };
-    state.lastScreenEffect = "patience-drop";
-    state.lastReaction = statementReactionDisplayText(statementNoClueReactionFor(scene));
-    state.lastPressureSignal = "drift";
-    state.scene = nextPatience.remaining <= 0 ? "statementPatienceLost" : "sceneLineReplay";
+    state.scene = "sceneQuestionAnswer";
     setIndexValue(brief, "sceneReview", sceneIndex);
+    saveState();
+    render();
+  }
+
+  function finishQuestionPenalty(brief, sceneIndex, focus) {
+    const state = ctx.getState();
+    if (!focus.pendingPenalty) return;
+    if (brief.dialoguePresentation?.focusedInquiry) {
+      focus.pendingPenalty = null;
+      state.lastReaction = null; state.lastPressureSignal = null;
+      return openSceneLineReplay(brief, sceneIndex);
+    }
+    const kind = focus.pendingPenalty;
+    // Clear the saved debt before navigating: reload/double click must not charge twice.
+    focus.pendingPenalty = null;
+    if (kind === "statement" || kind === "statement-key") {
+      const key = answerKey(brief, sceneIndex);
+      const attempted = state.statementReviewAttempts?.[key] ?? [];
+      if (kind === "statement-key" ? !actionDone(brief, `sceneQuestion:${sceneIndex}:${focus.optionIndex}`) : !attempted.includes(focus.lineId)) {
+        if (kind === "statement-key") markAction(brief, `sceneQuestion:${sceneIndex}:${focus.optionIndex}`);
+        else state.statementReviewAttempts = { ...(state.statementReviewAttempts ?? {}), [key]: [...attempted, focus.lineId] };
+        const patienceKey = statementPatienceKey(brief, sceneIndex);
+        const next = spendStatementPatience(state.statementPatience?.[patienceKey], statementPatienceMax(brief, sceneIndex));
+        state.statementPatience = { ...(state.statementPatience ?? {}), [patienceKey]: next };
+        state.lastScreenEffect = "patience-drop";
+        state.lastPressureSignal = "drift";
+        state.lastReaction = "这句没问下去，耐心 −1。";
+        const stageComplete = statementStageContext(brief, sceneIndex)?.progress.complete;
+        state.scene = next.remaining <= 0 && !stageComplete && !brief.dialoguePresentation?.focusedInquiry ? "statementPatienceLost" : kind === "statement-key" ? "sceneQuestionAnswer" : "sceneLineReplay";
+      }
+    } else {
+      markAction(brief, `sceneQuestion:${sceneIndex}:${focus.optionIndex}`, { spend: true });
+      if (audiencePatienceLost(brief, {
+        area: "sceneReview", index: sceneIndex,
+        actionKeys: [`sceneQuestion:${sceneIndex}:${focus.optionIndex}`, `version:${sceneIndex}`],
+        answerKey: answerKey(brief, sceneIndex), routeIndex: sceneIndex,
+        spent: true, removeQuestionPick: true
+      })) return;
+      state.lastScreenEffect = "patience-drop";
+      state.lastReaction = "这句没问下去，耐心 −1。";
+    }
     saveState();
     render();
   }
 
   function renderStatementPatienceLost(brief) {
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
+    if (brief.dialoguePresentation?.focusedInquiry) return retryStatementReview(brief, sceneIndex);
     frame({
       brief,
       mood: "tense",
@@ -610,6 +716,7 @@ export function createSceneScreens(ctx) {
     const state = ctx.getState();
     const question = overnightCallerQuestionFor(brief);
     const overnight = ensureOvernight(brief);
+    if (question?.choiceMode === "sequence") return renderSequentialCallerQuestion(brief, question, overnight);
     if (!question || actionDone(brief, "overnight:callerQuestion") && !overnight.callerQuestionChoiceId) {
       state.scene = nextSceneAfterEvidence({ issueBadge: issueCompletion(brief).badge, hasDeepFollowup: hasDeepFollowup(brief) });
       saveState();
@@ -651,6 +758,32 @@ export function createSceneScreens(ctx) {
     bindSceneButtons();
   }
 
+  function renderSequentialCallerQuestion(brief, question, overnight) {
+    const progress = callerQuestionProgress(question, overnight);
+    const picked = progress.picked;
+    const displayed = picked ?? question.options.find(option => option.id === progress.completedIds.at(-1));
+    frame({
+      brief, mood: "focused", label: "她的那一问", chapter: liveChapterTitle(brief),
+      text: `<div class="caller-question-dialogue">${callDialogueHtml([
+        ...(!progress.completedIds.length || displayed?.id === question.options[0]?.id ? [{ role: "caller", text: question.prompt }] : []),
+        ...(displayed ? [{ role: "host", text: displayed.label }, ...(displayed.lines ?? (displayed.callerLine ? [{ role: "caller", text: displayed.callerLine }] : []))] : [])
+      ])}</div>`,
+      choices: picked || progress.complete
+        ? flowGroupHtml(`<button class="primary" data-caller-sequence-continue type="button">继续</button>`)
+        : flowGroupHtml(`<button class="decision-choice" data-caller-question="${escapeHtml(progress.next.id)}" type="button">${escapeHtml(progress.next.label)}</button>`)
+    });
+    bind("[data-caller-question]", event => recordCallerQuestionChoice(brief, event.currentTarget?.getAttribute("data-caller-question") ?? ""));
+    bind("[data-caller-sequence-continue]", () => {
+      if (progress.complete) {
+        markAction(brief, "overnight:callerQuestion");
+        ctx.getState().scene = nextSceneAfterEvidence({ issueBadge: issueCompletion(brief).badge, hasDeepFollowup: hasDeepFollowup(brief) });
+      } else updateOvernight(brief, { callerQuestionChoiceId: null });
+      saveState();
+      render();
+    });
+    bindSceneButtons();
+  }
+
   function renderDeepFollowup(brief) {
     const state = ctx.getState();
     const issue = issueCompletion(brief);
@@ -680,6 +813,7 @@ export function createSceneScreens(ctx) {
   }
 
   function renderPatienceLost(brief) {
+    if (brief.dialoguePresentation?.focusedInquiry) { retryPatienceLostStep(brief); return; }
     frame({
       brief,
       mood: "tense",
@@ -724,6 +858,9 @@ export function createSceneScreens(ctx) {
       saveState();
       return render();
     }
+    if (brief.dialoguePresentation?.compactClosing) {
+      return resolveAccusationFromButton(brief, { getAttribute: name => ({ "data-accuse": "close", "data-accuse-label": "结束连线", "data-accuse-response": "" })[name] ?? "" });
+    }
     const choices = dailyAccusationChoices(brief).filter((choice) => {
       if (!choice.requiresRevisedSceneId) return true;
       const sourceScene = (brief.sceneVersions ?? []).find((scene) => scene.id === choice.requiresRevisedSceneId);
@@ -764,15 +901,20 @@ export function createSceneScreens(ctx) {
     const missReaction = option.correct === false ? statementMissReactionForOption(option) : null;
     state.pendingQuestionPressureSignal = null;
     state.pendingQuestionPressureSource = null;
-    const answer = missReaction?.text ? "" : answerVariant.answer;
-    markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`, { spend: !option.contradiction });
-    markAction(brief, `version:${sceneIndex}`);
+    const answer = missReaction?.text || answerVariant.answer;
+    const sequence = sceneQuestionSequence(scene);
+    const previousPick = selectedScenePickForState(state, brief, sceneIndex);
+    const focusedCorrect = option.correct === true || Boolean(option.contradiction);
+    if (sequence.length && (!brief.dialoguePresentation?.focusedInquiry || focusedCorrect) && option.id !== nextSequentialChoice(sequence, previousPick?.completedOptionIds)?.id) return;
+    const completedOptionIds = sequence.length ? [...completedChoicePrefix(sequence, previousPick?.completedOptionIds), ...(brief.dialoguePresentation?.focusedInquiry && !focusedCorrect ? [] : [option.id])] : [];
+    if (option.contradiction) markAction(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`);
+    if ((!brief.dialoguePresentation?.focusedInquiry || focusedCorrect) && (!sequence.length || !nextSequentialChoice(sequence, completedOptionIds))) markAction(brief, `version:${sceneIndex}`);
     if (option.contradiction) {
       recordContradiction(brief, option.contradiction);
       recordContradiction(brief, scene.contradiction);
     }
     else {
-      state.lastReaction = statementReactionDisplayText(missReaction);
+      state.lastReaction = null;
       state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
     }
     state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
@@ -783,6 +925,7 @@ export function createSceneScreens(ctx) {
     state.sceneQuestionPicks = {
       ...(state.sceneQuestionPicks ?? {}),
       [answerKey(brief, sceneIndex)]: {
+        optionIndex, optionId: option.id, sceneId: scene.id, completedOptionIds,
         question: option.question ?? "",
         suspicionLabel: option.suspicionLabel ?? "",
         revealTransition: option.revealTransition ?? null,
@@ -790,7 +933,7 @@ export function createSceneScreens(ctx) {
         contradiction: option.contradiction ?? "",
         routeAxis: option.routeAxis ?? routeAxisForChoice(option, scene),
         routeTone: option.routeTone ?? routeToneForChoice(option),
-        correct: Boolean(option.contradiction),
+        correct: Boolean(option.correct || option.contradiction),
         guarded: Boolean(missReaction?.text) || answerVariant.guarded || Boolean(option.forcedGuardedAnswer),
         resistanceBeat: option.resistanceBeat ?? null,
         lines: missReaction?.text || answerVariant.guarded ? null : option.lines ?? null,
@@ -799,16 +942,10 @@ export function createSceneScreens(ctx) {
       }
     };
     recordRouteChoice(brief, sceneIndex, option, scene);
-    if (audiencePatienceLost(brief, {
-      area: "sceneReview",
-      index: sceneIndex,
-      actionKeys: [`sceneQuestion:${sceneIndex}:${optionIndex}`, `version:${sceneIndex}`],
-      answerKey: answerKey(brief, sceneIndex),
-      routeIndex: sceneIndex,
-      spent: !option.contradiction,
-      removeQuestionPick: true
-    })) return;
-    state.sceneQuestionFocus = { caseId: caseKey(brief), sceneIndex, kind: "key", optionIndex };
+    state.sceneQuestionFocus = {
+      caseId: caseKey(brief), sceneIndex, kind: "key", optionIndex, sceneId: scene.id, optionId: option.id,
+      pendingPenalty: option.correct || option.contradiction || actionDone(brief, `sceneQuestion:${sceneIndex}:${optionIndex}`) ? null : sceneUsesLineReplay(scene) ? "statement-key" : "question"
+    };
     state.scene = "sceneQuestionAnswer";
     saveState();
     render();
@@ -834,7 +971,7 @@ export function createSceneScreens(ctx) {
       [key]: [
         ...current,
         {
-          optionIndex,
+          optionIndex, optionId: option.id, sceneId: scene.id,
           question: option.question ?? "",
           answer: answerVariant.answer,
           lines: answerVariant.guarded ? null : option.lines ?? null,
@@ -848,7 +985,7 @@ export function createSceneScreens(ctx) {
     state.lastReaction = questionPressureReaction({ ...option, answer: answerVariant.answer }, option.routeTone ?? routeToneForChoice(option));
     state.lastPressureSignal = questionPressureSignal(option, option.routeTone ?? routeToneForChoice(option));
     state.lastPressureAxis = option.routeAxis ?? routeAxisForChoice(option, scene);
-    state.sceneQuestionFocus = { caseId: caseKey(brief), sceneIndex, kind: "dialogue", optionIndex };
+    state.sceneQuestionFocus = { caseId: caseKey(brief), sceneIndex, kind: "dialogue", optionIndex, sceneId: scene.id, optionId: option.id };
     state.scene = "sceneQuestionAnswer";
     saveState();
     render();
@@ -930,6 +1067,17 @@ export function createSceneScreens(ctx) {
     const choice = (question?.options ?? []).find((option) => option.id === choiceId);
     const overnight = ensureOvernight(brief);
     if (!choice) return;
+    if (question.choiceMode === "sequence") {
+      const updated = advanceCallerQuestion(question, overnight, choiceId);
+      if (updated === overnight) return;
+      updateOvernight(brief, updated);
+      recordRouteChoice(brief, keyQuestionLimit(brief) + evidenceChecksFor(brief).length + 0.8 + question.options.indexOf(choice) / 100, {
+        question: question.prompt, answer: choice.label, routeAxis: choice.routeAxis ?? "process-control", routeTone: "caller-question"
+      }, { version: question.prompt });
+      saveState();
+      render();
+      return;
+    }
     if (choice.requiresEarnedItem && !(overnight.earnedItems ?? []).includes(choice.requiresEarnedItem)) return;
     updateOvernight(brief, { callerQuestionChoiceId: choice.id, callerQuestionHostChoiceId: null, callerQuestionStanceNudge: null });
     if ((choice.hostChoices ?? []).length) {
@@ -987,3 +1135,5 @@ export function createSceneScreens(ctx) {
     bindSceneButtons
   };
 }
+import { completedChoicePrefix, nextSequentialChoice, sceneQuestionSequence } from "../../runtime/sequentialChoices.js";
+import { callerQuestionProgress, advanceCallerQuestion } from "../../runtime/callerQuestionSequence.js";

@@ -1,12 +1,20 @@
+import { materialInquiryLines } from "../runtime/materialOperation.js";
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "../playerIdentity.js";
 import { choiceButtonBodyHtml } from "./callFlowView.js";
 
-export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
+export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0, costMeta = CHOICE_COST_META.evidenceMark) {
+  if (costMeta === "") return `<section class="evidence-workbench material-${evidenceMaterialKind(check)}">
+    <div class="evidence-document"><header><b>${escapeHtml(check.title ?? "当前材料")}</b></header>
+      <div class="evidence-document-body">${evidenceMaterialBodyHtml(check, evidenceMaterialKind(check))}</div></div>
+    ${pick ? "" : `<div class="evidence-target-options">${(check.options ?? []).map((option,index) =>
+      `<button data-evidence-check="${checkIndex}:${index}" type="button">${escapeHtml(option.question ?? option.label)}</button>`).join("")}</div>`}
+  </section>`;
   const options = (check.options ?? []).slice(0, 4);
   const kind = evidenceMaterialKind(check);
   return `
     <section class="evidence-workbench material-${kind} ${pick ? pick.correct ? "marked hit" : "marked miss" : ""}">
+      ${!pick ? `<p class="material-action-hint" role="note">${check.selectionMode === "priority" ? "选择一处，优先追问。" : "选择一处关键问题。"}</p>` : `<p class="material-action-hint" role="status">${pick.correct ? "已标注关键线索" : "未选中关键线索"}</p>`}
       <div class="evidence-document material-${kind}">
         <header>
           ${evidenceMaterialThumbHtml(check, kind)}
@@ -17,9 +25,9 @@ export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0) {
         ${pick ? evidenceAnnotationHtml(pick) : ""}
       </div>
       <div class="evidence-target-board" aria-label="圈点区域">
-        <span>${check.selectionMode === "priority" ? "先问哪一处" : "圈哪一处"}</span>
+        <span>${check.selectionMode === "priority" ? "先问哪一处" : "点击一处，圈出关键问题"}</span>
         <div class="evidence-target-grid">
-          ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick)).join("")}
+          ${options.map((option, optionIndex) => evidenceTargetHtml(option, optionIndex, checkIndex, pick, costMeta)).join("")}
         </div>
       </div>
     </section>
@@ -79,7 +87,7 @@ export function evidenceMaterialRows(check = {}) {
 }
 
 export function evidencePickFeedbackHtml(pick = {}, hostName = DEFAULT_PLAYER_NAME) {
-  const hostLine = pick.correct ? pick.feedback : "这条先放着。";
+  const hostLine = pick.feedback ?? (pick.correct ? "已标注关键线索。" : "这项没有提供新的线索。");
   return `
     <div class="call-dialogue evidence-pick-feedback">
       <div class="call-line host evidence-host-line">
@@ -97,12 +105,18 @@ export function evidenceCheckScreenHtml({
   pick = null,
   index = 0,
   hostName = DEFAULT_PLAYER_NAME,
+  costMeta = CHOICE_COST_META.evidenceMark,
   reviewHtml = ""
 } = {}) {
+  if (pick) {
+    const lines = materialInquiryLines(check, pick);
+    if (lines) return `<div class="call-dialogue evidence-pick-feedback">${lines.map(line => `<div class="call-line ${line.role}" data-dialogue-role="${line.role}"><b>${escapeHtml(line.speaker ?? (line.role === "host" ? normalizePlayerName(hostName) : "咨询者"))}</b><p>${escapeHtml(line.text)}</p></div>`).join("")}</div>`;
+    return evidencePickFeedbackHtml(pick, hostName);
+  }
   return `
     <p><b>${escapeHtml(check.title ?? "材料检视")}</b></p>
-    ${!pick && check.startComment?.text ? `<aside class="call-fixed-comment material-board-comment"><b>${escapeHtml(check.startComment.listenerId ?? "@听众")}</b><p>${escapeHtml(check.startComment.text)}</p></aside>` : ""}
-    ${evidenceOperationHtml(check, pick, index)}
+
+    ${evidenceOperationHtml(check, pick, index, costMeta)}
     ${evidenceMaterialNoteHtml(check)}
     <p>${escapeHtml(check.prompt ?? "这份材料里，哪一块最该先指出？")}</p>
     ${pick ? evidencePickFeedbackHtml(pick, hostName) : ""}
@@ -115,13 +129,19 @@ export function investigationBackflowScreenHtml({
   pick = null,
   index = 0,
   hostName = DEFAULT_PLAYER_NAME,
+  costMeta = CHOICE_COST_META.evidenceMark,
   reviewHtml = ""
 } = {}) {
+  if (pick) {
+    const lines = materialInquiryLines(hook, pick);
+    if (lines) return `<div class="call-dialogue evidence-pick-feedback">${lines.map(line => `<div class="call-line ${line.role}" data-dialogue-role="${line.role}"><b>${escapeHtml(line.speaker ?? (line.role === "host" ? normalizePlayerName(hostName) : "咨询者"))}</b><p>${escapeHtml(line.text)}</p></div>`).join("")}</div>`;
+    return evidencePickFeedbackHtml(pick, hostName);
+  }
   return `
     <p><b>${escapeHtml(hook.surface ?? "后台进来一条私信")}</b></p>
     <span class="source-badge">${escapeHtml(investigationSourceBadge(hook.source))}</span>
     <p>${escapeHtml(hook.appearsNowBecause ?? "收麦后，有人补了一张图。")}</p>
-    ${evidenceOperationHtml(hook, pick, index)}
+    ${evidenceOperationHtml(hook, pick, index, costMeta)}
     ${evidenceMaterialNoteHtml(hook)}
     <p>${escapeHtml(hook.prompt ?? "这条回流里，哪一句最该圈出来？")}</p>
     ${pick ? evidencePickFeedbackHtml(pick, hostName) : ""}
@@ -207,7 +227,7 @@ function evidenceMaterialBodyHtml(check = {}, kind = "file") {
       <span class="${index % 2 ? "alt" : ""}"><b>${escapeHtml(line)}</b></span>
     `).join("")}</div>`;
   }
-  if (kind === "social") return socialPostHtml(check.socialPost ?? {});
+  if (kind === "social" && check.socialPost) return socialPostHtml(check.socialPost);
   if (kind === "flow") {
     return `<div class="evidence-flow-track">${lines.map((line, index) => `
       <span><i>${index + 1}</i><b>${escapeHtml(line)}</b></span>
@@ -224,7 +244,7 @@ function socialPostHtml(post = {}) {
         <span><b>${escapeHtml(post.author ?? "朋友圈用户")}</b><small>${escapeHtml(post.postedAt ?? "")}</small></span>
         <em>···</em>
       </header>
-      <figure>
+      <figure data-caption="${escapeHtml(post.imageAlt ?? "朋友圈配图")}">
         ${post.imageSrc ? `<img src="${escapeHtml(post.imageSrc)}" alt="${escapeHtml(post.imageAlt ?? "朋友圈配图")}" />` : ""}
       </figure>
       <p class="social-post-caption">${escapeHtml(post.caption ?? "")}</p>
@@ -243,16 +263,17 @@ function evidenceMaterialRowsHtml(check = {}) {
 }
 
 function evidenceMaterialNoteHtml(check = {}) {
+  if (check.socialPost) return "";
   if (!Array.isArray(check.materialRows) || !check.materialRows.length || !check.material) return "";
   return `<p class="evidence-material-note">${escapeHtml(check.material)}</p>`;
 }
 
-function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick = null) {
+function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick = null, costMeta = CHOICE_COST_META.evidenceMark) {
   const selected = pick && Number(pick.optionIndex) === optionIndex;
   const className = `evidence-target ${pick ? "" : "decision-choice"} ${selected ? pick.correct ? "selected hit" : "selected miss" : pick ? "dimmed" : ""}`;
   const content = `<i>${optionIndex + 1}</i>${pick
     ? `<b>${escapeHtml(option.label ?? "这块")}</b>`
-    : choiceButtonBodyHtml(option.label ?? "这块", CHOICE_COST_META.evidenceMark)}`;
+    : choiceButtonBodyHtml(option.label ?? "这块", costMeta)}`;
   if (pick) {
     return `<span class="${className}">${content}</span>`;
   }
@@ -262,7 +283,7 @@ function evidenceTargetHtml(option = {}, optionIndex = 0, checkIndex = 0, pick =
 function evidenceAnnotationHtml(pick = {}) {
   return `
     <div class="evidence-annotation ${pick.correct ? "hit" : "miss"}">
-      <span>已圈</span>
+      <span>${pick.correct ? "已标注" : "未命中"}</span>
       <b>${escapeHtml(pick.label ?? "")}</b>
     </div>
   `;

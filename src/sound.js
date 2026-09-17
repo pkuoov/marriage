@@ -13,6 +13,8 @@ let activeVoice = null;
 let lastSceneKey = "";
 const playedCueKeys = new Set();
 const activeLoops = new Map();
+const exitingLoops = new Map();
+const loopFades = new Map();
 const desiredLoopCueIds = new Map();
 const activeOneShots = new Set();
 const audioListeners = new Set();
@@ -65,9 +67,13 @@ export function playAudioCue(cueId = "", callbacks = {}) {
 export function toggleVoiceCue(cueId = "") {
   if (activeVoice?.cueId === cueId) {
     if (activeVoice.audio.paused) {
-      activeVoice.audio.play().catch(() => finishVoice("error", cueId));
+      activeVoice.audio.play().then(() => {
+        refreshActiveVolumes();
+        emitAudioState("playing");
+      }).catch(() => finishVoice("error", cueId));
     } else {
       activeVoice.audio.pause();
+      refreshActiveVolumes();
       emitAudioState("paused");
     }
     return { ok: true, cueId };
@@ -225,7 +231,7 @@ function setLoopCue(busId, cueId = "") {
   }
   desiredLoopCueIds.set(busId, cueId);
   const previous = activeLoops.get(busId);
-  if (previous) fadeOutAndStop(previous.audio, 260);
+  if (previous) fadeOutAndStop(previous, 260);
   activeLoops.delete(busId);
   if (!cueId) return { ok: true, cueId: "" };
   if (!settings.enabled) return { ok: false, reason: "muted", cueId };
@@ -236,11 +242,15 @@ function setLoopCue(busId, cueId = "") {
   const audio = createAudioElement(cue);
   audio.loop = true;
   audio.volume = 0;
-  activeLoops.set(busId, { cueId, cue, audio });
+  const item = { cueId, cue, audio };
+  activeLoops.set(busId, item);
   audio.play()
     .then(() => {
-      if (activeLoops.get(busId)?.audio === audio) fadeTo(audio, effectiveCueVolume(cue), 320);
-      else audio.pause();
+      if (activeLoops.get(busId)?.audio !== audio) { audio.pause(); return; }
+      const configuredAttack = Number(cue.attackMs);
+      const attackMs = Number.isFinite(configuredAttack) && configuredAttack >= 0 ? configuredAttack : 320;
+      if (attackMs === 0) applyLoopVolume(item);
+      else fadeLoop(item, 0, 1, attackMs);
     })
     .catch(() => {
       if (activeLoops.get(busId)?.audio === audio) activeLoops.delete(busId);
@@ -255,7 +265,7 @@ function startVoiceCue(cueId, cue, callbacks = {}) {
   bindTimedAudioEvents(audio, cueId, callbacks, () => finishVoice("ended", cueId), () => finishVoice("error", cueId));
   refreshActiveVolumes();
   audio.play()
-    .then(() => emitAudioState("playing"))
+    .then(() => { refreshActiveVolumes(); emitAudioState("playing"); })
     .catch(() => finishVoice("error", cueId));
   return { ok: true, cueId, audio };
 }
@@ -307,38 +317,50 @@ function createAudioElement(cue) {
 }
 
 function effectiveCueVolume(cue) {
-  const ducked = Boolean(activeVoice) && ["bgm", "ambience"].includes(cue.bus);
+  const ducked = Boolean(activeVoice && !activeVoice.audio.paused) && ["bgm", "ambience"].includes(cue.bus);
   return Math.max(0, Math.min(1, audioBusGain(settings, cue.bus, { ducked }) * Number(cue.gain ?? 1)));
 }
 
 function refreshActiveVolumes() {
-  activeLoops.forEach(({ cue, audio }) => { audio.volume = effectiveCueVolume(cue); });
+  activeLoops.forEach(applyLoopVolume);
+  exitingLoops.forEach(applyLoopVolume);
   activeOneShots.forEach(({ cue, audio }) => { audio.volume = effectiveCueVolume(cue); });
   if (activeVoice) activeVoice.audio.volume = effectiveCueVolume(activeVoice.cue);
 }
 
-function fadeTo(audio, target, durationMs) {
-  const from = Number(audio.volume ?? 0);
+function applyLoopVolume({ cue, audio }) {
+  audio.volume = effectiveCueVolume(cue) * (loopFades.get(audio)?.gain ?? 1);
+}
+
+function fadeLoop(item, from, target, durationMs, onFinished = () => {}) {
+  const { audio } = item;
+  const previous = loopFades.get(audio);
+  if (previous) clearInterval(previous.timer);
   const startedAt = Date.now();
-  const timer = setInterval(() => {
+  const fade = { gain: from, timer: null };
+  loopFades.set(audio, fade);
+  applyLoopVolume(item);
+  fade.timer = setInterval(() => {
     const ratio = Math.min(1, (Date.now() - startedAt) / Math.max(1, durationMs));
-    audio.volume = Math.max(0, Math.min(1, from + (target - from) * ratio));
-    if (ratio >= 1) clearInterval(timer);
+    fade.gain = Math.max(0, Math.min(1, from + (target - from) * ratio));
+    applyLoopVolume(item);
+    if (ratio >= 1) {
+      clearInterval(fade.timer);
+      loopFades.delete(audio);
+      onFinished();
+    }
   }, 30);
 }
 
-function fadeOutAndStop(audio, durationMs) {
-  const from = Number(audio.volume ?? 0);
-  const startedAt = Date.now();
-  const timer = setInterval(() => {
-    const ratio = Math.min(1, (Date.now() - startedAt) / Math.max(1, durationMs));
-    audio.volume = Math.max(0, from * (1 - ratio));
-    if (ratio >= 1) {
-      clearInterval(timer);
-      audio.pause();
-      audio.currentTime = 0;
-    }
-  }, 30);
+function fadeOutAndStop(item, durationMs) {
+  const { audio } = item;
+  const from = loopFades.get(audio)?.gain ?? (audio.volume === 0 ? 0 : 1);
+  exitingLoops.set(audio, item);
+  fadeLoop(item, from, 0, durationMs, () => {
+    audio.pause();
+    audio.currentTime = 0;
+    exitingLoops.delete(audio);
+  });
 }
 
 function audioStateSnapshot(status = "") {

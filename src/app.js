@@ -1,7 +1,9 @@
 import { generateCasesForMode } from "./caseModes.js";
+import { dailyKeyFromUrl, hasFreshStartParam, modeFromUrl, storyKeyFromUrl } from "./runtime/urlMode.js";
+import { isSceneReviewScene } from "./runtime/liveSceneKinds.js";
 import { clearPlayedCueKeysByPrefix, getAudioSettings, playAudioCueOnce, playDialogueBlip, playSfx, resetAudioCueHistory } from "./sound.js";
 import { audioCueView } from "./audioCatalog.js";
-import { baseState, clearStateSnapshot, loadMeta, loadState, normalizeRuntimeState, saveStateSnapshot } from "./state.js";
+import { baseState, clearStateSnapshot, loadMeta, loadState, normalizeRuntimeState, saveReadingBeforeExit, saveStateSnapshot } from "./state.js";
 import { NPCS } from "./story.js";
 import { dailyAccusationChoices } from "./dailyChoices.js";
 import { keyboardNavigationIntent } from "./runtime/inputNavigation.js";
@@ -22,13 +24,14 @@ import { normalizePlayerName, personalizeHostHtml, personalizeHostText, playerFa
 import { CHOICE_COST_META } from "./runtime/choiceCostModel.js";
 import { mountDialoguePresentation } from "./runtime/dialoguePresentation.js";
 import { refreshSavedCaseContent } from "./runtime/savedContentRefresh.js";
-import { storyBoundaryRows, storyMaterialRows, storyPackSummaryModel, storyPressureRows } from "./runtime/storyPackSummaryModel.js";
+import { storyPressureRows } from "./runtime/storyPackSummaryModel.js";
 import { callDialogueHtml, choiceButtonBodyHtml, choiceGroupHtml, choiceReviewHtml, flowGroupHtml } from "./ui/callFlowView.js";
 import { dailyCompleteChoicesHtml, dailyCompleteHtml, dailyCompleteShareText } from "./ui/dailyCompleteView.js";
 import { delegationScreenHtml, evidenceCheckScreenHtml, investigationBackflowScreenHtml } from "./ui/evidenceView.js";
 import { audioPlaybackControlsHtml, callbackOpenerBeatHtml, callbackOpenerChoiceHtml, hangupBeatHtml, interludeDeskHtml, interludeDialogueActionHtml, interludePlaybackActionHtml, interruptToastHtml, replyChoicesHtml } from "./ui/interludeDeskView.js";
 import { bindAudioControls, syncSceneAudio, watchAudioPlaybackControls } from "./ui/audioController.js";
 import { liveCounterBeatHtml } from "./ui/liveCounterBeatView.js";
+import { currentLiveCounterPick } from "./runtime/liveCounterModel.js";
 import { liveControlDeckHtml, liveFrameHtml } from "./ui/liveFrameView.js";
 import { avgSystemBarHtml, mountCourtRecord } from "./ui/courtRecordView.js";
 import { finalQuoteComparisonHtml, solvedRecapFlowView, solvedRecapPagesHtml } from "./ui/recapView.js";
@@ -40,7 +43,7 @@ import { caseBridgeChoicesHtml, caseBridgeHtml, caseClosingChoicesHtml, caseClos
 import { careChoiceContinueHtml, careChoiceHtml } from "./ui/careChoiceView.js";
 import { epilogueUnreadContinueHtml, epilogueUnreadHtml } from "./ui/epilogueUnreadView.js";
 import { cafeAccountBoardHtml, cafeEvidencePairHtml, cafeFinalBoundaryHtml, cafeInvestigationChoicesHtml, cafeLegalRequestsHtml, cafeMaterialDetailModalHtml, cafeMaterialPromptHtml, cafePrologueDialogueHtml, cafePrologueHeaderHtml, cafeProloguePortraitStageHtml, cafeRevisionStatusHtml, cafeSingleEvidenceHtml, cafeStatementReplayHtml, cafeTransferPresentHtml } from "./ui/prologueCafeView.js";
-import { storyPackCompleteHtml, storyPackShareText } from "./ui/storyPackCompleteView.js";
+import { storyPackCompleteHtml } from "./ui/storyPackCompleteView.js";
 import { titleScreenHtml } from "./ui/titleView.js";
 import { CONTENT_ADVISORS } from "./generated/contentPackIndex.js";
 import { quickDetectiveCaseFor, quickDetectiveCasesFor, storyPackForKey } from "./storyPacks.js";
@@ -72,7 +75,8 @@ const {
   focusButton,
   activateButton,
   startGamepadPolling,
-  currentDialogueAdvance,
+  stopGamepadPollingWhenIdle,
+  confirmCurrentControl,
   keyEventInTextInput
 } = createFocusInputControl({ app });
 
@@ -206,18 +210,13 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.defaultPrevented || keyEventInTextInput(event)) return;
+  // Native details disclosure must not confirm the currently highlighted inquiry.
+  if (event.target.closest?.(".quick-inquiry-history summary")) return;
   const intent = keyboardNavigationIntent(event.key);
   if (intent === "confirm") {
-    const dialogue = currentDialogueAdvance();
-    if (dialogue) {
-      event.preventDefault();
-      dialogue.click();
-      return;
-    }
-    const button = document.activeElement?.matches?.("button") ? document.activeElement : preferredDefaultButton();
-    if (!button) return;
     event.preventDefault();
-    activateButton(button);
+    if (event.repeat) return;
+    confirmCurrentControl();
     return;
   }
   if (intent === "next") {
@@ -248,7 +247,9 @@ document.addEventListener("keydown", (event) => {
 });
 
 globalThis.addEventListener?.("gamepadconnected", () => startGamepadPolling());
+globalThis.addEventListener?.("gamepaddisconnected", () => stopGamepadPollingWhenIdle());
 startGamepadPolling();
+globalThis.addEventListener?.("pagehide", () => { if (activeDialogueController) saveReadingBeforeExit(state); });
 
 function saveState() {
   const saved = saveStateSnapshot(state);
@@ -323,44 +324,6 @@ function activeCaseBrief() {
 
 function isStoryPackMode() {
   return state.caseMode !== "daily";
-}
-
-function dailyKeyFromUrl() {
-  try {
-    return new URLSearchParams(globalThis.location?.search ?? "").get("dailyKey") || undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function storyKeyFromUrl() {
-  try {
-    const params = new URLSearchParams(globalThis.location?.search ?? "");
-    return params.get("storyKey") || params.get("packKey") || params.get("weeklyKey") || undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function modeFromUrl() {
-  try {
-    const mode = new URLSearchParams(globalThis.location?.search ?? "").get("mode");
-    return mode === "daily" ? "daily" : "episode";
-  } catch {
-    return "episode";
-  }
-}
-
-function hasFreshStartParam() {
-  try {
-    const url = new URL(globalThis.location?.href ?? "https://local.invalid/");
-    if (url.searchParams.get("fresh") !== "1") return false;
-    url.searchParams.delete("fresh");
-    globalThis.history?.replaceState?.(null, "", `${url.pathname}${url.search}${url.hash}`);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function startStoryPack() {
@@ -514,7 +477,7 @@ function resumeStageLabel() {
   if (scene === "caseBridge") return "上次停在：幕间引页";
   if (scene === "caseTitle") return "上次停在：幕标题";
   if (["caseSolved", "careChoice", "caseClosure", "storyInterlude"].includes(scene)) return "上次停在：收麦回看";
-  if (["cafePrologue", "cafePrologueAftermath"].includes(scene)) return "上次停在：开播前的咖啡厅";
+  if (["cafePrologue", "cafePrologueAftermath"].includes(scene)) return "上次停在：咖啡厅序章";
   if (scene === "cafePrologueForensic") return "上次停在：鉴定回告";
   if (["nightShellEpilogue", "runComplete"].includes(scene)) return "上次停在：天亮前";
   return "上次停在：直播连线";
@@ -694,9 +657,6 @@ function createDailyScreenRenderers() {
     cafePrologueCanOpenForensic,
     cafePrologueSceneForStep,
     hostDisclosureLinesForAnchor,
-    storyBoundaryRows,
-    storyMaterialRows,
-    storyPackSummaryModel,
     storyPressureRows,
     dailyCompleteChoicesHtml,
     dailyCompleteHtml,
@@ -734,7 +694,6 @@ function createDailyScreenRenderers() {
     cafeAccountBoardHtml,
     cafeFinalBoundaryHtml,
     storyPackCompleteHtml,
-    storyPackShareText,
     storyPackForKey,
     isStoryPackMode,
     storyKeyFromUrl,
@@ -884,12 +843,14 @@ function renderDailyCase() {
   return screens.renderCaseOpen(brief);
 }
 
-function isSceneReviewScene(scene = "") {
-  return ["sceneReview", "sceneQuestionMenu", "sceneQuestionAnswer", "callSegment1", "callSegment2", "overnightNight1", "overnightNight2", "testimonyPrelude", "testimonyWall", "testimonyMaterials", "decisivePresentMaterial", "decisivePresentTarget", "decisivePresentHit"].includes(scene);
-}
-
 function liveChapterTitle(brief = {}) {
-  return isStoryPackMode() ? "热线连线" : brief.storyArcTitle ?? "今日来电";
+  if (!isStoryPackMode()) return brief.storyArcTitle ?? "今日来电";
+  const nights = brief.nightStructure?.broadcastNights;
+  if (!Array.isArray(nights) || nights.length !== 2) return "热线连线";
+  const key = caseKey(brief);
+  const returning = state.caseOvernights?.[key]?.segment === "night2"
+    || state.caseNights?.[key]?.segment === "segment2";
+  return `第 ${nights[returning ? 1 : 0]} 晚 · ${returning ? "回拨" : "初次连线"}`;
 }
 
 function nightShellForStoryKey(storyKey = "") {
@@ -993,7 +954,7 @@ function sceneWithLiveCounterQuestionOverride(brief = {}, scene = {}) {
 }
 
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", backdropClass: backdropClassOverride = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen", musicPhase = "" }) {
-  const modeLabel = isStoryPackMode() ? "试玩连线" : "今日来电";
+  const modeLabel = isStoryPackMode() ? `第 ${Math.max(1, Number(state.chapter) || 1)} 案 · ${chapter || label || "连线中"}` : "今日来电";
   const backdropClass = backdropClassOverride || caseBackdropClass(brief);
   const pressure = showCaseHud ? (pressureOverride ?? currentLivePressure(brief, mood)) : {};
   const visualHud = visualHudOverride ?? (showCaseHud
@@ -1017,12 +978,14 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     material: currentMaterial,
     materialCount: materialProfile.count,
     materialArtSrc: brief?.evidenceBoard ?? "",
+    materialItems: materialProfile.items,
     screenEffect: state.lastScreenEffect ?? "",
     pixelTransition,
     rewindAvailable: canRewindQuestion(questionRewindHistory),
     screenClass: `${screenClass} effects-${state.settings?.screenEffects ?? "full"} ${pixelTransition?.kind === "reveal" ? "key-reveal-answer" : ""} ${showCaseHud ? liveSceneClass(brief, mood, pressure) : ""}`.trim(),
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
+          simpleInquiry: Boolean(brief.dialoguePresentation?.focusedInquiry),
           onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
           label,
           segment: Math.min(total, answeredSceneCountForState(state, brief) + 1),
@@ -1054,18 +1017,21 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
   bind('[data-action="title"]', returnToTitle);
   bind('[data-action="reset"]', resetToTitle);
   bindAudioControls({ root: app, onToggleSound: render });
-  syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, pressureLevel: pressure.level, musicPhase, audioEnterCueId, keepVoiceCueId });
+  syncSceneAudio({ briefId: brief?.id ?? "root", scene: state.scene || "title", backdropClass, pressureLevel: "", musicPhase,
+    liveNight: state.caseOvernights?.[caseKey(brief)]?.segment === "night2" || state.caseNights?.[caseKey(brief)]?.segment === "segment2" ? "night2" : "night1",
+    audioEnterCueId, keepVoiceCueId });
   if (pressure.flashback?.id) playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:flashback:${pressure.flashback.id}`);
   resetViewportScroll();
   mountCurrentDialogue();
   queueDefaultFocus();
 }
 
-function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-city", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition = undefined }) {
+function dayFrame({ brief, label, chapter, text, choices, modeLabel = "白天调查", backdropClass = "day-city", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition = undefined, screenClass = "" }) {
   const materialProfile = unlockedMaterialProfile({ state, brief });
   app.innerHTML = personalizeHostHtml(liveFrameHtml({
     productName: PRODUCT_NAME,
-    modeLabel: "白天调查",
+    modeLabel,
+    screenClass,
     audioSettings: getAudioSettings(),
     backdropClass,
     label,
@@ -1077,6 +1043,7 @@ function dayFrame({ brief, label, chapter, text, choices, backdropClass = "day-c
     material: materialProfile.label,
     materialCount: materialProfile.count,
     materialArtSrc: brief?.evidenceBoard ?? "",
+    materialItems: materialProfile.items,
     screenEffect: "",
     pixelTransition: pixelTransition === undefined ? pixelTransitionForCurrentScene(brief) : pixelTransition,
     rewindAvailable: canRewindQuestion(questionRewindHistory),
@@ -1124,10 +1091,15 @@ function keyRevealTransitionForCurrentScene(brief = {}) {
 
 function mountCurrentDialogue() {
   destroyActiveDialogueController();
+  const reaction = app?.querySelector('[data-transient-reaction]');
+  if (reaction) setTimeout(() => reaction.remove(), 2400);
   const card = app?.querySelector(".dialogue-card");
-  if (card) card.insertAdjacentHTML("beforeend", avgSystemBarHtml(state.settings));
+  if (card?.querySelector(".call-dialogue, .night-shell-card, .cafe-prologue-dialogue")) {
+    card.insertAdjacentHTML("beforeend", avgSystemBarHtml(state.settings));
+  }
   const materialPanel = mountMaterialPanel();
   let controller = null;
+  const dialogueState = state;
   controller = mountDialoguePresentation(app, {
     hostName: normalizePlayerName(state.playerName),
     speed: state.settings?.textSpeed ?? "normal",
@@ -1135,8 +1107,17 @@ function mountCurrentDialogue() {
     autoMode: Boolean(state.settings?.autoMode),
     autoDelay: state.settings?.autoDelay ?? 2,
     presentationProfile: activeCaseBrief()?.dialoguePresentation ?? {},
+    readingScope: `${caseKey(activeCaseBrief())}:${state.scene}`,
+    resume: state.dialogueReading,
+    onProgress: (progress, reason) => {
+      if (state !== dialogueState) return;
+      state.dialogueReading = progress;
+      if (reason === "page" || reason === "choices") saveState();
+    },
     onBlip: playDialogueBlip,
-    onPageStart: (page) => {
+    onPageStart: (page, _index, { restored } = {}) => {
+      if (_index > 0) reaction?.remove();
+      if (restored) return;
       const pageLines = Array.isArray(page?.lines) ? page.lines : [page];
       pageLines.forEach((line) => {
         const cueId = line?.audioCueId ?? "";
@@ -1151,16 +1132,39 @@ function mountCurrentDialogue() {
     },
     onChoicesShown: (shownChoices) => {
       materialPanel.syncChoices();
+      // Reading the final line already supplies the next-page action.
+      // Skip only mechanical transitions, never a choice or an unread page.
+      const buttons = [...(shownChoices?.querySelectorAll('button:not(:disabled)') ?? [])];
+      const transition = buttons.length === 1 && buttons[0].matches(
+        '[data-scene-open-replay], [data-next-scene-stage], [data-inquiry-continue], [data-continue-live-counter], [data-cafe-opening-seen], [data-cafe-revision-seen], [data-cafe-legal-brief]'
+      ) ? buttons[0] : null;
+      if (transition) {
+        shownChoices.hidden = true;
+        queueMicrotask(() => {
+          if (state === dialogueState && transition.isConnected && !app.querySelector('.court-record:not([hidden]), .avg-material-modal:not([hidden])')) transition.click();
+        });
+        return;
+      }
       keepInlineChoicesVisible(shownChoices);
     }
   });
   activeDialogueController = controller;
+  syncDialoguePause();
   materialPanel.syncChoices();
   mountCourtRecord(app, {
     state,
+    cafe: nightShellForBrief(activeCaseBrief())?.cafePrologue?.cafe,
+    materialItems: unlockedMaterialProfile({ state, brief: activeCaseBrief() ?? {} }).items,
     onSettingsChange: cycleAvgSetting,
-    onBeforeOpen: () => materialPanel.close({ restoreFocus: false })
+    onBeforeOpen: () => materialPanel.close({ restoreFocus: false }),
+    onVisibilityChange: syncDialoguePause
   });
+}
+
+function syncDialoguePause() {
+  activeDialogueController?.setPaused?.(Boolean(app?.querySelector(
+    ".court-record:not([hidden]), .avg-material-modal:not([hidden]), .cafe-material-modal:not([hidden])"
+  )));
 }
 
 function destroyActiveDialogueController() {
@@ -1183,6 +1187,7 @@ function mountMaterialPanel() {
   const close = ({ restoreFocus = true } = {}) => {
     if (!modal || modal.hidden) return false;
     modal.hidden = true;
+    syncDialoguePause();
     shell?.classList.remove("material-open");
     triggers.forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
     if (restoreFocus && lastFocused && isVisibleElement(lastFocused)) focusButton(lastFocused);
@@ -1201,6 +1206,7 @@ function mountMaterialPanel() {
     record?.querySelector("[data-record-close]")?.click();
     lastFocused = document.activeElement;
     modal.hidden = false;
+    syncDialoguePause();
     shell?.classList.add("material-open");
     triggers.forEach((item) => item.setAttribute("aria-expanded", "true"));
     focusButton(modal.querySelector(".avg-material-panel [data-material-close]"));
@@ -1230,7 +1236,8 @@ function cycleAvgSetting(kind) {
     state.settings.fastForward = !state.settings.fastForward;
     activeDialogueController?.setFastForward?.(state.settings.fastForward);
     document.querySelectorAll('[data-avg-setting="fast"]').forEach((button) => {
-      button.textContent = `快进 ${state.settings.fastForward ? "开" : "关"}`;
+      button.textContent = `即时文字 ${state.settings.fastForward ? "开" : "关"}`;
+      button.setAttribute("aria-pressed", String(state.settings.fastForward));
     });
     saveState();
     return;
@@ -1281,7 +1288,7 @@ function liveCounterPickKey(brief = {}, beatId = "") {
 }
 
 function liveCounterPickForState(brief = {}, beatId = "") {
-  return state.liveCounterPicks?.[liveCounterPickKey(brief, beatId)] ?? null;
+  return currentLiveCounterPick(liveCounterBeatById(brief, beatId), state.liveCounterPicks?.[liveCounterPickKey(brief, beatId)]);
 }
 
 function moveScene(scene) {
@@ -1363,11 +1370,7 @@ function hasDeepFollowup(brief) {
 
 function deepFollowupFor(brief) {
   if (brief.deepFollowup?.question) return brief.deepFollowup;
-  return {
-    question: "那我多问一句，如果把情绪先放一边，这件事最后是谁要承担成本？",
-    answer: "她停了一下，说：我刚才一直在讲委屈，其实最怕的是最后又变成我来兜底。",
-    note: "问到这一步，就别只听委屈了，得问最后谁兜底。"
-  };
+  return {};
 }
 
 function dailyConclusion(brief, result, issue) {

@@ -35,7 +35,7 @@ export function storyInterludeHtml({
     ${worldEcho ? `<section class="story-interlude-card world-echo">
       <span>${escapeHtml(worldEcho.kicker ?? "城市回声")}</span>
       <b>${escapeHtml(worldEcho.headline ?? "")}</b>
-      <p>${escapeHtml(worldEcho.body ?? "")}</p>
+      ${String(worldEcho.body ?? "").split(/\n\s*\n/).map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join("")}
     </section>` : ""}
     ${worldEchoHypothesis ? `<section class="story-interlude-card world-echo-hypothesis">
       <span>你先压下的判断</span>

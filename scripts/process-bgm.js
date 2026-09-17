@@ -8,6 +8,7 @@ import {
   writeFileSync
 } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -163,6 +164,9 @@ function buildRecipe(id, cliOptions) {
       ? null
       : recipe.reportPath;
   if (!existsSync(recipe.inputPath)) fail(`${id}: source is missing: ${displayPath(recipe.inputPath)}`);
+  if (recipe.sourceSha256 && createHash("sha256").update(readFileSync(recipe.inputPath)).digest("hex") !== recipe.sourceSha256) {
+    fail(`${id}: source checksum changed; review the replacement master before rebuilding`);
+  }
   if (existsSync(outputPath) && !cliOptions.force) {
     fail(`${displayPath(outputPath)} already exists; pass --force to replace it`);
   }
@@ -290,6 +294,7 @@ function makeReport(recipe, outputPath, sourceProbe, normalizationInput) {
     status: recipe.status ?? null,
     builtAt: new Date().toISOString(),
     source: displayPath(recipe.inputPath),
+    sourceSha256: sourceProbe ? createHash("sha256").update(readFileSync(recipe.inputPath)).digest("hex") : null,
     output: displayPath(outputPath),
     edit: {
       startSeconds: recipe.startSeconds,

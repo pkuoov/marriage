@@ -1,142 +1,25 @@
-# Narrative Flow Validation
+# 叙事检查的范围与工作流
 
-This workflow checks whether single live-call cases read like coherent livestream calls, not just valid data objects. In the current product, these cases are the units inside a weekly livestream collection.
+现行方向见 [项目方向](../project-skills/case-scriptwriting/references/current-project-direction.md)。`npm run test:narrative` 是确定性检查，不是中文对白自然度或 UI 验收。
 
-## Command
+## 自动检查实际覆盖
 
-Run this before major narrative changes:
+脚本 `scripts/verify-narrative-flow.js` 按八个日期调用 daily 入口，复用已接入的案件并生成 `docs/generated/narrative-flow-report.md`。八个日期不等于八个独立案件，也不证明序章、跨夜、快案或整包全程已走通。字段抽取中的兼容问答不等于当前舞台一定播放它。
 
-```bash
-npm run test:narrative
-```
+它检查非空内容、问题与回答存在、明显占位／来源问题等；文字启发式只能发现候选问题，不能凭词表保证承接成立。段数、字数或包含“多少／为什么”不能证明好不好问，不能靠凑这些量通过创作验收。
 
-It is also included in:
+完整内容与稳定 ID 由 `verify:pack` 等检查；台本和实播对照分别用 `--target=script-reading`、`--target=testimony-reading`；三个快案使用 `--target=quick-detective`。来源先后、可选信息和说话人仍需人工连读实际交换。
 
-```bash
-npm run check
-```
+## 语义审读
 
-The script writes a branch extraction report to:
+按照 [对白审读流程](../project-skills/case-scriptwriting/references/story-review-workflow.md) 看完整上下文。人物可能答偏、反复和迟疑；需要判断他在保护什么，而不是要求下一句直接回答完全部问题。主持人可据实际异常猜测和施压，材料和系统不能把猜测认证成事实。
 
-```text
-docs/generated/narrative-flow-report.md
-```
+按集中问询检查必要来源和问答承接，没问清留在本段，问清推进。口播任一有效点评即可。旧回放、深问和材料配对的现有用例只描述兼容行为，不要求新案保留；旧案例定点断言也不能锁住用户未指定的字句或段数。
 
-## What Gets Extracted
+## UI 与测试结论
 
-For each single-call case in the current rotation, the script extracts:
+按 [验收指南](qa-test-guide.md) 使用隔离存档，PC 优先验证可见边界、点击后的状态与实际截图。查询参数不隔离存档，能定位按钮不等于按钮在窗口内。
 
-- opening dialogue
-- every `sceneVersion`
-- every scene question and feedback branch
-- the conditional `deepFollowup` question and answer
-- every final quote-pick/result branch
-- evidence cards
-- stage judgement
-- truth and expected responsibility
+报告区分结构通过、实播内容一致、路径可达、布局通过与人工语义审读。旧整句断言失效时先核对用户锁定文本和现行剧情；用户没锁定的自然问法允许修改，来源与进度等硬约束继续验证。只改规范不需重新跑游戏的全部浏览器路线。
 
-The report is meant to be readable by humans. It is the text packet a reviewer or LLM can inspect without clicking through the UI.
-
-## Text Pattern
-
-Daily cases use a strict livestream dialogue pattern:
-
-```text
-caller gives one piece of context
--> host asks only the next logical question
--> caller answer directly bridges from that question
--> player option asks one playable direction
--> feedback answers that exact option before revealing any new fact
-```
-
-The caller may be messy, defensive, emotional, or self-serving. The host and UI cannot be messy. Host copy must not:
-
-- repeat a fact the caller already gave
-- ask A and receive an answer to B
-- jump from “proof / persuasion” directly to a later result such as meeting parents, borrowing money, or signing
-- use system-teaching language such as “先听”, “你要判断”, or “正确做法”
-- reveal the case conclusion before the player asks through the line
-
-Because each call is short and branch-sensitive, every generated case must be reviewed as a stitched transcript, not as isolated fields.
-
-Story-pack cases should also be generated as a stitched transcript first. If a reviewer changes a line that affects motive, face-saving, the purpose of a material, who pushed the dramatic object into the call, or how a mutual-harm chain works, the reviewer must re-check the full local chain rather than patching that sentence alone.
-
-## Logic Chain Rules
-
-Each case should satisfy this chain:
-
-```text
-relationship stage
--> pressure point
--> suspicious material / speech / event
--> dramatic gray-zone object or quote
--> actor purpose
--> unclear initiator / shared face-saving pressure
--> player question
--> feedback reveals or fails to reveal a fact
--> conclusion reuses facts already surfaced
-```
-
-The validator checks for:
-
-- caller speaks first
-- daily live room stays single-caller: only the host and anonymous caller are present
-- the other party appears only through caller retelling, chat logs, recordings, callbacks, or other materials
-- materials cannot interrupt as their own speaker inside scene/deep-question beats; the caller must pull them out, read them, or explain how they got them
-- no NPC real names appear in daily livestream text
-- opening has relationship context
-- suspicious materials do not appear from nowhere
-- each daily case has at least one dramatic object, quote, bill, screenshot, proof, table, agreement, or transfer record that can make the live room argue
-- the dramatic object has gray-zone authorship: it should be unclear whether it was pushed by the caller, the other party, parents, friends, platform pressure, or mutual face-saving
-- hidden/cropped/changed information has purpose
-- host questions advance one logic step at a time: first ask what a line proves or who it tries to persuade, then infer the later action it makes easier
-- host questions must not ask for facts the caller already gave in the immediately preceding line
-- host questions and the immediately following caller answer must connect without a missing bridge
-- the risk of full disclosure is legible
-- opening length fits mobile
-- daily scene count stays short
-- choices sound like host questions
-- no no-click throwaway options
-- no early spoilers
-- deep follow-up continues facts already surfaced and only appears after a full core-hit route
-- recap/Truth reuses previously surfaced motive or contradiction
-- no tutorial/debug/legalistic leftover copy
-- no gender-war or group-attack framing; mutual harm must be concrete behavior, not identity judgement
-- route-map fields exist for playable choices, so weekly recap can name how the player actually asked
-- story-pack title screens use a live-room hook, not thesis, moral judgement, case count, or case-title lists
-- every scene option and the full-hit deep question can be stitched into a short readable walkthrough
-- each walkthrough checks `caller line -> host option -> caller feedback` for missing bridges
-- edits preserve one integrated pressure system; options, feedback, recap, truth, and share copy must not drift into a different case question
-- current-node choice UI is one panel, not two lonely one-button groups
-- choice buttons read as the host's actual questions, not as labels that explain the design
-- current-node choice UI does not show route axes, difficulty labels, "soft/hard" tags, or other how-to-play copy
-
-## Large Playtest UI Gate
-
-Run this gate during every large manual test, especially after changing `src/app.js`, `src/styles.css`, case templates, or route metadata.
-
-1. Open a fresh cache key and start from the title screen.
-2. Confirm the title screen hook sounds like a live room opening, not a story-pack table of contents.
-3. Confirm the title screen does not reveal the number of cases, later case titles, route theme, or final thesis.
-4. Visit at least three current-node choice panels across different cases.
-5. Copy the visible DOM text for each choice panel.
-6. Confirm the panel has one short heading and the buttons are only host questions.
-7. Confirm the visual difference between outer/core choices does not become explanatory text.
-8. Search the visible text for banned helper labels: route axes, "how to play" instructions, and designer shorthand.
-9. Click one outer option and one core option. Both answers must return as caller dialogue and then move forward linearly.
-
-If any panel needs a label to explain what the buttons mean, the UI is carrying design notes instead of drama. Rewrite the buttons or remove the label.
-
-## Using LLM Review Later
-
-The current script is deterministic and offline. It also writes `Branch Walkthroughs` to the report. A later LLM pass can use `docs/generated/narrative-flow-report.md` as input and ask:
-
-```text
-For each branch walkthrough, identify any missing motivation chain,
-speaker knowledge mismatch, question-answer mismatch,
-abrupt material appearance, premature spoiler,
-or conclusion not earned by prior dialogue.
-Return blocking issues only.
-```
-
-Keep deterministic checks as the gate. Use LLM review as a second reader, not the only test.
+词汇与句式启发式输出为 `severity: review` 的人工复审候选，缺正文、缺回答、来源不成立等结构问题为 `severity: error` 并阻断。候选不能当作“自然／不自然”的机器定论；没有候选也不表示语义审读完成。新增规则回归由 `authoring-policy.test.js` 验证，已接入 `npm run check`。

@@ -1,4 +1,4 @@
 interface:
   display_name: "案件主线与反证审计"
-  short_description: "先梳理案件主线、证据、反证与未知，再清理剧情矛盾和无效场景"
-  default_prompt: "Use $audit-case-spine to audit this case spine before revising scenes or dialogue."
+  short_description: "检查必要来源与问答承接，清理重复揭露和无效环节"
+  default_prompt: "使用 $audit-case-spine 按当前任务范围检查案件主线、证据与人物知识；按集中问询检查本段是否问清，不扩建因果链，不默认重做整案。"

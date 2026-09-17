@@ -2,6 +2,7 @@ import { gamepadAxisDirection, nextFocusIndex } from "../runtime/inputNavigation
 
 export function createFocusInputControl({ app }) {
   let gamepadPollingStarted = false;
+  let gamepadPollingFrameId = null;
   let gamepadPreviousButtons = {};
   let lastGamepadMoveAt = 0;
 
@@ -31,7 +32,7 @@ export function createFocusInputControl({ app }) {
 
   function setupDefaultFocus() {
     const active = document.activeElement;
-    if (active && active !== document.body && isVisibleElement(active)) return;
+    if (active && active !== document.body && isVisibleElement(active) && topInteractiveScope()?.contains(active)) return;
     focusButton(preferredDefaultButton());
   }
 
@@ -62,7 +63,9 @@ export function createFocusInputControl({ app }) {
   }
 
   function preferredBackButton() {
-    return topInteractiveScope()?.querySelector('[data-material-close]:not(:disabled), [data-record-close]:not(:disabled), [data-retry-case]:not(:disabled), [data-action="rewind"]:not(:disabled), [data-action="title"]:not(:disabled)') ?? null;
+    // Escape closes the current layer. Rewinding a question changes story state
+    // and must remain an explicit action, never an implicit Back fallback.
+    return focusableButtons().find((button) => button.matches('[data-material-close], [data-record-close], [data-cafe-material-close]')) ?? null;
   }
 
   function preferredReviewButton() {
@@ -98,18 +101,18 @@ export function createFocusInputControl({ app }) {
   }
 
   function topInteractiveScope() {
-    const material = app?.querySelector(".avg-material-modal:not([hidden])");
+    const material = app?.querySelector(".avg-material-modal:not([hidden]), .cafe-material-modal:not([hidden])");
     if (material) return material;
     const record = app?.querySelector(".court-record:not([hidden])");
     if (record) return record;
-    const choices = app?.querySelector(".avg-choice-overlay:not([hidden])");
-    if (choices?.querySelector("button:not(:disabled)") && isVisibleElement(choices)) return choices;
+    // Inline choices share the scene with day locations and other controls.
+    // Only a modal may exclude those controls from keyboard/gamepad focus.
     return app;
   }
 
   function closeMaterialPanel() {
-    const modal = app?.querySelector(".avg-material-modal:not([hidden])");
-    const closeButton = modal?.querySelector(".avg-material-panel [data-material-close]");
+    const modal = app?.querySelector(".avg-material-modal:not([hidden]), .cafe-material-modal:not([hidden])");
+    const closeButton = modal?.querySelector(".avg-material-panel [data-material-close], .cafe-material-sheet [data-cafe-material-close]");
     if (!closeButton) return false;
     closeButton.click();
     return true;
@@ -146,14 +149,31 @@ export function createFocusInputControl({ app }) {
     if (gamepadPollingStarted) return;
     if (typeof requestAnimationFrame !== "function") return;
     if (typeof globalThis.navigator?.getGamepads !== "function") return;
+    if (!firstActiveGamepad()) return;
     gamepadPollingStarted = true;
-    requestAnimationFrame(pollGamepads);
+    gamepadPollingFrameId = requestAnimationFrame(pollGamepads);
   }
 
   function pollGamepads() {
     const gamepad = firstActiveGamepad();
-    if (gamepad) handleGamepadInput(gamepad);
-    requestAnimationFrame(pollGamepads);
+    if (!gamepad) {
+      gamepadPollingStarted = false;
+      gamepadPollingFrameId = null;
+      gamepadPreviousButtons = {};
+      return;
+    }
+    handleGamepadInput(gamepad);
+    gamepadPollingFrameId = requestAnimationFrame(pollGamepads);
+  }
+
+  function stopGamepadPollingWhenIdle() {
+    if (firstActiveGamepad()) return;
+    if (gamepadPollingFrameId !== null && typeof cancelAnimationFrame === "function") {
+      cancelAnimationFrame(gamepadPollingFrameId);
+    }
+    gamepadPollingStarted = false;
+    gamepadPollingFrameId = null;
+    gamepadPreviousButtons = {};
   }
 
   function firstActiveGamepad() {
@@ -161,15 +181,7 @@ export function createFocusInputControl({ app }) {
   }
 
   function handleGamepadInput(gamepad) {
-    handleGamepadButton(gamepad, 0, () => {
-      const dialogue = currentDialogueAdvance();
-      if (dialogue) return dialogue.click();
-      const focusedButton = document.activeElement?.matches?.("button:not(:disabled)") && isVisibleElement(document.activeElement)
-        ? document.activeElement
-        : null;
-      if (focusedButton) return activateButton(focusedButton);
-      activateButton(preferredDefaultButton());
-    });
+    handleGamepadButton(gamepad, 0, confirmCurrentControl);
     handleGamepadButton(gamepad, 1, () => {
       if (!closeTopOverlay()) activateButton(preferredBackButton());
     });
@@ -184,8 +196,18 @@ export function createFocusInputControl({ app }) {
   }
 
   function currentDialogueAdvance() {
+    if (topInteractiveScope() !== app) return null;
     return Array.from(app?.querySelectorAll?.("[data-dialogue-advance]:not([data-dialogue-done])") ?? [])
       .find((element) => element.getClientRects().length > 0 && !element.closest("[hidden]")) ?? null;
+  }
+
+  function confirmCurrentControl() {
+    const dialogue = currentDialogueAdvance();
+    if (dialogue) return dialogue.click();
+    const active = document.activeElement;
+    const focusedButton = active?.matches?.("button:not(:disabled)")
+      && topInteractiveScope()?.contains(active) && isVisibleElement(active) ? active : null;
+    activateButton(focusedButton ?? preferredDefaultButton());
   }
 
   function handleGamepadButton(gamepad, buttonIndex, handler) {
@@ -222,7 +244,9 @@ export function createFocusInputControl({ app }) {
     focusButton,
     activateButton,
     startGamepadPolling,
+    stopGamepadPollingWhenIdle,
     currentDialogueAdvance,
+    confirmCurrentControl,
     keyEventInTextInput
   };
 }

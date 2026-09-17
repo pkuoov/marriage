@@ -4,11 +4,23 @@ import { createServer } from "node:http";
 import { dirname, extname, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
+import { parseByteRange } from "./lib/http-byte-range.js";
+import { shouldReloadForChange, createContentReload } from "./lib/dev-reload.js";
+import { ensureContentIndex } from "./lib/content-build.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const options = readOptions(process.argv.slice(2));
 const clients = new Set();
 let reloadTimer = null;
+const contentReload = createContentReload({
+  build: () => ensureContentIndex(root),
+  reload: () => clients.forEach((client) => client.write("event: reload\ndata: changed\n\n")),
+  reportError: (error) => {
+    console.error(`剧情生成失败，已暂停刷新：${error.message}`);
+    clients.forEach((client) => client.write(`event: content-error\ndata: ${JSON.stringify("剧情生成失败，请查看开发服务终端。修复源文件后会自动刷新。当前页面仍是上一次成功版本。")}\n\n`));
+  }
+});
+await ensureContentIndex(root);
 
 const server = createServer((request, response) => {
   void handleRequest(request, response);
@@ -21,7 +33,7 @@ const playUrl = options.fresh ? `${baseUrl}/?fresh=1` : `${baseUrl}/`;
 console.log(`\n试玩开发服务已启动：${baseUrl}`);
 console.log(`普通试玩：${baseUrl}/`);
 console.log(`从头试玩：${baseUrl}/?fresh=1`);
-console.log("源码、内容或样式变更后，浏览器会自动刷新。按 Ctrl+C 停止服务。\n");
+console.log("页面源码、JSON 内容、样式或媒体变更后自动刷新；审稿记录和文档不会打断试玩。按 Ctrl+C 停止服务。\n");
 
 startWatcher();
 if (options.open) openBrowser(playUrl);
@@ -54,6 +66,13 @@ async function handleRequest(request, response) {
     return;
   }
 
+  try { await contentReload.flush(); }
+  catch {
+    response.writeHead(503, { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" })
+      .end("剧情内容生成失败，已暂停提供试玩文件。请查看开发服务终端并修复源文件。");
+    return;
+  }
+
   const filePath = resolveRequestPath(requestUrl.pathname);
   if (!filePath) {
     response.writeHead(403).end("Forbidden");
@@ -76,8 +95,19 @@ async function handleRequest(request, response) {
     const headers = {
       "Cache-Control": "no-store, max-age=0",
       "Content-Length": file.size,
+      "Accept-Ranges": "bytes",
       "Content-Type": mimeTypeFor(filePath)
     };
+    const range = method === "GET" ? parseByteRange(request.headers.range, file.size) : null;
+    if (range?.unsatisfiable) {
+      response.writeHead(416, { ...headers, "Content-Length": 0, "Content-Range": `bytes */${file.size}` }).end();
+      return;
+    }
+    if (range) {
+      response.writeHead(206, { ...headers, "Content-Length": range.end - range.start + 1, "Content-Range": `bytes ${range.start}-${range.end}/${file.size}` });
+      createReadStream(filePath, range).pipe(response);
+      return;
+    }
     response.writeHead(200, headers);
     if (method === "HEAD") response.end();
     else createReadStream(filePath).pipe(response);
@@ -87,7 +117,7 @@ async function handleRequest(request, response) {
 }
 
 function injectReloadClient(html) {
-  const client = `<script>(function(){const events=new EventSource("/_dev/events");events.addEventListener("reload",function(){location.reload();});}());</script>`;
+  const client = `<script>(function(){const events=new EventSource("/_dev/events");events.addEventListener("reload",function(){location.reload();});events.addEventListener("content-error",function(e){let box=document.getElementById("dev-content-error");if(!box){box=document.createElement("div");box.id="dev-content-error";box.setAttribute("role","alert");box.style="position:fixed;inset:0 0 auto;z-index:99999;background:#721c24;color:white;padding:16px";document.body.append(box);}box.textContent=JSON.parse(e.data);});}());</script>`;
   return html.includes("</body>") ? html.replace("</body>", `${client}</body>`) : `${html}${client}`;
 }
 
@@ -107,6 +137,11 @@ function mimeTypeFor(filePath) {
     ".jpg": "image/jpeg",
     ".js": "text/javascript; charset=utf-8",
     ".json": "application/json; charset=utf-8",
+    ".ogg": "audio/ogg",
+    ".wav": "audio/wav",
+    ".mp3": "audio/mpeg",
+    ".m4a": "audio/mp4",
+    ".flac": "audio/flac",
     ".png": "image/png",
     ".svg": "image/svg+xml",
     ".webp": "image/webp",
@@ -143,19 +178,16 @@ async function listenOnAvailablePort(httpServer, preferredPort) {
 function startWatcher() {
   try {
     watch(root, { recursive: true }, (_event, filename) => {
-      if (!filename || isIgnored(filename)) return;
+      if (!shouldReloadForChange(filename)) return;
+      contentReload.changed(filename);
       clearTimeout(reloadTimer);
       reloadTimer = setTimeout(() => {
-        clients.forEach((client) => client.write("event: reload\ndata: changed\n\n"));
+        void contentReload.flush().catch(() => {});
       }, 80);
     });
   } catch (error) {
     console.warn(`自动刷新未启用：${error.message}`);
   }
-}
-
-function isIgnored(filename) {
-  return /(^|\/)(\.git|dist|node_modules|\.DS_Store)(\/|$)/.test(filename);
 }
 
 function openBrowser(url) {

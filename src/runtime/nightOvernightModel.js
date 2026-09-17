@@ -46,9 +46,16 @@ export function initialOvernightStateFor(brief = {}) {
     activeDaySceneId: null,
     callbackOpenerId: null,
     callerQuestionChoiceId: null,
+    callerQuestionCompletedIds: [],
     callerQuestionHostChoiceId: null,
     callerQuestionStanceNudge: null
   };
+}
+
+// Linear investigations retain legacy save fields without spending or adding action points.
+export function nextLinearInvestigationScene(items = [], completedIds = []) {
+  const done = new Set(completedIds);
+  return items.find((item) => !done.has(item.id)) ?? null;
 }
 
 export function nightActionById(brief = {}, actionId = "") {
@@ -59,6 +66,7 @@ export function canCompleteNightAction(night = {}, action = {}, structure = {}) 
   const actionId = action?.id ?? "";
   if (!actionId) return { ok: false, reason: "missing-action" };
   if ((night.interludeActionsDone ?? []).includes(actionId)) return { ok: true, reason: "already-done" };
+  if (structure?.interlude?.flowMode === "linear") return { ok: true, reason: "" };
   const maxActions = Math.max(0, Number(structure?.interlude?.maxActions ?? Infinity));
   const doneCount = (night.interludeActionsDone ?? []).filter((id) => nightActionCountsForBudget(structure, id)).length;
   if (nightActionCountsForBudget(structure, actionId) && doneCount >= maxActions) return { ok: false, reason: "max-actions" };
@@ -70,7 +78,7 @@ export function canCompleteNightAction(night = {}, action = {}, structure = {}) 
 export function completeNightAction(night = {}, action = {}, structure = {}) {
   const readiness = canCompleteNightAction(night, action, structure);
   if (!readiness.ok || readiness.reason === "already-done") return night;
-  const cost = nightActionCost(action);
+  const cost = structure?.interlude?.flowMode === "linear" ? 0 : nightActionCost(action);
   const budget = night.interludeBudget ?? { max: 0, remaining: 0, used: 0 };
   const grants = Array.isArray(action.grantsInventory) ? action.grantsInventory : [];
   return {
@@ -190,10 +198,20 @@ export function interludeEarnedItemsForOvernight(brief = {}, inventory = []) {
 export function canEnterOvernightCallback(brief = {}, overnight = {}) {
   const structure = overnightStructureFor(brief);
   if (!structure) return false;
+  if ((structure.dayScenes ?? []).some((scene) => scene.body?.timelineSort && !timelineSortComplete(scene, overnight))) return false;
+  if (structure.flowMode === "linear") return !nextLinearInvestigationScene(structure.dayScenes, overnight.dayScenesDone);
   const required = Math.max(0, Number(structure.minDayScenes ?? 0));
   const validSceneIds = new Set((structure.dayScenes ?? []).map((scene) => scene.id));
   const completed = new Set((overnight.dayScenesDone ?? []).filter((sceneId) => validSceneIds.has(sceneId)));
   return completed.size >= required;
+}
+
+export function timelineSortComplete(scene = {}, overnight = {}) {
+  const timeline = scene.body?.timelineSort;
+  if (!timeline) return true;
+  const progress = overnight.timelineSorts?.[scene.id];
+  return Boolean(progress?.submitted && progress.correct
+    && JSON.stringify(progress.order) === JSON.stringify(timeline.correctOrder));
 }
 
 export function overnightCallbackOpenerById(brief = {}, openerId = "") {

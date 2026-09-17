@@ -123,7 +123,7 @@ export function testimonyActComparisonRows(scene = {}, wallProgress = {}) {
     id: statement.id,
     label: statement.label,
     text: statement.text,
-    status: normalizeComparisonStatus(statusById.get(statement.id) ?? (statement.id === brokenId ? "被打破" : "她收回了"))
+    status: normalizeComparisonStatus(statusById.get(statement.id) ?? (statement.id === brokenId ? "补充说明" : "保留原话"))
   }));
 }
 
@@ -170,7 +170,7 @@ export function pressTestimonyStatement(scene = {}, wallProgress = {}, statement
     activeResponse: {
       kind: "press",
       statementId: statement.id,
-      text: statement.pressResponse ?? "这句先记着，暂时还不能替任何一边补结论。"
+      text: statement.pressResponse ?? "对方没有继续回答。"
     }
   });
 }
@@ -180,15 +180,15 @@ export function softPresentOnStatement(scene = {}, wallProgress = {}, statementI
   const statement = testimonyStatementsForScene(scene, current).find((item) => item.id === statementId);
   if (!statement || !current.softEvidenceId) return current;
   const decisive = decisivePresentForScene(scene, current);
-  const nearHit = decisive?.evidenceId === current.softEvidenceId && decisive?.statementId === statement.id;
+  const nearHit = decisiveEvidenceMatches(decisive, current.softEvidenceId) && decisive?.statementId === statement.id;
   return updateActiveActProgress(current, {
     softPresentedIds: uniqueStrings([...current.softPresentedIds, `${current.softEvidenceId}:${statement.id}`]),
     activeResponse: {
       kind: "present",
       statementId: statement.id,
       text: nearHit
-        ? testimonyActForScene(scene, current).softAnchorResponse ?? "这两处能咬上。要把它正式压上麦，得单独发起指认。"
-        : statement.presentResponse ?? "材料放在这句旁边，能多问一步，但还不足以钉住这段说法。"
+        ? testimonyActForScene(scene, current).softAnchorResponse ?? "已选材料"
+        : statement.presentResponse ?? "已选材料"
     }
   });
 }
@@ -198,12 +198,32 @@ export function selectTestimonyEvidence(wallProgress = {}, evidenceId = "") {
   return updateActiveActProgress(current, { softEvidenceId: evidenceId, activeResponse: null });
 }
 
+// Resolve the active reply from this version's act. A saved response.text is an
+// old display cache and must never be the authority for current dialogue.
+export function testimonyResponseForAct(act = {}, progress = {}) {
+  const saved = progress.activeResponse;
+  const statement = saved && (act.statements ?? []).find((item) => item.id === saved.statementId);
+  if (!statement) return null;
+  const nearHit = decisiveEvidenceMatches(act.decisivePresent, progress.softEvidenceId)
+    && act.decisivePresent?.statementId === statement.id;
+  const text = saved.kind === "present"
+    ? nearHit ? act.softAnchorResponse : statement.presentResponse
+    : statement.pressResponse;
+  return text ? { kind: saved.kind, statementId: statement.id, text } : null;
+}
+
+// Alternatives must be explicitly authored for the same limited finding.
+export function decisiveEvidenceMatches(decisive = {}, evidenceId = "") {
+  return Boolean(evidenceId) && (evidenceId === decisive?.evidenceId
+    || (decisive?.acceptedEvidenceIds ?? []).includes(evidenceId));
+}
+
 export function decisivePresentOutcome(scene = {}, progress = {}, evidenceId = "", statementId = "", wallProgress = {}) {
   const decisive = decisivePresentForScene(scene, wallProgress);
   if (!decisive) return { kind: "missing", progress: normalizeDecisivePresentProgress(progress) };
   const current = normalizeDecisivePresentProgress(progress, decisive.maxAttempts);
   if (current.resolved) return { kind: "resolved", progress: current };
-  const hit = evidenceId === decisive.evidenceId && statementId === decisive.statementId;
+  const hit = decisiveEvidenceMatches(decisive, evidenceId) && statementId === decisive.statementId;
   if (hit) {
     return {
       kind: "hit",
@@ -213,14 +233,14 @@ export function decisivePresentOutcome(scene = {}, progress = {}, evidenceId = "
   const attempts = Math.min(current.max, current.attempts + 1);
   return {
     kind: attempts >= current.max ? "exhausted" : "miss",
-    missKind: evidenceId === decisive.evidenceId ? "statement" : "evidence",
+    missKind: decisiveEvidenceMatches(decisive, evidenceId) ? "statement" : "evidence",
     progress: {
       ...current,
       attempts,
       remaining: Math.max(0, current.max - attempts),
       selectedEvidenceId: "",
       guarded: true,
-      lastMissKind: evidenceId === decisive.evidenceId ? "statement" : "evidence"
+      lastMissKind: decisiveEvidenceMatches(decisive, evidenceId) ? "statement" : "evidence"
     }
   };
 }
@@ -284,7 +304,7 @@ function normalizeResponse(value) {
 }
 
 function normalizeComparisonStatus(value) {
-  return ["被打破", "她收回了", "变了说法"].includes(value) ? value : "她收回了";
+  return ["被打破", "她收回了", "变了说法", "补充说明", "保留原话"].includes(value) ? value : "保留原话";
 }
 
 function uniqueStrings(values = []) {

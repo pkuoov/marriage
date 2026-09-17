@@ -10,6 +10,8 @@
   "scripts": {
     "start": "node scripts/dev-server.js --open --fresh",
     "dev": "node scripts/dev-server.js",
+    "edit:dialogue": "node scripts/dialogue-editor-server.js",
+    "test:dialogue-editor": "node --test scripts/tests/dialogue-editor.test.js",
     "play": "node scripts/dev-server.js --open",
     "play:fresh": "node scripts/dev-server.js --open --fresh",
     "play:windows": "play-windows.bat",
@@ -31,7 +33,7 @@
     "steam:preflight": "node scripts/steam-preflight.js",
     "smoke:desktop": "npm run build:desktop && node scripts/smoke-desktop.js",
     "smoke:quick": "npm run build:playable && node scripts/smoke-browser-replay.js --target=local-quick",
-    "smoke:browser": "npm run build:playable && node scripts/smoke-browser-replay.js",
+    "smoke:browser": "npm run build:playable && node scripts/smoke-browser-replay.js && node scripts/smoke-recorded-playtest.js",
     "test": "npm run test:full",
     "test:full": "npm run check && npm run smoke:browser && npm run smoke:desktop",
     "test:local": "npm run check && npm run smoke:quick",
@@ -49,8 +51,10 @@
     "verify:pack": "npm run content:index:check && node scripts/verify-pack.js",
     "test:unit": "node scripts/verify-logic.js",
     "test:logic": "npm run test:unit",
+    "test:audio-runtime": "node scripts/verify-audio-runtime.js",
     "test:narrative": "node scripts/verify-narrative-flow.js",
-    "check": "node scripts/check-all.js"
+    "check": "node scripts/check-all.js",
+    "smoke:recorded": "npm run build:playable && node scripts/smoke-recorded-playtest.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

@@ -45,7 +45,7 @@ export function createCaseOutcome(ctx) {
     const issue = issueCompletion(brief);
     const quoteResult = resolveFinalQuoteForCase({
       brief,
-      selectedQuote: accused,
+      selectedQuote: brief.dialoguePresentation?.compactClosing ? expectedAccusationForCase(brief) : accused,
       issue
     });
     const result = {
@@ -63,7 +63,7 @@ export function createCaseOutcome(ctx) {
     state.solvedCaseIds = [...new Set([...(state.solvedCaseIds ?? []), brief.id])];
     applyOutcome(brief, result);
     recordDailyMeta(brief, result, issue);
-    state.scene = unlockedInvestigationEntriesForState(state, brief)
+    state.scene = !brief.dialoguePresentation?.compactClosing && unlockedInvestigationEntriesForState(state, brief)
       .some((entry) => !selectedInvestigationPickForState(state, brief, entry.index))
       ? "investigationBackflow"
       : "caseSolved";
@@ -97,6 +97,10 @@ export function createCaseOutcome(ctx) {
 
   function issueCompletion(brief) {
     const state = getState();
+    if (brief.dialoguePresentation?.focusedInquiry) {
+      const ready = accusationReadinessForCase(brief, key => actionDone(brief, key)).ready;
+      return { total: 1, revealed: ready ? ["本案集中问询已完成"] : [], missed: [], percent: ready ? 100 : 0, ratio: ready ? 1 : 0, badge: ready };
+    }
     return calculateIssueCompletion({
       brief,
       foundContradictions: contradictionsForState(state, brief),

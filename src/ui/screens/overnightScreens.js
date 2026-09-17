@@ -1,5 +1,6 @@
 import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "../../playerIdentity.js";
 import { createOvernightDocumentScreens } from "./overnightDocumentScreens.js";
+import { nextLinearInvestigationScene } from "../../runtime/nightOvernightModel.js";
 import { createLiveCounterScreens } from "./liveCounterScreens.js";
 
 export function createOvernightScreens(ctx) {
@@ -97,7 +98,7 @@ export function createOvernightScreens(ctx) {
           <div class="offair-ritual-visual" aria-hidden="true"><i></i><span>ON AIR</span><b>收麦</b></div>
           ${callDialogueHtml(hangupDialogue)}
           <span>${escapeHtml(structure.hangupLine ?? "")}</span>
-          <div class="offair-comment-settle"><span>弹幕慢下来了</span><p>先把原话留在台上。第二晚回拨，再把材料带回来。</p></div>
+          <div class="offair-comment-settle"><span>通话结束</span><p>次日</p></div>
         </section>
       `,
       choices: flowGroupHtml(
@@ -135,7 +136,7 @@ export function createOvernightScreens(ctx) {
         </section>
       `,
       choices: flowGroupHtml(
-        `<button class="primary" data-enter-day-act type="button">到第二天下午</button>`,
+        `<button class="primary" data-enter-day-act type="button">继续</button>`,
         { label: "时间推进", note: "离开直播间，继续查能落到纸面上的东西。" }
       )
     });
@@ -177,12 +178,12 @@ export function createOvernightScreens(ctx) {
           <span>第二天，下午</span>
           <b>把昨晚没问完的补上</b>
           <p>${escapeHtml(structure.dayIntro ?? "")}</p>
-          <small>没有弹幕催你。你只见已经答应见面的人，只看来电人同意交给节目的材料。</small>
+
         </section>
       `,
       choices: flowGroupHtml(
-        `<button class="primary" data-enter-day-map type="button">安排下午的回访</button>`,
-        { label: "回访准备", note: "每次约见或看材料会占掉一格下午时间。" }
+        `<button class="primary" data-enter-day-map type="button">${structure.flowMode === "linear" ? "继续" : "安排下午的回访"}</button>`,
+        structure.flowMode === "linear" ? {} : { label: "回访准备", note: "每次约见或看材料会占掉一格下午时间。" }
       )
     });
     bind("[data-enter-day-map]", () => {
@@ -203,6 +204,19 @@ export function createOvernightScreens(ctx) {
       return renderSceneReview(brief);
     }
     const overnight = ensureOvernight(brief);
+    if (structure.flowMode === "linear") {
+      const next = nextLinearInvestigationScene(structure.dayScenes, overnight.dayScenesDone);
+      if (next) {
+        updateOvernight(brief, { activeDaySceneId: next.id, segment: "day" });
+        state.scene = "dayScene";
+        saveState();
+        return renderDayScene(brief);
+      }
+      updateOvernight(brief, { activeDaySceneId: null, segment: "night2" });
+      state.scene = "overnightCallback";
+      saveState();
+      return renderOvernightCallback(brief);
+    }
     const done = new Set(overnight.dayScenesDone ?? []);
     const remaining = Number(overnight.dayBudget?.remaining ?? 0);
     const required = Math.max(0, Number(structure.minDayScenes ?? 0));
@@ -282,7 +296,7 @@ export function createOvernightScreens(ctx) {
       ? documentScreens.dayTimelineHtml(dayScene, timeline, timelineState)
       : documentScreens.dayFollowupHtml(body, followupAsked);
     const stageExtras = dayStageExtrasHtml(dayScene, body);
-    let canLeave = completed || !timeline || timelineState.submitted;
+    let canLeave = timeline ? timelineState.submitted && timelineState.correct : true;
     if (body.choice && !choiceStateId) canLeave = false;
     dayFrame({
       brief,
@@ -295,18 +309,21 @@ export function createOvernightScreens(ctx) {
           ${stageExtras}
           <p>${escapeHtml(body.text ?? "")}</p>
           ${dayBeatsHtml(body)}
+          ${audioPlaybackControlsHtml(audioCueView(body.audioCueId ?? ""))}
           ${interaction}
           ${dayChoiceHtml(body, choiceStateId)}
         </section>
       `,
       choices: flowGroupHtml(`
-        <button data-scene="dayMap" type="button">先回安排页</button>
-        ${canLeave ? `<button class="primary" data-complete-day-scene type="button">带着这部分离开</button>` : (body.choice && !choiceStateId ? `<button type="button" disabled>先选一步</button>` : "")}
+        ${structure.flowMode === "linear" ? "" : `<button data-scene="dayMap" type="button">先回安排页</button>`}
+        ${canLeave ? `<button class="primary" data-complete-day-scene type="button">继续</button>` : (body.choice && !choiceStateId ? `<button type="button" disabled>先选一步</button>` : "")}
       `)
     });
     bind("[data-day-timeline-card]", (event) => {
       documentScreens.selectTimelineCard(brief, dayScene, event.currentTarget?.getAttribute("data-day-timeline-card") ?? "");
     });
+    bind("[data-undo-day-timeline]", () => documentScreens.removeTimelineCard(brief, dayScene));
+    bind("[data-remove-day-timeline]", (event) => documentScreens.removeTimelineCard(brief, dayScene, Number(event.currentTarget?.dataset.removeDayTimeline)));
     bind("[data-reset-day-timeline]", () => {
       updateOvernight(brief, {
         timelineSorts: {
@@ -346,13 +363,13 @@ export function createOvernightScreens(ctx) {
 
   function dayStageExtrasHtml(dayScene = {}, body = {}) {
     const parts = [];
-    if (body.access) {
-      parts.push(`<p class="hint day-access-hint"><b>这次为什么能问：</b>${escapeHtml(body.access)}</p>`);
+    if (body.sourceNote) {
+      parts.push(`<p class="hint day-access-hint">${escapeHtml(body.sourceNote)}</p>`);
     }
     if (Array.isArray(body.cast) && body.cast.length) {
       parts.push(`<div class="day-cast">${body.cast.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</div>`);
     }
-    if (dayScene.kind === "observe") {
+    if (dayScene.kind === "observe" && !body.cast?.includes("你")) {
       parts.push(`<p class="hint day-sitin-hint">同场不同桌。你只看，不介入。</p>`);
     }
     return parts.join("");
@@ -410,6 +427,51 @@ export function createOvernightScreens(ctx) {
       return renderSceneReview(brief);
     }
     const overnight = ensureOvernight(brief);
+    if (!overnight.night2TransitionSeen) {
+      dayFrame({
+        brief,
+        label: "第二夜",
+        chapter: "第二天 · 晚上",
+        backdropClass: "day-studio",
+        screenClass: "night-transition-screen",
+        modeLabel: "第二夜",
+        pixelTransition: null,
+        text: '<section class="night-transition-card"><p>第二天 · 晚上</p><h2>第二夜</h2><p>白天的材料摊在桌边。你戴上耳机，打开直播，等那通约好的回拨。</p></section>',
+        choices: flowGroupHtml('<button class="primary" data-night2-transition-done type="button">接入回拨</button>')
+      });
+      bind('[data-night2-transition-done]', () => {
+        updateOvernight(brief, { night2TransitionSeen: true });
+        saveState();
+        render();
+      });
+      bindSceneButtons();
+      return;
+    }
+    if (structure.flowMode === "linear") {
+      if (!canEnterOvernightCallback(brief, overnight)) return renderDayMap(brief);
+      const snapshotPick = stanceSnapshotPickForState(brief);
+      const posture = overnightReturnPostureFor(snapshotPick, null);
+      frame({
+        brief,
+        mood: posture === "againstCaller" ? "tense" : "focused",
+        label: "回拨已接入",
+        chapter: "第二夜",
+        text: `<section class="callback-opener-card">${callDialogueHtml([
+          ...(structure.postures?.[posture] ? [{ role: "caller", text: structure.postures[posture] }] : []),
+          ...(structure.linearCallback?.lines ?? [])
+        ])}</section>`,
+        choices: flowGroupHtml(`<button class="primary" data-enter-overnight-night2 type="button">继续</button>`)
+      });
+      bind("[data-enter-overnight-night2]", () => {
+        updateOvernight(brief, { segment: "night2", callbackOpenerId: null });
+        setIndexValue(brief, "sceneReview", overnightFirstNight2SceneIndex(brief));
+        state.scene = documentScreens.pendingDocumentQuestions(brief).length ? "documentReconcile" : "overnightNight2";
+        saveState();
+        render();
+      });
+      bindSceneButtons();
+      return;
+    }
     const openers = availableOvernightCallbackOpeners(brief, overnight.earnedItems);
     if (!overnight.callbackOpenerId && openers.length > 1) {
       frame({
@@ -482,19 +544,20 @@ export function createOvernightScreens(ctx) {
   function completeDayScene(brief, dayScene = {}, { renderNow = true, stayActive = false } = {}) {
     const state = ctx.getState();
     const overnight = ensureOvernight(brief);
+    if (dayScene.body?.timelineSort && !overnight.timelineSorts?.[dayScene.id]?.correct) return;
     const alreadyDone = (overnight.dayScenesDone ?? []).includes(dayScene.id);
     const budget = overnight.dayBudget ?? { max: 0, remaining: 0, used: 0 };
     const choiceId = overnight.dayChoices?.[dayScene.id];
     const choiceOpt = (dayScene.body?.choice?.options ?? []).find((option) => option.id === choiceId);
     const earnedItemId = choiceOpt?.grantsEarnedItemId || dayScene.body?.earnedItemId;
     updateOvernight(brief, {
-      dayBudget: alreadyDone ? budget : {
+      dayBudget: alreadyDone || overnightStructureFor(brief)?.flowMode === "linear" ? budget : {
         ...budget,
         remaining: Math.max(0, Number(budget.remaining ?? 0) - 1),
         used: Number(budget.used ?? 0) + 1
       },
       dayScenesDone: [...new Set([...(overnight.dayScenesDone ?? []), dayScene.id])],
-      earnedItems: earnedItemId ? [...new Set([...(overnight.earnedItems ?? []), earnedItemId])] : (overnight.earnedItems ?? []),
+      earnedItems: [...new Set([...(overnight.earnedItems ?? []), ...(earnedItemId ? [earnedItemId] : []), ...(dayScene.body?.earnedItemIds ?? [])])],
       activeDaySceneId: stayActive ? dayScene.id : null
     });
     markAction(brief, `overnight:dayScene:${dayScene.id}`);

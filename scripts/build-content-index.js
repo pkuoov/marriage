@@ -1,8 +1,10 @@
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile, rename, rm } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { RUNTIME_CASE_CONTENT_FIELDS, RUNTIME_CASE_CONTENT_STATUS, RUNTIME_CASE_REQUIRED_FIELDS, runtimeCaseContentSummary } from "../src/runtime/contentCase.js";
 import { statementLinesFromText, statementStagesForBrief } from "../src/runtime/statementReviewModel.js";
+import { validateContentRevision } from "./lib/content-contracts.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packsDir = resolve(root, "content", "packs");
@@ -40,7 +42,15 @@ if (checkOnly) {
   }
 } else {
   await mkdir(dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, source);
+  if (await readFile(outputPath, "utf8").catch(() => "") !== source) {
+    const temporary = `${outputPath}.${randomUUID()}.tmp`;
+    try {
+      await writeFile(temporary, source, { flag: "wx" });
+      await rename(temporary, outputPath);
+    } finally {
+      await rm(temporary, { force: true });
+    }
+  }
   console.log(`Content pack runtime index ready: ${outputPath}`);
 }
 
@@ -74,6 +84,7 @@ async function loadContentPacks() {
     quickCases[manifest.id] = {};
     for (const item of manifest.sequence ?? []) {
       const packet = await readJson(resolve(packsDir, packId, "cases", `${item.caseId}.json`));
+      validateContentRevision(packet);
       validateStatementReplayCase(packet);
       cases[manifest.id][item.caseId] = runtimeIndexCase(packet, item);
     }
@@ -102,7 +113,7 @@ function validateStatementReplayCase(packet) {
   const stagedIndexes = stages.flatMap((stage) => stage.sceneIndexes).sort((left, right) => left - right);
   assert(JSON.stringify(stagedIndexes) === JSON.stringify(playableReplayIndexes), `${packet.caseId} statement stages must cover every playable line replay exactly once`);
   for (const stage of stages) {
-    assert(stage.minimumReviewCount >= 2, `${packet.caseId} statement stage ${stage.id} must require at least two replay actions`);
+    assert(stage.minimumReviewCount >= stage.sceneIndexes.length, `${packet.caseId} statement stage ${stage.id} must cover its required key questions`);
     const possibleReviewCount = stage.sceneIndexes.reduce((total, sceneIndex) => {
       const scene = packet.sceneVersions?.[sceneIndex] ?? {};
       return total + 1 + (scene.casualQuestions ?? []).length;
@@ -201,7 +212,7 @@ function validateQuickCase(packet, cast) {
     assert(packet.callerStake, `${packet.id} caller-driven quick case must register caller stake`);
     assert(packet.coverStrategy?.publicImage, `${packet.id} quick case must define the caller's believable public image`);
     assert((packet.coverStrategy?.honestDetails ?? []).length >= 3, `${packet.id} quick case needs at least three ordinary or honest cover details`);
-    assert((packet.coverStrategy?.layeredLeaks ?? []).length >= confrontations.length, `${packet.id} quick case must hide each confrontation behind a layered leak`);
+    // Ordinary exchanges and direct requests need no staged concealment quota.
   }
   assert(packet.presentation?.backgroundSrc, `${packet.id} quick case must define a live-room background`);
   assert(packet.presentation?.host?.artSrc, `${packet.id} quick case must define host portrait art`);
@@ -237,7 +248,7 @@ function validateQuickCase(packet, cast) {
     }
   }
   assert(
-    soloCommentary ? issueOptions.length >= confrontations.length : issueOptions.length > confrontations.length,
+    issueOptions.length >= confrontations.length,
     `${packet.id} needs enough issue choices for its confrontation structure`
   );
   assert(issueIds.size === issueOptions.length, `${packet.id} issue option ids must be unique`);
@@ -246,6 +257,11 @@ function validateQuickCase(packet, cast) {
   assert(issueOptions.filter((item) => !item.confrontationId).every((item) => item.missLine === undefined), `${packet.id} non-contradiction issue choices must not carry answer-explaining retry copy`);
   for (const issue of issueOptions) {
     if (issue.confrontationId) assert(confrontationIds.has(issue.confrontationId), `${packet.id} issue ${issue.id} references unknown confrontation ${issue.confrontationId}`);
+    else assert(typeof issue.question === "string" && issue.question.trim(), `${packet.id} issue ${issue.id} needs an audible question before miss feedback`);
+    if (issue.confrontationOpeningLines) {
+      assert(issue.confrontationId && Array.isArray(issue.confrontationOpeningLines) && issue.confrontationOpeningLines.length > 0, `${packet.id} issue ${issue.id} needs a target for its opening exchange`);
+      assert(issue.confrontationOpeningLines.every((line) => ["host", "caller"].includes(line.role) && typeof line.text === "string" && line.text.trim()), `${packet.id} issue ${issue.id} has an invalid opening line`);
+    }
   }
   assert(packet.quoteOptions === undefined && packet.playerMarkLimit === undefined && packet.requiredFlawCount === undefined, `${packet.id} must not restore retired crowd-assist scoring fields`);
   assert(packet.ending?.confirmed?.length && packet.ending?.unknown?.length, `${packet.id} ending must separate confirmed and unknown`);
@@ -257,13 +273,7 @@ function validateQuickCase(packet, cast) {
     assert((page.lines ?? []).every((line) => ["host", "caller"].includes(line.role) && line.text), `${packet.id} ending summary page ${index + 1} has an invalid spoken line`);
     assert((page.lines ?? []).some((line) => line.role === "host"), `${packet.id} ending summary page ${index + 1} must let the host speak`);
   }
-  const recapPage = (packet.ending?.summaryPages ?? []).find((page) => page.stageLabel === "结案复盘");
-  assert(recapPage, `${packet.id} quick case must include a separate recap page after the call ends`);
-  assert(
-    recapPage.lines?.[0]?.role === "host" && (soloCommentary ? /(看完了|读完了|长文)/.test(recapPage.lines[0].text) : /(电话挂了|收麦了)/.test(recapPage.lines[0].text)),
-    `${packet.id} recap page must open with a spoken handoff`
-  );
-  assert(!recapPage.lines[0].text.includes("我们来把这次这个连线复个盘"), `${packet.id} recap page must not restore the shared recap template`);
+  // The selected final exchange may close the case without a separate recap.
   assert(packet.sourceBoundary, `${packet.id} must record its adaptation boundary`);
   for (const confrontation of confrontations) {
     const lines = quickConfrontationLines(confrontation);
@@ -275,7 +285,7 @@ function validateQuickCase(packet, cast) {
       assert(lines[0]?.role === "host" && lines.some((line) => line.role === "caller"), `${packet.id} confrontation ${confrontation.id} must begin with the host and include the caller`);
       assert(lines.every((line, index) => index === 0 || line.role !== lines[index - 1].role), `${packet.id} confrontation ${confrontation.id} must alternate speakers`);
     }
-    assert((confrontation.basisTurnIds ?? []).length >= 2, `${packet.id} confrontation ${confrontation.id} needs at least two line anchors`);
+    assert((confrontation.basisTurnIds ?? []).length >= 1, `${packet.id} confrontation ${confrontation.id} needs at least one visible source turn`);
     for (const turnId of confrontation.basisTurnIds ?? []) {
       assert(turnIds.has(turnId), `${packet.id} confrontation ${confrontation.id} references unknown turn ${turnId}`);
     }

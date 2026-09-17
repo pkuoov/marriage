@@ -19,6 +19,7 @@ export function audioSettingsPanelHtml(value = {}, { placement = "topbar" } = {}
           <button data-audio-mute type="button">${settings.enabled ? "全部静音" : "恢复声音"}</button>
         </header>
         ${AUDIO_BUS_IDS.map((busId) => audioVolumeRowHtml(settings, busId)).join("")}
+        <button data-audio-close type="button">关闭声音设置</button>
       </section>
     </details>
   `;

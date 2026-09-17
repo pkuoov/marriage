@@ -15,11 +15,14 @@ story: midnight-hotline-livestream-detective
 
 | Name | Type | Region | File |
 |------|------|--------|------|
+| 咖啡厅靠窗桌 | Public Meeting Place |  | [cafe-window-table](locations/cafe-window-table.md) |
 | 案一餐厅 | Restaurant |  | [case1-restaurant](locations/case1-restaurant.md) |
 | 案二理发店 | Salon |  | [case2-salon](locations/case2-salon.md) |
 | 案三茶馆／核材料地点 | Public Meeting Place |  | [case3-teahouse](locations/case3-teahouse.md) |
 | 案四公司与仓储链 | Workplace |  | [case4-office](locations/case4-office.md) |
 | 林旭阳的直播间 | Studio |  | [livestream-studio](locations/livestream-studio.md) |
+| 男方返回的共同住所 | Residence |  | [married-home](locations/married-home.md) |
+| 数周后的私下回告 | Private Meeting Place |  | [private-forensic-callback](locations/private-forensic-callback.md) |
 
 ## Systems
 
@@ -33,7 +36,7 @@ story: midnight-hotline-livestream-detective
 | Name | Type | Status | File |
 |------|------|--------|------|
 | 宸直信托 | Company | declining | [chenzhi-trust](factions/chenzhi-trust.md) |
-| 栖行共享科技 | Company | unstable | [qixing-shared-tech](factions/qixing-shared-tech.md) |
+| 栖行共享科技 | Company | declining | [qixing-shared-tech](factions/qixing-shared-tech.md) |
 
 ## Artifacts
 
@@ -42,4 +45,4 @@ story: midnight-hotline-livestream-detective
 | 案一账单与流水 | Document | active | [case1-ledger](artifacts/case1-ledger.md) |
 | 案二排班表与剪辑录音 | Document | active | [case2-salon-records](artifacts/case2-salon-records.md) |
 | 案三条件资料图 | Document | active | [case3-profile-images](artifacts/case3-profile-images.md) |
-| 案四审批、报销与三层返费材料 | Document | active | [case4-approval-chain](artifacts/case4-approval-chain.md) |
+| 案四审批与返款材料 | Document | active | [case4-approval-chain](artifacts/case4-approval-chain.md) |

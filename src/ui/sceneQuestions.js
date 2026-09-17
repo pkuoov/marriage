@@ -1,4 +1,5 @@
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
+import { sceneQuestionSequence } from "../runtime/sequentialChoices.js";
 
 export function focusedQuestionOptions(options = []) {
   return (options ?? []).filter(Boolean);
@@ -11,11 +12,11 @@ export function sceneDialogueOptions(scene = {}, keyOptions = focusedQuestionOpt
   if (authored.length) return authored.map((option, optionIndex) => normalizeDialogueOption(option, optionIndex));
   return keyOptions
     .map((option, sourceIndex) => ({ option, sourceIndex }))
-    .filter(({ option }) => !option.contradiction)
+    .filter(({ option }) => !option.contradiction && (option.dialogueQuestion || option.freeQuestion))
     .map(({ option, sourceIndex }, optionIndex) => normalizeDialogueOption({
       ...option,
       sourceIndex,
-      question: option.dialogueQuestion ?? option.freeQuestion ?? fallbackDialogueQuestion(option, scene, optionIndex)
+      question: option.dialogueQuestion ?? option.freeQuestion
     }, optionIndex));
 }
 
@@ -30,7 +31,8 @@ export function sceneQuestionChoicesHtml(sceneIndex, scene = {}, askedDialoguePi
     .map(({ option, optionIndex }) => dialogueQuestionButton(sceneIndex, optionIndex, option))
     .join("");
   const keyRows = keyOptions
-    .map((option, optionIndex) => keyQuestionButton(sceneIndex, optionIndex, option))
+    .filter((option) => !scene.questionSequence?.length || option.id === sceneQuestionSequence(scene)[0]?.id)
+    .map((option) => keyQuestionButton(sceneIndex, keyOptions.indexOf(option), option))
     .join("");
   return choiceGroup(`${dialogueRows}${keyRows}`, "scene-question-group");
 }
@@ -43,17 +45,6 @@ function normalizeDialogueOption(option = {}, optionIndex = 0) {
     },
     optionIndex
   };
-}
-
-function fallbackDialogueQuestion(option = {}, scene = {}, optionIndex = 0) {
-  if (option.dialogueQuestion || option.freeQuestion) return option.dialogueQuestion ?? option.freeQuestion;
-  const axis = option.routeAxis ?? "";
-  if (axis === "caller-credibility") return "你当时怎么想的？";
-  if (axis === "money-flow") return "钱这块当时怎么说的？";
-  if (axis === "document-edge") return "这张图当时是怎么发过来的？";
-  if (axis === "identity-wording") return "这句话当时怎么说的？";
-  if (scene?.version?.includes("截图") || scene?.version?.includes("资料")) return "这东西当时怎么拿出来的？";
-  return optionIndex === 0 ? "先把前后问清楚。" : "你当时怎么回他的？";
 }
 
 function dialogueQuestionButton(sceneIndex, optionIndex, option = {}) {

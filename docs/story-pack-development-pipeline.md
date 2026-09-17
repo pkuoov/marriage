@@ -1,125 +1,34 @@
 # 故事包开发流程
 
-这份文档约束从网络热点、内部草稿到可发内容包的完整流程。目标不是多写几个案子，而是做一组有主题、有递进、有玩家路线回收的章节式案件包。
+本流程维护内容包的接入和交付；创作判断统一见 [项目方向](../project-skills/case-scriptwriting/references/current-project-direction.md)。局部改稿不必重新立项一个故事包。
 
-## 0. 先定包，不先定单案
+## 来源与包结构
 
-每次发版先写故事包，而不是先堆单案。
+新包先确认目标、人物关系、案件之间的衔接与采用的模式。当前 `steam-demo-01` 是四主案、三快案；规模、两夜配置与已批准的跨案线只约束本包，不自动成为未来新案配额。
 
-- `storyKey`：稳定 id，例如 `steam-demo-01`。
-- `theme`：本集真正要反复追问的问题。
-- `caseCount`：按主题节奏决定，可以是 3、4、5 或序章加大案。
-- `commentWallSeed`：玩家打完以后评论区最该吵的 3-5 句话。
-- `valueBoundary`：打击哪些具体坏行为，避免哪些性别、职业、阶层或地域标签。
+公开素材可以启发冲突、话术或材料形态。核对来源、去除可识别个案的组合并原创改写；不要求每案拼入三四张热点。`content/intelligence/plot-template-pool.json` 是素材种子，`verify:content-pipeline` 校验这个池的现有配置，不能证明案件已经可玩。
 
-当前 demo 是四案，只是本包规模，不是引擎规则。
+## 起稿或改稿
 
-## 1. 热点素材卡
+按 [编剧工作流](script-generation-agent-playbook.md) 串读人物诉求、前后说法和实际行动。选择适合案件的陈述、证言、材料或口播模式，不以五段、固定两问、满格深问或强制复盘作为通用结构。
 
-热点只能做结构来源，不能做改名复刻。每张素材卡只保留：
+信息按发现顺序进入 JSON。先统一前后互斥的行为，材料先有取得过程，再查阅和发问。玩家可以不询问当前原句；已经听过的答案和状态在后文保持。人物的抵赖和迟疑由实际动机决定。
 
-- 冲突类型：退款、押金、借贷、报销、学历包装、流程入口。
-- 话术：体面、自己人、条件好、主责、流程过了、正常不会算这么细。
-- 戏剧物件：截图、账单、审批页、排班表、报价单、流水、录音。
-- 误读风险：玩家第一眼容易站哪边，为什么会站早。
-- 第三压力源：父母、老板、平台、中介、朋友、期限。
+## 数据与构建
 
-入库前必须去掉真实姓名、账号、地点、金额、完整时间线和可反推原案的原话。
+字段契约见 [内容 Schema](content-pack-schema.md)，保存与刷新见 [运行时接入](../project-skills/case-scriptwriting/references/runtime-content-integration.md)。包级顺序和演出在 manifest；案件对白在 cases；快案在 quick-cases；人物以 cast 为真源。生成索引与阅读稿只由脚本更新。
 
-当前素材池入口：
-
-```text
-content/intelligence/plot-template-pool.json
-```
-
-它保存的是压力系统种子，不是可玩剧本。每个条目必须有 `dramaticAnchor`、`objectPurpose`、`callerBenefit`、`otherBenefit`、`thirdPressure`、`truthBoundary` 和 `routeAxes`。运行：
-
-```bash
-npm run verify:content-pipeline
-```
-
-可以校验模板池至少 12 个 plot id、非婚恋题材不少于一半、路线轴和事实边界完整。
-
-## 2. Showrunner Pass
-
-把 3-4 张素材卡融合成一个原创案：
-
-```text
-主热点 -> 案件骨架
-旁支热点 A -> 话术
-旁支热点 B -> 材料形态
-旁支热点 C -> 误读风险或第三压力
-```
-
-每案要回答：
-
-- 为什么是今晚连线？
-- 那个物件为什么会出现在关系里？
-- 来电人说法里哪一段对自己有利？
-- 对方少说哪一段能省掉钱、责任、边界或解释成本？
-- 当前电话能确认什么，什么仍然定不了？
-
-## 3. Ending-First Pass
-
-先写结尾，再写中段。
-
-- 最终评论区会吵什么？
-- 玩家最强的一句原话应该是哪句？
-- 如果玩家没问到核心，结果页还能留下些什么余味？
-- 满格路线多问的那一句，必须问出来电人自己的利益、面子、经济位置、机会成本或隐藏诉求。
-
-没有结尾争点的案子，不进入 beat ladder。
-
-## 4. Beat Ladder
-
-每案至少 5 段来电，正常目标 5-6 段：
-
-1. 表层不对劲：物件或原话第一次出现。
-2. 材料缺边：它能证明一件事，但不能证明对方想让它证明的事。
-3. 利益路径：钱、身份、机会、流程或情绪杠杆开始落到人身上。
-4. 来电人修剪：咨询者也藏了对自己不利或不体面的部分。
-5. 责任落点：谁把成本转出去，谁把边界说模糊，谁借第三方压力推进。
-6. 可选加深：只在不重复时加入，不能只是换说法再问一遍。
-
-每段只给玩家 2 个当前追问。问完就推进，不允许扫同节点剩余选项。
-
-## 5. 字段拆分
-
-整通电话串读通过后，再拆 JSON 字段：
-
-- `openingDialogue`
-- `sceneVersions`
-- `questionOptions`
-- `evidenceCards`
-- `evidenceChecks`
-- `investigationHooks`
-- `deepFollowup`
-- `accusationChoices`
-- `truthBoundary`
-- `conclusionWhenCleared` / `conclusionBranches`
-- `dailyShareTitle` / `dailyShareBody` / `dailyShareQuestion`
-- `storyInterludeRecap`
-
-最终收麦按钮必须是玩家已听过或高度贴近的原话，不写抽象结论。
-
-## 6. QA Gate
-
-每案进入 `runtime-loaded` 前必须过四道门：
-
-- 逻辑链：主播没有提前知道答案，每个追问只基于屏幕上已经出现的信息。
-- 角色链：来电人、对方、第三压力源都各自有利益，不是单方说教。
-- 玩法链：核心追问、外围追问、材料圈点、回流材料、原话收麦都有不同后果。
-- 文风链：没有教程腔、评分腔、AI 总结腔、性别对立钩子和“正确答案”提示。
-
-运行命令：
+`metadata-only` 保持为未接入设计；只有消费者和必要字段就绪，才标 `runtime-loaded`。这不是要求任何局部修改重新退回草案。
 
 ```bash
 npm run content:index
-npm run verify:content-pipeline
-npm run verify:pack
+npm run content:script
 npm run check
-npm run build:h5
-npm run build:steam
+npm run build:playable
 ```
 
-`package:win` 只在 Node 22.12+ 且 devDependencies 安装完成的 Windows/CI 环境验收。
+## 验证与交付
+
+检查分开报告：结构／引用、实际播放顺序、存档恢复、PC 可见布局、人工语义连读、目标平台运行。选择受影响浏览器目标，见 [验收指南](qa-test-guide.md)。只改规范不必发布构建；改对白也不自动要求制作 Windows 包。
+
+发行按 [Windows 手册](windows-exe-build-guide.md) 与 [桌面计划](desktop-steam-build-plan.md) 验收。测试通过不等于真人朗读、配音、Windows 原生或完整盲玩已完成。未执行、失败、因环境受阻分别记录。

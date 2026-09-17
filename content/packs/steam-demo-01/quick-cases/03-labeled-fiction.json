@@ -1,7 +1,7 @@
 {
   "id": "03-labeled-fiction",
   "caseNumber": "03",
-  "title": "某流量明星的小作文",
+  "title": "写给女演员的长文",
   "label": "直播快案 03",
   "format": "solo-commentary",
   "castProfileId": "quick3-caller-gu",
@@ -20,305 +20,325 @@
       }
     },
     "source": {
-      "name": "某流量明星的小作文",
+      "name": "科技创业者写给女演员的长文",
       "roleLabel": "公开长文 · 虚构合成"
     }
   },
   "rageBaitContract": {
-    "tierPlan": ["Tier 1", "Tier 2"],
+    "tierPlan": [
+      "Tier 1",
+      "Tier 2"
+    ],
     "tier4Assets": [],
     "debts": [
       {
         "id": "quick3-labeled-fiction",
         "tier": "Tier 2",
-        "issue": { "location": "essay-label", "quote": "正文指向现实人物并配图，文末却留了一句『纯属虚构』。" },
-        "interest": { "location": "labeled-fiction", "trigger": "player-input", "payoff": "玩家选择先看长文怎样一面指向真人、一面给作者留退路。", "holdingLimit": "第一段内" },
-        "principal": { "location": "public-leverage", "trigger": "player-input", "payoff": "玩家把虚构标注和认全文条件放回同一张桌上，主播直接评价这种舆论打法。" },
-        "nextDebt": { "location": "quick3:ending", "quote": "三千万该不该退，法院判。" }
+        "issue": {
+          "location": "essay-label",
+          "quote": "正文指向现实人物并配图，文末却留了一句『纯属虚构』。"
+        },
+        "interest": {
+          "location": "labeled-fiction",
+          "trigger": "player-input",
+          "payoff": "玩家选择先看长文怎样一面指向真人、一面给作者留退路。",
+          "holdingLimit": "第一段内"
+        },
+        "principal": {
+          "location": "public-leverage",
+          "trigger": "player-input",
+          "payoff": "玩家把虚构标注和认全文条件放回同一张桌上，主播直接评价这种舆论打法。"
+        },
+        "nextDebt": {
+          "location": "quick3:ending",
+          "quote": "三千万该不该退，法院判。"
+        }
       },
       {
         "id": "quick3-five-cards",
         "tier": "Tier 1",
-        "issue": { "location": "money-transferred", "quote": "让我准备五张卡一起打。" },
-        "interest": { "location": "money-split", "trigger": "player-input", "payoff": "玩家选择把已转出的三千万、未转出的五千万美元与女方未回应的数字拆开。", "holdingLimit": "第二段内" },
-        "principal": { "location": "quick3:ending", "trigger": "player-input", "payoff": "主播既不接受女方绕开三千万，也不把男方单方写下的更大开价当成第二份材料。" },
-        "nextDebt": { "location": "quick3:ending", "quote": "这笔钱没有转出去。" }
+        "issue": {
+          "location": "money-transferred",
+          "quote": "让我准备五张卡一起打。"
+        },
+        "interest": {
+          "location": "money-split",
+          "trigger": "player-input",
+          "payoff": "玩家选择把已转出的三千万、未转出的五千万美元与女方未回应的数字拆开。",
+          "holdingLimit": "第二段内"
+        },
+        "principal": {
+          "location": "quick3:ending",
+          "trigger": "player-input",
+          "payoff": "主播既不接受女方绕开三千万，也不把男方单方写下的更大开价当成第二份材料。"
+        },
+        "nextDebt": {
+          "location": "quick3:ending",
+          "quote": "这笔钱没有转出去。"
+        }
       },
       {
         "id": "quick3-public-leverage",
         "tier": "Tier 2",
-        "issue": { "location": "early-rumor", "quote": "网上已经出现代孕传闻。" },
-        "interest": { "location": "settlement-inference", "trigger": "player-input", "payoff": "玩家可以先说求和推断为什么可信，再由主播补上本人授权仍缺材料。", "holdingLimit": "第四段内" },
-        "principal": { "location": "quick3:ending", "trigger": "player-input", "payoff": "主播把高概率推断与已经确认的公开动作分开，再给出个人结论。" },
-        "nextDebt": { "location": "quick3:ending", "quote": "但高概率推断仍不是本人授权。" }
+        "issue": {
+          "location": "early-rumor",
+          "quote": "网上已经出现代孕传闻。"
+        },
+        "interest": {
+          "location": "settlement-inference",
+          "trigger": "player-input",
+          "payoff": "玩家可以先说求和推断为什么可信，再由主播补上本人授权仍缺材料。",
+          "holdingLimit": "第三段内"
+        },
+        "principal": {
+          "location": "quick3:ending",
+          "trigger": "player-input",
+          "payoff": "主播把有依据的推测与已经确认的公开动作分开，再给出个人结论。"
+        },
+        "nextDebt": {
+          "location": "quick3:ending",
+          "quote": "但有依据的推测仍不是本人授权。"
+        }
       }
     ]
   },
-  "whyTonight": "一篇指向真人、文末却标了虚构的长文已经刷屏；女方发了公开回应，三千万争议也进入诉讼。林旭阳不接当事人电话，只把公开文本和必要背景压成五段，边读边给出自己的评价。",
+  "whyTonight": "一篇指向真人、文末却标了虚构的长文已经刷屏；女方发了公开回应，三千万争议也进入诉讼。林旭阳不接当事人电话，只把公开文本和必要背景压成四段，边读边给出自己的评价。",
   "helpRequest": {
     "kind": "interest",
-    "request": "主播带观众看完五段长文精华与背景卡；玩家决定每一段先从哪里评价，任一成立角度都能推进，最后由主播说出自己的道德结论。"
+    "request": "本案没有当事人来电。节目要讨论的是：长文作者声称追三千万，为何又要求对方撤声明、认全文；女方的感情表态有没有回答钱款。公开人物的诉求与主播点评目的分别记录。"
   },
   "sourceStake": "长文试图让舆论在判决前先替作者给对方定性，同时保住‘我只是写了个故事、我只要公平、是她来找我谈’的说法。只要主播公开接受这套叙事，长文和诉讼就多了一次公开背书。",
   "sourceIntentProfile": {
     "openGoal": "让读者先接受女方那句没拿感情换钱是假的。",
     "preferredAnswer": "那篇长文只是故事，三千万是该退的彩礼，对方已经怕到找人求和，直播间应当站在他这边。",
-    "audienceTilt": "让听众把网上估的商业损失听成已经欠下的赔偿，再把中间人来谈听成对方已经认账。",
+    "audienceTilt": "先让读者盯住大额钱款与女方未回答之处，再把有人来谈读成她怕了。",
     "protectedInterest": "要公众站台和彩礼定性，也要把退钱、撤声明和承认整篇长文捆成一套。",
     "defaultTactic": "先把长文写成被辜负者的故事，再用更大开价和中间人来谈证明对方怕了，最后才完整说出退钱、撤声明、公开承认长文三条条件。",
-    "concessionLimit": "可以承认名字照片是真的、钱打到家里账、五张卡是自己去办的、最后一笔没打、上亿只是网上估算、没有收到对方本人消息、起诉状只写三千万；仍坚持三条条件必须一起做。",
+    "concessionLimit": "只记录现有文本明确写过的限制：五千万美元未转、来谈是转述、诉状据称只有三千万；缺席作者不在麦上承认新事实。",
     "painPoints": [
       {
-        "topic": "文末虚构和正文点名是不是一回事",
-        "threatens": "会击穿‘我只写了个故事’的公开保护。",
-        "firstResponse": "先说文末那句是保护，正文才是经历。",
-        "afterProof": "主播把点名、配图和当众定性放在一起后，才承认名字、照片都是真的。",
-        "minimumLeak": "承认虚构两个字是自己留的退路。"
+        "topic": "虚构标注",
+        "threatens": "点名配图与标注发生冲突。",
+        "firstResponse": "文章先指向真人，再在末尾标虚构。",
+        "afterProof": "玩家把两处公开文字并读，主播评价这种写法。",
+        "minimumLeak": "不增加作者本人认错。"
       },
       {
-        "topic": "三千万进家里账和五张卡",
-        "threatens": "会让‘普通彩礼’听起来像赶限额的打法。",
-        "firstResponse": "先说谈婚论嫁都这样。",
-        "afterProof": "被问一天限额一百万为何要五张卡后，才承认她嫌慢、卡是自己去办的。",
-        "minimumLeak": "承认钱确实打到她家账上。"
+        "topic": "钱款范围",
+        "threatens": "未转金额无法算进已收款。",
+        "firstResponse": "文中相邻排列三千万、五张卡和五千万美元。",
+        "afterProof": "主播分开男方所称已转、未转和女方未回应。",
+        "minimumLeak": "不追加谁办卡及实际资金链。"
       },
       {
-        "topic": "让我想想之后发生了什么",
-        "threatens": "会把未打出的更大一笔从已发生的账里拆出去。",
-        "firstResponse": "先强调她开口了。",
-        "afterProof": "主播追问答应过没有后，才承认没答应、钱也没打出去。",
-        "minimumLeak": "承认那笔五千万美元没有打出。"
+        "topic": "来谈的转述",
+        "threatens": "可能着急不等于本人授权。",
+        "firstResponse": "文章把中间人来谈解释为女方害怕。",
+        "afterProof": "主播核对话由谁说出。",
+        "minimumLeak": "没有女方委托原话，也没有本人认账。"
       },
       {
-        "topic": "一边起诉一边要直播间先说",
-        "threatens": "会把公平改写成要节目提前站台。",
-        "firstResponse": "先说法院太慢，直播间今晚就能把话说出去。",
-        "afterProof": "主播把未判决和当众定性拆开后，仍追问今晚到底说不说。",
-        "minimumLeak": "承认自己已经起诉，还要直播间先说清楚。"
-      },
-      {
-        "topic": "上亿赔偿是谁算的",
-        "threatens": "会拆掉‘她已经赔不起、所以来求我’这一层重量。",
-        "firstResponse": "先说她手上项目多，损失不可能小。",
-        "afterProof": "主播追到具体出处后，才承认上亿只是网友估的。",
-        "minimumLeak": "承认没有片方、品牌方或法院给过他这张账单。"
-      },
-      {
-        "topic": "托人来谈能不能等于本人认账",
-        "threatens": "会让‘她怕了’退回到中间人的单方转述。",
-        "firstResponse": "先说人都绕几层找来了，不可能没得到她同意。",
-        "afterProof": "被问有没有她本人消息后，才承认自己只听过中间人的话。",
-        "minimumLeak": "承认没有收到她本人认账或求饶的原话。"
-      },
-      {
-        "topic": "和解为什么要她承认整篇长文",
-        "threatens": "会暴露他要的不只是诉状里的三千万，还要对方替全部私事背书。",
-        "firstResponse": "先说撤声明、认长文只是还原事实。",
-        "afterProof": "主播把虚构标注和起诉范围一并问回后，他仍坚持三条必须一起做。",
-        "minimumLeak": "承认起诉状只写三千万，公开认全文是他另加的条件。"
+        "topic": "三条条件",
+        "threatens": "诉状里的钱不能替整篇叙事背书。",
+        "firstResponse": "退钱、撤声明、认全文被列成一套。",
+        "afterProof": "玩家将认全文要求与虚构标注相对照。",
+        "minimumLeak": "主播直接评价公开要求，缺席作者不被安排改口。"
       }
     ]
   },
-  "selfServingOmission": "长文先把自己写成被辜负的一方，再把没有转出的五千万、网友估损和中间人转述叠到已经进入诉讼的三千万上；直到末尾才完整出现撤声明、认全文等诉状外要求。",
-  "premise": "今晚不接电话。我们来看一篇某流量明星的小作文。",
+  "selfServingOmission": "文章把男方所称已转的三千万与未转的五千万美元相邻排列，再接中间人来谈；末尾才给全退钱、撤声明、认全文三条条件。",
+  "premise": "今晚不接电话。看一篇科技创业者写给女演员的长文。",
   "caseLedger": {
     "surfaceClaim": "公开长文把男方写成被金钱要求不断加码的一方；女方公开回应则把自己写成从未因金钱出卖爱情的一方。",
-    "dramaticObject": "文末的虚构标注，正文里的名字和照片，打到家里账上的三千万，一天限额一百万逼出的五张卡，网上估出的上亿损失，中间人的转述，以及最后才说出的三条条件。",
-    "falseSolution": "大额转账、更大的开价、商业损失和托人来谈叠在一起，足以证明对方已经认账并求饶。",
-    "missingEdge": "五千万没有转出；所谓上亿损失只是网友估算；来谈的消息没有对方本人原话；起诉状只写三千万，他却要求对方撤声明并公开承认整篇长文。",
+    "dramaticObject": "点名配图与虚构标注、男方所称三千万与五张卡、未转出的五千万美元、中间人的转述和三条条件。",
+    "falseSolution": "更大开价与来谈的转述，足以证明女方已经认账求饶。",
+    "missingEdge": "五千万美元未转；来谈没有本人授权材料；据男方说诉状只写三千万，却要求认全文。",
     "interestPath": "如果玩家只追最大数字，主播就会被带去替单方长文判动机；如果玩家逐段选准切口，主播才会把两边的公开动作都评价到。",
-    "sourceEdit": "长文先写委屈，再写大额转账和更大开价，随后叠上网传损失与中间人，最后才露出诉状外的两项公开要求。",
-    "thirdPressure": "法院尚未实体审理；对方工作室说他拿声誉施压；圈里人自称受托调解，网上同时出现商业损失估算。",
+    "sourceEdit": "先排列钱款与女方未答之处，再借来谈传闻放大压力，最后捆绑三条条件。",
+    "thirdPressure": "公众讨论、女方职业合作与男方公开提及的诉讼，共同给末尾条件施压。",
     "physicalVerbalLock": "本快案不展示现实长文原页、起诉状或调解记录，只让主播读取虚构合成后的公开文本：文末标虚构、起诉范围写三千万，公开条件却还包括撤声明与认全文。",
-    "reversal": "玩家起初容易被更大开价和求和传闻带走，五段读完后发现真正可评价的是双方已公开做出的动作：男方拿长文、传闻和条件压舆论，女方在声明里躲开三千万与代孕争议。",
-    "boundary": "能确认虚构合成文本里出现了人物基本盘、虚构标注、未转出的五千万、已经进入诉讼的三千万、中间人转述和三条公开条件，也能确认国内现行监管禁止代孕；不能确认催卡、更大开价和代孕安排的原始记录，也不能确认三千万的法律性质、调解授权、具体刑事责任或判决结果。",
-    "quotePayoff": "男方在骗舆论，女方在躲金钱账。三千万该不该退，法院判。",
+    "reversal": "玩家起初容易被更大开价和求和传闻带走，四段读完后发现真正可评价的是双方已公开做出的动作：男方拿长文、传闻和条件压舆论，女方在声明里躲开三千万与代孕争议。",
+    "boundary": "能确认虚构合成文本里出现了人物基本盘、虚构标注、未转出的五千万美元、已经进入诉讼的三千万、中间人转述和三条公开条件；不能确认催卡、更大开价和代孕安排的原始记录，也不能确认三千万的法律性质、调解授权、具体刑事责任或判决结果。",
+    "quotePayoff": "他自己写虚构，却要她认全文；主播不接受这种要求。",
     "coverLayer": "感性诡计：用‘我喜欢她’、‘我只要公平’和‘她现在怕了’先把讨论带到被辜负的一方。",
     "loadBearingLayer": "条件诡计：把诉状里的退钱，与诉状外的撤声明、承认全文捆成一套，再把这套说成普通和解。"
   },
   "coverStrategy": {
-    "publicImage": "长文把男方写成只想公开经历、要回钱并恢复名誉的人，再用更大的未转金额、商业损失和托人来谈证明女方已经怕了。",
+    "publicImage": "男方将自己写成追钱并恢复名誉的一方，用大额开价和来谈转述强化自己的说法。",
     "honestDetails": [
-      "他三十出头，做科技创业。",
-      "两个人谈了七个多月，见过家长，谈过婚。",
-      "对方是圈内女演员，已经公开回过一句不会为钱出卖爱情。"
+      "男方以科技创业者身份公开发布长文。",
+      "被点名者为女演员，已公开回应感情与金钱问题。",
+      "文中的具体私事仍是公开说法，不能由身份介绍自动证实。"
     ],
     "layeredLeaks": [
-      "第一段先摆两个人的利益基本盘，再让玩家从热搜收益、职业风险或虚构标注中任选一个切口。",
-      "第二段给代孕背景卡，玩家可以先谈监管红线、刑事边界或演艺圈前例。",
-      "第三段用五张卡和五千万放大数字，再让玩家选择审单方材料、拆金额或评价女方回应。",
-      "第四段把早前传闻、求和动机和中间人转述并排，玩家自行选择先推可信度还是先卡授权。",
-      "第五段把三条条件和未公开材料放到一起，玩家选择拆范围、评舆论杠杆或直接下道德判断。"
+      "先读发文者、被点名者及虚构标注。",
+      "再读男方声称的转款、未转金额和女方回应，各选一个角度点评。",
+      "循他为什么说她怕了，读早前传闻与中间人转述。",
+      "对职业风险补必要背景，不拿前例替本案证明私事。",
+      "回到三条条件，认全文与虚构标注直接相撞。"
     ]
   },
   "disclosureRounds": [
     {
       "id": "people-and-post",
       "completionMode": "any",
-      "noClueReaction": { "role": "host", "text": "先看两个人各自靠什么活，再决定从哪儿评价这篇文。" },
-      "label": "第一段 · 两个人与这篇长文",
+      "noClueReaction": {
+        "role": "host",
+        "text": "这句先放着。"
+      },
+      "label": "第一段 · 谁写了什么",
       "patience": 3,
-      "turnIds": ["profile-author", "profile-actress", "essay-label"],
-      "issueOptionIds": ["attention-asymmetry", "career-asymmetry", "labeled-fiction"],
-      "requiredConfrontationIds": ["attention-asymmetry", "career-asymmetry", "labeled-fiction"]
-    },
-    {
-      "id": "surrogacy-background",
-      "completionMode": "any",
-      "noClueReaction": { "role": "host", "text": "这张背景卡既不是给谁定罪，也不是替谁洗白。先选你要说清的那一层。" },
-      "label": "第二段 · 代孕背景卡",
-      "patience": 3,
-      "turnIds": ["domestic-rule", "criminal-boundary", "industry-precedent"],
-      "issueOptionIds": ["surrogacy-rule", "surrogacy-crime-boundary", "career-precedent"],
-      "requiredConfrontationIds": ["surrogacy-rule", "surrogacy-crime-boundary", "career-precedent"]
+      "turnIds": [
+        "profile-author",
+        "profile-actress",
+        "essay-label"
+      ],
+      "issueOptionIds": [
+        "attention-asymmetry",
+        "career-asymmetry",
+        "labeled-fiction"
+      ],
+      "requiredConfrontationIds": [
+        "attention-asymmetry",
+        "career-asymmetry",
+        "labeled-fiction"
+      ]
     },
     {
       "id": "money-and-reply",
       "completionMode": "any",
-      "noClueReaction": { "role": "host", "text": "大数字先别揉成一团。哪笔转了，哪笔没转，哪笔没人回，分开看。" },
-      "label": "第三段 · 钱与女方回应",
+      "noClueReaction": {
+        "role": "host",
+        "text": "这句先放着。"
+      },
+      "label": "第二段 · 钱与回应",
       "patience": 3,
-      "turnIds": ["money-transferred", "money-not-transferred", "money-not-answered"],
-      "issueOptionIds": ["single-source-money", "money-split", "reply-avoids-money"],
-      "requiredConfrontationIds": ["single-source-money", "money-split", "reply-avoids-money"]
+      "turnIds": [
+        "money-transferred",
+        "money-not-transferred",
+        "money-not-answered"
+      ],
+      "issueOptionIds": [
+        "single-source-money",
+        "money-split",
+        "reply-avoids-money"
+      ],
+      "requiredConfrontationIds": [
+        "single-source-money",
+        "money-split",
+        "reply-avoids-money"
+      ]
     },
     {
       "id": "settlement-rumor",
       "completionMode": "any",
-      "noClueReaction": { "role": "host", "text": "动机可以推，授权不能编。先决定这一拍评价哪一层。" },
-      "label": "第四段 · 早前传闻与求和",
+      "noClueReaction": {
+        "role": "host",
+        "text": "这句先放着。"
+      },
+      "label": "第三段 · 他凭什么说她怕了",
       "patience": 3,
-      "turnIds": ["early-rumor", "mediation-retelling", "motive-alignment"],
-      "issueOptionIds": ["settlement-inference", "mediation-authorization", "rumor-as-leverage"],
-      "requiredConfrontationIds": ["settlement-inference", "mediation-authorization", "rumor-as-leverage"]
+      "turnIds": [
+        "early-rumor",
+        "mediation-retelling",
+        "motive-alignment"
+      ],
+      "issueOptionIds": [
+        "settlement-inference",
+        "mediation-authorization",
+        "rumor-as-leverage"
+      ],
+      "requiredConfrontationIds": [
+        "settlement-inference",
+        "mediation-authorization",
+        "rumor-as-leverage"
+      ]
     },
     {
       "id": "settlement-scope",
       "completionMode": "any",
-      "noClueReaction": { "role": "host", "text": "手里还有什么，现在没人看见。先看已经公开开的条件。" },
-      "label": "第五段 · 三条条件与最后判断",
+      "noClueReaction": {
+        "role": "host",
+        "text": "这句先放着。"
+      },
+      "label": "第四段 · 退钱为什么还要认全文",
       "patience": 3,
-      "turnIds": ["settlement-three", "lawsuit-scope", "more-to-release"],
-      "issueOptionIds": ["settlement-scope", "public-leverage", "moral-conclusion"],
-      "requiredConfrontationIds": ["settlement-scope", "public-leverage", "moral-conclusion"]
-    }
-  ],
-  "deceptionChain": [
-    {
-      "id": "point-and-retreat",
-      "surfaceVersion": "作者说自己只是公开经历，文末已经写了虚构。",
-      "omittedFact": "正文仍用身份和照片把读者指向现实人物。",
-      "immediateBenefit": "既让舆论识别对象，又给作者保留退路。",
-      "traceTurnIds": ["profile-author", "profile-actress", "essay-label"],
-      "playerTest": "这一段先看谁能从热搜获利、谁更怕职业塌方，还是先看作者怎样给自己留门",
-      "minimumAdmission": "主播指出点名配图与虚构标注同时存在。",
-      "adviceChange": "长文可以读，不能当判决书。"
-    },
-    {
-      "id": "numbers-as-one-story",
-      "surfaceVersion": "三千万、五张卡、五千万美元连在一起，足以证明女方只认钱。",
-      "omittedFact": "三千万已进入诉讼，五千万美元没有转出，女方回应则避开三千万。",
-      "immediateBenefit": "用更大的未转数字给已经发生的争议加重量。",
-      "traceTurnIds": ["money-transferred", "money-not-transferred", "money-not-answered"],
-      "playerTest": "能不能把已转、未转和未回应放在同一个账里",
-      "minimumAdmission": "主播同时批评女方回避和男方把单方细节写成全貌。",
-      "adviceChange": "道德评价公开回应，法律结论仍交给法院。"
-    },
-    {
-      "id": "rumor-as-feedback",
-      "surfaceVersion": "代孕曝光足以毁掉职业，又有人提前来谈，说明女方已经怕了、认了。",
-      "omittedFact": "职业风险与求和时间确实对得上，但和解仍是中间人转述，没有女方本人消息。",
-      "immediateBenefit": "把合理动机进一步包装成女方本人已经授权和认账。",
-      "traceTurnIds": ["early-rumor", "mediation-retelling", "motive-alignment"],
-      "playerTest": "可信的求和动机能不能替中间人补出本人授权",
-      "minimumAdmission": "主播可以说求和推断很可信，但不能说女方本人已经授权。",
-      "adviceChange": "保留高概率判断，也保留最后一环材料缺口。"
-    },
-    {
-      "id": "lawsuit-as-leverage",
-      "surfaceVersion": "退钱、撤声明、认全文只是普通的一套和解。",
-      "omittedFact": "按男方公开说法，诉状只写三千万，后两条是诉状外要求。",
-      "immediateBenefit": "借可诉的金额争议让对方为整篇私生活叙事背书。",
-      "traceTurnIds": ["essay-label", "settlement-three", "lawsuit-scope", "more-to-release"],
-      "playerTest": "诉状里的钱能不能和认全文绑成一件事",
-      "minimumAdmission": "主播把三千万与撤声明、认全文拆开。",
-      "adviceChange": "拒绝替诉状外的公开要求催促。"
+      "turnIds": [
+        "settlement-three",
+        "lawsuit-scope",
+        "more-to-release"
+      ],
+      "issueOptionIds": [
+        "settlement-scope",
+        "public-leverage",
+        "moral-conclusion"
+      ],
+      "requiredConfrontationIds": [
+        "settlement-scope",
+        "public-leverage",
+        "moral-conclusion"
+      ]
     }
   ],
   "turns": [
     {
       "id": "profile-author",
-      "host": "先把男方放回他的基本盘。",
-      "source": "男方是高流量科技创业者，钱多、话筒多，也习惯把争议变成注意力。"
+      "host": "先看写这篇长文的人。",
+      "source": "男方是科技创业者，有自己的高关注度账号。这篇长文由他公开发布，很快被大量转发。"
     },
     {
       "id": "profile-actress",
-      "host": "再看女方靠什么吃饭。",
+      "host": "再看看被他写进文里的女方。",
       "source": "女方是曾经站在流量顶端的演员，播出平台、品牌和公众形象都是她的职业资产。"
     },
     {
       "id": "essay-label",
-      "host": "然后才看这篇文怎么写。",
+      "host": "他在文里追三千万，也写到代孕指控。先记住末尾这句。",
       "source": "正文指向现实人物并配图，文末却留了一句『纯属虚构』。"
     },
     {
-      "id": "domestic-rule",
-      "host": "第二段，先把国内规则说准。",
-      "source": "国内现行监管明确禁止任何形式的代孕，医疗机构和医务人员不得实施相关技术。"
-    },
-    {
-      "id": "criminal-boundary",
-      "host": "但别顺嘴加罪名。",
-      "source": "禁止不等于所有参与者自动构成同一个刑事罪名，刑事责任仍要看具体行为。"
-    },
-    {
-      "id": "industry-precedent",
-      "host": "再看演艺圈已经发生过什么。",
-      "source": "此前已有头部女星因境外代孕争议叠加偷逃税处罚，被停止邀请和播出，演艺事业就此停摆。"
-    },
-    {
       "id": "money-transferred",
-      "host": "第三段，看真正转出去的。",
-      "source": "长文说，谈婚期间三千万打进女方家里账户；男方的原话是，她嫌一天限额一百万太慢，让我准备五张卡一起打。"
+      "host": "再看钱。他说已经转了多少？",
+      "source": "长文说，谈婚期间三千万打进女方家里账户，他已经为这笔钱起诉；男方的原话是，她嫌一天限额一百万太慢，让我准备五张卡一起打。"
     },
     {
       "id": "money-not-transferred",
-      "host": "再看更大的那笔。",
+      "host": "后面还有一笔更大的数。",
       "source": "他又写，后来女方开口要五千万美元；他的回答是『让我想想』，这笔钱没有转出去。"
     },
     {
       "id": "money-not-answered",
-      "host": "然后是女方回应。",
+      "host": "女方怎么回的？",
       "source": "女方说自己从没因为金钱出卖爱情，但对三千万，一个字没回，代孕与更大开价也没有逐项回应。"
     },
     {
       "id": "early-rumor",
-      "host": "第四段，回到长文刷屏以前。",
+      "host": "钱还没对清，他又说女方怕了。凭什么这么说？把时间倒回长文发布以前。",
       "source": "在这篇长文刷屏前，网上已经出现代孕传闻，也传出有人提前找中间人谈。"
     },
     {
       "id": "mediation-retelling",
-      "host": "再看这是谁的原话。",
-      "source": "男方把有人来谈解释成女方害怕，但整段公开材料里只有中间人转述，没有她一句话。"
+      "host": "这段“有人来谈”，是谁说的？",
+      "source": "男方称，中间人来传话，说女方愿意谈，希望事情不要继续扩大。现有材料是男方对这次传话的描述，没有中间人的独立原话。"
     },
     {
       "id": "motive-alignment",
-      "host": "那为什么这传闻又很像真的？",
-      "source": "对依赖平台、品牌和公众形象的演员来说，代孕曝光可能击穿职业，所以求和动机与时间顺序确实对得上。"
+      "host": "他还拿女方的工作来解释这次来谈。",
+      "source": "男方写，她有演出、平台和品牌合作，事情闹大了会影响工作，所以她想尽早平息争议。"
     },
     {
       "id": "settlement-three",
-      "host": "最后一段，看男方到底要什么。",
+      "host": "那他让中间人带回去的，只有退钱这件事吗？",
       "source": "他开出三条：退三千万、撤回公开声明、公开承认整篇长文都是真的。"
     },
     {
       "id": "lawsuit-scope",
-      "host": "再对一下起诉范围。",
+      "host": "这些要求，都写进诉状了吗？",
       "source": "但他自己也承认：三千万在状子里。撤声明、认长文都不在。"
     },
     {
       "id": "more-to-release",
-      "host": "文章末尾还压了一句。",
+      "host": "把第一段的虚构标注翻回来，再读他的最后一句。",
       "source": "文末写着虚构，收尾却说她自己清楚；我手里还有，今晚先不放。"
     }
   ],
@@ -326,114 +346,119 @@
     {
       "id": "attention-asymmetry",
       "label": "先看谁更能从热搜获利",
-      "sourceAnchor": "把争议变成注意力",
-      "confrontationId": "attention-asymmetry"
+      "sourceAnchor": "由他公开发布",
+      "confrontationId": "attention-asymmetry",
+      "question": "男方自己把长文发出来，说明至少这一次，他愿意让大家都来谈。"
     },
     {
       "id": "career-asymmetry",
       "label": "先看谁更怕职业塌方",
       "sourceAnchor": "都是她的职业资产",
-      "confrontationId": "career-asymmetry"
+      "confrontationId": "career-asymmetry",
+      "question": "她靠演出和品牌合作吃饭。评论区吵起来，合作方可不会陪她慢慢等。"
     },
     {
       "id": "labeled-fiction",
       "label": "先看长文怎样给自己留门",
       "sourceAnchor": "文末却留了一句『纯属虚构』",
-      "confrontationId": "labeled-fiction"
-    },
-    {
-      "id": "surrogacy-rule",
-      "label": "先说明国内为什么把代孕当红线",
-      "sourceAnchor": "明确禁止任何形式的代孕",
-      "confrontationId": "surrogacy-rule"
-    },
-    {
-      "id": "surrogacy-crime-boundary",
-      "label": "先把禁止与刑事定罪分开",
-      "sourceAnchor": "不等于所有参与者自动构成",
-      "confrontationId": "surrogacy-crime-boundary"
-    },
-    {
-      "id": "career-precedent",
-      "label": "先看前例为什么让女方可能着急",
-      "sourceAnchor": "演艺事业就此停摆",
-      "confrontationId": "career-precedent"
+      "confrontationId": "labeled-fiction",
+      "question": "名字和照片都指向一个人，末尾又写“纯属虚构”。看的人到底该按哪句信？"
     },
     {
       "id": "single-source-money",
-      "label": "先把男方的私密细节放回单方层",
+      "label": "先问这些细节是谁说的",
       "sourceAnchor": "让我准备五张卡一起打",
-      "confrontationId": "single-source-money"
+      "confrontationId": "single-source-money",
+      "question": "五张卡、催得急、后来又开大价，这些都是男方在文里讲的。"
     },
     {
       "id": "money-split",
       "label": "先拆已转、未转和没回应",
       "sourceAnchor": "这笔钱没有转出去",
-      "confrontationId": "money-split"
+      "confrontationId": "money-split",
+      "question": "三千万，他说转了，也起诉了。五千万美元，他说对方要过，可自己没转。"
     },
     {
       "id": "reply-avoids-money",
       "label": "先评价女方这份回应",
       "sourceAnchor": "三千万，一个字没回",
-      "confrontationId": "reply-avoids-money"
+      "confrontationId": "reply-avoids-money",
+      "question": "男方把三千万说得这么具体，女方只回一句“不拿金钱换爱情”，这哪儿答上了？"
     },
     {
       "id": "settlement-inference",
-      "label": "先说为什么求和推断很可信",
-      "sourceAnchor": "求和动机与时间顺序确实对得上",
-      "confrontationId": "settlement-inference"
+      "label": "先看她为什么可能想平息争议",
+      "sourceAnchor": "事情闹大了会影响工作",
+      "confrontationId": "settlement-inference",
+      "question": "怕工作受影响，所以想赶紧谈，这个解释听着很顺。"
     },
     {
       "id": "mediation-authorization",
       "label": "先说证据链还缺哪一环",
-      "sourceAnchor": "只有中间人转述",
-      "confrontationId": "mediation-authorization"
+      "sourceAnchor": "没有中间人的独立原话",
+      "confrontationId": "mediation-authorization",
+      "question": "“她愿意谈”是谁的原话？"
     },
     {
       "id": "rumor-as-leverage",
       "label": "先看男方怎样把传闻变成压力",
       "sourceAnchor": "网上已经出现代孕传闻",
-      "confrontationId": "rumor-as-leverage"
+      "confrontationId": "rumor-as-leverage",
+      "question": "他把有人来谈紧接在传闻后面，再补一句“她怕了”。"
     },
     {
       "id": "settlement-scope",
       "label": "看诉状外多出来的两条",
       "sourceAnchor": "撤声明、认长文都不在",
-      "confrontationId": "settlement-scope"
+      "confrontationId": "settlement-scope",
+      "question": "照男方自己说的，诉状里是三千万，撤声明、认全文都没写进去。"
     },
     {
       "id": "public-leverage",
       "label": "先评价『我手里还有』这套玩法",
       "sourceAnchor": "我手里还有，今晚先不放",
-      "confrontationId": "public-leverage"
+      "confrontationId": "public-leverage",
+      "question": "前面写虚构，后面又说“我手里还有”，还要对方认下全文。他是在给对方加压力。"
     },
     {
       "id": "moral-conclusion",
-      "label": "现在给两个人下道德判断",
+      "label": "再看文末那句虚构",
       "sourceAnchor": "公开承认整篇长文都是真的",
-      "confrontationId": "moral-conclusion"
+      "confrontationId": "moral-conclusion",
+      "question": "最让我不信的是这儿：他自己给文章写虚构，却要她公开认全文。"
     }
   ],
   "confrontations": [
     {
       "id": "attention-asymmetry",
-      "basisTurnIds": ["profile-author", "profile-actress"],
+      "basisTurnIds": [
+        "profile-author",
+        "profile-actress"
+      ],
       "logicContract": {
-        "premiseAnchor": "男方靠注意力做生意，女方靠平台、品牌和公众形象吃饭。",
-        "sourceProves": "双方在同一轮热搜里的收益与职业风险并不对称。",
+        "premiseAnchor": "长文由男方在高关注度账号主动发布，女方职业依赖演出与品牌合作。",
+        "sourceProves": "发文和传播是公开动作，双方可能承担不同风险；是否净获利未确认。",
         "sourceDoesNotProve": "这种不对称不能证明任何私密指控属实。",
         "answerAdds": "主播先说明男方可能从争议获利，而女方可能承担职业损失。",
         "nextLimit": "只解释传播动机，不替后续材料定真假。"
       },
       "lines": [
-        { "role": "host", "text": "先看基本盘。男方靠注意力做生意，争议本身也能给他带来流量。" },
-        { "role": "host", "text": "所以他主动放料，付出的主要是口碑；女方付出的可能是整个职业。" },
-        { "role": "host", "text": "同一场热搜，对两个人不是一个价。" }
+        {
+          "role": "host",
+          "text": "男方自己把长文发出来，说明至少这一次，他愿意让大家都来谈。"
+        },
+        {
+          "role": "host",
+          "text": "这条热度是他主动要的。他想让人看的事，直接摆到了她的观众和合作方面前。"
+        }
       ]
     },
     {
       "id": "career-asymmetry",
-      "basisTurnIds": ["profile-actress", "essay-label"],
+      "basisTurnIds": [
+        "profile-actress",
+        "essay-label"
+      ],
       "logicContract": {
         "premiseAnchor": "女方的播出平台、品牌与公众形象都是职业资产。",
         "sourceProves": "争议曝光可能直接伤到她的职业合作。",
@@ -442,14 +467,22 @@
         "nextLimit": "动机只用于解释反应，不能补成事实。"
       },
       "lines": [
-        { "role": "host", "text": "女方靠平台、品牌和公众形象吃饭。她最怕的，不只是被骂。" },
-        { "role": "host", "text": "一旦碰到行业红线，项目、代言和播出都可能一起停。" },
-        { "role": "host", "text": "这就是后面『她为什么可能急』的背景。" }
+        {
+          "role": "host",
+          "text": "她靠演出和品牌合作吃饭。评论区吵起来，合作方可不会陪她慢慢等。"
+        },
+        {
+          "role": "host",
+          "text": "我要是她，现在最想知道的恐怕是：这篇东西到底还要挂多久？"
+        }
       ]
     },
     {
       "id": "labeled-fiction",
-      "basisTurnIds": ["profile-author", "essay-label"],
+      "basisTurnIds": [
+        "profile-author",
+        "essay-label"
+      ],
       "logicContract": {
         "premiseAnchor": "长文正文指向现实人物并配图，文末同时标注纯属虚构。",
         "sourceProves": "作者一面把读者指向现实人物，一面在文末保留虚构标注。",
@@ -458,62 +491,22 @@
         "nextLimit": "只评价公开写法，不借此替任何一边回答后续争议。"
       },
       "lines": [
-        { "role": "host", "text": "正文把人指给观众看，文末又给自己留着虚构，这不是普通讲故事。" },
-        { "role": "host", "text": "文末的纯属虚构是你自己写的。" },
-        { "role": "host", "text": "这篇文可以看，不能当判决书。" }
-      ]
-    },
-    {
-      "id": "surrogacy-rule",
-      "basisTurnIds": ["domestic-rule", "industry-precedent"],
-      "logicContract": {
-        "premiseAnchor": "国内现行监管明确禁止代孕。",
-        "sourceProves": "代孕在国内监管、伦理与行业层面都是明确红线。",
-        "sourceDoesNotProve": "监管禁止本身不能证明本案当事人已经实施相关行为。",
-        "answerAdds": "主播解释代孕争议为什么会给公众人物带来重大职业后果。",
-        "nextLimit": "背景卡说明规则，不替单方长文证明事实。"
-      },
-      "lines": [
-        { "role": "host", "text": "先说准。国内现行监管明确禁止代孕，医疗机构和医务人员不能做。" },
-        { "role": "host", "text": "这不是普通恋爱黑料，它同时踩到伦理、行业和监管红线。" },
-        { "role": "host", "text": "对公众人物，职业后果会比一般绯闻重得多。" }
-      ]
-    },
-    {
-      "id": "surrogacy-crime-boundary",
-      "basisTurnIds": ["domestic-rule", "criminal-boundary"],
-      "logicContract": {
-        "premiseAnchor": "监管禁止与刑事定罪不是同一个判断。",
-        "sourceProves": "现行规则禁止相关技术与服务。",
-        "sourceDoesNotProve": "所有参与者不会因此自动构成同一个刑事罪名。",
-        "answerAdds": "主播明确把道德和监管评价与刑事责任分开。",
-        "nextLimit": "具体罪责只能跟随具体行为与材料。"
-      },
-      "lines": [
-        { "role": "host", "text": "但我不把『禁止』顺嘴说成所有参与者都已经犯罪。" },
-        { "role": "host", "text": "有没有刑事责任，要看非法行医、买卖、遗弃之类的具体行为和材料。" },
-        { "role": "host", "text": "观点可以重，罪名不能靠主播补。" }
-      ]
-    },
-    {
-      "id": "career-precedent",
-      "basisTurnIds": ["profile-actress", "industry-precedent"],
-      "logicContract": {
-        "premiseAnchor": "已有头部女星因代孕争议叠加税务处罚退出演艺场。",
-        "sourceProves": "相似争议曾给头部演员带来停播与职业停摆。",
-        "sourceDoesNotProve": "历史前例不能证明本案女方实施过同样行为。",
-        "answerAdds": "主播用行业前例解释女方可能存在强烈止损动机。",
-        "nextLimit": "只能推到动机合理，不能推到传闻已经坐实。"
-      },
-      "lines": [
-        { "role": "host", "text": "前面已经有头部女星，因为境外代孕争议，再叠上偷逃税，节目停播，演艺事业停摆。" },
-        { "role": "host", "text": "所以对一个靠平台和品牌吃饭的女明星，代孕曝光绝不是普通公关危机。" },
-        { "role": "host", "text": "她有强烈灭火动机，这个判断顺逻辑。" }
+        {
+          "role": "host",
+          "text": "名字和照片都指向一个人，末尾又写“纯属虚构”。看的人到底该按哪句信？"
+        },
+        {
+          "role": "host",
+          "text": "你想让大家相信这些指控，就把材料拿出来。一个虚构标注，不能替你解释前面的内容。"
+        }
       ]
     },
     {
       "id": "single-source-money",
-      "basisTurnIds": ["money-transferred", "money-not-transferred"],
+      "basisTurnIds": [
+        "money-transferred",
+        "money-not-transferred"
+      ],
       "logicContract": {
         "premiseAnchor": "五张卡与更大开价目前都来自男方长文。",
         "sourceProves": "男方公开写过这些私密细节。",
@@ -522,14 +515,23 @@
         "nextLimit": "已诉金额、未转金额与单方细节继续分层。"
       },
       "lines": [
-        { "role": "host", "text": "五张卡、催得急、开更大的价，这些细节现在仍主要来自男方长文。" },
-        { "role": "host", "text": "三千万进入诉讼，不等于整篇私密叙事都跟着保真。" },
-        { "role": "host", "text": "我可以不信女方的回应，也不能把男方每一句都当第二份材料。" }
+        {
+          "role": "host",
+          "text": "五张卡、催得急、后来又开大价，这些都是男方在文里讲的。"
+        },
+        {
+          "role": "host",
+          "text": "他说三千万已经起诉，法院要查的是这笔钱。其他私下细节，不会因为他起诉了就自动变真。"
+        }
       ]
     },
     {
       "id": "money-split",
-      "basisTurnIds": ["money-transferred", "money-not-transferred", "money-not-answered"],
+      "basisTurnIds": [
+        "money-transferred",
+        "money-not-transferred",
+        "money-not-answered"
+      ],
       "logicContract": {
         "premiseAnchor": "男方说三千万已经转出并起诉；五千万美元停在开口和让我想想；女方声明没有回应三千万。",
         "sourceProves": "公开叙事里存在已诉金额、未转金额和未回应金额三层。",
@@ -538,14 +540,22 @@
         "nextLimit": "道德上评价公开回应，法律上仍把三千万交给法院。"
       },
       "lines": [
-        { "role": "host", "text": "三千万，是男方说已经转出并起诉的；五千万美元，是他说女方开过口，但没转。" },
-        { "role": "host", "text": "没转的钱，不能塞进她已经拿走的钱里。" },
-        { "role": "host", "text": "三千万该不该退，法院判。" }
+        {
+          "role": "host",
+          "text": "三千万，他说转了，也起诉了。五千万美元，他说对方要过，可自己没转。"
+        },
+        {
+          "role": "host",
+          "text": "两笔别加在一起算她拿了多少。三千万该不该退，交给法院判。"
+        }
       ]
     },
     {
       "id": "reply-avoids-money",
-      "basisTurnIds": ["money-transferred", "money-not-answered"],
+      "basisTurnIds": [
+        "money-transferred",
+        "money-not-answered"
+      ],
       "logicContract": {
         "premiseAnchor": "女方以感情表态回应，却没有逐项回应三千万与代孕争议。",
         "sourceProves": "女方公开回应避开了争议中的关键钱款与生育问题。",
@@ -554,30 +564,46 @@
         "nextLimit": "道德上评价回避，事实层仍不替男方补证。"
       },
       "lines": [
-        { "role": "host", "text": "女方说自己从不拿金钱换爱情，却对三千万一个字不回。" },
-        { "role": "host", "text": "代孕和更大开价，她也没有逐项回应。" },
-        { "role": "host", "text": "她想靠一句漂亮话把钱和代孕一起带过去，这个回应，我不接受。" }
+        {
+          "role": "host",
+          "text": "男方把三千万说得这么具体，女方只回一句“不拿金钱换爱情”，这哪儿答上了？"
+        },
+        {
+          "role": "host",
+          "text": "我想听的是，她认不认这笔钱，怎么解释。代孕和后面的开价，她也没有逐项答。这个回应说服不了我。"
+        }
       ]
     },
     {
       "id": "settlement-inference",
-      "basisTurnIds": ["early-rumor", "motive-alignment"],
+      "basisTurnIds": [
+        "early-rumor",
+        "motive-alignment"
+      ],
       "logicContract": {
         "premiseAnchor": "求和传闻的时间与女方可能承受的职业风险能够对上。",
         "sourceProves": "公开背景提供了一个符合一般逻辑的求和动机。",
         "sourceDoesNotProve": "动机吻合仍不能证明中间人得到女方授权。",
-        "answerAdds": "主播给出高可信度个人推断，同时保留授权边界。",
+        "answerAdds": "主播说明职业风险提供了平息争议的可能动机，仍不能据此确认授权。",
         "nextLimit": "后续只核对转述链，不把推断写成本人承认。"
       },
       "lines": [
-        { "role": "host", "text": "我的推断很直接：她想灭火，可信度很高。" },
-        { "role": "host", "text": "为什么？职业风险、早前传闻和求和时间能对上，一般人都会先止损。" },
-        { "role": "host", "text": "但高概率推断仍不是本人授权。" }
+        {
+          "role": "host",
+          "text": "怕工作受影响，所以想赶紧谈，这个解释听着很顺。"
+        },
+        {
+          "role": "host",
+          "text": "可顺归顺，中间人是不是她找的，还没有她本人的话。"
+        }
       ]
     },
     {
       "id": "mediation-authorization",
-      "basisTurnIds": ["mediation-retelling", "motive-alignment"],
+      "basisTurnIds": [
+        "mediation-retelling",
+        "motive-alignment"
+      ],
       "logicContract": {
         "premiseAnchor": "现有公开说法停在中间人转述。",
         "sourceProves": "男方公开称有人出面谈。",
@@ -586,14 +612,22 @@
         "nextLimit": "不让中间人替女方认账。"
       },
       "lines": [
-        { "role": "host", "text": "这里就差最后一环：她本人有没有授权。" },
-        { "role": "host", "text": "现有说法只能到『没有。中间人说是她的意思』，材料里没有她一句话。" },
-        { "role": "host", "text": "动机能解释求和，不能替中间人补授权。" }
+        {
+          "role": "host",
+          "text": "“她愿意谈”是谁的原话？"
+        },
+        {
+          "role": "host",
+          "text": "现在是男方说，中间人传的是她的意思。我还没看见中间人怎么说，更没看见她怎么委托的。"
+        }
       ]
     },
     {
       "id": "rumor-as-leverage",
-      "basisTurnIds": ["early-rumor", "mediation-retelling"],
+      "basisTurnIds": [
+        "early-rumor",
+        "mediation-retelling"
+      ],
       "logicContract": {
         "premiseAnchor": "男方把早前传闻与有人来谈解释成女方害怕。",
         "sourceProves": "传闻和中间人转述被一并放进公开叙事。",
@@ -602,14 +636,22 @@
         "nextLimit": "只评价公开传播动作，不猜未公开沟通。"
       },
       "lines": [
-        { "role": "host", "text": "早前传闻可以解释双方为什么突然谈，但男方又把『有人来谈』说成『她怕了』。" },
-        { "role": "host", "text": "这一步，是把传闻和中间人一起变成舆论压力。" },
-        { "role": "host", "text": "可信的动机，不等于可以公开替她认账。" }
+        {
+          "role": "host",
+          "text": "他把有人来谈紧接在传闻后面，再补一句“她怕了”。"
+        },
+        {
+          "role": "host",
+          "text": "这样读下来，来谈就像已经认了前面那些事。可这个结论是他加的。"
+        }
       ]
     },
     {
       "id": "settlement-scope",
-      "basisTurnIds": ["settlement-three", "lawsuit-scope"],
+      "basisTurnIds": [
+        "settlement-three",
+        "lawsuit-scope"
+      ],
       "logicContract": {
         "premiseAnchor": "三千万进入诉状，撤声明与认全文属于诉状外要求。",
         "sourceProves": "男方把诉状内外的三项要求列为同一套条件。",
@@ -618,14 +660,22 @@
         "nextLimit": "三千万交给法院，主播只评价诉状外施压。"
       },
       "lines": [
-        { "role": "host", "text": "三千万在状子里。撤声明、认长文都不在。" },
-        { "role": "host", "text": "退钱是一件事，让对方替整篇私生活背书是另外两件。" },
-        { "role": "host", "text": "别拿诉讼里的钱替诉状外的要求抬轿。" }
+        {
+          "role": "host",
+          "text": "照男方自己说的，诉状里是三千万，撤声明、认全文都没写进去。"
+        },
+        {
+          "role": "host",
+          "text": "退钱是一条，替全文背书又是两条。他自己写了虚构，对方为什么就得整篇认？"
+        }
       ]
     },
     {
       "id": "public-leverage",
-      "basisTurnIds": ["essay-label", "more-to-release"],
+      "basisTurnIds": [
+        "essay-label",
+        "more-to-release"
+      ],
       "revealTransition": {
         "id": "quick-public-leverage",
         "kind": "reveal",
@@ -642,25 +692,38 @@
         "nextLimit": "不猜未公开材料，只评已经说出口的威胁结构。"
       },
       "lines": [
-        { "role": "host", "text": "文末留着虚构，转头又拿『我手里还有』压对方认全文。" },
-        { "role": "host", "text": "这不是讲理，是拿女方最怕的职业后果当杠杆。" },
-        { "role": "host", "text": "这套玩法，我不会帮你催。" }
+        {
+          "role": "host",
+          "text": "前面写虚构，后面又说“我手里还有”，还要对方认下全文。他是在给对方加压力。"
+        },
+        {
+          "role": "host",
+          "text": "“我手里还有”，那就等拿出来再看。东西还没见着，倒先让她把整篇认了。"
+        }
       ]
     },
     {
       "id": "moral-conclusion",
-      "basisTurnIds": ["settlement-three", "more-to-release"],
+      "basisTurnIds": [
+        "settlement-three",
+        "more-to-release"
+      ],
       "logicContract": {
-        "premiseAnchor": "男方要求认全文并继续放话，女方回应则避开关键钱款。",
-        "sourceProves": "双方都做出了可供道德评价的公开动作。",
+        "premiseAnchor": "文末虚构标注与要求对方承认整篇长文同时出现。",
+        "sourceProves": "作者公开给自己的叙述保留退路，又要求对方取消这条退路。",
         "sourceDoesNotProve": "这些公开动作不能替法院完成金额与刑事判断。",
-        "answerAdds": "主播给出针对舆论操纵与金钱回避的固定个人结论。",
+        "answerAdds": "主播评价该不一致的公开要求，不强制补一段双方各打五十大板。",
         "nextLimit": "结论落在公开行为，不冒充法律定性。"
       },
       "lines": [
-        { "role": "host", "text": "到这里，我可以给个人结论了。" },
-        { "role": "host", "text": "男方在骗舆论，女方在躲金钱账；两边都不是我会替他说话的人。" },
-        { "role": "host", "text": "这个判断落在他们已经公开做出的动作上，不冒充法律判决。" }
+        {
+          "role": "host",
+          "text": "最让我不信的是这儿：他自己给文章写虚构，却要她公开认全文。"
+        },
+        {
+          "role": "host",
+          "text": "这句虚构到底只准谁用啊？"
+        }
       ]
     }
   ],
@@ -668,51 +731,27 @@
     "verdictKicker": "主播个人结论",
     "summaryPages": [
       {
-        "kicker": "五段看完",
-        "title": "两边，我都不站",
-        "stageLabel": "结案复盘",
+        "kicker": "说到这里",
+        "title": "收麦",
+        "stageLabel": "通话结束",
         "lines": [
-          { "role": "host", "text": "五段看完了。先给结论：我不站男方，也不替女方洗。" },
-          { "role": "host", "text": "男方把点名、虚构标注、代孕传闻和诉状外条件绑在一起，想让舆论先替他判。这套做法，我不信。" },
-          { "role": "host", "text": "女方说自己从不拿金钱换爱情，却没回应三千万和代孕争议。这个回法，我也不信。" }
-        ]
-      },
-      {
-        "kicker": "我的评价",
-        "title": "男方在骗舆论，女方在躲金钱账",
-        "stageLabel": "个人判断",
-        "lines": [
-          { "role": "host", "text": "男方的问题不是文章长，是他把一面说法写成全貌，还要对方公开认全文。道德上，这是操纵。" },
-          { "role": "host", "text": "女方的问题不是不肯认输，是她在最关键的钱和生育问题前绕开，只留一句漂亮话。道德上，这是回避。" },
-          { "role": "host", "text": "她想提前灭火，我认为非常符合一般逻辑；但是否由她授权中间人，目前仍缺本人材料。" },
-          { "role": "host", "text": "我的话再直一点：男方在骗舆论，女方在躲金钱账。两边都不是我会替他说话的人。" }
-        ]
-      },
-      {
-        "kicker": "事实边界",
-        "title": "观点要直，材料不能乱补",
-        "stageLabel": "最后收束",
-        "lines": [
-          { "role": "host", "text": "五张卡、五千万、代孕细节，还是男方一个人在讲。网上说真掉了要赔上亿，没有账单。中间人来谈，没有她一句话。" },
-          { "role": "host", "text": "能骂的，骂已经做出来的动作。没材料的，别替任何人补。" },
-          { "role": "host", "text": "三千万该不该退，法院判。代孕在国内被禁止，也不能由主播顺手写成已经构成某个罪名。" },
-          { "role": "host", "text": "认整篇长文这件，我不会帮你催。" }
+          {
+            "role": "host",
+            "text": "这篇先聊到这里。"
+          }
         ]
       }
     ],
     "riskReading": {
       "title": "主播给出的风险判断",
-      "text": "主播明确不接受男方用指向真人的长文、虚构标注、代孕传闻和诉状外条件操纵舆论，也不接受女方用一份没有回答三千万与代孕争议的声明证明自己与金钱无关。这个道德判断只针对双方已公开做出的动作；五张卡、更大开价、代孕细节、商业损失与调解授权仍缺少第二份材料。"
+      "text": "从虚构标注与三项公开条件看，男方很可能借追款争取对整段关系的公开说法；女方用态度声明避开了钱款问题。可以继续追这些具体矛盾，不必等本人承认目的。这不确认私下转账全貌、代孕安排或中间人授权。"
     },
     "confirmedTitle": "公开材料里能确认的动作",
     "confirmed": [
       "男方公开长文正文指向现实人物并配图，文末同时标注『纯属虚构』。",
       "男方公开叙事称三千万已经转出并进入诉讼；他所说的五千万美元没有转出。",
       "女方公开说自己从没因为金钱出卖爱情，但公开回应没有回答三千万与代孕争议。",
-      "国内现行监管明确禁止任何形式的代孕；禁止不等于所有参与者自动构成同一个刑事罪名。",
-      "此前已有头部女星因境外代孕争议叠加偷逃税处罚，被停止邀请和播出，演艺事业停摆。",
-      "上亿损失来自网络估算，不是本案展示的正式账单。",
-      "网上曾出现提前求和的传闻；所谓女方授权仍来自中间人转述，本案没有女方本人消息。",
+      "网上曾出现提前求和的传闻；男方称中间人代女方求和，未见中间人原话与女方本人的委托。",
       "男方公开提出退三千万、撤声明、认全文三条；按他的说法，起诉状只写三千万。"
     ],
     "unknownTitle": "今晚不需要继续猜的部分",
@@ -732,11 +771,18 @@
         "title": "只评已经看见的动作",
         "stageLabel": "提前收束",
         "lines": [
-          { "role": "host", "text": "看到这里，我只评公开动作：点名配图又标虚构，这种写法我不信。" },
-          { "role": "host", "text": "后面的金额、回应和条件还没看完，现在不替任何一边把结论补齐。" }
+          {
+            "role": "host",
+            "text": "看到这里，我只评公开动作：点名配图又标虚构，这种写法我不信。"
+          },
+          {
+            "role": "host",
+            "text": "材料还没读完。没看的部分先留着，现在不替任何一边把结论补齐。"
+          }
         ]
       }
     ]
   },
-  "sourceBoundary": "本案借用公开争议中‘指向真人的长文标注虚构、财产诉讼、代孕争议、公开声明与中间人自称调解同时出现’这一结构。游戏只让主播阅读压缩过的虚构合成长文、回应与公共背景卡，不安排真人来电；人物、平台账号、机构、标题、转账打法、三条条件、台词与主播结论均为虚构合成。大额开价、代孕安排和其他私密说法没有司法确认；‘提前求和’仍来自传闻与中间人转述，不写成女方已经授权或认账。国内现行监管禁止代孕，但不把这一规则顺手写成所有参与者已经构成同一个刑事罪名。主播可以对公开行为作明确道德评价，金额与法律结果仍交给法院和有权机关。"
+  "sourceBoundary": "本案借用公开争议中‘指向真人的长文标注虚构、财产诉讼、代孕争议、公开声明与中间人自称调解同时出现’这一结构。游戏只让主播阅读压缩过的虚构合成长文、回应与公共背景卡，不安排真人来电；人物、平台账号、机构、标题、转账打法、三条条件、台词与主播结论均为虚构合成。大额开价、代孕安排和其他私密说法没有司法确认；‘提前求和’仍来自传闻与中间人转述，不写成女方已经授权或认账。国内现行监管禁止代孕，但不把这一规则顺手写成所有参与者已经构成同一个刑事罪名。主播可以对公开行为作明确道德评价，金额与法律结果仍交给法院和有权机关。",
+  "contentRevision": "focused-2026-09-16"
 }

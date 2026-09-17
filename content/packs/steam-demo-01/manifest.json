@@ -30,7 +30,11 @@
       "seed": {
         "caseId": "01-credit",
         "documentId": "case1-bank-flow",
-        "rowIds": ["r13", "r14", "r15"]
+        "rowIds": [
+          "r13",
+          "r14",
+          "r15"
+        ]
       },
       "reinforcement": {
         "afterCaseId": "01-credit",
@@ -38,30 +42,45 @@
       },
       "corporateSeed": {
         "caseId": "04-workplace",
-        "surface": "case-tail",
+        "surface": "night-b-and-case-tail",
         "entityId": "qixing-shared-tech",
         "anchors": [
-          "主要股东",
-          "共享硬件",
+          "包干",
           "层层返费",
-          "估值"
+          "押金",
+          "关联往来"
+        ],
+        "documentId": "case4-department-ledger",
+        "rowIds": [
+          "q06",
+          "q09"
         ]
       },
       "secondarySeed": {
         "caseId": "02-tony",
         "surface": "overnight-return",
-        "anchors": ["名单", "十二万", "走我户", "宸直信托"]
+        "anchors": [
+          "名单",
+          "十二万",
+          "走我户",
+          "宸直信托"
+        ]
       },
       "tertiarySeed": {
         "caseId": "03-profile",
         "surface": "family-future-fund",
-        "anchors": ["二十八万八", "三十万", "九月底到期", "宸直"]
+        "anchors": [
+          "二十八万八",
+          "三十万",
+          "九月底到期",
+          "宸直"
+        ]
       },
       "payoff": {
         "afterCaseId": "02-tony",
         "worldEchoId": "world-echo-chenzhi-payment-crisis"
       },
-      "revalues": "机构最后出现全面兑付危机，既扩大案一投资风险的社会背景，也让栖行共享科技依赖融资抬估值的扩张、最后一通里的十二万元代投、周的一百万元回单和案三女方父母三十万元未到期资产重新变重；不倒推证明任何一笔钱已经全部损失，也不替当事人的借款、挪用、回扣或彩礼加码免责。"
+      "revalues": "栖行的亏损经营、包干虚列费用、物料个人返费与跨部门待付，先引出押金关联归集的疑问；最终处置通报确认宸直将押金用于金融杠杆。这不把所有个案转账并成同一笔，也不预判各人清偿金额。"
     }
   ],
   "theme": {
@@ -77,7 +96,7 @@
       "lowReveal": "材料都在，她们先没说的那件事，你还有没听出来的。",
       "beats": [
         "账单里有消费、借款和两笔认购，尾号 3301 仍没有名字。",
-        "三张审批页都写着通过，付款账户和回单号仍是空的。",
+        "过去垫钱能多结一笔，现在多个部门都在等；押金归集进了关联资金平台。",
         "学校图和工资卡都是真的，两边的全部家底仍没有摊开。",
         "店表写了起投和走他户，十二万是否入产品仍不知道。"
       ],
@@ -140,8 +159,16 @@
         "pause": "./assets/generated/callers/pixel-case01/caller_credit_pause_pixel.png?v=0.26.0"
       },
       "callerArtVariantPlan": {
-        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-case01/caller_credit_shaken_pixel.png" },
-        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-case01/caller_credit_broken_pixel.png" }
+        "shaken": {
+          "status": "planned",
+          "fallback": "pause",
+          "assetPath": "./assets/generated/callers/pixel-case01/caller_credit_shaken_pixel.png"
+        },
+        "broken": {
+          "status": "planned",
+          "fallback": "guarded",
+          "assetPath": "./assets/generated/callers/pixel-case01/caller_credit_broken_pixel.png"
+        }
       },
       "evidenceBoard": "./assets/generated/materials/case1-credit-evidence-board.png?v=0.27.0",
       "difficultyProfile": {
@@ -178,8 +205,16 @@
         "pause": "./assets/generated/callers/pixel-case04/caller_work_pause_pixel.png?v=0.26.0"
       },
       "callerArtVariantPlan": {
-        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-case04/caller_work_shaken_pixel.png" },
-        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-case04/caller_work_broken_pixel.png" }
+        "shaken": {
+          "status": "planned",
+          "fallback": "pause",
+          "assetPath": "./assets/generated/callers/pixel-case04/caller_work_shaken_pixel.png"
+        },
+        "broken": {
+          "status": "planned",
+          "fallback": "guarded",
+          "assetPath": "./assets/generated/callers/pixel-case04/caller_work_broken_pixel.png"
+        }
       },
       "evidenceBoard": "./assets/generated/materials/case4-workplace-evidence-board.png?v=0.27.0",
       "difficultyProfile": {
@@ -213,8 +248,16 @@
         "pause": "./assets/generated/callers/pixel-case03/caller_profile_pause_pixel.png?v=0.26.0"
       },
       "callerArtVariantPlan": {
-        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-case03/caller_profile_shaken_pixel.png" },
-        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-case03/caller_profile_broken_pixel.png" }
+        "shaken": {
+          "status": "planned",
+          "fallback": "pause",
+          "assetPath": "./assets/generated/callers/pixel-case03/caller_profile_shaken_pixel.png"
+        },
+        "broken": {
+          "status": "planned",
+          "fallback": "guarded",
+          "assetPath": "./assets/generated/callers/pixel-case03/caller_profile_broken_pixel.png"
+        }
       },
       "respondentArt": "./assets/generated/respondents/pixel-case03/respondent_profile_neutral_pixel.png?v=0.27.0",
       "respondentArtVariants": {
@@ -256,8 +299,16 @@
         "pause": "./assets/generated/callers/pixel-sample-case02/caller_salon_pause_pixel.png?v=0.26.0"
       },
       "callerArtVariantPlan": {
-        "shaken": { "status": "planned", "fallback": "pause", "assetPath": "./assets/generated/callers/pixel-sample-case02/caller_salon_shaken_pixel.png" },
-        "broken": { "status": "planned", "fallback": "guarded", "assetPath": "./assets/generated/callers/pixel-sample-case02/caller_salon_broken_pixel.png" }
+        "shaken": {
+          "status": "planned",
+          "fallback": "pause",
+          "assetPath": "./assets/generated/callers/pixel-sample-case02/caller_salon_shaken_pixel.png"
+        },
+        "broken": {
+          "status": "planned",
+          "fallback": "guarded",
+          "assetPath": "./assets/generated/callers/pixel-sample-case02/caller_salon_broken_pixel.png"
+        }
       },
       "evidenceBoard": "./assets/generated/materials/case2-tony-evidence-board.png?v=0.27.0",
       "difficultyProfile": {
@@ -313,7 +364,7 @@
           {
             "speaker": "主播·林旭阳",
             "type": "host",
-            "text": "她把后半段也转来了。她问钱花去哪儿，男友没答。"
+            "text": "她把后半段也转来了。她问钱都花哪去了，男友没答。"
           },
           {
             "speaker": "第一位来电人（后台文字）",
@@ -332,85 +383,90 @@
         {
           "speaker": "旁白",
           "type": "narration",
-          "text": "晚上八点，你推开直播间的门。旧工牌还压着转接线，桌上的显示器已经亮了。"
+          "text": "2024 年 7 月 15 日，晚上八点，你推开直播间的门。老方正站在桌边，低头看着压住转接线的旧工牌。显示器已经亮了。"
         },
         {
-          "speaker": "运营 · 老方（工作消息）",
-          "type": "notice",
-          "text": "深夜档这个月再不达标，就并进娱乐区。改版方案，下周一前给我。"
-        },
-        {
-          "speaker": "老婆",
-          "speakerProfileId": "zhao-lawyer",
-          "type": "message",
-          "text": "吃饭没有？汤在冰箱，记得热。还有个东西我塞你包里了，忙完再看。"
+          "speaker": "运营 · 老方（现场）",
+          "speakerProfileId": "producer-lao-fang",
+          "type": "background",
+          "text": "老林，到屋了？你那张旧工牌怎么还压着线。跟你说正事，深夜档这个月再不达标，就并进娱乐区。二十三号早上九点，改版方案给我。"
         },
         {
           "speaker": "林旭阳",
           "type": "background",
-          "text": "我把工牌挪到一边，戴上耳机。改版的事，等下播再说。"
+          "text": "少惦记我工牌。改版的事，等下播再说。"
+        },
+        {
+          "speaker": "老婆的微信",
+          "speakerProfileId": "zhao-lawyer",
+          "type": "message",
+          "text": "吃饭没有？汤在冰箱，记得热。还有个东西我塞你包里了，等这几天忙完了再看。"
+        },
+        {
+          "speaker": "旁白",
+          "type": "narration",
+          "text": "你把工牌挪到一边。老方指了指时间，带上门出去了。你看完老婆的微信，收起手机，戴上耳机。"
         }
       ]
     },
     "interludes": [
       {
         "afterCaseId": "01-credit",
-      "kicker": "广告间隙",
+        "kicker": "第 2 晚 · 收播以后",
         "lines": [
           {
+            "role": "stage",
+            "text": "第 2 晚的回拨结束，直播灯熄了。"
+          },
+          {
+            "role": "advisor",
+            "text": "汤在这儿。别盯着宸直信托的页面了，先吃。",
+            "speaker": "赵律师"
+          },
+          {
+            "role": "host",
+            "text": "白天周会计提醒我看那笔认购。我把宣传页和官网介绍都翻了，收益写得很显眼，旁边全是项目和签约照片。难怪他觉得借钱也能赚。",
+            "speaker": "林旭阳"
+          },
+          {
+            "role": "advisor",
+            "text": "你看他合同里的兑付安排了吗？",
+            "speaker": "赵律师"
+          },
+          {
+            "role": "host",
+            "text": "还没收到。广告讲到期返本，借款每月要还，他却想靠这个撑消费。等不到到期怎么办？",
+            "speaker": "林旭阳"
+          },
+          {
+            "role": "advisor",
+            "text": "我手上已经有几起宸直的兑付纠纷，约定的时间到了还在拖。那几笔投向商场、地产和关联项目，资产卖不掉，广告再好看也变不出现钱。",
+            "speaker": "赵律师"
+          },
+          {
+            "role": "host",
+            "text": "我给他补个消息：合同、到期日、借款利息一起发来。得看看他以为能赚到的钱，够不够先付利息。",
+            "speaker": "林旭阳"
+          },
+          {
+            "role": "advisor",
+            "text": "嗯。别把我经手的几笔，直接当成他这只已经出事。",
+            "speaker": "赵律师"
+          },
+          {
             "speaker": "赵律师",
             "role": "advisor",
-            "text": "你今天直播里提到的宸直信托，我知道。最近我手上就有好几起跟他们有关的兑付纠纷。"
+            "text": "他说她能拿八万，她只剩一万一千六百多。两个人倒是都挺敢想。"
           },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "已经兑不出来了？"
+            "text": "还都等着对方有钱。"
           },
           {
             "speaker": "赵律师",
             "role": "advisor",
-            "text": "有纠纷，不等于全线违约。不过我看过几份合同，收益写得很高，钱又去了商场、地产，还有几家关联公司。"
-          },
-          {
-            "speaker": "林旭阳",
-            "role": "host",
-            "text": "我记得这家公司什么都做，盘子也很大。"
-          },
-          {
-            "speaker": "赵律师",
-            "role": "advisor",
-            "text": "老板路子很广，业务铺得也开。可盘子大，不等于自己的钱多。至少我经手的几个项目，主要靠一轮一轮往外融。"
-          },
-          {
-            "speaker": "林旭阳",
-            "role": "host",
-            "text": "那今天这二十万呢？"
-          },
-          {
-            "speaker": "赵律师",
-            "role": "advisor",
-            "text": "产品、合同、到期日都没看见。现在只能说风险高，你别先替人宣布拿不回。"
-          },
-          {
-            "speaker": "林旭阳",
-            "role": "host",
-            "text": "行，我收回。"
-          },
-          {
-            "speaker": "赵律师",
-            "role": "advisor",
-            "text": "还有，她账户只剩一万一千六百多。这句别替她藏，让她自己跟男友说。"
-          },
-          {
-            "speaker": "林旭阳",
-            "role": "host",
-            "text": "八万先不转，但她账户还剩多少，也得自己跟男友说清楚。"
-          },
-          {
-            "speaker": "赵律师",
-            "role": "advisor",
-            "text": "对。至于那八万，债签在谁名下，合同就该由谁拿出来。"
+            "text": "你还笑，先把汤喝了。"
           },
           {
             "speaker": "赵律师",
@@ -423,71 +479,106 @@
             "text": "真那样的话，我们俩大概一开始就看不上对方。"
           }
         ],
-      "line": "你笑了一下。赵律师把一杯热水推到你手边。",
+        "line": "你笑了一下。赵律师把一杯热水推到你手边。",
         "afterLines": [
-        {
-          "role": "stage",
-          "text": "监听音箱里的音乐慢慢起来。"
+          {
+            "role": "stage",
+            "text": "监听音箱里的音乐慢慢起来。"
+          },
+          {
+            "role": "stage",
+            "text": "第 3 晚。你回到控台，重新接通热线。"
           }
         ]
       },
       {
         "afterCaseId": "04-workplace",
-        "kicker": "广告间隙",
+        "kicker": "第 4 晚 · 收播以后",
         "lines": [
+          {
+            "role": "stage",
+            "text": "第 4 晚的回拨结束，直播灯熄了。"
+          },
           {
             "speaker": "老方（语音）",
             "role": "production",
-            "text": "（嗦面声）刚才贴片再晚十秒，就自己切进来了。"
+            "text": "（嗦面声）前一场谁先垫谁主办，这一场谁先报谁着急。"
           },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "可那六万八也不会自己回来。"
+            "text": "白天让你找的融资稿，有了？陈说柜子铺多了就赚钱，我想看看他们自己报的成本。"
+          },
+          {
+            "speaker": "老方（语音）",
+            "role": "production",
+            "text": "找到了。栖行自己披露的试点，单柜一天平均三块使用费。场地分成八毛，维护一块二，折旧一块五。还没算总部开销。"
+          },
+          {
+            "speaker": "林旭阳",
+            "role": "host",
+            "text": "收三块，光这几项就三块五？"
           },
           {
             "speaker": "赵律师",
             "role": "advisor",
-            "text": "六万八走正式报销，返费表另存。你也趁广告吃一口。"
-          },
-          {
-            "speaker": "老方（语音）",
-            "role": "production",
-            "text": "栖行那份融资稿我翻到了。押金二十九，一次一块五，维护费和场地分成还没扣。估值那页我没看懂，发你了。"
-          },
-          {
-            "speaker": "老方（语音）",
-            "role": "production",
-            "text": "还有张公开照片：宸直那位坐私人飞机去法国看酒庄。先说好，这就是八卦。"
+            "text": "供应商的已结回执也对上了。三层返费还压在物料价里，采购越多，这笔越大。"
           },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "那张照片先别往案子里放。融资稿和返费表留下，我待会儿再看。"
+            "text": "那不停铺点，是等以后使用率上去？"
           },
           {
             "speaker": "老方（语音）",
             "role": "production",
-            "text": "刚才后台有人说，前一通是‘要态度’，这一通是‘想表现、能扛事’。好听话后面怎么都跟着让人掏钱。"
+            "text": "稿子是这么说的。可它下一页重点写新增注册和押金余额，使用率一笔带过。押金二十九，收进来算应退的钱。"
+          },
+          {
+            "speaker": "赵律师",
+            "role": "advisor",
+            "text": "附注还有一行，押金账户转关联往来，接收方是宸直体系的资金平台。这里只列了归集，没有写归集后拿去干什么。"
           },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "这句话先留着吧。几个人说话听着像，也不能就说她们认识。"
+            "text": "用户随时能退的二十九，怎么会转到主要股东那边？"
+          },
+          {
+            "speaker": "老方（语音）",
+            "role": "production",
+            "text": "我也卡这儿。先把原页存着，跟前一通的认购分开。别看都叫宸直，就算成同一笔。"
+          },
+          {
+            "speaker": "老方（语音）",
+            "role": "production",
+            "text": "先吃吧。我这面已经能整块夹起来了。"
           }
         ],
-        "line": "你掀开保温盒，面已经坨成一团。广告快结束了。",
+        "line": "你把融资稿停在“用户押金／关联往来”那页，掀开保温盒。",
         "afterLines": [
-        {
-          "role": "stage",
-          "text": "广告音乐换成一段轻一点的钢琴。"
+          {
+            "role": "stage",
+            "text": "你关了控台，第二天白天没有安排新的来电。"
+          },
+          {
+            "role": "stage",
+            "text": "第 5 晚。你回到控台，重新接通热线。"
           }
         ]
       },
       {
         "afterCaseId": "03-profile",
-      "kicker": "广告间隙",
+        "kicker": "第 6 晚 · 收播以后",
         "lines": [
+          {
+            "role": "stage",
+            "text": "第 6 晚的回拨结束，直播灯熄了。"
+          },
+          {
+            "role": "stage",
+            "text": "赵律师下班时送来今天新煮的汤。她回家后又打来电话，你刚倒了一碗。"
+          },
           {
             "speaker": "赵律师（语音）",
             "role": "advisor",
@@ -501,12 +592,12 @@
           {
             "speaker": "赵律师（语音）",
             "role": "advisor",
-            "text": "那就先看持有页。三十万还在，写着九月底到期。没合同，别先算它能不能兑。"
+            "text": "持有页写的是九月底。合同还没发来？"
           },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "她爸原话是给女儿自己留着，不是拿来办婚礼。九月底到底能不能兑，还得等。"
+            "text": "没发。她爸那笔是留给女儿自己的，婚宴首饰照样让男方出。"
           },
           {
             "speaker": "老方（语音）",
@@ -516,7 +607,7 @@
           {
             "speaker": "赵律师（语音）",
             "role": "advisor",
-            "text": "原图先别删。这页一共就剩四个词，连是谁发的都不知道。今天这个人买没买过课，前两通认不认识发图的人，都不能从这页上猜。"
+            "text": "四个词，裁得连抬头都不剩了。叫老方找找原图吧。"
           },
           {
             "speaker": "赵律师（语音）",
@@ -529,24 +620,32 @@
             "text": "还是会去。可那顿饭吃完，我有多少钱、愿意怎么花，得由我自己说。"
           }
         ],
-      "line": "语音停了，你把保温盒重新扣好。",
+        "line": "语音停了，你把保温盒重新扣好。",
         "afterLines": [
-        {
-          "role": "stage",
-          "text": "热过的汤又凉了。塑料盖轻轻响了一声。"
+          {
+            "role": "stage",
+            "text": "热过的汤又凉了。塑料盖轻轻响了一声。"
+          },
+          {
+            "role": "stage",
+            "text": "第 7 晚。你回到控台，重新接通热线。"
           }
         ],
-      "transitionQuote": {
-        "kind": "news-push",
-        "headline": "宸直产品出现延期登记传闻",
-        "text": "宸直旗下多只产品被曝延期登记，平台回应称正在核对。",
-        "source": "财经客户端推送 · 00:47"
+        "transitionQuote": {
+          "kind": "news-push",
+          "headline": "宸直产品出现延期登记传闻",
+          "text": "宸直旗下多只产品被曝延期登记，平台回应称正在核对。",
+          "source": "财经客户端推送 · 00:47"
         }
       },
       {
         "afterCaseId": "02-tony",
-      "kicker": "收播以后",
+        "kicker": "第 8 晚 · 收播以后",
         "lines": [
+          {
+            "role": "stage",
+            "text": "7 月 22 日，第 8 晚的回拨结束，直播灯熄了。"
+          },
           {
             "speaker": "赵律师",
             "role": "advisor",
@@ -563,11 +662,11 @@
             "text": "不监督。我在门口等你。"
           }
         ],
-      "line": "你把备用线缠好，收进桌下的盒子，又端起桌上的杯子。",
+        "line": "你把备用线缠好，收进桌下的盒子，又端起桌上的杯子。",
         "afterLines": [
-        {
-          "role": "stage",
-          "text": "屏幕右上角的“直播中”灭了。"
+          {
+            "role": "stage",
+            "text": "屏幕右上角的“直播中”灭了。"
           }
         ],
         "worldEcho": {
@@ -578,12 +677,12 @@
           "artSrc": "./assets/generated/cg/chenzhi-news-push-pixel.png?v=0.28.0",
           "artAlt": "收播后的工作室桌面，手机亮起一条紧急新闻推送",
           "headline": "宸直信托全部产品暂停兑付，实控人失联",
-          "body": "赵律师的手机连续震了两下。新闻客户端刚发出通报：宸直信托全部产品暂停兑付，多处关联项目停摆，实控人暂时无法联系，监管部门和警方已经介入。公告没有公布清偿顺序。",
+          "body": "赵律师把新闻附的处置通报打开。宸直信托全部产品暂停兑付，实控人暂时失联，监管部门和警方已介入。\n\n通报另列栖行：用户押金被归集至宸直控制的关联资金平台，作为关联项目配资资金，再以相关资产继续融资；到期资金无法回流，栖行的退押金与日常付款同时吃紧。\n\n后台调出此前的融资稿，押金归集的接收方与通报一致。试点租金已盖不住维护、分成和折旧，中层又从活动与物料里取走一层。一直增长的点位，还为宸直带来了不断补入的押金。\n\n各笔清偿金额尚未公布。",
           "hypotheses": [
             {
               "id": "cross-case-ledger",
               "label": "把四案里的宸直线索并在一起",
-              "response": "借款认购、栖行返费、家庭持有页和代投回单都碰到了同一机构名。先看它是不是一条跨案资金线。"
+              "response": "先把栖行融资稿的押金归集附注、部门待付记录与其他案的宸直材料摆到一起。它们提出了同一个资金来源问题，还需要通报说明去向。"
             },
             {
               "id": "tony-only",
@@ -593,11 +692,11 @@
             {
               "id": "ordinary-news",
               "label": "先按普通财经新闻处理",
-              "response": "新闻本身还不能证明每一案的钱都进入宸直；要不要串案，仍得回到各案材料逐笔核对。"
+              "response": "先读通报。尤其核对有没有提栖行此前披露的押金归集；不能只凭机构同名就把各人的转账并成一笔。"
             }
           ],
-          "proves": "宸直信托已经出现全面兑付危机，关联项目也受到波及。",
-          "doesNotProve": "不能倒推第一通的两笔认购已经全部损失，也不能证明最后一通里何的十二万元已经进入宸直，或周的一百万元转账就是回单对应的同一笔资金；第三通女方父母的三十万元具体产品、清偿顺序和可追回金额也仍要分别核对。"
+          "proves": "处置通报确认宸直将归集的栖行用户押金用于关联项目配资及继续融资，资金无法回流；此前经营披露、个人返费和跨部门待付由此连接成公司层面的资金链。",
+          "doesNotProve": "不能由公司资金链确认陈的六万八哪天追回，也不能把每一笔垫款标记为已直接投入杠杆；不能倒推第一通认购已全部损失，或确认何的十二万元已进入宸直；女方父母三十万元的清偿顺序与金额也需分别核对。 周的一百万元回单与具体转账是否对应，仍须核原件。"
         }
       }
     ],
@@ -612,8 +711,8 @@
           "speakerProfileId": "case1-caller-shen",
           "base": "新闻出来以后他只回了一句。宸直那二十万现在动不了。什么时候能拿回来他也不知道。八万我没转。灯收进箱子了。",
           "echoes": {
-            "pragmatic": "面煮了，放了两个蛋。",
-            "affirm": "你那句话我又听了一遍。",
+            "pragmatic": "他已经听过直播了，还是一直问我钱花在哪。",
+            "affirm": "余额他听到了，还非要我一笔笔列。",
             "accompany": "明晚我听着。不打了，就听。"
           },
           "attachment": {
@@ -628,11 +727,11 @@
           "caseLabel": "第二通回访",
           "sender": "陈",
           "speakerProfileId": "case4-caller-chen",
-          "base": "明天的话我写好了，三个版本。……开玩笑的。用第一版：先报备，再要回单号。",
+          "base": "今天开会，我跟运营、维修一起问了。六万八受理号还在，付款日期还是待通知。多出来那一万二，我也说明了。新闻你们看见了吧？他们也别拿协调费堵我的嘴，六万八得先还我。",
           "echoes": {
-            "pragmatic": "就是你说的顺序。",
-            "affirm": "『六万八是六万八』，我抄在第一版开头了。",
-            "accompany": "下周一开会前要是扛不住，我真打啊。"
+            "pragmatic": "群里到今天还没回。",
+            "affirm": "那两个同事也跟着催了。",
+            "accompany": "有付款消息我再来。现在还是那句等通知。"
           }
         },
         {
@@ -641,11 +740,11 @@
           "caseLabel": "第三通回访",
           "sender": "表妹",
           "speakerProfileId": "case3-caller-cousin",
-          "base": "我姐把周末包间退了。定金没退。两边父母也各自说过了。她说二十八万八先不提。宸直的新闻也出来了。那笔钱更不敢算进婚礼预算。她让我替她说声谢谢——她自己不好意思打。",
+          "base": "包间退了，定金按他说的由他承担。两边父母也各自说过了。我姐还在介意，他为什么不能跟介绍人说一句忙。那几条付款条件，她没说要改。现在宸直又出了新闻，她爸原先答应九月底给她的二十万，也不知道什么时候能拿到。",
           "echoes": {
-            "pragmatic": "她说包里会放张表。让你别问是哪张。",
-            "affirm": "她把『问清楚不丢人』那句转给我姨了。",
-            "accompany": "谈完她可能真会打。你们等着。"
+            "pragmatic": "介绍人来问，她只说饭局往后放。",
+            "affirm": "男方没替她说忙。她还在生这个气。",
+            "accompany": "她说要谈也得男方先来找她。"
           }
         },
         {
@@ -656,9 +755,9 @@
           "speakerProfileId": "case2-caller-he",
           "base": "周把转账和回单原图又交了一遍，我也把自己的聊天和十二万转账交了。我们没去店里堵人。新闻出来以后，Tony 还是只说已经提交，没把合同发来。我的钱到底进没进产品，还是不知道。",
           "echoes": {
-            "pragmatic": "聊天、转账和他发的提交页面，我分开存了。",
-            "affirm": "群里有人说，当时喜欢听那些话也不丢人。",
-            "accompany": "后面真要走投诉，我先拿材料问清楚。"
+            "pragmatic": "合同我还在催。他又嫌我催得急。",
+            "affirm": "头发在楼下剪了，十五块。",
+            "accompany": "你说他回了再来。我先把他这次回的也发你。"
           },
           "attachment": {
             "kind": "image-placeholder",
@@ -673,34 +772,34 @@
           "base": "老规矩不止你们一家。你们哪天做职场专场，我再来。——搬过三次仓库的人"
         }
       ],
-    "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息，至少今晚是。",
-    "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。下周，方案还是要交。",
-    "platformCost": "后台曲线掉回老地方。老方这次没打字，直接发来一句：‘推荐位没了。下周一的方案，照交。’",
+      "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息，至少今晚是。",
+      "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。天亮后九点，方案还是要交。",
+      "platformCost": "后台曲线掉回老地方。老方这次没打字，直接发来一句：‘推荐位没了。明早九点，方案照交。’",
       "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。保温盒空了。你顺手洗了，倒扣在水池边。你把她的合同挪开，又把自己的手机放远了点。",
-      "close": "你从包里拿出那个牛皮纸文件袋。封口贴着一张便签，赵的字：『你当年没问完的那通，我帮你找到了后续。』便签下露出一角日期：2019-11-08，『已撤回的账单』。",
+      "close": "你从包里拿出那个牛皮纸文件袋。封口贴着一张便签，赵的字：『你两年前没问完的那通，我帮你找到了后续。』里面是当时用过的旧账单，原件日期写着 2019-11-08；旁边另贴着直播回放索引：2022 年 7 月，『已撤回的账单』。",
       "closingCg": {
         "src": "./assets/generated/cg/envelope-2019-pixel.png?v=0.28.0",
         "alt": "天快亮时，直播桌上摊开的牛皮纸文件袋和旧账单",
-        "kicker": "2019-11-08",
-        "caption": "你当年没问完的那通"
+        "kicker": "账单原件 · 2019-11-08",
+        "caption": "2022 年 7 月 · 那通没问完的电话"
       }
     },
     "cafePrologue": {
       "id": "prologue-cafe-opening",
-      "timeline": "开播前 · 傍晚",
+      "timeline": "现在 · 傍晚",
       "title": "序章",
       "subtitle": "咖啡厅 · 谈离婚",
       "backdropClass": "day-cafe cafe-prologue-backdrop",
       "puzzleLedger": {
-        "playerGoal": "把妻子承认的聊天、酒店订单和钱款往来固定下来，再让男方把离婚、财产和亲子诉求逐项说清；亲子线必须赶在孩子旧物被带走前保住可核来源的样本，账户线只看男方本人名下的家庭支出卡。",
+        "playerGoal": "把妻子承认的聊天、酒店订单和钱款往来固定下来，再让男方把离婚、财产和亲子诉求逐项说清；亲子线先向机构问清受理与现场采样要求，旧物不能冒充孩子身份已确认的样本，账户线只看男方本人名下的家庭支出卡。",
         "adversaryGoal": "妻子想把同日酒店与钱款往来分别降格成可编辑截图、普通住宿和私人借款；表哥则借证据效力争议逼节目停播。",
         "mechanicalCoupling": [
-      "玩家必须先点出‘没去过酒店’这句原话，再亲手出示聊天截图或酒店订单；任一张都只能逼她承认开房，剩下那张仍不能证明顾*上过楼。",
+          "玩家必须先点出‘没去过酒店’这句原话，再亲手出示聊天截图或酒店订单；任一张都只能逼她承认开房，剩下那张仍不能证明顾*上过楼。",
           "玩家打开逐行流水追问‘没跟顾*转过钱’，只打穿没有钱款往来，不越级证明借款性质或酒店内行为。",
-      "玩家决定开播前先查孩子旧物还是男方名下的家庭支出卡；当晚只走选中的一条，数日后的回告也只兑付这条。"
+          "玩家依次查看孩子旧物和男方名下的家庭支出卡；两项交接后，转场回到两年前的直播，回忆结束后回到现在查看后续回告。"
         ],
         "pressure": "桌边录像、表哥手机里的另一份录屏和双方对后续剪辑的争夺同时压上来；妻子带孩子离开后，留在共同住所的孩子旧物也可能随时被取走。",
-        "failureBoundary": "不能在咖啡厅公开亲子结果，不能把酒店同住写成已经证明发生性关系，也不能用个人委托初检倒推女方何时知道孩子身世、为何结婚或给固定转账收款人补身份。"
+        "failureBoundary": "不能在咖啡厅公开亲子结果，不能把酒店同住写成已经证明发生性关系，也不能用鉴定结果倒推女方何时知道孩子身世、为何结婚或给固定转账收款人补身份。"
       },
       "cafe": {
         "clipDraft": {
@@ -713,7 +812,19 @@
             "speaker": "旁白",
             "speakerProfileId": "narrator",
             "type": "narration",
-            "text": "傍晚。你和妻子赵律师按约来到咖啡厅。男方的妻子和她表哥已经坐在靠窗那桌。几张遮过名字的材料压在咖啡杯下，桌边录像机的红灯还亮着。"
+            "text": "傍晚。你和妻子赵律师按约来到咖啡厅。她替你捋平卷起的领口。男方的妻子和她表哥已经坐在靠窗那桌。几张遮过名字的材料压在咖啡杯下，桌边的手机已经架好。"
+          },
+          {
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor",
+            "text": "站好，领子又卷了。大学到现在，一出门就得给你理。"
+          },
+          {
+            "speaker": "林旭阳",
+            "speakerProfileId": "host-lin-xuyang",
+            "type": "host",
+            "text": "行，赵同学。人都等着了，回家再数落我。"
           },
           {
             "speaker": "男方",
@@ -775,13 +886,13 @@
             "speaker": "妻子",
             "speakerProfileId": "prologue-cafe-wife",
             "type": "participant",
-            "text": "我也没偷着去澜桥酒店。"
+            "text": "那晚我没去澜桥酒店。"
           },
           {
             "speaker": "妻子",
             "speakerProfileId": "prologue-cafe-wife",
             "type": "participant",
-            "text": "他就是看见几张截图，自己越想越多。"
+            "text": "就是疑神疑鬼，天天怀疑我。"
           },
           {
             "speaker": "妻子",
@@ -790,7 +901,7 @@
             "text": "我跟顾*也没转过钱。你要谈离婚，就谈我们俩的账。"
           }
         ],
-        "firstClaim": "我也没偷着去澜桥酒店。",
+        "firstClaim": "那晚我没去澜桥酒店。",
         "claimStatements": [
           {
             "id": "long-acquaintance",
@@ -799,13 +910,13 @@
           },
           {
             "id": "hotel-denial",
-            "text": "我也没偷着去澜桥酒店。",
+            "text": "那晚我没去澜桥酒店。",
             "correct": true
           },
           {
             "id": "screenshot-dismissal",
-            "text": "他就是看见几张截图，自己越想越多。",
-            "missLine": "我说的是他看完截图以后自己乱想。你要问这句就问，别替他往下编。"
+            "text": "就是疑神疑鬼，天天怀疑我。",
+            "missLine": "他天天怀疑我。你要问哪件事，就把哪件事拿出来说。"
           },
           {
             "id": "money-denial-early",
@@ -814,163 +925,169 @@
           }
         ],
         "evidencePair": [
-      {
-        "id": "chat",
-        "documentKind": "chat",
-        "kicker": "聊天截图",
-        "title": "联系人：顾*",
-        "detail": "妻子发送｜21:18｜“我到澜桥酒店了”",
-        "remainingLines": [
           {
-            "speaker": "妻子",
-            "speakerProfileId": "prologue-cafe-wife",
-            "type": "participant",
-            "text": "等一下，你怎么会有我手机里的截图？"
+            "id": "chat",
+            "documentKind": "chat",
+            "kicker": "聊天截图",
+            "title": "联系人：顾*",
+            "detail": "妻子发送｜21:18｜“我到澜桥酒店了”",
+            "remainingLines": [
+              {
+                "speaker": "妻子",
+                "speakerProfileId": "prologue-cafe-wife",
+                "type": "participant",
+                "text": "等一下，你怎么会有我手机里的截图？"
+              },
+              {
+                "speaker": "男方",
+                "speakerProfileId": "prologue-cafe-husband",
+                "type": "participant",
+                "text": "家里的平板还登着你的账号。那天消息自己同步过来，我截下来的。"
+              }
+            ],
+            "hitLines": [
+              {
+                "speaker": "妻子",
+                "speakerProfileId": "prologue-cafe-wife",
+                "type": "participant",
+                "text": "等一下，你怎么会有我手机里的截图？"
+              },
+              {
+                "speaker": "男方",
+                "speakerProfileId": "prologue-cafe-husband",
+                "type": "participant",
+                "text": "家里的平板还登着你的账号。那天消息自己同步过来，我截下来的。"
+              },
+              {
+                "speaker": "林旭阳",
+                "speakerProfileId": "host-lin-xuyang",
+                "type": "host",
+                "text": "这是你自己发的，“我到澜桥酒店了”。你刚说那晚没去，这两句话怎么回事？"
+              }
+            ]
           },
           {
-            "speaker": "男方",
-            "speakerProfileId": "prologue-cafe-husband",
-            "type": "participant",
-            "text": "家里的平板还登着你的账号。那天消息自己同步过来，我截下来的。"
+            "id": "hotel",
+            "documentKind": "hotel",
+            "kicker": "酒店订单",
+            "title": "澜桥酒店",
+            "detail": "21:24｜状态：已入住｜入住人：妻子本人｜大床房 1 间",
+            "remainingLines": [
+              {
+                "speaker": "妻子",
+                "speakerProfileId": "prologue-cafe-wife",
+                "type": "participant",
+                "text": "这个订单你又是哪儿来的？"
+              },
+              {
+                "speaker": "男方",
+                "speakerProfileId": "prologue-cafe-husband",
+                "type": "participant",
+                "text": "订单邮件同步到家里的平板，入住后的订单状态也在，我一起留了。"
+              }
+            ],
+            "hitLines": [
+              {
+                "speaker": "妻子",
+                "speakerProfileId": "prologue-cafe-wife",
+                "type": "participant",
+                "text": "这个订单你又是哪儿来的？"
+              },
+              {
+                "speaker": "男方",
+                "speakerProfileId": "prologue-cafe-husband",
+                "type": "participant",
+                "text": "订单邮件同步到家里的平板，入住后的订单状态也在，我一起留了。"
+              },
+              {
+                "speaker": "林旭阳",
+                "speakerProfileId": "host-lin-xuyang",
+                "type": "host",
+                "text": "这张订单状态是已入住，入住人写的是你。你刚说那晚没去，怎么对得上？"
+              }
+            ]
           }
         ],
-        "hitLines": [
+        "revisedAccountLines": [
           {
             "speaker": "妻子",
             "speakerProfileId": "prologue-cafe-wife",
             "type": "participant",
-            "text": "等一下，你怎么会有我手机里的截图？"
+            "text": "那天是我自己住的酒店。我跟家里吵完，不想回去，就在那里住了一晚。"
           },
           {
-            "speaker": "男方",
-            "speakerProfileId": "prologue-cafe-husband",
+            "speaker": "妻子",
+            "speakerProfileId": "prologue-cafe-wife",
             "type": "participant",
-            "text": "家里的平板还登着你的账号。那天消息自己同步过来，我截下来的。"
+            "text": "顾*跟这件事没关系，他没有上去。订单上也只有我一个人的名字。"
           },
+          {
+            "speaker": "妻子",
+            "speakerProfileId": "prologue-cafe-wife",
+            "type": "participant",
+            "text": "钱上也一样。我跟顾*之间没转过钱。"
+          },
+          {
+            "speaker": "妻子",
+            "speakerProfileId": "prologue-cafe-wife",
+            "type": "participant",
+            "text": "你们别把聊天、酒店和钱全拧在一起。"
+          },
+          {
+            "text": "这三笔是以前你发给我核对家用的转账通知。我存着。后来这两个月你不让我看账户，我才没法接着对。",
+            "speaker": "男方",
+            "type": "participant",
+            "speakerProfileId": "prologue-cafe-husband"
+          }
+        ],
+        "revisedClaimStatements": [
+          {
+            "id": "room-admission",
+            "text": "那天是我自己住的酒店。",
+            "missLine": "那天是我自己住的酒店，这句我已经说了。你还想问什么？"
+          },
+          {
+            "id": "alone-stay",
+            "text": "我在那里住了一晚。",
+            "missLine": "订单上写的是我。你手里的东西也只能看到我。"
+          },
+          {
+            "id": "no-upstairs",
+            "text": "顾*没有上去。",
+            "missLine": "你们手里没有他上楼的东西。别拿猜的来问我。"
+          },
+          {
+            "id": "money-denial",
+            "text": "我跟顾*之间没转过钱。",
+            "correct": true
+          }
+        ],
+        "revisedEvidenceMissLines": {
+          "chat": [
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "这张图只能说明我说过自己到了酒店。你拿它问转账，问不着。"
+            }
+          ],
+          "hotel": [
+            {
+              "speaker": "妻子",
+              "speakerProfileId": "prologue-cafe-wife",
+              "type": "participant",
+              "text": "订单上只有我的名字。你拿它问转账，也问不着。"
+            }
+          ]
+        },
+        "revisedPresentLeadLines": [
           {
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "这是你自己发的，‘我到澜桥酒店了’。你刚说没去过，房是谁开的？"
-          }
-        ]
-      },
-      {
-        "id": "hotel",
-        "documentKind": "hotel",
-        "kicker": "酒店订单",
-        "title": "澜桥酒店",
-        "detail": "21:24｜入住人：妻子本人｜大床房 1 间",
-        "remainingLines": [
-          {
-            "speaker": "妻子",
-            "speakerProfileId": "prologue-cafe-wife",
-            "type": "participant",
-            "text": "这个订单你又是哪儿来的？"
-          },
-          {
-            "speaker": "男方",
-            "speakerProfileId": "prologue-cafe-husband",
-            "type": "participant",
-            "text": "预订邮件同步到家里的平板，订单还在。"
+            "text": "你刚才说得很清楚：你跟顾*之间没转过钱。"
           }
         ],
-        "hitLines": [
-          {
-            "speaker": "妻子",
-            "speakerProfileId": "prologue-cafe-wife",
-            "type": "participant",
-            "text": "这个订单你又是哪儿来的？"
-          },
-          {
-            "speaker": "男方",
-            "speakerProfileId": "prologue-cafe-husband",
-            "type": "participant",
-            "text": "预订邮件同步到家里的平板，订单还在。"
-          },
-          {
-            "speaker": "林旭阳",
-            "speakerProfileId": "host-lin-xuyang",
-            "type": "host",
-            "text": "入住人写的是你。你刚说没去过，房是谁开的？"
-          }
-        ]
-      }
-    ],
-    "revisedAccountLines": [
-      {
-        "speaker": "妻子",
-        "speakerProfileId": "prologue-cafe-wife",
-        "type": "participant",
-        "text": "那天是我自己住的酒店。我跟家里吵完，不想回去，就在那里住了一晚。"
-      },
-      {
-        "speaker": "妻子",
-        "speakerProfileId": "prologue-cafe-wife",
-        "type": "participant",
-        "text": "顾*跟这件事没关系，他没有上去。订单上也只有我一个人的名字。"
-      },
-      {
-        "speaker": "妻子",
-        "speakerProfileId": "prologue-cafe-wife",
-        "type": "participant",
-        "text": "钱上也一样。我跟顾*之间没转过钱。"
-      },
-      {
-        "speaker": "妻子",
-        "speakerProfileId": "prologue-cafe-wife",
-        "type": "participant",
-        "text": "你们别把聊天、酒店和钱全拧在一起。"
-      }
-    ],
-    "revisedClaimStatements": [
-      {
-        "id": "room-admission",
-        "text": "那天是我自己住的酒店。",
-        "missLine": "那天是我自己住的酒店，这句我已经说了。你还想问什么？"
-      },
-      {
-        "id": "alone-stay",
-        "text": "我在那里住了一晚。",
-        "missLine": "订单上写的是我。你手里的东西也只能看到我。"
-      },
-      {
-        "id": "no-upstairs",
-        "text": "顾*没有上去。",
-        "missLine": "你们手里没有他上楼的东西。别拿猜的来问我。"
-      },
-      {
-        "id": "money-denial",
-        "text": "我跟顾*之间没转过钱。",
-        "correct": true
-      }
-    ],
-    "revisedEvidenceMissLines": {
-      "chat": [
-        {
-          "speaker": "妻子",
-          "speakerProfileId": "prologue-cafe-wife",
-          "type": "participant",
-          "text": "这张图只能说明我说过自己到了酒店。你拿它问转账，问不着。"
-        }
-      ],
-      "hotel": [
-        {
-          "speaker": "妻子",
-          "speakerProfileId": "prologue-cafe-wife",
-          "type": "participant",
-          "text": "订单上只有我的名字。你拿它问转账，也问不着。"
-        }
-      ]
-    },
-    "revisedPresentLeadLines": [
-      {
-        "speaker": "林旭阳",
-        "speakerProfileId": "host-lin-xuyang",
-        "type": "host",
-        "text": "你刚才说得很清楚：你跟顾*之间没转过钱。"
-      }
-    ],
         "moneyClaim": "我跟顾*之间没转过钱。",
         "transferEvidence": {
           "id": "parallel-transfer-ledger",
@@ -1005,7 +1122,7 @@
           }
         ],
         "legalRequests": {
-          "zhaoRole": "赵律师接受男方当场咨询，与林旭阳一同到场，协助把离婚和家账先谈清；她不代理诉讼，不替任何一方下裁判，亲子初检路径只在谈判吵散后私下告诉男方。",
+          "zhaoRole": "赵律师接受男方当场咨询，与林旭阳一同到场，协助把离婚和家账先谈清；她不代理诉讼，不替任何一方下裁判，亲子鉴定申请只在谈判吵散后私下告诉男方。",
           "items": [
             {
               "id": "divorce-evidence",
@@ -1027,9 +1144,9 @@
               "id": "parentage-and-child-contact",
               "title": "亲子关系与孩子见面",
               "uiNote": "先取得能说明怀疑来源的初步材料",
-              "request": "男方先取得有来源记录的初步排除意见；结果支持怀疑后，再向法院提出亲子关系异议并申请法院委托鉴定。孩子见面另行书面约时间。",
-              "nextAction": "先保全可核来源的样本，走个人委托的初步检测；委托、来源和流转记录一起留存。",
-              "boundary": "个人委托意见只建立可审查的怀疑基础，不能直接改变法律亲子关系；法院是否准许鉴定仍要审查材料。"
+              "request": "男方先咨询个人委托鉴定；正式委托时按机构要求核验身份和现场采样，诉讼中的亲子关系异议由法院审查。",
+              "nextAction": "咨询机构取得初步材料，再由律师审查是否足以提出亲子关系异议、申请鉴定。",
+              "boundary": "双方委托的鉴定意见不能直接改变法律亲子关系，诉讼中的证明力由法院审查。"
             }
           ]
         },
@@ -1041,22 +1158,10 @@
             "text": "酒店我不想再吵了。我现在就想离婚，把家里的账查清。"
           },
           {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "她说的自己都对不上了。聊下一个问题吧。"
-          },
-          {
             "speaker": "男方",
             "speakerProfileId": "prologue-cafe-husband",
             "type": "participant",
             "text": "这两个月，她一直不让我看账户。我怕她还会往外转。"
-          },
-          {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "具体证据的事，我们回头再说。"
           },
           {
             "speaker": "妻子",
@@ -1068,31 +1173,7 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "他请我来，是想先把离婚和家里的账谈清楚。"
-          },
-          {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "你肯拿完整流水，我们现在对。"
-          },
-          {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "你不肯，我就按现有材料准备。"
-          },
-          {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "今天我们只聊现有的这些事。"
-          },
-          {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "我们还没到起诉离婚的程度。"
+            "text": "他请我来，是想把离婚和账目的事当面说清。你愿意拿完整流水，我们现在就对；不愿意，今天就先谈能谈的。"
           }
         ],
         "parentageBlockLines": [
@@ -1100,7 +1181,7 @@
             "speaker": "男方",
             "speakerProfileId": "prologue-cafe-husband",
             "type": "participant",
-            "text": "钱的事先这么办。那孩子呢？你看着我说，他到底是不是我的？"
+            "text": "钱的事再说，孩子怎么办？"
           },
           {
             "speaker": "妻子",
@@ -1118,7 +1199,7 @@
             "speaker": "妻子",
             "speakerProfileId": "prologue-cafe-wife",
             "type": "participant",
-            "text": "我不做。你爱信不信。这个婚我离，孩子我带走。"
+            "text": "还能是谁的？就是你的啊！早就知道你不信任我了，也好，离就离。"
           },
           {
             "speaker": "赵律师",
@@ -1138,33 +1219,111 @@
             "speaker": "表哥",
             "speakerProfileId": "prologue-cafe-cousin",
             "type": "participant",
-            "text": "你们两口子合着伙逼她是吧？录像别关，刚才的话一段都别少。"
+            "text": "你们合着伙逼她是吧？刚才的话一段都别少。"
           },
           {
             "speaker": "旁白",
             "speakerProfileId": "narrator",
             "type": "stage",
-            "text": "表哥把自己的手机举起来。屏幕上也是刚才那段录像，进度条还在往前走。"
+            "text": "表哥把自己的手机举起来。屏幕上的录制计时还在走，镜头朝着窗外。"
           },
           {
             "speaker": "表哥",
             "speakerProfileId": "prologue-cafe-cousin",
             "type": "participant",
-            "text": "大主播也不过如此。你们敢只剪问赢的那几句，我就把这份原片发出去。"
+            "text": "你们敢断章取义剪完再发，我就先发原片再告你们。"
           },
           {
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "表哥，你那边先别录了。林旭阳，我们这边也关。还要谈就继续谈。"
+            "text": "那今天就先这样。也确实没什么好谈的了。"
           }
         ],
         "pressureChoices": [
           {
             "id": "camera-off",
-            "label": "继续谈",
-            "note": "桌边不再录，剩下的条件不公开。",
-            "echo": "你关掉桌边录像。后面的争吵不再录，已经拍下的片段暂不剪、不发。剩下的条件改为私下谈。"
+            "label": "结束谈话",
+            "note": "",
+            "echo": "其实后面的争吵也确实没有录的必要了。"
+          }
+        ],
+        "inquiries": [
+          {
+            "id": "hotel",
+            "options": [
+              {
+                "id": "hotel-message",
+                "question": "你发消息说到澜桥酒店了，现在又说那晚没去，是怎么回事？",
+                "correct": true,
+                "evidenceId": "chat",
+                "lines": [
+                  {
+                    "speaker": "妻子",
+                    "speakerProfileId": "prologue-cafe-wife",
+                    "type": "participant",
+                    "text": "等一下，你怎么会有我手机里的截图？"
+                  },
+                  {
+                    "speaker": "男方",
+                    "speakerProfileId": "prologue-cafe-husband",
+                    "type": "participant",
+                    "text": "家里的平板还登着你的账号。那天消息自己同步过来，我截下来的。"
+                  }
+                ]
+              },
+              {
+                "id": "hotel-room",
+                "question": "这个房间是谁订的？",
+                "correct": false,
+                "lines": [
+                  {
+                    "speaker": "妻子",
+                    "speakerProfileId": "prologue-cafe-wife",
+                    "type": "participant",
+                    "text": "订单上有名字，你看就是了。你们到底要问什么？"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "transfers",
+            "options": [
+              {
+                "id": "transfer-purpose",
+                "question": "你刚说没转过钱。流水里有三笔，交易对手都是顾*。这个怎么说？",
+                "correct": true,
+                "evidenceId": "parallel-transfer-ledger",
+                "lines": [
+                  {
+                    "speaker": "妻子",
+                    "speakerProfileId": "prologue-cafe-wife",
+                    "type": "participant",
+                    "text": "那是借的。有进有出，早就平了。"
+                  },
+                  {
+                    "speaker": "男方",
+                    "speakerProfileId": "prologue-cafe-husband",
+                    "type": "participant",
+                    "text": "你看，又变成借的了。完整流水我问了几次，她都不给。"
+                  }
+                ]
+              },
+              {
+                "id": "transfer-balance",
+                "question": "你们之间这些转账，最后谁还欠谁的钱？",
+                "correct": false,
+                "lines": [
+                  {
+                    "speaker": "妻子",
+                    "speakerProfileId": "prologue-cafe-wife",
+                    "type": "participant",
+                    "text": "你们拿来的只有这三笔，又不是全部往来。要说欠不欠，光这张看不出来。"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1174,19 +1333,19 @@
             "speaker": "旁白",
             "speakerProfileId": "narrator",
             "type": "narration",
-            "text": "同一晚，咖啡厅那桌彻底吵散。妻子和表哥先走。你和赵律师把男方送到停车场。半小时后，妻子已经把孩子接走，又发来一条语音。"
+            "text": "妻子和表哥先走了。你和赵律师把男方送到停车场。半小时后，妻子发来一条语音。"
           },
           {
             "speaker": "妻子（语音）",
             "speakerProfileId": "prologue-cafe-wife",
             "type": "message",
-            "text": "那天是我自己住的酒店，三笔钱是借的。你们敢剪成别的，我就闹给你们看。孩子的事没得商量。"
+            "text": "那天是我自己住的酒店，你们看到的三笔钱都是借款。你们要是敢乱剪辑做视频，小心跟你们翻脸不认人。孩子的事也没什么好说的。"
           },
           {
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "她不肯做，桌上再吵也没用。你真要去法院申请鉴定，不能只拿一句‘我怀疑’过去，手上得先有能支撑这个怀疑的具体东西。"
+            "text": "她不肯做鉴定，吵再多也没用。孩子是不是亲生的，我们现在手上什么都没有，拿对方没办法。真要打到法庭上，你手上必须要有相对确凿的证据才行。"
           },
           {
             "speaker": "男方",
@@ -1195,10 +1354,16 @@
             "text": "那我现在还能做什么？"
           },
           {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "你先去问我给你的那家机构。他们让你怎么留，你就怎么留。说不定她明天就把孩子的东西都带走。"
+            "speaker": "林旭阳",
+            "speakerProfileId": "host-lin-xuyang",
+            "type": "host",
+            "text": "你先去问我给你的那家机构，受理需要谁到场，带哪些材料都先问清。"
+          },
+          {
+            "speaker": "林旭阳",
+            "speakerProfileId": "host-lin-xuyang",
+            "type": "host",
+            "text": "孩子大部分东西估计她都带走了，你可能得仔细找下家里还能去做鉴定的东西。"
           },
           {
             "speaker": "男方",
@@ -1210,48 +1375,59 @@
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "那你现在回家。别私下找她理论，也别碰孩子。"
+            "text": "嗯，到家给我打个电话。"
           }
         ],
         "routes": [
           {
             "id": "toy",
-            "label": "先联系机构，再看家里的旧物",
-            "note": "由机构判断什么能收，男方只报告原位置。",
-            "title": "沙发缝里的咬胶",
+            "label": "咨询鉴定机构",
+            "note": "",
+            "title": "到家后的电话",
             "lines": [
               {
                 "speaker": "男方（电话）",
                 "speakerProfileId": "prologue-cafe-husband",
                 "type": "participant",
-                "text": "我到家了。沙发靠背缝里还有个硅胶咬胶，应该是她走得急，忘了拿。"
+                "text": "我到家了。沙发靠背缝里还有个硅胶咬胶。"
               },
               {
                 "speaker": "林旭阳",
                 "speakerProfileId": "host-lin-xuyang",
                 "type": "host",
-                "text": "先跟机构说清它放在哪、是谁用过。能不能收，让他们判断。"
+                "text": "你问过机构了吗？"
+              },
+              {
+                "speaker": "男方（电话）",
+                "speakerProfileId": "prologue-cafe-husband",
+                "type": "participant",
+                "text": "问了。他们说可以先做个人委托的鉴定，东西能不能用，还得看。我就是想先知道孩子到底是不是我的。"
               },
               {
                 "speaker": "赵律师",
                 "speakerProfileId": "zhao-lawyer",
                 "type": "advisor",
-            "text": "机构愿意接，就按他们的登记走。现在只叫个人委托初检，别叫司法鉴定。"
-          }
-        ],
-        "handoffLines": [
-          {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "机构回话要几天。电话先留着，你去开播吧。"
-          }
-        ]
-      },
+                "text": "先拿到材料，我再帮你看能不能向法院提出亲子关系异议，申请鉴定。"
+              },
+              {
+                "speaker": "男方（电话）",
+                "speakerProfileId": "prologue-cafe-husband",
+                "type": "participant",
+                "text": "她还是不肯做呢？"
+              },
+              {
+                "speaker": "赵律师",
+                "speakerProfileId": "zhao-lawyer",
+                "type": "advisor",
+                "text": "我们有必要证据，她拿不出相反证据又拒绝鉴定，法院可以支持你否认亲子关系的主张。"
+              }
+            ],
+            "handoffLines": []
+          },
           {
             "id": "account",
-            "label": "先看男方名下的家庭支出卡",
-            "note": "只看男方本人能下载的明细，不碰妻子的个人账户。",
+            "label": "核对家庭支出卡",
+            "note": "",
             "title": "家庭支出卡",
             "rows": [
               {
@@ -1271,7 +1447,7 @@
                 "focus": true
               }
             ],
-        "lines": [
+            "lines": [
               {
                 "speaker": "男方（电话）",
                 "speakerProfileId": "prologue-cafe-husband",
@@ -1282,19 +1458,25 @@
                 "speaker": "林旭阳",
                 "speakerProfileId": "host-lin-xuyang",
                 "type": "host",
-                "text": "那就只看你这张卡。她自己的账户先别碰。"
+                "text": "你发来吧。我请平时帮节目核账的周会计一起看。"
+              },
+              {
+                "speaker": "旁白",
+                "speakerProfileId": "narrator",
+                "type": "stage",
+                "text": "你在微信里建了个临时群，把男方和周会计加进来，发起群语音。周会计接通后，你将男方刚发来的明细转给他。"
               },
               {
                 "speaker": "周会计",
                 "speakerProfileId": "zhou-accountant",
                 "type": "advisor",
-                "text": "明细我收到了。五号是房贷，十八号还有一笔固定转出。"
+                "text": "老林，你这下班语音，比上班还准时。明细我收到了，五号是房贷，十八号还有一笔固定转出。"
               },
               {
                 "speaker": "林旭阳",
                 "speakerProfileId": "host-lin-xuyang",
                 "type": "host",
-                "text": "车贷呢？"
+                "text": "又耽误你吃饭了，回头请你。车贷呢？"
               },
               {
                 "speaker": "周会计",
@@ -1321,37 +1503,60 @@
                 "text": "你自己的卡，电子回单能下载吗？"
               },
               {
-                "speaker": "男方（电话）",
+                "speaker": "男方（微信语音）",
                 "speakerProfileId": "prologue-cafe-husband",
                 "type": "participant",
-            "text": "能。我自己去银行APP里下。"
-          }
-        ],
-        "handoffLines": [
-          {
-            "speaker": "林旭阳",
-            "speakerProfileId": "host-lin-xuyang",
-            "type": "host",
-            "text": "回单你自己下，先留在麦外。时间到了，我得回去开播。"
+                "text": "能。我自己去银行APP里下。"
+              }
+            ],
+            "handoffLines": [
+              {
+                "speaker": "林旭阳",
+                "speakerProfileId": "host-lin-xuyang",
+                "type": "host",
+                "text": "那你把回单发给赵律师。拿到之后，我们再一起看。"
+              }
+            ]
           }
         ]
-      }
-    ]
-  },
+      },
       "forensic": {
-        "timeline": "数日后",
+        "timeline": "数周后",
         "openingLines": [
           {
             "speaker": "旁白",
             "speakerProfileId": "narrator",
             "type": "narration",
-            "text": "数日后。录制关闭，屏幕上只留张法医和当事人的个人委托检测回告。"
+            "text": "回忆结束，时间回到现在。距离咖啡厅那晚已经过去数周。录制关闭。赵律师带来一份新的委托记录：妻子要求孩子的信息不得公开，随后同意双方带孩子到机构。工作人员核对身份、完成现场采样，今天才回告结果。"
           },
           {
             "speaker": "张法医",
             "speakerProfileId": "zhang-forensic",
             "type": "advisor",
-            "text": "这是个人委托的初步检测，不是法院鉴定。咬胶样本和男方样本都有登记。结果是排除生物学父子关系。"
+            "text": "这次用的是到场核对身份后提取的样本，没有用那只咬胶。这份鉴定意见排除生物学父子关系。它是你们双方委托的，不是法院委托的。"
+          },
+          {
+            "text": "男方把手机扣在桌上，手还压着，许久没有说话。",
+            "type": "stage",
+            "speaker": "旁白"
+          },
+          {
+            "text": "我给他报学校、带他看病……一直都是我去的。",
+            "speaker": "男方",
+            "speakerProfileId": "prologue-cafe-husband",
+            "type": "participant"
+          },
+          {
+            "text": "那些日子不会因为这张纸就没发生过。今天不用把以后的事全决定。",
+            "speaker": "赵律师",
+            "speakerProfileId": "zhao-lawyer",
+            "type": "advisor"
+          },
+          {
+            "text": "我知道。让我坐一会儿。",
+            "speaker": "男方",
+            "speakerProfileId": "prologue-cafe-husband",
+            "type": "participant"
           },
           {
             "speaker": "男方",
@@ -1363,13 +1568,13 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "不能。它只能让你的怀疑不再是一句空话。你可以带着它去法院提出亲子关系异议，再申请由法院委托鉴定。法院准不准，还要看其他材料。"
+            "text": "不能直接改。你要提出亲子关系异议，就把这份意见和相关材料交给法院审查。是否还要由法院委托鉴定，得由法院决定。"
           },
           {
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "这份初检只排除了他。生父是谁，我们不猜。孩子以后怎么安排，也不是这通电话能定的。"
+            "text": "结果我们听到了。生父是谁，不猜；孩子以后怎么安排，你们跟律师私下谈。这段不公开。"
           }
         ],
         "accountClueLines": [
@@ -1404,42 +1609,45 @@
             "text": "那就先别把这笔钱也算到顾*头上。"
           }
         ],
-    "finalCards": {
-      "result": "个人委托初检：排除生物学父子关系",
-      "openAccount": "固定转账收款人另有其人"
-    },
-    "unknownByRoute": {
-      "toy": [
-        "孩子的生物学父亲是谁。",
-        "女方何时知道孩子与男方不存在生物学父子关系，以及她为什么仍然结婚。"
-      ],
-      "account": [
-        "固定转账收款人的身份没有向节目公开。",
-        "‘私教课时’是否对应真实课程、为什么持续支付、妻子是否知情。"
-      ]
-    }
-  },
+        "finalCards": {
+          "result": "双方到场委托鉴定：排除生物学父子关系",
+          "openAccount": "固定转账收款人另有其人"
+        },
+        "unknownByRoute": {
+          "toy": [
+            "孩子的生物学父亲是谁。",
+            "女方何时知道孩子与男方不存在生物学父子关系，以及她为什么仍然结婚。"
+          ],
+          "account": [
+            "固定转账收款人的身份没有向节目公开。",
+            "‘私教课时’是否对应真实课程、为什么持续支付、妻子是否知情。"
+          ]
+        }
+      },
       "truthBoundary": {
         "confirmed": [
           "妻子否认去过澜桥酒店，随后承认房是自己开的；她否认与顾*转账，流水显示两人之间有三笔双向记录。",
-          "个人委托的初步检测中，机构登记的咬胶咬合面样本与男方对照样本排除生物学父子关系；该意见尚未替代法院委托鉴定或生效裁判。",
+          "数周后双方同意带孩子到机构，核验身份并现场采样；鉴定意见排除生物学父子关系。这是双方委托的意见，不是变更法律亲子关系的生效裁判。",
           "男方名下的家庭支出卡里有一笔每月同日的固定转账，不是房贷或未结清车贷；摘要写着‘私教课时’，电子回单上的收款姓氏也不是顾。"
         ],
         "unknown": [
           "酒店内具体发生了什么，三笔钱各自是借款、赠与还是其他用途。",
           "孩子的生物学父亲是谁。",
-          "女方何时知道孩子与男方不存在生物学父子关系，以及她为什么仍然结婚；个人委托初检不能证明她此前的知情和婚姻目的。",
+          "女方何时知道孩子与男方不存在生物学父子关系，以及她为什么仍然结婚；鉴定意见不能证明她此前的知情和婚姻目的。",
           "固定转账收款人的身份没有向节目公开；‘私教课时’是否对应真实课程、为什么持续支付、妻子是否知情。"
         ],
-        "endingLine": "初步排除亲生，还有一笔账没对上。"
+        "endingLine": "亲子鉴定有了结果，家庭账仍有未解之处。"
       },
       "authorTruth": {
         "wifePregnancyKnowledge": "女方怀孕时已经知道孩子不是男方的。",
         "wifeMarriageMotive": "她仍然与男方结婚，目的就是取得婚内钱款后离开。",
-        "disclosureBoundary": "这是后续主线的作者真相。试玩现有材料只证明个人委托样本组合排除生物学父子关系，尚不能证明女方何时知情或为何结婚。"
+        "disclosureBoundary": "这是后续主线的作者真相。试玩只披露双方同意、到场核验并采样所得的亲子鉴定意见，不能证明女方此前何时知情或为何结婚。"
       },
       "rageBaitContract": {
-        "tierPlan": ["Tier 2", "Tier 3"],
+        "tierPlan": [
+          "Tier 2",
+          "Tier 3"
+        ],
         "debts": [
           {
             "id": "cafe-only-close-chat",
@@ -1451,7 +1659,7 @@
             "interest": {
               "location": "cafePrologue.cafe.evidencePair",
               "trigger": "player-input",
-          "payoff": "玩家先点出她否认去酒店的原话，再亲手压上一张能直接反驳它的材料；她被迫承认房是自己开的。",
+              "payoff": "玩家先点出她否认去酒店的原话，再亲手压上一张能直接反驳它的材料；她被迫承认房是自己开的。",
               "holdingLimit": "同一场"
             },
             "principal": {
@@ -1478,17 +1686,29 @@
               "holdingLimit": "同一屏"
             },
             "principal": {
-          "location": "cafePrologue.forensic",
-          "trigger": "player-input",
-          "payoff": "玩家先查咬胶，数日后只收到支持亲子怀疑的初步排除意见；先查家庭卡，则只收到十八日回单。两条都不在同一关同时兑付。"
-        },
-        "nextDebt": {
-          "location": "cafePrologue.forensic.accountClueLines",
-          "quote": "十八号那笔，收款人不是顾*。"
-        }
+              "location": "cafePrologue.forensic",
+              "trigger": "player-input",
+              "payoff": "玩家先联系机构，得知旧物不能代替身份核验。数周后，双方同意现场采样才取得亲子鉴定意见；先查家庭卡则只收到十八日回单，未选路线不提前披露结果。"
+            },
+            "nextDebt": {
+              "location": "cafePrologue.forensic.accountClueLines",
+              "quote": "十八号那笔，收款人不是顾*。"
+            }
           }
         ]
       }
     }
+  },
+  "storyCalendar": {
+    "timezone": "Asia/Shanghai",
+    "firstNightDate": "2024-07-15",
+    "nightCount": 8,
+    "platformDeadline": "2024-07-23T09:00:00+08:00",
+    "workplaceMeetingDate": "2024-07-22",
+    "workplaceActivityDate": "2024-06-26",
+    "case3DinnerDate": "2024-07-21",
+    "hostStartedMonth": "2022-01",
+    "hostMisjudgmentMonth": "2022-07",
+    "oldBillDate": "2019-11-08"
   }
 }

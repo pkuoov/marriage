@@ -1,3 +1,5 @@
+import { replaceDocumentQuestions, toggleDocumentMarks } from "../../runtime/documentMarkModel.js";
+
 export function createOvernightDocumentScreens(ctx, callbacks = {}) {
   const {
     playAudioCueOnce,
@@ -41,25 +43,26 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
     }
     const overnight = ensureOvernight(brief);
     const markedRows = overnight.documentMarks?.[document.id] ?? [];
-    const canLeave = markedRows.length > 0;
+    const canLeave = brief.dialoguePresentation?.focusedInquiry || markedRows.length > 0;
     dayFrame({
       brief,
       label: dayScene.label ?? document.title ?? "回后台审流水",
       chapter: quietDayChapter(dayScene.kind),
+      screenClass: `document-review-screen ${document.presentation === "transactionCards" ? "transaction-review-screen" : ""}`,
       backdropClass: dayScene.backdropClass ?? "day-document",
       text: `
-        ${dayScene.body?.access ? `<p class="hint day-access-hint"><b>这份材料为什么能看：</b>${escapeHtml(dayScene.body.access)}</p>` : ""}
-        ${documentViewerHtml({ document, markedRows })}
+        ${document.presentation !== "transactionCards" && dayScene.body?.sourceNote ? `<p class="hint day-access-hint">${escapeHtml(dayScene.body.sourceNote)}</p>` : ""}
+        ${documentViewerHtml({ document, markedRows, readOnly: Boolean(brief.dialoguePresentation?.focusedInquiry) })}
       `,
       choices: flowGroupHtml(`
-        <button data-scene="dayMap" type="button">先回安排页</button>
+        ${brief.overnightStructure?.flowMode === "linear" ? "" : `<button data-scene="dayMap" type="button">先回安排页</button>`}
         ${canLeave
-          ? `<button class="primary" data-complete-day-scene type="button">圈好，带回直播间</button>`
+          ? `<button class="primary" data-complete-day-scene type="button">${brief.dialoguePresentation?.focusedInquiry ? "材料收好了，继续" : "圈好了，继续"}</button>`
           : `<button type="button" disabled>先圈一行</button>`}
       `)
     });
     bind("[data-document-row]", (event) => markDocumentRow(brief, dayScene, document, event.currentTarget?.getAttribute("data-document-row") ?? ""));
-    bind("[data-complete-day-scene]", () => completeDayScene(brief, dayScene));
+    bind("[data-complete-day-scene]", () => confirmDocumentMarks(brief, dayScene, document));
     bindSceneButtons();
   }
 
@@ -110,11 +113,11 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
           <ol class="timeline-picked">
             ${cards.map((_, index) => {
               const card = order[index];
-              return `<li class="${card ? "filled" : "empty"}"><i>${index + 1}</i><span>${escapeHtml(card ?? "等待放入")}</span></li>`;
+              return `<li class="${card ? "filled" : "empty"}"><i>${index + 1}</i><span>${escapeHtml(card ?? "等待放入")}</span>${card && !submitted ? `<button data-remove-day-timeline="${index}" type="button" aria-label="移除第 ${index + 1} 张：${escapeHtml(card)}">移除</button>` : ""}</li>`;
             }).join("")}
           </ol>
         </section>
-        ${submitted ? `<p class="reaction">${escapeHtml(payoff ?? "")}</p>` : `
+        ${submitted ? `<p class="reaction">${escapeHtml(payoff ?? "")}</p>${!timelineState.correct ? '<button data-reset-day-timeline type="button">重新排列</button>' : ''}` : `
           <section class="timeline-available">
             <span>待放时间点</span>
             <div class="timeline-card-grid">
@@ -126,6 +129,7 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
             </div>
           </section>
           <div class="inline-actions">
+            <button data-undo-day-timeline ${order.length ? "" : "disabled"} type="button">撤销上一张</button>
             <button data-reset-day-timeline ${order.length ? "" : "disabled"} type="button">清空重排</button>
             <button class="primary" data-submit-day-timeline ${order.length === cards.length ? "" : "disabled"} type="button">确认时间线</button>
           </div>
@@ -159,33 +163,40 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
     }[dayKind] ?? "白天";
   }
 
-  function documentViewerHtml({ document = {}, markedRows = [] } = {}) {
+  function documentViewerHtml({ document = {}, markedRows = [], readOnly = false } = {}) {
     const marked = new Set(markedRows ?? []);
     const limit = Number(document.markLimit ?? 3);
     const columns = documentTableColumns(document);
     const gridStyle = `grid-template-columns: 56px repeat(${columns.length}, minmax(110px, 1fr));`;
+    const compact = !readOnly && document.presentation === 'transactionCards';
+    const focusedRows = (document.rows ?? []).filter((row) => document.focusRowIds?.includes(row.rowId));
     return `
       <section class="document-viewer-card">
-        <span class="source-badge">文档呈堂</span>
+        ${compact ? "" : '<span class="source-badge">后台材料</span>'}
         <p><b>${escapeHtml(document.title ?? "")}</b></p>
         <p>${escapeHtml(document.intro ?? "")}</p>
-        <div class="document-mark-limit"><b>已圈 ${marked.size}/${limit}</b><span>圈行后，夜里可逐条对账。</span></div>
+        ${readOnly ? "" : `<div class="document-mark-limit"><b>已标注 ${marked.size}/${limit}</b><span>点击交易选择，再点可取消；确认后带回连线发问。</span></div>`}
+        ${compact ? `<div class="transaction-card-grid">${focusedRows.map((row) => `
+          <button class="transaction-card ${marked.has(row.rowId) ? 'marked' : ''}" data-document-row="${escapeHtml(row.rowId)}" aria-pressed="${marked.has(row.rowId)}" ${!marked.has(row.rowId) && marked.size >= limit ? 'disabled' : ''} type="button">
+            <span>${escapeHtml(row.date)} · ${escapeHtml(row.kind)}</span><b>${escapeHtml(row.amount)}</b><span>${escapeHtml(row.party)}</span><small>${escapeHtml(row.memo)}</small>
+          </button>`).join('')}</div><details class="transaction-original"><summary>查看其余流水</summary>` : ''}
         <div class="bank-flow-table" role="table" aria-label="${escapeHtml(document.title ?? "流水单")}">
           <div class="bank-flow-head" role="row" style="${gridStyle}">
             <span>序号</span>${columns.map((column) => `<span>${escapeHtml(column.label)}</span>`).join("")}
           </div>
           ${(document.rows ?? []).map((row, index) => {
             const selected = marked.has(row.rowId);
-            const disabled = !selected && marked.size >= limit;
+            const disabled = !readOnly && !selected && marked.size >= limit;
             return `
-              <button class="bank-flow-row ${selected ? "marked" : ""}" data-document-row="${escapeHtml(row.rowId ?? "")}" ${disabled || selected ? "disabled" : ""} type="button" role="row" style="${gridStyle}">
-                <span>${String(index + 1).padStart(2, "0")}</span>
-                ${columns.map((column) => `<span>${escapeHtml(row[column.key] ?? "")}</span>`).join("")}
-              </button>
+              <${readOnly ? "div" : "button"} class="bank-flow-row ${!readOnly && selected ? "marked" : ""}" ${readOnly ? "" : `data-document-row="${escapeHtml(row.rowId ?? "")}" ${disabled ? "disabled" : ""} aria-pressed="${selected}" type="button"`} role="row" style="${gridStyle}">
+                <span data-column-label="序号">${String(index + 1).padStart(2, "0")}</span>
+                ${columns.map((column) => `<span data-column-label="${escapeHtml(column.label)}">${escapeHtml(row[column.key] ?? "")}</span>`).join("")}
+              </${readOnly ? "div" : "button"}>
             `;
           }).join("")}
         </div>
-        ${documentEarnedPreviewHtml(document, markedRows)}
+        ${compact ? '</details>' : ''}
+        ${compact || readOnly ? '' : documentEarnedPreviewHtml(document, markedRows)}
       </section>
     `;
   }
@@ -245,7 +256,7 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
   }
 
   function selectTimelineCard(brief, dayScene = {}, card = "") {
-    if (!card) return;
+    if (!card || !(dayScene.body?.timelineSort?.cards ?? []).includes(card)) return;
     const overnight = ensureOvernight(brief);
     const previous = overnight.timelineSorts?.[dayScene.id] ?? { order: [], submitted: false };
     if (previous.submitted || (previous.order ?? []).includes(card)) return;
@@ -258,6 +269,20 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
         }
       }
     });
+    saveState();
+    render();
+  }
+
+  function removeTimelineCard(brief, dayScene = {}, index = -1) {
+    const overnight = ensureOvernight(brief);
+    const previous = overnight.timelineSorts?.[dayScene.id] ?? {};
+    const order = previous.order ?? [];
+    const target = index === -1 ? order.length - 1 : Number(index);
+    if (previous.submitted || !Number.isInteger(target) || target < 0 || target >= order.length) return;
+    updateOvernight(brief, { timelineSorts: {
+      ...(overnight.timelineSorts ?? {}),
+      [dayScene.id]: { ...previous, order: order.filter((_, position) => position !== target) }
+    } });
     saveState();
     render();
   }
@@ -285,7 +310,7 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
       routeAxis: dayScene.body?.routeAxis ?? "document-edge",
       routeTone: correct ? "timeline-hit" : "timeline-miss"
     }, { version: dayScene.body?.text ?? "" });
-    completeDayScene(brief, dayScene, { renderNow: false, stayActive: true });
+    if (correct) completeDayScene(brief, dayScene, { renderNow: false, stayActive: true });
     saveState();
     render();
   }
@@ -295,34 +320,71 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
     if (!row) return;
     const overnight = ensureOvernight(brief);
     const previous = overnight.documentMarks?.[document.id] ?? [];
-    if (previous.includes(rowId)) return;
-    const limit = Math.max(0, Number(document.markLimit ?? 3));
-    if (previous.length >= limit) return;
-    const markedRows = [...previous, rowId];
-    const earned = mergeDocumentQuestions(overnight.documentEarnedQuestions ?? [], earnedDocumentQuestionsFor(document, markedRows));
+    if ((overnight.dayScenesDone ?? []).includes(dayScene.id)) return;
+    const markedRows = toggleDocumentMarks(document, previous, rowId);
+    if (markedRows === previous) return;
+    clearDraftDocumentRecords(brief, dayScene, document);
     updateOvernight(brief, {
-      documentMarks: {
-        ...(overnight.documentMarks ?? {}),
-        [document.id]: markedRows
-      },
-      documentEarnedQuestions: earned
+      documentMarks: { ...(overnight.documentMarks ?? {}), [document.id]: markedRows },
+      documentEarnedQuestions: replaceDocumentQuestions(overnight.documentEarnedQuestions ?? [], document, [])
     });
-    markAction(brief, `document:${document.id}:${rowId}`);
-    playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:document:${document.id}:${rowId}`);
-    recordRouteChoice(brief, overnightRouteIndexFor(brief, dayScene) + markedRows.length / 1000, {
-      question: `圈出：${row.date ?? row.kind ?? "这一行"}`,
-      answer: documentRowSummary(row, document),
-      routeAxis: "document-edge",
-      routeTone: "document-row"
-    }, { version: document.title ?? "" });
+    if (markedRows.includes(rowId)) playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:document:${document.id}:${rowId}`);
+    const positions = Array.from(globalThis.document.querySelectorAll(".dialogue-card, .bank-flow-table, .document-table-wrap, main"))
+      .map((element) => ({ selector: element.className, top: element.scrollTop, left: element.scrollLeft }));
+    const pageTop = globalThis.scrollY;
     saveState();
     render();
+    // Keep focus on the toggled row before the queued default-focus callback.
+    // Otherwise it selects Continue and scrolls away after our restoration.
+    Array.from(globalThis.document.querySelectorAll("[data-document-row]"))
+      .find((element) => element.getAttribute("data-document-row") === rowId)?.focus({ preventScroll: true });
+    for (const position of positions) {
+      const element = Array.from(globalThis.document.querySelectorAll(".dialogue-card, .bank-flow-table, .document-table-wrap, main"))
+        .find((item) => item.className === position.selector);
+      if (element) { element.scrollTop = position.top; element.scrollLeft = position.left; }
+    }
+    globalThis.scrollTo?.(0, pageTop);
   }
 
-  function mergeDocumentQuestions(current = [], next = []) {
-    const byId = new Map((current ?? []).map((question) => [question.id, question]));
-    (next ?? []).forEach((question) => byId.set(question.id, question));
-    return [...byId.values()];
+  function clearDraftDocumentRecords(brief, dayScene, document) {
+    // Older saves recorded tentative clicks immediately. Remove only this
+    // document's draft entries before replacing them with the confirmed marks.
+    const state = ctx.getState();
+    const key = caseKey(brief);
+    const base = overnightRouteIndexFor(brief, dayScene);
+    const indexes = new Set(Array.from({ length: document.markLimit ?? 3 }, (_, index) => base + (index + 1) / 1000));
+    state.routeChoiceLog = {
+      ...(state.routeChoiceLog ?? {}),
+      [key]: (state.routeChoiceLog?.[key] ?? []).filter((entry) => !(entry.tone === "document-row" && indexes.has(entry.sceneIndex)))
+    };
+    state.caseActionLog = {
+      ...(state.caseActionLog ?? {}),
+      [key]: Object.fromEntries(Object.entries(state.caseActionLog?.[key] ?? {}).filter(([id]) => !id.startsWith(`document:${document.id}:`)))
+    };
+  }
+
+  function confirmDocumentMarks(brief, dayScene, document) {
+    const overnight = ensureOvernight(brief);
+    const markedRows = overnight.documentMarks?.[document.id] ?? [];
+    if (!markedRows.length && !brief.dialoguePresentation?.focusedInquiry) return;
+    if (!(overnight.dayScenesDone ?? []).includes(dayScene.id)) {
+      clearDraftDocumentRecords(brief, dayScene, document);
+      updateOvernight(brief, {
+        documentEarnedQuestions: replaceDocumentQuestions(overnight.documentEarnedQuestions ?? [], document, markedRows)
+      });
+      markedRows.forEach((rowId, index) => {
+        const row = documentRowById(document, rowId);
+        if (!row) return;
+        markAction(brief, `document:${document.id}:${rowId}`);
+        recordRouteChoice(brief, overnightRouteIndexFor(brief, dayScene) + (index + 1) / 1000, {
+          question: `圈出：${row.date ?? row.kind ?? "这一行"}`,
+          answer: documentRowSummary(row, document),
+          routeAxis: "document-edge",
+          routeTone: "document-row"
+        }, { version: document.title ?? "" });
+      });
+    }
+    completeDayScene(brief, dayScene);
   }
 
   function documentRowSummary(row = {}, document = {}) {
@@ -371,6 +433,7 @@ export function createOvernightDocumentScreens(ctx, callbacks = {}) {
     dayFollowupHtml,
     quietDayChapter,
     selectTimelineCard,
+    removeTimelineCard,
     submitTimelineSort,
     pendingDocumentQuestions
   };

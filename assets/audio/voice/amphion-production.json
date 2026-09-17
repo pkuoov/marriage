@@ -73,11 +73,6 @@
       "description": "案2托尼老师，二十多岁；疲惫、嘴甜，熟悉如何顺手给出情绪价值。",
       "referenceScript": "今天店里从下午忙到晚上，我刚送走最后一位客人。吹风机停下来了，耳朵里还是嗡嗡的，我先坐一会儿。"
     },
-    "case3-female-elder": {
-      "kind": "material-only-role",
-      "description": "案3饭局女性长辈；礼貌核对事实，不知道自己的问题会让桌面冷下来。",
-      "referenceScript": "这家店我以前来过两次，菜上得不算快。你们先聊，我给大家添点热水，等人齐了我们再点菜。"
-    },
     "case4-colleague": {
       "kind": "cast-character",
       "description": "案4项目负责人；理性、忙，习惯用机会语言催别人承担成本。",
@@ -87,6 +82,11 @@
       "kind": "cast-character",
       "description": "案4供应商项目员；流程化，认为自己只是在说明长期做法。",
       "referenceScript": "报价单我已经按新数量改过了，送货时间还是周五上午。东西到场以后，麻烦找个人签收。"
+    },
+    "case3-caller": {
+      "kind": "cast-character",
+      "description": "案3咨询者林，审计从业者；在饭局中途向相亲对象询问本科学历。",
+      "referenceScript": "这家店我以前来过两次，菜上得不算快。你们先聊，我给大家添点热水，等人齐了我们再点菜。"
     }
   },
   "jobs": [
@@ -124,16 +124,16 @@
     {
       "cueId": "voice.case3.dinner-pause",
       "status": "blocked-reference",
-      "speakerProfileId": "case3-female-elder",
-      "transcript": "本科也是那所学校吗？",
+      "speakerProfileId": "case3-caller",
+      "transcript": "你发的材料是那所学校，本科也是在那儿读的吗？",
       "targetPath": "./assets/audio/voice/case3-dinner-pause.ogg",
-      "referenceWav": "assets/audio/source/voice/references/case3-female-elder/reference.wav",
-      "referenceTranscript": "assets/audio/source/voice/references/case3-female-elder/reference.txt",
+      "referenceWav": "assets/audio/source/voice/references/case3-caller/reference.wav",
+      "referenceTranscript": "assets/audio/source/voice/references/case3-caller/reference.txt",
       "generationDirectory": "assets/audio/source/voice/amphion/voice-case3-dinner-pause",
       "reviewPath": "assets/audio/review/voice/case3-dinner-pause-candidate.ogg",
       "reportPath": "assets/audio/reports/voice/case3-dinner-pause-candidate.json",
       "performance": "真心核对，不带审讯口气，尾音自然落下。",
-      "tailSilenceSeconds": 11,
+      "tailSilenceSeconds": 0.12,
       "effectsDeferred": [
         "cup and plate room response"
       ]
@@ -142,7 +142,7 @@
       "cueId": "voice.case4.pad-message",
       "status": "blocked-reference",
       "speakerProfileId": "case4-colleague",
-      "transcript": "你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。",
+      "transcript": "你先把场地和礼品费垫了，这场就交给你。",
       "targetPath": "./assets/audio/voice/case4-pad-message.ogg",
       "referenceWav": "assets/audio/source/voice/references/case4-colleague/reference.wav",
       "referenceTranscript": "assets/audio/source/voice/references/case4-colleague/reference.txt",
@@ -158,7 +158,7 @@
       "cueId": "voice.case4.supplier-message",
       "status": "blocked-reference",
       "speakerProfileId": "case4-supplier",
-      "transcript": "服务协调费按老规矩返给对接人。",
+      "transcript": "每一层的返费结完，下一批点位才往下走。",
       "targetPath": "./assets/audio/voice/case4-supplier-message.ogg",
       "referenceWav": "assets/audio/source/voice/references/case4-supplier/reference.wav",
       "referenceTranscript": "assets/audio/source/voice/references/case4-supplier/reference.txt",

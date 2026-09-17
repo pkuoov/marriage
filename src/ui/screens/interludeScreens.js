@@ -1,3 +1,6 @@
+import { evidenceOperationHtml } from "../evidenceView.js";
+import { nextLinearInvestigationScene } from "../../runtime/nightOvernightModel.js";
+
 export function createInterludeScreens(ctx) {
   const {
     playAudioCueOnce,
@@ -95,6 +98,21 @@ export function createInterludeScreens(ctx) {
     const night = ensureNight(brief);
     const activeAction = nightActionById(brief, night.activeActionId);
     if (activeAction) return renderInterludeAction(brief, activeAction);
+    if (structure.interlude?.flowMode === "linear") {
+      const next = nextLinearInvestigationScene(structure.interlude.actions, night.interludeActionsDone);
+      if (next) {
+        updateNight(brief, { activeActionId: next.id });
+        saveState();
+        return renderInterludeAction(brief, next);
+      }
+      const overnight = ensureOvernight(brief);
+      updateOvernight(brief, {
+        earnedItems: [...new Set([...(overnight.earnedItems ?? []), ...interludeEarnedItemsForOvernight(brief, night.inventory)])]
+      });
+      state.scene = "dayActOpening";
+      saveState();
+      return render();
+    }
     const interrupt = nextPendingInterruptAction(brief, night);
     if (interrupt) return renderInterludeInterruptToast(brief, interrupt);
     const interlude = structure.interlude ?? {};
@@ -161,7 +179,7 @@ export function createInterludeScreens(ctx) {
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       }),
       choices: flowGroupHtml(`
-        ${pick ? `<button class="primary" data-return-interlude type="button">回调查台</button>` : `<button data-return-interlude type="button">先放下</button>`}
+        ${pick ? `<button class="primary" data-return-interlude type="button">${nightStructureFor(brief)?.interlude?.flowMode === "linear" ? "继续" : "回调查台"}</button>` : `<button data-return-interlude type="button">先放下</button>`}
       `)
     });
     bindDelegationButtons(brief, delegation, { interludeAction: action });
@@ -176,6 +194,15 @@ export function createInterludeScreens(ctx) {
     const check = evidenceChecksFor(brief)[safeIndex] ?? null;
     const pick = selectedEvidencePickForState(state, brief, safeIndex);
     if (!check) return completeInterludeAction(brief, action);
+    if (action.readOnlyAfterCall) {
+      if (actionDone(brief, `evidenceCheck:${safeIndex}`)) return completeInterludeAction(brief, action);
+      dayFrame({ brief, backdropClass: "day-document", label: "已收到的审批原页", chapter: "收麦后",
+        text: evidenceOperationHtml(check, {}, safeIndex, ""),
+        choices: flowGroupHtml('<button class="primary" data-read-legacy-material type="button">继续</button>') });
+      bind("[data-read-legacy-material]", () => { markAction(brief, `evidenceCheck:${safeIndex}`); completeInterludeAction(brief, action); });
+      bindSceneButtons(); return;
+    }
+    const retry = brief.dialoguePresentation?.focusedInquiry && pick && !pick.correct;
     dayFrame({
       brief,
       backdropClass: action.backdropClass ?? "day-document",
@@ -186,14 +213,22 @@ export function createInterludeScreens(ctx) {
         pick,
         index: safeIndex,
         hostName: state.playerName,
+        costMeta: "",
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       }),
       choices: pick
-        ? flowGroupHtml(`<button class="primary" data-return-interlude type="button">回调查台</button>`)
+        ? flowGroupHtml(`<button class="primary" data-return-interlude type="button">${retry ? "这处没问清，重新问" : nightStructureFor(brief)?.interlude?.flowMode === "linear" ? "继续" : "回调查台"}</button>`)
         : ""
     });
     bindEvidenceCheckButtons(brief, check, { interludeAction: action });
-    bind("[data-return-interlude]", () => completeInterludeAction(brief, action));
+    bind("[data-return-interlude]", () => {
+      if (retry) {
+        delete state.evidenceCheckPicks[evidenceAnswerKey(brief, safeIndex)];
+        saveState();
+        return render();
+      }
+      completeInterludeAction(brief, action);
+    });
     bindSceneButtons();
   }
 
@@ -210,21 +245,23 @@ export function createInterludeScreens(ctx) {
       brief,
       backdropClass: action.backdropClass ?? "day-document",
       label: action.label ?? "后台私信",
+      screenClass: !pick && hook.socialPost ? "social-evidence-screen" : "",
       chapter: "回拨前",
       text: `${investigationBackflowScreenHtml({
         hook,
         pick,
         index: hookIndex,
         hostName: state.playerName,
+        costMeta: "",
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       })}${pick ? replyChoicesHtml(replyChoices, replyChoiceId) : ""}`,
       choices: pick
-        ? flowGroupHtml(`${needsReply ? "" : `<button class="primary" data-return-interlude type="button">回调查台</button>`}`)
+        ? flowGroupHtml(`${needsReply ? "" : `<button class="primary" data-return-interlude type="button">${nightStructureFor(brief)?.interlude?.flowMode === "linear" ? "继续" : "回调查台"}</button>`}`)
         : ""
     });
     bindInvestigationButtons(brief, hook, hookIndex, { interludeAction: action });
     bind("[data-reply-choice]", (event) => recordInterludeReplyChoice(brief, action, replyChoices, event.currentTarget?.getAttribute("data-reply-choice") ?? ""));
-    bind("[data-return-interlude]", () => closeInterludeAction(brief));
+    bind("[data-return-interlude]", () => completeInterludeAction(brief, action));
     bindSceneButtons();
   }
 
@@ -240,7 +277,7 @@ export function createInterludeScreens(ctx) {
       text: interludeDialogueActionHtml(action, followupAsked, audioCueView(cueId)),
       choices: flowGroupHtml(`
         ${action.script?.followupQuestion && !followupAsked ? `<button data-interlude-followup="${escapeHtml(action.id)}" type="button">追一问</button>` : ""}
-        <button class="primary" data-complete-interlude-action type="button">记下回调查台</button>
+        <button class="primary" data-complete-interlude-action type="button">继续</button>
       `),
       keepVoiceCueId: cueId
     });
@@ -267,7 +304,7 @@ export function createInterludeScreens(ctx) {
       label: action.label ?? "听回放",
       chapter: "回拨前",
       text: interludePlaybackActionHtml(action, audioCueView(cueId)),
-      choices: flowGroupHtml(`<button class="primary" data-complete-interlude-action type="button">记下回调查台</button>`),
+      choices: flowGroupHtml(`<button class="primary" data-complete-interlude-action type="button">继续</button>`),
       keepVoiceCueId: cueId
     });
     bind("[data-complete-interlude-action]", () => completeInterludeAction(brief, action));
@@ -291,8 +328,8 @@ export function createInterludeScreens(ctx) {
       text: interruptToastHtml(action, selectedChoiceId),
       pixelTransition,
       choices: flowGroupHtml(`
-        ${!hasChoices && !selectedChoiceId ? `<button class="primary" data-complete-interlude-action type="button">稍后处理</button>` : ""}
-        ${selectedChoiceId ? `<button class="primary" data-return-interlude type="button">回调查台</button>` : ""}
+        ${!hasChoices && !selectedChoiceId ? `<button class="primary" data-complete-interlude-action type="button">继续</button>` : ""}
+        ${selectedChoiceId ? `<button class="primary" data-return-interlude type="button">${nightStructureFor(brief)?.interlude?.flowMode === "linear" ? "继续" : "回调查台"}</button>` : ""}
       `)
     });
     bind("[data-interrupt-choice]", (event) => recordInterludeActionChoice(brief, action, event.currentTarget?.getAttribute("data-interrupt-choice") ?? ""));
@@ -305,11 +342,9 @@ export function createInterludeScreens(ctx) {
     const state = ctx.getState();
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     const pendingAfterScene = afterSceneEvidenceFor(brief, sceneIndex, (key) => actionDone(brief, key));
-    // The click marks the check before the result frame renders. Keep that just-picked
-    // board alive for one render so its authored feedback is not skipped as "already done".
-    const afterScene = pendingAfterScene ?? (state.lastReaction || state.lastScreenEffect
-      ? afterSceneEvidenceFor(brief, sceneIndex, () => false)
-      : null);
+    // A result stays open until explicit continuation, including after reload or
+    // transient feedback cleanup. Completion alone must not close the board.
+    const afterScene = pendingAfterScene ?? afterSceneEvidenceFor(brief, sceneIndex, () => false);
     if (!afterScene?.check) {
       state.scene = "sceneReview";
       saveState();
@@ -321,16 +356,18 @@ export function createInterludeScreens(ctx) {
       brief,
       mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
       label: afterScene.label ?? "看材料",
+      screenClass: !pick && check.socialPost ? "social-evidence-screen" : "",
       chapter: liveChapterTitle(brief),
       text: evidenceCheckScreenHtml({
         check,
         pick,
         index: checkIndex,
         hostName: state.playerName,
+        costMeta: brief.dialoguePresentation?.focusedInquiry ? "" : CHOICE_COST_META.evidenceMark,
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       }),
       choices: pick
-        ? flowGroupHtml(`<button class="primary" data-after-scene-evidence type="button">${escapeHtml(afterScene.continueLabel ?? "继续听")}</button>`)
+        ? flowGroupHtml(`<button class="primary" data-after-scene-evidence type="button">${escapeHtml(brief.dialoguePresentation?.focusedInquiry && !pick.correct ? "这处没问清，重新问" : afterScene.continueLabel ?? "收起材料，继续连线")}</button>`)
         : ""
     });
     bindEvidenceCheckButtons(brief, check, { afterSceneIndex: sceneIndex });
@@ -370,23 +407,36 @@ export function createInterludeScreens(ctx) {
         pick,
         index,
         hostName: state.playerName,
+        costMeta: brief.dialoguePresentation?.focusedInquiry ? "" : CHOICE_COST_META.evidenceMark,
         reviewHtml: choiceReviewHtml(latestChoiceReviewRowsForState(state, brief))
       }),
       choices: pick
-        ? flowGroupHtml(lastCheck
+        ? flowGroupHtml(brief.dialoguePresentation?.focusedInquiry && !pick.correct
+          ? '<button class="primary" data-retry-evidence-check type="button">这处没问清，重新问</button>'
+          : lastCheck
           ? `<button class="primary" data-scene="${effectiveNextStage}" type="button">${effectiveNextLabel}</button>`
           : `<button class="primary" data-next-evidence-check type="button">继续看材料</button>`)
         : ""
     });
     bindEvidenceCheckButtons(brief, check);
     bind("[data-next-evidence-check]", () => setIndex(brief, "evidenceCheck", index + 1));
+    bind("[data-retry-evidence-check]", () => {
+      delete state.evidenceCheckPicks[evidenceAnswerKey(brief, index)];
+      saveState();
+      render();
+    });
     bindSceneButtons();
   }
 
   function renderInvestigationBackflow(brief) {
     const state = ctx.getState();
     const model = investigationBackflowModel({
-      entries: unlockedInvestigationEntriesForState(state, brief),
+      entries: unlockedInvestigationEntriesForState(state, brief).filter(({ hook }) => {
+        if (nightStructureFor(brief)?.interlude?.flowMode !== "linear") return true;
+        const night = ensureNight(brief);
+        return !(nightStructureFor(brief).interlude.actions ?? []).some((action) =>
+          action.hookId === hook.id && (night.interludeActionsDone ?? []).includes(action.id));
+      }),
       selectedPick: (index) => selectedInvestigationPickForState(state, brief, index)
     });
     const { hook, pick, index, nextLabel } = model;
@@ -496,27 +546,29 @@ export function createInterludeScreens(ctx) {
         const [checkIndex, optionIndex] = button.dataset.evidenceCheck.split(":").map(Number);
         const outcome = materialOperationOutcome(check, checkIndex, optionIndex);
         playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:evidence:${checkIndex}:${optionIndex}`);
-        markAction(brief, `evidenceCheck:${checkIndex}:${optionIndex}`, { spend: outcome.spend });
-        markAction(brief, `evidenceCheck:${checkIndex}`);
+        markAction(brief, `evidenceCheck:${checkIndex}:${optionIndex}`, { spend: context.interludeAction ? false : outcome.spend });
+        if (outcome.correct || !brief.dialoguePresentation?.focusedInquiry) markAction(brief, `evidenceCheck:${checkIndex}`);
         if (outcome.contradiction) {
           recordContradiction(brief, outcome.contradiction);
         }
         state.evidenceCheckPicks = {
           ...(state.evidenceCheckPicks ?? {}),
-          [evidenceAnswerKey(brief, checkIndex)]: evidencePickWithRevision(brief, outcome.pick)
+          [evidenceAnswerKey(brief, checkIndex)]: evidencePickWithRevision(brief, { ...outcome.pick, checkId: check.id, optionId: check.options?.[optionIndex]?.id })
         };
         recordRouteChoice(brief, keyQuestionLimit(brief) + checkIndex, outcome.routeChoice, { version: check.material ?? "" });
-        state.lastReaction = materialPressureReaction(outcome, check);
-        state.lastPressureSignal = materialPressureSignal(outcome);
+        state.lastReaction = brief.dialoguePresentation?.focusedInquiry ? null : materialPressureReaction(outcome, check);
+        state.lastPressureSignal = brief.dialoguePresentation?.focusedInquiry ? null : materialPressureSignal(outcome);
         state.lastPityLine = materialPityLineFor(brief, check, checkIndex, outcome);
         if (outcome.correct) state.lastScreenEffect = "material-hit";
         state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
         if (context.interludeAction) {
-          completeInterludeAction(brief, context.interludeAction, { renderNow: false });
+          if (nightStructureFor(brief)?.interlude?.flowMode !== "linear") {
+            completeInterludeAction(brief, context.interludeAction, { renderNow: false });
+          }
           saveState();
           return render();
         }
-        if (outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
+        if (!brief.dialoguePresentation?.focusedInquiry && outcome.spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
           area: Number.isInteger(context.afterSceneIndex) ? "afterSceneEvidence" : "evidenceCheck",
           index: checkIndex,
           actionKeys: [
@@ -537,6 +589,12 @@ export function createInterludeScreens(ctx) {
   function continueAfterSceneEvidence(brief, sceneIndex = 0) {
     const state = ctx.getState();
     const afterScene = afterSceneEvidenceFor(brief, sceneIndex, () => false);
+    if (brief.dialoguePresentation?.focusedInquiry && afterScene && !selectedEvidencePickForState(state, brief, afterScene.checkIndex)?.correct) {
+      delete state.evidenceCheckPicks[evidenceAnswerKey(brief, afterScene.checkIndex)];
+      state.scene = "afterSceneEvidence";
+      saveState();
+      return render();
+    }
     markAction(brief, `afterScene:${sceneIndex}`);
     if (afterScene?.returnScene) {
       state.scene = afterScene.returnScene;
@@ -582,7 +640,7 @@ export function createInterludeScreens(ctx) {
         const optionIndex = Number(button.dataset.evidenceCheck.split(":")[1] ?? 0);
         const outcome = materialOperationOutcome(hook, hookIndex, optionIndex);
         playAudioCueOnce("sfx.document.mark", `${caseKey(brief)}:investigation:${hookIndex}:${optionIndex}`);
-        const spend = hook.spendOnMiss === true && outcome.spend;
+        const spend = !context.interludeAction && hook.spendOnMiss === true && outcome.spend;
         markAction(brief, `investigation:${hookIndex}:${optionIndex}`, { spend });
         markAction(brief, `investigation:${hookIndex}`);
         if (outcome.contradiction) {
@@ -603,18 +661,18 @@ export function createInterludeScreens(ctx) {
           { version: hook.material ?? "" }
         );
         state.lastReaction = investigationPickReaction(outcome, hook);
-        state.lastPressureSignal = materialPressureSignal(outcome);
+        state.lastPressureSignal = brief.dialoguePresentation?.focusedInquiry ? null : materialPressureSignal(outcome);
         if (outcome.correct) state.lastScreenEffect = "material-hit";
         state.lastPressureAxis = outcome.routeChoice?.routeAxis ?? outcome.routeChoice?.axis ?? null;
         if (context.interludeAction) {
           const replyChoices = context.interludeAction.replyChoices ?? hook.replyChoices ?? [];
-          if (!replyChoices.length) {
+          if (!replyChoices.length && nightStructureFor(brief)?.interlude?.flowMode !== "linear") {
             completeInterludeAction(brief, context.interludeAction, { renderNow: false });
           }
           saveState();
           return render();
         }
-        if (spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
+        if (!brief.dialoguePresentation?.focusedInquiry && spend && Number(ensureBudget(brief).remaining ?? 0) <= 0) return recordPatienceLost(brief, {
           area: "investigationBackflow",
           index: hookIndex,
           actionKeys: [`investigation:${hookIndex}:${optionIndex}`, `investigation:${hookIndex}`],

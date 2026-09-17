@@ -4,11 +4,13 @@ import { dirname, resolve } from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { copyRuntimeAssets } from "./runtime-assets.js";
+import { ensureContentIndex } from "./lib/content-build.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = resolve(root, "dist");
 const execFileAsync = promisify(execFile);
 
+await ensureContentIndex(root);
 await mkdir(dist, { recursive: true });
 await cleanStaticBuildTargets();
 

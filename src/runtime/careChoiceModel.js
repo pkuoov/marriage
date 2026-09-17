@@ -21,5 +21,5 @@ export function careChoiceLines(choice = {}, hostName = DEFAULT_PLAYER_NAME) {
 
 export function careChoiceIsComplete(brief = {}) {
   const ids = careChoicesFor(brief).map((choice) => choice.id);
-  return CARE_CHOICE_IDS.every((id) => ids.includes(id)) && ids.length === CARE_CHOICE_IDS.length;
+  return ids.length > 0 && new Set(ids).size === ids.length && ids.every(id => CARE_CHOICE_IDS.includes(id));
 }

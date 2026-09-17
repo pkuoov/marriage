@@ -30,7 +30,6 @@
   to { opacity: 1; transform: translateY(-1px); }
 }
 
-.dialogue-mode-listen .avg-textbox,
 .quick-scene-transcript .quick-statement-bubble {
   min-height: clamp(190px, 29vh, 330px);
   align-content: start;
@@ -43,8 +42,8 @@
   max-height: min(36vh, 390px);
   overflow: auto;
   padding-right: 10px;
-  font-size: clamp(16px, 1.75vw, 21px);
-  line-height: 1.78;
+  font-size: clamp(19px, 2.1vw, 23px);
+  line-height: 1.68;
 }
 
 .dialogue-mode-replay .dialogue-card,
@@ -59,9 +58,25 @@
   background: linear-gradient(180deg, rgba(7, 17, 19, .96), rgba(4, 10, 13, .985));
 }
 
+/* Reserve the upper stage for faces; the replay stays above its actions. */
 .dialogue-mode-replay .vn-stage .dialogue-card.avg-dialogue-active {
+  top: clamp(220px, 32vh, 310px);
+  min-height: 0;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
+}
+
+.dialogue-mode-replay .dialogue-card.avg-dialogue-active .avg-textbox {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-content: start;
+}
+
+/* Scrollable replay panels keep the plate inside their clipping boundary. */
+.dialogue-mode-replay .avg-page-line:only-child b {
+  position: static;
+  margin-bottom: 12px;
 }
 
 .dialogue-mode-replay .statement-replay-card,
@@ -124,10 +139,15 @@
 }
 
 .dialogue-focus-stage .statement-replay-actions .statement-replay-next {
-  grid-column: 1 / -1;
-  justify-self: end;
-  width: min(100%, 18rem);
-  text-align: center;
+  width: 100%;
+  text-align: left;
+}
+
+.key-choice-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #f2d277;
+  font-size: 12px;
 }
 
 .dialogue-mode-replay .choice-material-shortcut {
@@ -339,6 +359,36 @@
 .dialogue-mode-replay.choices-open:not(.cafe-prologue-screen) .vn-stage .dialogue-card.avg-dialogue-active,
 .dialogue-focus-stage.choices-open:not(.cafe-prologue-screen):has(.scene-question-group) .vn-stage .dialogue-card.avg-dialogue-active {
   bottom: clamp(164px, 25vh, 230px);
+}
+
+/* Replay choices vary in height. Give the quote and the choices separate rows
+   instead of guessing a bottom offset that breaks when text wraps. */
+.dialogue-mode-replay.choices-open:not(.cafe-prologue-screen) .vn-stage {
+  display: grid;
+  grid-template-rows: minmax(150px, 1fr) auto auto;
+  gap: 12px;
+}
+.dialogue-mode-replay.choices-open:not(.cafe-prologue-screen) .vn-stage .dialogue-card.avg-dialogue-active {
+  position: relative;
+  inset: auto;
+  width: auto;
+  transform: none;
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0 14px;
+  padding: 0;
+  overflow: visible;
+}
+.dialogue-mode-replay.choices-open:not(.cafe-prologue-screen) .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+  position: relative;
+  inset: auto;
+  width: auto;
+  transform: none;
+  grid-column: 1;
+  grid-row: 3;
+  margin: 0 14px 14px;
+  max-height: none;
+  overflow: visible;
 }
 
 /* The aftermath has one primary action. Do not inherit the cafe document
@@ -623,6 +673,10 @@
 .effects-off .pixel-transition,
 .effects-off::after { display: none !important; animation: none !important; }
 .effects-reduced .screen-effect { opacity: .24; animation-duration: 120ms; }
+.effects-reduced .pixel-transition-phase { animation-duration: 760ms; }
+.effects-reduced .pixel-transition-phase p,
+.effects-reduced .statement-phase-rail i { animation-duration: 360ms; }
+.effects-reduced .statement-phase-signal i { animation: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .decisive-present-sequence .vn-stage,
@@ -670,6 +724,19 @@
   max-height: calc(100% - 72px);
   overflow: auto;
   scrollbar-gutter: stable;
+}
+
+/* The inline choice layer is centered with a transform. Temporarily remove
+   that containing block while a document is open so its fixed modal can use
+   the whole viewport instead of being clipped to the evidence tray. */
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:not([hidden]):has(.cafe-material-modal:not([hidden])) {
+  transform: none;
+}
+
+.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) .cafe-material-sheet > header button {
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto;
 }
 
 .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group,
@@ -877,3 +944,40 @@
     right: 0;
   }
 }
+
+/* Low-motion mode stops only persistent loops; scene cuts and one-shot feedback remain. */
+.effects-reduced .deck-host-monitor em i,
+.effects-reduced .live-comment,
+.effects-reduced .call-expression,
+.effects-reduced .expression-blink::after,
+.effects-reduced .avg-continue,
+.effects-reduced .quick-call-link i,
+.effects-reduced .vn-stage-frame > span em,
+.effects-reduced .deck-mode-interrupt .deck-monitor-strip i.is-active,
+.effects-reduced .statement-phase-signal i {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-host-monitor em i,
+  .live-comment,
+  .call-expression,
+  .expression-blink::after,
+  .avg-continue,
+  .quick-call-link i,
+  .vn-stage-frame > span em,
+  .deck-mode-interrupt .deck-monitor-strip i.is-active,
+  .statement-phase-signal i {
+    animation: none !important;
+  }
+}
+
+/* Keep material selection and the statement it checks on the same screen. */
+.testimony-inline-material { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line, #3b404a); border-radius: 8px; }
+.testimony-inline-material select { width: 100%; min-width: 0; min-height: 42px; padding: 8px; color: inherit; background: var(--panel, #20232a); font: inherit; }
+.testimony-inline-material p { margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+.testimony-inline-material small { opacity: .8; }
+
+.testimony-wall .testimony-statement { grid-template-columns: minmax(0, 1fr); }
+.testimony-wall .testimony-statement nav { flex-wrap: wrap; }
+.testimony-wall .testimony-statement nav button { font-size: 12px; }

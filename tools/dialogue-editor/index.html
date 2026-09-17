@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="editor-token" content="__EDITOR_TOKEN__">
+  <title>深夜热线 · 台词审阅</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header><div><span class="eyebrow">深夜热线 / 编剧工作台</span><h1>台词审阅</h1></div><div class="header-actions"><button id="refresh">刷新内容</button><button id="history-toggle">修改记录</button><button id="check">同步报告与检查</button></div></header>
+  <p id="notice" role="status" aria-live="polite">正在读取台词…</p>
+  <main>
+    <aside class="library">
+      <h2>找一段对白</h2>
+      <label>内容搜索<input id="search" type="search" placeholder="原句、关键词或位置"></label>
+      <div class="filters"><label>案件<select id="case"><option value="">全部案件</option></select></label><label>角色<select id="character"><option value="">全部角色</option></select></label></div>
+      <label>阶段<select id="phase"><option value="">全部阶段</option><option value="nightA">第一夜</option><option value="day">白天</option><option value="nightB">第二夜</option><option value="ending">收束</option><option value="interlude">幕间</option><option value="backstage">后台材料</option><option value="other">其他</option></select></label>
+      <p id="count" class="muted"></p><div id="lines" class="line-list"></div>
+    </aside>
+    <section class="workspace" id="workspace">
+      <div id="empty"><h2>从左侧选择一句台词</h2><p>连着问答看，再决定怎么改。修改只回写选中的原句。</p></div>
+      <article id="editor" hidden>
+        <div class="section-heading"><div><span id="location" class="eyebrow"></span><h2 id="speaker"></h2></div><span id="phase-label" class="badge"></span></div>
+        <nav class="header-actions" aria-label="逐句浏览"><button id="previous">上一句</button><button id="next">下一句</button></nav>
+        <section class="context"><h3>这句话前后</h3><p id="context-note" class="muted"></p><div id="context"></div></section>
+        <section class="editing"><label for="after">修改台词 <span class="muted">⌘ / Ctrl + Enter 保存</span></label><textarea id="after" rows="5"></textarea><div id="diff" class="diff"></div></section>
+        <section class="feedback"><h3>留下这次判断</h3><div class="filters"><label>问题类型<select id="issue"><option>口语润色</option><option>像作者总结</option><option>回答没接住</option><option>人物说话方式</option><option>提前知道事实</option><option>复述过多</option><option>有意重复（保留）</option><option>喜剧被解释</option><option>反串／误会反转</option><option>其他</option></select></label><label>适用范围<select id="scope"><option>本段</option><option>本案同类场景</option><option>该角色同类场景</option><option>候选通用经验，尚待验证</option></select></label></div><label>为什么这样改<textarea id="reason" rows="2" placeholder="修改时可选；记录保留判断时必填。说清这里为什么要重复、答偏或保留原话。"></textarea></label><label>例外／不要照着改的情况<input id="exception" placeholder="可选，例如：人物故意打官腔时保留"></label></section>
+        <details><summary>改与保留的对照（按问题类型筛选）</summary><p class="muted">以下是方向示范，尚未获用户逐条确认，不是本案事实或套句模板。</p><div id="calibration-examples"></div></details>
+        <div id="style-candidates" class="muted"></div>
+        <div class="save-bar"><button id="save" class="primary">保存台词修改</button><button id="note">只记问题，保留原句</button><button id="keep">保留原句，记录原因</button><button id="reset">恢复编辑前内容</button><button id="rebase" hidden>以当前原句继续修改</button></div>
+        <p class="muted">保存后自动更新报告并运行检查。事实与接话是否成立，仍需复核；工具不会替换审查锚点。</p>
+        <details><summary>源文件位置</summary><code id="source"></code></details>
+      </article>
+    </section>
+    <aside class="reference"><h2>人物与本段约束</h2><p class="muted">作者参考，可能包含后续信息。人物知道的事不等于玩家在当前分支已听过的事。</p><div id="character-card"></div><div id="contracts"></div><details id="related-panel" hidden><summary>同文位置（不自动同步）</summary><p class="muted">相同文字可能属于不同分支。先核对是否需要一起修改。</p><div id="related"></div></details><section><h3>检查状态</h3><div id="check-status" class="muted">尚未运行</div><details><summary>检查明细</summary><div id="check-details"></div></details></section></aside>
+  </main>
+  <dialog id="history"><div class="section-heading"><h2>修改与问题记录</h2><button id="history-close">关闭</button></div><p id="history-notice" role="status" aria-live="polite"></p><p class="muted">记录保存原句、改句、上下文与适用范围。通用经验不会自动生效。撤回仅在源文件未再修改时可用。</p><div id="history-list"></div></dialog>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

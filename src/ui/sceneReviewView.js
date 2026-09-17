@@ -1,5 +1,6 @@
 import { HOST_NAME } from "../hostProfile.js";
 import { statementLinesFromText } from "../runtime/statementReviewModel.js";
+import { answerDialogueLines } from "../runtime/dialogueContent.js";
 
 export function sceneReviewHtml({
   index = 0,
@@ -102,6 +103,9 @@ export function sceneQuestionAnswerHtml({
 }
 
 export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pick = {}, fallbackAnswer = "" } = {}) {
+  if (scene.interactionMode === "testimonyWall") {
+    return sceneBeatLinesHtml(scene.afterVersion) + sceneBeatLinesHtml(scene.sceneCloser);
+  }
   return [
     sceneBeatLinesHtml(scene.beforeVersion),
     sceneEntryQuestionHtml(scene),
@@ -113,7 +117,6 @@ export function completedSceneExchangeHtml({ scene = {}, dialoguePicks = [], pic
       dialogueAnswerHtml(item)
     ]),
     keyChoiceExchangeHtml({ scene, pick, fallbackAnswer }),
-    scene.interactionMode === "testimonyWall" ? sceneBeatLinesHtml(scene.afterVersion) : "",
     sceneBeatLinesHtml(scene.sceneCloser)
   ].join("");
 }
@@ -147,8 +150,7 @@ function sceneEntryQuestionHtml(scene = {}) {
 }
 
 function dialogueAnswerHtml(pick = {}) {
-  if (Array.isArray(pick.lines) && pick.lines.length) return pick.lines.map((line) => callLineHtml(line)).join("");
-  return callLineHtml({ role: "caller", text: pick.answer ?? "" });
+  return answerDialogueLines(pick).map((line) => callLineHtml(line)).join("");
 }
 
 function flowGroup(content) {

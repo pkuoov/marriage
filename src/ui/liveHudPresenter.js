@@ -1,4 +1,5 @@
 import { CHARACTER_ART } from "../state.js";
+import { keepsScenePressure } from "../runtime/liveSceneKinds.js";
 import { NPCS } from "../story.js";
 import { normalizePlayerName } from "../playerIdentity.js";
 import { contradictionsForState, selectedEvidencePickForState } from "../runtime/caseStateSelectors.js";
@@ -22,8 +23,7 @@ export function createLiveHudPresenter(ctx) {
     isStoryPackMode,
     ensureBudget,
     ensureNight,
-    currentIndex,
-    isSceneReviewScene
+    currentIndex
   } = ctx;
 
   function currentLivePressure(brief, mood = "listening") {
@@ -122,7 +122,7 @@ export function createLiveHudPresenter(ctx) {
   }
 
   function liveCommentStrip(pressure = {}) {
-    return liveCommentStripHtml(pressure);
+    return "";
   }
 
   function liveIntentHookFor(brief) {
@@ -184,9 +184,7 @@ export function createLiveHudPresenter(ctx) {
 
   function currentScenePressureHint(brief) {
     const state = getState();
-    const keepsScenePressure = isSceneReviewScene(state.scene)
-      || ["sceneLineReplay", "stanceSnapshot", "afterSceneEvidence"].includes(state.scene);
-    if (!keepsScenePressure) return {};
+    if (!keepsScenePressure(state.scene)) return {};
     const scenes = brief?.sceneVersions ?? [];
     const index = currentIndex(brief, "sceneReview", scenes.length || 1);
     return scenes[index]?.pressureHint ?? {};
@@ -202,7 +200,7 @@ export function createLiveHudPresenter(ctx) {
   function reactionLine() {
     const text = getState().lastReaction;
     if (!text) return "";
-    return `<p class="reaction">${escapeLiveHudHtml(text)}</p>`;
+    return `<p class="reaction" data-transient-reaction role="status">${escapeLiveHudHtml(text)}</p>`;
   }
 
   return {

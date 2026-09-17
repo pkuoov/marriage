@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { testimonyReadingRoute } from "./lib/testimony-reading.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv.slice(2).find((argument) => !argument.startsWith("--")) ?? "steam-demo-01";
@@ -178,12 +179,32 @@ function renderReport() {
   const lines = [];
   const reviewed = new Set(review.reviewedCaseIds ?? []);
   lines.push(`# 《${manifest.title}》逐话轮承接审查`, "");
-  lines.push("> 本表从实际 JSON 字段生成。机器只能确认登记的抓词仍存在，不能据此证明语义因果已经成立。人工复审还必须检查：问题有没有新增尚未出现的前提、上一个问题是否得到回应、连续两句是否重复发问，以及回答第一拍是否正面作答。", "");
+  lines.push("> 本表从实际 JSON 字段生成。机器只能确认登记的抓词仍存在，不能据此证明语义因果已经成立。人工复审区分作者漏接与人物有意答偏：核对承重问题是否偷用未知前提，同时保留显人、喜剧、误会和情绪所需的重复与跑题；不要求回答第一拍总是正面作答。", "");
   lines.push("## 覆盖状态", "", "| 案件 | 状态 | 场数 |", "|---|---|---:|");
   for (const packet of packets) lines.push(`| ${cell(packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.caseId)} | ${reviewed.has(packet.caseId) ? "锚点合同已覆盖" : "待登记锚点合同"} | ${(packet.sceneVersions ?? []).length} |`);
   lines.push("");
 
-  lines.push("## 四案微因果合同覆盖", "", "> 承重追问必须从本场固定台词取得前提，写清材料的证明边界、回答新增事实和下一问上限。第三方镜头或作者题眼不得留在人物台词中。", "");
+  const inquiryCount = packets.flatMap(packet => packet.sceneVersions ?? []).flatMap(scene => scene.testimonyWall?.acts ?? []).filter(act => act.inquiry).length;
+  lines.push("## 实机集中问询｜原话、问句与回应", "",
+    `> 当前四案共 ${inquiryCount} 组集中问询。问句直接显示，原件只读，不要求解锁或配对。下表列一条必要追问及回应；完整陈述、其他有效问法和补问见连读稿。锚点存在不代表语义成立。`, "",
+    "| 案件 / 场 / 幕 | 玩家问句 | 来电人的说法 | 原始材料 | 回应 | 主播收束 | 证明边界 |",
+    "|---|---|---|---|---|---|---|" );
+  for (const packet of packets) {
+    for (const scene of packet.sceneVersions ?? []) {
+      if (scene.interactionMode !== "testimonyWall") continue;
+      for (const { act, presses, target, material, present } of testimonyReadingRoute(scene)) {
+        if (act.inquiry) {
+          const option = act.inquiry.options.find(option => option.correct);
+          lines.push(`| ${cell(`${packet.caseId} / ${scene.id} / ${act.id}`)} | ${cell(option.question)} | ${cell(act.inquiry.openingLines.filter(line => line.role === "caller").map(line => line.text).join("；"))} | ${cell(present.materialCards.map(card => `${card.sourceLabel ?? card.label}：${card.excerpt}`).join("；"))} | ${cell(option.lines.map(line => line.text).filter(Boolean).join("；"))} | ${cell(present.hostLine)} | ${cell(present.boundaryLine)} |`);
+          continue;
+        }
+        lines.push(`| ${cell(`${packet.caseId} / ${scene.id} / ${act.id}`)} | ${cell(presses.map((press) => `${press.statement.text} → ${press.response}`).join("；") || "无需解锁")} | ${cell(target.text)} | ${cell(`${material.sourceLabel ?? material.label}：${material.excerpt}`)} | ${cell(present.callerLine)} | ${cell(present.hostLine)} | ${cell(present.boundaryLine)} |`);
+      }
+    }
+  }
+  lines.push("", "> 未选择的补问不能算入主播已知信息；后续必用事实须由各条可推进问法共同交代。", "");
+
+  lines.push("## 传统问答的微因果合同覆盖", "", "> 承重追问必须从本场固定台词取得前提，写清材料的证明边界、回答新增事实和下一问上限。第三方镜头或作者题眼不得留在人物台词中。", "");
   lines.push("| 案件 | 承重追问 | 追问合同 | 承重场尾 | 场尾合同 | 人物旁白高风险 |", "|---|---:|---:|---:|---:|---:|");
   for (const packet of packets) {
     const options = microLogicOptions(packet);
@@ -217,6 +238,10 @@ function renderReport() {
     lines.push("");
 
     for (const [sceneIndex, scene] of (packet.sceneVersions ?? []).entries()) {
+      if (scene.interactionMode === "testimonyWall") {
+        lines.push(`### ${sceneIndex + 1}. ${scene.id}`, "", "此场按两幕证词墙运行，实际原话与改口见上表；旧问答字段不属于实机路线。", "");
+        continue;
+      }
       const sceneReview = caseReview.scenes[scene.id];
       const freeOptions = (scene.casualQuestions ?? []).length ? scene.casualQuestions : scene.dialogueOptions ?? [];
       lines.push(`### ${sceneIndex + 1}. ${scene.id}`, "");
@@ -238,7 +263,7 @@ function renderReport() {
 }
 
 function microLogicOptions(packet) {
-  return (packet.sceneVersions ?? []).flatMap((scene) => (scene.questionOptions ?? [])
+  return (packet.sceneVersions ?? []).filter((scene) => scene.interactionMode !== "testimonyWall").flatMap((scene) => (scene.questionOptions ?? [])
     .filter((option) => option.correct === true)
     .map((option) => ({ scene, option })));
 }
@@ -283,6 +308,7 @@ function narratorLeakEntries(packet) {
       });
     }
   });
+  (packet.overnightStructure?.linearCallback?.lines ?? []).forEach((line, index) => add(`overnightStructure.linearCallback.lines[${index}]`, line.text));
   (packet.overnightStructure?.dayScenes ?? []).forEach((dayScene, sceneIndex) => {
     (dayScene.body?.beats ?? []).forEach((beat, beatIndex) => add(`overnightStructure.dayScenes[${sceneIndex}].body.beats[${beatIndex}]`, beat?.text));
     (dayScene.body?.choice?.options ?? []).forEach((option, optionIndex) => {

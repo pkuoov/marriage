@@ -16,6 +16,11 @@ export function liveCounterBeatById(brief = {}, beatId = "") {
   return liveCounterBeatsFor(brief).find((beat) => beat.id === beatId) ?? null;
 }
 
+export function currentLiveCounterPick(beat = {}, pick = null) {
+  if (beat.choiceMode === "sequence" && !pick?.completedChoiceIds?.length) return null;
+  return beat?.choices?.some((choice) => choice.id === pick?.choiceId) ? pick : null;
+}
+
 export function liveCounterBeatAfterScene(brief = {}, sceneIndex = 0, actionDone = () => false, overnight = {}) {
   return liveCounterBeatsFor(brief).find((beat) => (
     Number(beat.afterSceneIndex) === Number(sceneIndex)

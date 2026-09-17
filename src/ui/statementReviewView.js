@@ -1,4 +1,5 @@
 import { statementLinesFromText, statementOptionForLine, statementOptionsForLine } from "../runtime/statementReviewModel.js";
+import { nextSequentialChoice, sceneQuestionSequence } from "../runtime/sequentialChoices.js";
 
 export function statementReplayHtml({ scene = {}, sceneIndex = 0, attemptedLineIds = [] } = {}) {
   return statementStageReplayHtml({
@@ -37,6 +38,7 @@ export function statementReplayPageChoicesHtml({
   line = {},
   attempted = false,
   keyResolved = false,
+  completedOptionIds = [],
   resolvedDialogueOptionIndexes = [],
   stageKeysRemaining = 0,
   nextLabel = "继续回放"
@@ -64,23 +66,36 @@ export function statementReplayPageChoicesHtml({
   ];
   const available = matches.filter((item) => !item.resolved);
   const keyAvailable = available.filter((item) => item.kind === "key");
-  const visibleAvailable = keyAvailable.length ? keyAvailable : available.filter((item) => item.kind === "dialogue").slice(0, 1);
-  const questionButtons = visibleAvailable.map(({ kind, option, optionIndex }) => `
+  // Optional checks remain reachable before the key answer completes the stage.
+  const sequence = sceneQuestionSequence(scene);
+  const next = nextSequentialChoice(sequence, completedOptionIds);
+  const orderedKey = keyAvailable.filter((item) => !sequence.length || item.option.id === next?.id);
+  const visibleAvailable = [...available.filter((item) => item.kind === "dialogue"), ...orderedKey].slice(0, 1);
+  const questionButtons = visibleAvailable.map(({ kind, option, optionIndex }) => option.materialRows?.length ? `
+    <details class="statement-bill-question"><summary>询问这句</summary>
+      <button class="statement-bill-card" data-scene-question="${sceneIndex}:${optionIndex}" type="button">
+        <b>${escapeHtml(option.materialTitle ?? '账单')}</b>
+        ${option.materialRows.map((row) => `<span>${escapeHtml(row)}</span>`).join('')}
+        <small>点击账单发问</small>
+      </button>
+    </details>` : `
     <button class="choice-question statement-replay-question" ${kind === "key"
       ? `data-scene-question="${sceneIndex}:${optionIndex}"${option.correct === true ? ' data-statement-key-correct="true"' : ""}`
       : `data-scene-dialogue="${sceneIndex}:${optionIndex}" data-scene-replay-dialogue="true" data-stage-keys-remaining="${Math.max(0, Number(stageKeysRemaining) || 0)}"`} type="button">
-      ${escapeHtml(option.question ?? option.suspicionLabel ?? "接着问")}
+      <span>询问这句</span>
     </button>
   `).join("");
-  const noClueButton = !matches.length && !attempted
-    ? `<button class="secondary statement-replay-press" data-scene-review-line="${escapeHtml(line.id)}" data-scene-review-index="${sceneIndex}" type="button">就这句追问</button>`
+  const probe = (scene.reviewProbes ?? []).find((item) => line.text?.includes(item.sourceAnchor));
+  const noClueButton = !questionButtons
+    ? `<button class="secondary statement-replay-press" data-scene-review-line="${escapeHtml(line.id)}" data-scene-review-index="${sceneIndex}" type="button"><span>询问这句</span></button>`
     : "";
   return `
     <div class="flow-group statement-replay-actions">
       <div class="choice-stack">
         ${questionButtons}
         ${noClueButton}
-        <button class="secondary statement-replay-next" data-scene-replay-next type="button">${escapeHtml(nextLabel)}</button>
+        <button class="secondary statement-replay-next" data-scene-replay-next type="button">不询问</button>
+        <button class="secondary" data-scene-replay-previous type="button">上一句</button>
       </div>
     </div>
   `;
@@ -91,9 +106,10 @@ export function statementReplayLineForScene(scene = {}, lineId = "") {
     .find((line) => line.id === lineId) ?? null;
 }
 
-export function statementReplayOptionIndex(scene = {}, line = {}) {
+export function statementReplayOptionIndex(scene = {}, line = {}, nextOptionId = null) {
   const allLines = statementLinesFromText(scene.version ?? "", { prefix: scene.id ?? "scene" });
-  const option = statementOptionForLine(scene.questionOptions ?? [], line, { allLines });
+  const matches = statementOptionsForLine(scene.questionOptions ?? [], line, { allLines });
+  const option = matches.find((item) => item.id === nextOptionId) ?? matches[0];
   return option ? (scene.questionOptions ?? []).indexOf(option) : -1;
 }
 
@@ -168,7 +184,7 @@ function statementReplayLineHtml(
     <button class="statement-replay-line${missed ? " is-missed" : ""}" data-scene-review-line="${escapeHtml(line.id)}" data-scene-review-index="${sceneIndex}" type="button">
       <i aria-hidden="true"></i>
       <span>${escapeHtml(line.text)}</span>
-      ${missed ? "<small>这句没有可追问的线索 · 耐心 −1</small>" : ""}
+      ${missed ? "<small>已追问 · 对方没有接下去</small>" : ""}
     </button>
   `;
 }

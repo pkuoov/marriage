@@ -1,16 +1,18 @@
 import { chromium } from "@playwright/test";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, mkdir } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
+import { testimonyReadingRoute } from "./lib/testimony-reading.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const playableUrl = pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
+const playableUrl = process.env.SMOKE_URL || pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
 const storyManifest = JSON.parse(await readFile(resolve(root, "content", "packs", "steam-demo-01", "manifest.json"), "utf8"));
 const authoredCasePackets = await Promise.all((storyManifest.sequence ?? []).map((item) => (
   readFile(resolve(root, "content", "packs", "steam-demo-01", "cases", `${item.caseId}.json`), "utf8").then(JSON.parse)
 )));
 const testimonySmokeActs = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
-  (scene.testimonyWall?.acts ?? []).map((act) => ({
+  (scene.testimonyWall?.acts ?? []).map((act, actIndex) => ({
+    reading: testimonyReadingRoute(scene)[actIndex],
     caseId: packet.id ?? packet.caseId ?? "unknown-case",
     sceneId: scene.id ?? "unknown-scene",
     actId: act.id ?? `act-${act.act ?? "unknown"}`,
@@ -19,6 +21,8 @@ const testimonySmokeActs = authoredCasePackets.flatMap((packet) => (packet.scene
     statementIds: (act.statements ?? []).map((statement) => statement.id).filter(Boolean)
   }))
 ))).filter((act) => act.evidenceId && act.statementId && act.statementIds.length);
+const continuousReading = (await readFile(resolve(root, "docs/generated/steam-demo-01-continuous-story-script.md"), "utf8")).split("# 附录｜")[0];
+const verifiedTestimonyActs = new Set();
 const loadBearingQuestionSignatures = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
   (scene.questionOptions ?? [])
     .filter((option) => option.correct === true)
@@ -49,10 +53,18 @@ const supportedSmokeTargets = new Set([
   "host-verdict",
   "portrait-viewports",
   "state-replacement",
+  "reading-controls",
+  "testimony-reading",
+  "focused-credit",
+  "six-review",
+  "script-reading",
+  "credit-replay",
+  "credit-replay-path",
   "quick-detective",
+  "dialogue-layout",
   "cafe-prologue"
 ]);
-const smokeStepTimeoutMs = Math.max(1000, Number(process.env.SMOKE_STEP_TIMEOUT_MS) || 90000);
+const smokeStepTimeoutMs = Math.max(1000, Number(process.env.SMOKE_STEP_TIMEOUT_MS) || 180000);
 const browserActionTimeoutMs = Math.max(1000, Number(process.env.SMOKE_ACTION_TIMEOUT_MS) || 8000);
 const gamepadDialogueSamples = new WeakMap();
 const gamepadDialogueSampleLimit = 4;
@@ -66,7 +78,7 @@ try {
     await runCase3DayRoutes();
     await runCase4DayRoutes();
   } else if (smokeTarget === "case1" || smokeTarget === "local-quick") {
-    await runSmokeStep("route 1/1 accounting-support", () => runRoute(routes[0]));
+    await runSmokeStep("focused credit route", runFocusedCredit);
   } else if (smokeTarget === "gamepad") {
     await runSmokeStep("route 1/1 gamepad-support-document", () => runRoute(routes.find((route) => route.inputMode === "gamepad")));
   } else if (smokeTarget === "case2-transition") {
@@ -78,28 +90,46 @@ try {
     await runSmokeStep("portrait viewport matrix", runPortraitViewports);
   } else if (smokeTarget === "state-replacement") {
     await runSmokeStep("state replacement", runStateReplacementRoutes);
+  } else if (smokeTarget === "reading-controls") {
+    await runSmokeStep("reading controls", runReadingControls);
+  } else if (smokeTarget === "six-review") {
+    await runSmokeStep("six reviewed cases", runSixReviewedCases, { timeoutMs: 600000 });
+  } else if (smokeTarget === "focused-credit") {
+    await runSmokeStep("focused credit route", runFocusedCredit);
+  } else if (smokeTarget === "testimony-reading") {
+    await runSmokeStep("testimony reading parity", runTestimonyReadingMatrix);
+  } else if (smokeTarget === "credit-replay-path") {
+    await runSmokeStep("focused credit route", runFocusedCredit);
+  } else if (smokeTarget === "credit-replay") {
+    await runSmokeStep("focused credit recovery", runFocusedCredit);
+  } else if (smokeTarget === "script-reading") {
+    await runSmokeStep("script and rendered dialogue parity", runScriptReadingMatrix);
   } else if (smokeTarget === "quick-detective") {
     await runSmokeStep("quick detective viewport matrix", runQuickDetective);
   } else if (smokeTarget === "cafe-prologue") {
-    await runSmokeStep("cafe prologue viewport matrix", runCafePrologue);
+    await runSmokeStep("cafe prologue viewport matrix", runCafePrologue, { timeoutMs: Math.max(smokeStepTimeoutMs, 180000) });
+  } else if (smokeTarget === "dialogue-layout") {
+    await runSmokeStep("dialogue nameplate and type layout", runDialogueLayout);
   } else {
-    for (const [index, route] of routes.entries()) {
-      await runSmokeStep(`route ${index + 1}/${routes.length} ${route.name}`, () => runRoute(route));
-    }
+    await runSmokeStep("focused credit route", runFocusedCredit);
     await runCase2DayMap();
     await runCase3DayRoutes();
     await runCase4DayRoutes();
     await runSmokeStep("case transition", runCaseTransition);
     await runSmokeStep("portrait viewport matrix", runPortraitViewports);
     await runSmokeStep("state replacement", runStateReplacementRoutes);
+    await runSmokeStep("reading controls", runReadingControls);
+    await runSmokeStep("testimony reading parity", runTestimonyReadingMatrix);
+    await runSmokeStep("script and rendered dialogue parity", runScriptReadingMatrix);
     await runSmokeStep("quick detective viewport matrix", runQuickDetective);
-    await runSmokeStep("cafe prologue viewport matrix", runCafePrologue);
+    await runSmokeStep("cafe prologue viewport matrix", runCafePrologue, { timeoutMs: Math.max(smokeStepTimeoutMs, 180000) });
   }
 } finally {
   await browser.close();
 }
 
 smokeProgress(`PASS ${smokeSummary(smokeTarget)}`);
+if (verifiedTestimonyActs.size) smokeProgress(`Verified testimony/readable act pairs: ${verifiedTestimonyActs.size}/${testimonySmokeActs.length}`);
 
 function smokeTargetFrom(args, environmentTarget = "") {
   const inlineTarget = args.find((argument) => argument.startsWith("--target="))?.slice("--target=".length);
@@ -112,17 +142,110 @@ function smokeTargetFrom(args, environmentTarget = "") {
   return target;
 }
 
+async function runReadingControls() {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });
+  await context.addInitScript(() => {
+    window.__readingAudio = [];
+    window.Audio = new Proxy(window.Audio, {
+      construct(AudioClass, args) {
+        const audio = new AudioClass(...args);
+        window.__readingAudio.push(audio);
+        return audio;
+      }
+    });
+    window.__smokeGamepad = { connected: true, index: 0, axes: [0, 0], buttons: Array.from({ length: 16 }, () => ({ pressed: false })) };
+    Object.defineProperty(navigator, "getGamepads", { configurable: true, value: () => [window.__smokeGamepad] });
+  });
+  const page = await context.newPage();
+  page.setDefaultTimeout(browserActionTimeoutMs);
+  try {
+    await page.goto(`${playableUrl}?playtest=reading-controls-${Date.now()}`);
+    await page.locator("[data-start-story]").click();
+    const text = () => page.locator(".avg-page-lines").innerText();
+    const first = await text();
+    for (const input of ["keyboard", "gamepad"]) {
+      await page.locator("[data-record-open]").click();
+      await page.locator(".court-record:not([hidden])").waitFor();
+      for (let index = 0; index < 8; index += 1) {
+        await page.keyboard.press("Tab");
+        if (!await page.evaluate(() => Boolean(document.activeElement?.closest(".court-record")))) throw new Error("court record Tab escaped overlay");
+      }
+      await page.locator("[data-record-close]").focus();
+      if (input === "keyboard") await page.keyboard.press("Enter");
+      else await gamepadPress(page, 0);
+      await page.locator(".court-record").waitFor({ state: "hidden" });
+      if (await text() !== first) throw new Error(`${input} confirm advanced narration behind court record`);
+      if (!await page.locator("[data-record-open]").evaluate(element => element === document.activeElement)) throw new Error("court record must restore opener focus");
+    }
+    await page.locator('[data-avg-setting="auto"]').click();
+    await page.locator("[data-record-open]").click();
+    const pausedText = await text();
+    // Observe a negative guarantee for longer than two autoplay intervals.
+    const changedWhilePaused = await page.evaluate(() => new Promise(resolve => {
+      const observer = new MutationObserver(() => { clearTimeout(timer); observer.disconnect(); resolve(true); });
+      const timer = setTimeout(() => { observer.disconnect(); resolve(false); }, 2200);
+      observer.observe(document.querySelector(".avg-page-lines"), { childList: true, subtree: true, characterData: true });
+    }));
+    if (changedWhilePaused || await text() !== pausedText) throw new Error("autoplay advanced behind court record");
+    await page.keyboard.press("Escape");
+    await page.waitForFunction(previous => document.querySelector(".avg-page-lines")?.innerText !== previous, pausedText);
+    await page.locator('[data-avg-setting="auto"]').click();
+    const resumeText = await text();
+    const backlogLength = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")).dialogueBacklog.length);
+    for (const setting of ["speed", "effects"]) {
+      await page.locator(`[data-avg-setting="${setting}"]`).click();
+      if (await text() !== resumeText) throw new Error(`${setting} reset the dialogue page`);
+    }
+    await page.waitForFunction(() => window.__readingAudio.some(audio => audio.loop && !audio.paused && audio.currentTime > 0 && audio.volume > 0));
+    await page.locator("[data-audio-settings] > summary").click();
+    await page.locator("[data-audio-mute]").click();
+    if (await text() !== resumeText) throw new Error("sound toggle reset the dialogue page");
+    const audibleWhileMuted = await page.evaluate(() => new Promise(resolve => {
+      const audios = window.__readingAudio.filter(audio => !audio.paused);
+      let audible = audios.some(audio => audio.volume !== 0);
+      const inspect = event => { if (event.target.volume !== 0) audible = true; };
+      audios.forEach(audio => audio.addEventListener("volumechange", inspect));
+      setTimeout(() => {
+        audios.forEach(audio => audio.removeEventListener("volumechange", inspect));
+        resolve(audible);
+      }, 500);
+    }));
+    if (audibleWhileMuted) throw new Error("native browser audio became audible while muted");
+    await page.locator("[data-audio-settings] > summary").click();
+    await page.locator("[data-audio-mute]").click();
+    await page.waitForFunction(() => window.__readingAudio.some(audio => audio.loop && !audio.paused && audio.volume > 0));
+    await page.locator('[data-action="title"]').click();
+    await page.locator("[data-continue-story]").click();
+    if (await text() !== resumeText) throw new Error("continue reset the dialogue page");
+    await page.reload();
+    await page.locator("[data-continue-story]").click();
+    if (await text() !== resumeText) throw new Error("reload reset the dialogue page");
+    const restoredBacklogLength = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")).dialogueBacklog.length);
+    if (restoredBacklogLength !== backlogLength) throw new Error("restoring an already-read page duplicated the backlog");
+  } finally {
+    await context.close();
+  }
+}
+
 function smokeSummary(target) {
   if (target === "case34") return "case3-day-map, case4-day-map";
-  if (target === "case1" || target === "local-quick") return "case1 staged disclosure (single viewport)";
+  if (["case1", "local-quick", "credit-replay", "credit-replay-path"].includes(target)) return "case 1 focused inquiry, retry and compact closing";
   if (target === "gamepad") return "gamepad-support-document";
   if (target === "case2-transition") return "case2-day-map, case-transition";
   if (target === "host-verdict") return "host verdict staged at mobile and desktop widths";
   if (target === "portrait-viewports") return "portrait layouts at 390x844, 1280x720, 1366x768, 1280x800, 1920x1080";
   if (target === "state-replacement") return "new-game-reset, patience-retry";
-  if (target === "quick-detective") return "quick detective at 390x844, 592x920, 1280x720, and 1280x800";
-  if (target === "cafe-prologue") return "cafe prologue, same-night continuation, and private callback at 390x844, 592x920, 1280x720, and 1280x800";
-  return [...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition", "new-game-reset", "patience-retry", "quick-detective", "cafe-prologue"].join(", ");
+  if (target === "reading-controls") return "overlay keyboard/gamepad, autoplay pause, settings and save reading position";
+  if (target === "six-review") return "reviewed main cases and quick cases: focused inquiry, sources, reload and compact endings";
+  if (target === "focused-credit") return "case 1 focused inquiry, local retry, reload and compact closing";
+  if (target === "testimony-reading") return "four cases / eight testimony acts match the continuous reading";
+  if (target === "script-reading") return "four cases: staged statements and answer speakers/order match director/continuous scripts";
+  if (target === "credit-replay-path") return "case 1 normal path: first-night old post through second-night device evidence";
+  if (target === "credit-replay") return "case 1 restaurant/device replay recovery and social evidence at four PC sizes";
+  if (target === "quick-detective") return "quick detective at 1920x1080, 1366x768, 1280x720, and 1280x800";
+  if (target === "dialogue-layout") return "opening dialogue: six speakers at 390x844, 592x920, 1280x720, and 1280x800";
+  if (target === "cafe-prologue") return "cafe prologue, same-night continuation, and private callback at 1280x720, 1366x768, 1280x800, and 1920x1080";
+  return [...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition", "new-game-reset", "patience-retry", "reading-controls", "testimony-reading", "script-reading", "quick-detective", "cafe-prologue"].join(", ");
 }
 
 function smokeProgress(message) {
@@ -130,7 +253,7 @@ function smokeProgress(message) {
   console.log(`[browser-smoke +${elapsedSeconds}s] ${message}`);
 }
 
-async function runSmokeStep(label, action) {
+async function runSmokeStep(label, action, { timeoutMs = smokeStepTimeoutMs } = {}) {
   const startedAt = Date.now();
   let timeoutId = 0;
   smokeProgress(`START ${label}`);
@@ -138,7 +261,7 @@ async function runSmokeStep(label, action) {
     const result = await Promise.race([
       action(),
       new Promise((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error(`Smoke step timed out after ${smokeStepTimeoutMs}ms: ${label}`)), smokeStepTimeoutMs);
+        timeoutId = setTimeout(() => reject(new Error(`Smoke step timed out after ${timeoutMs}ms: ${label}`)), timeoutMs);
       })
     ]);
     smokeProgress(`PASS  ${label} (${((Date.now() - startedAt) / 1000).toFixed(1)}s)`);
@@ -175,15 +298,24 @@ async function currentLoadBearingStatementLine(page) {
   const visited = [];
   for (let step = 0; step < 48; step += 1) {
     await drainDialogue(page, {});
+    const bill = page.locator('.statement-bill-question');
+    if(await bill.count()) {
+      if(!await bill.getAttribute('open')) await bill.locator('summary').click();
+      return bill.locator('[data-scene-question]');
+    }
     const authoredKey = page.locator('[data-statement-key-correct="true"]:visible:not(:disabled)');
     if (await authoredKey.count()) return authoredKey.first();
     const lines = page.locator("[data-scene-question]:visible:not(:disabled)");
     const texts = await lines.allTextContents();
-    const index = texts.findIndex((text) => loadBearingQuestionSignatures.some(({ anchor, label }) => text.includes(anchor) && text.includes(label)));
+    const index = texts.findIndex((text) => loadBearingQuestionSignatures.some(({ label }) => label && text.includes(label)));
     if (index >= 0) return lines.nth(index);
-    const followups = page.locator('[data-scene-dialogue][data-stage-keys-remaining="0"]:visible:not(:disabled)');
+    const followups = page.locator('[data-scene-dialogue]:visible:not(:disabled)');
     if (await followups.count()) return followups.first();
     visited.push((await page.locator(".statement-replay-page .avg-line:visible").first().textContent().catch(() => ""))?.trim() ?? "");
+    if (await page.locator("[data-scene-replay-restart]").count()) {
+      await click(page, "[data-scene-replay-restart]");
+      continue;
+    }
     if (!await page.locator("[data-scene-replay-next]:visible:not(:disabled)").count()) break;
     await click(page, "[data-scene-replay-next]");
   }
@@ -218,8 +350,8 @@ async function fileExists(path) {
 
 async function runQuickDetective() {
   for (const viewport of [
-    { width: 390, height: 844 },
-    { width: 592, height: 920 },
+    { width: 1920, height: 1080 },
+    { width: 1366, height: 768 },
     { width: 1280, height: 720 },
     { width: 1280, height: 800 }
   ]) {
@@ -238,33 +370,35 @@ async function runQuickDetective() {
       await playStatementQuickCase(page, viewport, {
         caseId: "01-no-conditions",
         rounds: [
-          ["我爸爸给了我一百万", "或者是我不能生孩子"],
-          ["先别急吧", "您就帮我留意一下吧"]
+          [],
+          ["爸爸给了我一百万"],
+          [],
+          ["前任分手就因为我脾气", "先跟他说一句，我这人还可以"]
         ],
-        decoyAnchor: "我妈看这日子过不下去",
-        expectedListen: ["我二十四，在商场卖衣服", "我爸爸给了我一百万"],
-        expectedVerdict: ["我不会做这种背书的", "她不说，我也不会替她编"]
+        decoyAnchor: "亲爸偶尔替人看店",
+        decoyRoundIndex: 1,
+        expectedListen: ["我二十四，在商场卖衣服", "好听的也不会讲"],
       });
       await click(page, "[data-quick-select]");
       if (await page.locator('.quick-case-card.is-complete[data-quick-case-id="01-no-conditions"]').count() !== 1) {
         throw new Error("首宗快案通关后必须显示完成对勾");
       }
       if (viewport.width === 390) {
-        await playEarlyQuickCase(page, "01-no-conditions", "我爸爸给了我一百万");
+        await playEarlyQuickCase(page, "01-no-conditions", "好听的也不会讲");
         await click(page, "[data-quick-select]");
       }
 
       await playStatementQuickCase(page, viewport, {
         caseId: "02-one-missed-message",
         rounds: [
-          ["还有人说羡慕", "十一点五十二"],
+          ["十一点五十二"],
           ["后面又有人点了一轮"],
-          ["六次酒吧或者 KTV", "顺嘴说了句‘他也不知道", "他可能以为是喝断片那晚拍的"]
+          ["后来也解释过了"],
+          ["我说很久没出去没说错"]
         ],
         decoyAnchor: "他三十五",
         decoyKind: "anchored",
         expectedListen: ["本科和硕士都在一所985高校", "十一点五十二"],
-        expectedVerdict: ["那首歌，他隔了很久只回‘听了’", "换成我，我也会劝他退出", "我不猜酒桌上还有没有别的事"]
       });
       await click(page, "[data-quick-select]");
       await playStatementQuickCase(page, viewport, {
@@ -272,13 +406,11 @@ async function runQuickDetective() {
         soloCommentary: true,
         rounds: [
           ["先看长文怎样给自己留门"],
-          ["先看前例为什么让女方可能着急"],
           ["先评价女方这份回应"],
-          ["先说为什么求和推断很可信"],
+          ["先看她为什么可能想平息争议"],
           ["先评价『我手里还有』这套玩法"]
         ],
-        expectedListen: ["男方是高流量科技创业者", "女方是曾经站在流量顶端的演员", "文末却留了一句『纯属虚构』"],
-        expectedVerdict: ["我不会帮你催", "男方在骗舆论，女方在躲金钱账", "是否由她授权中间人，目前仍缺本人材料", "三千万该不该退，法院判"]
+        expectedListen: ["男方是科技创业者", "女方是曾经站在流量顶端的演员", "文末却留了一句『纯属虚构』"],
       });
       await click(page, "[data-quick-select]");
       if (await page.locator(".quick-case-card.is-complete").count() !== 3) throw new Error("三宗快案通关后都必须保留完成对勾");
@@ -289,12 +421,76 @@ async function runQuickDetective() {
   }
 }
 
+async function runDialogueLayout() {
+  const directory = resolve(root, "output/playwright/dialogue-layout");
+  await mkdir(directory, { recursive: true });
+  for (const viewport of [{ width: 390, height: 844 }, { width: 592, height: 920 }, { width: 1280, height: 720 }, { width: 1280, height: 800 }]) {
+    const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    try {
+      await page.goto(playableUrl);
+      await click(page, "[data-start-story]");
+      await page.getByRole("button", { name: "即时文字 关", exact: true }).click();
+      await page.locator(".avg-page-line b").waitFor();
+      const speakers = new Set();
+      let finished = false;
+      for (let step = 0; step < 60; step += 1) {
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+        const metrics = await page.locator(".avg-textbox").evaluate((box) => {
+          const plate = box.querySelector(".avg-page-line b");
+          const line = box.querySelector(".avg-line");
+          const plateRect = plate.getBoundingClientRect();
+          const lineRect = line.getBoundingClientRect();
+          const boxRect = box.getBoundingClientRect();
+          const buttons = [...document.querySelectorAll(".avg-system-bar button")].map((button) => button.getBoundingClientRect());
+          return {
+            speaker: plate.textContent, font: parseFloat(getComputedStyle(line).fontSize),
+            aligned: Math.abs(plateRect.left - lineRect.left) < 2,
+            textClear: plateRect.bottom <= lineRect.top && lineRect.bottom <= boxRect.bottom,
+            contained: boxRect.left >= 0 && boxRect.right <= innerWidth && boxRect.bottom <= innerHeight,
+            toolbarClear: buttons.every((rect) => rect.top >= boxRect.bottom && rect.bottom <= innerHeight && rect.right <= innerWidth),
+            oneRow: buttons.every((rect) => Math.abs(rect.top - buttons[0].top) < 2)
+          };
+        });
+        if (metrics.font < 18 || !metrics.aligned || !metrics.textClear || !metrics.contained || !metrics.toolbarClear || !metrics.oneRow) {
+          throw new Error(`dialogue layout at ${viewport.width}x${viewport.height}: ${JSON.stringify(metrics)}`);
+        }
+        if (!speakers.has(metrics.speaker)) {
+          speakers.add(metrics.speaker);
+          await page.screenshot({ path: resolve(directory, `${viewport.width}x${viewport.height}-${speakers.size}.png`) });
+        }
+        if (await page.locator("[data-cafe-opening-seen]:visible").count()) { finished = true; break; }
+        await page.locator(".avg-textbox").click();
+      }
+      if (!finished || speakers.size < 6) throw new Error("the layout review must traverse the complete opening exchange");
+      console.log(`dialogue layout ${viewport.width}x${viewport.height}: ${[...speakers].join(", ")}`);
+    } finally {
+      await context.close();
+    }
+  }
+}
+
+function assertAuthoredTranscript(text, lines, label) {
+  // drainDialogue observes typewriter prefixes as well as completed pages.
+  const samples = text.split("\n");
+  const rendered = samples.filter((sample, index) => !samples[index + 1]?.startsWith(sample)).join("").replace(/\s+/g, "");
+  let cursor = 0;
+  for (const line of lines ?? []) {
+    if (!line.text) continue;
+    const expected = line.text.replace(/\s+/g, "");
+    const position = rendered.indexOf(expected, cursor);
+    if (position < 0) throw new Error(`${label}: missing authored turn: ${line.text}\nRendered: ${rendered}`);
+    cursor = position + expected.length;
+  }
+}
+
 async function runCafePrologue() {
+  const prologue = storyManifest.nightShell.cafePrologue;
   for (const viewport of [
-    { width: 390, height: 844, pressureChoice: "camera-off", firstRoute: "toy", firstEvidence: "chat" },
-    { width: 592, height: 920, pressureChoice: "camera-off", firstRoute: "account", firstEvidence: "hotel" },
-    { width: 1280, height: 720, pressureChoice: "camera-off", firstRoute: "toy", firstEvidence: "hotel" },
-    { width: 1280, height: 800, pressureChoice: "camera-off", firstRoute: "account", firstEvidence: "chat" }
+    { width: 1280, height: 720, pressureChoice: "camera-off", firstEvidence: "chat" },
+    { width: 1366, height: 768, pressureChoice: "camera-off", firstEvidence: "chat" },
+    { width: 1280, height: 800, pressureChoice: "camera-off", firstEvidence: "chat" },
+    { width: 1920, height: 1080, pressureChoice: "camera-off", firstEvidence: "chat" }
   ]) {
     const context = await browser.newContext({ viewport, reducedMotion: viewport.width === 390 ? "no-preference" : "reduce" });
     const page = await context.newPage();
@@ -303,8 +499,10 @@ async function runCafePrologue() {
     page.setDefaultTimeout(browserActionTimeoutMs);
     try {
       await page.goto(`${playableUrl}?playtest=cafe-prologue-${viewport.width}-${Date.now()}&storyKey=steam-demo-01`);
+      const gameUserSelect = await page.locator("#app").evaluate((element) => getComputedStyle(element).userSelect);
+      if (gameUserSelect !== "none") throw new Error(`the game stage must prevent accidental text selection, got ${gameUserSelect}`);
       await click(page, "[data-start-story]");
-      await assertVisibleText(page, "开播前 · 傍晚", "the cafe negotiation must be the playable opening");
+      await assertVisibleText(page, "现在 · 傍晚", "the cafe negotiation must open in the present before the flashback");
       const sourceLayer = await page.locator(".cafe-prologue-dialogue").first().evaluate((element) => ({
         hidden: element.hidden,
         display: getComputedStyle(element).display
@@ -314,18 +512,43 @@ async function runCafePrologue() {
       if (!openingText.includes("我准备离婚")) throw new Error("the husband must state the divorce request before the first tutorial action");
       if (!openingText.includes("孩子以后怎么安排")) throw new Error("the child arrangement conflict must be part of the opening negotiation");
       if (openingText.includes("哪三页") || openingText.includes("只看这三页")) throw new Error("participants must not recite the tutorial material count");
-      await click(page, "[data-cafe-opening-seen]");
-      const firstAccountText = await drainDialogue(page, {});
-      if (!firstAccountText.includes("我也没偷着去澜桥酒店")) throw new Error("the first statement phase must include the wife's explicit hotel denial");
+      if (await page.locator("[data-cafe-opening-seen]").count()) await click(page, "[data-cafe-opening-seen]");
+      if (viewport.width === 390) {
+        const phaseTransition = page.locator('.pixel-transition-phase[data-transition-variant="listen"]');
+        if (await phaseTransition.count() !== 1) throw new Error("the first account must enter through the shared statement transition");
+        if (await phaseTransition.locator(".statement-phase-signal i").count() !== 5) throw new Error("the statement transition must render its animated signal bars");
+      }
+      const firstAccountText = openingText + await drainDialogue(page, {});
+      if (!firstAccountText.includes("那晚我没去澜桥酒店")) throw new Error("the first statement phase must include the wife's explicit hotel denial");
       const cafePortraitRoles = await page.locator(".cafe-negotiation-portrait[data-dialogue-portrait]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-dialogue-portrait")));
       if (cafePortraitRoles.join("|") !== "host|advisor|husband|wife|cousin") throw new Error(`cafe negotiation must keep five cross-talking portraits, got ${cafePortraitRoles.join("|")}`);
-      await assertVisibleText(page, "桌面", "the material names must stay in a compact scene-prop dock after the negotiation");
-      await assertVisibleText(page, "我也没偷着去澜桥酒店。", "the first action must expose the caller's exact denial as a selectable line");
+      await assertVisibleText(page, "21:18", "the material timestamp must remain readable");
+      if (await page.locator("[data-cafe-statement-id], [data-cafe-evidence-select], [data-cafe-evidence-present]").count()) throw Error("cafe still requires sentence/material matching");
       await assertVisibleText(page, "入住人：妻子本人", "the right-hand hotel material must expose a readable raw booking field");
       if (await page.locator("[data-cafe-material-open]").count() < 2) throw new Error("both opening materials must open into readable originals before the first presentation");
       await click(page, '[data-cafe-material-open="hotel"]');
       await assertVisibleText(page, "预订记录", "opening the hotel material must show a readable document view");
-      await click(page, "[data-cafe-material-close]");
+      const cafeMaterialMetrics = await page.locator(".cafe-material-sheet").evaluate((element) => {
+        const panel = element.getBoundingClientRect();
+        const close = element.querySelector("header [data-cafe-material-close]")?.getBoundingClientRect();
+        return {
+          width: panel.width,
+          height: panel.height,
+          closeWidth: close?.width ?? 0,
+          closeHeight: close?.height ?? 0,
+          viewportWidth: innerWidth,
+          viewportHeight: innerHeight
+        };
+      });
+      if (cafeMaterialMetrics.width < Math.min(360, cafeMaterialMetrics.viewportWidth - 20)
+        || cafeMaterialMetrics.height < cafeMaterialMetrics.viewportHeight * .72) {
+        throw new Error(`cafe material original is too small at ${viewport.width}px: ${cafeMaterialMetrics.width.toFixed(1)}x${cafeMaterialMetrics.height.toFixed(1)}`);
+      }
+      if (cafeMaterialMetrics.closeWidth < 112 || cafeMaterialMetrics.closeHeight < 44) {
+        throw new Error(`cafe material close control is too small: ${cafeMaterialMetrics.closeWidth.toFixed(1)}x${cafeMaterialMetrics.closeHeight.toFixed(1)}`);
+      }
+      await page.keyboard.press("Escape");
+      if (await page.locator(".cafe-material-modal:not([hidden])").count()) throw new Error("Escape must close the cafe material original");
       await assertNoPageText(page, "遮名银行流水", "the transfer evidence must stay off the table until the hotel exchange ends");
       for (const banned of ["教学 ·", "两边都会查", "依次点击两张材料确认", "先核她刚才那句"]) {
         await assertNoPageText(page, banned, `the cafe loop must not expose instruction copy: ${banned}`);
@@ -346,70 +569,54 @@ async function runCafePrologue() {
       const cafeBackdrop = await page.locator(".visual-scene").evaluate((element) => getComputedStyle(element).backgroundImage);
       if (!cafeBackdrop.includes("cafe_date")) throw new Error(`${viewport.width} cafe prologue must use the authored cafe background`);
 
-      await click(page, '[data-cafe-statement-id="screenshot-dismissal"]');
-      const wrongStatementText = await drainDialogue(page, {});
-      if (!wrongStatementText.includes("你要问这句就问")) throw new Error("a wrong source line must trigger the wife's in-character response");
-      if (await page.locator("[data-cafe-statement-id]").count() < 3) throw new Error("a wrong source line must return to the spoken lines instead of only disabling a button");
-      await click(page, '[data-cafe-statement-id="hotel-denial"]');
-      await assertVisibleText(page, "21:18", "the chat card must show its raw timestamp");
-      await assertVisibleText(page, "入住人：妻子本人", "the hotel card must show its raw booking field");
-      await assertCafeViewport(page, viewport, "evidence pair board");
-      await click(page, `[data-cafe-evidence-select="${viewport.firstEvidence}"]`);
-      await assertVisibleText(page, "已选择", "selecting one material must have an immediate visible response");
-      await click(page, "[data-cafe-evidence-present]");
-      const firstHitText = await drainDialogue(page, {});
-      if (!firstHitText.includes("你刚说没去过")) throw new Error("the first material hit must answer the selected denial before the revised statement starts");
-      await click(page, "[data-cafe-revision-seen]");
-      const pairText = await drainDialogue(page, {});
-      for (const line of ["自己住的酒店", "顾*跟这件事没关系", "我跟顾*之间没转过钱", "别把聊天、酒店和钱全拧在一起"]) {
-        if (!pairText.includes(line)) throw new Error(`the first hit must let the wife finish her revised account before review: ${line}`);
+      for (const [roundIndex, round] of prologue.cafe.inquiries.entries()) {
+        const wrong = round.options.find(option => !option.correct);
+        const correct = round.options.find(option => option.correct);
+        await click(page, `[data-cafe-inquiry="${wrong.id}"]`);
+        assertAuthoredTranscript(await drainDialogue(page, {}), [{role:"host",text:wrong.question}, ...wrong.lines], "cafe wrong inquiry");
+        await click(page, '[data-cafe-inquiry-retry]');
+        await page.reload(); await click(page, '[data-continue-story]');
+        if (await page.locator('[data-dialogue-advance]').count()) throw Error('cafe retry replayed the opening');
+        await assertCafeViewport(page, viewport, `cafe round ${roundIndex + 1} retry`);
+        await click(page, `[data-cafe-inquiry="${correct.id}"]`);
+        if (!roundIndex) {
+          const firstAnswerText = await drainDialogue(page, {});
+          assertAuthoredTranscript(firstAnswerText, [{role:"host",text:correct.question}, ...correct.lines], 'cafe first answer');
+          if (await page.locator('[data-cafe-revision-seen]').count()) await click(page, '[data-cafe-revision-seen]');
+          assertAuthoredTranscript(firstAnswerText + await drainDialogue(page, {}), prologue.cafe.revisedAccountLines, 'cafe revised account');
+          await assertVisibleText(page, "4 月 12 日｜转出｜顾*", "second inquiry needs the transfer original");
+        }
       }
-      await assertVisibleText(page, "回放她改口后的话", "the revised account must finish before the second replay opens");
-      if (await page.locator("[data-cafe-statement-id]").count() !== 4) throw new Error("the revised account must return as four separately selectable statements");
-      if (await page.locator(`[data-cafe-material-open="${viewport.firstEvidence}"]`).count()) throw new Error("a successfully presented material must leave the current material tray");
-      await assertVisibleText(page, "三笔双向转账", "the transfer material may enter only after the wife has denied money in the revised account");
-      await click(page, '[data-cafe-statement-id="alone-stay"]');
-      const revisedMissText = await drainDialogue(page, {});
-      if (!revisedMissText.includes("你手里的东西也只能看到我")) throw new Error("a wrong revised statement must receive an in-character boundary response");
-      await click(page, '[data-cafe-statement-id="money-denial"]');
-      const revisedLeadText = await drainDialogue(page, {});
-      if (!revisedLeadText.includes("你跟顾*之间没转过钱")) throw new Error("the host must replay the selected revised sentence before the second material choice");
-      await assertVisibleText(page, "4 月 12 日｜转出｜顾*", "the transfer card must show raw rows instead of a cross-document inference");
-      const remainingOpeningEvidence = viewport.firstEvidence === "chat" ? "hotel" : "chat";
-      await click(page, `[data-cafe-evidence-select="${remainingOpeningEvidence}"]`);
-      await click(page, "[data-cafe-revised-present]");
-      const revisedEvidenceMissText = await drainDialogue(page, {});
-      if (!revisedEvidenceMissText.includes("问转账") || !revisedEvidenceMissText.includes("问不着")) throw new Error("the remaining opening material must stay clickable without pretending it proves the money claim");
-      await assertVisibleText(page, "4 月 12 日｜转出｜顾*", "the transfer card must show raw rows instead of a cross-document inference");
-      await assertNoPageText(page, "交易对手户名与聊天联系人同名", "the transfer card must not solve the cross-document match for the player");
-      await assertCafeViewport(page, viewport, "transfer presentation board");
-      await click(page, '[data-cafe-evidence-select="parallel-transfer-ledger"]');
-      await click(page, "[data-cafe-revised-present]");
       const legalText = await drainDialogue(page, {});
-      if (!legalText.includes("他请我来") || !legalText.includes("按现有材料准备") || !legalText.includes("还没到起诉离婚的程度")) throw new Error("Zhao must make the on-site consultation clear without presenting herself as litigation counsel");
-      await assertVisibleText(page, "共同财产", "the cafe must turn the husband's legal demands into a visible request list");
+      assertAuthoredTranscript(legalText, prologue.cafe.legalClaimLines, "cafe negotiation");
+      if (!legalText.includes("把家里的账查清")) throw Error("the husband must state the financial demand before parentage");
       await assertCafeViewport(page, viewport, "legal request board");
-      await click(page, "[data-cafe-legal-brief]");
-      const parentageText = await drainDialogue(page, {});
-      if (!parentageText.includes("就跟我去做鉴定") || !parentageText.includes("敢不敢") || !parentageText.includes("我不做") || !parentageText.includes("你俩先别吵") || !parentageText.includes("掰扯不明白")) throw new Error("the parentage dispute must break into an argument before Zhao stops the public quarrel");
+      if (await page.locator("[data-cafe-legal-brief]").count()) await click(page, "[data-cafe-legal-brief]");
+      const parentageText = legalText + await drainDialogue(page, {});
+      assertAuthoredTranscript(parentageText, prologue.cafe.parentageBlockLines, "parentage argument");
       if (parentageText.includes("个人委托") || parentageText.includes("最可行的一步")) throw new Error("the private testing path must not be explained in front of the wife and camera");
-      if (!parentageText.includes("大主播也不过如此") || !parentageText.includes("这份原片")) throw new Error("the competing recording and edit threat must arrive after the material hit");
+      assertAuthoredTranscript(parentageText, prologue.cafe.cameraBreakLines, "recording dispute");
       if (parentageText.includes("礼物") || parentageText.includes("直播间") || parentageText.includes("停播")) throw new Error("the cafe is a pre-recorded negotiation and must not expose live-gifting language");
       await assertCafeViewport(page, viewport, "recording pressure choices");
       await click(page, `[data-cafe-pressure="${viewport.pressureChoice}"]`);
       const aftermathText = await drainDialogue(page, {});
-      if (!aftermathText.includes("孩子的事没得商量")) throw new Error("the wife must continue resisting after she leaves the cafe");
-      if (!aftermathText.includes("不能只拿一句‘我怀疑’") || !aftermathText.includes("那家机构") || !aftermathText.includes("明天就把孩子的东西都带走")) throw new Error("Zhao must explain the practical path and timing risk privately after the argument");
+      assertAuthoredTranscript(aftermathText, prologue.aftermath.openingLines, "cafe aftermath");
+
       await assertCafeViewport(page, viewport, "investigation order choices");
-      await click(page, `[data-cafe-investigation="${viewport.firstRoute}"]`);
-      const firstRouteText = await drainDialogue(page, {});
-      if (!firstRouteText.includes(viewport.firstRoute === "toy" ? "沙发靠背缝里" : "十八号那笔")) throw new Error("the player's first continuation route must control information order");
-      if (firstRouteText.includes(viewport.firstRoute === "toy" ? "十八号那笔" : "沙发靠背缝里")) throw new Error("the unchosen continuation route must not be forced before the live show");
-      await assertVisibleText(page, "回直播间开播", "the opening investigation must hand off to the live-show loop before the result returns");
-      await assertCafeViewport(page, viewport, "night handoff");
-      await click(page, "[data-cafe-enter-night]");
+      await click(page, "[data-cafe-aftermath-next]");
+      for (const [index, route] of prologue.aftermath.routes.entries()) {
+        if (await page.locator("[data-cafe-investigation]").count()) throw new Error("cafe investigation still branches");
+        const routeText = await drainDialogue(page, {});
+        assertAuthoredTranscript(routeText, [...route.lines, ...route.handoffLines], `cafe route ${route.id}`);
+        await assertCafeViewport(page, viewport, `sequential investigation ${index + 1}`);
+        await page.reload();
+        await click(page, "[data-continue-story]");
+        await click(page, "[data-cafe-aftermath-next]");
+      }
       const nightScene = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}").scene ?? "");
       if (nightScene !== "nightShellPrologue") throw new Error(`${viewport.width} cafe opening must hand off to the night prologue, got ${nightScene}`);
+      await assertVisibleText(page, "两年前", "the first case must explicitly enter a flashback");
+      await click(page, "[data-enter-first-flashback]");
       const nightPrelude = await drainDialogue(page, {});
       if (!nightPrelude.includes("你推开直播间的门")) throw new Error(`${viewport.width} the night cold open must follow the cafe tutorial`);
       await page.evaluate(() => {
@@ -428,15 +635,7 @@ async function runCafePrologue() {
       await click(page, "[data-continue-story]");
       await click(page, "[data-finish-night-shell]");
       const forensicText = await drainDialogue(page, {});
-      if (viewport.firstRoute === "toy") {
-        if (!forensicText.includes("个人委托的初步检测") || !forensicText.includes("排除生物学父子关系") || !forensicText.includes("申请由法院委托鉴定")) throw new Error("the toy route must return only the preliminary parentage result and court request");
-        if (forensicText.includes("收款人不是顾*")) throw new Error("the toy route must not also pay off the unchosen account route");
-        await assertVisibleText(page, "女方何时知道", "the parentage ending must keep the wife's prior knowledge unproven");
-      } else {
-        if (!forensicText.includes("收款人不是顾*")) throw new Error("the account route must return its separate account-holder clue");
-        if (forensicText.includes("排除生物学父子关系")) throw new Error("the account route must not also pay off the unchosen parentage route");
-        await assertVisibleText(page, "收款人的身份没有向节目公开", "the account ending must keep the receiver unknown");
-      }
+      assertAuthoredTranscript(forensicText, [...prologue.forensic.openingLines, ...prologue.forensic.accountClueLines], "both private callbacks");
       await assertVisibleText(page, "结果只到这里", "the cafe prologue must end on a fact boundary rather than a victory card");
       await assertCafeViewport(page, viewport, "private callback ending");
       const savedProgress = await page.evaluate(() => {
@@ -452,16 +651,14 @@ async function runCafePrologue() {
       });
       if (!savedProgress.legalBriefSeen
         || savedProgress.pressureChoice !== viewport.pressureChoice
-        || savedProgress.statementId !== "money-denial"
-        || savedProgress.evidenceId !== "parallel-transfer-ledger"
         || !savedProgress.marks?.includes(viewport.firstEvidence)
         || !savedProgress.marks?.includes("parallel-transfer-ledger")
-        || savedProgress.order?.[0] !== viewport.firstRoute
-        || savedProgress.order?.length !== 1) {
+        || JSON.stringify(savedProgress.order) !== JSON.stringify(prologue.aftermath.routes.map(route => route.id))) {
         throw new Error(`${viewport.width} cafe choices must survive state writes: ${JSON.stringify(savedProgress)}`);
       }
       await click(page, "[data-cafe-finish]");
-      await assertVisibleText(page, "今晚收麦", "the cafe prologue must return to the existing non-verdict story summary");
+      for (const caption of ["故事未完待续", "维护基本的道德底线是每个人都应该做的", "主播将在正式版归来继续主持公道！"]) await page.getByText(caption, { exact: true }).waitFor({ state: "visible", timeout: 20000 });
+      smokeProgress(`PASS cafe ${viewport.width}x${viewport.height}: both investigations, saved progress, both callbacks and three credits`);
     } finally {
       await context.close();
     }
@@ -481,6 +678,8 @@ async function assertCafeViewport(page, viewport, label) {
     const screenRect = screen?.getBoundingClientRect();
     const dialogueCard = screen?.querySelector(".dialogue-card.avg-dialogue-active");
     const actionSelector = [
+      "[data-cafe-inquiry]",
+      "[data-cafe-inquiry-retry]",
       "[data-cafe-statement-id]",
       "[data-cafe-opening-seen]",
       "[data-cafe-revision-seen]",
@@ -490,6 +689,7 @@ async function assertCafeViewport(page, viewport, label) {
       "[data-cafe-revised-present]:not(:disabled)",
       "[data-cafe-legal-brief]",
       "[data-cafe-pressure]",
+      "[data-cafe-aftermath-next]",
       "[data-cafe-investigation]",
       "[data-cafe-enter-night]:not(:disabled)",
       "[data-cafe-finish]"
@@ -540,16 +740,22 @@ async function playEarlyQuickCase(page, caseId, anchor) {
   await advanceQuickLine(page, "[data-quick-next-turn]");
   await clickQuickSourceLine(page, anchor);
   await finishQuickConfrontation(page);
+  if (await page.locator(".quick-scene-transcript").count()) {
+    await advanceQuickLine(page, "[data-quick-next-turn]");
+  }
   await page.locator("[data-quick-end-early]").waitFor({ state: "visible" });
   await assertVisibleText(page, "先收麦", "快案抓到一个关键矛盾后必须允许提前收麦");
   await click(page, "[data-quick-end-early]");
   while (!await page.locator(".quick-ending-actions").count()) {
     await advanceQuickLine(page, "[data-quick-next-verdict]");
   }
-  await assertVisibleText(page, "拒绝背书，不替她编故事", "提前收案必须落到独立的事实边界结论");
+  await assertVisibleText(page, "暂不替她介绍", "提前收案必须落到已知信息不足的结论");
 }
 
-async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, decoyKind = "no-clue", expectedListen, expectedVerdict, alreadySelected = false, soloCommentary = false }) {
+async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, decoyRoundIndex = 0, decoyKind = "no-clue", expectedListen, alreadySelected = false, soloCommentary = false }) {
+  const authored = JSON.parse(await readFile(resolve(root, "content", "packs", "steam-demo-01", "quick-cases", `${caseId}.json`), "utf8"));
+  if (authored.focusedInquiry) return playFocusedQuickCase(page, viewport, authored, alreadySelected);
+  const expectedVerdict = authored.ending.summaryPages.flatMap((page) => page.lines.map((line) => line.text));
   if (!alreadySelected) await click(page, `[data-quick-case-id="${caseId}"]`);
   await assertVisibleText(page, "周明", "快案必须显示玩家保存的主播姓名");
   await assertNoPageText(page, "这次怎么玩", "快案入口不得解释内部机制");
@@ -569,23 +775,47 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
     } else {
       await advanceQuickLine(page, "[data-quick-next-turn]");
     }
+    if ((authored.disclosureRounds[roundIndex].autoConfrontationIds ?? []).length) {
+      await assertVisibleText(page, "连线继续", "普通交流直接接在陈述后，不要求寻找矛盾");
+      await assertNoPageText(page, "LINE 打断", "普通接话不应显示打断状态");
+      const directory = resolve(root, "output/playwright/focused-inquiry");
+      await mkdir(directory, { recursive: true });
+      await page.locator("[data-quick-dialogue-box]").click();
+      await page.screenshot({ path: resolve(directory, `${caseId}-conversation-${roundIndex}-${viewport.width}x${viewport.height}.png`), animations: "disabled" });
+      await finishQuickConfrontation(page);
+      if (!anchors.length) continue;
+    }
     await page.locator("[data-quick-review-line]").first().waitFor({ state: "visible" });
     await assertVisibleText(page, soloCommentary ? "PAUSE 评议" : "REC 回放", soloCommentary ? "口播暂停点必须进入主播评议状态" : "找问题时必须切换为逐句回放状态");
     await assertNoPageText(page, "先问哪件事", "回放不得退回抽象问题方向菜单");
     await assertNoPageText(page, "只选怀疑的方向", "回放不得添加操作教程");
-    if (roundIndex === 0 && decoyAnchor) {
+    if (roundIndex === decoyRoundIndex && decoyAnchor) {
       await clickQuickSourceLine(page, decoyAnchor);
       await page.locator(".quick-scene-missReaction").waitFor({ state: "visible" });
-      await assertVisibleText(page, "这句问早了", "快案错误原句必须先进入人物反应拍，不能只扣耐心回选句");
+      await assertVisibleText(page, "询问这句", "误问也必须先播放实际问题");
+      if (await page.locator(".quick-miss-bubble").getAttribute("data-quick-speaking") !== "host") throw new Error("误问首句必须是主播问话");
+      await assertQuickLayout(page, viewport, `${caseId} miss question`, "host");
+      await advanceQuickLine(page, "[data-quick-after-miss]");
+      if (await page.locator(".quick-miss-bubble").getAttribute("data-quick-speaking") !== "caller") throw new Error("问句之后必须是来电人回应");
+      await assertQuickLayout(page, viewport, `${caseId} miss response`, "caller");
+      const captureDirectory = resolve(root, "output/playwright/script-review-repairs");
+      await mkdir(captureDirectory, { recursive: true });
+      await page.locator(".quick-miss-bubble").click();
+      await page.screenshot({ path: resolve(captureDirectory, `${caseId}-miss-${viewport.width}x${viewport.height}.png`), animations: "disabled" });
       const missText = (await page.locator(".quick-miss-bubble").getAttribute("data-quick-line-text"))?.trim() ?? "";
       if (!missText) throw new Error("快案错误原句必须显示来电人或主播的具体反应");
-      await click(page, "[data-quick-after-miss]");
+      await advanceQuickLine(page, "[data-quick-after-miss]");
       await page.locator(".quick-scene-issueSelection").waitFor({ state: "visible" });
       await assertVisibleText(
         page,
         decoyKind === "anchored" ? "这个问法被挡回来了 · 耐心 −1" : "这句没有可追问的线索 · 耐心 −1",
         decoyKind === "anchored" ? "有锚点的社会性错选必须标成问法被挡回，不能再伪装成无线索" : "错误原句只做局部反馈，不讲解答案"
       );
+    }
+    if (soloCommentary) {
+      for (const callerState of ["来电人还在", "来电人发来", "刚接进来", "你会让主播先说什么"]) {
+        await assertNoPageText(page, callerState, "独白模式不得沿用虚构来电状态或第三人称操作提示");
+      }
     }
     for (const anchor of anchors) {
       await clickQuickSourceLine(page, anchor);
@@ -609,12 +839,24 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
     }
   }
   verdictText += ` ${(await page.locator("[data-quick-dialogue-box]").getAttribute("data-quick-line-text")) ?? ""}`;
+  let verdictCursor = 0;
   for (const text of expectedVerdict) {
-    if (!verdictText.includes(text)) throw new Error(`${caseId} verdict should include ${text}`);
+    const at = verdictText.indexOf(text, verdictCursor);
+    if (at < 0) throw new Error(`${caseId} verdict omitted or reordered authored line: ${text}`);
+    verdictCursor = at + text.length;
   }
 }
 
 async function clickQuickSourceLine(page, anchor) {
+  if(await page.locator('[data-quick-replay-next]').count()) {
+    for(let n=0;n<40;n++) {
+      if((await page.locator('.quick-replay-quote').innerText()).includes(anchor)) {
+        await page.locator('[data-quick-review-line]').click();return;
+      }
+      await page.locator('[data-quick-replay-next]').click();
+    }
+    throw Error(`quick replay source unavailable: ${anchor}`);
+  }
   const line = page.locator("[data-quick-review-line]:visible").filter({ hasText: anchor }).first();
   await line.waitFor({ state: "visible" });
   await line.click();
@@ -762,7 +1004,7 @@ async function runStateReplacementRoutes() {
     const retriedState = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
     const retriedCaseId = retriedState.caseBriefs?.[0]?.id;
     const retriedAnswerKey = `${retriedCaseId}:scene:0`;
-    if (!["不住在一起。", "他住他的，我住我的。"].every((line) => retryTranscript.includes(line)) || retryTranscript.includes("这是一条已经淘汰的旧台词")) {
+    if (!["不住在一起，他住他的，我住我的。"].every((line) => retryTranscript.includes(line)) || retryTranscript.includes("这是一条已经淘汰的旧台词")) {
       throw new Error("continuing a save must refresh stale authored dialogue from the current content pack");
     }
     if (retriedState.caseBriefs?.[0]?.sceneVersions) {
@@ -784,7 +1026,7 @@ async function runStateReplacementRoutes() {
 
 async function runRoute(route) {
   const context = await browser.newContext({
-    viewport: { width: 390, height: 844 },
+    viewport: { width: 1280, height: 720 },
     reducedMotion: route.name === "accounting-support" ? "no-preference" : "reduce"
   });
   await context.addInitScript(() => {
@@ -850,8 +1092,8 @@ async function runRoute(route) {
         throw new Error("night shell prologue must identify the first caller and the forwarded male voice before playing it");
       }
       await assertNoPageText(page, "试玩已收麦", "night shell prologue must not display the story-pack completion HUD");
-      if (golden90?.preludeKinds?.notice !== 1 || golden90?.preludeKinds?.message !== 1) {
-        throw new Error("night shell prelude should distinguish the work notice from the personal message before the player starts broadcasting");
+      if (golden90?.preludeKinds?.notice !== 0 || golden90?.preludeKinds?.message !== 1 || !golden90?.preludeTranscript?.includes('老方正站在桌边')) {
+        throw new Error("night shell prelude must distinguish the producer on site from the spouse's WeChat message");
       }
       if (golden90?.debtKinds?.stage !== 1 || golden90?.debtKinds?.host < 1) {
         throw new Error("night shell cold open should confirm the go-live action and identify the forwarded voice before it plays");
@@ -880,19 +1122,44 @@ async function runRoute(route) {
     let selectedCounterChoiceLabel = "";
     let sceneQuestionCount = 0;
     const inlineEvidenceCheckIndexes = new Set();
+    let inlineBillVerified = false;
+    let lastRoutePhase = "";
 
     for (let beat = 0; beat < 48; beat += 1) {
+      if (await page.locator('[data-night2-transition-done]').count()) {
+        await page.locator('[data-night2-transition-done]').click();continue;
+      }
+      if (await page.locator("[data-caller-question]").count()) break;
+      // Previously inspected boards can reopen with a saved pick and no visible
+      // choice buttons. Hand this phase to the material driver before replay.
+      const savedPhase = await page.evaluate(() => JSON.parse(window.localStorage?.getItem("livestream-detective-save-v1") ?? "{}").scene);
+      if(savedPhase !== lastRoutePhase) { smokeProgress(`ROUTE ${route.name}: ${savedPhase}`); lastRoutePhase = savedPhase; }
+      if (savedPhase === "evidenceCheck") break;
       await collectLiveVisualState(page, visualStates, portraitStates);
+      if (["interludeDesk", "dayActOpening", "dayMap", "dayScene"].includes(savedPhase)) {
+        await completeLinearInvestigation(page, route);
+        continue;
+      }
       if (await testimonyFlowIsVisible(page)) {
         await completeTestimonyWall(page, route);
         continue;
       }
       if (route.name === "accounting-support" && !materialEntryChecked && await page.locator(".deck-card-material[data-material-open]").count()) {
-        if (await page.locator("[data-material-open]").count() < 3) throw new Error("received material must be reachable from the control deck, dialogue bar, and active choice layer");
-        if (!await page.locator(".choice-material-shortcut[data-material-open]").isVisible()) throw new Error("active choices must expose a visible received-material shortcut");
-        await page.locator(".choice-material-shortcut[data-material-open]").click();
+        const materialEntry = page.locator("[data-material-open]:visible").first();
+        if (!await materialEntry.isEnabled()) throw new Error("received material must have an accessible control");
+        await materialEntry.click();
         await page.locator(".avg-material-modal:not([hidden])").waitFor({ state: "visible" });
         await assertVisibleText(page, "社保断缴时间", "the first received material must open before the active choice");
+        const materialPanelMetrics = await page.locator(".avg-material-panel").evaluate((element) => {
+          const panel = element.getBoundingClientRect();
+          const close = element.querySelector("header [data-material-close]")?.getBoundingClientRect();
+          return { width: panel.width, height: panel.height, closeWidth: close?.width ?? 0, closeHeight: close?.height ?? 0, viewportWidth: innerWidth, viewportHeight: innerHeight };
+        });
+        if (materialPanelMetrics.width < Math.min(600, materialPanelMetrics.viewportWidth - 24)
+          || materialPanelMetrics.height < materialPanelMetrics.viewportHeight * .72) {
+          throw new Error(`received material panel is too small: ${materialPanelMetrics.width.toFixed(1)}x${materialPanelMetrics.height.toFixed(1)}`);
+        }
+        if (materialPanelMetrics.closeWidth < 112 || materialPanelMetrics.closeHeight < 44) throw new Error("received material close control must be easy to reach");
         await page.locator(".avg-material-panel [data-material-close]").click();
         materialEntryChecked = true;
       }
@@ -908,14 +1175,30 @@ async function runRoute(route) {
         if (savedScene === "afterSceneEvidence") {
           const checkIndex = Number((await page.locator("[data-evidence-check]").first().getAttribute("data-evidence-check"))?.split(":")[0]);
           inlineEvidenceCheckIndexes.add(checkIndex);
-          await activate(page, route, "[data-evidence-check]", 0);
-          await drainDialogue(page, route);
+          await assertVisibleText(page, "圈点 · 圈偏 −1 耐心", "inline material must disclose the miss cost");
+          const check = authoredCasePackets[0].evidenceChecks[checkIndex];
+          const optionIndex = check.options.findIndex(option => option.correct === !(checkIndex === 0 && route.materialMode === "miss"));
+          await activate(page, route, "[data-evidence-check]", optionIndex);
+          const inlineTranscript = await drainDialogue(page, route);
+          if (checkIndex === 0) {
+            if (route.materialMode === "miss") {
+              await assertVisibleText(page, caseOneMaterialMissDrift, "inline bill miss must retain the authored drift comment");
+            } else if (!check.options[optionIndex].label.includes("三万五") || !inlineTranscript.includes(check.options[optionIndex].feedback)) {
+              throw new Error("bill inspection must select the unexplained 35,000 and play its authored follow-up");
+            }
+            inlineBillVerified = true;
+          }
           if (!await page.locator("[data-after-scene-evidence]").count()) {
             const afterState = await page.evaluate(() => JSON.parse(window.localStorage?.getItem("livestream-detective-save-v1") ?? "{}"));
             const visibleButtons = await page.locator("button:visible").evaluateAll((buttons) => buttons.map((button) => button.outerHTML));
             throw new Error(`inline evidence check ${checkIndex} returned to ${afterState.scene}: ${JSON.stringify(visibleButtons)}`);
           }
           await activate(page, route, "[data-after-scene-evidence]");
+          if (route.stopAfterCheckId === check.id) {
+            if (!route.oldPostSeen) throw new Error("second-night evidence lacked first-night acquisition");
+            smokeProgress("PASS first-night old post, ordered day investigation, restaurant reveal, device questions and exit");
+            return;
+          }
           continue;
         }
         break;
@@ -963,7 +1246,7 @@ async function runRoute(route) {
           await assertVisibleText(page, "我想了一晚上，还是得把话说完——你接着问吧。", "zero-location route should use fallback opener");
         }
         const openerTranscript = await drainDialogue(page, route);
-        if (route.openerText && !openerTranscript.includes(route.openerText)) {
+        if (!authoredCasePackets[0].overnightStructure.linearCallback.lines.every(line => openerTranscript.includes(line.text))) {
           throw new Error(`${route.name} should render the selected opener and its first conflict`);
         }
         await activate(page, route, "[data-enter-overnight-night2]");
@@ -1002,17 +1285,13 @@ async function runRoute(route) {
           : "";
         const liveCounterTranscript = await drainDialogue(page, route);
         if (route.name === "accounting-support") {
-          const firstInterest = liveCounterTranscript.includes("房租是不是另付的") || liveCounterTranscript.includes("我刚才没说房租");
-          if (firstInterest) {
-            if (!liveCounterTranscript.includes("每月一万七千五里，到底算没算房租") || !liveCounterTranscript.includes("我刚才没说房租")) {
-              throw new Error("night-B first interest must show the room noticing the rent and the caller's small admission");
+          const activeBeatId = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')).activeLiveCounterBeatId);
+          const counter = authoredCasePackets[0].overnightStructure.liveCounterBeats.find(beat => beat.id === activeBeatId);
+          const expectedLines = counter?.choices?.at(-1)?.lines ?? counter?.lines ?? [];
+          for(const line of expectedLines.filter(line=>line.text && line.role !== 'pause')) {
+            for(const sentence of line.text.split(/(?<=[。！？])/u).filter(Boolean)) {
+              if(!liveCounterTranscript.replace(/\s/g, '').includes(sentence.replace(/\s/g, ''))) throw Error(`counter beat omitted current authored sentence: ${sentence}`);
             }
-          } else if (!liveCounterTranscript.includes("他在听。")) {
-            throw new Error("night-B counter-pressure should interrupt between two live scenes");
-          }
-          // The button only names a direction; the complete host sentence appears after selection.
-          if (!firstInterest && (!selectedCounterChoiceLabel || !selectedHostResponse || selectedHostResponse === selectedCounterChoiceLabel)) {
-            throw new Error("the selected counter-pressure direction must resolve into a distinct on-air host response");
           }
         }
         await activate(page, route, "[data-continue-live-counter]");
@@ -1031,11 +1310,13 @@ async function runRoute(route) {
         await completeTestimonyWall(page, route);
         continue;
       }
-      if (!await page.locator(".statement-replay-page").count()) {
+      if (!await page.locator(".statement-replay-page").count() && !await page.locator("[data-scene-question]:visible").count()) {
         await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
         await activate(page, route, "[data-scene-open-replay]");
       }
-      await assertVisibleText(page, "REC", "main-case statement review must switch the control deck to replay");
+      if (await page.locator(".statement-replay-page").count()) {
+        await assertVisibleText(page, "REC", "main-case statement review must switch the control deck to replay");
+      }
       await assertNoPageText(page, "收束 · 未命中 −1 耐心", "原句回放不得把底层耐心成本写成按钮说明");
       if (!helperHiddenChecked && route.name === "accounting-support") {
         if (await page.locator("[data-scene-helper]").count()) throw new Error("V哥隐藏期间不得出现求助按钮");
@@ -1045,7 +1326,10 @@ async function runRoute(route) {
         helperHiddenChecked = true;
       }
       const sourceLine = await currentLoadBearingStatementLine(page);
-      const sourceText = (await page.locator(".statement-replay-page .avg-line:visible").first().textContent())?.trim() ?? "";
+      const sourceText = await page.locator(".statement-replay-page .avg-line:visible").count()
+        ? (await page.locator(".statement-replay-page .avg-line:visible").first().textContent())?.trim() ?? ""
+        : "";
+      const selectedKey = await sourceLine.getAttribute("data-scene-question");
       await sourceLine.click();
       sceneQuestionCount += 1;
       if (sourceText && !directionChoiceChecked) {
@@ -1063,39 +1347,25 @@ async function runRoute(route) {
         directionChoiceChecked = true;
       }
       const answerTranscript = await drainDialogue(page, route);
-      if (route.name === "accounting-support" && sceneQuestionCount === 1 && !answerTranscript.includes("以前每个月都按时到")) {
+      if (route.name === "accounting-support" && selectedKey === "0:1" && !answerTranscript.includes("以前每个月都按时到")) {
         throw new Error("the normal key-question route must play the authored sceneCloser before advancing");
       }
-      if (route.name === "accounting-support" && sceneQuestionCount === 2 && !answerTranscript.includes("以前也有人这么跟我借钱")) {
+      if (route.name === "accounting-support" && selectedKey === "1:1" && !answerTranscript.includes("以前也有人这么跟我借钱")) {
         throw new Error("the normal key-question route must play the anchored host disclosure instead of skipping it");
       }
       continue;
     }
 
-    await page.locator("[data-evidence-check]").first().waitFor({ state: "visible" });
-    await assertVisibleText(page, "圈点 · 圈偏 −1 耐心", "evidence targets must expose the miss cost before activation");
+    if (!inlineBillVerified) throw new Error("the first-night bill check was skipped");
     if (visualStates.size < 2 || portraitStates.size < 2) {
-      throw new Error(`${route.name} route should change scene and portrait states while questioning`);
+      throw new Error(`${route.name} route should change scene and portrait states while questioning: ${[...visualStates]} / ${[...portraitStates]}`);
     }
     if (route.name === "accounting-support" && (!helperHiddenChecked || !directionChoiceChecked || !materialEntryChecked)) {
       throw new Error("primary browser route must verify hidden V哥 UI, a direction-only question, and the received-material entry");
     }
-    if (route.name === "accounting-support" && ![1, 2, 3].every((index) => inlineEvidenceCheckIndexes.has(index))) {
-      throw new Error(`primary browser route must interleave all three case-1 material boards, got ${[...inlineEvidenceCheckIndexes].join(",")}`);
+    if (route.name === "accounting-support" && ![0, 1, 2, 3].every((index) => inlineEvidenceCheckIndexes.has(index))) {
+      throw new Error(`primary browser route must interleave the four case-1 material boards, got ${[...inlineEvidenceCheckIndexes].join(",")}`);
     }
-    const materialIndex = route.materialMode === "miss" ? 1 : 0;
-    const materialButtons = page.locator("[data-evidence-check]");
-    await activate(page, route, "[data-evidence-check]", Math.min(materialIndex, await materialButtons.count() - 1));
-    const materialResultTranscript = await drainDialogue(page, route);
-    if (route.name === "accounting-support") {
-      if (!materialResultTranscript.includes("餐厅、酒店、礼物，还有设备")) {
-        throw new Error("perfect route should show testimony revision after the material hit");
-      }
-    }
-    if (route.name === "material-miss-accounting-support") {
-      await assertVisibleText(page, caseOneMaterialMissDrift, "material-miss route should release the current case-authored drift comment after the miss");
-    }
-
     await advanceToAccusation(page, route);
     await assertVisibleText(page, "终局追问 · 选后收麦", "final question must disclose that it closes the call");
     await activate(page, route, "[data-accuse]");
@@ -1156,7 +1426,8 @@ async function runCase3DayRoutes() {
     openerText: "那两份材料我又看了几遍",
     reactionText: "她把我家的群发给一个直播间？",
     reactionChoice: "push-back",
-    reactionResponse: "你先让我把这段说完。"
+    reactionResponse: "你先让我把这段说完。",
+    tailText: "以后不还是得谈这几条？"
   }));
 }
 
@@ -1170,16 +1441,16 @@ async function runCase4DayRoutes() {
     dayScenes: [
       {
         id: "day-work-payment-ledger",
-        text: "她整理的七条报销记录",
+        text: "垫款、结算与待付记录",
         rows: ["q01", "q02", "q04"],
-        questionText: "公开流程刚写完对公要比价，他为什么十七分钟后就让你改刷个人卡"
+        questionText: "通知写主办先垫，主管又私聊让你先出钱"
       },
-      { id: "day-work-finance-window", text: "拿着立项页等不到账" }
+      { id: "day-work-finance-window", text: "别再重复填一单" }
     ],
     opener: "她整理的报销时间线",
-    openerText: "财务说延后，是九天以后",
-    conflictText: "十四点二十二分那条私聊",
-    reactionText: "弹幕里有人说我蠢。",
+    openerText: "前五条对过了",
+    conflictText: "发票照片交给他以后",
+    reactionText: "有人说多报四千的时候怎么不打电话。",
     reactionChoice: "silence",
     reactionResponse: "行，继续。",
     nextCounterText: "工作群刚弹出一条"
@@ -1305,7 +1576,7 @@ async function runCase2DayMap() {
   }));
 }
 
-async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoice = "", interludeReplyChoice = "", expectedNightInventory = "", interludeText = "", expectedDaySceneCount = 3, dayScenes, opener, openerText, conflictText = "", reactionText = "", reactionChoice = "", reactionResponse = "", nextCounterText = "" }) {
+async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoice = "", interludeReplyChoice = "", expectedNightInventory = "", interludeText = "", expectedDaySceneCount = 3, dayScenes, opener, openerText, conflictText = "", reactionText = "", reactionChoice = "", reactionResponse = "", nextCounterText = "", tailText = "" }) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     reducedMotion: "reduce"
@@ -1325,69 +1596,7 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
     });
     await assertNoPageText(page, "第二天，下午", `${name} must show the hangup before daytime`);
     await click(page, "[data-enter-post-live], [data-enter-interlude]");
-    if (await page.locator("[data-interrupt-choice]").count()) {
-      await click(page, "[data-interrupt-choice]");
-      await click(page, "[data-return-interlude]");
-    } else if (await page.getByText("后台打断", { exact: true }).first().isVisible().catch(() => false)
-      && await page.locator("[data-complete-interlude-action]").count()) {
-      await click(page, "[data-complete-interlude-action]");
-    }
-    await assertVisibleText(page, "回拨前", `${name} must pass through the short interlude before the day map`);
-    await click(page, `[data-interlude-action="${interludeAction}"]`);
-    await assertNoPageText(page, "ON AIR", `${name} interlude action must stay off air`);
-    if (interludeText) await assertVisibleText(page, interludeText, `${name} must render the selected interlude NPC action`);
-    if (interludeReplyChoice) {
-      await click(page, "[data-evidence-check]");
-      if (await page.locator("[data-return-interlude]").count()) {
-        throw new Error(`${name} must require a reply before returning to the interlude desk`);
-      }
-      await assertNightState(page, (night) => !(night.interludeActionsDone ?? []).includes(interludeAction), `${name} must not complete the private-message action before reply`);
-      await assertNightState(page, (night) => !(night.inventory ?? []).includes("other-caller-dm-seen"), `${name} must not grant the orphan read receipt`);
-      await click(page, `[data-reply-choice="${interludeReplyChoice}"]`);
-      await assertNightState(page, (night) => (night.interludeActionsDone ?? []).includes(interludeAction), `${name} must complete the private-message action after reply`);
-      await assertNightState(page, (night) => (night.inventory ?? []).includes(expectedNightInventory), `${name} must grant the selected reply stance`);
-      await assertNightState(page, (night) => !(night.inventory ?? []).includes("other-caller-dm-seen"), `${name} must keep the orphan read receipt absent after reply`);
-    } else if (interludeChoice) {
-      await click(page, `[data-advisor-conflict="${interludeChoice}"]`);
-      await click(page, "[data-return-interlude]");
-    } else if (await page.locator("[data-return-interlude]").count()) {
-      await click(page, "[data-return-interlude]");
-    } else if (await page.locator("[data-evidence-check]").count()) {
-      await click(page, "[data-evidence-check]");
-      if (await page.locator("[data-return-interlude]").count()) await click(page, "[data-return-interlude]");
-    } else {
-      await click(page, "[data-complete-interlude-action]");
-    }
-    await click(page, "[data-callback-ready]");
-    await assertVisibleText(page, "把昨晚没问完的补上", `${name} must enter the daytime follow-up after the short interlude`);
-    await click(page, "[data-enter-day-map]");
-    if (await page.locator("[data-day-scene]").count() !== expectedDaySceneCount) throw new Error(`${name} should expose exactly ${expectedDaySceneCount} daytime locations`);
-    if (await page.locator("[data-enter-overnight-callback]").count()) throw new Error(`${name} must require two daytime locations`);
-    for (const [index, scene] of dayScenes.entries()) {
-      await click(page, `[data-day-scene="${scene.id}"]`);
-      if (await page.locator(".day-access-hint").count() !== 1) {
-        throw new Error(`${scene.id} must explain why the host can meet this source or read this material`);
-      }
-      const dayEntryTranscript = await drainDialogue(page, {});
-      await assertNoPageText(page, "ON AIR", `${scene.id} must stay off air`);
-      if (!dayEntryTranscript.includes(scene.text)) {
-        await assertVisibleText(page, scene.text, `${scene.id} must render its own location material`);
-      }
-      for (const rowId of scene.rows ?? []) await click(page, `[data-document-row="${rowId}"]`);
-      if (scene.questionText) await assertVisibleText(page, scene.questionText, `${scene.id} must unlock its cross-row question after marking the required rows`);
-      if (await page.locator("[data-day-choice]").count()) await click(page, scene.choice ? `[data-day-choice="${scene.choice}"]` : "[data-day-choice]");
-      const daySceneTranscript = await drainDialogue(page, {});
-      if (scene.choiceText && !daySceneTranscript.includes(scene.choiceText)) {
-        throw new Error(`${scene.id} must reveal the selected branch result`);
-      }
-      if (scene.excludedChoiceText && daySceneTranscript.includes(scene.excludedChoiceText)) {
-        throw new Error(`${scene.id} must not reveal an unselected branch result`);
-      }
-      await click(page, "[data-complete-day-scene]");
-      if (index === 0 && await page.locator("[data-enter-overnight-callback]").count()) throw new Error(`${name} unlocked callback after only one location`);
-    }
-    await click(page, "[data-enter-overnight-callback]");
-    await click(page, `[data-overnight-opener="${opener}"]`);
+    await completeLinearInvestigation(page, { name, dayScenes });
     let callbackTranscript = await drainDialogue(page, {});
     for (const selector of ["[data-enter-overnight-night2]", "[data-enter-overnight-night2-direct]"]) {
       if (!await page.locator(selector).count()) continue;
@@ -1395,8 +1604,8 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
       callbackTranscript += `\n${await drainDialogue(page, {})}`;
       break;
     }
-    if (!callbackTranscript.includes(openerText)) throw new Error(`${name} must use the selected daytime item in the second-night opener`);
-    if (conflictText && !callbackTranscript.includes(conflictText)) throw new Error(`${name} must render the selected item's first night-B confrontation`);
+    const bridge = authoredCasePackets[chapter - 1].overnightStructure.linearCallback.lines;
+    if (!bridge.every((line) => callbackTranscript.includes(line.text))) throw new Error(`${name} must use the unified callback bridge`);
     if (reactionText) {
       await advanceToReactionBeat(page, reactionText, name);
       await click(page, `[data-live-counter-choice="${reactionChoice}"]`);
@@ -1408,6 +1617,7 @@ async function runOfflineDayMap({ chapter, name, interludeAction, interludeChoic
         if (!nextCounterTranscript.includes(nextCounterText)) throw new Error(`${name} must queue the next scene-tail counter beat instead of skipping it`);
       }
     }
+    if (tailText) await advanceToReactionBeat(page, tailText, name);
     await assertNoPageText(page, "undefined", `${name} rendered undefined text`);
     await assertNoPageText(page, "NaN", `${name} rendered NaN text`);
   } catch (error) {
@@ -1436,7 +1646,11 @@ async function advanceToReactionBeat(page, expectedText, name) {
       "[data-close-document-question]",
       "[data-after-scene-evidence]",
       "[data-next-scene-stage]",
-      "[data-continue-live-counter]"
+      "[data-evidence-check]",
+      "[data-live-counter-choice]",
+      "[data-continue-live-counter]",
+      "button[data-scene]",
+      "[data-next-evidence-check]"
     ]) {
       if (await page.locator(selector).count()) {
         await click(page, selector);
@@ -1451,11 +1665,13 @@ async function advanceToReactionBeat(page, expectedText, name) {
       await click(page, "[data-scene-question]");
     }
   }
-  throw new Error(`${name} did not reach reaction beat: ${expectedText}`);
+  throw new Error(`${name} did not reach reaction beat: ${expectedText}\nRecent transcript: ${transcript.slice(-2500)}`);
 }
 
 async function testimonyFlowIsVisible(page) {
   return Boolean(await page.locator([
+    "[data-evidence-inquiry]:visible",
+    "[data-inquiry-continue]:visible",
     ".dialogue-card > .testimony-prelude-card:visible",
     ".dialogue-card > .testimony-wall:visible",
     ".dialogue-card > .present-material-select:visible",
@@ -1465,6 +1681,7 @@ async function testimonyFlowIsVisible(page) {
 }
 
 async function completeTestimonyWall(page, route = {}) {
+  if (await page.locator('[data-evidence-inquiry], [data-inquiry-continue]').count()) return completeFocusedEvidenceInquiry(page);
   let completedActs = 0;
   let enteredPrelude = false;
   for (let step = 0; step < 6; step += 1) {
@@ -1484,29 +1701,398 @@ async function completeTestimonyWall(page, route = {}) {
       completedActs += 1;
       continue;
     }
-    if (!await page.locator("[data-decisive-present-start]").count()) break;
-
+    if (!await page.locator("[data-inline-present-material]").count()) break;
     const act = await currentTestimonySmokeAct(page);
-    const launch = page.locator("[data-decisive-present-start]");
-    if (await launch.isDisabled()) {
-      const visibleStatementIds = await page.locator("[data-testimony-press]").evaluateAll((buttons) => (
-        buttons.map((button) => button.dataset.testimonyPress).filter(Boolean)
-      ));
-      for (const statementId of visibleStatementIds) {
-        await activate(page, route, `[data-testimony-press="${statementId}"]`);
-        if (!await page.locator("[data-decisive-present-start]").isDisabled()) break;
-      }
-      if (await page.locator("[data-decisive-present-start]").isDisabled()) {
-        throw new Error(`${act.caseId}/${act.sceneId}/${act.actId} did not unlock decisive present after PRESS`);
-      }
+    await assertTestimonyReading(page, act);
+    for (const press of act.reading.presses) {
+      await activate(page, route, `[data-testimony-press="${press.statement.id}"]`);
+      await assertVisibleText(page, press.response, "required question response matches authored reading");
     }
-
-    await activate(page, route, "[data-decisive-present-start]");
-    await activate(page, route, `[data-decisive-material="${act.evidenceId}"]`);
+    const selectedEvidenceId = process.env.SMOKE_ALTERNATE_EVIDENCE === "1"
+      ? act.reading.present.acceptedEvidenceIds?.[0] ?? act.evidenceId : act.evidenceId;
+    await page.locator("[data-inline-present-material]").selectOption(selectedEvidenceId);
+    if (smokeTarget === "testimony-reading") {
+      const directory = resolve(root, "output/playwright/focused-inquiry");
+      await mkdir(directory, { recursive: true });
+      const selector = page.locator("[data-inline-present-material]");
+      await selector.scrollIntoViewIfNeeded();
+      const rect = await selector.boundingBox();
+      if (!rect || rect.x < 0 || rect.x + rect.width > page.viewportSize().width + 1) throw new Error("inline material selector overflowed the viewport");
+      await page.screenshot({ path: resolve(directory, `${act.caseId}-${act.actId}-${page.viewportSize().width}x${page.viewportSize().height}-selection.png`), animations: "disabled" });
+    }
     await activate(page, route, `[data-decisive-present-target="${act.statementId}"]`);
     await page.locator("[data-after-decisive-present]").waitFor({ state: "visible" });
+    const hitLines = await page.locator(".present-hit-dialogue > p > span").allTextContents();
+    if (JSON.stringify(hitLines) !== JSON.stringify([act.reading.present.callerLine, act.reading.present.hostLine])) throw new Error("testimony hit order differs from continuous reading");
+    const selectedCard = act.reading.present.materialCards.find((card) => card.id === selectedEvidenceId);
+    await assertVisibleText(page, selectedCard.label, "命中画面必须保留玩家实际选中的材料");
+    if (smokeTarget === "testimony-reading") {
+      const directory = resolve(root, "output/playwright/focused-inquiry");
+      await mkdir(directory, { recursive: true });
+      if (await page.locator("[data-skip-hit-presentation]").isVisible()) await click(page, "[data-skip-hit-presentation]");
+      const geometry = await page.evaluate(() => {
+        const panel = document.querySelector(".decisive-present-hit");
+        const card = panel.closest(".dialogue-card");
+        const rects = [...panel.querySelectorAll(".present-hit-pair article, .present-hit-dialogue p"), document.querySelector("[data-after-decisive-present]")].map((node) => {
+          const rect = node.getBoundingClientRect();
+          return { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right };
+        });
+        return { width: innerWidth, height: innerHeight, rects, clipped: card.scrollHeight > card.clientHeight + 2 };
+      });
+      if (geometry.clipped || geometry.rects.some((r) => r.top < 0 || r.bottom > geometry.height || r.left < 0 || r.right > geometry.width)) throw new Error(`testimony hit must fit the viewport: ${JSON.stringify(geometry)}`);
+      await page.screenshot({ path: resolve(directory, `${act.caseId}-${act.actId}-${page.viewportSize().width}x${page.viewportSize().height}-${process.env.SMOKE_ALTERNATE_EVIDENCE === "1" ? "alternative" : "primary"}.png`), animations: "disabled" });
+    }
+    verifiedTestimonyActs.add(`${act.caseId}/${act.actId}`);
   }
   if (!completedActs && !enteredPrelude) throw new Error("testimony wall smoke helper did not complete an act");
+}
+
+async function runCreditReplayRecovery() {
+  const packet = authoredCasePackets[0];
+  const dir = resolve(root, "output/playwright/credit-replay-recovery");
+  await mkdir(dir, { recursive: true });
+  for (const viewport of [{width:1920,height:1080},{width:1366,height:768},{width:1280,height:800},{width:1280,height:720}]) {
+    const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    try {
+      await openCaseAtChapter(page, 1, `credit-replay-${viewport.width}-${viewport.height}`);
+      for (const sceneIndex of [3, 6]) {
+        const scene = packet.sceneVersions[sceneIndex];
+        await page.evaluate(({sceneIndex}) => {
+          const key = "livestream-detective-save-v1", save = JSON.parse(localStorage.getItem(key));
+          const id = save.caseBriefs[0].id;
+          Object.assign(save, {scene:"sceneLineReplay",activeStatementLineId:null,sceneQuestionFocus:null,sceneQuestionPicks:{},sceneDialoguePicks:{},caseActionLog:{[id]:{}},caseOvernights:{[id]:{segment:"night2",hangupDone:true,night2TransitionSeen:true}},dialogueProgress:{[`${id}:sceneReview`]:sceneIndex},dialogueReading:null});
+          save.settings.screenEffects = "off";
+          localStorage.setItem(key, JSON.stringify(save));
+        }, {sceneIndex});
+        await page.reload(); await click(page, "[data-continue-story]");
+        const initial = await page.locator('.statement-replay-page').innerText();
+        await click(page, '[data-scene-replay-next]'); await click(page, '[data-scene-replay-previous]');
+        if (await page.locator('.statement-replay-page').innerText() !== initial) throw new Error('previous sentence did not restore source');
+        for(let n=0;n<30 && await page.locator('[data-scene-replay-next]').count();n++) await click(page,'[data-scene-replay-next]');
+        await drainDialogue(page,{});
+        await page.locator('[data-scene-replay-restart]').waitFor();
+        await click(page,'[data-action="title"]'); await page.reload(); await click(page,'[data-continue-story]');
+        await drainDialogue(page,{});
+        await page.locator('[data-scene-replay-restart]').waitFor();
+        await drainDialogue(page,{});
+        await page.screenshot({path:resolve(dir,`${scene.id}-end-${viewport.width}x${viewport.height}.png`),animations:'disabled'});
+        await click(page,'[data-scene-replay-restart]');
+        let completed = 0;
+        let repeatedQuestionChecked = false;
+        for(let n=0;n<50 && !await page.locator('[data-next-scene-stage]').count();n++) {
+          const sourceLine = await currentLoadBearingStatementLine(page);
+          const keyChoice = await sourceLine.getAttribute('data-scene-question');
+          const sourceText = await page.locator('.statement-replay-page').innerText();
+          await sourceLine.click(); await drainDialogue(page,{});
+          if(keyChoice) completed++;
+          if(await page.locator('[data-scene-open-replay]').count()) {
+            await click(page,'[data-scene-open-replay]'); await drainDialogue(page,{});
+            if(await page.locator('.statement-replay-page').innerText() !== sourceText) throw new Error('answer skipped the original sentence');
+            if(completed===1) {
+              await page.reload();await click(page,'[data-continue-story]'); await drainDialogue(page,{});
+              if(await page.locator('.statement-replay-page').innerText() !== sourceText) throw new Error('reload lost replay position');
+              if (sceneIndex===6 && !repeatedQuestionChecked) {
+                await click(page,'[data-scene-review-line]');
+                await page.reload(); await click(page,'[data-continue-story]');
+                await assertVisibleText(page,scene.questionOptions[0].question,'repeated completed question changed after reload');
+                const restored = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+                if(restored.sceneQuestionFocus?.resolvedOptionId!==scene.questionOptions[0].id) throw new Error('repeated question lost identity');
+                if(JSON.stringify(restored.sceneQuestionFocus.pick.lines)!==JSON.stringify(scene.questionOptions[0].lines)) throw new Error('repeated question lost answer exchange');
+                await drainDialogue(page,{}); await click(page,'[data-scene-open-replay]');
+                await drainDialogue(page,{});
+                if(await page.locator('.statement-replay-page').innerText() !== sourceText) throw new Error('repeated answer lost source position: '+await page.locator('.statement-replay-page').innerText());
+                repeatedQuestionChecked = true;
+              }
+            }
+          }
+        }
+        if(completed!==scene.questionSequence.length) throw new Error(`${scene.id}: incomplete question sequence ${completed}`);
+        await click(page,'[data-next-scene-stage]');
+        for(let n=0;n<12 && !await page.locator('[data-evidence-check]').count();n++) {
+          await drainDialogue(page,{});
+          if(await page.locator('[data-live-counter-choice]').count()) await click(page,'[data-live-counter-choice]');
+          else if(await page.locator('[data-continue-live-counter]').count()) await click(page,'[data-continue-live-counter]');
+          else throw new Error('unexpected scene after replay: '+await page.locator('body').innerText());
+        }
+        await page.locator('[data-evidence-check]').first().waitFor();
+        if(sceneIndex===3) {
+          await assertVisibleText(page,'第三次来啦','old social post must be readable');
+          await assertVisibleText(page,'两年前','post must show the old date');
+          const invalid = await page.locator('.social-post-caption, .social-post-comments, [data-evidence-check]').evaluateAll(nodes => nodes.map(node => ({text:node.textContent,rect:node.getBoundingClientRect().toJSON()})).filter(({rect})=>rect.x<0 || rect.y<0 || rect.right>innerWidth || rect.bottom>innerHeight));
+          if(invalid.length) throw new Error('material outside PC viewport: '+JSON.stringify(invalid));
+          const captionColor=await page.locator('.social-post-caption').evaluate(node=>getComputedStyle(node).color);
+          if(captionColor !== 'rgb(40, 52, 47)') throw new Error('social post text lost paper contrast: '+captionColor);
+          await page.screenshot({path:resolve(dir,`restaurant-material-${viewport.width}x${viewport.height}.png`),animations:'disabled'});
+          await page.locator('[data-evidence-check]').first().click(); await drainDialogue(page,{});
+        }
+      }
+      if(errors.length) throw new Error(errors.join('\n'));
+      smokeProgress(`PASS credit replay ${viewport.width}x${viewport.height}: skips/end/title/reload/questions/material`);
+    } finally { await context.close(); }
+  }
+}
+
+async function runScriptReadingMatrix() {
+  const director = await readFile(resolve(root, "docs/generated/steam-demo-01-director-script.md"), "utf8");
+  for (const [caseIndex, packet] of authoredCasePackets.entries()) {
+    const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    page.setDefaultTimeout(browserActionTimeoutMs);
+    try {
+      await openCaseAtChapter(page, caseIndex + 1, `script-reading-${packet.caseId}`);
+      const stage = packet.statementStages.find((item) => item.sceneIndexes.includes(0));
+      const prompt = (await page.locator(".statement-stage-listen .call-line p").allTextContents()).join("");
+      let previous = -1;
+      for (const index of stage.sceneIndexes) {
+        const text = packet.sceneVersions[index].version;
+        const position = prompt.indexOf(text);
+        if (position <= previous) throw new Error(`${packet.caseId}: actual stage does not finish the ordered statements before replay`);
+        previous = position;
+      }
+      const activeIndexes = [...packet.nightStructure.segment1SceneIndexes, ...packet.nightStructure.segment2SceneIndexes];
+      for (const sceneIndex of activeIndexes.filter(index => packet.sceneVersions[index].questionSequence?.length)) {
+      const scene = packet.sceneVersions[sceneIndex];
+      const optionIndex = scene.questionOptions.findIndex((option) => option.correct);
+      const option = scene.questionOptions[optionIndex];
+      await page.evaluate(({ caseIndex, sceneIndex, option, optionIndex, secondNight }) => {
+        const key = "livestream-detective-save-v1";
+        const save = JSON.parse(localStorage.getItem(key));
+        const briefId = save.caseBriefs[caseIndex].id;
+        save.scene = "sceneQuestionAnswer";
+        save.caseOvernights ??= {};
+        save.caseOvernights[briefId] = { ...save.caseOvernights[briefId], segment: secondNight ? "night2" : "night1", hangupDone: secondNight };
+        save.dialogueProgress = { ...save.dialogueProgress, [`${briefId}:sceneReview`]: sceneIndex };
+        save.sceneQuestionFocus = { caseId: briefId, sceneIndex, kind: "key", optionIndex };
+        save.sceneQuestionPicks = { [`${briefId}:scene:${sceneIndex}`]: { ...option, optionId: option.id, optionIndex, completedOptionIds: [option.id] } };
+        save.caseActionLog = { [briefId]: { [`version:${sceneIndex}`]: true } };
+        save.settings.screenEffects = "off";
+        save.dialogueReading = null;
+        localStorage.setItem(key, JSON.stringify(save));
+      }, { caseIndex, sceneIndex, option, optionIndex, secondNight: packet.nightStructure.segment2SceneIndexes.includes(sceneIndex) });
+      await page.reload();
+      await click(page, "[data-continue-story]");
+      await page.locator(".question-answer-card").waitFor({ state: "attached" });
+      const ordered = scene.questionSequence?.length ? scene.questionSequence.map(id => scene.questionOptions.find(option => option.id === id)) : [option];
+      for (const [step, spokenOption] of ordered.entries()) {
+      if (step) {
+        if (await page.locator("[data-next-scene-stage]").count()) throw new Error(`${packet.caseId}: unfinished question sequence exposed a stage exit`);
+        await click(page, '[data-scene-open-replay]');
+        const target = `[data-scene-question="${sceneIndex}:${scene.questionOptions.indexOf(spokenOption)}"]`;
+        for(let n=0;n<80 && !await page.locator(target).count();n++) {
+          await drainDialogue(page, {});
+          if(await page.locator('[data-scene-dialogue]').count()) {
+            await click(page, '[data-scene-dialogue]');await click(page, '[data-scene-open-replay]');
+          } else if(await page.locator('[data-scene-replay-restart]').count()) await click(page, '[data-scene-replay-restart]');
+          else await click(page, '[data-scene-replay-next]');
+        }
+        const bill=page.locator('.statement-bill-question:not([open])');
+        if(await bill.count())await bill.locator('summary').click();
+        await click(page, target);
+        await page.reload();
+        await click(page, "[data-continue-story]");
+      }
+      const actual = await page.locator(".question-answer-card .call-line").evaluateAll((rows) => rows.map((row) => ({
+        speaker: row.querySelector("b").textContent, text: row.querySelector("p").textContent
+      })));
+      const expected = [
+        { role: "host", text: spokenOption.question }, ...(spokenOption.resistanceBeat?.lines ?? []),
+        ...(spokenOption.lines?.length ? spokenOption.lines : [{ role: "caller", text: spokenOption.answer }]),
+        ...(spokenOption.reactionLine ? [{ role: "caller", text: spokenOption.reactionLine }] : []), ...(step === ordered.length - 1 ? scene.sceneCloser?.lines ?? [] : [])
+      ].filter((line) => !["pause", "stage"].includes(line.role)).map((line) => ({
+        speaker: line.role === "host" || ["你", "林旭阳"].includes(line.speaker) ? "林旭阳" : line.speaker ?? "咨询者",
+        text: line.text ?? line.line ?? ""
+      }));
+      if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`${packet.caseId}: rendered answer speakers/order differ from authored lines`);
+      for (const line of actual) {
+        const marker = `**${line.speaker}：** ${line.text}`;
+        if (!director.includes(marker) || !continuousReading.includes(marker)) throw new Error(`${packet.caseId}: script omitted rendered dialogue ${marker}`);
+      }
+      smokeProgress(`PASS ${packet.caseId}/${scene.id}/${step + 1}: ${actual.length} answer turns match scripts`);
+      }
+      }
+      await verifyOrderedCounterAndCare(page, packet, caseIndex);
+    } finally { await context.close(); }
+  }
+}
+
+async function verifyOrderedCounterAndCare(page, packet, caseIndex) {
+  const seed = async (scene, beatId = "") => {
+    await page.evaluate(({ scene, beatId, caseIndex }) => {
+      const key = "livestream-detective-save-v1";
+      const save = JSON.parse(localStorage.getItem(key));
+      save.scene = scene;
+      save.activeLiveCounterBeatId = beatId;
+      const briefId = save.caseBriefs[caseIndex].id;
+      save.caseOvernights ??= {};
+      if (scene === "careChoice") save.caseOvernights[briefId] = { ...save.caseOvernights[briefId], segment: "night2", hangupDone: true };
+      save.liveCounterPicks = {};
+      save.careChoices = {};
+      save.dialogueReading = null;
+      save.sceneQuestionFocus = null;
+      save.settings.screenEffects = "off";
+      localStorage.setItem(key, JSON.stringify(save));
+    }, { scene, beatId, caseIndex });
+    await page.reload();
+    await click(page, "[data-continue-story]");
+  };
+  for (const beat of packet.overnightStructure.liveCounterBeats.filter(beat => beat.choiceMode === "sequence")) {
+    await seed("liveCounterBeat", beat.id);
+    for (const choice of beat.choices) {
+      if (await page.locator("[data-live-counter-choice]").count() !== 1) throw new Error(`${beat.id}: expected exactly one next exchange`);
+      if (await page.locator("[data-continue-live-counter]").count()) throw new Error(`${beat.id}: premature exit`);
+      await click(page, `[data-live-counter-choice="${choice.id}"]`);
+      const actual = await page.locator(".live-counter-response").textContent();
+      for (const line of choice.lines ?? []) if (line.text && !actual.includes(line.text)) throw new Error(`${beat.id}/${choice.id}: missing authored reply`);
+      await page.reload();
+      await click(page, "[data-continue-story]");
+    }
+    if (await page.locator("[data-continue-live-counter]").count() !== 1) throw new Error(`${beat.id}: final exchange did not unlock exit`);
+    if (beat.choices.some(choice => choice.endingImpact === "platform-data-loss")) {
+      const paid = await page.evaluate(() => Object.values(JSON.parse(localStorage.getItem("livestream-detective-save-v1")).liveCounterPicks).some(pick => pick.endingImpact === "platform-data-loss"));
+      if (!paid) throw new Error(`${beat.id}: later dialogue erased the recommendation loss`);
+    }
+    smokeProgress(`PASS ${beat.id}: all ${beat.choices.length} ordered exchanges survive reload`);
+  }
+  const question = packet.overnightStructure.callerQuestion;
+  if (question?.choiceMode === "sequence") {
+    await seed("callerQuestion");
+    // Restore an old exclusive result at the active scene. It cannot skip steps.
+    await page.evaluate(({ caseIndex, lastId }) => {
+      const key = "livestream-detective-save-v1";
+      const save = JSON.parse(localStorage.getItem(key));
+      const id = save.caseBriefs[caseIndex].id;
+      save.caseOvernights[id] = { ...save.caseOvernights[id], segment: "night2", callerQuestionChoiceId: lastId };
+      delete save.caseOvernights[id].callerQuestionCompletedIds;
+      save.caseActionLog[id] = { ...save.caseActionLog[id], "overnight:callerQuestion": true };
+      save.dialogueReading = null;
+      localStorage.setItem(key, JSON.stringify(save));
+    }, { caseIndex, lastId: question.options.at(-1).id });
+    await page.reload();
+    await click(page, "[data-continue-story]");
+    for (const [index, option] of question.options.entries()) {
+      if (await page.locator("[data-caller-question]").count() !== 1) throw new Error("counterquestion must expose exactly one ordered response");
+      await click(page, `[data-caller-question="${option.id}"]`);
+      const actual = await page.locator(".caller-question-dialogue").textContent();
+      for (const line of option.lines ?? [{ text: option.callerLine }]) if (!actual.includes(line.text)) throw new Error("counterquestion omitted caller reply");
+      if (index === 1) {
+        const directory = resolve(root, "output/playwright/caller-question-sequence");
+        await mkdir(directory, { recursive: true });
+        for (const viewport of [{ width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+          await page.setViewportSize(viewport);
+          await drainDialogue(page, {});
+          await page.screenshot({ path: resolve(directory, `${viewport.width}.png`), fullPage: true });
+        }
+        await page.setViewportSize({ width: 1280, height: 720 });
+      }
+      await page.reload();
+      await click(page, "[data-continue-story]");
+      const state = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")));
+      const id = state.caseBriefs[caseIndex].id;
+      if (state.caseActionLog[id]["overnight:callerQuestion"]) throw new Error("counterquestion marked complete before final exchange was read");
+      if (state.caseOvernights[id].callerQuestionCompletedIds.length !== index + 1) throw new Error("counterquestion save lost its ordered prefix");
+      await click(page, "[data-caller-sequence-continue]");
+    }
+    if (await page.locator("[data-caller-question]").count()) throw new Error("counterquestion did not exit after all exchanges");
+    smokeProgress(`PASS ${packet.caseId}: counterquestion legacy save and ${question.options.length} ordered responses`);
+  }
+  await seed("careChoice");
+  for (const choice of packet.careChoices) {
+    if (await page.locator("[data-care-choice]").count() !== 1) throw new Error(`${packet.caseId}: care options still branch`);
+    if (await page.locator("[data-care-choice-continue]").count()) throw new Error(`${packet.caseId}: premature care exit`);
+    await click(page, `[data-care-choice="${choice.id}"]`);
+    await page.reload();
+    await click(page, "[data-continue-story]");
+    const actual = await page.locator(".care-choice-dialogue").textContent();
+    if (!actual.includes(choice.hostLine)) throw new Error(`${packet.caseId}: wrong care response after reload`);
+  }
+  if (await page.locator("[data-care-choice-continue]").count() !== 1) throw new Error(`${packet.caseId}: care sequence did not finish`);
+  if (caseIndex === 0) {
+    const directory = resolve(root, "output/host-style-2026-09-12");
+    await mkdir(directory, { recursive: true });
+    await page.screenshot({ path: resolve(directory, "care-desktop.png"), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: resolve(directory, "care-mobile.png"), fullPage: true });
+  }
+  smokeProgress(`PASS ${packet.caseId}: all three care exchanges survive reload`);
+}
+
+async function runTestimonyReadingMatrix() {
+  for (const viewport of [{ width: 1920, height: 1080 }, { width: 1366, height: 768 }, { width: 1280, height: 800 }, { width: 1280, height: 720 }]) {
+  for (const [caseIndex, packet] of authoredCasePackets.entries()) {
+    const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    page.setDefaultTimeout(browserActionTimeoutMs);
+    const sceneIndex = packet.sceneVersions.findIndex(scene => scene.interactionMode === "testimonyWall");
+    for (const act of packet.sceneVersions[sceneIndex].testimonyWall.acts) {
+      verifiedTestimonyActs.delete(`${packet.id ?? packet.caseId}/${act.id}`);
+    }
+    try {
+      await openCaseAtChapter(page, caseIndex + 1, `testimony-reading-${packet.caseId}`);
+      await page.evaluate(({ caseIndex, sceneIndex, sceneCount, checkCount }) => {
+        const key = "livestream-detective-save-v1";
+        const save = JSON.parse(localStorage.getItem(key));
+        const briefId = save.caseBriefs[caseIndex].id;
+        save.scene = "testimonyWall";
+        const brief = save.caseBriefs[caseIndex];
+        save.caseOvernights = {...save.caseOvernights, [briefId]: {...save.caseOvernights?.[briefId], segment:"night2", hangupDone:true}};
+        save.caseNights = {...save.caseNights, [briefId]: {...save.caseNights?.[briefId], segment:"segment2", hangupDone:true}};
+        save.caseActionLog = {...save.caseActionLog, [briefId]: Object.fromEntries([
+          ...Array.from({length: sceneCount}).flatMap((_, index) => index < sceneIndex ? [[`version:${index}`, true]] : []),
+          ...Array.from({length: checkCount}).map((_, index) => [`evidenceCheck:${index}`, true])
+        ])};
+        save.dialogueProgress = { ...save.dialogueProgress, [`${briefId}:sceneReview`]: sceneIndex };
+        save.settings.screenEffects = "off";
+        save.dialogueReading = null;
+        localStorage.setItem(key, JSON.stringify(save));
+      }, { caseIndex, sceneIndex, sceneCount: packet.sceneVersions.length, checkCount: packet.evidenceChecks?.length ?? 0 });
+      await page.reload();
+      await click(page, "[data-continue-story]");
+      for (let step = 0; step < 12; step += 1) {
+        await drainDialogue(page, {});
+        if (await testimonyFlowIsVisible(page)) await completeTestimonyWall(page);
+        else if (await page.locator("[data-evidence-check]").count()) await click(page, "[data-evidence-check]");
+        else if (await page.locator("[data-after-scene-evidence]").count()) await click(page, "[data-after-scene-evidence]");
+        else break;
+      }
+      for (const act of packet.sceneVersions[sceneIndex].testimonyWall.acts) {
+        if (!verifiedTestimonyActs.has(`${packet.id ?? packet.caseId}/${act.id}`)) throw new Error(`${packet.caseId}/${act.id} did not finish the parity fixture: ${(await page.locator("body").innerText()).slice(0, 1800)}`);
+      }
+      const sources = await page.locator(".dialogue-card .call-dialogue").allTextContents();
+      const oldVersion = packet.sceneVersions[sceneIndex].version;
+      if (sources.join("\n").includes(oldVersion)) throw new Error(`${packet.caseId} replayed its legacy statement after testimony`);
+      smokeProgress(`PASS ${packet.caseId} testimony at ${viewport.width}x${viewport.height}`);
+    } finally {
+      await context.close();
+    }
+  }
+}
+}
+
+async function assertTestimonyReading(page, act) {
+  const reading = act.reading;
+  const actualIds = await page.locator("[data-testimony-press]").evaluateAll(buttons => buttons.map(button => button.dataset.testimonyPress));
+  if (JSON.stringify(actualIds) !== JSON.stringify(reading.initialStatements.map(statement => statement.id))) throw new Error(`${act.caseId}/${act.actId}: initial testimony visibility differs from the reading route`);
+  const marker = `### 证词墙 · 第 ${reading.act.act} 幕｜${reading.act.title}`;
+  const start = continuousReading.indexOf(marker);
+  if (start < 0) throw new Error(`continuous reading omitted ${marker}`);
+  const next = continuousReading.indexOf("\n### ", start + marker.length);
+  const script = continuousReading.slice(start, next < 0 ? undefined : next);
+  let position = marker.length;
+  const sequence = [
+    ...reading.initialStatements.map(statement => statement.text),
+    ...reading.presses.flatMap(press => [press.response, ...press.revealed.map(statement => `【追问后补充的原话】${statement.text}`)]),
+    `【你出示：${reading.material.label}】`,
+    `【正式指认原句：${reading.target.text}】`,
+    reading.present.callerLine, reading.present.hostLine
+  ];
+  for (const text of sequence) {
+    const found = script.indexOf(text, position);
+    if (found < 0) throw new Error(`${act.caseId}/${act.actId}: continuous reading omitted or reordered ${text}`);
+    position = found + text.length;
+  }
 }
 
 async function currentTestimonySmokeAct(page) {
@@ -1528,61 +2114,107 @@ async function waitForEnabled(page, selector) {
 }
 
 async function completeOvernightDay(page, route) {
-  await assertVisibleText(page, "今天的约见与材料", "day map should start with authorized appointments and materials");
-  await assertVisibleText(page, "耗时 1 · 占用一处走访", "day locations must expose their action cost before activation");
-  await assertNoPageText(page, "节目不在线，弹幕不在，城市在。", "day map must not repeat the second-act opening copy");
-  await assertNoPageText(page, "ON AIR", "day map must hide ON AIR");
-  await assertNoPageText(page, "听众耐心", "day map must hide patience HUD");
-  if (await page.locator("[data-enter-overnight-callback]").count()) {
-    throw new Error("day map must not allow skipping the required two daytime actions");
-  }
-  for (const sceneId of route.dayScenes) {
-    await activate(page, route, `[data-day-scene="${sceneId}"]`);
-    if (await page.locator(".day-access-hint").count() !== 1) {
-      throw new Error(`${sceneId} must keep its contact and consent source visible`);
-    }
-    await drainDialogue(page, route);
-    await assertNoPageText(page, "ON AIR", `${sceneId} must hide ON AIR`);
-    await assertNoPageText(page, "听众耐心", `${sceneId} must hide patience HUD`);
-    if (sceneId === "day-accounting") {
-      await assertVisibleText(page, "旧厂房改的档案室", "accounting day scene should render");
-      await assertVisibleText(page, "排序 · 可清空重排", "timeline cards must explain that ordering is reversible");
-      for (const card of ["社保断缴", "分期开通", "每月 8 日的固定入账中断", "他开口借八万"]) {
-        await activate(page, route, `[data-day-timeline-card="${card}"]`);
+  await completeLinearInvestigation(page, route);
+}
+
+async function completeLinearInvestigation(page, route = {}) {
+  const enteredDays = [];
+  let checkedResume = false;
+  for (let step = 0; step < 48; step += 1) {
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
+    const packet = authoredCasePackets[Number(saved.chapter ?? 1) - 1];
+    const key = saved.caseBriefs[Number(saved.chapter ?? 1) - 1].id;
+    if (saved.scene === "overnightCallback") {
+      const done = saved.caseOvernights[key].dayScenesDone;
+      const expected = packet.overnightStructure.dayScenes.map((scene) => scene.id);
+      if (JSON.stringify(done) !== JSON.stringify(expected)) throw new Error(`${route.name}: incomplete or out-of-order day scenes: ${done}`);
+      if (await page.locator("[data-overnight-opener]").count()) throw new Error("linear callback must not offer material selection");
+      const inventory = saved.caseNights[key].inventory ?? [];
+      for (const action of packet.nightStructure.interlude.actions) {
+        if (!(saved.caseNights[key].interludeActionsDone ?? []).includes(action.id)) throw new Error(`missing interlude ${action.id}`);
+        for (const item of action.grantsInventory ?? []) if (!inventory.includes(item)) throw new Error(`missing carried material ${item}`);
       }
-      await activate(page, route, "[data-submit-day-timeline]");
-      await assertVisibleText(page, "人是谁，手里这些东西看不出来", "timeline sort should preserve the unknown account owner and reject the unsupported summary");
+      if (saved.caseOvernights[key].dayBudget.used !== 0 || saved.caseNights[key].interludeBudget.used !== 0) throw new Error("linear investigation must not spend action points");
+      return;
     }
-    if (sceneId === "day-support-payments") {
-      await assertVisibleText(page, "三月九日和五月九日", "support payment scene should show the two bimonthly rent rows");
-      await assertNoPageText(page, "今天第三拨", "removed restaurant witness must not survive in the replacement scene");
+    await assertNoPageText(page, "剩余 0 格", "linear investigation must not display action points");
+    if (await page.locator("[data-day-scene], [data-interlude-action]").count()) throw new Error("linear investigation must not display a location menu");
+    if (saved.scene === "dayActOpening") {
+      await activate(page, route, "[data-enter-day-map]");
+      continue;
     }
-    if (sceneId === "day-bank-flow") {
-      await assertVisibleText(page, "他的银行流水（近五个月关键交易摘录）", "document day scene should render bank flow");
-      for (const rowId of route.documentRows ?? ["r08", "r11"]) {
-        await activate(page, route, `[data-document-row="${rowId}"]`);
-      }
-      const crossQuestion = (route.documentRows ?? []).includes("r13")
-        ? "流水没写后面转出的就是那二十万"
-        : "七月五日五万进，七月十九日四万九千八出——这算周转吗？";
-      await assertVisibleText(page, crossQuestion, "document route should unlock the cross question for the selected rows");
-    }
-    if (await page.locator("[data-day-choice]").count()) {
-      await assertVisibleText(page, "现场判断 · 选后锁定", "day choices must disclose their lock before activation");
-      const choiceId = route.dayChoices?.[sceneId];
-      const choiceSelector = choiceId ? `[data-day-choice="${choiceId}"]` : "[data-day-choice]";
-      const choiceButton = page.locator(choiceSelector).first();
-      const selectedLabel = await choiceButton.locator(".choice-text").count()
-        ? (await choiceButton.locator(".choice-text").innerText()).trim()
-        : (await choiceButton.innerText()).split("\n")[0].trim();
-      await activate(page, route, choiceSelector);
+    if (saved.scene === "interludeDesk") {
+      const action = packet.nightStructure.interlude.actions.find((a) => a.id === saved.caseNights[key].activeActionId);
+      if (!action) throw new Error("linear interlude has no active scene");
       await drainDialogue(page, route);
-      await assertVisibleText(page, selectedLabel, `${sceneId} must reveal the selected branch result`);
+      await assertNoPageText(page, "ON AIR", "interlude must remain off air");
+      if (packet.caseId === "01-credit" && action.id === "friend-dm-early") {
+        await assertVisibleText(page,"第三次来啦","first night must show the actual old post");
+        await assertVisibleText(page,"两年前","old post date must be visible before second night");
+        route.oldPostSeen = true;
+      }
+      if (packet.caseId === "02-tony" && action.id === "reopen-training") {
+        await assertVisibleText(page, "门店培训卡", "store statement must open the actual store material");
+        await assertNoPageText(page, "走Tony户", "full roster must not leak into first-night store statement");
+      }
+      if (await page.locator("[data-evidence-check]").count()) {
+        const material = action.kind === "backflowEarly"
+          ? packet.investigationHooks.find((h) => h.id === action.hookId)
+          : packet.evidenceChecks.find((c) => action.focusCheckIds?.includes(c.id));
+        const optionIndex = Math.max(0, material.options.findIndex((o) => o.correct));
+        await activate(page, route, "[data-evidence-check]", optionIndex);
+        await drainDialogue(page, route);
+        const resultSave = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")));
+        if (resultSave.caseNights[key].activeActionId !== action.id) throw new Error("material result skipped before acknowledgement");
+        await activate(page, route, "[data-return-interlude]");
+      } else if (await page.locator("[data-interrupt-choice]").count()) {
+        await activate(page, route, "[data-interrupt-choice]");
+        await activate(page, route, "[data-return-interlude]");
+      } else {
+        await activate(page, route, "[data-return-interlude], [data-complete-interlude-action]");
+      }
+      continue;
     }
-    await activate(page, route, "[data-complete-day-scene]");
+    if (saved.scene === "dayScene") {
+      const scene = packet.overnightStructure.dayScenes.find((entry) => entry.id === saved.caseOvernights[key].activeDaySceneId);
+      if (!scene) throw new Error("linear day has no active scene");
+      enteredDays.push(scene.id);
+      let transcript = await drainDialogue(page, route);
+      await assertNoPageText(page, "ON AIR", "day scene must remain off air");
+      if (await page.locator("[data-day-choice]").count()) throw new Error("redundant material choice survived linearization");
+      if (scene.body.timelineSort) {
+        for (const card of scene.body.timelineSort.correctOrder) await activate(page, route, `[data-day-timeline-card="${card}"]`);
+        await activate(page, route, "[data-submit-day-timeline]");
+      }
+      if (scene.kind === "document") {
+        const document = packet.documents.find((doc) => doc.id === scene.body.documentId);
+        const sceneRoute = (route.dayScenes ?? []).find((item) => typeof item === "object" && item.id === scene.id);
+        const rows = sceneRoute?.rows ?? route.documentRows ?? document.focusRowIds?.slice(0, 2) ?? document.rows.slice(0, 2).map((row) => row.rowId);
+        for (const id of rows) {
+          const beforeMark = await page.evaluate(() => ({ page: scrollY, table: document.querySelector(".bank-flow-table").scrollTop }));
+          await activate(page, route, `[data-document-row="${id}"]`);
+          await waitForAnimationFrames(page, 2);
+          const afterMark = await page.evaluate(() => ({ page: scrollY, table: document.querySelector(".bank-flow-table").scrollTop,
+            focusedRow: document.activeElement?.getAttribute("data-document-row") }));
+          if (afterMark.focusedRow !== id || Math.abs(afterMark.page - beforeMark.page) > 2 || Math.abs(afterMark.table - beforeMark.table) > 2) {
+            throw new Error(`document marking must preserve the row and scroll position: ${JSON.stringify({ beforeMark, afterMark })}`);
+          }
+        }
+        await assertVisibleText(page, "圈好了，继续", "document inspection must have an explicit completion exit");
+      }
+      if (route.name === "accounting-support" && !checkedResume) {
+        checkedResume = true;
+        await page.reload({ waitUntil: "domcontentloaded" });
+        await activate(page, route, "[data-continue-story]");
+        await drainDialogue(page, route);
+        await assertOvernightState(page, (night) => night.activeDaySceneId === scene.id, "reload must resume the active investigation scene");
+      }
+      await activate(page, route, "[data-complete-day-scene]");
+      continue;
+    }
+    throw new Error(`Unexpected linear investigation phase ${saved.scene}`);
   }
-  await assertOvernightState(page, (overnight) => (overnight.dayScenesDone ?? []).length === route.dayScenes.length, "day route should record completed scenes");
-  await activate(page, route, "[data-enter-overnight-callback]");
+  throw new Error(`Linear investigation did not finish: ${enteredDays}`);
 }
 
 async function runCaseTransition() {
@@ -1615,10 +2247,10 @@ async function runCaseTransition() {
     await assertVisibleText(page, "已经确认", "closure should distinguish confirmed facts from a raw evidence pile");
     await assertVisibleText(page, "还没弄清", "closure should preserve unresolved facts");
     await click(page, "[data-enter-story-interlude]");
-    await page.getByText("广告间隙").first().waitFor({ state: "visible" }).catch(async () => {
+    await page.getByText("第 2 晚 · 收播以后").first().waitFor({ state: "visible" }).catch(async () => {
       throw new Error(`first case tail did not render after closure:\n${await page.locator("body").innerText()}`);
     });
-    await assertVisibleText(page, "广告间隙", "closure should move into the first case's lived epilogue without an authorial case-tail label");
+    await assertVisibleText(page, "第 2 晚 · 收播以后", "closure should move into the first case's lived epilogue without an authorial case-tail label");
     await assertVisibleText(page, "我们俩大概一开始就看不上对方", "first case epilogue should establish Lin and Zhao as a couple through dialogue");
     if (await page.locator('.story-interlude-stage[data-after-case="01-credit"]').count() !== 1) throw new Error("first case interlude must return to the off-air studio stage");
     if (await page.locator('.interlude-zhao img[src*="zhao-lawyer-teasing-pixel"]').count() !== 1) throw new Error("first case interlude must use Zhao's teasing portrait state");
@@ -1654,7 +2286,7 @@ async function runCaseTransition() {
     await page.reload();
     await click(page, "[data-continue-story]");
     await click(page, "[data-enter-story-interlude]");
-    await assertVisibleText(page, "广告间隙", "second case must close without an authorial case-tail label");
+    await assertVisibleText(page, "第 4 晚 · 收播以后", "second case must close without an authorial case-tail label");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await assertVisibleText(page, "接一通插播", "second act interlude must expose the optional quick-call pressure valve");
     await click(page, "[data-enter-optional-quick]");
@@ -1662,12 +2294,13 @@ async function runCaseTransition() {
       caseId: "01-no-conditions",
       alreadySelected: true,
       rounds: [
-        ["我爸爸给了我一百万", "或者是我不能生孩子"],
-        ["先别急吧", "您就帮我留意一下吧"]
+        ["好听的也不会讲"],
+          ["爸爸给了我一百万"],
+          ["或者是我不能生孩子"],
+        ["先别急吧", "先跟他说一句，我这人还可以"]
       ],
-      decoyAnchor: "我妈看这日子过不下去",
-      expectedListen: ["我二十四，在商场卖衣服", "我爸爸给了我一百万"],
-      expectedVerdict: ["我不会做这种背书的", "她不说，我也不会替她编"]
+      decoyAnchor: "我二十四，在商场卖衣服",
+      expectedListen: ["我二十四，在商场卖衣服", "好听的也不会讲"],
     });
     await assertVisibleText(page, "回到主线", "optional quick call must offer a main-story return instead of the standalone case picker");
     await click(page, "[data-quick-select]");
@@ -1694,11 +2327,13 @@ async function runCaseTransition() {
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("final world echo must not appear before player action");
     await assertVisibleText(page, "把四案里的宸直线索并在一起", "final world echo must first ask the player to connect the cross-case risk");
     await click(page, '[data-world-echo-hypothesis="cross-case-ledger"]');
-    await assertVisibleText(page, "借款认购、栖行返费、家庭持有页和代投回单", "the selected cross-case hypothesis must be acknowledged before the reveal");
+    await assertVisibleText(page, "栖行融资稿的押金归集附注", "the selected cross-case hypothesis must be acknowledged before the reveal");
     await assertVisibleText(page, "把新闻推送点开", "final world echo must be offered after the player records a hypothesis");
+    if (await page.getByText("作为关联项目配资资金", { exact: false }).count()) throw new Error("deposit leverage must remain undisclosed before opening the notice");
     await click(page, "[data-reveal-world-echo]");
+    await assertVisibleText(page, "作为关联项目配资资金", "the disposal notice must pay off the deposited-funds trail");
     await assertVisibleText(page, "宸直信托全部产品暂停兑付，实控人失联", "final world echo must pay off the case-one and case-two trust seeds");
-    await assertVisibleText(page, "公告没有公布清偿顺序", "final world echo must preserve the unresolved recovery boundary");
+    await assertVisibleText(page, "各笔清偿金额尚未公布", "final world echo must preserve the unresolved recovery boundary");
     if (await page.locator('.story-world-echo-stage img[src*="chenzhi-news-push-pixel"]').count() !== 1) throw new Error("final world echo must switch to the trust-news ending CG");
     await click(page, "[data-enter-night-epilogue]");
     await assertVisibleText(page, "直播中", "whole-night epilogue should begin only after the fourth case tail");
@@ -1706,12 +2341,14 @@ async function runCaseTransition() {
       await click(page, "[data-epilogue-unread-next]");
     }
     if (await page.locator('.night-ending-cg-stage img[src*="envelope-2019-pixel"]').count() !== 1) throw new Error("whole-night epilogue must end on the 2019 envelope CG");
+    await assertVisibleText(page, "账单原件 · 2019-11-08", "the envelope date must be identified as the original bill date");
+    await assertVisibleText(page, "2022 年 7 月", "the old broadcast must have its own date beside the bill");
     await click(page, "[data-finish-night-shell]");
     const forensicText = await drainDialogue(page, {});
-    if (!forensicText.includes("个人委托的初步检测") || !forensicText.includes("排除生物学父子关系") || !forensicText.includes("申请由法院委托鉴定")) {
-      throw new Error("the later callback must keep the preliminary result before the court appraisal request");
+    if (!forensicText.includes("双方带孩子到机构") || !forensicText.includes("没有用那只咬胶") || !forensicText.includes("排除生物学父子关系") || !forensicText.includes("得由法院决定")) {
+      throw new Error("the later callback must keep the verified sampling before the result, with court review still required");
     }
-    if (forensicText.includes("收款人不是顾*")) throw new Error("the toy route must not also pay off the account route");
+    if (!forensicText.includes("收款人不是顾*")) throw new Error("the sequential prologue must pay off both the paternity and account investigations");
     await assertVisibleText(page, "结果只到这里", "the demo prologue must end on a fact boundary rather than a guilty or victory card");
     await click(page, "[data-cafe-finish]");
   } finally {
@@ -1903,15 +2540,11 @@ async function advanceToAccusation(page, route) {
       continue;
     }
     if (await page.locator("[data-caller-question]").count()) {
-      const third = page.locator('[data-caller-question="dont-answer-for-her"]');
-      if (!await third.isEnabled()) throw new Error("Zhao's proactive call should keep the non-directive answer available on every route");
-      await activate(page, route, `[data-caller-question="${route.callerQuestion}"]`);
-      if (route.callerQuestion === "dont-answer-for-her") {
-        const callerQuestionTranscript = await drainDialogue(page, route);
-        if (!callerQuestionTranscript.includes("贷款让他解释") || !callerQuestionTranscript.includes("我拿过的钱和剩下的钱，我自己说")) {
-          throw new Error("process-control answer should leave the loan with the respondent and return the caller's own spending explanation to her");
-        }
-      }
+      const question = authoredCasePackets[0].overnightStructure.callerQuestion;
+      if (question.choiceMode === "sequence") {
+        if (await page.locator("[data-caller-question]").count() !== 1) throw new Error("caller question still offers exclusive alternatives");
+        await activate(page, route, "[data-caller-question]");
+      } else await activate(page, route, `[data-caller-question="${route.callerQuestion}"]`);
       continue;
     }
     if (await page.locator("[data-caller-question-host]").count()) {
@@ -1923,6 +2556,10 @@ async function advanceToAccusation(page, route) {
           throw new Error("humanization branch must render the chosen emotional-labor response");
         }
       }
+      continue;
+    }
+    if (await page.locator("[data-caller-sequence-continue]").count()) {
+      await activate(page, route, "[data-caller-sequence-continue]");
       continue;
     }
     if (await page.locator("[data-after-caller-question]").count()) {
@@ -2024,10 +2661,15 @@ async function activate(page, route, selector, index = 0) {
 }
 
 async function drainDialogue(page, route) {
+  if(await page.locator('[data-night2-transition-done]:visible').count()) await page.locator('[data-night2-transition-done]').click();
   const shownText = new Set();
   for (let line = 0; line < 160; line += 1) {
     const box = page.locator("[data-dialogue-advance]:not([data-dialogue-done]):visible").first();
     if (!await box.count()) {
+      if (await page.locator("[data-finish-question]:visible").count()) {
+        await page.locator("[data-finish-question]").click();
+        continue;
+      }
       await assertInlineContinuePlacement(page);
       return [...shownText].join("\n");
     }
@@ -2057,7 +2699,7 @@ async function assertInlineContinuePlacement(page) {
   if (!await overlay.count()) return;
   const placement = await overlay.evaluate((element) => {
     const stage = element.closest(".vn-stage");
-    const button = element.querySelector("button.primary:not(:disabled), button");
+    const button = [...element.querySelectorAll("button.primary:not(:disabled), button, summary")].find(el => el.getBoundingClientRect().height > 0);
     const stageRect = stage?.getBoundingClientRect();
     const buttonRect = button?.getBoundingClientRect();
     return {
@@ -2071,7 +2713,7 @@ async function assertInlineContinuePlacement(page) {
     };
   });
   const minimumStageRatio = placement.multiQuestionBar || placement.replayQuestionBar ? 0.44 : 0.55;
-  const structuredBoard = placement.statementBoard || placement.documentBoard;
+  const structuredBoard = placement.statementBoard || placement.documentBoard || await page.locator(".focused-evidence-inquiry").count();
   if (placement.insideRecord || (!structuredBoard && placement.stageRatio < minimumStageRatio) || placement.bottomOverflow > 2) {
     throw new Error(`main continue action must stay in the lower dialogue stage, got ${JSON.stringify(placement)}`);
   }
@@ -2082,10 +2724,17 @@ async function assertDialoguePresentation(page) {
   await box.waitFor({ state: "visible" });
   await assertDialoguePageDensity(box);
   const before = await box.locator(".avg-line").first().textContent();
+  const restoredChoices = await box.getAttribute("data-dialogue-done") === "true";
   await box.click();
   const completed = await box.locator(".avg-line").first().textContent();
-  if ((completed?.length ?? 0) < (before?.length ?? 0)) throw new Error("typing click must complete the current sentence");
-  if (!await box.locator(".avg-continue").isVisible()) throw new Error("completed sentence must show continue indicator");
+  if (restoredChoices) {
+    if (completed !== before) throw new Error("clicking a restored completed dialogue must preserve its last page");
+    if (await box.locator(".avg-continue").isVisible()) throw new Error("restored choice state must not invite another dialogue advance");
+    if (!await page.locator('[data-scene="sceneReview"]:visible').count()) throw new Error("restored choice state must keep the next action available");
+  } else {
+    if ((completed?.length ?? 0) < (before?.length ?? 0)) throw new Error("typing click must complete the current sentence");
+    if (!await box.locator(".avg-continue").isVisible()) throw new Error("completed sentence must show continue indicator");
+  }
   await page.mouse.wheel(0, -120);
   await waitForAnimationFrames(page, 1);
   if (await page.locator(".court-record:not([hidden])").count()) {
@@ -2098,6 +2747,8 @@ async function assertDialoguePresentation(page) {
 
 async function assertDialoguePageDensity(box) {
   const lines = box.locator(".avg-page-line");
+  // Scene-entry animation mounts the textbox before its first spoken page.
+  await lines.first().waitFor({ state: "visible" });
   const count = await lines.count();
   if (count !== 1) {
     throw new Error(`dialogue page must contain exactly one current speaker turn, got ${count}`);
@@ -2147,10 +2798,13 @@ async function enterNightFromCafePrologue(page, route = {}) {
   await activate(page, route, "[data-cafe-revised-present]");
   await activate(page, route, "[data-cafe-legal-brief]");
   await activate(page, route, '[data-cafe-pressure="camera-off"]');
-  await activate(page, route, '[data-cafe-investigation="toy"]');
+  await activate(page, route, '[data-cafe-aftermath-next]');
+  await activate(page, route, '[data-cafe-aftermath-next]');
   await drainDialogue(page, route);
-  await assertVisibleText(page, "回直播间开播", "the same-night investigation must hand the player into the live-show loop");
-  await activate(page, route, "[data-cafe-enter-night]");
+  await assertVisibleText(page, "回想两年前的直播", "the present-day investigation must hand off to the flashback");
+  await activate(page, route, "[data-cafe-aftermath-next]");
+  await assertVisibleText(page, "两年前", "the timeline change must have its own readable transition");
+  await activate(page, route, "[data-enter-first-flashback]");
 }
 
 async function revealGolden90(page, route = {}, { assertContract = false } = {}) {
@@ -2349,4 +3003,290 @@ function assertTextOrder(body, texts, message) {
     if (index <= cursor) throw new Error(message);
     cursor = index;
   }
+}
+
+async function runFocusedCredit() {
+  const [width, height] = (process.env.SMOKE_VIEWPORT || "1280x720").split("x").map(Number);
+  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  page.setDefaultTimeout(browserActionTimeoutMs);
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  const transcript = [];
+  const visits = [];
+  let wrongLoan = false, retriedLoan = false, reloaded = false;
+  const directory = resolve(root, "output/playwright/focused-inquiry");
+  await mkdir(directory, { recursive: true });
+  try {
+    await openCaseAtChapter(page, 1, "focused-credit");
+    for (let step = 0; step < 110; step += 1) {
+      transcript.push(await drainDialogue(page, {}));
+      const snapshot = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")));
+      const body = await page.locator("body").innerText();
+      transcript.push(body);
+      const position = snapshot.dialogueProgress?.[`${snapshot.caseBriefs[0].id}:sceneReview`];
+      smokeProgress(`focused ${step}: ${snapshot.scene} / ${position}`);
+      if (snapshot.scene === "storyInterlude") {
+        if (!wrongLoan || !retriedLoan || !reloaded) throw new Error("retry/reload regression was not exercised");
+        const text = transcript.join("\n");
+        for (const phrase of ["酒水", "后台", "两年前", "二十万", "一万一千六百", "反正八万我不转"]) {
+          if (!text.includes(phrase)) throw new Error(`route never rendered ${phrase}`);
+        }
+        if (visits.some(scene => ["deepFollowup", "investigationBackflow", "caseClosure"].includes(scene))) throw new Error("compact closing reopened a retired completion stage");
+        if (errors.length) throw new Error(errors.join("\n"));
+        const { writeFile } = await import("node:fs/promises");
+        await writeFile(resolve(directory, `credit-route-${width}x${height}.txt`), text);
+        await page.screenshot({ path: resolve(directory, `credit-complete-${width}x${height}.png`) });
+        smokeProgress("PASS focused credit: first call → materials → local wrong-answer retry → direct closing; reload preserved question order");
+        return;
+      }
+      if (await page.locator('.social-evidence-screen .evidence-target-options').count()) {
+        const questions = page.locator('.social-evidence-screen [data-evidence-check]');
+        const rects = await questions.evaluateAll(nodes => nodes.map(n => { const r=n.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height}; }));
+        if (rects.length !== 3 || rects.some((r,i) => r.h<48 || i && r.y < rects[i-1].y + rects[i-1].h + 8)) throw Error('social questions crowded');
+        for (let qi=0; qi<rects.length; qi++) { await questions.nth(qi).scrollIntoViewIfNeeded(); await questions.nth(qi).click({trial:true}); }
+        await questions.first().scrollIntoViewIfNeeded();
+        await page.screenshot({path:resolve(directory,`credit-social-${snapshot.scene}-${width}x${height}.png`)});
+        await page.reload(); await click(page,'[data-continue-story]');
+        if (!await page.locator('.social-evidence-screen [data-evidence-check]').count()) throw Error('social entry lost on restore');
+      }
+      visits.push(snapshot.scene);
+      if (await testimonyFlowIsVisible(page)) { transcript.push(await completeTestimonyWall(page) ?? ""); reloaded = true; continue; }
+      if (!reloaded && snapshot.scene === "sceneQuestionAnswer") {
+        await page.reload(); await click(page, '[data-continue-story]');
+        transcript.push(await drainDialogue(page, {})); reloaded = true;
+      }
+      if (await page.locator("[data-evidence-check]").count()) {
+        const value = await page.locator("[data-evidence-check]").first().getAttribute("data-evidence-check");
+        const ci = Number(value.split(":")[0]);
+        const check = authoredCasePackets[0].evidenceChecks[ci];
+        const isLoan = check.id === "credit-anniversary-footprint";
+        const oi = check.options.findIndex(option => isLoan && !wrongLoan ? !option.correct : option.correct);
+        if (isLoan && !wrongLoan) wrongLoan = true;
+        else if (isLoan) retriedLoan = true;
+        await click(page, `[data-evidence-check="${ci}:${oi}"]`);
+        continue;
+      }
+      if (await page.locator("[data-after-scene-evidence]").count()) {
+        const before = snapshot.scene;
+        const retry = body.includes("这处没问清，重新问");
+        await click(page, "[data-after-scene-evidence]");
+        if (retry) {
+          const after = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")));
+          if (after.scene !== before || !await page.locator("[data-evidence-check]").count()) throw new Error("wrong material advanced instead of reopening this question");
+        }
+        continue;
+      }
+      if (await page.locator("[data-scene-question]").count()) {
+        if (position === 2 && !reloaded && snapshot.sceneQuestionPicks?.[`${snapshot.caseBriefs[0].id}:scene:2`]?.completedOptionIds?.length) {
+          const before = await page.locator("[data-scene-question]").allTextContents();
+          await page.reload();
+          await click(page, "[data-continue-story]");
+          await drainDialogue(page, {});
+          const after = await page.locator("[data-scene-question]").allTextContents();
+          if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("reload repeated the completed wine question");
+          reloaded = true;
+        }
+        const values = await page.locator("[data-scene-question]").evaluateAll(nodes => nodes.map(node => node.dataset.sceneQuestion));
+        const correct = values.find(value => { const [si, oi] = value.split(":").map(Number); return authoredCasePackets[0].sceneVersions[si].questionOptions[oi].correct; });
+        if (!correct) throw new Error("focused question has no available next question");
+        await click(page, `[data-scene-question="${correct}"]`);
+        continue;
+      }
+      const selectors = ["[data-scene-open-replay]", "[data-next-scene-stage]", "[data-enter-interlude]", "[data-interlude-action]", "[data-return-interlude]", "[data-complete-interlude-action]", "[data-callback-ready]", "[data-enter-post-live]", "[data-enter-day-act]", "[data-enter-day-map]", "[data-day-scene]:not(:disabled)", "[data-complete-day-scene]", "[data-enter-overnight-callback]", "[data-night2-transition-done]", "[data-enter-overnight-night2]", "[data-enter-segment2]", "[data-care-choice]", "[data-care-choice-continue]", "[data-close-scene-question]", "button[data-scene]"];
+      let activated = false;
+      for (const selector of selectors) {
+        if (await page.locator(`${selector}:visible`).count()) { await click(page, selector); activated = true; break; }
+      }
+      if (!activated) throw new Error(`focused route stuck in ${snapshot.scene}: ${body}`);
+    }
+    throw new Error("focused route exceeded 110 steps");
+  } catch (error) {
+    await page.screenshot({ path: resolve(directory, `credit-failure-${width}x${height}.png`), fullPage: true });
+    throw error;
+  } finally { await context.close(); }
+}
+
+async function runSixReviewedCases() {
+  const [width, height] = (process.env.SMOKE_VIEWPORT || "1280x720").split("x").map(Number);
+  const viewport = { width, height };
+  const directory = resolve(root, 'output/playwright/six-review');
+  await mkdir(directory, { recursive: true });
+  const { writeFile } = await import('node:fs/promises');
+  for (const chapter of (process.env.SMOKE_REVIEW_PART === 'quick' ? [] : process.env.SMOKE_REVIEW_PART === 'tony' ? [4] : [2, 3, 4])) {
+    const packet = authoredCasePackets[chapter - 1];
+    const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
+    const page = await context.newPage(); page.setDefaultTimeout(browserActionTimeoutMs);
+    const errors = []; page.on('pageerror', e => errors.push(e.message));
+    const transcript = []; let reloaded = false, care = false, done = false, wrongMaterial = false;
+    try {
+      await openCaseAtChapter(page, chapter, 'six-review');
+      for (let step = 0; step < 160; step++) {
+        transcript.push(await drainDialogue(page, {}));
+        const save = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+        const body = await page.locator('body').innerText(); transcript.push(body);
+        smokeProgress(`${packet.caseId} ${step}: ${save.scene}`);
+        if (care && !['careChoice','caseClosure'].includes(save.scene)) { done = true; break; }
+        if (['deepFollowup','investigationBackflow','caseClosure'].includes(save.scene)) throw Error(`retired stage ${save.scene}`);
+        if (await testimonyFlowIsVisible(page)) { transcript.push(await completeTestimonyWall(page) ?? ""); reloaded = true; continue; }
+        if (await page.locator('[data-evidence-check]').count()) {
+          const ci = Number((await page.locator('[data-evidence-check]').first().getAttribute('data-evidence-check')).split(':')[0]);
+          const activeAction = packet.nightStructure.interlude.actions.find(action => action.id === save.caseNights?.[save.caseBriefs[chapter-1].id]?.activeActionId);
+          const board = activeAction?.kind === 'backflowEarly' ? packet.investigationHooks[ci] : packet.evidenceChecks[ci];
+          const miss = chapter === 2 && board.id === 'work-approval-missing' && !wrongMaterial;
+          const oi = board.options.findIndex(o => miss ? !o.correct : o.correct);
+          if (miss) wrongMaterial = true;
+          await click(page, `[data-evidence-check="${ci}:${oi}"]`); continue;
+        }
+        if (await page.locator('[data-scene-question]').count()) {
+          if (!reloaded) {
+            const before = await page.locator('[data-scene-question]').allTextContents();
+            await page.reload(); await click(page,'[data-continue-story]'); await drainDialogue(page,{});
+            if (JSON.stringify(before) !== JSON.stringify(await page.locator('[data-scene-question]').allTextContents())) throw Error('saved current inquiry changed');
+            reloaded = true;
+            await page.screenshot({path:resolve(directory,`${packet.caseId}-inquiry.png`)});
+          }
+          const values = await page.locator('[data-scene-question]').evaluateAll(nodes=>nodes.map(n=>n.dataset.sceneQuestion));
+          const choice = values.find(v=>{const [si,oi]=v.split(':').map(Number);return packet.sceneVersions[si].questionOptions[oi].correct;});
+          if (!choice) throw Error('no next valid question');
+          await click(page,`[data-scene-question="${choice}"]`); continue;
+        }
+        const selectors = ['[data-stance-snapshot]','[data-after-stance-snapshot]','[data-after-scene-evidence]','[data-live-counter-choice]','[data-continue-live-counter]','[data-scene-open-replay]','[data-next-scene-stage]','[data-enter-interlude]','[data-interlude-action]','[data-return-interlude]','[data-complete-interlude-action]','[data-next-evidence-check]','[data-callback-ready]','[data-enter-post-live]','[data-enter-day-act]','[data-enter-day-map]','[data-day-scene]:not(:disabled)','[data-day-choice]','[data-day-dialogue-choice]','[data-complete-day-scene]','[data-enter-overnight-callback]','[data-night2-transition-done]','[data-enter-overnight-night2]','[data-enter-segment2]','[data-care-choice]','[data-care-choice-continue]','[data-close-scene-question]','button[data-scene]'];
+        let clicked=false;
+        for (const selector of selectors) if (await page.locator(`${selector}:visible`).count()) {
+          if (selector==='[data-care-choice-continue]') care=true;
+          await click(page,selector);clicked=true;break;
+        }
+        if (!clicked) throw Error(`stuck ${save.scene}: ${body}`);
+      }
+      if (!done || !reloaded || (chapter === 2 && !wrongMaterial)) throw Error('main case did not complete reload, material retry and closing');
+      const text=transcript.join('\n');
+      const phrases = chapter===2 ? ['主管填的费用草单','他发出两条群消息'] : chapter===3 ? ['第二路麦克风接通','八万四','共同账户','我自己跟我妈说'] : ['合同','十二万','上礼拜他给我修刘海','这次不发半张了'];
+      for (const phrase of phrases) if (!text.includes(phrase)) throw Error(`missing required dialogue ${phrase}`);
+      if (errors.length) throw Error(errors.join('\n'));
+      await writeFile(resolve(directory,`${packet.caseId}-route.txt`),text);
+      smokeProgress(`PASS ${packet.caseId}: two nights, source materials, reload, compact ending`);
+    } catch(e) { await page.screenshot({path:resolve(directory,`${packet.caseId}-failure.png`),fullPage:true}); throw e; }
+    finally { await context.close(); }
+  }
+  let soloEndingChoice = 0;
+  for (const id of [...storyManifest.quickCases, '03-labeled-fiction', '03-labeled-fiction']) {
+    const packet=JSON.parse(await readFile(resolve(root,`content/packs/steam-demo-01/quick-cases/${id}.json`),'utf8'));
+    const context=await browser.newContext({viewport,reducedMotion:'reduce'});const page=await context.newPage();page.setDefaultTimeout(browserActionTimeoutMs);
+    const errors=[];page.on('pageerror',e=>errors.push(e.message));const transcript=[];let wrong=false,reloaded=false,done=false;
+    try {
+      await page.goto(playableUrl);await click(page,'[data-start-quick-detective]');await click(page,`[data-quick-case-id="${id}"]`);await click(page,'[data-quick-begin]');
+      for(let step=0;step<110;step++) {
+        transcript.push(await drainDialogue(page,{}));
+        transcript.push(await page.locator('body').innerText());
+        if(await page.locator('[data-quick-select]:visible').count()){done=true;break;}
+        if(await page.locator('[data-quick-issue]:visible').count()) {
+          if(!reloaded){const before=await page.locator('[data-quick-issue]').allTextContents();await page.reload();if(await page.locator('[data-continue-story]:visible').count())await click(page,'[data-continue-story]');await drainDialogue(page,{});if(JSON.stringify(before)!==JSON.stringify(await page.locator('[data-quick-issue]').allTextContents()))throw Error('quick resume lost question');reloaded=true;await page.screenshot({path:resolve(directory,`${id}-inquiry.png`)});}
+          const values=await page.locator('[data-quick-issue]').evaluateAll(nodes=>nodes.map(n=>n.dataset.quickIssue));
+          const decoy=values.find(value=>!packet.issueOptions.find(o=>o.id===value)?.confrontationId);
+          const pick=decoy&&!wrong?decoy:values.find(value=>packet.issueOptions.find(o=>o.id===value)?.confrontationId);
+          if(pick===decoy)wrong=true;
+          await click(page,`[data-quick-issue="${pick}"]`);continue;
+        }
+        const selectors=['[data-quick-next-turn]','[data-quick-after-miss]','[data-quick-next-confrontation]','[data-quick-next-verdict]','.quick-commentary-option:not(:disabled)'];
+        let clicked=false;for(const selector of selectors)if(await page.locator(`${selector}:visible`).count()){const soloFinal = selector === '.quick-commentary-option:not(:disabled)' && await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')).quickDetective?.roundIndex === 3);
+        await click(page,selector,soloFinal ? soloEndingChoice : 0);clicked=true;break;}
+        if(!clicked)throw Error(`quick stuck: ${await page.locator('body').innerText()}`);
+      }
+      if(!done)throw Error('quick did not finish');if(packet.focusedInquiry&&!reloaded)throw Error('quick not resumed');if(id==='02-one-missed-message'&&!wrong)throw Error('quick retry not exercised');if(errors.length)throw Error(errors.join('\n'));
+      await writeFile(resolve(directory,`${id}-route.txt`),transcript.join('\n'));
+      await click(page,'[data-quick-select]');if(!await page.locator(`.is-complete[data-quick-case-id="${id}"]`).count())throw Error('completion missing');
+      smokeProgress(`PASS ${id}: complete and saved${packet.format === 'solo-commentary' ? ` (ending ${++soloEndingChoice})` : ''}`);
+    }catch(e){await page.screenshot({path:resolve(directory,`${id}-failure.png`),fullPage:true});throw e;}finally{await context.close();}
+  }
+}
+
+async function playFocusedQuickCase(page, viewport, packet, alreadySelected = false) {
+  await mkdir(resolve(root, "output/playwright/six-review"), {recursive:true});
+  if (!alreadySelected) await click(page, `[data-quick-case-id="${packet.id}"]`);
+  await click(page,'[data-quick-begin]');
+  let wrong = false; const transcript = [];
+  for (let step=0;step<110;step++) {
+    transcript.push(await drainDialogue(page,{}));
+    transcript.push(await page.locator('body').innerText());
+    if(await page.locator('[data-quick-select]:visible').count()) {
+      if(packet.id==='02-one-missed-message'&&!wrong)throw Error('wrong-question path not exercised');
+      for(const line of packet.ending.summaryPages.flatMap(p=>p.lines)) if(!transcript.join('\n').includes(line.text)) throw Error(`ending skipped: ${line.text}`);
+      return;
+    }
+    if(await page.locator('[data-quick-issue]:visible').count()) {
+      if (await page.locator('.quick-inquiry-material').count()) {
+        await page.screenshot({path:resolve(root,`output/playwright/six-review/${packet.id}-materials-${viewport.width}x${viewport.height}.png`)});
+        await page.locator('.quick-inquiry-history summary').focus();
+        await page.keyboard.press('Enter');
+        if (!await page.locator('.quick-inquiry-history').getAttribute('open').then(value=>value!==null)) throw Error('optional history cannot open by keyboard');
+      }
+      const options=await page.locator('[data-quick-issue]').evaluateAll(nodes=>nodes.map(n=>n.dataset.quickIssue));
+      const miss=options.find(id=>!packet.issueOptions.find(o=>o.id===id).confrontationId);
+      const chosen=miss&&!wrong?miss:options.find(id=>packet.issueOptions.find(o=>o.id===id).confrontationId);
+      if(chosen===miss)wrong=true;
+      const target=page.locator(`[data-quick-issue="${chosen}"]`);
+      await target.scrollIntoViewIfNeeded();
+      const bounds=await target.boundingBox();
+      if(!bounds || bounds.x<0 || bounds.x+bounds.width>viewport.width || bounds.y<0 || bounds.y+bounds.height>viewport.height)throw Error(`inquiry button clipped at ${viewport.width}x${viewport.height}`);
+      await target.click(); continue;
+    }
+    const selectors=['[data-quick-next-turn]','[data-quick-after-miss]','[data-quick-next-confrontation]','[data-quick-next-verdict]'];
+    let clicked=false;for(const selector of selectors)if(await page.locator(`${selector}:visible`).count()){await click(page,selector);clicked=true;break;}
+    if(!clicked)throw Error(`focused quick stuck: ${await page.locator('body').innerText()}`);
+  }
+  throw Error('focused quick exceeded step bound');
+}
+
+async function completeFocusedEvidenceInquiry(page) {
+  const lines = [];
+  const snapshot = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+  const packet = authoredCasePackets[snapshot.chapter-1];
+  const scene = packet.sceneVersions.find(s => s.testimonyWall);
+  const caseId = snapshot.caseBriefs[snapshot.chapter-1].id;
+  const wallKey = `${caseId}:${scene.id}`;
+  // Resolve the authored act by currently visible question IDs, not DOM order.
+  const ids = await page.locator('[data-evidence-inquiry]').evaluateAll(nodes => nodes.map(n=>n.dataset.evidenceInquiry));
+  const act = scene.testimonyWall.acts.find(a => a.inquiry.options.some(o => ids.includes(o.id)));
+  if (!act) { lines.push(await drainDialogue(page,{})); if (await page.locator('[data-inquiry-continue]:visible').count()) await click(page,'[data-inquiry-continue]'); return lines.join('\n'); }
+  lines.push(await page.locator('body').innerText());
+  if (await page.locator('[data-inline-present-material], [data-testimony-press], .deck-card-pressure').count()) throw Error('retired interaction remains visible');
+  const overlap = await page.evaluate(() => {
+    const cards=[...document.querySelectorAll('.inquiry-materials article')].map(n=>n.getBoundingClientRect());
+    const buttons=[...document.querySelectorAll('[data-evidence-inquiry]')].map(n=>n.getBoundingClientRect());
+    return cards.some(a=>buttons.some(b=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top));
+  });
+  if(overlap) throw Error('question covers material');
+  const quoteClipped = await page.evaluate(() => {
+    const stage=document.querySelector('.focused-evidence-inquiry .vn-stage');
+    const quote=stage?.querySelector('.avg-textbox');
+    return quote && quote.getBoundingClientRect().top + stage.scrollTop < stage.getBoundingClientRect().top;
+  });
+  if(quoteClipped) throw Error('current quote lifted outside the reading area');
+  lines.push(await drainDialogue(page,{}));
+  const dir = resolve(root,'output/playwright/simple-mechanics'); await mkdir(dir,{recursive:true});
+  await page.screenshot({path:resolve(dir,`${packet.caseId}-${act.id}-${page.viewportSize().width}.png`)});
+  const miss = act.inquiry.options.find(o=>!o.correct);
+  const budgetsBefore = JSON.stringify([snapshot.caseBudgets,snapshot.statementPatience,snapshot.decisivePresentProgress]);
+  await click(page,`[data-evidence-inquiry="${miss.id}"]`);
+  lines.push(await drainDialogue(page,{}));
+  await page.reload(); await click(page,'[data-continue-story]'); lines.push(await drainDialogue(page,{}));
+  const restored = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+  if (JSON.stringify([restored.caseBudgets,restored.statementPatience,restored.decisivePresentProgress]) !== budgetsBefore) throw Error('wrong inquiry consumed budget or lost progress');
+  if (await page.locator('[data-inquiry-continue]:visible').count()) await click(page,'[data-inquiry-continue]');
+  if (!await page.locator('[data-inquiry-context]').count()) throw Error('local retry not restored');
+  for (let restore = 0; restore < 2; restore++) {
+    if (await page.locator('[data-dialogue-advance]').count() || !await page.locator('[data-inquiry-context]').count()) throw Error('retry replayed inquiry opening');
+    if (!await page.locator('[data-evidence-inquiry]').count()) throw Error('retry lost current questions');
+    if (!restore) { await page.reload(); await click(page,'[data-continue-story]'); }
+  }
+  const correct = act.inquiry.options.find(o=>o.correct);
+  const button = page.locator(`[data-evidence-inquiry="${correct.id}"]`); await button.scrollIntoViewIfNeeded();
+  const box = await button.boundingBox(), viewport = page.viewportSize();
+  if (!box || box.x<0 || box.x+box.width>viewport.width || box.y<0 || box.y+box.height>viewport.height) throw Error('inquiry question clipped');
+  await button.click(); lines.push(await drainDialogue(page,{}));
+  for (const line of correct.lines) if (!lines.join('\n').replace(/\s+/g,'').includes(line.text.replace(/\s+/g,''))) { const {writeFile}=await import('node:fs/promises'); await writeFile(resolve(dir,'response-debug.json'),JSON.stringify({missing:line.text,lines,html:await page.content(),save:await page.evaluate(()=>JSON.parse(localStorage.getItem('livestream-detective-save-v1')))},null,2)); throw Error('correct response skipped: '+line.text); }
+  if (await page.locator('[data-inquiry-continue]:visible').count()) await click(page,'[data-inquiry-continue]');
+  verifiedTestimonyActs.add(`${packet.caseId}/${act.id}`);
+  return lines.join('\n');
 }

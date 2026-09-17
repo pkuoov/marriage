@@ -10,7 +10,7 @@ const npmCliPath = [
   process.env.NPM_CLI_JS,
   join(dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js")
 ].find((candidate) => candidate && existsSync(candidate));
-const syntaxRoots = ["src", "scripts", "desktop/electron"];
+const syntaxRoots = ["src", "scripts", "desktop/electron", "tools/dialogue-editor"];
 const syntaxExtensions = new Set([".js", ".cjs", ".mjs"]);
 
 runNpm("content:index:check");
@@ -29,7 +29,22 @@ runNpm("verify:audio");
 runNpm("verify:content-pipeline");
 runNpm("verify:pack");
 runNpm("test:logic");
+run(process.execPath, ["--test", "scripts/tests/core-rebuttal.test.js", "scripts/tests/focused-inquiry.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/ui-review-regressions.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/playtest-fixes.test.js", "scripts/tests/combined-review-fixes.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/visual-polish.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/story-canvas-review.test.js"]);
+runNpm("test:audio-runtime");
+run(process.execPath, ["--test", "scripts/tests/http-byte-range.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/dev-reload.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/content-revision-mechanisms.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/script-presentation-parity.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/ordered-dialogue.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/project-skill-links.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/authoring-policy.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/script-review-repairs.test.js"]);
 runNpm("test:narrative");
+runNpm("test:dialogue-editor");
 
 function collectSyntaxFiles(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {

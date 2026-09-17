@@ -41,3 +41,11 @@ export function materialOperationMark(check = {}, checkIndex = 0) {
     material: check.material ?? ""
   };
 }
+
+export function materialInquiryLines(check = {}, pick = {}) {
+  const option = check.options?.find(option => option.id === pick.optionId) ?? check.options?.[pick.optionIndex];
+  if (!check.spokenInquiry || !option) return null;
+  return [{ role: "host", text: option.question ?? option.label },
+    ...(option.lines ?? (option.reactionLine ? [{ role: "caller", text: option.reactionLine }] : [])),
+    ...(pick.correct && pick.revisedVersion ? [{ role: "caller", text: pick.revisedVersion }] : [])];
+}

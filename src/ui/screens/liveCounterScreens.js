@@ -1,4 +1,7 @@
 import { liveSceneForCurrentSegment } from "../../runtime/nightOvernightModel.js";
+import { afterSceneEvidenceFor } from "../../runtime/sceneAdvance.js";
+import { flowGroupHtml } from "../callFlowView.js";
+import { completedChoicePrefix, nextSequentialChoice } from "../../runtime/sequentialChoices.js";
 
 export function createLiveCounterScreens(ctx) {
   const {
@@ -55,6 +58,7 @@ export function createLiveCounterScreens(ctx) {
     }
     const pick = liveCounterPickForState(brief, beat.id);
     const requiresChoice = (beat.choices ?? []).length > 0;
+    const pending = beat.choiceMode === "sequence" && nextSequentialChoice(beat.choices, pick?.completedChoiceIds);
     const transitionKey = `${caseKey(brief)}:live-counter:${beat.id}:reveal`;
     const pixelTransition = beat.revealTransition?.id && consumePixelTransition?.(transitionKey)
       ? { ...beat.revealTransition, kind: "reveal", evidenceArtSrc: brief.evidenceBoard ?? beat.revealTransition.evidenceArtSrc ?? "" }
@@ -66,7 +70,7 @@ export function createLiveCounterScreens(ctx) {
       chapter: "第二夜",
       text: liveCounterBeatHtml(beat, pick),
       pixelTransition,
-      choices: (!requiresChoice || pick)
+      choices: (!requiresChoice || (pick && !pending))
         ? flowGroupHtml(`<button class="primary" data-continue-live-counter type="button">继续追问</button>`)
         : ""
     });
@@ -108,17 +112,20 @@ export function createLiveCounterScreens(ctx) {
     const state = ctx.getState();
     const choice = (beat.choices ?? []).find((item) => item.id === choiceId) ?? null;
     if (!choice) return;
+    const previous = liveCounterPickForState(brief, beat.id);
+    if (beat.choiceMode === "sequence" && nextSequentialChoice(beat.choices, previous?.completedChoiceIds)?.id !== choiceId) return;
     const pressureSignal = pressureSignalForLiveCounterChoice(choice, state.lastPressureSignal ?? "");
     state.liveCounterPicks = {
       ...(state.liveCounterPicks ?? {}),
       [liveCounterPickKey(brief, beat.id)]: {
         choiceId: choice.id,
+        completedChoiceIds: beat.choiceMode === "sequence" ? [...completedChoicePrefix(beat.choices, previous?.completedChoiceIds), choiceId] : [],
         label: choice.label ?? "",
         recapAftertaste: choice.recapAftertaste ?? "",
         stanceNudge: choice.stanceNudge ?? null,
         pressureSignal,
         routeTone: choice.routeTone ?? "live-counter",
-        endingImpact: choice.endingImpact ?? null,
+        endingImpact: choice.endingImpact ?? (beat.choiceMode === "sequence" ? previous?.endingImpact : null) ?? null,
         at: Date.now()
       }
     };
@@ -141,6 +148,7 @@ export function createLiveCounterScreens(ctx) {
 
   function continueAfterLiveCounterBeat(brief = {}, beat = {}) {
     const state = ctx.getState();
+    if (beat.choiceMode === "sequence" && nextSequentialChoice(beat.choices, liveCounterPickForState(brief, beat.id)?.completedChoiceIds)) return;
     if ((beat.choices ?? []).length && !liveCounterPickForState(brief, beat.id)) return;
     markAction(brief, `liveCounterBeat:${beat.id}`);
     state.activeLiveCounterBeatId = null;
@@ -160,7 +168,15 @@ export function createLiveCounterScreens(ctx) {
       render();
       return;
     }
-    const nextSceneIndex = nextPlayableSceneIndex(brief, Number(beat.afterSceneIndex ?? 0));
+    const sceneIndex = Number(beat.afterSceneIndex ?? 0);
+    if (afterSceneEvidenceFor(brief, sceneIndex, (key) => actionDone(brief, key))) {
+      setIndexValue(brief, "sceneReview", sceneIndex);
+      state.scene = "afterSceneEvidence";
+      saveState();
+      render();
+      return;
+    }
+    const nextSceneIndex = nextPlayableSceneIndex(brief, sceneIndex);
     if (nextSceneIndex >= 0) {
       setIndexValue(brief, "sceneReview", nextSceneIndex);
       state.scene = liveSceneForCurrentSegment(brief, {

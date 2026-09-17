@@ -2,13 +2,15 @@ import { choiceButtonBodyHtml } from "./callFlowView.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
 export function careChoiceHtml({ choices = [], selectedChoice = null, hostName = DEFAULT_PLAYER_NAME } = {}) {
+  const sequential = choices[0]?.sequential;
+  const nextChoice = sequential ? choices[selectedChoice ? choices.findIndex((choice) => choice.id === selectedChoice.id) + 1 : 0] : null;
   return `
     <section class="care-choice-card">
       <div class="care-choice-heading">
         <span>今晚最后一句</span>
-        <h2>案情说完了，最后跟她说一句。</h2>
+        <h2>收麦前</h2>
       </div>
-      ${selectedChoice ? careChoiceDialogueHtml(selectedChoice, hostName) : `
+      ${selectedChoice ? careChoiceDialogueHtml(selectedChoice, hostName) : !sequential ? `
         <div class="care-choice-grid">
           ${choices.map((choice) => `
             <button class="decision-choice" data-care-choice="${escapeHtml(choice.id)}" type="button">
@@ -16,7 +18,8 @@ export function careChoiceHtml({ choices = [], selectedChoice = null, hostName =
             </button>
           `).join("")}
         </div>
-      `}
+      ` : ""}
+      ${nextChoice ? `<button class="decision-choice" data-care-choice="${escapeHtml(nextChoice.id)}" type="button">${choiceButtonBodyHtml(nextChoice.label)}</button>` : ""}
     </section>
   `;
 }

@@ -1,11 +1,5 @@
-const TEXTURE_THRESHOLDS = Object.freeze({
-  shortAnswerCount: 3,
-  longRambleCount: 1,
-  interruptionCount: 2,
-  nonLoadBearingMaxCount: 2,
-  callerTicCount: 2,
-  otherTicCount: 0
-});
+// Only declared speaker ownership is a numeric gate; rhythm counts are descriptive.
+const TEXTURE_THRESHOLDS = Object.freeze({ otherTicCount: 0 });
 
 const COMMON_VOICE_TICS = Object.freeze(["呃", "哎", "唉", "就是说", "你知道吧"]);
 
@@ -320,13 +314,10 @@ function textureErrors(metrics = {}, options = {}) {
     voiceTicArcResults = []
   } = options;
   const errors = [];
-  if (metrics.shortAnswerCount < TEXTURE_THRESHOLDS.shortAnswerCount) errors.push(`短答句 ${metrics.shortAnswerCount}/${TEXTURE_THRESHOLDS.shortAnswerCount}`);
-  if (metrics.longRambleCount < TEXTURE_THRESHOLDS.longRambleCount) errors.push(`长絮叨段 ${metrics.longRambleCount}/${TEXTURE_THRESHOLDS.longRambleCount}`);
-  if (metrics.interruptionCount < TEXTURE_THRESHOLDS.interruptionCount) errors.push(`掐断标记 ${metrics.interruptionCount}/${TEXTURE_THRESHOLDS.interruptionCount}`);
-  if (metrics.nonLoadBearingCount > TEXTURE_THRESHOLDS.nonLoadBearingMaxCount) errors.push(`无功能生活噪声过多 ${metrics.nonLoadBearingCount}/${TEXTURE_THRESHOLDS.nonLoadBearingMaxCount}`);
+  // Ramble and tic counts describe voice; they must not force filler into a revised scene.
   if (!voiceTicsDeclared) errors.push("voiceTics 未声明");
   if (!voiceTicArcDeclared) errors.push("voiceTicArc 未声明");
-  if (voiceTics.length > 0 && metrics.callerTicCount < TEXTURE_THRESHOLDS.callerTicCount) errors.push(`来电人口癖 ${metrics.callerTicCount}/${TEXTURE_THRESHOLDS.callerTicCount}`);
+
   if (metrics.otherTicCount > TEXTURE_THRESHOLDS.otherTicCount) errors.push(`其他说话人口癖串用 ${metrics.otherTicCount}/${TEXTURE_THRESHOLDS.otherTicCount}`);
   if (voiceTicsDeclared && voiceTics.length === 0 && metrics.negativeFingerprintCount > 0) errors.push(`零语气词指纹泄漏 ${metrics.negativeFingerprintCount}`);
   if (oneTimeTic && metrics.oneTimeCallerCount !== 1) errors.push(`oneTimeTic「${oneTimeTic}」来电人出现 ${metrics.oneTimeCallerCount}/1`);

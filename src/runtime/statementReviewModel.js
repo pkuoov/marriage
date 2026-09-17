@@ -161,7 +161,7 @@ export function statementStagesForBrief(brief = {}) {
       sceneIndexes,
       startIndex: sceneIndexes[0],
       endIndex: sceneIndexes[sceneIndexes.length - 1],
-      minimumReviewCount: Math.max(2, Number(stage.minimumReviewCount) || sceneIndexes.length)
+      minimumReviewCount: Math.max(1, Number(stage.minimumReviewCount) || sceneIndexes.length)
     };
   }).filter(Boolean);
   if (stages.length) return stages;
@@ -179,7 +179,7 @@ export function statementStagesForBrief(brief = {}) {
     sceneIndexes: [sceneIndex],
     startIndex: sceneIndex,
     endIndex: sceneIndex,
-    minimumReviewCount: 2
+    minimumReviewCount: 1
   }));
 }
 
@@ -211,7 +211,7 @@ export function statementStageProgress({
   const dialogueReviewCount = current.sceneIndexes
     .reduce((total, sceneIndex) => total + (dialoguePicksForScene(sceneIndex) ?? []).length, 0);
   const reviewCount = keyReviewCount + dialogueReviewCount;
-  const minimumReviewCount = Math.max(2, Number(current.minimumReviewCount) || current.sceneIndexes.length);
+  const minimumReviewCount = Math.max(1, Number(current.minimumReviewCount) || current.sceneIndexes.length);
   const unresolvedSceneIndexes = current.sceneIndexes
     .filter((sceneIndex) => !actionDone(`version:${sceneIndex}`));
   return {

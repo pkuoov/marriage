@@ -50,11 +50,13 @@ npm run audio:bgm -- build live-call-v2 \
 
 生成阶段遵守三层目录：
 
-1. `assets/audio/unchanged/`：Udio 原始下载，只读保留；
+1. `assets/audio/unchanged/` 与 `assets/audio/source/bgm-*/`：Udio 原始下载，只读保留；
 2. `assets/audio/review/`：剪辑后的人工试听候选；
 3. `assets/audio/bgm/`：通过对白混音和循环试听后才进入的正式运行时资产。
 
 `review/` 与自动质检报告属于可重复生成的本地文件，默认不提交 Git；正式母版和它采用的配方才进入版本控制。
+
+2026-09-06 的三首新素材由用户授权工程选剪并接入，保留 `auditoryReview: pending`，尚未完成上文所述的人工听感签收。该批配方中的 `approved` 仅表示已选择用于当前试玩构建，不表示已听过或达到发行听感标准。原始文件以 SHA-256 固定，重建前程序会拒绝名称相同、内容已变化的输入；复核新源后再更新配方。具体差异、裁切与剩余听感问题见 [选剪记录](review-archive/bgm-selection-2026-09-06.md)。
 
 2026-07-22 已完成首轮晋升：`live-call-v2` 使用较舒缓的 `music_2_2.wav`；`pressure-stem-v2` 直接使用同轮生成、气氛更紧张的 `music_2_1.wav`；`offair-desk-v2` 使用稳定且脉冲较弱的 `music_4_3.wav`；`day-investigation-v1` 使用速度正确的 `music_5_2.wav`；`callback-return-v1` 使用稳定、低频更重的 `music_6_2.wav`。五个配方状态均为 `approved`，直接输出到 `assets/audio/bgm/`；以后更换入选 take 仍必须先出 review 试听，再改 approved 配方。
 

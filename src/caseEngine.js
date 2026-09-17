@@ -1,6 +1,6 @@
 import { applyDifficultyProfile } from "./difficulty.js";
 import { applyRuntimeCaseContent } from "./runtime/contentCase.js";
-import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseContentForPlot, storyPackCaseCount, storyPackForKey } from "./storyPacks.js";
+import { DEFAULT_STORY_PACK_KEY, storyPackCaseContentFor, storyPackCaseCount, storyPackForKey } from "./storyPacks.js";
 import { DAILY_TEMPLATE_BUILDERS } from "./caseTemplates/index.js";
 import { withChoiceRoutes } from "./caseTemplates/dailyTemplateSupport.js";
 
@@ -101,8 +101,12 @@ function actorIdForRole(role, ids) {
 
 function runtimeContentForDailyCase(options, plotId) {
   const storyKey = options.storyKey ?? options.packKey ?? DEFAULT_STORY_PACK_KEY;
-  if (options.runtimeCaseId) return storyPackCaseContentFor(storyKey, options.runtimeCaseId);
-  return storyPackCaseContentForPlot(storyKey, plotId);
+  const spec = (storyPackForKey(storyKey)?.sequence ?? []).find((item) => item.plotId === plotId);
+  const caseId = options.runtimeCaseId ?? spec?.caseId;
+  if (!caseId) return null; // Unmigrated daily plots still have authored templates.
+  const content = storyPackCaseContentFor(storyKey, caseId);
+  if (!content) throw new Error(`内容包 ${storyKey} 的案件 ${caseId} 缺少可运行正文，已停止载入。`);
+  return content;
 }
 
 const DAILY_ROTATION = [

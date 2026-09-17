@@ -1,0 +1,69 @@
+{
+  "callerQuestion": {
+    "prompt": "你都问到这里了，总不能还让我把这八万转过去吧？",
+    "options": [
+      {
+        "id": "not-your-debt",
+        "label": "八万我没让你转。你答应代存、现在只剩一万一千六百多，这段也得留在回放里。",
+        "lines": [
+          {
+            "role": "caller",
+            "text": "存着是我说过，可里面也有一起花的钱。你别只留一句钱都让我花没了。"
+          }
+        ],
+        "routeAxis": "caller-credibility"
+      },
+      {
+        "id": "ask-fifty-thousand",
+        "label": "一起花的也留。你刚报了余额，接下来把共同花销和你自己的开销分开给他看。",
+        "callerLine": "我可以找记录。可他不能看见一笔买衣服，就让我原价退回去。",
+        "routeAxis": "money-flow"
+      },
+      {
+        "id": "dont-answer-for-her",
+        "label": "先对记录，别还没对就说全退或者全不退。你这边的账讲了，他那三万五也得继续解释。",
+        "callerLine": "那就两边都看。别我的每笔都要说，他一句不方便就过去了。",
+        "routeAxis": "process-control"
+      }
+    ],
+    "choiceMode": "sequence"
+  },
+  "dayScene": {
+    "id": "day-accounting",
+    "label": "与周会计核账",
+    "backdropClass": "day-document",
+    "kind": "studio",
+    "body": {
+      "access": "咨询者同意节目核对她转交的遮名账页。",
+      "text": "下午，周会计来到工作室，把外套往常坐的椅背上一搭：“昨晚欠的饭，今天先记着。”你把收到的账页递过去：“记我账上。这回来电人的账，也得请你看一眼。”",
+      "routeAxis": "money-flow",
+      "earnedItemId": "周会计的时间线",
+      "timelineSort": {
+        "cards": [
+          "他开口借八万",
+          "分期开通",
+          "社保断缴",
+          "每月 8 日的固定入账中断"
+        ],
+        "correctOrder": [
+          "社保断缴",
+          "分期开通",
+          "每月 8 日的固定入账中断",
+          "他开口借八万"
+        ],
+        "payoffLine": "周会计点了点最后两张卡：“七月八号没收到这笔钱，后来才找她要八万。明晚问问他，这一万原本指望谁给。”",
+        "missLine": "周会计把账页推回来：“断缴和分期在前。七月八号空着，借八万是后面的事。”"
+      },
+      "sourceNote": "咨询者把账页交给了节目，请周会计帮忙核对。"
+    }
+  },
+  "deviceProbes": [
+    {
+      "id": "credit-bank-flow:reviewProbes:device",
+      "sourceAnchor": "设备的分期我可没答应过",
+      "question": "买的时候，他跟你谈过一起还吗？",
+      "answer": "没谈。他说送我的，我才收。",
+      "keyChoice": true
+    }
+  ]
+}

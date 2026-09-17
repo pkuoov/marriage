@@ -1,3 +1,4 @@
+import { materialRecordHtml } from "./materialRecordView.js";
 import { audioSettingsPanelHtml } from "./audioSettingsView.js";
 
 export function liveControlDeckHtml({
@@ -10,7 +11,9 @@ export function liveControlDeckHtml({
   material = "",
   materialCount = 1,
   progressLabel = "",
-  progressNote = ""
+  progressNote = "",
+  soloCommentary = false,
+  simpleInquiry = false
 } = {}) {
   const safeTotal = Math.max(1, Number(total ?? 1));
   const safeSegment = Math.max(1, Math.min(safeTotal, Number(segment ?? 1)));
@@ -20,12 +23,16 @@ export function liveControlDeckHtml({
   const pressurePercent = pressureMax > 0
     ? Math.round((Math.max(0, Math.min(pressureMax, pressureRemaining)) / pressureMax) * 100)
     : 0;
-  const defaultProgressState = deckProgressState(safeSegment, safeTotal);
+  const defaultProgressState = soloCommentary
+    ? { label: `第 ${safeSegment} 段点评`, note: "本段公开文本正在口播。" }
+    : deckProgressState(safeSegment, safeTotal);
   const progressState = {
     label: progressLabel || defaultProgressState.label,
     note: progressNote || defaultProgressState.note
   };
-  const patienceState = deckPatienceState(pressure);
+  const patienceState = soloCommentary
+    ? { label: "点评中", note: "读完这一段，再选择从哪里说起。" }
+    : deckPatienceState(pressure);
   const materialKind = materialKindForLabel(material);
   const hasMaterial = Boolean(material && Number(materialCount) > 0);
   const hostState = hostMonitorStateForPressure(pressure);
@@ -53,8 +60,8 @@ export function liveControlDeckHtml({
           <i class="${mode === "interrupt" ? "is-active" : ""}">LINE</i>
         </div>
       </section>
-      <section class="deck-card">
-        <span>通话进度</span>
+      ${simpleInquiry ? "" : `<section class="deck-card">
+        <span>${soloCommentary ? "点评进度" : "通话进度"}</span>
         <b>${escapeHtml(progressState.label)}</b>
         <i class="deck-value-rail" aria-hidden="true"><em style="width:${progressPercent}%"></em></i>
         <small>${escapeHtml(progressState.note)}</small>
@@ -65,6 +72,7 @@ export function liveControlDeckHtml({
         <i class="deck-value-rail deck-pressure-rail" aria-hidden="true"><em style="width:${pressurePercent}%"></em></i>
         <small>${escapeHtml(patienceState.note)}</small>
       </section>
+      `}
       ${hasMaterial ? `
         <button class="deck-card deck-card-material is-ready" data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="查看后台材料：${escapeHtml(material)}" type="button">
           <span>后台材料</span>
@@ -75,15 +83,15 @@ export function liveControlDeckHtml({
           <b>${escapeHtml(material)}</b>
           <small>已收到 ${Number(materialCount)} 份 · 点击查看</small>
         </button>
-      ` : `
+      ` : simpleInquiry ? "" : `
         <section class="deck-card deck-card-material">
           <span>后台材料</span>
           <div class="deck-material-preview material-empty" aria-hidden="true">
             <i>—</i>
             <em></em>
           </div>
-          <b>尚未收到</b>
-          <small>来电人发来后会出现在这里。</small>
+          <b>${soloCommentary ? "公开文本" : "尚未收到"}</b>
+          <small>${soloCommentary ? "本段文本随主播口播呈现。" : "来电人发来后会出现在这里。"}</small>
         </section>
       `}
     </aside>
@@ -100,6 +108,7 @@ function deckProgressState(segment = 1, total = 1) {
 
 function deckPatienceState(pressure = {}) {
   const level = pressure.level ?? "high";
+  if (pressure.focusedInquiry) return { label: Number(pressure.remaining ?? 0) <= 0 ? "这件事还没问清" : pressure.patienceLabel ?? "还在听", note: "接着问当前的问题。" };
   if (pressure.quietUntilEmpty) {
     if (Number(pressure.remaining ?? 0) <= 0) {
       return { label: pressure.patienceLabel ?? "直播间失去耐心", note: "直播间开始催你别再乱带节奏。" };
@@ -167,6 +176,7 @@ export function liveFrameHtml({
   material = "",
   materialCount = 1,
   materialArtSrc = "",
+  materialItems = [],
   screenEffect = "",
   screenClass = "",
   pixelTransition = null,
@@ -178,20 +188,18 @@ export function liveFrameHtml({
   const choiceMarkup = String(choices ?? "");
   const hasChoices = Boolean(choiceMarkup.trim());
   const choicesAreFlow = hasChoices && (choiceMarkup.includes("flow-group") || choiceMarkup.includes("cafe-opening-action"));
-  const materialShortcut = material && !String(screenClass ?? "").split(/\s+/).includes("dialogue-mode-replay")
-    ? `<button class="choice-material-shortcut" data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="选择前查看材料：${escapeHtml(material)}" type="button"><span>查看材料</span><b>${Math.max(1, Number(materialCount) || 1)}</b></button>`
-    : "";
   const choiceLayer = hasChoices
-    ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${materialShortcut}${choiceMarkup}</div>`
+    ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choiceMarkup}</div>`
     : "";
   return `
-    <main>
+    <main class="${escapeHtml(String(screenClass ?? "").split(/\s+/).find((name) => /^effects-(full|reduced|off)$/.test(name)) ?? "effects-full")}">
       ${pixelTransitionHtml(pixelTransition)}
       <header class="topbar">
-        <button class="history-back-button" data-action="rewind" type="button" aria-label="返回上次追问" ${rewindAvailable ? "" : "disabled"}>返回</button>
-        <button data-action="title" type="button" aria-label="回到标题页">${escapeHtml(productName)}</button>
+        <button class="history-back-button" data-action="rewind" type="button" aria-label="返回上次追问" ${rewindAvailable ? "" : "disabled"}>返回追问</button>
+        <button data-action="title" type="button" aria-label="回到标题页">主菜单</button>
         <nav aria-label="章节"><span class="active"><i></i>${escapeHtml(modeLabel)}</span></nav>
         ${audioSettingsPanelHtml(audioSettings ?? { enabled: soundEnabled }, { placement: "topbar" })}
+        ${material ? `<button class="material-toolbar-button" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" type="button">查看材料 <b>${Math.max(1, Number(materialCount) || 1)}</b></button>` : ""}
         ${showResetButton ? `<button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>` : ""}
         ${showRecordButton ? `<button class="record-button" data-record-open type="button">案卷</button>` : ""}
       </header>
@@ -211,7 +219,6 @@ export function liveFrameHtml({
           <div class="dialogue-card" aria-live="polite">
             <div class="dialogue-toolbar">
               ${chapter ? `<p class="eyebrow">${escapeHtml(chapter)}</p>` : ""}
-              ${material ? `<button class="avg-material-card" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" aria-label="打开材料板：${escapeHtml(material)}" type="button"><small>材料</small><b>${Math.max(1, Number(materialCount) || 1)}</b></button>` : ""}
             </div>
             ${text}
             ${reactionHtml}
@@ -219,8 +226,8 @@ export function liveFrameHtml({
           ${choicesAreFlow ? choiceLayer : ""}
         </article>
         ${choicesAreFlow ? "" : choiceLayer}
-        ${material ? materialModalHtml(material, materialKind, materialArtSrc) : ""}
       </section>
+      ${material ? materialModalHtml(material, materialKind, materialArtSrc, materialItems) : ""}
     </main>
   `;
 }
@@ -237,30 +244,39 @@ export function pixelTransitionHtml(transition = null) {
   const caption = eyebrow || label
     ? `<p>${eyebrow ? `<small>${escapeHtml(eyebrow)}</small>` : ""}${label ? `<b>${escapeHtml(label)}</b>` : ""}</p>`
     : "";
+  const phaseStage = kind === "phase"
+    ? `<div class="statement-phase-stage" aria-hidden="true">
+        <span class="statement-phase-rail statement-phase-rail-left"><i></i><i></i><i></i></span>
+        <span class="statement-phase-signal"><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="statement-phase-rail statement-phase-rail-right"><i></i><i></i><i></i></span>
+      </div>`
+    : "";
   return `
     <div class="pixel-transition pixel-transition-${kind}${signalClass}${phaseVariant}" data-transition-kind="${kind}"${phaseVariant ? ` data-transition-variant="${escapeHtml(transition.visualVariant)}"` : ""} aria-hidden="true">
       <div class="pixel-transition-grid"></div>
+      ${phaseStage}
       ${revealPerformanceHtml(transition)}
       ${caption}
     </div>
   `;
 }
 
-function materialModalHtml(material = "", materialKind = "file", materialArtSrc = "") {
+function materialModalHtml(material = "", materialKind = "file", materialArtSrc = "", materialItems = []) {
   return `
     <aside class="avg-material-modal" id="avg-material-modal" data-material-modal hidden>
       <button class="avg-material-backdrop" data-material-close aria-label="关闭材料板" type="button"></button>
       <section class="avg-material-panel" role="dialog" aria-modal="true" aria-labelledby="avg-material-title">
         <header>
           <span>后台材料</span>
-          <button data-material-close type="button">关闭</button>
+          <button data-material-close type="button" aria-label="关闭后台材料">关闭材料 <b aria-hidden="true">×</b></button>
         </header>
-        <div class="avg-material-sheet material-${escapeHtml(materialKind)}${materialArtSrc ? " has-material-art" : ""}">
-          ${materialArtSrc ? `<img class="avg-material-art" src="${escapeHtml(materialArtSrc)}" alt="${escapeHtml(material)}的材料合成图" onerror="this.hidden=true" />` : ""}
+        <div class="avg-material-sheet material-${escapeHtml(materialKind)}">
+          ${materialRecordHtml(materialItems)}
+          ${materialArtSrc ? `<details class="material-image-preview"><summary>展开材料示意图</summary><img class="avg-material-art" src="${escapeHtml(materialArtSrc)}" alt="${escapeHtml(material)}的材料合成图" onerror="this.hidden=true" /></details>` : ""}
           <small id="avg-material-title">当前材料</small>
           <i aria-hidden="true">${escapeHtml(materialGlyph(materialKind))}</i>
           <b>${escapeHtml(material)}</b>
-          <em>材料文字由案卷记录，图面只标纸张与圈点位置。</em>
+          <em>已收到的原文可随时回看。示意图不增加证据内容。</em>
         </div>
       </section>
     </aside>

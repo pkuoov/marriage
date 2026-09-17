@@ -47,6 +47,7 @@ export function callLineHtml(line = {}) {
   }
   const role = line.role === "host" || line.speaker === "你" || line.speaker === HOST_NAME
     ? "host"
+    : line.speakerProfileId === "zhao-lawyer" || line.role === "advisor" || /^赵律师(?:[（(]|$)/.test(line.speaker ?? "") ? "advisor"
     : line.role === "director" ? "other" : "caller";
   const speaker = role === "host" ? HOST_NAME : line.speaker ?? "咨询者";
   const text = line.text ?? line.version ?? line.line ?? "";
@@ -54,7 +55,7 @@ export function callLineHtml(line = {}) {
   const speedTierAttr = line.textSpeedTier ? ` data-text-speed-tier="${escapeHtml(line.textSpeedTier)}"` : "";
   return `
     <div class="call-line ${role}"${autoAdvanceAttr}${speedTierAttr}>
-      <b>${speaker}</b>
+      <b>${escapeHtml(speaker)}</b>
       <p>${escapeHtml(text)}</p>
     </div>
   `;

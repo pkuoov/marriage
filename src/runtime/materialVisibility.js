@@ -1,5 +1,20 @@
 import { actionDoneForState } from "./caseStateSelectors.js";
 import { caseKey } from "./sceneAdvance.js";
+import { normalizeTestimonyWallProgress, testimonyWallKey } from "./decisivePresentModel.js";
+
+export function documentIsReceived(state = {}, brief = {}, document = {}) {
+  const overnight = state.caseOvernights?.[caseKey(brief)] ?? {};
+  const receipt = document.availableAt;
+  if (receipt?.sceneId) {
+    const index = (brief.sceneVersions ?? []).findIndex((scene) => scene.id === receipt.sceneId);
+    if (index < 0) return false;
+    if (actionDoneForState(state, brief, `version:${index}`)) return true;
+    const wall = normalizeTestimonyWallProgress(state.testimonyWallProgress?.[testimonyWallKey(brief, brief.sceneVersions[index], index)]);
+    return wall.act >= (receipt.act ?? 1) && wall.preludeSeen;
+  }
+  const dayDocument = (brief.overnightStructure?.dayScenes ?? []).some((scene) => scene.body?.documentId === document.id);
+  return dayDocument && (overnight.segment === "day" || overnight.segment === "night2");
+}
 
 export function unlockedMaterialProfile({ state = {}, brief = {}, visible = true } = {}) {
   if (!visible) return emptyMaterialProfile();
@@ -11,19 +26,21 @@ export function unlockedMaterialProfile({ state = {}, brief = {}, visible = true
     if (!card) return [];
     return [{
       id: card.id,
-      label: card.title ?? card.type ?? "随麦材料"
+      label: card.title ?? card.type ?? "随麦材料",
+      kind: card.type ?? "材料",
+      front: card.front ?? "",
+      detail: card.detail ?? ""
     }];
   });
 
-  const key = caseKey(brief);
-  const receivedAfterHangup = Boolean(
-    state.caseNights?.[key]?.hangupDone
-    || state.caseOvernights?.[key]?.hangupDone
-  );
-  if (receivedAfterHangup && brief.storyClueObject) {
-    items.push({
-      id: `${key}:story-clue-object`,
-      label: brief.storyClueObject
+  for (const document of brief.documents ?? []) {
+    if (documentIsReceived(state, brief, document)) items.push({
+      id: document.id,
+      label: document.title ?? "银行流水摘录",
+      kind: "已收到的材料",
+      front: [document.description ?? document.subtitle, ...(document.rows ?? []).map((row) =>
+        [row.date, row.kind, row.amount, row.party, row.memo].filter(Boolean).join(" · ")
+      )].filter(Boolean).join("\n")
     });
   }
 

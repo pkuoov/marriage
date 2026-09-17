@@ -1,4 +1,4 @@
-export function cafePrologueHeaderHtml({ timeline = "开播前 · 傍晚", title = "序章", subtitle = "" } = {}) {
+export function cafePrologueHeaderHtml({ timeline = "现在 · 傍晚", title = "序章", subtitle = "" } = {}) {
   return `
     <header class="cafe-prologue-header">
       <span>${escapeHtml(timeline)}</span>
@@ -124,7 +124,7 @@ export function cafeEvidencePairHtml(cards = [], selectedId = "", statementText 
               <b>${escapeHtml(card.title ?? "")}</b>
               <span>${escapeHtml(card.detail ?? "")}</span>
               ${(card.rows ?? []).length ? `<div class="cafe-transfer-rows">${card.rows.map((row) => `<span>${escapeHtml(row)}</span>`).join("")}</div>` : ""}
-              <em>${selectedId === card.id ? "已选择" : "选择"}</em>
+              <em>${selectedId === card.id ? "✓ 已选择此材料" : "选择此材料"}</em>
             </button>
             <button class="cafe-evidence-inspect" data-cafe-material-open="${escapeHtml(card.id)}" type="button">查看原件</button>
           </article>
@@ -175,19 +175,19 @@ export function cafeMaterialDetailModalHtml(cards = []) {
     <aside class="cafe-material-modal" data-cafe-material-modal hidden aria-hidden="true">
       <button class="cafe-material-modal-backdrop" data-cafe-material-close type="button" aria-label="关闭材料"></button>
       <section class="cafe-material-sheet" role="dialog" aria-modal="true" aria-label="材料原件">
-        <header><span>材料原件</span><button data-cafe-material-close type="button">关闭</button></header>
+        <header><span>材料原件</span><button data-cafe-material-close type="button" aria-label="关闭材料原件">关闭材料 <b aria-hidden="true">×</b></button></header>
         ${(cards ?? []).filter(Boolean).map((card) => cafeMaterialDocumentHtml(card)).join("")}
       </section>
     </aside>
   `;
 }
 
-function cafeMaterialDocumentHtml(card = {}) {
+export function cafeMaterialDocumentHtml(card = {}, { hidden = true } = {}) {
   const kind = card.documentKind ?? (card.id === "chat" ? "chat" : card.id === "hotel" ? "hotel" : "ledger");
   const rows = card.rows ?? [];
   if (kind === "chat") {
     return `
-      <article class="cafe-material-document material-chat" data-cafe-material-document="${escapeHtml(card.id)}" hidden>
+      <article class="cafe-material-document material-chat" data-cafe-material-document="${escapeHtml(card.id)}" ${hidden ? "hidden" : ""}>
         <div class="material-chat-top"><b>${escapeHtml(card.title ?? "联系人")}</b><span>聊天记录</span></div>
         <time>21:18</time>
         <p>我到澜桥酒店了</p>
@@ -197,7 +197,7 @@ function cafeMaterialDocumentHtml(card = {}) {
   }
   if (kind === "hotel") {
     return `
-      <article class="cafe-material-document material-hotel" data-cafe-material-document="${escapeHtml(card.id)}" hidden>
+      <article class="cafe-material-document material-hotel" data-cafe-material-document="${escapeHtml(card.id)}" ${hidden ? "hidden" : ""}>
         <header><small>预订记录</small><b>${escapeHtml(card.title ?? "酒店订单")}</b></header>
         <dl><div><dt>入住时间</dt><dd>21:24</dd></div><div><dt>入住人</dt><dd>妻子本人</dd></div><div><dt>房型</dt><dd>大床房 1 间</dd></div></dl>
         <small>${escapeHtml(card.detail ?? "")}</small>
@@ -205,7 +205,7 @@ function cafeMaterialDocumentHtml(card = {}) {
     `;
   }
   return `
-    <article class="cafe-material-document material-ledger" data-cafe-material-document="${escapeHtml(card.id)}" hidden>
+    <article class="cafe-material-document material-ledger" data-cafe-material-document="${escapeHtml(card.id)}" ${hidden ? "hidden" : ""}>
       <header><small>${escapeHtml(card.kicker ?? "银行流水")}</small><b>${escapeHtml(card.title ?? "转账记录")}</b></header>
       <p>${escapeHtml(card.detail ?? "")}</p>
       <div>${rows.map((row) => `<span>${escapeHtml(row)}</span>`).join("")}</div>

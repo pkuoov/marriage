@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copyRuntimeAssets } from "./runtime-assets.js";
 import { bundleCssSync } from "./css-bundle.js";
+import { ensureContentIndex } from "./lib/content-build.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = resolve(root, "dist", "playable");
@@ -10,6 +11,7 @@ const tempRoot = resolve(root, "dist", ".playable-");
 const entry = resolve(root, "src", "app.js");
 
 export async function buildPlayable() {
+  await ensureContentIndex(root);
   await mkdir(resolve(root, "dist"), { recursive: true });
   const tempDir = await mkdtemp(tempRoot);
   try {

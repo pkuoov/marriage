@@ -129,7 +129,7 @@ export function dailyLostJobCreditTemplate(brief, names) {
         options: [
           { label: "探店视频和那套分期设备", correct: true, contradiction: "分期设备和推广的受益账号是咨询者自己的号，“他带我消费”的说法被她自己的视频拆了半边。", feedback: "这条不替他还账。但今晚的账单里，有一笔的受益人一直坐在麦前。", routeAxis: "external-corroboration" },
           { label: "朋友语气很替她生气", correct: false, feedback: "朋友生气很正常，账还是得回到谁刷、谁还。", routeAxis: "outer-thread" },
-          { label: "照片看起来很贵", correct: false, feedback: "贵不贵只是第一眼的感觉，和账单同周出现才咬得上。", routeAxis: "document-edge" }
+          { label: "照片里的地方看起来很贵", correct: false, feedback: "贵不贵只是第一眼的感觉，和账单同周出现才咬得上。", routeAxis: "document-edge" }
         ]
       }
     ],

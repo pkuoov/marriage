@@ -89,6 +89,7 @@ export function createCaseStateWrites(ctx) {
   }
 
   function markAction(brief, actionKey, { spend = false } = {}) {
+    if (brief.dialoguePresentation?.focusedInquiry) spend = false;
     const state = getState();
     const key = caseKey(brief);
     const previousRemaining = Number(ensureBudget(brief).remaining ?? 0);
@@ -107,6 +108,7 @@ export function createCaseStateWrites(ctx) {
   }
 
   function audiencePatienceLost(brief, context = {}) {
+    if (brief.dialoguePresentation?.focusedInquiry) return false;
     const state = getState();
     const budget = ensureBudget(brief);
     if (!casePatienceLost({
@@ -211,14 +213,14 @@ export function createCaseStateWrites(ctx) {
   function completeInterludeAction(brief, action = {}, { renderNow = true } = {}) {
     const state = getState();
     const structure = nightStructureFor(brief);
-    const nextNight = completeNightAction(ensureNight(brief), action, structure);
+    const nextNight = { ...completeNightAction(ensureNight(brief), action, structure), activeActionId: null };
     state.caseNights = {
       ...(state.caseNights ?? {}),
       [caseKey(brief)]: nextNight
     };
     markAction(brief, `interlude:${action.id}`);
     if (renderNow) {
-      state.lastReaction = "这件先记下。";
+      state.lastReaction = null;
       saveState();
       render();
     }

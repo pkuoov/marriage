@@ -37,7 +37,7 @@ export function storyPackSummaryHudHtml({ total = 1, solved = 0 } = {}) {
     <div class="weekly-summary-visual">
       <span>试玩已收麦</span>
       <b>${Number(solved ?? 0)}/${Number(total ?? 1)}</b>
-      <small>麦都收进来了，评论区开始吵后半场。</small>
+      <small>本次试玩结束</small>
     </div>
   `;
 }

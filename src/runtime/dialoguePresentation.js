@@ -39,7 +39,9 @@ export function splitDialogueSentences(value = "") {
 }
 
 export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxTurnSentences = 2, maxPageChars = 156, hostName = DEFAULT_PLAYER_NAME } = {}) {
-  return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction, .cafe-prologue-line") ?? []).flatMap((line) => {
+  return Array.from(root?.querySelectorAll?.(".call-line, .night-shell-line, .call-stage-direction, .cafe-prologue-line") ?? [])
+    .filter((line) => !line.closest?.("details:not([open])"))
+    .flatMap((line) => {
     const isCallStage = line.classList.contains("call-stage-direction");
     const isNarration = line.classList.contains("shell-narration") || line.classList.contains("shell-stage");
     const isStage = isCallStage || isNarration;
@@ -47,11 +49,14 @@ export function dialogueTurnsFrom(root, { maxTurnChars = 92, maxTurnSentences = 
       ? "现场"
       : line.querySelector("b")?.textContent?.trim() || (isNarration ? "旁白" : "咨询者");
     const authoredRole = line.getAttribute?.("data-dialogue-role") ?? "";
-    const role = authoredRole || (isStage
+    const isAdvisor = line.getAttribute?.("data-speaker-profile-id") === "zhao-lawyer" || line.classList.contains("advisor") || /^赵律师(?:[（(]|$)/.test(speaker);
+    const role = isAdvisor ? "advisor" : authoredRole || (isStage
       ? "stage"
       : line.classList.contains("host") || line.classList.contains("shell-host") || speaker === DEFAULT_PLAYER_NAME || speaker === hostName
         ? "host"
-        : speaker === "男方"
+        : line.classList.contains("advisor") || /^赵律师(?:[（(]|$)/.test(speaker)
+          ? "advisor"
+          : speaker === "男方"
           ? "respondent"
           : "caller");
     const text = isCallStage ? line.querySelector("span")?.textContent ?? "" : line.querySelector("p")?.textContent ?? "";
@@ -119,7 +124,10 @@ function splitLongSentence(value = "", maxChars = 92) {
 export function mountDialoguePresentation(root, options = {}) {
   const card = root?.querySelector?.(".dialogue-card");
   const sources = Array.from(card?.querySelectorAll?.(".call-dialogue, .night-shell-card, .cafe-prologue-dialogue") ?? [])
-    .filter((candidate) => !candidate.closest("details:not([open])"));
+    .filter((candidate) => !candidate.closest("details:not([open])"))
+    // Completed exchanges can contain their own call-dialogue. Read each
+    // authored line once, through its outermost source container.
+    .filter((candidate, _, all) => !all.some((parent) => parent !== candidate && parent.contains(candidate)));
   const pages = groupDialogueTurns(sources.flatMap((source) => dialogueTurnsFrom(source, options)), options);
   if (!card || !sources.length || !pages.length) return null;
   const box = document.createElement("section");
@@ -142,10 +150,11 @@ export function mountDialoguePresentation(root, options = {}) {
     pages,
     choices,
     ...options,
+    readingKey: dialogueReadingKey(pages, options.readingScope),
     pairedAutoAdvance: options.pairedAutoAdvance === true,
-    onPageStart: (page, pageIndex) => {
+    onPageStart: (page, pageIndex, context) => {
       syncDialoguePortraitFocus(root, page);
-      options.onPageStart?.(page, pageIndex);
+      options.onPageStart?.(page, pageIndex, context);
     },
     onChoicesShown: (shownChoices) => {
       inlineChoiceRegions.forEach((region) => { region.hidden = false; });
@@ -153,8 +162,46 @@ export function mountDialoguePresentation(root, options = {}) {
     }
   });
   box.addEventListener("click", () => controller.advance());
-  controller.start();
+  return startDialogueAfterTransition(root, controller, options);
+}
+
+// Wait for the visible transition, including its child animations. Dialogue
+// audio, typing and auto timers all start together after the stage is readable.
+export function startDialogueAfterTransition(root, controller, { fastForward = false } = {}) {
+  const transition = root?.querySelector?.(".pixel-transition");
+  const animations = Array.from(transition?.getAnimations?.({ subtree: true }) ?? [])
+    .filter((animation) => animation.playState !== "finished" && Number.isFinite(animation.effect?.getComputedTiming?.().endTime));
+  let cancelled = false;
+  let released = false;
+  const release = () => {
+    if (cancelled || released || root?.isConnected === false) return;
+    released = true;
+    controller.start();
+  };
+  const destroy = controller.destroy.bind(controller);
+  const setFastForward = controller.setFastForward.bind(controller);
+  controller.destroy = () => { cancelled = true; destroy(); };
+  controller.setFastForward = (enabled) => {
+    setFastForward(enabled);
+    if (enabled && !released && !cancelled) {
+      transition?.remove();
+      release();
+    }
+  };
+  if (fastForward) {
+    transition?.remove();
+    release();
+  } else if (animations.length) {
+    Promise.allSettled(animations.map((animation) => animation.finished)).then(release);
+  } else release();
   return controller;
+}
+
+export function dialogueReadingKey(pages = [], scope = "") {
+  const text = JSON.stringify(pages);
+  let hash = 2166136261;
+  for (let index = 0; index < text.length; index += 1) hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
+  return `${scope}:${text.length}:${hash >>> 0}`;
 }
 
 export function createDialogueController({
@@ -169,25 +216,43 @@ export function createDialogueController({
   pairedAutoDelay = 450,
   pairedAutoAdvance = false,
   presentationProfile = {},
+  readingKey = "",
+  resume = null,
+  onProgress = () => {},
   onBlip = () => {},
   onPageStart = () => {},
   onShown = () => {},
   onChoicesShown = () => {}
 } = {}) {
-  let pageIndex = 0;
+  const saved = resume?.key === readingKey && Number.isInteger(resume.pageIndex)
+    && resume.pageIndex >= 0 && resume.pageIndex < pages.length ? resume : null;
+  let pageIndex = saved?.pageIndex ?? 0;
   let visibleCount = 0;
   let frameId = 0;
   let autoTimerId = 0;
   let lastAt = 0;
   let complete = false;
   let destroyed = false;
+  let paused = false;
+  let started = false;
+  let startRequested = false;
+  let restoring = Boolean(saved);
+  let reportedThrough = Math.min(pages.length - 1, Number.isInteger(saved?.reportedThrough) ? saved.reportedThrough : -1);
   let fastForwardEnabled = Boolean(fastForward);
   const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
   const pageLines = box.querySelector(".avg-page-lines");
   const indicator = box.querySelector(".avg-continue");
+  indicator.hidden = true;
   const delays = { slow: 54, normal: 34, fast: 18, instant: 0 };
   const baseDelay = delays[speed] ?? delays.normal;
   let activeDelay = baseDelay;
+
+  function start() {
+    startRequested = true;
+    if (started || destroyed || paused || box.isConnected === false) return;
+    started = true;
+    showPage();
+  }
 
   function showPage() {
     if (destroyed) return;
@@ -205,6 +270,7 @@ export function createDialogueController({
     box.classList.toggle("speaker-caller", activeRole === "caller");
     box.classList.toggle("speaker-respondent", activeRole === "respondent");
     box.classList.toggle("speaker-stage", activeRole === "stage");
+    box.classList.toggle("speaker-advisor", activeRole === "advisor");
     box.dataset.activeSpeaker = activeRole;
     box.classList.toggle("reduced-fade", reduceMotion);
     pageLines.innerHTML = lines.map((entry) => `
@@ -213,16 +279,25 @@ export function createDialogueController({
         <p class="avg-line"></p>
       </div>
     `).join("");
-    onPageStart(page, pageIndex);
-    applyVisibleText(page, 0);
-    indicator.hidden = true;
+    onPageStart(page, pageIndex, { restored: restoring });
+    const fullLength = typeablePageLines(page).reduce((sum, entry) => sum + entry.text.length, 0);
+    visibleCount = restoring ? Math.max(0, Math.min(fullLength, Number(saved.visibleCount) || 0)) : 0;
+    complete = restoring && saved.complete === true;
+    if (complete) visibleCount = fullLength;
+    applyVisibleText(page, visibleCount);
+    indicator.hidden = !complete;
+    const restoreChoices = restoring && complete && saved.done === true;
+    restoring = false;
+    reportProgress("page");
+    if (restoreChoices) return revealChoices(false);
+    if (complete) return scheduleAutoAdvance();
     if (reduceMotion || activeDelay === 0) return finishPage();
     lastAt = performance.now() + Math.max(0, Number(tierProfile.holdMs) || 0);
     frameId = requestAnimationFrame(typeFrame);
   }
 
   function typeFrame(now) {
-    if (destroyed || box.isConnected === false) return;
+    if (destroyed || paused || box.isConnected === false) return;
     const page = pages[pageIndex];
     const fullText = typeablePageLines(page).map((entry) => entry.text).join("");
     const previous = fullText[Math.max(0, visibleCount - 1)] ?? "";
@@ -230,6 +305,7 @@ export function createDialogueController({
     if (now - lastAt >= activeDelay + punctuationDelay) {
       visibleCount += 1;
       applyVisibleText(page, visibleCount);
+      reportProgress("typing");
       if (visibleCount % 2 === 1) onBlip(presentationProfile.blipPitchHz?.[dialoguePageRole(page)] ?? 280);
       lastAt = now;
     }
@@ -238,19 +314,22 @@ export function createDialogueController({
   }
 
   function finishPage() {
-    if (destroyed || complete || box.isConnected === false) return;
+    if (!started || destroyed || paused || complete || box.isConnected === false) return;
     cancelAnimationFrame(frameId);
     const page = pages[pageIndex];
     visibleCount = typeablePageLines(page).reduce((sum, entry) => sum + entry.text.length, 0);
     applyVisibleText(page, visibleCount);
     complete = true;
     indicator.hidden = false;
-    onShown(page, pageIndex);
+    const firstShowing = pageIndex > reportedThrough;
+    reportedThrough = Math.max(reportedThrough, pageIndex);
+    reportProgress("finished");
+    if (firstShowing) onShown(page, pageIndex);
     scheduleAutoAdvance();
   }
 
   function scheduleAutoAdvance() {
-    if (destroyed) return;
+    if (destroyed || paused || box.dataset.dialogueDone) return;
     clearAutoAdvance();
     const nextPage = pages[pageIndex + 1];
     const pairDelay = pairedAutoAdvance && !reduceMotion && activeDelay > 0 && shouldAutoAdvanceDialoguePair(pages[pageIndex], nextPage)
@@ -289,7 +368,7 @@ export function createDialogueController({
   }
 
   function advance() {
-    if (destroyed || box.isConnected === false) return;
+    if (!started || destroyed || paused || box.dataset.dialogueDone || box.isConnected === false) return;
     clearAutoAdvance();
     if (!complete) return finishPage();
     if (pageIndex < pages.length - 1) {
@@ -297,16 +376,43 @@ export function createDialogueController({
       showPage();
       return;
     }
+    revealChoices(true);
+  }
+
+  function revealChoices(focus) {
     indicator.hidden = true;
     if (choices) choices.hidden = false;
     onChoicesShown(choices);
     box.dataset.dialogueDone = "true";
-    choices?.querySelector("button:not(:disabled)")?.focus?.({ preventScroll: true });
+    reportProgress("choices");
+    if (focus) choices?.querySelector("button:not(:disabled)")?.focus?.({ preventScroll: true });
+  }
+
+  function reportProgress(reason) {
+    onProgress({ key: readingKey, pageIndex, visibleCount, complete, done: box.dataset.dialogueDone === "true", reportedThrough }, reason);
   }
 
   function setFastForward(enabled) {
     fastForwardEnabled = Boolean(enabled);
     if (fastForwardEnabled && !complete) finishPage();
+  }
+
+  function setPaused(value) {
+    if (paused === Boolean(value)) return;
+    paused = Boolean(value);
+    clearAutoAdvance();
+    cancelAnimationFrame(frameId);
+    if (paused || destroyed || box.dataset.dialogueDone) return;
+    if (!started) {
+      if (startRequested) start();
+      return;
+    }
+    if (fastForwardEnabled && !complete) return finishPage();
+    if (complete) scheduleAutoAdvance();
+    else {
+      lastAt = performance.now();
+      frameId = requestAnimationFrame(typeFrame);
+    }
   }
 
   function destroy() {
@@ -316,7 +422,7 @@ export function createDialogueController({
     frameId = 0;
   }
 
-  return { start: showPage, advance, finish: finishPage, destroy, setFastForward, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
+  return { start, advance, finish: finishPage, destroy, setFastForward, setPaused, get complete() { return complete; }, get pageIndex() { return pageIndex; } };
 }
 
 function safeRoleClass(value = "caller") {

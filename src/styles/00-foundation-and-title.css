@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --ink: #edf1ee;
   --muted: #9fa9a5;
   --line: rgba(218, 226, 221, 0.14);
@@ -33,6 +33,24 @@ body {
     linear-gradient(180deg, rgba(255, 255, 255, .026) 1px, transparent 1px),
     linear-gradient(145deg, #111410 0%, #181712 46%, #101816 100%);
   background-size: 28px 28px, 28px 28px, auto;
+}
+
+/* The game stage behaves like a console, not a document. Prevent rapid clicks
+   and dialogue advancing from leaving accidental browser text selections. */
+#app {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#app input,
+#app textarea,
+#app [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+#app img {
+  -webkit-user-drag: none;
 }
 
 .runtime-status-warning {
@@ -79,7 +97,6 @@ button:focus-visible {
   outline: 3px solid rgba(101, 214, 194, .72);
   outline-offset: 3px;
   box-shadow: 0 0 0 6px rgba(101, 214, 194, .14), 0 12px 28px rgba(0, 0, 0, .24);
-  animation: focusCurrent .95s ease-in-out infinite alternate;
 }
 
 button:active:not(:disabled) {
@@ -888,6 +905,9 @@ button:active:not(:disabled) {
   top: calc(100% + 8px);
   right: 0;
   width: min(320px, calc(100vw - 24px));
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -899,6 +919,9 @@ button:active:not(:disabled) {
 }
 
 .audio-settings-title .audio-settings-panel {
+  position: absolute;
+  top: auto;
+  bottom: calc(100% + 8px);
   right: auto;
   left: 0;
 }
@@ -960,4 +983,3 @@ button:active:not(:disabled) {
   font-size: 12px;
   white-space: nowrap;
 }
-

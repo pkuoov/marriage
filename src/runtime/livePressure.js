@@ -50,13 +50,9 @@ export function pressuredAnswerVariant(option = {}, { pressureSignal = "" } = {}
 }
 
 export function questionPressureReaction(option = {}, routeTone = "") {
-  const tone = routeTone || option.routeTone || "";
-  if (option.pressureReaction) return option.pressureReaction;
-  if (tone === "softening") return "你把语气放缓，她没有立刻顶回来。";
-  if (tone === "detour") return "话题岔开了一点，弹幕跟着聊起别的。";
-  if (tone === "caller-skeptical") return "你把话问回咨询者这边，她停了一下。";
-  if (tone === "pressure-point" || tone === "trust-but-verify") return "";
-  return option.contradiction ? "这句问到了口子上。" : "";
+  // A pressure score does not establish what a person or the audience did.
+  // Only play a reaction actually authored for this exchange.
+  return option.pressureReaction ?? "";
 }
 
 export function materialPressureSignal(outcome = {}) {
@@ -64,11 +60,7 @@ export function materialPressureSignal(outcome = {}) {
 }
 
 export function materialPressureReaction(outcome = {}, check = {}) {
-  void check;
-  if (outcome.correct) {
-    return "弹幕开始往回翻前面的原话。";
-  }
-  return "弹幕一下分成了两拨。";
+  return outcome.pick?.pressureReaction ?? "";
 }
 
 export function pressureRecapProfile({ budget = {}, choices = [], foundCount = 0 } = {}) {

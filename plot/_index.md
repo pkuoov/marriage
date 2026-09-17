@@ -25,11 +25,11 @@ structure: kishotenketsu-four-act
 
 | Name | Type | Status | File |
 |------|------|--------|------|
+| 咖啡厅之后的家庭账 | main | in-progress | [cafe-family-ledger](arcs/cafe-family-ledger.md) |
 | 宸直信托兑付危机 | subplot | resolved | [chenzhi-trust-crisis](arcs/chenzhi-trust-crisis.md) |
 | 林旭阳的判断方法 | character | in-progress | [host-judgment-method](arcs/host-judgment-method.md) |
 | 好听身份的成本 | main | in-progress | [identity-cost-episode](arcs/identity-cost-episode.md) |
 | 平台判决秀压力 | subplot | in-progress | [platform-pressure](arcs/platform-pressure.md) |
-| 咖啡厅之后的家庭账 | main | in-progress | [cafe-family-ledger](arcs/cafe-family-ledger.md) |
 
 ## Theme Tracking
 

@@ -37,19 +37,19 @@
       "priority": 1,
       "status": "actor-required",
       "targetPath": "./assets/audio/voice/case3-dinner-pause.ogg",
-      "speaker": "案3饭局中的女性长辈，礼貌、理智，问完才察觉桌面冷掉",
-      "transcript": "本科也是那所学校吗？",
-      "direction": "真心核对，不带审讯口气；尾音自然落下，不预演自己问中了问题。",
-      "editNotes": "问句后保留 10 至 12 秒可感知的杯碟停顿；停车费转场不补新台词，可只用椅动或杯碟恢复。"
+      "speaker": "案3咨询者林，审计从业者，在饭局上问对方本科在哪里读。",
+      "transcript": "你发的材料是那所学校，本科也是在那儿读的吗？",
+      "direction": "她犹豫到饭局中途才开口，认真问一句，尾音自然落下。",
+      "editNotes": "只录咨询者问句干声。男方停筷、回答与服务员添水由剧情呈现，不在这段干声中填十几秒空白。"
     },
     {
       "cueId": "voice.case4.pad-message",
       "priority": 1,
       "status": "actor-required",
       "targetPath": "./assets/audio/voice/case4-pad-message.ogg",
-      "speaker": "案4项目负责人，理性、忙、习惯用机会语言压缩别人的判断时间",
-      "transcript": "你先把场地和礼品费垫了。活动总结的“执行主责”一栏，可以写你的名字。",
-      "direction": "像在赶进度，不觉得自己在威胁；“先把场地和礼品费垫了”说得快，“执行主责可以写你”略放慢，像给补偿。",
+      "speaker": "案4采购经办同事，正在催陈先刷个人卡，借负责人署名劝她答应。",
+      "transcript": "你先把场地和礼品费垫了，这场就交给你。",
+      "direction": "像在赶活动进度；先催垫款，接着许诺署名，不演成反派。",
       "editNotes": "不要加笑声、叹气或反派停顿；保留手机语音的近讲感，线路滤波在混音阶段处理。"
     },
     {
@@ -58,7 +58,7 @@
       "status": "actor-required",
       "targetPath": "./assets/audio/voice/case4-supplier-message.ogg",
       "speaker": "供应商项目员，成年男性或女性，理智、流程化，认为自己只是在补充老做法",
-      "transcript": "服务协调费按老规矩返给对接人。",
+      "transcript": "每一层的返费结完，下一批点位才往下走。",
       "direction": "平铺直叙，不知道这句会成为关键；“老规矩”不做刻意重音。",
       "editNotes": "一句到底，允许轻微办公室口腔噪声；不要在文件里混入键盘或环境底。"
     }

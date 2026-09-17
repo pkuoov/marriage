@@ -1,3 +1,5 @@
+> 状态：未来实验提案，不是当前玩法标准。2026-09-16 起其中旧满格深问、循环问询和结案流程已不适用；如继续实验，按[当前方向](../project-skills/case-scriptwriting/references/current-project-direction.md)重新设计接入。
+
 # AI 问答改造方案
 
 审查日期：2026-06-30

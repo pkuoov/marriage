@@ -189,7 +189,7 @@ export function firstUnansweredSceneIndex(brief = {}, actionDone = () => false) 
   return index ?? indexes[indexes.length - 1] ?? 0;
 }
 
-export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => false, issueBadge = false, hasDeepFollowup = false } = {}) {
+export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => false, issueBadge = false, hasDeepFollowup = false, overnight = {} } = {}) {
   const scenes = brief.sceneVersions ?? [];
   const total = scenes.length || 1;
   const safeIndex = Math.max(0, Math.min(Number(index ?? 0), total - 1));
@@ -201,7 +201,8 @@ export function sceneReviewModel({ brief = {}, index = 0, actionDone = () => fal
   const lastStage = safeIndex === activeIndexes[activeIndexes.length - 1];
   const overnightHangupStage = done && shouldEnterOvernightHangupAfterScene(brief, safeIndex);
   const hangupStage = done && (shouldEnterHangupAfterScene(brief, safeIndex) || overnightHangupStage);
-  const flowBreak = Boolean(pendingSnapshot || pendingAfterSceneEvidence || hangupStage || lastStage);
+  const pendingLiveCounter = done ? liveCounterBeatAfterScene(brief, safeIndex, actionDone, overnight) : null;
+  const flowBreak = !pendingLiveCounter && Boolean(pendingSnapshot || pendingAfterSceneEvidence || hangupStage || lastStage);
   const hasEvidence = pendingEvidenceChecksFor(brief, actionDone).length > 0;
   const canDeepFollow = Boolean(issueBadge && hasDeepFollowup);
   const nextStage = pendingSnapshot

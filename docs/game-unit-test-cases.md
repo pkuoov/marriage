@@ -1,5 +1,7 @@
 # Game Unit Test Cases
 
+> 本文件是测试用例索引，旧条目不另立创作标准。实际覆盖以当前脚本和本次运行报告为准；统一规则见[标准索引](standards-index.md)，不能据旧按钮名恢复已取消玩法。
+
 This document records the automated unit/contract tests that must run before every major gameplay or UI release.
 
 ## Local Feedback Loop
@@ -32,10 +34,20 @@ npm run smoke:desktop
 
 | ID | Area | Case | Guards Against |
 | --- | --- | --- | --- |
+| FLOW-LINEAR-UI/001/002 | 顺序调查与旧存档 | 四案全部必要场景、耗尽次数的旧存档、重复确认与合并材料 | 漏掉必经来源、重复扣费、旧开场覆盖统一回拨、旧存档卡住。 |
+| STORY-REVISION-001 | Quick-case order and saved rounds | 快案二 8 条有效点击路线、快案三 243 种点评组合；各轮来源、原句点击、完整结案及流程指纹恢复。 | 改序后引用未来材料、锚点被截走、卡在结案前、旧轮次进度误接新内容。 |
+| STORY-REVISION-002 | Main-case causal sequence | Tony 警方核实与十二万陈述分开；彩礼出资先于取消饭局；案一回放诉求在证词墙后必经对白播放。 | 文件顺序看似正确但播放顺序相反；承重诉求仅存在于不播放的兼容问答。 |
+| READING-001 | Modal input and reading continuity | `node scripts/smoke-browser-replay.js --target=reading-controls`: keyboard/gamepad confirm closes the court record, Tab stays inside it, autoplay pauses; speed/effects/sound changes and reload/continue keep the page and backlog. Full routes cover nonmodal day-location buttons. | 确认键穿透案卷；普通选项被当成弹层；设置重绘和读档从头播、重复记录。 |
+| AUDIO-RUNTIME-001 | Production mixer | `npm run test:audio-runtime` uses production `sound.js` with deterministic clocks: mute during fade-in/out, bus changes, voice pause/resume/stop, transition timer cleanup. `reading-controls` also observes native browser audio playing, muting and restoring. | 淡入计时器覆盖静音或最新音量；暂停语音后 BGM 仍被压低；退出音轨失控。 |
+| SCRIPT-WALL-001 | Testimony reading parity | Full browser replay compares initial statement visibility, required PRESS unlocks, material/target and hit dialogue order with the continuous script. `content:script:check` checks all generated reports; unit tests require one post-wall continuation and no legacy statement replay. | 八幕证词墙从审稿文件消失；隐藏原话提前出现；旧问答和墙后对白重复播放。 |
+| NARRATIVE-CAFE-ROUTE | Exclusive investigation sources | Continuous reading follows one cafe route through its matching callback, including consent and sampling before the parentage opinion; alternate results remain marked as exclusive. | 连续稿拼接互斥路线，让玩家仿佛已听过两条线的结果。 |
+| VIEW-NARRATIVE-001 | Bounded questioning and commentary | Clarification uses a questioning action; empty wall summaries stay absent; solo commentary has no fictional caller status. | 材料不足仍逼角色认错；墙前摘要泄题；公开文本点评出现虚构来电人。 |
 | BROWSER-SMOKE-FAST | Local behavior gate | `npm run smoke:quick` builds the playable and replays the canonical long-case route at one viewport; `npm run test:local` runs it after `check`. | 本地行为闸门长到没人运行，内容和 smoke pin 的漂移积到 push 后才发现。 |
 | MODE-001 | Mode routing | Unknown modes normalize to `episode`; explicit `daily` still expects one case; legacy `weekly` links migrate. | Steam 主入口被旧 daily 默认值拉回去，或单案兼容入口丢失。 |
 | PACK-001 | Content pack contract | `content/packs/steam-demo-01/manifest.json` matches the runtime story-pack definition, and each case pressure packet has truth boundaries, stakes, object purpose, self-serving omission, and quote candidates. | 故事包目录和运行时定义脱节，或新故事包只有标题顺序、没有编剧压力系统。 |
 | PACK-005 | Runtime content schema | Runtime-loaded cases must expose playable nested content: task profile, opening dialogue, five scene beats, exactly one core question per beat, at least two readable materials, investigation backflow, caller omission, third pressure, thick truth-boundary pools, deep follow-up, conclusion, share copy, and truth text. | 内容包看着完整，实际缺少可被引擎消费的任务画像、台词、选项、材料、回流、结算字段，事实边界退回三栏各一，或体量退回短问答。 |
+| PACK-CALENDAR | Main story calendar | Checks eight distinct nights, one post-finale deadline, the Monday meeting, Sunday dinner, June activity, and separate bill / broadcast dates consistent with host tenure. | 八晚跨周导致截止日滑动；会后回访仍说会前；账单年份替代节目年份。 |
+| PACK-019-ROUTE | Disclosure and microphone order | Mandatory Tony convergence establishes the loan and earlier risk warning; profile consent precedes connection and male speech, while requests remain backstage text. | 外围追问跳过事实，或男方未获同意便提前上麦。 |
 | PACK-019 | Consultation benefit boundary | Cases 2 and 3 preserve countable gains, the caller's hidden desired outcome, and different remedies for completed exchange, unauthorized identity use, personal-account transfers, and unaccepted payment terms. | 案二退回“渣男话术”空争论，案三退回“高彩礼／没诚意”价值观空争论；来电人的实际利益、已取得好处和建议变化再次消失。 |
 | PACK-020 | Layered disguise chain | All four long cases preserve five causally ordered surface versions under one protected purpose; every stage records pressure, edited fact, immediate utility, fair trace, player test, forced revision, and advice impact, including live counterbeats where applicable. | 来电人的多次改口退回一个晚到的完整坦白，或变成几处互不相干、只为反转而出现的随机谎点。 |
 | STATEMENT-001 | Playable misses | Every visible `correct:false` option has an exact, reachable source anchor and an authored non-spoiler character reaction; no-clue lines also enter a reaction beat before patience changes. | 错误方向点不到、被更长锚点吞掉、只扣耐心不说话，或错选反应反向泄露正确金额、人名和锚点。 |
@@ -137,3 +149,10 @@ Automated tests do not replace one short browser replay after large narrative/UI
 - Any large story-coupling complaint must be promoted into `DETECTIVE-001`, `docs/detective-coupling-improvement-plan.md`, or `project-skills/detective-plot-coupling-review/SKILL.md` before rewriting dialogue.
 - Broad "continue optimizing" work should first check `docs/unfinished-backlog.md`; if the work discovers a new repeated gap, add it there instead of leaving it only in chat.
 - Content-pack changes must update both `content/packs/<pack-id>/` and the runtime pack definition until full JSON loading replaces the temporary mirror in `src/storyPacks.js`; `npm run verify:pack` is the guardrail.
+
+
+## 2026-09-09 已记录试玩问题回归
+
+- `PLAYTEST-RECORDED-001`：同一晚陈述、回放、问答、材料和插话保持 BGM；顾问角色在普通及旧格式对白中都与求助者区分。
+- `PLAYTEST-RECORDED-002`：四案探问锚点只命中唯一原句，具备具体问句与反驳；案一房租→代存→供养的来源完整；职场停垫进入原有消息，发送不重复。
+- `npm run smoke:recorded`：桌面和手机验证反驳前不扣耐心、继续后只扣一次、途中刷新安全、合理社保追问无罚、账单圈选后刷新不丢出口、完整开场句及顾问配色；不能以强制点击绕过按钮遮挡。

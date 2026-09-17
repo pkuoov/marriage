@@ -67,18 +67,18 @@ export function titleScreenHtml({
                     <button class="title-journey-action title-journey-new" data-request-new-game type="button">
                       <span>NEW GAME</span>
                       <b>新游戏</b>
-                      <small>从开播前重新开始</small>
+                      <small>从咖啡厅序章重新开始</small>
                     </button>
                   ` : `
                     <button class="primary title-journey-action title-journey-new title-journey-new-only" ${saveLoadError ? "data-request-new-game" : "data-start-story"} type="button">
                       <span>NEW GAME</span>
                       <b>${storyPack ? "新游戏" : "开始今日来电"}</b>
-                      <small>${storyPack ? "从开播前的咖啡厅开始" : "接入今天这通匿名来电"}</small>
+                      <small>${storyPack ? "从咖啡厅序章开始" : "接入今天这通匿名来电"}</small>
                     </button>
                   `}
                   ${quickModeAvailable ? `
                     <button class="title-journey-action title-quick-detective" data-start-quick-detective type="button">
-                      <span>DETECTIVE MODE · 15 MIN</span>
+                      <span>DETECTIVE MODE · 独立快案</span>
                       <b>直播快案</b>
                       <small>选择一宗短案，当面问穿前后矛盾</small>
                     </button>

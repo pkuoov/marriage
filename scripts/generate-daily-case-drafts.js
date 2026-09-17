@@ -61,13 +61,14 @@ function buildDraft(cards, index) {
   return {
     id: `draft-${String(index + 1).padStart(2, "0")}-${slugify(conflict)}`,
     status: "needs-human-review",
+    authoringScope: "候选素材；旧 daily 单来电形态示意，不是当前主案的字段模板。按现行项目方向和目标模式改写后接入；不自动修改游戏。",
     basedOnCardIds: cards.map((card) => card.id),
     primarySourceLabel: primary.sourceLabel,
     sourceLabels: unique(cards.map((card) => card.sourceLabel).filter(Boolean)),
     sourceUrls: cards.map((card) => card.sourceUrl).filter(Boolean),
     contentBoundary: "只使用多条热点的抽象结构，不使用真实人物、完整案情、原视频原话或可识别时间线。",
     hotspotFusion: {
-      rule: "一个候选案至少融合 2-4 张热点卡：主冲突给案件骨架，其他卡只提供话术、材料形态、误读风险或第三方压力。",
+      rule: "素材数量不设最低配额：主冲突给案件骨架，只采用能服务同一因果链的其他信号；组合数量不保证原创性。",
       primaryConflict: conflict,
       supportingSignals: {
         conflicts: conflicts.filter((item) => item !== conflict),
@@ -98,14 +99,14 @@ function buildDraft(cards, index) {
     shareQuestion: shareQuestionForTheme(theme),
     reviewerChecklist: [
       "是否已去除真实姓名、账号、地点、机构和独特时间线？",
-      "是否保持单人匿名连线，没有另一方直接上麦？",
-      "sceneVersions 和 deepFollowup.answer 是否全部由咨询者讲出，材料是否由咨询者拿出或念出？",
-      "是否保留了反制方式被正确使用、被曲解、被滥用三种可能？",
+      "是否确认目标模式与在场角色？旧 daily 的单来电限制不推广到主案或口播。",
+      "台词是否归属于实际说话人，材料取得与上屏是否有当前来源？",
+      "反制或辩护是否由本案事实支撑，不强制每案写三种结局？",
       "是否有一个具体戏剧物件/原话/动作，而不是只有抽象冲突？",
-      "关键物件是谁推出来的是否存在灰区：咨询者、对方、父母、朋友、平台或双方压力？",
+      "关键物件是谁取得、为何此时提供？不为灰区故意省掉来源。",
       "是否先写成一通完整电话，再拆成 openingDialogue / sceneVersions / questionOptions / deepFollowup？",
       "每个选项和反馈是否都回到同一个压力系统，没有突然跳去泛情感问题？",
-      "是否能支撑至少 20 分钟玩法：5-6 个关键来电段、满格深问、最终挑句和复盘？",
+      "是否完整播放必要事实并给玩家当前成立的询问？不以时长、段数或复盘页凑内容。",
       "是否避免把法律/心理建议写成确定结论？"
     ]
   };
@@ -114,7 +115,7 @@ function buildDraft(cards, index) {
 function compositeHook(cards, conflict, countermeasure, talkTrack) {
   const hooks = cards.map((card) => card.hook).filter(Boolean);
   if (hooks.length >= 2) return `${hooks[0]} 另一条热议里也出现了${countermeasure || talkTrack || conflict}，这次把两种压力拧到同一通电话里。`;
-  return hooks[0] ?? buildHook([conflict], [countermeasure], [talkTrack]);
+  return hooks[0] ?? `${conflict}中出现了${talkTrack || countermeasure || "尚待核对的说法"}，先核对材料来由与人物诉求。`;
 }
 
 function unique(items) {
@@ -123,11 +124,11 @@ function unique(items) {
 
 function integratedStoryPacketForTheme(theme, conflict, countermeasure, talkTrack) {
   return {
-    generationRule: "先写最终争点和完整通话，再拆字段；任何动机/面子/证明用途变化都要重跑本包。",
+    generationRule: "新案先理清争点与信息顺序，再写交流；局部修改追受影响的前提和后文，不默认重做整包。",
     endingFirst: {
       finalAudienceArgument: audienceArgumentForTheme(theme, conflict),
       valueBoundary: "结论必须指向具体行为、成本和责任，不指向性别、职业、年龄或群体标签。",
-      noPreachRule: "先让玩家在选择里听出问题，再在复盘里分层说清，不能在来电中提前讲道理。"
+      noPreachRule: "让玩家从原话和材料发现问题；收麦回应此刻必要判断，不强制复盘报告或说教。"
     },
     pressureSystem: {
       relationshipStage: relationshipStageForTheme(theme),
@@ -140,20 +141,17 @@ function integratedStoryPacketForTheme(theme, conflict, countermeasure, talkTrac
     },
     beatLadder: beatLadderForTheme(theme),
     branchingContract: {
-      choiceShape: "每段 2-3 个主播追问；每个都像真人主播会问，但只有部分抓核心。",
-      branchReturn: "回答后必须回到下一段咨询者陈述，不允许扫同节点剩余选项。",
-      stateTracking: "每个选项必须标 routeAxis、routeTone、是否揭示 core issue。",
-      fullHitGate: "5-6 段核心都抓住，才出现一次无选择 deepFollowup。"
+      choiceShape: "逐句回放一屏完整原句与询问／不询问；实际问题在对白中播放，不设问法数量配额。",
+      branchReturn: "问答后回到对应原句，按当前事实依赖继续；不把剩余必经问题跳掉。",
+      stateTracking: "按目标模式维护稳定 ID、来源锚点与完成状态，内部路线字段不作为玩家提示。",
+      fullHitGate: "深问若配置，须在其实际前提成立后可达；不固定段数，不提前使用未播事实。"
     },
     stitchedTranscriptPlan: [
-      "opening: 咨询者先讲关系阶段和为什么今天打来；主播只问下一句自然问题；咨询者回答材料为什么出现。",
-      "scene-1: 追材料是谁推出来的，反馈必须回答谁的压力进入了对话。",
-      "scene-2: 追材料真到哪一层，反馈必须说清露出的部分和没露出的部分。",
-      "scene-3: 追对方如何转移问题，反馈必须落在话术、时间或完整信息缺口。",
-      "scene-4: 追来电人自己的修剪，反馈必须让咨询者承认自己也保留了有利版本。",
-      "scene-5: 追成本/责任落点，反馈必须把本案推向最终挑句。",
-      "deepFollowup: 只有满格路线出现，主播只多问一句咨询者自己的利益/面子/误判压力，咨询者第一人称回答。",
-      "open: 最终选择设计成两个半答案、一个灰区真答案、一个情绪化误判。"
+      "明确当前人物想得到什么，哪些事实已说，哪些事实正在被省略。",
+      "按材料取得顺序展开陈述和逐句询问；没有已知来源的事实不能成为下一问前提。",
+      "人物可迟疑、改词、争主语、换用途或拒答；语塞不是证据，不强迫完整自白。",
+      "必要材料由玩家查阅和发问；回到当前原句后再推进后续交流。",
+      "按实际证据收麦，可谈崩、留白或提出行动，不强制回暖和三段总结。"
     ],
     writersRoomPasses: writerRoomPassesForTheme(theme),
     qualityScorecard: qualityScorecard(),
@@ -172,8 +170,8 @@ function scriptGenerationModelForTheme(theme, conflict) {
     methodSources: [
       "screenplay beat outline: setup -> pressure -> reversal -> cost -> resolution",
       "Pixar-style ending-first story spine: know the final argument before drafting middle beats",
-      "Ink/Twine-style interactive writing: choices branch briefly, then rejoin with state tracked",
-      "LLM writers-room workflow: showrunner, case writer, actor-consistency pass, continuity QA pass"
+      "当前交互依现行项目方向和目标模式；不能从历史分支模型推导只能问一次。",
+      "以下为可选审读角度，由当前任务执行者按范围检查，不默认创建多代理。"
     ],
     showrunnerBrief: {
       theme,
@@ -198,45 +196,43 @@ function beatLadderForTheme(theme) {
   return beats.map((beat, index) => ({
     beat: index + 1,
     purpose: beat,
-    requiredOutput: "caller statement + 2-3 host questions + caller feedback + route metadata"
+    requiredOutput: "候选功能，可合并、删除或重排；采用时写出完整原句、自然问答与已知依据，不要求每项独立成场。"
   }));
 }
 
 function writerRoomPassesForTheme(theme) {
   return [
     {
-      role: "Showrunner Agent",
+      role: "主题审读（可选）",
       pass: "检查本集主题是否能穿过当前案件包，不靠性别对立制造热度。"
     },
     {
-      role: "Case Writer Agent",
-      pass: "先写 ending-first argument 和五段 beat ladder，再写 stitched transcript。"
+      role: "情节审读（可选）",
+      pass: "按当前任务范围写人物目的、已知事实和完整交流，不把候选功能数当场景数。"
     },
     {
-      role: "Actor Consistency Agent",
+      role: "人物审读（可选）",
       pass: "分别替咨询者、对方、第三方压力回答：这句话保护了谁的面子、钱、责任或退路？"
     },
     {
-      role: "Branch Designer Agent",
+      role: "交互审读（可选）",
       pass: "检查每段选项是否都有真人会点，是否只改变揭示程度和路线倾向，不破坏主线。"
     },
     {
-      role: "Continuity QA Agent",
-      pass: "串读 opening、5-6 段来电、deepFollowup、最终原话、复盘，查跳步、提前剧透和未披露事实。"
+      role: "连续性审读（可选）",
+      pass: "按实际播放顺序连读前后交换、材料与收麦，查来源、跳步、重复揭示和知识提前。"
     }
   ];
 }
 
 function qualityScorecard() {
   return [
-    "结构 0-2：是否有 5-6 段完整 beat ladder。",
-    "冲突 0-2：每段是否新增压力，而不是重复同一个疑点。",
-    "角色 0-2：咨询者、对方、第三方压力是否各自有利益。",
-    "互动 0-2：每个选项是否像主播会问的话，且后果不同。",
-    "回收 0-2：分支是否回到主线而不造成断裂。",
-    "现实 0-2：是否像评论区会吵的真实公共事件。",
-    "价值 0-2：是否打击具体坏行为，不制造性别或群体对立。",
-    "低于 10 分不得入库；任一项 0 分必须重写。"
+    "按实际问题记录定位与修订建议，不用总分或固定次数决定是否入库。",
+    "结构：每个承重问题有没有已经播出的依据，材料取得和转场是否成立？",
+    "人物：隐瞒或迟疑保护什么，改口是否由可见压力触发？闲聊不需硬塞利益。",
+    "交互：逐句询问、材料点击、顺序状态和当前模式是否一致？",
+    "收束：结论只使用玩家取得的事实，不强迫认错、回暖或额外报告。",
+    "现实：批评具体行为，不凭群体标签定性；来源与虚构边界可追溯。"
   ];
 }
 
@@ -535,6 +531,11 @@ function parseArgs(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     const item = argv[index];
     if (!item.startsWith("--")) continue;
+    const equalsIndex = item.indexOf("=");
+    if (equalsIndex > 2) {
+      parsed[item.slice(2, equalsIndex)] = item.slice(equalsIndex + 1);
+      continue;
+    }
     const key = item.slice(2);
     const next = argv[index + 1];
     if (!next || next.startsWith("--")) {

@@ -1,5 +1,6 @@
 ---
 name: 家庭固定转账收给谁
+title: 家庭固定转账收给谁
 status: open
 introduced: chapter-06
 ---

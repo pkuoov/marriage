@@ -1,0 +1,552 @@
+/* Readable controls, stable actor placement and restrained feedback. */
+/* Let the header take its actual height; stretch only dialogue stages below it.
+   Document desks keep their compact layout, and desktop composition is unchanged. */
+@media (max-width: 860px) {
+  #app > main:has(> .dialogue-focus-stage:not(.cafe-prologue-step-1)) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+  #app > main:has(> .dialogue-focus-stage:not(.cafe-prologue-step-1)) > .topbar {
+    flex-shrink: 0;
+  }
+  #app > main > .dialogue-focus-stage:not(.cafe-prologue-step-1) {
+    flex: 1;
+  }
+  #app > main > .dialogue-focus-stage:not(.cafe-prologue-step-1) > .vn-stage {
+    align-self: stretch;
+  }
+}
+
+.dialogue-focus-stage:not(.choices-open) .avg-system-bar,
+.dialogue-mode-replay .avg-system-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  min-height: 40px;
+  max-height: none;
+  gap: 6px;
+}
+.dialogue-focus-stage .avg-system-bar button,
+.dialogue-focus-stage:not(.choices-open) .avg-system-bar button,
+.dialogue-mode-replay .avg-system-bar button {
+  height: auto;
+  min-height: 40px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.avg-system-bar [aria-pressed="true"] { color: #f2d277; border-color: #b89b50; background: #293027; }
+.cafe-material-preview small, .cafe-material-preview em, .cafe-material-preview strong,
+.cafe-evidence-card small, .cafe-evidence-card em, .cafe-evidence-inspect,
+.present-material-card small, .present-hit-pair article span, .flashback-quote p,
+.decisive-present-hit > small { font-size: 13px; line-height: 1.6; }
+.cafe-evidence-card.selected { border-color: #eed486; box-shadow: inset 0 0 0 2px #eed486; background: #26362e; }
+.cafe-evidence-card.selected em { color: #f8e4a4; font-weight: 800; }
+.cafe-evidence-inspect { color: #c3d1ca; background: #14211e; }
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow:has(.cafe-evidence-board):not([hidden]) {
+  max-height: none;
+  overflow: visible;
+  scrollbar-gutter: auto;
+}
+.cafe-prologue-screen .avg-choice-overlay.inline-choice-flow .choice-stack:has(.cafe-evidence-board) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.cafe-prologue-screen .choice-stack > .cafe-evidence-board { grid-column: 1 / -1; }
+.cafe-prologue-screen.choices-open:has([data-cafe-opening-seen]) .avg-textbox,
+.cafe-prologue-screen.choices-open:has([data-cafe-revision-seen]) .avg-textbox,
+.cafe-prologue-screen.choices-open:has([data-cafe-legal-brief]) .avg-textbox { display: grid; }
+.cafe-prologue-screen.choices-open:has([data-cafe-opening-seen]) .vn-stage .dialogue-card.avg-dialogue-active,
+.cafe-prologue-screen.choices-open:has([data-cafe-revision-seen]) .vn-stage .dialogue-card.avg-dialogue-active,
+.cafe-prologue-screen.choices-open:has([data-cafe-legal-brief]) .vn-stage .dialogue-card.avg-dialogue-active {
+  bottom: 110px;
+  padding-bottom: 0;
+  transform: none;
+}
+
+/* Listening actors remain physically present, without ghosting or blur. */
+.case-vn-grid .case-portrait:not(.active),
+.dialogue-focus-stage .case-portrait:not(.active),
+.dialogue-focus-stage[data-active-speaker="stage"] .case-portrait {
+  opacity: 1;
+  filter: saturate(.78) brightness(.8);
+  transform: none;
+}
+.case-vn-grid .case-portrait.active { transform: none; }
+.case-vn-grid .case-portrait img { opacity: 1; }
+.dialogue-focus-stage .case-portrait,
+.cafe-negotiation-portrait { transition: filter 160ms ease, opacity 160ms ease; }
+.dialogue-focus-stage .case-portrait img { transform: none; }
+.dialogue-focus-stage .case-portrait:not(.active) figcaption { opacity: .85; }
+.case-vn-grid .deck-host-monitor, .case-vn-grid .deck-live-metrics { display: none; }
+.case-vn-grid .deck-monitor-strip { opacity: .7; }
+.case-vn-grid .deck-card small { font-size: 12px; line-height: 1.5; }
+.deck-mode-interrupt .deck-monitor-strip i.is-active { animation: none; }
+.live-comment { animation: none; }
+.topbar nav { min-width: 0; overflow: hidden; }
+.topbar nav > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Source text has priority; the schematic stays available as an expansion. */
+.avg-material-sheet.has-material-art { min-height: 0; align-content: start; }
+.avg-material-sheet.has-material-art::before { display: none; }
+.readable-material { padding: 16px; margin: 0 0 12px; border: 1px solid #688c7f; border-radius: 10px; background: #172b25; color: #f2f3e9; }
+.readable-material h3 { margin: 4px 0 12px; font-size: 18px; }
+.readable-material header small { color: #c1d5ca; }
+.readable-material p { line-height: 1.8; font-size: 15px; white-space: pre-line; }
+.readable-material .material-reading-note { color: #c1d5ca; border-top: 1px solid #3b554b; padding-top: 10px; }
+.material-image-preview > summary, .recap-detail-fold > summary { min-height: 44px; padding: 12px; cursor: pointer; color: #e6d6a2; }
+.avg-material-sheet .material-image-preview > summary { color: #234c43; }
+.material-image-preview .avg-material-art { position: static !important; display: block; width: 100%; height: auto; object-fit: contain; }
+.recap-detail-fold { border: 1px solid #486358; border-radius: 10px; padding: 4px; }
+.recap-detail-fold[open] > div { margin: 12px; }
+.quick-case-copy { min-width: 0; }
+.quick-case-premise { display: block; margin-top: 8px; font-size: 14px; line-height: 1.7; color: #c2d0ca; font-weight: 400; }
+.timeline-picked > li { grid-template-columns: 26px minmax(0, 1fr) auto; }
+.timeline-picked > li > button { min-height: 44px; padding: 6px 10px; font-size: 13px; }
+.vn-stage:has(.day-timeline-sort) { grid-template-rows: 28px 44px auto; min-height: 0; }
+.vn-stage:has(.day-timeline-sort) .visual-scene { min-height: 44px; }
+.vn-stage:has(.day-timeline-sort) .dialogue-card { padding: 16px; }
+.vn-stage:has(.day-timeline-sort) .day-scene-card { padding: 12px; gap: 10px; }
+.vn-stage:has(.day-timeline-sort) .day-scene-card > p { margin: 4px 0; font-size: 15px; line-height: 1.6; }
+.day-timeline-sort { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.day-timeline-sort .timeline-sort-head, .day-timeline-sort > .inline-actions,
+.day-timeline-sort > .reaction { grid-column: 1 / -1; }
+.timeline-sort-head { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; }
+.timeline-available { align-content: start; }
+.timeline-card-grid { grid-template-columns: minmax(0, 1fr); }
+
+/* The evidence and sentence react locally; no full-screen white flash. */
+.decisive-present-sequence.effects-full::after { display: none; }
+.decisive-present-sequence.effects-full .vn-stage,
+.decisive-present-sequence.effects-reduced .vn-stage { animation: none; }
+.decisive-present-sequence.effects-full .present-hit-pair article { animation: evidence-confirm 480ms ease-out both; }
+.decisive-present-sequence.effects-full .present-hit-caller { animation: decisive-line-in 160ms ease 350ms both; }
+.decisive-present-sequence.effects-full .present-hit-host { animation: decisive-line-in 160ms ease 900ms both; }
+.decisive-present-sequence.effects-reduced .present-hit-host { animation: decisive-line-in 120ms ease 180ms both; }
+.decisive-present-sequence .case-portrait-caller.pose-shaken img { transform: none; }
+.decisive-present-sequence.sequence-settled .present-hit-caller,
+.decisive-present-sequence.sequence-settled .present-hit-host { animation: none; opacity: 1; }
+.decisive-present-sequence.sequence-settled .present-hit-pair article,
+.decisive-present-sequence.sequence-settled .case-portrait-respondent { animation: none; }
+@keyframes evidence-confirm {
+  from { border-color: #f4d58d; box-shadow: inset 0 0 0 2px #f4d58d; }
+  to { border-color: #9d895c; box-shadow: inset 0 0 0 0 transparent; }
+}
+.effects-off .deck-host-monitor *, .effects-off .live-comment,
+.effects-off .deck-monitor-strip *, .effects-off .case-portrait,
+.effects-reduced .deck-host-monitor *, .effects-reduced .live-comment,
+.effects-reduced .deck-monitor-strip * { animation: none !important; }
+@media (max-width: 760px) {
+  .day-timeline-sort, .timeline-sort-head { grid-template-columns: minmax(0, 1fr); }
+  .vn-stage:has(.day-timeline-sort) .dialogue-card { padding: 10px; }
+  .dialogue-focus-stage:not(.choices-open) .avg-system-bar { display: flex; width: fit-content; max-width: 100%; }
+  .dialogue-focus-stage .avg-system-bar button { min-height: 44px; padding-inline: 8px; }
+  .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow .choice-stack:has(.cafe-evidence-board) { grid-template-columns: minmax(0, 1fr); }
+  /* A last-child button pinned to column 2 would create an implicit second track. */
+  .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow .choice-stack:has(.cafe-evidence-board) > button,
+  .cafe-prologue-screen .avg-choice-overlay.inline-choice-flow .choice-stack:has(.cafe-evidence-board) > button:last-child {
+    grid-column: 1;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+  }
+  .cafe-prologue-screen .choice-stack > .cafe-evidence-board { grid-column: 1; }
+  .cafe-prologue-screen .cafe-evidence-grid { grid-template-columns: minmax(0, 1fr); }
+  .cafe-prologue-screen.cafe-prologue-step-1 .avg-choice-overlay.inline-choice-flow:has(.cafe-evidence-board):not([hidden]) {
+    max-height: none;
+    overflow: visible;
+    scrollbar-gutter: auto;
+  }
+  .topbar { grid-template-columns: auto minmax(0, 1fr) auto auto auto; }
+  .topbar nav { display: flex; grid-row: 2; grid-column: 1 / -1; justify-self: start; max-width: 100%; }
+  .timeline-picked > li { grid-template-columns: 22px minmax(0, 1fr) auto; }
+  .readable-material { padding: 12px; }
+  .record-backlog p:not(.record-empty) { grid-template-columns: 4rem minmax(0, 1fr); gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-portrait, .cafe-negotiation-portrait, .live-comment,
+  .deck-monitor-strip *, .present-hit-pair article { animation: none !important; transition: none !important; }
+}
+/* The demo closes on a return card, outside the live-broadcast layout. */
+main:has(.demo-return-screen) > .topbar {
+  display: none;
+}
+
+.demo-return-screen[data-live-shell] {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: block;
+  width: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background: #080a0b;
+  overflow: auto;
+}
+
+.demo-return-screen .vn-stage[data-live-stage] {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.demo-return-screen .visual-scene,
+.demo-return-screen .vn-stage-frame,
+.demo-return-screen .dialogue-toolbar,
+.demo-return-screen .avg-system-bar,
+.demo-return-screen .reaction {
+  display: none;
+}
+
+.demo-return-screen .vn-stage .dialogue-card {
+  position: static;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  margin: 0;
+  padding: 32px 24px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.demo-return-card p {
+  margin: 0;
+  color: #eee7d6;
+  font-size: clamp(22px, 3.5vw, 36px);
+  line-height: 1.8;
+  letter-spacing: .08em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.demo-return-screen .avg-choice-overlay.inline-choice-flow {
+  position: static;
+  margin: 0;
+  padding: 24px 24px max(32px, env(safe-area-inset-bottom));
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.demo-return-screen .choice-group {
+  justify-content: center;
+}
+
+.demo-return-screen .avg-choice-overlay button {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 120px;
+  color: #aaa79f;
+  background: transparent;
+  border: 1px solid #383a39;
+}
+
+.demo-return-screen .vn-stage::before,
+.demo-return-screen .dialogue-card::before,
+.demo-return-screen .avg-choice-overlay::before,
+.demo-return-screen .avg-choice-overlay::after,
+.demo-return-screen .choice-group::before,
+.demo-return-screen .choice-group::after,
+.demo-return-screen .avg-choice-overlay button::before,
+.demo-return-screen .avg-choice-overlay button::after {
+  display: none;
+}
+
+.demo-return-screen .vn-stage .dialogue-card {
+  grid-row: 1;
+}
+
+.demo-return-screen .dialogue-card .demo-return-card p {
+  font-size: clamp(22px, 3.5vw, 36px);
+  line-height: 1.8;
+}
+
+.demo-return-screen .avg-choice-overlay.inline-choice-flow {
+  grid-row: 2;
+}
+
+.demo-return-screen .avg-choice-overlay.inline-choice-flow .choice-group {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.demo-return-screen .avg-choice-overlay.inline-choice-flow button {
+  flex: 0 0 auto;
+  width: auto;
+  padding: 12px 24px;
+  box-shadow: none;
+}
+
+/* Each caption occupies the same frame: 6s, 8s, then the return promise. */
+.demo-return-card {
+  display: grid;
+  place-items: center;
+  width: min(960px, 100%);
+}
+
+.demo-return-screen .dialogue-card .demo-end-caption {
+  grid-area: 1 / 1;
+  max-width: 100%;
+  visibility: hidden;
+  opacity: 0;
+  font-family: "Songti SC", "Noto Serif CJK SC", "STSong", serif;
+  font-weight: 400;
+  letter-spacing: .12em;
+  text-shadow: 0 0 24px rgba(238, 231, 214, .12);
+}
+
+.demo-end-caption-first {
+  animation: demo-caption-pass 6s linear forwards;
+}
+
+.demo-end-caption-second {
+  animation: demo-caption-pass 8s 6s linear forwards;
+}
+
+.demo-end-caption-final {
+  animation: demo-caption-arrive 3s 14s ease-out both;
+}
+
+.demo-return-screen .avg-choice-overlay.inline-choice-flow {
+  animation: demo-caption-arrive 1s 17s ease-out both;
+}
+
+@keyframes demo-caption-pass {
+  0% { visibility: visible; opacity: 0; }
+  22%, 72% { visibility: visible; opacity: 1; }
+  99% { visibility: visible; opacity: 0; }
+  100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes demo-caption-arrive {
+  from { visibility: hidden; opacity: 0; }
+  to { visibility: visible; opacity: 1; }
+}
+
+/* Preserve reading time and screen order when visual effects are disabled. */
+@keyframes demo-caption-cut {
+  0%, 99% { visibility: visible; opacity: 1; }
+  100% { visibility: hidden; opacity: 0; }
+}
+
+.demo-return-screen:is(.effects-reduced, .effects-off) .demo-end-caption-first,
+.demo-return-screen:is(.effects-reduced, .effects-off) .demo-end-caption-second {
+  animation-name: demo-caption-cut;
+  animation-timing-function: steps(1, end);
+}
+
+.demo-return-screen:is(.effects-reduced, .effects-off) .demo-end-caption-final,
+.demo-return-screen:is(.effects-reduced, .effects-off) .avg-choice-overlay.inline-choice-flow {
+  animation-duration: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-return-screen .demo-end-caption-first,
+  .demo-return-screen .demo-end-caption-second {
+    animation-name: demo-caption-cut;
+    animation-timing-function: steps(1, end);
+  }
+
+  .demo-return-screen .demo-end-caption-final,
+  .demo-return-screen .avg-choice-overlay.inline-choice-flow {
+    animation-duration: 0s;
+  }
+}
+
+/* PC playtest: keep every reading/choice layer within its actual stage. */
+.dialogue-focus-stage:not(.cafe-prologue-screen) .vn-stage .dialogue-card.avg-dialogue-active,
+.dialogue-focus-stage:not(.cafe-prologue-screen) .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+  left: 14px;
+  right: 14px;
+  width: auto;
+  transform: none;
+}
+.dialogue-mode-replay.choices-open .statement-replay-actions,
+.dialogue-mode-replay.choices-open .statement-replay-actions > .choice-stack { width: 100%; }
+.statement-replay-actions > .choice-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.statement-bill-question summary { padding: 14px; cursor: pointer; border: 1px solid #81958e; border-radius: 6px; background: #172422; }
+.statement-bill-question[open] { grid-column: 1 / -1; }
+.statement-bill-card { display: grid; gap: 6px; width: 100%; padding: 14px; text-align: left; }
+.transaction-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.transaction-card { display: grid; align-content: start; gap: 6px; padding: 14px; text-align: left; min-width: 0; }
+.transaction-card b { font-size: 22px; }
+.transaction-card.marked { border-color: #eed486; box-shadow: inset 0 0 0 1px #eed486; }
+.transaction-original { margin-top: 14px; color: #9aaaab; }
+.transaction-original summary { cursor: pointer; padding: 8px 0; }
+.night-transition-card { text-align: center; padding: clamp(24px, 8vh, 80px) 24px; }
+.night-transition-card h2 { font-size: clamp(32px, 5vw, 64px); letter-spacing: .2em; }
+@media (max-width: 720px) {
+  .transaction-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Major transactions and the confirmation action fit a 720px-high PC window. */
+@media (min-width: 900px) {
+  .transaction-review-screen .vn-stage { grid-template-rows: 22px 38px auto auto; }
+  .transaction-review-screen .vn-stage > .visual-scene { height: 38px; min-height: 38px; }
+  .transaction-review-screen .vn-stage > .dialogue-card { padding: 12px 18px; }
+  .transaction-review-screen .dialogue-card > h2 { margin: 0 0 8px; font-size: 18px; }
+  .transaction-review-screen .document-viewer-card { gap: 8px; }
+  .transaction-review-screen .document-viewer-card > p { font-size: 14px; line-height: 1.5; }
+  .transaction-review-screen .document-mark-limit { padding: 7px 10px; }
+  .transaction-review-screen .transaction-card { padding: 10px 12px; gap: 3px; font-size: 14px; }
+  .transaction-review-screen .transaction-card b { font-size: 20px; }
+  .transaction-review-screen .transaction-original { margin-top: 0; }
+}
+.quick-replay-quote { margin: 0; line-height: 1.65; font-size: clamp(17px, 1.5vw, 22px); }
+.quick-statement-replay .quick-replay-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.night-transition-screen .vn-stage {
+  height: calc(100dvh - 104px);
+  min-height: 480px;
+  grid-template-rows: 22px minmax(0, 1fr) auto;
+}
+.night-transition-screen .vn-stage > .visual-scene {
+  position: absolute; inset: 22px 0 0; height: auto; min-height: 0; z-index: 0;
+}
+.night-transition-screen .scene-label,
+.night-transition-screen .dialogue-toolbar { display: none; }
+.night-transition-screen .vn-stage > .dialogue-card {
+  position: relative; z-index: 1; display: grid; place-items: center;
+  min-height: 0; margin: 8px 16px; padding: 12px;
+  background: rgba(5, 12, 12, .68);
+}
+.night-transition-screen .night-transition-card { max-width: 680px; padding: 20px; }
+.night-transition-screen .night-transition-card h2 { margin: 20px 0; }
+.night-transition-screen .night-transition-card p { margin: 0; line-height: 1.8; }
+.night-transition-screen .avg-choice-overlay {
+  position: relative; z-index: 1; margin: 0 16px 14px; width: auto; transform: none;
+}
+
+/* Social evidence uses the stage for the original post and clickable facts. */
+@media (min-width: 900px) {
+  .social-evidence-screen .vn-stage { grid-template-rows: 22px 24px auto; min-height: 0; }
+  .social-evidence-screen .vn-stage > .visual-scene { height: 24px; min-height: 24px; overflow: hidden; }
+  .social-evidence-screen .vn-stage > .dialogue-card { margin: 0 14px 14px; padding: 12px 18px; }
+  .social-evidence-screen .dialogue-toolbar { display: none; }
+  .social-evidence-screen .dialogue-card > p { margin: 4px 0; font-size: 16px; line-height: 1.5; }
+  .social-evidence-screen .evidence-workbench { margin: 8px 0; padding: 10px; gap: 8px 14px; grid-template-columns: minmax(320px, 1fr) minmax(260px, 1fr); }
+  .social-evidence-screen .material-action-hint { padding: 8px 12px; margin: 0; }
+  .social-evidence-screen .evidence-document-body { padding: 8px; }
+  .social-evidence-screen .social-post-shot { width: min(400px, 100%); padding: 10px; gap: 6px; }
+  .social-evidence-screen .social-post-shot figure { height: 90px; }
+  .social-evidence-screen .social-post-caption,
+  .social-evidence-screen .social-post-comments p { font-size: 15px; line-height: 1.5; }
+  .social-evidence-screen .social-post-shot > header small,
+  .social-evidence-screen .social-post-location { font-size: 13px; }
+  .social-evidence-screen .evidence-target-grid { align-content: start; }
+}
+.statement-replay-actions [data-scene-replay-previous] { grid-column: 1 / -1; justify-self: start; width: auto; padding: 8px 16px; }
+/* The light screenshot paper must not inherit the live console's white text. */
+.dialogue-card .social-post-shot p { color: #28342f; text-shadow: none; }
+@media (min-width: 900px) {
+  .social-evidence-screen .material-action-hint,
+  .social-evidence-screen .dialogue-card > .choice-review,
+  .social-evidence-screen .avg-system-bar { display: none; }
+}
+
+
+/* Keep the material, challenged sentence, replies and action in one PC viewport. */
+@media (min-width: 900px) {
+  .decisive-present-sequence .vn-stage[data-live-stage] {
+    height: calc(100dvh - 100px);
+    min-height: 0;
+  }
+  .decisive-present-sequence .vn-stage > .visual-scene {
+    height: 100%;
+    min-height: 0;
+  }
+  .decisive-present-sequence .vn-stage > .dialogue-card {
+    position: absolute;
+    inset: auto 16px 108px;
+    max-height: calc(100% - 168px);
+    width: auto;
+    margin: 0;
+    padding: 18px;
+    overflow: auto;
+  }
+  .decisive-present-sequence .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+    position: absolute;
+    inset: auto 16px 12px;
+    margin: 0;
+  }
+  .decisive-present-sequence .avg-choice-overlay .choice-stack {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .decisive-present-sequence .choice-stack:has([data-skip-hit-presentation]:not([hidden])) {
+    grid-template-columns: 1fr 1fr;
+  }
+  .decisive-present-sequence .present-hit-dialogue { min-height: 0; }
+}
+
+/* Evidence inquiries read vertically: dialogue, materials, then questions. */
+.focused-evidence-inquiry .vn-stage {
+  display: flex; flex-direction: column; justify-content: flex-start;
+  height: calc(100dvh - 96px); min-height: 0; overflow-y: auto;
+  padding: 64px 14px 18px; gap: 12px;
+}
+.focused-evidence-inquiry .vn-stage > .visual-scene { position: absolute; inset: 0; min-height: 100%; pointer-events: none; }
+.dialogue-focus-stage.focused-evidence-inquiry .vn-stage .dialogue-card.avg-dialogue-active {
+  position: relative; inset: auto; width: 100%; min-height: 0; max-height: none;
+  margin: 0; padding: 0; overflow: visible; flex: 0 0 auto; transform: none;
+}
+.dialogue-focus-stage.focused-evidence-inquiry .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+  position: relative; inset: auto; width: 100%; margin: 0; padding: 0;
+  transform: none; flex: 0 0 auto; background: #101b1c;
+}
+.focused-evidence-inquiry .avg-choice-overlay .choice-stack { display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; max-width: none; }
+.focused-evidence-inquiry .avg-choice-overlay.inline-choice-flow:not([hidden]) button { width: 100%; max-width: none; min-height: 48px; text-align: left; padding: 12px 16px; }
+.focused-evidence-inquiry .avg-textbox { overflow: visible; }
+.focused-evidence-inquiry .inquiry-materials { margin-bottom: 0; }
+
+.dialogue-focus-stage.focused-evidence-inquiry.choices-open .vn-stage .dialogue-card.avg-dialogue-active { bottom: auto; }
+
+.focused-evidence-inquiry .vn-stage > .dialogue-card:not(.avg-dialogue-active) {
+  position: relative; inset: auto; width: 100%; margin: 0; padding: 0; flex: 0 0 auto;
+  overflow: visible; transform: none; background: transparent;
+}
+.inquiry-context { padding: 12px; color: #cbd9d4; }
+.cafe-prologue-screen.focused-evidence-inquiry .inquiry-materials button { min-height: 36px; }
+
+.cafe-prologue-screen.focused-evidence-inquiry.choices-open .vn-stage > .dialogue-card { display: block; }
+.cafe-prologue-screen.focused-evidence-inquiry .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group .choice-stack { grid-template-columns: 1fr; }
+.cafe-prologue-screen.focused-evidence-inquiry .avg-choice-overlay.inline-choice-flow:not([hidden]) { max-height: none; overflow: visible; }
+
+/* Material questions belong below the source, including the early DM page. */
+.evidence-workbench:has(.evidence-target-options) {
+  display: flex; flex-direction: column; gap: 18px; min-width: 0;
+}
+.evidence-target-options { display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%; }
+.evidence-target-options button {
+  display: block; width: 100%; min-height: 52px; height: auto; padding: 14px 18px;
+  white-space: normal; text-align: left; line-height: 1.6;
+}
+.focused-evidence-inquiry .scene-label { display: none; }
+.focused-evidence-inquiry .avg-textbox { margin-top: 22px; }
+.focused-evidence-inquiry .inquiry-context {
+  padding: 16px 20px; border: 1px solid #467d76; background: #142021; line-height: 1.75;
+}
+.focused-evidence-inquiry .inquiry-context p { margin: 8px 0 0; }
+.focused-evidence-inquiry [data-evidence-inquiry] small { display: inline-block; margin-left: 12px; color: #91aaa3; }
+/* A finished reading page remains visible beside its next action. */
+.cafe-prologue-screen.choices-open:has(.choices > .flow-group button:only-child) .avg-textbox { display: block; }
+@media (min-width: 1440px) {
+  .cafe-prologue-screen:not(.focused-evidence-inquiry) .vn-stage .dialogue-card.avg-dialogue-active {
+    width: calc(100% - 56px);
+  }
+}

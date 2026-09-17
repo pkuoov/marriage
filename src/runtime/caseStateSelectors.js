@@ -14,6 +14,8 @@ import {
   routeChoicesFromPicks,
   routeToneForChoice
 } from "./routeLog.js";
+import { answerDialogueLines } from "./dialogueContent.js";
+import { completedSequenceAnswer } from "./sequentialChoices.js";
 
 export function actionDoneForState(state = {}, brief = {}, actionKey = "") {
   return Boolean(state.caseActionLog?.[caseKey(brief)]?.[actionKey]);
@@ -55,7 +57,7 @@ export function completedSceneExchangeForState(state = {}, brief = {}, scene = {
   return {
     scene,
     dialoguePicks: askedDialoguePicksForState(state, brief, index),
-    pick,
+    pick: completedSequenceAnswer(scene, pick),
     fallbackAnswer: sceneAnswerForState(state, brief, index)
   };
 }
@@ -67,11 +69,11 @@ export function latestChoiceReviewRowsForState(state = {}, brief = {}, { exclude
   if (lastAnsweredIndex === excludeIndex || lastDialogueIndex === excludeIndex) return [];
   if (lastAnsweredIndex < 0 && lastDialogueIndex < 0) return [];
   if (lastAnsweredIndex >= 0) {
-    const selectedPick = selectedScenePickForState(state, brief, lastAnsweredIndex);
+    const selectedPick = completedSequenceAnswer(scenes[lastAnsweredIndex], selectedScenePickForState(state, brief, lastAnsweredIndex));
     return [
       { role: "caller", text: sceneVersionForReview(scenes[lastAnsweredIndex], selectedPick) },
       { role: "host", text: selectedPick?.question ?? "" },
-      { role: "caller", text: selectedPick?.answer ?? sceneAnswerForState(state, brief, lastAnsweredIndex) },
+      ...answerDialogueLines({ answer: selectedPick?.answer ?? sceneAnswerForState(state, brief, lastAnsweredIndex), lines: selectedPick?.lines }),
       ...latestEvidenceRevisionRowsForState(state, brief)
     ].filter((line) => line.text);
   }

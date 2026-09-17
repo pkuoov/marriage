@@ -254,7 +254,7 @@
   height: 4px;
   border-radius: 999px;
   background: rgba(101, 214, 194, .72);
-  animation: stageSignal 1.05s ease-in-out infinite alternate;
+  animation: stageSignal 1.05s ease-in-out 2 alternate;
 }
 
 .vn-stage-frame > span em:nth-of-type(2),
