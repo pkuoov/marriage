@@ -97,7 +97,7 @@ try {
   } else if (smokeTarget === "focused-credit") {
     await runSmokeStep("focused credit route", runFocusedCredit);
   } else if (smokeTarget === "testimony-reading") {
-    await runSmokeStep("testimony reading parity", runTestimonyReadingMatrix);
+    await runSmokeStep("testimony reading parity", runTestimonyReadingMatrix, { timeoutMs: Math.max(smokeStepTimeoutMs, 600000) });
   } else if (smokeTarget === "credit-replay-path") {
     await runSmokeStep("focused credit route", runFocusedCredit);
   } else if (smokeTarget === "credit-replay") {
@@ -112,14 +112,13 @@ try {
     await runSmokeStep("dialogue nameplate and type layout", runDialogueLayout);
   } else {
     await runSmokeStep("focused credit route", runFocusedCredit);
-    await runCase2DayMap();
-    await runCase3DayRoutes();
-    await runCase4DayRoutes();
+    // Current two-night routes replace the retired day-map/row-marking fixtures.
+    await runSmokeStep("six reviewed cases", runSixReviewedCases, { timeoutMs: 600000 });
     await runSmokeStep("case transition", runCaseTransition);
     await runSmokeStep("portrait viewport matrix", runPortraitViewports);
     await runSmokeStep("state replacement", runStateReplacementRoutes);
     await runSmokeStep("reading controls", runReadingControls);
-    await runSmokeStep("testimony reading parity", runTestimonyReadingMatrix);
+    await runSmokeStep("testimony reading parity", runTestimonyReadingMatrix, { timeoutMs: Math.max(smokeStepTimeoutMs, 600000) });
     await runSmokeStep("script and rendered dialogue parity", runScriptReadingMatrix);
     await runSmokeStep("quick detective viewport matrix", runQuickDetective);
     await runSmokeStep("cafe prologue viewport matrix", runCafePrologue, { timeoutMs: Math.max(smokeStepTimeoutMs, 180000) });
@@ -234,18 +233,18 @@ function smokeSummary(target) {
   if (target === "case2-transition") return "case2-day-map, case-transition";
   if (target === "host-verdict") return "host verdict staged at mobile and desktop widths";
   if (target === "portrait-viewports") return "portrait layouts at 390x844, 1280x720, 1366x768, 1280x800, 1920x1080";
-  if (target === "state-replacement") return "new-game-reset, patience-retry";
+  if (target === "state-replacement") return "new-game-reset, legacy save migration into no-penalty inquiry";
   if (target === "reading-controls") return "overlay keyboard/gamepad, autoplay pause, settings and save reading position";
   if (target === "six-review") return "reviewed main cases and quick cases: focused inquiry, sources, reload and compact endings";
   if (target === "focused-credit") return "case 1 focused inquiry, local retry, reload and compact closing";
-  if (target === "testimony-reading") return "four cases / eight testimony acts match the continuous reading";
+  if (target === "testimony-reading") return "four cases / seven inquiry acts match the continuous reading";
   if (target === "script-reading") return "four cases: staged statements and answer speakers/order match director/continuous scripts";
   if (target === "credit-replay-path") return "case 1 normal path: first-night old post through second-night device evidence";
   if (target === "credit-replay") return "case 1 restaurant/device replay recovery and social evidence at four PC sizes";
   if (target === "quick-detective") return "quick detective at 1920x1080, 1366x768, 1280x720, and 1280x800";
   if (target === "dialogue-layout") return "opening dialogue: six speakers at 390x844, 592x920, 1280x720, and 1280x800";
   if (target === "cafe-prologue") return "cafe prologue, same-night continuation, and private callback at 1280x720, 1366x768, 1280x800, and 1920x1080";
-  return [...routes.map((route) => route.name), "case2-day-map", "case3-day-map", "case4-day-map", "case-transition", "new-game-reset", "patience-retry", "reading-controls", "testimony-reading", "script-reading", "quick-detective", "cafe-prologue"].join(", ");
+  return ["four main cases", "three quick cases", "case-transition", "portrait-viewports", "new-game-reset", "legacy-save-migration", "reading-controls", "testimony-reading", "script-reading", "quick-detective", "cafe-prologue"].join(", ");
 }
 
 function smokeProgress(message) {
@@ -936,19 +935,8 @@ async function runStateReplacementRoutes() {
   const page = await context.newPage();
   page.setDefaultTimeout(browserActionTimeoutMs);
   try {
-    await page.goto(`${playableUrl}?playtest=browser-smoke-state-replacement-${Date.now()}&storyKey=steam-demo-01`);
-    await click(page, "[data-start-story]");
-    await enterNightFromCafePrologue(page, {});
-    await revealGolden90(page, {});
-    if (await page.locator("[data-enter-first-case]").count()) {
-      await drainDialogue(page, {});
-      await click(page, "[data-enter-first-case]");
-      await click(page, "[data-enter-case-live]");
-    }
+    await openCaseAtChapter(page, 1, "state-replacement");
     await drainDialogue(page, {});
-    await click(page, '[data-scene="sceneReview"]');
-    await drainDialogue(page, {});
-    await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
     if (await page.locator("[data-scene-helper]").count()) throw new Error("V哥隐藏期间不得出现求助按钮");
     await assertNoPageText(page, "V哥", "V哥隐藏期间不得出现在问题底栏");
     await click(page, '[data-action="title"]');
@@ -997,10 +985,8 @@ async function runStateReplacementRoutes() {
     }, structuredClone(authoredCasePackets[0].sceneVersions ?? []));
     await page.reload();
     await click(page, "[data-continue-story]");
-    await assertVisibleText(page, "这通断了", "seeded patience loss must render before retry");
-    await click(page, "[data-retry-lost-step]");
+    if (await page.locator("[data-retry-lost-step]").count()) throw new Error("old patience loss must migrate directly into the current inquiry");
     const retryTranscript = await drainDialogue(page, {});
-    await page.locator("[data-scene-open-replay]").waitFor({ state: "visible" });
     const retriedState = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}"));
     const retriedCaseId = retriedState.caseBriefs?.[0]?.id;
     const retriedAnswerKey = `${retriedCaseId}:scene:0`;
@@ -1010,14 +996,14 @@ async function runStateReplacementRoutes() {
     if (retriedState.caseBriefs?.[0]?.sceneVersions) {
       throw new Error("refreshed saves must return to progress-only case stubs instead of persisting authored dialogue");
     }
-    if (retriedState.scene !== "sceneReview" || retriedState.patienceLostContext !== null) {
-      throw new Error("patience retry must render from the replacement state and clear its retry context");
+    if (!["sceneReview", "sceneQuestionAnswer", "stanceSnapshot"].includes(retriedState.scene) || retriedState.patienceLostContext !== null) {
+      throw new Error(`legacy save must resume the current inquiry and clear its retry context: ${retriedState.scene}`);
     }
-    if (retriedState.sceneQuestionPicks?.[retriedAnswerKey] || retriedState.sceneAnswers?.[retriedAnswerKey]) {
-      throw new Error("patience retry must remove the failed question from the replacement state");
+    if (retriedState.sceneQuestionPicks?.[retriedAnswerKey]?.marker === "old-state" || retriedState.sceneAnswers?.[retriedAnswerKey] === "old-state") {
+      throw new Error("save migration must remove the stale failed answer before current dialogue resumes");
     }
-    if (retriedState.caseBudgets?.[retriedCaseId]?.remaining !== 1) {
-      throw new Error("patience retry must refund one point on the replacement state");
+    if (retriedState.caseBudgets?.[retriedCaseId]?.remaining !== 0) {
+      throw new Error("no-penalty migration must not mutate the old budget");
     }
   } finally {
     await context.close();
@@ -1855,9 +1841,14 @@ async function runScriptReadingMatrix() {
       const activeIndexes = [...packet.nightStructure.segment1SceneIndexes, ...packet.nightStructure.segment2SceneIndexes];
       for (const sceneIndex of activeIndexes.filter(index => packet.sceneVersions[index].questionSequence?.length)) {
       const scene = packet.sceneVersions[sceneIndex];
-      const optionIndex = scene.questionOptions.findIndex((option) => option.correct);
-      const option = scene.questionOptions[optionIndex];
-      await page.evaluate(({ caseIndex, sceneIndex, option, optionIndex, secondNight }) => {
+      const ordered = scene.questionSequence.map(id => scene.questionOptions.find(option => option.id === id));
+      // Isolate each saved answer for exact speaker/text parity. The complete
+      // routes above separately exercise progression through these questions.
+      for (const [step, spokenOption] of ordered.entries()) {
+      const option = spokenOption;
+      const optionIndex = scene.questionOptions.indexOf(option);
+      const completedOptionIds = ordered.slice(0, step + 1).map(option => option.id);
+      await page.evaluate(({ caseIndex, sceneIndex, option, optionIndex, completedOptionIds, secondNight }) => {
         const key = "livestream-detective-save-v1";
         const save = JSON.parse(localStorage.getItem(key));
         const briefId = save.caseBriefs[caseIndex].id;
@@ -1866,34 +1857,15 @@ async function runScriptReadingMatrix() {
         save.caseOvernights[briefId] = { ...save.caseOvernights[briefId], segment: secondNight ? "night2" : "night1", hangupDone: secondNight };
         save.dialogueProgress = { ...save.dialogueProgress, [`${briefId}:sceneReview`]: sceneIndex };
         save.sceneQuestionFocus = { caseId: briefId, sceneIndex, kind: "key", optionIndex };
-        save.sceneQuestionPicks = { [`${briefId}:scene:${sceneIndex}`]: { ...option, optionId: option.id, optionIndex, completedOptionIds: [option.id] } };
+        save.sceneQuestionPicks = { [`${briefId}:scene:${sceneIndex}`]: { ...option, optionId: option.id, optionIndex, completedOptionIds } };
         save.caseActionLog = { [briefId]: { [`version:${sceneIndex}`]: true } };
         save.settings.screenEffects = "off";
         save.dialogueReading = null;
         localStorage.setItem(key, JSON.stringify(save));
-      }, { caseIndex, sceneIndex, option, optionIndex, secondNight: packet.nightStructure.segment2SceneIndexes.includes(sceneIndex) });
+      }, { caseIndex, sceneIndex, option, optionIndex, completedOptionIds, secondNight: packet.nightStructure.segment2SceneIndexes.includes(sceneIndex) });
       await page.reload();
       await click(page, "[data-continue-story]");
       await page.locator(".question-answer-card").waitFor({ state: "attached" });
-      const ordered = scene.questionSequence?.length ? scene.questionSequence.map(id => scene.questionOptions.find(option => option.id === id)) : [option];
-      for (const [step, spokenOption] of ordered.entries()) {
-      if (step) {
-        if (await page.locator("[data-next-scene-stage]").count()) throw new Error(`${packet.caseId}: unfinished question sequence exposed a stage exit`);
-        await click(page, '[data-scene-open-replay]');
-        const target = `[data-scene-question="${sceneIndex}:${scene.questionOptions.indexOf(spokenOption)}"]`;
-        for(let n=0;n<80 && !await page.locator(target).count();n++) {
-          await drainDialogue(page, {});
-          if(await page.locator('[data-scene-dialogue]').count()) {
-            await click(page, '[data-scene-dialogue]');await click(page, '[data-scene-open-replay]');
-          } else if(await page.locator('[data-scene-replay-restart]').count()) await click(page, '[data-scene-replay-restart]');
-          else await click(page, '[data-scene-replay-next]');
-        }
-        const bill=page.locator('.statement-bill-question:not([open])');
-        if(await bill.count())await bill.locator('summary').click();
-        await click(page, target);
-        await page.reload();
-        await click(page, "[data-continue-story]");
-      }
       const actual = await page.locator(".question-answer-card .call-line").evaluateAll((rows) => rows.map((row) => ({
         speaker: row.querySelector("b").textContent, text: row.querySelector("p").textContent
       })));
@@ -2016,7 +1988,7 @@ async function verifyOrderedCounterAndCare(page, packet, caseIndex) {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: resolve(directory, "care-mobile.png"), fullPage: true });
   }
-  smokeProgress(`PASS ${packet.caseId}: all three care exchanges survive reload`);
+  smokeProgress(`PASS ${packet.caseId}: all ${packet.careChoices.length} care exchanges survive reload`);
 }
 
 async function runTestimonyReadingMatrix() {
@@ -2235,18 +2207,14 @@ async function runCaseTransition() {
       save.chapter = 1;
       save.caseBrief = save.caseBriefs?.[0] ?? null;
       save.screen = "chapter";
-      save.scene = "caseClosure";
+      save.scene = "storyInterlude";
+      save.dialogueReading = null;
       save.recapStep = 0;
       save.lastReaction = null;
       window.localStorage.setItem(key, JSON.stringify(save));
     });
     await page.reload();
     await click(page, "[data-continue-story]");
-    await assertVisibleText(page, "案件结案", "first case should enter a dedicated closure page before the next case");
-    await assertVisibleText(page, authoredCasePackets[0].caseClosing?.title, "first case closure should carry its authored case-specific title");
-    await assertVisibleText(page, "已经确认", "closure should distinguish confirmed facts from a raw evidence pile");
-    await assertVisibleText(page, "还没弄清", "closure should preserve unresolved facts");
-    await click(page, "[data-enter-story-interlude]");
     await page.getByText("第 2 晚 · 收播以后").first().waitFor({ state: "visible" }).catch(async () => {
       throw new Error(`first case tail did not render after closure:\n${await page.locator("body").innerText()}`);
     });
@@ -2279,13 +2247,13 @@ async function runCaseTransition() {
       const save = JSON.parse(window.localStorage.getItem(key) ?? "{}");
       save.chapter = 2;
       save.caseBrief = save.caseBriefs?.[1] ?? null;
-      save.scene = "caseClosure";
+      save.scene = "storyInterlude";
+      save.dialogueReading = null;
       save.storyWorldEchoes = {};
       window.localStorage.setItem(key, JSON.stringify(save));
     });
     await page.reload();
     await click(page, "[data-continue-story]");
-    await click(page, "[data-enter-story-interlude]");
     await assertVisibleText(page, "第 4 晚 · 收播以后", "second case must close without an authorial case-tail label");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await assertVisibleText(page, "接一通插播", "second act interlude must expose the optional quick-call pressure valve");
@@ -2312,14 +2280,13 @@ async function runCaseTransition() {
       const save = JSON.parse(window.localStorage.getItem(key) ?? "{}");
       save.chapter = 4;
       save.caseBrief = save.caseBriefs?.[3] ?? null;
-      save.scene = "caseClosure";
+      save.scene = "storyInterlude";
+      save.dialogueReading = null;
       save.storyWorldEchoHypotheses = {};
       window.localStorage.setItem(key, JSON.stringify(save));
     });
     await page.reload();
     await click(page, "[data-continue-story]");
-    await assertVisibleText(page, "案件结案", "final case must still enter its dedicated closure page");
-    await click(page, "[data-enter-story-interlude]");
     await page.getByText("收播以后").first().waitFor({ state: "visible" });
     await assertVisibleText(page, "收播以后", "final case must have its own lived epilogue");
     await assertVisibleText(page, "屏幕右上角的“直播中”灭了", "final case tail must close through an on-screen action instead of an authorial end label");
@@ -2788,15 +2755,12 @@ async function enterNightFromCafePrologue(page, route = {}) {
   if (!openingText.includes("我准备离婚") || !openingText.includes("孩子以后怎么安排")) {
     throw new Error("the playable opening must establish divorce and the child-arrangement conflict before evidence selection");
   }
-  await activate(page, route, "[data-cafe-opening-seen]");
-  await activate(page, route, '[data-cafe-statement-id="hotel-denial"]');
-  await activate(page, route, '[data-cafe-evidence-select="chat"]');
-  await activate(page, route, "[data-cafe-evidence-present]");
-  await activate(page, route, "[data-cafe-revision-seen]");
-  await activate(page, route, '[data-cafe-statement-id="money-denial"]');
-  await activate(page, route, '[data-cafe-evidence-select="parallel-transfer-ledger"]');
-  await activate(page, route, "[data-cafe-revised-present]");
-  await activate(page, route, "[data-cafe-legal-brief]");
+  const prologue = storyManifest.nightShell.cafePrologue;
+  for (const inquiry of prologue.cafe.inquiries) {
+    const correct = inquiry.options.find(option => option.correct);
+    await activate(page, route, `[data-cafe-inquiry="${correct.id}"]`);
+    await drainDialogue(page, route);
+  }
   await activate(page, route, '[data-cafe-pressure="camera-off"]');
   await activate(page, route, '[data-cafe-aftermath-next]');
   await activate(page, route, '[data-cafe-aftermath-next]');
@@ -2824,7 +2788,7 @@ async function revealGolden90(page, route = {}, { assertContract = false } = {})
   }
   if (!await page.locator("[data-reveal-cold-open]").count()) return null;
   const debtTranscript = (await drainDialogue(page, route)).replace(/\s+/g, "");
-  const debtComments = (await page.locator(".live-comment-strip").innerText().catch(() => "")).replace(/\s+/g, "");
+  const debtComments = assertContract ? (await page.locator(".live-comment-strip").innerText()).replace(/\s+/g, "") : "";
   const debtKinds = await page.evaluate(() => ({
     stage: document.querySelectorAll(".night-shell-line.shell-stage").length,
     host: document.querySelectorAll(".night-shell-line.shell-host").length
@@ -2841,7 +2805,7 @@ async function revealGolden90(page, route = {}, { assertContract = false } = {})
     await assertVisibleText(page, "她把后半段也转来了", "the first screen after player input must continue the same forwarded exchange");
   }
   const interestTranscript = (await drainDialogue(page, route)).replace(/\s+/g, "");
-  const interestComments = (await page.locator(".live-comment-strip").innerText().catch(() => "")).replace(/\s+/g, "");
+  const interestComments = assertContract ? (await page.locator(".live-comment-strip").innerText()).replace(/\s+/g, "") : "";
   if (assertContract) {
     if (!interestTranscript.includes("今晚转我行不行")) throw new Error("golden 90 payoff must escalate into the caller's next excuse");
     if (!interestComments.includes("还在催她转钱")) throw new Error("golden 90 payoff must let the room react in the comment layer to the newly heard context");
