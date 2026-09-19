@@ -60,7 +60,7 @@
   "deviceProbes": [
     {
       "id": "credit-bank-flow:reviewProbes:device",
-      "sourceAnchor": "设备的分期我可没答应过",
+      "sourceAnchor": "拍摄设备是给我买的",
       "question": "买的时候，他跟你谈过一起还吗？",
       "answer": "没谈。他说送我的，我才收。",
       "keyChoice": true

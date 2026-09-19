@@ -1,6 +1,6 @@
 # 现行标准索引
 
-更新：2026-09-16。本页管理规则归属与适用范围，具体规则只在对应源文件维护。
+更新：2026-09-19。本页管理规则归属与适用范围，具体规则只在对应源文件维护。
 
 ## 优先级与真源
 
@@ -8,7 +8,7 @@
 
 | 范围 | 维护入口 | 不能由它推导的要求 |
 | --- | --- | --- |
-| 剧情、来源、集中问询与逐句承接 | [当前方向](../project-skills/case-scriptwriting/references/current-project-direction.md)、[复审流程](../project-skills/case-scriptwriting/references/story-review-workflow.md) | 每案固定段数、每句新事实、人人认错、凑语气词 |
+| 剧情、来源、集中问询与逐句承接 | [当前方向](../project-skills/case-scriptwriting/references/current-project-direction.md)、[谎盖谎](../project-skills/case-scriptwriting/references/caller-shameless-demand.md)、[未改项完整 Prompt](../project-skills/case-scriptwriting/references/remaining-edits-prompt.md)、[两连问跨案](../project-skills/case-scriptwriting/references/two-beat-followup-prompt.md)、[复审流程](../project-skills/case-scriptwriting/references/story-review-workflow.md) | 每案固定段数、每句新事实、人人认错、凑语气词；给妄人硬编难言之隐 |
 | 技能触发与工作范围 | `project-skills/*/SKILL.md`、各自 `agents/openai.yaml` | 一句修订也重做整案、默认召集多个代理 |
 | JSON、播放顺序、存档 | [Schema](content-pack-schema.md)、[运行时接入](../project-skills/case-scriptwriting/references/runtime-content-integration.md) | 有内部字段就必须增加玩家页面；所有模式共用按钮规则 |
 | 当前主案与快案 | [主案设计](weekly-livestream-design-bible.md)、[快案模式](quick-detective-mode.md)、manifest 与案件 JSON | 当前某案的轮数成为所有未来案件配额 |
@@ -32,6 +32,6 @@
 
 ## 2026-09-16 人工修改归纳与六案复审
 
-当前方向 S1–S8 统一了集中问询、本段重问、材料直接核对、来源与知情、口语及简短收尾。案一男方不上麦与匿名朋友圈留在本案，不推广成其他案件事实。
+当前方向 S1–S9 统一了集中问询、本段重问、材料直接核对、来源与知情、口语、简短收尾，以及以小见大、一段一层的剥雾节奏。案一男方不上麦与匿名朋友圈留在本案，不推广成其他案件事实。
 
 [清理记录](review-archive/standards-cleanup-2026-09-16.md)列出源规则和校验变更；[六案复审](review-archive/remaining-cases-review-2026-09-16.md)覆盖其余三主案及全部三快案。六案正文与集中问询迁移已接入，实施与验收见复审报告末尾；历史通读完成不替代当前版本验收。

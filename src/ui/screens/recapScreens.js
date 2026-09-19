@@ -362,10 +362,8 @@ export function createRecapScreens(ctx) {
         <button class="primary" data-cafe-legal-brief type="button">把现有证据和线索记下来</button>
       `);
     } else {
-      text += cafePrologueDialogueHtml([
-        ...(cafe.parentageBlockLines ?? []),
-        ...(cafe.cameraBreakLines ?? [])
-      ]);
+      // Keep step 5 as the exit so old table-side saves can still continue.
+      text += cafePrologueDialogueHtml(cafe.cameraBreakLines ?? []);
       choices = flowGroupHtml((cafe.pressureChoices ?? []).map((choice) => `
         <button class="secondary" data-cafe-pressure="${escapeHtml(choice.id)}" type="button">
           <b>${escapeHtml(choice.label)}</b><span>${escapeHtml(choice.note)}</span>

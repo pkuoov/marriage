@@ -451,6 +451,18 @@ function renderReadableQuickRounds(lines, packet) {
       }
     }
   });
+  const usedOptionIds = new Set(rounds.flatMap((round) => round.issueOptionIds ?? []));
+  const usedConfrontationIds = new Set(rounds.flatMap((round) => [
+    ...(round.requiredConfrontationIds ?? []),
+    ...(round.autoConfrontationIds ?? [])
+  ]));
+  const leftoverOptions = (packet.issueOptions ?? []).filter((option) => !usedOptionIds.has(option.id));
+  const leftoverConfrontations = (packet.confrontations ?? []).filter((item) => !usedConfrontationIds.has(item.id));
+  if (leftoverOptions.length || leftoverConfrontations.length) {
+    lines.push("### 旁支问法（本通不自动必中）", "");
+    for (const option of leftoverOptions) renderNode(lines, option, option.id, 4);
+    for (const confrontation of leftoverConfrontations) renderNode(lines, confrontation, confrontation.id, 4);
+  }
 }
 
 function renderPureStoryScript() {
@@ -1278,7 +1290,6 @@ function renderCafePrologueStory(lines, prologue, { includeAlternatives = true, 
       }
       lines.push("");
     }
-    for (const line of cafe.parentageBlockLines ?? []) renderDirectorSpoken(lines, line);
     for (const line of cafe.cameraBreakLines ?? []) renderDirectorSpoken(lines, line);
     const pressureChoices = cafe.pressureChoices ?? [];
     for (const [index, choice] of pressureChoices.entries()) {

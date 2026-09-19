@@ -65,7 +65,7 @@ test("同一句原话上的连续追问按未完成 ID 推进，重绘后仍落�
   }
 });
 
-test("普通交流自动接入、不扣耐心，逐句读档后完整走完两宗快案", () => {
+test("自动接话与可选交流不扣耐心，逐句读档后完整走完两宗快案", () => {
   for (const id of ["01-no-conditions", "02-one-missed-message"]) {
     const packet = read(`quick-cases/${id}`);
     let state = { ...initialQuickDetectiveState(packet), scene: "transcript" };
@@ -77,9 +77,15 @@ test("普通交流自动接入、不扣耐心，逐句读档后完整走完两�
         const item = packet.confrontations.find((item) => item.id === state.activeConfrontationId);
         heard.add(item.id);
         if (item.kind === "conversation") {
-          assert.equal(state.activeIssueId, null);
+          const round = packet.disclosureRounds[state.roundIndex];
           assert.ok(quickDetectiveConfrontationHtml(packet, state).includes("连线继续"));
-          assert.ok(!quickIssueOptionsForRound(packet, state).some((option) => option.confrontationId === item.id));
+          if ((round.autoConfrontationIds ?? []).includes(item.id)) {
+            assert.equal(state.activeIssueId, null);
+            assert.ok(!quickIssueOptionsForRound(packet, state).some((option) => option.confrontationId === item.id));
+          } else {
+            assert.ok(state.activeIssueId);
+            assert.ok(!round.requiredConfrontationIds.includes(item.id), "生育顾虑等普通交流可以选择，但不能设为通关要求");
+          }
         }
         const expectedLine = quickConfrontationLinesForState(packet, state)[state.confrontationLineIndex];
         state = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(state)), packet);
@@ -94,7 +100,13 @@ test("普通交流自动接入、不扣耐心，逐句读档后完整走完两�
         assert.ok(option); state = applyQuickIssueSelection(packet, state, option.id);
       }
     }
-    assert.equal(state.scene, "verdict"); assert.equal(heard.size, packet.confrontations.length);
+    assert.equal(state.scene, "verdict");
+    const reachable = new Set();
+    for (const round of packet.disclosureRounds ?? []) {
+      for (const id of round.requiredConfrontationIds ?? []) reachable.add(id);
+      for (const id of round.autoConfrontationIds ?? []) reachable.add(id);
+    }
+    for (const requiredId of reachable) assert.ok(heard.has(requiredId));
     assert.ok(Object.values(state.roundPatience).every((value) => value.remaining === value.max));
   }
 });
@@ -102,9 +114,10 @@ test("普通交流自动接入、不扣耐心，逐句读档后完整走完两�
 test("锚点修正保留进度，结构重排按段落身份迁移", () => {
   const packet = read("quick-cases/02-one-missed-message");
   const old = structuredClone(packet); old.issueOptions.find((item) => item.id === "nightlife-pattern").sourceAnchor = "六次酒吧或者 KTV";
-  const state = { ...initialQuickDetectiveState(old), scene: "issueSelection", roundIndex: 2, resolvedConfrontationIds: ["care-or-display", "message-or-drunkenness", "third-person-at-table", "how-he-knew"] };
+  const roundIndex = packet.disclosureRounds.findIndex(round => round.id === "social-feed");
+  const state = { ...initialQuickDetectiveState(old), scene: "issueSelection", roundIndex, resolvedConfrontationIds: ["care-or-display", "message-or-drunkenness", "third-person-at-table", "how-he-knew"] };
   const restored = normalizeQuickDetectiveState(state, packet);
-  assert.equal(restored.roundIndex, 2); assert.deepEqual(restored.resolvedConfrontationIds, state.resolvedConfrontationIds);
+  assert.equal(restored.roundIndex, roundIndex); assert.deepEqual(restored.resolvedConfrontationIds, state.resolvedConfrontationIds);
   assert.equal(restored.activeConfrontationId, "apology-and-post"); assert.equal(restored.flowVersion, quickFlowVersion(packet));
   old.disclosureRounds.reverse();
   assert.equal(normalizeQuickDetectiveState({ ...state, flowVersion: quickFlowVersion(old) }, packet).roundIndex, 0);

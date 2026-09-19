@@ -456,7 +456,7 @@
           {
             "speaker": "赵律师",
             "role": "advisor",
-            "text": "他说她能拿八万，她只剩一万一千六百多。两个人倒是都挺敢想。"
+            "text": "他说她能拿八万，她却连剩多少都不肯讲。一个当她存着，一个早拿去花了。"
           },
           {
             "speaker": "林旭阳",
@@ -507,47 +507,21 @@
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "白天让你找的融资稿，有了？陈说柜子铺多了就赚钱，我想看看他们自己报的成本。"
+            "text": "旧报销要等下一场的钱。老方，帮我找找这家公司的公开材料，它平时靠什么进钱？"
+          },
+          {
+            "role": "stage",
+            "text": "过了一会儿，老方发来栖行的公开融资稿。"
           },
           {
             "speaker": "老方（语音）",
             "role": "production",
-            "text": "找到了。栖行自己披露的试点，单柜一天平均三块使用费。场地分成八毛，维护一块二，折旧一块五。还没算总部开销。"
+            "text": "做共享柜的，稿里列了租金、维护成本，还有押金的关联往来，接收方有宸直。陈今天那笔报销，跟这里还对不上。"
           },
           {
             "speaker": "林旭阳",
             "role": "host",
-            "text": "收三块，光这几项就三块五？"
-          },
-          {
-            "speaker": "赵律师",
-            "role": "advisor",
-            "text": "供应商的已结回执也对上了。三层返费还压在物料价里，采购越多，这笔越大。"
-          },
-          {
-            "speaker": "林旭阳",
-            "role": "host",
-            "text": "那不停铺点，是等以后使用率上去？"
-          },
-          {
-            "speaker": "老方（语音）",
-            "role": "production",
-            "text": "稿子是这么说的。可它下一页重点写新增注册和押金余额，使用率一笔带过。押金二十九，收进来算应退的钱。"
-          },
-          {
-            "speaker": "赵律师",
-            "role": "advisor",
-            "text": "附注还有一行，押金账户转关联往来，接收方是宸直体系的资金平台。这里只列了归集，没有写归集后拿去干什么。"
-          },
-          {
-            "speaker": "林旭阳",
-            "role": "host",
-            "text": "用户随时能退的二十九，怎么会转到主要股东那边？"
-          },
-          {
-            "speaker": "老方（语音）",
-            "role": "production",
-            "text": "我也卡这儿。先把原页存着，跟前一通的认购分开。别看都叫宸直，就算成同一笔。"
+            "text": "原页留着，明天接着看。他今晚不肯再垫了，公司拿什么还他，还没答。"
           },
           {
             "speaker": "老方（语音）",
@@ -740,7 +714,7 @@
           "caseLabel": "第三通回访",
           "sender": "表妹",
           "speakerProfileId": "case3-caller-cousin",
-          "base": "包间退了，定金按他说的由他承担。两边父母也各自说过了。我姐还在介意，他为什么不能跟介绍人说一句忙。那几条付款条件，她没说要改。现在宸直又出了新闻，她爸原先答应九月底给她的二十万，也不知道什么时候能拿到。",
+          "base": "周末见面取消了，两边父母也各自说过了。我姐还在介意，他为什么不能跟介绍人说一句忙。那几条付款条件，她没说要改。现在宸直又出了新闻，她爸原先答应九月底给她的二十万，也不知道什么时候能拿到。",
           "echoes": {
             "pragmatic": "介绍人来问，她只说饭局往后放。",
             "affirm": "男方没替她说忙。她还在生这个气。",
@@ -1173,48 +1147,22 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "他请我来，是想把离婚和账目的事当面说清。你愿意拿完整流水，我们现在就对；不愿意，今天就先谈能谈的。"
+            "text": "他请我来，是想把离婚和账目的事当面说清。完整流水你愿意拿，我们就对；这些截图先留好，钱怎么算，要核完材料再谈。"
           }
         ],
-        "parentageBlockLines": [
-          {
-            "speaker": "男方",
-            "speakerProfileId": "prologue-cafe-husband",
-            "type": "participant",
-            "text": "钱的事再说，孩子怎么办？"
-          },
+        "cameraBreakLines": [
           {
             "speaker": "妻子",
             "speakerProfileId": "prologue-cafe-wife",
             "type": "participant",
-            "text": "你有完没完？当着镜头问这个，你让孩子以后怎么做人？"
-          },
-          {
-            "speaker": "男方",
-            "speakerProfileId": "prologue-cafe-husband",
-            "type": "participant",
-            "text": "我问了半年，你每次都拿些乱七八糟的理由堵我。你要说是我的，就跟我去做鉴定。敢不敢？"
-          },
-          {
-            "speaker": "妻子",
-            "speakerProfileId": "prologue-cafe-wife",
-            "type": "participant",
-            "text": "还能是谁的？就是你的啊！早就知道你不信任我了，也好，离就离。"
-          },
-          {
-            "speaker": "赵律师",
-            "speakerProfileId": "zhao-lawyer",
-            "type": "advisor",
-            "text": "你俩先别吵。孩子是不是他的，在这儿也掰扯不明白。"
+            "text": "流水我不拿，今天也不谈了。你们把录像关了。"
           },
           {
             "speaker": "旁白",
             "speakerProfileId": "narrator",
             "type": "stage",
-            "text": "妻子猛地推开椅子。表哥也跟着站了起来。"
-          }
-        ],
-        "cameraBreakLines": [
+            "text": "你关掉桌边录像。妻子推开椅子，表哥跟着站起来。"
+          },
           {
             "speaker": "表哥",
             "speakerProfileId": "prologue-cafe-cousin",
@@ -1245,7 +1193,7 @@
             "id": "camera-off",
             "label": "结束谈话",
             "note": "",
-            "echo": "其实后面的争吵也确实没有录的必要了。"
+            "echo": "你收起设备，结束这次谈话。"
           }
         ],
         "inquiries": [
@@ -1345,13 +1293,13 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "她不肯做鉴定，吵再多也没用。孩子是不是亲生的，我们现在手上什么都没有，拿对方没办法。真要打到法庭上，你手上必须要有相对确凿的证据才行。"
+            "text": "钱的材料先留好，你发来以后我再看。"
           },
           {
             "speaker": "男方",
             "speakerProfileId": "prologue-cafe-husband",
             "type": "participant",
-            "text": "那我现在还能做什么？"
+            "text": "还有孩子。我怀疑了半年，她一直不肯跟我谈。我想问问鉴定该怎么办。"
           },
           {
             "speaker": "林旭阳",
@@ -1407,19 +1355,7 @@
                 "speaker": "赵律师",
                 "speakerProfileId": "zhao-lawyer",
                 "type": "advisor",
-                "text": "先拿到材料，我再帮你看能不能向法院提出亲子关系异议，申请鉴定。"
-              },
-              {
-                "speaker": "男方（电话）",
-                "speakerProfileId": "prologue-cafe-husband",
-                "type": "participant",
-                "text": "她还是不肯做呢？"
-              },
-              {
-                "speaker": "赵律师",
-                "speakerProfileId": "zhao-lawyer",
-                "type": "advisor",
-                "text": "我们有必要证据，她拿不出相反证据又拒绝鉴定，法院可以支持你否认亲子关系的主张。"
+                "text": "机构的受理说明和结果都留好。到时候我看材料，再谈法院里的申请，今天不替法院下结论。"
               }
             ],
             "handoffLines": []

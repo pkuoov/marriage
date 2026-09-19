@@ -45,7 +45,7 @@ test('未问清材料不能收麦，完成本案各段与两份材料即可收�
   assert.equal(dailyAccusationReadiness(brief, action => actions.has(action)).ready, true);
 });
 
-import { initialQuickDetectiveState, normalizeQuickDetectiveState, applyQuickIssueSelection, advanceQuickMissReaction, quickRoundPatienceForState, quickFlowVersion } from '../../src/runtime/quickDetectiveModel.js';
+import { initialQuickDetectiveState, normalizeQuickDetectiveState, applyQuickIssueSelection, advanceQuickMissReaction, advanceQuickConfrontation, quickRoundPatienceForState, quickFlowVersion } from '../../src/runtime/quickDetectiveModel.js';
 const quick = JSON.parse(readFileSync(new URL('../../content/packs/steam-demo-01/quick-cases/02-one-missed-message.json', import.meta.url)));
 
 test('直接误问先读问答，保存恢复后留在本段且不再扣旧预算', () => {
@@ -58,39 +58,65 @@ test('直接误问先读问答，保存恢复后留在本段且不再扣旧预�
   assert.equal(state.scene, 'missReaction');
   assert.equal(quickRoundPatienceForState(quick, state).remaining, 1);
   state = advanceQuickMissReaction(quick, state);
-  assert.equal(state.scene, 'issueSelection');
+  assert.equal(state.scene, 'confrontation');
+  assert.equal(state.activeConfrontationId, 'message-or-drunkenness');
   assert.equal(state.roundIndex, 0);
   assert.equal(quickRoundPatienceForState(quick, state).remaining, 1);
   assert.deepEqual(advanceQuickMissReaction(quick, state), state);
-  assert.equal(applyQuickIssueSelection(quick, state, 'missed-message-state').scene, 'confrontation');
 });
 
 test('旧快案按稳定段落身份迁移，保留前段结果与耐心，不跳过新回答', () => {
   const old = structuredClone(quick); old.contentRevision = 'old';
-  const merged = old.disclosureRounds[1];
-  old.disclosureRounds.splice(2, 0, { ...structuredClone(merged), id: 'explanation-to-him', turnIds: ['how-he-knew-version'], requiredConfrontationIds: ['how-he-knew'] });
-  merged.turnIds = merged.turnIds.filter(id => id !== 'how-he-knew-version');
-  merged.requiredConfrontationIds = ['third-person-at-table'];
   let saved = { ...initialQuickDetectiveState(old), scene: 'confrontation', roundIndex: 3, activeConfrontationId: 'nightlife-pattern', confrontationLineIndex: 3, resolvedConfrontationIds: ['care-or-display', 'message-or-drunkenness', 'third-person-at-table', 'how-he-knew', 'apology-and-post'], roundPatience: { 'social-feed': { max: 4, remaining: 2 } } };
   saved.flowVersion = quickFlowVersion(old).replace('quick-v6|old|', 'quick-v5|');
   const restored = normalizeQuickDetectiveState(saved, quick);
   assert.equal(restored.roundIndex, quick.disclosureRounds.findIndex(round => round.id === 'social-feed'));
   assert.equal(restored.scene, 'transcript');
   assert.equal(restored.confrontationLineIndex, 0);
-  assert.deepEqual(restored.resolvedConfrontationIds, saved.resolvedConfrontationIds.slice(0, 4));
+  assert.deepEqual(restored.resolvedConfrontationIds, ['message-or-drunkenness', 'third-person-at-table', 'how-he-knew']);
   assert.equal(quickRoundPatienceForState(quick, restored).remaining, 2);
 });
 
-test('合并快案段落后，旧的解释段存档回到合并问询而非重开来电', () => {
+test('拆开身份与解释后，旧合并段存档回到身份问询，保留前段结果与已结案存档', () => {
   const old = structuredClone(quick);
-  old.contentRevision = 'before-merge';
-  old.disclosureRounds.splice(2, 0, { ...structuredClone(old.disclosureRounds[1]), id: 'explanation-to-him' });
-  const saved = { ...initialQuickDetectiveState(old), scene: 'issueSelection', roundIndex: 2,
+  old.contentRevision = 'before-split';
+  const [explanation] = old.disclosureRounds.splice(2, 1);
+  for (const field of ['turnIds', 'issueOptionIds', 'requiredConfrontationIds']) {
+    old.disclosureRounds[1][field].push(...explanation[field]);
+  }
+  old.disclosureRounds[1].previousRoundIds = ['explanation-to-him'];
+  const saved = { ...initialQuickDetectiveState(old), scene: 'issueSelection', roundIndex: 1,
     resolvedConfrontationIds: ['care-or-display', 'message-or-drunkenness', 'third-person-at-table'] };
   const restored = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(saved)), quick);
   assert.equal(restored.roundIndex, 1);
   assert.equal(restored.scene, 'transcript');
-  assert(restored.resolvedConfrontationIds.includes('care-or-display'));
+  assert(restored.resolvedConfrontationIds.includes('message-or-drunkenness'));
+  assert(!restored.resolvedConfrontationIds.includes('third-person-at-table'));
+  const completed = normalizeQuickDetectiveState({ ...saved, scene: 'verdict', roundIndex: 2 }, quick);
+  assert.equal(completed.scene, 'verdict');
+  assert.equal(quick.disclosureRounds[completed.roundIndex].id, 'social-feed');
+});
+
+test('快案二先问清第三人，再问如何解释；中途保存不倒序、不重播身份', () => {
+  const identityIndex = quick.disclosureRounds.findIndex(round => round.id === 'changed-version');
+  let state = { ...initialQuickDetectiveState(quick), scene: 'issueSelection', roundIndex: identityIndex,
+    resolvedConfrontationIds: ['message-or-drunkenness'] };
+  assert.deepEqual(quickAvailableInquiryOptions(quick, state).map(option => option.id), ['third-person']);
+  assert.deepEqual(applyQuickIssueSelection(quick, state, 'how-he-knew'), state);
+  state = applyQuickIssueSelection(quick, state, 'third-person');
+  state = advanceQuickConfrontation(quick, state);
+  const midway = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(state)), quick);
+  assert.equal(midway.activeConfrontationId, 'third-person-at-table');
+  assert.equal(midway.confrontationLineIndex, state.confrontationLineIndex);
+  state = midway;
+  for (let step = 0; step < 30 && state.scene === 'confrontation'; step++) {
+    state = advanceQuickConfrontation(quick, state);
+  }
+  state = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(state)), quick);
+  assert.equal(quick.disclosureRounds[state.roundIndex].id, 'explanation-to-him');
+  assert(state.resolvedConfrontationIds.includes('third-person-at-table'));
+  assert.deepEqual(quickAvailableInquiryOptions(quick, state).map(option => option.id), ['how-he-knew']);
+  assert.deepEqual(quick.disclosureRounds[state.roundIndex].turnIds, ['how-he-knew-version']);
 });
 
 test('补问记录保存后保留，非法旧字段不影响继续问询', () => {
@@ -180,10 +206,11 @@ test('简化控场台不显示假进度、耐心或尚未收到空卡；已收�
 });
 
 test('快案可选问法排除已回答及已解释的错问，单一剩余问题可直接接话', () => {
-  const state={...initialQuickDetectiveState(quick),scene:'issueSelection',resolvedConfrontationIds:['care-or-display'],attemptedIssueIds:['founder-busy']};
+  const state={...initialQuickDetectiveState(quick),scene:'issueSelection',roundIndex:quick.disclosureRounds.findIndex(round=>round.id==='explanation-to-him'),resolvedConfrontationIds:['message-or-drunkenness','third-person-at-table'],attemptedIssueIds:['founder-busy']};
   const options=quickAvailableInquiryOptions(quick,state);
   assert.ok(options.every(option=>option.id!=='founder-busy'));
   assert.equal(options.length,1);
+  assert.equal(options[0].id,'how-he-knew');
   const next=applyQuickIssueSelection(quick,state,options[0].id);
   assert.equal(next.scene,'confrontation');
   assert.equal(next.confrontationLineIndex,0);
@@ -263,4 +290,35 @@ test('材料页面实际渲染所选问题和错误回应，不渲染旧评题�
   const html=evidenceCheckScreenHtml({check,pick});
   assert.ok(html.includes(option.question)); assert.ok(html.includes(option.reactionLine));
   assert.ok(!html.includes(option.feedback));
+});
+
+test('职场旧四千问询退役，只迁移仍保留的待付款问询进度', () => {
+  const work = JSON.parse(readFileSync(new URL('../../content/packs/steam-demo-01/cases/04-workplace.json', import.meta.url)));
+  work.id = 'work-save';
+  const index = work.sceneVersions.findIndex(scene => scene.id === 'work-split-ownership');
+  const scene = work.sceneVersions[index];
+  const key = testimonyWallKey(work, scene, index);
+  const old = { id: work.id, contentIdentity: caseContentIdentity(work) };
+  old.contentIdentity.sceneVersions[index].testimonyRevision = Object.keys(scene.testimonyWall.previousActOrders)[0];
+  for (const act of [1, 2]) {
+    const input = { chapter: 1, scene: 'testimonyWall', caseBrief: work,
+      dialogueProgress: { 'work-save:sceneReview': index },
+      caseActionLog: { 'work-save': { 'version:0': true } },
+      testimonyWallProgress: { [key]: { act, preludeSeen: true, completedActs: act === 2 ? [1] : [] } },
+      decisivePresentProgress: { [key]: { resolved: true }, ...(act === 2 ? { [`${key}:act2`]: { resolved: true } } : {}) },
+      evidenceInquiryPicks: { [key]: 'act2-ask', ...(act === 2 ? { [`${key}:act2`]: 'act1-ask' } : {}) },
+      evidenceInquiryHeard: { [key]: true, ...(act === 2 ? { [`${key}:act2`]: true } : {}) },
+      caseBudgets: { 'work-save': { remaining: 4 } }
+    };
+    const result = refreshSavedExchangeCopy(input, [work], [old]);
+    assert.equal(result.testimonyWallProgress[key].act, 1);
+    assert.equal(result.evidenceInquiryPicks[key], act === 2 ? 'act1-ask' : undefined);
+    assert.equal(result.decisivePresentProgress[key]?.resolved, act === 2 ? true : undefined);
+    assert.equal(result.evidenceInquiryPicks[`${key}:act2`], undefined);
+    assert.equal(result.caseActionLog['work-save']['version:0'], true);
+    assert.deepEqual(result.caseBudgets, input.caseBudgets);
+    assert.equal(input.evidenceInquiryPicks[key], 'act2-ask');
+    const closed = refreshSavedExchangeCopy({ ...input, scene: 'careChoice' }, [work], [old]);
+    assert.equal(closed.scene, 'careChoice', '已收麦的存档不退回问询');
+  }
 });

@@ -72,12 +72,10 @@ test("旧互斥接麦存档不跳过新的完整退礼物与公开范围交流",
   assert.ok(html.includes("接进来"));
 });
 
-test("余额差额追问在披露之后；试问不区分命中提示；连续台本收齐顺序收麦", async () => {
+test("现场不泄露精确余额；试问不区分命中提示；连续台本收齐顺序收麦", async () => {
   const credit = packets[0];
   const end = credit.sceneVersions.find(scene => scene.id === "credit-loyalty-test").afterVersion.lines;
-  const balance = end.findIndex(line => line.text.includes("一万一千六百"));
-  const followup = end.findIndex(line => line.role === "host" && line.text.includes("为什么不告诉他"));
-  assert.ok(balance >= 0 && followup > balance);
+  assert.ok(end.every(line => !line.text.includes("一万一千六百")));
   const script = await read("docs/generated/steam-demo-01-continuous-story-script.md");
   for (const packet of packets) {
     for (const choice of packet.careChoices) assert.ok(script.includes(choice.hostLine));

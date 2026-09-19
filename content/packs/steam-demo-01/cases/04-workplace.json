@@ -305,7 +305,7 @@
     },
     {
       "role": "host",
-      "text": "怕被领导骂吧。",
+      "text": "群里不敢发，你是怕得罪谁？",
       "speaker": "林旭阳",
       "mood": "listening"
     },
@@ -317,37 +317,7 @@
     },
     {
       "role": "host",
-      "text": "你们公司做什么的？",
-      "speaker": "林旭阳",
-      "mood": "listening"
-    },
-    {
-      "role": "caller",
-      "text": "栖行，做商场里的共享充电柜和储物柜的。最近一直催着铺点。主要股东之一是现在最火的宸直。",
-      "speaker": "咨询者",
-      "mood": "thinking"
-    },
-    {
-      "role": "host",
-      "text": "柜子铺这么多，公司靠什么挣钱？",
-      "speaker": "林旭阳"
-    },
-    {
-      "role": "caller",
-      "text": "使用费，还有城市合伙人进来的钱。用户注册交二十九押金，主管说规模起来就赚钱，商场里摆得越多越好谈。"
-    },
-    {
-      "role": "host",
-      "text": "押金得退给用户。光收使用费，现在能盖住租场地、维修这些成本吗？",
-      "speaker": "林旭阳"
-    },
-    {
-      "role": "caller",
-      "text": "这我真没看过账。公司会上都是讲新增多少点，宸直又投了多少。主管说先占住地方，后来就好赚了。"
-    },
-    {
-      "role": "host",
-      "text": "宸直是吧。现在满世界都是他家的新闻。那你垫钱，是没给你批让你先垫，还是你来不及报批主动垫的？",
+      "text": "六万八是谁让你垫的？没批，还是你自己先刷的？",
       "speaker": "林旭阳",
       "mood": "listening"
     },
@@ -385,15 +355,15 @@
       "reliability": "mixed",
       "casualQuestions": [
         {
-          "question": "你说能接的时候，他怎么回的？",
+          "question": "会上说能接的时候，他有没有当场定是你办？",
           "sourceAnchor": "小会上",
           "answer": "会上就点了个头，没当场定人。散会才私聊我。",
           "id": "work-title-for-advance:casualQuestions:0"
         },
         {
-          "question": "主管平时对你怎么样？",
+          "question": "他私聊让你先垫的时候，有没有说钱什么时候能报回来？",
           "sourceAnchor": "私聊过来",
-          "answer": "有回我加班，他给我留了盏灯，贴了张“早点回”。平时还算照顾我，所以让我先垫，我也信他会给我办。",
+          "answer": "只说这场交给我。什么时候付，他当时没给日子。我信他会办，才刷的卡。",
           "id": "work-title-for-advance:casualQuestions:1"
         },
         {
@@ -441,7 +411,26 @@
       "audioCueId": "voice.case4.pad-message",
       "questionSequence": [
         "work-title-for-advance:questionOptions:0"
-      ]
+      ],
+      "sceneCloser": {
+        "lines": [
+          {
+            "role": "host",
+            "text": "想争这场才垫，这点先记下。"
+          },
+          {
+            "role": "stage",
+            "text": "他在那头翻手机，像在找上一场怎么结的。"
+          }
+        ]
+      },
+      "closureContract": {
+        "entryAnchor": "这场就交给你",
+        "closerAnchor": "想争这场才垫，这点先记下",
+        "adds": "他承认垫六万八是为了争到主办。上一场怎么结、别人为什么也垫，还没展开。",
+        "openEdge": "别人为什么也愿意先垫，上回结算多出来的钱按什么名目走。",
+        "routeIndependent": true
+      }
     },
     {
       "id": "work-private-process",
@@ -479,16 +468,16 @@
           "id": "work-private-process:casualQuestions:0"
         },
         {
-          "question": "是你们部门几个人轮着办？",
+          "question": "有人专门问下个月还有几场。问的是还能不能先垫，还是只问业绩怎么记？",
           "sourceAnchor": "有人专门问",
-          "answer": "不轮。谁接得起谁接。前阵子一个同事卡没还上，还问我能不能替他先刷。",
+          "answer": "问的是还能不能垫。不轮着办，谁接得起谁接。前阵子一个同事卡没还上，还问我能不能替他先刷。",
           "id": "work-private-process:casualQuestions:1"
         },
         {
-          "question": "算谁的业绩，怎么记？",
+          "question": "主办能算业绩。签到和客户跟进，是记在垫钱的人名下吗？",
           "sourceAnchor": "主办能算业绩",
           "suspicionLabel": "活动业绩归谁",
-          "answer": "签到和客户跟进都记主办。能接活动的人，下个月分客户也占便宜。",
+          "answer": "记主办。谁先垫、谁主办，签到和客户跟进都记他。下个月分客户也占便宜。",
           "routeAxis": "identity-wording",
           "routeTone": "neutral",
           "id": "work-private-process:questionOptions:1"
@@ -553,7 +542,7 @@
           "question": "那你这次六万八，他也答应多报、再分给你？",
           "sourceAnchor": "不会让垫钱的人白忙",
           "suspicionLabel": "那你这次六万八，他也答应多报、再分给你？",
-          "answer": "也按八万报，报下来分我四千。以前都能回来，我才接的。我就想把钱要回来，没想跟主管翻脸。以后还得在他手底下干呢。",
+          "answer": "也按八万报，报下来分我四千。以前都能回来，我才接的。我就想把钱要回来，没想跟主管翻脸。以后还得在他手底下干呢。先私下问他。我还是想接下周的，前一笔能回来就接。进来才多久，我不想一催就把机会催没了。",
           "correct": true,
           "routeAxis": "money-flow",
           "routeTone": "trust-but-verify",
@@ -569,6 +558,14 @@
             {
               "role": "caller",
               "text": "我就想把钱要回来，没想跟主管翻脸。以后还得在他手底下干呢。"
+            },
+            {
+              "role": "host",
+              "text": "你现在打算怎么催？下周再让你先垫呢？"
+            },
+            {
+              "role": "caller",
+              "text": "先私下问他。我还是想接下周的，前一笔能回来就接。进来才多久，我不想一催就把机会催没了。"
             }
           ],
           "contradiction": "他争取活动不只为了业绩，还期待主管许诺的四千元分配；尚未到账。",
@@ -617,26 +614,26 @@
       "reliability": "partial",
       "casualQuestions": [
         {
-          "question": "信用卡账单出来以后，你准备怎么还？",
+          "question": "你问什么时候回来，他三次都发同一张。有没有一次写过哪天付？",
           "sourceAnchor": "审批通过",
-          "answer": "我还没想好。手头的钱不够一次还清，又不想做最低还款，所以才越来越慌。",
+          "answer": "没有。每次都是那张“审批通过”，没日子。卡账单已经来了，我才越来越慌。",
           "id": "work-approval-only:casualQuestions:0"
         },
         {
-          "question": "你以前用个人信用卡垫过公司的钱吗？",
+          "question": "以前垫打车费，第二天就能报。这次他三次发同一张图，有没有一张是付款回单？",
           "sourceAnchor": "活动后",
-          "answer": "这么大一笔没有。以前最多垫过打车费，第二天就能报。这次六万八，是第一次。",
+          "answer": "没有。这么大一笔我是第一次垫。以前最多垫过打车费，第二天就能报。这次六万八，他还是那张旧图。",
           "lines": [
             {
               "role": "caller",
-              "text": "这么大一笔没有。以前最多垫过打车费，第二天就能报。"
+              "text": "没有。这么大一笔我是第一次垫。以前最多垫过打车费，第二天就能报。"
             },
             {
               "role": "pause"
             },
             {
               "role": "caller",
-              "text": "六万八，是第一次。"
+              "text": "这次六万八，他还是那张旧图。"
             }
           ],
           "id": "work-approval-only:casualQuestions:2"
@@ -759,32 +756,32 @@
       ],
       "questionOptions": [
         {
-          "question": "财务问到那一万二，你当时怎么回的？",
-          "sourceAnchor": "各自的受理页",
-          "suspicionLabel": "财务问到那一万二，你当时怎么回的？",
-          "answer": "我先说费用单是主管填的。财务让我把他说怎么分的钱也交过去。我还没交，怕他以后不让我碰活动。",
+          "question": "主管说优先办你的，财务给你定了哪天付款？",
+          "sourceAnchor": "主管私下还说会优先办我的",
+          "suspicionLabel": "主管说优先办你的，财务给你定了哪天付款？",
+          "answer": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追。",
           "correct": true,
           "routeAxis": "money-flow",
           "routeTone": "trust-but-verify",
           "lines": [
             {
               "role": "caller",
-              "text": "我先说费用单是主管填的。财务让我把他说怎么分的钱也交过去。我还没交，怕他以后不让我碰活动。"
+              "text": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追。"
             },
             {
               "role": "host",
-              "text": "受理页和草单都发来。先看他答应你的，财务到底认不认。"
+              "text": "把你和她们的受理页放一起，看财务究竟回了什么。"
             }
           ],
           "contradiction": "其他部门提供了财务受理页，需按页核对费用状态。",
           "logicContract": {
-            "premiseAnchor": "各自的受理页",
+            "premiseAnchor": "主管私下还说会优先办我的",
             "sourceKind": "caller-statement",
-            "sourceProves": "各自的受理页",
+            "sourceProves": "主管私下承诺优先，但受理页仍待通知。",
             "sourceDoesNotProve": "口述与现有单据不说明公司全部账目或最终追回金额。",
-            "answerAnchor": "我先说费用单是主管填的",
-            "answerAdds": "我先说费用单是主管填的。财务让我把他说怎么分的钱也交过去。我还没交，怕他以后不让我碰活动。",
-            "nextLegalQuestion": "沿已出现的款项、经手人和原始材料继续核对。"
+            "answerAnchor": "没定，受理页还是待通知",
+            "answerAdds": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追。",
+            "nextLegalQuestion": "比较三个部门的受理与待付状态，追主管优先承诺的依据。"
           },
           "id": "work-leader-note:questionOptions:0"
         }
@@ -801,7 +798,7 @@
       "id": "work-split-ownership",
       "interactionMode": "testimonyWall",
       "clueRole": "payoff",
-      "falseFrame": "各部门只是分别缺材料，包干余款天然属于经办人员。",
+      "falseFrame": "别人也许没补齐手续，主管答应优先，自己仍能先拿到钱。",
       "payoffFor": [
         "work-title-for-advance",
         "work-leader-note"
@@ -812,7 +809,7 @@
       "version": "活动负责人写的是我，付款经办人写的是他。今天三个人把受理页放到一起，都还没收到钱。",
       "testimonyWall": {
         "title": "不止他这一笔",
-        "intro": "看材料，接着问。",
+        "intro": "选择原话与材料后出示。",
         "splitAfter": 3,
         "midSummary": "",
         "softAnchorResponse": "已选材料",
@@ -958,8 +955,12 @@
             "inquiry": {
               "openingLines": [
                 {
+                  "role": "host",
+                  "text": "你那六万八登记了。再看运营和维修这两张，财务有没有叫她们补材料？"
+                },
+                {
                   "role": "caller",
-                  "text": "运营、维修都在等，我看见了。可主管说我替他办了这场，他肯定先顾我。别人没交齐手续也说不定，我不想因为她们催得急，就跟着把主管得罪了。"
+                  "text": "她们也在等，我看见了。可主管说会先顾我。别人没交齐手续也说不定，我不想因为她们催得急，就把主管得罪了。"
                 }
               ],
               "options": [
@@ -982,18 +983,38 @@
                     },
                     {
                       "role": "host",
-                      "text": "你现在拿他的保证，替没有付款日期找理由。"
+                      "text": "财务没写优先，你就信他一句先办？下周那场，你还准备垫？"
+                    },
+                    {
+                      "role": "caller",
+                      "text": "我想等这笔回来再垫。他答应先办我的，总得让我看见钱吧。"
+                    },
+                    {
+                      "role": "stage",
+                      "text": "小陈手机又响了。他把主管刚发来的催办消息转到后台。"
+                    },
+                    {
+                      "role": "caller",
+                      "text": "他说：“下周招商会照排，场地礼品还是负责人先垫。下一场预收款进了公司，才有钱排你们上个月的报销；活动停了，前面的更没法结。”"
+                    },
+                    {
+                      "role": "host",
+                      "text": "你这场都办完了，报销为什么要等下一场的钱？你不垫下一场，这笔还能不能下来？"
+                    },
+                    {
+                      "role": "caller",
+                      "text": "……照他这话，活动不接着办，前面的更没法结。我以前只看见上回的人拿到了，才敢跟着垫。可我真垫出去的六万八，总不能就算了吧？"
                     }
                   ]
                 },
                 {
                   "id": "act1-miss-1",
-                  "question": "你让主管给财务打个电话，催你这笔先付了吗？",
+                  "question": "主管说已经打过招呼。财务那栏有没有留下他催付的记录？",
                   "correct": false,
                   "lines": [
                     {
                       "role": "caller",
-                      "text": "我催过，他说已经打过招呼。我没听到他们怎么说的。"
+                      "text": "没有。我只听他说打过，财务页上什么都没写。"
                     }
                   ],
                   "supplementary": true
@@ -1014,231 +1035,57 @@
                     {
                       "role": "caller",
                       "text": "没有。财务只说等通知，我听到的优先都是主管说的。"
+                    },
+                    {
+                      "role": "host",
+                      "text": "财务没写优先，你就信他一句先办？下周那场，你还准备垫？"
+                    },
+                    {
+                      "role": "caller",
+                      "text": "我想等这笔回来再垫。他答应先办我的，总得让我看见钱吧。"
+                    },
+                    {
+                      "role": "stage",
+                      "text": "小陈手机又响了。他把主管刚发来的催办消息转到后台。"
+                    },
+                    {
+                      "role": "caller",
+                      "text": "他说：“下周招商会照排，场地礼品还是负责人先垫。下一场预收款进了公司，才有钱排你们上个月的报销；活动停了，前面的更没法结。”"
+                    },
+                    {
+                      "role": "host",
+                      "text": "你这场都办完了，报销为什么要等下一场的钱？你不垫下一场，这笔还能不能下来？"
+                    },
+                    {
+                      "role": "caller",
+                      "text": "……照他这话，活动不接着办，前面的更没法结。我以前只看见上回的人拿到了，才敢跟着垫。可我真垫出去的六万八，总不能就算了吧？"
                     }
                   ]
                 }
               ]
-            }
-          },
-          {
-            "id": "act2",
-            "statusLabel": "他翻出主管的费用草单",
-            "title": "包干的钱怎样分",
-            "intro": "选择原话与材料后出示。",
-            "openerFactKeywords": [
-              "付款",
-              "负责人"
-            ],
+            },
             "openerLines": [
               {
-                "role": "caller",
-                "text": "七月四号，财务发过一条供应商付款延后的通知。现在员工也等着。主管还让我们别停活动，说负责人先顶着，月底一起结。"
-              },
-              {
                 "role": "host",
-                "text": "到这时候还让你们垫？"
+                "text": "你那六万八登记了。再看运营和维修这两张，财务有没有叫她们补材料？"
               },
               {
                 "role": "caller",
-                "text": "他说各部门包干，活动照办。八万的费用草单是交财务的，分配那几句是他另发给我的，我都转后台了。"
-              },
-              {
-                "role": "host",
-                "text": "这一万二，有外面的人做过服务吗？"
-              },
-              {
-                "role": "caller",
-                "text": "没有，是说给我四千、给他八千。各部门包干，忙完拿点钱有什么问题？"
+                "text": "她们也在等，我看见了。可主管说会先顾我。别人没交齐手续也说不定，我不想因为她们催得急，就把主管得罪了。"
               }
             ],
-            "revisedFrame": "没有外部服务已在普通交流中问明；他仍声称财务知道真实分配，材料直接反驳这一说法。",
-            "splitAfter": 2,
-            "midSummary": "",
-            "softAnchorResponse": "已选材料",
-            "comparison": [
-              {
-                "statementId": "work-process-complete",
-                "status": "已核对"
-              },
-              {
-                "statementId": "work-three-screenshots",
-                "status": "已核对"
-              },
-              {
-                "statementId": "work-title-matters",
-                "status": "继续追问"
-              },
-              {
-                "statementId": "work-payment-handler-other",
-                "status": "继续追问"
-              },
-              {
-                "statementId": "work-unsent-group-message",
-                "status": "继续追问"
-              }
-            ],
-            "statements": [
-              {
-                "id": "work-handler-promise-cleared-her",
-                "label": "原话",
-                "text": "交给财务的草单已经把我四千、主管八千写明白了，她们都知道这是给我们俩的。",
-                "pressResponse": "他发给我的分配就是这么写的，交上去还能两样？",
-                "presentResponse": "已选材料"
-              },
-              {
-                "id": "work-repeat-screenshot-no-number",
-                "label": "原话",
-                "text": "费用单写的是八万，但我实际刷了六万八，这两个数我知道。",
-                "pressResponse": "我没多刷，后面一万二是另填的协调费。",
-                "presentResponse": "已选材料",
-                "survivesFromAct1": "work-payment-handler-other"
-              },
-              {
-                "id": "work-title-and-payment-split",
-                "label": "原话",
-                "text": "供应商那三笔返费，我没收过。我只等他答应给我的四千。",
-                "pressResponse": "上面怎么分我不管，我才第一次办。",
-                "presentResponse": "已选材料"
-              },
-              {
-                "id": "work-card-debt-needs-formal-entry",
-                "label": "原话",
-                "text": "现在四千我不要了，先把我卡上的六万八还回来行不行？",
-                "pressResponse": "以前说报得多，我觉得划算。真压住卡了，谁还能睡着。",
-                "presentResponse": "已选材料"
-              }
-            ],
-            "decisivePresent": {
-              "maxAttempts": 2,
-              "evidenceId": "case4-department-ledger:q08",
-              "statementId": "work-handler-promise-cleared-her",
-              "boundaryLineKeyPhrases": [
-                "本次协调费没有外部服务，尚未支付；供应商返费是此前批次。"
-              ],
-              "selectionReason": "交财务的草单与另发的私人分配内容不同，直接纠正“财务已被如实告知”的说法；包干本身不能证明违规。",
-              "materialCards": [
-                {
-                  "id": "case4-department-ledger:q08",
-                  "kind": "主管发给陈的分配附注",
-                  "label": "八万费用草单与分配附注",
-                  "excerpt": "交财务的草单：场地 ¥48,000；礼品 ¥20,000；外部协调 ¥12,000；外部服务方及工作记录未填。主管另发给陈的分配附注：主办四千，主管八千。",
-                  "sourceLabel": "第二夜收到的受理页与包干明细"
-                },
-                {
-                  "id": "case4-department-ledger:q09",
-                  "kind": "供应商工作结算及去名回执",
-                  "label": "已结物料费中的三笔个人返费",
-                  "excerpt": "费用计入物料报价；三笔分别 ¥9,000／¥6,000／¥3,000；回执为岗位对应个人收款；原件由供应商保管，完整账号不公开",
-                  "sourceLabel": "第二夜收到的受理页与包干明细"
-                },
-                {
-                  "id": "case4-department-ledger:q07",
-                  "kind": "本场费用受理页",
-                  "label": "六万八已登记，付款待通知",
-                  "excerpt": "已登记实际垫款 ¥68,000；发票照片及刷卡记录已收；原件后补；协调费 ¥12,000 待解释；付款日期：待通知",
-                  "sourceLabel": "第二夜收到的受理页与包干明细"
-                }
-              ],
-              "callerLine": "他发我的时候明明写了！交上去为什么换成外部协调，我怎么知道？又不是我填的。",
-              "hostLine": "发给你的分配写了，给财务的草单没写，还换成外部协调。你刚说财务都知道，是从哪儿看出来的？",
-              "boundaryLine": "本次协调费没有外部服务，尚未支付；供应商返费是此前批次。",
-              "contradiction": "他称财务草单如实写明两人分配，实际草单写外部协调、收款人与服务字段未填，分配只在另发给他的附注中。",
-              "routeAxis": "process-control",
-              "continueLabel": "听他接下来怎么说",
-              "outcomeKind": "contradiction"
-            },
-            "missFeedback": {
-              "evidence": [
-                "他反问：“这张能看出什么？”",
-                "他说：“我还是刚才那个意思。”"
-              ],
-              "statement": [
-                "他问：“我说的有什么不对？”",
-                "他说：“我没改口，就是这么回事。”"
-              ]
-            },
-            "winkLine": "",
-            "inquiry": {
-              "openingLines": [
-                {
-                  "role": "caller",
-                  "text": "七月四号，财务发过一条供应商付款延后的通知。现在员工也等着。主管还让我们别停活动，说负责人先顶着，月底一起结。"
-                },
-                {
-                  "role": "host",
-                  "text": "到这时候还让你们垫？"
-                },
-                {
-                  "role": "caller",
-                  "text": "他说各部门包干，活动照办。八万的费用草单是交财务的，分配那几句是他另发给我的，我都转后台了。"
-                },
-                {
-                  "role": "host",
-                  "text": "这一万二，有外面的人做过服务吗？"
-                },
-                {
-                  "role": "caller",
-                  "text": "没有，是说给我四千、给他八千。各部门包干，忙完拿点钱有什么问题？"
-                },
-                {
-                  "role": "caller",
-                  "text": "交给财务的草单已经把我四千、主管八千写明白了，她们都知道这是给我们俩的。"
-                }
-              ],
-              "options": [
-                {
-                  "id": "act2-miss-1",
-                  "question": "供应商那三笔返费里，有没有你们主管那一笔？",
-                  "correct": false,
-                  "lines": [
-                    {
-                      "role": "caller",
-                      "text": "去掉名字了，我认不出来。我知道的是他跟我说过怎么分这一万二。"
-                    }
-                  ],
-                  "supplementary": true
-                },
-                {
-                  "id": "act2-ask",
-                  "question": "给财务的草单写着外部协调，你从哪里看出财务知道这钱是分给你们两人的？",
-                  "correct": true,
-                  "lines": [
-                    {
-                      "role": "caller",
-                      "text": "他发我的时候明明写了！交上去为什么换成外部协调，我怎么知道？又不是我填的。"
-                    },
-                    {
-                      "role": "host",
-                      "text": "单不是你填的，但多报一万二、你分四千，你转钱前就知道。现在不能把自己说成只替公司垫款，其他全不知情。"
-                    },
-                    {
-                      "role": "caller",
-                      "text": "四千我确实想拿。可六万八也是我真刷出去的。"
-                    },
-                    {
-                      "role": "host",
-                      "text": "所以真实垫款照实催，那一万二也照实说，不能为了分到钱，就替外部协调这四个字打掩护。"
-                    }
-                  ]
-                },
-                {
-                  "id": "act2-miss-2",
-                  "question": "给你的分配消息，是在交财务之前发的吗？",
-                  "correct": false,
-                  "lines": [
-                    {
-                      "role": "caller",
-                      "text": "先发给我的。他之后交上去那张，我也是这次问财务才看到。"
-                    }
-                  ],
-                  "supplementary": true
-                }
-              ]
-            }
+            "comparison": [],
+            "revisedFrame": "他答应提交真实分配，却仍拿主管优先承诺解释跨部门待付；新催办消息才让他意识到后续收款正在填旧报销。"
           }
         ],
         "winkLine": "",
-        "revision": "focused-2026-09-16"
+        "revision": "remaining-edits-2026-09-19",
+        "previousActOrders": {
+          "shameless-2026-09-19": [
+            "act2",
+            "act1"
+          ]
+        }
       },
       "decisivePresent": {
         "maxAttempts": 2,
@@ -1275,15 +1122,15 @@
         "continueLabel": "听他说公司的安排",
         "outcomeKind": "contradiction"
       },
-      "helperHint": "先看其他部门是不是也缺材料，再核八万草单里的费用。",
-      "doubt": "流程拖延的解释开始覆盖不了跨部门待付，包干分成又被称作正常收入。",
-      "contradiction": "所谓外部协调费实际拟分给主办和主管，没有对应外部服务。",
+      "helperHint": "核对三个部门的待付状态，追主管所说的优先付款。",
+      "doubt": "其他部门材料已齐仍未付款，主管的优先承诺没有财务确认。",
+      "contradiction": "主管要求下一场预收款到账才付旧报销，却继续要求负责人个人垫款。",
       "reliability": "partial",
       "casualQuestions": [
         {
-          "question": "你现在最急的是哪一天？",
+          "question": "活动办完了。财务有没有给你一个付款日期，还是只让你等月底开会？",
           "sourceAnchor": "没收到钱",
-          "answer": "信用卡还款日。活动早办完了，卡不会因为公司月底开会就晚扣。",
+          "answer": "没有日期。财务写待通知。卡不会因为公司月底开会就晚扣。",
           "id": "work-split-ownership:casualQuestions:0"
         }
       ],
@@ -1317,16 +1164,16 @@
           "id": "work-split-ownership:questionOptions:0"
         },
         {
-          "question": "你还等着下回活动？",
+          "question": "财务受理页上，有没有写优先付你这一单？",
           "sourceAnchor": "活动负责人写的是我",
-          "suspicionLabel": "还要不要下次活动",
-          "answer": "我现在先想把这回的钱拿回来。",
+          "suspicionLabel": "优先是主管口头说的，还是财务写的",
+          "answer": "没有。财务只写待通知。优先是主管私下跟我说的。",
           "correct": false,
           "routeAxis": "money-flow",
           "routeTone": "caller-skeptical",
           "missReaction": {
             "role": "caller",
-            "text": "我现在先想把这回的钱拿回来。"
+            "text": "没有。财务只写待通知。优先是主管私下跟我说的。"
           },
           "id": "work-split-ownership:questionOptions:1"
         }
@@ -1343,11 +1190,11 @@
           },
           {
             "role": "host",
-            "text": "先把她们的受理页放上来。"
+            "text": "先看三张受理页。你们的钱，各卡在哪儿？"
           },
           {
             "role": "stage",
-            "text": "后台把两份待付受理页与陈自己的新受理页并排打开。供应商按白天约好的范围，补来已结批次的工作结算和去名回执。"
+            "text": "后台把两份待付受理页与陈自己的新受理页并排打开。供货方项目员找到财务留存的回执，按白天说好的遮去账号，经陈转来，与旧批次工作结算放在一起。"
           },
           {
             "role": "stage",
@@ -1364,19 +1211,11 @@
         "lines": [
           {
             "role": "host",
-            "text": "下周活动还让先垫。你准备怎么回？"
+            "text": "六万八接着催。草单和分配消息也一并交，四千的事你昨晚认过了。下周那场还垫不垫？"
           },
           {
             "role": "caller",
-            "text": "不垫了。六万八还没回来，再让我刷卡，我真扛不住。我现在就在群里问付款日期，下周让公司先安排钱。"
-          },
-          {
-            "role": "host",
-            "text": "财务问那一万二，你怎么答？"
-          },
-          {
-            "role": "caller",
-            "text": "主管填的费用草单和发给我的分配消息，我一起交。草单里写外部协调，可他跟我说的是我四千、他八千，不能到最后全推给我。"
+            "text": "不垫了。不是只等我这一笔，前面也在等后面的钱。我现在就在群里问六万八的付款日期，下周让公司先安排钱。"
           },
           {
             "role": "stage",
@@ -1389,7 +1228,7 @@
         ]
       },
       "closureContract": {
-        "entryAnchor": "下周活动还让先垫",
+        "entryAnchor": "下周那场还垫不垫",
         "closerAnchor": "发了。群里一个都没回",
         "adds": "他把实际垫款和预期协调费分开提交，发消息要求付款并拒绝再垫。主管填草单，他提交现有两份材料。",
         "openEdge": "付款日期与财务对协调费的回复。",
@@ -1430,7 +1269,7 @@
       "title": "上一场结算单",
       "selectionMode": "priority",
       "prompt": "这张结算单里，你先问哪一处？",
-      "material": "前主办同意提供去名的结算单及到账截页，日期早于本次活动。",
+      "material": "陈刚才给上一场主办发了消息，请他把以前展示过的到账记录再发一遍，想证明先垫的人确实拿回过钱。对方回道：“别说成我没花钱白拿，实支那页也放上，名字遮掉。”陈随后转来结算单及到账截页，日期早于本次活动。",
       "materialRows": [
         "上一场实际支出｜¥58,000",
         "公司结算到账｜¥70,000",
@@ -1460,13 +1299,13 @@
           "question": "你说他们抢着办，是因为事先讲好了怎么分吗？"
         },
         {
-          "label": "上一场活动有没有办",
+          "label": "多出来的是不是场地超支",
           "correct": false,
-          "feedback": "现场支出和结算都在这里。你要问他哪笔钱？",
-          "reactionLine": "是他经手的。主办怎么交单、财务怎么批的，我没在场。",
+          "feedback": "支出五万八、结了七万都写在这儿。多出来的那笔，先问怎么分，不是有没有办成。",
+          "reactionLine": "不是超支。支出五万八，结了七万。多出来的就是他们叫的协调费。",
           "routeAxis": "outer-thread",
           "id": "work-budget-timeline:option:2",
-          "question": "上一场也是同一个主管批的结算吗？"
+          "question": "差额一万二，是补给场地和礼品的超支吗？"
         }
       ],
       "spokenInquiry": true
@@ -1499,13 +1338,13 @@
           "question": "这张批的是立项，报销受理号拿到了吗？"
         },
         {
-          "label": "有审批编号，就按这个编号查付款日期？",
+          "label": "立项号能不能直接查付款",
           "correct": false,
           "feedback": "先看编号对应的单据。这是立项号，报销受理号还没看到。",
           "reactionLine": "他就给了这一张，我没有别的编号。",
           "routeAxis": "outer-thread",
           "id": "work-approval-missing:option:1",
-          "question": "有审批编号，就按这个编号查付款日期？"
+          "question": "单据编号 LX-2406-018 已经有了。按这个号，能不能直接去查付款日期？"
         },
         {
           "label": "这页没付款回单，财务是不是拒绝报销了？",
@@ -1683,7 +1522,7 @@
   ],
   "caseClosing": {
     "title": "抢着垫钱的人都在催款",
-    "verdict": "谁垫钱谁主办，陈抢的是业绩，也是多报以后能分到的四千。八万草单中一万二没有对应外部服务，主管却用包干和部门惯例解释。这让人更有理由怀疑，活动名目下还藏着私人分配；多部门同时待付，又把下一问推到公司经营和资金去向。",
+    "verdict": "陈想争业绩和四千分成，曾替草单上的外部协调找理由。齐件仍待付的部门受理页，接上主管要求用下一场预收款付旧报销的消息，让他看清并非只差自己的手续。他决定不再垫，发群消息问付款日期，并交出费用草单与分配消息。",
     "beats": [
       {
         "label": "为什么抢",
@@ -1702,7 +1541,8 @@
       "六万八为场地和礼品实际支出，费用已受理但尚无付款日期",
       "陈知道主管准备按八万报，期待其中四千元；当前额外一万二未支付",
       "其他两部门受理页无补件要求仍待付款",
-      "他决定下周不再个人垫款，已在原有付款询问中写明公司须先安排付款"
+      "他决定下周不再个人垫款，已在原有付款询问中写明公司须先安排付款",
+      "主管在第二夜催办消息中说明，上月报销要等下一场预收款，新活动仍由员工先垫；小陈据此放弃继续垫款。"
     ],
     "unresolved": [
       "各笔欠款何时支付、最终能追回多少",
@@ -1766,7 +1606,7 @@
       "afterSceneIndex": 2,
       "speaker": "咨询者",
       "line": "我把那三张图找齐。明天直接问财务，再问问以前办过的人。",
-      "hostLine": "好，问完把原话和单子带回来。",
+      "hostLine": "问清楚谁让垫、分成怎么写。原话和单子带回来。",
       "stageDirection": "他那头传来翻相册的声音，随后只剩忙音。",
       "audioCueId": "sfx.phone.busy"
     },
@@ -1795,12 +1635,12 @@
         {
           "id": "leader-interrupt",
           "speakerProfileId": "case4-leader",
-          "label": "领导批注（未邀）",
-          "summary": "后台同步了一条新批注。",
+          "label": "陈补来的工作群通知",
+          "summary": "收麦后，陈从工作群转来领导刚发的通知。",
           "cost": 0,
           "kind": "interruptToast",
           "npcVerb": "interrupt",
-          "from": "领导通知（后台同步）",
+          "from": "领导通知（陈转发）",
           "text": "二十二号，下周一照常排下一轮活动。各部门按包干额度先顶，旧费用月底一起处理。",
           "grantsInventory": [
             "leader-note-hot"
@@ -1831,7 +1671,7 @@
     "hangupAnchor": "发了三次",
     "hangupLine": "他那头传来翻相册的声音，随后只剩忙音。",
     "hangupAudioCueId": "sfx.phone.busy",
-    "hostHoldLine": "好，问完把原话和单子带回来。",
+    "hostHoldLine": "问清楚谁让垫、分成怎么写。原话和单子带回来。",
     "returnBeat": {
       "lines": [
         {
@@ -1943,42 +1783,42 @@
       "approval-page-reviewed": "立项页不是报销单",
       "leader-note-hot": "领导批注"
     },
-    "dayIntro": "昨晚来电的小陈去问公司财务。你约了一位做企业财务的朋友看他的审批页，随后去供应商门市。部门助理也答应带来活动预算通知。",
+    "dayIntro": "小陈去问公司财务，又把昨晚的连线发给这次活动的礼品供货方项目员和一位前同事，想请他们帮自己说话。两人各有要澄清的事，答应由他拉进私下语音。你先听周会计回电话，他看过你昨晚发的审批页。",
     "dayBudget": 0,
     "minDayScenes": 4,
     "dayScenes": [
       {
         "id": "day-work-finance-window",
-        "label": "工作室·请财务朋友看单据",
+        "label": "工作室·周会计回电话",
         "backdropClass": "day-studio",
         "kind": "studio",
         "body": {
-          "access": "受邀财务经办解释材料类型，不进入栖行内网；具体受理情况由陈本人另向公司财务查询。",
-          "text": "做企业财务的朋友应邀来到工作室。她把小陈的审批页放在桌上。",
+          "access": "周会计长期帮工作室记账，应主播请求看已收到的审批页；不在栖行任职，不查其内部记录。",
+          "text": "你把立项截图发给周会计，问小陈拿这张能不能催报销。他忙完手头的账，给你回了电话。",
           "routeAxis": "money-flow",
           "cast": [
-            "财务朋友",
+            "周会计",
             "你"
           ],
           "beats": [
             {
-              "speaker": "财务朋友",
-              "text": "老林，咖啡给我留了吧？你昨晚问受理号是对的。他今天去查，就带刷卡日期和金额，别重新报一遍。",
+              "speaker": "周会计",
+              "text": "老林，你发的图我看了。昨晚问受理号是对的。他今天去查，就带刷卡日期和金额，别重新报一遍。",
               "id": "rhythm-beat-0"
             },
             {
               "speaker": "你",
-              "text": "桌上这杯。还有个问题：他们说铺的柜子多了就赚钱，可租金现在够不够成本，没人答。",
+              "text": "谢了。他要还是只拿立项截图回来，今天就算白问了。",
               "id": "rhythm-beat-1"
             },
             {
-              "speaker": "财务朋友",
-              "text": "查融资时自己披露的经营数。看使用费和维护成本，别拿押金当收入。",
+              "speaker": "周会计",
+              "text": "让他把财务要补什么也记下来。卡在哪一步、找谁补，别只带回来一句等通知。",
               "id": "rhythm-beat-2"
             },
             {
               "speaker": "你",
-              "text": "我让老方找原稿。晚上先听小陈在财务问到了什么。",
+              "text": "好。晚上听听他到底问到了什么。",
               "id": "rhythm-beat-3"
             }
           ],
@@ -1987,27 +1827,26 @@
             "立项单号拒查记录"
           ],
           "earnedItemId": "财务窗口补报销要求",
-          "sourceNote": "你请一位做企业财务的朋友来工作室看单据。"
+          "sourceNote": "昨晚你请周会计帮忙认单据，他回电话解释这张审批页。"
         }
       },
       {
         "id": "day-work-supplier-visit",
-        "label": "供应商仓库门市",
-        "backdropClass": "day-city",
-        "kind": "visit",
+        "label": "工作室·小陈牵线的供货方语音",
+        "backdropClass": "day-studio",
+        "kind": "studio",
         "body": {
-          "access": "陈给供应商发过书面同意；项目员只谈自己经手的返费表和工作语音，不提供个人收款账户。",
-          "text": "项目员翻出供应商工作结算。点位协调、渠道维护、采购配合三栏都算在物料报价里。去名回执还在整理，眼下先核表上的名目。",
+          "access": "陈用本次采购时留的联系方式找供货方，请其证明费用差额属于正常成本。项目员不肯替他这样解释，愿意在陈拉起的私下语音里出示本方旧结算，澄清额外费用来自客户提出的返费要求。",
+          "text": "小陈先把供货方项目员拉进三人语音。他想请对方证明以前多结一点很正常；项目员却说，别把那些钱全算成他们自己抬的物料价。随后发来旧批次的三栏结算表。",
           "routeAxis": "external-corroboration",
           "cast": [
             "供应商项目员",
-            "仓库管理员",
             "你"
           ],
           "beats": [
             {
               "speaker": "供应商项目员",
-              "text": "以前不是只找一个联系人。招商主管要点位协调费，区域经理要渠道维护费，采购经办又算采购配合费。",
+              "text": "小陈，你别让我证明这都是正常成本。以前不是只找一个联系人：招商主管要点位协调费，区域经理要渠道维护费，采购经办又算采购配合费。",
               "id": "day-work-supplier-visit:beat:0"
             },
             {
@@ -2021,13 +1860,13 @@
               "id": "day-work-supplier-visit:beat:2"
             },
             {
-              "speaker": "仓库管理员",
-              "text": "我经手发货，不经手打款。哪一笔付了、最后进谁账户，我没经手。回执得找项目组。",
+              "speaker": "供应商项目员",
+              "text": "表是我经手的，打款是我们财务办的。我现在手里没回执，不能把表上的数直接说成都付了。",
               "id": "day-work-supplier-visit:beat:3"
             },
             {
               "speaker": "你",
-              "text": "陈那笔还没报下来。你们以前这三笔付给谁了，回执还找得到吗？",
+              "text": "陈那笔还没报下来，不能和你们以前这三笔混在一起。回执你愿意找吗？",
               "id": "day-work-supplier-visit:beat:4"
             },
             {
@@ -2037,12 +1876,12 @@
             },
             {
               "speaker": "你",
-              "text": "三栏表和那条工作语音一起发给我。晚上回执到了，再对每笔到底付给谁。",
+              "text": "先把三栏表和那条工作语音给我。回执找到了，再看以前这几笔究竟付给谁。",
               "id": "day-work-supplier-visit:beat:5"
             },
             {
               "speaker": "供应商项目员",
-              "text": "行。语音里那句“每一层的返费结完，下一批点位才往下走”，也是我们当时催结算说的。回执整理好就补。",
+              "text": "可以，省得最后说是我们凭空加价。语音里“每一层的返费结完，下一批点位才往下走”，就是我们当时催结算说的。回执我去找财务，找到后把账号遮了，发给小陈转你。",
               "id": "day-work-supplier-visit:beat:6"
             }
           ],
@@ -2052,31 +1891,36 @@
           ],
           "earnedItemId": "供应商返费三层表",
           "audioCueId": "voice.case4.supplier-message",
-          "sourceNote": "小陈联系过供应商，对方答应谈谈这几笔费用。"
+          "sourceNote": "小陈联系的是给这场活动供礼品的项目员。对方来澄清费用差额，不肯替陈担保报销。"
         }
       },
       {
         "id": "day-work-breakroom-observe",
-        "label": "工作室·部门助理带来的通知",
-        "backdropClass": "day-office",
-        "kind": "observe",
+        "label": "工作室·小陈拉来的前同事",
+        "backdropClass": "day-studio",
+        "kind": "studio",
         "body": {
-          "access": "部门助理受邀核自己发过的活动预算与报备通知，不代查其他员工的费用。",
-          "text": "助理带来活动分配通知和包干预算页。她只肯说自己发过的那几行，私下怎么分，她不接话。",
+          "access": "陈把连线转给月初离职的原部门助理，并问是不是当时没通知报备要求。她为澄清自己职责接受私下语音，只提供离职前亲自发过的通知和留存预算页，没有当前系统权限。",
+          "text": "下午，小陈又拉起一通语音。这位前同事原来做部门助理，月初已经离职。小陈问她是不是漏发过报备要求，她不高兴，把当时发给他的通知原图翻了出来。",
           "routeAxis": "process-control",
           "cast": [
-            "部门助理",
+            "原部门助理",
             "你"
           ],
           "beats": [
+            {
+              "id": "day-work-breakroom-observe:reason",
+              "speaker": "原部门助理",
+              "text": "小陈，我月初就走了，现在的钱付不付我不知道。你问我是不是没通知，旧消息我还留着，你看清日期。"
+            },
             {
               "speaker": "你",
               "text": "主办为什么都要先垫？",
               "id": "day-work-breakroom-observe:beat:0"
             },
             {
-              "speaker": "部门助理",
-              "text": "分活动就看谁能先垫。费用让各部门主管并起来报，我发通知。",
+              "speaker": "原部门助理",
+              "text": "当时就是谁能先垫，就让谁办。费用让各部门主管并起来报，我只负责发通知。",
               "id": "day-work-breakroom-observe:beat:1"
             },
             {
@@ -2085,7 +1929,7 @@
               "id": "day-work-breakroom-observe:beat:2"
             },
             {
-              "speaker": "部门助理",
+              "speaker": "原部门助理",
               "text": "是这一场的部门包干预算。主办实际花了多少，还得附单。",
               "id": "day-work-breakroom-observe:beat:3"
             },
@@ -2095,18 +1939,18 @@
               "id": "day-work-breakroom-observe:beat:4"
             },
             {
-              "speaker": "部门助理",
+              "speaker": "原部门助理",
               "text": "费用单由主管填，你问他。我不替他解释。",
               "id": "day-work-breakroom-observe:beat:5"
             },
             {
               "speaker": "你",
-              "text": "通知发我吧。主管到底怎么填的，我找陈要那张草单。",
+              "text": "通知我收到了。主管后来到底怎么填，陈，你把自己收到的草单找出来。",
               "id": "day-work-breakroom-observe:beat:6"
             },
             {
-              "speaker": "部门助理",
-              "text": "我发的通知可以给你。费用草单你找他要。",
+              "speaker": "原部门助理",
+              "text": "对，那张单不归我填。别把你们私下答应的事算成我没报。",
               "id": "day-work-breakroom-observe:beat:7"
             }
           ],
@@ -2115,7 +1959,7 @@
             "茶水间责任对照"
           ],
           "earnedItemId": "茶水间立项缺口",
-          "sourceNote": "部门助理带着她发过的通知来见你。"
+          "sourceNote": "小陈请前同事说明旧流程；她愿意说，是不想把主管没办的事算成自己漏通知。"
         }
       },
       {
@@ -2128,7 +1972,7 @@
           "documentId": "case4-payment-ledger",
           "routeAxis": "money-flow",
           "earnedItemId": "她整理的报销时间线",
-          "sourceNote": "小陈和上一场主办把各自的垫款、结算记录交给了你。"
+          "sourceNote": "小陈交来自己的垫款记录，也转来上一场主办补发的实支与到账页；对方要求把自己先垫的钱一起说明。"
         }
       }
     ],
@@ -2232,10 +2076,10 @@
     "allocation": "陈先在部门会上争取做招商会，主管随后将先垫六万八作为交活条件；这是部门惯例，不是首次现金紧张时临时转嫁。",
     "settlement": "部门包干预算八万，真实场地与礼品支出六万八。主管拟以不存在的外部协调服务列支一万二，分陈四千、自己八千；陈知道多报和分成，但开场只讲业绩。此前主办给他看过实支五万八、结算七万的到账样本。",
     "submission": "6月27日陈交发票照片及刷卡记录，主管提交八万费用草单。财务登记真实六万八、另挂一万二待解释，原件可后补；主管只回旧立项页。",
-    "arrears": "7月4日供应商延付通知出现；7月18日第二夜由同事授权受理页确认运营四万二、维修九千六材料齐全仍待付款。不是所有欠款都由缺件造成。",
+    "arrears": "7月4日供应商延付通知出现；7月18日第二夜由同事授权受理页确认运营四万二、维修九千六材料齐全仍待付款。不是所有欠款都由缺件造成。 第二夜主管新发消息明确：上月报销要等下一场预收款，新活动费用仍让负责人先垫；这条消息与各部门齐件待付一起，揭开持续用后续进款顶旧缺口的做法。",
     "middleManagement": "部门按活动/点位包干，中层利用虚列协调费及供应商返费取私利；包干本身不是侵占的证明。已结批次供应商工作结算和去名回执证明部分返费付给岗位对应人员，当前活动一万二尚未支付。",
     "corporate": "融资稿披露的试点租金收入低于点位分成、维护和折旧，包干与返费增加损耗。用户押金列为应退负债，却经关联往来归集到宸直。宸直用押金为关联项目配资并以资产继续融资；这一作者事实只在最终玩家打开处置通报后确证。",
-    "boundary": "小陈没有集团账目，不能在连线中说出押金去向。职场案结束只确认跨部门待付和部分私人分成；当前六万八最终何时追回未知。"
+    "boundary": "小陈没有集团账目，不能在连线中说出押金去向。本通听见主管明确要求后续收款填旧报销，结合跨部门齐件待付揭开公司滚动填缺口；集团资金归集及最终处置仍在案后，六万八何时追回未知。"
   },
   "oneTimeTic": ""
 }

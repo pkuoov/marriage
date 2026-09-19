@@ -5,7 +5,7 @@ description: Write or revise case dialogue for 《深夜热线：直播间侦探
 
 # Case Scriptwriting
 
-先读 [当前项目方向](references/current-project-direction.md)。这是项目创作约定的唯一维护入口；本 skill 负责怎样把它写进对白。用户当次要求优先，旧评审、小样和历史台词不自动成为新案的事实或硬性模板。
+先读 [当前项目方向](references/current-project-direction.md)。这是项目创作约定的唯一维护入口；本 skill 负责怎样把它写进对白。用户当次要求优先，旧评审、小样和历史台词不自动成为新案的事实或硬性模板。来电人提出不讲理的要求时，先读 [无赖来电：谎盖谎](references/caller-shameless-demand.md)。谎盖谎主链已接入。还没改进可玩路径的台词、三处逻辑和序章桌边，按 [未改项完整 Prompt](references/remaining-edits-prompt.md) 改，不要再按旧分单各做一遍。对质里钉错后再追一层显而易见的可能性，按 [两连问跨案 Prompt](references/two-beat-followup-prompt.md)。
 
 ## 按改动范围工作
 
@@ -25,7 +25,7 @@ description: Write or revise case dialogue for 《深夜热线：直播间侦探
 
 ## 写人物攻防
 
-主播有经验、好奇心和脾气，可以顺着对方的理由聊几句，让她为证明自己有理而多讲，再抓她自己补出的不一致。也可以直接追问、阴阳或短暂误会。不要固定为“共情—核实—判断—补边界”。
+主播有经验、好奇心和脾气，可以顺着对方的理由聊几句，让她为证明自己有理而多讲，再抓她自己补出的不一致。也可以直接追问、阴阳或短暂误会。发现不对以后，对质里可以两连问：先钉已经露出来的错，再问一层显而易见能推出来的可能性，逼对方沉默或反驳；这仍是同一层，不是另开秘密。两连问写在 `lines` 的 host，不要写进 `entryQuestion` / `question` / `hostLine`。不要固定为“共情—核实—判断—补边界”。
 
 来电人被发现问题后继续维护原诉求。她可以承认已经藏不住的事实，再争用途、争承诺、怪别人、挑词或挂断；不要替主播总结自己的动机，也不要为了凑多层伪装让她反复否认已经认过的事。对方给出成立的解释时，主播应调整判断。
 

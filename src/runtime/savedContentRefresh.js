@@ -2,7 +2,7 @@ import { earnedDocumentQuestionsFor } from "./documentMarkModel.js";
 import { sceneDialogueOptions } from "../ui/sceneQuestions.js";
 import { answerKey, caseKey, evidenceAnswerKey, evidenceChecksFor } from "./sceneAdvance.js";
 import { statementLinesFromText, statementMissReactionForOption, statementStageForScene } from "./statementReviewModel.js";
-import { testimonyWallKey } from "./decisivePresentModel.js";
+import { normalizeTestimonyWallProgress, testimonyWallKey } from "./decisivePresentModel.js";
 import { remapReviewLines } from "./savedContentIdentity.js";
 import { completedChoicePrefix, nextSequentialChoice, sceneQuestionSequence } from "./sequentialChoices.js";
 import { callerQuestionProgress } from "./callerQuestionSequence.js";
@@ -123,9 +123,14 @@ export function refreshSavedExchangeCopy(state = {}, briefs = [], previousBriefs
       const wallScreens = ["testimonyWall", "testimonyResponse", "testimonyMaterials", "decisivePresentTarget", "decisivePresentHit", "decisivePresentMiss"];
       if (previous && revision && revision !== oldRevision && caseKey(currentBrief) === caseKey(brief) && wallScreens.includes(state.scene)) {
         const wallKey = testimonyWallKey(brief, scene, index);
-        delete next.testimonyWallProgress[wallKey];
-        for (const presentKey of Object.keys(next.decisivePresentProgress)) {
-          if (presentKey === wallKey || presentKey.startsWith(`${wallKey}:act`)) { delete next.decisivePresentProgress[presentKey]; delete next.evidenceInquiryPicks[presentKey]; delete next.evidenceInquiryHeard[presentKey]; delete next.evidenceInquiryAsked[presentKey]; }
+        const previousActOrder = scene.testimonyWall?.previousActOrders?.[oldRevision];
+        if (previousActOrder) {
+          remapRetainedTestimonyActs(next, state, wallKey, previousActOrder, scene.testimonyWall.acts);
+        } else {
+          delete next.testimonyWallProgress[wallKey];
+          for (const presentKey of Object.keys(next.decisivePresentProgress)) {
+            if (presentKey === wallKey || presentKey.startsWith(`${wallKey}:act`)) { delete next.decisivePresentProgress[presentKey]; delete next.evidenceInquiryPicks[presentKey]; delete next.evidenceInquiryHeard[presentKey]; delete next.evidenceInquiryAsked[presentKey]; }
+          }
         }
         delete next.caseActionLog[caseKey(brief)]?.[`version:${index}`];
         next.dialogueProgress[`${caseKey(brief)}:sceneReview`] = index;
@@ -272,6 +277,34 @@ export function refreshSavedExchangeCopy(state = {}, briefs = [], previousBriefs
   next.lastReaction = null;
   next.lastPityLine = null;
   return next;
+}
+
+// An explicitly declared removal/reorder keeps the surviving inquiry's own
+// answer and reading state; a hit on a deleted act cannot answer its replacement.
+function remapRetainedTestimonyActs(next, state, wallKey, previousOrder, acts) {
+  const old = normalizeTestimonyWallProgress(state.testimonyWallProgress?.[wallKey]);
+  const oldIndexFor = (act) => previousOrder.indexOf(act.id) + 1;
+  const keyFor = (number) => number === 1 ? wallKey : `${wallKey}:act${number}`;
+  const maps = ['decisivePresentProgress', 'evidenceInquiryPicks', 'evidenceInquiryHeard', 'evidenceInquiryAsked'];
+  for (const field of maps) {
+    for (const key of Object.keys(next[field])) {
+      if (key === wallKey || key.startsWith(`${wallKey}:act`)) delete next[field][key];
+    }
+    acts.forEach((act, index) => {
+      const number = oldIndexFor(act);
+      const value = number > 0 ? state[field]?.[keyFor(number)] : undefined;
+      if (value !== undefined) next[field][keyFor(index + 1)] = value;
+    });
+  }
+  const currentId = previousOrder[old.act - 1];
+  const retainedIndex = acts.findIndex(act => act.id === currentId);
+  const pendingIndex = acts.findIndex(act => !old.completedActs.includes(oldIndexFor(act)));
+  const act = (retainedIndex >= 0 ? retainedIndex : Math.max(0, pendingIndex)) + 1;
+  const actProgress = Object.fromEntries(acts.map((item, index) => [String(index + 1), old.actProgress[String(oldIndexFor(item))] ?? {}]));
+  next.testimonyWallProgress[wallKey] = normalizeTestimonyWallProgress({
+    act, preludeSeen: old.preludeSeen, actProgress,
+    completedActs: acts.flatMap((item, index) => old.completedActs.includes(oldIndexFor(item)) ? [index + 1] : [])
+  });
 }
 
 function uniqueMatch(items, predicate) {

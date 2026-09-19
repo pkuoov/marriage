@@ -591,11 +591,13 @@ async function runCafePrologue() {
       if (!legalText.includes("把家里的账查清")) throw Error("the husband must state the financial demand before parentage");
       await assertCafeViewport(page, viewport, "legal request board");
       if (await page.locator("[data-cafe-legal-brief]").count()) await click(page, "[data-cafe-legal-brief]");
-      const parentageText = legalText + await drainDialogue(page, {});
-      assertAuthoredTranscript(parentageText, prologue.cafe.parentageBlockLines, "parentage argument");
-      if (parentageText.includes("个人委托") || parentageText.includes("最可行的一步")) throw new Error("the private testing path must not be explained in front of the wife and camera");
-      assertAuthoredTranscript(parentageText, prologue.cafe.cameraBreakLines, "recording dispute");
-      if (parentageText.includes("礼物") || parentageText.includes("直播间") || parentageText.includes("停播")) throw new Error("the cafe is a pre-recorded negotiation and must not expose live-gifting language");
+      // The old third-discussion step remains a valid recording exit.
+      await page.reload();
+      await click(page, '[data-continue-story]');
+      const closingText = legalText + await drainDialogue(page, {});
+      if (/鉴定|个人委托|敢不敢/.test(closingText)) throw new Error('the table must close without a third parentage inquiry');
+      assertAuthoredTranscript(closingText, prologue.cafe.cameraBreakLines, "recording dispute");
+      if (closingText.includes("礼物") || closingText.includes("直播间") || closingText.includes("停播")) throw new Error("the cafe is a pre-recorded negotiation and must not expose live-gifting language");
       await assertCafeViewport(page, viewport, "recording pressure choices");
       await click(page, `[data-cafe-pressure="${viewport.pressureChoice}"]`);
       const aftermathText = await drainDialogue(page, {});
@@ -2993,7 +2995,7 @@ async function runFocusedCredit() {
       if (snapshot.scene === "storyInterlude") {
         if (!wrongLoan || !retriedLoan || !reloaded) throw new Error("retry/reload regression was not exercised");
         const text = transcript.join("\n");
-        for (const phrase of ["酒水", "后台", "两年前", "二十万", "一万一千六百", "反正八万我不转"]) {
+        for (const phrase of ["酒水", "后台", "两年前", "二十万", "反正八万我不转"]) {
           if (!text.includes(phrase)) throw new Error(`route never rendered ${phrase}`);
         }
         if (visits.some(scene => ["deepFollowup", "investigationBackflow", "caseClosure"].includes(scene))) throw new Error("compact closing reopened a retired completion stage");
@@ -3082,7 +3084,7 @@ async function runSixReviewedCases() {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     const page = await context.newPage(); page.setDefaultTimeout(browserActionTimeoutMs);
     const errors = []; page.on('pageerror', e => errors.push(e.message));
-    const transcript = []; let reloaded = false, care = false, done = false, wrongMaterial = false;
+    const transcript = []; let reloaded = false, care = false, done = false, wrongMaterial = false, migrationChecked = false;
     try {
       await openCaseAtChapter(page, chapter, 'six-review');
       for (let step = 0; step < 160; step++) {
@@ -3090,9 +3092,19 @@ async function runSixReviewedCases() {
         const save = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
         const body = await page.locator('body').innerText(); transcript.push(body);
         smokeProgress(`${packet.caseId} ${step}: ${save.scene}`);
+        if (save.scene === 'dayScene') {
+          const daySceneId = save.caseOvernights?.[save.caseBriefs[chapter - 1].id]?.activeDaySceneId;
+          if (daySceneId) await page.screenshot({ path: resolve(directory, `${packet.caseId}-${daySceneId}.png`), animations: 'disabled' });
+        }
         if (care && !['careChoice','caseClosure'].includes(save.scene)) { done = true; break; }
         if (['deepFollowup','investigationBackflow','caseClosure'].includes(save.scene)) throw Error(`retired stage ${save.scene}`);
-        if (await testimonyFlowIsVisible(page)) { transcript.push(await completeTestimonyWall(page) ?? ""); reloaded = true; continue; }
+        if (await testimonyFlowIsVisible(page)) {
+          if (chapter === 2 && !migrationChecked) {
+            await verifyWorkplaceActMigration(page, packet, chapter);
+            migrationChecked = true;
+          }
+          transcript.push(await completeTestimonyWall(page) ?? ""); reloaded = true; continue;
+        }
         if (await page.locator('[data-evidence-check]').count()) {
           const ci = Number((await page.locator('[data-evidence-check]').first().getAttribute('data-evidence-check')).split(':')[0]);
           const activeAction = packet.nightStructure.interlude.actions.find(action => action.id === save.caseNights?.[save.caseBriefs[chapter-1].id]?.activeActionId);
@@ -3125,7 +3137,19 @@ async function runSixReviewedCases() {
       }
       if (!done || !reloaded || (chapter === 2 && !wrongMaterial)) throw Error('main case did not complete reload, material retry and closing');
       const text=transcript.join('\n');
-      const phrases = chapter===2 ? ['主管填的费用草单','他发出两条群消息'] : chapter===3 ? ['第二路麦克风接通','八万四','共同账户','我自己跟我妈说'] : ['合同','十二万','上礼拜他给我修刘海','这次不发半张了'];
+      const normalizedText = text.replace(/\s/g, '');
+      for (const dayScene of packet.overnightStructure?.dayScenes ?? []) {
+        if (!dayScene.body?.beats?.length) continue;
+        const source = dayScene.body.sourceNote?.replace(/\s/g, '');
+        if (!source || !normalizedText.includes(source)) throw Error(`NPC source not visible: ${dayScene.id}`);
+      }
+      if (chapter === 3) {
+        const firstNightQuestion = packet.sceneVersions[packet.nightStructure.segment1SceneIndexes[0]].entryQuestion;
+        const secondNightQuestion = packet.sceneVersions[packet.nightStructure.segment2SceneIndexes[0]].entryQuestion;
+        const first = text.indexOf(firstNightQuestion), second = text.indexOf(secondNightQuestion);
+        if (first < 0 || second <= first) throw Error('profile must play its authored first night before its second night');
+      }
+      const phrases = chapter===2 ? ['费用草单与分配消息一并提交','他发出两条群消息'] : chapter===3 ? ['第二路麦克风接通','八万四','共同账户','我自己跟我妈说'] : ['合同','十二万','上礼拜他给我修刘海','这次不发半张了'];
       for (const phrase of phrases) if (!text.includes(phrase)) throw Error(`missing required dialogue ${phrase}`);
       if (errors.length) throw Error(errors.join('\n'));
       await writeFile(resolve(directory,`${packet.caseId}-route.txt`),text);
@@ -3144,6 +3168,19 @@ async function runSixReviewedCases() {
         transcript.push(await drainDialogue(page,{}));
         transcript.push(await page.locator('body').innerText());
         if(await page.locator('[data-quick-select]:visible').count()){done=true;break;}
+        if(packet.focusedInquiry && !reloaded && await page.locator('[data-quick-next-confrontation]:visible').count()) {
+          const position = () => page.evaluate(() => {
+            const q = JSON.parse(localStorage.getItem('livestream-detective-save-v1')).quickDetective;
+            return [q.scene, q.roundIndex, q.activeConfrontationId, q.confrontationLineIndex, q.resolvedConfrontationIds];
+          });
+          const before = await position();
+          await page.reload();
+          if(await page.locator('[data-continue-story]:visible').count()) await click(page,'[data-continue-story]');
+          if(JSON.stringify(before) !== JSON.stringify(await position())) throw Error('quick resume changed current exchange');
+          reloaded = true;
+          await page.screenshot({path:resolve(directory,`${id}-inquiry.png`)});
+          continue;
+        }
         if(await page.locator('[data-quick-issue]:visible').count()) {
           if(!reloaded){const before=await page.locator('[data-quick-issue]').allTextContents();await page.reload();if(await page.locator('[data-continue-story]:visible').count())await click(page,'[data-continue-story]');await drainDialogue(page,{});if(JSON.stringify(before)!==JSON.stringify(await page.locator('[data-quick-issue]').allTextContents()))throw Error('quick resume lost question');reloaded=true;await page.screenshot({path:resolve(directory,`${id}-inquiry.png`)});}
           const values=await page.locator('[data-quick-issue]').evaluateAll(nodes=>nodes.map(n=>n.dataset.quickIssue));
@@ -3157,12 +3194,16 @@ async function runSixReviewedCases() {
         await click(page,selector,soloFinal ? soloEndingChoice : 0);clicked=true;break;}
         if(!clicked)throw Error(`quick stuck: ${await page.locator('body').innerText()}`);
       }
-      if(!done)throw Error('quick did not finish');if(packet.focusedInquiry&&!reloaded)throw Error('quick not resumed');if(id==='02-one-missed-message'&&!wrong)throw Error('quick retry not exercised');if(errors.length)throw Error(errors.join('\n'));
+      if(!done)throw Error('quick did not finish');if(packet.focusedInquiry&&!reloaded)throw Error('quick not resumed');if(hasReachableQuickMiss(packet) && !wrong)throw Error('reachable quick retry not exercised');if(errors.length)throw Error(errors.join('\n'));
       await writeFile(resolve(directory,`${id}-route.txt`),transcript.join('\n'));
       await click(page,'[data-quick-select]');if(!await page.locator(`.is-complete[data-quick-case-id="${id}"]`).count())throw Error('completion missing');
       smokeProgress(`PASS ${id}: complete and saved${packet.format === 'solo-commentary' ? ` (ending ${++soloEndingChoice})` : ''}`);
     }catch(e){await page.screenshot({path:resolve(directory,`${id}-failure.png`),fullPage:true});throw e;}finally{await context.close();}
   }
+}
+
+function hasReachableQuickMiss(packet) {
+  return packet.disclosureRounds.some(round => (round.requiredConfrontationIds ?? []).some(id => !(round.autoConfrontationIds ?? []).includes(id)) && (round.issueOptionIds ?? []).some(id => !packet.issueOptions.find(option => option.id === id)?.confrontationId));
 }
 
 async function playFocusedQuickCase(page, viewport, packet, alreadySelected = false) {
@@ -3174,7 +3215,7 @@ async function playFocusedQuickCase(page, viewport, packet, alreadySelected = fa
     transcript.push(await drainDialogue(page,{}));
     transcript.push(await page.locator('body').innerText());
     if(await page.locator('[data-quick-select]:visible').count()) {
-      if(packet.id==='02-one-missed-message'&&!wrong)throw Error('wrong-question path not exercised');
+      if(hasReachableQuickMiss(packet)&&!wrong)throw Error('wrong-question path not exercised');
       for(const line of packet.ending.summaryPages.flatMap(p=>p.lines)) if(!transcript.join('\n').includes(line.text)) throw Error(`ending skipped: ${line.text}`);
       return;
     }
@@ -3253,4 +3294,41 @@ async function completeFocusedEvidenceInquiry(page) {
   if (await page.locator('[data-inquiry-continue]:visible').count()) await click(page,'[data-inquiry-continue]');
   verifiedTestimonyActs.add(`${packet.caseId}/${act.id}`);
   return lines.join('\n');
+}
+
+async function verifyWorkplaceActMigration(page, packet, chapter) {
+  const baseline = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+  const sceneIndex = packet.sceneVersions.findIndex(scene => scene.id === 'work-split-ownership');
+  const scene = packet.sceneVersions[sceneIndex];
+  const revision = Object.keys(scene.testimonyWall.previousActOrders)[0];
+  const caseId = baseline.caseBriefs[chapter - 1].id;
+  const key = `${caseId}:testimony:${scene.id}`;
+  for (const oldAct of [1, 2]) {
+    const legacy = structuredClone(baseline);
+    for (const brief of [legacy.caseBriefs[chapter - 1], legacy.caseBrief].filter(Boolean)) {
+      if (brief.contentIdentity) brief.contentIdentity.sceneVersions[sceneIndex].testimonyRevision = revision;
+      if (brief.sceneVersions) brief.sceneVersions[sceneIndex].testimonyWall.revision = revision;
+    }
+    legacy.scene = 'testimonyWall';
+    legacy.dialogueReading = null;
+    legacy.testimonyWallProgress = { ...legacy.testimonyWallProgress, [key]: { act: oldAct, preludeSeen: true, completedActs: oldAct === 2 ? [1] : [] } };
+    legacy.decisivePresentProgress = { ...legacy.decisivePresentProgress, [key]: { resolved: true } };
+    legacy.evidenceInquiryPicks = { ...legacy.evidenceInquiryPicks, [key]: 'act2-ask' };
+    if (oldAct === 2) {
+      legacy.decisivePresentProgress[`${key}:act2`] = { resolved: true };
+      legacy.evidenceInquiryPicks[`${key}:act2`] = 'act1-ask';
+    }
+    await page.evaluate(save => localStorage.setItem('livestream-detective-save-v1', JSON.stringify(save)), legacy);
+    await page.reload(); await click(page, '[data-continue-story]');
+    const text = await drainDialogue(page, {});
+    const migrated = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+    if (migrated.testimonyWallProgress[key]?.act !== 1) throw Error('workplace old act did not map to the remaining inquiry');
+    if (migrated.evidenceInquiryPicks[key] !== (oldAct === 2 ? 'act1-ask' : undefined)) throw Error('workplace migration lost the retained answer or reused the deleted answer');
+    if (oldAct === 2 && !text.includes('下一场预收款')) throw Error('retained resolved answer did not render after migration');
+    if (oldAct === 1 && !await page.locator('[data-evidence-inquiry="act1-ask"]').count()) throw Error('deleted act save cannot continue to the remaining inquiry');
+    if (JSON.stringify(migrated.caseBudgets) !== JSON.stringify(baseline.caseBudgets)) throw Error('migration changed unrelated budgets');
+  }
+  await page.evaluate(save => localStorage.setItem('livestream-detective-save-v1', JSON.stringify(save)), baseline);
+  await page.reload(); await click(page, '[data-continue-story]'); await drainDialogue(page, {});
+  smokeProgress('PASS workplace legacy deleted/retained act saves resume without losing unrelated progress');
 }

@@ -166,16 +166,11 @@
       "issueOptionIds": [
         "sales-voice"
       ],
-      "requiredConfrontationIds": [
-        "sales-soft-talk"
-      ],
+      "requiredConfrontationIds": [],
       "noClueReaction": {
         "role": "caller",
         "text": "你先听我把这段说完。"
-      },
-      "autoConfrontationIds": [
-        "sales-soft-talk"
-      ]
+      }
     },
     {
       "id": "family-version",
@@ -198,27 +193,6 @@
       }
     },
     {
-      "id": "personal-concern",
-      "label": "她接着说自己的顾虑",
-      "patience": 3,
-      "turnIds": [
-        "fertility-example"
-      ],
-      "issueOptionIds": [
-        "report-disclosure"
-      ],
-      "requiredConfrontationIds": [
-        "fertility-slip"
-      ],
-      "noClueReaction": {
-        "role": "caller",
-        "text": "你先听我把这段说完。"
-      },
-      "autoConfrontationIds": [
-        "fertility-slip"
-      ]
-    },
-    {
       "id": "actual-request",
       "label": "重新问找人的要求",
       "patience": 3,
@@ -227,20 +201,37 @@
         "ordinary-match",
         "ordinary-caution",
         "home-price",
-        "borrow-host-trust"
+        "fertility-example"
       ],
       "issueOptionIds": [
         "mortgage-pressure",
-        "soft-talk"
+        "report-disclosure"
       ],
       "requiredConfrontationIds": [
-        "hidden-standards",
-        "useful-soft-talk"
+        "hidden-standards"
       ],
       "noClueReaction": {
         "role": "caller",
         "text": "你先听我把这段说完。"
       }
+    },
+    {
+      "id": "endorsement-request",
+      "label": "她还要一句推荐",
+      "turnIds": [
+        "borrow-host-trust"
+      ],
+      "issueOptionIds": [
+        "soft-talk"
+      ],
+      "requiredConfrontationIds": [
+        "useful-soft-talk"
+      ],
+      "noClueReaction": {
+        "role": "caller",
+        "text": "你就先替我说句好话不行吗？"
+      },
+      "patience": 3
     }
   ],
   "turns": [
@@ -271,23 +262,23 @@
     },
     {
       "id": "which-dad",
-      "host": "那你爸还挺疼你的，自己身体这样，还先把你的房子解决了。",
+      "host": "一百万从家里出，你现在还有贷。这笔钱当时怎么说的？",
       "caller": "他在我身上一直挺舍得的。钱的事其实都不是重点，我也不会让男方养我。"
     },
     {
       "id": "fertility-example",
-      "host": "你说遇上事一起想办法，具体是指什么？",
+      "host": "房贷是钱的事。你前面说遇事别一听就走，还怕什么？",
       "caller": "遇上事不光是钱的事。哪怕以后他身体不好，或者是我不能生孩子，也能商量着过，别一听就走。"
     },
     {
       "id": "low-standards",
-      "host": "家里的情况和检查这件事，我听到了。再说找人，你现在具体想找什么样的？",
-      "caller": "一个月四五千就行，年龄大我五岁以内，没房也可以。学历、长相我真不挑，人品好就行。"
+      "host": "出钱的不是你亲爸，这点问清了。你今晚还想让我怎么帮你？",
+      "caller": "还是想让你介绍啊。以前是谁帮我，跟我现在找对象有什么关系？一个月四五千就行，年龄大我五岁以内，没房也可以。学历、长相我真不挑，人品好就行。"
     },
     {
       "id": "ordinary-match",
-      "host": "我这还真有个，二十九，月薪六千，在物流公司做调度，没房。要不要先认识一下？",
-      "caller": "您节目里之前提过一个，二十九，月薪六千。我也看了，先别急吧。就这么几句话，我也不知道他平时是什么样的人。加了以后不合适，再删也挺麻烦的。"
+      "host": "登记表上有个，二十九，月薪六千，在物流公司做调度，没房。要不要先认识一下？",
+      "caller": "先别急吧。就这么几句话，我也不知道他平时是什么样的人。加了以后不合适，再删也挺麻烦的。"
     },
     {
       "id": "ordinary-caution",
@@ -321,18 +312,18 @@
       "question": "你前面说亲爸伤了腰，只能偶尔替人看店。后面又说‘爸爸’给了你一百万。我问清楚：给钱的到底是不是你亲爸？"
     },
     {
-      "id": "report-disclosure",
-      "label": "为什么偏偏拿自己不能生孩子举例",
-      "sourceAnchor": "或者是我不能生孩子",
-      "confrontationId": "fertility-slip",
-      "question": "你说到生孩子。这是希望找人前先谈清的事，还是你现在正有这个顾虑？"
-    },
-    {
       "id": "mortgage-pressure",
       "label": "分担房贷是要求，还是希望",
       "sourceAnchor": "能帮我减轻点房贷压力",
       "confrontationId": "hidden-standards",
       "question": "你说月薪四五千也行，自己的工资还完房贷又剩不了多少。你希望对方每月替你还多少？"
+    },
+    {
+      "id": "report-disclosure",
+      "label": "为什么偏偏拿自己不能生孩子举例",
+      "sourceAnchor": "或者是我不能生孩子",
+      "confrontationId": "fertility-slip",
+      "question": "你说到生孩子。这是希望找人前先谈清的事，还是你现在正有这个顾虑？"
     },
     {
       "id": "soft-talk",
@@ -416,7 +407,7 @@
         },
         {
           "role": "host",
-          "text": "那刚才我说你亲爸身体这样还给你买房，你怎么不纠正？给钱这位跟你是什么关系？"
+          "text": "给这一百万的，跟你是什么关系？"
         },
         {
           "role": "caller",
@@ -447,11 +438,11 @@
         },
         {
           "role": "host",
-          "text": "不用在这里交检查。你想让我介绍人，这个顾虑准备什么时候跟对方谈？"
+          "text": "这事你打算什么时候跟对方说？要是一直不说，还让我替你介绍？"
         },
         {
           "role": "caller",
-          "text": "见面聊得来，我会跟他说。我以前查过，医生说自然怀孕的机会低一点，又没说一定不能。我还年轻，后面也可以再复查。"
+          "text": "谁说我一直不说了？见面聊得来，我会跟他说。我以前查过，医生说自然怀孕的机会低一点，又没说一定不能。我还年轻，后面也可以再复查。"
         }
       ],
       "kind": "conversation"
@@ -514,7 +505,7 @@
         },
         {
           "role": "host",
-          "text": "介绍之前我不了解你，这句话我说不了。"
+          "text": "我今晚才听清你真正要什么。拿我的嘴去替你说可靠，这事我不干。"
         },
         {
           "role": "caller",
@@ -533,7 +524,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "介绍的事先算了。真要找对象，把房贷和要求当面跟人家说。"
+            "text": "介绍我不做。可靠我也不说。房贷、要求和谁出的钱，你自己跟人家讲。"
           },
           {
             "role": "caller",
@@ -569,11 +560,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "今天我了解的还不够，先不替你介绍，也不替你向别人保证。"
-          },
-          {
-            "role": "host",
-            "text": "真想跟谁认真谈，就把该让对方知道的事说清楚。现在不想聊的，我们先不聊。"
+            "text": "介绍我不做。可靠我也不说。"
           }
         ]
       }
@@ -581,5 +568,5 @@
   },
   "sourceBoundary": "本案为原创虚构文本。作者设定沿长期经济供养、个人生育顾虑与接续生活负担展开；玩家由具体说辞、拒答和第二轮择偶要求叠加判断，不需要她亲口认下供养关系。当前资助是否继续、具体交换条件与医学成因未披露，不从职业或检查单项推导性经历，不复刻参考视频中的真实人物。",
   "focusedInquiry": true,
-  "contentRevision": "focused-2026-09-16"
+  "contentRevision": "shameless-2026-09-19"
 }

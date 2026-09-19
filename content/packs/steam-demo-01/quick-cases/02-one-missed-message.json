@@ -87,7 +87,7 @@
   "whyTonight": "她通过婚恋机构认识了一位创业者。两个人相处一个月，男方却在一次周末聚会后停下了联系。她认为自己只是有一晚喝多了、漏回一条消息，想问主播是不是自己对情绪交流要求太高。",
   "helpRequest": {
     "kind": "explanation",
-    "request": "她想理解男方为什么突然退出，先获得对委屈和交流需要的支持；几轮解释后又想要一句能发给男方、争取恢复联系的话。她希望保住自己认真对待关系的形象，但现稿没有确认她要求男方先道歉。"
+    "request": "她想理解男方为什么突然退出，先获得对委屈和交流需要的支持；几轮解释后又想要一句能发给男方、争取恢复联系的话。收麦时她要求男方先为口气道歉。"
   },
   "callerStake": "她想追回一个经济条件、婚姻意愿都符合预期的对象，同时保住自己在这段关系里‘重感情、只想被理解’的说法。只要把分开归因于男方不懂情绪、介意一条消息，她就不用正面面对自己连续几次缩小那两晚的事实。",
   "callerIntentProfile": {
@@ -186,17 +186,14 @@
         "missed-message-version"
       ],
       "issueOptionIds": [
-        "emotion-or-display",
-        "flower-request",
         "missed-message-state",
         "founder-busy"
       ],
       "requiredConfrontationIds": [
-        "care-or-display",
         "message-or-drunkenness"
       ],
       "autoConfrontationIds": [
-        "care-or-display"
+        "message-or-drunkenness"
       ]
     },
     {
@@ -209,19 +206,27 @@
       "patience": 3,
       "turnIds": [
         "changed-night-version",
-        "who-ordered-drinks",
+        "who-ordered-drinks"
+      ],
+      "issueOptionIds": [
+        "third-person"
+      ],
+      "requiredConfrontationIds": [
+        "third-person-at-table"
+      ]
+    },
+    {
+      "id": "explanation-to-him",
+      "label": "她怎样向男方解释",
+      "patience": 3,
+      "turnIds": [
         "how-he-knew-version"
       ],
       "issueOptionIds": [
-        "third-person",
         "how-he-knew"
       ],
       "requiredConfrontationIds": [
-        "third-person-at-table",
         "how-he-knew"
-      ],
-      "previousRoundIds": [
-        "explanation-to-him"
       ]
     },
     {
@@ -288,7 +293,7 @@
     },
     {
       "id": "changed-night-version",
-      "host": "你后来怎么回去的？",
+      "host": "早上七点多才回那条消息。你当时人在哪？",
       "caller": "醒来已经在妹妹家了，回去那段记不太清。桌上混着点了几种鸡尾酒，还有龙舌兰，后面又有人点了一轮。"
     },
     {
@@ -323,7 +328,7 @@
       "label": "情绪交流和公开展示",
       "sourceAnchor": "还有人说羡慕",
       "confrontationId": "care-or-display",
-      "question": "花那张照片旁边的包，是你自己买的，还是他送的？"
+      "question": "那束花是你自己开口要的，还是他先送的？"
     },
     {
       "id": "flower-request",
@@ -340,7 +345,7 @@
           "text": "我高兴啊，可也想知道他为什么愿意送。他就说你喜欢就买了，后面又没话。"
         }
       ],
-      "question": "花那张照片旁边的包，是你自己买的，还是他送的？"
+      "question": "花是你先开口要的。他真送来以后，你还是觉得缺点什么？"
     },
     {
       "id": "missed-message-state",
@@ -365,14 +370,14 @@
     },
     {
       "id": "founder-busy",
-      "label": "创业者是不是都没时间听歌",
+      "label": "漏回那六分钟，是信号不好还是已经喝多",
       "sourceAnchor": "自己开公司",
       "correct": false,
       "missReaction": {
         "role": "caller",
-        "text": "他创业是忙，可我打来不是替他解释工作的。"
+        "text": "不是信号。我回完还行就接着喝了。身体那会儿已经不对。"
       },
-      "question": "创业者是不是都没时间听歌"
+      "question": "他回那句‘听了’隔了很久。你漏回的那六分钟，是信号不好，还是已经喝多了？"
     },
     {
       "id": "how-he-knew",
@@ -406,11 +411,11 @@
       "lines": [
         {
           "role": "host",
-          "text": "花那张照片旁边的包，是你自己买的，还是他送的？"
+          "text": "花是你先开口要的。他真送来以后，你还是觉得缺点什么？"
         },
         {
           "role": "caller",
-          "text": "他送的。第一次逛街时我在柜台前多看了几眼，他后来自己买的。我可没开口跟他要。"
+          "text": "我高兴啊，可也想知道他为什么愿意送。他就说你喜欢就买了，后面又没话。"
         },
         {
           "role": "host",
@@ -451,11 +456,11 @@
         },
         {
           "role": "host",
-          "text": "那就别只说漏看了一条消息。你当时已经难受，还回他‘还行’，后面才断掉。这一段他当时不知道。"
+          "text": "你当时已经难受，为什么回还行？回完还指望他看懂你不舒服？"
         },
         {
           "role": "caller",
-          "text": "好，我那句‘还行’确实逞强了。但我第二天一醒就说了，也没有故意晾他。"
+          "text": "我怕他知道我喝多了又来问，才说还行。我没让他猜，可第二天一醒就解释了，也没有故意晾他。"
         }
       ]
     },
@@ -632,7 +637,7 @@
           },
           {
             "role": "host",
-            "text": "你漏掉同桌的人，第二天也没把经过讲全，现在却要他先为口气道歉。你说想挽回，又只肯讲对自己有利的那半段，我没法替你把这话圆过去。"
+            "text": "你漏掉同桌的人，第二天也没把经过讲全，现在却要他先为口气道歉。这道歉我不替你圆。"
           },
           {
             "role": "caller",
@@ -670,7 +675,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "今天还有些事没问完。我现在说不准他为什么不联系，也没法替你判断还要不要继续。"
+            "text": "你要跟他继续谈，就把经过讲全。替你要道歉，这事我不做。"
           },
           {
             "role": "caller",
@@ -678,7 +683,7 @@
           },
           {
             "role": "host",
-            "text": "先到这儿。"
+            "text": "挂了。"
           }
         ]
       }
@@ -686,5 +691,5 @@
   },
   "sourceBoundary": "本案以公开讨论中常见的相亲沟通、醉酒失联与信息逐步补充模式为结构参考，人物、机构、具体时间、聊天措辞、对质台词与舞台结论均为虚构合成。当前朋友圈三天可见、两批旧动态均由她本人翻出后截屏发给后台，主播没有直接浏览其历史朋友圈；异性在场本身不构成越界证据。",
   "focusedInquiry": true,
-  "contentRevision": "rhythm-2026-09-17"
+  "contentRevision": "disclosure-2026-09-19"
 }

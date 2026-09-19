@@ -26,10 +26,9 @@ test("误问先播放问题，读档继续回答，简化模式不再扣费", ()
   assert.equal(quickRoundPatienceForState(packet, s).remaining, initial);
   s = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(s)), packet);
   s = advanceQuickMissReaction(packet, s);
-  assert.equal(s.scene, "issueSelection");
-  assert.equal(quickRoundPatienceForState(packet, s).remaining, initial);
-  assert.deepEqual(advanceQuickMissReaction(packet, s), s);
-  assert.deepEqual(applyQuickStatementLineSelection(packet, s, s.activeSourceLineId), s);
+  assert.equal(s.scene, "transcript");
+  assert.equal(s.roundIndex, 1);
+  assert.equal(s.roundPatience[packet.disclosureRounds[0].id].remaining, initial);
 });
 
 test("简化问询保留旧消耗记录，读完反馈不再追加扣费", () => {
@@ -39,10 +38,11 @@ test("简化问询保留旧消耗记录，读完反馈不再追加扣费", () =>
   s = advanceQuickMissReaction(packet, s);
   assert.equal(s.scene, "missReaction");
   s = advanceQuickMissReaction(packet, s);
-  assert.equal(s.scene, "issueSelection");
+  assert.equal(s.scene, "transcript");
+  assert.equal(s.roundIndex, 1);
   const legacy = { ...select(), missPhase: undefined, missPenaltyPending: undefined, activeMissQuestion: undefined, roundPatience: { [round.id]: { max: round.patience, remaining: 2 } } };
   const restored = advanceQuickMissReaction(packet, normalizeQuickDetectiveState(legacy, packet));
-  assert.equal(quickRoundPatienceForState(packet, restored).remaining, 2);
+  assert.equal(restored.roundPatience[round.id].remaining, 2);
 });
 
 test("普通无锚点句也先提问，不在选句时扣费", () => {
@@ -57,6 +57,7 @@ test("普通无锚点句也先提问，不在选句时扣费", () => {
 test("不同原句保留自己的开头，重载不跳句，共享追问完成只记一次", () => {
   const legacyPacket = structuredClone(packet);
   delete legacyPacket.disclosureRounds[0].autoConfrontationIds;
+  legacyPacket.disclosureRounds[0].issueOptionIds = ["flower-request", ...(legacyPacket.disclosureRounds[0].issueOptionIds ?? [])];
   for (const [p, id, round] of [[legacyPacket, "flower-request", 0]]) {
     let s = select(p, id, round);
     const o = p.issueOptions.find(o => o.id === id);
@@ -153,6 +154,7 @@ test('普通追问读档保留来电人与主播交替的整组回答', () => {
   const brief = structuredClone({...credit, id:'credit-probe-test'});
   brief.sceneVersions[6].reviewProbes = JSON.parse(readFileSync(new URL('./fixtures/legacy-credit-interactions.json', import.meta.url))).deviceProbes;
   const scene = brief.sceneVersions[6], probe = scene.reviewProbes[0];
+  scene.version = '拍摄设备是给我买的。'; // Legacy fixture tests saved dialogue mechanics independently of the revised live scene.
   probe.lines = [{role:'caller',text:probe.answer},{role:'host',text:'好，我知道了。'}];
   const line = statementLinesFromText(scene.version, {prefix:scene.id}).find(l=>l.text.includes(probe.sourceAnchor));
   const state = {caseBrief:brief,scene:'sceneQuestionAnswer',dialogueProgress:{[`${brief.id}:sceneReview`]:6},

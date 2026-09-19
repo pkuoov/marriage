@@ -349,7 +349,7 @@ export function quickRoundPatienceForState(packet = {}, state = {}) {
 }
 
 function quickRequiredConfrontationIds(packet = {}, round = {}) {
-  if (Array.isArray(round.requiredConfrontationIds) && round.requiredConfrontationIds.length) {
+  if (Array.isArray(round.requiredConfrontationIds)) {
     return round.requiredConfrontationIds;
   }
   const issueIds = new Set(round.issueOptionIds ?? []);

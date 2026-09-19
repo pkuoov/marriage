@@ -1350,7 +1350,9 @@ function areaTotalForRetry(brief, area) {
 }
 
 function currentIndex(brief, area, total) {
-  return Math.max(0, Math.min(Number(state.dialogueProgress?.[`${caseKey(brief)}:${area}`] ?? 0), Math.max(0, total - 1)));
+  const savedIndex = state.dialogueProgress?.[`${caseKey(brief)}:${area}`];
+  const index = savedIndex ?? (area === "sceneReview" ? firstPendingSceneIndex(brief) : 0);
+  return Math.max(0, Math.min(Number(index), Math.max(0, total - 1)));
 }
 
 function firstPendingSceneIndex(brief) {
