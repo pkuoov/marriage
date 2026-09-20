@@ -140,6 +140,8 @@ export function mountDialoguePresentation(root, options = {}) {
   if (choices) choices.hidden = true;
   const inlineChoiceRegions = Array.from(card.querySelectorAll(".day-followup, .reply-choice-grid"))
     .filter((region) => region.querySelector("button"));
+  const afterReadingRegions = Array.from(card.querySelectorAll("[data-after-dialogue]"));
+  afterReadingRegions.forEach((region) => { region.hidden = true; });
   inlineChoiceRegions.forEach((region) => { region.hidden = true; });
   sources.forEach((source) => { source.hidden = true; });
   card.classList.add("avg-dialogue-active");
@@ -157,6 +159,7 @@ export function mountDialoguePresentation(root, options = {}) {
       options.onPageStart?.(page, pageIndex, context);
     },
     onChoicesShown: (shownChoices) => {
+      afterReadingRegions.forEach((region) => { region.hidden = false; });
       inlineChoiceRegions.forEach((region) => { region.hidden = false; });
       options.onChoicesShown?.(shownChoices);
     }

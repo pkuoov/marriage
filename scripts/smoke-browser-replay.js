@@ -621,7 +621,7 @@ async function runCafePrologue() {
       }
       const nightScene = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}").scene ?? "");
       if (nightScene !== "nightShellPrologue") throw new Error(`${viewport.width} cafe opening must hand off to the night prologue, got ${nightScene}`);
-      await assertVisibleText(page, "两年前", "the first case must explicitly enter a flashback");
+      await assertVisibleText(page, "先从七月说起", "the first case must explicitly enter a flashback");
       await click(page, "[data-enter-first-flashback]");
       const nightPrelude = await drainDialogue(page, {});
       if (!nightPrelude.includes("你推开直播间的门")) throw new Error(`${viewport.width} the night cold open must follow the cafe tutorial`);
@@ -642,7 +642,7 @@ async function runCafePrologue() {
       await click(page, "[data-finish-night-shell]");
       const forensicText = await drainDialogue(page, {});
       assertAuthoredTranscript(forensicText, [...prologue.forensic.openingLines, ...prologue.forensic.accountClueLines], "both private callbacks");
-      await assertVisibleText(page, "结果只到这里", "the cafe prologue must end on a fact boundary rather than a victory card");
+      await assertVisibleText(page, "暂别", "the cafe prologue must end on a fact boundary rather than a victory card");
       await assertCafeViewport(page, viewport, "private callback ending");
       const savedProgress = await page.evaluate(() => {
         const save = JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}");
@@ -2204,8 +2204,9 @@ async function completeLinearInvestigation(page, route = {}) {
 }
 
 async function runCaseTransition() {
+  const [width, height] = (process.env.SMOKE_VIEWPORT || "1280x720").split("x").map(Number);
   const context = await browser.newContext({
-    viewport: { width: 390, height: 844 },
+    viewport: { width, height },
     reducedMotion: "reduce"
   });
   const page = await context.newPage();
@@ -2229,10 +2230,10 @@ async function runCaseTransition() {
     });
     await page.reload();
     await click(page, "[data-continue-story]");
-    await page.getByText("第 2 晚 · 收播以后").first().waitFor({ state: "visible" }).catch(async () => {
+    await page.getByText("7 月 16 日 · 收播以后").first().waitFor({ state: "visible" }).catch(async () => {
       throw new Error(`first case tail did not render after closure:\n${await page.locator("body").innerText()}`);
     });
-    await assertVisibleText(page, "第 2 晚 · 收播以后", "closure should move into the first case's lived epilogue without an authorial case-tail label");
+    await assertVisibleText(page, "7 月 16 日 · 收播以后", "closure should move into the first case's lived epilogue without an authorial case-tail label");
     if (await page.locator('[data-enter-case-bridge]:visible').count()) throw Error('interlude must finish reading before the next case');
     const firstLine = await page.locator('.avg-textbox').innerText();
     await page.reload(); await click(page, '[data-continue-story]');
@@ -2246,6 +2247,7 @@ async function runCaseTransition() {
     await assertNoPageText(page, "祸莫大于不知足", "first interlude must not append the removed classic quote");
     await assertVisibleText(page, "CASE 02", "second case must open on a numbered case title card");
     await assertVisibleText(page, "职场报销截图", "second case title card should name the workplace case");
+    await assertVisibleText(page, "2024 年 7 月 25 日 · 九天后", "case title must show the gap after the previous callback");
     await assertNoPageText(page, "02 / 04", "case title must not expose the whole-night directory");
     await assertNoPageText(page, "自己人", "case title must not frame the case with an author-written theme word");
     await assertNoPageText(page, "新案接入", "case title must not duplicate its own meaning in a scene label");
@@ -2257,6 +2259,7 @@ async function runCaseTransition() {
     if (titleAnimations.length) {
       throw new Error(`second case title should stay still, found animations: ${titleAnimations.join(", ")}`);
     }
+    await page.screenshot({ path: resolve(root, `output/playwright/calendar-title-${width}x${height}.png`), animations: "disabled" });
     await click(page, "[data-enter-case-live]");
     await drainDialogue(page, {});
     await page.locator('[data-scene="sceneReview"]').waitFor({ state: "visible" });
@@ -2273,12 +2276,15 @@ async function runCaseTransition() {
     });
     await page.reload();
     await click(page, "[data-continue-story]");
-    await assertVisibleText(page, "第 4 晚 · 私下咨询之后", "second case must close its private consultation");
+    await assertVisibleText(page, "7 月 26 日 · 私下咨询之后", "second case must close its private consultation");
     await drainDialogue(page, {});
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
+    await click(page, "[data-enter-broadcast-recap]");
+    const recapText = await drainDialogue(page, {});
+    if (!recapText.includes("7 月 29 日") || !recapText.includes("今天的会开完了")) throw Error("workplace public recap must follow its own consultation by three days");
     await assertVisibleText(page, "接一通插播", "second act interlude must expose the optional quick-call pressure valve");
     await click(page, "[data-enter-optional-quick]");
-    await playStatementQuickCase(page, { width: 390, height: 844 }, {
+    await playStatementQuickCase(page, { width, height }, {
       caseId: "01-no-conditions",
       alreadySelected: true,
       rounds: [
@@ -2294,6 +2300,29 @@ async function runCaseTransition() {
     await click(page, "[data-quick-select]");
     await assertNoPageText(page, "名不正，则言不顺", "second interlude must not append the removed classic quote");
     await assertVisibleText(page, "CASE 03", "case two tail must return to the normal case transition");
+    await assertVisibleText(page, "2024 年 8 月 22 日", "third case must have its own later date");
+
+    await page.evaluate(() => {
+      const key = "livestream-detective-save-v1";
+      const save = JSON.parse(localStorage.getItem(key));
+      save.chapter = 3;
+      save.caseBrief = save.caseBriefs[2];
+      save.scene = "storyInterlude";
+      save.dialogueReading = null;
+      localStorage.setItem(key, JSON.stringify(save));
+    });
+    await page.reload(); await click(page, "[data-continue-story]");
+    await drainDialogue(page, {});
+    await click(page, "[data-enter-case-bridge]");
+    await assertVisibleText(page, "9 月 21 日", "the rumor bridge must return to recent time");
+    await assertNoPageText(page, "全部产品暂停兑付", "the earlier rumor must not reveal the finale");
+    await click(page, "[data-enter-next-case]");
+    await assertVisibleText(page, "2024 年 9 月 21 日 · 最近", "the final case must be recent");
+    await page.screenshot({ path: resolve(root, `output/playwright/calendar-recent-${width}x${height}.png`), animations: "disabled" });
+    await click(page, "[data-enter-case-live]");
+    const recentOpening = await drainDialogue(page, {});
+    if (!recentOpening.includes("9 月 21 日") || !recentOpening.includes("二十三号早上九点")) throw Error("recent opening must establish the final deadline");
+    await assertVisibleText(page, "9 月 21 日 · 初次连线", "live HUD must use the recent session date");
 
     await page.evaluate(() => {
       const key = "livestream-detective-save-v1";
@@ -2321,12 +2350,13 @@ async function runCaseTransition() {
     if (await page.getByText("作为关联项目配资资金", { exact: false }).count()) throw new Error("deposit leverage must remain undisclosed before opening the notice");
     await click(page, "[data-reveal-world-echo]");
     const newsText = await drainDialogue(page, {});
+    await page.screenshot({ path: resolve(root, `output/playwright/calendar-news-${width}x${height}.png`), animations: "disabled" });
     if (!newsText.includes("作为关联项目配资资金")) throw new Error("the disposal notice must pay off the deposited-funds trail");
     await assertVisibleText(page, "宸直信托全部产品暂停兑付，实控人失联", "final world echo must pay off the case-one and case-two trust seeds");
     if (!newsText.includes("各笔清偿金额尚未公布")) throw new Error("final world echo must preserve the unresolved recovery boundary");
     if (await page.locator('.story-world-echo-stage img[src*="chenzhi-news-push-pixel"]').count() !== 1) throw new Error("final world echo must switch to the trust-news ending CG");
     await click(page, "[data-enter-night-epilogue]");
-    await assertVisibleText(page, "直播中", "whole-night epilogue should begin only after the fourth case tail");
+    await assertVisibleText(page, "9 月 22 日深夜", "unread updates must belong to the recent finale");
     for (let index = 0; index < 8 && await page.locator("[data-epilogue-unread-next]").count(); index += 1) {
       await click(page, "[data-epilogue-unread-next]");
     }
@@ -2334,13 +2364,23 @@ async function runCaseTransition() {
     await assertVisibleText(page, "账单原件 · 2019-11-08", "the envelope date must be identified as the original bill date");
     await assertVisibleText(page, "2022 年 7 月", "the old broadcast must have its own date beside the bill");
     await click(page, "[data-finish-night-shell]");
+    await assertNoPageText(page, "排除生物学父子关系", "the result card must wait until the actual disclosure");
+    await page.screenshot({ path: resolve(root, `output/playwright/calendar-forensic-entry-${width}x${height}.png`), animations: "disabled" });
+    const forensicOpening = await page.locator(".avg-textbox").innerText();
+    await page.reload(); await click(page, "[data-continue-story]");
+    if (await page.locator(".avg-textbox").innerText() !== forensicOpening) throw Error("forensic callback reload lost its opening");
+    await assertNoPageText(page, "排除生物学父子关系", "reload must not reveal the result early");
     const forensicText = await drainDialogue(page, {});
     if (!forensicText.includes("双方带孩子到机构") || !forensicText.includes("没有用那只咬胶") || !forensicText.includes("排除生物学父子关系") || !forensicText.includes("得由法院决定")) {
       throw new Error("the later callback must keep the verified sampling before the result, with court review still required");
     }
+    if (!forensicText.includes("9 月 23 日上午") || !forensicText.includes("赵拨通张法医的视频")) throw Error("forensic callback needs its date and expert entrance before the result");
     if (!forensicText.includes("收款人不是顾*")) throw new Error("the sequential prologue must pay off both the paternity and account investigations");
-    await assertVisibleText(page, "结果只到这里", "the demo prologue must end on a fact boundary rather than a guilty or victory card");
+    await assertVisibleText(page, "暂别", "the demo prologue must end on a fact boundary rather than a guilty or victory card");
+    await assertVisibleText(page, "双方到场委托鉴定：排除生物学父子关系", "the result summary must appear after its dialogue");
+    await page.screenshot({ path: resolve(root, `output/playwright/calendar-forensic-${width}x${height}.png`), animations: "disabled" });
     await click(page, "[data-cafe-finish]");
+    for (const caption of ["故事未完待续", "维护基本的道德底线是每个人都应该做的", "主播将在正式版归来继续主持公道！"]) await page.getByText(caption, { exact: true }).waitFor({ state: "visible", timeout: 20000 });
   } finally {
     await context.close();
   }
@@ -2788,9 +2828,9 @@ async function enterNightFromCafePrologue(page, route = {}) {
   await activate(page, route, '[data-cafe-aftermath-next]');
   await activate(page, route, '[data-cafe-aftermath-next]');
   await drainDialogue(page, route);
-  await assertVisibleText(page, "回想两年前的直播", "the present-day investigation must hand off to the flashback");
+  await assertVisibleText(page, "回看这几个月的来电", "the present-day investigation must hand off to the flashback");
   await activate(page, route, "[data-cafe-aftermath-next]");
-  await assertVisibleText(page, "两年前", "the timeline change must have its own readable transition");
+  await assertVisibleText(page, "先从七月说起", "the timeline change must have its own readable transition");
   await activate(page, route, "[data-enter-first-flashback]");
 }
 
@@ -3134,7 +3174,8 @@ async function runSixReviewedCases() {
         if (care && !['careChoice','caseClosure'].includes(save.scene)) {
           if (save.scene === 'storyInterlude' && await page.locator('[data-enter-broadcast-recap]:visible').count()) {
             await click(page, '[data-enter-broadcast-recap]');
-            await page.waitForFunction(() => document.querySelector('.avg-textbox')?.innerText.includes('7 月 21 日'));
+            await page.waitForFunction(() => document.querySelector('.avg-textbox')?.innerText.includes('7 月 29 日'));
+            transcript.push(await page.locator('body').innerText());
             await page.locator('[data-dialogue-advance]:visible').evaluate(el => el.click());
             await page.screenshot({path:resolve(directory,`public-recap-${width}x${height}.png`)});
             const readingBefore = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')).dialogueReading);
@@ -3222,8 +3263,8 @@ async function runSixReviewedCases() {
         if (/强制贴片|本场退出推荐|先把这条念完|我不替他解释/.test(text)) throw Error('retired workplace dialogue leaked');
         await page.screenshot({path:resolve(directory,`workplace-tail-${width}x${height}.png`)});
       }
+      if (chapter === 2 && (!text.includes('距离那次私下咨询已经过去三天') || !text.includes('后来跟我私下聊了'))) throw Error('later public consultation recap missing');
       if (chapter === 3) {
-        if (!text.includes('距离那次私下咨询已经过去三天') || !text.includes('后来跟我私下聊了')) throw Error('later public consultation recap missing');
         const firstNightQuestion = packet.sceneVersions[packet.nightStructure.segment1SceneIndexes[0]].entryQuestion;
         const secondNightQuestion = packet.sceneVersions[packet.nightStructure.segment2SceneIndexes[0]].entryQuestion;
         const first = text.indexOf(firstNightQuestion), second = text.indexOf(secondNightQuestion);

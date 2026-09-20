@@ -135,7 +135,7 @@ test("散场后依次调查亲子与家庭支出，旧存档只补尚未看过�
   assert.equal(fresh.state.scene, "nightShellPrologue");
   const legacy = fixture(["account"]);
   assert.match(legacy.show().text, /亲子后续/);
-  assert.match(legacy.show().choices, /回想两年前的直播/);
+  assert.match(legacy.show().choices, /回看这几个月的来电/);
   legacy.next();
   assert.equal(legacy.state.scene, "nightShellPrologue");
   const finishedLegacy = fixture(["toy"]);

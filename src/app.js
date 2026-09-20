@@ -849,12 +849,13 @@ function renderDailyCase() {
 
 function liveChapterTitle(brief = {}) {
   if (!isStoryPackMode()) return brief.storyArcTitle ?? "今日来电";
-  const nights = brief.nightStructure?.broadcastNights;
-  if (!Array.isArray(nights) || nights.length !== 2) return "热线连线";
+  const dates = brief.nightStructure?.sessionDates;
+  if (!Array.isArray(dates) || dates.length !== 2) return "热线连线";
   const key = caseKey(brief);
   const returning = state.caseOvernights?.[key]?.segment === "night2"
     || state.caseNights?.[key]?.segment === "segment2";
-  return `第 ${nights[returning ? 1 : 0]} 晚 · ${returning ? (isPrivateConsultation(brief, state) ? "单独咨询" : "回拨") : "初次连线"}`;
+  const [, month, day] = dates[returning ? 1 : 0].split("-");
+  return `${Number(month)} 月 ${Number(day)} 日 · ${returning ? (isPrivateConsultation(brief, state) ? "单独咨询" : "回拨") : "初次连线"}`;
 }
 
 function nightShellForStoryKey(storyKey = "") {
@@ -959,7 +960,11 @@ function sceneWithLiveCounterQuestionOverride(brief = {}, scene = {}) {
 
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", backdropClass: backdropClassOverride = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen", musicPhase = "" }) {
   const privateConsultation = isPrivateConsultation(brief, state);
-  const modeLabel = isStoryPackMode() ? `第 ${Math.max(1, Number(state.chapter) || 1)} 案 · ${chapter || label || "连线中"}` : "今日来电";
+  const storyLabel = state.scene === "cafePrologueForensic" ? "尾声 · 私下回告"
+    : state.scene === "nightShellEpilogue" ? "尾声 · 旧案来信"
+    : state.scene === "runComplete" ? "试玩片尾"
+    : `第 ${Math.max(1, Number(state.chapter) || 1)} 案 · ${chapter || label || (showCaseHud ? "连线中" : "故事过场")}`;
+  const modeLabel = isStoryPackMode() ? storyLabel : "今日来电";
   const backdropClass = backdropClassOverride || caseBackdropClass(brief);
   const pressure = showCaseHud ? (pressureOverride ?? currentLivePressure(brief, mood)) : {};
   const visualHud = visualHudOverride ?? (showCaseHud

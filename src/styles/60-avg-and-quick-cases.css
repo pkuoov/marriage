@@ -2,7 +2,8 @@
 .dialogue-card .call-dialogue[hidden],
 .dialogue-card .night-shell-card[hidden],
 .dialogue-card .day-followup[hidden],
-.dialogue-card .reply-choice-grid[hidden] { display: none !important; }
+.dialogue-card .reply-choice-grid[hidden],
+.dialogue-card [data-after-dialogue][hidden] { display: none !important; }
 .avg-textbox { position: relative; min-height: 8.4rem; padding: 1.2rem 2.4rem 1.3rem; cursor: pointer; color: #fff; background: rgba(8, 12, 22, .88); border: 1px solid rgba(255,255,255,.24); border-radius: 12px; box-shadow: 0 16px 42px rgba(0,0,0,.34); }
 .avg-page-lines { display: grid; gap: .8rem; }
 .avg-page-line { padding: .65rem .9rem .72rem; border-left: 3px solid rgba(255,255,255,.26); border-radius: 6px; background: rgba(255,255,255,.045); }

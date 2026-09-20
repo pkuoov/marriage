@@ -146,7 +146,7 @@ export function createRecapScreens(ctx) {
         showCaseHud: false,
         visualHud: "",
         screenClass: "case-title-screen first-case-flashback-screen",
-        text: '<section class="case-title-card"><p class="eyebrow">时间回到</p><h1>两年前</h1><p class="case-title-subtitle">2024 年 7 月 15 日 · 晚上八点</p><p class="case-title-intro">那时，你的深夜热线还在为留下这个时段发愁。</p></section>',
+        text: '<section class="case-title-card"><p class="eyebrow">时间回到</p><h1>先从七月说起</h1><p class="case-title-subtitle">2024 年 7 月 15 日 · 晚上八点</p><p class="case-title-intro">那时，你的深夜热线还在为留下这个时段发愁。</p></section>',
         choices: flowGroupHtml('<button class="primary" data-enter-first-flashback type="button">走进那晚的直播间</button>'),
         pixelTransition: { kind: "soft-fade" }
       });
@@ -231,7 +231,7 @@ export function createRecapScreens(ctx) {
       screenClass: `night-epilogue-screen${stage.complete && epilogue.closingCg?.src ? " has-ending-cg" : ""}`,
       text: stage.complete ? `${openingHtml}${nightShellHtml(lines)}` : `${openingHtml}${unreadHtml}`,
       choices: flowGroupHtml(stage.complete
-        ? `<button class="primary" data-finish-night-shell type="button">收麦</button>`
+        ? `<button class="primary" data-finish-night-shell type="button">上午，见一位老来客</button>`
         : epilogueUnreadContinueHtml({ visibleCount: stage.visibleMessages.length, total: stage.messages.length }))
     });
     bind("[data-epilogue-unread-next]", () => {
@@ -580,7 +580,7 @@ export function createRecapScreens(ctx) {
       const route = routes.find((item) => !progress.order.includes(item.id)) ?? routes.at(-1);
       text += cafeInvestigationResultHtml(route, "同一晚");
       text += cafePrologueDialogueHtml(route?.handoffLines ?? []);
-      choices = flowGroupHtml(`<button class="primary" data-cafe-aftermath-next type="button">${routes.filter((item) => !progress.order.includes(item.id)).length <= 1 ? allCasesSolved ? "继续查看回告" : "回想两年前的直播" : "继续核对家庭支出卡"}</button>`);
+      choices = flowGroupHtml(`<button class="primary" data-cafe-aftermath-next type="button">${routes.filter((item) => !progress.order.includes(item.id)).length <= 1 ? allCasesSolved ? "继续查看回告" : "回看这几个月的来电" : "继续核对家庭支出卡"}</button>`);
     }
 
     frame({
@@ -637,15 +637,15 @@ export function createRecapScreens(ctx) {
       openAccount: hasAccount ? forensic.finalCards?.openAccount : "",
       unknown: []
     });
-    const choices = flowGroupHtml(`<button class="primary" data-cafe-finish type="button">结束试玩</button>`, {
-      label: "结果只到这里",
-      note: isToyRoute ? "生父是谁，这份鉴定意见没有回答。" : "收款人是谁，节目里没有公开。"
+    const choices = flowGroupHtml(`<button class="primary" data-cafe-finish type="button">进入片尾</button>`, {
+      label: "暂别",
+      note: ""
     });
     frame({
       brief,
       mood: "focused",
       label: `${forensic.timeline ?? "数周后"} · ${isToyRoute ? "鉴定回告" : "回单回告"}`,
-      chapter: "试玩序章尾声",
+      chapter: "尾声 · 咖啡厅来客",
       showCaseHud: false,
       visualHud: "",
       backdropClass: "day-document cafe-forensic-document",

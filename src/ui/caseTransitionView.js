@@ -60,7 +60,7 @@ export function caseBridgeHtml({
 }
 
 export function caseBridgeChoicesHtml() {
-  return `<button class="primary" data-enter-next-case type="button">接下一通</button>`;
+  return `<button class="primary" data-enter-next-case type="button">继续</button>`;
 }
 
 export function caseTitleHtml({ caseNumber = 1, totalCases = 4, brief = {} } = {}) {
@@ -71,6 +71,7 @@ export function caseTitleHtml({ caseNumber = 1, totalCases = 4, brief = {} } = {
       <header class="case-title-index">
         <span>CASE ${String(caseNumber).padStart(2, "0")}</span>
       </header>
+      ${titleCard.timeline ? `<p class="case-title-subtitle">${escapeHtml(titleCard.timeline)}</p>` : ""}
       <h1>${escapeHtml(title)}</h1>
       <div class="case-title-rule"></div>
     </section>

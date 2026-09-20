@@ -42,6 +42,7 @@ export function extractFlow(brief, key) {
     respondentId: brief.respondentId,
     opening: (brief.openingDialogue ?? []).map((line, index) => ({
       id: `opening-${index + 1}`,
+      role: line.role ?? "",
       speakerId: line.speakerId ?? null,
       speaker: speakerLabel(brief, line),
       text: line.text ?? ""
@@ -146,7 +147,7 @@ export function validateFlow(flow) {
   check(!hasRealNpcName(allText), "NO_REAL_NAMES", "直播间单案文本不能出现 NPC 真名。");
   check(!hasCallerPerspectiveLeak(allText), "CALLER_PERSPECTIVE", "咨询者语境下的反馈应使用第一人称或直接引语，不能写成第三人称旁白。");
   check(Boolean(flow.opening.length >= 2), "OPENING_LENGTH", "当前 daily 开场须有可播放的来回；不设句数上限。");
-  check(flow.opening[0]?.speaker === "咨询者", "CALLER_FIRST", "第一句必须由咨询者开口。");
+  check(flow.opening.find((line) => line.role !== "stage")?.speaker === "咨询者", "CALLER_FIRST", "通话第一句必须由咨询者开口，开播前舞台说明不算发言。");
   check(flow.opening.some((line) => line.speaker === "你"), "HOST_AFTER_CALLER", "开场必须有主播接话，但不能抢在咨询者之前。");
   check(!renderedOpeningEndsOnHost(flow.opening), "OPENING_DANGLING_HOST", "首屏开场不能停在主播问句上，必须让咨询者答完再进入通话推进。");
   check(!hasRedundantHostOpening(flow.opening), "HOST_REDUNDANT_OPENING", "主播不能重复询问咨询者刚刚已经说过的信息。");

@@ -1871,37 +1871,54 @@ test("PACK-008", "offstage helper NPC remains registered but player-hidden", () 
   assert(!advisorIds.has("v-bro"), "V哥不能混入专业顾问注册表");
 });
 
-test("PACK-CALENDAR", "eight nights, deadlines, and the old bill use distinct dates", () => {
+test("PACK-CALENDAR", "separate case dates converge on the recent finale and dated callbacks", () => {
   const calendar = manifest.storyCalendar;
-  assert(calendar, "试玩包必须登记统一节目日历");
+  const day = (date) => Date.parse(`${date}T00:00:00+08:00`);
   const dayMs = 86400000;
-  const firstDay = Date.parse(`${calendar.firstNightDate}T00:00:00+08:00`);
-  const lastDay = firstDay + (calendar.nightCount - 1) * dayMs;
-  const meetingDay = Date.parse(`${calendar.workplaceMeetingDate}T00:00:00+08:00`);
+  assertEqual(calendar.caseSessions.length, caseFiles.length, "四案各有独立日期");
+  calendar.caseSessions.forEach((session, index) => {
+    const packet = caseFiles.find((item) => item.caseId === session.caseId);
+    assert(packet, "日历须引用实际案件");
+    assertEqual(JSON.stringify(packet.nightStructure.sessionDates), JSON.stringify(session.dates), "HUD 日期与日历一致");
+    assertEqual(day(session.dates[1]) - day(session.dates[0]), dayMs, "各案回拨承接次日");
+    if (index > 0) assert(day(session.dates[0]) - day(calendar.caseSessions[index - 1].dates[1]) > dayMs, "不同案件之间有日历间隔");
+    assert(!packet.nightStructure.broadcastNights, "不再把四案标成连续八晚");
+    assert(packet.caseTitle.timeline.includes(`${Number(session.dates[0].slice(5, 7))} 月 ${Number(session.dates[0].slice(8))} 日`), "标题给出本案日期");
+  });
+  const firstDay = day(calendar.firstNightDate);
+  const finalSession = calendar.caseSessions.at(-1);
+  assertEqual(finalSession.caseId, "02-tony", "Tony 是最近发生的最后一案");
+  assertEqual(finalSession.dates[1], calendar.presentDate, "最后回拨到达当前时点");
+  assertEqual(calendar.newsDate, calendar.presentDate, "正式暴雷在最后一案收播后出现");
+  assertEqual(day(calendar.forensicCallbackDate) - day(calendar.presentDate), dayMs, "鉴定回告紧接终局次日上午");
+  assert(day(calendar.forensicCallbackDate) - day(calendar.cafePrologueDate) >= 21 * dayMs, "采样与鉴定之间有实际数周间隔");
+  assert(day(calendar.cafePrologueDate) > day(calendar.caseSessions[2].dates[1]) && day(calendar.cafePrologueDate) < day(finalSession.dates[0]), "咖啡厅位于旧案与近期案件之间");
   const deadline = Date.parse(calendar.platformDeadline);
-  assertEqual(calendar.nightCount, caseFiles.length * 2, "四案必须占八个不同夜次");
-  assertEqual(new Date(firstDay + 8 * 3600000).getUTCDay(), 1, "第一晚日历起点为周一");
-  assertEqual(meetingDay, lastDay, "职场总结会在第八日，尾声不能仍说下周才开会");
-  assert(deadline > lastDay + dayMs && deadline < lastDay + dayMs + 12 * 3600000, "方案期限必须落在第八晚后的次日上午");
-  assertEqual(Date.parse(`${calendar.case3DinnerDate}T00:00:00+08:00`), firstDay + 6 * dayMs, "第六晚取消的饭局原定第七日周日");
+  assert(deadline > day(calendar.forensicCallbackDate) && deadline < day(calendar.forensicCallbackDate) + 12 * 3600000, "平台期限落在终局次日上午");
+  const workSession = calendar.caseSessions.find((item) => item.caseId === "04-workplace");
+  assertEqual(day(calendar.workplacePublicRecapDate) - day(workSession.dates[1]), 3 * dayMs, "私下咨询三天后公开回访");
+  assertEqual(new Date(`${calendar.workplaceMeetingDate}T12:00:00+08:00`).getUTCDay(), 1, "职场会议为周一");
+  assertEqual(new Date(`${calendar.case3DinnerDate}T12:00:00+08:00`).getUTCDay(), 0, "相亲饭局原定周日");
+  assert(day(calendar.case3DinnerDate) > day(calendar.caseSessions[2].dates[1]), "取消饭局时饭局尚未举行");
   const monthNumber = (month) => Number(month.slice(0, 4)) * 12 + Number(month.slice(5, 7));
   assertEqual(monthNumber(calendar.hostMisjudgmentMonth) - monthNumber(calendar.hostStartedMonth), 6, "误判发生于开播约半年后");
-  assertEqual(monthNumber(calendar.firstNightDate) - monthNumber(calendar.hostMisjudgmentMonth), 24, "两年前的误判不得与旧账单原件日期混同");
-  assert(calendar.oldBillDate < `${calendar.hostStartedMonth}-01`, "2019 是较早的账单日期，不是开播后的节目日期");
+  assertEqual(monthNumber(calendar.firstNightDate) - monthNumber(calendar.hostMisjudgmentMonth), 24, "两年前误判不是本轮四案");
+  assert(calendar.oldBillDate < `${calendar.hostStartedMonth}-01`, "2019 为较早账单日期");
   const epilogue = manifest.nightShell.epilogue;
-  const opening = collectTextFrom(manifest.nightShell.prologue.lines);
-  assert(opening.includes("2024 年 7 月 15 日") && opening.includes("二十三号早上九点"), "开场必须给出故事日期和不会跨周漂移的截止日");
-  assert(!/下周/.test([epilogue.good, epilogue.bad, epilogue.platformCost].join(" ")), "各数据结局不得把方案期限再次推到下周");
-  assert(epilogue.bad.includes("天亮后九点") && epilogue.platformCost.includes("明早九点"), "两个催方案结局都须承接同一次早九点期限");
+  assert(collectTextFrom(manifest.nightShell.prologue.lines).includes("2024 年 7 月 15 日"), "首案开场日期明确");
+  assert(collectTextFrom(caseFiles.find((p) => p.caseId === "02-tony").openingDialogue).includes("二十三号早上九点"), "具体期限在最近一案交代");
+  assert(epilogue.bad.includes("天亮后九点") && epilogue.platformCost.includes("明早九点"), "尾声仍为同一次期限");
   const workCallback = epilogue.unreadMessages.find((message) => message.caseId === "04-workplace");
-  assert(workCallback.base.includes("今天开会") && !collectTextFrom(workCallback).includes("下周一"), "第八晚回访承接当天已开会，不能重发会前承诺");
-  assert(epilogue.close.includes("原件日期") && epilogue.close.includes(calendar.oldBillDate) && epilogue.close.includes("直播回放索引：2022 年 7 月"), "旧账单与误判节目日期必须分别呈现给玩家");
+  assert(workCallback.base.includes("后来又催了几回") && !workCallback.base.includes("今天开会"), "旧案回访承认数周催款间隔");
+  assert(epilogue.close.includes(calendar.oldBillDate) && epilogue.close.includes("直播回放索引：2022 年 7 月"), "旧账单与误判节目日期分开");
   const work = caseFiles.find((packet) => packet.caseId === "04-workplace");
-  assert(collectTextFrom(work).includes("二十二号，下周一"), "职场会议原话需与节目日历对应");
-  const activityDay = Date.parse(`${calendar.workplaceActivityDate}T00:00:00+08:00`);
-  assert((firstDay + 3 * dayMs - activityDay) / dayMs >= 21, "第二幕回拨时发票确已放了三个星期");
+  assert(collectTextFrom(work).includes("二十九号，下周一"), "会议原话与日历对应");
+  assert(day(workSession.dates[0]) - day(calendar.workplaceActivityDate) >= 28 * dayMs, "首次求助已经垫付约一个月");
+  const recap = manifest.nightShell.interludes.find((i) => i.afterCaseId === work.caseId)?.broadcastRecap;
+  assert(recap && recap.caseId === work.caseId, "第二案公开回访留在自己的案尾");
+  assert(!manifest.nightShell.interludes.find((i) => i.afterCaseId === "03-profile")?.broadcastRecap, "不把数周前的回访挂到第三案后");
   const documentId = `LX-${calendar.workplaceActivityDate.slice(2, 4)}${calendar.workplaceActivityDate.slice(5, 7)}-018`;
-  assert(work.documents.some((document) => document.rows.some((row) => row.rowId === "q04" && row.memo.includes(documentId))), "立项编号月份须与六月活动相符");
+  assert(work.documents.some((document) => document.rows.some((row) => row.rowId === "q04" && row.memo.includes(documentId))), "立项编号与六月活动相符");
 });
 
 test("PACK-009", "document-derived timeline claims stay aligned with row dates", () => {
@@ -2042,7 +2059,7 @@ test("PACK-012B", "the cafe closes after hotel and money disputes; testing stays
   const sameNightZhaoLine = (prologue.aftermath?.openingLines ?? []).filter((line) => line.speakerProfileId === "zhao-lawyer").map((line) => line.text ?? "").join(" ");
   const sameNightHostLine = (prologue.aftermath?.openingLines ?? []).filter((line) => line.speakerProfileId === "host-lin-xuyang").map((line) => line.text ?? "").join(" ");
   assertEqual(prologue.id, "prologue-cafe-opening", "咖啡厅必须登记为试玩开篇，不能保留半年后终章 id");
-  assertEqual(prologue.timeline, "现在 · 傍晚", "咖啡厅必须在现在开场，四宗热线属于两年前的回忆");
+  assert(prologue.timeline.includes("2024 年 9 月 1 日") && prologue.timeline.includes("三周前"), "咖啡厅显式标明相对最近案件的日期");
   assertEqual(prologue.title, "序章", "咖啡厅开篇只保留序章题名，不得再挂‘还有一笔账’一类作者标题");
   assertEqual(prologue.cafe?.evidencePair?.length, 2, "咖啡厅第一步必须由聊天定位与酒店订单两页共同成立");
   assertDeepEqual(prologue.cafe?.evidencePair?.map((item) => item.id), ["chat", "hotel"], "咖啡厅对时材料顺序必须稳定");
@@ -2089,8 +2106,8 @@ test("PACK-012B", "the cafe closes after hotel and money disputes; testing stays
   assert(accountRouteText.includes("我自己去银行APP里下"), "电子回单必须由账户本人取得，不能让主播或顾问凭空等待银行材料");
   assert(!aftermathText.includes("等完整回单") && !forensicText.includes("完整回单只多核"), "序章不得把节目组写成能向银行或执法机关调取回单的主体");
   assert(forensicText.includes("双方带孩子到机构") && forensicText.includes("现场采样") && forensicText.includes("没有用那只咬胶") && forensicText.includes("排除生物学父子关系"), "鉴定结果必须来自双方同意、身份核验及现场采样，不能用不明旧物替代");
-  assert(forensicText.indexOf("随后同意") < forensicText.indexOf("现场采样") && forensicText.indexOf("现场采样") < forensicText.indexOf("排除生物学父子关系"), "同意和现场采样须先于结果披露");
-  assert(forensicText.includes("得由法院决定") && forensicText.includes("孩子以后怎么安排，你们跟律师私下谈"), "初步意见不得越级写成法院必然准许鉴定或法律亲子关系已经改变");
+  assert(forensicText.indexOf("妻子同意") >= 0 && forensicText.indexOf("妻子同意") < forensicText.indexOf("现场采样") && forensicText.indexOf("现场采样") < forensicText.indexOf("排除生物学父子关系"), "同意和现场采样须先于结果披露");
+  assert(forensicText.includes("得由法院决定") && forensicText.includes("不能直接改"), "初步意见不得越级写成法院必然准许鉴定或法律亲子关系已经改变");
   assert(forensicText.includes("从自己的银行APP里下来了") && forensicText.includes("收款人不是顾*"), "鉴定结果后的收款户名反证必须来自男方本人下载的电子回单");
   assert(forensicText.indexOf("排除生物学父子关系") < forensicText.indexOf("收款人不是顾*"), "先交亲子技术结果，再挂家庭账新债");
   assert((prologue.truthBoundary?.unknown ?? []).some((line) => line.includes("生物学父亲")), "尾声必须保留生父身份未知");

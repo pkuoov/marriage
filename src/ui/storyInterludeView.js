@@ -88,8 +88,8 @@ export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null,
     return `<button class="primary" data-reveal-world-echo type="button">${escapeHtml(worldEcho.actionLabel ?? "继续听")}</button><button data-retry-case type="button">回看这通</button>`;
   }
   const primary = finalCase
-    ? `<button class="primary" data-enter-night-epilogue type="button">收播</button>`
-    : `<button class="primary" data-enter-case-bridge type="button">接下一通</button>`;
+    ? `<button class="primary" data-enter-night-epilogue type="button">查看来信</button>`
+    : `<button class="primary" data-enter-case-bridge type="button">下一段故事</button>`;
   const optional = !finalCase && optionalQuickCall?.quickCaseId
     ? `<button data-enter-optional-quick="${escapeHtml(optionalQuickCall.quickCaseId)}" type="button">${escapeHtml(optionalQuickCall.actionLabel ?? "接一通插播")}</button>`
     : "";

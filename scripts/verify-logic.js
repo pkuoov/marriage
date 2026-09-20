@@ -945,7 +945,7 @@ test("CARE-002", "epilogue unread callbacks echo care choices before the data cu
   };
   const messages = epilogueUnreadMessages(epilogue, careChoices);
   assertEqual(messages.length, 5, "尾声必须依次有四条回访和一条陌生号码");
-  assertIncludes(messages[0].text, "他已经听过直播了", "案 1 未读必须回声务实选择");
+  assertEqual(messages[0].echo, epilogue.unreadMessages[0].echoes.pragmatic, "案 1 未读必须回声务实选择");
   assertIncludes(messages[1].text, "群里到今天还没回", "第二通职场回访必须回声务实选择");
   const profileCallback = epilogue.unreadMessages.find((message) => message.caseId === "03-profile");
   assertEqual(messages[2].echo, profileCallback.echoes.accompany, "案 3 未读必须选中陪伴回声，不锁定已经退役的对白");
@@ -2753,7 +2753,6 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(storyInterludeHtml({ shellLine: "老方发来消息。", shellLines: [{ speaker: "林旭阳", text: "广告弹幕念错了。" }] }), "广告弹幕念错了。", "案间串场必须能在原旁白前追加主播台词");
   assertIncludes(storyInterludeStageHtml({ afterCaseId: "01-credit" }), "zhao-lawyer-teasing-pixel.png", "案一广告间隙必须使用赵律师揶揄态立绘");
   assertIncludes(storyInterludeStageHtml({ afterCaseId: "03-profile" }), "is-remote", "案三赵律师语音必须以远程态呈现，不能误画成同处一室");
-  assertIncludes(storyInterludeChoicesHtml(), "接下一通", "案后小尾声必须先进入独立幕间引页");
   assertIncludes(storyInterludeChoicesHtml(), "data-enter-case-bridge", "案后小尾声不得直接跳到下一案");
   const optionalQuickCall = storyOptionalQuickCall(storyPackForKey("steam-demo-01"), { caseId: "04-workplace" });
   assertEqual(optionalQuickCall?.quickCaseId, "01-no-conditions", "第二幕与第三幕之间必须提供一通可选插播来电");
@@ -2769,7 +2768,7 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assert(!storyInterludeChoicesHtml({ worldEcho: hypothesisEcho, worldEchoRevealed: false }).includes("data-reveal-world-echo"), "玩家尚未选风险假设时不能直接播放新闻答案");
   assertIncludes(storyInterludeChoicesHtml({ worldEcho: hypothesisEcho, worldEchoRevealed: false, worldEchoHypothesisId: "cross-case" }), "data-reveal-world-echo", "玩家记录风险假设后才能揭示世界回声");
   assertIncludes(storyInterludeHtml({ worldEchoHypothesis: hypothesisEcho.hypotheses[0] }), "先核对同名机构", "跨案回收必须在揭示前回应玩家选择");
-  assertIncludes(storyInterludeChoicesHtml({ finalCase: true }), "收播", "最后一案小尾声之后必须进入整晚尾声");
+  assertIncludes(storyInterludeChoicesHtml({ finalCase: true }), "data-enter-night-epilogue", "最后一案小尾声之后必须进入来信尾声");
   assert(!storyInterludeHtml({ shellLine: "第四案完。" }).includes("下一通"), "最后一案小尾声不能渲染不存在的下一案材料");
   assertEqual(storyInterludeCaseId({ sequence: [{ caseId: "01-credit", plotId: "lost-job-hidden-credit" }] }, { id: "episode-generated-id", plotId: "lost-job-hidden-credit" }), "01-credit", "案间必须把运行时 plotId 映射回 manifest caseId");
   const closingCard = caseClosingHtml({
@@ -3300,12 +3299,13 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   assertIncludes(JSON.stringify(case3Opening), "卡上有二十八万六，也不代表我要拿二十八万八", "案三男方必须在错误追问路线也能当场反驳工资卡推断");
   assert(!/男方(?:问|插话)/.test(JSON.stringify(case3Opening.sceneVersions.find((scene) => scene.testimonyWall)?.testimonyWall?.acts?.[1]?.missFeedback ?? {})), "案三证词墙完成后男方才申请接麦，失败反馈不得让他提前发言");
   const openingFirstLines = [case1Opening, case2, case3Opening, case4Opening]
-    .map((brief) => brief?.openingDialogue?.[0]?.text ?? "");
+    .map((brief) => brief?.openingDialogue?.find((line) => line.role === "caller")?.text ?? "");
   assert(openingFirstLines.every((line) => /主播|咨询|分析/.test(line)), "四案第一句都必须先有自然接通感，不能从金额或证据物件硬切入");
   assertEqual(new Set(openingFirstLines.map((line) => line.split(/[。！？]/)[0])).size, 4, "四案不得共用同一句模板问候");
-  assertIncludes(case2?.openingDialogue?.[0]?.text ?? "", "我在线上吗", "案二应先确认自己已经接入，不得把名单和失眠塞进问候句");
-  assertIncludes(case2?.openingDialogue?.[1]?.text ?? "", "你在的，请讲", "案二主播必须先完成正常接线，再让名单进入");
-  assert(!/名单|女的|没睡/.test(case2?.openingDialogue?.[0]?.text ?? ""), "案二问候句不得兼做名单摘要");
+  const tonyOpening = case2.openingDialogue.filter((line) => line.role !== "stage");
+  assertIncludes(tonyOpening[0]?.text ?? "", "我在线上吗", "案二应先确认自己已经接入，不得把名单和失眠塞进问候句");
+  assertIncludes(tonyOpening[1]?.text ?? "", "你在的，请讲", "案二主播必须先完成正常接线，再让名单进入");
+  assert(!/名单|女的|没睡/.test(tonyOpening[0]?.text ?? ""), "案二问候句不得兼做名单摘要");
   assert(!JSON.stringify(case2?.openingDialogue ?? []).includes("先缓口气"), "案二开场必须从名单和要钱直接追，不能保留模板式安抚");
   assertIncludes(JSON.stringify(case2?.openingDialogue ?? []), "钱在他那里", "案二开场必须在名单之后尽快砸出要钱，不能只填关系表");
   assertIncludes(case3Opening?.openingDialogue?.[0]?.text ?? "", "帮我听听一件事", "案三应先用自己的措辞提出求助，不得从二十八万八硬切入");

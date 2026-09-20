@@ -274,7 +274,7 @@ export function cafeAccountBoardHtml(rows = []) {
 
 export function cafeFinalBoundaryHtml({ result = "", openAccount = "", unknown = [] } = {}) {
   return `
-    <section class="cafe-final-boundary">
+    <section class="cafe-final-boundary" data-after-dialogue hidden>
       ${result ? `<div><small>鉴定回告</small><strong>${escapeHtml(result)}</strong></div>` : ""}
       ${openAccount ? `<div><small>家庭流水</small><strong>${escapeHtml(openAccount)}</strong></div>` : ""}
       <p>${(unknown ?? []).map((item) => escapeHtml(item)).join("；")}</p>

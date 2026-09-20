@@ -2036,7 +2036,7 @@ export const CONTENT_PACKS = {
             "speaker": "运营 · 老方（现场）",
             "speakerProfileId": "producer-lao-fang",
             "type": "background",
-            "text": "老林，到屋了？你那张旧工牌怎么还压着线。跟你说正事，深夜档这个月再不达标，就并进娱乐区。二十三号早上九点，改版方案给我。"
+            "text": "老林，到屋了？你那张旧工牌怎么还压着线。跟你说正事，深夜档的数据再这么下去，就并进娱乐区。改版的事，你得想想了。"
           },
           {
             "speaker": "林旭阳",
@@ -2059,11 +2059,11 @@ export const CONTENT_PACKS = {
       "interludes": [
         {
           "afterCaseId": "01-credit",
-          "kicker": "第 2 晚 · 收播以后",
+          "kicker": "7 月 16 日 · 收播以后",
           "lines": [
             {
               "role": "stage",
-              "text": "第 2 晚的回拨结束，直播灯熄了。"
+              "text": "7 月 16 日，回拨结束，直播灯熄了。"
             },
             {
               "role": "advisor",
@@ -2130,17 +2130,13 @@ export const CONTENT_PACKS = {
           "afterLines": [
             {
               "role": "stage",
-              "text": "监听音箱里的音乐慢慢起来。"
-            },
-            {
-              "role": "stage",
-              "text": "第 3 晚。你回到控台，重新接通热线。"
+              "text": "你关掉监听音箱，和赵一起出了门。"
             }
           ]
         },
         {
           "afterCaseId": "04-workplace",
-          "kicker": "第 4 晚 · 私下咨询之后",
+          "kicker": "7 月 26 日 · 私下咨询之后",
           "lines": [
             {
               "role": "stage",
@@ -2260,21 +2256,55 @@ export const CONTENT_PACKS = {
             }
           ],
           "line": "你存好新的收件记录，把付款日期空着的那一栏留在屏幕上。",
-          "afterLines": [
-            {
-              "role": "stage",
-              "text": "第 5 晚。你回到控台，接通下一通热线。"
-            }
-          ],
-          "remoteLabel": "语音与消息"
+          "afterLines": [],
+          "remoteLabel": "语音与消息",
+          "broadcastRecap": {
+            "caseId": "04-workplace",
+            "kicker": "7 月 29 日 · 开播回访",
+            "actionLabel": "几天后，开播",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "7 月 29 日，距离那次私下咨询已经过去三天。开播前，陈发来消息：今天的会开完了，六万八仍未到账，付款日期还是“待通知”。"
+              },
+              {
+                "role": "stage",
+                "text": "你关掉内部单据和聊天窗口，打开直播。"
+              },
+              {
+                "role": "host",
+                "text": "前几天那个垫钱办活动的小伙子，后来跟我私下聊了。原件补齐了，钱还没到。他这次没再垫。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "host",
+                "text": "顺着他们公开的广告和经营资料往下看，租金连成本都盖不住，还在不停加点位。每多一个用户，却先多收一笔押金。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "host",
+                "text": "融资材料里写得很明白，押金进了关联平台，拿去给地产这些项目周转。充电宝做得越便宜，用的人越多，他们能拿去周转的钱就越多。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "host",
+                "text": "他一开始以为只是主管拖着报销。问到最后，公司连旧费用都等着后面的进款。他那六万八什么时候能拿回来，还得接着盯。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "stage",
+                "text": "你收起公开资料，继续今晚的节目。"
+              }
+            ]
+          }
         },
         {
           "afterCaseId": "03-profile",
-          "kicker": "第 6 晚 · 收播以后",
+          "kicker": "8 月 23 日 · 收播以后",
           "lines": [
             {
               "role": "stage",
-              "text": "第 6 晚的回拨结束，直播灯熄了。"
+              "text": "8 月 23 日，回拨结束，直播灯熄了。"
             },
             {
               "role": "stage",
@@ -2336,55 +2366,16 @@ export const CONTENT_PACKS = {
             "kind": "news-push",
             "headline": "宸直产品出现延期登记传闻",
             "text": "宸直旗下多只产品被曝延期登记，平台回应称正在核对。",
-            "source": "财经客户端推送 · 00:47"
-          },
-          "broadcastRecap": {
-            "caseId": "04-workplace",
-            "kicker": "第 7 晚 · 开播回访",
-            "actionLabel": "几天后，开播",
-            "lines": [
-              {
-                "role": "stage",
-                "text": "7 月 21 日，距离那次私下咨询已经过去三天。开播前，陈发来消息：六万八仍未到账，财务只让他等二十二号的会。"
-              },
-              {
-                "role": "stage",
-                "text": "你关掉内部单据和聊天窗口，打开直播。"
-              },
-              {
-                "role": "host",
-                "text": "前几天那个垫钱办活动的小伙子，后来跟我私下聊了。原件补齐了，钱还没到。他这次没再垫。",
-                "speaker": "林旭阳"
-              },
-              {
-                "role": "host",
-                "text": "顺着他们公开的广告和经营资料往下看，租金连成本都盖不住，还在不停加点位。每多一个用户，却先多收一笔押金。",
-                "speaker": "林旭阳"
-              },
-              {
-                "role": "host",
-                "text": "融资材料里写得很明白，押金进了关联平台，拿去给地产这些项目周转。充电宝做得越便宜，用的人越多，他们能拿去周转的钱就越多。",
-                "speaker": "林旭阳"
-              },
-              {
-                "role": "host",
-                "text": "他一开始以为只是主管拖着报销。问到最后，公司连旧费用都等着后面的进款。他那六万八什么时候能拿回来，还得接着盯。",
-                "speaker": "林旭阳"
-              },
-              {
-                "role": "stage",
-                "text": "你收起公开资料，接入今晚的热线。"
-              }
-            ]
+            "source": "财经客户端推送 · 9 月 21 日 19:47"
           }
         },
         {
           "afterCaseId": "02-tony",
-          "kicker": "第 8 晚 · 收播以后",
+          "kicker": "9 月 22 日 · 收播以后",
           "lines": [
             {
               "role": "stage",
-              "text": "7 月 22 日，第 8 晚的回拨结束，直播灯熄了。"
+              "text": "9 月 22 日，今晚的回拨结束，直播灯熄了。"
             },
             {
               "speaker": "赵律师",
@@ -2416,7 +2407,7 @@ export const CONTENT_PACKS = {
           "worldEcho": {
             "id": "world-echo-chenzhi-payment-crisis",
             "promiseId": "chenzhi-trust-payment-crisis",
-            "kicker": "收播后 · 新闻推送",
+            "kicker": "9 月 22 日深夜 · 新闻推送",
             "actionLabel": "把新闻推送点开",
             "artSrc": "./assets/generated/cg/chenzhi-news-push-pixel.png",
             "artAlt": "收播后的工作室桌面，手机亮起一条紧急新闻推送",
@@ -2426,7 +2417,7 @@ export const CONTENT_PACKS = {
               {
                 "id": "cross-case-ledger",
                 "label": "把四案里的宸直线索并在一起",
-                "response": "先把栖行融资稿的押金归集附注、部门待付记录与其他案的宸直材料摆到一起。它们提出了同一个资金来源问题，还需要通报说明去向。"
+                "response": "先把栖行融资稿的押金归集附注、部门待付记录与其他案的宸直材料摆到一起。融资稿已经写了关联项目周转；这次通报说了什么，得打开看。"
               },
               {
                 "id": "tony-only",
@@ -2445,7 +2436,7 @@ export const CONTENT_PACKS = {
         }
       ],
       "epilogue": {
-        "opening": "屏幕右上角的“直播中”灭了。你摘下耳机，房间一下安静下来。",
+        "opening": "9 月 22 日深夜。你摘下耳机，手机接连震了几下。新闻链接下面，几位以前的来电人又发来了消息。",
         "unreadMessages": [
           {
             "id": "case1-callback",
@@ -2453,10 +2444,10 @@ export const CONTENT_PACKS = {
             "caseLabel": "第一通回访",
             "sender": "咨询者",
             "speakerProfileId": "case1-caller-shen",
-            "base": "新闻出来以后他只回了一句。宸直那二十万现在动不了。什么时候能拿回来他也不知道。八万我没转。灯收进箱子了。",
+            "base": "七月那通电话之后，八万我一直没转，灯也早收进箱子了。刚才新闻出来，他又回了一句：宸直那二十万现在动不了，什么时候能拿回来他也不知道。",
             "echoes": {
-              "pragmatic": "他已经听过直播了，还是一直问我钱花在哪。",
-              "affirm": "余额他听到了，还非要我一笔笔列。",
+              "pragmatic": "那次直播他早听过了，到现在还拿那几笔花销跟我吵。",
+              "affirm": "余额当时也让他听见了。他到现在还要我一笔笔列。",
               "accompany": "明晚我听着。不打了，就听。"
             },
             "attachment": {
@@ -2471,7 +2462,7 @@ export const CONTENT_PACKS = {
             "caseLabel": "第二通回访",
             "sender": "陈",
             "speakerProfileId": "case4-caller-chen",
-            "base": "今天开会，我跟运营、维修一起问了。六万八受理号还在，付款日期还是待通知。多出来那一万二，我也说明了。新闻你们看见了吧？他们也别拿协调费堵我的嘴，六万八得先还我。",
+            "base": "七月底那次会，我跟运营、维修一起问了。后来又催了几回，到今天六万八还没拿到，付款日期还是待通知。多出来那一万二，我当时也说明了。新闻你们看见了吧？他们也别拿协调费堵我的嘴，六万八得先还我。",
             "echoes": {
               "pragmatic": "群里到今天还没回。",
               "affirm": "那两个同事也跟着催了。",
@@ -2484,7 +2475,7 @@ export const CONTENT_PACKS = {
             "caseLabel": "第三通回访",
             "sender": "表妹",
             "speakerProfileId": "case3-caller-cousin",
-            "base": "周末见面取消了，两边父母也各自说过了。我姐还在介意，他为什么不能跟介绍人说一句忙。那几条付款条件，她没说要改。现在宸直又出了新闻，她爸原先答应九月底给她的二十万，也不知道什么时候能拿到。",
+            "base": "八月底约的那顿饭后来取消了，两边父母也各自说过了。我姐还在介意，他为什么不能跟介绍人说一句忙。那几条付款条件，她没说要改。现在宸直又出了新闻，她爸原先答应九月底给她的二十万，也不知道什么时候能拿到。",
             "echoes": {
               "pragmatic": "介绍人来问，她只说饭局往后放。",
               "affirm": "男方没替她说忙。她还在生这个气。",
@@ -2519,7 +2510,7 @@ export const CONTENT_PACKS = {
         "good": "后台曲线停在一个不难看的数字上。老方没发短信——没消息就是好消息，至少今晚是。",
         "bad": "后台曲线停在老地方。老方的短信显示“输入中”……又消失了。天亮后九点，方案还是要交。",
         "platformCost": "后台曲线掉回老地方。老方这次没打字，直接发来一句：‘推荐位没了。明早九点，方案照交。’",
-        "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。保温盒空了。你顺手洗了，倒扣在水池边。你把她的合同挪开，又把自己的手机放远了点。",
+        "home": "天有点亮了。赵睡在沙发上，合同盖在脸上。保温盒空了。你顺手洗了，倒扣在水池边。你把她的合同挪开，又把自己的手机放远了点。 昨晚男方发来的鉴定报告还在消息列表里，赵已经和他约好，今天上午来拿材料。",
         "close": "你从包里拿出那个牛皮纸文件袋。封口贴着一张便签，赵的字：『你两年前没问完的那通，我帮你找到了后续。』里面是当时用过的旧账单，原件日期写着 2019-11-08；旁边另贴着直播回放索引：2022 年 7 月，『已撤回的账单』。",
         "closingCg": {
           "src": "./assets/generated/cg/envelope-2019-pixel.png",
@@ -2530,7 +2521,7 @@ export const CONTENT_PACKS = {
       },
       "cafePrologue": {
         "id": "prologue-cafe-opening",
-        "timeline": "现在 · 傍晚",
+        "timeline": "三周前 · 2024 年 9 月 1 日傍晚",
         "title": "序章",
         "subtitle": "咖啡厅 · 谈离婚",
         "backdropClass": "day-cafe cafe-prologue-backdrop",
@@ -2540,7 +2531,7 @@ export const CONTENT_PACKS = {
           "mechanicalCoupling": [
             "玩家必须先点出‘没去过酒店’这句原话，再亲手出示聊天截图或酒店订单；任一张都只能逼她承认开房，剩下那张仍不能证明顾*上过楼。",
             "玩家打开逐行流水追问‘没跟顾*转过钱’，只打穿没有钱款往来，不越级证明借款性质或酒店内行为。",
-            "玩家依次查看孩子旧物和男方名下的家庭支出卡；两项交接后，转场回到两年前的直播，回忆结束后回到现在查看后续回告。"
+            "玩家依次查看孩子旧物和男方名下的家庭支出卡；两项交接后回看七月起的三宗旧案，再进入最近发生的 Tony 案，次日上午接回亲子鉴定与家庭卡的后续。"
           ],
           "pressure": "桌边录像、表哥手机里的另一份录屏和双方对后续剪辑的争夺同时压上来；妻子带孩子离开后，留在共同住所的孩子旧物也可能随时被取走。",
           "failureBoundary": "不能在咖啡厅公开亲子结果，不能把酒店同住写成已经证明发生性关系，也不能用鉴定结果倒推女方何时知道孩子身世、为何结婚或给固定转账收款人补身份。"
@@ -3227,13 +3218,37 @@ export const CONTENT_PACKS = {
           ]
         },
         "forensic": {
-          "timeline": "数周后",
+          "timeline": "9 月 23 日上午 · 咖啡厅见面三周后",
           "openingLines": [
             {
               "speaker": "旁白",
               "speakerProfileId": "narrator",
               "type": "narration",
-              "text": "回忆结束，时间回到现在。距离咖啡厅那晚已经过去数周。录制关闭。赵律师带来一份新的委托记录：妻子要求孩子的信息不得公开，随后同意双方带孩子到机构。工作人员核对身份、完成现场采样，今天才回告结果。"
+              "text": "9 月 23 日上午，工作室没有开播。距离咖啡厅那晚已经过去三周。赵把男方带到桌边，他手里拿着昨晚收到的报告。这期间，妻子同意双方带孩子到机构，工作人员核对身份、完成现场采样。"
+            },
+            {
+              "speaker": "男方",
+              "speakerProfileId": "prologue-cafe-husband",
+              "type": "participant",
+              "text": "报告我昨晚就收到了，看了一晚上。赵律师，能不能找个懂行的人，再帮我看看？"
+            },
+            {
+              "speaker": "赵律师",
+              "speakerProfileId": "zhao-lawyer",
+              "type": "advisor",
+              "text": "我有个朋友是法医，姓张。我问过他了，他这会儿有空。你把报告翻到意见那一页，我接通给他看。"
+            },
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "stage",
+              "text": "赵拨通张法医的视频。你把桌上的台灯转向报告，男方把纸摊平。"
+            },
+            {
+              "speaker": "张法医",
+              "speakerProfileId": "zhang-forensic",
+              "type": "advisor",
+              "text": "看得清。我先把这一句念给你听。"
             },
             {
               "speaker": "张法医",
@@ -3280,7 +3295,13 @@ export const CONTENT_PACKS = {
               "speaker": "林旭阳",
               "speakerProfileId": "host-lin-xuyang",
               "type": "host",
-              "text": "结果我们听到了。生父是谁，不猜；孩子以后怎么安排，你们跟律师私下谈。这段不公开。"
+              "text": "你先坐着，我给你倒杯水。"
+            },
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "stage",
+              "text": "男方点了点头，从文件袋里又抽出一张回单，递给赵。"
             }
           ],
           "accountClueLines": [
@@ -3318,7 +3339,13 @@ export const CONTENT_PACKS = {
               "speaker": "林旭阳",
               "speakerProfileId": "host-lin-xuyang",
               "type": "host",
-              "text": "那就先别把这笔钱也算到顾*头上。"
+              "text": "这笔每个月都转的钱，又是给谁的？"
+            },
+            {
+              "speaker": "旁白",
+              "speakerProfileId": "narrator",
+              "type": "stage",
+              "text": "男方看着遮住的名字，没有接话。赵把回单放在鉴定报告旁边。窗外，送孩子上学的人正从楼下经过。"
             }
           ],
           "finalCards": {
@@ -3400,7 +3427,7 @@ export const CONTENT_PACKS = {
               "principal": {
                 "location": "cafePrologue.forensic",
                 "trigger": "player-input",
-                "payoff": "玩家先联系机构，得知旧物不能代替身份核验。数周后，双方同意现场采样才取得亲子鉴定意见；先查家庭卡则只收到十八日回单，未选路线不提前披露结果。"
+                "payoff": "玩家依次交接旧物与家庭卡；三周后，双方同意现场采样所得鉴定意见和家庭卡电子回单先后回告，序章不提前披露结果。"
               },
               "nextDebt": {
                 "location": "cafePrologue.forensic.accountClueLines",
@@ -5679,9 +5706,9 @@ export const CONTENT_CASES = {
             "neutral": "我回来了。你接着问吧。"
           }
         },
-        "broadcastNights": [
-          1,
-          2
+        "sessionDates": [
+          "2024-07-15",
+          "2024-07-16"
         ]
       },
       "overnightStructure": {
@@ -5855,7 +5882,8 @@ export const CONTENT_CASES = {
         "nextStep": "她挂断，八万未转。三万五用途、当前具体余额与产品回款仍未说明，不能用未公开部分改写当场已认下的约定。"
       },
       "caseTitle": {
-        "title": "账单里的八万"
+        "title": "账单里的八万",
+        "timeline": "2024 年 7 月 15 日 · 两个多月前"
       },
       "storyInterludeRecap": "男方在后台发来代存约定和消费聊天；女方承认代存款基本花完、余额不肯公开，仍坚持此前的钱都是主动赠与。男方借款投资的事由本人后台说明，未公开的信用卡消费仍未解释。",
       "followupTwist": "男方看直播后直接提交材料，确认三月借款用于宸直认购。他把离职补偿说成奖金，也仍不愿公开信用卡中至少三万五的明细。女方的代存约定、个人消费和实际余额在连线中分别核实，男方始终没有上麦。",
@@ -5870,7 +5898,7 @@ export const CONTENT_CASES = {
       "runtimeContentStatus": "runtime-loaded",
       "label": "职场报销截图",
       "storyArcTitle": "今日来电：职场报销截图",
-      "publicHook": "六万八垫了三个星期。他想催，又怕以后没有活动给他办。",
+      "publicHook": "六万八垫了一个月。他想催，又怕以后没有活动给他办。",
       "storyArcSummary": "陈为业绩与四千元预期分成先垫六万八。第二夜跨部门待付与包干草单使个人催款变成公司资金问题；案后再核经营成本、层层返费和押金关联往来。",
       "storySuspense": "以前人人抢着先垫，这次几个部门都收不回钱。主管说月底统一结，可公司拿什么结？",
       "storyClueObject": "六万八刷卡记录、过往超额结算、旧立项页、跨部门待付受理页和八万包干草单",
@@ -5977,7 +6005,7 @@ export const CONTENT_CASES = {
         },
         {
           "role": "caller",
-          "text": "我替公司垫了六万八，三个星期了，还没报下来。",
+          "text": "我替公司垫了六万八，一个月了，还没报下来。",
           "speaker": "咨询者",
           "mood": "thinking"
         },
@@ -7286,7 +7314,7 @@ export const CONTENT_CASES = {
               "kind": "interruptToast",
               "npcVerb": "interrupt",
               "from": "领导通知（陈转发）",
-              "text": "二十二号，下周一照常排下一轮活动。各部门按包干额度先顶，旧费用月底一起处理。",
+              "text": "二十九号，下周一照常排下一轮活动。各部门按包干额度先顶，旧费用月底一起处理。",
               "grantsInventory": [
                 "leader-note-hot"
               ]
@@ -7307,9 +7335,9 @@ export const CONTENT_CASES = {
             "neutral": "我回来了，今天直接问了财务。"
           }
         },
-        "broadcastNights": [
-          3,
-          4
+        "sessionDates": [
+          "2024-07-25",
+          "2024-07-26"
         ]
       },
       "overnightStructure": {
@@ -7805,7 +7833,8 @@ export const CONTENT_CASES = {
         "nextStep": "下周活动不再个人垫款，要求公司先付款；按受理号补原件并取得收件记录，继续追六万八。草单和分配消息已交财务，付款日期与协调费说明尚待回复。"
       },
       "caseTitle": {
-        "title": "职场报销截图"
+        "title": "职场报销截图",
+        "timeline": "2024 年 7 月 25 日 · 九天后"
       },
       "storyInterludeRecap": "陈已提交草单和分配消息，拒绝继续垫款，约定次日补原件。咨询结束后，周会计应林的请求发来栖行的公开广告、融资稿和大股东宣传册；第三天开播再提催款进展与经营结论。",
       "followupTwist": "他说收到新的付款回复就再打来。",
@@ -8698,21 +8727,21 @@ export const CONTENT_CASES = {
                       "id": "case3-credential-balance:p08",
                       "kind": "介绍人转发页",
                       "label": "‘只差两千，不是拿不出，就是不肯’",
-                      "excerpt": "07-18 · 女方母亲→介绍人→咨询者 · 差 ¥2,000 · 母亲：只差两千，不是拿不出，就是不肯；咨询者回复：嗯，我也觉得是态度",
+                      "excerpt": "08-18 · 女方母亲→介绍人→咨询者 · 差 ¥2,000 · 母亲：只差两千，不是拿不出，就是不肯；咨询者回复：嗯，我也觉得是态度",
                       "sourceLabel": "学历、彩礼与两家资金边界 p08"
                     },
                     {
                       "id": "case3-credential-balance:p03",
                       "kind": "工资卡覆盖范围",
                       "label": "期末余额 ¥286,000 · 仅一张账户",
-                      "excerpt": "07-18 · 男方工资账户 · ¥286,000 · 07-01 至 07-18；期末余额；其他账户未提供",
+                      "excerpt": "08-18 · 男方工资账户 · ¥286,000 · 08-01 至 08-18；期末余额；其他账户未提供",
                       "sourceLabel": "学历、彩礼与两家资金边界 p03"
                     },
                     {
                       "id": "case3-credential-balance:p04",
                       "kind": "条件原文",
                       "label": "领证前转入女方个人账户 ¥288,000",
-                      "excerpt": "07-17 · 女方母亲→介绍人 · ¥288,000 · 听说 MBA 自费后提出；要求领证前转入女方个人账户",
+                      "excerpt": "08-17 · 女方母亲→介绍人 · ¥288,000 · 听说 MBA 自费后提出；要求领证前转入女方个人账户",
                       "sourceLabel": "学历、彩礼与两家资金边界"
                     }
                   ],
@@ -8803,21 +8832,21 @@ export const CONTENT_CASES = {
                 "id": "case3-credential-balance:p08",
                 "kind": "介绍人转发页",
                 "label": "‘只差两千，不是拿不出，就是不肯’",
-                "excerpt": "07-18 · 女方母亲→介绍人→咨询者 · 差 ¥2,000 · 母亲：只差两千，不是拿不出，就是不肯；咨询者回复：嗯，我也觉得是态度",
+                "excerpt": "08-18 · 女方母亲→介绍人→咨询者 · 差 ¥2,000 · 母亲：只差两千，不是拿不出，就是不肯；咨询者回复：嗯，我也觉得是态度",
                 "sourceLabel": "学历、彩礼与两家资金边界 p08"
               },
               {
                 "id": "case3-credential-balance:p03",
                 "kind": "工资卡覆盖范围",
                 "label": "期末余额 ¥286,000 · 仅一张账户",
-                "excerpt": "07-18 · 男方工资账户 · ¥286,000 · 07-01 至 07-18；期末余额；其他账户未提供",
+                "excerpt": "08-18 · 男方工资账户 · ¥286,000 · 08-01 至 08-18；期末余额；其他账户未提供",
                 "sourceLabel": "学历、彩礼与两家资金边界 p03"
               },
               {
                 "id": "case3-credential-balance:p04",
                 "kind": "条件原文",
                 "label": "领证前转入女方个人账户 ¥288,000",
-                "excerpt": "07-17 · 女方母亲→介绍人 · ¥288,000 · 听说 MBA 自费后提出；要求领证前转入女方个人账户",
+                "excerpt": "08-17 · 女方母亲→介绍人 · ¥288,000 · 听说 MBA 自费后提出；要求领证前转入女方个人账户",
                 "sourceLabel": "学历、彩礼与两家资金边界"
               }
             ],
@@ -9139,7 +9168,7 @@ export const CONTENT_CASES = {
           "id": "daily-profile-deposit",
           "type": "工资账户流水",
           "title": "工资账户流水",
-          "front": "07-01 至 07-18；工资账户期末余额 28.6 万。页面没有列出其他账户。",
+          "front": "08-01 至 08-18；工资账户期末余额 28.6 万。页面没有列出其他账户。",
           "detail": "这页只列一个工资账户：到账和期末余额都在，其他账户和转账授权都没有。",
           "targets": [
             "truthWithGap",
@@ -9402,7 +9431,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "p04",
-              "date": "07-17",
+              "date": "08-17",
               "kind": "提醒",
               "amount": "¥288,000",
               "party": "女方母亲→介绍人",
@@ -9410,7 +9439,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "p06",
-              "date": "07-17",
+              "date": "08-17",
               "kind": "提醒",
               "amount": "¥200,000",
               "party": "女方父亲口头安排",
@@ -9418,7 +9447,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "p07",
-              "date": "07-17",
+              "date": "08-17",
               "kind": "提醒",
               "amount": "另算",
               "party": "婚宴与首饰",
@@ -9426,15 +9455,15 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "p03",
-              "date": "07-18",
+              "date": "08-18",
               "kind": "提醒",
               "amount": "¥286,000",
               "party": "男方工资账户",
-              "memo": "07-01 至 07-18；期末余额；其他账户未提供"
+              "memo": "08-01 至 08-18；期末余额；其他账户未提供"
             },
             {
               "rowId": "p08",
-              "date": "07-18",
+              "date": "08-18",
               "kind": "提醒",
               "amount": "差 ¥2,000",
               "party": "女方母亲→介绍人→咨询者",
@@ -9540,9 +9569,9 @@ export const CONTENT_CASES = {
             "neutral": "我回来了。昨晚群里吵到很晚，我把那几张图又看了一遍。"
           }
         },
-        "broadcastNights": [
-          5,
-          6
+        "sessionDates": [
+          "2024-08-22",
+          "2024-08-23"
         ]
       },
       "overnightStructure": {
@@ -10077,7 +10106,8 @@ export const CONTENT_CASES = {
         "nextStep": "周末饭局取消，双方各自通知父母。她要求对外说他忙，他拒绝；付款条件仍没谈拢，共同账户没有获她同意。任何后续联系都要从这次没有谈成继续，不能把两人仍愿意开口写成已经达成安排。"
       },
       "caseTitle": {
-        "title": "彩礼与流水"
+        "title": "彩礼与流水",
+        "timeline": "2024 年 8 月 22 日 · 又过了三个多星期"
       },
       "storyInterludeRecap": "学校图上只有 MBA。女方父母查到男方家境普通后，没有追究被骗，反而借这个落差问二十八万八；咨询者嘴上劝过一句，实际没有叫停。",
       "conclusionWhenCleared": {
@@ -10220,6 +10250,10 @@ export const CONTENT_CASES = {
       ],
       "openingComplaint": "她打来问：翻到 Tony 一份名单以后，怎样把钱要回来。",
       "openingDialogue": [
+        {
+          "role": "stage",
+          "text": "9 月 21 日，晚上八点。开播前，老方发来消息：“二十三号早上九点，改版方案给我。这回别再拖了。”你把消息关掉，接入今晚的热线。"
+        },
         {
           "speaker": "咨询者",
           "role": "caller",
@@ -11182,21 +11216,21 @@ export const CONTENT_CASES = {
                       "id": "case2-member-training:m03",
                       "kind": "名单原行",
                       "label": "何：12 万／不够 100 万起投／走 Tony 户",
-                      "excerpt": "07-12 · 何 · ¥120,000 · 不够100万起投；走Tony户",
+                      "excerpt": "09-12 · 何 · ¥120,000 · 不够100万起投；走Tony户",
                       "sourceLabel": "名单与十二万转账"
                     },
                     {
                       "id": "case2-member-training:m02",
                       "kind": "名单原行",
                       "label": "周：100 万／已买",
-                      "excerpt": "07-11 · 周（遮名） · ¥1,000,000 · 已买；跟进；无亲密度",
+                      "excerpt": "09-11 · 周（遮名） · ¥1,000,000 · 已买；跟进；无亲密度",
                       "sourceLabel": "名单与十二万转账"
                     },
                     {
                       "id": "case2-member-training:m05",
                       "kind": "转账记录",
                       "label": "何→Tony：¥120,000",
-                      "excerpt": "07-13 · 何→Tony · ¥120,000 · 转账备注空；聊天写帮我买",
+                      "excerpt": "09-13 · 何→Tony · ¥120,000 · 转账备注空；聊天写帮我买",
                       "sourceLabel": "名单与十二万转账"
                     }
                   ],
@@ -11388,14 +11422,14 @@ export const CONTENT_CASES = {
                       "id": "case2-member-training:m05",
                       "kind": "转账记录",
                       "label": "何→Tony：¥120,000",
-                      "excerpt": "07-13 · 何→Tony · ¥120,000 · 转账备注空；聊天写帮我买",
+                      "excerpt": "09-13 · 何→Tony · ¥120,000 · 转账备注空；聊天写帮我买",
                       "sourceLabel": "名单与十二万转账"
                     },
                     {
                       "id": "case2-member-training:m03",
                       "kind": "名单原行",
                       "label": "不够 100 万起投／走 Tony 户",
-                      "excerpt": "07-12 · 何 · ¥120,000 · 不够100万起投；走Tony户",
+                      "excerpt": "09-12 · 何 · ¥120,000 · 不够100万起投；走Tony户",
                       "sourceLabel": "名单与十二万转账"
                     }
                   ],
@@ -11505,21 +11539,21 @@ export const CONTENT_CASES = {
                 "id": "case2-member-training:m03",
                 "kind": "名单原行",
                 "label": "何：12 万／不够 100 万起投／走 Tony 户",
-                "excerpt": "07-12 · 何 · ¥120,000 · 不够100万起投；走Tony户",
+                "excerpt": "09-12 · 何 · ¥120,000 · 不够100万起投；走Tony户",
                 "sourceLabel": "名单与十二万转账"
               },
               {
                 "id": "case2-member-training:m02",
                 "kind": "名单原行",
                 "label": "周：100 万／已买",
-                "excerpt": "07-11 · 周（遮名） · ¥1,000,000 · 已买；跟进；无亲密度",
+                "excerpt": "09-11 · 周（遮名） · ¥1,000,000 · 已买；跟进；无亲密度",
                 "sourceLabel": "名单与十二万转账"
               },
               {
                 "id": "case2-member-training:m05",
                 "kind": "转账记录",
                 "label": "何→Tony：¥120,000",
-                "excerpt": "07-13 · 何→Tony · ¥120,000 · 转账备注空；聊天写帮我买",
+                "excerpt": "09-13 · 何→Tony · ¥120,000 · 转账备注空；聊天写帮我买",
                 "sourceLabel": "名单与十二万转账"
               }
             ],
@@ -11778,7 +11812,7 @@ export const CONTENT_CASES = {
           "rows": [
             {
               "rowId": "m01",
-              "date": "07-11",
+              "date": "09-11",
               "kind": "提醒",
               "amount": "——",
               "party": "下次约／亲密度",
@@ -11786,7 +11820,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "m02",
-              "date": "07-11",
+              "date": "09-11",
               "kind": "提醒",
               "amount": "¥1,000,000",
               "party": "周（遮名）",
@@ -11794,7 +11828,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "m03",
-              "date": "07-12",
+              "date": "09-12",
               "kind": "提醒",
               "amount": "¥120,000",
               "party": "何",
@@ -11802,7 +11836,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "m05",
-              "date": "07-13",
+              "date": "09-13",
               "kind": "支出",
               "amount": "¥120,000",
               "party": "何→Tony",
@@ -11810,7 +11844,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "m06",
-              "date": "07-13",
+              "date": "09-13",
               "kind": "提醒",
               "amount": "要回",
               "party": "何→节目",
@@ -11825,7 +11859,7 @@ export const CONTENT_CASES = {
           "rows": [
             {
               "rowId": "status",
-              "date": "07-22",
+              "date": "09-22",
               "kind": "提醒",
               "amount": "——",
               "party": "Tony 转给何",
@@ -11833,7 +11867,7 @@ export const CONTENT_CASES = {
             },
             {
               "rowId": "reply",
-              "date": "07-22",
+              "date": "09-22",
               "kind": "提醒",
               "amount": "——",
               "party": "Tony→何",
@@ -11979,9 +12013,9 @@ export const CONTENT_CASES = {
             "neutral": "我回来了。完整名单和转账都发后台了。"
           }
         },
-        "broadcastNights": [
-          7,
-          8
+        "sessionDates": [
+          "2024-09-21",
+          "2024-09-22"
         ]
       },
       "overnightStructure": {
@@ -12461,7 +12495,8 @@ export const CONTENT_CASES = {
         "nextStep": "不再转钱。要求 Tony 交产品全名、认购合同、回单和实际下单账户；提交转账与完整聊天供警方核实。公开谈这笔钱时同时说明代投安排，不凭裁图判定其他顾客与他的关系。"
       },
       "caseTitle": {
-        "title": "那张名单"
+        "title": "那张名单",
+        "timeline": "2024 年 9 月 21 日 · 最近"
       },
       "storyInterludeRecap": "她先拿裁过的名单讲养鱼，后来才承认两人真实的恋爱相处和真实照顾都发生过。第一夜强光和敲门让她突然下线；第二夜才问出警方因涉案放款人来核实借款。完整名单和转账随后对出：她主动让 Tony 代投十二万，钱走他的个人账户，合同和回单仍在他手里。风声一来，她才裁图改口。",
       "followupTwist": "周又发来消息，说愿意把转账和回单原图交给警方。来电人也把自己的聊天和十二万转账整理了过去。两人都没有去店里堵人；他还是只说已经提交，没有发合同。",

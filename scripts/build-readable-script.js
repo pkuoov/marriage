@@ -192,6 +192,8 @@ function renderScript() {
     add(`- **剧情 ID：** ${packet.plotId}`);
     if (packet.storyArcTitle) add(`- **内容包原题：** ${packet.storyArcTitle}`);
     if (packet.caseTitle?.subtitle) add(`- **副标题：** ${packet.caseTitle.subtitle}`);
+    if (packet.caseTitle?.timeline) add(`- **时间：** ${packet.caseTitle.timeline}`);
+    renderNode(lines, packet.nightStructure?.sessionDates, "本案两次通话日期", 3);
     add("");
 
     add("## 本案人物", "");
@@ -484,6 +486,7 @@ function renderPureStoryScript() {
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? `第${caseIndex + 1}案`;
     lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
+    if (packet.caseTitle?.timeline) lines.push(`【${packet.caseTitle.timeline}】`, "");
 
     lines.push("## 第一夜｜第一次来电", "", "【开播。】", "");
     for (const line of packet.openingDialogue ?? []) renderDirectorSpoken(lines, line);
@@ -568,6 +571,7 @@ function renderContinuousStoryScript() {
 
     lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
+    if (packet.caseTitle?.timeline) lines.push(`【${packet.caseTitle.timeline}】`, "");
 
     lines.push("## 第一夜｜第一次来电", "", "【你接入电话。】", "");
     for (const line of packet.openingDialogue ?? []) renderContinuousSpoken(lines, line);
@@ -1313,7 +1317,7 @@ function renderCafePrologueStory(lines, prologue, { includeAlternatives = true, 
       for (const line of route.handoffLines ?? []) renderDirectorSpoken(lines, line);
     }
     for (const line of aftermath.bridgeLines ?? []) renderDirectorSpoken(lines, line);
-    lines.push(`【${actionActor}操作：两项交接完成，回想两年前的直播。】`, "", "【转场：时间回到两年前。2024 年 7 月 15 日，晚上八点。】", "");
+    lines.push(`【${actionActor}操作：两项交接完成，回看这几个月的来电。】`, "", "【转场：先从七月说起。2024 年 7 月 15 日，晚上八点。】", "");
   }
 
   if (phase !== "opening") {
@@ -1357,6 +1361,7 @@ function renderDirectorScript() {
     const title = packet.caseTitle?.title ?? packet.storyArcTitle ?? packet.label ?? packet.caseId;
     lines.push(`# 第${chineseNumber(caseIndex + 1)}幕｜${title}`, "");
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
+    if (packet.caseTitle?.timeline) lines.push(`【${packet.caseTitle.timeline}】`, "");
     lines.push(`【场景目标】${packet.dramaticAnchor ?? ""}`, "");
     lines.push(`【今晚非发生不可】${packet.whyTonight ?? ""}`, "");
 
