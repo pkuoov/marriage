@@ -403,9 +403,9 @@
       "showsCard": "daily-profile-deposit",
       "casualQuestions": [
         {
-          "question": "他只给一张工资卡。你让他打流水的时候，要的是证明拿不出，还是证明还能加？",
+          "question": "如果流水上真没有这笔钱，你肯少要一点吗？",
           "sourceAnchor": "过了十几分钟",
-          "answer": "我要证明他还能加。我们见过四次，我不信差两千就拿不出。",
+          "answer": "我不信就差两千他都拿不出。我们见过四次，他平时又不像没钱的人。",
           "id": "profile-proof-before-dinner:casualQuestions:0"
         },
         {
@@ -496,11 +496,7 @@
       ],
       "pressureHint": {
         "intentHook": "条件话被托了一层",
-        "callerGuard": "guarded",
-        "expression": {
-          "kind": "blink",
-          "text": "她把数字念得很轻，念完没有往下接"
-        }
+        "callerGuard": "guarded"
       },
       "questionSequence": [
         "profile-proof-before-dinner:questionOptions:0",
@@ -568,18 +564,18 @@
       ],
       "questionOptions": [
         {
-          "question": "他已经承认本科不是那所。你当时为什么没接着问，前面那句“名校毕业”到底怎么来的？",
+          "question": "那顿饭以后，你把本科的事跟家里说了吗？",
           "sourceAnchor": "本科不是",
-          "suspicionLabel": "他已经承认本科不是那所。你当时为什么没接着问，前面那句“名校毕业”到底怎么来的？",
-          "answer": "那个……当时桌上还有介绍人，我没接着问。回家也没解释，还是跟家里说他是那所学校本科毕业。介绍人那张学校图摆在那儿，谁看了不以为是本科？我总不能在饭桌上跟他查户口吧。",
+          "suspicionLabel": "那顿饭以后，你把本科的事跟家里说了吗？",
+          "answer": "没有。回家我还是说他是那所学校本科毕业。那时候我妈挺满意的，我没想再改口。介绍人那张学校图摆在那儿，谁看了不以为是本科？我总不能在饭桌上跟他查户口吧。",
           "lines": [
             {
               "role": "caller",
-              "text": "那个……当时桌上还有介绍人，我没接着问。回家也没解释，还是跟家里说他是那所学校本科毕业。"
+              "text": "没有。回家我还是说他是那所学校本科毕业。那时候我妈挺满意的，我没想再改口。"
             },
             {
               "role": "host",
-              "text": "他当面都说本科不是了，你怎么不接着问？回家还跟家里说他是那所学校本科毕业？"
+              "text": "他当面说了不是，你回去还这么讲？"
             },
             {
               "role": "caller",
@@ -604,11 +600,7 @@
       ],
       "pressureHint": {
         "intentHook": "饭局冷场露出来",
-        "callerGuard": "tense",
-        "expression": {
-          "kind": "pause",
-          "text": "停了很久才说完"
-        }
+        "callerGuard": "tense"
       },
       "afterScene": {
         "kind": "evidenceCheck",
@@ -689,10 +681,10 @@
       ],
       "questionOptions": [
         {
-          "question": "你妈说家里帮不上，彩礼就多拿一点。查完普通家境不撤条件，你也这么想？",
+          "question": "你妈说彩礼多拿一点，你当时怎么回她的？",
           "sourceAnchor": "彩礼就多问一点",
-          "suspicionLabel": "你妈说家里帮不上，彩礼就多拿一点。查完普通家境不撤条件，你也这么想？",
-          "answer": "我当时也觉得他该多拿一点。这个数是我妈提的……但我只说别把人吓跑，没让她撤回二十八万八。是，我也想要。只是我妈先开的口，我又没让她加到别的数。",
+          "suspicionLabel": "你妈说彩礼多拿一点，你当时怎么回她的？",
+          "answer": "我当时也觉得他该多拿一点。这个数是我妈提的……但我只说别把人吓跑，没让她撤回二十八万八。数是她先报的啊。我后来觉得可以，又不等于我让她去加的。",
           "logicContract": {
             "premiseAnchor": "彩礼就多问一点",
             "sourceKind": "caller-statement",
@@ -714,22 +706,18 @@
             },
             {
               "role": "host",
-              "text": "你也觉得他该多拿，还只说是你妈提的？二十八万八先到你手里，你就没叫停？"
+              "text": "那你开头怎么说自己不知道，都是你妈先报出去的？"
             },
             {
               "role": "caller",
-              "text": "是，我也想要。只是我妈先开的口，我又没让她加到别的数。"
+              "text": "数是她先报的啊。我后来觉得可以，又不等于我让她去加的。"
             }
           ]
         }
       ],
       "pressureHint": {
         "intentHook": "资料缺口压上来",
-        "callerGuard": "tense",
-        "expression": {
-          "kind": "pause",
-          "text": "纸张响了一下，她停了两秒"
-        }
+        "callerGuard": "tense"
       },
       "afterScene": {
         "kind": "evidenceCheck",
@@ -1131,11 +1119,11 @@
                     },
                     {
                       "role": "host",
-                      "text": "共同账户你不接受。那他怎么给，你打算听到什么才算数？"
+                      "text": "他要是只肯放共同账户，这婚还谈吗？"
                     },
                     {
                       "role": "caller",
-                      "text": "他先答应进我的卡，具体差多少再商量。共同账户我不考虑。"
+                      "text": "那就让他再想想。我都说了，彩礼要给我的，这个也要我让？"
                     }
                   ]
                 },
@@ -1150,11 +1138,11 @@
                     },
                     {
                       "role": "host",
-                      "text": "共同账户你不接受。那他怎么给，你打算听到什么才算数？"
+                      "text": "他要是只肯放共同账户，这婚还谈吗？"
                     },
                     {
                       "role": "caller",
-                      "text": "他先答应进我的卡，具体差多少再商量。共同账户我不考虑。"
+                      "text": "那就让他再想想。我都说了，彩礼要给我的，这个也要我让？"
                     }
                   ]
                 }
@@ -1398,7 +1386,7 @@
           {
             "role": "caller",
             "speaker": "男方",
-            "text": "我妈让我挑工资卡，我也不想把所有账户都给她看。这句我该直接回她。其他账户我不公开，刚才那些付款条件，我也不接受。"
+            "text": "我就是不想给她看别的卡。我妈让我发工资卡，我觉得这张就够了。其他账户我不公开，难道我都给她看了，她就肯改条件？"
           }
         ]
       },
@@ -1620,7 +1608,7 @@
           "label": "学费能否代表现有积蓄",
           "correct": true,
           "contradiction": "她因为男方过去付得起学费，推断当时仍有钱可付彩礼，因此坚持索要流水；历史支出不能证明当时余额。",
-          "feedback": "先问她当时为什么坚持要流水，不能把旧学费直接当作现有积蓄。",
+          "feedback": "还没拿到流水的时候，他说拿不出，你为什么不信？",
           "reactionLine": "二十三万八的学费都是他自己交的，我就觉得他肯定有钱。他说拿不出，我当然想看看。",
           "routeAxis": "identity-wording",
           "id": "profile-mba-gap:option:0",
@@ -1674,7 +1662,7 @@
         {
           "label": "收入稳是看过材料还是听来的",
           "correct": true,
-          "feedback": "先问清“收入稳”是看过材料，还是听来的。",
+          "feedback": "她跟你说收入稳的时候，有没有说自己看过工资单？",
           "reactionLine": "她没说看过材料。给我家的原话，只写了收入稳。明天你帮我问一句，她到底看过什么。",
           "routeAxis": "caller-credibility",
           "id": "profile-introducer-double-speak:option:1",
@@ -1713,7 +1701,7 @@
           "label": "领证前转账和九月底到期",
           "correct": true,
           "contradiction": "女方家要求男方在领证前把钱转入女儿账户，婚宴首饰另算；自己那二十万元不但要等九月底，还准备留给女儿本人。",
-          "feedback": "要求男方支付的时间、账户和额外项目都很清楚；轮到女方家的钱，只剩一个未来日期，而且没有共同用途。",
+          "feedback": "你爸的钱可以等九月底，为什么他的就得领证前给？",
           "routeAxis": "caller-credibility",
           "question": "她家能等九月底，为什么要男方领证前转钱？"
         },
@@ -1751,7 +1739,7 @@
           "label": "我先把两家约到桌上",
           "correct": true,
           "contradiction": "介绍人为了促成见面，替两个人都说了没确认的话。",
-          "feedback": "她想把饭局促成，既替双方添了好话，也没有拦住二十八万八这句先冲过去。",
+          "feedback": "她替你说不计较学历，这话你同意过吗？",
           "routeAxis": "process-control",
           "question": "她为了把饭局约成，替双方说过哪些没确认的话？"
         },
@@ -1846,8 +1834,8 @@
   "careChoices": [
     {
       "id": "accompany",
-      "label": "那就挂了，你跟家里说清楚。",
-      "hostLine": "那就挂了，你跟家里说清楚。",
+      "label": "好，那今天就到这儿。",
+      "hostLine": "好，那今天就到这儿。",
       "lines": [
         {
           "role": "caller",
@@ -2010,7 +1998,7 @@
       "afterSceneIndex": 2,
       "speaker": "咨询者",
       "line": "家里群一直在 @ 我。最上面那几句……我得自己再看一遍。今晚先到这儿吧，明天我回来。",
-      "hostLine": "查完家境以后加的价，明天把每个人原话对上。别只把学历那句反复说。",
+      "hostLine": "你先看家里怎么说。介绍人那边也联系一下，明天把原话带来。",
       "stageDirection": "电话断了。屏幕上，家里群的新消息还在往外跳。",
       "audioCueId": "sfx.phone.busy"
     },
@@ -2059,7 +2047,7 @@
     "hangupAnchor": "没让她撤回二十八万八",
     "hangupLine": "电话断了。屏幕上，家里群的新消息还在往外跳。",
     "hangupAudioCueId": "sfx.phone.busy",
-    "hostHoldLine": "查完家境以后加的价，明天把每个人原话对上。别只把学历那句反复说。",
+    "hostHoldLine": "你先看家里怎么说。介绍人那边也联系一下，明天把原话带来。",
     "snapshotEcho": {
       "respondent-fraud": "昨晚你问我为什么不信他说拿不出。我确实没信，还让他打了流水。今天把我家开的条件也说全。",
       "caller-control": "昨晚你说我爸妈查完他家境普通就加价。我没让他们改数字，这句我认。",
@@ -2253,7 +2241,7 @@
           {
             "role": "caller",
             "speaker": "男方",
-            "text": "条件没变，换我去说忙。以后不还是得谈这几条？"
+            "text": "可我真不是因为忙。你让我撒这个谎，下次见面怎么办？"
           },
           {
             "role": "host",
@@ -2320,12 +2308,12 @@
             },
             {
               "speaker": "你",
-              "text": "两边聊天和彩礼传话我都留着。“收入挺稳”“不计较学历”，你都没问过本人；二十八万八你倒是一字不落地传过去了。",
+              "text": "她计不计较学历，你也没问啊。你就不怕两个人一见面，全对不上？",
               "id": "day-profile-teahouse:beat:7"
             },
             {
               "speaker": "介绍人",
-              "text": "我想着先把人约到桌上嘛。现在倒好，人还没坐下，钱先把两家掀了。",
+              "text": "我想着见了面，觉得人不错，这些就好谈了。谁知道两家连饭店都没订，就吵成这样。",
               "id": "day-profile-teahouse:beat:8"
             }
           ],
@@ -2459,14 +2447,14 @@
     },
     "postures": {
       "againstCaller": "二十八万八是我妈定的，我知道以后没叫停。今晚我自己答。",
-      "withCaller": "家里群我没删。彩礼和宸直那几句，你看到哪儿，就问到哪儿吧。"
+      "withCaller": "我又看了家里群。他们到现在还觉得我没错。你要问就问吧。"
     },
     "flowMode": "linear",
     "linearCallback": {
       "lines": [
         {
           "role": "host",
-          "text": "介绍人解释了传话的事，男方表姐也说了她参与选卡的经过。你家那几句，还是你自己来说。"
+          "text": "好，那咱们接着昨晚说。"
         }
       ]
     }

@@ -450,13 +450,13 @@
           },
           {
             "role": "advisor",
-            "text": "嗯。别把我经手的几笔，直接当成他这只已经出事。",
+            "text": "让他把产品名字也发来，我看看是不是我手里这几款。",
             "speaker": "赵律师"
           },
           {
             "speaker": "赵律师",
             "role": "advisor",
-            "text": "他说她能拿八万，她却连剩多少都不肯讲。一个当她存着，一个早拿去花了。"
+            "text": "他还以为有十五万呢。她这一年多，居然一直没跟他说。"
           },
           {
             "speaker": "林旭阳",
@@ -568,12 +568,12 @@
           },
           {
             "role": "host",
-            "text": "对上了。充电宝这边不挣钱也照样扩，押金收到别的项目里去了。光催主管，恐怕真催不出钱来。",
+            "text": "又是宸直。陈还以为催催主管就能报下来呢，这钱都拿去做地产了。",
             "speaker": "林旭阳"
           },
           {
             "role": "advisor",
-            "text": "前面店里要分成，中间采购还要返费，租金本来就盖不住成本。押金又在别处周转，大家一来要钱，它拿什么付？",
+            "text": "租金连成本都不够，押金又拿走了。大家要是都来退，他们拿什么还？",
             "speaker": "周会计（语音）",
             "speakerProfileId": "zhou-accountant"
           },
@@ -800,7 +800,7 @@
           "base": "七月那通电话之后，八万我一直没转，灯也早收进箱子了。刚才新闻出来，他又回了一句：宸直那二十万现在动不了，什么时候能拿回来他也不知道。",
           "echoes": {
             "pragmatic": "那次直播他早听过了，到现在还拿那几笔花销跟我吵。",
-            "affirm": "余额当时也让他听见了。他到现在还要我一笔笔列。",
+            "affirm": "八万拿不出来，那天他也听见了。他到现在还要我一笔笔列。",
             "accompany": "明晚我听着。不打了，就听。"
           },
           "attachment": {
@@ -1194,7 +1194,7 @@
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "等一下。那这三笔转给顾*的钱是怎么回事？"
+            "text": "等一下。那你跟顾*来往的这三笔钱是怎么回事？"
           },
           {
             "speaker": "妻子",
@@ -1354,7 +1354,7 @@
             "options": [
               {
                 "id": "transfer-purpose",
-                "question": "等一下。那这三笔转给顾*的钱是怎么回事？",
+                "question": "等一下。那你跟顾*来往的这三笔钱是怎么回事？",
                 "correct": true,
                 "evidenceId": "parallel-transfer-ledger",
                 "lines": [
@@ -1469,7 +1469,7 @@
                 "speaker": "赵律师",
                 "speakerProfileId": "zhao-lawyer",
                 "type": "advisor",
-                "text": "机构的受理说明和结果都留好。到时候我看材料，再谈法院里的申请，今天不替法院下结论。"
+                "text": "机构给你的说明和结果都留着，到时候发给我。我看过材料，再跟你谈法院那边怎么申请。"
               }
             ],
             "handoffLines": []
@@ -1564,7 +1564,7 @@
                 "speaker": "林旭阳",
                 "speakerProfileId": "host-lin-xuyang",
                 "type": "host",
-                "text": "那你把回单发给赵律师。拿到之后，我们再一起看。"
+                "text": "下载好了发给赵律师，我们一起看。"
               }
             ]
           }
@@ -1686,13 +1686,13 @@
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor",
-            "text": "回单留好。这笔钱为什么每月都转，后面再查。"
+            "text": "回单我留下了。你知道这笔钱是给谁的吗？"
           },
           {
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "这笔每个月都转的钱，又是给谁的？"
+            "text": "你以前看过这个名字吗？"
           },
           {
             "speaker": "旁白",

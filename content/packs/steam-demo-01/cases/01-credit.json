@@ -412,15 +412,7 @@
       "questionSequence": [
         "credit-living-arrangement:questionOptions:0",
         "credit-living-arrangement:questionOptions:1"
-      ],
-      "afterVersion": {
-        "lines": [
-          {
-            "role": "caller",
-            "text": "就是这个月没转，我才去问他。"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": "credit-layoff-gap",
@@ -502,7 +494,7 @@
             },
             {
               "role": "host",
-              "text": "加班你不信了。以前转到你这儿的，你也不拿出来？"
+              "text": "那以前他转给你的钱呢，你打算怎么跟他说？"
             },
             {
               "role": "caller",
@@ -538,7 +530,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "后台有个人说是你男朋友。他说刚看到直播，听见你说他拿以前的钱逼你，所以来补材料。你确认一下，是他的账号吗？"
+            "text": "后台有个人说是你男朋友，发来了账单。你看看，是他的账号吗？"
           },
           {
             "role": "caller",
@@ -546,7 +538,7 @@
           },
           {
             "role": "host",
-            "text": "他不上麦，发来的是你们的聊天和完整账单。姓名卡号我遮住了，现在看。"
+            "text": "他不上麦，那我把他发的账单打开，姓名卡号遮掉。"
           },
           {
             "role": "stage",
@@ -678,22 +670,7 @@
       "questionSequence": [
         "credit-eight-wan-bill:wine",
         "credit-eight-wan-bill:questionOptions:0"
-      ],
-      "sceneCloser": {
-        "lines": [
-          {
-            "role": "host",
-            "text": "你刚才说云栖是你让他订的。以前去过？"
-          }
-        ]
-      },
-      "closureContract": {
-        "entryAnchor": "云栖那顿纪念日晚餐最贵",
-        "closerAnchor": "以前去过",
-        "adds": "共同消费和至少三万五缺口已经摊开。云栖被点名后，当晚先核对到店经历。",
-        "openEdge": "这家店她以前到底去过几次，旧图和她说的第一次能否对上。",
-        "routeIndependent": true
-      }
+      ]
     },
     {
       "id": "credit-anniversary-agency",
@@ -774,11 +751,7 @@
       },
       "pressureHint": {
         "intentHook": "餐厅经历",
-        "callerGuard": "guarded",
-        "expression": {
-          "kind": "shift",
-          "text": "她翻东西的声音停了"
-        }
+        "callerGuard": "guarded"
       },
       "questionSequence": [
         "credit-anniversary-agency:questionOptions:0"
@@ -1063,7 +1036,7 @@
           },
           {
             "role": "host",
-            "text": "他承认三月借二十万、分两次买了宸直产品，想靠收益撑开销；所谓奖金是待发的离职补偿，十万五，预计月底发。他之前怎么跟你讲的？"
+            "text": "他回我了，那二十万是借来买宸直的。你说的奖金，他发来的却是离职结算通知，十万五，预计月底发。这些他跟你讲过吗？"
           }
         ]
       },
@@ -1130,33 +1103,14 @@
           ]
         }
       ],
-      "sceneCloser": {
-        "lines": [
-          {
-            "role": "host",
-            "text": "他把你们当时的聊天发来了，你看看。"
-          }
-        ]
-      },
       "pressureHint": {
         "intentHook": "不吐旧钱",
-        "callerGuard": "guarded",
-        "expression": {
-          "kind": "pause",
-          "text": "听筒离远了一点，回来时她先吸了口气"
-        }
+        "callerGuard": "guarded"
       },
       "questionSequence": [
         "credit-bank-flow:questionOptions:0",
         "credit-bank-flow:questionOptions:1"
-      ],
-      "closureContract": {
-        "entryAnchor": "自己的钱",
-        "closerAnchor": "当时的聊天发来了",
-        "adds": "男方的借款用途已回复，转回她保护的旧钱与约定。",
-        "openEdge": "每月半薪当初约定如何使用。",
-        "routeIndependent": true
-      }
+      ]
     },
     {
       "id": "credit-loyalty-test",
@@ -1173,7 +1127,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "你说是他愿意给，男方说是放你这里存着。当初怎么约定的，把前后原话发来，不只发转账数字。"
+            "text": "你说是给你花的，他说是放你这里存着的。你们当时怎么聊的？把那段发来看看。"
           },
           {
             "role": "stage",
@@ -1181,7 +1135,7 @@
           },
           {
             "role": "host",
-            "text": "他发来的记录是一万七千五，十四个月，二十四万五。房租还另外付。这些你认吗？"
+            "text": "十四个月都转了，房租也是他另付的。这个没错吧？"
           },
           {
             "role": "caller",
@@ -1198,10 +1152,6 @@
           {
             "role": "stage",
             "text": "后台打开男方提交的约定原图。沈：“每个月那一半放我这儿，我替我们存着，以后一起生活用。”男友：“好，那就每月八号转，房租我另外付。”沈：“嗯。”"
-          },
-          {
-            "role": "host",
-            "text": "这是你们当时商量钱怎么用的聊天。"
           },
           {
             "role": "caller",
@@ -1332,7 +1282,7 @@
               "openingLines": [
                 {
                   "role": "caller",
-                  "text": "是我收的，每个月那一半都在我卡里。可谈恋爱的时候说以后一起生活，又没定哪天结婚，也没规定每月必须留多少。我穿什么、去哪儿，他都知道，从前不说，现在急用了就让我全拿出来。每个月那笔我收了，可那是他给我花的。我从没答应替两个人存起来。"
+                  "text": "可那时候又没定哪天结婚，也没规定每月必须留多少。我穿什么、去哪儿，他都知道，从前不说，现在急用了就让我全拿出来。每个月那笔我收了，可那是他给我花的。我从没答应替两个人存起来。"
                 }
               ],
               "options": [
@@ -1460,7 +1410,7 @@
                 }
               ],
               "callerLine": "做脸、衣服、探店，哪样不要钱？我做账号，探店的钱先垫着，等合作下来就回来了。",
-              "hostLine": "你买衣服做脸，他另付饭钱。说好存着的那份，究竟留在哪儿了？",
+              "hostLine": "那说好存着的钱呢？总不能全花在这些上面吧？",
               "boundaryLine": "本人聊天与现场回答说明代存款被用于个人消费和无约定报酬的探店；当前余额她不公开。",
               "contradiction": "她承认个人消费，却把维护外表与未收回的探店开销都算作代存款的共同用途。",
               "routeAxis": "money-flow",
@@ -1525,7 +1475,7 @@
                 },
                 {
                   "id": "act2-ask",
-                  "question": "你买衣服做脸，他另付饭钱。说好存着的那份，究竟留在哪儿了？",
+                  "question": "那说好存着的钱呢？总不能全花在这些上面吧？",
                   "correct": true,
                   "lines": [
                     {
@@ -1619,7 +1569,7 @@
           },
           {
             "role": "host",
-            "text": "他以为你替两个人存着十五万，你这边八万都拿不出。你跟他说过没存下来吗？"
+            "text": "他还以为你存着十五万呢。你跟他说过没存下来吗？"
           },
           {
             "role": "caller",
@@ -1627,7 +1577,7 @@
           },
           {
             "role": "host",
-            "text": "他瞒着失业是他的事。可钱没存下来，你也一直没告诉他啊。"
+            "text": "可钱没存下来，你也一直没告诉他啊。"
           },
           {
             "role": "caller",
@@ -1643,7 +1593,7 @@
           },
           {
             "role": "host",
-            "text": "主动赠与是你现在的说法。可“我替我们存着”也是你自己说的。"
+            "text": "那你当初答应存着的时候，也是这么想的？"
           },
           {
             "role": "caller",
@@ -1651,7 +1601,7 @@
           },
           {
             "role": "host",
-            "text": "那你就把刚才这些话原样跟他说，别只说钱是他愿意给的。"
+            "text": "你陪他出去，他就该当你没答应过存钱？"
           },
           {
             "role": "caller",
@@ -2098,7 +2048,7 @@
             },
             {
               "speaker": "你",
-              "text": "我给他留个言，让他把借款用途、产品介绍和离职通知一起准备好。",
+              "text": "我问问他。这笔借款，还有他说快发的奖金，都得让他自己回。",
               "id": "rhythm-beat-5"
             },
             {
@@ -2108,7 +2058,7 @@
             },
             {
               "speaker": "你",
-              "text": "有意思，广告全在说赚多少、摊子多大。借款利息每个月得还，产品的钱什么时候回来，这页倒没写清。晚上问他本人。",
+              "text": "这广告光说收益高，什么时候能拿钱倒找不着。他借的钱可是每个月都要还利息的。",
               "id": "credit-product-question"
             }
           ]
@@ -2130,7 +2080,7 @@
       "lines": [
         {
           "role": "host",
-          "text": "昨晚的材料都收到了。先问用途和当初的约定。"
+          "text": "嗯，我把昨晚的聊天打开了。"
         }
       ]
     }

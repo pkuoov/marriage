@@ -1,8 +1,28 @@
 {
   "advisors": [
-    { "id": "zhao-lawyer", "name": "赵律师", "domain": "家事与债务", "catchphrase": "口说的不算，落纸的算数" },
-    { "id": "zhou-accountant", "name": "周会计", "domain": "钱路与流程", "catchphrase": "钱只认路径，不认说法" },
-    { "id": "lin-matchmaker", "name": "小林老师", "domain": "婚恋介绍", "catchphrase": "行里的话，得翻译着听" },
-    { "id": "zhang-forensic", "name": "张法医", "domain": "司法鉴定", "catchphrase": "链条不全，报告就是纸" }
+    {
+      "id": "zhao-lawyer",
+      "name": "赵律师",
+      "domain": "家事与债务",
+      "catchphrase": "先看看你们当时怎么约定的。"
+    },
+    {
+      "id": "zhou-accountant",
+      "name": "周会计",
+      "domain": "钱路与流程",
+      "catchphrase": "你把那几笔转账翻出来，我看看。"
+    },
+    {
+      "id": "lin-matchmaker",
+      "name": "小林老师",
+      "domain": "婚恋介绍",
+      "catchphrase": "你自己见过以后怎么想？"
+    },
+    {
+      "id": "zhang-forensic",
+      "name": "张法医",
+      "domain": "司法鉴定",
+      "catchphrase": "原件带了吗？我看一下。"
+    }
   ]
 }

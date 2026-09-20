@@ -8,7 +8,7 @@
   ],
   "cases": {
     "01-credit": {
-      "reviewedAt": "2026-09-19",
+      "reviewedAt": "2026-09-20",
       "opening": [
         {
           "fromAnchor": "问个自己的事",
@@ -121,7 +121,7 @@
           "entry": {
             "mode": "continue",
             "fromAnchor": "八万",
-            "toAnchor": "后台有个人说是你男朋友。他说刚看",
+            "toAnchor": "后台有个人说是你男朋友，发来了账单",
             "relation": "男方看到直播中的账单说法，直接向后台补原件；女方确认账号后读账单，主播先问酒水和高消费，再追未说明消费。"
           },
           "questionOptions": [
@@ -138,19 +138,14 @@
               "relation": "未说明的三万五收住，不代认用途；已认的消费继续核对，不再许诺次日追这笔。"
             }
           ],
-          "freeQuestions": [],
-          "closer": {
-            "anchor": "你刚才说云栖是你让他订的。以前去过？",
-            "routeIndependent": true,
-            "relation": "未说明的三万五收住，不代认用途；已认的消费继续核对，不再许诺次日追这笔。"
-          }
+          "freeQuestions": []
         },
         "credit-anniversary-agency": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "以前去过",
+            "fromAnchor": "我没把每一笔都加起来",
             "toAnchor": "云栖这家店，你以前去过吗？",
-            "relation": "账单问清消费后，当场核对她点名的云栖到店次数。匿名观众在她说完第一次后才把旧朋友圈发来。"
+            "relation": "她仍强调男方愿意付钱，下一场沿她此前点名的餐厅追到过去的用餐经历；不提前再问一次同样的问题。"
           },
           "questionOptions": [
             {
@@ -258,21 +253,16 @@
               "contextAnchor": "找我要八万",
               "questionAnchor": "他有没有说过，为什么偏偏让你拿八万？",
               "answerAnchor": "他说以前转给我的那些，留一部分也够了。可那是以前的事，谈恋爱愿意给我的",
-              "relation": "男方补齐借款和离职解释后，主播追他为什么向她要八万，再问她想获得哪句支持；半薪用途留到约定揭开后问。"
+              "relation": "男方补齐借款和离职解释后，主播追他为什么向她要八万；她坚持此前转账已经归自己，尚未核对代存约定。"
             },
             {
               "contextAnchor": "自己的钱",
               "questionAnchor": "所以你觉得，以前转给你的钱，他现在就不该往回要？",
               "answerAnchor": "对啊，给了又往回要，那我算什么？他的备用钱包？",
-              "relation": "男方补齐借款和离职解释后，主播追他为什么向她要八万，再问她想获得哪句支持；半薪用途留到约定揭开后问。"
+              "relation": "她把已经转账当作不能索回的理由，主播确认这是否也是男方当初的意思，下一场再看原始约定。"
             }
           ],
-          "freeQuestions": [],
-          "closer": {
-            "anchor": "把你们当时的聊天发来了",
-            "routeIndependent": true,
-            "relation": "男方补齐借款和离职解释后，主播追他为什么向她要八万，再问她想获得哪句支持；半薪用途留到约定揭开后问。"
-          }
+          "freeQuestions": []
         },
         "credit-loyalty-test": {
           "entry": {
@@ -287,7 +277,7 @@
       }
     },
     "02-tony": {
-      "reviewedAt": "2026-09-19",
+      "reviewedAt": "2026-09-20",
       "opening": [
         {
           "fromAnchor": "接入今晚的热线",
@@ -346,11 +336,11 @@
         },
         {
           "fromAnchor": "是不是对谁都这样",
-          "toAnchor": "钱这件事还没答",
-          "relation": "主播接受暂缓，同时保留追款问题，再问名单来源。"
+          "toAnchor": "那名单你是怎么看见的",
+          "relation": "她暂时把追钱放下，主播顺着当前争执问她怎么看见名单。"
         },
         {
-          "fromAnchor": "怎么到你手里的",
+          "fromAnchor": "名单你是怎么看见的",
           "toAnchor": "备忘录没锁",
           "relation": "咨询者只交代看见的动作，不解释她为什么翻。"
         },
@@ -430,9 +420,9 @@
           "questionOptions": [
             {
               "contextAnchor": "叫我自己人",
-              "questionAnchor": "约会是真的。可你们谈过恋爱，能说明这张表上的其他人也都是女朋友吗？",
-              "answerAnchor": "不能每个人都这么说。可他给别人也留晚档、叫自己人，我看着就恶心。",
-              "relation": "承认恋爱和照顾是真实的，追问为什么把名单上的其他人也说成女友，再回到追钱所需的完整图。"
+              "questionAnchor": "名单上其他人，你见过谁跟他约会吗？",
+              "answerAnchor": "我又不可能天天跟着他。可他也给别人留晚档、叫自己人，我看着就恶心。",
+              "relation": "她已经说过自己与 Tony 约会，主播只问其他人的亲眼依据；她答不上，仍抓住相同称呼争辩。"
             }
           ],
           "freeQuestions": [
@@ -697,7 +687,7 @@
       }
     },
     "03-profile": {
-      "reviewedAt": "2026-09-19",
+      "reviewedAt": "2026-09-20",
       "opening": [
         {
           "fromAnchor": "帮我听听一件事",
@@ -775,9 +765,9 @@
           "freeQuestions": [
             {
               "contextAnchor": "带相亲对象见父母",
-              "questionAnchor": "要的是证明拿不出，还是证明还能加",
+              "questionAnchor": "流水上真没有这笔钱",
               "answerAnchor": "四次",
-              "relation": "彩礼已把周末饭局打断，补问实际相处次数以衡量关系进度。"
+              "relation": "她要求查其他账户，主播追问没有这笔钱时肯不肯调整条件；她回到见面次数和先前预期，避开让步。"
             },
             {
               "contextAnchor": "先托介绍人去问了彩礼",
@@ -809,9 +799,9 @@
           "questionOptions": [
             {
               "contextAnchor": "本科不是",
-              "questionAnchor": "为什么没接着问",
+              "questionAnchor": "你把本科的事跟家里说了吗",
               "answerAnchor": "谁看了不以为是本科",
-              "relation": "她用学校图和饭桌礼貌推脱自己没有细问，随后仍拿已支付学费推想现有积蓄。"
+              "relation": "已承认饭桌上听见本科不是名校，继续问有没有纠正家里的印象；她转而怪图会误导，又拿 MBA 学费推想现有积蓄。"
             }
           ],
           "freeQuestions": [
@@ -857,7 +847,7 @@
           "questionOptions": [
             {
               "contextAnchor": "彩礼就多问一点",
-              "questionAnchor": "你妈说家里帮不上，彩礼就多拿一点。查完普通家境不撤条件，你也这么想？",
+              "questionAnchor": "你妈说彩礼多拿一点，你当时怎么回她的？",
               "answerAnchor": "我当时也觉得他该多拿一点。这个数是我妈提的……但我只说别把人吓跑",
               "relation": "我当时也觉得他该多拿一点。我只说别把人吓跑，没让她撤回二十八万八。"
             }
@@ -1050,7 +1040,7 @@
       }
     },
     "04-workplace": {
-      "reviewedAt": "2026-09-17",
+      "reviewedAt": "2026-09-20",
       "opening": [
         {
           "fromAnchor": "主播，我想问个工作上的事。",
