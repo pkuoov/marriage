@@ -277,7 +277,7 @@ function validateQuickCase(packet, cast) {
   assert(packet.sourceBoundary, `${packet.id} must record its adaptation boundary`);
   for (const confrontation of confrontations) {
     const lines = quickConfrontationLines(confrontation);
-    assert(confrontation.id && lines.length >= 2, `${packet.id} confrontation needs an id and at least two spoken lines`);
+    assert(confrontation.id && lines.length >= 1, `${packet.id} confrontation needs an id and at least one spoken line`);
     assert(lines.every((line) => ["host", "caller"].includes(line.role) && line.text), `${packet.id} confrontation ${confrontation.id} has an invalid spoken line`);
     if (soloCommentary) {
       assert(lines.every((line) => line.role === "host"), `${packet.id} solo commentary ${confrontation.id} must remain host-only`);

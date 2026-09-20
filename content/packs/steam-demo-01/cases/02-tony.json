@@ -901,7 +901,7 @@
             },
             {
               "role": "host",
-              "text": "你开场只说昨晚看名单才觉得不对，前面怎么只肯讲那一排女人？高息这事，你不是早就听过了？"
+              "text": "你开场只讲那一排女人。高息这事，你不是早就听过了？"
             },
             {
               "role": "caller",
@@ -912,12 +912,12 @@
             "premiseAnchor": "小姐妹提过一嘴",
             "sourceKind": "caller-statement",
             "sourceProves": "咨询者在翻名单以前就听过高息产品，也知道自己手里的钱够不上门槛。",
-            "sourceDoesNotProve": "尚未证明她听完后转了钱，也尚未证明产品就是宸直。",
+            "sourceDoesNotProve": "听过高息不等于知道被骗；尚未证明她听完后转了钱，也尚未证明产品就是宸直。",
             "answerAnchor": "不是我手里那点钱能买的",
             "answerAdds": "她知道自己够不上门槛，却把后来找谁帮忙掐断。",
             "nextLegalQuestion": "可以问她后来做了什么，不能把听过传闻写成已经买成产品。"
           },
-          "contradiction": "她开场把今晚写成刚发现被骗，这里承认自己早就听过高息，也知道手里的钱够不上门槛。",
+          "contradiction": "她开场只讲名单里的女人，追问产品后才补出自己早听过高息、知道起投门槛；这不代表她当时已知产品有风险。",
           "correct": true,
           "routeAxis": "caller-credibility",
           "routeTone": "pressure-point",
@@ -1355,7 +1355,7 @@
                     },
                     {
                       "role": "host",
-                      "text": "聊天写的是“帮我买”，现在为什么要省掉？是不是一说全，就听着像你自己要买了？"
+                      "text": "聊天写的是“帮我买”，现在为什么要省掉？一说全，就听着像你自己要买？"
                     },
                     {
                       "role": "caller",

@@ -3903,7 +3903,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "role": "host",
-                  "text": "他现在说什么你都不信了，以前转到你这儿的，你也一分不吐？那笔钱到了你手里，就只进不出了？"
+                  "text": "加班你不信了。以前转到你这儿的，你也不拿出来？"
                 },
                 {
                   "role": "caller",
@@ -4059,7 +4059,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "role": "host",
-                  "text": "用途没说，这笔先搁着。云栖接着说。"
+                  "text": "用途没说，这笔先搁着。"
                 },
                 {
                   "role": "caller",
@@ -4752,7 +4752,7 @@ export const CONTENT_CASES = {
                         },
                         {
                           "role": "host",
-                          "text": "数你认了，当初写的也是“替我们存着”，现在怎么成了他愿意给你花？他一要用，这个约定就不算了？"
+                          "text": "数你认了。当初写的是“替我们存着”，现在怎么成了他愿意给你花？"
                         },
                         {
                           "role": "caller",
@@ -5048,7 +5048,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "主动赠与是你现在的说法。可“我替我们存着”也是你自己说的。存的时候是两个人，花的时候不交代，到用钱了就变成他自愿给的？"
+                "text": "主动赠与是你现在的说法。可“我替我们存着”也是你自己说的。"
               },
               {
                 "role": "caller",
@@ -5056,7 +5056,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "host",
-                "text": "陪他出去，就连做脸、买衣服都算替两个人存钱了？钱没留住，你不肯讲；旧钱不想吐，还要我替你说一句不欠他的。这个说辞我给不了。"
+                "text": "你要我替你说一句不欠他的，这话我说不了。"
               },
               {
                 "role": "caller",
@@ -8667,7 +8667,11 @@ export const CONTENT_CASES = {
                         },
                         {
                           "role": "host",
-                          "text": "那就不只是差两千了。你要钱怎么放，也得听他愿不愿意。"
+                          "text": "共同账户你不接受。那他怎么给，你打算听到什么才算数？"
+                        },
+                        {
+                          "role": "caller",
+                          "text": "他先答应进我的卡，具体差多少再商量。共同账户我不考虑。"
                         }
                       ]
                     },
@@ -10709,7 +10713,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "role": "host",
-                  "text": "你开场只说昨晚看名单才觉得不对，前面怎么只肯讲那一排女人？高息这事，你不是早就听过了？"
+                  "text": "你开场只讲那一排女人。高息这事，你不是早就听过了？"
                 },
                 {
                   "role": "caller",
@@ -10720,12 +10724,12 @@ export const CONTENT_CASES = {
                 "premiseAnchor": "小姐妹提过一嘴",
                 "sourceKind": "caller-statement",
                 "sourceProves": "咨询者在翻名单以前就听过高息产品，也知道自己手里的钱够不上门槛。",
-                "sourceDoesNotProve": "尚未证明她听完后转了钱，也尚未证明产品就是宸直。",
+                "sourceDoesNotProve": "听过高息不等于知道被骗；尚未证明她听完后转了钱，也尚未证明产品就是宸直。",
                 "answerAnchor": "不是我手里那点钱能买的",
                 "answerAdds": "她知道自己够不上门槛，却把后来找谁帮忙掐断。",
                 "nextLegalQuestion": "可以问她后来做了什么，不能把听过传闻写成已经买成产品。"
               },
-              "contradiction": "她开场把今晚写成刚发现被骗，这里承认自己早就听过高息，也知道手里的钱够不上门槛。",
+              "contradiction": "她开场只讲名单里的女人，追问产品后才补出自己早听过高息、知道起投门槛；这不代表她当时已知产品有风险。",
               "correct": true,
               "routeAxis": "caller-credibility",
               "routeTone": "pressure-point",
@@ -11163,7 +11167,7 @@ export const CONTENT_CASES = {
                         },
                         {
                           "role": "host",
-                          "text": "聊天写的是“帮我买”，现在为什么要省掉？是不是一说全，就听着像你自己要买了？"
+                          "text": "聊天写的是“帮我买”，现在为什么要省掉？一说全，就听着像你自己要买？"
                         },
                         {
                           "role": "caller",
@@ -12823,11 +12827,11 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "这事你打算什么时候跟对方说？要是一直不说，还让我替你介绍？"
+              "text": "这事你打算什么时候跟对方说？"
             },
             {
               "role": "caller",
-              "text": "谁说我一直不说了？见面聊得来，我会跟他说。我以前查过，医生说自然怀孕的机会低一点，又没说一定不能。我还年轻，后面也可以再复查。"
+              "text": "见面聊得来，我会跟他说。我以前查过，医生说自然怀孕的机会低一点，又没说一定不能。我还年轻，后面也可以再复查。"
             }
           ],
           "kind": "conversation"
@@ -12890,7 +12894,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "host",
-              "text": "我今晚才听清你真正要什么。拿我的嘴去替你说可靠，这事我不干。"
+              "text": "让我跟人家说你可靠，这事我不干。"
             },
             {
               "role": "caller",
@@ -13589,7 +13593,7 @@ export const CONTENT_QUICK_CASES = {
               },
               {
                 "role": "host",
-                "text": "你漏掉同桌的人，第二天也没把经过讲全，现在却要他先为口气道歉。这道歉我不替你圆。"
+                "text": "这道歉我不替你圆。"
               },
               {
                 "role": "caller",
@@ -14136,11 +14140,7 @@ export const CONTENT_QUICK_CASES = {
           "lines": [
             {
               "role": "host",
-              "text": "名字照片都指着一个人，末尾再写虚构，就成编故事了？这谁信？"
-            },
-            {
-              "role": "host",
-              "text": "你想让大家相信这些指控，就把材料拿出来。一个虚构标注，不能替你解释前面的内容。"
+              "text": "名字照片都点了这个人，末尾写虚构。谁信啊？"
             }
           ]
         },

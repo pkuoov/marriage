@@ -5,7 +5,7 @@ description: Write or revise case dialogue for 《深夜热线：直播间侦探
 
 # Case Scriptwriting
 
-先读 [当前项目方向](references/current-project-direction.md)。这是项目创作约定的唯一维护入口；本 skill 负责怎样把它写进对白。用户当次要求优先，旧评审、小样和历史台词不自动成为新案的事实或硬性模板。来电人提出不讲理的要求时，先读 [无赖来电：谎盖谎](references/caller-shameless-demand.md)。谎盖谎主链已接入。还没改进可玩路径的台词、三处逻辑和序章桌边，按 [未改项完整 Prompt](references/remaining-edits-prompt.md) 改，不要再按旧分单各做一遍。对质里钉错后再追一层显而易见的可能性，按 [两连问跨案 Prompt](references/two-beat-followup-prompt.md)。
+先读 [当前项目方向](references/current-project-direction.md)。这是项目创作约定的唯一维护入口；本 skill 负责怎样把它写进对白。用户当次要求优先，旧评审、小样和历史台词不自动成为新案的事实或硬性模板。来电人提出不讲理的要求时，先读 [无赖来电：谎盖谎](references/caller-shameless-demand.md)。谎盖谎主链、未改项清单和两连问已接入。还在打架的顺序、过满推断和作文腔，按 [逻辑与口语收口 Prompt](references/logic-and-spoken-voice-prompt.md) 改。
 
 ## 按改动范围工作
 
