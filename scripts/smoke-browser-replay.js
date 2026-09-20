@@ -490,6 +490,8 @@ function assertAuthoredTranscript(text, lines, label) {
 
 async function runCafePrologue() {
   const prologue = storyManifest.nightShell.cafePrologue;
+  const directory = resolve(root, "output/playwright/cafe-account-review");
+  await mkdir(directory, { recursive: true });
   for (const viewport of [
     { width: 1280, height: 720, pressureChoice: "camera-off", firstEvidence: "chat" },
     { width: 1366, height: 768, pressureChoice: "camera-off", firstEvidence: "chat" },
@@ -506,7 +508,7 @@ async function runCafePrologue() {
       const gameUserSelect = await page.locator("#app").evaluate((element) => getComputedStyle(element).userSelect);
       if (gameUserSelect !== "none") throw new Error(`the game stage must prevent accidental text selection, got ${gameUserSelect}`);
       await click(page, "[data-start-story]");
-      await assertVisibleText(page, "现在 · 傍晚", "the cafe negotiation must open in the present before the flashback");
+      await assertVisibleText(page, prologue.timeline, "the cafe negotiation must show its authored date before the flashback");
       const sourceLayer = await page.locator(".cafe-prologue-dialogue").first().evaluate((element) => ({
         hidden: element.hidden,
         display: getComputedStyle(element).display
@@ -612,11 +614,30 @@ async function runCafePrologue() {
       await click(page, "[data-cafe-aftermath-next]");
       for (const [index, route] of prologue.aftermath.routes.entries()) {
         if (await page.locator("[data-cafe-investigation]").count()) throw new Error("cafe investigation still branches");
-        const routeText = await drainDialogue(page, {});
+        let prefix = "";
+        if (route.id === "account") {
+          const board = page.locator(".cafe-account-board");
+          if (await board.isVisible()) throw new Error("account summary revealed before the statement was received and read");
+          await page.screenshot({ path: resolve(directory, `unread-${viewport.width}x${viewport.height}.png`), animations: "disabled" });
+          const box = page.locator("[data-dialogue-advance]:visible").first();
+          // Complete the first typed page, then move forward without draining
+          // the scene, so reloading exercises an unfinished conversation.
+          for (let step = 0; step < 2; step += 1) {
+            prefix += await box.innerText();
+            await box.evaluate(element => element.click());
+          }
+          await page.reload();
+          await click(page, "[data-continue-story]");
+          if (await board.isVisible()) throw new Error("account summary revealed by a mid-dialogue reload");
+        }
+        const routeText = prefix + await drainDialogue(page, {});
         assertAuthoredTranscript(routeText, [...route.lines, ...route.handoffLines], `cafe route ${route.id}`);
+        if (route.id === "account" && !await page.locator(".cafe-account-board").isVisible()) throw new Error("account summary missing after the conversation");
         await assertCafeViewport(page, viewport, `sequential investigation ${index + 1}`);
+        if (route.id === "account") await page.screenshot({ path: resolve(directory, `read-${viewport.width}x${viewport.height}.png`), animations: "disabled" });
         await page.reload();
         await click(page, "[data-continue-story]");
+        if (route.id === "account" && !await page.locator(".cafe-account-board").isVisible()) throw new Error("completed account summary lost on reload");
         await click(page, "[data-cafe-aftermath-next]");
       }
       const nightScene = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1") ?? "{}").scene ?? "");

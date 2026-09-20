@@ -259,7 +259,7 @@ export function cafeInvestigationChoicesHtml(routes = []) {
 
 export function cafeAccountBoardHtml(rows = []) {
   return `
-    <section class="cafe-account-board">
+    <section class="cafe-account-board" data-after-dialogue hidden>
       <header><span>近一年家庭账户</span><strong>只看路径</strong></header>
       ${(rows ?? []).map((row) => `
         <div class="cafe-account-row${row.focus ? " focus" : ""}">

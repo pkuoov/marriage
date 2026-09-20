@@ -1311,10 +1311,10 @@ function renderCafePrologueStory(lines, prologue, { includeAlternatives = true, 
     const routes = aftermath.routes ?? [];
     for (const [index, route] of routes.entries()) {
       lines.push(`## ${index > 0 ? "接着查看｜" : "先查看｜"}${route.title ?? route.label ?? ""}`, "");
-      for (const row of route.rows ?? []) lines.push(`- ${row.when ?? ""}｜${row.label ?? ""}｜${row.status ?? ""}`);
-      if (route.rows?.length) lines.push("");
       for (const line of route.lines ?? []) renderDirectorSpoken(lines, line);
       for (const line of route.handoffLines ?? []) renderDirectorSpoken(lines, line);
+      for (const row of route.rows ?? []) lines.push(`- ${row.when ?? ""}｜${row.label ?? ""}｜${row.status ?? ""}`);
+      if (route.rows?.length) lines.push("");
     }
     for (const line of aftermath.bridgeLines ?? []) renderDirectorSpoken(lines, line);
     lines.push(`【${actionActor}操作：两项交接完成，回看这几个月的来电。】`, "", "【转场：先从七月说起。2024 年 7 月 15 日，晚上八点。】", "");

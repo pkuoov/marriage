@@ -424,7 +424,7 @@
           "entry": {
             "mode": "continue",
             "fromAnchor": "他一直叫我自己人",
-            "toAnchor": "金额列你认了",
+            "toAnchor": "怎么走到一起的",
             "relation": "金额列已经认下。过场收住这一层后，下一句集中打约会自称。"
           },
           "questionOptions": [
@@ -534,7 +534,7 @@
             }
           ],
           "closer": {
-            "anchor": "金额那几列你自己认了。约会是不是真的，下一句再说。",
+            "anchor": "行，那说说你们俩。",
             "routeIndependent": true,
             "relation": "金额列已经露头，先收住这一层，下一句才集中打约会自称。"
           }

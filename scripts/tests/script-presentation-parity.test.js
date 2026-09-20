@@ -95,6 +95,10 @@ test("序章完整首述、双线交接回告与片尾都进入主阅读路线�
   assert.ok(main.indexOf(cafe.cafe.initialAccountLines.at(-1).text) < firstAction);
   for (const route of cafe.aftermath.routes) {
     for (const line of [...route.lines, ...route.handoffLines]) if (line.text) assert.ok(main.includes(line.text));
+    if (route.id === "account") {
+      const lastLine = [...route.lines, ...route.handoffLines].filter(line => line.text).at(-1).text;
+      for (const row of route.rows) assert.ok(main.indexOf(`- ${row.when}｜${row.label}｜${row.status}`) > main.indexOf(lastLine), "account summary must follow the spoken exchange");
+    }
   }
   for (const line of [...cafe.forensic.openingLines, ...cafe.forensic.accountClueLines]) if (line.text) assert.ok(main.includes(line.text));
   const credits = storyPackCompleteHtml();
@@ -114,4 +118,17 @@ test("序章完整首述、双线交接回告与片尾都进入主阅读路线�
       if (option.callerLine) assert.ok(main.includes(option.callerLine));
     }
   }
+});
+
+test("Tony 原话材料引用此前必经陈述，不借用未播放的旧证词墙", () => {
+  const packet = packets.find(item => item.caseId === "02-tony");
+  const source = packet.sceneVersions.find(scene => scene.id === "tony-caller-benefits");
+  const later = packet.sceneVersions.find(scene => scene.id === "tony-next-push-column");
+  const card = later.testimonyWall.acts.flatMap(act => act.decisivePresent.materialCards)
+    .find(item => item.id === "tony-next-push-column:tony-heard-threshold-before");
+  const quote = card.excerpt.replace(/^[‘“]|[’”]$/g, "");
+  assert.ok(source.version.includes(quote));
+  const main = continuous.split("# 附录｜")[0];
+  assert.ok(main.indexOf(source.version) >= 0);
+  assert.ok(main.indexOf(source.version) < main.indexOf(card.excerpt));
 });
