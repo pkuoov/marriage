@@ -2416,12 +2416,14 @@ test("PACK-017C", "case 1 concentrates fixed-support questions in the received-m
 test("PACK-017D", "case 1 receives severance before closing and permits balance refusal", () => {
   const packet = caseFiles.find(p => p.caseId === "01-credit");
   const wall = packet.sceneVersions.find(s => s.testimonyWall);
-  const text = JSON.stringify(wall.afterVersion);
+  const text = JSON.stringify([wall.afterVersion, packet.careChoices]);
   const receipt = packet.sceneVersions.find(scene => scene.id === "credit-bank-flow").beforeVersion.lines;
   assert(receipt.some(line => line.role === "stage" && /男方.*离职结算通知/.test(line.text)), "离职通知先由男方递交，不在收尾新开一层");
   assert(!text.includes("一万一千六百多"), "现场不披露作者掌握的精确余额");
   assert(text.includes("你有什么话当着直播间直接跟他说吧"), "本人表态");
   assert(text.includes("反正八万我不转，之前给我的就是主动赠与"), "保留用户指定拒付原话");
+  const lastWords = packet.careChoices.flatMap(choice => choice.lines ?? []);
+  assert(lastWords.at(-1)?.role === "caller" && /主动赠与/.test(lastWords.at(-1)?.text), "拒付表态后不再追加主播的重复追问");
   assert(!packet.deepFollowup.question && packet.careChoices.length === 1, "收尾不再扩展问答");
 });
 test("PACK-017E", "case 1 identifies the boyfriend before receiving his direct materials", () => {

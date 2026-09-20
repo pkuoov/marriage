@@ -184,7 +184,7 @@
       "completionMode": "any",
       "noClueReaction": {
         "role": "host",
-        "text": "这句先放着。"
+        "text": "这篇是他自己发出来的。"
       },
       "label": "第一段 · 谁写了什么",
       "patience": 3,
@@ -205,7 +205,7 @@
       "completionMode": "any",
       "noClueReaction": {
         "role": "host",
-        "text": "这句先放着。"
+        "text": "金额写得很大，可现在只有他这篇长文。"
       },
       "label": "第二段 · 钱与回应",
       "patience": 3,
@@ -230,7 +230,7 @@
       "completionMode": "any",
       "noClueReaction": {
         "role": "host",
-        "text": "这句先放着。"
+        "text": "她到底怎么想，我又没听她自己讲。"
       },
       "label": "第三段 · 他凭什么说她怕了",
       "patience": 3,
@@ -255,7 +255,7 @@
       "completionMode": "any",
       "noClueReaction": {
         "role": "host",
-        "text": "这句先放着。"
+        "text": "他要对方答应的，可不只是退钱。"
       },
       "label": "第四段 · 退钱为什么还要认全文",
       "patience": 3,

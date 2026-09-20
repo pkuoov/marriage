@@ -3216,6 +3216,7 @@ test("EPISODE-001B", "each demo case exposes the caller's self-serving omission"
       sceneVersions: brief.sceneVersions,
       deepFollowup: brief.deepFollowup,
       stageJudgement: brief.stageJudgement,
+      careChoices: brief.careChoices,
       truth: brief.truth,
       dailyAccusationChoices: dailyAccusationChoices(brief)
     });
@@ -3372,7 +3373,8 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   const cancellationLines = dinnerCancelled?.lines ?? [];
   assert(cancellationLines.some((line) => line.role === "caller" && line.speaker === "男方"), "取消饭局必须有男方本人回应");
   assert(cancellationLines.some((line) => line.role === "caller" && line.speaker === "咨询者"), "取消饭局必须有来电人本人回应");
-  assertEqual(cancellationLines.at(-1)?.role, "host", "双方说完以后主播收段，不把来回争执限制成固定三句话");
+  const profileClose = case3Opening.careChoices.flatMap(choice => choice.lines ?? []);
+  assert(profileClose.some(line => line.role === "caller" && /我妈/.test(line.text)), "取消饭局后保留来电人通知家里的行动，不强制每段以主播总结结尾");
   assert(!(dinnerCancelled?.lines ?? []).some((line) => line.speaker === "介绍人"), "案三介绍人未接入直播，不得越权替双方宣布取消饭局");
 });
 
@@ -4812,7 +4814,8 @@ test("RUNTIME-011", "case 4 keeps interlude choices on evidence that changes the
   assertEqual(nightStructureFor(brief)?.segment1SceneIndexes?.join("|"), "0|1|2", "第一夜从分活、过往结算到本次催款");
   assertEqual(nightStructureFor(brief)?.segment2SceneIndexes?.join("|"), "3|4", "第二夜从跨部门欠款进入包干费用");
   const first = brief.sceneVersions.find((scene) => scene.id === "work-title-for-advance");
-  assertIncludes(JSON.stringify(first.questionOptions), "谁能先出钱", "交活条件必须能由玩家问出");
+  assert(/谁先.*场地礼品.*客户就归谁/.test(first.version), "先垫钱取得活动的条件在本段首述披露");
+  assertIncludes(JSON.stringify(first.questionOptions), "临时提额", "随后追问筹款才由本人说出临时提额，不重复确认是否争活动");
   const profit = brief.sceneVersions.find((scene) => scene.id === "work-private-process");
   assertIncludes(JSON.stringify(profit.questionOptions), "分我四千", "个人获利必须在第一夜的追问中出现");
   assert(!JSON.stringify(brief.openingDialogue).includes("四千"), "开场不能直接交出她隐去的分成");

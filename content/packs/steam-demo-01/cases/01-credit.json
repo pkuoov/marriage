@@ -58,7 +58,7 @@
           "payoff": "两次决定性指认后，判词拒绝替她做公开赦免。"
         },
         "nextDebt": {
-          "location": "credit-loyalty-test",
+          "location": "careChoices.accompany",
           "quote": "反正八万我不转，之前给我的就是主动赠与。"
         }
       }
@@ -184,7 +184,7 @@
   "quotePickCandidates": [
     "衣服做脸是我用的，可我跟他出去也得体面。这些也算两个人过日子的花销。",
     "我手里剩多少一直没给他看，因为那是我的账户。",
-    "反正八万我不转，之前给我的就是主动赠与。"
+    "他愿意给我的，怎么现在都成我的错了？"
   ],
   "accusationChoices": [
     {
@@ -202,10 +202,10 @@
       "accuseRole": "complainant"
     },
     {
-      "label": "“反正八万我不转，之前给我的就是主动赠与。”",
+      "label": "“他愿意给我的，怎么现在都成我的错了？”",
       "response": "本段已经当场问清。",
       "quoteSourceSceneId": "credit-loyalty-test",
-      "quoteSourceAnchor": "反正八万我不转，之前给我的就是主动赠与。",
+      "quoteSourceAnchor": "他愿意给我的，怎么现在都成我的错了？",
       "accuseRole": "both"
     }
   ],
@@ -290,7 +290,7 @@
     {
       "speaker": "林旭阳",
       "role": "host",
-      "text": "那你自己怎么想？",
+      "text": "他今晚还催，你准备怎么回他？",
       "mood": "listening"
     },
     {
@@ -1073,10 +1073,10 @@
           "id": "credit-bank-flow:questionOptions:0"
         },
         {
-          "question": "所以你觉得，以前转给你的钱，他现在就不该往回要？",
+          "question": "他当时说过，这些钱你可以随便花吗？",
           "sourceAnchor": "自己的钱",
-          "suspicionLabel": "所以你觉得，以前转给你的钱，他现在就不该往回要？",
-          "answer": "对啊，给了又往回要，那我算什么？他的备用钱包？",
+          "suspicionLabel": "他当时说过，这些钱你可以随便花吗？",
+          "answer": "他又没说不许花。钱都转给我了，用的时候还得一笔笔问他？",
           "correct": true,
           "routeAxis": "document-edge",
           "routeTone": "trust-but-verify",
@@ -1085,20 +1085,16 @@
           "logicContract": {
             "premiseAnchor": "自己的钱",
             "sourceKind": "caller-statement",
-            "sourceProves": "她把自己账户里的旧钱一概说成自愿给付，要求主播支持不吐钱。",
+            "sourceProves": "她以转账已经完成为由，主张自己可以支配。",
             "sourceDoesNotProve": "男方曾经转账，不等于双方没有约定用途，也不等于当前余额。",
-            "answerAnchor": "对啊，给了又往回要，那我算什么？他的备用钱包？",
-            "answerAdds": "对啊，给了又往回要，那我算什么？他的备用钱包？",
+            "answerAnchor": "他又没说不许花",
+            "answerAdds": "她用没有禁止花钱来回答是否明确同意随便花，没有给出原始约定。",
             "nextLegalQuestion": "用双方原始聊天核对代存约定。"
           },
           "lines": [
             {
               "role": "caller",
-              "text": "对啊，给了又往回要，那我算什么？他的备用钱包？"
-            },
-            {
-              "role": "host",
-              "text": "他也说是给你随便花的吗？"
+              "text": "他又没说不许花。钱都转给我了，用的时候还得一笔笔问他？"
             }
           ]
         }
@@ -1127,7 +1123,7 @@
         "lines": [
           {
             "role": "host",
-            "text": "你说是给你花的，他说是放你这里存着的。你们当时怎么聊的？把那段发来看看。"
+            "text": "把你们当时的聊天发来看看吧。"
           },
           {
             "role": "stage",
@@ -1582,30 +1578,6 @@
           {
             "role": "caller",
             "text": "他愿意给我的，怎么现在都成我的错了？"
-          },
-          {
-            "role": "host",
-            "text": "你有什么话当着直播间直接跟他说吧。"
-          },
-          {
-            "role": "caller",
-            "text": "反正八万我不转，之前给我的就是主动赠与。"
-          },
-          {
-            "role": "host",
-            "text": "那你当初答应存着的时候，也是这么想的？"
-          },
-          {
-            "role": "caller",
-            "text": "那我跟他这一年多呢？陪他出去、替他撑面子，这些你怎么不算？"
-          },
-          {
-            "role": "host",
-            "text": "你陪他出去，他就该当你没答应过存钱？"
-          },
-          {
-            "role": "caller",
-            "text": "行，你已经这么看我了。我也不想再解释。"
           }
         ]
       },
@@ -1891,12 +1863,12 @@
   "careChoices": [
     {
       "id": "accompany",
-      "label": "你回去跟他聊吧。",
-      "hostLine": "你回去跟他聊吧。",
+      "label": "你有什么话当着直播间直接跟他说吧。",
+      "hostLine": "你有什么话当着直播间直接跟他说吧。",
       "lines": [
         {
           "role": "caller",
-          "text": "我自己跟他说，挂了。"
+          "text": "反正八万我不转，之前给我的就是主动赠与。"
         }
       ],
       "sequential": true

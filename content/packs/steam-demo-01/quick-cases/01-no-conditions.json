@@ -169,7 +169,7 @@
       "requiredConfrontationIds": [],
       "noClueReaction": {
         "role": "caller",
-        "text": "你先听我把这段说完。"
+        "text": "我在店里卖衣服是工作，私下不爱哄人。"
       }
     },
     {
@@ -189,7 +189,7 @@
       ],
       "noClueReaction": {
         "role": "caller",
-        "text": "你先听我把这段说完。"
+        "text": "钱是他愿意帮我的，我现在不是来借钱的。"
       }
     },
     {
@@ -212,7 +212,7 @@
       ],
       "noClueReaction": {
         "role": "caller",
-        "text": "你先听我把这段说完。"
+        "text": "没房我说了可以啊，可我也得看合不合适吧。"
       }
     },
     {

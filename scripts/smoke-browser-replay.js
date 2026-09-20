@@ -3299,7 +3299,7 @@ async function runSixReviewedCases() {
         const anchors = ['再找财务的人对一下', '后来问到新的情况了吗', '我是真不信他了', '我念给你听吧', '谁能垫钱，活动就归谁', '截图截到了', '原件已补齐'];
         for (const anchor of anchors) if (!text.includes(anchor)) throw Error(`workplace missing recorded edit: ${anchor}`);
         let last = -1;
-        for (const anchor of ['租借广告：', '租金收了三万', '他要的就是押金', '附注“用户押金与关联往来”', '宣传册链接']) {
+        for (const anchor of ['租借广告：', '租金收了三万', '附注“用户押金与关联往来”', '押金收进来，又拿去做别的生意了', '宣传册链接']) {
           const at = text.indexOf(anchor, last + 1);
           if (at < 0) throw Error(`corporate reveal out of order: ${anchor}`);
           last = at;

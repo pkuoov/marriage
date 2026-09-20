@@ -8,7 +8,7 @@
   ],
   "cases": {
     "01-credit": {
-      "reviewedAt": "2026-09-20",
+      "reviewedAt": "2026-09-21",
       "opening": [
         {
           "fromAnchor": "问个自己的事",
@@ -62,11 +62,11 @@
         },
         {
           "fromAnchor": "说过几天",
-          "toAnchor": "自己怎么想",
+          "toAnchor": "他今晚还催",
           "relation": "借款条件已经说清，主播把话题从信息核对转回咨询者本人的意愿。"
         },
         {
-          "fromAnchor": "自己怎么想",
+          "fromAnchor": "他今晚还催",
           "toAnchor": "我不想转",
           "relation": "咨询者明确说不想转，再说男友如何拿过去花销和一年半关系向她施压。"
         }
@@ -257,9 +257,9 @@
             },
             {
               "contextAnchor": "自己的钱",
-              "questionAnchor": "所以你觉得，以前转给你的钱，他现在就不该往回要？",
-              "answerAnchor": "对啊，给了又往回要，那我算什么？他的备用钱包？",
-              "relation": "她把已经转账当作不能索回的理由，主播确认这是否也是男方当初的意思，下一场再看原始约定。"
+              "questionAnchor": "他当时说过，这些钱你可以随便花吗",
+              "answerAnchor": "他又没说不许花",
+              "relation": "上一步已说不该索回，这一步直接追当初是否同意随便花。她以没有禁止花钱回避原约定，接着才能核对聊天。"
             }
           ],
           "freeQuestions": []
@@ -277,7 +277,7 @@
       }
     },
     "02-tony": {
-      "reviewedAt": "2026-09-20",
+      "reviewedAt": "2026-09-21",
       "opening": [
         {
           "fromAnchor": "接入今晚的热线",
@@ -687,7 +687,7 @@
       }
     },
     "03-profile": {
-      "reviewedAt": "2026-09-20",
+      "reviewedAt": "2026-09-21",
       "opening": [
         {
           "fromAnchor": "帮我听听一件事",
@@ -1040,7 +1040,7 @@
       }
     },
     "04-workplace": {
-      "reviewedAt": "2026-09-20",
+      "reviewedAt": "2026-09-21",
       "opening": [
         {
           "fromAnchor": "主播，我想问个工作上的事。",
@@ -1114,9 +1114,9 @@
           "questionOptions": [
             {
               "contextAnchor": "你先把场地和礼品费垫了",
-              "questionAnchor": "你是想争这场活动，才答应先垫这六万八，对吗？",
-              "answerAnchor": "对，我想争。谁能先出钱，就让谁办。额度不够，我还申请了临时提额。",
-              "relation": "需要垫钱，所以才扔给我。"
+              "questionAnchor": "六万八不是小数，你当时怎么凑出来的",
+              "answerAnchor": "申请了临时提额",
+              "relation": "他已承认争活动且钱难凑，直接问怎么筹钱；临时提额由回答首次披露，不拿未来事实作问题前提。"
             }
           ],
           "freeQuestions": [

@@ -379,27 +379,27 @@
       ],
       "questionOptions": [
         {
-          "question": "你是想争这场活动，才答应先垫这六万八，对吗？",
+          "question": "六万八不是小数，你当时怎么凑出来的？",
           "sourceAnchor": "你先把场地和礼品费垫了",
-          "suspicionLabel": "你是想争这场活动，才答应先垫这六万八，对吗？",
-          "answer": "对，我想争。谁能先出钱，就让谁办。额度不够，我还申请了临时提额。",
+          "suspicionLabel": "六万八不是小数，你当时怎么凑出来的？",
+          "answer": "信用卡啊，额度还不够，我又申请了临时提额。上一场都结了，我想着这回也就是周转几天。",
           "correct": true,
           "routeAxis": "money-flow",
           "routeTone": "trust-but-verify",
           "lines": [
             {
               "role": "caller",
-              "text": "对，我想争。谁能先出钱，就让谁办。额度不够，我还申请了临时提额。"
+              "text": "信用卡啊，额度还不够，我又申请了临时提额。上一场都结了，我想着这回也就是周转几天。"
             }
           ],
-          "contradiction": "需要垫钱，所以才扔给我。",
+          "contradiction": "为争活动接受先垫款，还在信用卡额度不足时申请提额。",
           "logicContract": {
             "premiseAnchor": "你先把场地和礼品费垫了",
             "sourceKind": "caller-statement",
-            "sourceProves": "你先把场地和礼品费垫了",
+            "sourceProves": "主管提出先垫场地和礼品费，来电人已说六万八不是随手能拿出的数额。",
             "sourceDoesNotProve": "口述与现有单据不说明公司全部账目或最终追回金额。",
-            "answerAnchor": "对，我想争",
-            "answerAdds": "对，我想争。谁能先出钱，就让谁办。额度不够，我还申请了临时提额。",
+            "answerAnchor": "申请了临时提额",
+            "answerAdds": "他刷信用卡并申请临时提额，按上一场已结的经历预期短期报回。",
             "nextLegalQuestion": "沿已出现的款项、经手人和原始材料继续核对。"
           },
           "id": "work-title-for-advance:questionOptions:0"
