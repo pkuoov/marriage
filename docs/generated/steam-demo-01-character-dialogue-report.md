@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：39
-- 收录台词／玩家可见人物材料：1070
+- 收录台词／玩家可见人物材料：1073
 - 本包实际出声人物：33
 - 句长节奏人工复核提示：24
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -31,15 +31,18 @@
 - `$manifest.nightShell.interludes[0].lines[12]` 真那样的话，我们俩大概一开始就看不上对方。
 - `$manifest.nightShell.interludes[1].lines[1]` 老周，几个部门都等着付款，还在催人办活动。栖行平时到底靠什么挣钱？有公开的经营资料吗？
 - `$manifest.nightShell.interludes[1].lines[5]` 收费低一半，还经常免费。维护、给店里的分成，拿什么付？
-- `$manifest.nightShell.interludes[1].lines[7]` 这么做根本不挣钱，还拼命加点位。他们收的押金放在哪儿了？
-- `$manifest.nightShell.interludes[1].lines[10]` 押金收进来，又拿去做别的生意了。宸直怎么也在这儿？
-- `$manifest.nightShell.interludes[1].lines[13]` 又是宸直。押金拿去做地产，几个部门的报销还拖着。栖行自己手里还有多少能用的钱？
-- `$manifest.nightShell.interludes[1].lines[15]` 这些公开页我给陈发过去。明天他去交原件，也得问清楚，这次到底排没排付款。
-- `$manifest.nightShell.interludes[1].lines[18]` 好，付款那栏有变化就发我。
+- `$manifest.nightShell.interludes[1].lines[8]` 这么做根本不挣钱，还拼命加点位。他们收的押金放在哪儿了？
+- `$manifest.nightShell.interludes[1].lines[11]` 押金收进来，又拿去做别的生意了。宸直怎么也在这儿？
+- `$manifest.nightShell.interludes[1].lines[14]` 又是宸直。押金拿去做地产，几个部门的报销还拖着。栖行自己手里还有多少能用的钱？
+- `$manifest.nightShell.interludes[1].lines[16]` 这些公开页我给陈发过去。明天他去交原件，也得问清楚，这次到底排没排付款。
+- `$manifest.nightShell.interludes[1].lines[19]` 好，付款那栏有变化就发我。
 - `$manifest.nightShell.interludes[1].broadcastRecap.lines[2]` 前几天那个垫钱办活动的小伙子，后来跟我私下聊了。原件补齐了，钱还没到。他这次没再垫。
-- `$manifest.nightShell.interludes[1].broadcastRecap.lines[3]` 顺着他们公开的广告和经营资料往下看，租金连成本都盖不住，还在不停加点位。每多一个用户，却先多收一笔押金。
-- `$manifest.nightShell.interludes[1].broadcastRecap.lines[4]` 融资材料里写得很明白，押金进了关联平台，拿去给地产这些项目周转。充电宝做得越便宜，用的人越多，他们能拿去周转的钱就越多。
-- `$manifest.nightShell.interludes[1].broadcastRecap.lines[5]` 他一开始以为只是主管拖着报销。问到最后，公司连旧费用都等着后面的进款。他那六万八什么时候能拿回来，还得接着盯。
+- `$manifest.nightShell.interludes[1].broadcastRecap.lines[4]` 我去翻了这家栖行共享科技的公开资料。看完以后，我觉得他们的经营可能有很严重的问题。你们看，租金收三万，成本五万二，总部的人还没算。就这样，还在往外铺。
+- `$manifest.nightShell.interludes[1].broadcastRecap.lines[5]` 设备是买现成的，也没见它说有什么新技术能把成本降下来。后面这张盈利预测，用户越来越多，给店里的分成、维护费倒不涨了。多摆几台就不用修了？照它这个收费，铺得越快，亏的不是越多吗？
+- `$manifest.nightShell.interludes[1].broadcastRecap.lines[6]` 可它每拉来一个用户，先收一百九十九的押金。再看这页，押金进了宸直控制的关联平台，拿去给地产这些项目周转。充电宝可以免费借，押金得先留下。
+- `$manifest.nightShell.interludes[1].broadcastRecap.lines[7]` 人家不用了就要退押金，地产那头没回款，你拿什么退？租金连自己都养不活。还得不停拉新人进来，前面的钱才有得还。这怎么维持下去？
+- `$manifest.nightShell.interludes[1].broadcastRecap.lines[8]` 我看他们就是冲着押金来的。拿免费充电招人，把人家随时要退的钱拿去做别的生意，还吹自己扩张有多快。这不就是骗吗？
+- `$manifest.nightShell.interludes[1].broadcastRecap.lines[9]` 小陈那六万八还没拿回来。他原来以为把主管说通了就行，现在是连付款日期都没人给。我会接着问他。今天这些公开资料，我也放到回放下面，你们自己看。
 - `$manifest.nightShell.interludes[2].lines[3]` 我只看见持有页，三十万，写着九月底到期。合同没上屏。
 - `$manifest.nightShell.interludes[2].lines[5]` 没发。她爸那笔是留给女儿自己的，婚宴首饰照样让男方出。
 - `$manifest.nightShell.interludes[2].lines[10]` 还是会去。可那顿饭吃完，我有多少钱、愿意怎么花，得由我自己说。
@@ -145,9 +148,9 @@
 
 - `$manifest.nightShell.interludes[1].lines[3]` 我从他们官网翻到的。做共享充电宝的，广告和融资稿发你了，先看它怎么收费。
 - `$manifest.nightShell.interludes[1].lines[6]` 融资稿有个试点月报。租金收了三万，点位分成、维护和设备折旧加起来五万二，还没算总部的人。
-- `$manifest.nightShell.interludes[1].lines[8]` 融资稿后面有张关联往来表，你往后翻。
-- `$manifest.nightShell.interludes[1].lines[12]` 你问的那家平台在这页。栖行的大股东背后是同一个实控人，名下还有地产公司、资产管理公司。宣传册里说这些业务一起发展。
-- `$manifest.nightShell.interludes[1].lines[14]` 租金连成本都不够，押金又拿走了。大家要是都来退，他们拿什么还？
+- `$manifest.nightShell.interludes[1].lines[9]` 融资稿后面有张关联往来表，你往后翻。
+- `$manifest.nightShell.interludes[1].lines[13]` 你问的那家平台在这页。栖行的大股东背后是同一个实控人，名下还有地产公司、资产管理公司。宣传册里说这些业务一起发展。
+- `$manifest.nightShell.interludes[1].lines[15]` 租金连成本都不够，押金又拿走了。大家要是都来退，他们拿什么还？
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[3]` 老林，你这下班语音，比上班还准时。明细我收到了，五号是房贷，十八号还有一笔固定转出。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[5]` 四个月前就结清了，跟十八号这笔对不上。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[7]` ‘私教课时’。连续四个月，都是同一天、同一个数。收款人的名字没显示全。
@@ -1524,7 +1527,7 @@
 以下只是朗读提醒，不自动判错。三句服务于不同防御动作时可以保留。
 
 - _shell／旁白／other：22、24、21 字（$manifest.nightShell.cafePrologue.forensic.openingLines[6]；$manifest.nightShell.cafePrologue.forensic.openingLines[13]；$manifest.nightShell.cafePrologue.forensic.accountClueLines[2]）
-- _shell／林旭阳／other：27、28、25 字（$manifest.nightShell.interludes[1].lines[5]；$manifest.nightShell.interludes[1].lines[7]；$manifest.nightShell.interludes[1].lines[10]）
+- _shell／林旭阳／other：27、28、25 字（$manifest.nightShell.interludes[1].lines[5]；$manifest.nightShell.interludes[1].lines[8]；$manifest.nightShell.interludes[1].lines[11]）
 - _shell／林旭阳／other：33、35、33 字（$manifest.nightShell.cafePrologue.cafe.openingLines[10]；$manifest.nightShell.cafePrologue.cafe.evidencePair[0].hitLines[2]；$manifest.nightShell.cafePrologue.cafe.evidencePair[1].hitLines[2]）
 - 01-credit／案一咨询者·沈／other：26、24、25 字（$case.sceneVersions[4].questionOptions[1].missReaction；$case.sceneVersions[5].noClueReaction；$case.sceneVersions[5].questionOptions[1].missReaction）
 - _shell／咖啡厅男方／other：30、30、30 字（$manifest.nightShell.cafePrologue.cafe.evidencePair[0].remainingLines[1]；$manifest.nightShell.cafePrologue.cafe.evidencePair[0].hitLines[1]；$manifest.nightShell.cafePrologue.cafe.evidencePair[1].remainingLines[1]）
