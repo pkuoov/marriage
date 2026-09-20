@@ -86,10 +86,10 @@ Udio 总制作单与缺曲补充单目前仍在使用；追索音乐以补充单
 
 `docs/generated/` 由脚本生成，只用于阅读、朗读和审查，禁止直接改稿：
 
-- 连续故事版
-- 完整阅读版
-- 纯故事台本
-- 导演台本
+- [连续故事台本](generated/steam-demo-01-continuous-story-script.md)：日常审读先打开这一份。按主线顺序读序章、四案、尾声，其他问法和可选案卷在附录。
+- [纯故事台本](generated/steam-demo-01-pure-story-script.md)：逐场核对台词及可选接法，互斥分支并列展示。
+- [导演阅读版](generated/steam-demo-01-director-script.md)：排演动作、人物资料和主要分支，含作者信息。
+- [全量可读文字剧本](generated/steam-demo-01-full-readable-script.md)：完整字段、材料与独立快案，含作者信息和后续真相，不适合作为首次阅读入口。
 - 角色台词报告
 - 相邻问答报告
 - 剧情流报告

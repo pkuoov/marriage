@@ -114,6 +114,7 @@ const outputs = [
     content: renderContinuousStoryScript()
   }
 ];
+for (const output of outputs) output.content = organizeReadableScript(output.content);
 assertSourceCompleteness(outputs[0].content, {
   manifest,
   comments,
@@ -133,6 +134,39 @@ if (checkOnly) {
     await writeFile(output.path, output.content);
     console.log(`${output.label} ready: ${output.path}`);
   }
+}
+
+function organizeReadableScript(markdown) {
+  const versions = [
+    ["continuous-story", "连续故事台本", "顺着主线读：序章、四案、尾声；其他问法放在附录。"],
+    ["pure-story", "纯故事台本", "逐场对照台词和可选接法；并列分支不代表连续发生。"],
+    ["director", "导演阅读版", "查看排演动作、人物资料和主要分支；含作者信息。"],
+    ["full-readable", "全量可读文字剧本", "查完整字段、原件和独立快案；含作者信息与后续真相。"]
+  ];
+  const sourceLines = markdown.trimEnd().split("\n");
+  const directory = [];
+  let reachedChapter = false;
+  const body = sourceLines.map((line, index) => {
+    if (!index) return line;
+    if (line.startsWith("# ")) reachedChapter = true;
+    if (!line.startsWith("# ") && (reachedChapter || !line.startsWith("## "))) return line;
+    const anchor = `reading-section-${directory.length + 1}`;
+    directory.push(`- [${line.replace(/^#+ /, "")}](#${anchor})`);
+    return `<a id="${anchor}"></a>\n\n${line}`;
+  });
+  const introEnd = body.findIndex((line, index) => index > 0 && line.startsWith("<a id="));
+  body.splice(introEnd, 0,
+    "## 阅读入口", "",
+    ...versions.map(([suffix, label, description]) => `- [${label}](${packId}-${suffix}-script.md)：${description}`), "",
+    "> **时间与场景：** 案件按讲述顺序排列，各案日期见正文，并非连续几晚。方括号为动作、材料或场景说明，不作台词朗读。", "",
+    "## 目录", "", ...directory, ""
+  );
+  return `${body.join("\n").replace(/\n{3,}/g, "\n\n")}\n`;
+}
+
+function renderSessionDate(lines, packet, index) {
+  const date = packet.nightStructure?.sessionDates?.[index];
+  if (date) lines.push(`【通话日期：${date}】`, "");
 }
 
 function renderScript() {
@@ -179,7 +213,7 @@ function renderScript() {
   renderNode(lines, manifest.nightShell?.cafePrologue, "离婚谈判、同晚咨询与数周后回告", 3);
   add("");
 
-  add("## 晚上八点：回到直播间", "");
+  add(`## ${casePackets[0].nightStructure.sessionDates[0]} 晚上八点：开麦`, "");
   renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderSpokenLine, { includeMetadata: true });
   add("");
 
@@ -479,7 +513,7 @@ function renderPureStoryScript() {
     ""
   );
   renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { phase: "opening" });
-  lines.push("# 当晚｜晚上八点，开麦", "", "【你和赵律师回到直播间。控台灯亮，第一通热线已经在等。】", "");
+  lines.push(`# ${casePackets[0].nightStructure.sessionDates[0]} 晚上八点｜开麦`, "");
   renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderDirectorSpoken);
 
   casePackets.forEach((packet, caseIndex) => {
@@ -488,7 +522,9 @@ function renderPureStoryScript() {
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
     if (packet.caseTitle?.timeline) lines.push(`【${packet.caseTitle.timeline}】`, "");
 
-    lines.push("## 第一夜｜第一次来电", "", "【开播。】", "");
+    lines.push("## 第一夜｜第一次来电", "");
+    renderSessionDate(lines, packet, 0);
+    lines.push("【开播。】", "");
     for (const line of packet.openingDialogue ?? []) renderDirectorSpoken(lines, line);
     (packet.nightStructure?.segment1SceneIndexes ?? []).forEach((sceneIndex, localIndex) => {
       renderPureStoryScene(lines, packet.sceneVersions?.[sceneIndex], `第一夜 · ${localIndex + 1}`);
@@ -499,12 +535,13 @@ function renderPureStoryScript() {
     renderPureStoryInterlude(lines, packet.nightStructure?.interlude);
     if (packet.delegation?.depositLine) renderDirectorSpoken(lines, packet.delegation.depositLine);
 
-    lines.push("## 白天｜离开直播间", "");
+    lines.push("## 白天｜收到后续材料", "");
     const overnight = packet.overnightStructure ?? {};
     if (overnight.dayIntro) lines.push(`【${overnight.dayIntro}】`, "");
     for (const scene of overnight.dayScenes ?? []) renderPureStoryDayScene(lines, scene, packet.documents ?? []);
 
     lines.push(packet.overnightStructure?.sessionMode === "private-consultation" ? "## 第二夜｜单独咨询" : "## 第二夜｜回拨", "");
+    renderSessionDate(lines, packet, 1);
     renderPureStoryCallerVariants(lines, "来电人的回拨立场", overnight.postures);
     for (const line of overnight.returnLead?.lines ?? []) renderDirectorSpoken(lines, line);
     if (overnight.flowMode === "linear") {
@@ -540,6 +577,7 @@ function renderPureStoryScript() {
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
+      if (interlude.broadcastRecap) lines.push(`### ${interlude.broadcastRecap.kicker}`, "");
       for (const line of interlude.broadcastRecap?.lines ?? []) renderDirectorSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho);
@@ -561,7 +599,7 @@ function renderContinuousStoryScript() {
     ""
   );
   renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { includeAlternatives: false, actionActor: "林旭阳", phase: "opening" });
-  lines.push("# 当晚｜开麦", "");
+  lines.push(`# ${casePackets[0].nightStructure.sessionDates[0]} 晚上八点｜开麦`, "");
   renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderContinuousSpoken, { actionMarker: "林旭阳操作" });
 
   casePackets.forEach((packet, caseIndex) => {
@@ -573,7 +611,9 @@ function renderContinuousStoryScript() {
     if (packet.caseTitle?.subtitle) lines.push(`**副标题：** ${packet.caseTitle.subtitle}`, "");
     if (packet.caseTitle?.timeline) lines.push(`【${packet.caseTitle.timeline}】`, "");
 
-    lines.push("## 第一夜｜第一次来电", "", "【你接入电话。】", "");
+    lines.push("## 第一夜｜第一次来电", "");
+    renderSessionDate(lines, packet, 0);
+    lines.push("【你接入电话。】", "");
     for (const line of packet.openingDialogue ?? []) renderContinuousSpoken(lines, line);
     const embeddedEvidenceCheckIds = new Set();
     renderContinuousNight(lines, packet, route, "segment1", embeddedEvidenceCheckIds);
@@ -586,7 +626,7 @@ function renderContinuousStoryScript() {
       }
     } else renderContinuousInterlude(lines, packet, route.interludeActionId, route.interludeOptionId, embeddedEvidenceCheckIds);
 
-    lines.push("## 白天｜继续调查", "");
+    lines.push("## 白天｜收到后续材料", "");
     if (packet.overnightStructure?.dayIntro) lines.push(`【${continuousStageText(packet.overnightStructure.dayIntro)}】`, "");
     for (const stop of packet.overnightStructure?.flowMode === "linear" ? packet.overnightStructure.dayScenes.map((scene) => ({ sceneId: scene.id })) : route.dayStops) {
       const scene = (packet.overnightStructure?.dayScenes ?? []).find((entry) => entry.id === stop.sceneId);
@@ -595,6 +635,7 @@ function renderContinuousStoryScript() {
     }
 
     lines.push(packet.overnightStructure?.sessionMode === "private-consultation" ? "## 第二夜｜单独咨询" : "## 第二夜｜回拨", "");
+    renderSessionDate(lines, packet, 1);
     renderContinuousCallerVariant(lines, packet.overnightStructure?.postures, route.posture);
     for (const line of packet.overnightStructure?.returnLead?.lines ?? []) renderContinuousSpoken(lines, line);
     renderContinuousCallback(lines, packet, route.callbackEarnedItem);
@@ -628,6 +669,7 @@ function renderContinuousStoryScript() {
       for (const line of interlude.lines ?? []) renderContinuousSpoken(lines, line);
       if (interlude.line) lines.push(`【${continuousStageText(interlude.line)}】`, "");
       for (const line of interlude.afterLines ?? []) renderContinuousSpoken(lines, line);
+      if (interlude.broadcastRecap) lines.push(`### ${interlude.broadcastRecap.kicker}`, "");
       for (const line of interlude.broadcastRecap?.lines ?? []) renderContinuousSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, false, false);
@@ -743,8 +785,9 @@ function renderTestimonyReading(lines, scene) {
 function renderTestimonyAlternatives(lines, scene) {
   for (const { act, presses, present } of testimonyReadingRoute(scene)) {
     if (act.inquiry) {
-      lines.push(`#### ${act.title}｜其他问法`, "");
-      for (const option of act.inquiry.options.filter(item => !item.correct)) {
+      lines.push(`### ${act.title}｜其他问法`, "");
+      for (const [index, option] of act.inquiry.options.filter(item => !item.correct).entries()) {
+        lines.push(`#### 问法 ${index + 1}（独立选择）`, "");
         renderDirectorSpoken(lines, {role:"host",text:option.question});
         for (const line of option.lines) renderDirectorSpoken(lines, line);
         lines.push("【留在当前问题，重新选择问法】", "");
@@ -1353,7 +1396,7 @@ function renderDirectorScript() {
   lines.push("- 夜 A 让人物按自己的防御讲故事；白天让物件和第三方改变主语；夜 B 才让省略重新回到人物嘴里。", "- 方括号为舞台、表演或玩家操作，不念出。`【防备分支】` 只在压力不足时使用。", "");
 
   renderCafePrologueStory(lines, manifest.nightShell?.cafePrologue, { phase: "opening" });
-  lines.push("# 当晚开播", "");
+  lines.push(`# ${casePackets[0].nightStructure.sessionDates[0]} 晚上八点｜开麦`, "");
   renderNightShellPrologue(lines, manifest.nightShell?.prologue, renderDirectorSpoken);
 
   casePackets.forEach((packet, caseIndex) => {
@@ -1378,7 +1421,9 @@ function renderDirectorScript() {
       lines.push("");
     }
 
-    lines.push("## 夜 A｜第一次来电", "", "【开播。先让咨询者把自己相信的版本讲完整。】", "");
+    lines.push("## 夜 A｜第一次来电", "");
+    renderSessionDate(lines, packet, 0);
+    lines.push("【开播。先让咨询者把自己相信的版本讲完整。】", "");
     for (const line of packet.openingDialogue ?? []) renderDirectorSpoken(lines, line);
     (packet.nightStructure?.segment1SceneIndexes ?? []).forEach((sceneIndex, localIndex) => {
       renderDirectorScene(lines, packet.sceneVersions?.[sceneIndex], `夜 A · ${localIndex + 1}`);
@@ -1389,12 +1434,13 @@ function renderDirectorScript() {
     renderDirectorInterlude(lines, packet.nightStructure?.interlude);
     if (packet.delegation?.depositLine) renderDirectorSpoken(lines, packet.delegation.depositLine);
 
-    lines.push("## 白天｜物件改变主语", "");
+    lines.push("## 白天｜收到后续材料", "");
     const overnight = packet.overnightStructure ?? {};
     if (overnight.dayIntro) lines.push(`【转场】${overnight.dayIntro}`, "");
     for (const scene of overnight.dayScenes ?? []) renderDirectorDayScene(lines, scene, packet.documents ?? []);
 
-    lines.push("## 夜 B｜把省略问回来", "");
+    lines.push(overnight.sessionMode === "private-consultation" ? "## 夜 B｜单独咨询" : "## 夜 B｜回拨", "");
+    renderSessionDate(lines, packet, 1);
     if (packet.nightStructure?.returnStance?.lines) {
       lines.push("### 回拨时的咨询者立场", "");
       for (const [stance, line] of Object.entries(packet.nightStructure.returnStance.lines)) lines.push(`- **${humanLabel(stance)}：** ${line}`);
@@ -1404,7 +1450,7 @@ function renderDirectorScript() {
       lines.push("### 回拨先行拍", "");
       for (const line of overnight.returnLead.lines) renderDirectorSpoken(lines, line);
     }
-    lines.push("### 回拨衔接", "");
+    lines.push(overnight.sessionMode === "private-consultation" ? "### 私下接通" : "### 回拨衔接", "");
     for (const line of overnight.linearCallback?.lines ?? []) renderDirectorSpoken(lines, line);
     for (const [earnedItem, opener] of Object.entries(overnight.callbackOpeners ?? {})) {
       lines.push(`#### ${earnedItem}`, "", `**咨询者：** ${opener.line ?? ""}`, "");
@@ -1449,6 +1495,7 @@ function renderDirectorScript() {
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
+      if (interlude.broadcastRecap) lines.push(`### ${interlude.broadcastRecap.kicker}`, "");
       for (const line of interlude.broadcastRecap?.lines ?? []) renderDirectorSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, true);
@@ -1546,6 +1593,7 @@ function renderColdOpen(lines, coldOpen = null, renderLine = renderDirectorSpoke
 
 function renderDirectorSpoken(lines, line) {
   if (!line) return;
+  if (lines.at(-1)) lines.push("");
   if (line.role === "pause") {
     lines.push("【停顿】", "");
     return;

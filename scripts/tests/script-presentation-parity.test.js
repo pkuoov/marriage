@@ -12,6 +12,22 @@ const manifest = JSON.parse(await read("content/packs/steam-demo-01/manifest.jso
 const packets = await Promise.all(manifest.sequence.map(async ({ caseId }) => JSON.parse(await read(`content/packs/steam-demo-01/cases/${caseId}.json`))));
 const continuous = await read("docs/generated/steam-demo-01-continuous-story-script.md");
 const director = await read("docs/generated/steam-demo-01-director-script.md");
+const pure = await read("docs/generated/steam-demo-01-pure-story-script.md");
+
+test("阅读稿保留分散通话日期，私下咨询与数日后公开回访分场", () => {
+  const workplace = packets.find(packet => packet.caseId === "04-workplace");
+  const recap = manifest.nightShell.interludes.find(entry => entry.afterCaseId === workplace.caseId).broadcastRecap;
+  for (const script of [continuous, director, pure]) {
+    for (const packet of packets) {
+      for (const date of packet.nightStructure.sessionDates) assert.ok(script.includes(`【通话日期：${date}】`));
+    }
+    const privateHeading = script.indexOf("｜单独咨询");
+    const privateStart = script.indexOf(workplace.overnightStructure.linearCallback.lines[0].text, privateHeading);
+    const publicHeading = script.indexOf(`### ${recap.kicker}`);
+    assert.ok(privateHeading >= 0 && privateStart > privateHeading && publicHeading > privateStart);
+    for (const line of recap.lines) assert.ok(script.indexOf(line.text, publicHeading) > publicHeading);
+  }
+});
 
 test("四案连续台本先完整陈述，再进入同阶段追问", () => {
   for (const packet of packets) {
