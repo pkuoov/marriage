@@ -182,3 +182,37 @@ test('伪造正确标记但排序仍错的旧存档不能进入第二夜', async
   overnight.timelineSorts[scene.id].order = scene.body.timelineSort.correctOrder;
   assert.equal(timelineSortComplete(scene, overnight), true);
 });
+
+import { isPrivateConsultation } from '../../src/runtime/consultationModel.js';
+import { liveControlDeckHtml } from '../../src/ui/liveFrameView.js';
+import { storyInterludeStageHtml } from '../../src/ui/storyInterludeView.js';
+
+test('私下咨询只在第二夜启用，控台不显示直播及观众数', () => {
+  const work = read('04-workplace');
+  assert.equal(isPrivateConsultation(null), false);
+  assert.equal(isPrivateConsultation(work, {caseOvernights: {[work.id]: {segment:'day'}}}), false);
+  const active = isPrivateConsultation(work, {caseOvernights: {[work.id]: {segment:'night2'}}});
+  assert.equal(active, true);
+  assert.equal(isPrivateConsultation(read('02-tony'), {caseOvernights: {[work.id]: {segment:'night2'}}}), false);
+  const html = liveControlDeckHtml({privateConsultation: active, simpleInquiry: true});
+  assert.ok(html.includes('PRIVATE CALL'));
+  assert.ok(!/ON AIR|deck-live-metrics|听众耐心/.test(html));
+  assert.ok(liveControlDeckHtml().includes('ON AIR'));
+  const recap = storyInterludeStageHtml({afterCaseId:'03-profile', broadcasting:true});
+  assert.ok(recap.includes('ON AIR'));
+  assert.ok(!/OFF AIR|interlude-zhao|interlude-remote-chip/.test(recap));
+});
+
+test('撤销职场广告选项只清理该旧代价，不重置进度或其他案件后果', () => {
+  const work = read('04-workplace');
+  const beat = work.overnightStructure.liveCounterBeats.find(b => b.supersedesChoiceIds);
+  for (const choiceId of beat.supersedesChoiceIds) {
+    const key = `${work.id}:${beat.id}`;
+    const input = {liveCounterPicks:{[key]:{choiceId, endingImpact:'platform-data-loss'},other:{choiceId:'keep-asking-table',endingImpact:'platform-data-loss'}},caseActionLog:{[work.id]:{[`liveCounterBeat:${beat.id}`]:true}},scene:'liveCounterBeat',activeLiveCounterBeatId:beat.id};
+    const result = refreshSavedExchangeCopy(input,[work]);
+    assert.equal(result.liveCounterPicks[key],undefined);
+    assert.deepEqual(result.liveCounterPicks.other,input.liveCounterPicks.other);
+    assert.deepEqual(result.caseActionLog,input.caseActionLog);
+    assert.equal(result.activeLiveCounterBeatId,beat.id);
+  }
+});

@@ -220,6 +220,10 @@ export function refreshSavedExchangeCopy(state = {}, briefs = [], previousBriefs
     for (const beat of brief.overnightStructure?.liveCounterBeats ?? []) {
       const pickKey = `${caseKey(brief)}:${beat.id}`;
       const saved = state.liveCounterPicks?.[pickKey];
+      if (saved && beat.supersedesChoiceIds?.includes(saved.choiceId)) {
+        delete next.liveCounterPicks[pickKey];
+        continue;
+      }
       const choice = saved && beat.choices?.find((item) => item.id === saved.choiceId);
       if (choice) next.liveCounterPicks[pickKey] = { ...saved, label: choice.label ?? "", recapAftertaste: choice.recapAftertaste ?? "" };
     }

@@ -15,6 +15,7 @@ import { materialPressureReaction, materialPressureSignal, pressuredAnswerVarian
 import { routeAxisForChoice, routeToneForChoice } from "./runtime/routeLog.js";
 import { canRewindQuestion, popQuestionRewindPoint, pushQuestionRewindPoint } from "./runtime/questionRewind.js";
 import { afterEvidenceScene as nextSceneAfterEvidence, afterSceneEvidenceFor, answerKey, availableCallbackOpeners, availableOvernightCallbackOpeners, callbackOpenerById, canEnterOvernightCallback, caseKey, daySceneById, delegationFor, delegationOutcomeFor, delegationRouteAxisForAdvisor, documentById, documentRowById, documentQuestionId, earnedDocumentQuestionsFor, evidenceAnswerKey, evidenceCheckModel, evidenceChecksFor, firstUnansweredSceneIndex as firstOpenSceneIndex, interludeEarnedItemsForOvernight, investigationAnswerKey, investigationBackflowModel, investigationRouteIndexBase, keyQuestionLimit, liveCounterBeatAfterScene, liveCounterBeatBeforeScene, liveCounterBeatById, liveCounterBeatsFor, nextPlayableSceneIndex, nightActionById, nightStructureFor, overnightCallbackDialogueLines, overnightCallbackOpenerById, overnightCallerQuestionFor, overnightFirstNight2SceneIndex, overnightReturnPostureFor, overnightStructureFor, pendingEvidenceChecksFor, playableSceneCount, playableSceneIndexes, pressureSignalForLiveCounterChoice, returnStanceFor, sceneReviewModel, shouldEnterHangupAfterScene, shouldEnterOvernightHangupAfterScene, snapshotEchoFor, stanceSnapshotForScene } from "./runtime/sceneAdvance.js";
+import { isPrivateConsultation } from "./runtime/consultationModel.js";
 import { storyInterludeCaseId, storyOptionalQuickCall } from "./runtime/storyInterludeModel.js";
 import { careChoiceById, careChoicesFor } from "./runtime/careChoiceModel.js";
 import { epilogueUnreadStage } from "./runtime/epilogueUnreadModel.js";
@@ -470,6 +471,7 @@ function canContinueJourney() {
 
 function resumeStageLabel() {
   const scene = state.scene ?? "caseOpen";
+  if (isPrivateConsultation(activeCaseBrief(), state) && !["storyInterlude", "caseBridge", "caseTitle", "runComplete"].includes(scene)) return "上次停在：单独咨询";
   if (scene === "nightShellPrologue") return "上次停在：开播前";
   if (["dayActOpening", "dayMap", "dayScene"].includes(scene)) return "上次停在：白天调查";
   if (["overnightCallback", "callbackOpener", "callbackOpenerBeat", "overnightNight2", "documentReconcile", "liveCounterBeat"].includes(scene)) return "上次停在：第二晚回拨";
@@ -852,7 +854,7 @@ function liveChapterTitle(brief = {}) {
   const key = caseKey(brief);
   const returning = state.caseOvernights?.[key]?.segment === "night2"
     || state.caseNights?.[key]?.segment === "segment2";
-  return `第 ${nights[returning ? 1 : 0]} 晚 · ${returning ? "回拨" : "初次连线"}`;
+  return `第 ${nights[returning ? 1 : 0]} 晚 · ${returning ? (isPrivateConsultation(brief, state) ? "单独咨询" : "回拨") : "初次连线"}`;
 }
 
 function nightShellForStoryKey(storyKey = "") {
@@ -956,11 +958,12 @@ function sceneWithLiveCounterQuestionOverride(brief = {}, scene = {}) {
 }
 
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", backdropClass: backdropClassOverride = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen", musicPhase = "" }) {
+  const privateConsultation = isPrivateConsultation(brief, state);
   const modeLabel = isStoryPackMode() ? `第 ${Math.max(1, Number(state.chapter) || 1)} 案 · ${chapter || label || "连线中"}` : "今日来电";
   const backdropClass = backdropClassOverride || caseBackdropClass(brief);
   const pressure = showCaseHud ? (pressureOverride ?? currentLivePressure(brief, mood)) : {};
   const visualHud = visualHudOverride ?? (showCaseHud
-    ? `${liveCommentStrip(pressure)}${portraitLayer(brief, mood, pressure, controlMode)}`
+    ? `${privateConsultation ? "" : liveCommentStrip(pressure)}${portraitLayer(brief, mood, pressure, controlMode)}`
     : storyPackSummaryHud());
   const total = Math.max(1, playableSceneCount(brief));
   const materialProfile = unlockedMaterialProfile({ state, brief, visible: showCaseHud });
@@ -988,7 +991,8 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     controlDeckHtml: showCaseHud
       ? liveControlDeckHtml({
           simpleInquiry: Boolean(brief.dialoguePresentation?.focusedInquiry),
-          onAirLabel: isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
+          privateConsultation,
+          onAirLabel: privateConsultation ? "单独咨询" : isStoryPackMode() ? "匿名热线" : brief.label ?? "来电中",
           label,
           segment: Math.min(total, answeredSceneCountForState(state, brief) + 1),
           total,

@@ -2140,53 +2140,133 @@ export const CONTENT_PACKS = {
         },
         {
           "afterCaseId": "04-workplace",
-          "kicker": "第 4 晚 · 收播以后",
+          "kicker": "第 4 晚 · 私下咨询之后",
           "lines": [
             {
               "role": "stage",
-              "text": "第 4 晚的回拨结束，直播灯熄了。"
+              "text": "小陈挂断语音。你存好他的受理页，把去名的供应商结算表和回执转给周会计，接着发了一条消息。"
             },
             {
-              "speaker": "老方（语音）",
-              "role": "production",
-              "text": "（嗦面声）前一场谁先垫谁主办，这一场谁先报谁着急。"
-            },
-            {
-              "speaker": "林旭阳",
               "role": "host",
-              "text": "旧报销要等下一场的钱。老方，帮我找找这家公司的公开材料，它平时靠什么进钱？"
+              "text": "老周，几个部门都等着付款，还在催人办活动。栖行平时到底靠什么挣钱？有公开的经营资料吗？",
+              "speaker": "林旭阳"
             },
             {
               "role": "stage",
-              "text": "过了一会儿，老方发来栖行的公开融资稿。"
+              "text": "过了一会儿，周会计回了电话，微信里同时收到栖行的租借广告和一份公开融资稿。"
             },
             {
-              "speaker": "老方（语音）",
-              "role": "production",
-              "text": "做共享柜的，稿里列了租金、维护成本，还有押金的关联往来，接收方有宸直。陈今天那笔报销，跟这里还对不上。"
+              "role": "advisor",
+              "text": "我从他们官网翻到的。做共享充电宝的，广告和融资稿发你了，先看它怎么收费。",
+              "speaker": "周会计（语音）",
+              "speakerProfileId": "zhou-accountant"
             },
             {
-              "speaker": "林旭阳",
+              "role": "stage",
+              "text": "租借广告：每小时一元，同区常见价格每小时两元；每周三天免租金。押金一百九十九元，同区常见押金九十九元。页脚写着“新增点位持续招募”。"
+            },
+            {
               "role": "host",
-              "text": "原页留着，明天接着看。他今晚不肯再垫了，公司拿什么还他，还没答。"
+              "text": "收费低一半，还经常免费。维护、给店里的分成，拿什么付？",
+              "speaker": "林旭阳"
             },
             {
-              "speaker": "老方（语音）",
-              "role": "production",
-              "text": "先吃吧。我这面已经能整块夹起来了。"
+              "role": "advisor",
+              "text": "融资稿有个试点月报。租金收了三万，点位分成、维护和设备折旧加起来五万二，还没算总部的人。",
+              "speaker": "周会计（语音）",
+              "speakerProfileId": "zhou-accountant"
+            },
+            {
+              "role": "host",
+              "text": "这么做根本不挣钱，还拼命往外推。他要的就是押金。",
+              "speaker": "林旭阳"
+            },
+            {
+              "role": "advisor",
+              "text": "每多一个交押金的用户，先收一百九十九。稿里写着继续增加投放，押金余额也在往上涨。",
+              "speaker": "周会计（语音）",
+              "speakerProfileId": "zhou-accountant"
+            },
+            {
+              "role": "host",
+              "text": "用户随时会退，这笔钱他们放在哪儿？",
+              "speaker": "林旭阳"
+            },
+            {
+              "role": "advisor",
+              "text": "融资稿后面有张关联往来表，你往后翻。",
+              "speaker": "周会计（语音）",
+              "speakerProfileId": "zhou-accountant"
+            },
+            {
+              "role": "stage",
+              "text": "附注“用户押金与关联往来”：押金余额统一归集至宸直控制的资金平台，用于集团地产等关联项目周转；退押申请由平台按批次调拨。"
+            },
+            {
+              "role": "host",
+              "text": "押金收进来，又拿去做别的生意了。宸直怎么也在这儿？",
+              "speaker": "林旭阳"
+            },
+            {
+              "role": "stage",
+              "text": "周会计发来栖行大股东官网上的宣传册链接。你点开“集团业务”，翻到股权关系页。"
+            },
+            {
+              "role": "advisor",
+              "text": "你问的那家平台在这页。栖行的大股东背后是同一个实控人，名下还有地产公司、资产管理公司。宣传册里说这些业务一起发展。",
+              "speaker": "周会计（语音）",
+              "speakerProfileId": "zhou-accountant"
+            },
+            {
+              "role": "host",
+              "text": "对上了。充电宝这边不挣钱也照样扩，押金收到别的项目里去了。光催主管，恐怕真催不出钱来。",
+              "speaker": "林旭阳"
+            },
+            {
+              "role": "advisor",
+              "text": "前面店里要分成，中间采购还要返费，租金本来就盖不住成本。押金又在别处周转，大家一来要钱，它拿什么付？",
+              "speaker": "周会计（语音）",
+              "speakerProfileId": "zhou-accountant"
+            },
+            {
+              "role": "host",
+              "text": "这些公开页我给陈发过去。明天他去交原件，也得问清楚，这次到底排没排付款。",
+              "speaker": "林旭阳"
+            },
+            {
+              "role": "stage",
+              "text": "你把广告、融资稿和宣传册链接发给小陈。他回了一条语音。"
+            },
+            {
+              "role": "caller",
+              "text": "看到了。招新点位的广告倒一天没停过。我明天跟运营那个姐姐一起去，原件交了就让他们给收件记录。",
+              "speaker": "陈（语音）",
+              "speakerProfileId": "case4-caller-chen"
+            },
+            {
+              "role": "host",
+              "text": "好，付款那栏有变化就发我。",
+              "speaker": "林旭阳"
+            },
+            {
+              "role": "stage",
+              "text": "第二天下午，小陈发来盖过收件章的照片：原件已补齐，付款日期仍是“待通知”。下周活动改由主管另找人承办。"
+            },
+            {
+              "role": "caller",
+              "text": "我没再接。钱还是没下来，我跟她们留了同一份催款记录。财务有回复，我再找你。",
+              "speaker": "陈（语音）",
+              "speakerProfileId": "case4-caller-chen"
             }
           ],
-          "line": "你把融资稿停在“用户押金／关联往来”那页，掀开保温盒。",
+          "line": "你存好新的收件记录，把付款日期空着的那一栏留在屏幕上。",
           "afterLines": [
             {
               "role": "stage",
-              "text": "你关了控台，第二天白天没有安排新的来电。"
-            },
-            {
-              "role": "stage",
-              "text": "第 5 晚。你回到控台，重新接通热线。"
+              "text": "第 5 晚。你回到控台，接通下一通热线。"
             }
-          ]
+          ],
+          "remoteLabel": "语音与消息"
         },
         {
           "afterCaseId": "03-profile",
@@ -2250,10 +2330,6 @@ export const CONTENT_PACKS = {
             {
               "role": "stage",
               "text": "热过的汤又凉了。塑料盖轻轻响了一声。"
-            },
-            {
-              "role": "stage",
-              "text": "第 7 晚。你回到控台，重新接通热线。"
             }
           ],
           "transitionQuote": {
@@ -2261,6 +2337,45 @@ export const CONTENT_PACKS = {
             "headline": "宸直产品出现延期登记传闻",
             "text": "宸直旗下多只产品被曝延期登记，平台回应称正在核对。",
             "source": "财经客户端推送 · 00:47"
+          },
+          "broadcastRecap": {
+            "caseId": "04-workplace",
+            "kicker": "第 7 晚 · 开播回访",
+            "actionLabel": "几天后，开播",
+            "lines": [
+              {
+                "role": "stage",
+                "text": "7 月 21 日，距离那次私下咨询已经过去三天。开播前，陈发来消息：六万八仍未到账，财务只让他等二十二号的会。"
+              },
+              {
+                "role": "stage",
+                "text": "你关掉内部单据和聊天窗口，打开直播。"
+              },
+              {
+                "role": "host",
+                "text": "前几天那个垫钱办活动的小伙子，后来跟我私下聊了。原件补齐了，钱还没到。他这次没再垫。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "host",
+                "text": "顺着他们公开的广告和经营资料往下看，租金连成本都盖不住，还在不停加点位。每多一个用户，却先多收一笔押金。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "host",
+                "text": "融资材料里写得很明白，押金进了关联平台，拿去给地产这些项目周转。充电宝做得越便宜，用的人越多，他们能拿去周转的钱就越多。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "host",
+                "text": "他一开始以为只是主管拖着报销。问到最后，公司连旧费用都等着后面的进款。他那六万八什么时候能拿回来，还得接着盯。",
+                "speaker": "林旭阳"
+              },
+              {
+                "role": "stage",
+                "text": "你收起公开资料，接入今晚的热线。"
+              }
+            ]
           }
         },
         {
@@ -2306,7 +2421,7 @@ export const CONTENT_PACKS = {
             "artSrc": "./assets/generated/cg/chenzhi-news-push-pixel.png",
             "artAlt": "收播后的工作室桌面，手机亮起一条紧急新闻推送",
             "headline": "宸直信托全部产品暂停兑付，实控人失联",
-            "body": "赵律师把新闻附的处置通报打开。宸直信托全部产品暂停兑付，实控人暂时失联，监管部门和警方已介入。\n\n通报另列栖行：用户押金被归集至宸直控制的关联资金平台，作为关联项目配资资金，再以相关资产继续融资；到期资金无法回流，栖行的退押金与日常付款同时吃紧。\n\n后台调出此前的融资稿，押金归集的接收方与通报一致。试点租金已盖不住维护、分成和折旧，中层又从活动与物料里取走一层。一直增长的点位，还为宸直带来了不断补入的押金。\n\n各笔清偿金额尚未公布。",
+            "body": "赵律师把新闻附的处置通报打开。宸直信托全部产品暂停兑付，实控人暂时失联，监管部门和警方已介入。\n\n通报另列栖行：用户押金被归集至宸直控制的关联资金平台，作为关联项目配资资金，再以相关资产继续融资；到期资金无法回流，栖行的退押金与日常付款同时吃紧。\n\n你调出周会计此前发来的融资稿，押金归集的接收方与通报一致。共享充电宝的试点租金已盖不住维护、分成和折旧，中层又从活动与物料里取走一层。一直增长的点位，还为宸直带来了不断补入的押金。\n\n各笔清偿金额尚未公布。",
             "hypotheses": [
               {
                 "id": "cross-case-ledger",
@@ -6317,8 +6432,8 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "chen",
           "speaker": "咨询者",
-          "entryQuestion": "今天问到新的情况了吗？",
-          "version": "问到了。早上我拿日期和金额去查，六万八登记着，付款日期还是待通知。财务问我外部协调的一万二给谁，我一下没答上来。中午找运营部的姐姐问，她也没收到，维修那边也有。下午她们把各自的受理页发过来，连几千块的物料费都挂着。可主管私下还说会优先办我的，让我别跟着起哄。我是真想信他，不然下周又排了活动，我拿什么继续垫？",
+          "entryQuestion": "后来问到新的情况了吗？",
+          "version": "问到了。早上我拿日期和金额去查，六万八登记着，付款日期还是待通知。财务问我外部协调的一万二给谁，我一下没答上来。中午找运营部的姐姐问，她也没收到，维修那边也有。下午她们把各自的受理页发过来，连几千块的物料费都挂着。可主管私下还说会优先办我的，让我别跟着起哄。我是真不信他了。下周又排了活动，我拿什么继续垫？",
           "helperHint": "其他人的欠款是否也缺单据？",
           "doubt": "多个部门同时未付款，不能只沿主管与小陈的关系解释。",
           "contradiction": "跨部门已有受理且无补件要求的费用仍在等待付款。",
@@ -6331,7 +6446,7 @@ export const CONTENT_CASES = {
               "id": "work-leader-note:casualQuestions:0"
             },
             {
-              "question": "这些受理页能给后台看吗？",
+              "question": "这些受理页能给我看吗？",
               "sourceAnchor": "受理页",
               "answer": "她们同意了，姓名和账号都遮了，只留部门、金额和状态。",
               "id": "work-leader-note:casualQuestions:1"
@@ -6358,14 +6473,14 @@ export const CONTENT_CASES = {
               "question": "主管说优先办你的，财务给你定了哪天付款？",
               "sourceAnchor": "主管私下还说会优先办我的",
               "suspicionLabel": "主管说优先办你的，财务给你定了哪天付款？",
-              "answer": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追。",
+              "answer": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追问。",
               "correct": true,
               "routeAxis": "money-flow",
               "routeTone": "trust-but-verify",
               "lines": [
                 {
                   "role": "caller",
-                  "text": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追。"
+                  "text": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追问。"
                 },
                 {
                   "role": "host",
@@ -6379,7 +6494,7 @@ export const CONTENT_CASES = {
                 "sourceProves": "主管私下承诺优先，但受理页仍待通知。",
                 "sourceDoesNotProve": "口述与现有单据不说明公司全部账目或最终追回金额。",
                 "answerAnchor": "没定，受理页还是待通知",
-                "answerAdds": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追。",
+                "answerAdds": "没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追问。",
                 "nextLegalQuestion": "比较三个部门的受理与待付状态，追主管优先承诺的依据。"
               },
               "id": "work-leader-note:questionOptions:0"
@@ -6533,7 +6648,7 @@ export const CONTENT_CASES = {
                       "sourceLabel": "第二夜收到的受理页与包干明细"
                     }
                   ],
-                  "callerLine": "她们那栏是没写补件。可我这一单主管答应过先办，总不能还跟她们一起等吧？",
+                  "callerLine": "她们那栏是没写补件。他还跟我说先办我的，光嘴上说，有什么用？",
                   "hostLine": "他答应你先办，财务给这几个部门的回复，也是先办？",
                   "boundaryLine": "多个部门均无补件要求，付款日期仍待通知。",
                   "contradiction": "多个部门无补件要求仍待付款，不能把欠款都归结为个人手续遗漏。",
@@ -6559,18 +6674,18 @@ export const CONTENT_CASES = {
                     },
                     {
                       "role": "caller",
-                      "text": "她们也在等，我看见了。可主管说会先顾我。别人没交齐手续也说不定，我不想因为她们催得急，就把主管得罪了。"
+                      "text": "她们也在等，我看见了。可她们到底缺不缺手续，我还没细看。主管又说会先顾我，我现在就想让他给个准日子。"
                     }
                   ],
                   "options": [
                     {
                       "id": "act1-ask",
-                      "question": "运营和维修的受理页都写着不用补件，为什么你还觉得她们是手续没补完？",
+                      "question": "这两张都写着不用补件。手续已经齐了，怎么也没付？",
                       "correct": true,
                       "lines": [
                         {
                           "role": "caller",
-                          "text": "她们那栏是没写补件。可我这一单主管答应过先办，总不能还跟她们一起等吧？"
+                          "text": "她们那栏是没写补件。他还跟我说先办我的，光嘴上说，有什么用？"
                         },
                         {
                           "role": "host",
@@ -6582,15 +6697,15 @@ export const CONTENT_CASES = {
                         },
                         {
                           "role": "host",
-                          "text": "财务没写优先，你就信他一句先办？下周那场，你还准备垫？"
+                          "text": "财务没写优先，他这句先办又没落到单子上。下周那场，你还准备垫？"
                         },
                         {
                           "role": "caller",
-                          "text": "我想等这笔回来再垫。他答应先办我的，总得让我看见钱吧。"
+                          "text": "现在肯定不垫。他说能先办，我就等着看钱到底到不到。"
                         },
                         {
                           "role": "stage",
-                          "text": "小陈手机又响了。他把主管刚发来的催办消息转到后台。"
+                          "text": "小陈手机又响了。他把主管刚发来的催办消息转给你。"
                         },
                         {
                           "role": "caller",
@@ -6637,15 +6752,15 @@ export const CONTENT_CASES = {
                         },
                         {
                           "role": "host",
-                          "text": "财务没写优先，你就信他一句先办？下周那场，你还准备垫？"
+                          "text": "财务没写优先，他这句先办又没落到单子上。下周那场，你还准备垫？"
                         },
                         {
                           "role": "caller",
-                          "text": "我想等这笔回来再垫。他答应先办我的，总得让我看见钱吧。"
+                          "text": "现在肯定不垫。他说能先办，我就等着看钱到底到不到。"
                         },
                         {
                           "role": "stage",
-                          "text": "小陈手机又响了。他把主管刚发来的催办消息转到后台。"
+                          "text": "小陈手机又响了。他把主管刚发来的催办消息转给你。"
                         },
                         {
                           "role": "caller",
@@ -6670,7 +6785,7 @@ export const CONTENT_CASES = {
                   },
                   {
                     "role": "caller",
-                    "text": "她们也在等，我看见了。可主管说会先顾我。别人没交齐手续也说不定，我不想因为她们催得急，就把主管得罪了。"
+                    "text": "她们也在等，我看见了。可她们到底缺不缺手续，我还没细看。主管又说会先顾我，我现在就想让他给个准日子。"
                   }
                 ],
                 "comparison": [],
@@ -6713,7 +6828,7 @@ export const CONTENT_CASES = {
                 "sourceLabel": "第二夜收到的受理页与包干明细"
               }
             ],
-            "callerLine": "她们那栏是没写补件。可我这一单主管答应过先办，总不能还跟她们一起等吧？",
+            "callerLine": "她们那栏是没写补件。他还跟我说先办我的，光嘴上说，有什么用？",
             "hostLine": "他答应你先办，财务给这几个部门的回复，也是先办？",
             "boundaryLine": "多个部门均无补件要求，付款日期仍待通知。",
             "contradiction": "多个部门无补件要求仍待付款，不能把欠款都归结为个人手续遗漏。",
@@ -6793,7 +6908,7 @@ export const CONTENT_CASES = {
               },
               {
                 "role": "stage",
-                "text": "后台把两份待付受理页与陈自己的新受理页并排打开。供货方项目员找到财务留存的回执，按白天说好的遮去账号，经陈转来，与旧批次工作结算放在一起。"
+                "text": "你把两份待付受理页与陈自己的新受理页并排打开。供货方项目员找到财务留存的回执，按白天说好的遮去账号，经陈转来，与旧批次工作结算放在一起。"
               },
               {
                 "role": "stage",
@@ -6810,7 +6925,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "六万八接着催。草单和分配消息也一并交，四千的事你昨晚认过了。下周那场还垫不垫？"
+                "text": "六万八接着催。草单和分配消息也一并交，四千的事你昨晚认过了。下周要办，让公司自己先出钱。"
               },
               {
                 "role": "caller",
@@ -6827,7 +6942,7 @@ export const CONTENT_CASES = {
             ]
           },
           "closureContract": {
-            "entryAnchor": "下周那场还垫不垫",
+            "entryAnchor": "下周要办，让公司自己先出钱",
             "closerAnchor": "发了。群里一个都没回",
             "adds": "他把实际垫款和预期协调费分开提交，发消息要求付款并拒绝再垫。主管填草单，他提交现有两份材料。",
             "openEdge": "付款日期与财务对协调费的回复。",
@@ -7221,61 +7336,29 @@ export const CONTENT_CASES = {
             "kind": "interruptToast",
             "cost": 0,
             "afterSceneIndex": 3,
-            "from": "平台强制贴片",
+            "from": "陈的工作群消息",
+            "supersedesChoiceIds": [
+              "read-before-ad",
+              "mute-for-ad"
+            ],
             "lines": [
               {
                 "role": "caller",
-                "text": "工作群刚弹出一条，是他说的。我正要念。"
+                "text": "工作群刚弹出一条，是他说的。我念给你听吧。"
               },
               {
-                "role": "stage",
-                "text": "后台同时弹出强制贴片：五秒后播放。继续发声，本场退出推荐。"
-              }
-            ],
-            "choices": [
-              {
-                "id": "read-before-ad",
-                "directionLabel": "先把这条念完。",
-                "label": "先把这条念完。",
-                "lines": [
-                  {
-                    "role": "caller",
-                    "text": "他发的是：“各部门别单独催，费用月底一起办。下周活动照排，先垫的还是主办。”"
-                  },
-                  {
-                    "role": "host",
-                    "text": "月底打钱，还是月底再议？他还是没说。"
-                  },
-                  {
-                    "role": "stage",
-                    "text": "群消息随即撤回。他截到了；贴片同时归零，后台曲线骤降，本场推荐关闭。"
-                  }
-                ],
-                "routeAxis": "process-control",
-                "routeTone": "pressure-point",
-                "endingImpact": "platform-data-loss",
-                "recapAftertaste": "",
-                "silent": false,
-                "stanceNudge": "neutral"
+                "role": "caller",
+                "text": "“各部门别单独催，费用月底一起结算，下周活动照常。谁能垫钱，活动就归谁。”"
               },
               {
-                "id": "mute-for-ad",
-                "directionLabel": "截到了就发来。",
-                "label": "截到了就发来。",
-                "lines": [
-                  {
-                    "role": "caller",
-                    "text": "发了。撤回有什么用，我每天盯着这个群，就等他说什么时候还钱。"
-                  }
-                ],
-                "routeAxis": "document-edge",
-                "routeTone": "trust-but-verify",
-                "recapAftertaste": "",
-                "silent": false,
-                "stanceNudge": "neutral"
+                "role": "host",
+                "text": "月底结算，那具体哪天到账？他写了吗？"
+              },
+              {
+                "role": "caller",
+                "text": "没写。他撤回了，还好截图截到了。"
               }
-            ],
-            "choiceMode": "sequence"
+            ]
           },
           {
             "id": "work-private-warning-voice",
@@ -7313,7 +7396,7 @@ export const CONTENT_CASES = {
           "approval-page-reviewed": "立项页不是报销单",
           "leader-note-hot": "领导批注"
         },
-        "dayIntro": "小陈去问公司财务，又把昨晚的连线发给这次活动的礼品供货方项目员和一位前同事，想请他们帮自己说话。两人各有要澄清的事，答应由他拉进私下语音。你先听周会计回电话，他看过你昨晚发的审批页。",
+        "dayIntro": "小陈把昨晚的连线发给供货方项目员和一位前同事，约了下午的私下语音。你桌上的手机先响了，是周会计回电话。",
         "dayBudget": 0,
         "minDayScenes": 4,
         "dayScenes": [
@@ -7367,7 +7450,7 @@ export const CONTENT_CASES = {
             "kind": "studio",
             "body": {
               "access": "陈用本次采购时留的联系方式找供货方，请其证明费用差额属于正常成本。项目员不肯替他这样解释，愿意在陈拉起的私下语音里出示本方旧结算，澄清额外费用来自客户提出的返费要求。",
-              "text": "小陈先把供货方项目员拉进三人语音。他想请对方证明以前多结一点很正常；项目员却说，别把那些钱全算成他们自己抬的物料价。随后发来旧批次的三栏结算表。",
+              "text": "小陈把这次活动的供货方项目员拉进三人语音，问以前是不是也会多结一点。项目员翻了一阵聊天记录，发来旧批次的三栏结算表。",
               "routeAxis": "external-corroboration",
               "cast": [
                 "供应商项目员",
@@ -7391,7 +7474,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "speaker": "供应商项目员",
-                  "text": "表是我经手的，打款是我们财务办的。我现在手里没回执，不能把表上的数直接说成都付了。",
+                  "text": "表是我做的，回执在财务那儿，我得去找一下。",
                   "id": "day-work-supplier-visit:beat:3"
                 },
                 {
@@ -7411,7 +7494,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "speaker": "供应商项目员",
-                  "text": "可以，省得最后说是我们凭空加价。语音里“每一层的返费结完，下一批点位才往下走”，就是我们当时催结算说的。回执我去找财务，找到后把账号遮了，发给小陈转你。",
+                  "text": "行。语音里“每一层的返费结完，下一批点位才往下走”，就是我们当时催结算说的。回执我去找财务，找到后把账号遮了，发给小陈转你。",
                   "id": "day-work-supplier-visit:beat:6"
                 }
               ],
@@ -7421,7 +7504,7 @@ export const CONTENT_CASES = {
               ],
               "earnedItemId": "供应商返费三层表",
               "audioCueId": "voice.case4.supplier-message",
-              "sourceNote": "小陈联系的是给这场活动供礼品的项目员。对方来澄清费用差额，不肯替陈担保报销。"
+              "sourceNote": "小陈用采购时留的联系方式约来供货方项目员，对方发来经手的旧批次结算表。"
             }
           },
           {
@@ -7431,7 +7514,7 @@ export const CONTENT_CASES = {
             "kind": "studio",
             "body": {
               "access": "陈把连线转给月初离职的原部门助理，并问是不是当时没通知报备要求。她为澄清自己职责接受私下语音，只提供离职前亲自发过的通知和留存预算页，没有当前系统权限。",
-              "text": "下午，小陈又拉起一通语音。这位前同事原来做部门助理，月初已经离职。小陈问她是不是漏发过报备要求，她不高兴，把当时发给他的通知原图翻了出来。",
+              "text": "下午，小陈又拉起一通语音。这位前同事原来做部门助理，月初已经离职。刚接通，她就抱怨了几句以前天天被催着转通知的事。小陈问起报备要求，她翻出了当时发给他的通知原图。",
               "routeAxis": "process-control",
               "cast": [
                 "原部门助理",
@@ -7441,7 +7524,7 @@ export const CONTENT_CASES = {
                 {
                   "id": "day-work-breakroom-observe:reason",
                   "speaker": "原部门助理",
-                  "text": "小陈，我月初就走了，现在的钱付不付我不知道。你问我是不是没通知，旧消息我还留着，你看清日期。"
+                  "text": "小陈，我月初就走了。走了还老有人来问。通知我当时发给你了，旧消息还在，你看日期。"
                 },
                 {
                   "speaker": "你",
@@ -7450,7 +7533,7 @@ export const CONTENT_CASES = {
                 },
                 {
                   "speaker": "原部门助理",
-                  "text": "当时就是谁能先垫，就让谁办。费用让各部门主管并起来报，我只负责发通知。",
+                  "text": "当时就是谁能垫钱，活动就归谁。费用让各部门主管并起来报。",
                   "id": "day-work-breakroom-observe:beat:1"
                 },
                 {
@@ -7470,18 +7553,23 @@ export const CONTENT_CASES = {
                 },
                 {
                   "speaker": "原部门助理",
-                  "text": "费用单由主管填，你问他。我不替他解释。",
+                  "text": "那你还不如当面问他。",
                   "id": "day-work-breakroom-observe:beat:5"
                 },
                 {
                   "speaker": "你",
-                  "text": "通知我收到了。主管后来到底怎么填，陈，你把自己收到的草单找出来。",
+                  "text": "陈，你把主管给你填的单子找出来再看一眼。",
                   "id": "day-work-breakroom-observe:beat:6"
                 },
                 {
                   "speaker": "原部门助理",
-                  "text": "对，那张单不归我填。别把你们私下答应的事算成我没报。",
+                  "text": "对，我只负责转发走流程，具体细节真别问我。",
                   "id": "day-work-breakroom-observe:beat:7"
+                },
+                {
+                  "id": "day-work-breakroom-observe:finance-followup",
+                  "speaker": "你",
+                  "text": "陈，你记得再找财务的人对一下，看看主管交上去的单子到底怎么填的。晚上咱们单独聊。"
                 }
               ],
               "earnedItemIds": [
@@ -7489,7 +7577,7 @@ export const CONTENT_CASES = {
                 "茶水间责任对照"
               ],
               "earnedItemId": "茶水间立项缺口",
-              "sourceNote": "小陈请前同事说明旧流程；她愿意说，是不想把主管没办的事算成自己漏通知。"
+              "sourceNote": "小陈拉起的三人语音；前部门助理翻出自己发过的通知和留存的预算页。"
             }
           },
           {
@@ -7597,10 +7685,11 @@ export const CONTENT_CASES = {
           "lines": [
             {
               "role": "host",
-              "text": "供应商的返费表和部门预算我看过了。你今天补的受理页，先对一下，接着说财务怎么回你的。"
+              "text": "就咱们两个人，你慢慢说。"
             }
           ]
-        }
+        },
+        "sessionMode": "private-consultation"
       },
       "stanceSnapshot": {
         "afterScene": 2,
@@ -7673,12 +7762,12 @@ export const CONTENT_CASES = {
       "careChoices": [
         {
           "id": "accompany",
-          "label": "有付款消息再说。",
-          "hostLine": "有付款消息再说。",
+          "label": "原件明天补上，收件记录和付款回复留好。有消息再跟我说。",
+          "hostLine": "原件明天补上，收件记录和付款回复留好。有消息再跟我说。",
           "lines": [
             {
               "role": "caller",
-              "text": "行。别又拿张旧图打发我。"
+              "text": "行，知道了。这次还不见钱，肯定跟他们完不了。"
             }
           ],
           "sequential": true
@@ -7718,7 +7807,7 @@ export const CONTENT_CASES = {
       "caseTitle": {
         "title": "职场报销截图"
       },
-      "storyInterludeRecap": "陈把六万八受理号和一万二协调费分开写给财务。收麦后，后台继续核供应商已结返费与栖行融资稿。",
+      "storyInterludeRecap": "陈已提交草单和分配消息，拒绝继续垫款，约定次日补原件。咨询结束后，周会计应林的请求发来栖行的公开广告、融资稿和大股东宣传册；第三天开播再提催款进展与经营结论。",
       "followupTwist": "他说收到新的付款回复就再打来。",
       "dailyShareTitle": "为什么大家抢着给公司垫钱？",
       "dailyShareBody": "以前办完能多报一笔，这次几个部门一起等付款。",

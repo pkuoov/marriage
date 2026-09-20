@@ -3,6 +3,7 @@ import { audioSettingsPanelHtml } from "./audioSettingsView.js";
 
 export function liveControlDeckHtml({
   onAirLabel = "匿名热线",
+  privateConsultation = false,
   label = "连线中",
   segment = 1,
   total = 1,
@@ -37,9 +38,9 @@ export function liveControlDeckHtml({
   const hasMaterial = Boolean(material && Number(materialCount) > 0);
   const hostState = hostMonitorStateForPressure(pressure);
   return `
-    <aside class="control-deck deck-mode-${escapeHtml(mode)}" aria-label="直播控场台">
+    <aside class="control-deck deck-mode-${escapeHtml(mode)}" aria-label="${privateConsultation ? "私下通话" : "直播控场台"}">
       <section class="deck-card deck-card-live">
-        <span><i></i>ON AIR</span>
+        <span><i></i>${privateConsultation ? "PRIVATE CALL" : "ON AIR"}</span>
         <b>${escapeHtml(onAirLabel)}</b>
         <small>${escapeHtml(label || "连线中")}</small>
         <div class="deck-host-monitor host-${escapeHtml(hostState.kind)}" aria-hidden="true">
@@ -50,17 +51,17 @@ export function liveControlDeckHtml({
           </span>
           <em><i></i><i></i><i></i><i></i></em>
         </div>
-        <div class="deck-live-metrics" aria-hidden="true">
+        ${privateConsultation ? "" : `<div class="deck-live-metrics" aria-hidden="true">
           <i>LIVE</i>
           <i>${viewerCountForPressure(pressure)}</i>
-        </div>
+        </div>`}
         <div class="deck-monitor-strip" aria-hidden="true">
           <i class="${mode === "listen" ? "is-active" : ""}">MIC</i>
           <i class="${mode === "replay" ? "is-active" : ""}">REC</i>
           <i class="${mode === "interrupt" ? "is-active" : ""}">LINE</i>
         </div>
       </section>
-      ${simpleInquiry ? "" : `<section class="deck-card">
+      ${simpleInquiry || privateConsultation ? "" : `<section class="deck-card">
         <span>${soloCommentary ? "点评进度" : "通话进度"}</span>
         <b>${escapeHtml(progressState.label)}</b>
         <i class="deck-value-rail" aria-hidden="true"><em style="width:${progressPercent}%"></em></i>

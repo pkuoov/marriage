@@ -1242,7 +1242,7 @@
           "entry": {
             "mode": "resumed-thread",
             "fromAnchor": "流程在走",
-            "toAnchor": "今天问到新的情况了吗",
+            "toAnchor": "后来问到新的情况了吗",
             "relation": "隔夜调查结束，问新进展，不把白天选支线默认算成已知。"
           },
           "questionOptions": [
@@ -1262,7 +1262,7 @@
             },
             {
               "contextAnchor": "受理页",
-              "questionAnchor": "这些受理页能给后台看吗？",
+              "questionAnchor": "这些受理页能给我看吗？",
               "answerAnchor": "她们同意了，姓名和账号都遮了，只留部门、金额和状态。",
               "relation": "沿受理页核授权和遮名范围，为后续展示准备来源。"
             },

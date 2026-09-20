@@ -1,3 +1,5 @@
+import { isPrivateConsultation } from "../../runtime/consultationModel.js";
+
 export function createRecapScreens(ctx) {
   const {
     contradictionsForState,
@@ -811,7 +813,7 @@ export function createRecapScreens(ctx) {
       showCaseHud: false,
       visualHud: "",
       screenClass: "care-choice-screen",
-      text: careChoiceHtml({ choices: careChoicesFor(brief), selectedChoice, hostName: state.playerName }),
+      text: careChoiceHtml({ choices: careChoicesFor(brief), selectedChoice, hostName: state.playerName, privateConsultation: isPrivateConsultation(brief, state) }),
       choices: selectedChoice && (!careChoicesFor(brief)[0]?.sequential || selectedId === careChoicesFor(brief).at(-1)?.id) ? flowGroupHtml(careChoiceContinueHtml({ finalCase })) : ""
     });
     document.querySelectorAll("[data-care-choice]").forEach((button) => {
@@ -977,6 +979,9 @@ export function createRecapScreens(ctx) {
     const finalCase = isFinalStoryPackCase();
     const interludeCaseId = storyInterludeCaseId(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
     const optionalQuickCall = storyOptionalQuickCall(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
+    const broadcastRecap = interlude?.broadcastRecap;
+    const broadcastingRecap = Boolean(broadcastRecap && actionDone(brief, "interlude:broadcastRecap"));
+    const shownInterlude = broadcastingRecap ? broadcastRecap : interlude;
     const worldEchoRevealed = !interlude?.worldEcho || Boolean(state.storyWorldEchoes?.[interludeCaseId]);
     const worldEchoHypothesisId = state.storyWorldEchoHypotheses?.[interludeCaseId] ?? "";
     const worldEchoHypothesis = (interlude?.worldEcho?.hypotheses ?? []).find((item) => item.id === worldEchoHypothesisId) ?? null;
@@ -984,22 +989,29 @@ export function createRecapScreens(ctx) {
       brief,
       mood: "focused",
       label: "",
-      chapter: interlude?.kicker ?? "广告间隙",
+      chapter: shownInterlude?.kicker ?? "广告间隙",
       showCaseHud: false,
       visualHud: worldEchoRevealed && interlude?.worldEcho?.artSrc
         ? storyWorldEchoStageHtml(interlude.worldEcho)
-        : storyInterludeStageHtml({ afterCaseId: interludeCaseId, hostName: state.playerName ?? "林旭阳" }),
+        : storyInterludeStageHtml({ afterCaseId: interludeCaseId, hostName: state.playerName ?? "林旭阳", remoteLabel: interlude?.remoteLabel, broadcasting: broadcastingRecap }),
       screenClass: `story-interlude-screen story-interlude-${interludeCaseId}${worldEchoRevealed && interlude?.worldEcho ? " has-world-echo" : ""}`,
       text: storyInterludeHtml({
-        kicker: interlude?.kicker ?? "案后小尾声",
-        shellLine: interlude?.line ?? "",
-        shellLines: interlude?.lines ?? [],
-        shellAfterLines: interlude?.afterLines ?? [],
+        kicker: shownInterlude?.kicker ?? "案后小尾声",
+        shellLine: shownInterlude?.line ?? "",
+        shellLines: shownInterlude?.lines ?? [],
+        shellAfterLines: shownInterlude?.afterLines ?? [],
         worldEcho: worldEchoRevealed ? interlude?.worldEcho ?? null : null,
         worldEchoHypothesis,
         afterCaseId: interludeCaseId
       }),
-      choices: flowGroupHtml(storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed, worldEchoHypothesisId, optionalQuickCall }))
+      choices: flowGroupHtml(broadcastRecap && !broadcastingRecap
+        ? `<button class="primary" data-enter-broadcast-recap type="button">${escapeHtml(broadcastRecap.actionLabel ?? "下次开播")}</button>`
+        : storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed, worldEchoHypothesisId, optionalQuickCall }))
+    });
+    bind("[data-enter-broadcast-recap]", () => {
+      markAction(brief, "interlude:broadcastRecap");
+      saveState();
+      render();
     });
     bind("[data-world-echo-hypothesis]", (event) => {
       const hypothesisId = event.currentTarget.getAttribute("data-world-echo-hypothesis") ?? "";

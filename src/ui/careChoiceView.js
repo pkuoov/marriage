@@ -1,14 +1,14 @@
 import { choiceButtonBodyHtml } from "./callFlowView.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
-export function careChoiceHtml({ choices = [], selectedChoice = null, hostName = DEFAULT_PLAYER_NAME } = {}) {
+export function careChoiceHtml({ choices = [], selectedChoice = null, hostName = DEFAULT_PLAYER_NAME, privateConsultation = false } = {}) {
   const sequential = choices[0]?.sequential;
   const nextChoice = sequential ? choices[selectedChoice ? choices.findIndex((choice) => choice.id === selectedChoice.id) + 1 : 0] : null;
   return `
     <section class="care-choice-card">
       <div class="care-choice-heading">
         <span>今晚最后一句</span>
-        <h2>收麦前</h2>
+        <h2>${privateConsultation ? "结束通话前" : "收麦前"}</h2>
       </div>
       ${selectedChoice ? careChoiceDialogueHtml(selectedChoice, hostName) : !sequential ? `
         <div class="care-choice-grid">

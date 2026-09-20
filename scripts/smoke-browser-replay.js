@@ -2273,7 +2273,7 @@ async function runCaseTransition() {
     });
     await page.reload();
     await click(page, "[data-continue-story]");
-    await assertVisibleText(page, "第 4 晚 · 收播以后", "second case must close without an authorial case-tail label");
+    await assertVisibleText(page, "第 4 晚 · 私下咨询之后", "second case must close its private consultation");
     await drainDialogue(page, {});
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await assertVisibleText(page, "接一通插播", "second act interlude must expose the optional quick-call pressure valve");
@@ -3114,7 +3114,7 @@ async function runSixReviewedCases() {
   const directory = resolve(root, 'output/playwright/six-review');
   await mkdir(directory, { recursive: true });
   const { writeFile } = await import('node:fs/promises');
-  for (const chapter of (process.env.SMOKE_REVIEW_PART === 'quick' ? [] : process.env.SMOKE_REVIEW_PART === 'tony' ? [4] : [2, 3, 4])) {
+  for (const chapter of (process.env.SMOKE_REVIEW_PART === 'quick' ? [] : process.env.SMOKE_REVIEW_PART === 'tony' ? [4] : process.env.SMOKE_REVIEW_PART === 'workplace' ? [2] : process.env.SMOKE_REVIEW_PART === 'consultation' ? [2, 3] : [2, 3, 4])) {
     const packet = authoredCasePackets[chapter - 1];
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     const page = await context.newPage(); page.setDefaultTimeout(browserActionTimeoutMs);
@@ -3131,10 +3131,41 @@ async function runSixReviewedCases() {
           const daySceneId = save.caseOvernights?.[save.caseBriefs[chapter - 1].id]?.activeDaySceneId;
           if (daySceneId) await page.screenshot({ path: resolve(directory, `${packet.caseId}-${daySceneId}.png`), animations: 'disabled' });
         }
-        if (care && !['careChoice','caseClosure'].includes(save.scene)) { done = true; break; }
+        if (care && !['careChoice','caseClosure'].includes(save.scene)) {
+          if (save.scene === 'storyInterlude' && await page.locator('[data-enter-broadcast-recap]:visible').count()) {
+            await click(page, '[data-enter-broadcast-recap]');
+            await page.waitForFunction(() => document.querySelector('.avg-textbox')?.innerText.includes('7 月 21 日'));
+            await page.locator('[data-dialogue-advance]:visible').evaluate(el => el.click());
+            await page.screenshot({path:resolve(directory,`public-recap-${width}x${height}.png`)});
+            const readingBefore = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')).dialogueReading);
+            await page.reload(); await click(page, '[data-continue-story]');
+            const readingAfter = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')).dialogueReading);
+            if (!readingBefore?.key || readingAfter?.key !== readingBefore.key || readingAfter?.pageIndex !== readingBefore.pageIndex) throw Error('public recap reload lost reading position');
+            transcript.push(await drainDialogue(page, {}));
+            if (!await page.locator('.interlude-live-light').innerText().then(t => t.includes('ON AIR'))) throw Error('public recap still marked off air');
+          }
+          done = true; break;
+        }
+        if (chapter === 2 && save.caseOvernights?.[save.caseBriefs[chapter - 1].id]?.segment === 'night2' && await page.locator('.control-deck').count()) {
+          const deck = await page.locator('.control-deck').innerText();
+          if (!deck.includes('PRIVATE CALL') || deck.includes('ON AIR') || await page.locator('.deck-live-metrics').count()) throw Error('private consultation leaked live broadcast HUD');
+          if (save.scene === 'liveCounterBeat' && await page.locator('[data-live-counter-choice]').count()) throw Error('retired ad choice still displayed');
+          if (save.scene === 'overnightCallback') await page.screenshot({path:resolve(directory,`private-call-${width}x${height}.png`)});
+          if (save.scene === 'liveCounterBeat') await page.screenshot({path:resolve(directory,`private-message-${width}x${height}.png`)});
+        }
         if (['deepFollowup','investigationBackflow','caseClosure'].includes(save.scene)) throw Error(`retired stage ${save.scene}`);
         if (await testimonyFlowIsVisible(page)) {
           if (chapter === 2 && !migrationChecked) {
+            const activeBefore = await page.evaluate(() => {
+              const key = 'livestream-detective-save-v1', save = JSON.parse(localStorage.getItem(key));
+              const brief = save.caseBriefs[1];
+              save.liveCounterPicks = {...save.liveCounterPicks, [`${brief.id}:work-group-repayment-message`]: {choiceId:'read-before-ad', completedChoiceIds:['read-before-ad'], endingImpact:'platform-data-loss'}};
+              localStorage.setItem(key, JSON.stringify(save));
+              return save.scene;
+            });
+            await page.reload(); await click(page, '[data-continue-story]');
+            const refreshed = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+            if (refreshed.scene !== activeBefore || refreshed.liveCounterPicks?.[`${refreshed.caseBriefs[1].id}:work-group-repayment-message`]) throw Error('retired ad save refresh lost position or kept its penalty');
             await verifyWorkplaceActMigration(page, packet, chapter);
             migrationChecked = true;
           }
@@ -3179,7 +3210,20 @@ async function runSixReviewedCases() {
         const source = dayScene.body.sourceNote?.replace(/\s/g, '');
         if (!source || !normalizedText.includes(source)) throw Error(`NPC source not visible: ${dayScene.id}`);
       }
+      if (chapter === 2) {
+        const anchors = ['再找财务的人对一下', '后来问到新的情况了吗', '我是真不信他了', '我念给你听吧', '谁能垫钱，活动就归谁', '截图截到了', '原件已补齐'];
+        for (const anchor of anchors) if (!text.includes(anchor)) throw Error(`workplace missing recorded edit: ${anchor}`);
+        let last = -1;
+        for (const anchor of ['租借广告：', '租金收了三万', '他要的就是押金', '附注“用户押金与关联往来”', '宣传册链接']) {
+          const at = text.indexOf(anchor, last + 1);
+          if (at < 0) throw Error(`corporate reveal out of order: ${anchor}`);
+          last = at;
+        }
+        if (/强制贴片|本场退出推荐|先把这条念完|我不替他解释/.test(text)) throw Error('retired workplace dialogue leaked');
+        await page.screenshot({path:resolve(directory,`workplace-tail-${width}x${height}.png`)});
+      }
       if (chapter === 3) {
+        if (!text.includes('距离那次私下咨询已经过去三天') || !text.includes('后来跟我私下聊了')) throw Error('later public consultation recap missing');
         const firstNightQuestion = packet.sceneVersions[packet.nightStructure.segment1SceneIndexes[0]].entryQuestion;
         const secondNightQuestion = packet.sceneVersions[packet.nightStructure.segment2SceneIndexes[0]].entryQuestion;
         const first = text.indexOf(firstNightQuestion), second = text.indexOf(secondNightQuestion);
@@ -3194,7 +3238,7 @@ async function runSixReviewedCases() {
     finally { await context.close(); }
   }
   let soloEndingChoice = 0;
-  for (const id of [...storyManifest.quickCases, '03-labeled-fiction', '03-labeled-fiction']) {
+  for (const id of (['workplace', 'consultation'].includes(process.env.SMOKE_REVIEW_PART) ? [] : [...storyManifest.quickCases, '03-labeled-fiction', '03-labeled-fiction'])) {
     const packet=JSON.parse(await readFile(resolve(root,`content/packs/steam-demo-01/quick-cases/${id}.json`),'utf8'));
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});const page=await context.newPage();page.setDefaultTimeout(browserActionTimeoutMs);
     const errors=[];page.on('pageerror',e=>errors.push(e.message));const transcript=[];let wrong=false,reloaded=false,done=false;

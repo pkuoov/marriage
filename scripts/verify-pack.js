@@ -2331,7 +2331,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   });
   assert(supplierRouteText.includes("陈那笔还没报下来") && supplierRouteText.includes("以前这三笔"), "供应商对话区分陈本次未报销和以往三笔返费，无需额外教玩家分类");
   assert(caseFourTailText.includes("融资稿") && caseFourTailText.includes("关联往来") && caseFourTailText.includes("宸直"), "案后保留后续材料的来处，不要求关灯后复讲经营数字");
-  assert(caseFourTailText.includes("对不上"), "案后材料不能自动归到陈的报销或案一认购上");
+  assert(caseFourTailText.includes("关联往来") && caseFourTailText.includes("付款日期"), "经营资金与个人待付状态均须有具体材料，不靠同一实控人直接推出钱款流向");
   assertEqual(caseFourInterlude?.worldEcho, undefined, "第二通职场案结尾不得提前宣布宸直全面兑付危机");
   assert(caseTwoInterlude?.worldEcho?.headline?.includes("全部产品暂停兑付"), "最后一通 Tony 案结尾必须回收宸直全面兑付危机");
   assert(caseTwoInterlude?.worldEcho?.doesNotProve?.includes("何的十二万元") && caseTwoInterlude?.worldEcho?.doesNotProve?.includes("周的一百万元"), "最终公共事件必须保留 Tony 案两笔资金各自的证明边界");
@@ -2357,7 +2357,7 @@ test("PACK-015", "workplace keeps early settlement evidence separate from second
   assertEqual(acts[0].decisivePresent.evidenceId, `${late.id}:q06`, "先核跨部门待付，走到公司资金问题");
   assertEqual(acts.length, 1, "已认过的四千不再单独审一幕");
   for (const option of acts[0].inquiry.options.filter(option => option.correct)) {
-    const received = option.lines.findIndex(line => line.role === "stage" && /主管.*消息.*后台/.test(line.text));
+    const received = option.lines.findIndex(line => line.role === "stage" && /主管.*消息.*转给你/.test(line.text));
     const quoted = option.lines.findIndex(line => line.role === "caller" && /预收款/.test(line.text));
     assert(received >= 0 && quoted > received, "每条可推进路线都先收主管消息，再谈后续收款填旧报销");
   }
@@ -2727,9 +2727,11 @@ test("PACK-020", "optional author notes keep stable IDs without a disguise-chain
   const groupMessageBeat = caseFour?.overnightStructure?.liveCounterBeats?.find((beat) => beat.id === "work-group-repayment-message");
   assert(caseFourOpening.includes("公司群里问") && caseFourOpening.includes("没敢发"), "案四必须在开场种下未发送的追款消息");
   assert(JSON.stringify(groupMessageBeat ?? {}).includes("各部门别单独催"), "案四第二夜用跨部门通知扩大付款压力");
-  assert(groupMessageBeat?.from === "平台强制贴片", "当前已配置贴片消息须保留其来源；不要求固定选项数量");
-  assert(groupMessageBeat?.choices?.some((choice) => choice.endingImpact === "platform-data-loss"), "案四先念完群消息必须付出退出推荐的真实代价");
-  assert(groupMessageBeat?.choices?.some((choice) => JSON.stringify(choice.lines ?? []).includes("撤回") && JSON.stringify(choice.lines ?? []).includes("截到")), "案四先静音路线必须失去公开原话但留下可归因截图");
+  assertEqual(caseFour.overnightStructure.sessionMode, "private-consultation", "第二夜企业材料在私下咨询中核对");
+  assertEqual(groupMessageBeat?.from, "陈的工作群消息", "工作群消息由陈带入私下咨询");
+  assert(!groupMessageBeat.choices?.length, "群通知直接念出，不再附加广告选项");
+  assert(groupMessageBeat.lines.some(line => line.role === "caller" && line.text.includes("撤回") && line.text.includes("截到")), "截图结果由收到消息的人说明");
+  assert(!caseFour.overnightStructure.liveCounterBeats.some(beat => beat.choices?.some(choice => choice.endingImpact)), "私下咨询不产生直播流量惩罚");
   const closingLines = caseFour.sceneVersions.find(scene => scene.id === "work-split-ownership").sceneCloser.lines;
   assertEqual(closingLines.filter((line) => line.role === "stage" && line.text.includes("他发出两条群消息")).length, 1, "结案只发送一次");
   assert(!JSON.stringify(caseFour.deepFollowup).includes("发了。"), "深问不得提前发送，避免非深问路线丢失行动或结尾回退");

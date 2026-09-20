@@ -47,21 +47,21 @@ export function storyInterludeHtml({
   `;
 }
 
-export function storyInterludeStageHtml({ afterCaseId = "", hostName = "林旭阳" } = {}) {
-  const stage = INTERLUDE_STAGE[afterCaseId] ?? INTERLUDE_STAGE["01-credit"];
+export function storyInterludeStageHtml({ afterCaseId = "", hostName = "林旭阳", remoteLabel = "", broadcasting = false } = {}) {
+  const stage = broadcasting ? { hostPose: "questioning", prop: "desk" } : INTERLUDE_STAGE[afterCaseId] ?? INTERLUDE_STAGE["01-credit"];
   const hostSrc = HOST_ART[stage.hostPose] ?? HOST_ART.listening;
   const zhaoSrc = stage.zhaoPose ? ZHAO_ART[stage.zhaoPose] : "";
   return `
     <div class="story-interlude-stage prop-${escapeHtml(stage.prop ?? "desk")}" data-after-case="${escapeHtml(afterCaseId)}">
-      <div class="interlude-live-light"><i></i><span>OFF AIR</span></div>
+      <div class="interlude-live-light"><i></i><span>${broadcasting ? "ON AIR" : "OFF AIR"}</span></div>
       <figure class="interlude-person interlude-host">
         <img src="${escapeHtml(hostSrc)}" alt="" onerror="this.hidden=true" />
         <figcaption><span>主播</span><b>${escapeHtml(hostName)}</b></figcaption>
       </figure>
-      ${zhaoSrc ? `<figure class="interlude-person interlude-zhao is-${escapeHtml(stage.zhaoMode ?? "present")}">
+      ${broadcasting ? "" : zhaoSrc ? `<figure class="interlude-person interlude-zhao is-${escapeHtml(stage.zhaoMode ?? "present")}">
         <img src="${escapeHtml(zhaoSrc)}" alt="" onerror="this.hidden=true" />
         <figcaption><span>${stage.zhaoMode === "remote" ? "语音通话" : "工作室里"}</span><b>赵律师</b></figcaption>
-      </figure>` : `<div class="interlude-remote-chip"><i></i><span>${escapeHtml(stage.remoteLabel ?? "语音消息")}</span></div>`}
+      </figure>` : `<div class="interlude-remote-chip"><i></i><span>${escapeHtml(remoteLabel || stage.remoteLabel || "语音消息")}</span></div>`}
       <div class="interlude-desk-prop" aria-hidden="true"><i></i><span></span></div>
     </div>
   `;

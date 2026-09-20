@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：39
-- 收录台词／玩家可见人物材料：1051
+- 收录台词／玩家可见人物材料：1067
 - 本包实际出声人物：33
 - 句长节奏人工复核提示：24
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -29,11 +29,21 @@
 - `$manifest.nightShell.interludes[0].lines[6]` 我给他补个消息：合同、到期日、借款利息一起发来。得看看他以为能赚到的钱，够不够先付利息。
 - `$manifest.nightShell.interludes[0].lines[9]` 还都等着对方有钱。
 - `$manifest.nightShell.interludes[0].lines[12]` 真那样的话，我们俩大概一开始就看不上对方。
-- `$manifest.nightShell.interludes[1].lines[2]` 旧报销要等下一场的钱。老方，帮我找找这家公司的公开材料，它平时靠什么进钱？
-- `$manifest.nightShell.interludes[1].lines[5]` 原页留着，明天接着看。他今晚不肯再垫了，公司拿什么还他，还没答。
+- `$manifest.nightShell.interludes[1].lines[1]` 老周，几个部门都等着付款，还在催人办活动。栖行平时到底靠什么挣钱？有公开的经营资料吗？
+- `$manifest.nightShell.interludes[1].lines[5]` 收费低一半，还经常免费。维护、给店里的分成，拿什么付？
+- `$manifest.nightShell.interludes[1].lines[7]` 这么做根本不挣钱，还拼命往外推。他要的就是押金。
+- `$manifest.nightShell.interludes[1].lines[9]` 用户随时会退，这笔钱他们放在哪儿？
+- `$manifest.nightShell.interludes[1].lines[12]` 押金收进来，又拿去做别的生意了。宸直怎么也在这儿？
+- `$manifest.nightShell.interludes[1].lines[15]` 对上了。充电宝这边不挣钱也照样扩，押金收到别的项目里去了。光催主管，恐怕真催不出钱来。
+- `$manifest.nightShell.interludes[1].lines[17]` 这些公开页我给陈发过去。明天他去交原件，也得问清楚，这次到底排没排付款。
+- `$manifest.nightShell.interludes[1].lines[20]` 好，付款那栏有变化就发我。
 - `$manifest.nightShell.interludes[2].lines[3]` 我只看见持有页，三十万，写着九月底到期。合同没上屏。
 - `$manifest.nightShell.interludes[2].lines[5]` 没发。她爸那笔是留给女儿自己的，婚宴首饰照样让男方出。
 - `$manifest.nightShell.interludes[2].lines[10]` 还是会去。可那顿饭吃完，我有多少钱、愿意怎么花，得由我自己说。
+- `$manifest.nightShell.interludes[2].broadcastRecap.lines[2]` 前几天那个垫钱办活动的小伙子，后来跟我私下聊了。原件补齐了，钱还没到。他这次没再垫。
+- `$manifest.nightShell.interludes[2].broadcastRecap.lines[3]` 顺着他们公开的广告和经营资料往下看，租金连成本都盖不住，还在不停加点位。每多一个用户，却先多收一笔押金。
+- `$manifest.nightShell.interludes[2].broadcastRecap.lines[4]` 融资材料里写得很明白，押金进了关联平台，拿去给地产这些项目周转。充电宝做得越便宜，用的人越多，他们能拿去周转的钱就越多。
+- `$manifest.nightShell.interludes[2].broadcastRecap.lines[5]` 他一开始以为只是主管拖着报销。问到最后，公司连旧费用都等着后面的进款。他那六万八什么时候能拿回来，还得接着盯。
 - `$manifest.nightShell.interludes[3].lines[2]` 我洗。你站旁边监督。
 - `$manifest.nightShell.cafePrologue.cafe.openingLines[2]` 行，赵同学。人都等着了，回家再数落我。
 - `$manifest.nightShell.cafePrologue.cafe.openingLines[4]` 就昨天电话里聊的那些？
@@ -65,9 +75,6 @@
 ### 其他出声面
 
 - `$manifest.nightShell.prologue.lines[1]` 老林，到屋了？你那张旧工牌怎么还压着线。跟你说正事，深夜档这个月再不达标，就并进娱乐区。二十三号早上九点，改版方案给我。
-- `$manifest.nightShell.interludes[1].lines[1]` （嗦面声）前一场谁先垫谁主办，这一场谁先报谁着急。
-- `$manifest.nightShell.interludes[1].lines[4]` 做共享柜的，稿里列了租金、维护成本，还有押金的关联往来，接收方有宸直。陈今天那笔报销，跟这里还对不上。
-- `$manifest.nightShell.interludes[1].lines[6]` 先吃吧。我这面已经能整块夹起来了。
 - `$manifest.nightShell.interludes[2].lines[7]` 有个自称买过婚恋课的观众私信我，说听了今晚这通，想找卖课的人退款，问我能不能帮她看看。她只肯发一页打码课纲，怕被认出来；标题和来源都遮了，只剩安全感、态度、向上社交、退出这四个词。
 
 ## 旁白
@@ -133,6 +140,12 @@
 
 ### 其他出声面
 
+- `$manifest.nightShell.interludes[1].lines[3]` 我从他们官网翻到的。做共享充电宝的，广告和融资稿发你了，先看它怎么收费。
+- `$manifest.nightShell.interludes[1].lines[6]` 融资稿有个试点月报。租金收了三万，点位分成、维护和设备折旧加起来五万二，还没算总部的人。
+- `$manifest.nightShell.interludes[1].lines[8]` 每多一个交押金的用户，先收一百九十九。稿里写着继续增加投放，押金余额也在往上涨。
+- `$manifest.nightShell.interludes[1].lines[10]` 融资稿后面有张关联往来表，你往后翻。
+- `$manifest.nightShell.interludes[1].lines[14]` 你问的那家平台在这页。栖行的大股东背后是同一个实控人，名下还有地产公司、资产管理公司。宣传册里说这些业务一起发展。
+- `$manifest.nightShell.interludes[1].lines[16]` 前面店里要分成，中间采购还要返费，租金本来就盖不住成本。押金又在别处周转，大家一来要钱，它拿什么付？
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[3]` 老林，你这下班语音，比上班还准时。明细我收到了，五号是房贷，十八号还有一笔固定转出。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[5]` 四个月前就结清了，跟十八号这笔对不上。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[7]` ‘私教课时’。连续四个月，都是同一天、同一个数。收款人的名字没显示全。
@@ -469,7 +482,8 @@
 - `$case.overnightStructure.dayScenes[2].body.beats[1]` 主办为什么都要先垫？
 - `$case.overnightStructure.dayScenes[2].body.beats[3]` 八万是陈这一个人的额度？
 - `$case.overnightStructure.dayScenes[2].body.beats[5]` 多出来的怎么处理？
-- `$case.overnightStructure.dayScenes[2].body.beats[7]` 通知我收到了。主管后来到底怎么填，陈，你把自己收到的草单找出来。
+- `$case.overnightStructure.dayScenes[2].body.beats[7]` 陈，你把主管给你填的单子找出来再看一眼。
+- `$case.overnightStructure.dayScenes[2].body.beats[9]` 陈，你记得再找财务的人对一下，看看主管交上去的单子到底怎么填的。晚上咱们单独聊。
 
 ### 夜 B
 
@@ -477,18 +491,18 @@
 - `$case.sceneVersions[4].testimonyWall.acts[0].decisivePresent.hostLine` 他答应你先办，财务给这几个部门的回复，也是先办？
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.openingLines[0]` 你那六万八登记了。再看运营和维修这两张，财务有没有叫她们补材料？
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[1]` 他答应你先办，财务给这几个部门的回复，也是先办？
-- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[3]` 财务没写优先，你就信他一句先办？下周那场，你还准备垫？
+- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[3]` 财务没写优先，他这句先办又没落到单子上。下周那场，你还准备垫？
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[7]` 你这场都办完了，报销为什么要等下一场的钱？你不垫下一场，这笔还能不能下来？
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[1]` 比你早，材料也齐，照样没付。他答应优先，财务给过确认吗？
-- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[3]` 财务没写优先，你就信他一句先办？下周那场，你还准备垫？
+- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[3]` 财务没写优先，他这句先办又没落到单子上。下周那场，你还准备垫？
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[7]` 你这场都办完了，报销为什么要等下一场的钱？你不垫下一场，这笔还能不能下来？
 - `$case.sceneVersions[4].testimonyWall.acts[0].openerLines[0]` 你那六万八登记了。再看运营和维修这两张，财务有没有叫她们补材料？
 - `$case.sceneVersions[4].beforeVersion.lines[1]` 先看三张受理页。你们的钱，各卡在哪儿？
-- `$case.sceneVersions[4].sceneCloser.lines[0]` 六万八接着催。草单和分配消息也一并交，四千的事你昨晚认过了。下周那场还垫不垫？
-- `$case.overnightStructure.linearCallback.lines[0]` 供应商的返费表和部门预算我看过了。你今天补的受理页，先对一下，接着说财务怎么回你的。
-- `$case.sceneVersions[3].entryQuestion` 今天问到新的情况了吗？
+- `$case.sceneVersions[4].sceneCloser.lines[0]` 六万八接着催。草单和分配消息也一并交，四千的事你昨晚认过了。下周要办，让公司自己先出钱。
+- `$case.overnightStructure.linearCallback.lines[0]` 就咱们两个人，你慢慢说。
+- `$case.sceneVersions[3].entryQuestion` 后来问到新的情况了吗？
 - `$case.sceneVersions[3].casualQuestions[0].question` 她们怎么知道你也被欠着？
-- `$case.sceneVersions[3].casualQuestions[1].question` 这些受理页能给后台看吗？
+- `$case.sceneVersions[3].casualQuestions[1].question` 这些受理页能给我看吗？
 - `$case.sceneVersions[3].casualQuestions[2].question` 以前她们也给公司垫过钱？
 - `$case.sceneVersions[3].casualQuestions[3].question` 其他部门的垫款，是这次问同事才知道的？
 - `$case.sceneVersions[3].questionOptions[0].question` 主管说优先办你的，财务给你定了哪天付款？
@@ -499,8 +513,8 @@
 
 ### 其他出声面
 
-- `$case.careChoices[0].hostLine` 有付款消息再说。
-- `$case.overnightStructure.liveCounterBeats[0].choices[0].lines[1]` 月底打钱，还是月底再议？他还是没说。
+- `$case.careChoices[0].hostLine` 原件明天补上，收件记录和付款回复留好。有消息再跟我说。
+- `$case.overnightStructure.liveCounterBeats[0].lines[2]` 月底结算，那具体哪天到账？他写了吗？
 - `$case.overnightStructure.liveCounterBeats[1].lines[4]` 他提到八万草单了，把那页也打开。
 
 ## 第二通咨询者·陈
@@ -547,25 +561,25 @@
 ### 夜 B
 
 - `$case.sceneVersions[3].noClueReaction` 我今天才知道她们也在催。昨晚还觉得催快一点就轮到我了。
-- `$case.sceneVersions[3].questionOptions[0].lines[0]` 没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追。
-- `$case.sceneVersions[4].testimonyWall.acts[0].decisivePresent.callerLine` 她们那栏是没写补件。可我这一单主管答应过先办，总不能还跟她们一起等吧？
-- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.openingLines[1]` 她们也在等，我看见了。可主管说会先顾我。别人没交齐手续也说不定，我不想因为她们催得急，就把主管得罪了。
-- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[0]` 她们那栏是没写补件。可我这一单主管答应过先办，总不能还跟她们一起等吧？
+- `$case.sceneVersions[3].questionOptions[0].lines[0]` 没定，受理页还是待通知。主管让我先别催财务，说他去打招呼。我想着下周还得跟他干，就没再追问。
+- `$case.sceneVersions[4].testimonyWall.acts[0].decisivePresent.callerLine` 她们那栏是没写补件。他还跟我说先办我的，光嘴上说，有什么用？
+- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.openingLines[1]` 她们也在等，我看见了。可她们到底缺不缺手续，我还没细看。主管又说会先顾我，我现在就想让他给个准日子。
+- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[0]` 她们那栏是没写补件。他还跟我说先办我的，光嘴上说，有什么用？
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[2]` 财务没说优先。是主管自己跟我保证的。
-- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[4]` 我想等这笔回来再垫。他答应先办我的，总得让我看见钱吧。
+- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[4]` 现在肯定不垫。他说能先办，我就等着看钱到底到不到。
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[6]` 他说：“下周招商会照排，场地礼品还是负责人先垫。下一场预收款进了公司，才有钱排你们上个月的报销；活动停了，前面的更没法结。”
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[0].lines[8]` ……照他这话，活动不接着办，前面的更没法结。我以前只看见上回的人拿到了，才敢跟着垫。可我真垫出去的六万八，总不能就算了吧？
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[1].lines[0]` 没有。我只听他说打过，财务页上什么都没写。
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[0]` 受理时间比我早，钱也没到。我只知道主管说先办我的。
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[2]` 没有。财务只说等通知，我听到的优先都是主管说的。
-- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[4]` 我想等这笔回来再垫。他答应先办我的，总得让我看见钱吧。
+- `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[4]` 现在肯定不垫。他说能先办，我就等着看钱到底到不到。
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[6]` 他说：“下周招商会照排，场地礼品还是负责人先垫。下一场预收款进了公司，才有钱排你们上个月的报销；活动停了，前面的更没法结。”
 - `$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[8]` ……照他这话，活动不接着办，前面的更没法结。我以前只看见上回的人拿到了，才敢跟着垫。可我真垫出去的六万八，总不能就算了吧？
-- `$case.sceneVersions[4].testimonyWall.acts[0].openerLines[1]` 她们也在等，我看见了。可主管说会先顾我。别人没交齐手续也说不定，我不想因为她们催得急，就把主管得罪了。
+- `$case.sceneVersions[4].testimonyWall.acts[0].openerLines[1]` 她们也在等，我看见了。可她们到底缺不缺手续，我还没细看。主管又说会先顾我，我现在就想让他给个准日子。
 - `$case.sceneVersions[4].beforeVersion.lines[0]` 她们两个人同意把受理页给你看，名字已经遮了。主管那张费用草单，我也发了。
 - `$case.sceneVersions[4].sceneCloser.lines[1]` 不垫了。不是只等我这一笔，前面也在等后面的钱。我现在就在群里问六万八的付款日期，下周让公司先安排钱。
 - `$case.sceneVersions[4].sceneCloser.lines[3]` 发了。群里一个都没回，平时催我倒挺快。
-- `$case.sceneVersions[3].version` 问到了。早上我拿日期和金额去查，六万八登记着，付款日期还是待通知。财务问我外部协调的一万二给谁，我一下没答上来。中午找运营部的姐姐问，她也没收到，维修那边也有。下午她们把各自的受理页发过来，连几千块的物料费都挂着。可主管私下还说会优先办我的，让我别跟着起哄。我是真想信他，不然下周又排了活动，我拿什么继续垫？
+- `$case.sceneVersions[3].version` 问到了。早上我拿日期和金额去查，六万八登记着，付款日期还是待通知。财务问我外部协调的一万二给谁，我一下没答上来。中午找运营部的姐姐问，她也没收到，维修那边也有。下午她们把各自的受理页发过来，连几千块的物料费都挂着。可主管私下还说会优先办我的，让我别跟着起哄。我是真不信他了。下周又排了活动，我拿什么继续垫？
 - `$case.sceneVersions[3].casualQuestions[0].answer` 我中午找她问怎么催，她把维修那位也拉进来了。三个人一报数，谁也没安慰成谁。
 - `$case.sceneVersions[3].casualQuestions[1].answer` 她们同意了，姓名和账号都遮了，只留部门、金额和状态。
 - `$case.sceneVersions[3].casualQuestions[2].answer` 运营那个姐姐办过好几场，之前都报了。这次她拿自己的旧到账记录跟新单号挨个对，越对越慌。
@@ -588,10 +602,10 @@
 
 ### 其他出声面
 
-- `$case.careChoices[0].lines[0]` 行。别又拿张旧图打发我。
-- `$case.overnightStructure.liveCounterBeats[0].lines[0]` 工作群刚弹出一条，是他说的。我正要念。
-- `$case.overnightStructure.liveCounterBeats[0].choices[0].lines[0]` 他发的是：“各部门别单独催，费用月底一起办。下周活动照排，先垫的还是主办。”
-- `$case.overnightStructure.liveCounterBeats[0].choices[1].lines[0]` 发了。撤回有什么用，我每天盯着这个群，就等他说什么时候还钱。
+- `$case.careChoices[0].lines[0]` 行，知道了。这次还不见钱，肯定跟他们完不了。
+- `$case.overnightStructure.liveCounterBeats[0].lines[0]` 工作群刚弹出一条，是他说的。我念给你听吧。
+- `$case.overnightStructure.liveCounterBeats[0].lines[1]` “各部门别单独催，费用月底一起结算，下周活动照常。谁能垫钱，活动就归谁。”
+- `$case.overnightStructure.liveCounterBeats[0].lines[3]` 没写。他撤回了，还好截图截到了。
 - `$case.overnightStructure.liveCounterBeats[1].lines[0]` 主管又发语音了。
 - `$case.overnightStructure.liveCounterBeats[1].lines[3]` 这句是他说的。我就怕这个。
 
@@ -622,9 +636,9 @@
 
 - `$case.overnightStructure.dayScenes[1].body.beats[0]` 小陈，你别让我证明这都是正常成本。以前不是只找一个联系人：招商主管要点位协调费，区域经理要渠道维护费，采购经办又算采购配合费。
 - `$case.overnightStructure.dayScenes[1].body.beats[2]` 算。不加进去，我们给谁垫？
-- `$case.overnightStructure.dayScenes[1].body.beats[3]` 表是我经手的，打款是我们财务办的。我现在手里没回执，不能把表上的数直接说成都付了。
+- `$case.overnightStructure.dayScenes[1].body.beats[3]` 表是我做的，回执在财务那儿，我得去找一下。
 - `$case.overnightStructure.dayScenes[1].body.beats[5]` 当时怎么叫我们报的，工作群里还留着一条语音。我和这张三栏表一起存着。
-- `$case.overnightStructure.dayScenes[1].body.beats[7]` 可以，省得最后说是我们凭空加价。语音里“每一层的返费结完，下一批点位才往下走”，就是我们当时催结算说的。回执我去找财务，找到后把账号遮了，发给小陈转你。
+- `$case.overnightStructure.dayScenes[1].body.beats[7]` 行。语音里“每一层的返费结完，下一批点位才往下走”，就是我们当时催结算说的。回执我去找财务，找到后把账号遮了，发给小陈转你。
 
 ## 职场案原部门助理
 
@@ -635,11 +649,11 @@
 
 ### 白天
 
-- `$case.overnightStructure.dayScenes[2].body.beats[0]` 小陈，我月初就走了，现在的钱付不付我不知道。你问我是不是没通知，旧消息我还留着，你看清日期。
-- `$case.overnightStructure.dayScenes[2].body.beats[2]` 当时就是谁能先垫，就让谁办。费用让各部门主管并起来报，我只负责发通知。
+- `$case.overnightStructure.dayScenes[2].body.beats[0]` 小陈，我月初就走了。走了还老有人来问。通知我当时发给你了，旧消息还在，你看日期。
+- `$case.overnightStructure.dayScenes[2].body.beats[2]` 当时就是谁能垫钱，活动就归谁。费用让各部门主管并起来报。
 - `$case.overnightStructure.dayScenes[2].body.beats[4]` 是这一场的部门包干预算。主办实际花了多少，还得附单。
-- `$case.overnightStructure.dayScenes[2].body.beats[6]` 费用单由主管填，你问他。我不替他解释。
-- `$case.overnightStructure.dayScenes[2].body.beats[8]` 对，那张单不归我填。别把你们私下答应的事算成我没报。
+- `$case.overnightStructure.dayScenes[2].body.beats[6]` 那你还不如当面问他。
+- `$case.overnightStructure.dayScenes[2].body.beats[8]` 对，我只负责转发走流程，具体细节真别问我。
 
 ## 职场案领导
 
@@ -1520,7 +1534,7 @@
 - 01-credit／林旭阳／nightB：21、18、19 字（$case.overnightStructure.linearCallback.lines[0]；$case.sceneVersions[6].questionOptions[0].question；$case.sceneVersions[6].questionOptions[1].question）
 - 04-workplace／第二通咨询者·陈／nightA：29、26、29 字（$case.sceneVersions[1].questionOptions[1].lines[0]；$case.sceneVersions[1].questionOptions[2].lines[0]；$case.sceneVersions[1].questionOptions[2].lines[2]）
 - 04-workplace／第二通咨询者·陈／nightB：21、25、24 字（$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[1].lines[0]；$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[0]；$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[2]）
-- 04-workplace／第二通咨询者·陈／nightB：25、24、27 字（$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[0]；$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[2]；$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[4]）
+- 04-workplace／第二通咨询者·陈／nightB：25、24、25 字（$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[0]；$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[2]；$case.sceneVersions[4].testimonyWall.acts[0].inquiry.options[2].lines[4]）
 - 03-profile／案三咨询者·林／nightA：37、37、39 字（$case.sceneVersions[2].casualQuestions[0].answer；$case.sceneVersions[2].casualQuestions[1].answer；$case.sceneVersions[2].casualQuestions[2].answer）
 - 03-profile／案三咨询者·林／nightB：25、25、29 字（$case.sceneVersions[6].afterVersion.lines[3]；$case.sceneVersions[6].questionOptions[0].lines[0]；$case.sceneVersions[6].questionOptions[0].lines[3]）
 - 02-tony／第四通咨询者·何／nightA：26、26、28 字（$case.sceneVersions[3].casualQuestions[0].answer；$case.sceneVersions[3].casualQuestions[1].answer；$case.sceneVersions[3].casualQuestions[2].answer）

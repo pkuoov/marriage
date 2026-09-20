@@ -427,6 +427,7 @@ export function createOvernightScreens(ctx) {
       return renderSceneReview(brief);
     }
     const overnight = ensureOvernight(brief);
+    const privateConsultation = structure.sessionMode === "private-consultation";
     if (!overnight.night2TransitionSeen) {
       dayFrame({
         brief,
@@ -436,8 +437,10 @@ export function createOvernightScreens(ctx) {
         screenClass: "night-transition-screen",
         modeLabel: "第二夜",
         pixelTransition: null,
-        text: '<section class="night-transition-card"><p>第二天 · 晚上</p><h2>第二夜</h2><p>白天的材料摊在桌边。你戴上耳机，打开直播，等那通约好的回拨。</p></section>',
-        choices: flowGroupHtml('<button class="primary" data-night2-transition-done type="button">接入回拨</button>')
+        text: privateConsultation
+          ? '<section class="night-transition-card"><p>第二天 · 晚上</p><h2>单独咨询</h2><p>白天约好的语音邀请到了。今晚不开直播，你戴上耳机，接通小陈的电话。</p></section>'
+          : '<section class="night-transition-card"><p>第二天 · 晚上</p><h2>第二夜</h2><p>白天的材料摊在桌边。你戴上耳机，打开直播，等那通约好的回拨。</p></section>',
+        choices: flowGroupHtml(`<button class="primary" data-night2-transition-done type="button">${privateConsultation ? "接通私下语音" : "接入回拨"}</button>`)
       });
       bind('[data-night2-transition-done]', () => {
         updateOvernight(brief, { night2TransitionSeen: true });
@@ -454,7 +457,7 @@ export function createOvernightScreens(ctx) {
       frame({
         brief,
         mood: posture === "againstCaller" ? "tense" : "focused",
-        label: "回拨已接入",
+        label: privateConsultation ? "单独咨询" : "回拨已接入",
         chapter: "第二夜",
         text: `<section class="callback-opener-card">${callDialogueHtml([
           ...(structure.postures?.[posture] ? [{ role: "caller", text: structure.postures[posture] }] : []),
@@ -513,7 +516,7 @@ export function createOvernightScreens(ctx) {
     frame({
       brief,
       mood: posture === "againstCaller" ? "tense" : "focused",
-      label: "回拨已接入",
+      label: privateConsultation ? "单独咨询" : "回拨已接入",
       chapter: "第二夜",
       text: `
         <section class="callback-opener-card">

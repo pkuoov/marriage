@@ -224,14 +224,14 @@ function renderScript() {
 
     add("## 白天调查", "");
     const overnight = packet.overnightStructure ?? {};
-    for (const key of ["dayIntro", "dayBudget", "minDayScenes"]) {
+    for (const key of ["dayIntro", "dayBudget", "minDayScenes", "sessionMode"]) {
       if (overnight[key] !== undefined) renderNode(lines, overnight[key], key, 3);
     }
     (overnight.dayScenes ?? []).forEach((scene, index) => renderNode(lines, scene, `地点 ${index + 1}`, 3));
     if (overnight.interludeEarnedItemMap) renderNode(lines, overnight.interludeEarnedItemMap, "幕间物件映射", 3);
     add("");
 
-    add("## 夜 B：回拨", "");
+    add(overnight.sessionMode === "private-consultation" ? "## 夜 B：单独咨询" : "## 夜 B：回拨", "");
     for (const key of ["hangupAnchor", "hangupLine", "hangupAudioCueId", "hostHoldLine"]) {
       if (overnight[key] !== undefined) renderNode(lines, overnight[key], key, 3);
     }
@@ -288,6 +288,9 @@ function renderScript() {
       for (const line of interlude.lines ?? []) renderSpokenLine(lines, line);
       if (interlude.line) add(interlude.line, "");
       for (const line of interlude.afterLines ?? []) renderSpokenLine(lines, line);
+      if (interlude.remoteLabel) add(`语音：${interlude.remoteLabel}`, "");
+      if (interlude.broadcastRecap) add(`### ${interlude.broadcastRecap.kicker}`, "", `【${interlude.broadcastRecap.actionLabel}】`, "");
+      for (const line of interlude.broadcastRecap?.lines ?? []) renderSpokenLine(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote, true);
       renderWorldEcho(lines, interlude.worldEcho, true);
     }
@@ -498,7 +501,7 @@ function renderPureStoryScript() {
     if (overnight.dayIntro) lines.push(`【${overnight.dayIntro}】`, "");
     for (const scene of overnight.dayScenes ?? []) renderPureStoryDayScene(lines, scene, packet.documents ?? []);
 
-    lines.push("## 第二夜｜回拨", "");
+    lines.push(packet.overnightStructure?.sessionMode === "private-consultation" ? "## 第二夜｜单独咨询" : "## 第二夜｜回拨", "");
     renderPureStoryCallerVariants(lines, "来电人的回拨立场", overnight.postures);
     for (const line of overnight.returnLead?.lines ?? []) renderDirectorSpoken(lines, line);
     if (overnight.flowMode === "linear") {
@@ -534,6 +537,7 @@ function renderPureStoryScript() {
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
+      for (const line of interlude.broadcastRecap?.lines ?? []) renderDirectorSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho);
     }
@@ -586,7 +590,7 @@ function renderContinuousStoryScript() {
       renderContinuousDayScene(lines, scene, packet.documents ?? [], stop.optionId, stop.documentQuestionRowId);
     }
 
-    lines.push("## 第二夜｜回拨", "");
+    lines.push(packet.overnightStructure?.sessionMode === "private-consultation" ? "## 第二夜｜单独咨询" : "## 第二夜｜回拨", "");
     renderContinuousCallerVariant(lines, packet.overnightStructure?.postures, route.posture);
     for (const line of packet.overnightStructure?.returnLead?.lines ?? []) renderContinuousSpoken(lines, line);
     renderContinuousCallback(lines, packet, route.callbackEarnedItem);
@@ -620,6 +624,7 @@ function renderContinuousStoryScript() {
       for (const line of interlude.lines ?? []) renderContinuousSpoken(lines, line);
       if (interlude.line) lines.push(`【${continuousStageText(interlude.line)}】`, "");
       for (const line of interlude.afterLines ?? []) renderContinuousSpoken(lines, line);
+      for (const line of interlude.broadcastRecap?.lines ?? []) renderContinuousSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, false, false);
     }
@@ -1439,6 +1444,7 @@ function renderDirectorScript() {
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
+      for (const line of interlude.broadcastRecap?.lines ?? []) renderDirectorSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, true);
     }
