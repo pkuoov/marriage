@@ -292,7 +292,7 @@ main:has(.demo-return-screen) > .topbar {
   box-shadow: none;
 }
 
-/* Each caption occupies the same frame: 6s, 8s, then the return promise. */
+/* The final story caption stays visible until the player returns to the title. */
 .demo-return-card {
   display: grid;
   place-items: center;
@@ -310,27 +310,12 @@ main:has(.demo-return-screen) > .topbar {
   text-shadow: 0 0 24px rgba(238, 231, 214, .12);
 }
 
-.demo-end-caption-first {
-  animation: demo-caption-pass 6s linear forwards;
-}
-
-.demo-end-caption-second {
-  animation: demo-caption-pass 8s 6s linear forwards;
-}
-
 .demo-end-caption-final {
-  animation: demo-caption-arrive 3s 14s ease-out both;
+  animation: demo-caption-arrive 3s ease-out both;
 }
 
 .demo-return-screen .avg-choice-overlay.inline-choice-flow {
-  animation: demo-caption-arrive 1s 17s ease-out both;
-}
-
-@keyframes demo-caption-pass {
-  0% { visibility: visible; opacity: 0; }
-  22%, 72% { visibility: visible; opacity: 1; }
-  99% { visibility: visible; opacity: 0; }
-  100% { visibility: hidden; opacity: 0; }
+  animation: demo-caption-arrive 1s 3s ease-out both;
 }
 
 @keyframes demo-caption-arrive {
@@ -338,33 +323,17 @@ main:has(.demo-return-screen) > .topbar {
   to { visibility: visible; opacity: 1; }
 }
 
-/* Preserve reading time and screen order when visual effects are disabled. */
-@keyframes demo-caption-cut {
-  0%, 99% { visibility: visible; opacity: 1; }
-  100% { visibility: hidden; opacity: 0; }
-}
-
-.demo-return-screen:is(.effects-reduced, .effects-off) .demo-end-caption-first,
-.demo-return-screen:is(.effects-reduced, .effects-off) .demo-end-caption-second {
-  animation-name: demo-caption-cut;
-  animation-timing-function: steps(1, end);
-}
-
 .demo-return-screen:is(.effects-reduced, .effects-off) .demo-end-caption-final,
 .demo-return-screen:is(.effects-reduced, .effects-off) .avg-choice-overlay.inline-choice-flow {
   animation-duration: 0s;
+  animation-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .demo-return-screen .demo-end-caption-first,
-  .demo-return-screen .demo-end-caption-second {
-    animation-name: demo-caption-cut;
-    animation-timing-function: steps(1, end);
-  }
-
   .demo-return-screen .demo-end-caption-final,
   .demo-return-screen .avg-choice-overlay.inline-choice-flow {
     animation-duration: 0s;
+    animation-delay: 0s;
   }
 }
 

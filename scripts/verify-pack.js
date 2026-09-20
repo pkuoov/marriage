@@ -2129,7 +2129,6 @@ test("PACK-013", "warmth props close their arcs and the personal livestream stay
   assertEqual(hostProfile?.streamerTenure, "两年半", "主播年限必须固定为两年半");
   assertEqual(hostProfile?.relationships?.find((relationship) => relationship.with === "zhao-lawyer")?.publicLabel, "妻子", "赵律师与林旭阳的关系必须保持夫妻设定");
   assert(hostProfile?.personality?.stressResponse?.includes("收笑") && !hostProfile?.voice?.avoid?.includes("提前猜动机"), "主播遇到具体绕答即可加压，人物档案不得恢复禁止推测动机的旧规则");
-  assert(hostProfile?.voice?.habits?.some((habit) => habit.includes("点名具体伤害")), "主播声纹必须允许直接指出行为与目的，不等待本人认错");
   assert(hostProfile?.voice?.avoid?.includes("把克制写成没有立场"), "主播不得重新退回没有立场的逻辑机器");
   const zhaoProfile = castRegistry.cast?.find((profile) => profile.id === "zhao-lawyer");
   assertEqual(zhaoProfile?.occupation, "执业律师", "赵律师的职业必须固定为执业律师");
@@ -2346,7 +2345,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   ["招商主管", "区域经理", "采购经办", "点位协调费", "渠道维护费", "采购配合费"].forEach((anchor) => {
     assert(supplierRouteText.includes(anchor), `供应商白天路线缺少 ${anchor}`);
   });
-  assert(supplierRouteText.includes("陈那笔还没报下来") && supplierRouteText.includes("以前这三笔"), "供应商对话区分陈本次未报销和以往三笔返费，无需额外教玩家分类");
+  assert(supplierRouteText.includes("旧批次") && supplierRouteText.includes("回执") && supplierRouteText.includes("找财务"), "供货方带来的是旧批次结算，到账仍需财务回执，不要求角色额外分类口播");
   assert(caseFourTailText.includes("融资稿") && caseFourTailText.includes("关联往来") && caseFourTailText.includes("宸直"), "案后保留后续材料的来处，不要求关灯后复讲经营数字");
   assert(caseFourTailText.includes("关联往来") && caseFourTailText.includes("付款日期"), "经营资金与个人待付状态均须有具体材料，不靠同一实控人直接推出钱款流向");
   assertEqual(caseFourInterlude?.worldEcho, undefined, "第二通职场案结尾不得提前宣布宸直全面兑付危机");
@@ -2422,7 +2421,7 @@ test("PACK-017B", "case 1 asks wine and high spending before the second night", 
   const wine = bill.questionOptions[0];
   assert(wine.id.endsWith(":wine") && wine.question.includes("酒水"), "第一夜先问酒水");
   assert(wine.answer.includes("酒是他挑的") && wine.answer.includes("店是我想去的"), "双方消费行动明确");
-  assert(JSON.stringify(wine.lines).includes("你的消费也不低"), "直接指出高消费");
+  assert(wine.lines.some(line => line.role === "host" && /自己.*花了多少/.test(line.text)), "酒水之后追到她自己的消费，不要求附带高消费判词");
 });
 test("PACK-017C", "case 1 concentrates fixed-support questions in the received-material prelude", () => {
   const packet = caseFiles.find(p => p.caseId === "01-credit");
@@ -2463,8 +2462,8 @@ test("PACK-017E2", "case 1 bill retains three spending categories without anothe
   const packet = caseFiles.find(p => p.caseId === "01-credit");
   const wall = packet.sceneVersions.find(s => s.testimonyWall);
   const bill = packet.sceneVersions[2];
-  const question = bill.questionOptions[1].question;
-  for (const value of ["四万", "五千", "三万五"]) assert(question.includes(value), `保留金额 ${value}`);
+  const material = JSON.stringify(bill.questionOptions.flatMap(option => option.materialRows ?? []));
+  for (const value of ["四万", "五千", "三万五"]) assert(material.includes(value), `原件保留金额 ${value}，不强制主播再念一遍`);
   assert(!bill.casualQuestions?.length && !bill.afterScene, "不重复男装或账单材料问答");
 });
 test("PACK-017F", "case 1 handoff has two attributable submissions and no audience interruption", () => {

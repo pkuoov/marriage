@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
 import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js";
 import { testimonyReadingRoute } from "./lib/testimony-reading.js";
+import { STORY_PACK_CREDITS } from "../src/runtime/storyPackCredits.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = process.env.SMOKE_URL || pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
@@ -684,8 +685,8 @@ async function runCafePrologue() {
         throw new Error(`${viewport.width} cafe choices must survive state writes: ${JSON.stringify(savedProgress)}`);
       }
       await click(page, "[data-cafe-finish]");
-      for (const caption of ["故事未完待续", "维护基本的道德底线是每个人都应该做的", "主播将在正式版归来继续主持公道！"]) await page.getByText(caption, { exact: true }).waitFor({ state: "visible", timeout: 20000 });
-      smokeProgress(`PASS cafe ${viewport.width}x${viewport.height}: both investigations, saved progress, both callbacks and three credits`);
+      await assertStoryEnding(page);
+      smokeProgress(`PASS cafe ${viewport.width}x${viewport.height}: both investigations, saved progress, both callbacks and ending`);
     } finally {
       await context.close();
     }
@@ -2401,10 +2402,32 @@ async function runCaseTransition() {
     await assertVisibleText(page, "双方到场委托鉴定：排除生物学父子关系", "the result summary must appear after its dialogue");
     await page.screenshot({ path: resolve(root, `output/playwright/calendar-forensic-${width}x${height}.png`), animations: "disabled" });
     await click(page, "[data-cafe-finish]");
-    for (const caption of ["故事未完待续", "维护基本的道德底线是每个人都应该做的", "主播将在正式版归来继续主持公道！"]) await page.getByText(caption, { exact: true }).waitFor({ state: "visible", timeout: 20000 });
+    await assertStoryEnding(page);
   } finally {
     await context.close();
   }
+}
+
+async function assertStoryEnding(page) {
+  for (const caption of STORY_PACK_CREDITS) {
+    await page.getByText(caption, { exact: true }).waitFor({ state: "visible" });
+  }
+  if (await page.locator(".demo-end-caption").count() !== STORY_PACK_CREDITS.length) {
+    throw new Error("ending captions differ from the authored credits");
+  }
+  const returnButton = page.locator('.demo-return-screen [data-action="title"]');
+  await returnButton.waitFor({ state: "visible" });
+  await page.waitForFunction(() => [...document.querySelectorAll('.demo-end-caption, .demo-return-screen [data-action="title"]')].every((node) => {
+    const rect = node.getBoundingClientRect();
+    return Number(getComputedStyle(node).opacity) >= 0.99
+      && rect.width > 0 && rect.height > 0
+      && rect.left >= 0 && rect.top >= 0
+      && rect.right <= innerWidth && rect.bottom <= innerHeight;
+  }));
+  const { width, height } = page.viewportSize();
+  await page.screenshot({ path: resolve(root, `output/playwright/second-revision-ending-${width}x${height}.png`) });
+  await returnButton.click();
+  await page.locator("[data-continue-story]").waitFor({ state: "visible" });
 }
 
 async function runHostVerdictPresentation() {

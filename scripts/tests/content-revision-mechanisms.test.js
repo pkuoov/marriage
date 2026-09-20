@@ -228,11 +228,16 @@ test("朋友访谈先回答反应，再由主播问后续联系；作者授权�
   const body = b.overnightStructure.dayScenes.find((scene) => scene.id === "day-tony-friend-studio").body;
   const reply = body.beats.find((beat) => beat.id === "day-tony-friend-studio:beat:2");
   const followup = body.beats.find((beat) => beat.id === "day-tony-friend-studio:beat:3");
+  const threshold = body.beats.find((beat) => beat.id === "tony-friend-original-reply");
+  const warning = body.beats.find((beat) => beat.id === "day-tony-friend-studio:beat:4");
   assert.equal(reply.speaker, "小姐妹");
-  assert.match(reply.text, /钱够不够/);
+  assert.match(threshold.text, /一百万/);
+  assert.ok(body.beats.indexOf(threshold) < body.beats.indexOf(reply));
+  assert.doesNotMatch(reply.text, /赎回|排队/);
   assert.equal(followup.speaker, "你");
   assert.doesNotMatch(followup.text, /怎么又让她别转/);
   assert.ok(body.beats.indexOf(reply) < body.beats.indexOf(followup));
+  assert.ok(body.beats.indexOf(followup) < body.beats.indexOf(warning));
   assert.notEqual(body.sourceNote, body.access);
   for (const file of ["overnightScreens.js", "overnightDocumentScreens.js"]) {
     const source = await readFile(new URL(`../../src/ui/screens/${file}`, import.meta.url), "utf8");

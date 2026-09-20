@@ -2806,7 +2806,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(appSource, "./ui/storyPackCompleteView.js", "故事集终局 HTML 必须从 app.js 拆到 ui/storyPackCompleteView");
   const hiddenThreadProfile = { total: 4, title: "今晚暗线", label: "同款话术", line: "好听话后面接成本。", beats: ["体面接钱", "自己人接资源"] };
   const storyCompleteCard = storyPackCompleteHtml({ playerType: "钱流雷达主播", comments: ["说教评论"], boundaryProfile: { total: 1, label: "定急了" } });
-  assertIncludes(storyCompleteCard, "主播将在正式版归来继续主持公道！", "试玩片尾必须保留正式版归来的约定");
+  assertIncludes(storyCompleteCard, "故事未完待续", "试玩片尾保留故事续篇提示");
+  assertEqual((storyCompleteCard.match(/<p /g) ?? []).length, 1, "片尾只保留一屏字幕，不能恢复旧宣讲页");
   assert(!storyCompleteCard.includes("钱流雷达主播") && !storyCompleteCard.includes("定急了") && !storyCompleteCard.includes("说教评论"), "旧评分字段不得重新进入结尾文案");
   const summaryBriefs = [{ label: "第一案", truthBoundary: { true: ["账单是真的"], edited: ["少了来源"], unknown: ["动机定不了"] }, storyClueObject: "账单", storyHiddenThread: { title: "今晚暗线", label: "同款话术", reveal: "好听词后面接成本。", beats: ["账单", "表格"] } }];
   const summary = storyPackSummaryModel({
@@ -3524,7 +3525,7 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   const mbaScene = brief.sceneVersions.find((scene) => scene.version.includes("MBA") && scene.version.includes("本科"));
   const motiveScene = brief.sceneVersions.find((scene) => scene.id === "profile-caller-repeats-label");
   const complicityQuestion = motiveScene?.questionOptions?.find((option) => option.correct);
-  const spendingScene = brief.sceneVersions.find((scene) => scene.version.includes("团购") && scene.version.includes("停车费") && scene.version.includes("AA"));
+  const spendingScene = brief.sceneVersions.find((scene) => scene.id === "profile-income-and-card");
   const bridePriceFlow = `${openingText} ${brief.sceneVersions[0]?.version ?? ""}`;
   assertIncludes(brief.sceneVersions[0].version, "工资卡最清楚", "第一段必须承接女方索要流水后男方只交工资账户，不能残留无缘无故主动发图");
   assertIncludes(JSON.stringify({ answer: requestedFlowQuestion?.answer, lines: requestedFlowQuestion?.lines }), "条件我不想改", "第二夜必须把索要流水接到她不肯改条件的目的");
@@ -3544,7 +3545,7 @@ assertEqual(requestedFlowQuestion?.suspicionLabel, requestedFlowQuestion?.questi
   assert(!JSON.stringify(requestedFlowQuestion?.lines).includes("学费"), "第二夜不再以学费复审财力误判");
 assertEqual(complicityQuestion?.suspicionLabel, complicityQuestion?.question, "后续顺序追问使用实际台词");
   assertIncludes(complicityQuestion?.answer, "没让她撤回二十八万八", "咨询者必须承认自己没有叫停二十八万八");
-  assert(spendingScene, "收入疑点必须来自日常观察而不只是截图缺边");
+  assert(spendingScene?.questionOptions.some(option => option.lines?.some(line => /吃饭|下班/.test(line.text))), "出资争执保留日常关系背景，不强制首述同时列举全部消费");
   assertIncludes(bridePriceFlow, "二十八万八拿不出来", "案三必须先让男方拒绝二十八万八");
   assertIncludes(bridePriceFlow, "工资账户", "案三必须把女方索要流水与男方只交工资账户接在拒绝之后");
   assertIncludes(bridePriceFlow, "二十八万六", "案三必须让工资账户二十八万六成为局部材料，而非主动展示完整家底");
@@ -4720,7 +4721,7 @@ test("RUNTIME-010", "case 3 connects voluntary explanations to the received cred
   assert(!nightStructure?.hangup?.line?.includes("马上"), "案 3 挂断不能再写成马上回来的软离席");
   assert(!/爸爸|宸直/.test(nightStructure?.hangup?.hostLine ?? ""), "案 3 夜 A 挂断不得点名尚未揭示的父亲或宸直线");
   const incomeCardScene = (brief.sceneVersions ?? []).find((scene) => scene.id === "profile-income-and-card");
-  assertIncludes(JSON.stringify(incomeCardScene?.afterVersion ?? {}), "别的账户", "案 3 最终对峙保留工资卡以外账户仍未公开的范围");
+  assert(/(?:其他|别的)账户/.test(JSON.stringify(incomeCardScene?.afterVersion ?? {})), "案 3 最终对峙保留工资卡以外账户仍未公开的范围");
   assertIncludes((incomeCardScene?.afterVersion?.lines ?? []).map((line) => line.text ?? "").join(" "), "其他账户我不公开", "案 3 必须让男方亲口说明选择性提供流水的边界");
   assertIncludes(JSON.stringify(structure.liveCounterBeats), "九月底", "双人对话须先谈女方家资金时点，不在最后对话重讲同一笔");
   assert(!incomeCardScene?.version?.includes("只能代表一张工资卡"), "案 3 咨询者不得替材料念证明边界公式");
@@ -4974,7 +4975,10 @@ test("STORY-REVISION-002", "long-case sequencing follows disclosed knowledge bef
   const profile = briefs.find((brief) => brief.runtimeContentCaseId === "03-profile");
   const beforeCancellation = liveCounterBeatAfterScene(profile, 5, (key) => ["profile-family-chat-blowup", "profile-gift-mic-request", "profile-mediation-consent"].some((id) => key === `liveCounterBeat:${id}`), {});
   assert(!beforeCancellation, "同意上麦后先进入出资对话，不能立即取消饭局");
-  assert(profile.sceneVersions[6].version.includes("八万四"), "自己的钱必须在取消饭局前的必经陈述出现");
+  const contribution = profile.sceneVersions[6];
+  const contributionLines = contribution.questionSequence.flatMap(id => contribution.questionOptions.find(option => option.id === id).lines ?? []);
+  assert(contributionLines.some(line => line.role === "caller" && line.text.includes("八万四")), "自己的钱必须在取消饭局前的必经问答出现");
+  assert(!JSON.stringify([contribution.version, contribution.beforeVersion, contribution.afterVersion]).includes("八万四"), "存款放在追问回答里，不提前塞回首述或场前对话");
   const cancel = profile.overnightStructure.liveCounterBeats.find((beat) => beat.id === "profile-weekend-dinner-cancelled");
   assertEqual(cancel.afterSceneIndex, 6, "取消饭局跟在出资谈不拢之后");
 });

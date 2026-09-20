@@ -1,6 +1,6 @@
 # 现行标准索引
 
-更新：2026-09-19。本页管理规则归属与适用范围，具体规则只在对应源文件维护。
+更新：2026-09-20。本页管理规则归属与适用范围，具体规则只在对应源文件维护。
 
 ## 优先级与真源
 
@@ -8,7 +8,7 @@
 
 | 范围 | 维护入口 | 不能由它推导的要求 |
 | --- | --- | --- |
-| 剧情、来源、集中问询与逐句承接 | [当前方向](../project-skills/case-scriptwriting/references/current-project-direction.md)、[谎盖谎](../project-skills/case-scriptwriting/references/caller-shameless-demand.md)、[未改项完整 Prompt](../project-skills/case-scriptwriting/references/remaining-edits-prompt.md)、[两连问跨案](../project-skills/case-scriptwriting/references/two-beat-followup-prompt.md)、[逻辑与口语收口](../project-skills/case-scriptwriting/references/logic-and-spoken-voice-prompt.md)、[复审流程](../project-skills/case-scriptwriting/references/story-review-workflow.md) | 每案固定段数、每句新事实、人人认错、凑语气词；给妄人硬编难言之隐 |
+| 剧情、来源、集中问询与逐句承接 | [当前方向](../project-skills/case-scriptwriting/references/current-project-direction.md)、[谎盖谎](../project-skills/case-scriptwriting/references/caller-shameless-demand.md)、[二次改稿](../project-skills/case-scriptwriting/references/second-revision-dialogue.md)、[复审流程](../project-skills/case-scriptwriting/references/story-review-workflow.md) | 每案固定段数、每句新事实、人人认错、凑语气词；给妄人硬编难言之隐 |
 | 技能触发与工作范围 | `project-skills/*/SKILL.md`、各自 `agents/openai.yaml` | 一句修订也重做整案、默认召集多个代理 |
 | JSON、播放顺序、存档 | [Schema](content-pack-schema.md)、[运行时接入](../project-skills/case-scriptwriting/references/runtime-content-integration.md) | 有内部字段就必须增加玩家页面；所有模式共用按钮规则 |
 | 当前主案与快案 | [主案设计](weekly-livestream-design-bible.md)、[快案模式](quick-detective-mode.md)、manifest 与案件 JSON | 当前某案的轮数成为所有未来案件配额 |

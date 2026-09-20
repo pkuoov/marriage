@@ -133,14 +133,14 @@
             },
             {
               "contextAnchor": "我没把每一笔都加起来",
-              "questionAnchor": "共同消费四万，男装五千，还有至少三万五没说清。他给你解释过吗？",
+              "questionAnchor": "那剩下的三万多，他跟你说花在哪儿了吗？",
               "answerAnchor": "没解释。问起来就说奖金快发了，让我先把卡还上。",
               "relation": "未说明的三万五收住，不代认用途；已认的消费继续核对，不再许诺次日追这笔。"
             }
           ],
           "freeQuestions": [],
           "closer": {
-            "anchor": "三万五先停在这里。你刚才点名云栖，这家店接着说。",
+            "anchor": "你刚才说云栖是你让他订的。以前去过？",
             "routeIndependent": true,
             "relation": "未说明的三万五收住，不代认用途；已认的消费继续核对，不再许诺次日追这笔。"
           }
@@ -148,7 +148,7 @@
         "credit-anniversary-agency": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "这家店接着说",
+            "fromAnchor": "以前去过",
             "toAnchor": "云栖这家店，你以前去过吗？",
             "relation": "账单问清消费后，当场核对她点名的云栖到店次数。匿名观众在她说完第一次后才把旧朋友圈发来。"
           },
@@ -162,7 +162,7 @@
           ],
           "freeQuestions": [],
           "closer": {
-            "anchor": "刚才有位匿名观众发来你两年前的朋友圈，定位也是云栖。",
+            "anchor": "后台有个观众发来一张你的旧朋友圈",
             "routeIndependent": true,
             "relation": "她先把到店说成第一次或只跟朋友去过一次，匿名旧朋友圈随后进入，当场核对次数。"
           }
@@ -170,7 +170,7 @@
         "credit-device-benefit": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "两年前的朋友圈",
+            "fromAnchor": "旧朋友圈",
             "toAnchor": "买的是拍视频用的灯和稳定器",
             "relation": "未接入的旧场景；当前播放由餐厅材料转到设备付款场景，不将本条视为实际相邻对白。"
           },
@@ -262,14 +262,14 @@
             },
             {
               "contextAnchor": "自己的钱",
-              "questionAnchor": "他提以前的转账，你最想让我替你说哪句？",
-              "answerAnchor": "就说以前给我的不能往回要。我不是他的备用钱包。",
+              "questionAnchor": "所以你觉得，以前转给你的钱，他现在就不该往回要？",
+              "answerAnchor": "对啊，给了又往回要，那我算什么？他的备用钱包？",
               "relation": "男方补齐借款和离职解释后，主播追他为什么向她要八万，再问她想获得哪句支持；半薪用途留到约定揭开后问。"
             }
           ],
           "freeQuestions": [],
           "closer": {
-            "anchor": "接着把你们当初的话对上",
+            "anchor": "把你们当时的聊天发来了",
             "routeIndependent": true,
             "relation": "男方补齐借款和离职解释后，主播追他为什么向她要八万，再问她想获得哪句支持；半薪用途留到约定揭开后问。"
           }
@@ -495,8 +495,8 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "金额、产品、后面怎么跟",
-              "questionAnchor": "为什么偏偏把金额和产品那几列裁掉",
+              "contextAnchor": "右边记的是钱",
+              "questionAnchor": "跟钱有关的几列",
               "answerAnchor": "那几列是钱的事。我想先说他怎么对我，放一起，你们又要先问我为什么",
               "relation": "我不想先谈钱。原图右边一放，大家肯定先问我为什么转给他。"
             }
@@ -509,7 +509,7 @@
               "relation": "沿小姐妹要求留原图补问理由；回答保留对方没有在消息里替她下结论的边界。"
             },
             {
-              "contextAnchor": "金额、产品、后面怎么跟",
+              "contextAnchor": "右边记的是钱",
               "questionAnchor": "知道右边跟钱有关吗",
               "answerAnchor": "知道",
               "relation": "主播直接核她裁图时的知情程度；回答承认她不是事后才知道缺口与钱有关。"
@@ -542,8 +542,8 @@
         "tony-bar-rumor-hangup": {
           "entry": {
             "mode": "continue",
-            "fromAnchor": "金额、产品、后面怎么跟",
-            "toAnchor": "那是什么产品",
+            "fromAnchor": "右边记的是钱",
+            "toAnchor": "之前跟你聊过钱的事",
             "relation": "名单右侧已经确认有产品字段；主播只追她在翻名单以前是否听过相关高息传闻。"
           },
           "questionOptions": [
@@ -558,7 +558,7 @@
             {
               "contextAnchor": "有个东西利息挺高",
               "questionAnchor": "有没有说过起投要多少，还是只报了息",
-              "answerAnchor": "最近有人在买",
+              "answerAnchor": "我当时也没问到底差多少",
               "relation": "沿高息传闻核对产品名称；回答明确当时并没有说出哪家公司。"
             },
             {
@@ -591,7 +591,7 @@
             {
               "contextAnchor": "十二万",
               "questionAnchor": "十二万已经转过去了，什么事让你开始怕拿不回来？",
-              "answerAnchor": "酒吧的小姐妹说，那个产品赎回在排队，让我别再转。我才去翻他的手机，看见",
+              "answerAnchor": "小姐妹说，那个产品赎回在排队",
               "relation": "敲门与借款用陈述交代完，必经问答转入她先听说赎回拖延、再翻手机追款的先后。"
             }
           ],
@@ -602,19 +602,14 @@
               "answerAnchor": "十来分钟",
               "relation": "沿上门问话补问时长；回答只交代警方当时核过的两个问题。"
             }
-          ],
-          "closer": {
-            "anchor": "中间这十二万怎么交给他的",
-            "routeIndependent": true,
-            "relation": "敲门与借款用陈述交代完，必经问答转入她先听说赎回拖延、再翻手机追款的先后。"
-          }
+          ]
         },
         "tony-caller-benefits": {
           "entry": {
             "mode": "resumed-thread",
-            "fromAnchor": "中间这十二万怎么交给他的",
+            "fromAnchor": "那十二万转进他户里了",
             "toAnchor": "你补来的转账我看了",
-            "relation": "职业和高息来源刚由场尾问出；主播顺着她后来去问 Tony，追十二万如何实际转出。"
+            "relation": "她说自己后来去问 Tony，下一场追十二万如何转出，删去同义场尾追问。"
           },
           "questionOptions": [
             {
@@ -1037,10 +1032,10 @@
           },
           "questionOptions": [
             {
-              "contextAnchor": "婚宴和首饰另算",
-              "questionAnchor": "打算谁出",
-              "answerAnchor": "他家",
-              "relation": "双方已报付款条件，主播追问她默认的婚宴付款人，男方当面说未同意。"
+              "contextAnchor": "我自己也会出钱",
+              "questionAnchor": "准备拿多少",
+              "answerAnchor": "我现在有八万四",
+              "relation": "先声称自己也出钱，主播问数额，再问时点；男方接着追父亲的钱，婚宴由谁出最后才争出来。"
             }
           ],
           "freeQuestions": [
@@ -1048,7 +1043,7 @@
               "contextAnchor": "婚宴和首饰",
               "questionAnchor": "一起管这些钱的例子",
               "answerAnchor": "我表姐",
-              "relation": "从双方都在讨论婚事资金补问她现实参照，回答也暴露她习惯精确计算。"
+              "relation": "围绕婚后共同用钱补问身边例子，她仍认为自己的情况不同。"
             }
           ]
         }
@@ -1155,7 +1150,7 @@
             }
           ],
           "closer": {
-            "anchor": "想争这场才垫，这点先记下。",
+            "anchor": "六万八还得临时提额，你也真敢接。",
             "routeIndependent": true,
             "relation": "谁让垫、为何争活动已经钉住，下一场才看别人为什么也愿意垫。"
           }

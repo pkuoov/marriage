@@ -1194,7 +1194,7 @@
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "你刚说没转过钱。流水里有三笔，交易对手都是顾*。这个怎么说？"
+            "text": "等一下。那这三笔转给顾*的钱是怎么回事？"
           },
           {
             "speaker": "妻子",
@@ -1354,7 +1354,7 @@
             "options": [
               {
                 "id": "transfer-purpose",
-                "question": "你刚说没转过钱。流水里有三笔，交易对手都是顾*。这个怎么说？",
+                "question": "等一下。那这三笔转给顾*的钱是怎么回事？",
                 "correct": true,
                 "evidenceId": "parallel-transfer-ledger",
                 "lines": [
@@ -1621,7 +1621,7 @@
             "type": "participant"
           },
           {
-            "text": "那些日子不会因为这张纸就没发生过。今天不用把以后的事全决定。",
+            "text": "你一晚上没睡吧？坐会儿，后面的事等你缓一缓再谈。",
             "speaker": "赵律师",
             "speakerProfileId": "zhao-lawyer",
             "type": "advisor"

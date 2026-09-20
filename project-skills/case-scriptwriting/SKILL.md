@@ -5,7 +5,7 @@ description: Write or revise case dialogue for 《深夜热线：直播间侦探
 
 # Case Scriptwriting
 
-先读 [当前项目方向](references/current-project-direction.md)。这是项目创作约定的唯一维护入口；本 skill 负责怎样把它写进对白。用户当次要求优先，旧评审、小样和历史台词不自动成为新案的事实或硬性模板。来电人提出不讲理的要求时，先读 [无赖来电：谎盖谎](references/caller-shameless-demand.md)。谎盖谎主链、未改项清单和两连问已接入。还在打架的顺序、过满推断和作文腔，按 [逻辑与口语收口 Prompt](references/logic-and-spoken-voice-prompt.md) 改。
+先读 [当前项目方向](references/current-project-direction.md)。这是项目创作约定的唯一维护入口；本 skill 负责怎样把它写进对白。用户当次要求优先，旧评审、小样和历史台词不自动成为新案的事实或硬性模板。来电人提出不讲理的要求时，先读 [无赖来电：谎盖谎](references/caller-shameless-demand.md)。谎盖谎主链、未改项清单和两连问已接入。二次审读语言、人物和泄露顺序时，读 [现场对白与逐层揭露](references/second-revision-dialogue.md)。旧 prompt 只记录已经完成的结构调整，不再提供锁定台词。
 
 ## 按改动范围工作
 
@@ -24,6 +24,8 @@ description: Write or revise case dialogue for 《深夜热线：直播间侦探
 人物可以重复、答偏、反问、装懂和讲歪理。听众能跟上他在保护什么即可；不要求逐句复述上一句的关键词，也不要求每句交付新事实。主语不明、来源凭空出现、引用说错、突然回答另一件事，才需要补接话或重排。
 
 ## 写人物攻防
+
+修的是摘要式表达，不是句子长度。需要主语、指代和原因的地方说完整，已演完的事实不再补总结。材料给事实，人物作反应；来电人可以答半句、避重就轻，NPC 的信息跟随眼前处境。职业表达不必强行随意。
 
 主播有经验、好奇心和脾气，可以顺着对方的理由聊几句，让她为证明自己有理而多讲，再抓她自己补出的不一致。也可以直接追问、阴阳或短暂误会。发现不对以后，对质里可以两连问：先钉已经露出来的错，再问一层显而易见能推出来的可能性，逼对方沉默或反驳；这仍是同一层，不是另开秘密。两连问写在 `lines` 的 host，不要写进 `entryQuestion` / `question` / `hostLine`。不要固定为“共情—核实—判断—补边界”。
 
