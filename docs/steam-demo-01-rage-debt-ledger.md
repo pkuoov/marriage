@@ -19,7 +19,7 @@
 
 | 债务 | 层级 | 发债 | 首期付息 | 持债上限 | 本金结清 | 下一笔债 |
 |---|---|---|---|---|---|---|
-| credit-lost-job-voice | Tier 1 | nightShell.prologue.coldOpen：“我只是怕你知道我失业后就离开我。” | nightShell.prologue.coldOpen（player-input）：玩家听完整条语音，最低还款金额随即出现，先前的同情开始动摇。 | 同一屏 | credit-loyalty-test:act2（player-input）：两次决定性指认后，判词拒绝替她做公开赦免。 | credit-loyalty-test：“反正八万我不转，之前给我的就是主动赠与。” |
+| credit-lost-job-voice | Tier 1 | nightShell.prologue.coldOpen：“这次先帮我顶几天，我会还你的。” | nightShell.prologue.coldOpen（player-input）：玩家听完整条语音，最低还款金额随即出现，先前的同情开始动摇。 | 同一屏 | credit-loyalty-test:act2（player-input）：两次决定性指认后，判词拒绝替她做公开赦免。 | credit-loyalty-test：“反正八万我不转，之前给我的就是主动赠与。” |
 
 ## 主案｜04-workplace｜职场报销截图
 

@@ -191,9 +191,6 @@
       ],
       "requiredConfrontationIds": [
         "message-or-drunkenness"
-      ],
-      "autoConfrontationIds": [
-        "message-or-drunkenness"
       ]
     },
     {
@@ -248,9 +245,6 @@
       ],
       "requiredConfrontationIds": [
         "nightlife-pattern",
-        "apology-and-post"
-      ],
-      "autoConfrontationIds": [
         "apology-and-post"
       ],
       "materialRows": [
@@ -370,14 +364,15 @@
     },
     {
       "id": "founder-busy",
-      "label": "漏回那六分钟，是信号不好还是已经喝多",
-      "sourceAnchor": "自己开公司",
+      "label": "后一条为什么没看见",
+      "sourceAnchor": "后面那条我没看见",
       "correct": false,
       "missReaction": {
         "role": "caller",
-        "text": "不是信号。我回完还行就接着喝了。身体那会儿已经不对。"
+        "text": "回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。"
       },
-      "question": "他回那句‘听了’隔了很久。你漏回的那六分钟，是信号不好，还是已经喝多了？"
+      "question": "前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？",
+      "clarification": true
     },
     {
       "id": "how-he-knew",

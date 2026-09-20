@@ -349,7 +349,7 @@
           "speaker": "男方语音（来电人转发）",
           "speakerProfileId": "case1-respondent",
           "type": "caller",
-          "text": "我只是怕你知道我失业后就离开我。",
+          "text": "这次先帮我顶几天，我会还你的。",
           "audioCueId": "voice.case1.loyalty-message"
         },
         "baitComments": [
@@ -574,14 +574,18 @@
             "text": "没发。她爸那笔是留给女儿自己的，婚宴首饰照样让男方出。"
           },
           {
+            "role": "stage",
+            "text": "手机收到老方发来的语音。你对赵律师说了声“等一下”，点开播放。"
+          },
+          {
             "speaker": "老方（语音）",
             "role": "production",
-            "text": "后台有人丢来一页打码课纲，标题和来源都遮了，只剩四个词：安全感、态度、向上社交、退出。"
+            "text": "有个自称买过婚恋课的观众私信我，说听了今晚这通，想找卖课的人退款，问我能不能帮她看看。她只肯发一页打码课纲，怕被认出来；标题和来源都遮了，只剩安全感、态度、向上社交、退出这四个词。"
           },
           {
             "speaker": "赵律师（语音）",
             "role": "advisor",
-            "text": "四个词，裁得连抬头都不剩了。叫老方找找原图吧。"
+            "text": "她想退课，先让她把购买记录和完整课纲发来。四个词，看不出对方到底教了什么。"
           },
           {
             "speaker": "赵律师（语音）",
@@ -641,6 +645,10 @@
           {
             "role": "stage",
             "text": "屏幕右上角的“直播中”灭了。"
+          },
+          {
+            "role": "stage",
+            "text": "桌上的手机亮了一下，财经新闻推送里出现“宸直”两个字。你把杯子放回桌上，叫住门口的赵律师。"
           }
         ],
         "worldEcho": {
@@ -1305,19 +1313,19 @@
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "你先去问我给你的那家机构，受理需要谁到场，带哪些材料都先问清。"
+            "text": "我把一家鉴定机构的公开联系方式发给你。受理需要谁到场，带哪些材料，你先问清。"
           },
           {
             "speaker": "林旭阳",
             "speakerProfileId": "host-lin-xuyang",
             "type": "host",
-            "text": "孩子大部分东西估计她都带走了，你可能得仔细找下家里还能去做鉴定的东西。"
+            "text": "家里还留着孩子用过的东西吗？哪些能用，也先问机构。"
           },
           {
             "speaker": "男方",
             "speakerProfileId": "prologue-cafe-husband",
             "type": "participant",
-            "text": "那我现在回家？"
+            "text": "家里应该还有。我现在回去找找？"
           },
           {
             "speaker": "林旭阳",
@@ -1527,7 +1535,13 @@
             "text": "发给你们看的这份，我把名字遮了，只留了姓。"
           },
           {
-            "speaker": "周会计",
+            "speaker": "旁白",
+            "type": "narration",
+            "text": "赵律师打开周会计核对这份回单后发来的语音。",
+            "speakerProfileId": "narrator"
+          },
+          {
+            "speaker": "周会计（语音）",
             "speakerProfileId": "zhou-accountant",
             "type": "advisor",
             "text": "我看过了。十八号那笔，收款人不是顾*。"

@@ -44,7 +44,7 @@
         "tier": "Tier 1",
         "issue": {
           "location": "nightShell.prologue.coldOpen",
-          "quote": "我只是怕你知道我失业后就离开我。"
+          "quote": "这次先帮我顶几天，我会还你的。"
         },
         "interest": {
           "location": "nightShell.prologue.coldOpen",
@@ -553,7 +553,7 @@
           }
         ]
       },
-      "version": "账单八万出头。男装就五千左右，一件大衣两千多，他都没工作了，还买这些。餐厅、酒店和礼物也有，都是我们一起出去的。云栖那顿纪念日晚餐最贵，主要贵在酒，店和靠窗位是我让他订的。还有一万二的拍摄设备，在我家。我没把每一笔都加起来。",
+      "version": "账单八万出头。男装就五千左右，一件大衣两千多，奖金都没发，还买这些。餐厅、酒店和礼物也有，都是我们一起出去的。云栖那顿纪念日晚餐最贵，主要贵在酒，店和靠窗位是我让他订的。还有一万二的拍摄设备，在我家。我没把每一笔都加起来。",
       "helperHint": "账单已收到，可以打开查看。",
       "doubt": "金额、用途和时间都比“垫几天”重得多。",
       "contradiction": "咨询者先指责男方约五千元男装，又确认餐厅、礼物和设备与自己有关；两类金额之外仍有至少三万五用途不明。",
@@ -2035,20 +2035,7 @@
       "minActions": 0,
       "maxActions": 0,
       "continueLabel": "进入白天调查",
-      "actions": [
-        {
-          "id": "friend-dm-early",
-          "label": "再看一眼已对过的朋友圈",
-          "summary": "匿名来信那张两年前的云栖朋友圈已经对过。男方流水留到白天打开。",
-          "cost": 0,
-          "kind": "backflowEarly",
-          "hookId": "credit-friend-dm",
-          "grantsInventory": [
-            "friend-dm-seen"
-          ],
-          "replyChoices": []
-        }
-      ],
+      "actions": [],
       "flowMode": "linear"
     },
     "returnStance": {
@@ -2082,7 +2069,7 @@
         "kind": "studio",
         "body": {
           "access": "男方直接向节目提交并同意遮名展示。",
-          "text": "昨晚你把男方发来的材料转给一直帮工作室记账的周会计，请他帮忙看这几笔进出。他约你上午在工作室碰头，把外套搭在椅背上。",
+          "text": "昨晚你把男方发来的材料转给一直帮工作室记账的周会计，请他帮忙看这几笔进出。他约你下午在工作室碰头，把外套搭在椅背上。",
           "earnedItemId": "男方后台材料",
           "sourceNote": "男方为说明钱的用途补来流水；你请平时帮工作室记账的周会计一起看。",
           "documentId": "case1-bank-flow",

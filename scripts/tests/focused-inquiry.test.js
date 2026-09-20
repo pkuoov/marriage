@@ -48,7 +48,7 @@ test('未问清材料不能收麦，完成本案各段与两份材料即可收�
 import { initialQuickDetectiveState, normalizeQuickDetectiveState, applyQuickIssueSelection, advanceQuickMissReaction, advanceQuickConfrontation, quickRoundPatienceForState, quickFlowVersion } from '../../src/runtime/quickDetectiveModel.js';
 const quick = JSON.parse(readFileSync(new URL('../../content/packs/steam-demo-01/quick-cases/02-one-missed-message.json', import.meta.url)));
 
-test('直接误问先读问答，保存恢复后留在本段且不再扣旧预算', () => {
+test('补问先读问答，保存恢复后留在本段且不扣旧预算', () => {
   const round = quick.disclosureRounds[0];
   let state = { ...initialQuickDetectiveState(quick), scene: 'issueSelection', resolvedConfrontationIds: ['care-or-display'], roundPatience: { [round.id]: { max: round.patience, remaining: 1 } } };
   state = applyQuickIssueSelection(quick, state, 'founder-busy');
@@ -58,8 +58,8 @@ test('直接误问先读问答，保存恢复后留在本段且不再扣旧预�
   assert.equal(state.scene, 'missReaction');
   assert.equal(quickRoundPatienceForState(quick, state).remaining, 1);
   state = advanceQuickMissReaction(quick, state);
-  assert.equal(state.scene, 'confrontation');
-  assert.equal(state.activeConfrontationId, 'message-or-drunkenness');
+  assert.equal(state.scene, 'issueSelection');
+  assert.equal(state.resolvedConfrontationIds.includes('message-or-drunkenness'), false);
   assert.equal(state.roundIndex, 0);
   assert.equal(quickRoundPatienceForState(quick, state).remaining, 1);
   assert.deepEqual(advanceQuickMissReaction(quick, state), state);
@@ -321,4 +321,26 @@ test('职场旧四千问询退役，只迁移仍保留的待付款问询进度',
     const closed = refreshSavedExchangeCopy({ ...input, scene: 'careChoice' }, [work], [old]);
     assert.equal(closed.scene, 'careChoice', '已收麦的存档不退回问询');
   }
+});
+
+
+import { quickTranscriptDialogueLines } from '../../src/ui/quickDetectiveView.js';
+
+test('快案首读保留提问与回应，不把下一段材料混进来；保存可恢复当前说话页', () => {
+  const packet = {
+    id: 'conversation', format: 'call',
+    turns: [
+      { id: 'first', host: '今天来问什么？', caller: '想请你介绍对象。' },
+      { id: 'later', host: '钱是谁给的？', caller: '后段才回答。' }
+    ],
+    disclosureRounds: [{ id: 'intro', turnIds: ['first'] }, { id: 'funds', turnIds: ['later'] }]
+  };
+  const state = { ...initialQuickDetectiveState(packet), scene: 'transcript' };
+  assert.deepEqual(quickTranscriptDialogueLines(packet, state, '主播甲'), [
+    { role: 'host', speaker: '主播甲', text: '今天来问什么？' },
+    { role: 'caller', speaker: '来电人', text: '想请你介绍对象。' }
+  ]);
+  state.transcriptReading = { key: 'conversation:transcript:0', pageIndex: 1, complete: true, done: false };
+  const restored = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(state)), packet);
+  assert.deepEqual(restored.transcriptReading, state.transcriptReading);
 });

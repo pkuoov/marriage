@@ -1058,7 +1058,10 @@ export function createSceneScreens(ctx) {
       return;
     }
     const nextIndex = nextPlayableSceneIndex(brief, sceneIndex);
-    if (nextIndex >= 0) setIndex(brief, "sceneReview", nextIndex);
+    if (nextIndex >= 0) {
+      state.scene = "sceneReview";
+      setIndex(brief, "sceneReview", nextIndex);
+    }
     else moveScene("accusation");
   }
 

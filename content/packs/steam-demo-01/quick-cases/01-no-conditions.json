@@ -386,7 +386,8 @@
         "kind": "reveal",
         "eyebrow": "称呼对不上",
         "label": "两个“爸爸”",
-        "visualVariant": "two-fathers"
+        "visualVariant": "two-fathers",
+        "lineIndex": 4
       },
       "lines": [
         {

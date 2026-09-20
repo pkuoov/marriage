@@ -1,3 +1,5 @@
+import { callDialogueHtml } from "./callFlowView.js";
+
 const HOST_ART = {
   listening: "./assets/generated/quick-detective/lin-xuyang-host-pixel.png?v=0.28.0",
   questioning: "./assets/generated/host/lin_xuyang_questioning_pixel.png?v=0.28.0"
@@ -11,9 +13,9 @@ const ZHAO_ART = {
 
 const INTERLUDE_STAGE = {
   "01-credit": { hostPose: "listening", zhaoPose: "teasing", prop: "warm-water", zhaoMode: "present" },
-  "02-tony": { hostPose: "questioning", prop: "voice-message", remoteLabel: "老方 · 语音" },
+  "02-tony": { hostPose: "listening", zhaoPose: "daily", prop: "cups", zhaoMode: "present" },
   "03-profile": { hostPose: "listening", zhaoPose: "serious", prop: "thermos", zhaoMode: "remote" },
-  "04-workplace": { hostPose: "listening", zhaoPose: "daily", prop: "cups", zhaoMode: "present" }
+  "04-workplace": { hostPose: "questioning", prop: "voice-message", remoteLabel: "老方 · 语音" }
 };
 
 export function storyInterludeHtml({
@@ -25,23 +27,23 @@ export function storyInterludeHtml({
   worldEchoHypothesis = null,
   afterCaseId = ""
 } = {}) {
+  // Each phase has its own reading content. Revealing the news must not replay
+  // the studio conversation that led to it.
+  const lines = worldEcho ? [
+    { role: "stage", text: worldEcho.headline ?? "" },
+    ...String(worldEcho.body ?? "").split(/\n\s*\n/).map(text => ({ role: "stage", text }))
+  ] : worldEchoHypothesis ? [
+    { role: "host", text: worldEchoHypothesis.response ?? "" }
+  ] : [
+    ...shellLines,
+    ...(shellLine ? [{ role: "stage", text: shellLine }] : []),
+    ...shellAfterLines.map(line => ({ ...line, role: line.role ?? "stage" }))
+  ];
   return `
     <section class="story-interlude-card shell" data-after-case="${escapeHtml(afterCaseId)}">
-      <span>${escapeHtml(kicker)}</span>
-      ${(shellLines ?? []).map((line) => `<div class="story-interlude-line"><b>${escapeHtml(line.speaker ?? "")}</b><p>${escapeHtml(line.text ?? "")}</p></div>`).join("")}
-      <p>${escapeHtml(shellLine || "控台安静了一会儿，下一通的材料先到了后台。")}</p>
-      ${(shellAfterLines ?? []).map((line) => `<div class="story-interlude-line stage"><b>${escapeHtml(line.speaker ?? "")}</b><p>${escapeHtml(line.text ?? "")}</p></div>`).join("")}
+      <span>${escapeHtml(worldEcho?.kicker ?? (worldEchoHypothesis ? "你先压下的判断" : kicker))}</span>
+      ${callDialogueHtml(lines, "story-interlude-dialogue")}
     </section>
-    ${worldEcho ? `<section class="story-interlude-card world-echo">
-      <span>${escapeHtml(worldEcho.kicker ?? "城市回声")}</span>
-      <b>${escapeHtml(worldEcho.headline ?? "")}</b>
-      ${String(worldEcho.body ?? "").split(/\n\s*\n/).map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join("")}
-    </section>` : ""}
-    ${worldEchoHypothesis ? `<section class="story-interlude-card world-echo-hypothesis">
-      <span>你先压下的判断</span>
-      <b>${escapeHtml(worldEchoHypothesis.label ?? "")}</b>
-      <p>${escapeHtml(worldEchoHypothesis.response ?? "")}</p>
-    </section>` : ""}
   `;
 }
 

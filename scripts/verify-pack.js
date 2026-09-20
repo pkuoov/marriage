@@ -583,7 +583,8 @@ function assertNightStructure(packet = {}, label = "") {
   assert(interlude && typeof interlude === "object" && !Array.isArray(interlude), `${label} nightStructure.interlude 必须是对象`);
   if (interlude.flowMode === "linear") {
     assertEqual(interlude.budget, 0, `${label} 线性幕间不得增加行动预算`);
-    assertArrayMin(interlude.actions, 1, `${label} 线性幕间必须有场景`);
+    assert(Array.isArray(interlude.actions), `${label} 线性幕间 actions 必须是数组`);
+    assert(interlude.actions.length > 0 || packet.overnightStructure?.dayScenes?.length > 0, `${label} 无幕间任务时必须有后续白天场景`);
   } else {
   assert(Number.isInteger(interlude.budget) && interlude.budget > 0, `${label} nightStructure.interlude.budget 必须是正整数`);
   assert(Number.isInteger(interlude.minActions) && interlude.minActions >= 1, `${label} nightStructure.interlude.minActions 必须是正整数`);
@@ -619,7 +620,7 @@ function assertNightStructure(packet = {}, label = "") {
     }
   });
   assert(
-    interlude.actions.some((action) => ["advisorCall", "advisorConflict", "interruptToast", "backflowEarly"].includes(action.kind)),
+    interlude.flowMode === "linear" || interlude.actions.some((action) => ["advisorCall", "advisorConflict", "interruptToast", "backflowEarly"].includes(action.kind)),
     `${label} nightStructure.interlude.actions 至少需要一个由场外人物触发的行动位`
   );
   if (packet.overnightStructure) {
@@ -2078,9 +2079,9 @@ test("PACK-012B", "the cafe closes after hotel and money disputes; testing stays
   assert(cafeText.includes("断章取义") && cafeText.includes("先发原片") && prologue.cafe?.pressureChoices?.length === 1, "录像中断必须让表哥拿出自己的录屏，关掉录像后只保留真实可执行的继续谈");
   assert(!cafeText.includes("礼物") && !cafeText.includes("直播间") && !cafeText.includes("停播"), "咖啡厅是预录谈判素材，不得混入直播打赏或现场停播逻辑");
   assert(aftermathText.includes("三笔钱都是借款") && aftermathText.includes("敢乱剪辑做视频") && aftermathText.includes("孩子的事也没什么好说的"), "妻子离场后必须继续否认并回应公开风险，不能在咖啡厅命中后立即完整认错");
-  assert(sameNightZhaoLine.includes("材料") && sameNightHostLine.includes("那家机构") && sameNightHostLine.includes("需要谁到场"), "散场后保留机构咨询与材料交接，不强制重复法律讲解");
-  assert(sameNightHostLine.includes("估计") && sameNightHostLine.includes("到家给我打个电话"), "林旭阳必须让男方按机构意见行动，同时守住不追人、不碰孩子的边界");
-  assert(aftermathText.indexOf("那家机构") < aftermathText.indexOf("沙发靠背缝里还有个硅胶咬胶"), "先交代主播推荐机构，男方到家后再报告咬胶");
+  assert(sameNightZhaoLine.includes("材料") && sameNightHostLine.includes("机构的公开联系方式") && sameNightHostLine.includes("需要谁到场"), "散场后保留机构咨询与材料交接，不强制重复法律讲解");
+  assert(sameNightHostLine.includes("哪些能用，也先问机构") && sameNightHostLine.includes("到家给我打个电话"), "林旭阳必须让男方按机构意见行动，同时守住不追人、不碰孩子的边界");
+  assert(aftermathText.indexOf("机构的公开联系方式") < aftermathText.indexOf("沙发靠背缝里还有个硅胶咬胶"), "先交代主播推荐机构，男方到家后再报告咬胶");
   assertDeepEqual(prologue.aftermath?.routes?.map((route) => route.id), ["toy", "account"], "序章后续必须按旧物、家庭账的顺序处理");
   assert(aftermathText.includes("硅胶咬胶") && aftermathText.includes("个人委托") && aftermathText.includes("固定同额转出"), "同晚保留两项交接来源；司法结果仍须等后续材料");
   const accountRouteText = collectTextFrom(prologue.aftermath?.routes?.find((route) => route.id === "account") ?? {});
@@ -2698,7 +2699,7 @@ test("PACK-019D", "fable hooks weld into existing cases without replacing their 
   assert(JSON.stringify(cafeAccount).includes("十八号还有一笔固定转出") && JSON.stringify(cafeAccount).includes("跟十八号这笔对不上") && JSON.stringify(cafeAccount).includes("房贷") && JSON.stringify(cafeAccount).includes("车贷"), "课程类摘要不得吞掉房贷车贷排除过程");
 
   assert(JSON.stringify(workplaceInterlude).includes("融资稿") && JSON.stringify(workplaceInterlude).includes("押金"), "职场收播在滚动垫款消息之后取得融资稿，继续追查公司的资金来源");
-  assert(JSON.stringify(profileInterlude).includes("打码课纲") && JSON.stringify(profileInterlude).includes("原图"), "第三通展示打码课纲并留下来源待查，不给人物补购买事实");
+  assert(JSON.stringify(profileInterlude).includes("打码课纲") && JSON.stringify(profileInterlude).includes("完整课纲") && JSON.stringify(profileInterlude).includes("自称买过婚恋课的观众") && JSON.stringify(profileInterlude).includes("退款"), "第三通展示打码课纲并留下来源待查，不给人物补购买事实");
   assertEqual(manifest.theme?.hiddenThread?.phraseEcho?.rule, "相似措辞只能提示继续核对来源，不能证明来电人买过课、彼此认识或受同一人指使。", "同构话术暗线必须登记证明上限");
 });
 

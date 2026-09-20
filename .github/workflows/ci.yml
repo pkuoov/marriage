@@ -30,12 +30,21 @@ jobs:
 
       # Local work can use test:local's single-route smoke. CI intentionally
       # keeps the complete smoke:browser matrix for flow and rendering drift.
-      # Hosted browser startup occasionally stalls despite the same commit
-      # passing locally, so retry the complete deterministic matrix once.
       - name: Run browser behavior replay
         env:
           # Hosted runners can be slower than local machines. Keep every
           # assertion, but give each browser action and route enough headroom.
           SMOKE_ACTION_TIMEOUT_MS: 30000
           SMOKE_STEP_TIMEOUT_MS: 240000
-        run: npm run smoke:browser || npm run smoke:browser
+        run: npm run smoke:browser 2>&1 | tee browser-replay.log
+
+      - name: Upload browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: browser-failure-diagnostics
+          path: |
+            browser-replay.log
+            output/playwright/
+          if-no-files-found: ignore
+          retention-days: 7

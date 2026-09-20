@@ -1367,7 +1367,8 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   let state = { ...initialQuickDetectiveState(packet), scene: "transcript" };
   while (state.scene === "transcript") state = advanceQuickTranscript(packet, state);
   assertEqual(state.roundIndex, 0, "第一轮听完必须停在初问阶段");
-  assertEqual(quickIssueOptionsForRound(packet, state).map((item) => item.id).join("|"), "founder-busy", "第一轮先打已经说出口的消息状态，旁支只留工作忙，不能提前出现第三人、朋友圈或先开口要花");
+  assertEqual(quickIssueOptionsForRound(packet, state).map((item) => item.id).join("|"), "missed-message-state|founder-busy", "第一轮可问身体状态或补问手机去向，不提前出现第三人、朋友圈");
+  state = applyQuickIssueSelection(packet, state, "missed-message-state");
   while (state.scene === "confrontation") state = advanceQuickConfrontation(packet, state);
   assertEqual(state.scene, "transcript", "第一轮核心问题问完后必须回到连线继续追，而不是继续弹出后面的答案");
   assertEqual(state.roundIndex, 1, "第一轮对质应迫使来电人进入第二版说法");
@@ -1391,9 +1392,9 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   }
   assertEqual(quickDisclosureRounds(packet)[state.roundIndex].id, "social-feed", "解释过程完成后才开始翻旧动态");
   while (state.scene === "transcript") state = advanceQuickTranscript(packet, state);
-  assertEqual(quickIssueOptionsForRound(packet, state).map((item) => item.id).join("|"), "nightlife-pattern", "朋友圈日期核实自动接话，回放只保留当前维持的说法");
+  assertEqual(quickIssueOptionsForRound(packet, state).map((item) => item.id).join("|"), "nightlife-pattern|apology-post", "已读到的外出频率和照片日期都应允许玩家追问");
   while (state.scene === "confrontation") state = advanceQuickConfrontation(packet, state);
-  for (const issueId of ["nightlife-pattern"]) {
+  for (const issueId of ["nightlife-pattern", "apology-post"]) {
     const issue = packet.issueOptions.find((item) => item.id === issueId);
     const line = quickStatementLinesForRound(packet, state).find((item) => item.text.includes(issue.sourceAnchor));
     state = applyQuickStatementLineSelection(packet, state, line.id);
@@ -4636,7 +4637,7 @@ test("RAGE-001", "rage-bait payoff stays player-led, bounded, and visible in run
   assertIncludes(JSON.stringify(coldOpen?.setupLines ?? []), "第一位来电人", "失业语音前必须先交代它来自第一位来电人");
   assertIncludes(JSON.stringify(coldOpen?.setupLines ?? []), "男朋友", "失业语音前必须先交代说话人与来电人的关系");
   assertEqual(coldOpen?.line?.speakerProfileId, "case1-respondent", "失业语音必须绑定案一男方，不能误用来电人声纹");
-  assertEqual(coldOpen?.line?.text, "我只是怕你知道我失业后就离开我。", "黄金九十秒必须以失业语音发债");
+  assert(coldOpen?.line?.text && !/失业|离职|补偿金/.test(coldOpen.line.text), "冷开场不得提前承认第一夜尚待核实的失业信息");
   assertEqual(coldOpen?.actionLabel, "听完这条语音", "首期付息必须由玩家主动听完原话触发");
   assert(!/替(?:他|她|谁)收口|紧跟着|紧接着/.test(JSON.stringify(coldOpen)), "冷开场不得让主播说作者衔接词");
   assert(!screenSources[3].includes("先让弹幕把这句话听全"), "冷开场按钮旁不得再放编导式操作说明");
@@ -4931,7 +4932,7 @@ test("STORY-REVISION-001", "reordered quick cases preserve all valid routes and 
       return total + explore(packet, next);
     }, 0);
   }
-  for (const [id, count] of [["01-no-conditions", 2], ["02-one-missed-message", 1], ["03-labeled-fiction", 27]]) {
+  for (const [id, count] of [["01-no-conditions", 2], ["02-one-missed-message", 2], ["03-labeled-fiction", 27]]) {
     const packet = packets.find((item) => item.id === id);
     assertEqual(explore(packet, { ...initialQuickDetectiveState(packet), scene: "transcript" }), count, `${id} 全部有效选择顺序应到达结案`);
     const priorLayout = structuredClone(packet);
@@ -5041,7 +5042,8 @@ test("FLOW-LINEAR-001", "required investigation scenes stay ordered without acti
     }
     assert(canEnterOvernightCallback(brief, { dayScenesDone: ids, timelineSorts: correctTimelineSorts(brief) }), "全场完成后回拨");
     const exhausted = { ...initialNightStateFor(brief), interludeBudget: { max: 1, remaining: 0, used: 1 } };
-    assert(completeNightAction(exhausted, structure.interlude.actions[0], structure).interludeActionsDone.length === 1, "旧存档即使次数耗尽仍能继续");
+    if (structure.interlude.actions.length) assert(completeNightAction(exhausted, structure.interlude.actions[0], structure).interludeActionsDone.length === 1, "旧存档即使次数耗尽仍能继续");
+    else assertEqual(nextLinearInvestigationScene(structure.interlude.actions, []), null, "无任务幕间直接进入白天，不制造重复询问");
   }
 });
 

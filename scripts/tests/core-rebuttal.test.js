@@ -84,7 +84,8 @@ test("自动接话与可选交流不扣耐心，逐句读档后完整走完两�
             assert.ok(!quickIssueOptionsForRound(packet, state).some((option) => option.confrontationId === item.id));
           } else {
             assert.ok(state.activeIssueId);
-            assert.ok(!round.requiredConfrontationIds.includes(item.id), "生育顾虑等普通交流可以选择，但不能设为通关要求");
+            // Required fact-checking can be player-selected without becoming an accusation.
+            if (id === "01-no-conditions") assert.ok(!round.requiredConfrontationIds.includes(item.id), "生育顾虑等普通交流可以选择，但不能设为通关要求");
           }
         }
         const expectedLine = quickConfrontationLinesForState(packet, state)[state.confrontationLineIndex];
@@ -118,7 +119,10 @@ test("锚点修正保留进度，结构重排按段落身份迁移", () => {
   const state = { ...initialQuickDetectiveState(old), scene: "issueSelection", roundIndex, resolvedConfrontationIds: ["care-or-display", "message-or-drunkenness", "third-person-at-table", "how-he-knew"] };
   const restored = normalizeQuickDetectiveState(state, packet);
   assert.equal(restored.roundIndex, roundIndex); assert.deepEqual(restored.resolvedConfrontationIds, state.resolvedConfrontationIds);
-  assert.equal(restored.activeConfrontationId, "apology-and-post"); assert.equal(restored.flowVersion, quickFlowVersion(packet));
+  assert.equal(restored.activeConfrontationId, null);
+  assert.equal(restored.scene, "issueSelection");
+  assert.deepEqual(quickIssueOptionsForRound(packet, restored).map(item => item.id), ["nightlife-pattern", "apology-post"]);
+  assert.equal(restored.flowVersion, quickFlowVersion(packet));
   old.disclosureRounds.reverse();
   assert.equal(normalizeQuickDetectiveState({ ...state, flowVersion: quickFlowVersion(old) }, packet).roundIndex, 0);
 });

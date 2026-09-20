@@ -8,7 +8,7 @@ import {
   quickStatementLinesForRound,
   quickVerdictPages
 } from "../runtime/quickDetectiveModel.js";
-import { statementAnchorLineMatches, statementOptionForLine, statementTextFromTurns } from "../runtime/statementReviewModel.js";
+import { statementAnchorLineMatches, statementOptionForLine } from "../runtime/statementReviewModel.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
 
 export function quickDetectiveCaseSelectHtml(packets = [], completedIds = []) {
@@ -92,7 +92,7 @@ export function quickDetectiveIntroHtml(packet = {}, { hostName = packet.present
 export function quickDetectiveTranscriptHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
   const round = quickDisclosureRoundForState(packet, state);
   const solo = isSoloCommentary(packet);
-  const line = { role: solo ? "host" : "caller", speaker: solo ? hostName : "来电人", text: statementTextFromTurns(packet, round) };
+  const line = quickTranscriptDialogueLines(packet, state, hostName)[0] ?? {};
   return `
     <section class="quick-detective-panel quick-transcript quick-statement-listen">
       ${quickSpeechBubbleHtml(line, "quick-statement-bubble", hostName)}
@@ -100,6 +100,19 @@ export function quickDetectiveTranscriptHtml(packet = {}, state = {}, { hostName
       <button class="primary quick-main-action" data-quick-next-turn type="button">${solo ? "这一段，怎么评" : (round.autoConfrontationIds ?? []).some((id) => !state.resolvedConfrontationIds?.includes(id)) ? "继续听" : packet.focusedInquiry ? "接着问" : "把刚才那段拉回来"}</button>
     </section>
   `;
+}
+
+export function quickTranscriptDialogueLines(packet = {}, state = {}, hostName = DEFAULT_PLAYER_NAME) {
+  const round = quickDisclosureRoundForState(packet, state);
+  const turns = new Map((packet.turns ?? []).map(turn => [turn.id, turn]));
+  return (round.turnIds ?? []).flatMap(id => {
+    const turn = turns.get(id) ?? {};
+    if (isSoloCommentary(packet)) return [{ role: "host", speaker: hostName, text: turn.source ?? turn.caller ?? "" }];
+    return [
+      { role: "host", speaker: hostName, text: turn.host ?? "" },
+      { role: "caller", speaker: "来电人", text: turn.caller ?? turn.source ?? "" }
+    ];
+  }).filter(line => line.text);
 }
 
 export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
@@ -115,7 +128,7 @@ export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostN
   const nextLine = lines[lineIndex + 1];
   const advanceLabel = nextLine
     ? "继续"
-    : solo ? (finalSoloRound ? "听主播结论" : "继续看下一段") : last ? "听最后一句" : "继续听";
+    : solo ? (finalSoloRound ? "结束点评" : "继续看下一段") : last ? "听最后一句" : "继续听";
   return `
     <section class="quick-detective-panel quick-confrontation">
       <header>
@@ -128,22 +141,22 @@ export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostN
 }
 
 export function quickDetectiveMissReactionHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
+  const clarification = packet.issueOptions?.find(option => option.id === state.activeIssueId)?.clarification;
   const reaction = quickMissLine(state);
   const role = reaction.role === "host" ? "host" : "caller";
   const speaker = reaction.speaker || (role === "host" ? hostName : "来电人");
   return `
     <section class="quick-detective-panel quick-miss-reaction">
-      <header><span>${state.missPhase === "question" ? "询问这句" : isSoloCommentary(packet) ? "这个角度先放下" : "来电人的回应"}</span></header>
+      <header><span>${state.missPhase === "question" ? "询问这句" : clarification ? "补充说明" : isSoloCommentary(packet) ? "这个角度先放下" : "来电人的回应"}</span></header>
       ${quickSpeechBubbleHtml({ role, speaker, text: reaction.text ?? "这句我现在不想往下说。" }, "quick-miss-bubble", hostName)}
-      <button class="primary quick-main-action" data-quick-after-miss type="button">${state.missPhase === "question" ? "继续" : isSoloCommentary(packet) ? "换个切口" : packet.focusedInquiry ? "换个问法" : "回到刚才那段"}</button>
+      <button class="primary quick-main-action" data-quick-after-miss type="button">${state.missPhase === "question" ? "继续" : clarification ? "接着问" : isSoloCommentary(packet) ? "换个切口" : packet.focusedInquiry ? "换个问法" : "回到刚才那段"}</button>
     </section>
   `;
 }
 
 export function quickDetectiveActiveLine(packet = {}, state = {}, hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME) {
   if (state.scene === "transcript") {
-    const round = quickDisclosureRoundForState(packet, state);
-    return { role: isSoloCommentary(packet) ? "host" : "caller", speaker: isSoloCommentary(packet) ? hostName : "来电人", text: statementTextFromTurns(packet, round) };
+    return quickTranscriptDialogueLines(packet, state, hostName)[0] ?? null;
   }
   if (state.scene === "confrontation") {
     const confrontation = (packet.confrontations ?? []).find((item) => item.id === state.activeConfrontationId) ?? {};

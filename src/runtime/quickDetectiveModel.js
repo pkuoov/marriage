@@ -21,6 +21,7 @@ export function initialQuickDetectiveState(packet = {}) {
     roundIndex: 0,
     turnIndex: 0,
     turnLineIndex: 0,
+    transcriptReading: null,
     activeConfrontationId: null,
     activeIssueId: null,
     activeSourceLineId: null,
@@ -55,6 +56,7 @@ export function normalizeQuickDetectiveState(value, packet = {}) {
     value = { ...value, flowVersion: base.flowVersion,
       roundIndex: nextRoundIndex, scene: ending ? "verdict" : "transcript",
       turnIndex: quickTurnIndexesForRound(packet, rounds[nextRoundIndex])[0] ?? 0, turnLineIndex: 0,
+      transcriptReading: null,
       activeConfrontationId: null, activeIssueId: null, activeSourceLineId: null,
       activeMissReaction: null, missPenaltyPending: false, confrontationLineIndex: 0,
       attemptedIssueIds: [], attemptedLineIds: [], verdictIndex: 0, verdictLineIndex: 0,
@@ -75,6 +77,7 @@ export function normalizeQuickDetectiveState(value, packet = {}) {
     roundIndex,
     turnIndex: boundedIndex(value.turnIndex, packet.turns?.length),
     turnLineIndex: boundedLineIndex(value.turnLineIndex, 2),
+    transcriptReading: value.transcriptReading ?? null,
     activeConfrontationId: confrontationIds.has(value.activeConfrontationId) ? value.activeConfrontationId : null,
     activeIssueId: issueIds.has(value.activeIssueId) ? value.activeIssueId : null,
     activeSourceLineId: typeof value.activeSourceLineId === "string" ? value.activeSourceLineId : null,
@@ -173,7 +176,7 @@ export function applyQuickIssueSelection(packet = {}, state = {}, issueId = "") 
   if (!confrontation && packet.focusedInquiry) return {
     ...state, scene: "missReaction", attemptedIssueIds, activeIssueId: issue.id,
     activeMissQuestion: issue.question ?? issue.label, activeMissReaction: statementMissReactionForOption(issue),
-    missPhase: "question", missPenaltyPending: true, afterMissScene: "issueSelection"
+    missPhase: "question", missPenaltyPending: !issue.clarification, afterMissScene: "issueSelection"
   };
   if (!confrontation || resolved.has(confrontation.id)) {
     return {

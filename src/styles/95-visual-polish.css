@@ -550,3 +550,61 @@ main:has(.demo-return-screen) > .topbar {
     width: calc(100% - 56px);
   }
 }
+.story-interlude-screen .vn-stage {
+  display: grid;
+  grid-template-rows: minmax(80px, 1fr) auto auto;
+  gap: 12px;
+  height: calc(100dvh - 10.5rem);
+  min-height: 0;
+  padding: 24px clamp(18px, 3vw, 42px) 16px;
+}
+
+.story-interlude-screen.dialogue-focus-stage .vn-stage .dialogue-card.avg-dialogue-active,
+.story-interlude-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active {
+  position: relative;
+  inset: auto;
+  grid-row: 2;
+  width: 100%;
+  min-height: 0;
+  max-height: none;
+  align-self: stretch;
+  padding: 0;
+  margin: 0;
+}
+
+.story-interlude-screen.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+  position: relative;
+  inset: auto;
+  grid-row: 3;
+  width: 100%;
+  max-height: none;
+}
+
+.story-interlude-screen.dialogue-focus-stage .avg-choice-overlay.inline-choice-flow:not([hidden]) .flow-group {
+  display: block;
+}
+
+.story-interlude-screen .flow-group > .choice-stack {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.story-interlude-screen .world-echo-hypothesis-choices {
+  grid-column: 1 / -1;
+}
+
+.story-interlude-screen:not(.choices-open) .vn-stage {
+  padding-bottom: 68px;
+}
+
+.story-interlude-screen .vn-stage .dialogue-card.avg-dialogue-active {
+  overflow: visible;
+}
+
+/* The dialogue nameplate identifies the speaker; avoid duplicate labels
+   underneath the shared reading controls at the foot of the stage. */
+.story-interlude-screen:has(.avg-textbox) .interlude-person figcaption {
+  display: none;
+}

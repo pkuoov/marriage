@@ -16,6 +16,7 @@ import {
 import { statementPressureFor } from "../../runtime/statementReviewModel.js";
 import {
   quickDetectiveActiveLine,
+  quickTranscriptDialogueLines,
   quickDetectiveCaseSelectHtml,
   quickDetectiveConfrontationHtml,
   quickDetectiveIntroHtml,
@@ -105,7 +106,7 @@ export function createQuickDetectiveScreens(ctx) {
     }
     state.quickDetective = normalizeQuickDetectiveState(state.quickDetective, packet);
     const quickState = state.quickDetective;
-    if (packet.focusedInquiry && quickState.scene === "issueSelection") {
+    if ((packet.focusedInquiry || packet.format === "solo-commentary") && quickState.scene === "issueSelection") {
       const options = quickAvailableInquiryOptions(packet, quickState);
       if (options.length === 1 && options[0].confrontationId) return updateQuickDetective(applyQuickIssueSelection(packet, quickState, options[0].id));
     }
@@ -223,36 +224,43 @@ export function createQuickDetectiveScreens(ctx) {
     }[quickState.scene] ?? "");
     if (actionButton) actionButton.hidden = true;
     const speed = ctx.getState().settings?.textSpeed ?? "normal";
+    const transcript = quickState.scene === "transcript";
+    const pages = (transcript ? quickTranscriptDialogueLines(packet, quickState, ctx.getState().playerName) : [line])
+      .map(entry => ({ lines: [{ ...entry, text: ctx.personalizeHostText(entry.text, ctx.getState().playerName) }] }));
     const autoPair = false;
     box.dataset.quickAutoPair = autoPair ? "true" : "false";
     let controller = null;
     controller = createDialogueController({
       box,
-      pages: [{ lines: [line] }],
+      pages,
       choices: null,
       speed,
+      fastForward: Boolean(ctx.getState().settings?.fastForward),
+      readingKey: `${packet.id}:transcript:${quickState.roundIndex}`,
+      resume: transcript ? quickState.transcriptReading : null,
+      onProgress: (progress, reason) => {
+        if (!transcript || ctx.getState().quickDetective !== quickState) return;
+        quickState.transcriptReading = progress;
+        if (reason !== "typing") ctx.saveState();
+      },
       hostName: ctx.getState().playerName,
-      onPageStart: (page) => syncDialoguePortraitFocus(root, page),
-      onShown: () => {
-        if (!autoPair) {
-          if (actionButton) {
-            actionButton.hidden = false;
-            actionButton.focus?.({ preventScroll: true });
-          }
-          box.dataset.dialogueDone = "true";
-          return;
+      onPageStart: (page, index) => {
+        syncDialoguePortraitFocus(root, page);
+        const material = root.querySelector(".quick-transcript .quick-inquiry-material");
+        if (material) material.hidden = index < pages.length - 1;
+      },
+      onChoicesShown: () => {
+        if (actionButton) {
+          actionButton.hidden = false;
+          actionButton.focus?.({ preventScroll: true });
         }
-        const indicator = box.querySelector(".avg-continue");
-        if (indicator) indicator.hidden = true;
-        quickAutoTimerId = globalThis.setTimeout(() => {
-          quickAutoTimerId = 0;
-          if (box.isConnected === false) return;
-          advanceQuickLine(packet, quickState);
-        }, 450);
+      },
+      onShown: (page, index) => {
+        if (index === pages.length - 1) controller.advance();
       }
     });
     box.addEventListener("click", () => {
-      if (!controller.complete) {
+      if (box.dataset.dialogueDone !== "true") {
         controller.advance();
         return;
       }

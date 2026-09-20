@@ -2,6 +2,7 @@ import { chromium } from "@playwright/test";
 import { access, readFile, mkdir } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
+import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js";
 import { testimonyReadingRoute } from "./lib/testimony-reading.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -50,6 +51,7 @@ const supportedSmokeTargets = new Set([
   "case1",
   "gamepad",
   "case2-transition",
+  "case-transition",
   "host-verdict",
   "portrait-viewports",
   "state-replacement",
@@ -81,6 +83,8 @@ try {
     await runSmokeStep("focused credit route", runFocusedCredit);
   } else if (smokeTarget === "gamepad") {
     await runSmokeStep("route 1/1 gamepad-support-document", () => runRoute(routes.find((route) => route.inputMode === "gamepad")));
+  } else if (smokeTarget === "case-transition") {
+    await runSmokeStep("case transition", runCaseTransition);
   } else if (smokeTarget === "case2-transition") {
     await runCase2DayMap();
     await runSmokeStep("case transition", runCaseTransition);
@@ -230,6 +234,7 @@ function smokeSummary(target) {
   if (target === "case34") return "case3-day-map, case4-day-map";
   if (["case1", "local-quick", "credit-replay", "credit-replay-path"].includes(target)) return "case 1 focused inquiry, retry and compact closing";
   if (target === "gamepad") return "gamepad-support-document";
+  if (target === "case-transition") return "case interludes, reading recovery, optional quick call and final news";
   if (target === "case2-transition") return "case2-day-map, case-transition";
   if (target === "host-verdict") return "host verdict staged at mobile and desktop widths";
   if (target === "portrait-viewports") return "portrait layouts at 390x844, 1280x720, 1366x768, 1280x800, 1920x1080";
@@ -764,9 +769,10 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
 
   let verdictText = "";
   for (const [roundIndex, anchors] of rounds.entries()) {
+    const listenText = [await drainDialogue(page, {}), ...await page.locator("[data-quick-dialogue-box] .avg-line").allTextContents()].join("\n");
     await assertQuickLayout(page, viewport, `${caseId} round ${roundIndex + 1} listen`, soloCommentary ? "host" : "caller", soloCommentary ? 1 : 2);
     if (roundIndex === 0) {
-      for (const text of expectedListen) await assertVisibleText(page, text, `${caseId} 首次听麦必须保留整段陈述内容`);
+      for (const text of expectedListen) if (!listenText.includes(text)) throw new Error(`${caseId} 首次阅读漏播：${text}`);
     }
     await assertVisibleText(page, soloCommentary ? "READ 长文" : "监听", soloCommentary ? "口播材料必须点亮长文状态" : "首次整段陈述必须点亮监听状态");
     if (roundIndex === 0 && viewport.width === 592) {
@@ -775,6 +781,11 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
       await page.locator(".quick-scene-issueSelection").waitFor({ state: "visible" });
     } else {
       await advanceQuickLine(page, "[data-quick-next-turn]");
+    }
+    if (soloCommentary && await page.locator(".quick-scene-confrontation").count()) {
+      if (authored.disclosureRounds[roundIndex].issueOptionIds.length !== 1) throw new Error("口播有多个角度时不得跳过选择");
+      await finishQuickConfrontation(page);
+      continue;
     }
     if ((authored.disclosureRounds[roundIndex].autoConfrontationIds ?? []).length) {
       await assertVisibleText(page, "连线继续", "普通交流直接接在陈述后，不要求寻找矛盾");
@@ -1831,7 +1842,8 @@ async function runScriptReadingMatrix() {
     page.setDefaultTimeout(browserActionTimeoutMs);
     try {
       await openCaseAtChapter(page, caseIndex + 1, `script-reading-${packet.caseId}`);
-      const stage = packet.statementStages.find((item) => item.sceneIndexes.includes(0));
+      const firstSceneIndex = packet.nightStructure.segment1SceneIndexes[0];
+      const stage = packet.statementStages.find((item) => item.sceneIndexes.includes(firstSceneIndex));
       const prompt = (await page.locator(".statement-stage-listen .call-line p").allTextContents()).join("");
       let previous = -1;
       for (const index of stage.sceneIndexes) {
@@ -2221,7 +2233,12 @@ async function runCaseTransition() {
       throw new Error(`first case tail did not render after closure:\n${await page.locator("body").innerText()}`);
     });
     await assertVisibleText(page, "第 2 晚 · 收播以后", "closure should move into the first case's lived epilogue without an authorial case-tail label");
-    await assertVisibleText(page, "我们俩大概一开始就看不上对方", "first case epilogue should establish Lin and Zhao as a couple through dialogue");
+    if (await page.locator('[data-enter-case-bridge]:visible').count()) throw Error('interlude must finish reading before the next case');
+    const firstLine = await page.locator('.avg-textbox').innerText();
+    await page.reload(); await click(page, '[data-continue-story]');
+    if (await page.locator('.avg-textbox').innerText() !== firstLine) throw Error('interlude reload lost the current reading page');
+    const interludeText = await drainDialogue(page, {});
+    if (!interludeText.includes('我们俩大概一开始就看不上对方')) throw Error('interlude omitted the relationship exchange');
     if (await page.locator('.story-interlude-stage[data-after-case="01-credit"]').count() !== 1) throw new Error("first case interlude must return to the off-air studio stage");
     if (await page.locator('.interlude-zhao img[src*="zhao-lawyer-teasing-pixel"]').count() !== 1) throw new Error("first case interlude must use Zhao's teasing portrait state");
     if (await page.locator(".pixel-transition-signal-disconnect").count() !== 1) throw new Error("program interlude should use one short disconnect signal transition");
@@ -2257,6 +2274,7 @@ async function runCaseTransition() {
     await page.reload();
     await click(page, "[data-continue-story]");
     await assertVisibleText(page, "第 4 晚 · 收播以后", "second case must close without an authorial case-tail label");
+    await drainDialogue(page, {});
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await assertVisibleText(page, "接一通插播", "second act interlude must expose the optional quick-call pressure valve");
     await click(page, "[data-enter-optional-quick]");
@@ -2291,18 +2309,21 @@ async function runCaseTransition() {
     await click(page, "[data-continue-story]");
     await page.getByText("收播以后").first().waitFor({ state: "visible" });
     await assertVisibleText(page, "收播以后", "final case must have its own lived epilogue");
-    await assertVisibleText(page, "屏幕右上角的“直播中”灭了", "final case tail must close through an on-screen action instead of an authorial end label");
+    const finalInterludeText = await drainDialogue(page, {});
+    if (!finalInterludeText.includes("屏幕右上角的“直播中”灭了")) throw new Error("final case tail must close through an on-screen action");
     if (await page.getByText("下一通 · 材料先到").count()) throw new Error("final case tail must not show a nonexistent next case");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("final world echo must not appear before player action");
     await assertVisibleText(page, "把四案里的宸直线索并在一起", "final world echo must first ask the player to connect the cross-case risk");
     await click(page, '[data-world-echo-hypothesis="cross-case-ledger"]');
-    await assertVisibleText(page, "栖行融资稿的押金归集附注", "the selected cross-case hypothesis must be acknowledged before the reveal");
+    const hypothesisText = await drainDialogue(page, {});
+    if (!hypothesisText.includes("栖行融资稿的押金归集附注")) throw new Error("the selected cross-case hypothesis must be acknowledged before the reveal");
     await assertVisibleText(page, "把新闻推送点开", "final world echo must be offered after the player records a hypothesis");
     if (await page.getByText("作为关联项目配资资金", { exact: false }).count()) throw new Error("deposit leverage must remain undisclosed before opening the notice");
     await click(page, "[data-reveal-world-echo]");
-    await assertVisibleText(page, "作为关联项目配资资金", "the disposal notice must pay off the deposited-funds trail");
+    const newsText = await drainDialogue(page, {});
+    if (!newsText.includes("作为关联项目配资资金")) throw new Error("the disposal notice must pay off the deposited-funds trail");
     await assertVisibleText(page, "宸直信托全部产品暂停兑付，实控人失联", "final world echo must pay off the case-one and case-two trust seeds");
-    await assertVisibleText(page, "各笔清偿金额尚未公布", "final world echo must preserve the unresolved recovery boundary");
+    if (!newsText.includes("各笔清偿金额尚未公布")) throw new Error("final world echo must preserve the unresolved recovery boundary");
     if (await page.locator('.story-world-echo-stage img[src*="chenzhi-news-push-pixel"]').count() !== 1) throw new Error("final world echo must switch to the trust-news ending CG");
     await click(page, "[data-enter-night-epilogue]");
     await assertVisibleText(page, "直播中", "whole-night epilogue should begin only after the fourth case tail");
@@ -2971,6 +2992,19 @@ function assertTextOrder(body, texts, message) {
   }
 }
 
+function assertFirstNightStatementsPlayed(packet, transcript) {
+  const text = transcript.replace(/\s/g, "");
+  let previous = -1;
+  for (const index of packet.nightStructure.segment1SceneIndexes) {
+    const scene = packet.sceneVersions[index];
+    if (scene.testimonyWall) continue;
+    const opening = splitDialogueSentences(scene.version)[0]?.replace(/\s/g, "");
+    const at = text.indexOf(opening, previous + 1);
+    if (!opening || at < 0) throw Error(`next scene statement skipped or out of order: ${packet.caseId}/${scene.id}`);
+    previous = at;
+  }
+}
+
 async function runFocusedCredit() {
   const [width, height] = (process.env.SMOKE_VIEWPORT || "1280x720").split("x").map(Number);
   const context = await browser.newContext({ viewport: { width, height }, reducedMotion: "reduce" });
@@ -2995,6 +3029,7 @@ async function runFocusedCredit() {
       if (snapshot.scene === "storyInterlude") {
         if (!wrongLoan || !retriedLoan || !reloaded) throw new Error("retry/reload regression was not exercised");
         const text = transcript.join("\n");
+        assertFirstNightStatementsPlayed(authoredCasePackets[0], text);
         for (const phrase of ["酒水", "后台", "两年前", "二十万", "反正八万我不转"]) {
           if (!text.includes(phrase)) throw new Error(`route never rendered ${phrase}`);
         }
@@ -3137,6 +3172,7 @@ async function runSixReviewedCases() {
       }
       if (!done || !reloaded || (chapter === 2 && !wrongMaterial)) throw Error('main case did not complete reload, material retry and closing');
       const text=transcript.join('\n');
+      assertFirstNightStatementsPlayed(packet, text);
       const normalizedText = text.replace(/\s/g, '');
       for (const dayScene of packet.overnightStructure?.dayScenes ?? []) {
         if (!dayScene.body?.beats?.length) continue;
@@ -3195,6 +3231,18 @@ async function runSixReviewedCases() {
         if(!clicked)throw Error(`quick stuck: ${await page.locator('body').innerText()}`);
       }
       if(!done)throw Error('quick did not finish');if(packet.focusedInquiry&&!reloaded)throw Error('quick not resumed');if(hasReachableQuickMiss(packet) && !wrong)throw Error('reachable quick retry not exercised');if(errors.length)throw Error(errors.join('\n'));
+      if (packet.focusedInquiry) {
+        const played = transcript.join('\n').replace(/\s/g, '');
+        let last = -1;
+        for (const round of packet.disclosureRounds) for (const turnId of round.turnIds) {
+          const turn = packet.turns.find(t => t.id === turnId);
+          for (const text of [turn.host, turn.caller].filter(Boolean)) {
+            const at = played.indexOf(text.replace(/\s/g, ''), last + 1);
+            if (at < 0) throw Error(`quick host/caller exchange skipped or reordered: ${id}/${turnId}`);
+            last = at;
+          }
+        }
+      }
       await writeFile(resolve(directory,`${id}-route.txt`),transcript.join('\n'));
       await click(page,'[data-quick-select]');if(!await page.locator(`.is-complete[data-quick-case-id="${id}"]`).count())throw Error('completion missing');
       smokeProgress(`PASS ${id}: complete and saved${packet.format === 'solo-commentary' ? ` (ending ${++soloEndingChoice})` : ''}`);

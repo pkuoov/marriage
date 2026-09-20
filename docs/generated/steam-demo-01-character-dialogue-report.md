@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：39
-- 收录台词／玩家可见人物材料：1050
+- 收录台词／玩家可见人物材料：1051
 - 本包实际出声人物：33
 - 句长节奏人工复核提示：24
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -33,7 +33,7 @@
 - `$manifest.nightShell.interludes[1].lines[5]` 原页留着，明天接着看。他今晚不肯再垫了，公司拿什么还他，还没答。
 - `$manifest.nightShell.interludes[2].lines[3]` 我只看见持有页，三十万，写着九月底到期。合同没上屏。
 - `$manifest.nightShell.interludes[2].lines[5]` 没发。她爸那笔是留给女儿自己的，婚宴首饰照样让男方出。
-- `$manifest.nightShell.interludes[2].lines[9]` 还是会去。可那顿饭吃完，我有多少钱、愿意怎么花，得由我自己说。
+- `$manifest.nightShell.interludes[2].lines[10]` 还是会去。可那顿饭吃完，我有多少钱、愿意怎么花，得由我自己说。
 - `$manifest.nightShell.interludes[3].lines[2]` 我洗。你站旁边监督。
 - `$manifest.nightShell.cafePrologue.cafe.openingLines[2]` 行，赵同学。人都等着了，回家再数落我。
 - `$manifest.nightShell.cafePrologue.cafe.openingLines[4]` 就昨天电话里聊的那些？
@@ -43,8 +43,8 @@
 - `$manifest.nightShell.cafePrologue.cafe.evidencePair[1].hitLines[2]` 这张订单状态是已入住，入住人写的是你。你刚说那晚没去，怎么对得上？
 - `$manifest.nightShell.cafePrologue.cafe.revisedPresentLeadLines[0]` 你刚才说得很清楚：你跟顾*之间没转过钱。
 - `$manifest.nightShell.cafePrologue.cafe.transferHitLines[0]` 你刚说没转过钱。流水里有三笔，交易对手都是顾*。这个怎么说？
-- `$manifest.nightShell.cafePrologue.aftermath.openingLines[4]` 你先去问我给你的那家机构，受理需要谁到场，带哪些材料都先问清。
-- `$manifest.nightShell.cafePrologue.aftermath.openingLines[5]` 孩子大部分东西估计她都带走了，你可能得仔细找下家里还能去做鉴定的东西。
+- `$manifest.nightShell.cafePrologue.aftermath.openingLines[4]` 我把一家鉴定机构的公开联系方式发给你。受理需要谁到场，带哪些材料，你先问清。
+- `$manifest.nightShell.cafePrologue.aftermath.openingLines[5]` 家里还留着孩子用过的东西吗？哪些能用，也先问机构。
 - `$manifest.nightShell.cafePrologue.aftermath.openingLines[7]` 嗯，到家给我打个电话。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[0].lines[1]` 你问过机构了吗？
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[1]` 你发来吧。我请平时帮节目核账的周会计一起看。
@@ -53,7 +53,7 @@
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[8]` 你自己的卡，电子回单能下载吗？
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].handoffLines[0]` 那你把回单发给赵律师。拿到之后，我们再一起看。
 - `$manifest.nightShell.cafePrologue.forensic.openingLines[8]` 结果我们听到了。生父是谁，不猜；孩子以后怎么安排，你们跟律师私下谈。这段不公开。
-- `$manifest.nightShell.cafePrologue.forensic.accountClueLines[4]` 那就先别把这笔钱也算到顾*头上。
+- `$manifest.nightShell.cafePrologue.forensic.accountClueLines[5]` 那就先别把这笔钱也算到顾*头上。
 
 ## 老方
 
@@ -68,7 +68,7 @@
 - `$manifest.nightShell.interludes[1].lines[1]` （嗦面声）前一场谁先垫谁主办，这一场谁先报谁着急。
 - `$manifest.nightShell.interludes[1].lines[4]` 做共享柜的，稿里列了租金、维护成本，还有押金的关联往来，接收方有宸直。陈今天那笔报销，跟这里还对不上。
 - `$manifest.nightShell.interludes[1].lines[6]` 先吃吧。我这面已经能整块夹起来了。
-- `$manifest.nightShell.interludes[2].lines[6]` 后台有人丢来一页打码课纲，标题和来源都遮了，只剩四个词：安全感、态度、向上社交、退出。
+- `$manifest.nightShell.interludes[2].lines[7]` 有个自称买过婚恋课的观众私信我，说听了今晚这通，想找卖课的人退款，问我能不能帮她看看。她只肯发一页打码课纲，怕被认出来；标题和来源都遮了，只剩安全感、态度、向上社交、退出这四个词。
 
 ## 旁白
 
@@ -89,6 +89,7 @@
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[2]` 你在微信里建了个临时群，把男方和周会计加进来，发起群语音。周会计接通后，你将男方刚发来的明细转给他。
 - `$manifest.nightShell.cafePrologue.forensic.openingLines[0]` 回忆结束，时间回到现在。距离咖啡厅那晚已经过去数周。录制关闭。赵律师带来一份新的委托记录：妻子要求孩子的信息不得公开，随后同意双方带孩子到机构。工作人员核对身份、完成现场采样，今天才回告结果。
 - `$manifest.nightShell.cafePrologue.forensic.openingLines[2]` 男方把手机扣在桌上，手还压着，许久没有说话。
+- `$manifest.nightShell.cafePrologue.forensic.accountClueLines[2]` 赵律师打开周会计核对这份回单后发来的语音。
 
 ## 赵律师
 
@@ -109,8 +110,8 @@
 - `$manifest.nightShell.interludes[0].lines[11]` 那我问个不用证据的。我要是也这么爱面子、花钱没数，你会不会什么都给我买？
 - `$manifest.nightShell.interludes[2].lines[2]` 你刚才说的那笔宸直，女方家买的是哪一款？
 - `$manifest.nightShell.interludes[2].lines[4]` 持有页写的是九月底。合同还没发来？
-- `$manifest.nightShell.interludes[2].lines[7]` 四个词，裁得连抬头都不剩了。叫老方找找原图吧。
-- `$manifest.nightShell.interludes[2].lines[8]` 先别替人家发愁。你第一次去我家的时候，我爸妈要是先问你能拿多少，你还会来吗？
+- `$manifest.nightShell.interludes[2].lines[8]` 她想退课，先让她把购买记录和完整课纲发来。四个词，看不出对方到底教了什么。
+- `$manifest.nightShell.interludes[2].lines[9]` 先别替人家发愁。你第一次去我家的时候，我爸妈要是先问你能拿多少，你还会来吗？
 - `$manifest.nightShell.interludes[3].lines[1]` 今晚这些杯子，谁洗？
 - `$manifest.nightShell.interludes[3].lines[3]` 不监督。我在门口等你。
 - `$manifest.nightShell.cafePrologue.cafe.openingLines[1]` 站好，领子又卷了。大学到现在，一出门就得给你理。
@@ -121,7 +122,7 @@
 - `$manifest.nightShell.cafePrologue.aftermath.routes[0].lines[3]` 机构的受理说明和结果都留好。到时候我看材料，再谈法院里的申请，今天不替法院下结论。
 - `$manifest.nightShell.cafePrologue.forensic.openingLines[4]` 那些日子不会因为这张纸就没发生过。今天不用把以后的事全决定。
 - `$manifest.nightShell.cafePrologue.forensic.openingLines[7]` 不能直接改。你要提出亲子关系异议，就把这份意见和相关材料交给法院审查。是否还要由法院委托鉴定，得由法院决定。
-- `$manifest.nightShell.cafePrologue.forensic.accountClueLines[3]` 回单留好。这笔钱为什么每月都转，后面再查。
+- `$manifest.nightShell.cafePrologue.forensic.accountClueLines[4]` 回单留好。这笔钱为什么每月都转，后面再查。
 
 ## 周会计
 
@@ -135,7 +136,7 @@
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[3]` 老林，你这下班语音，比上班还准时。明细我收到了，五号是房贷，十八号还有一笔固定转出。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[5]` 四个月前就结清了，跟十八号这笔对不上。
 - `$manifest.nightShell.cafePrologue.aftermath.routes[1].lines[7]` ‘私教课时’。连续四个月，都是同一天、同一个数。收款人的名字没显示全。
-- `$manifest.nightShell.cafePrologue.forensic.accountClueLines[2]` 我看过了。十八号那笔，收款人不是顾*。
+- `$manifest.nightShell.cafePrologue.forensic.accountClueLines[3]` 我看过了。十八号那笔，收款人不是顾*。
 
 ## 张法医
 
@@ -291,7 +292,7 @@
 - `$case.nightStructure.hangup` 他把材料都发你了吧？那你看，我明晚再来。
 - `$case.sceneVersions[0].version` 工资卡他自己拿着，每个月转我一半，已经一年多了。不住在一起，他住他的，我住我的。以前吃饭出去玩也都是他付，他从没说吃力。就是这个月没转，我才去问他。结果自己的钱没等到，他倒让我先拿八万。我就想问，之前愿意给我的，现在还能反过来逼我还吗？
 - `$case.sceneVersions[1].version` 这个月那笔没来，我就问他怎么回事，他还是说奖金晚发。我不放心，才让他把工资记录发来。工资记录没发，只给了我一份从电子社保卡导出的缴费记录，说公司漏缴了两个月。我翻到最后，才发现缴费停在四月。可四月以后，他还天天跟我说加班。
-- `$case.sceneVersions[2].version` 账单八万出头。男装就五千左右，一件大衣两千多，他都没工作了，还买这些。餐厅、酒店和礼物也有，都是我们一起出去的。云栖那顿纪念日晚餐最贵，主要贵在酒，店和靠窗位是我让他订的。还有一万二的拍摄设备，在我家。我没把每一笔都加起来。
+- `$case.sceneVersions[2].version` 账单八万出头。男装就五千左右，一件大衣两千多，奖金都没发，还买这些。餐厅、酒店和礼物也有，都是我们一起出去的。云栖那顿纪念日晚餐最贵，主要贵在酒，店和靠窗位是我让他订的。还有一万二的拍摄设备，在我家。我没把每一笔都加起来。
 - `$case.sceneVersions[3].version` 我俩第一次去那家餐厅。靠窗那排好拍照，我才让他订。认识他以前跟朋友去过一次，没别的了。
 
 ### 夜 B
@@ -383,7 +384,7 @@
 
 ### 其他出声面
 
-- `$manifest.nightShell.prologue.coldOpen.line` 我只是怕你知道我失业后就离开我。
+- `$manifest.nightShell.prologue.coldOpen.line` 这次先帮我顶几天，我会还你的。
 
 ## 案一闺蜜
 
@@ -768,7 +769,7 @@
 - `$case.openingDialogue[8]` 没信。我让他打流水，他只发来一份工资账户流水。
 - `$case.openingDialogue[10]` 二十八万六。
 - `$case.sceneVersions[1].noClueReaction` 那顿饭已经够尴尬了。你还想问什么？
-- `$case.sceneVersions[1].questionOptions[0].lines[0]` 那个……当时桌上还有介绍人，我没接着问。
+- `$case.sceneVersions[1].questionOptions[0].lines[0]` 那个……当时桌上还有介绍人，我没接着问。回家也没解释，还是跟家里说他是那所学校本科毕业。
 - `$case.sceneVersions[1].questionOptions[0].lines[2]` 介绍人那张学校图摆在那儿，谁看了不以为是本科？我总不能在饭桌上跟他查户口吧。
 - `$case.sceneVersions[2].noClueReaction` 介绍人的话我就听到这些。再让我念，也还是这几句。
 - `$case.sceneVersions[2].questionOptions[0].lines[0]` 我当时也觉得他该多拿一点。这个数是我妈提的……但我只说别把人吓跑，没让她撤回二十八万八。
@@ -1359,7 +1360,7 @@
 - `$quick.issueOptions[2].question` 十一点五十二你回的是‘还行’，六分钟以后就没再回。你回‘还行’的时候，身体到底怎么样？
 - `$quick.issueOptions[3].question` 你刚说有些酒是别人点的。这个‘别人’是谁？
 - `$quick.issueOptions[4].question` 这两个月六次酒吧、KTV，上个月三个周末都有。你说很久没出去，是这些都不算？
-- `$quick.issueOptions[5].question` 他回那句‘听了’隔了很久。你漏回的那六分钟，是信号不好，还是已经喝多了？
+- `$quick.issueOptions[5].question` 前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？
 - `$quick.issueOptions[6].question` 你说解释过了，当时怎么跟他讲的？
 - `$quick.issueOptions[7].question` 十号你为九号喝多道歉，又发了八号在 KTV 的照片。你发的时候，有没有写清是哪天拍的？
 - `$quick.confrontations[0].lines[0]` 花是你先开口要的。他真送来以后，你还是觉得缺点什么？
@@ -1402,7 +1403,7 @@
 - `$quick.turns[10].caller` 他可能以为是喝断片那晚拍的，其实不是，那是八号的照片，我晚了两天才发。
 - `$quick.turns[11].caller` 我跟师姐去唱歌，包厢套餐里带了六杯鸡尾酒。那天就我们两个，我也没喝醉，和九号不是一回事。
 - `$quick.issueOptions[1].confrontationOpeningLines[1].text` 我高兴啊，可也想知道他为什么愿意送。他就说你喜欢就买了，后面又没话。
-- `$quick.issueOptions[5].missReaction.text` 不是信号。我回完还行就接着喝了。身体那会儿已经不对。
+- `$quick.issueOptions[5].missReaction.text` 回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。
 - `$quick.confrontations[0].lines[1]` 我高兴啊，可也想知道他为什么愿意送。他就说你喜欢就买了，后面又没话。
 - `$quick.confrontations[0].lines[3]` 说过，我还截给他看了。有人羡慕我也高兴啊。但总不能有花有包，就不用好好聊天了吧。
 - `$quick.confrontations[1].lines[1]` 已经有点难受了。我当时想着马上就走，没必要让他跟着担心。谁知道几分钟以后会吐成那样。

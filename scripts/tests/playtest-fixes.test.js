@@ -9,7 +9,29 @@ import { unlockedMaterialProfile } from "../../src/runtime/materialVisibility.js
 import { createRecapScreens } from "../../src/ui/screens/recapScreens.js";
 import { refreshSavedExchangeCopy } from "../../src/runtime/savedContentRefresh.js";
 import { normalizedCafePrologueProgress, cafePrologueCanOpenForensic, cafePrologueSceneForStep } from "../../src/runtime/prologueCafeModel.js";
+import { storyInterludeHtml } from "../../src/ui/storyInterludeView.js";
+import { titleScreenHtml } from "../../src/ui/titleView.js";
 const credit = JSON.parse(readFileSync(new URL("../../content/packs/steam-demo-01/cases/01-credit.json", import.meta.url)));
+
+test("案间只播放当前阶段；点开新闻后不重新播放案间交流与先前假设", () => {
+  const base = { shellLines: [{ role: "host", text: "桌边的交流" }], shellAfterLines: [{ text: "手机收到推送" }] };
+  const opening = storyInterludeHtml(base);
+  assert.match(opening, /桌边的交流/);
+  assert.match(opening, /手机收到推送/);
+  const hypothesis = { response: "先前材料支持的假设" };
+  const selected = storyInterludeHtml({ ...base, worldEchoHypothesis: hypothesis });
+  assert.match(selected, /先前材料支持的假设/);
+  assert.doesNotMatch(selected, /桌边的交流|手机收到推送/);
+  const news = storyInterludeHtml({ ...base, worldEchoHypothesis: hypothesis, worldEcho: { headline: "新闻标题", body: "公告第一段\n\n公告第二段" } });
+  assert.match(news, /新闻标题[\s\S]*公告第一段[\s\S]*公告第二段/);
+  assert.doesNotMatch(news, /桌边的交流|先前材料支持的假设/);
+});
+
+test("已完成的旅程在标题页明确提供重看片尾，未完成仍是继续直播", () => {
+  assert.match(titleScreenHtml({ canContinue: true, journeyComplete: true }), /重看片尾/);
+  assert.doesNotMatch(titleScreenHtml({ canContinue: true, journeyComplete: true }), /继续上次直播/);
+  assert.match(titleScreenHtml({ canContinue: true }), /继续上次直播/);
+});
 
 test("旧存档的回答与材料反馈同步新台词，保留进度和既有预算", () => {
   const brief = { ...credit, id: "credit-save" };

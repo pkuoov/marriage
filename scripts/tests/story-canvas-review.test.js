@@ -29,7 +29,7 @@ test("匿名餐厅旧图在第一夜收到，来源不再依赖前同事和流�
   assert.equal(hook.triggerAction, "version:2");
   assert.match(hook.socialPost.postedAt, /两年前/);
   assert.ok(!b.investigationHooks.some(h => h.id === "credit-ex-coworker-note"));
-  assert.ok(b.nightStructure.interlude.actions.some(a => a.hookId === hook.id));
+  assert.ok(!b.nightStructure.interlude.actions.some(a => a.hookId === hook.id), "第一夜已核对的旧图不能在收麦后再次出题");
 });
 
 test("回放、立场与材料沿用压力和连线声音，但保留自己的页面路由", () => {

@@ -729,7 +729,7 @@
       {
         "kicker": "说到这里",
         "title": "收麦",
-        "stageLabel": "通话结束",
+        "stageLabel": "点评结束",
         "lines": [
           {
             "role": "host",

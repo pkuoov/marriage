@@ -14,7 +14,7 @@ function select(p = packet, id = option.id, roundIndex = 0) {
   return applyQuickStatementLineSelection(p, state, line.id);
 }
 
-test("误问先播放问题，读档继续回答，简化模式不再扣费", () => {
+test("补问先播放问题，读档继续回答，回到本轮待问事实", () => {
   let s = select();
   const initial = quickRoundPatienceForState(packet, s).remaining;
   assert.equal(quickMissLine(s).text, option.question);
@@ -26,8 +26,8 @@ test("误问先播放问题，读档继续回答，简化模式不再扣费", ()
   assert.equal(quickRoundPatienceForState(packet, s).remaining, initial);
   s = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(s)), packet);
   s = advanceQuickMissReaction(packet, s);
-  assert.equal(s.scene, "transcript");
-  assert.equal(s.roundIndex, 1);
+  assert.equal(s.scene, "issueSelection");
+  assert.equal(s.roundIndex, 0);
   assert.equal(s.roundPatience[packet.disclosureRounds[0].id].remaining, initial);
 });
 
@@ -38,8 +38,8 @@ test("简化问询保留旧消耗记录，读完反馈不再追加扣费", () =>
   s = advanceQuickMissReaction(packet, s);
   assert.equal(s.scene, "missReaction");
   s = advanceQuickMissReaction(packet, s);
-  assert.equal(s.scene, "transcript");
-  assert.equal(s.roundIndex, 1);
+  assert.equal(s.scene, "issueSelection");
+  assert.equal(s.roundIndex, 0);
   const legacy = { ...select(), missPhase: undefined, missPenaltyPending: undefined, activeMissQuestion: undefined, roundPatience: { [round.id]: { max: round.patience, remaining: 2 } } };
   const restored = advanceQuickMissReaction(packet, normalizeQuickDetectiveState(legacy, packet));
   assert.equal(restored.roundPatience[round.id].remaining, 2);
@@ -83,11 +83,11 @@ import { refreshSavedExchangeCopy } from '../../src/runtime/savedContentRefresh.
 import { statementLinesFromText } from '../../src/runtime/statementReviewModel.js';
 const credit = JSON.parse(readFileSync(new URL('../../content/packs/steam-demo-01/cases/01-credit.json', import.meta.url)));
 
-test('案一第一夜与第二夜出示同一份有日期和配文的旧图', () => {
+test('案一首次出示的旧图保留日期配文，收麦后不再重复出题', () => {
   const hook = credit.investigationHooks.find(h => h.id === 'credit-friend-dm');
   const check = credit.evidenceChecks.find(c => c.id === 'credit-anniversary-footprint');
   const action = credit.nightStructure.interlude.actions.find(a => a.hookId === hook.id);
-  assert.ok(action);
+  assert.equal(action, undefined);
   assert.equal(credit.nightStructure.interlude.flowMode, 'linear');
   for (const key of ['postedAt','location','caption','comment']) {
     assert.equal(check.socialPost[key], hook.socialPost[key]);

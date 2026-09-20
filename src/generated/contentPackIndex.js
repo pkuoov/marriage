@@ -1996,7 +1996,7 @@ export const CONTENT_PACKS = {
             "speaker": "男方语音（来电人转发）",
             "speakerProfileId": "case1-respondent",
             "type": "caller",
-            "text": "我只是怕你知道我失业后就离开我。",
+            "text": "这次先帮我顶几天，我会还你的。",
             "audioCueId": "voice.case1.loyalty-message"
           },
           "baitComments": [
@@ -2221,14 +2221,18 @@ export const CONTENT_PACKS = {
               "text": "没发。她爸那笔是留给女儿自己的，婚宴首饰照样让男方出。"
             },
             {
+              "role": "stage",
+              "text": "手机收到老方发来的语音。你对赵律师说了声“等一下”，点开播放。"
+            },
+            {
               "speaker": "老方（语音）",
               "role": "production",
-              "text": "后台有人丢来一页打码课纲，标题和来源都遮了，只剩四个词：安全感、态度、向上社交、退出。"
+              "text": "有个自称买过婚恋课的观众私信我，说听了今晚这通，想找卖课的人退款，问我能不能帮她看看。她只肯发一页打码课纲，怕被认出来；标题和来源都遮了，只剩安全感、态度、向上社交、退出这四个词。"
             },
             {
               "speaker": "赵律师（语音）",
               "role": "advisor",
-              "text": "四个词，裁得连抬头都不剩了。叫老方找找原图吧。"
+              "text": "她想退课，先让她把购买记录和完整课纲发来。四个词，看不出对方到底教了什么。"
             },
             {
               "speaker": "赵律师（语音）",
@@ -2288,6 +2292,10 @@ export const CONTENT_PACKS = {
             {
               "role": "stage",
               "text": "屏幕右上角的“直播中”灭了。"
+            },
+            {
+              "role": "stage",
+              "text": "桌上的手机亮了一下，财经新闻推送里出现“宸直”两个字。你把杯子放回桌上，叫住门口的赵律师。"
             }
           ],
           "worldEcho": {
@@ -2952,19 +2960,19 @@ export const CONTENT_PACKS = {
               "speaker": "林旭阳",
               "speakerProfileId": "host-lin-xuyang",
               "type": "host",
-              "text": "你先去问我给你的那家机构，受理需要谁到场，带哪些材料都先问清。"
+              "text": "我把一家鉴定机构的公开联系方式发给你。受理需要谁到场，带哪些材料，你先问清。"
             },
             {
               "speaker": "林旭阳",
               "speakerProfileId": "host-lin-xuyang",
               "type": "host",
-              "text": "孩子大部分东西估计她都带走了，你可能得仔细找下家里还能去做鉴定的东西。"
+              "text": "家里还留着孩子用过的东西吗？哪些能用，也先问机构。"
             },
             {
               "speaker": "男方",
               "speakerProfileId": "prologue-cafe-husband",
               "type": "participant",
-              "text": "那我现在回家？"
+              "text": "家里应该还有。我现在回去找找？"
             },
             {
               "speaker": "林旭阳",
@@ -3174,7 +3182,13 @@ export const CONTENT_PACKS = {
               "text": "发给你们看的这份，我把名字遮了，只留了姓。"
             },
             {
-              "speaker": "周会计",
+              "speaker": "旁白",
+              "type": "narration",
+              "text": "赵律师打开周会计核对这份回单后发来的语音。",
+              "speakerProfileId": "narrator"
+            },
+            {
+              "speaker": "周会计（语音）",
               "speakerProfileId": "zhou-accountant",
               "type": "advisor",
               "text": "我看过了。十八号那笔，收款人不是顾*。"
@@ -3941,7 +3955,7 @@ export const CONTENT_CASES = {
               }
             ]
           },
-          "version": "账单八万出头。男装就五千左右，一件大衣两千多，他都没工作了，还买这些。餐厅、酒店和礼物也有，都是我们一起出去的。云栖那顿纪念日晚餐最贵，主要贵在酒，店和靠窗位是我让他订的。还有一万二的拍摄设备，在我家。我没把每一笔都加起来。",
+          "version": "账单八万出头。男装就五千左右，一件大衣两千多，奖金都没发，还买这些。餐厅、酒店和礼物也有，都是我们一起出去的。云栖那顿纪念日晚餐最贵，主要贵在酒，店和靠窗位是我让他订的。还有一万二的拍摄设备，在我家。我没把每一笔都加起来。",
           "helperHint": "账单已收到，可以打开查看。",
           "doubt": "金额、用途和时间都比“垫几天”重得多。",
           "contradiction": "咨询者先指责男方约五千元男装，又确认餐厅、礼物和设备与自己有关；两类金额之外仍有至少三万五用途不明。",
@@ -5539,20 +5553,7 @@ export const CONTENT_CASES = {
           "minActions": 0,
           "maxActions": 0,
           "continueLabel": "进入白天调查",
-          "actions": [
-            {
-              "id": "friend-dm-early",
-              "label": "再看一眼已对过的朋友圈",
-              "summary": "匿名来信那张两年前的云栖朋友圈已经对过。男方流水留到白天打开。",
-              "cost": 0,
-              "kind": "backflowEarly",
-              "hookId": "credit-friend-dm",
-              "grantsInventory": [
-                "friend-dm-seen"
-              ],
-              "replyChoices": []
-            }
-          ],
+          "actions": [],
           "flowMode": "linear"
         },
         "returnStance": {
@@ -5586,7 +5587,7 @@ export const CONTENT_CASES = {
             "kind": "studio",
             "body": {
               "access": "男方直接向节目提交并同意遮名展示。",
-              "text": "昨晚你把男方发来的材料转给一直帮工作室记账的周会计，请他帮忙看这几笔进出。他约你上午在工作室碰头，把外套搭在椅背上。",
+              "text": "昨晚你把男方发来的材料转给一直帮工作室记账的周会计，请他帮忙看这几笔进出。他约你下午在工作室碰头，把外套搭在椅背上。",
               "earnedItemId": "男方后台材料",
               "sourceNote": "男方为说明钱的用途补来流水；你请平时帮工作室记账的周会计一起看。",
               "documentId": "case1-bank-flow",
@@ -8106,11 +8107,11 @@ export const CONTENT_CASES = {
               "question": "他已经承认本科不是那所。你当时为什么没接着问，前面那句“名校毕业”到底怎么来的？",
               "sourceAnchor": "本科不是",
               "suspicionLabel": "他已经承认本科不是那所。你当时为什么没接着问，前面那句“名校毕业”到底怎么来的？",
-              "answer": "那个……当时桌上还有介绍人，我没接着问。介绍人那张学校图摆在那儿，谁看了不以为是本科？我总不能在饭桌上跟他查户口吧。",
+              "answer": "那个……当时桌上还有介绍人，我没接着问。回家也没解释，还是跟家里说他是那所学校本科毕业。介绍人那张学校图摆在那儿，谁看了不以为是本科？我总不能在饭桌上跟他查户口吧。",
               "lines": [
                 {
                   "role": "caller",
-                  "text": "那个……当时桌上还有介绍人，我没接着问。"
+                  "text": "那个……当时桌上还有介绍人，我没接着问。回家也没解释，还是跟家里说他是那所学校本科毕业。"
                 },
                 {
                   "role": "host",
@@ -9185,12 +9186,13 @@ export const CONTENT_CASES = {
             },
             {
               "label": "收入稳是看过材料还是听来的",
-              "correct": false,
-              "feedback": "另一段聊天里，她也替女方说过没确认的话。先查“收入稳”从哪儿来的。",
-              "reactionLine": "她没说看过材料。给我家的原话，只写了收入稳。",
+              "correct": true,
+              "feedback": "先问清“收入稳”是看过材料，还是听来的。",
+              "reactionLine": "她没说看过材料。给我家的原话，只写了收入稳。明天你帮我问一句，她到底看过什么。",
               "routeAxis": "caller-credibility",
               "id": "profile-introducer-double-speak:option:1",
-              "question": "她给女方家说收入稳。这句话，她有没有说是看过材料，还是听男方家说的？"
+              "question": "她给女方家说收入稳。这句话，她有没有说是看过材料，还是听男方家说的？",
+              "contradiction": "介绍人对两边都抬高好处、压低短处，条件版本被介绍链共同加工。"
             },
             {
               "label": "她说的“稳定”是多少钱",
@@ -9777,11 +9779,11 @@ export const CONTENT_CASES = {
             "backdropClass": "day-document",
             "kind": "document",
             "body": {
-              "access": "学校页、缴费回单和男方已经发给女方的工资账户流水由男方明确同意查看；其他账户从未提供，也不在授权范围内。家里群截图来自自称表妹的后台账号，来电人尚未同意公开，只能麦外查看，带回直播前必须先问她。",
+              "access": "学校页、缴费回单和男方已经发给女方的工资账户流水由男方明确同意查看；其他账户从未提供，也不在授权范围内。家里群截图来自自称表妹的后台账号，来电人尚未同意公开，只能麦外查看，带回直播前必须先问她。来电人另补了父亲的宸直持有页，说这能证明家里答应的二十万不是空话。",
               "documentId": "case3-credential-balance",
               "routeAxis": "document-edge",
               "earnedItemId": "双份材料圈注",
-              "sourceNote": "男方同意核对这份学费回单和工资流水；家里群截图还没征得来电人同意，暂时只在后台看。"
+              "sourceNote": "男方同意核对这份学费回单和工资流水；家里群截图还没征得来电人同意，暂时只在后台看。来电人另补了父亲的宸直持有页，说这能证明家里答应的二十万不是空话。"
             }
           }
         ],
@@ -9849,7 +9851,7 @@ export const CONTENT_CASES = {
       "stanceSnapshot": {
         "afterScene": 3,
         "kicker": "中段立场快照",
-        "prompt": "走到这儿，你最想先问哪件？",
+        "prompt": "走到这儿，哪件事最让你在意？",
         "note": "不判分。按下你现在最在意的那件事。",
         "afterPickLine": "她要回家里群看原话。明天再问那几个数字是怎么传出去的。",
         "continueLabel": "继续听",
@@ -9873,7 +9875,7 @@ export const CONTENT_CASES = {
             "id": "market-coauthored",
             "label": "一张工资卡能回答多少",
             "summary": "她知道男方只发工资卡，却抓着二十八万六与彩礼的差额不放。",
-            "feedback": "她问过其他账户，却仍想靠这张卡判断他肯不肯给。",
+            "feedback": "目前只有一张工资卡，其他账户和她的付款要求还没说清。",
             "recap": "工资账户有二十八万六；其他账户没有交，不能拿差额替他答应条件。"
           }
         ]
@@ -10599,7 +10601,7 @@ export const CONTENT_CASES = {
             "lines": [
               {
                 "role": "stage",
-                "text": "她把手机扣在桌上。右边金额露出来以后，她先不说话。"
+                "text": "听筒里响了一下。她停了片刻，没有把右半张发来。"
               },
               {
                 "role": "host",
@@ -11719,7 +11721,7 @@ export const CONTENT_CASES = {
               "kind": "提醒",
               "amount": "要回",
               "party": "何→节目",
-              "memo": "草稿把代投写成养鱼骗钱"
+              "memo": "草稿：“Tony 养鱼骗钱，把我转的十二万还回来。”"
             }
           ]
         },
@@ -12768,7 +12770,8 @@ export const CONTENT_QUICK_CASES = {
             "kind": "reveal",
             "eyebrow": "称呼对不上",
             "label": "两个“爸爸”",
-            "visualVariant": "two-fathers"
+            "visualVariant": "two-fathers",
+            "lineIndex": 4
           },
           "lines": [
             {
@@ -13145,9 +13148,6 @@ export const CONTENT_QUICK_CASES = {
           ],
           "requiredConfrontationIds": [
             "message-or-drunkenness"
-          ],
-          "autoConfrontationIds": [
-            "message-or-drunkenness"
           ]
         },
         {
@@ -13202,9 +13202,6 @@ export const CONTENT_QUICK_CASES = {
           ],
           "requiredConfrontationIds": [
             "nightlife-pattern",
-            "apology-and-post"
-          ],
-          "autoConfrontationIds": [
             "apology-and-post"
           ],
           "materialRows": [
@@ -13324,14 +13321,15 @@ export const CONTENT_QUICK_CASES = {
         },
         {
           "id": "founder-busy",
-          "label": "漏回那六分钟，是信号不好还是已经喝多",
-          "sourceAnchor": "自己开公司",
+          "label": "后一条为什么没看见",
+          "sourceAnchor": "后面那条我没看见",
           "correct": false,
           "missReaction": {
             "role": "caller",
-            "text": "不是信号。我回完还行就接着喝了。身体那会儿已经不对。"
+            "text": "回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。"
           },
-          "question": "他回那句‘听了’隔了很久。你漏回的那六分钟，是信号不好，还是已经喝多了？"
+          "question": "前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？",
+          "clarification": true
         },
         {
           "id": "how-he-knew",
@@ -14378,7 +14376,7 @@ export const CONTENT_QUICK_CASES = {
           {
             "kicker": "说到这里",
             "title": "收麦",
-            "stageLabel": "通话结束",
+            "stageLabel": "点评结束",
             "lines": [
               {
                 "role": "host",

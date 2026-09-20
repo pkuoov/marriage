@@ -438,6 +438,7 @@ function renderTitle() {
     audioSettings: getAudioSettings(),
     canContinue,
     resumeLabel: resumeStageLabel(),
+    journeyComplete: storyPack && state.scene === "runComplete",
     confirmNewGame: (canContinue || Boolean(state.saveLoadError)) && titleNewGameConfirmation,
     saveLoadError: state.saveLoadError,
     quickModeAvailable: storyPack && quickDetectiveCasesFor(storyKeyFromUrl()).length > 0,
@@ -479,7 +480,8 @@ function resumeStageLabel() {
   if (["caseSolved", "careChoice", "caseClosure", "storyInterlude"].includes(scene)) return "上次停在：收麦回看";
   if (["cafePrologue", "cafePrologueAftermath"].includes(scene)) return "上次停在：咖啡厅序章";
   if (scene === "cafePrologueForensic") return "上次停在：鉴定回告";
-  if (["nightShellEpilogue", "runComplete"].includes(scene)) return "上次停在：天亮前";
+  if (scene === "runComplete") return "试玩已完成 · 可重看片尾";
+  if (scene === "nightShellEpilogue") return "上次停在：天亮前";
   return "上次停在：直播连线";
 }
 

@@ -9,6 +9,7 @@ export function titleScreenHtml({
   host = {},
   audioSettings = {},
   canContinue = false,
+  journeyComplete = false,
   resumeLabel = "上次停在：直播连线",
   confirmNewGame = false,
   saveLoadError = null,
@@ -60,8 +61,8 @@ export function titleScreenHtml({
                 <div class="title-journey-menu">
                   ${canContinue ? `
                     <button class="primary title-journey-action title-journey-continue" data-continue-story type="button">
-                      <span>CONTINUE</span>
-                      <b>继续上次直播</b>
+                      <span>${journeyComplete ? "REPLAY" : "CONTINUE"}</span>
+                      <b>${journeyComplete ? "重看片尾" : "继续上次直播"}</b>
                       <small>${escapeHtml(resumeLabel)}</small>
                     </button>
                     <button class="title-journey-action title-journey-new" data-request-new-game type="button">
