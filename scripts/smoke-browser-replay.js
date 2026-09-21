@@ -666,11 +666,25 @@ async function runCafePrologue() {
         save.caseBrief = save.caseBriefs?.[lastIndex] ?? null;
         save.solvedCaseIds = (save.caseBriefs ?? []).map((brief) => brief.id);
         save.scene = "nightShellEpilogue";
-        save.epilogueUnreadStep = 6;
+        save.epilogueUnreadStep = 0;
         localStorage.setItem(storageKey, JSON.stringify(save));
       });
       await page.reload();
       await click(page, "[data-continue-story]");
+      for (let unread = 0; unread < 7 && await page.locator("[data-epilogue-unread-next]").count(); unread += 1) {
+        const button = page.locator("[data-epilogue-unread-next]");
+        const bounds = await button.boundingBox();
+        if (!bounds?.width || !bounds?.height || bounds.y < 0 || bounds.y + bounds.height > viewport.height) {
+          throw new Error(`epilogue action collapsed or left viewport: ${JSON.stringify(bounds)}`);
+        }
+        const readingDone = await page.locator("[data-dialogue-advance]").getAttribute("data-dialogue-done");
+        if (!readingDone && !await button.isDisabled()) throw new Error("unread navigation must wait for the lead-in dialogue");
+        await click(page, "[data-epilogue-unread-next]");
+      }
+      const finishBounds = await page.locator("[data-finish-night-shell]").boundingBox();
+      if (!finishBounds?.width || !finishBounds?.height || finishBounds.y + finishBounds.height > viewport.height) {
+        throw new Error(`envelope action collapsed or left viewport: ${JSON.stringify(finishBounds)}`);
+      }
       await click(page, "[data-finish-night-shell]");
       const forensicText = await drainDialogue(page, {});
       assertAuthoredTranscript(forensicText, [...prologue.forensic.openingLines, ...prologue.forensic.accountClueLines], "both private callbacks");

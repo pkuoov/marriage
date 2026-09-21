@@ -189,8 +189,9 @@ export function liveFrameHtml({
   const choiceMarkup = String(choices ?? "");
   const hasChoices = Boolean(choiceMarkup.trim());
   const choicesAreFlow = hasChoices && (choiceMarkup.includes("flow-group") || choiceMarkup.includes("cafe-opening-action"));
+  const persistentNavigation = screenClass.split(/\s+/).includes("night-epilogue-screen");
   const choiceLayer = hasChoices
-    ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choiceMarkup}</div>`
+    ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}"${persistentNavigation ? ' data-reading-navigation' : ""}>${choiceMarkup}</div>`
     : "";
   const inquiryLayout = screenClass.split(/\s+/).includes("focused-evidence-inquiry");
   return `

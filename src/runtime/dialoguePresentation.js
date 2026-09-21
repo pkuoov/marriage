@@ -137,7 +137,14 @@ export function mountDialoguePresentation(root, options = {}) {
   box.innerHTML = `<div class="avg-page-lines"></div><i class="avg-continue" aria-label="继续">▼</i>`;
   sources.at(-1).after(box);
   const choices = root?.querySelector?.(".choices");
-  if (choices) choices.hidden = true;
+  // Keep the epilogue's next-screen action in place while its lead-in is read.
+  // Disable it until reading finishes rather than collapsing it to 0×0.
+  const readingNavigation = choices?.hasAttribute("data-reading-navigation");
+  const navigationButtons = readingNavigation
+    ? Array.from(choices.querySelectorAll("button:not(:disabled)"))
+    : [];
+  if (choices) choices.hidden = !readingNavigation;
+  navigationButtons.forEach((button) => { button.disabled = true; });
   const inlineChoiceRegions = Array.from(card.querySelectorAll(".day-followup, .reply-choice-grid"))
     .filter((region) => region.querySelector("button"));
   const afterReadingRegions = Array.from(card.querySelectorAll("[data-after-dialogue]"));
@@ -159,6 +166,7 @@ export function mountDialoguePresentation(root, options = {}) {
       options.onPageStart?.(page, pageIndex, context);
     },
     onChoicesShown: (shownChoices) => {
+      navigationButtons.forEach((button) => { button.disabled = false; });
       afterReadingRegions.forEach((region) => { region.hidden = false; });
       inlineChoiceRegions.forEach((region) => { region.hidden = false; });
       options.onChoicesShown?.(shownChoices);
