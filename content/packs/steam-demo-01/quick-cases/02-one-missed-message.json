@@ -190,8 +190,10 @@
         "founder-busy"
       ],
       "requiredConfrontationIds": [
-        "message-or-drunkenness"
-      ]
+        "message-or-drunkenness",
+        "phone-in-bag"
+      ],
+      "completionMode": "any"
     },
     {
       "id": "changed-version",
@@ -251,7 +253,8 @@
         "她发来的近两个月动态：六条酒吧或 KTV 记录；上个月三个周末有聚会。",
         "其中一条动态发布时间：凌晨 5:17。",
         "八号在 KTV；九号在清吧；十号发布的是八号 KTV 的照片。"
-      ]
+      ],
+      "completionMode": "any"
     }
   ],
   "turns": [
@@ -366,13 +369,8 @@
       "id": "founder-busy",
       "label": "后一条为什么没看见",
       "sourceAnchor": "后面那条我没看见",
-      "correct": false,
-      "missReaction": {
-        "role": "caller",
-        "text": "回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。"
-      },
       "question": "前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？",
-      "clarification": true
+      "confrontationId": "phone-in-bag"
     },
     {
       "id": "how-he-knew",
@@ -608,6 +606,30 @@
         }
       ],
       "kind": "conversation"
+    },
+    {
+      "id": "phone-in-bag",
+      "basisTurnIds": [
+        "missed-message-version"
+      ],
+      "kind": "conversation",
+      "lines": [
+        {
+          "role": "host",
+          "text": "前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？"
+        },
+        {
+          "role": "caller",
+          "text": "回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。"
+        }
+      ],
+      "logicContract": {
+        "premiseAnchor": "她说十一点五十二回复过，之后没有看到消息。",
+        "sourceProves": "两条消息之间是否还能接触手机需要问清。",
+        "sourceDoesNotProve": "不回消息不能单独证明醉酒程度或隐瞒关系。",
+        "answerAdds": "回完后手机放进包里，后来由妹妹拿着包。",
+        "nextLimit": "沿当晚聚会继续听，不补问另一条身体状态分支。"
+      }
     }
   ],
   "ending": {
@@ -682,5 +704,5 @@
   },
   "sourceBoundary": "本案以公开讨论中常见的相亲沟通、醉酒失联与信息逐步补充模式为结构参考，人物、机构、具体时间、聊天措辞、对质台词与舞台结论均为虚构合成。当前朋友圈三天可见、两批旧动态均由她本人翻出后截屏发给后台，主播没有直接浏览其历史朋友圈；异性在场本身不构成越界证据。",
   "focusedInquiry": true,
-  "contentRevision": "disclosure-2026-09-19"
+  "contentRevision": "branches-2026-09-21"
 }

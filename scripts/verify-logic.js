@@ -967,7 +967,7 @@ test("CARE-002", "epilogue unread callbacks echo care choices before the data cu
   const unreadHtml = epilogueUnreadHtml({ messages, currentIndex: 4 });
   assertEqual((unreadHtml.match(/epilogue-attachment-placeholder/g) ?? []).length, 2, "灯箱照和三张表留证照片必须各有一个附件卡");
   assert(!unreadHtml.includes("试玩素材占位"), "玩家可见尾声不得暴露开发期素材占位文案");
-  assertIncludes(epilogueUnreadContinueHtml({ visibleCount: 5, total: 5 }), "看后台曲线", "读完五条后才出现曲线按钮");
+  assertIncludes(epilogueUnreadContinueHtml({ visibleCount: 5, total: 5 }), "看看桌上的信封", "读完五条后才进入信封页");
   assertIncludes(epilogue.platformCost, "推荐位没了", "平台压力选择必须拥有独立尾声结果，不能被整晚平均分覆盖");
   assertIncludes(runtimeSource, "endingImpact: choice.endingImpact", "现场压力选择必须把结局代价写入存档状态");
   assertIncludes(runtimeSource, "pick?.endingImpact === \"platform-data-loss\"", "整晚尾声必须读取已经发生的平台代价");
@@ -1251,7 +1251,11 @@ test("QUICK-001", "focused calls advance through direct questions and compact en
       for (const id of round.requiredConfrontationIds ?? []) reachable.add(id);
       for (const id of round.autoConfrontationIds ?? []) reachable.add(id);
     }
-    assertEqual(state.resolvedConfrontationIds.length, reachable.size, "两来电案必要问询均已播完");
+    for (const round of packet.disclosureRounds) {
+      const ids = [...new Set([...(round.requiredConfrontationIds ?? []), ...(round.autoConfrontationIds ?? [])])];
+      const played = ids.filter(id => state.resolvedConfrontationIds.includes(id));
+      assertEqual(played.length, round.completionMode === "any" ? 1 : ids.length, "只播所选分支，自动问询正常完成");
+    }
     assertEqual(packet.ending.summaryPages.length, 1, "一个短收尾即可");
     while (!quickDetectiveIsComplete(packet, state)) state = advanceQuickVerdict(packet, state);
     assertIncludes(quickDetectiveVerdictHtml(packet, state), "返回案件选择", "最后一句后才能结束");
@@ -1271,7 +1275,7 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assert(identityRound >= 0 && explanationRound > identityRound, "第三人身份必须先问清，不能让解释过程抢先泄露");
   assertEqual(quickDisclosureRounds(packet)[0]?.turnIds?.length, 6, "第二宗快案第一轮只能用六组话建立公开版本，不能恢复十七组问卷");
   assert(!quickDisclosureRounds(packet)[identityRound].turnIds.includes("how-he-knew-version"), "身份问清前不追问如何解释桌上这个人");
-  assertEqual(packet.confrontations.length, 6, "第二宗快案必须让主播问回六处彼此不同的前后矛盾");
+  assertEqual(packet.confrontations.length, 7, "第二宗快案保留六处问询及独立的手机分支");
   assert(packet.issueOptions.length > packet.confrontations.length, "第二宗快案必须混入合理但不能互证的方向，不能直接把六个矛盾答案交给玩家");
   assert(packet.issueOptions.every((item) => item.sourceAnchor), "第二宗快案每个判断点都必须绑定本轮已经播出的原话");
   for (const issueId of ["founder-busy"]) {
@@ -1298,7 +1302,7 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
     assert(confrontation.logicContract?.sourceProves, `${confrontation.id} 必须登记现有原话能证明什么`);
     assert(confrontation.logicContract?.sourceDoesNotProve, `${confrontation.id} 必须登记不能证明什么`);
     const lines = quickConfrontationLines(confrontation);
-    assert(lines.length >= 4, `${confrontation.id} 必须经过来电人反驳和主播回问，不能两句直接交答案`);
+    assert(lines.length >= (confrontation.kind === "conversation" ? 2 : 4), `${confrontation.id} 要有对应回答；对质保留反驳和回问`);
     assert(lines.every((line, index) => line.text && ["host", "caller"].includes(line.role) && (index === 0 || line.role !== lines[index - 1].role)), `${confrontation.id} 多轮对质必须逐句交替`);
   }
 
@@ -2763,8 +2767,8 @@ test("UI-002", "live-call screens keep a broadcast control-desk identity", () =>
   assertIncludes(storyWorldEchoStageHtml({ ...worldEcho, artSrc: "./assets/generated/cg/news.png" }), "news.png", "世界回声应能切换为全舞台新闻 CG");
   assertIncludes(storyInterludeChoicesHtml({ worldEcho, worldEchoRevealed: true }), "data-enter-case-bridge", "世界回声揭示后必须恢复下一幕入口");
   const hypothesisEcho = { ...worldEcho, hypotheses: [{ id: "cross-case", label: "把四案线索并在一起", response: "先核对同名机构。" }] };
-  assertIncludes(storyInterludeChoicesHtml({ worldEcho: hypothesisEcho, worldEchoRevealed: false }), "data-world-echo-hypothesis", "跨案回收必须先让玩家主动押下一条风险假设");
-  assert(!storyInterludeChoicesHtml({ worldEcho: hypothesisEcho, worldEchoRevealed: false }).includes("data-reveal-world-echo"), "玩家尚未选风险假设时不能直接播放新闻答案");
+  assert(!storyInterludeChoicesHtml({ worldEcho: hypothesisEcho, worldEchoRevealed: false }).includes("data-world-echo-hypothesis"), "新闻入口不得伪装成不同分支");
+  assertIncludes(storyInterludeChoicesHtml({ worldEcho: hypothesisEcho, worldEchoRevealed: false }), "data-reveal-world-echo", "新闻可直接打开");
   assertIncludes(storyInterludeChoicesHtml({ worldEcho: hypothesisEcho, worldEchoRevealed: false, worldEchoHypothesisId: "cross-case" }), "data-reveal-world-echo", "玩家记录风险假设后才能揭示世界回声");
   assertIncludes(storyInterludeHtml({ worldEchoHypothesis: hypothesisEcho.hypotheses[0] }), "先核对同名机构", "跨案回收必须在揭示前回应玩家选择");
   assertIncludes(storyInterludeChoicesHtml({ finalCase: true }), "data-enter-night-epilogue", "最后一案小尾声之后必须进入来信尾声");
@@ -4930,14 +4934,14 @@ test("STORY-REVISION-001", "reordered quick cases preserve all valid routes and 
       assert(confrontation.basisTurnIds.every((id) => seenTurns.has(id)), `${packet.id}/${issue.id} 不得引用未来轮次的材料`);
       const line = quickStatementLinesForRound(packet, state).find((item) => item.text.includes(issue.sourceAnchor));
       assert(line, `${packet.id}/${issue.id} 必须在本轮有可点击原句`);
-      let next = applyQuickStatementLineSelection(packet, state, line.id);
+      let next = packet.focusedInquiry ? applyQuickIssueSelection(packet, state, issue.id) : applyQuickStatementLineSelection(packet, state, line.id);
       assertEqual(next.scene, "confrontation", `${issue.id} 必须实际进入对应对话`);
       assertEqual(next.activeConfrontationId, issue.confrontationId, `${issue.id} 不得被另一锚点截走`);
       while (next.scene === "confrontation") next = advanceQuickConfrontation(packet, next);
       return total + explore(packet, next);
     }, 0);
   }
-  for (const [id, count] of [["01-no-conditions", 2], ["02-one-missed-message", 2], ["03-labeled-fiction", 27]]) {
+  for (const [id, count] of [["01-no-conditions", 4], ["02-one-missed-message", 4], ["03-labeled-fiction", 27]]) {
     const packet = packets.find((item) => item.id === id);
     assertEqual(explore(packet, { ...initialQuickDetectiveState(packet), scene: "transcript" }), count, `${id} 全部有效选择顺序应到达结案`);
     const priorLayout = structuredClone(packet);

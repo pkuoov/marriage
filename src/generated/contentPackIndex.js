@@ -2598,7 +2598,7 @@ export const CONTENT_PACKS = {
             "caseLabel": "第三通回访",
             "sender": "表妹",
             "speakerProfileId": "case3-caller-cousin",
-            "base": "八月底那顿饭取消了，两边父母也各自说过了。我姐后来还问介绍人有没有别的人选，彩礼的条件没松。现在宸直又出了新闻，她爸原先答应九月底给她的二十万，也不知道什么时候能拿到。",
+            "base": "八月底那顿饭取消了，两边父母也各自说过了。我姐后来还问介绍人有没有别的人选，彩礼的条件没松。现在宸直又出了新闻，她爸原先答应九月底给她的三十万，也不知道什么时候能拿到。",
             "echoes": {
               "pragmatic": "介绍人来问，她只说饭局往后放。",
               "affirm": "男方没替她说忙。她还在生这个气。",
@@ -13056,15 +13056,18 @@ export const CONTENT_QUICK_CASES = {
             "which-dad"
           ],
           "issueOptionIds": [
-            "benefactor-source"
+            "benefactor-source",
+            "father-identity"
           ],
           "requiredConfrontationIds": [
-            "two-fathers"
+            "two-fathers",
+            "father-identity"
           ],
           "noClueReaction": {
             "role": "caller",
             "text": "钱是他愿意帮我的，我现在不是来借钱的。"
-          }
+          },
+          "completionMode": "any"
         },
         {
           "id": "actual-request",
@@ -13082,12 +13085,14 @@ export const CONTENT_QUICK_CASES = {
             "report-disclosure"
           ],
           "requiredConfrontationIds": [
-            "hidden-standards"
+            "hidden-standards",
+            "fertility-slip"
           ],
           "noClueReaction": {
             "role": "caller",
             "text": "没房我说了可以啊，可我也得看合不合适吧。"
-          }
+          },
+          "completionMode": "any"
         },
         {
           "id": "endorsement-request",
@@ -13205,6 +13210,13 @@ export const CONTENT_QUICK_CASES = {
           "sourceAnchor": "先跟他说一句，我这人还可以",
           "confrontationId": "useful-soft-talk",
           "question": "我今天才认识你，怎么跟人家保证你可靠？"
+        },
+        {
+          "id": "father-identity",
+          "label": "这位爸爸是不是亲生父亲",
+          "sourceAnchor": "爸爸给了我一百万",
+          "confrontationId": "father-identity",
+          "question": "给你一百万的这个爸爸，是你亲生父亲吗？"
         }
       ],
       "confrontations": [
@@ -13261,7 +13273,7 @@ export const CONTENT_QUICK_CASES = {
             "eyebrow": "称呼对不上",
             "label": "两个“爸爸”",
             "visualVariant": "two-fathers",
-            "lineIndex": 4
+            "lineIndex": 2
           },
           "lines": [
             {
@@ -13270,15 +13282,7 @@ export const CONTENT_QUICK_CASES = {
             },
             {
               "role": "caller",
-              "text": "我一直叫他爸爸，他也一直把我当女儿。钱是他愿意给我的，你们为什么非要分得这么清？"
-            },
-            {
-              "role": "host",
-              "text": "我只问一句，他是不是你亲生父亲？"
-            },
-            {
-              "role": "caller",
-              "text": "……不是亲爸。可我叫了这么多年，跟亲爸有什么区别？"
+              "text": "不是我亲爸给的。我一直叫他爸爸，他也一直把我当女儿。钱是他愿意给我的，你们为什么非要分得这么清？"
             },
             {
               "role": "host",
@@ -13387,6 +13391,40 @@ export const CONTENT_QUICK_CASES = {
               "text": "那你就直说不想介绍呗。"
             }
           ]
+        },
+        {
+          "id": "father-identity",
+          "basisTurnIds": [
+            "birth-father",
+            "million-from-dad",
+            "which-dad"
+          ],
+          "logicContract": {
+            "premiseAnchor": "爸爸给了我一百万",
+            "sourceProves": "她先说亲生父亲腰伤后收入很少，随后又说爸爸一次给了一百万元买房。",
+            "sourceDoesNotProve": "称呼相同不能证明两人关系，也不能证明这一百万元存在交换条件。",
+            "answerAdds": "她承认出资人不是亲生父亲，但拒绝公开双方具体关系。",
+            "nextLimit": "当前先追出资人与亲爸的区别；后面结合房贷、前任和择偶要求，可以质疑她是否在寻找接续供养的人，不以她拒绝承认终止推断。",
+            "nextLegalQuestion": "继续问清她当前的择偶要求，不据此猜测资助人的具体关系。"
+          },
+          "lines": [
+            {
+              "role": "host",
+              "text": "给你一百万的这个爸爸，是你亲生父亲吗？"
+            },
+            {
+              "role": "caller",
+              "text": "……不是亲爸。可我叫了这么多年，跟亲爸有什么区别？"
+            },
+            {
+              "role": "host",
+              "text": "给这一百万的，跟你是什么关系？"
+            },
+            {
+              "role": "caller",
+              "text": "这是我的私事，我没必要在直播里全说。反正钱是他自愿给的，不是我偷的抢的，房子也在我名下。"
+            }
+          ]
         }
       ],
       "ending": {
@@ -13443,7 +13481,7 @@ export const CONTENT_QUICK_CASES = {
       },
       "sourceBoundary": "本案为原创虚构文本。作者设定沿长期经济供养、个人生育顾虑与接续生活负担展开；玩家由具体说辞、拒答和第二轮择偶要求叠加判断，不需要她亲口认下供养关系。当前资助是否继续、具体交换条件与医学成因未披露，不从职业或检查单项推导性经历，不复刻参考视频中的真实人物。",
       "focusedInquiry": true,
-      "contentRevision": "shameless-2026-09-19"
+      "contentRevision": "branches-2026-09-21"
     },
     "02-one-missed-message": {
       "id": "02-one-missed-message",
@@ -13637,8 +13675,10 @@ export const CONTENT_QUICK_CASES = {
             "founder-busy"
           ],
           "requiredConfrontationIds": [
-            "message-or-drunkenness"
-          ]
+            "message-or-drunkenness",
+            "phone-in-bag"
+          ],
+          "completionMode": "any"
         },
         {
           "id": "changed-version",
@@ -13698,7 +13738,8 @@ export const CONTENT_QUICK_CASES = {
             "她发来的近两个月动态：六条酒吧或 KTV 记录；上个月三个周末有聚会。",
             "其中一条动态发布时间：凌晨 5:17。",
             "八号在 KTV；九号在清吧；十号发布的是八号 KTV 的照片。"
-          ]
+          ],
+          "completionMode": "any"
         }
       ],
       "turns": [
@@ -13813,13 +13854,8 @@ export const CONTENT_QUICK_CASES = {
           "id": "founder-busy",
           "label": "后一条为什么没看见",
           "sourceAnchor": "后面那条我没看见",
-          "correct": false,
-          "missReaction": {
-            "role": "caller",
-            "text": "回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。"
-          },
           "question": "前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？",
-          "clarification": true
+          "confrontationId": "phone-in-bag"
         },
         {
           "id": "how-he-knew",
@@ -14055,6 +14091,30 @@ export const CONTENT_QUICK_CASES = {
             }
           ],
           "kind": "conversation"
+        },
+        {
+          "id": "phone-in-bag",
+          "basisTurnIds": [
+            "missed-message-version"
+          ],
+          "kind": "conversation",
+          "lines": [
+            {
+              "role": "host",
+              "text": "前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？"
+            },
+            {
+              "role": "caller",
+              "text": "回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。"
+            }
+          ],
+          "logicContract": {
+            "premiseAnchor": "她说十一点五十二回复过，之后没有看到消息。",
+            "sourceProves": "两条消息之间是否还能接触手机需要问清。",
+            "sourceDoesNotProve": "不回消息不能单独证明醉酒程度或隐瞒关系。",
+            "answerAdds": "回完后手机放进包里，后来由妹妹拿着包。",
+            "nextLimit": "沿当晚聚会继续听，不补问另一条身体状态分支。"
+          }
         }
       ],
       "ending": {
@@ -14129,7 +14189,7 @@ export const CONTENT_QUICK_CASES = {
       },
       "sourceBoundary": "本案以公开讨论中常见的相亲沟通、醉酒失联与信息逐步补充模式为结构参考，人物、机构、具体时间、聊天措辞、对质台词与舞台结论均为虚构合成。当前朋友圈三天可见、两批旧动态均由她本人翻出后截屏发给后台，主播没有直接浏览其历史朋友圈；异性在场本身不构成越界证据。",
       "focusedInquiry": true,
-      "contentRevision": "disclosure-2026-09-19"
+      "contentRevision": "branches-2026-09-21"
     },
     "03-labeled-fiction": {
       "id": "03-labeled-fiction",
@@ -14154,7 +14214,7 @@ export const CONTENT_QUICK_CASES = {
         },
         "source": {
           "name": "科技创业者写给女演员的长文",
-          "roleLabel": "公开长文 · 虚构合成"
+          "roleLabel": "公开长文"
         }
       },
       "rageBaitContract": {
@@ -14474,84 +14534,84 @@ export const CONTENT_QUICK_CASES = {
       "issueOptions": [
         {
           "id": "attention-asymmetry",
-          "label": "先看谁更能从热搜获利",
+          "label": "谁主动把事情公开？",
           "sourceAnchor": "由他公开发布",
           "confrontationId": "attention-asymmetry",
           "question": "男方自己把长文发出来，说明至少这一次，他愿意让大家都来谈。"
         },
         {
           "id": "career-asymmetry",
-          "label": "先看谁更怕职业塌方",
+          "label": "她的工作会受影响吗？",
           "sourceAnchor": "都是她的职业资产",
           "confrontationId": "career-asymmetry",
           "question": "她靠演出和品牌合作吃饭。这事一直挂着，片方和品牌方会不会继续找她，她能不着急吗？"
         },
         {
           "id": "labeled-fiction",
-          "label": "先看长文怎样给自己留门",
+          "label": "点名配图，为什么又写虚构？",
           "sourceAnchor": "文末却留了一句『纯属虚构』",
           "confrontationId": "labeled-fiction",
           "question": "名字和照片都指向一个人，末尾又写“纯属虚构”。看的人到底该按哪句信？"
         },
         {
           "id": "single-source-money",
-          "label": "先问这些细节是谁说的",
+          "label": "这些细节是谁说的？",
           "sourceAnchor": "让我准备五张卡一起打",
           "confrontationId": "single-source-money",
           "question": "五张卡、催得急、后来又开大价，这些都是男方在文里讲的。"
         },
         {
           "id": "money-split",
-          "label": "先拆已转、未转和没回应",
+          "label": "哪笔已转，哪笔没转？",
           "sourceAnchor": "这笔钱没有转出去",
           "confrontationId": "money-split",
           "question": "三千万，他说转了，也起诉了。五千万美元，他说对方要过，可自己没转。"
         },
         {
           "id": "reply-avoids-money",
-          "label": "先评价女方这份回应",
+          "label": "女方回应了三千万吗？",
           "sourceAnchor": "三千万，一个字没回",
           "confrontationId": "reply-avoids-money",
           "question": "男方把三千万说得这么具体，女方只回一句“不拿金钱换爱情”，这哪儿答上了？"
         },
         {
           "id": "settlement-inference",
-          "label": "先看她为什么可能想平息争议",
+          "label": "来谈就能说明她怕了吗？",
           "sourceAnchor": "事情闹大了会影响工作",
           "confrontationId": "settlement-inference",
           "question": "他觉得她是怕丢工作，才找人来谈。"
         },
         {
           "id": "mediation-authorization",
-          "label": "先说证据链还缺哪一环",
+          "label": "中间人受谁委托？",
           "sourceAnchor": "没有中间人的独立原话",
           "confrontationId": "mediation-authorization",
           "question": "“她愿意谈”是谁的原话？"
         },
         {
           "id": "rumor-as-leverage",
-          "label": "先看男方怎样把传闻变成压力",
+          "label": "传闻能证明她认了吗？",
           "sourceAnchor": "网上已经出现代孕传闻",
           "confrontationId": "rumor-as-leverage",
           "question": "他把有人来谈紧接在传闻后面，再补一句“她怕了”。"
         },
         {
           "id": "settlement-scope",
-          "label": "看诉状外多出来的两条",
+          "label": "诉状里究竟要求了什么？",
           "sourceAnchor": "撤声明、认长文都不在",
           "confrontationId": "settlement-scope",
           "question": "照男方自己说的，诉状里是三千万，撤声明、认全文都没写进去。"
         },
         {
           "id": "public-leverage",
-          "label": "先评价『我手里还有』这套玩法",
+          "label": "为什么说有材料却不放？",
           "sourceAnchor": "我手里还有，今晚先不放",
           "confrontationId": "public-leverage",
           "question": "“我手里还有”——那他打算什么时候拿出来？"
         },
         {
           "id": "moral-conclusion",
-          "label": "再看文末那句虚构",
+          "label": "标了虚构，怎么还要她认全文？",
           "sourceAnchor": "公开承认整篇长文都是真的",
           "confrontationId": "moral-conclusion",
           "question": "最让我不信的是这儿：他自己给文章写虚构，却要她公开认全文。"
@@ -14862,7 +14922,7 @@ export const CONTENT_QUICK_CASES = {
             "lines": [
               {
                 "role": "host",
-                "text": "这篇先聊到这里。"
+                "text": "点名配图，文末又标虚构，还要对方公开认全文。这种写法我不信。三千万该怎么处理，等法院认定。"
               }
             ]
           }
@@ -14905,7 +14965,31 @@ export const CONTENT_QUICK_CASES = {
         ]
       },
       "sourceBoundary": "本案借用公开争议中‘指向真人的长文标注虚构、财产诉讼、代孕争议、公开声明与中间人自称调解同时出现’这一结构。游戏只让主播阅读压缩过的虚构合成长文、回应与公共背景卡，不安排真人来电；人物、平台账号、机构、标题、转账打法、三条条件、台词与主播结论均为虚构合成。大额开价、代孕安排和其他私密说法没有司法确认；‘提前求和’仍来自传闻与中间人转述，不写成女方已经授权或认账。国内现行监管禁止代孕，但不把这一规则顺手写成所有参与者已经构成同一个刑事罪名。主播可以对公开行为作明确道德评价，金额与法律结果仍交给法院和有权机关。",
-      "contentRevision": "peel-2026-09-18"
+      "contentRevision": "original-2026-09-21",
+      "sourceDocument": {
+        "title": "写给许念的一封信",
+        "byline": "周砚 · 公开账号长文",
+        "paragraphs": [
+          "许念，这封信写给你，也给一直问我为什么分开的人。",
+          "【配图：许念的公开活动照片；照片下标注“演员许念”。】",
+          "我们谈婚事的时候，我向你家里的账户转了三千万。这笔钱我已经起诉。你当时嫌一张卡每天只能转一百万，太慢，让我准备五张卡一起打。",
+          "后来你又开口要五千万美元。我说，让我想想。这五千万美元我没有转。",
+          "在我发这篇文章以前，网上已经有代孕的传闻。后来有中间人找我，说你愿意谈，希望事情不要继续扩大。",
+          "你还有演出、平台和品牌合作，事情闹大了会影响工作。我觉得你是怕了，才想尽早把事情平息。",
+          "我让中间人带回去三条：第一，退还三千万；第二，撤回你的公开声明；第三，公开承认这篇长文写的都是真的。",
+          "三千万在我的诉状里。撤回声明、承认全文，这两条没写进诉状。",
+          "有些事你自己清楚。我手里还有，今晚先不放。",
+          "纯属虚构。"
+        ],
+        "relatedDocuments": [
+          {
+            "title": "许念 · 公开回应",
+            "paragraphs": [
+              "我从没因为金钱出卖爱情。"
+            ]
+          }
+        ]
+      }
     }
   }
 };

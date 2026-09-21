@@ -25,7 +25,7 @@ export function epilogueUnreadHtml({ messages = [], currentIndex = -1 } = {}) {
 export function epilogueUnreadContinueHtml({ visibleCount = 0, total = 0 } = {}) {
   if (visibleCount <= 0) return `<button class="primary" data-epilogue-unread-next type="button">打开后台未读</button>`;
   if (visibleCount < total) return `<button class="primary" data-epilogue-unread-next type="button">下一条未读</button>`;
-  return `<button class="primary" data-epilogue-unread-next type="button">看后台曲线</button>`;
+  return `<button class="primary" data-epilogue-unread-next type="button">看看桌上的信封</button>`;
 }
 
 function attachmentPlaceholderHtml(attachment = {}) {

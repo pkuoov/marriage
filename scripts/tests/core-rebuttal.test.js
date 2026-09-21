@@ -85,7 +85,7 @@ test("自动接话与可选交流不扣耐心，逐句读档后完整走完两�
           } else {
             assert.ok(state.activeIssueId);
             // Required fact-checking can be player-selected without becoming an accusation.
-            if (id === "01-no-conditions") assert.ok(!round.requiredConfrontationIds.includes(item.id), "生育顾虑等普通交流可以选择，但不能设为通关要求");
+            if (id === "01-no-conditions") assert.equal(round.completionMode, "any", "普通交流与另一问二选一，不能强制补问");
           }
         }
         const expectedLine = quickConfrontationLinesForState(packet, state)[state.confrontationLineIndex];
@@ -102,12 +102,10 @@ test("自动接话与可选交流不扣耐心，逐句读档后完整走完两�
       }
     }
     assert.equal(state.scene, "verdict");
-    const reachable = new Set();
-    for (const round of packet.disclosureRounds ?? []) {
-      for (const id of round.requiredConfrontationIds ?? []) reachable.add(id);
-      for (const id of round.autoConfrontationIds ?? []) reachable.add(id);
+    for (const round of packet.disclosureRounds) {
+      const ids = [...new Set([...(round.requiredConfrontationIds ?? []), ...(round.autoConfrontationIds ?? [])])];
+      assert.equal(ids.filter(id => heard.has(id)).length, round.completionMode === "any" ? 1 : ids.length);
     }
-    for (const requiredId of reachable) assert.ok(heard.has(requiredId));
     assert.ok(Object.values(state.roundPatience).every((value) => value.remaining === value.max));
   }
 });

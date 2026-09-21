@@ -48,21 +48,19 @@ test('未问清材料不能收麦，完成本案各段与两份材料即可收�
 import { initialQuickDetectiveState, normalizeQuickDetectiveState, applyQuickIssueSelection, advanceQuickMissReaction, advanceQuickConfrontation, quickRoundPatienceForState, quickFlowVersion } from '../../src/runtime/quickDetectiveModel.js';
 const quick = JSON.parse(readFileSync(new URL('../../content/packs/steam-demo-01/quick-cases/02-one-missed-message.json', import.meta.url)));
 
-test('补问先读问答，保存恢复后留在本段且不扣旧预算', () => {
+test('手机分支读档后只回答本问，保留耐心再进入下一段', () => {
   const round = quick.disclosureRounds[0];
-  let state = { ...initialQuickDetectiveState(quick), scene: 'issueSelection', resolvedConfrontationIds: ['care-or-display'], roundPatience: { [round.id]: { max: round.patience, remaining: 1 } } };
+  let state = { ...initialQuickDetectiveState(quick), scene: 'issueSelection', roundPatience: { [round.id]: { max: round.patience, remaining: 1 } } };
   state = applyQuickIssueSelection(quick, state, 'founder-busy');
-  assert.equal(quickRoundPatienceForState(quick, state).remaining, 1);
   state = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(state)), quick);
-  state = advanceQuickMissReaction(quick, state);
-  assert.equal(state.scene, 'missReaction');
+  state = advanceQuickConfrontation(quick, state);
+  assert.equal(state.scene, 'confrontation');
   assert.equal(quickRoundPatienceForState(quick, state).remaining, 1);
-  state = advanceQuickMissReaction(quick, state);
-  assert.equal(state.scene, 'issueSelection');
+  state = advanceQuickConfrontation(quick, state);
+  assert.equal(state.scene, 'transcript');
   assert.equal(state.resolvedConfrontationIds.includes('message-or-drunkenness'), false);
-  assert.equal(state.roundIndex, 0);
-  assert.equal(quickRoundPatienceForState(quick, state).remaining, 1);
-  assert.deepEqual(advanceQuickMissReaction(quick, state), state);
+  assert.equal(state.roundIndex, 1);
+  assert.equal(state.roundPatience[round.id].remaining, 1);
 });
 
 test('旧快案按稳定段落身份迁移，保留前段结果与耐心，不跳过新回答', () => {

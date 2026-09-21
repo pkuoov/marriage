@@ -411,10 +411,10 @@ async function runQuickDetective() {
         caseId: "03-labeled-fiction",
         soloCommentary: true,
         rounds: [
-          ["先看长文怎样给自己留门"],
-          ["先评价女方这份回应"],
-          ["先看她为什么可能想平息争议"],
-          ["先评价『我手里还有』这套玩法"]
+          ["点名配图，为什么又写虚构？"],
+          ["女方回应了三千万吗？"],
+          ["来谈就能说明她怕了吗？"],
+          ["为什么说有材料却不放？"]
         ],
         expectedListen: ["男方是科技创业者", "女方是曾经站在流量顶端的演员", "文末却留了一句『纯属虚构』"],
       });
@@ -710,8 +710,7 @@ async function runCafePrologue() {
       }
       await click(page, "[data-cafe-finish]");
       await assertStoryEnding(page);
-      // A chapter-only legacy save must finish here, never replay the tutorial
-      // as though it were a new scene in case four.
+      // A chapter-only legacy save must reach the report without replaying the tutorial.
       await page.evaluate(() => {
         const key = "livestream-detective-save-v1";
         const save = JSON.parse(localStorage.getItem(key));
@@ -726,7 +725,7 @@ async function runCafePrologue() {
       await click(page, "[data-continue-story]");
       await click(page, "[data-finish-night-shell]");
       const legacyScene = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")).scene);
-      if (legacyScene !== "runComplete") throw Error(`legacy epilogue replayed tutorial: ${legacyScene}`);
+      if (legacyScene !== "cafePrologueForensic") throw Error(`legacy epilogue replayed tutorial: ${legacyScene}`);
       smokeProgress(`PASS cafe ${viewport.width}x${viewport.height}: both investigations, saved progress, both callbacks and ending`);
     } finally {
       await context.close();
@@ -806,6 +805,7 @@ async function assertCafeViewport(page, viewport, label) {
 async function playEarlyQuickCase(page, caseId, anchor) {
   await click(page, `[data-quick-case-id="${caseId}"]`);
   await click(page, "[data-quick-begin]");
+  if (await page.locator("[data-quick-source-read]").count()) await click(page, "[data-quick-source-read]");
   await advanceQuickLine(page, "[data-quick-next-turn]");
   await clickQuickSourceLine(page, anchor);
   await finishQuickConfrontation(page);
@@ -829,6 +829,7 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
   await assertVisibleText(page, "周明", "快案必须显示玩家保存的主播姓名");
   await assertNoPageText(page, "这次怎么玩", "快案入口不得解释内部机制");
   await click(page, "[data-quick-begin]");
+  if (await page.locator("[data-quick-source-read]").count()) await click(page, "[data-quick-source-read]");
 
   let verdictText = "";
   for (const [roundIndex, anchors] of rounds.entries()) {
@@ -3439,7 +3440,7 @@ async function runSixReviewedCases() {
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});const page=await context.newPage();page.setDefaultTimeout(browserActionTimeoutMs);
     const errors=[];page.on('pageerror',e=>errors.push(e.message));const transcript=[];let wrong=false,reloaded=false,done=false;
     try {
-      await page.goto(playableUrl);await click(page,'[data-start-quick-detective]');await click(page,`[data-quick-case-id="${id}"]`);await click(page,'[data-quick-begin]');
+      await page.goto(playableUrl);await click(page,'[data-start-quick-detective]');await click(page,`[data-quick-case-id="${id}"]`);await click(page,'[data-quick-begin]');if(await page.locator('[data-quick-source-read]').count())await click(page,'[data-quick-source-read]');
       for(let step=0;step<110;step++) {
         transcript.push(await drainDialogue(page,{}));
         transcript.push(await page.locator('body').innerText());
@@ -3497,7 +3498,7 @@ function hasReachableQuickMiss(packet) {
 async function playFocusedQuickCase(page, viewport, packet, alreadySelected = false) {
   await mkdir(resolve(root, "output/playwright/six-review"), {recursive:true});
   if (!alreadySelected) await click(page, `[data-quick-case-id="${packet.id}"]`);
-  await click(page,'[data-quick-begin]');
+  await click(page,'[data-quick-begin]');if(await page.locator('[data-quick-source-read]').count())await click(page,'[data-quick-source-read]');
   let wrong = false; const transcript = [];
   for (let step=0;step<110;step++) {
     transcript.push(await drainDialogue(page,{}));

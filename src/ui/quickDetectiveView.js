@@ -89,6 +89,16 @@ export function quickDetectiveIntroHtml(packet = {}, { hostName = packet.present
   `;
 }
 
+export function quickSourceDocumentHtml(packet = {}) {
+  const source = packet.sourceDocument;
+  if (!source) return "";
+  return `<article class="quick-original-document"><header><small>${escapeHtml(source.byline)}</small><h2>${escapeHtml(source.title)}</h2></header>${(source.paragraphs ?? []).map(text => `<p>${escapeHtml(text)}</p>`).join("")}</article>${(source.relatedDocuments ?? []).map(doc => `<article class="quick-original-document"><h3>${escapeHtml(doc.title)}</h3>${doc.paragraphs.map(text => `<p>${escapeHtml(text)}</p>`).join("")}</article>`).join("")}`;
+}
+
+export function quickDetectiveSourceHtml(packet = {}) {
+  return `<section class="quick-source-reader"><div class="quick-source-scroll" tabindex="0" aria-label="长文原文">${quickSourceDocumentHtml(packet)}</div><button class="primary" data-quick-source-read type="button">读完，开始点评</button></section>`;
+}
+
 export function quickDetectiveTranscriptHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
   const round = quickDisclosureRoundForState(packet, state);
   const solo = isSoloCommentary(packet);
@@ -113,6 +123,20 @@ export function quickTranscriptDialogueLines(packet = {}, state = {}, hostName =
       { role: "caller", speaker: "来电人", text: turn.caller ?? turn.source ?? "" }
     ];
   }).filter(line => line.text);
+}
+
+export function quickInquiryHistoryLines(packet = {}, state = {}, hostName = DEFAULT_PLAYER_NAME) {
+  const resolved = new Set(state.resolvedConfrontationIds ?? []);
+  return (packet.disclosureRounds ?? []).slice(0, Number(state.roundIndex ?? 0) + 1).flatMap((round, roundIndex) => {
+    const heard = quickTranscriptDialogueLines(packet, { ...state, roundIndex }, hostName);
+    const ids = [...new Set([...(round.autoConfrontationIds ?? []),
+      ...(round.issueOptionIds ?? []).map(id => packet.issueOptions?.find(option => option.id === id)?.confrontationId)])];
+    for (const id of ids.filter(id => id && resolved.has(id))) {
+      const issue = (packet.issueOptions ?? []).find(option => option.confrontationId === id && state.attemptedIssueIds?.includes(option.id));
+      heard.push(...quickConfrontationLinesForState(packet, { activeConfrontationId: id, activeIssueId: issue?.id }));
+    }
+    return heard;
+  });
 }
 
 export function quickDetectiveConfrontationHtml(packet = {}, state = {}, { hostName = packet.presentation?.host?.name ?? DEFAULT_PLAYER_NAME } = {}) {
@@ -214,6 +238,7 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
         <div class="quick-commentary-options">
           ${options.map((option) => quickCommentaryOptionButton(option, lines, attempted, resolved)).join("")}
         </div>
+        ${packet.sourceDocument ? `<details class="quick-inquiry-history"><summary>查看长文原文</summary>${quickSourceDocumentHtml(packet)}</details>` : ""}
         ${quickCanEndEarly(packet, state) ? `
           <div class="quick-early-verdict">
             <button data-quick-end-early type="button">先下结论</button>
@@ -229,7 +254,7 @@ export function quickDetectiveIssueSelectionHtml(packet = {}, state = {}) {
       <header class="quick-commentary-prompt"><small>${escapeHtml(round.label ?? "接着问")}</small><b>还有哪件事没说清？</b></header>
       ${round.materialRows?.length ? `<div class="quick-inquiry-material" aria-label="刚收到的材料">${round.materialRows.map(row => `<p>${escapeHtml(row)}</p>`).join("")}</div>` : ""}
       <div class="quick-commentary-options">${choices.map(option => `<button data-quick-issue="${escapeHtml(option.id)}" type="button">${escapeHtml(option.question ?? option.label)}</button>`).join("")}</div>
-      <details class="quick-inquiry-history"><summary>查看刚才的对话</summary>${lines.map(line => `<p>${escapeHtml(line.text)}</p>`).join("")}</details>
+      <details class="quick-inquiry-history"><summary>查看刚才的对话</summary>${quickInquiryHistoryLines(packet, state).map(line => `<p><b>${line.role === "host" ? "主播" : "来电人"}：</b>${escapeHtml(line.text)}</p>`).join("")}</details>
     </section>`;
   }
   const current = lines.find((line) => line.id === state.activeSourceLineId) ?? lines[0];
@@ -424,7 +449,6 @@ function quickCommentaryOptionButton(option = {}, lines = [], attempted = new Se
   return `
     <button class="quick-commentary-option${solved ? " is-resolved" : ""}${missed ? " is-missed" : ""}" data-quick-review-line="${escapeHtml(line.id)}" type="button" ${solved ? "disabled" : ""}>
       <b>${escapeHtml(option.label)}</b>
-      <small>${escapeHtml(line.text)}</small>
       ${missed ? `<em>这个角度带远了 · 判断力 −1</em>` : ""}
     </button>
   `;

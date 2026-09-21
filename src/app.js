@@ -966,6 +966,7 @@ function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true,
     : state.scene === "cafePrologueAftermath" ? "序章 · 咖啡厅散场后"
     : state.scene === "nightShellEpilogue" ? "尾声 · 旧案来信"
     : state.scene === "runComplete" ? "试玩片尾"
+    : state.scene === "storyInterlude" ? chapterLabel
     : `第 ${Math.max(1, Number(state.chapter) || 1)} 案 · ${chapterLabel}`;
   const modeLabel = isStoryPackMode() ? storyLabel : "今日来电";
   const backdropClass = backdropClassOverride || caseBackdropClass(brief);

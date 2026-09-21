@@ -14,35 +14,17 @@ function select(p = packet, id = option.id, roundIndex = 0) {
   return applyQuickStatementLineSelection(p, state, line.id);
 }
 
-test("补问先播放问题，读档继续回答，回到本轮待问事实", () => {
+test("手机放哪儿是独立路线，读档后答完不补问另一选项", () => {
   let s = select();
-  const initial = quickRoundPatienceForState(packet, s).remaining;
-  assert.equal(quickMissLine(s).text, option.question);
-  assert.equal(quickDetectiveActiveLine(packet, s).role, "host");
-  assert.ok(quickDetectiveMissReactionHtml(packet, s).includes(option.question));
+  assert.equal(quickDetectiveActiveLine(packet, s).text, option.question);
+  s = advanceQuickConfrontation(packet, s);
   s = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(s)), packet);
-  s = advanceQuickMissReaction(packet, s);
-  assert.equal(quickMissLine(s).text, option.missReaction.text);
-  assert.equal(quickRoundPatienceForState(packet, s).remaining, initial);
-  s = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(s)), packet);
-  s = advanceQuickMissReaction(packet, s);
-  assert.equal(s.scene, "issueSelection");
-  assert.equal(s.roundIndex, 0);
-  assert.equal(s.roundPatience[packet.disclosureRounds[0].id].remaining, initial);
-});
-
-test("简化问询保留旧消耗记录，读完反馈不再追加扣费", () => {
-  let s = select();
-  const round = packet.disclosureRounds[0];
-  s.roundPatience = { [round.id]: { max: round.patience, remaining: 1 } };
-  s = advanceQuickMissReaction(packet, s);
-  assert.equal(s.scene, "missReaction");
-  s = advanceQuickMissReaction(packet, s);
-  assert.equal(s.scene, "issueSelection");
-  assert.equal(s.roundIndex, 0);
-  const legacy = { ...select(), missPhase: undefined, missPenaltyPending: undefined, activeMissQuestion: undefined, roundPatience: { [round.id]: { max: round.patience, remaining: 2 } } };
-  const restored = advanceQuickMissReaction(packet, normalizeQuickDetectiveState(legacy, packet));
-  assert.equal(restored.roundPatience[round.id].remaining, 2);
+  assert.equal(quickDetectiveActiveLine(packet, s).role, "caller");
+  s = advanceQuickConfrontation(packet, s);
+  assert.equal(s.scene, "transcript");
+  assert.equal(s.roundIndex, 1);
+  assert.ok(s.resolvedConfrontationIds.includes("phone-in-bag"));
+  assert.ok(!s.resolvedConfrontationIds.includes("message-or-drunkenness"));
 });
 
 test("普通无锚点句也先提问，不在选句时扣费", () => {
@@ -162,4 +144,46 @@ test('普通追问读档保留来电人与主播交替的整组回答', () => {
   const restored = refreshSavedExchangeCopy(JSON.parse(JSON.stringify(state)),[brief],[brief]);
   assert.equal(restored.scene,'sceneQuestionAnswer');
   assert.deepEqual(restored.sceneQuestionFocus.pick.lines,probe.lines);
+});
+
+import { applyQuickIssueSelection } from '../../src/runtime/quickDetectiveModel.js';
+import { quickInquiryHistoryLines, quickSourceDocumentHtml } from '../../src/ui/quickDetectiveView.js';
+
+test('四组二选一逐条恢复后只出口所选问法，不排队补问', () => {
+  for (const [id, roundIndex, choices] of [
+    ['01-no-conditions', 1, ['benefactor-source', 'father-identity']],
+    ['01-no-conditions', 2, ['mortgage-pressure', 'report-disclosure']],
+    ['02-one-missed-message', 0, ['missed-message-state', 'founder-busy']],
+    ['02-one-missed-message', 3, ['nightlife-pattern', 'apology-post']]
+  ]) for (const choice of choices) {
+    const p = read(id);
+    let state = applyQuickIssueSelection(p, { ...initialQuickDetectiveState(p), scene: 'issueSelection', roundIndex, resolvedConfrontationIds: p.disclosureRounds.slice(0, roundIndex).flatMap(r => r.requiredConfrontationIds) }, choice);
+    const selected = p.issueOptions.find(o => o.id === choice).confrontationId;
+    const alternate = p.issueOptions.find(o => o.id === choices.find(x => x !== choice)).confrontationId;
+    while (state.scene === 'confrontation') {
+      state = normalizeQuickDetectiveState(JSON.parse(JSON.stringify(state)), p);
+      assert.equal(state.activeConfrontationId, selected);
+      state = advanceQuickConfrontation(p, state);
+    }
+    assert.ok(state.roundIndex > roundIndex || state.scene === 'verdict');
+    assert.ok(!state.resolvedConfrontationIds.includes(alternate));
+  }
+});
+
+test('快案回看保留早先的一百万与房贷，不泄露未选问答', () => {
+  const p = read('01-no-conditions');
+  const state = { ...initialQuickDetectiveState(p), roundIndex: 2, resolvedConfrontationIds: ['two-fathers'], attemptedIssueIds: ['benefactor-source'] };
+  const history = quickInquiryHistoryLines(p, state).map(l => l.text).join('\n');
+  assert.match(history, /一百万/);
+  assert.match(history, /房贷/);
+  assert.ok(history.includes(p.confrontations.find(c => c.id === 'two-fathers').lines[0].text));
+  assert.ok(!history.includes(p.issueOptions.find(o => o.id === 'father-identity').question));
+});
+
+test('长文原页列出已转未转及文末虚构，原文与回应分开', () => {
+  const p = read('03-labeled-fiction');
+  const html = quickSourceDocumentHtml(p);
+  for (const phrase of ['演员许念', '三千万', '五千万美元我没有转', '中间人', '纯属虚构。']) assert.ok(html.includes(phrase));
+  assert.equal(p.sourceDocument.paragraphs.at(-1), '纯属虚构。');
+  assert.ok(!p.presentation.source.roleLabel.includes('虚构'));
 });

@@ -182,15 +182,18 @@
         "which-dad"
       ],
       "issueOptionIds": [
-        "benefactor-source"
+        "benefactor-source",
+        "father-identity"
       ],
       "requiredConfrontationIds": [
-        "two-fathers"
+        "two-fathers",
+        "father-identity"
       ],
       "noClueReaction": {
         "role": "caller",
         "text": "钱是他愿意帮我的，我现在不是来借钱的。"
-      }
+      },
+      "completionMode": "any"
     },
     {
       "id": "actual-request",
@@ -208,12 +211,14 @@
         "report-disclosure"
       ],
       "requiredConfrontationIds": [
-        "hidden-standards"
+        "hidden-standards",
+        "fertility-slip"
       ],
       "noClueReaction": {
         "role": "caller",
         "text": "没房我说了可以啊，可我也得看合不合适吧。"
-      }
+      },
+      "completionMode": "any"
     },
     {
       "id": "endorsement-request",
@@ -331,6 +336,13 @@
       "sourceAnchor": "先跟他说一句，我这人还可以",
       "confrontationId": "useful-soft-talk",
       "question": "我今天才认识你，怎么跟人家保证你可靠？"
+    },
+    {
+      "id": "father-identity",
+      "label": "这位爸爸是不是亲生父亲",
+      "sourceAnchor": "爸爸给了我一百万",
+      "confrontationId": "father-identity",
+      "question": "给你一百万的这个爸爸，是你亲生父亲吗？"
     }
   ],
   "confrontations": [
@@ -387,7 +399,7 @@
         "eyebrow": "称呼对不上",
         "label": "两个“爸爸”",
         "visualVariant": "two-fathers",
-        "lineIndex": 4
+        "lineIndex": 2
       },
       "lines": [
         {
@@ -396,15 +408,7 @@
         },
         {
           "role": "caller",
-          "text": "我一直叫他爸爸，他也一直把我当女儿。钱是他愿意给我的，你们为什么非要分得这么清？"
-        },
-        {
-          "role": "host",
-          "text": "我只问一句，他是不是你亲生父亲？"
-        },
-        {
-          "role": "caller",
-          "text": "……不是亲爸。可我叫了这么多年，跟亲爸有什么区别？"
+          "text": "不是我亲爸给的。我一直叫他爸爸，他也一直把我当女儿。钱是他愿意给我的，你们为什么非要分得这么清？"
         },
         {
           "role": "host",
@@ -513,6 +517,40 @@
           "text": "那你就直说不想介绍呗。"
         }
       ]
+    },
+    {
+      "id": "father-identity",
+      "basisTurnIds": [
+        "birth-father",
+        "million-from-dad",
+        "which-dad"
+      ],
+      "logicContract": {
+        "premiseAnchor": "爸爸给了我一百万",
+        "sourceProves": "她先说亲生父亲腰伤后收入很少，随后又说爸爸一次给了一百万元买房。",
+        "sourceDoesNotProve": "称呼相同不能证明两人关系，也不能证明这一百万元存在交换条件。",
+        "answerAdds": "她承认出资人不是亲生父亲，但拒绝公开双方具体关系。",
+        "nextLimit": "当前先追出资人与亲爸的区别；后面结合房贷、前任和择偶要求，可以质疑她是否在寻找接续供养的人，不以她拒绝承认终止推断。",
+        "nextLegalQuestion": "继续问清她当前的择偶要求，不据此猜测资助人的具体关系。"
+      },
+      "lines": [
+        {
+          "role": "host",
+          "text": "给你一百万的这个爸爸，是你亲生父亲吗？"
+        },
+        {
+          "role": "caller",
+          "text": "……不是亲爸。可我叫了这么多年，跟亲爸有什么区别？"
+        },
+        {
+          "role": "host",
+          "text": "给这一百万的，跟你是什么关系？"
+        },
+        {
+          "role": "caller",
+          "text": "这是我的私事，我没必要在直播里全说。反正钱是他自愿给的，不是我偷的抢的，房子也在我名下。"
+        }
+      ]
     }
   ],
   "ending": {
@@ -569,5 +607,5 @@
   },
   "sourceBoundary": "本案为原创虚构文本。作者设定沿长期经济供养、个人生育顾虑与接续生活负担展开；玩家由具体说辞、拒答和第二轮择偶要求叠加判断，不需要她亲口认下供养关系。当前资助是否继续、具体交换条件与医学成因未披露，不从职业或检查单项推导性经历，不复刻参考视频中的真实人物。",
   "focusedInquiry": true,
-  "contentRevision": "shameless-2026-09-19"
+  "contentRevision": "branches-2026-09-21"
 }

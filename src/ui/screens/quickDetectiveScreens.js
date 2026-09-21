@@ -20,6 +20,7 @@ import {
   quickDetectiveCaseSelectHtml,
   quickDetectiveConfrontationHtml,
   quickDetectiveIntroHtml,
+  quickDetectiveSourceHtml,
   quickDetectiveIssueSelectionHtml,
   quickDetectiveMissReactionHtml,
   quickDetectivePatience,
@@ -85,6 +86,8 @@ export function createQuickDetectiveScreens(ctx) {
       screenClass: "quick-case-select-screen",
       controlDeckHtml: "",
       showRecordButton: false,
+      resetLabel: "重开当前快案，保留主线进度",
+      resetText: "重开本案",
       showResetButton: false
     }), state.playerName);
     ctx.bind('[data-action="title"], [data-quick-select-title]', ctx.returnToTitle);
@@ -116,6 +119,7 @@ export function createQuickDetectiveScreens(ctx) {
     }
     const body = {
       intro: () => quickDetectiveIntroHtml(packet, { hostName: state.playerName }),
+      source: () => quickDetectiveSourceHtml(packet),
       transcript: () => quickDetectiveTranscriptHtml(packet, quickState, { hostName: state.playerName }),
       issueSelection: () => quickDetectiveIssueSelectionHtml(packet, quickState),
       missReaction: () => quickDetectiveMissReactionHtml(packet, quickState, { hostName: state.playerName }),
@@ -153,14 +157,17 @@ export function createQuickDetectiveScreens(ctx) {
         progressLabel: packet.format === "solo-commentary" ? (quickState.scene === "intro" ? "准备读材料" : `第 ${Number(quickState.roundIndex ?? 0) + 1} 段点评`) : quickState.scene === "intro" ? "等待接通" : "",
         progressNote: packet.format === "solo-commentary" ? "本案由我阅读公开文本并点评。" : quickState.scene === "intro" ? "线路还没接进来。" : ""
       }),
-      showRecordButton: false
+      showRecordButton: false,
+      resetLabel: "重开当前快案，保留主线进度",
+      resetText: "重开本案"
     }), state.playerName);
     ctx.bind('[data-action="title"]', () => {
       clearQuickAutoAdvance();
       ctx.returnToTitle();
     });
     ctx.bind('[data-action="reset"]', () => startQuickDetective(packet.id));
-    ctx.bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0, turnLineIndex: 0 }));
+    ctx.bind("[data-quick-begin]", () => updateQuickDetective({ ...quickState, scene: packet.sourceDocument ? "source" : "transcript", turnIndex: 0, turnLineIndex: 0 }));
+    ctx.bind("[data-quick-source-read]", () => updateQuickDetective({ ...quickState, scene: "transcript", turnIndex: 0, turnLineIndex: 0 }));
     ctx.bind("[data-quick-next-turn]", () => updateQuickDetective(advanceQuickTranscript(packet, quickState)));
     ctx.bind("[data-quick-issue]", (event) => updateQuickDetective(applyQuickIssueSelection(packet, quickState, event.currentTarget.dataset.quickIssue)));
     ctx.bind("[data-quick-review-line]", (event) => updateQuickDetective(applyQuickStatementLineSelection(packet, quickState, event.currentTarget.dataset.quickReviewLine)));

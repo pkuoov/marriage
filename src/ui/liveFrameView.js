@@ -183,7 +183,9 @@ export function liveFrameHtml({
   pixelTransition = null,
   rewindAvailable = false,
   showRecordButton = true,
-  showResetButton = true
+  showResetButton = true,
+  resetLabel = "重新开始，清除本局存档",
+  resetText = "重开"
 } = {}) {
   const materialKind = materialKindForLabel(material);
   const choiceMarkup = String(choices ?? "");
@@ -203,7 +205,7 @@ export function liveFrameHtml({
         <nav aria-label="章节"><span class="active"><i></i>${escapeHtml(modeLabel)}</span></nav>
         ${audioSettingsPanelHtml(audioSettings ?? { enabled: soundEnabled }, { placement: "topbar" })}
         ${material ? `<button class="material-toolbar-button" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" type="button">材料</button>` : ""}
-        ${showResetButton ? `<button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>` : ""}
+        ${showResetButton ? `<button data-action="reset" type="button" aria-label="${escapeHtml(resetLabel)}">${escapeHtml(resetText)}</button>` : ""}
         ${showRecordButton ? `<button class="record-button" data-record-open type="button">案卷</button>` : ""}
       </header>
       <section class="story-grid case-vn-grid live-console-shell ${controlDeckHtml ? "has-control-deck" : ""} ${escapeHtml(screenClass)}" data-live-shell>

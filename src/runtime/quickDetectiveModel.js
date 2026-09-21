@@ -10,7 +10,7 @@ import {
   statementOptionForLine
 } from "./statementReviewModel.js";
 
-const QUICK_SCENES = new Set(["intro", "transcript", "issueSelection", "missReaction", "confrontation", "patienceLost", "verdict"]);
+const QUICK_SCENES = new Set(["intro", "source", "transcript", "issueSelection", "missReaction", "confrontation", "patienceLost", "verdict"]);
 const LEGACY_REVIEW_SCENES = new Set(["investigation", "feedback", "crowdAssist", "crowdFeedback"]);
 
 export function initialQuickDetectiveState(packet = {}) {

@@ -5,7 +5,7 @@
 ## 汇总
 
 - 固定人物卡：39
-- 收录台词／玩家可见人物材料：1094
+- 收录台词／玩家可见人物材料：1098
 - 本包实际出声人物：33
 - 句长节奏人工复核提示：24
 - 构建时硬拦截：未归属说话人、越案人物 ID，以及“我现在想知道的是／本质上／更重要的是／一方面另一方面”高密度模板。
@@ -1328,17 +1328,19 @@
 - `$quick.issueOptions[2].question` 你说月薪四五千也行，自己的工资还完房贷又剩不了多少。你希望对方每月替你还多少？
 - `$quick.issueOptions[3].question` 怎么会想到拿自己不能生孩子举例？你很担心这个吗？
 - `$quick.issueOptions[4].question` 我今天才认识你，怎么跟人家保证你可靠？
+- `$quick.issueOptions[5].question` 给你一百万的这个爸爸，是你亲生父亲吗？
 - `$quick.confrontations[0].lines[0]` 你在店里，客人试了半天又不买，你也这么直说？
 - `$quick.confrontations[0].lines[2]` 工作里能耐着性子，回家就不想再这么说了？
 - `$quick.confrontations[1].lines[0]` 你爸不是伤了腰，连重活都干不了了吗？他哪来的一百万？
-- `$quick.confrontations[1].lines[2]` 我只问一句，他是不是你亲生父亲？
-- `$quick.confrontations[1].lines[4]` 给这一百万的，跟你是什么关系？
+- `$quick.confrontations[1].lines[2]` 给这一百万的，跟你是什么关系？
 - `$quick.confrontations[2].lines[0]` 怎么会想到拿自己不能生孩子举例？你很担心这个吗？
 - `$quick.confrontations[2].lines[2]` 这事你打算什么时候跟对方说？
 - `$quick.confrontations[3].lines[0]` 你说月薪四五千也行，自己的工资还完房贷又剩不了多少。你希望对方每月替你还多少？
 - `$quick.confrontations[3].lines[2]` 如果他四五千只够自己生活，拿不出钱帮你还贷，你还愿意见吗？
 - `$quick.confrontations[4].lines[0]` 我今天才认识你，怎么跟人家保证你可靠？
 - `$quick.confrontations[4].lines[2]` 可人家听的是我说你好，回头不合适，还不得来找我？
+- `$quick.confrontations[5].lines[0]` 给你一百万的这个爸爸，是你亲生父亲吗？
+- `$quick.confrontations[5].lines[2]` 给这一百万的，跟你是什么关系？
 - `$quick.ending.summaryPages[0].lines[0]` 你这忙我帮不了。今天就到这儿吧。
 
 ## 快案来电人·罗
@@ -1364,15 +1366,16 @@
 - `$quick.turns[11].caller` 您做这个两年多了，看人肯定比我准。您要是先跟他说一句，我这人还可以，他至少愿意见我一面。旭阳哥，我条件真没那么多，您就帮我留意一下吧。
 - `$quick.confrontations[0].lines[1]` 那怎么会。我就说姐，您再搭这件试试，这个颜色显气色。真不买，我也得笑着送出去。
 - `$quick.confrontations[0].lines[3]` 上班才这么说啊。下班找个对象，还得让我哄？我一天都够累了。
-- `$quick.confrontations[1].lines[1]` 我一直叫他爸爸，他也一直把我当女儿。钱是他愿意给我的，你们为什么非要分得这么清？
-- `$quick.confrontations[1].lines[3]` ……不是亲爸。可我叫了这么多年，跟亲爸有什么区别？
-- `$quick.confrontations[1].lines[5]` 这是我的私事，我没必要在直播里全说。反正钱是他自愿给的，不是我偷的抢的，房子也在我名下。
+- `$quick.confrontations[1].lines[1]` 不是我亲爸给的。我一直叫他爸爸，他也一直把我当女儿。钱是他愿意给我的，你们为什么非要分得这么清？
+- `$quick.confrontations[1].lines[3]` 这是我的私事，我没必要在直播里全说。反正钱是他自愿给的，不是我偷的抢的，房子也在我名下。
 - `$quick.confrontations[2].lines[1]` 我怕对方一听就走。可现在才刚说介绍，总不能先把检查都交上去吧。
 - `$quick.confrontations[2].lines[3]` 见面聊得来，我会跟他说。我以前查过，医生说自然怀孕的机会低一点，又没说一定不能。我还年轻，后面也可以再复查。
 - `$quick.confrontations[3].lines[1]` 我又没让他全包。以后住我的房子，帮着还一点不是应该的吗？
 - `$quick.confrontations[3].lines[3]` 那我也得考虑啊。两个人过日子，总不能比我一个人还紧吧。
 - `$quick.confrontations[4].lines[1]` 又没让你担保。你先说一句好话，后面我自己跟他聊。
 - `$quick.confrontations[4].lines[3]` 那你就直说不想介绍呗。
+- `$quick.confrontations[5].lines[1]` ……不是亲爸。可我叫了这么多年，跟亲爸有什么区别？
+- `$quick.confrontations[5].lines[3]` 这是我的私事，我没必要在直播里全说。反正钱是他自愿给的，不是我偷的抢的，房子也在我名下。
 - `$quick.ending.summaryPages[0].lines[1]` 行，那不麻烦你了。
 
 # 快案：那晚没回消息
@@ -1421,6 +1424,7 @@
 - `$quick.confrontations[4].lines[4]` 你前面只提妹妹，忽然又有个朋友，他当然要问啊。
 - `$quick.confrontations[5].lines[0]` 你发那组 KTV 照片的时候，写了是八号拍的吗？
 - `$quick.confrontations[5].lines[2]` 没写日期，他真看到也未必知道是旧图。你后来单独跟他解释过八号、九号吗？
+- `$quick.confrontations[6].lines[0]` 前一条你还回着，后一条为什么没看见？手机那会儿放哪儿？
 - `$quick.ending.summaryPages[0].lines[0]` 你今天还打算联系他吗？
 - `$quick.ending.summaryPages[0].lines[2]` 那他不先道歉，你就不联系了？
 
@@ -1446,7 +1450,6 @@
 - `$quick.turns[10].caller` 他可能以为是喝断片那晚拍的，其实不是，那是八号的照片，我晚了两天才发。
 - `$quick.turns[11].caller` 我跟师姐去唱歌，包厢套餐里带了六杯鸡尾酒。那天就我们两个，我也没喝醉，和九号不是一回事。
 - `$quick.issueOptions[1].confrontationOpeningLines[1].text` 我高兴啊，可也想知道他为什么愿意送。他就说你喜欢就买了，后面又没话。
-- `$quick.issueOptions[5].missReaction.text` 回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。
 - `$quick.confrontations[0].lines[1]` 我高兴啊，可也想知道他为什么愿意送。他就说你喜欢就买了，后面又没话。
 - `$quick.confrontations[0].lines[3]` 说过，我还截给他看了。有人羡慕我也高兴啊。但总不能有花有包，就不用好好聊天了吧。
 - `$quick.confrontations[1].lines[1]` 已经有点难受了。我当时想着马上就走，没必要让他跟着担心。谁知道几分钟以后会吐成那样。
@@ -1461,6 +1464,7 @@
 - `$quick.confrontations[4].lines[5]` 可那就是我妹妹的朋友。我不想说得好像我专门去见他一样。
 - `$quick.confrontations[5].lines[1]` 没写。可那不是同一天。我照片早就修好了，不发也浪费。他要是问，我完全可以解释。
 - `$quick.confrontations[5].lines[3]` 那我总不能因为他不高兴，什么都不发、哪里也不去吧？
+- `$quick.confrontations[6].lines[1]` 回完就塞包里了。后来不舒服，是妹妹帮我拿着包，我没再翻手机。
 - `$quick.ending.summaryPages[0].lines[1]` 我可以解释。可他那样问我，他也得先为自己的口气道歉吧。你帮我想一句，别弄得像我求他。
 - `$quick.ending.summaryPages[0].lines[3]` 先不发了。我都解释过一次了，总不能一直是我找他。
 
@@ -1534,7 +1538,7 @@
 - `$quick.confrontations[10].lines[1]` 东西还没见着，倒先让她把整篇认了。
 - `$quick.confrontations[11].lines[0]` 最让我不信的是这儿：他自己给文章写虚构，却要她公开认全文。
 - `$quick.confrontations[11].lines[1]` 这句虚构到底只准谁用啊？
-- `$quick.ending.summaryPages[0].lines[0]` 这篇先聊到这里。
+- `$quick.ending.summaryPages[0].lines[0]` 点名配图，文末又标虚构，还要对方公开认全文。这种写法我不信。三千万该怎么处理，等法院认定。
 
 # 未在本报告捕获到台词的人物卡
 

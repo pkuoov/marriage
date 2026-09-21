@@ -409,6 +409,12 @@ function quickConfrontationLines(confrontation = {}) {
 }
 
 function renderReadableQuickRounds(lines, packet) {
+  if (packet.sourceDocument) {
+    lines.push("### 上屏原文", "", packet.sourceDocument.title, "", packet.sourceDocument.byline ?? "", "", ...packet.sourceDocument.paragraphs.flatMap(text => [text, ""]));
+    for (const document of packet.sourceDocument.relatedDocuments ?? []) {
+      lines.push(document.title, "", ...(document.paragraphs ?? []).flatMap(text => [text, ""]));
+    }
+  }
   const turnsById = new Map((packet.turns ?? []).map((turn, index) => [turn.id, { turn, index }]));
   const optionsById = new Map((packet.issueOptions ?? []).map((option) => [option.id, option]));
   const confrontationsById = new Map((packet.confrontations ?? []).map((item) => [item.id, item]));
@@ -1079,7 +1085,7 @@ function renderContinuousEpilogue(lines, epilogue) {
     lines.push(`## 后台未读｜${message.sender ?? "陌生号码"}`, "");
     if (message.attachment) lines.push(`【附图：${message.attachment.label ?? message.attachment.alt ?? "图片"}】`, "");
     if (message.base) lines.push(message.base, "");
-    const caseId = casePackets[index]?.caseId;
+    const caseId = message.caseId;
     const packet = casePackets.find((packet) => packet.caseId === caseId);
     const careChoiceId = packet?.careChoices?.[0]?.sequential ? packet.careChoices.at(-1).id : continuousStoryRoutes[caseId]?.careChoiceId;
     if (careChoiceId && message.echoes?.[careChoiceId]) lines.push(message.echoes[careChoiceId], "");

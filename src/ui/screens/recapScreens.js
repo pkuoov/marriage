@@ -214,15 +214,21 @@ export function createRecapScreens(ctx) {
     const epilogue = nightShellForBrief(brief)?.epilogue ?? {};
     const resultLine = epilogue[nightShellEndingKey?.() ?? (nightShellGoodEnding() ? "good" : "bad")]
       ?? (nightShellGoodEnding() ? epilogue.good : epilogue.bad);
-    const stage = epilogueUnreadStage(epilogue, state.careChoices, state.epilogueUnreadStep);
+    const careChoicesByCaseId = { ...state.careChoices };
+    for (const caseBrief of state.caseBriefs ?? []) {
+      const choice = state.careChoices?.[caseKey(caseBrief)];
+      if (!choice) continue;
+      const pack = storyPackForKey(caseBrief.storyKey ?? caseBrief.weeklyKey ?? storyKeyFromUrl());
+      careChoicesByCaseId[storyInterludeCaseId(pack, caseBrief)] = choice;
+    }
+    const stage = epilogueUnreadStage(epilogue, careChoicesByCaseId, state.epilogueUnreadStep);
     const currentIndex = stage.visibleMessages.length - 1;
     const lines = stage.complete
       ? [resultLine, epilogue.home, epilogue.close].filter(Boolean)
       : [];
     const openingHtml = nightShellHtml([epilogue.opening].filter(Boolean));
     const unreadHtml = epilogueUnreadHtml({ messages: stage.visibleMessages, currentIndex });
-    const canReturnToCafe = normalizedCafePrologueProgress(state).step === 7
-      && cafePrologueCanOpenForensic(normalizedCafePrologueProgress(state));
+    const canReturnToCafe = Boolean(nightShellForBrief(brief)?.cafePrologue);
     frame({
       brief,
       mood: "focused",
@@ -243,8 +249,7 @@ export function createRecapScreens(ctx) {
     });
     bind("[data-finish-night-shell]", () => {
       const cafePrologue = nightShellForBrief(brief)?.cafePrologue;
-      const progress = normalizedCafePrologueProgress(state);
-      if (cafePrologue && progress.step === 7 && cafePrologueCanOpenForensic(progress)) {
+      if (cafePrologue) {
         setCafePrologueStep(state, 8);
         return;
       }
@@ -623,19 +628,19 @@ export function createRecapScreens(ctx) {
     const prologue = nightShellForBrief(brief)?.cafePrologue ?? {};
     const forensic = prologue.forensic ?? {};
     const progress = normalizedCafePrologueProgress(state);
-    const isToyRoute = progress.order.includes("toy");
+    // The final return always includes the report; prior optional inquiries do not gate it.
     const hasAccount = progress.order.includes("account");
     let text = cafePrologueHeaderHtml({
       timeline: forensic.timeline ?? "数周后",
       title: "私下回告",
-      subtitle: isToyRoute ? "双方委托鉴定" : "家庭卡电子回单"
+      subtitle: "双方委托鉴定"
     });
     text += cafePrologueDialogueHtml([
-      ...(isToyRoute ? forensic.openingLines ?? [] : []),
+      ...(hasAccount ? forensic.openingLines ?? [] : (forensic.openingLines ?? []).slice(0, -1)),
       ...(hasAccount ? forensic.accountClueLines ?? [] : [])
     ]);
     text += cafeFinalBoundaryHtml({
-      result: isToyRoute ? forensic.finalCards?.result : "",
+      result: forensic.finalCards?.result,
       openAccount: hasAccount ? forensic.finalCards?.openAccount : "",
       unknown: []
     });
@@ -646,7 +651,7 @@ export function createRecapScreens(ctx) {
     frame({
       brief,
       mood: "focused",
-      label: `${forensic.timeline ?? "数周后"} · ${isToyRoute ? "鉴定回告" : "回单回告"}`,
+      label: `${forensic.timeline ?? "数周后"} · 鉴定回告`,
       chapter: "尾声 · 咖啡厅来客",
       showCaseHud: false,
       visualHud: "",
@@ -1024,7 +1029,7 @@ export function createRecapScreens(ctx) {
     const shownInterlude = packetOpening ? { ...interlude, lines: packet.arrivalLines, line: "", afterLines: [] } : broadcastingRecap ? broadcastRecap : interlude;
     const worldEchoRevealed = !interlude?.worldEcho || Boolean(state.storyWorldEchoes?.[interludeCaseId]);
     const worldEchoHypothesisId = state.storyWorldEchoHypotheses?.[interludeCaseId] ?? "";
-    const worldEchoHypothesis = (interlude?.worldEcho?.hypotheses ?? []).find((item) => item.id === worldEchoHypothesisId) ?? null;
+    const worldEchoHypothesis = null;
     frame({
       brief,
       mood: "focused",
