@@ -2026,7 +2026,7 @@ test("PACK-012", "epilogue unread callbacks stay typed, attributed, and non-evid
   assert(caseTwoCallback?.base?.includes("没去店里堵人"), "案二行动落地必须保持克制，不能写成胜利式围堵");
   const caseOneCallback = messages.find((message) => message.caseId === "01-credit");
   assert(caseOneCallback?.base?.includes("二十万现在动不了") && caseOneCallback?.base?.includes("什么时候能拿回来他也不知道"), "宸直新闻后必须回到案一人物，同时保留清偿时间未知");
-  assert(caseTwoCallback?.base?.includes("Tony 还是只说已经提交") && caseTwoCallback?.base?.includes("到底进没进产品，还是不知道"), "宸直新闻后必须回到案二材料，同时保留资金是否入产品未知");
+  assert(caseTwoCallback?.base?.includes("赎回"), "成交已由案后材料确认，后续追问应推进到赎回而非重置认购未知");
 });
 
 test("PACK-012B", "the cafe closes after hotel and money disputes; testing stays in the aftermath", () => {
@@ -2202,7 +2202,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const trustPromise = (manifest.crossCasePromises ?? []).find((promise) => promise.id === "chenzhi-trust-payment-crisis");
   assertEqual(trustPromise?.corporateSeed?.caseId, "04-workplace", "宸直企业线必须在职场案落下共享硬件公司种子");
   assertEqual(trustPromise?.corporateSeed?.entityId, "qixing-shared-tech", "职场案企业种子必须指向虚构的栖行共享科技");
-  ["包干", "层层返费", "押金", "关联往来"].forEach((anchor) => {
+  ["包干", "虚增费用", "押金", "关联往来"].forEach((anchor) => {
     assert(trustPromise?.corporateSeed?.anchors?.includes(anchor), `栖行企业种子缺少 ${anchor} 锚点`);
   });
   assertEqual(trustPromise?.secondarySeed?.caseId, "02-tony", "宸直线后段代投种子必须登记在 Tony 案");
@@ -2236,10 +2236,10 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
     closingBeats: caseThree?.caseClosing?.beats,
     confirmed: caseThree?.caseClosing?.confirmed
   });
-  assert(profileMotiveText.includes("父母都是普通上班") && profileMotiveText.includes("婚房也帮不上"), "案三必须由父母调查问出男方普通家境，不能只停在 MBA 标签");
-  assert(profileMotiveQuestion?.correct === true && /彩礼就(?:该多拿|多拿|多问|多)一点/.test(profileMotiveText), "案三父母必须借家境落差加价，不能继续把它写成单纯受骗反应");
-  assert(/你.*(?:想|回)/.test(profileMotiveQuestion?.question ?? ""), "案三承重追问继续问咨询者自己的态度，不由按钮替玩家归纳");
-  assert(profileMotiveText.includes("工作和家庭更稳") && /彩礼就(?:该多拿|多拿|多问|多)一点/.test(profileMotiveText), "案三必须问出她把工作家庭差距当作多拿彩礼的理由，不凭作者设定断言日常付出观");
+  assert(profileMotiveText.includes("二十三万八") && profileMotiveText.includes("十八万八"), "加价必须对照先前彩礼参考与自费学费，不补未演出的家境调查");
+  assert(profileMotiveQuestion?.correct === true && profileMotiveText.includes("二十八万八"), "用母亲加价前后的要求回答当前问句");
+  assert(profileMotiveQuestion?.question?.includes("原来") && profileMotiveQuestion?.question?.includes("以后"), "先问条件如何变化，再在挽回段问本人推动了什么");
+  assert(JSON.stringify(caseThree.sceneVersions[0].questionOptions).includes("婚房"), "她主动提出的婚房要求要先在对白出现");
 
   const firstTailText = JSON.stringify(interludesByCaseId.get("01-credit") ?? {});
   assert(firstTailText.includes("收益") && firstTailText.includes("兑付纠纷"), "案一小尾声必须由赵律师补入高收益合同风险");
@@ -2253,7 +2253,7 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const hangupScene = caseTwo?.sceneVersions?.find((scene) => scene.id === "tony-bar-rumor-hangup");
   const hangupCloserLines = hangupScene?.sceneCloser?.lines ?? [];
   const hangupCloserText = hangupCloserLines.map((line) => line.text ?? "").join(" ");
-  assert(hangupCloserText.includes("窗外忽然扫进一片白光") && hangupCloserText.includes("门外传来两下敲门声"), "案二第一夜场尾必须按强光、拉帘和敲门留下开放边");
+  assert(hangupCloserText.includes("车灯晃进来了") && hangupCloserText.includes("门外传来两下敲门声"), "案二第一夜场尾必须按强光、拉帘和敲门留下开放边");
   assert(hangupCloserLines.some((line) => line.audioCueId === "sfx.case2.door-knock"), "案二第一夜敲门必须接入专属音效");
   assert(caseTwo?.nightStructure?.hangup?.hostLine?.includes("确认安全"), "案二独立挂断页必须让主播先确认安全");
   assert(!hangupCloserText.includes("警笛") && !/警车|民警|警察|报案|高利贷/.test(hangupCloserText), "案二第一夜不得用警笛或身份词提前解释来讯");
@@ -2322,10 +2322,10 @@ test("PACK-014", "cross-case public shocks keep a seeded promise and a non-retro
   const caseFourTailText = JSON.stringify(caseFourInterlude ?? {});
   assert(caseFourOpeningText.includes("六万八是谁让你垫的") && caseFourOpeningText.includes("主管私聊让我先垫"), "职场案开场必须先问清垫款是谁让垫的");
   assert(!caseFourOpeningText.includes("宸直") && !caseFourOpeningText.includes("押金"), "职场案开场不得提前讲押金归集和跨案股东");
-  ["招商主管", "区域经理", "采购经办", "点位协调费", "渠道维护费", "采购配合费"].forEach((anchor) => {
+  ["小陈", "地推", "底薪", "奖金", "指标"].forEach((anchor) => {
     assert(supplierRouteText.includes(anchor), `供应商白天路线缺少 ${anchor}`);
   });
-  assert(supplierRouteText.includes("旧批次") && supplierRouteText.includes("回执") && supplierRouteText.includes("找财务"), "供货方带来的是旧批次结算，到账仍需财务回执，不要求角色额外分类口播");
+  assert(supplierRouteText.includes("三人语音") && supplierRouteText.includes("辞职"), "地推同事由小陈联系，只讲任职经历");
   assert(caseFourTailText.includes("融资稿") && caseFourTailText.includes("关联往来") && caseFourTailText.includes("宸直"), "案后保留后续材料的来处，不要求关灯后复讲经营数字");
   assert(caseFourTailText.includes("关联往来") && caseFourTailText.includes("付款日期"), "经营资金与个人待付状态均须有具体材料，不靠同一实控人直接推出钱款流向");
   assertEqual(caseFourInterlude?.worldEcho, undefined, "第二通职场案结尾不得提前宣布宸直全面兑付危机");
@@ -2353,12 +2353,12 @@ test("PACK-015", "workplace keeps early settlement evidence separate from second
   assertEqual(acts[0].decisivePresent.evidenceId, `${late.id}:q06`, "先核跨部门待付，走到公司资金问题");
   assertEqual(acts.length, 1, "已认过的四千不再单独审一幕");
   for (const option of acts[0].inquiry.options.filter(option => option.correct)) {
-    const received = option.lines.findIndex(line => line.role === "stage" && /主管.*消息.*转给你/.test(line.text));
-    const quoted = option.lines.findIndex(line => line.role === "caller" && /预收款/.test(line.text));
-    assert(received >= 0 && quoted > received, "每条可推进路线都先收主管消息，再谈后续收款填旧报销");
+    const reviewed = option.lines.filter(line => line.role === "host").map(line => line.text).join(" ");
+    assert(!JSON.stringify(option.lines).includes("下一场预收款"), "不让主管自白滚动偿付结论");
+    assert(reviewed.includes("前同事") && /离职|辞了/.test(reviewed), "每条正确路径都结合已听经历给出停止垫资与离职建议");
   }
   assert(late.rows.find((row) => row.rowId === "q07").memo.includes("已登记实际垫款"), "个人费用已经登记，不能退回未提交设定");
-  assert(late.rows.find((row) => row.rowId === "q09").memo.includes("个人收款"), "中层已收返费必须有独立回执，不能凭包干推定");
+  assert(!late.rows.some(row => row.rowId === "q09"), "已撤回供应商支线，不保留无来源的付款回执");
   const earlyReply = JSON.stringify(packet.sceneVersions.find((item) => item.id === "work-leader-note").questionOptions);
   assert(!earlyReply.includes("两个人都交齐了"), "不能在前一场已经确认齐全，后一场又怀疑缺件");
 });
@@ -2446,8 +2446,11 @@ test("PACK-017E2", "case 1 bill retains three spending categories without anothe
   const packet = caseFiles.find(p => p.caseId === "01-credit");
   const wall = packet.sceneVersions.find(s => s.testimonyWall);
   const bill = packet.sceneVersions[2];
-  const material = JSON.stringify(bill.questionOptions.flatMap(option => option.materialRows ?? []));
-  for (const value of ["四万", "五千", "三万五"]) assert(material.includes(value), `原件保留金额 ${value}，不强制主播再念一遍`);
+  const original = packet.evidenceCards.find(card => card.id === "daily-credit-card-bill");
+  const amounts = original.sourceTable.rows.map(row => Number(row[1].replaceAll(",", "")));
+  assertEqual(amounts.slice(0, 5).reduce((sum, n) => sum + n, 0), 40000, "可见餐饮、酒店、礼品和设备明细合计四万");
+  assertEqual(amounts[5], 5000, "男装明细五千，与主线金额一致");
+  assert(!original.front.includes("停薪") && !original.detail.includes("未说明"), "原件不提前归纳工作状态和用途结论");
   assert(!bill.casualQuestions?.length && !bill.afterScene, "不重复男装或账单材料问答");
 });
 test("PACK-017F", "case 1 handoff has two attributable submissions and no audience interruption", () => {
@@ -2535,7 +2538,7 @@ test("PACK-019", "cases 2 and 3 keep countable benefit and remedy boundaries", (
   assert(caseThreeDeepText.includes("八万四") && caseThreeDeepText.includes("六万") && caseThreeDeepText.includes("领证以后") && caseThreeDeepText.includes("添家电、搬家"), "案三必须通过短问短答问出咨询者自己的存款、上限和使用时点");
   assert(fundsRows.get("p04")?.memo?.includes("领证前转入女方个人账户"), "案三材料行必须写清彩礼进入谁的账户");
   assert(fundsRows.get("p07")?.memo?.includes("不包含在 28.8 万内"), "案三材料行必须单列婚宴与首饰");
-  assert(caseThree?.caseClosing?.nextStep?.includes("共同账户没有获她同意") && caseThree?.caseClosing?.unresolved?.some((item) => item.includes("男方其他账户")), "结案保持条件未谈成与其他资产未知，口播可以继续追她拒绝对等条件的目的");
+  assert(caseThree.caseClosing.nextStep.includes("没有谈妥") && caseThree.caseClosing.unresolved.some(item => item.includes("其他账户")), "结案保留未谈妥与其他账户未知");
   assert(!caseThree?.investigationHooks?.some((hook) => hook?.stillCannotProve?.includes("女方只图钱")), "案三未知边界不得再用‘不能证明只图钱’替已锁死的加价行为免责");
 });
 
@@ -2641,7 +2644,7 @@ test("PACK-019C", "closing point surfaces name locked behavior before preserving
   });
   const byId = new Map(caseFiles.map((casePacket) => [casePacket.caseId, casePacket]));
   assert(byId.get("04-workplace")?.stageJudgement?.includes("垫钱") && byId.get("04-workplace")?.stageJudgement?.includes("旧立项页") && !byId.get("04-workplace")?.stageJudgement?.includes("返费"), "案四必须点名催垫款和以旧页应付催款，不提前使用案后返费表");
-  assert(JSON.stringify(byId.get("03-profile")?.caseClosing?.confirmed ?? []).includes("赞成完整付款条件"), "案三保留实际加价与本人赞成的来源，判词可以继续追条件不改的目的");
+  assert(byId.get("03-profile").caseClosing.verdict.includes("提高彩礼") && byId.get("03-profile").caseClosing.verdict.includes("自己"), "加价与女方主动提出条件都应有已播放来源");
   assert(byId.get("02-tony")?.caseClosing?.nextStep?.includes("同时说明代投安排") && (byId.get("02-tony")?.caseClosing?.unresolved ?? []).some((item) => item.includes("十二万是否已经买成")), "案二追款保留完整背景，也保留对实际交付的追问，不能以她主动买代替资金回答");
 });
 
@@ -2677,8 +2680,8 @@ test("PACK-019D", "fable hooks weld into existing cases without replacing their 
 
   assert(caseThreeActTwo?.statements?.some((statement) => statement.text?.includes("只差两千")), "案三必须保留差两千态度句");
   assert(JSON.stringify(caseThree).includes("profile-family-chat-origin") && JSON.stringify(caseThree).includes("第二路麦克风接通"), "案三必须保留出处页与第二路麦，不重写彩礼主线");
-  assert(caseThreeLedger?.rows?.some((row) => row.rowId === "p08" && row.memo?.includes("只差两千") && row.party?.includes("介绍人")), "案三必须把‘差两千就是态度’的介绍人转发页做成可核材料");
-  assert(caseThreeActTwo?.decisivePresent?.materialCards?.some((card) => card.id === "case3-credential-balance:p08"), "案三第二幕必须允许玩家把出处页放进材料卡对照");
+  assert(!caseThreeLedger.rows.some(row => /只差两千|我也觉得是态度/.test(row.memo)), "原始字段不提前给出态度结论");
+  assert(!caseThreeActTwo.decisivePresent.materialCards.some(card => card.id.endsWith(":p08")), "删除带态度判词的摘录卡");
   assertEqual(caseThreeActTwo?.decisivePresent?.evidenceId, "case3-credential-balance:p03", "案三出处页只能补来源，不能替换第二幕决定性工资卡落点");
 
   const tonyDoorText = JSON.stringify(caseTwo?.nightStructure?.overnight?.dayActions ?? caseTwo?.overnightStructure ?? {});
@@ -2690,7 +2693,7 @@ test("PACK-019D", "fable hooks weld into existing cases without replacing their 
   assert(!caseTwo?.stageJudgement?.includes("培训") && !caseTwo?.stageJudgement?.includes("课程"), "Tony 的目的不得被改写成培训组织主线");
 
   assert(!workplaceInbox, "供应商回执直接到场，不再分六封信筛选");
-  assert(caseFour.sceneVersions.at(-1).beforeVersion.lines.some(line => line.text.includes("供应商")), "删筛信后仍保留回执来源");
+  assert(caseFour.sceneVersions.at(-1).beforeVersion.lines.some(line => line.text.includes("同意") && line.text.includes("受理页")), "第二夜受理页仍由同事授权提供");
   assert(quickEndingLines.some(line => line.role === "caller" && line.text.includes("道歉")), "快案二结束在她仍要求道歉的态度");
 
   assertEqual(cafe?.clipDraft?.title, "她说没去酒店，怎么让她当场改口", "序章必须出现攻略体切片标题");

@@ -1,5 +1,5 @@
 import { seekVoiceCue, setAudioBusVolume, subscribeAudioState, syncAudioScene, toggleSound, toggleVoiceCue } from "../sound.js";
-import { audioCueAvailable } from "../audioCatalog.js";
+import { audioCueAvailable, audioCueById } from "../audioCatalog.js";
 import { audioScenePlan } from "../runtime/audioSceneModel.js";
 
 export function bindAudioControls({ root = defaultRoot(), onToggleSound = () => {} } = {}) {
@@ -74,13 +74,13 @@ export function updateAudioPlaybackControls(snapshot = {}, { root = defaultRoot(
   root.querySelectorAll("[data-audio-seek]").forEach((input) => {
     const cueId = input.getAttribute("data-audio-seek") ?? "";
     const active = voice.cueId === cueId;
-    input.max = String(active ? voice.duration || 0 : 0);
+    input.max = String(active ? voice.duration || audioCueById(cueId)?.duration || 0 : audioCueById(cueId)?.duration || 0);
     input.value = String(active ? Math.min(voice.currentTime || 0, voice.duration || 0) : 0);
   });
   root.querySelectorAll("[data-audio-time]").forEach((output) => {
     const cueId = output.getAttribute("data-audio-time") ?? "";
     const active = voice.cueId === cueId;
-    output.textContent = `${formatAudioTime(active ? voice.currentTime : 0)} / ${formatAudioTime(active ? voice.duration : 0)}`;
+    output.textContent = `${formatAudioTime(active ? voice.currentTime : 0)} / ${formatAudioTime((active ? voice.duration : 0) || audioCueById(cueId)?.duration || 0)}`;
   });
 }
 

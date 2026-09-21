@@ -84,7 +84,7 @@ export function interludePlaybackActionHtml(action = {}, audioCue = null) {
       <p><b>${escapeHtml(action.summary ?? "")}</b></p>
       ${audioPlaybackControlsHtml(audioCue)}
       <div class="call-dialogue">
-        ${script.clipLine ? callLineHtml({ role: "caller", text: script.clipLine }) : ""}
+        ${script.clipLine ? callLineHtml({ role: "caller", speaker: script.speaker, text: script.clipLine }) : ""}
         ${script.hostNote ? callLineHtml({ role: "host", text: script.hostNote }) : ""}
       </div>
     </section>
@@ -96,8 +96,8 @@ export function audioPlaybackControlsHtml(audioCue = {}) {
   return `
     <section class="audio-playback" data-audio-playback="${escapeHtml(audioCue.id ?? "")}">
       <button data-audio-play="${escapeHtml(audioCue.id ?? "")}" type="button">播放录音</button>
-      <input data-audio-seek="${escapeHtml(audioCue.id ?? "")}" type="range" min="0" max="0" step="0.1" value="0" aria-label="录音进度">
-      <output data-audio-time="${escapeHtml(audioCue.id ?? "")}">00:00 / 00:00</output>
+      <input data-audio-seek="${escapeHtml(audioCue.id ?? "")}" type="range" min="0" max="${Number(audioCue.duration) || 0}" step="0.1" value="0" aria-label="录音进度">
+      <output data-audio-time="${escapeHtml(audioCue.id ?? "")}">00:00 / ${String(Math.floor((audioCue.duration || 0) / 60)).padStart(2, "0")}:${String(Math.floor((audioCue.duration || 0) % 60)).padStart(2, "0")}</output>
     </section>
   `;
 }

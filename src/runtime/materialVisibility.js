@@ -29,7 +29,8 @@ export function unlockedMaterialProfile({ state = {}, brief = {}, visible = true
       label: card.title ?? card.type ?? "随麦材料",
       kind: card.type ?? "材料",
       front: card.front ?? "",
-      detail: card.detail ?? ""
+      detail: card.detail ?? "",
+      sourceTable: card.sourceTable
     }];
   });
 

@@ -960,10 +960,13 @@ function sceneWithLiveCounterQuestionOverride(brief = {}, scene = {}) {
 
 function frame({ brief, label, chapter, text, choices, mood, showCaseHud = true, visualHud: visualHudOverride, screenClass = "", backdropClass: backdropClassOverride = "", audioEnterCueId = "", keepVoiceCueId = "", pixelTransition: pixelTransitionOverride = undefined, pressureOverride = null, controlMode = "listen", musicPhase = "" }) {
   const privateConsultation = isPrivateConsultation(brief, state);
+  const chapterLabel = String(chapter || label || (showCaseHud ? "连线中" : "故事过场")).replace(/^第\s*\d+\s*案\s*·?\s*/, "");
   const storyLabel = state.scene === "cafePrologueForensic" ? "尾声 · 私下回告"
+    : state.scene === "cafePrologue" ? "序章 · 咖啡厅"
+    : state.scene === "cafePrologueAftermath" ? "序章 · 咖啡厅散场后"
     : state.scene === "nightShellEpilogue" ? "尾声 · 旧案来信"
     : state.scene === "runComplete" ? "试玩片尾"
-    : `第 ${Math.max(1, Number(state.chapter) || 1)} 案 · ${chapter || label || (showCaseHud ? "连线中" : "故事过场")}`;
+    : `第 ${Math.max(1, Number(state.chapter) || 1)} 案 · ${chapterLabel}`;
   const modeLabel = isStoryPackMode() ? storyLabel : "今日来电";
   const backdropClass = backdropClassOverride || caseBackdropClass(brief);
   const pressure = showCaseHud ? (pressureOverride ?? currentLivePressure(brief, mood)) : {};
@@ -1147,7 +1150,7 @@ function mountCurrentDialogue() {
       // Skip only mechanical transitions, never a choice or an unread page.
       const buttons = [...(shownChoices?.querySelectorAll('button:not(:disabled)') ?? [])];
       const transition = buttons.length === 1 && buttons[0].matches(
-        '[data-scene-open-replay], [data-next-scene-stage], [data-inquiry-continue], [data-continue-live-counter], [data-cafe-opening-seen], [data-cafe-revision-seen], [data-cafe-legal-brief]'
+        '[data-scene-open-replay], [data-next-scene-stage], [data-inquiry-continue], [data-continue-live-counter], [data-cafe-opening-seen], [data-cafe-revision-seen], [data-cafe-legal-brief], [data-care-dialogue-done]'
       ) ? buttons[0] : null;
       if (transition) {
         shownChoices.hidden = true;

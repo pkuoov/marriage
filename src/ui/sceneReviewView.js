@@ -33,6 +33,8 @@ export function sceneReviewDoneChoicesHtml({
 
 export function stanceSnapshotHtml(snapshot = {}, pick = null) {
   const options = Array.isArray(snapshot.options) ? snapshot.options : [];
+  const selected = options.find(option => option.id === pick?.id);
+  if (selected?.response) return `<section class="stance-snapshot-card"><div class="call-dialogue">${callLineHtml({role: "host", text: selected.label})}${callLineHtml({role: "caller", text: selected.response})}</div></section>`;
   return `
     <section class="stance-snapshot-card">
       <span>${escapeHtml(snapshot.kicker ?? "立场快照")}</span>

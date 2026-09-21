@@ -39,7 +39,7 @@
 | 债务 | 层级 | 发债 | 首期付息 | 持债上限 | 本金结清 | 下一笔债 |
 |---|---|---|---|---|---|---|
 | profile-mother-did-it | Tier 2 | 03-profile:opening：“我才知道我妈已经先托介绍人去问了彩礼。” | profile-caller-repeats-label（player-input）：玩家重放‘名校毕业是我自己加的’，她承认知道加价却没有叫停。 | 夜 A 同一段 | profile-family-chat-origin:act1（player-input）：玩家用家里群与工资卡打穿‘两边对等’。 | profile-family-chat-origin:act2：“只差两千，不是拿不出，就是不肯。” |
-| profile-two-thousand-attitude | Tier 3 | profile-family-chat-origin:act2：“只差两千，不是拿不出，就是不肯。” | profile-family-chat-origin:act2（player-input）：玩家压上另一行材料，主播让她收回‘差两千就是态度’。 | 同一场景 | 03-profile:stageJudgement（player-input）：判词点名查完普通家境加价，她本人赞成。 | 03-profile:hangup：“家里群的新消息还在往外跳。” |
+| profile-two-thousand-attitude | Tier 3 | profile-family-chat-origin:act2：“只差两千，不是拿不出，就是不肯。” | profile-family-chat-origin:act2（player-input）：玩家压上另一行材料，主播让她收回‘差两千就是态度’。 | 同一场景 | 03-profile:stageJudgement（player-input）：母亲看过男方自费 MBA 回单后提高彩礼；女方说在缓和，却保留数字并主动提出婚房加名。 | 03-profile:hangup：“家里群的新消息还在往外跳。” |
 
 ## 主案｜02-tony｜那张名单
 

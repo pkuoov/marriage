@@ -192,6 +192,7 @@ export function liveFrameHtml({
   const choiceLayer = hasChoices
     ? `<div class="choices avg-choice-overlay ${choicesAreFlow ? "inline-choice-flow" : "modal-choice-flow"}">${choiceMarkup}</div>`
     : "";
+  const inquiryLayout = screenClass.split(/\s+/).includes("focused-evidence-inquiry");
   return `
     <main class="${escapeHtml(String(screenClass ?? "").split(/\s+/).find((name) => /^effects-(full|reduced|off)$/.test(name)) ?? "effects-full")}">
       ${pixelTransitionHtml(pixelTransition)}
@@ -200,7 +201,7 @@ export function liveFrameHtml({
         <button data-action="title" type="button" aria-label="回到标题页">主菜单</button>
         <nav aria-label="章节"><span class="active"><i></i>${escapeHtml(modeLabel)}</span></nav>
         ${audioSettingsPanelHtml(audioSettings ?? { enabled: soundEnabled }, { placement: "topbar" })}
-        ${material ? `<button class="material-toolbar-button" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" type="button">查看材料 <b>${Math.max(1, Number(materialCount) || 1)}</b></button>` : ""}
+        ${material ? `<button class="material-toolbar-button" data-material-card data-material-open aria-controls="avg-material-modal" aria-expanded="false" aria-haspopup="dialog" type="button">材料</button>` : ""}
         ${showResetButton ? `<button data-action="reset" type="button" aria-label="重新开始，清除本局存档">重开</button>` : ""}
         ${showRecordButton ? `<button class="record-button" data-record-open type="button">案卷</button>` : ""}
       </header>
@@ -217,6 +218,7 @@ export function liveFrameHtml({
             ${sceneEvidencePropsHtml(backdropClass, materialKind)}
             ${visualHud}
           </div>
+          ${inquiryLayout ? '<div class="inquiry-reading-pane">' : ""}
           <div class="dialogue-card" aria-live="polite">
             <div class="dialogue-toolbar">
               ${chapter ? `<p class="eyebrow">${escapeHtml(chapter)}</p>` : ""}
@@ -225,6 +227,7 @@ export function liveFrameHtml({
             ${reactionHtml}
           </div>
           ${choicesAreFlow ? choiceLayer : ""}
+          ${inquiryLayout ? '</div>' : ""}
         </article>
         ${choicesAreFlow ? "" : choiceLayer}
       </section>
@@ -273,11 +276,10 @@ function materialModalHtml(material = "", materialKind = "file", materialArtSrc 
         </header>
         <div class="avg-material-sheet material-${escapeHtml(materialKind)}">
           ${materialRecordHtml(materialItems)}
-          ${materialArtSrc ? `<details class="material-image-preview"><summary>展开材料示意图</summary><img class="avg-material-art" src="${escapeHtml(materialArtSrc)}" alt="${escapeHtml(material)}的材料合成图" onerror="this.hidden=true" /></details>` : ""}
           <small id="avg-material-title">当前材料</small>
           <i aria-hidden="true">${escapeHtml(materialGlyph(materialKind))}</i>
           <b>${escapeHtml(material)}</b>
-          <em>已收到的原文可随时回看。示意图不增加证据内容。</em>
+          <em>已收到的原文可随时回看。</em>
         </div>
       </section>
     </aside>

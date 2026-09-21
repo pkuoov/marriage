@@ -146,7 +146,6 @@ export function portraitLayerHtml({
       </figure>
       ${callerVisible ? `<figure class="case-portrait case-portrait-caller${artStyleClass} mood-${escapeHtml(mood)} pose-${escapeHtml(safeExpression.kind)} beat-${Math.max(0, Number(sceneIndex ?? 0)) % 4} active" data-dialogue-portrait="caller">
         ${artSrc ? `<img src="${escapeHtml(artSrc)}" alt=""${fallbackAttr} /><span class="anonymous-portrait-placeholder" aria-hidden="true"></span>` : `<span class="anonymous-portrait-placeholder" aria-hidden="true"></span>`}
-        <div class="call-expression expression-${escapeHtml(safeExpression.kind)}"><span>${escapeHtml(safeExpression.text)}</span></div>
         <figcaption><span>语音连线｜${escapeHtml(moodLabels[mood] ?? "听线")}</span><b>匿名来电人</b></figcaption>
       </figure>` : ""}
       ${respondentNeutralSrc ? `<figure class="case-portrait case-portrait-respondent art-pixel" data-dialogue-portrait="respondent" data-respondent-art-neutral="${escapeHtml(respondentNeutralSrc)}" data-respondent-art-guarded="${escapeHtml(respondentGuardedSrc)}">

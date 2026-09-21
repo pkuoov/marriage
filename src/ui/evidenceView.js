@@ -211,6 +211,7 @@ function investigationSourceBadge(source = "") {
 }
 
 function evidenceMaterialBodyHtml(check = {}, kind = "file") {
+  if (check.sourceDocuments?.length) return `<div class="evidence-source-documents">${check.sourceDocuments.map(document => `<article class="evidence-source-document"><header><b>${escapeHtml(document.title)}</b><small>${escapeHtml(document.sender)}</small></header>${document.rows.map(row => `<p>${escapeHtml(row)}</p>`).join("")}</article>`).join("")}</div>`;
   const lines = evidenceMaterialRows(check);
   if (kind === "bill") {
     return `<div class="evidence-ledger">${lines.map((line, index) => `
@@ -263,6 +264,7 @@ function evidenceMaterialRowsHtml(check = {}) {
 }
 
 function evidenceMaterialNoteHtml(check = {}) {
+  if (check.sourceDocuments?.length) return "";
   if (check.socialPost) return "";
   if (!Array.isArray(check.materialRows) || !check.materialRows.length || !check.material) return "";
   return `<p class="evidence-material-note">${escapeHtml(check.material)}</p>`;

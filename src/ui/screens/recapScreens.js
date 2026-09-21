@@ -221,6 +221,8 @@ export function createRecapScreens(ctx) {
       : [];
     const openingHtml = nightShellHtml([epilogue.opening].filter(Boolean));
     const unreadHtml = epilogueUnreadHtml({ messages: stage.visibleMessages, currentIndex });
+    const canReturnToCafe = normalizedCafePrologueProgress(state).step === 7
+      && cafePrologueCanOpenForensic(normalizedCafePrologueProgress(state));
     frame({
       brief,
       mood: "focused",
@@ -231,7 +233,7 @@ export function createRecapScreens(ctx) {
       screenClass: `night-epilogue-screen${stage.complete && epilogue.closingCg?.src ? " has-ending-cg" : ""}`,
       text: stage.complete ? `${openingHtml}${nightShellHtml(lines)}` : `${openingHtml}${unreadHtml}`,
       choices: flowGroupHtml(stage.complete
-        ? `<button class="primary" data-finish-night-shell type="button">上午，见一位老来客</button>`
+        ? `<button class="primary" data-finish-night-shell type="button">${canReturnToCafe ? "上午，见一位老来客" : "结束试玩"}</button>`
         : epilogueUnreadContinueHtml({ visibleCount: stage.visibleMessages.length, total: stage.messages.length }))
     });
     bind("[data-epilogue-unread-next]", () => {
@@ -242,12 +244,8 @@ export function createRecapScreens(ctx) {
     bind("[data-finish-night-shell]", () => {
       const cafePrologue = nightShellForBrief(brief)?.cafePrologue;
       const progress = normalizedCafePrologueProgress(state);
-      if (cafePrologue && progress.step === 7) {
-        setCafePrologueStep(state, cafePrologueCanOpenForensic(progress) ? 8 : 7);
-        return;
-      }
-      if (cafePrologue && progress.step < 7) {
-        moveScene(cafePrologueSceneForStep(progress.step));
+      if (cafePrologue && progress.step === 7 && cafePrologueCanOpenForensic(progress)) {
+        setCafePrologueStep(state, 8);
         return;
       }
       moveScene("runComplete");
@@ -387,7 +385,7 @@ export function createRecapScreens(ctx) {
       text = directPick
         ? cafePrologueDialogueHtml([cafeHostQuestion(directPick.question), ...directPick.lines])
         : `${state.cafeInquiryHeard?.[cafeRound.id] ? '<aside class="inquiry-context" data-inquiry-context>桌上材料</aside>' : cafePrologueDialogueHtml(opening)}
-          <section class="inquiry-materials">${cards.map(card => `<article><b>${escapeHtml(card.kicker ?? "材料")} · ${escapeHtml(card.title)}</b><p>${escapeHtml(card.detail)}</p>${(card.rows ?? []).map(row => `<p>${escapeHtml(row)}</p>`).join("")}<button data-cafe-material-open="${escapeHtml(card.id)}" type="button">查看原件</button></article>`).join("")}</section>`;
+          <section class="inquiry-materials" data-after-dialogue>${cards.map(card => `<article><b>${escapeHtml(card.kicker ?? "材料")} · ${escapeHtml(card.title)}</b><p>${escapeHtml(card.detail)}</p>${(card.rows ?? []).map(row => `<p>${escapeHtml(row)}</p>`).join("")}<button data-cafe-material-open="${escapeHtml(card.id)}" type="button">查看原件</button></article>`).join("")}</section>`;
       choices = directPick ? flowGroupHtml('<button data-cafe-inquiry-retry type="button">换个问法</button>')
         : flowGroupHtml(cafeRound.options.map(option => `<button data-cafe-inquiry="${escapeHtml(option.id)}" type="button">${escapeHtml(option.question)}</button>`).join(""));
       choices += cafeMaterialDetailModalHtml(cards);
@@ -479,6 +477,10 @@ export function createRecapScreens(ctx) {
         render();
       });
     });
+    // Originals must remain outside the choice panel: dialogue playback hides
+    // that panel, even when a material's own open button is already visible.
+    const cafeMaterialModal = document.querySelector("[data-cafe-material-modal]");
+    if (cafeMaterialModal) document.querySelector("#app")?.append(cafeMaterialModal);
     document.querySelectorAll("[data-cafe-material-open]").forEach((button) => {
       button.addEventListener("click", () => {
         const id = button.getAttribute("data-cafe-material-open") ?? "";
@@ -802,6 +804,23 @@ export function createRecapScreens(ctx) {
   function renderCareChoice(brief) {
     const state = ctx.getState();
     const key = caseKey(brief);
+    const availableChoices = careChoicesFor(brief);
+    if (availableChoices.length === 1) {
+      const choice = availableChoices[0];
+      if (state.careChoices?.[key] !== choice.id) {
+        state.careChoices = {...state.careChoices, [key]: choice.id};
+        saveState();
+      }
+      frame({brief, mood: "listening", label: "通话结束前", chapter: liveChapterTitle(brief),
+        showCaseHud: false, screenClass: "care-choice-screen",
+        text: callDialogueHtml([{role: "host", text: choice.hostLine}, ...(choice.lines ?? [])]),
+        choices: flowGroupHtml('<button class="primary" data-care-dialogue-done type="button">继续</button>')});
+      bind('[data-care-dialogue-done]', () => {
+        state.scene = brief.dialoguePresentation?.singleClosingCard ? 'caseClosure' : 'storyInterlude';
+        saveState(); render();
+      });
+      bindSceneButtons(); return;
+    }
     const selectedId = state.careChoices?.[key] ?? "";
     const selectedChoice = careChoiceById(brief, selectedId);
     const finalCase = isFinalStoryPackCase();
@@ -843,6 +862,8 @@ export function createRecapScreens(ctx) {
   function renderCaseClosure(brief) {
     const state = ctx.getState();
     const boundary = truthBoundaryReview(brief);
+    const focus = (brief.stanceSnapshot?.options ?? []).find(option => option.id === stanceSnapshotPickForState(brief)?.id);
+    const postscript = actionDone(brief, "interlude:receivedDocumentsRead") ? brief.caseClosing?.postscript : null;
     frame({
       brief,
       mood: "focused",
@@ -852,7 +873,7 @@ export function createRecapScreens(ctx) {
       visualHud: "",
       text: caseClosingHtml({
         caseNumber: Number(state.chapter ?? 1),
-        closing: brief.caseClosing,
+        closing: {...brief.caseClosing, ...(focus?.closingTitle ? {title: focus.closingTitle} : {}), ...(postscript ? { title: postscript.title, verdict: postscript.confirmed.join(""), confirmed: postscript.confirmed, unresolved: postscript.unresolved, nextStep: "保存完整聊天和成交原件，核对代投与追款安排。" } : {})},
         boundary
       }),
       choices: flowGroupHtml(caseClosingChoicesHtml())
@@ -931,7 +952,7 @@ export function createRecapScreens(ctx) {
     const configured = (brief.stanceSnapshot?.options ?? []).find((option) => option.id === pick.id) ?? null;
     return {
       kicker: brief.stanceSnapshot?.recapKicker ?? "中段立场",
-      label: pick.label,
+      label: configured?.label ?? pick.label,
       recap: configured?.recap ?? pick.recap ?? brief.stanceSnapshot?.recap ?? "这次判断不判分，只用来回看你的路线。"
     };
   }
@@ -981,7 +1002,26 @@ export function createRecapScreens(ctx) {
     const optionalQuickCall = storyOptionalQuickCall(storyPackForKey(brief.storyKey ?? brief.weeklyKey ?? storyKeyFromUrl()), brief);
     const broadcastRecap = interlude?.broadcastRecap;
     const broadcastingRecap = Boolean(broadcastRecap && actionDone(brief, "interlude:broadcastRecap"));
-    const shownInterlude = broadcastingRecap ? broadcastRecap : interlude;
+    const packet = interlude?.receivedPacket;
+    const packetArrived = Boolean(packet && actionDone(brief, "interlude:receivedDocuments"));
+    const packetOpening = Boolean(packet && !packetArrived);
+    const unreadPacket = packetArrived && !actionDone(brief, "interlude:receivedDocumentsRead");
+    if (unreadPacket || (broadcastingRecap && broadcastRecap.materials?.length && !actionDone(brief, "interlude:publicMaterialsRead"))) {
+      const documents = unreadPacket ? packet.materials : broadcastRecap.materials;
+      frame({
+        brief, mood: "focused", chapter: unreadPacket ? interlude.kicker : broadcastRecap.kicker, showCaseHud: false,
+        screenClass: "public-materials-screen",
+        text: `<section class="shell public-materials-board"><h2>${unreadPacket ? "Tony 刚补来的材料" : "开播前 · 翻看已收到的公开资料"}</h2>${documents.map(doc => `<article class="material-record"><h3>${escapeHtml(doc.title)}</h3><ul>${doc.rows.map(row => `<li>${escapeHtml(row)}</li>`).join("")}</ul></article>`).join("")}</section>`,
+        choices: flowGroupHtml(`<button class="primary" data-public-materials-read type="button">${unreadPacket ? "看完，继续" : "看完，开始直播"}</button>`)
+      });
+      bind("[data-public-materials-read]", () => {
+        markAction(brief, unreadPacket ? "interlude:receivedDocumentsRead" : "interlude:publicMaterialsRead");
+        saveState();
+        render();
+      });
+      return;
+    }
+    const shownInterlude = packetOpening ? { ...interlude, lines: packet.arrivalLines, line: "", afterLines: [] } : broadcastingRecap ? broadcastRecap : interlude;
     const worldEchoRevealed = !interlude?.worldEcho || Boolean(state.storyWorldEchoes?.[interludeCaseId]);
     const worldEchoHypothesisId = state.storyWorldEchoHypotheses?.[interludeCaseId] ?? "";
     const worldEchoHypothesis = (interlude?.worldEcho?.hypotheses ?? []).find((item) => item.id === worldEchoHypothesisId) ?? null;
@@ -1004,9 +1044,14 @@ export function createRecapScreens(ctx) {
         worldEchoHypothesis,
         afterCaseId: interludeCaseId
       }),
-      choices: flowGroupHtml(broadcastRecap && !broadcastingRecap
+      choices: flowGroupHtml(packetOpening ? `<button class="primary" data-received-documents type="button">打开 Tony 补来的材料</button>` : broadcastRecap && !broadcastingRecap
         ? `<button class="primary" data-enter-broadcast-recap type="button">${escapeHtml(broadcastRecap.actionLabel ?? "下次开播")}</button>`
         : storyInterludeChoicesHtml({ finalCase, worldEcho: interlude?.worldEcho ?? null, worldEchoRevealed, worldEchoHypothesisId, optionalQuickCall }))
+    });
+    bind("[data-received-documents]", () => {
+      markAction(brief, "interlude:receivedDocuments");
+      saveState();
+      render();
     });
     bind("[data-enter-broadcast-recap]", () => {
       markAction(brief, "interlude:broadcastRecap");

@@ -464,6 +464,13 @@ main:has(.demo-return-screen) > .topbar {
 }
 
 /* Evidence inquiries read vertically: dialogue, materials, then questions. */
+.material-source-table { overflow-x: auto; }
+.material-source-table table { width: 100%; border-collapse: collapse; text-align: left; }
+.material-source-table th, .material-source-table td { padding: 12px; border-bottom: 1px solid #65716b; }
+.evidence-source-documents { display: grid; gap: 18px; }
+.evidence-source-document { border: 1px solid #697970; padding: 18px; background: #142321; }
+.evidence-source-document header { display: grid; gap: 8px; }
+.evidence-source-document p { white-space: pre-wrap; line-height: 1.7; }
 .focused-evidence-inquiry .vn-stage {
   display: flex; flex-direction: column; justify-content: flex-start;
   height: calc(100dvh - 96px); min-height: 0; overflow-y: auto;
@@ -577,3 +584,70 @@ main:has(.demo-return-screen) > .topbar {
 .story-interlude-screen:has(.avg-textbox) .interlude-person figcaption {
   display: none;
 }
+
+/* Keep the current speaker beside the source and question, outside their
+   scrolling column. A long document must never displace a portrait. */
+.focused-evidence-inquiry .vn-stage {
+  display: grid; grid-template-columns: minmax(200px, 30%) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr); align-items: stretch;
+  height: calc(100dvh - 96px); padding: 18px; gap: 16px; overflow: hidden;
+}
+.focused-evidence-inquiry .vn-stage > .visual-scene {
+  grid-column: 1; grid-row: 1;
+  position: relative; inset: auto; width: 100%; height: 100%; min-height: 0;
+  overflow: hidden; border-radius: 8px;
+}
+.inquiry-reading-pane { grid-column: 2; grid-row: 1; min-width: 0; min-height: 0; overflow-y: auto; padding: 18px 8px 18px 0; scrollbar-gutter: stable; }
+.focused-evidence-inquiry .vn-stage .inquiry-reading-pane > .dialogue-card,
+.focused-evidence-inquiry.choices-open .vn-stage .inquiry-reading-pane > .dialogue-card.avg-dialogue-active {
+  display: block; position: relative; inset: auto; width: 100%; margin: 0; padding: 0;
+  min-height: 0; max-height: none; overflow: visible; transform: none;
+}
+.focused-evidence-inquiry .inquiry-reading-pane .avg-choice-overlay.inline-choice-flow:not([hidden]) {
+  position: relative; inset: auto; width: 100%; margin: 12px 0 0; padding: 0;
+  max-height: none; transform: none; overflow: visible;
+}
+.focused-evidence-inquiry .inquiry-reading-pane .flow-group .choice-stack {
+  display: grid; grid-template-columns: 1fr; width: 100%; gap: 8px;
+}
+.focused-evidence-inquiry .inquiry-materials {
+  display: grid; grid-template-columns: 1fr; max-height: 30dvh;
+  overflow-y: auto; scrollbar-gutter: stable;
+}
+.focused-evidence-inquiry .inquiry-materials[hidden] { display: none; }
+.focused-evidence-inquiry .avg-textbox { min-height: 0; margin: 0 0 12px; padding: 20px 16px 16px; }
+.focused-evidence-inquiry .avg-page-line .avg-line { font-size: 17px; line-height: 1.5; }
+.focused-evidence-inquiry .inquiry-context { padding: 12px; }
+.focused-evidence-inquiry .inquiry-context p { margin: 6px 0 0; font-size: 17px; line-height: 1.5; }
+.focused-evidence-inquiry .avg-choice-overlay.inline-choice-flow:not([hidden]) button { padding: 10px 12px; }
+.focused-evidence-inquiry .case-duel-portraits,
+.focused-evidence-inquiry .case-duel-portraits.has-respondent,
+.focused-evidence-inquiry .case-duel-portraits:has(.case-portrait:only-child) {
+  inset: 16px 0 0; display: flex; justify-content: center;
+}
+.focused-evidence-inquiry .case-portrait:not(.active) { display: none; }
+.focused-evidence-inquiry .case-portrait.active { width: 100%; min-width: 0; margin: 0; }
+.focused-evidence-inquiry .case-portrait img,
+.focused-evidence-inquiry .case-duel-portraits.has-respondent .case-portrait img {
+  width: 100%; max-width: 100%; height: 90%; object-fit: contain;
+}
+.focused-evidence-inquiry .case-portrait figcaption { max-width: 100%; }
+.cafe-prologue-screen.focused-evidence-inquiry .cafe-negotiation-portraits { inset: 12px 0; }
+.cafe-prologue-screen.focused-evidence-inquiry .cafe-negotiation-portrait { inset: 0; width: 100%; height: 100%; }
+.cafe-prologue-screen.focused-evidence-inquiry .cafe-negotiation-portrait:not(.active) { display: none; }
+.case-vn-grid .control-deck .deck-card-live > b { overflow: visible; white-space: normal; padding-left: 8px; }
+
+/* Public documents are read before the host's on-air assessment. */
+.public-materials-board { max-height: 64dvh; overflow-y: auto; padding: 18px 24px; }
+.public-materials-board article { margin: 12px 0; padding: 12px 16px; border: 1px solid #665849; }
+.public-materials-board h3 { margin: 0 0 8px; }
+.public-materials-board li { margin: 6px 0; line-height: 1.6; }
+.public-materials-screen .vn-stage { display: flex; flex-direction: column; height: calc(100dvh - 96px); padding: 20px; overflow: hidden; }
+.public-materials-screen .visual-scene { display: none; }
+.public-materials-screen .vn-stage > .dialogue-card { position: relative; inset: auto; transform: none; width: 100%; margin: 0; padding: 0; flex: 1; min-height: 0; overflow: hidden; }
+.public-materials-screen .public-materials-board { height: calc(100% - 42px); max-height: none; }
+.public-materials-screen .vn-stage > .avg-choice-overlay { position: relative; inset: auto; transform: none; width: 100%; padding: 12px 0 0; margin: 0; flex: 0 0 auto; }
+.material-check-screen .case-duel-portraits:not(:has(.case-portrait.active)) .case-portrait-caller { display: flex; width: 100%; min-width: 0; }
+.material-check-screen .evidence-document-body { max-height: 30dvh; overflow-y: auto; }
+.material-check-screen .dialogue-toolbar { display: none; }
+.material-check-screen .vn-stage::before { position: absolute; top: 0; right: 0; left: 0; }

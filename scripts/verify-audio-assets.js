@@ -48,8 +48,7 @@ const requiredContentCues = [
   "sfx.case2.door-knock",
   "voice.case2.dryer-message",
   "voice.case3.dinner-pause",
-  "voice.case4.pad-message",
-  "voice.case4.supplier-message"
+  "voice.case4.pad-message"
 ];
 const requiredReadySfx = [
   "sfx.phone.connect",

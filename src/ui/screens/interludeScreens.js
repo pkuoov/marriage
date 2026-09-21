@@ -356,7 +356,7 @@ export function createInterludeScreens(ctx) {
       brief,
       mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
       label: afterScene.label ?? "看材料",
-      screenClass: !pick && check.socialPost ? "social-evidence-screen" : "",
+      screenClass: !pick ? (check.socialPost ? "social-evidence-screen" : "focused-evidence-inquiry material-check-screen") : "",
       chapter: liveChapterTitle(brief),
       text: evidenceCheckScreenHtml({
         check,
@@ -400,6 +400,7 @@ export function createInterludeScreens(ctx) {
     frame({
       brief,
       mood: pick ? (pick.correct ? "focused" : "tense") : "thinking",
+      screenClass: !pick && !check.socialPost ? "focused-evidence-inquiry material-check-screen" : "",
       label: "看材料",
       chapter: liveChapterTitle(brief),
       text: evidenceCheckScreenHtml({

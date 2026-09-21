@@ -321,11 +321,14 @@ function renderScript() {
     const interlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === packet.caseId);
     if (interlude) {
       add(`## ${interlude.kicker ?? "案间串场"}`, "");
+      for (const line of interlude.receivedPacket?.arrivalLines ?? []) renderSpokenLine(lines, line);
+      renderInterludeDocuments(lines, interlude.receivedPacket?.materials);
       for (const line of interlude.lines ?? []) renderSpokenLine(lines, line);
       if (interlude.line) add(interlude.line, "");
       for (const line of interlude.afterLines ?? []) renderSpokenLine(lines, line);
       if (interlude.remoteLabel) add(`语音：${interlude.remoteLabel}`, "");
       if (interlude.broadcastRecap) add(`### ${interlude.broadcastRecap.kicker}`, "", `【${interlude.broadcastRecap.actionLabel}】`, "");
+      renderInterludeDocuments(lines, interlude.broadcastRecap?.materials);
       for (const line of interlude.broadcastRecap?.lines ?? []) renderSpokenLine(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote, true);
       renderWorldEcho(lines, interlude.worldEcho, true);
@@ -574,10 +577,13 @@ function renderPureStoryScript() {
     const interlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === packet.caseId);
     if (interlude) {
       lines.push(`## ${interlude.kicker ?? "案间｜广告与下一通热线"}`, "");
+      for (const line of interlude.receivedPacket?.arrivalLines ?? []) renderDirectorSpoken(lines, line);
+      renderInterludeDocuments(lines, interlude.receivedPacket?.materials);
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.broadcastRecap) lines.push(`### ${interlude.broadcastRecap.kicker}`, "");
+      renderInterludeDocuments(lines, interlude.broadcastRecap?.materials);
       for (const line of interlude.broadcastRecap?.lines ?? []) renderDirectorSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho);
@@ -666,10 +672,13 @@ function renderContinuousStoryScript() {
     const interlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === packet.caseId);
     if (interlude) {
       lines.push(`## ${interlude.kicker ?? "案间｜下一通热线"}`, "");
+      for (const line of interlude.receivedPacket?.arrivalLines ?? []) renderContinuousSpoken(lines, line);
+      renderInterludeDocuments(lines, interlude.receivedPacket?.materials);
       for (const line of interlude.lines ?? []) renderContinuousSpoken(lines, line);
       if (interlude.line) lines.push(`【${continuousStageText(interlude.line)}】`, "");
       for (const line of interlude.afterLines ?? []) renderContinuousSpoken(lines, line);
       if (interlude.broadcastRecap) lines.push(`### ${interlude.broadcastRecap.kicker}`, "");
+      renderInterludeDocuments(lines, interlude.broadcastRecap?.materials);
       for (const line of interlude.broadcastRecap?.lines ?? []) renderContinuousSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, false, false);
@@ -1035,13 +1044,23 @@ function renderContinuousOffMicLetters(lines, packet) {
 
 function renderContinuousCaseClosing(lines, closing) {
   if (!closing) return;
-  lines.push(`## 可选案卷｜${closing.title ?? "本案记录"}`, "");
+  lines.push(`## 案卷记录｜${closing.title ?? "本案记录"}`, "");
+  if (closing.postscript) lines.push("【以下为挂断时记录；收播后新增凭证见本节末尾。】", "");
   if (closing.verdict) lines.push(closing.verdict, "");
   for (const beat of closing.beats ?? []) lines.push(`- **${beat.label ?? "进展"}：** ${beat.text ?? ""}`);
   if ((closing.beats ?? []).length) lines.push("");
   if (closing.confirmed?.length) lines.push(`【已经确认】${closing.confirmed.slice(0, 3).join("；")}`, "");
   if (closing.unresolved?.length) lines.push(`【还没弄清】${closing.unresolved.slice(0, 3).join("；")}`, "");
   if (closing.nextStep) lines.push(`【接下来】${closing.nextStep}`, "");
+  renderClosingPostscript(lines, closing);
+}
+
+function renderClosingPostscript(lines, closing) {
+  const postscript = closing.postscript;
+  if (!postscript) return;
+  lines.push(`【${postscript.title}】`, "");
+  if (postscript.confirmed?.length) lines.push(`【新增确认】${postscript.confirmed.join("；")}`, "");
+  if (postscript.unresolved?.length) lines.push(`【此时仍未知】${postscript.unresolved.join("；")}`, "");
 }
 
 function renderContinuousCareChoice(lines, choices = [], choiceId) {
@@ -1236,6 +1255,11 @@ function renderPureStoryMaterials(lines, packet) {
   for (const card of packet.evidenceCards ?? []) {
     lines.push(`### 材料卡｜${card.title ?? card.type ?? "未命名材料"}`, "");
     if (card.front) lines.push(card.front, "");
+    if (card.sourceTable) {
+      lines.push(`| ${card.sourceTable.columns.join(" | ")} |`, `| ${card.sourceTable.columns.map(() => "---").join(" | ")} |`);
+      for (const row of card.sourceTable.rows) lines.push(`| ${row.join(" | ")} |`);
+      lines.push("");
+    }
     if (card.detail) lines.push(card.detail, "");
   }
 
@@ -1492,10 +1516,13 @@ function renderDirectorScript() {
     const interlude = manifest.nightShell?.interludes?.find((entry) => entry.afterCaseId === packet.caseId);
     if (interlude) {
       lines.push(`## ${interlude.kicker ?? "案间转场"}`, "");
+      for (const line of interlude.receivedPacket?.arrivalLines ?? []) renderDirectorSpoken(lines, line);
+      renderInterludeDocuments(lines, interlude.receivedPacket?.materials);
       for (const line of interlude.lines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.line) lines.push(`【${interlude.line}】`, "");
       for (const line of interlude.afterLines ?? []) renderDirectorSpoken(lines, line);
       if (interlude.broadcastRecap) lines.push(`### ${interlude.broadcastRecap.kicker}`, "");
+      renderInterludeDocuments(lines, interlude.broadcastRecap?.materials);
       for (const line of interlude.broadcastRecap?.lines ?? []) renderDirectorSpoken(lines, line);
       renderTransitionQuote(lines, interlude.transitionQuote);
       renderWorldEcho(lines, interlude.worldEcho, true);
@@ -1741,6 +1768,7 @@ function renderDirectorClosing(lines, closing) {
   if (closing.confirmed?.length) lines.push(`【能确认】${closing.confirmed.join("；")}`, "");
   if (closing.unresolved?.length) lines.push(`【仍未知】${closing.unresolved.join("；")}`, "");
   if (closing.nextStep) lines.push(`【下一步】${closing.nextStep}`, "");
+  renderClosingPostscript(lines, closing);
 }
 
 function advisorName(advisorId) {
@@ -2031,4 +2059,11 @@ function projectPlayableCaseSource(packet) {
 
 async function readJson(relativePath) {
   return JSON.parse(await readFile(resolve(root, relativePath), "utf8"));
+}
+
+function renderInterludeDocuments(lines, documents = []) {
+  for (const doc of documents) {
+    lines.push(`【材料原页：${doc.title}】`, "");
+    for (const row of doc.rows ?? []) lines.push(`> ${row}`, "");
+  }
 }

@@ -263,7 +263,8 @@ export function refreshSavedExchangeCopy(state = {}, briefs = [], previousBriefs
     }
   }
   // Removed optional end stages and material boards must not strand an old save.
-  if (current?.dialoguePresentation?.compactClosing && ["deepFollowup", "caseClosure", "investigationBackflow", "evidenceCheck", "accusation"].includes(next.scene)) {
+  if (current?.dialoguePresentation?.compactClosing && ["deepFollowup", "caseClosure", "investigationBackflow", "evidenceCheck", "accusation"].includes(next.scene)
+      && !(next.scene === "caseClosure" && current.dialoguePresentation.singleClosingCard)) {
     const key = caseKey(current);
     const active = [...(current.nightStructure?.segment1SceneIndexes ?? []), ...(current.nightStructure?.segment2SceneIndexes ?? [])];
     const pending = active.find(index => !next.caseActionLog?.[key]?.[`version:${index}`]);

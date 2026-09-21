@@ -25,6 +25,7 @@ const testimonySmokeActs = authoredCasePackets.flatMap((packet) => (packet.scene
 ))).filter((act) => act.evidenceId && act.statementId && act.statementIds.length);
 const continuousReading = (await readFile(resolve(root, "docs/generated/steam-demo-01-continuous-story-script.md"), "utf8")).split("# 附录｜")[0];
 const verifiedTestimonyActs = new Set();
+const checkedSourceTables = new WeakMap();
 const loadBearingQuestionSignatures = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
   (scene.questionOptions ?? [])
     .filter((option) => option.correct === true)
@@ -98,7 +99,7 @@ try {
   } else if (smokeTarget === "reading-controls") {
     await runSmokeStep("reading controls", runReadingControls);
   } else if (smokeTarget === "six-review") {
-    await runSmokeStep("six reviewed cases", runSixReviewedCases, { timeoutMs: 600000 });
+    await runSmokeStep("selected reviewed routes", runSixReviewedCases, { timeoutMs: 600000 });
   } else if (smokeTarget === "focused-credit") {
     await runSmokeStep("focused credit route", runFocusedCredit);
   } else if (smokeTarget === "testimony-reading") {
@@ -118,7 +119,7 @@ try {
   } else {
     await runSmokeStep("focused credit route", runFocusedCredit);
     // Current two-night routes replace the retired day-map/row-marking fixtures.
-    await runSmokeStep("six reviewed cases", runSixReviewedCases, { timeoutMs: 600000 });
+    await runSmokeStep("selected reviewed routes", runSixReviewedCases, { timeoutMs: 600000 });
     await runSmokeStep("case transition", runCaseTransition);
     await runSmokeStep("portrait viewport matrix", runPortraitViewports);
     await runSmokeStep("state replacement", runStateReplacementRoutes);
@@ -241,7 +242,7 @@ function smokeSummary(target) {
   if (target === "portrait-viewports") return "portrait layouts at 390x844, 1280x720, 1366x768, 1280x800, 1920x1080";
   if (target === "state-replacement") return "new-game-reset, legacy save migration into no-penalty inquiry";
   if (target === "reading-controls") return "overlay keyboard/gamepad, autoplay pause, settings and save reading position";
-  if (target === "six-review") return "reviewed main cases and quick cases: focused inquiry, sources, reload and compact endings";
+  if (target === "six-review") return `selected review routes (${process.env.SMOKE_REVIEW_PART || "all"}): focused inquiry, sources, reload and compact endings`;
   if (target === "focused-credit") return "case 1 focused inquiry, local retry, reload and compact closing";
   if (target === "testimony-reading") return "four cases / seven inquiry acts match the continuous reading";
   if (target === "script-reading") return "four cases: staged statements and answer speakers/order match director/continuous scripts";
@@ -520,6 +521,15 @@ async function runCafePrologue() {
       if (!openingText.includes("孩子以后怎么安排")) throw new Error("the child arrangement conflict must be part of the opening negotiation");
       if (openingText.includes("哪三页") || openingText.includes("只看这三页")) throw new Error("participants must not recite the tutorial material count");
       if (await page.locator("[data-cafe-opening-seen]").count()) await click(page, "[data-cafe-opening-seen]");
+      // The original must not inherit the hidden state of the question panel
+      // while the wife's account is still playing.
+      const earlyOriginal = page.locator('[data-cafe-material-open="chat"]');
+      if (await earlyOriginal.isVisible()) {
+        await earlyOriginal.click();
+        const bounds = await page.locator('.cafe-material-sheet').boundingBox();
+        if (!bounds?.width || !bounds?.height) throw Error('cafe original is hidden with the dialogue choices');
+        await page.getByRole('button', { name: '关闭材料原件', exact: true }).click();
+      }
       if (viewport.width === 390) {
         const phaseTransition = page.locator('.pixel-transition-phase[data-transition-variant="listen"]');
         if (await phaseTransition.count() !== 1) throw new Error("the first account must enter through the shared statement transition");
@@ -686,6 +696,23 @@ async function runCafePrologue() {
       }
       await click(page, "[data-cafe-finish]");
       await assertStoryEnding(page);
+      // A chapter-only legacy save must finish here, never replay the tutorial
+      // as though it were a new scene in case four.
+      await page.evaluate(() => {
+        const key = "livestream-detective-save-v1";
+        const save = JSON.parse(localStorage.getItem(key));
+        save.scene = "nightShellEpilogue";
+        save.screen = "chapter";
+        save.epilogueUnreadStep = 6;
+        save.cafePrologueStep = 0;
+        save.cafePrologueOrder = [];
+        localStorage.setItem(key, JSON.stringify(save));
+      });
+      await page.reload();
+      await click(page, "[data-continue-story]");
+      await click(page, "[data-finish-night-shell]");
+      const legacyScene = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")).scene);
+      if (legacyScene !== "runComplete") throw Error(`legacy epilogue replayed tutorial: ${legacyScene}`);
       smokeProgress(`PASS cafe ${viewport.width}x${viewport.height}: both investigations, saved progress, both callbacks and ending`);
     } finally {
       await context.close();
@@ -3105,6 +3132,7 @@ async function runFocusedCredit() {
     await openCaseAtChapter(page, 1, "focused-credit");
     for (let step = 0; step < 110; step += 1) {
       transcript.push(await drainDialogue(page, {}));
+      await checkReceivedSourceTables(page);
       const snapshot = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")));
       const body = await page.locator("body").innerText();
       transcript.push(body);
@@ -3192,6 +3220,24 @@ async function runFocusedCredit() {
   } finally { await context.close(); }
 }
 
+async function checkReceivedSourceTables(page) {
+  const checked = checkedSourceTables.get(page) ?? new Set();
+  for (const id of ['daily-credit-card-bill', 'daily-tony-roster']) {
+    const original = page.locator(`[data-material-modal] [data-received-material="${id}"]`);
+    if (checked.has(id) || !await original.count()) continue;
+    const open = page.locator('[data-material-open]:visible').first();
+    if (!await open.count()) continue;
+    await open.click();
+    const table = original.locator('table');
+    if (!await table.isVisible() || await table.locator('tbody tr').count() < 6) throw Error(`${id}: original has no readable source rows`);
+    await original.scrollIntoViewIfNeeded();
+    await page.screenshot({path: resolve(root, `output/playwright/fixes-2026-09-21/G2-${id}.png`)});
+    await page.getByRole('button', {name: '关闭后台材料', exact: true}).click();
+    checked.add(id);
+  }
+  checkedSourceTables.set(page, checked);
+}
+
 async function runSixReviewedCases() {
   const [width, height] = (process.env.SMOKE_VIEWPORT || "1280x720").split("x").map(Number);
   const viewport = { width, height };
@@ -3203,21 +3249,72 @@ async function runSixReviewedCases() {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     const page = await context.newPage(); page.setDefaultTimeout(browserActionTimeoutMs);
     const errors = []; page.on('pageerror', e => errors.push(e.message));
-    const transcript = []; let reloaded = false, care = false, done = false, wrongMaterial = false, migrationChecked = false;
+    const transcript = []; let reloaded = false, care = false, done = false, wrongMaterial = false, migrationChecked = false, audioChecked = false;
     try {
       await openCaseAtChapter(page, chapter, 'six-review');
       for (let step = 0; step < 160; step++) {
+        const voiceButton = page.locator('[data-audio-play="voice.case2.dryer-message"]:visible');
+        if (!audioChecked && await voiceButton.count()) {
+          const timer = page.locator('[data-audio-time="voice.case2.dryer-message"]');
+          if ((await timer.innerText()).endsWith('/ 00:00')) throw Error('Tony voice duration unavailable');
+          await voiceButton.click();
+          await page.waitForFunction(() => Number(document.querySelector('[data-audio-seek="voice.case2.dryer-message"]')?.value) > 0);
+          await voiceButton.click();
+          await page.screenshot({path: resolve(directory, 'tony-audio-playing.png')});
+          audioChecked = true;
+        }
         transcript.push(await drainDialogue(page, {}));
+        await checkReceivedSourceTables(page);
         const save = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
+        if (chapter === 2 && save.scene === 'afterSceneEvidence' && await page.locator('[data-evidence-check]:visible').count() && (await page.locator('body').innerText()).includes('上一场结算单')) {
+          await page.screenshot({path: resolve(directory, 'workplace-prior-settlement.png')});
+          await writeFile(resolve(directory, 'workplace-prior-settlement-save.json'), JSON.stringify(save));
+        }
+        if (save.scene === 'testimonyWall') {
+          await writeFile(resolve(directory, `${packet.caseId}-inquiry-save.json`), JSON.stringify(save));
+          await page.screenshot({path: resolve(directory, `${packet.caseId}-inquiry.png`)});
+        }
         const body = await page.locator('body').innerText(); transcript.push(body);
         smokeProgress(`${packet.caseId} ${step}: ${save.scene}`);
+        if (await page.locator('[data-view-case-closure]:visible').count()) {
+          await click(page, '[data-view-case-closure]');
+          const pick = save.stanceSnapshots?.[save.caseBriefs[chapter - 1].id];
+          const focus = packet.stanceSnapshot?.options.find(option => option.id === pick?.id);
+          if (focus?.closingTitle && await page.locator('.case-closing-heading h2').innerText() !== focus.closingTitle) throw Error('closure lost the selected focus');
+          await page.screenshot({path:resolve(directory,`${packet.caseId}-focus-closure.png`)});
+          await writeFile(resolve(directory,`${packet.caseId}-completed-save.json`),JSON.stringify(await page.evaluate(()=>JSON.parse(localStorage.getItem('livestream-detective-save-v1')))));
+          await click(page, '[data-enter-story-interlude]'); care = true; continue;
+        }
         if (save.scene === 'dayScene') {
           const daySceneId = save.caseOvernights?.[save.caseBriefs[chapter - 1].id]?.activeDaySceneId;
           if (daySceneId) await page.screenshot({ path: resolve(directory, `${packet.caseId}-${daySceneId}.png`), animations: 'disabled' });
         }
-        if (care && !['careChoice','caseClosure'].includes(save.scene)) {
+        if (save.scene === 'caseClosure') {
+          const pick = save.stanceSnapshots?.[save.caseBriefs[chapter - 1].id];
+          const focus = packet.stanceSnapshot?.options.find(option => option.id === pick?.id);
+          if (focus?.closingTitle && await page.locator('.case-closing-heading h2').innerText() !== focus.closingTitle) throw Error('closure lost the selected focus');
+          await page.screenshot({path:resolve(directory,`${packet.caseId}-focus-closure.png`)});
+          await click(page, '[data-enter-story-interlude]'); care = true; continue;
+        }
+        if (save.scene === 'storyInterlude') {
+          if (await page.locator('[data-received-documents]:visible').count()) {
+            await click(page, '[data-received-documents]');
+            const sources = await page.locator('.public-materials-board').innerText();
+            if (!sources.includes('1,120,000') || !sources.includes('未显示已读')) throw Error('Tony receipt or read-status boundary missing');
+            await page.screenshot({path:resolve(directory, 'tony-postscript-sources.png')});
+            await click(page, '[data-public-materials-read]');
+            continue;
+          }
           if (save.scene === 'storyInterlude' && await page.locator('[data-enter-broadcast-recap]:visible').count()) {
             await click(page, '[data-enter-broadcast-recap]');
+            if (await page.locator('[data-public-materials-read]:visible').count()) {
+              const board = page.locator('.public-materials-board');
+              if (await board.locator('article').count() !== 4) throw Error('public source pages missing');
+              if ((await board.innerText()).includes('这不就是骗')) throw Error('verdict leaked into raw sources');
+              await board.evaluate(el => { el.scrollTop = el.scrollHeight; });
+              await page.screenshot({path:resolve(directory,`public-sources-${width}x${height}.png`)});
+              await click(page, '[data-public-materials-read]');
+            }
             await page.waitForFunction(() => document.querySelector('.avg-textbox')?.innerText.includes('7 月 29 日'));
             transcript.push(await page.locator('body').innerText());
             await page.locator('[data-dialogue-advance]:visible').evaluate(el => el.click());
@@ -3323,7 +3420,7 @@ async function runSixReviewedCases() {
     finally { await context.close(); }
   }
   let soloEndingChoice = 0;
-  for (const id of (['workplace', 'consultation'].includes(process.env.SMOKE_REVIEW_PART) ? [] : [...storyManifest.quickCases, '03-labeled-fiction', '03-labeled-fiction'])) {
+  for (const id of (['workplace', 'consultation', 'tony'].includes(process.env.SMOKE_REVIEW_PART) ? [] : [...storyManifest.quickCases, '03-labeled-fiction', '03-labeled-fiction'])) {
     const packet=JSON.parse(await readFile(resolve(root,`content/packs/steam-demo-01/quick-cases/${id}.json`),'utf8'));
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});const page=await context.newPage();page.setDefaultTimeout(browserActionTimeoutMs);
     const errors=[];page.on('pageerror',e=>errors.push(e.message));const transcript=[];let wrong=false,reloaded=false,done=false;
@@ -3434,7 +3531,11 @@ async function completeFocusedEvidenceInquiry(page) {
   lines.push(await page.locator('body').innerText());
   if (await page.locator('[data-inline-present-material], [data-testimony-press], .deck-card-pressure').count()) throw Error('retired interaction remains visible');
   const overlap = await page.evaluate(() => {
-    const cards=[...document.querySelectorAll('.inquiry-materials article')].map(n=>n.getBoundingClientRect());
+    const panel=document.querySelector('.inquiry-materials').getBoundingClientRect();
+    const cards=[...document.querySelectorAll('.inquiry-materials article')].map(n=>{
+      const r=n.getBoundingClientRect();
+      return {left:Math.max(r.left,panel.left),right:Math.min(r.right,panel.right),top:Math.max(r.top,panel.top),bottom:Math.min(r.bottom,panel.bottom)};
+    }).filter(r=>r.bottom>r.top&&r.right>r.left);
     const buttons=[...document.querySelectorAll('[data-evidence-inquiry]')].map(n=>n.getBoundingClientRect());
     return cards.some(a=>buttons.some(b=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top));
   });
@@ -3501,7 +3602,7 @@ async function verifyWorkplaceActMigration(page, packet, chapter) {
     const migrated = await page.evaluate(() => JSON.parse(localStorage.getItem('livestream-detective-save-v1')));
     if (migrated.testimonyWallProgress[key]?.act !== 1) throw Error('workplace old act did not map to the remaining inquiry');
     if (migrated.evidenceInquiryPicks[key] !== (oldAct === 2 ? 'act1-ask' : undefined)) throw Error('workplace migration lost the retained answer or reused the deleted answer');
-    if (oldAct === 2 && !text.includes('下一场预收款')) throw Error('retained resolved answer did not render after migration');
+    if (oldAct === 2 && !text.includes('这公司的账目有问题')) throw Error('retained resolved answer did not render after migration');
     if (oldAct === 1 && !await page.locator('[data-evidence-inquiry="act1-ask"]').count()) throw Error('deleted act save cannot continue to the remaining inquiry');
     if (JSON.stringify(migrated.caseBudgets) !== JSON.stringify(baseline.caseBudgets)) throw Error('migration changed unrelated budgets');
   }

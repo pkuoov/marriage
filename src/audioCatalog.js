@@ -57,7 +57,7 @@ export const AUDIO_CUES = Object.freeze({
   "sfx.case2.door-knock": readyOneShot("门外敲门", "./assets/audio/sfx/case2-door-knock.ogg", 0.5),
 
   "voice.case1.loyalty-message": plannedVoice("案1·怕你离开", "./assets/audio/voice/case1-loyalty-message.ogg", "我只是怕你知道我失业后就离开我。"),
-  "voice.case2.dryer-message": readyVoice("案2·吹风机回放", "./assets/audio/voice/case2-dryer-message.ogg", "今晚店长又说我了。也就你肯听我说这些。"),
+  "voice.case2.dryer-message": readyVoice("Tony · 店内语音", "./assets/audio/voice/case2-dryer-message.ogg", "今晚店长又说我了。也就你肯听我说这些。", 3.710938),
   "voice.case3.dinner-pause": plannedVoice("案3·饭局停顿", "./assets/audio/voice/case3-dinner-pause.ogg", "你发的材料是那所学校，本科也是在那儿读的吗？"),
   "voice.case4.pad-message": plannedVoice("案4·垫款私聊", "./assets/audio/voice/case4-pad-message.ogg", "你先把场地和礼品费垫了，这场就交给你。"),
   "voice.case4.supplier-message": plannedVoice("案4·供应商补话", "./assets/audio/voice/case4-supplier-message.ogg", "每一层的返费结完，下一批点位才往下走。")
@@ -75,7 +75,7 @@ export function audioCueAvailable(cueId = "") {
 export function audioCueView(cueId = "") {
   const cue = audioCueById(cueId);
   if (!cue) return null;
-  return { id: cueId, label: cue.label, bus: cue.bus, available: audioCueAvailable(cueId) };
+  return { id: cueId, label: cue.label, bus: cue.bus, available: audioCueAvailable(cueId), duration: cue.duration ?? 0 };
 }
 
 function readySynth(label, synth) {
@@ -102,6 +102,6 @@ function plannedVoice(label, src, transcript) {
   return Object.freeze({ label, bus: "voice", status: "planned", src, transcript, gain: 1, loop: false });
 }
 
-function readyVoice(label, src, transcript) {
-  return Object.freeze({ label, bus: "voice", status: "ready", src, transcript, gain: 1, loop: false });
+function readyVoice(label, src, transcript, duration = 0) {
+  return Object.freeze({ label, bus: "voice", status: "ready", src, transcript, duration, gain: 1, loop: false });
 }

@@ -461,6 +461,7 @@ export function createOvernightScreens(ctx) {
         chapter: "第二夜",
         text: `<section class="callback-opener-card">${callDialogueHtml([
           ...(structure.postures?.[posture] ? [{ role: "caller", text: structure.postures[posture] }] : []),
+          ...((brief.stanceSnapshot?.options ?? []).find(option => option.id === snapshotPick?.id)?.callbackLines ?? []),
           ...(structure.linearCallback?.lines ?? [])
         ])}</section>`,
         choices: flowGroupHtml(`<button class="primary" data-enter-overnight-night2 type="button">继续</button>`)
