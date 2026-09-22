@@ -694,7 +694,7 @@ function assertOvernightStructure(packet = {}, label = "") {
         assertNonEmptyString(choice.id, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 id`);
         assertNonEmptyString(choice.directionLabel, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 必须只向玩家显示处理方向`);
         assertNonEmptyString(choice.label, `${label} overnightStructure.liveCounterBeats[${beatIndex}].choices[${choiceIndex}] 缺少 label`);
-        if (beat.choiceMode === "sequence") assertEqual(choice.directionLabel, choice.label, `${label} 顺序接话应显示实际台词`);
+        if (["sequence", "single"].includes(beat.choiceMode)) assertEqual(choice.directionLabel, choice.label, `${label} 直接问法应显示实际台词`);
         else {
           assert(choice.directionLabel !== choice.label, `${label} 互斥方向与实际台词分别编写`);
           assertNonEmptyString(choice.recapAftertaste, `${label} 互斥分支记录所选结果`);

@@ -72,3 +72,40 @@ test("Tony 第二幕先展示具体履行问题和收款人的回避，结果仍
   assert.match(act.decisivePresent.hostLine, /合同.*催/, "主播回应已经披露的催合同经历");
   assert.doesNotMatch(act.decisivePresent.hostLine, /刘海|修头发/, "不能抢在咨询者后面的生活回忆之前引用它");
 });
+
+import { liveCounterBeatHtml } from '../../src/ui/liveCounterBeatView.js';
+import { liveCounterBeatAfterScene } from '../../src/runtime/liveCounterModel.js';
+
+test('设备约定和账单计算在实际播放场次内，归属不再当新秘密', () => {
+  const p = readCase('01-credit');
+  const index = p.sceneVersions.findIndex(s => s.id === 'credit-eight-wan-bill');
+  assert.ok(p.nightStructure.segment1SceneIndexes.includes(index));
+  const scene = p.sceneVersions[index];
+  const device = scene.questionOptions.find(q => q.id === 'credit-eight-wan-bill:device-installment');
+  const gap = scene.questionOptions.find(q => q.id === 'credit-eight-wan-bill:questionOptions:0');
+  assert.ok(scene.questionSequence.indexOf(device.id) < scene.questionSequence.indexOf(gap.id));
+  assert.ok(device.materialRows.some(r => r.includes('分期')));
+  assert.equal(gap.logicContract.sourceKind, 'host-calculation');
+  assert.ok(device.lines.some(l => l.role === 'caller' && l.text.includes('没签过分期')));
+});
+
+test('彩礼反驳在饭局取消后可达，选中后不复播前言或另一条回应', () => {
+  const p = readCase('03-profile');
+  const beats = p.overnightStructure.liveCounterBeats;
+  const beat = beats.find(b => b.id === 'profile-marriage-price');
+  const cancellation = beats.find(b => b.id === 'profile-weekend-dinner-cancelled');
+  assert.ok(beats.indexOf(beat) > beats.indexOf(cancellation));
+  const already = new Set(beats.slice(0, beats.indexOf(beat)).map(b => `liveCounterBeat:${b.id}`));
+  assert.equal(liveCounterBeatAfterScene(p, beat.afterSceneIndex, id => already.has(id)).id, beat.id);
+  assert.equal(beat.choiceMode, 'single');
+  assert.equal(beat.choices.length, 2);
+  const before = liveCounterBeatHtml(beat);
+  assert.ok(before.includes(beat.lines.at(-1).text));
+  for (const choice of beat.choices) {
+    assert.ok(before.includes(`data-live-counter-choice="${choice.id}"`));
+    const html = liveCounterBeatHtml(beat, { choiceId: choice.id });
+    assert.ok(!html.includes(beat.lines[0].text));
+    assert.ok(html.includes(choice.lines[0].text));
+    assert.ok(!html.includes(beat.choices.find(c => c.id !== choice.id).lines[0].text));
+  }
+});

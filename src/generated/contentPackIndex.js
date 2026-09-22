@@ -2491,7 +2491,7 @@ export const CONTENT_PACKS = {
             "artSrc": "./assets/generated/cg/chenzhi-news-push-pixel.png",
             "artAlt": "收播后的工作室桌面，手机亮起一条紧急新闻推送",
             "headline": "宸直信托全部产品暂停兑付，实控人失联",
-            "body": "赵律师把新闻附的处置通报打开。宸直信托全部产品暂停兑付，实控人暂时失联，监管部门和警方已介入。\n\n通报另列栖行：用户押金被归集至宸直控制的关联资金平台，作为关联项目配资资金，再以相关资产继续融资；到期资金无法回流，栖行的退押金与日常付款同时吃紧。\n\n你调出周会计此前发来的融资稿，押金归集的接收方与通报一致。共享充电宝的试点租金已盖不住维护、分成和折旧，此前主管又把一万二的个人分配填作外部协调费。一直增长的点位，还为宸直带来了不断补入的押金。\n\n各笔清偿金额尚未公布。",
+            "body": "赵律师把新闻附的处置通报打开。宸直信托全部产品暂停兑付，实控人暂时失联，监管部门和警方已介入。\n\n通报另列栖行：用户押金被归集至宸直控制的关联资金平台，作为关联项目配资资金，再以相关资产继续融资；到期资金无法回流，栖行的退押金与日常付款同时吃紧。\n\n各笔清偿金额尚未公布。",
             "hypotheses": [
               {
                 "id": "cross-case-ledger",
@@ -2598,7 +2598,7 @@ export const CONTENT_PACKS = {
             "caseLabel": "第三通回访",
             "sender": "表妹",
             "speakerProfileId": "case3-caller-cousin",
-            "base": "八月底那顿饭取消了，两边父母也各自说过了。我姐后来还问介绍人有没有别的人选，彩礼的条件没松。现在宸直又出了新闻，她爸原先答应九月底给她的三十万，也不知道什么时候能拿到。",
+            "base": "八月底那顿饭取消了，两边父母也各自说过了。我姐后来还问介绍人有没有别的人选，彩礼的条件没松。现在宸直又出了新闻，她爸那三十万原定九月底到期，答应从里面拿二十万给她自己留着，现在也不知道什么时候能拿到。",
             "echoes": {
               "pragmatic": "介绍人来问，她只说饭局往后放。",
               "affirm": "男方没替她说忙。她还在生这个气。",
@@ -4280,9 +4280,53 @@ export const CONTENT_CASES = {
               "materialTitle": "信用卡账单 · 已遮名"
             },
             {
-              "question": "那剩下的三万多，他跟你说花在哪儿了吗？",
+              "id": "credit-eight-wan-bill:device-installment",
+              "question": "设备在你家。买的时候，你知道他办分期了吗？",
+              "sourceAnchor": "一万二的拍摄设备",
+              "suspicionLabel": "设备在你家。买的时候，你知道他办分期了吗？",
+              "correct": true,
+              "routeAxis": "document-edge",
+              "routeTone": "trust-but-verify",
+              "lines": [
+                {
+                  "role": "caller",
+                  "text": "不知道。我以为他全款买来送我的。他说支持我做探店号，还说这是投资我。"
+                },
+                {
+                  "role": "host",
+                  "text": "那他提过让你一起还吗？"
+                },
+                {
+                  "role": "caller",
+                  "text": "没有。我没签过分期，也没答应替他还。东西我是用了，可他买的时候不是这么说的。"
+                }
+              ],
+              "materialRows": [
+                "本期应还款额：¥80,360.00\n持卡人、卡号已遮盖。以下为发来的消费明细截图。",
+                "云栖餐厅｜6,800.00",
+                "餐饮消费（多笔）｜7,200.00",
+                "酒店住宿（两笔）｜4,800.00",
+                "礼品消费（多笔）｜9,200.00",
+                "拍摄设备／分期订单总价｜12,000.00",
+                "男装（含大衣 2,380.00）｜5,000.00"
+              ],
+              "materialTitle": "信用卡账单 · 已遮名",
+              "contradiction": "咨询者使用拍摄设备，但声称购入时不知道分期，也没有同意共同还款。",
+              "logicContract": {
+                "premiseAnchor": "一万二的拍摄设备",
+                "sourceKind": "caller-statement",
+                "sourceProves": "设备在她家，账单显示分期订单。",
+                "sourceDoesNotProve": "接收使用设备不等于签订分期或承诺还款。",
+                "answerAnchor": "不知道",
+                "answerAdds": "她说自己以为是全款赠礼，未签分期，也未约定共同还款。",
+                "nextLegalQuestion": "继续核对账单其余款项，不把设备受益直接认作还款责任。"
+              },
+              "answer": "不知道。我以为他全款买来送我的。他说支持我做探店号，还说这是投资我。没有。我没签过分期，也没答应替他还。东西我是用了，可他买的时候不是这么说的。"
+            },
+            {
+              "question": "这几笔我加了一遍：吃饭、酒店、礼物和设备合计四万，男装五千。八万多的账单，还差三万五千多。他说过剩下的花在哪儿了吗？",
               "sourceAnchor": "我没把每一笔都加起来",
-              "suspicionLabel": "那剩下的三万多，他跟你说花在哪儿了吗？",
+              "suspicionLabel": "这几笔我加了一遍：吃饭、酒店、礼物和设备合计四万，男装五千。八万多的账单，还差三万五千多。他说过剩下的花在哪儿了吗？",
               "revealTransition": {
                 "id": "case1-unexplained-gap",
                 "kind": "reveal",
@@ -4293,8 +4337,8 @@ export const CONTENT_CASES = {
               "answer": "没解释。问起来就说奖金快发了，让我先把卡还上。可这些是他当时愿意花的。怎么一缺钱就都要找我？",
               "logicContract": {
                 "premiseAnchor": "我没把每一笔都加起来",
-                "sourceKind": "caller-statement",
-                "sourceProves": "来电人当场陈述，可与已经收到的材料核对。",
+                "sourceKind": "host-calculation",
+                "sourceProves": "已上屏账单总额80360；餐饮、酒店、礼物与设备合计40000，男装5000，差额35360尚未说明。",
                 "sourceDoesNotProve": "未披露的付款、余额或用途不能靠语气推断。",
                 "answerAnchor": "没解释。问起来就说奖金快发了，让我先把卡还上。",
                 "answerAdds": "没解释。问起来就说奖金快发了，让我先把卡还上。可这些是他当时愿意花的。怎么一缺钱就都要找我？",
@@ -4341,6 +4385,7 @@ export const CONTENT_CASES = {
           },
           "questionSequence": [
             "credit-eight-wan-bill:wine",
+            "credit-eight-wan-bill:device-installment",
             "credit-eight-wan-bill:questionOptions:0"
           ]
         },
@@ -4604,7 +4649,7 @@ export const CONTENT_CASES = {
           ],
           "questionOptions": [
             {
-              "question": "你加完还差至少三万五，这个数对不上。你当时怎么问他的？",
+              "question": "我按账单加完，还差至少三万五。你当时问过他，这些钱花在哪儿了吗？",
               "sourceAnchor": "四万里",
               "suspicionLabel": "八万里没说清的三万五",
               "answer": "我追着问用途。他没接，反过来问我八万到底转不转。我就没再往下问。",
@@ -8351,8 +8396,8 @@ export const CONTENT_CASES = {
           ],
           "speakerId": "lin",
           "speaker": "咨询者",
-          "entryQuestion": "你回家以后是怎么跟家里说的？",
-          "version": "“名校毕业”最早也不是他说的。介绍人说学校好、收入稳、家里省心，我回去说成了名校毕业。后来问清本科，我把 MBA 缴费回单也发给我妈了。她先说我没问清，接着问：二十三万八，真是他自己出的？我说是。她就去找介绍人了。",
+          "entryQuestion": "那晚回家你还说是本科。后来什么时候改的口，回单又是什么时候发给你妈的？",
+          "version": "隔了两天，我在微信上又问了一次。他还是说本科不是那所，把 MBA 查询页和缴费回单发来了。我这才把两张图转给我妈，跟她说是工作以后读的 MBA，不是本科。她先说我没问清，接着问：二十三万八，真是他自己出的？我说是。她就去找介绍人了。",
           "afterVersion": {
             "lines": [
               {
@@ -9861,6 +9906,86 @@ export const CONTENT_CASES = {
                 "text": "可我真不是因为忙。你让我撒这个谎，下次见面怎么办？"
               }
             ]
+          },
+          {
+            "id": "profile-marriage-price",
+            "kind": "interruptToast",
+            "cost": 0,
+            "afterSceneIndex": 6,
+            "from": "连线继续",
+            "lines": [
+              {
+                "role": "host",
+                "text": "你还要按原来的条件谈，就回去跟你父母说。他不愿意，你让他说忙也没用啊。"
+              },
+              {
+                "role": "caller",
+                "text": "我自己跟我妈说。"
+              },
+              {
+                "role": "caller",
+                "text": "可我是真觉得他条件不错。要不然我也不至于跟他说这么多。"
+              },
+              {
+                "role": "host",
+                "text": "那就看你愿意改什么，不能光让他改。"
+              },
+              {
+                "role": "caller",
+                "text": "主播，你不是也帮人介绍对象吗？按我的条件，如果不找他，还能找到什么条件的？上限能到哪儿？"
+              },
+              {
+                "role": "host",
+                "text": "你先说你要什么。收入、相处，还是结婚给你多少钱？"
+              },
+              {
+                "role": "caller",
+                "text": "收入不能比他低吧。彩礼还是要有，房子也得有保障。不然女孩子结这个婚图什么？我又不想被物化。我的付出和青春，总得有人配得起吧。"
+              }
+            ],
+            "choices": [
+              {
+                "id": "price-versus-security",
+                "label": "不想被物化，怎么又拿彩礼和房子当结婚的条件？",
+                "lines": [
+                  {
+                    "role": "caller",
+                    "text": "这是保障，又不是卖自己。什么都不要，万一以后过不下去，我怎么办？"
+                  },
+                  {
+                    "role": "host",
+                    "text": "保障可以谈。可你刚问我换个人能找什么上限，列的又全是人家要给你多少。你不也在拿这些给自己标价吗？"
+                  },
+                  {
+                    "role": "caller",
+                    "text": "我总不能换个人，条件还越谈越低吧？"
+                  }
+                ],
+                "directionLabel": "不想被物化，怎么又拿彩礼和房子当结婚的条件？",
+                "recapAftertaste": "我问了彩礼和房子的保障，她仍不愿降低条件。"
+              },
+              {
+                "id": "price-of-youth",
+                "label": "付出和青春要人配得起，这不就是在标价？",
+                "lines": [
+                  {
+                    "role": "caller",
+                    "text": "我又没说一年青春多少钱。可我付出这么多，找个人还不如现在这个，图什么？"
+                  },
+                  {
+                    "role": "host",
+                    "text": "那你说说，除了收入、彩礼和房子，你还想跟他过什么样的日子？"
+                  },
+                  {
+                    "role": "caller",
+                    "text": "日子当然要好好过。可这些都没有，光说对我好有什么用？"
+                  }
+                ],
+                "directionLabel": "付出和青春要人配得起，这不就是在标价？",
+                "recapAftertaste": "我问了付出和青春的标价，她仍先看对方能给什么。"
+              }
+            ],
+            "choiceMode": "single"
           }
         ],
         "interludeEarnedItemMap": {
@@ -10183,45 +10308,9 @@ export const CONTENT_CASES = {
       "careChoices": [
         {
           "id": "accompany",
-          "label": "你还要按原来的条件谈，就回去跟你父母说。他不愿意，你让他说忙也没用啊。",
-          "hostLine": "你还要按原来的条件谈，就回去跟你父母说。他不愿意，你让他说忙也没用啊。",
+          "label": "他不接受这些条件。你想继续，就跟他谈；想换人，也别把自己的要求全推给父母。",
+          "hostLine": "他不接受这些条件。你想继续，就跟他谈；想换人，也别把自己的要求全推给父母。",
           "lines": [
-            {
-              "role": "caller",
-              "text": "我自己跟我妈说。"
-            },
-            {
-              "role": "caller",
-              "text": "可我是真觉得他条件不错。要不然我也不至于跟他说这么多。"
-            },
-            {
-              "role": "host",
-              "text": "那就看你愿意改什么，不能光让他改。"
-            },
-            {
-              "role": "caller",
-              "text": "主播，你不是也帮人介绍对象吗？按我的条件，如果不找他，还能找到什么条件的？上限能到哪儿？"
-            },
-            {
-              "role": "host",
-              "text": "你先说你要什么。收入、相处，还是结婚给你多少钱？"
-            },
-            {
-              "role": "caller",
-              "text": "收入不能比他低吧。彩礼还是要有，房子也得有保障。不然女孩子结这个婚图什么？我又不想被物化。"
-            },
-            {
-              "role": "host",
-              "text": "你刚才问自己的条件值一个什么上限，现在说出来的，又是他得给你多少。这样给自己定价，不就是你说的物化吗？"
-            },
-            {
-              "role": "caller",
-              "text": "我总不能换个人，条件还越谈越低吧？"
-            },
-            {
-              "role": "host",
-              "text": "人家明确说不接受了。你想继续，就跟他谈；想换人，也别把自己的要求全推给父母。"
-            },
             {
               "role": "caller",
               "text": "那彩礼我还是要的。你要有合适的人，先把情况给我看看吧。"
@@ -14537,7 +14626,7 @@ export const CONTENT_QUICK_CASES = {
           "label": "谁主动把事情公开？",
           "sourceAnchor": "由他公开发布",
           "confrontationId": "attention-asymmetry",
-          "question": "男方自己把长文发出来，说明至少这一次，他愿意让大家都来谈。"
+          "question": "长文是他自己发出来的，不是女方先爆的。"
         },
         {
           "id": "career-asymmetry",
@@ -14634,7 +14723,7 @@ export const CONTENT_QUICK_CASES = {
           "lines": [
             {
               "role": "host",
-              "text": "男方自己把长文发出来，说明至少这一次，他愿意让大家都来谈。"
+              "text": "长文是他自己发出来的，不是女方先爆的。"
             },
             {
               "role": "host",

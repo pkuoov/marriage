@@ -344,7 +344,7 @@
       "label": "谁主动把事情公开？",
       "sourceAnchor": "由他公开发布",
       "confrontationId": "attention-asymmetry",
-      "question": "男方自己把长文发出来，说明至少这一次，他愿意让大家都来谈。"
+      "question": "长文是他自己发出来的，不是女方先爆的。"
     },
     {
       "id": "career-asymmetry",
@@ -441,7 +441,7 @@
       "lines": [
         {
           "role": "host",
-          "text": "男方自己把长文发出来，说明至少这一次，他愿意让大家都来谈。"
+          "text": "长文是他自己发出来的，不是女方先爆的。"
         },
         {
           "role": "host",

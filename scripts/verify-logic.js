@@ -3377,7 +3377,7 @@ test("EPISODE-001E", "all four demo cases preserve human causality and evidence 
   const cancellationLines = dinnerCancelled?.lines ?? [];
   assert(cancellationLines.some((line) => line.role === "caller" && line.speaker === "男方"), "取消饭局必须有男方本人回应");
   assert(cancellationLines.some((line) => line.role === "caller" && line.speaker === "咨询者"), "取消饭局必须有来电人本人回应");
-  const profileClose = case3Opening.careChoices.flatMap(choice => choice.lines ?? []);
+  const profileClose = [...case3Opening.careChoices.flatMap(choice => choice.lines ?? []), ...(case3.overnightStructure.liveCounterBeats.find(beat => beat.id === "profile-marriage-price")?.lines ?? [])];
   assert(profileClose.some(line => line.role === "caller" && /我妈/.test(line.text)), "取消饭局后保留来电人通知家里的行动，不强制每段以主播总结结尾");
   assert(!(dinnerCancelled?.lines ?? []).some((line) => line.speaker === "介绍人"), "案三介绍人未接入直播，不得越权替双方宣布取消饭局");
 });
@@ -4624,7 +4624,7 @@ assertIncludes(giftText, "其他账户不公开", "退款后依次确认材料�
     (caseBrief.overnightStructure?.liveCounterBeats ?? []).forEach((counterBeat) => {
       (counterBeat.choices ?? []).forEach((choice, choiceIndex) => {
         assert(choice.directionLabel, `${caseBrief.runtimeContentCaseId} 的现场压力选择 ${counterBeat.id}/${choice.id} 必须提供方向按钮`);
-        if (counterBeat.choiceMode === "sequence") assertEqual(choice.directionLabel, choice.label, "顺序选项直接展示实际台词");
+        if (["sequence", "single"].includes(counterBeat.choiceMode)) assertEqual(choice.directionLabel, choice.label, "直接问法展示实际台词");
         else assert(choice.directionLabel !== choice.label, "保留的分支方向使用短标签");
         assert((choice.lines ?? []).length >= 1, `${caseBrief.runtimeContentCaseId} 的现场压力选择 ${counterBeat.id}/${choice.id} 必须在点击后的第一屏改变人物或现场状态`);
         const choiceResultHtml = liveCounterBeatHtml(counterBeat, { choiceId: choice.id, completedChoiceIds: counterBeat.choices.slice(0, choiceIndex + 1).map(item => item.id) });
@@ -5019,6 +5019,8 @@ test("STORY-REVISION-004", "final statement preserves its unresolved live counte
     const review = () => sceneReviewModel({ brief: packet, index: cancellation.afterSceneIndex, actionDone: (key) => done.has(key), overnight: { segment: "night2" } });
     assertEqual(review().lastStage, false, "最后一段无论问中与否，都须通过继续按钮进入尚未播放的固定事件");
     done.add(`liveCounterBeat:${cancellation.id}`);
+    assertEqual(review().lastStage, false, "取消饭局后仍要完成来电人换对象的反驳选择");
+    done.add("liveCounterBeat:profile-marriage-price");
     assertEqual(review().lastStage, true, "固定事件完成后才能离开问答，不得重播取消饭局");
   }
 });

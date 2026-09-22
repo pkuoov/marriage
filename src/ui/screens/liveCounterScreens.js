@@ -69,6 +69,7 @@ export function createLiveCounterScreens(ctx) {
       label: "现场反压",
       chapter: "第二夜",
       text: liveCounterBeatHtml(beat, pick),
+      screenClass: beat.choiceMode === "single" ? "single-counter-screen" : "",
       pixelTransition,
       choices: (!requiresChoice || (pick && !pending))
         ? flowGroupHtml(`<button class="primary" data-continue-live-counter type="button">继续追问</button>`)

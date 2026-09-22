@@ -3259,7 +3259,7 @@ async function runSixReviewedCases() {
   const directory = resolve(root, 'output/playwright/six-review');
   await mkdir(directory, { recursive: true });
   const { writeFile } = await import('node:fs/promises');
-  for (const chapter of (process.env.SMOKE_REVIEW_PART === 'quick' ? [] : process.env.SMOKE_REVIEW_PART === 'tony' ? [4] : process.env.SMOKE_REVIEW_PART === 'workplace' ? [2] : process.env.SMOKE_REVIEW_PART === 'consultation' ? [2, 3] : [2, 3, 4])) {
+  for (const chapter of (process.env.SMOKE_REVIEW_PART === 'quick' ? [] : process.env.SMOKE_REVIEW_PART === 'tony' ? [4] : process.env.SMOKE_REVIEW_PART === 'workplace' ? [2] : process.env.SMOKE_REVIEW_PART === 'consultation' ? [2, 3] : process.env.SMOKE_REVIEW_PART === 'profile' ? [3] : [2, 3, 4])) {
     const packet = authoredCasePackets[chapter - 1];
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     const page = await context.newPage(); page.setDefaultTimeout(browserActionTimeoutMs);
@@ -3435,7 +3435,7 @@ async function runSixReviewedCases() {
     finally { await context.close(); }
   }
   let soloEndingChoice = 0;
-  for (const id of (['workplace', 'consultation', 'tony'].includes(process.env.SMOKE_REVIEW_PART) ? [] : [...storyManifest.quickCases, '03-labeled-fiction', '03-labeled-fiction'])) {
+  for (const id of (['workplace', 'consultation', 'tony', 'profile'].includes(process.env.SMOKE_REVIEW_PART) ? [] : [...storyManifest.quickCases, '03-labeled-fiction', '03-labeled-fiction'])) {
     const packet=JSON.parse(await readFile(resolve(root,`content/packs/steam-demo-01/quick-cases/${id}.json`),'utf8'));
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});const page=await context.newPage();page.setDefaultTimeout(browserActionTimeoutMs);
     const errors=[];page.on('pageerror',e=>errors.push(e.message));const transcript=[];let wrong=false,reloaded=false,done=false;

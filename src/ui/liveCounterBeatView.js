@@ -13,7 +13,7 @@ export function liveCounterBeatHtml(beat = {}, pick = null) {
     <section class="interlude-action-card interrupt-toast-card live-counter-beat-card${presentationClass}">
       <span class="source-badge">${escapeHtml(beat.from ?? "现场新消息")}</span>
       ${beat.text ? `<p><b>${escapeHtml(beat.text)}</b></p>` : ""}
-      ${!sequential || !pick ? callDialogueHtml(beat.lines ?? [], "live-counter-dialogue") : ""}
+      ${!pick || (!sequential && beat.choiceMode !== "single") ? callDialogueHtml(beat.lines ?? [], "live-counter-dialogue") : ""}
       ${choices.length && !sequential ? `
         <div class="reply-choice-grid">
           ${choices.map((choice) => counterChoiceHtml(choice, pick)).join("")}

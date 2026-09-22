@@ -664,3 +664,13 @@ main:has(.demo-return-screen) > .topbar {
 .quick-original-document { border: 1px solid #687c73; padding: 16px; margin-bottom: 18px; }
 .quick-original-document p { line-height: 1.8; margin: 14px 0; }
 .quick-source-reader > button { flex: 0 0 auto; min-height: 48px; }
+
+/* Direct rebuttal choices stay readable beneath the current speaker. */
+.single-counter-screen .live-counter-beat-card { padding: 0; border: 0; background: transparent; }
+.single-counter-screen .live-counter-beat-card > .source-badge { display: none; }
+.single-counter-screen .reply-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.single-counter-screen .reply-choice-option { min-width: 0; min-height: 56px; padding: 12px 16px; font-size: 16px; line-height: 1.5; text-align: left; }
+.single-counter-screen .reply-choice-grid:has(article) { display: none; }
+.single-counter-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active { padding-bottom: 40px; }
+.single-counter-screen.dialogue-focus-stage .case-portrait-host:not(.active) { transform: translateY(-18%) scale(.93); }
+.single-counter-screen.dialogue-focus-stage .case-portrait-host.active { transform: translateY(-18%) scale(1.025); }

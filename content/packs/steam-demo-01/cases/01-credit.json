@@ -614,9 +614,53 @@
           "materialTitle": "信用卡账单 · 已遮名"
         },
         {
-          "question": "那剩下的三万多，他跟你说花在哪儿了吗？",
+          "id": "credit-eight-wan-bill:device-installment",
+          "question": "设备在你家。买的时候，你知道他办分期了吗？",
+          "sourceAnchor": "一万二的拍摄设备",
+          "suspicionLabel": "设备在你家。买的时候，你知道他办分期了吗？",
+          "correct": true,
+          "routeAxis": "document-edge",
+          "routeTone": "trust-but-verify",
+          "lines": [
+            {
+              "role": "caller",
+              "text": "不知道。我以为他全款买来送我的。他说支持我做探店号，还说这是投资我。"
+            },
+            {
+              "role": "host",
+              "text": "那他提过让你一起还吗？"
+            },
+            {
+              "role": "caller",
+              "text": "没有。我没签过分期，也没答应替他还。东西我是用了，可他买的时候不是这么说的。"
+            }
+          ],
+          "materialRows": [
+            "本期应还款额：¥80,360.00\n持卡人、卡号已遮盖。以下为发来的消费明细截图。",
+            "云栖餐厅｜6,800.00",
+            "餐饮消费（多笔）｜7,200.00",
+            "酒店住宿（两笔）｜4,800.00",
+            "礼品消费（多笔）｜9,200.00",
+            "拍摄设备／分期订单总价｜12,000.00",
+            "男装（含大衣 2,380.00）｜5,000.00"
+          ],
+          "materialTitle": "信用卡账单 · 已遮名",
+          "contradiction": "咨询者使用拍摄设备，但声称购入时不知道分期，也没有同意共同还款。",
+          "logicContract": {
+            "premiseAnchor": "一万二的拍摄设备",
+            "sourceKind": "caller-statement",
+            "sourceProves": "设备在她家，账单显示分期订单。",
+            "sourceDoesNotProve": "接收使用设备不等于签订分期或承诺还款。",
+            "answerAnchor": "不知道",
+            "answerAdds": "她说自己以为是全款赠礼，未签分期，也未约定共同还款。",
+            "nextLegalQuestion": "继续核对账单其余款项，不把设备受益直接认作还款责任。"
+          },
+          "answer": "不知道。我以为他全款买来送我的。他说支持我做探店号，还说这是投资我。没有。我没签过分期，也没答应替他还。东西我是用了，可他买的时候不是这么说的。"
+        },
+        {
+          "question": "这几笔我加了一遍：吃饭、酒店、礼物和设备合计四万，男装五千。八万多的账单，还差三万五千多。他说过剩下的花在哪儿了吗？",
           "sourceAnchor": "我没把每一笔都加起来",
-          "suspicionLabel": "那剩下的三万多，他跟你说花在哪儿了吗？",
+          "suspicionLabel": "这几笔我加了一遍：吃饭、酒店、礼物和设备合计四万，男装五千。八万多的账单，还差三万五千多。他说过剩下的花在哪儿了吗？",
           "revealTransition": {
             "id": "case1-unexplained-gap",
             "kind": "reveal",
@@ -627,8 +671,8 @@
           "answer": "没解释。问起来就说奖金快发了，让我先把卡还上。可这些是他当时愿意花的。怎么一缺钱就都要找我？",
           "logicContract": {
             "premiseAnchor": "我没把每一笔都加起来",
-            "sourceKind": "caller-statement",
-            "sourceProves": "来电人当场陈述，可与已经收到的材料核对。",
+            "sourceKind": "host-calculation",
+            "sourceProves": "已上屏账单总额80360；餐饮、酒店、礼物与设备合计40000，男装5000，差额35360尚未说明。",
             "sourceDoesNotProve": "未披露的付款、余额或用途不能靠语气推断。",
             "answerAnchor": "没解释。问起来就说奖金快发了，让我先把卡还上。",
             "answerAdds": "没解释。问起来就说奖金快发了，让我先把卡还上。可这些是他当时愿意花的。怎么一缺钱就都要找我？",
@@ -675,6 +719,7 @@
       },
       "questionSequence": [
         "credit-eight-wan-bill:wine",
+        "credit-eight-wan-bill:device-installment",
         "credit-eight-wan-bill:questionOptions:0"
       ]
     },
@@ -938,7 +983,7 @@
       ],
       "questionOptions": [
         {
-          "question": "你加完还差至少三万五，这个数对不上。你当时怎么问他的？",
+          "question": "我按账单加完，还差至少三万五。你当时问过他，这些钱花在哪儿了吗？",
           "sourceAnchor": "四万里",
           "suspicionLabel": "八万里没说清的三万五",
           "answer": "我追着问用途。他没接，反过来问我八万到底转不转。我就没再往下问。",

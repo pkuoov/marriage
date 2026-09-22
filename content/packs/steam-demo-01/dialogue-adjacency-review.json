@@ -8,7 +8,7 @@
   ],
   "cases": {
     "01-credit": {
-      "reviewedAt": "2026-09-21",
+      "reviewedAt": "2026-09-22",
       "opening": [
         {
           "fromAnchor": "问个自己的事",
@@ -129,13 +129,19 @@
               "contextAnchor": "主要贵在酒",
               "questionAnchor": "云栖这顿酒水是谁点的，你平时吃饭也按这个标准？",
               "answerAnchor": "酒是他挑的，我还说太贵了。店是我想去的，平时探店也会去这种地方。",
-              "relation": "未说明的三万五收住，不代认用途；已认的消费继续核对，不再许诺次日追这笔。"
+              "relation": "先问酒水及消费标准，确认她参与选择、费用由男方支付；接着才核对设备约定与账单缺口。"
+            },
+            {
+              "contextAnchor": "一万二的拍摄设备",
+              "questionAnchor": "买的时候，你知道他办分期了吗",
+              "answerAnchor": "我没签过分期",
+              "relation": "已知设备在女方家，不再追归属；问购买时是否知情、有没有承诺共同还款。"
             },
             {
               "contextAnchor": "我没把每一笔都加起来",
-              "questionAnchor": "那剩下的三万多，他跟你说花在哪儿了吗？",
+              "questionAnchor": "这几笔我加了一遍",
               "answerAnchor": "没解释。问起来就说奖金快发了，让我先把卡还上。",
-              "relation": "未说明的三万五收住，不代认用途；已认的消费继续核对，不再许诺次日追这笔。"
+              "relation": "主播对已上屏账单计算四万加五千，再问其余三万五千多的用途；女方未加总，不把计算归给她。"
             }
           ],
           "freeQuestions": []
@@ -220,7 +226,7 @@
           "questionOptions": [
             {
               "contextAnchor": "四万里，确实有我那一份",
-              "questionAnchor": "加完还差至少三万五",
+              "questionAnchor": "我按账单加完",
               "answerAnchor": "他没接",
               "guardedAnswerAnchor": "问过",
               "relation": "复述账单里已经拆出的未说明金额，询问她是否问过具体用途。"
@@ -693,7 +699,7 @@
       }
     },
     "03-profile": {
-      "reviewedAt": "2026-09-21",
+      "reviewedAt": "2026-09-22",
       "opening": [
         {
           "fromAnchor": "帮我听听一件事",
@@ -822,8 +828,8 @@
           "entry": {
             "mode": "continue",
             "fromAnchor": "本科不是",
-            "toAnchor": "回家以后是怎么跟家里说的",
-            "relation": "饭桌上已经纠正本科，上一段玩家也已问出父母为何不信男方拿不出；本段先让咨询者承认自己把“学校好”说成“名校毕业”，再用短问补出她如何更正、母亲如何抬价以及她没有撤回。"
+            "toAnchor": "后来什么时候改的口",
+            "relation": "上一场承认饭后仍向家人谎称本科，本场明确隔了两天微信再问、转发查询页和回单，才纠正学历并引出母亲加价。"
           },
           "questionOptions": [
             {
@@ -835,25 +841,25 @@
           ],
           "freeQuestions": [
             {
-              "contextAnchor": "介绍人说",
+              "contextAnchor": "她就去找介绍人了",
               "questionAnchor": "介绍人是他妈的老同事。她说收入稳、家里省心，这些有没有让你核对过材料？",
               "answerAnchor": "没有。他妈的老同事，话肯定挑好的说，这我懂。可收入稳那句",
               "relation": "从介绍人的条件转述补问她与男方家的现实关系。"
             },
             {
-              "contextAnchor": "家里省心",
+              "contextAnchor": "她就去找介绍人了",
               "questionAnchor": "“家里省心”这话你怎么理解？",
               "answerAnchor": "就是独生子，爸妈有退休金，平时不用他贴钱。我妈一听这四个",
               "relation": "沿介绍人的原词要求咨询者说明家里如何具体理解省心。"
             },
             {
-              "contextAnchor": "后来问清本科",
+              "contextAnchor": "不是本科",
               "questionAnchor": "你把本科说清以后，你妈妈当时怎么回的？",
               "answerAnchor": "她先说我没问清",
               "relation": "本科纠正后母亲追问学费是否自费，尚未由此确认男方当前余额。"
             },
             {
-              "contextAnchor": "介绍人说",
+              "contextAnchor": "她就去找介绍人了",
               "questionAnchor": "她说收入稳。有没有给过一个月多少的工资单，还是只报了这个词？",
               "answerAnchor": "没有。她说工作稳，我就没再问具体数字。",
               "relation": "沿「最早也不是他说的」核实，回答交代「没有。她说工作稳，我就没再问具体数字。」，不把核实本身判为越界。"
