@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.js";
 // Only pass received cards here. Reasoning notes and contradiction answers are
 // deliberately excluded: the document viewer displays the source material.
 export function materialRecordHtml(items = []) {
@@ -11,4 +12,3 @@ export function materialRecordHtml(items = []) {
 function sourceTableHtml(table) {
   return `<div class="material-source-table"><table><thead><tr>${(table.columns ?? []).map(column => `<th scope="col">${escapeHtml(column)}</th>`).join("")}</tr></thead><tbody>${(table.rows ?? []).map(row => `<tr>${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
 }
-function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]); }

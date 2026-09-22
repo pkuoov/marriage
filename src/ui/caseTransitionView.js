@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.js";
 export function caseClosingHtml({ caseNumber = 1, closing = {}, boundary = {} } = {}) {
   const title = closing.title ?? "本案结案";
   const verdict = closing.verdict ?? "今晚先把能确认和不能确认的事分开。";
@@ -95,14 +96,4 @@ function closingColumnHtml(label, items, className) {
 
 function boundaryItems(boundary, key) {
   return boundary?.columns?.find((column) => column.key === key)?.items ?? [];
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

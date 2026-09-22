@@ -1,3 +1,4 @@
+import { resolveCommit } from "../../runtime/stateCommit.js";
 import { liveSceneForCurrentSegment } from "../../runtime/nightOvernightModel.js";
 import { afterSceneEvidenceFor } from "../../runtime/sceneAdvance.js";
 import { flowGroupHtml } from "../callFlowView.js";
@@ -31,6 +32,7 @@ export function createLiveCounterScreens(ctx) {
     setIndexValue,
     sceneAfterEvidenceFor
   } = ctx;
+  const commit = resolveCommit(ctx);
 
   function renderLiveCounterBeat(brief) {
     const state = ctx.getState();
@@ -102,10 +104,10 @@ export function createLiveCounterScreens(ctx) {
     const state = ctx.getState();
     const beat = liveCounterBeatAfterScene(brief, sceneIndex, (key) => actionDone(brief, key), ensureOvernight(brief));
     if (!beat) return false;
-    state.activeLiveCounterBeatId = beat.id;
-    state.scene = "liveCounterBeat";
-    saveState();
-    render();
+    commit((state) => {
+      state.activeLiveCounterBeatId = beat.id;
+      state.scene = "liveCounterBeat";
+    });
     return true;
   }
 
@@ -142,9 +144,9 @@ export function createLiveCounterScreens(ctx) {
       routeTone: choice.routeTone ?? "live-counter",
       stanceNudge: choice.stanceNudge ?? null
     }, { version: beat.from ?? "现场反压" });
-    state.lastReaction = choice.recapAftertaste ?? "";
-    saveState();
-    render();
+    commit((state) => {
+      state.lastReaction = choice.recapAftertaste ?? "";
+    });
   }
 
   function continueAfterLiveCounterBeat(brief = {}, beat = {}) {
@@ -154,27 +156,27 @@ export function createLiveCounterScreens(ctx) {
     markAction(brief, `liveCounterBeat:${beat.id}`);
     state.activeLiveCounterBeatId = null;
     if (beat.beforeSceneIndex !== undefined) {
-      state.scene = overnightStructureFor(brief)
+      commit((state) => {
+        state.scene = overnightStructureFor(brief)
         ? ensureOvernight(brief).segment === "night2" ? "overnightNight2" : "overnightNight1"
         : "sceneReview";
-      saveState();
-      render();
+      });
       return;
     }
     const nextBeat = liveCounterBeatAfterScene(brief, beat.afterSceneIndex, (key) => actionDone(brief, key), ensureOvernight(brief));
     if (nextBeat) {
-      state.activeLiveCounterBeatId = nextBeat.id;
-      state.scene = "liveCounterBeat";
-      saveState();
-      render();
+      commit((state) => {
+        state.activeLiveCounterBeatId = nextBeat.id;
+        state.scene = "liveCounterBeat";
+      });
       return;
     }
     const sceneIndex = Number(beat.afterSceneIndex ?? 0);
     if (afterSceneEvidenceFor(brief, sceneIndex, (key) => actionDone(brief, key))) {
       setIndexValue(brief, "sceneReview", sceneIndex);
-      state.scene = "afterSceneEvidence";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "afterSceneEvidence";
+      });
       return;
     }
     const nextSceneIndex = nextPlayableSceneIndex(brief, sceneIndex);

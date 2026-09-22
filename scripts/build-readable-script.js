@@ -1861,7 +1861,7 @@ function renderNode(lines, value, label, level = 3) {
 
 function renderObjectBody(lines, object, level, skip = new Set()) {
   for (const [key, value] of Object.entries(object)) {
-    if (skip.has(key)) continue;
+    if (skip.has(key) || key === "backdropArt" || key === "stageArt") continue;
     if (key === "text" && typeof value === "string") {
       lines.push(value, "");
       continue;
@@ -2042,7 +2042,7 @@ function assertSourceCompleteness(markdown, sources) {
         if (key === "helperHint" && !vBroPlayerVisible) return;
         if (["callerIntentProfile", "sourceIntentProfile"].includes(key)) return;
         if (["rageBaitContract", "contentRevision", "previousRoundIds"].includes(key)) return;
-        if (["src", "artSrc", "alt", "artAlt"].includes(key)) return;
+        if (["src", "artSrc", "alt", "artAlt", "backdropArt", "stageArt"].includes(key)) return;
         visit(entry, `${path}.${key}`);
       });
     }

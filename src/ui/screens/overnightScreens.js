@@ -1,3 +1,4 @@
+import { resolveCommit } from "../../runtime/stateCommit.js";
 import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "../../playerIdentity.js";
 import { createOvernightDocumentScreens } from "./overnightDocumentScreens.js";
 import { nextLinearInvestigationScene } from "../../runtime/nightOvernightModel.js";
@@ -63,6 +64,7 @@ export function createOvernightScreens(ctx) {
     sceneAfterEvidenceFor,
     escapeHtml
   } = ctx;
+  const commit = resolveCommit(ctx);
 
   const documentScreens = createOvernightDocumentScreens(ctx, {
     renderDayMap,
@@ -108,9 +110,9 @@ export function createOvernightScreens(ctx) {
       audioEnterCueId: structure.hangupAudioCueId
     });
     bind("[data-enter-post-live]", () => {
-      state.scene = "overnightPostLive";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "overnightPostLive";
+      });
     });
     bindSceneButtons();
   }
@@ -188,9 +190,9 @@ export function createOvernightScreens(ctx) {
     });
     bind("[data-enter-day-map]", () => {
       updateOvernight(brief, { segment: "day", hangupDone: true });
-      state.scene = "dayMap";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "dayMap";
+      });
     });
     bindSceneButtons();
   }
@@ -262,15 +264,15 @@ export function createOvernightScreens(ctx) {
     });
     bind("[data-day-scene]", (event) => {
       updateOvernight(brief, { activeDaySceneId: event.currentTarget?.getAttribute("data-day-scene") ?? "" });
-      state.scene = "dayScene";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "dayScene";
+      });
     });
     bind("[data-enter-overnight-callback]", () => {
       updateOvernight(brief, { segment: "night2" });
-      state.scene = "overnightCallback";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "overnightCallback";
+      });
     });
     bindSceneButtons();
   }
@@ -469,9 +471,9 @@ export function createOvernightScreens(ctx) {
       bind("[data-enter-overnight-night2]", () => {
         updateOvernight(brief, { segment: "night2", callbackOpenerId: null });
         setIndexValue(brief, "sceneReview", overnightFirstNight2SceneIndex(brief));
-        state.scene = documentScreens.pendingDocumentQuestions(brief).length ? "documentReconcile" : "overnightNight2";
-        saveState();
-        render();
+        commit((state) => {
+          state.scene = documentScreens.pendingDocumentQuestions(brief).length ? "documentReconcile" : "overnightNight2";
+        });
       });
       bindSceneButtons();
       return;
@@ -530,9 +532,9 @@ export function createOvernightScreens(ctx) {
     bind("[data-enter-overnight-night2]", () => {
       updateOvernight(brief, { segment: "night2", callbackOpenerId: opener.id ?? "fallback" });
       setIndexValue(brief, "sceneReview", overnightFirstNight2SceneIndex(brief));
-      state.scene = documentScreens.pendingDocumentQuestions(brief).length ? "documentReconcile" : "overnightNight2";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = documentScreens.pendingDocumentQuestions(brief).length ? "documentReconcile" : "overnightNight2";
+      });
     });
     bindSceneButtons();
   }
@@ -540,9 +542,9 @@ export function createOvernightScreens(ctx) {
   function enterOvernightNight2(brief) {
     const state = ctx.getState();
     setIndexValue(brief, "sceneReview", overnightFirstNight2SceneIndex(brief));
-    state.scene = "overnightNight2";
-    saveState();
-    render();
+    commit((state) => {
+      state.scene = "overnightNight2";
+    });
   }
 
   function completeDayScene(brief, dayScene = {}, { renderNow = true, stayActive = false } = {}) {
@@ -574,9 +576,9 @@ export function createOvernightScreens(ctx) {
       }, { version: dayScene.body?.text ?? "" });
     }
     if (renderNow) {
-      state.scene = "dayMap";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "dayMap";
+      });
     }
   }
 
@@ -606,9 +608,9 @@ export function createOvernightScreens(ctx) {
         callbackOpenerId: openerId,
         callerStanceOnReturn: stance
       });
-      state.scene = "callbackOpenerBeat";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "callbackOpenerBeat";
+      });
     });
     bindSceneButtons();
   }
@@ -630,9 +632,9 @@ export function createOvernightScreens(ctx) {
     bind("[data-enter-segment2]", () => {
       const firstSegment2 = nightStructureFor(brief)?.segment2SceneIndexes?.[0] ?? 0;
       setIndexValue(brief, "sceneReview", firstSegment2);
-      state.scene = "callSegment2";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = "callSegment2";
+      });
     });
     bindSceneButtons();
   }

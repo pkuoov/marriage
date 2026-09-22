@@ -1,4 +1,5 @@
 import { testimonyResponseForAct } from "../runtime/decisivePresentModel.js";
+import { escapeHtml } from "./html.js";
 
 export function testimonyWallHtml({ scene = {}, wallAct = null, statements = [], comparisonRows = [], wallProgress = {}, presentProgress = {}, presentAvailability = {} } = {}) {
   const wall = wallAct ?? scene.testimonyWall ?? {};
@@ -166,13 +167,3 @@ function testimonyStatementHtml(statement = {}, progress = {}, selectedMaterial 
 }
 
 export function formalPresentLabel(present = {}) { return present.outcomeKind === "clarification" ? "材料核对" : "正式指认"; }
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
-}

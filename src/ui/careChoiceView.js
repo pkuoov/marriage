@@ -1,5 +1,6 @@
 import { choiceButtonBodyHtml } from "./callFlowView.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
+import { escapeHtml } from "./html.js";
 
 export function careChoiceHtml({ choices = [], selectedChoice = null, hostName = DEFAULT_PLAYER_NAME, privateConsultation = false } = {}) {
   const sequential = choices[0]?.sequential;
@@ -43,14 +44,4 @@ function careChoiceDialogueHtml(choice = {}, hostName = DEFAULT_PLAYER_NAME) {
           </div>`).join("")}
     </div>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

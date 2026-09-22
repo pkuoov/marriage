@@ -1,4 +1,5 @@
 import { HOST_NAME } from "../hostProfile.js";
+import { escapeHtml } from "./html.js";
 
 export function choiceGroupHtml(label, content, className = "", note = "") {
   if (!content?.trim()) return "";
@@ -99,13 +100,4 @@ export function choiceReviewHtml(rows = []) {
       </div>
     </details>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }

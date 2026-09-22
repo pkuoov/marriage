@@ -1,6 +1,7 @@
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 import { splitDialogueSentences } from "../runtime/dialoguePresentation.js";
 import { callDialogueHtml } from "./callFlowView.js";
+import { escapeHtml } from "./html.js";
 
 export function solvedRecapPagesHtml({
   rank = "",
@@ -274,14 +275,4 @@ function flowGroup(content) {
 
 function truthBoundaryChoiceLabel(review, key) {
   return review.choices?.find((choice) => choice.key === key)?.label ?? "另一栏";
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

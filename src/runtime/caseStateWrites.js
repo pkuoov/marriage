@@ -27,6 +27,7 @@ export function createCaseStateWrites(ctx) {
     getState,
     setState,
     saveState,
+    commit,
     render,
     clearQuestionRewindHistory,
     clearPlayedCueKeysByPrefix = () => 0,
@@ -52,40 +53,40 @@ export function createCaseStateWrites(ctx) {
     const state = getState();
     const key = caseKey(brief);
     clearPlayedCueKeysByPrefix(`${key}:`);
-    state.scene = "caseOpen";
-    state.sceneQuestionFocus = null;
-    state.dialogueProgress = removeKeyPrefix(state.dialogueProgress, `${key}:`);
-    state.sceneAnswers = removeKeyPrefix(state.sceneAnswers, `${key}:`);
-    state.sceneQuestionPicks = removeKeyPrefix(state.sceneQuestionPicks, `${key}:`);
-    state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
-    state.statementReviewAttempts = removeKeyPrefix(state.statementReviewAttempts, `${key}:`);
-    state.statementPatience = removeKeyPrefix(state.statementPatience, `${key}:`);
-    state.testimonyWallProgress = removeKeyPrefix(state.testimonyWallProgress, `${key}:`);
-    state.decisivePresentProgress = removeKeyPrefix(state.decisivePresentProgress, `${key}:`);
-    state.activeStatementLineId = null;
-    state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
-    state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);
-    state.delegationPicks = omitRecordKey(state.delegationPicks, key);
-    state.stanceSnapshots = omitRecordKey(state.stanceSnapshots, key);
-    state.liveCounterPicks = removeKeyPrefix(state.liveCounterPicks, `${key}:`);
-    state.activeLiveCounterBeatId = null;
-    state.pendingQuestionPressureSignal = null;
-    state.pendingQuestionPressureSource = null;
-    state.truthBoundaryPicks = omitRecordKey(state.truthBoundaryPicks, key);
-    state.truthBoundaryMisses = omitRecordKey(state.truthBoundaryMisses, key);
-    state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
-    state.caseActionLog = omitRecordKey(state.caseActionLog, key);
-    state.contradictionLog = omitRecordKey(state.contradictionLog, key);
-    state.accusationHistory = (state.accusationHistory ?? []).filter((item) => item.caseId !== key);
-    state.solvedCaseIds = (state.solvedCaseIds ?? []).filter((item) => item !== key);
-    state.caseInterludes = omitRecordKey(state.caseInterludes, key);
-    state.caseBudgets = omitRecordKey(state.caseBudgets, key);
-    state.caseNights = omitRecordKey(state.caseNights, key);
-    state.caseOvernights = omitRecordKey(state.caseOvernights, key);
-    state.recapStep = 0;
-    state.patienceLostContext = null;
-    saveState();
-    render();
+    commit((state) => {
+      state.scene = "caseOpen";
+      state.sceneQuestionFocus = null;
+      state.dialogueProgress = removeKeyPrefix(state.dialogueProgress, `${key}:`);
+      state.sceneAnswers = removeKeyPrefix(state.sceneAnswers, `${key}:`);
+      state.sceneQuestionPicks = removeKeyPrefix(state.sceneQuestionPicks, `${key}:`);
+      state.sceneDialoguePicks = removeKeyPrefix(state.sceneDialoguePicks, `${key}:`);
+      state.statementReviewAttempts = removeKeyPrefix(state.statementReviewAttempts, `${key}:`);
+      state.statementPatience = removeKeyPrefix(state.statementPatience, `${key}:`);
+      state.testimonyWallProgress = removeKeyPrefix(state.testimonyWallProgress, `${key}:`);
+      state.decisivePresentProgress = removeKeyPrefix(state.decisivePresentProgress, `${key}:`);
+      state.activeStatementLineId = null;
+      state.evidenceCheckPicks = removeKeyPrefix(state.evidenceCheckPicks, `${key}:`);
+      state.investigationPicks = removeKeyPrefix(state.investigationPicks, `${key}:`);
+      state.delegationPicks = omitRecordKey(state.delegationPicks, key);
+      state.stanceSnapshots = omitRecordKey(state.stanceSnapshots, key);
+      state.liveCounterPicks = removeKeyPrefix(state.liveCounterPicks, `${key}:`);
+      state.activeLiveCounterBeatId = null;
+      state.pendingQuestionPressureSignal = null;
+      state.pendingQuestionPressureSource = null;
+      state.truthBoundaryPicks = omitRecordKey(state.truthBoundaryPicks, key);
+      state.truthBoundaryMisses = omitRecordKey(state.truthBoundaryMisses, key);
+      state.routeChoiceLog = { ...(state.routeChoiceLog ?? {}), [key]: [] };
+      state.caseActionLog = omitRecordKey(state.caseActionLog, key);
+      state.contradictionLog = omitRecordKey(state.contradictionLog, key);
+      state.accusationHistory = (state.accusationHistory ?? []).filter((item) => item.caseId !== key);
+      state.solvedCaseIds = (state.solvedCaseIds ?? []).filter((item) => item !== key);
+      state.caseInterludes = omitRecordKey(state.caseInterludes, key);
+      state.caseBudgets = omitRecordKey(state.caseBudgets, key);
+      state.caseNights = omitRecordKey(state.caseNights, key);
+      state.caseOvernights = omitRecordKey(state.caseOvernights, key);
+      state.recapStep = 0;
+      state.patienceLostContext = null;
+    });
   }
 
   function markAction(brief, actionKey, { spend = false } = {}) {
@@ -220,9 +221,9 @@ export function createCaseStateWrites(ctx) {
     };
     markAction(brief, `interlude:${action.id}`);
     if (renderNow) {
-      state.lastReaction = null;
-      saveState();
-      render();
+      commit((state) => {
+        state.lastReaction = null;
+      });
     }
     return nextNight;
   }
@@ -260,9 +261,9 @@ export function createCaseStateWrites(ctx) {
       routeAxis: choice.routeAxis ?? action.routeAxis ?? "outer-thread",
       routeTone: action.npcVerb ? `npc-${action.npcVerb}` : "interlude-choice"
     }, { version: action.summary ?? action.text ?? "" });
-    getState().lastReaction = "这套框架先记下。";
-    saveState();
-    render();
+    commit((state) => {
+      state.lastReaction = "这套框架先记下。";
+    });
   }
 
   function recordInterludeReplyChoice(brief, action = {}, choices = [], choiceId = "") {
@@ -287,9 +288,9 @@ export function createCaseStateWrites(ctx) {
       routeAxis: choice.routeAxis ?? action.routeAxis ?? "outer-thread",
       routeTone: "reply-choice"
     }, { version: action.summary ?? "" });
-    getState().lastReaction = "这句回出去了。";
-    saveState();
-    render();
+    commit((state) => {
+      state.lastReaction = "这句回出去了。";
+    });
   }
 
   function interludeRouteIndexFor(brief = {}, action = {}) {

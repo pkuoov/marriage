@@ -10,6 +10,7 @@ import {
 } from "../runtime/quickDetectiveModel.js";
 import { statementAnchorLineMatches, statementOptionForLine } from "../runtime/statementReviewModel.js";
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
+import { escapeHtml } from "./html.js";
 
 export function quickDetectiveCaseSelectHtml(packets = [], completedIds = []) {
   const completed = new Set(completedIds);
@@ -460,13 +461,4 @@ function isSoloCommentary(packet = {}) {
 
 export function quickDetectivePatience(packet = {}, state = {}) {
   return quickRoundPatienceForState(packet, state);
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }

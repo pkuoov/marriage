@@ -1,4 +1,5 @@
 import { callDialogueHtml } from "./callFlowView.js";
+import { escapeHtml } from "./html.js";
 
 const HOST_ART = {
   listening: "./assets/generated/quick-detective/lin-xuyang-host-pixel.png?v=0.28.0",
@@ -91,14 +92,4 @@ export function storyInterludeChoicesHtml({ finalCase = false, worldEcho = null,
     ? `<button data-enter-optional-quick="${escapeHtml(optionalQuickCall.quickCaseId)}" type="button">${escapeHtml(optionalQuickCall.actionLabel ?? "接一通插播")}</button>`
     : "";
   return `${primary}${optional}`;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

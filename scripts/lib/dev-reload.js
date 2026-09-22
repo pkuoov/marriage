@@ -30,7 +30,7 @@ export function createContentReload({ build, reload, reportError = () => {} }) {
   return {
     changed(filename) {
       if (!shouldReloadForChange(filename)) return;
-      if (filename === "src/generated/contentPackIndex.js" && running) return;
+      if ((filename === "src/generated/contentPackIndex.js" || filename === "src/generated/contentPackAuthorIndex.js") && running) return;
       pending = true;
       contentDirty ||= isRuntimeContentChange(filename);
     },

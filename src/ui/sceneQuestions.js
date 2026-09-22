@@ -1,5 +1,6 @@
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 import { sceneQuestionSequence } from "../runtime/sequentialChoices.js";
+import { escapeHtml } from "./html.js";
 
 export function focusedQuestionOptions(options = []) {
   return (options ?? []).filter(Boolean);
@@ -77,14 +78,4 @@ function choiceGroup(content, className = "") {
       <div class="choice-stack">${content}</div>
     </section>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

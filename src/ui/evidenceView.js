@@ -2,6 +2,7 @@ import { materialInquiryLines } from "../runtime/materialOperation.js";
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 import { DEFAULT_PLAYER_NAME, normalizePlayerName } from "../playerIdentity.js";
 import { choiceButtonBodyHtml } from "./callFlowView.js";
+import { escapeHtml } from "./html.js";
 
 export function evidenceOperationHtml(check = {}, pick = null, checkIndex = 0, costMeta = CHOICE_COST_META.evidenceMark) {
   if (costMeta === "") return `<section class="evidence-workbench material-${evidenceMaterialKind(check)}">
@@ -303,14 +304,4 @@ function evidenceReactionLineHtml(text = "") {
 function shortMaterialLabel(title = "") {
   const cleaned = String(title ?? "").replace(/\s+/g, "");
   return cleaned.slice(0, 4) || "材料";
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

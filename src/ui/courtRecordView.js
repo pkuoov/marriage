@@ -1,5 +1,6 @@
 import { materialRecordHtml } from "./materialRecordView.js";
 import { cafeMaterialDocumentHtml } from "./prologueCafeView.js";
+import { escapeHtml } from "./html.js";
 
 export function mountCourtRecord(root, { state, cafe = {}, materialItems = [], onSettingsChange = () => {}, onBeforeOpen = () => {}, onVisibilityChange = () => {} } = {}) {
   if (!root) return;
@@ -96,4 +97,3 @@ function values(value) { return Object.values(value ?? {}).flat(); }
 function labelFor(value) { return typeof value === "string" ? value : value?.material ?? value?.label ?? value?.title ?? value?.question ?? ""; }
 function speedLabel(value) { return ({ slow: "慢", normal: "中", fast: "快", instant: "立即" })[value] ?? "中"; }
 function effectsLabel(value) { return ({ full: "完整", reduced: "减弱", off: "关闭" })[value] ?? "完整"; }
-function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]); }

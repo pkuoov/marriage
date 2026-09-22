@@ -4,48 +4,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
 import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js";
 import { testimonyReadingRoute } from "./lib/testimony-reading.js";
+import { caseIdsForSmokeTarget } from "./lib/smoke-case-files.js";
 import { STORY_PACK_CREDITS } from "../src/runtime/storyPackCredits.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const playableUrl = process.env.SMOKE_URL || pathToFileURL(resolve(root, "dist", "playable", "index.html")).toString();
-const storyManifest = JSON.parse(await readFile(resolve(root, "content", "packs", "steam-demo-01", "manifest.json"), "utf8"));
-const authoredCasePackets = await Promise.all((storyManifest.sequence ?? []).map((item) => (
-  readFile(resolve(root, "content", "packs", "steam-demo-01", "cases", `${item.caseId}.json`), "utf8").then(JSON.parse)
-)));
-const testimonySmokeActs = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
-  (scene.testimonyWall?.acts ?? []).map((act, actIndex) => ({
-    reading: testimonyReadingRoute(scene)[actIndex],
-    caseId: packet.id ?? packet.caseId ?? "unknown-case",
-    sceneId: scene.id ?? "unknown-scene",
-    actId: act.id ?? `act-${act.act ?? "unknown"}`,
-    evidenceId: act.decisivePresent?.evidenceId ?? "",
-    statementId: act.decisivePresent?.statementId ?? "",
-    statementIds: (act.statements ?? []).map((statement) => statement.id).filter(Boolean)
-  }))
-))).filter((act) => act.evidenceId && act.statementId && act.statementIds.length);
-const continuousReading = (await readFile(resolve(root, "docs/generated/steam-demo-01-continuous-story-script.md"), "utf8")).split("# 附录｜")[0];
-const verifiedTestimonyActs = new Set();
-const checkedSourceTables = new WeakMap();
-const loadBearingQuestionSignatures = authoredCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
-  (scene.questionOptions ?? [])
-    .filter((option) => option.correct === true)
-    .flatMap((option) => [option.sourceAnchor, option.revisedSourceAnchor]
-      .filter(Boolean)
-      .map((anchor) => ({ anchor, label: option.suspicionLabel ?? option.question ?? "" })))
-)));
-const caseOneMaterialMissDrift = String(authoredCasePackets.find((packet) => packet.caseId === "01-credit")?.driftComments?.[0] ?? "")
-  .split(":")
-  .slice(1)
-  .join(":");
-const routes = [
-  { name: "accounting-support", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, dayChoiceText: { "day-support-payments": "住房租赁支出旁" }, opener: "两个月一次的房租", openerText: "是我住的", callerQuestion: "not-your-debt", callerQuestionHost: "soothe" },
-  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
-  { name: "document-trust-rows", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r13", "r14", "r15"], opener: "流水圈注", openerText: "这二十万，他以前跟你提过吗", callerQuestion: "dont-answer-for-her" },
-  { name: "support-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-support-payments", "day-bank-flow"], dayChoices: { "day-support-payments": "compare-rent-transfer" }, dayChoiceText: { "day-support-payments": "并排标了出来" }, documentRows: ["r08", "r11"], opener: "房租是不是另外付的", openerText: "房租算在每月一万七千五里面吗", callerQuestion: "dont-answer-for-her" },
-  { name: "material-miss-accounting-support", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
-  { name: "keyboard-accounting-support", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
-  { name: "gamepad-support-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-support-payments", "day-bank-flow"], dayChoices: { "day-support-payments": "compare-rent-transfer" }, documentRows: ["r08", "r11"], opener: "房租是不是另外付的", openerText: "房租算在每月一万七千五里面吗", callerQuestion: "dont-answer-for-her" }
-];
 const supportedSmokeTargets = new Set([
   "all",
   "local-quick",
@@ -68,14 +31,56 @@ const supportedSmokeTargets = new Set([
   "dialogue-layout",
   "cafe-prologue"
 ]);
+const storyManifest = JSON.parse(await readFile(resolve(root, "content", "packs", "steam-demo-01", "manifest.json"), "utf8"));
+const smokeTarget = smokeTargetFrom(process.argv.slice(2), process.env.SMOKE_TARGET);
+const smokeCaseIds = new Set(caseIdsForSmokeTarget(smokeTarget, storyManifest.sequence ?? [], process.env.SMOKE_REVIEW_PART || ""));
+const authoredCasePackets = await Promise.all((storyManifest.sequence ?? []).map((item) => (
+  smokeCaseIds.has(item.caseId)
+    ? readFile(resolve(root, "content", "packs", "steam-demo-01", "cases", `${item.caseId}.json`), "utf8").then(JSON.parse)
+    : null
+)));
+const loadedCasePackets = authoredCasePackets.filter(Boolean);
+const testimonySmokeActs = loadedCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
+  (scene.testimonyWall?.acts ?? []).map((act, actIndex) => ({
+    reading: testimonyReadingRoute(scene)[actIndex],
+    caseId: packet.id ?? packet.caseId ?? "unknown-case",
+    sceneId: scene.id ?? "unknown-scene",
+    actId: act.id ?? `act-${act.act ?? "unknown"}`,
+    evidenceId: act.decisivePresent?.evidenceId ?? "",
+    statementId: act.decisivePresent?.statementId ?? "",
+    statementIds: (act.statements ?? []).map((statement) => statement.id).filter(Boolean)
+  }))
+))).filter((act) => act.evidenceId && act.statementId && act.statementIds.length);
+let continuousReading = "";
+const verifiedTestimonyActs = new Set();
+const checkedSourceTables = new WeakMap();
+const loadBearingQuestionSignatures = loadedCasePackets.flatMap((packet) => (packet.sceneVersions ?? []).flatMap((scene) => (
+  (scene.questionOptions ?? [])
+    .filter((option) => option.correct === true)
+    .flatMap((option) => [option.sourceAnchor, option.revisedSourceAnchor]
+      .filter(Boolean)
+      .map((anchor) => ({ anchor, label: option.suspicionLabel ?? option.question ?? "" })))
+)));
+const caseOneMaterialMissDrift = String(authoredCasePackets.find((packet) => packet?.caseId === "01-credit")?.driftComments?.[0] ?? "")
+  .split(":")
+  .slice(1)
+  .join(":");
+const routes = [
+  { name: "accounting-support", sceneMode: "core", materialMode: "hit", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, dayChoiceText: { "day-support-payments": "住房租赁支出旁" }, opener: "两个月一次的房租", openerText: "是我住的", callerQuestion: "not-your-debt", callerQuestionHost: "soothe" },
+  { name: "document-r08-r11", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r08", "r11"], opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
+  { name: "document-trust-rows", sceneMode: "core", materialMode: "hit", dayScenes: ["day-bank-flow", "day-accounting"], documentRows: ["r13", "r14", "r15"], opener: "流水圈注", openerText: "这二十万，他以前跟你提过吗", callerQuestion: "dont-answer-for-her" },
+  { name: "support-document", sceneMode: "outer", materialMode: "hit", dayScenes: ["day-support-payments", "day-bank-flow"], dayChoices: { "day-support-payments": "compare-rent-transfer" }, dayChoiceText: { "day-support-payments": "并排标了出来" }, documentRows: ["r08", "r11"], opener: "房租是不是另外付的", openerText: "房租算在每月一万七千五里面吗", callerQuestion: "dont-answer-for-her" },
+  { name: "material-miss-accounting-support", sceneMode: "core", materialMode: "miss", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
+  { name: "keyboard-accounting-support", sceneMode: "core", materialMode: "hit", inputMode: "keyboard", dayScenes: ["day-accounting", "day-support-payments"], dayChoices: { "day-support-payments": "ask-rent-home" }, opener: "周会计的时间线", openerText: "翻到七月 8 号，空的", callerQuestion: "ask-fifty-thousand" },
+  { name: "gamepad-support-document", sceneMode: "core", materialMode: "hit", inputMode: "gamepad", dayScenes: ["day-support-payments", "day-bank-flow"], dayChoices: { "day-support-payments": "compare-rent-transfer" }, documentRows: ["r08", "r11"], opener: "房租是不是另外付的", openerText: "房租算在每月一万七千五里面吗", callerQuestion: "dont-answer-for-her" }
+];
 const smokeStepTimeoutMs = Math.max(1000, Number(process.env.SMOKE_STEP_TIMEOUT_MS) || 180000);
 const browserActionTimeoutMs = Math.max(1000, Number(process.env.SMOKE_ACTION_TIMEOUT_MS) || 8000);
 const gamepadDialogueSamples = new WeakMap();
 const gamepadDialogueSampleLimit = 4;
 const smokeStartedAt = Date.now();
-const smokeTarget = smokeTargetFrom(process.argv.slice(2), process.env.SMOKE_TARGET);
-
 smokeProgress(`TARGET ${smokeTarget}`);
+smokeProgress(`CASE JSON ${[...smokeCaseIds].join(", ") || "none"}`);
 const browser = await runSmokeStep("browser launch", launchBrowser);
 try {
   if (smokeTarget === "case34") {
@@ -1023,8 +1028,8 @@ async function runStateReplacementRoutes() {
     if (freshState.chapter !== 1 || freshState.scene !== "cafePrologue") {
       throw new Error(`new game must replace the old run state: ${JSON.stringify({ chapter: freshState.chapter, scene: freshState.scene })}`);
     }
-    if (Object.keys(freshState.helperHintPicks ?? {}).length) {
-      throw new Error("new game must not retain helper records from the old state");
+    if ("helperHintPicks" in freshState) {
+      throw new Error("new game must not persist the retired helper-hint record");
     }
     await enterNightFromCafePrologue(page, {});
     await revealGolden90(page, {});
@@ -1898,7 +1903,14 @@ async function runCreditReplayRecovery() {
   }
 }
 
+async function ensureContinuousReading() {
+  if (continuousReading) return continuousReading;
+  continuousReading = (await readFile(resolve(root, "docs/generated/steam-demo-01-continuous-story-script.md"), "utf8")).split("# 附录｜")[0];
+  return continuousReading;
+}
+
 async function runScriptReadingMatrix() {
+  await ensureContinuousReading();
   const director = await readFile(resolve(root, "docs/generated/steam-demo-01-director-script.md"), "utf8");
   for (const [caseIndex, packet] of authoredCasePackets.entries()) {
     const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });
@@ -2049,6 +2061,23 @@ async function verifyOrderedCounterAndCare(page, packet, caseIndex) {
     smokeProgress(`PASS ${packet.caseId}: counterquestion legacy save and ${question.options.length} ordered responses`);
   }
   await seed("careChoice");
+  if (packet.careChoices.length === 1) {
+    const choice = packet.careChoices[0];
+    if (await page.locator("[data-care-choice]").count()) throw new Error(`${packet.caseId}: a single closing exchange must not masquerade as a choice`);
+    const opening = await page.locator(".avg-textbox").innerText();
+    await page.reload();
+    await click(page, "[data-continue-story]");
+    if (await page.locator(".avg-textbox").innerText() !== opening) throw new Error(`${packet.caseId}: closing dialogue reload lost its reading position`);
+    const actual = await drainDialogue(page, {});
+    for (const line of [{ text: choice.hostLine }, ...(choice.lines ?? [])]) {
+      if (line.text && !actual.includes(line.text)) throw new Error(`${packet.caseId}: closing dialogue omitted ${line.text}`);
+    }
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("livestream-detective-save-v1")));
+    if (saved.careChoices[saved.caseBriefs[caseIndex].id] !== choice.id) throw new Error(`${packet.caseId}: closing exchange was not saved`);
+    if (!["caseClosure", "storyInterlude"].includes(saved.scene)) throw new Error(`${packet.caseId}: closing dialogue did not advance`);
+    smokeProgress(`PASS ${packet.caseId}: closing dialogue, reload and automatic continuation`);
+    return;
+  }
   for (const choice of packet.careChoices) {
     if (await page.locator("[data-care-choice]").count() !== 1) throw new Error(`${packet.caseId}: care options still branch`);
     if (await page.locator("[data-care-choice-continue]").count()) throw new Error(`${packet.caseId}: premature care exit`);
@@ -2070,6 +2099,7 @@ async function verifyOrderedCounterAndCare(page, packet, caseIndex) {
 }
 
 async function runTestimonyReadingMatrix() {
+  await ensureContinuousReading();
   for (const viewport of [{ width: 1920, height: 1080 }, { width: 1366, height: 768 }, { width: 1280, height: 800 }, { width: 1280, height: 720 }]) {
   for (const [caseIndex, packet] of authoredCasePackets.entries()) {
     const context = await browser.newContext({ viewport, reducedMotion: "reduce" });
@@ -2122,6 +2152,7 @@ async function runTestimonyReadingMatrix() {
 }
 
 async function assertTestimonyReading(page, act) {
+  await ensureContinuousReading();
   const reading = act.reading;
   const actualIds = await page.locator("[data-testimony-press]").evaluateAll(buttons => buttons.map(button => button.dataset.testimonyPress));
   if (JSON.stringify(actualIds) !== JSON.stringify(reading.initialStatements.map(statement => statement.id))) throw new Error(`${act.caseId}/${act.actId}: initial testimony visibility differs from the reading route`);
@@ -2344,6 +2375,8 @@ async function runCaseTransition() {
     await drainDialogue(page, {});
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("world echo must stay hidden until the final case");
     await click(page, "[data-enter-broadcast-recap]");
+    await assertVisibleText(page, "开播前 · 翻看已收到的公开资料", "workplace recap must show the public materials before going live");
+    await click(page, "[data-public-materials-read]");
     const recapText = await drainDialogue(page, {});
     if (!recapText.includes("7 月 29 日") || !recapText.includes("今天的会开完了")) throw Error("workplace public recap must follow its own consultation by three days");
     await assertVisibleText(page, "接一通插播", "second act interlude must expose the optional quick-call pressure valve");
@@ -2402,15 +2435,18 @@ async function runCaseTransition() {
     await click(page, "[data-continue-story]");
     await page.getByText("收播以后").first().waitFor({ state: "visible" });
     await assertVisibleText(page, "收播以后", "final case must have its own lived epilogue");
+    const packetArrivalText = await drainDialogue(page, {});
+    if (!packetArrivalText.includes("十九号就发给她了")) throw new Error("final case tail must first deliver Tony's late materials");
+    await click(page, "[data-received-documents]");
+    await assertVisibleText(page, "Tony 刚补来的材料", "Tony's late materials must be readable before the finale closes");
+    await click(page, "[data-public-materials-read]");
     const finalInterludeText = await drainDialogue(page, {});
     if (!finalInterludeText.includes("屏幕右上角的“直播中”灭了")) throw new Error("final case tail must close through an on-screen action");
     if (await page.getByText("下一通 · 材料先到").count()) throw new Error("final case tail must not show a nonexistent next case");
     if (await page.getByText("宸直信托全部产品暂停兑付，实控人失联").count()) throw new Error("final world echo must not appear before player action");
-    await assertVisibleText(page, "把四案里的宸直线索并在一起", "final world echo must first ask the player to connect the cross-case risk");
-    await click(page, '[data-world-echo-hypothesis="cross-case-ledger"]');
-    const hypothesisText = await drainDialogue(page, {});
-    if (!hypothesisText.includes("栖行融资稿的押金归集附注")) throw new Error("the selected cross-case hypothesis must be acknowledged before the reveal");
-    await assertVisibleText(page, "把新闻推送点开", "final world echo must be offered after the player records a hypothesis");
+    if (await page.locator("[data-world-echo-hypothesis]").count()) throw new Error("retired risk hypotheses must not block the news");
+    if (await page.getByRole("button", { name: "回看这通", exact: true }).count()) throw new Error("the finale must not offer a destructive case restart");
+    await assertVisibleText(page, "把新闻推送点开", "final world echo must open directly after the final interlude");
     if (await page.getByText("作为关联项目配资资金", { exact: false }).count()) throw new Error("deposit leverage must remain undisclosed before opening the notice");
     await click(page, "[data-reveal-world-echo]");
     const newsText = await drainDialogue(page, {});

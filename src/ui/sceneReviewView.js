@@ -1,6 +1,7 @@
 import { HOST_NAME } from "../hostProfile.js";
 import { statementLinesFromText } from "../runtime/statementReviewModel.js";
 import { answerDialogueLines } from "../runtime/dialogueContent.js";
+import { escapeHtml } from "./html.js";
 
 export function sceneReviewHtml({
   index = 0,
@@ -203,14 +204,4 @@ function sceneEvidenceCardHtml(card = null) {
       <p>${escapeHtml(card.front ?? "")}</p>
     </aside>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

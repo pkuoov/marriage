@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.js";
 export function dailyCompleteHtml({
   issueLineText = "",
   route = {},
@@ -42,14 +43,4 @@ export function dailyCompleteShareText({ route = {}, pickedQuote = "" } = {}) {
 
 function flowGroup(content) {
   return `<div class="choice-flow">${content}</div>`;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

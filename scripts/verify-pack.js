@@ -7,7 +7,7 @@ import { assertDialogueTexture, spokenPunctuationLeaks } from "../src/runtime/di
 import { splitDialogueSentences } from "../src/runtime/dialoguePresentation.js";
 import { statementStagesForBrief } from "../src/runtime/statementReviewModel.js";
 import { STORY_PACKS } from "../src/storyPacks.js";
-import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js";
+import { CONTENT_CAST, CONTENT_HELPER_NPCS } from "../src/generated/contentPackAuthorIndex.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packId = process.argv[2] ?? "steam-demo-01";
@@ -1213,14 +1213,22 @@ test("PACK-002", "manifest keeps distinct playable cases", () => {
   assertEqual(new Set(manifest.sequence.map((item) => item.caseId)).size, manifest.size, "caseId 不能重复");
   assertEqual(new Set(manifest.sequence.map((item) => item.plotId)).size, manifest.size, "plotId 不能重复");
   manifest.sequence.forEach((item, index) => {
-    ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "backdropClass", "callerArt"].forEach((field) => {
+    ["caseId", "plotId", "sceneId", "complainantId", "respondentId", "act", "objectLabel", "backdropClass", "backdropArt", "callerArt"].forEach((field) => {
       assert(item[field], `第 ${index + 1} 案缺少 ${field}`);
     });
     assert(item.bridge === undefined, `第 ${index + 1} 案不得保留接通前案情旁白；求助和材料必须由通话内获得`);
+  });
+  const stageArt = manifest.nightShell?.stageArt ?? {};
+  ["day-city", "day-document", "day-cafe", "day-home", "day-matchmaking"].forEach((key) => {
+    assert(/^\.\/assets\/generated\/backgrounds\/[^?#]+\.png$/.test(stageArt[key] ?? ""), `nightShell.stageArt.${key} 必须指向背景 PNG`);
+  });
+  assert(String(manifest.nightShell?.cafePrologue?.backdropArt ?? "").includes("cafe_date.png"), "咖啡序章背景必须指向咖啡馆图");
+  manifest.sequence.forEach((item, index) => {
     assertDifficultyProfile(item.difficultyProfile, `第 ${index + 1} 案`);
     if (index > 0) {
       assert(item.difficultyProfile.tier >= manifest.sequence[index - 1].difficultyProfile.tier, `第 ${index + 1} 案 difficultyProfile.tier 不能倒退`);
     }
+    assert(/^\.\/assets\/generated\/backgrounds\/[^?#]+\.png$/.test(item.backdropArt), `第 ${index + 1} 案 backdropArt 必须指向背景 PNG`);
     assert(/^\.\/assets\/generated\/callers\/[^?#]+\.png$/.test(item.callerArt), `第 ${index + 1} 案 callerArt 必须指向不带手写缓存戳的匿名来电人 PNG`);
     assert(callerArtFiles.get(item.callerArt), `第 ${index + 1} 案 callerArt 文件不存在`);
     assert(pngHasAlpha(callerArtFiles.get(item.callerArt)), `第 ${index + 1} 案 callerArt 必须是真透明 PNG，不能使用烘入棋盘格的 RGB 图`);
@@ -1845,9 +1853,9 @@ test("PACK-008", "offstage helper NPC remains registered but player-hidden", () 
   const vBro = helpers.find((helper) => helper.id === "v-bro");
   assert(vBro, "场下求助 NPC 注册表必须包含 v-bro");
   assertNonEmptyString(vBro.boundary, "V哥必须声明求助边界");
-  assert(CONTENT_HELPER_NPCS["v-bro"], "V哥必须进入运行时内容索引");
+  assert(CONTENT_HELPER_NPCS["v-bro"], "V哥必须进入作者索引");
   assert(vBro.playerVisible === false, "V哥当前必须保持玩家不可见，直到重新通过节奏验收");
-  assert(CONTENT_HELPER_NPCS["v-bro"].playerVisible === false, "运行时内容索引必须保留 V哥隐藏状态");
+  assert(CONTENT_HELPER_NPCS["v-bro"].playerVisible === false, "作者索引必须保留 V哥隐藏状态");
   assert(!advisorIds.has("v-bro"), "V哥不能混入专业顾问注册表");
 });
 
@@ -1939,13 +1947,13 @@ test("PACK-010", "every manifest role resolves to a fixed personality and voice 
         assertNonEmptyString(profile.voiceArc?.[phase], `${profile.id}.voiceArc.${phase} 不能为空`);
       });
     }
-    assert(CONTENT_CAST[profile.id], `${profile.id} 必须进入运行时内容索引`);
+    assert(CONTENT_CAST[profile.id], `${profile.id} 必须进入作者索引`);
   });
   manifest.sequence.forEach((item) => {
     assertArrayMin(item.castProfileIds, 2, `${item.caseId} 必须声明逐案 castProfileIds`);
     item.castProfileIds.forEach((profileId) => {
       assert(profileIds.has(profileId), `${item.caseId} 引用了不存在的固定角色: ${profileId}`);
-      assert(CONTENT_CAST[profileId], `${item.caseId}/${profileId} 未进入运行时内容索引`);
+      assert(CONTENT_CAST[profileId], `${item.caseId}/${profileId} 未进入作者索引`);
       const profile = CONTENT_CAST[profileId];
       assert(profile.caseIds.includes("*") || profile.caseIds.includes(item.caseId), `${profileId} 的 caseIds 不包含 ${item.caseId}`);
     });

@@ -1,6 +1,5 @@
 import { CHARACTER_ART } from "../state.js";
 import { keepsScenePressure } from "../runtime/liveSceneKinds.js";
-import { NPCS } from "../story.js";
 import { normalizePlayerName } from "../playerIdentity.js";
 import { contradictionsForState, selectedEvidencePickForState } from "../runtime/caseStateSelectors.js";
 import { livePressureProfile } from "../runtime/livePressure.js";
@@ -139,10 +138,9 @@ export function createLiveHudPresenter(ctx) {
 
   function portraitLayer(brief, mood = "listening", pressure = null, controlMode = "") {
     const state = getState();
-    const npc = NPCS.find((item) => item.id === brief.complainantId) ?? NPCS[0];
     const sceneIndex = currentIndex(brief, "sceneReview", brief.sceneVersions?.length || 1);
     const expression = callerExpressionFor(brief, mood, pressure);
-    const art = casePortraitArt(brief, npc, expression);
+    const art = casePortraitArt(brief, expression);
     const respondentJoined = (ensureNight(brief).interludeActionsDone ?? []).includes("profile-gift-mic-request");
     return portraitLayerHtml({
       artSrc: art.src,
@@ -164,8 +162,8 @@ export function createLiveHudPresenter(ctx) {
     return hostSpeakingStateForView({ scene: getState().scene, mood, controlMode });
   }
 
-  function casePortraitArt(brief, npc, expression = {}) {
-    const neutralArt = brief.callerArtVariants?.neutral ?? brief.callerArt ?? CHARACTER_ART[npc.id] ?? "";
+  function casePortraitArt(brief, expression = {}) {
+    const neutralArt = brief.callerArtVariants?.neutral ?? brief.callerArt ?? CHARACTER_ART[brief.complainantId] ?? "";
     return callerArtForExpression({
       neutralSrc: neutralArt,
       variants: brief.callerArtVariants,

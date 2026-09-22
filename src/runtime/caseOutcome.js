@@ -29,6 +29,7 @@ export function createCaseOutcome(ctx) {
     getMeta,
     setMeta,
     saveState,
+    commit,
     render,
     ensureBudget,
     actionDone,
@@ -59,17 +60,17 @@ export function createCaseOutcome(ctx) {
     result.dailyAccuseLabel = accuseLabel;
     result.dailyResponse = response;
     result.dailyRoute = routeProfileForBrief(brief, result);
-    state.accusationHistory = upsertCaseResultById(state.accusationHistory, result);
-    state.solvedCaseIds = [...new Set([...(state.solvedCaseIds ?? []), brief.id])];
-    applyOutcome(brief, result);
-    recordDailyMeta(brief, result, issue);
-    state.scene = !brief.dialoguePresentation?.compactClosing && unlockedInvestigationEntriesForState(state, brief)
-      .some((entry) => !selectedInvestigationPickForState(state, brief, entry.index))
-      ? "investigationBackflow"
-      : "caseSolved";
-    state.recapStep = 0;
-    saveState();
-    render();
+    commit((state) => {
+      state.accusationHistory = upsertCaseResultById(state.accusationHistory, result);
+      state.solvedCaseIds = [...new Set([...(state.solvedCaseIds ?? []), brief.id])];
+      applyOutcome(brief, result);
+      recordDailyMeta(brief, result, issue);
+      state.scene = !brief.dialoguePresentation?.compactClosing && unlockedInvestigationEntriesForState(state, brief)
+        .some((entry) => !selectedInvestigationPickForState(state, brief, entry.index))
+        ? "investigationBackflow"
+        : "caseSolved";
+      state.recapStep = 0;
+    });
   }
 
   function normalizedDailyResult(brief) {
@@ -191,21 +192,20 @@ export function createCaseOutcome(ctx) {
 
   function advanceToNextStoryPackCase(message = "新的来电接进来，上一通留给弹幕吵。") {
     clearQuestionRewindHistory();
-    const state = getState();
-    state.chapter = Math.min(Number(state.chapter ?? 1) + 1, state.caseBriefs?.length ?? 1);
-    state.caseBrief = activeCaseBrief();
-    state.scene = "caseTitle";
-    state.recapStep = 0;
-    state.patienceLostContext = null;
     void message;
-    state.lastReaction = null;
-    state.lastPressureSignal = null;
-    state.pendingQuestionPressureSignal = null;
-    state.pendingQuestionPressureSource = null;
-    state.lastPressureAxis = null;
-    state.lastScreenEffect = null;
-    saveState();
-    render();
+    commit((state) => {
+      state.chapter = Math.min(Number(state.chapter ?? 1) + 1, state.caseBriefs?.length ?? 1);
+      state.caseBrief = activeCaseBrief();
+      state.scene = "caseTitle";
+      state.recapStep = 0;
+      state.patienceLostContext = null;
+      state.lastReaction = null;
+      state.lastPressureSignal = null;
+      state.pendingQuestionPressureSignal = null;
+      state.pendingQuestionPressureSource = null;
+      state.lastPressureAxis = null;
+      state.lastScreenEffect = null;
+    });
   }
 
   return {

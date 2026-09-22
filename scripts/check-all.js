@@ -29,7 +29,7 @@ runNpm("verify:audio");
 runNpm("verify:content-pipeline");
 runNpm("verify:pack");
 runNpm("test:logic");
-run(process.execPath, ["--test", "scripts/tests/core-rebuttal.test.js", "scripts/tests/focused-inquiry.test.js"]);
+run(process.execPath, ["--test", "scripts/tests/core-rebuttal.test.js", "scripts/tests/focused-inquiry.test.js", "scripts/tests/state-snapshot.test.js", "scripts/tests/html-escape.test.js", "scripts/tests/stage-art-url.test.js"]);
 run(process.execPath, ["--test", "scripts/tests/ui-review-regressions.test.js"]);
 run(process.execPath, ["--test", "scripts/tests/playtest-fixes.test.js", "scripts/tests/combined-review-fixes.test.js"]);
 run(process.execPath, ["--test", "scripts/tests/visual-polish.test.js"]);

@@ -246,7 +246,10 @@ function setLoopCue(busId, cueId = "") {
   activeLoops.set(busId, item);
   audio.play()
     .then(() => {
-      if (activeLoops.get(busId)?.audio !== audio) { audio.pause(); return; }
+      if (activeLoops.get(busId)?.audio !== audio) {
+        releaseAudioElement(audio);
+        return;
+      }
       const configuredAttack = Number(cue.attackMs);
       const attackMs = Number.isFinite(configuredAttack) && configuredAttack >= 0 ? configuredAttack : 320;
       if (attackMs === 0) applyLoopVolume(item);
@@ -280,11 +283,11 @@ function startOneShot(cueId, cue, callbacks = {}) {
     callbacks,
     () => {
       callbacks.onEnded?.();
-      activeOneShots.delete(item);
+      releaseOneShot(item);
     },
-    () => activeOneShots.delete(item)
+    () => releaseOneShot(item)
   );
-  audio.play().catch(() => activeOneShots.delete(item));
+  audio.play().catch(() => releaseOneShot(item));
   return { ok: true, cueId, audio };
 }
 
@@ -335,32 +338,61 @@ function applyLoopVolume({ cue, audio }) {
 function fadeLoop(item, from, target, durationMs, onFinished = () => {}) {
   const { audio } = item;
   const previous = loopFades.get(audio);
-  if (previous) clearInterval(previous.timer);
+  if (previous?.timer) cancelAnimationFrame(previous.timer);
   const startedAt = Date.now();
-  const fade = { gain: from, timer: null };
+  const fade = { gain: from, timer: 0, finish };
   loopFades.set(audio, fade);
   applyLoopVolume(item);
-  fade.timer = setInterval(() => {
+  function finish() {
+    if (loopFades.get(audio) !== fade) return;
+    if (fade.timer) cancelAnimationFrame(fade.timer);
+    fade.gain = Math.max(0, Math.min(1, target));
+    applyLoopVolume(item);
+    loopFades.delete(audio);
+    onFinished();
+  }
+  const step = () => {
+    if (loopFades.get(audio) !== fade) return;
     const ratio = Math.min(1, (Date.now() - startedAt) / Math.max(1, durationMs));
+    if (ratio >= 1) return finish();
     fade.gain = Math.max(0, Math.min(1, from + (target - from) * ratio));
     applyLoopVolume(item);
-    if (ratio >= 1) {
-      clearInterval(fade.timer);
-      loopFades.delete(audio);
-      onFinished();
-    }
-  }, 30);
+    fade.timer = requestAnimationFrame(step);
+  };
+  fade.timer = requestAnimationFrame(step);
 }
+
+// Animation frames stop while the window is hidden; settle fades so an outgoing
+// loop cannot keep playing at partial volume under a silent incoming one.
+export function finishPendingFades() {
+  [...loopFades.values()].forEach((fade) => fade.finish());
+}
+
+globalThis.document?.addEventListener?.("visibilitychange", () => {
+  if (globalThis.document.visibilityState === "hidden") finishPendingFades();
+});
 
 function fadeOutAndStop(item, durationMs) {
   const { audio } = item;
   const from = loopFades.get(audio)?.gain ?? (audio.volume === 0 ? 0 : 1);
   exitingLoops.set(audio, item);
   fadeLoop(item, from, 0, durationMs, () => {
-    audio.pause();
     audio.currentTime = 0;
+    releaseAudioElement(audio);
     exitingLoops.delete(audio);
   });
+}
+
+function releaseOneShot(item) {
+  if (!activeOneShots.has(item)) return;
+  activeOneShots.delete(item);
+  releaseAudioElement(item.audio);
+}
+
+function releaseAudioElement(audio) {
+  audio.pause();
+  audio.removeAttribute("src");
+  audio.load();
 }
 
 function audioStateSnapshot(status = "") {

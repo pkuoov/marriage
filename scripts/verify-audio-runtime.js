@@ -1,37 +1,39 @@
 import assert from "node:assert/strict";
 
 // Exercise the production mixer with deterministic clocks and an Audio boundary.
-const original = { Audio: globalThis.Audio, now: Date.now, setInterval: globalThis.setInterval, clearInterval: globalThis.clearInterval };
+const original = {
+  Audio: globalThis.Audio,
+  now: Date.now,
+  requestAnimationFrame: globalThis.requestAnimationFrame,
+  cancelAnimationFrame: globalThis.cancelAnimationFrame
+};
 let now = 0;
-let timerId = 0;
-const timers = new Map();
+let frameId = 0;
+const frames = new Map();
 const elements = [];
-globalThis.setInterval = (callback, period) => {
-  const id = ++timerId;
-  timers.set(id, { callback, period, next: now + period });
+globalThis.requestAnimationFrame = (callback) => {
+  const id = ++frameId;
+  frames.set(id, callback);
   return id;
 };
-globalThis.clearInterval = id => timers.delete(id);
+globalThis.cancelAnimationFrame = (id) => frames.delete(id);
 Date.now = () => now;
 globalThis.Audio = class {
-  constructor(src) { Object.assign(this, { src, volume: 1, paused: true, currentTime: 0, duration: 8 }); elements.push(this); }
+  constructor(src) { Object.assign(this, { src, volume: 1, paused: true, currentTime: 0, duration: 8, listeners: {} }); elements.push(this); }
   play() { this.paused = false; return Promise.resolve(); }
   pause() { this.paused = true; }
-  addEventListener() {}
+  addEventListener(type, listener) { this.listeners[type] = listener; }
+  removeAttribute(name) { if (name === "src") this.src = ""; }
+  load() { this.loadCount = (this.loadCount ?? 0) + 1; }
 };
 function tick(ms) {
   const until = now + ms;
-  while (true) {
-    const next = Math.min(...[...timers.values()].map(timer => timer.next));
-    if (next > until) break;
-    now = next;
-    for (const [id, timer] of [...timers]) {
-      if (timer.next !== now || !timers.has(id)) continue;
-      timer.next += timer.period;
-      timer.callback();
-    }
+  while (now < until) {
+    const batch = [...frames.entries()];
+    frames.clear();
+    now = Math.min(until, now + 16);
+    for (const [, callback] of batch) callback(now);
   }
-  now = until;
 }
 function near(actual, expected, message) { assert(Math.abs(actual - expected) < 1e-9, `${message}: ${actual} != ${expected}`); }
 
@@ -69,6 +71,8 @@ try {
   tick(300);
   near(accusation.volume, 0.85 * 0.2 * 0.7, "slider wins over old fade target");
   assert(live.paused, "outgoing loop stops after crossfade");
+  assert.equal(live.src, "", "outgoing loop releases its media source");
+  assert.equal(live.loadCount, 1, "outgoing loop reloads after releasing its source");
   sound.syncAudioScene({ bgmCueId: "bgm.live-call-allegro" });
   await Promise.resolve();
   const allegro = elements.at(-1);
@@ -89,18 +93,32 @@ try {
   assert(dawn.volume > 0 && dawn.volume < 0.85 * 0.2 * 0.54, "dawn uses its longer gentle attack");
   tick(570);
   near(dawn.volume, 0.85 * 0.2 * 0.54, "dawn reaches full gain at 900 milliseconds");
+  sound.playAudioCue("sfx.phone.connect");
+  const shot = elements.at(-1);
+  shot.listeners.ended();
+  assert.equal(shot.paused, true, "finished one-shot pauses");
+  assert.equal(shot.src, "", "finished one-shot releases its media source");
+  assert.equal(shot.loadCount, 1, "finished one-shot reloads after releasing its source");
+  sound.syncAudioScene({ bgmCueId: "bgm.pursuit" });
+  await Promise.resolve();
+  const hiddenIncoming = elements.at(-1);
+  sound.finishPendingFades();
+  assert(dawn.paused, "hidden window settles the outgoing crossfade");
+  assert.equal(dawn.src, "", "settled outgoing loop releases its media source");
+  assert(hiddenIncoming.volume > 0, "hidden window settles the incoming attack at full gain");
+  assert.equal(frames.size, 0, "settled fades leave no animation frames");
   sound.syncAudioScene({ bgmCueId: "bgm.live-call" });
   await Promise.resolve();
   sound.toggleSound();
   tick(60);
   for (const audio of elements.filter(audio => !audio.paused)) near(audio.volume, 0, "mute also covers outgoing tracks");
   tick(400);
-  assert.equal(timers.size, 0, "finished transitions leave no timers");
+  assert.equal(frames.size, 0, "finished transitions leave no animation frames");
   console.log("Audio runtime tests passed: fade mute, slider, outgoing loops, voice pause/resume, stinger silence, instant BGM attack, epilogue fade, timer cleanup");
 } finally {
   Date.now = original.now;
-  globalThis.setInterval = original.setInterval;
-  globalThis.clearInterval = original.clearInterval;
+  globalThis.requestAnimationFrame = original.requestAnimationFrame;
+  globalThis.cancelAnimationFrame = original.cancelAnimationFrame;
   if (original.Audio === undefined) delete globalThis.Audio;
   else globalThis.Audio = original.Audio;
 }

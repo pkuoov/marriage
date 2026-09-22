@@ -1,5 +1,6 @@
 import { statementLinesFromText, statementOptionForLine, statementOptionsForLine } from "../runtime/statementReviewModel.js";
 import { nextSequentialChoice, sceneQuestionSequence } from "../runtime/sequentialChoices.js";
+import { escapeHtml } from "./html.js";
 
 export function statementReplayHtml({ scene = {}, sceneIndex = 0, attemptedLineIds = [] } = {}) {
   return statementStageReplayHtml({
@@ -187,14 +188,4 @@ function statementReplayLineHtml(
       ${missed ? "<small>已追问 · 对方没有接下去</small>" : ""}
     </button>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

@@ -40,10 +40,10 @@ export function createQuickDetectiveScreens(ctx) {
     ctx.clearQuestionRewindHistory();
     ctx.commitTitlePlayerName();
     ctx.resetQuickTransientState();
-    state.quickDetectiveReturn = null;
-    state.screen = "quickDetectiveSelect";
-    ctx.saveState();
-    ctx.render();
+    ctx.commit((state) => {
+      state.quickDetectiveReturn = null;
+      state.screen = "quickDetectiveSelect";
+    });
   }
 
   function startQuickDetective(caseId = "", returnContext = undefined) {
@@ -198,19 +198,19 @@ export function createQuickDetectiveScreens(ctx) {
     const state = ctx.getState();
     const returnContext = state.quickDetectiveReturn;
     if (!returnContext) return openQuickDetectiveSelect();
-    state.quickDetectiveReturn = null;
-    state.screen = "chapter";
-    state.scene = returnContext.scene ?? "caseBridge";
-    ctx.saveState();
-    ctx.render();
+    ctx.commit((state) => {
+      state.quickDetectiveReturn = null;
+      state.screen = "chapter";
+      state.scene = returnContext.scene ?? "caseBridge";
+    });
   }
 
   function updateQuickDetective(nextQuickState) {
     clearQuickAutoAdvance();
     const state = ctx.getState();
-    state.quickDetective = nextQuickState;
-    ctx.saveState();
-    ctx.render();
+    ctx.commit((state) => {
+      state.quickDetective = nextQuickState;
+    });
   }
 
   function mountQuickDialogue(packet, quickState) {

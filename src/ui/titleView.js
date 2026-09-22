@@ -1,4 +1,5 @@
 import { audioSettingsPanelHtml } from "./audioSettingsView.js";
+import { escapeHtml } from "./html.js";
 
 export function titleScreenHtml({
   productName = "深夜热线：直播间侦探",
@@ -110,14 +111,4 @@ function productTitleLines(productName = "") {
   const value = String(productName || "深夜热线：直播间侦探");
   if (value === "深夜热线：直播间侦探") return ["深夜热线", "直播间侦探"];
   return [value, ""];
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

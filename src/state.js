@@ -78,7 +78,6 @@ export const baseState = {
   cafeInquiryPicks: {},
   cafeInquiryHeard: {},
   activeStatementLineId: null,
-  helperHintPicks: {},
   sceneQuestionFocus: null,
   evidenceCheckPicks: {},
   investigationPicks: {},
@@ -208,7 +207,7 @@ export function migrateState(saved) {
     .filter(([, ids]) => Array.isArray(ids)).map(([key, ids]) => [key, [...new Set(ids.filter(id => typeof id === "string"))]]));
   if (!next.decisivePresentProgress || Array.isArray(next.decisivePresentProgress)) next.decisivePresentProgress = {};
   if (!("activeStatementLineId" in next)) next.activeStatementLineId = null;
-  if (!next.helperHintPicks || Array.isArray(next.helperHintPicks)) next.helperHintPicks = {};
+  delete next.helperHintPicks;
   if (!next.sceneQuestionFocus || typeof next.sceneQuestionFocus !== "object" || Array.isArray(next.sceneQuestionFocus)) next.sceneQuestionFocus = null;
   if (!next.evidenceCheckPicks || Array.isArray(next.evidenceCheckPicks)) next.evidenceCheckPicks = {};
   if (!next.investigationPicks || Array.isArray(next.investigationPicks)) next.investigationPicks = {};
@@ -532,13 +531,28 @@ export function saveStateSnapshot(state) {
   return saved;
 }
 
+const DROPPED_PERSISTENCE_KEYS = new Set(["caseBrief", "saveLoadError", "saveWriteError"]);
+
 export function stateSnapshotForPersistence(state = {}) {
-  const snapshot = structuredClone({ ...state, saveSlot: activeSaveSlot() });
-  delete snapshot.saveLoadError;
-  delete snapshot.saveWriteError;
-  snapshot.caseBriefs = (snapshot.caseBriefs ?? []).map(caseBriefPersistenceStub);
-  delete snapshot.caseBrief;
-  return snapshot;
+  const source = state ?? {};
+  const rest = {};
+  for (const key of Object.keys(source)) {
+    if (key === "caseBriefs" || DROPPED_PERSISTENCE_KEYS.has(key)) continue;
+    rest[key] = source[key];
+  }
+  const snapshot = structuredClone({ ...rest, saveSlot: activeSaveSlot() });
+  const briefs = (source.caseBriefs ?? []).map(caseBriefPersistenceStub);
+  return orderPersistedSnapshot(snapshot, briefs, source);
+}
+
+function orderPersistedSnapshot(snapshot, briefs, source) {
+  const keys = Object.keys(source);
+  if (!keys.includes("saveSlot")) keys.push("saveSlot");
+  const order = keys.filter((key) => !DROPPED_PERSISTENCE_KEYS.has(key));
+  if (!order.includes("caseBriefs")) order.push("caseBriefs");
+  const ordered = {};
+  for (const key of order) ordered[key] = key === "caseBriefs" ? briefs : snapshot[key];
+  return ordered;
 }
 
 const PERSISTED_CASE_BRIEF_KEYS = Object.freeze([

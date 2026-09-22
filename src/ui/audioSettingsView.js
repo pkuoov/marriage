@@ -1,4 +1,5 @@
 import { AUDIO_BUS_IDS, audioVolumePercent, normalizeAudioSettings } from "../runtime/audioModel.js";
+import { escapeHtml } from "./html.js";
 
 const BUS_LABELS = Object.freeze({
   master: "主音量",
@@ -34,14 +35,4 @@ function audioVolumeRowHtml(settings, busId) {
       <output data-audio-output="${escapeHtml(busId)}">${percent}%</output>
     </label>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

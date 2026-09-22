@@ -1,3 +1,5 @@
+import { escapeHtml } from "./ui/html.js";
+
 export const DEFAULT_PLAYER_NAME = "林旭阳";
 export const PLAYER_NAME_MAX_LENGTH = 12;
 
@@ -31,14 +33,4 @@ export function playerFamiliarName(value = DEFAULT_PLAYER_NAME) {
   return chars.length >= 3 && chars.every((char) => /[\u3400-\u9fff]/.test(char))
     ? chars.slice(-2).join("")
     : name;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

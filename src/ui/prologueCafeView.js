@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.js";
 export function cafePrologueHeaderHtml({ timeline = "现在 · 傍晚", title = "序章", subtitle = "" } = {}) {
   return `
     <header class="cafe-prologue-header">
@@ -280,13 +281,4 @@ export function cafeFinalBoundaryHtml({ result = "", openAccount = "", unknown =
       <p>${(unknown ?? []).map((item) => escapeHtml(item)).join("；")}</p>
     </section>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }

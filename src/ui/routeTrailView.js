@@ -1,4 +1,5 @@
 import { routeTrailModel } from "../runtime/routeMapModel.js";
+import { escapeHtml } from "./html.js";
 
 export function routeTrailHtml({
   choices = [],
@@ -21,13 +22,4 @@ function routeTrailItemHtml(item) {
       <b>${escapeHtml(item.question || item.label)}</b>
     </span>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.js";
 export function epilogueUnreadHtml({ messages = [], currentIndex = -1 } = {}) {
   if (!messages.length) return "";
   return `
@@ -36,14 +37,4 @@ function attachmentPlaceholderHtml(attachment = {}) {
       <small>图片附件</small>
     </div>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

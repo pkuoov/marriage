@@ -1,5 +1,6 @@
 import { materialRecordHtml } from "./materialRecordView.js";
 import { audioSettingsPanelHtml } from "./audioSettingsView.js";
+import { escapeHtml } from "./html.js";
 
 export function liveControlDeckHtml({
   onAirLabel = "匿名热线",
@@ -167,6 +168,7 @@ export function liveFrameHtml({
   soundEnabled = true,
   audioSettings = null,
   backdropClass = "backdrop-live",
+  backdropArt = "",
   label = "",
   chapter = "",
   text = "",
@@ -216,7 +218,7 @@ export function liveFrameHtml({
             <i></i><i></i><i></i><i></i>
             <span><em></em><em></em><em></em><em></em><em></em><em></em><em></em></span>
           </div>
-          <div class="visual-scene backdrop-office ${escapeHtml(backdropClass)}" aria-hidden="true">
+          <div class="visual-scene backdrop-office ${escapeHtml(backdropClass)}"${stageArtStyle(backdropArt)} aria-hidden="true">
             ${label ? `<div class="scene-label">${escapeHtml(label)}</div>` : ""}
             ${sceneEvidencePropsHtml(backdropClass, materialKind)}
             ${visualHud}
@@ -309,6 +311,24 @@ function revealPerformanceHtml(transition = {}) {
   return inner ? `<div class="reveal-performance reveal-${escapeHtml(variant)}">${inner}</div>` : "";
 }
 
+function stageArtStyle(art = "") {
+  const path = String(art ?? "").trim().replace(/["'\\()]/g, "");
+  if (!path.includes("assets/")) return "";
+  return ` style="--stage-art:url('${escapeHtml(documentRelativeUrl(path))}')"`;
+}
+
+// A relative url() inside a custom property resolves against the stylesheet that
+// reads var(--stage-art), not the page, so pin it to the document base first.
+function documentRelativeUrl(path) {
+  const base = globalThis.document?.baseURI;
+  if (!base) return path;
+  try {
+    return new URL(path, base).href;
+  } catch {
+    return path;
+  }
+}
+
 function sceneEvidencePropsHtml(backdropClass = "", materialKind = "file") {
   const sceneKind = sceneKindForBackdrop(backdropClass);
   return `
@@ -325,13 +345,4 @@ function sceneKindForBackdrop(backdropClass = "") {
   if (text.includes("profile")) return "profile";
   if (text.includes("work")) return "work";
   return "live";
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }

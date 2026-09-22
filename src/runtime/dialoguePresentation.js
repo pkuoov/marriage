@@ -1,4 +1,5 @@
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
+import { escapeHtml } from "../ui/html.js";
 
 const QUOTE_PAIRS = new Map([["「", "」"], ["『", "』"], ["“", "”"], ["‘", "’"], ["\"", "\""]]);
 const SENTENCE_END = new Set(["。", "！", "？", "!", "?"]);
@@ -489,13 +490,4 @@ function normalizedPageLines(page = {}) {
 
 function typeablePageLines(page = {}) {
   return normalizedPageLines(page).filter((line) => !line.repeatedContext);
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }

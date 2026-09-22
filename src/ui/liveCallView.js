@@ -1,4 +1,5 @@
 import { DEFAULT_PLAYER_NAME } from "../playerIdentity.js";
+import { escapeHtml } from "./html.js";
 
 export const DEFAULT_HOST_ART_VARIANTS = {
   listening: "./assets/generated/quick-detective/lin-xuyang-host-pixel.png?v=0.27.0",
@@ -154,14 +155,4 @@ export function portraitLayerHtml({
       </figure>` : ""}
     </div>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

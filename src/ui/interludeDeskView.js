@@ -1,6 +1,7 @@
 import { HOST_NAME } from "../hostProfile.js";
 import { CHOICE_COST_META } from "../runtime/choiceCostModel.js";
 import { choiceButtonBodyHtml } from "./callFlowView.js";
+import { escapeHtml } from "./html.js";
 
 export function hangupBeatHtml(hangup = {}) {
   return `
@@ -227,14 +228,4 @@ function callLineHtml(line = {}) {
       <p>${escapeHtml(line.text ?? "")}</p>
     </div>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

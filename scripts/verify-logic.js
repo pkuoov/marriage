@@ -1,10 +1,12 @@
+import { caseIdsForSmokeTarget } from "./lib/smoke-case-files.js";
 import { dailyKeyFromUrl, hasFreshStartParam, modeFromUrl, storyKeyFromUrl } from "../src/runtime/urlMode.js";
 import { caseModeConfig, generateCasesForMode, normalizeCaseMode, validCaseBriefCount } from "../src/caseModes.js";
 import { accusationLabel, evidenceInsightFor, runCompleteLineFor, timelineGapText } from "../src/caseNarration.js";
 import { allCaseContradictions, calculateCaseBudgetMax, calculateCaseOutcome, calculateInspirationMax, calculateIssueCompletion, expectedAccusationForCase, nextInspirationContradictionForCase, relationshipExpectedAccusationForCase, resolveAccusationForCase, resolveFinalQuoteForCase } from "../src/caseRuntime.js";
 import { requiredContradictionsForCase, truthBoundaryPromptLimitForCase } from "../src/difficulty.js";
 import { migrateState, normalizeRuntimeState, parseStateSnapshot, saveReadingBeforeExit, saveStateSnapshot, STORAGE_KEY, stateSnapshotForPersistence } from "../src/state.js";
-import { CONTENT_ADVISORS, CONTENT_HELPER_NPCS } from "../src/generated/contentPackIndex.js";
+import { CONTENT_ADVISORS } from "../src/generated/contentPackIndex.js";
+import { CONTENT_AUTHOR_CASES, CONTENT_AUTHOR_QUICK_CASES, CONTENT_HELPER_NPCS } from "../src/generated/contentPackAuthorIndex.js";
 import { DEFAULT_STORY_PACK_KEY, quickDetectiveCaseFor, quickDetectiveCasesFor, storyPackCaseCount, storyPackForKey } from "../src/storyPacks.js";
 import { NPCS } from "../src/story.js";
 import { dailyAccusationChoices } from "../src/dailyChoices.js";
@@ -72,6 +74,19 @@ import { bundleCssSync } from "./css-bundle.js";
 import { assetReferencesInText } from "./runtime-assets.js";
 
 const attrs = { wealth: 4, family: 4, looks: 4, education: 4, eq: 4 };
+
+function authorCaseForBrief(brief = {}) {
+  const packKey = brief.storyKey ?? brief.weeklyKey ?? "steam-demo-01";
+  const cases = CONTENT_AUTHOR_CASES[packKey] ?? CONTENT_AUTHOR_CASES["steam-demo-01"] ?? {};
+  return cases[brief.runtimeContentCaseId]
+    ?? cases[brief.caseId]
+    ?? Object.values(cases).find((packet) => packet.plotId === brief.plotId)
+    ?? null;
+}
+
+function authorSceneFor(brief = {}, scene = {}) {
+  return (authorCaseForBrief(brief)?.sceneVersions ?? []).find((item) => item.id === scene?.id) ?? null;
+}
 const results = [];
 const testFilter = commandLineOption("--filter").toLowerCase();
 const screenSourcePaths = [
@@ -82,11 +97,23 @@ const screenSourcePaths = [
   "../src/ui/screens/quickDetectiveScreens.js",
   "../src/ui/screens/overnightDocumentScreens.js",
   "../src/ui/screens/liveCounterScreens.js",
-  "../src/ui/screens/testimonyWallScreens.js"
+  "../src/ui/screens/testimonyWallScreens.js",
+  "../src/ui/screens/cafePrologueScreens.js",
+  "../src/ui/screens/nightShellScreens.js",
+  "../src/ui/screens/sceneReviewFlow.js",
+  "../src/ui/screens/sceneQuestionFlow.js",
+  "../src/ui/screens/statementReplayFlow.js",
+  "../src/ui/screens/sceneBeatFlow.js",
+  "../src/ui/screens/interludeDeskFlow.js",
+  "../src/ui/screens/interludeEvidenceFlow.js",
+  "../src/ui/screens/interludeInvestigationFlow.js"
 ];
 const screenSources = screenSourcePaths.map((path) => readFileSync(new URL(path, import.meta.url), "utf8"));
 const runtimeSource = [
   readFileSync(new URL("../src/app.js", import.meta.url), "utf8"),
+  readFileSync(new URL("../src/ui/liveChrome.js", import.meta.url), "utf8"),
+  readFileSync(new URL("../src/ui/titleFlow.js", import.meta.url), "utf8"),
+  readFileSync(new URL("../src/ui/dailyScreenParts.js", import.meta.url), "utf8"),
   readFileSync(new URL("../src/runtime/caseOutcome.js", import.meta.url), "utf8"),
   readFileSync(new URL("../src/runtime/caseStateWrites.js", import.meta.url), "utf8"),
   readFileSync(new URL("../src/ui/focusInputControl.js", import.meta.url), "utf8"),
@@ -204,17 +231,19 @@ test("ARCH-001", "screen modules depend on an injected context instead of app.js
 });
 
 test("FLOW-000", "screen fallbacks preserve the current segment and every pending gate", () => {
-  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
-  const interludeSource = screenSources[1];
-  const sceneSource = screenSources[2];
+  const liveChromeSource = readFileSync(new URL("../src/ui/liveChrome.js", import.meta.url), "utf8");
+  const interludeSource = readFileSync(new URL("../src/ui/screens/interludeEvidenceFlow.js", import.meta.url), "utf8");
   const quickSource = screenSources[4];
   assertIncludes(interludeSource, "nextPlayableSceneIndex(brief, sceneIndex)", "场后材料完成后必须跳到下一个可玩场，不得用下标加一误入隐藏场");
   assertIncludes(interludeSource, "pendingAfterScene ?? afterSceneEvidenceFor(brief, sceneIndex, () => false)", "场后材料刚命中时必须先播本次反馈，不能因完成标记立刻跳回场景");
-  assertIncludes(sceneSource, "pendingEvidence", "立场快照完成后必须先回收待处理的场后材料");
-  assertIncludes(sceneSource, 'button.dataset.sceneReplayDialogue !== "true"', "自由问只有从原话回放发起时才能绕过退役问卷入口");
-  assertIncludes(sceneSource, 'data-scene-open-replay', "自由问答完必须能回到同一段原话，不能落回退役问卷");
+  const sceneReviewSource = readFileSync(new URL("../src/ui/screens/sceneReviewFlow.js", import.meta.url), "utf8");
+  const sceneQuestionSource = readFileSync(new URL("../src/ui/screens/sceneQuestionFlow.js", import.meta.url), "utf8");
+  const sceneBeatSource = readFileSync(new URL("../src/ui/screens/sceneBeatFlow.js", import.meta.url), "utf8");
+  assertIncludes(sceneBeatSource, "pendingEvidence", "立场快照完成后必须先回收待处理的场后材料");
+  assertIncludes(sceneQuestionSource, 'button.dataset.sceneReplayDialogue !== "true"', "自由问只有从原话回放发起时才能绕过退役问卷入口");
+  assertIncludes(sceneReviewSource, "data-scene-open-replay", "自由问答完必须能回到同一段原话，不能落回退役问卷");
   assertIncludes(quickSource, "const autoPair = false", "快案对质必须由玩家点击换句，不得 450ms 自动跳过");
-  const moveSceneSource = appSource.slice(appSource.indexOf("function moveScene(scene)"), appSource.indexOf("function setIndex(brief"));
+  const moveSceneSource = liveChromeSource.slice(liveChromeSource.indexOf("function moveScene(scene)"), liveChromeSource.indexOf("function setIndex(brief"));
   assert(moveSceneSource.indexOf("const readiness = accusationReadinessForBrief(brief)") < moveSceneSource.indexOf('state.scene = "callerQuestion"'), "进入结案前必须先验门，不得用来电人反问绕过未完成场次");
 });
 
@@ -312,6 +341,12 @@ test("ARCH-003", "large runtime domains stay split behind injected boundaries", 
   assertIncludes(sceneSource, "createTestimonyWallScreens", "主场景必须把证词墙与决定性指认委托给独立工厂");
   assert(!sceneSource.includes("function renderTestimonyWall"), "证词墙实现不能重新塞回 sceneScreens");
   assert(!sceneSource.includes("function renderDecisivePresentHit"), "决定性指认演出不能重新塞回 sceneScreens");
+  const recapSource = readFileSync(new URL("../src/ui/screens/recapScreens.js", import.meta.url), "utf8");
+  assertIncludes(recapSource, "createCafePrologueScreens", "复盘屏幕必须把咖啡序章委托给独立工厂");
+  assertIncludes(recapSource, "createNightShellScreens", "复盘屏幕必须把夜场壳委托给独立工厂");
+  assert(!recapSource.includes("function renderCafePrologue"), "咖啡序章实现不能重新塞回复盘屏幕");
+  assert(!recapSource.includes("function renderNightShellPrologue"), "夜场开播实现不能重新塞回复盘屏幕");
+  assertIncludes(appSource, "composeScreenContext({ session, queries, view })", "屏幕依赖必须分成状态、查询、画面三组后再交给屏幕");
 
   [
     "createFocusInputControl",
@@ -609,7 +644,7 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
         const reaction = statementMissReactionForOption(option);
         assert(reaction.text && ["caller", "host", "comment"].includes(reaction.role), `${scene.id} 可见错问必须有带角色的 missReaction`);
         assert(!/(正确答案|你该点|点另一句|换一条线索)/.test(reaction.text), `${scene.id} 错问反应不得教玩家改点答案`);
-        const answerAnchors = (scene.questionOptions ?? [])
+        const answerAnchors = (authorSceneFor(brief, scene)?.questionOptions ?? [])
           .filter((candidate) => candidate.correct === true)
           .flatMap((candidate) => [candidate.logicContract?.answerAnchor, candidate.revisedSourceAnchor])
           .filter((value) => String(value ?? "").length >= 6);
@@ -666,7 +701,7 @@ test("STATEMENT-001", "statement replay keeps one source block and exact line an
   assertEqual(migratedWallState.testimonyWallProgress.legacy.act, 1, "旧版单幕 testimonyWall 存档必须迁移为 act1 进行中");
   assertEqual(normalizeTestimonyWallProgress(migratedWallState.testimonyWallProgress.legacy).preludeSeen, true, "已经在旧证词墙操作过的存档不能倒退重播前置陈述");
   assertEqual(normalizeTestimonyWallProgress({}).preludeSeen, false, "新证词墙必须先播放承重前置陈述再开放逐句盘问");
-  assertIncludes(screenSources[2], "wallContext.finalAct && wallContext.presentProgress.resolved", "旧版 act1 已写完成标记的存档也必须以 act2 命中作为证词墙最终门禁");
+  assertIncludes(readFileSync(new URL("../src/ui/screens/sceneReviewFlow.js", import.meta.url), "utf8"), "wallContext.finalAct && wallContext.presentProgress.resolved", "旧版 act1 已写完成标记的存档也必须以 act2 命中作为证词墙最终门禁");
   assertIncludes(screenSources[7], "function advanceWallAct", "证词墙模块必须保留 act1 命中后推进到 act2 的独立入口");
 
   for (const packet of quickDetectiveCasesFor("steam-demo-01")) {
@@ -1289,18 +1324,23 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assertEqual(packet.confrontations.find((item) => item.revealTransition)?.revealTransition?.lineIndex, 4, "第三人重击必须等来电人承认男性在场以后再播放，不能由动画提前给答案");
   assertIncludes(packet.presentation?.caller?.artSrc, "caller-zhou-female-pixel", "第二宗快案必须使用自己的匿名女性来电人立绘，不能串用第一宗角色");
   assertIncludes(quickDetectiveCaseSelectHtml(quickCases, []), "CASE</small><b>02", "案件选择页必须实际渲染 CASE 02");
-  assert(!packet.sourceBoundary.includes("BV1iGKG65EJ3"), "运行时内容不得暴露精确公开视频编号");
-  assertIncludes(packet.sourceBoundary, "公开讨论中常见", "第二宗快案必须说明结构参考来自公开讨论中的常见模式");
-  assertIncludes(packet.sourceBoundary, "虚构合成", "来源边界必须声明人物、事件细节和全部台词已经虚构合成");
-  assertIncludes(packet.sourceBoundary, "异性在场本身不构成越界证据", "第二宗快案不得把男性在场直接升级成未证实行为");
+  const authorPacket = CONTENT_AUTHOR_QUICK_CASES["steam-demo-01"]?.["02-one-missed-message"];
+  assert(authorPacket, "第二宗快案的作者索引必须保留来源边界和追问合同");
+  assert(!authorPacket.sourceBoundary.includes("BV1iGKG65EJ3"), "作者索引不得暴露精确公开视频编号");
+  assertIncludes(authorPacket.sourceBoundary, "公开讨论中常见", "第二宗快案必须说明结构参考来自公开讨论中的常见模式");
+  assertIncludes(authorPacket.sourceBoundary, "虚构合成", "来源边界必须声明人物、事件细节和全部台词已经虚构合成");
+  assertIncludes(authorPacket.sourceBoundary, "异性在场本身不构成越界证据", "第二宗快案不得把男性在场直接升级成未证实行为");
+  assert(!Object.hasOwn(packet, "sourceBoundary"), "玩家索引不得携带快案来源边界");
 
   const turnIds = new Set(packet.turns.map((turn) => turn.id));
   for (const confrontation of packet.confrontations) {
     assert((confrontation.basisTurnIds ?? []).length >= 1, `${confrontation.id} 必须引用至少两处已经播出的原话`);
     assert(confrontation.basisTurnIds.every((turnId) => turnIds.has(turnId)), `${confrontation.id} 不得带入麦外事实`);
-    assert(confrontation.logicContract?.premiseAnchor, `${confrontation.id} 必须登记问句前提`);
-    assert(confrontation.logicContract?.sourceProves, `${confrontation.id} 必须登记现有原话能证明什么`);
-    assert(confrontation.logicContract?.sourceDoesNotProve, `${confrontation.id} 必须登记不能证明什么`);
+    const contract = authorPacket.confrontations.find((item) => item.id === confrontation.id)?.logicContract;
+    assert(contract?.premiseAnchor, `${confrontation.id} 必须登记问句前提`);
+    assert(contract?.sourceProves, `${confrontation.id} 必须登记现有原话能证明什么`);
+    assert(contract?.sourceDoesNotProve, `${confrontation.id} 必须登记不能证明什么`);
+    assert(!Object.hasOwn(confrontation, "logicContract"), `${confrontation.id} 的追问合同不得进入玩家索引`);
     const lines = quickConfrontationLines(confrontation);
     assert(lines.length >= (confrontation.kind === "conversation" ? 2 : 4), `${confrontation.id} 要有对应回答；对质保留反驳和回问`);
     assert(lines.every((line, index) => line.text && ["host", "caller"].includes(line.role) && (index === 0 || line.role !== lines[index - 1].role)), `${confrontation.id} 多轮对质必须逐句交替`);
@@ -1328,7 +1368,7 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   assertIncludes(originalTranscript, "那几次动态我找到了，发给你", "第二批朋友圈材料必须明确由来电人自己发来，不能写成主播直接翻她的主页");
   assert(!originalTranscript.includes("后台收到了。往前两个月翻"), "朋友圈三天可见以后，主播不得表现成能直接翻看来电人的历史动态");
   assert(!packet.issueOptions.some((item) => item.id.includes("tattoo")), "纹身不得成为玩家需要判定的矛盾方向");
-  assertIncludes(packet.confrontations.find((item) => item.id === "third-person-at-table")?.logicContract?.sourceDoesNotProve, "不自动证明暧昧、出轨", "异性在场必须有明确的不证明边界");
+  assertIncludes(authorPacket.confrontations.find((item) => item.id === "third-person-at-table")?.logicContract?.sourceDoesNotProve, "不自动证明暧昧、出轨", "异性在场必须有明确的不证明边界");
   assert((packet.ending?.unknown ?? []).some((item) => item.includes("是否发生过暧昧")), "结案制作边界必须保留酒局内容未知");
   const quickTwoRecapPage = packet.ending.summaryPages.find((page) => page.stageLabel === "结案复盘");
   assert(!quickTwoRecapPage?.lines?.[0]?.text?.includes("我们来把这次这个连线复个盘"), "第二宗快案不得恢复共用复盘模板句");
@@ -1614,7 +1654,7 @@ test("AUDIO-002", "scene audio plans and semantic cues stay stable", () => {
   assertEqual(resolveSceneAudioFallback({ ...epiloguePlan, bgmCueId: "missing.dawn" }).bgmCueId, "bgm.recap-afterhours", "尾声仍须保留可用的复盘回退");
   assertIncludes(screenSources[7], 'ctx.getState().scene !== "decisivePresentHit"', "命中 stinger 定时器必须校验仍停留在命中场景");
   assert(!screenSources[7].includes('playAudioCue("bgm.pursuit")'), "命中页不得再用脱离场景同步的定时器手动切 pursuit");
-  assertIncludes(screenSources[2], '? "pursuit" : ""', "命中后的 sceneReview 必须通过 musicPhase 接管 pursuit 续播");
+  assertIncludes(readFileSync(new URL("../src/ui/screens/sceneReviewFlow.js", import.meta.url), "utf8"), '? "pursuit" : ""', "命中后的 sceneReview 必须通过 musicPhase 接管 pursuit 续播");
   assertIncludes(screenSources[7], 'context.wallProgress.act > 1 ? "pursuit" : "allegro"', "act2 证词墙与材料选择必须切入 pursuit，并继续使用场景音频回退");
   assertEqual(audioScenePlan({ scene: "sceneLineReplay" }).ambienceCueId, "ambience.studio-line", "原话回放仍在连线中，不得掉到收麦声场");
   assertEqual(audioScenePlan({ scene: "afterSceneEvidence" }).ambienceCueId, "ambience.studio-line", "连线中插入材料不得误切后台声场");
@@ -2180,7 +2220,7 @@ test("MATERIAL-005", "material toolbar unlocks only after the player has actuall
 
 test("UI-004", "inline transition buttons keep a normal CTA shape", () => {
   const stylesSource = bundleCssSync(new URL("../src/styles.css", import.meta.url));
-  const recapScreenSource = readFileSync(new URL("../src/ui/screens/recapScreens.js", import.meta.url), "utf8");
+  const nightShellSource = readFileSync(new URL("../src/ui/screens/nightShellScreens.js", import.meta.url), "utf8");
   const inlineFlowRule = stylesSource.slice(
     stylesSource.indexOf(".avg-choice-overlay.inline-choice-flow:not([hidden]) {"),
     stylesSource.indexOf(".evidence-screen, .investigation-screen")
@@ -2191,7 +2231,7 @@ test("UI-004", "inline transition buttons keep a normal CTA shape", () => {
   assertIncludes(inlineFlowRule, "justify-content: center", "进入幕、接入案件和后续继续按钮必须统一居中，不能悬在舞台最右侧");
   assertIncludes(inlineFlowRule, "text-align: center", "推进按钮文字必须使用居中 CTA 排版");
   assertIncludes(inlineFlowRule, "scroll-margin-block: 1rem", "推进按钮滚入视口时必须保留底部呼吸空间");
-  assertIncludes(recapScreenSource, "night-shell-prologue-screen", "开播前页面必须有独立布局类，避免入口按钮被长对白挤出首屏");
+  assertIncludes(nightShellSource, "night-shell-prologue-screen", "开播前页面必须有独立布局类，避免入口按钮被长对白挤出首屏");
   assertIncludes(stylesSource, ".night-shell-prologue-screen .vn-stage", "开播前舞台必须给入口按钮预留一行");
   assertIncludes(runtimeSource, "keepInlineChoicesVisible(shownChoices)", "后续继续按钮出现时必须滚到完整可见位置");
 });
@@ -2417,7 +2457,10 @@ test("UI-001", "current-node questions separate free asks from key choices", () 
   assert(!stylesSource.includes(".advisor-conflict"), "顾问分歧死分支删除后不能残留孤立样式");
   assertIncludes(stylesSource, ".day-studio", "工作室白天场景必须有独立背景规则");
   assertIncludes(stylesSource, ".day-office", "办公室白天场景必须有独立背景规则");
-  assertIncludes(stylesSource, "backgrounds/cafe_date.png", "餐厅与咖啡馆必须接入已有场景图");
+  const stageShellSource = readFileSync(new URL("../src/styles/10-live-stage-shell.css", import.meta.url), "utf8");
+  const stageImageUrls = [...stageShellSource.matchAll(/url\(([^)]+)\)/g)].map((match) => match[1]);
+  assert(stageImageUrls.length > 0 && stageImageUrls.every((url) => url.includes("livestream_studio_v2.png")), "直播间样式只保留演播室底图，案件背景改由内容字段引用");
+  assertIncludes(readFileSync(new URL("../content/packs/steam-demo-01/manifest.json", import.meta.url), "utf8"), "backgrounds/cafe_date.png", "餐厅与咖啡馆背景必须写在案件包里");
   assertIncludes(appSource, "solvedRecapFlowView", "renderSolved 必须调用纯 UI flow helper，不能继续本地拼分页按钮");
   assert(!appSource.includes("先把这几句放完") && !recapViewSource.includes("先把这几句放完"), "事实边界阻止继续的按钮文案不能继续写回运行时代码或 UI 模块");
   assert(!appSource.includes("这句还不能这么放"), "事实边界不能当场提示对错，错放应留到回看/终局揭晓");
@@ -3025,6 +3068,7 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   const storyPacksSource = readFileSync(new URL("../src/storyPacks.js", import.meta.url), "utf8");
   const recapModelSource = readFileSync(new URL("../src/runtime/recapModel.js", import.meta.url), "utf8");
   const contentIndexSource = readFileSync(new URL("../src/generated/contentPackIndex.js", import.meta.url), "utf8");
+  const authorIndexSource = readFileSync(new URL("../src/generated/contentPackAuthorIndex.js", import.meta.url), "utf8");
   const dailyChoicesSource = readFileSync(new URL("../src/dailyChoices.js", import.meta.url), "utf8");
   const demoPack = storyPackForKey("steam-demo-01");
   const demoCaseCount = storyPackCaseCount(demoPack);
@@ -3034,6 +3078,15 @@ test("EPISODE-001", "story pack contains deterministic live-call cases with one 
   assertIncludes(storyPacksSource, "./generated/contentPackIndex.js", "故事包运行时必须读取 content 生成索引，不能再手写 manifest 镜像");
   assert(!storyPacksSource.includes("ANONYMOUS_CALL_LABELS"), "故事包标签不能在 storyPacks.js 里手写双份");
   assertIncludes(contentIndexSource, "CONTENT_CASES", "内容索引必须包含案件运行时状态，为后续 JSON loader 留入口");
+  const storySource = readFileSync(new URL("../src/story.js", import.meta.url), "utf8");
+  const hudSource = readFileSync(new URL("../src/ui/liveHudPresenter.js", import.meta.url), "utf8");
+  assert(!contentIndexSource.includes("\"logicContract\"") && !contentIndexSource.includes("\"helperHint\"") && !contentIndexSource.includes("CONTENT_CAST"), "玩家索引不得携带追问合同、场外提示或角色档案");
+  assert(!storySource.includes("motiveWeights") && !storySource.includes("yellow:") && !storySource.includes("red:"), "玩家人物表只留身份，黄线、红线和动机权重不得进包");
+  assert(!hudSource.includes("story.js"), "立绘以案件 callerArt 为准，界面不再读取人物黄线表");
+  assert(a.every((brief) => typeof brief.callerArt === "string" && brief.callerArt.includes("assets/")), "试玩立绘必须来自 manifest 的 callerArt");
+  assert(a.every((brief) => typeof brief.backdropArt === "string" && brief.backdropArt.includes("assets/generated/backgrounds/")), "试玩舞台背景必须来自 manifest 的 backdropArt");
+  assertIncludes(authorIndexSource, "CONTENT_AUTHOR_CASES", "作者索引必须保留完整案件，供校验读取追问合同");
+  assertIncludes(authorIndexSource, "\"logicContract\"", "作者索引必须保留追问合同");
   assertIncludes(contentIndexSource, "commentSeeds", "内容索引必须包含 comments.json，不能让弹幕种子停在影子资产");
   assertIncludes(contentIndexSource, "hiddenThread", "内容索引必须包含故事包暗线，不能把串案结构写死在终局 UI");
   assertIncludes(contentIndexSource, '"runtimeContentStatus": "runtime-loaded"', "至少一案必须已接通 runtime-loaded 内容，证明 JSON loader 真实生效");
@@ -3195,8 +3248,11 @@ test("EPISODE-004", "daily mode reuses runtime-loaded JSON content before templa
     const brief = generateCasesForMode("daily", NPCS, attrs, { dailyKey: `explicit-${plotId}`, plotId })[0];
     assertEqual(brief.runtimeContentCaseId, caseId, `daily ${plotId} 必须复用内容包 JSON，避免模板和故事集双源`);
   });
-  const house = generateCasesForMode("daily", NPCS, attrs, { dailyKey: "legacy-house", plotId: "house-name-security-test" })[0];
-  assertEqual(house.runtimeContentSource, undefined, "显式旧房产案可以继续走模板兜底，但不能进入自动 daily 轮换");
+  assertThrows(
+    () => generateCasesForMode("daily", NPCS, attrs, { dailyKey: "legacy-house", plotId: "house-name-security-test" }),
+    /not templated/,
+    "不在内容包序列里的旧房产案不再保留第二套模板"
+  );
   Array.from({ length: 12 }, (_, index) => generateCasesForMode("daily", NPCS, attrs, { dailyKey: `2026-07-${String(index + 1).padStart(2, "0")}` })[0])
     .forEach((brief) => {
       assertEqual(brief.runtimeContentSource, "content-pack-json", "自动 daily 轮换必须只出 runtime-loaded JSON 内容");
@@ -3538,7 +3594,9 @@ test("DAILY-007", "fake profile case keeps motive chain and half-truth structure
   assertIncludes(JSON.stringify({ answer: requestedFlowQuestion?.answer, lines: requestedFlowQuestion?.lines }), "我没答应改数字", "第二夜必须把索要流水接到她不肯改条件的目的");
   assertIncludes(salaryOnlyQuestion?.answer, "他没答", "玩家必须能问出男方只提供工资账户的材料缺口");
   assert(!salaryOnlyQuestion?.answer?.includes("今晚上麦") && !salaryOnlyQuestion?.answer?.includes("刚才上麦"), "案三夜 A 追问不得提前引用夜 B 上麦后的承认");
-  assertIncludes(salaryOnlyQuestion?.logicContract?.sourceDoesNotProve, "其他账户", "工资账户不能被写成男方全部家底");
+  const salaryOnlyAuthor = authorSceneFor(brief, proofScene)?.questionOptions?.find((option) => option.id === "profile-proof-before-dinner:questionOptions:1");
+  assertIncludes(salaryOnlyAuthor?.logicContract?.sourceDoesNotProve, "其他账户", "工资账户不能被写成男方全部家底");
+  assert(!Object.hasOwn(salaryOnlyQuestion ?? {}, "logicContract"), "工资账户追问合同不得进入玩家索引");
   assertIncludes(sceneVersionsText, "介绍人", "扩成长案后必须交代体面标签不是单人凭空出现");
   assertIncludes(sceneVersionsText, "第一次正式吃饭", "扩成长案后必须还原第一次饭局现场");
   assertIncludes(sceneVersionsText, "在男方家那边也替我说过", "扩成长案后必须还原介绍链双面话术");
@@ -3789,7 +3847,7 @@ test("STATE-001", "legacy saves migrate into episode-compatible shape", () => {
   assertEqual(migrated.lastPressureSignal, null, "旧存档必须补结构化现场压力状态");
   assertEqual(migrated.lastPressureAxis, null, "旧存档必须补路线轴现场压力状态");
   assertEqual(migrated.patienceLostContext, null, "旧存档必须补耐心耗尽重试上下文");
-  assertEqual(typeof migrated.helperHintPicks, "object", "旧存档必须补 V哥求助记录，且不混入路线记录");
+  assertEqual(migrateState({ helperHintPicks: { "old-hint": 1 } }).helperHintPicks, undefined, "旧存档里的 V哥求助记录不再进入本局");
 
   const namedSave = migrateState({ playerName: "周明" });
   assertEqual(namedSave.playerName, "周明", "新存档必须保留玩家输入的主播姓名");
@@ -4641,14 +4699,15 @@ test("RAGE-001", "rage-bait payoff stays player-led, bounded, and visible in run
   const prologue = pack.nightShell?.prologue;
   const coldOpen = prologue?.coldOpen;
   assertEqual(prologue?.entryActionKey, "night-shell-broadcast-opened", "冷开场前必须先让玩家完成开播动作");
-  assertIncludes(screenSources[3], "data-start-night-broadcast", "开播动作必须有独立可操作按钮，不能由冷开场倒叙代劳");
+  const nightBroadcastSource = readFileSync(new URL("../src/ui/screens/nightShellScreens.js", import.meta.url), "utf8");
+  assertIncludes(nightBroadcastSource, "data-start-night-broadcast", "开播动作必须有独立可操作按钮，不能由冷开场倒叙代劳");
   assertIncludes(JSON.stringify(coldOpen?.setupLines ?? []), "第一位来电人", "失业语音前必须先交代它来自第一位来电人");
   assertIncludes(JSON.stringify(coldOpen?.setupLines ?? []), "男朋友", "失业语音前必须先交代说话人与来电人的关系");
   assertEqual(coldOpen?.line?.speakerProfileId, "case1-respondent", "失业语音必须绑定案一男方，不能误用来电人声纹");
   assert(coldOpen?.line?.text && !/失业|离职|补偿金/.test(coldOpen.line.text), "冷开场不得提前承认第一夜尚待核实的失业信息");
   assertEqual(coldOpen?.actionLabel, "听完这条语音", "首期付息必须由玩家主动听完原话触发");
   assert(!/替(?:他|她|谁)收口|紧跟着|紧接着/.test(JSON.stringify(coldOpen)), "冷开场不得让主播说作者衔接词");
-  assert(!screenSources[3].includes("先让弹幕把这句话听全"), "冷开场按钮旁不得再放编导式操作说明");
+  assert(!nightBroadcastSource.includes("先让弹幕把这句话听全"), "冷开场按钮旁不得再放编导式操作说明");
   assertIncludes(JSON.stringify(coldOpen?.interestLines ?? []), "今晚转我行不行", "首期付息后必须立即增发下一笔债");
 
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
@@ -4853,10 +4912,12 @@ test("DOCS-003", "case writing law requires audited adjacent-turn causality", ()
   const adjacencyReview = JSON.parse(readFileSync(new URL("../content/packs/steam-demo-01/dialogue-adjacency-review.json", import.meta.url), "utf8"));
   assertEqual(JSON.stringify([...adjacencyReview.reviewedCaseIds].sort()), JSON.stringify(["01-credit", "02-tony", "03-profile", "04-workplace"]), "试玩四案必须全部保持逐句复审锁定状态");
   const briefs = generateCasesForMode("episode", NPCS, attrs, { storyKey: "steam-demo-01" });
-  const coreOptions = briefs.flatMap((brief) => (brief.sceneVersions ?? []).flatMap((scene) => (scene.questionOptions ?? []).filter((option) => option.correct === true)));
+  const authorCases = Object.values(CONTENT_AUTHOR_CASES["steam-demo-01"] ?? {});
+  const coreOptions = authorCases.flatMap((brief) => (brief.sceneVersions ?? []).flatMap((scene) => (scene.questionOptions ?? []).filter((option) => option.correct === true)));
   assert(coreOptions.length > 0 && new Set(coreOptions.map((option) => option.id)).size === coreOptions.length, "承重问题身份必须唯一，数量服从剧情需要");
   assert(coreOptions.every((option) => option.logicContract?.premiseAnchor && option.logicContract?.sourceDoesNotProve && option.logicContract?.nextLegalQuestion), "四案所有承重追问必须登记前提、证据边界和下一问上限");
-  const loadBearingClosers = briefs.flatMap((brief) => (brief.sceneVersions ?? []).filter((scene) => (scene.sceneCloser?.lines ?? []).some((line) => !["stage", "pause"].includes(line?.role) && line?.nonLoadBearing !== true && line?.text)));
+  assert(briefs.every((brief) => JSON.stringify(brief.sceneVersions ?? []).includes("\"logicContract\"") === false), "玩家案件不得携带追问合同");
+  const loadBearingClosers = authorCases.flatMap((brief) => (brief.sceneVersions ?? []).filter((scene) => (scene.sceneCloser?.lines ?? []).some((line) => !["stage", "pause"].includes(line?.role) && line?.nonLoadBearing !== true && line?.text)));
   assert(loadBearingClosers.length > 0, "检查当前承重场尾合同，不固定场尾数量");
   assert(loadBearingClosers.every((scene) => scene.closureContract?.routeIndependent === true && scene.closureContract?.openEdge), "四案所有承重场尾必须登记路线独立合同和唯一未决问题");
 });
@@ -5101,6 +5162,29 @@ test("PLAYTEST-RECORDED-002", "authored probes and shared-savings reveal retain 
   const sent = work.findIndex((line) => line.role === "stage" && line.text.includes("他发出两条群消息"));
   assert(stop >= 0 && sent >= stop, "停止垫款必须进入原有发送动作，不另发一轮");
   assertEqual(work.filter((line) => line.role === "stage" && line.text.includes("他发出两条群消息")).length, 1, "发送事件只发生一次");
+});
+
+test("SMOKE-001", "browser replay reads only the case JSON for the selected target", () => {
+  const sequence = [
+    { caseId: "01-credit" },
+    { caseId: "04-workplace" },
+    { caseId: "03-profile" },
+    { caseId: "02-tony" }
+  ];
+  const sameIds = (actual, expected, message) => assertEqual(JSON.stringify(actual), JSON.stringify(expected), message);
+  sameIds(caseIdsForSmokeTarget("case1", sequence), ["01-credit"], "信用案冒烟只读第一案");
+  sameIds(caseIdsForSmokeTarget("cafe-prologue", sequence), [], "咖啡序章不读四案 JSON");
+  sameIds(caseIdsForSmokeTarget("quick-detective", sequence), [], "快案冒烟不预读主线案件");
+  sameIds(caseIdsForSmokeTarget("case34", sequence), ["03-profile", "04-workplace"], "案三案四冒烟只读这两案");
+  sameIds(caseIdsForSmokeTarget("case2-transition", sequence), ["02-tony"], "Tony 白天路线只读 Tony 案");
+  sameIds(caseIdsForSmokeTarget("six-review", sequence, "workplace"), ["04-workplace"], "分案复查只读指定案");
+  sameIds(caseIdsForSmokeTarget("six-review", sequence, "quick"), [], "快案复查不预读主线案件");
+  sameIds(caseIdsForSmokeTarget("all", sequence), sequence.map((item) => item.caseId), "全量目标才读四案");
+  const smokeSource = readFileSync(new URL("./smoke-browser-replay.js", import.meta.url), "utf8");
+  const checkAllSource = readFileSync(new URL("./check-all.js", import.meta.url), "utf8");
+  assertIncludes(smokeSource, "smokeCaseIds.has(item.caseId)", "冒烟必须先按目标过滤，再读案件 JSON");
+  assertIncludes(smokeSource, "ensureContinuousReading", "连续剧本必须等到证词或剧本对照时再读");
+  assert(!checkAllSource.includes("smoke-browser-replay") && !checkAllSource.includes("smoke:browser"), "浏览器冒烟不放进全量检查");
 });
 
 const failed = results.filter((item) => !item.ok);

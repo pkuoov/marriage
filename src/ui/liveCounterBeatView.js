@@ -1,6 +1,7 @@
 import { callDialogueHtml } from "./callFlowView.js";
 import { currentLiveCounterPick } from "../runtime/liveCounterModel.js";
 import { nextSequentialChoice } from "../runtime/sequentialChoices.js";
+import { escapeHtml } from "./html.js";
 
 export function liveCounterBeatHtml(beat = {}, pick = null) {
   pick = currentLiveCounterPick(beat, pick);
@@ -42,14 +43,4 @@ function counterChoiceHtml(choice = {}, pick = null) {
       <b>${escapeHtml(directionLabel)}</b>
     </button>
   `;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
 }

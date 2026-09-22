@@ -1,3 +1,4 @@
+import { resolveCommit } from "../../runtime/stateCommit.js";
 import { decisiveHitTiming, mountDecisiveHitPresentation } from "../../runtime/decisiveHitPresentation.js";
 import { formalPresentLabel } from "../decisivePresentView.js";
 import {
@@ -50,6 +51,7 @@ export function createTestimonyWallScreens(ctx) {
     recordRouteChoice,
     recordPatienceLost
   } = ctx;
+  const commit = resolveCommit(ctx);
 
   function renderTestimonyPrelude(brief) {
     const context = testimonyContext(brief);
@@ -68,9 +70,9 @@ export function createTestimonyWallScreens(ctx) {
     bind("[data-enter-testimony-wall]", () => {
       writeWallProgress(context.wallKey, { ...context.wallProgress, preludeSeen: true });
       const pendingEvidence = afterSceneEvidenceFor(brief, context.index, (key) => actionDone(brief, key));
-      ctx.getState().scene = pendingEvidence ? "afterSceneEvidence" : "testimonyWall";
-      saveState();
-      render();
+      commit((state) => {
+        state.scene = pendingEvidence ? "afterSceneEvidence" : "testimonyWall";
+      });
     });
     bindSceneButtons();
   }
@@ -253,12 +255,18 @@ export function createTestimonyWallScreens(ctx) {
     });
     bind("[data-inquiry-continue]", () => {
       if (!correct) {
-        const picks = { ...ctx.getState().evidenceInquiryPicks }; delete picks[context.key];
-        ctx.getState().evidenceInquiryPicks = picks;
-        ctx.getState().scene = "testimonyWall"; saveState(); return render();
+        return commit((state) => {
+          const picks = { ...state.evidenceInquiryPicks };
+          delete picks[context.key];
+          state.evidenceInquiryPicks = picks;
+          state.scene = "testimonyWall";
+        });
       }
       if (context.finalAct) return ctx.continueAfterFocusedEvidence(brief, context.index);
-      advanceWallAct(context); ctx.getState().scene = "testimonyWall"; saveState(); render();
+      advanceWallAct(context);
+      commit((state) => {
+        state.scene = "testimonyWall";
+      });
     });
     bindSceneButtons();
   }
@@ -284,13 +292,13 @@ export function createTestimonyWallScreens(ctx) {
   function openTestimonyMaterials(brief, mode = "soft") {
     const state = ctx.getState();
     if (mode === "decisive" && !testimonyContext(brief).presentAvailability.canStart) {
-      state.scene = "testimonyWall";
-      saveState();
-      return render();
+      return commit((state) => {
+        state.scene = "testimonyWall";
+      });
     }
-    state.scene = mode === "decisive" ? "decisivePresentMaterial" : "testimonyMaterials";
-    saveState();
-    render();
+    commit((state) => {
+      state.scene = mode === "decisive" ? "decisivePresentMaterial" : "testimonyMaterials";
+    });
   }
 
   function selectTestimonyMaterial(brief, evidenceId) {
@@ -303,15 +311,15 @@ export function createTestimonyWallScreens(ctx) {
     const context = testimonyContext(brief);
     writePresentProgress(context.key, { ...context.presentProgress, selectedEvidenceId: evidenceId });
     const state = ctx.getState();
-    state.scene = "decisivePresentTarget";
-    saveState();
-    render();
+    commit((state) => {
+      state.scene = "decisivePresentTarget";
+    });
   }
 
   function returnToTestimonyWall(brief) {
-    ctx.getState().scene = "testimonyWall";
-    saveState();
-    render();
+    commit((state) => {
+      state.scene = "testimonyWall";
+    });
   }
 
   function commitDecisivePresent(brief, statementId) {
@@ -341,9 +349,9 @@ export function createTestimonyWallScreens(ctx) {
         };
         recordRouteChoice(brief, context.index, state.sceneQuestionPicks[answerKey(brief, context.index)], context.scene);
       }
-      state.scene = "decisivePresentHit";
-      saveState();
-      return render();
+      return commit((state) => {
+        state.scene = "decisivePresentHit";
+      });
     }
     const missIndex = outcome.progress.attempts;
     markAction(brief, `decisivePresentMiss:${context.index}:act${context.wallProgress.act}:${missIndex}`);
@@ -361,9 +369,9 @@ export function createTestimonyWallScreens(ctx) {
         spent: false
       });
     }
-    ctx.getState().scene = "testimonyWall";
-    saveState();
-    render();
+    commit((state) => {
+      state.scene = "testimonyWall";
+    });
   }
 
   function decisiveMissReaction(context = {}, outcome = {}) {
@@ -390,13 +398,13 @@ export function createTestimonyWallScreens(ctx) {
     const context = testimonyContext(brief);
     if (!context.finalAct) {
       advanceWallAct(context);
-      ctx.getState().scene = "testimonyWall";
-      saveState();
-      return render();
+      return commit((state) => {
+        state.scene = "testimonyWall";
+      });
     }
-    ctx.getState().scene = "sceneReview";
-    saveState();
-    render();
+    commit((state) => {
+      state.scene = "sceneReview";
+    });
   }
 
   function testimonyContext(brief) {

@@ -674,3 +674,16 @@ main:has(.demo-return-screen) > .topbar {
 .single-counter-screen.dialogue-focus-stage.choices-open .vn-stage .dialogue-card.avg-dialogue-active { padding-bottom: 40px; }
 .single-counter-screen.dialogue-focus-stage .case-portrait-host:not(.active) { transform: translateY(-18%) scale(.93); }
 .single-counter-screen.dialogue-focus-stage .case-portrait-host.active { transform: translateY(-18%) scale(1.025); }
+
+@media (max-width: 600px) {
+  .focused-evidence-inquiry .vn-stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 140px minmax(0, 1fr);
+    height: calc(100dvh - 128px);
+    padding: 12px; gap: 12px;
+  }
+  .focused-evidence-inquiry .inquiry-reading-pane {
+    grid-column: 1; grid-row: 2;
+    padding: 18px 4px 12px 0;
+  }
+}
