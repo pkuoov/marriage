@@ -62,6 +62,8 @@
 
 ## 数据与代码
 
+第三宗快案《四分之三》已接入独立选择页。采用三轮、每轮两处对质，最大反转在来电人承认早已知道孩子生父以后播放。制作账本、材料先后和提前收案边界见 [快案 03 制作说明](quick-three-quarters.md)。
+
 - 内容真源：`content/packs/steam-demo-01/quick-cases/*.json`
 - 角色真源：`content/characters/cast.json`
 - 纯状态机：`src/runtime/quickDetectiveModel.js`

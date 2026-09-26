@@ -92,7 +92,8 @@
   ],
   "quickCases": [
     "01-no-conditions",
-    "02-one-missed-message"
+    "02-one-missed-message",
+    "03-three-quarters"
   ],
   "sequence": [
     {
