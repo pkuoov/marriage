@@ -23,6 +23,7 @@ story: midnight-hotline-livestream-detective
 | 老方 | supporting | alive | [producer-lao-fang](producer-lao-fang.md) |
 | 快案来电人·罗 | supporting | alive | [quick1-caller-luo](quick1-caller-luo.md) |
 | 快案来电人·周女士 | supporting | alive | [quick2-caller-zhou](quick2-caller-zhou.md) |
+| 快案来电人·女秘书 | supporting | alive | [quick3-caller-secretary](quick3-caller-secretary.md) |
 | V哥 | supporting | alive | [v-bro](v-bro.md) |
 | 张法医 | supporting | alive | [zhang-forensic](zhang-forensic.md) |
 | 赵律师 | deuteragonist | alive | [zhao-lawyer](zhao-lawyer.md) |
@@ -37,4 +38,6 @@ story: midnight-hotline-livestream-detective
 
 ## Family Trees
 
-试玩版没有需要维护的血缘树；亲属只在对应案件中作为压力来源或麦外证人。
+快案 03《四分之三》的固定血缘关系：老张是小张和孩子的父亲，女秘书是孩子的母亲；孩子是小张同父异母的弟弟。女秘书曾对小张声称孩子是他的儿子，这是她用来误导小张的说法。
+
+人物设定与时间线见 [快案 03 制作说明](../docs/quick-three-quarters.md)。

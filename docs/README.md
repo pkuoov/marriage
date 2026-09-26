@@ -26,6 +26,7 @@
 - [多场景罗生门结构](multi-scene-rashomon-design.md)
 - [主播调查与证据回流](host-investigation-loop.md)
 - [直播快案：主播对质模式](quick-detective-mode.md)
+- [快案 03《四分之三》制作说明](quick-three-quarters.md)
 
 人物性格、场景功能、伏笔和跨案状态分别维护在 `characters/`、`scenes/`、`plot/`、`continuity/`；玩家实际看到的文本维护在 `content/packs/steam-demo-01/`。
 

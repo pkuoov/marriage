@@ -943,7 +943,8 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
   const quickCases = quickDetectiveCasesFor("steam-demo-01");
   const packet = quickCases.find((item) => item.id === "02-one-missed-message");
   assert(packet, "试玩包必须加载第二宗快案");
-  assertEqual(quickCases.map((item) => item.caseNumber).join("|"), "01|02", "快案选择页必须按 manifest 保持 01、02 的稳定顺序");
+  assertEqual(quickCases.map((item) => item.id).join("|"), storyPackForKey("steam-demo-01").quickCases.join("|"), "快案选择页必须遵循 manifest 顺序");
+  assertEqual(quickCases.slice(0, 2).map((item) => item.caseNumber).join("|"), "01|02", "已有快案必须保留 01、02 的稳定编号与顺序");
   assertEqual(packet.caseNumber, "02", "第二宗快案必须使用稳定编号 02");
   assertEqual(packet.premise, "一个姑娘打进电话，想问问她和男朋友接下来该怎么办。", "第二宗快案入口只能交代表面求助，不得提前剧透学历、婚介、创业者、送花和失联原因");
   assertEqual(packet.turns.length, 13, "第二宗快案必须把登记式问卷收成三轮陈述与少量追问");
@@ -1078,6 +1079,110 @@ test("QUICK-003", "second quick case reveals new contradictions only after the p
     while (state.scene === "confrontation") state = advanceQuickConfrontation(packet, state);
   }
   assertEqual(state.scene, "verdict", "第二宗快案六处对质完成后必须进入主播结案，不能卡在选择页");
+});
+
+test("QUICK-004", "third quick case keeps evidence chronological across every confrontation order", () => {
+  const cases = quickDetectiveCasesFor("steam-demo-01");
+  const packet = cases.find((item) => item.id === "03-three-quarters");
+  assert(packet, "第三宗快案必须可加载");
+  assertEqual(packet.caseNumber, "03", "新快案使用稳定编号 03");
+  assertEqual(packet.castProfileId, "quick3-caller-secretary", "女秘书使用独立角色卡");
+  assertEqual(packet.premise, "一位母亲打进电话，想问自己和孩子能不能拿到遗产。", "入口只交代表面求助");
+  assertIncludes(quickDetectiveCaseSelectHtml(cases, []), "四分之三", "选择页显示第三案");
+  assertIncludes(packet.presentation.caller.artSrc, "caller-secretary-", "女秘书不能复用其他来电人立绘");
+  const rounds = quickDisclosureRounds(packet);
+  assertEqual(rounds.length, 3, "遗产、两段关系、早期知情分三轮展开");
+  assertEqual(packet.confrontations.length, 6, "每轮保留两处可独立追问的矛盾");
+  const seenTurns = new Set();
+  const assignedConfrontations = [];
+  for (const [roundIndex, round] of rounds.entries()) {
+    round.turnIds.forEach((id) => seenTurns.add(id));
+    const lines = quickStatementLinesForRound(packet, { roundIndex });
+    for (const issue of quickIssueOptionsForRound(packet, { roundIndex })) {
+      assertEqual(lines.filter((line) => line.text.includes(issue.sourceAnchor)).length, 1, `${issue.id} 必须唯一匹配当前轮原句`);
+    }
+    for (const id of round.requiredConfrontationIds) {
+      assignedConfrontations.push(id);
+      const confrontation = packet.confrontations.find((item) => item.id === id);
+      assert(confrontation.basisTurnIds.length >= 2, `${id} 至少有两处已播依据`);
+      assert(confrontation.basisTurnIds.every((turnId) => seenTurns.has(turnId)), `${id} 不得使用未来轮次事实`);
+      for (const field of ["premiseAnchor", "sourceProves", "sourceDoesNotProve", "answerAdds", "nextLimit"]) {
+        assert(confrontation.logicContract[field], `${id} 缺少 ${field}`);
+      }
+      const spoken = quickConfrontationLines(confrontation);
+      assert(spoken.every((line, index) => line.role === (index % 2 ? "caller" : "host")), `${id} 必须交替攻防`);
+    }
+  }
+  assertEqual(new Set(assignedConfrontations).size, packet.confrontations.length, "所有对质均应纳入轮次推进条件");
+  const reveals = packet.confrontations.filter((item) => item.revealTransition);
+  assertEqual(reveals.length, 1, "只播放一次最大反转");
+  assertEqual(reveals[0].id, "knew-before-screenshot", "最大反转为知情时间");
+  const beforeReveal = reveals[0].lines[reveals[0].revealTransition.lineIndex - 1];
+  assertEqual(beforeReveal.role, "caller", "反转应紧接来电人承认");
+  assertIncludes(beforeReveal.text, "四月就知道了", "反转动画不能早于知情承认");
+  const fullText = packet.ending.summaryPages.flatMap((page) => page.lines).map((line) => line.text).join(" ");
+  const partialText = packet.ending.partialSummaryPages.flatMap((page) => page.lines).map((line) => line.text).join(" ");
+  assertIncludes(fullText, "为了钱不择手段的骗子", "证据齐全时兑现用户要求的尖锐收尾");
+  assertIncludes(fullText, "不能因为你撒谎就抹掉", "母亲的行为不取消孩子权益");
+  assertIncludes(fullText, "不是因为报告出得早", "知情结论不能只依赖报告出具日期");
+  const partialPages = quickVerdictPages(packet, { verdictMode: "partial" });
+  const finishedPartial = {
+    ...initialQuickDetectiveState(packet), scene: "verdict", verdictMode: "partial",
+    verdictIndex: partialPages.length - 1,
+    verdictLineIndex: partialPages.at(-1).lines.length - 1
+  };
+  assert(quickDetectiveIsComplete(packet, finishedPartial), "第三案沿用提前结尾读完即完成的现有规则");
+  assertIncludes(quickDetectiveVerdictHtml(packet, finishedPartial), "quick-ending-actions", "提前结尾仍须提供返回与重玩按钮");
+  for (const spoiler of ["骗子", "四月", "五月", "初恋", "裁", "亲生", "奶粉", "三千", "弟弟"]) {
+    assert(!partialText.includes(spoiler), `提前收案不能泄露未取得的事实：${spoiler}`);
+  }
+  // Two independent directions per round yield eight orderings, all of which
+  // must progress, resume and support an evidence-bounded early ending.
+  for (let mask = 0; mask < 8; mask += 1) {
+    let state = { ...initialQuickDetectiveState(packet), scene: "transcript" };
+    for (const [roundIndex, round] of rounds.entries()) {
+      assertEqual(state.roundIndex, roundIndex, "已问清时直接续播下一轮");
+      state = advanceQuickTranscript(packet, normalizeQuickDetectiveState(state, packet));
+      const futureIssue = rounds[roundIndex + 1]?.issueOptionIds[0];
+      assert(!quickIssueOptionsForRound(packet, state).some((issue) => issue.id === futureIssue), "未来方向不得提前开放");
+      const lines = quickStatementLinesForRound(packet, state);
+      const decoy = quickIssueOptionsForRound(packet, state).find((issue) => !issue.confrontationId);
+      const decoyLine = lines.find((line) => line.text.includes(decoy.sourceAnchor));
+      state = applyQuickStatementLineSelection(packet, state, decoyLine.id);
+      assertEqual(quickRoundPatienceForState(packet, state).remaining, round.patience - 1, "选错原句仅扣本轮耐心");
+      const ordered = (mask & (1 << roundIndex)) ? [...round.requiredConfrontationIds].reverse() : round.requiredConfrontationIds;
+      for (const id of ordered) {
+        const issue = packet.issueOptions.find((item) => item.confrontationId === id);
+        state = applyQuickStatementLineSelection(packet, state, lines.find((line) => line.text.includes(issue.sourceAnchor)).id);
+        assertEqual(state.scene, "confrontation", "正确原句必须触发对应对质");
+        state = normalizeQuickDetectiveState(advanceQuickConfrontation(packet, state), packet);
+        assertEqual(state.activeConfrontationId, id, "刷新后保留当前对质");
+        let budget = 30;
+        while (state.scene === "confrontation" && budget-- > 0) state = advanceQuickConfrontation(packet, state);
+        assert(budget > 0, "对质不能卡死");
+        const early = endQuickCaseEarly(packet, state);
+        assertEqual(early.verdictMode, "partial", "每个已取得对质都可提前收案");
+        assertEqual(quickVerdictPages(packet, early), packet.ending.partialSummaryPages, "提前收案使用独立台词");
+        assert(!quickDetectiveIsComplete(packet, early), "提前结尾首句不能立刻标记完成");
+      }
+    }
+    assertEqual(state.scene, "verdict", "六处矛盾问完才进入完整结案");
+    assert(!quickDetectiveIsComplete(packet, state), "结案首句不能立刻标记完成");
+    let budget = 80;
+    while (!quickDetectiveIsComplete(packet, state) && budget-- > 0) state = advanceQuickVerdict(packet, state);
+    assert(budget > 0, "结案可完整播放到末句");
+    assertEqual(state.resolvedConfrontationIds.length, 6, "完整结案保留六处对质记录");
+  }
+  let tired = { ...initialQuickDetectiveState(packet), scene: "issueSelection" };
+  const lines = quickStatementLinesForRound(packet, tired);
+  const anchors = quickIssueOptionsForRound(packet, tired).filter((issue) => issue.confrontationId).map((issue) => issue.sourceAnchor);
+  for (const line of lines.filter((item) => !anchors.some((anchor) => item.text.includes(anchor))).slice(0, rounds[0].patience)) {
+    tired = applyQuickStatementLineSelection(packet, tired, line.id);
+  }
+  assertEqual(tired.scene, "patienceLost", "本案耐心耗尽可重听");
+  const retry = retryQuickStatement(packet, tired);
+  assertEqual(retry.scene, "transcript", "重听回到当前陈述");
+  assertEqual(quickRoundPatienceForState(packet, retry).remaining, rounds[0].patience, "重听恢复本轮耐心");
 });
 
 test("PLATFORM-001", "platform runtime exposes a safe top-level postMessage bridge", () => {

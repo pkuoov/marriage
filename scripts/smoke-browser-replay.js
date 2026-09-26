@@ -204,7 +204,7 @@ async function runQuickDetective() {
       await page.locator("[data-player-name]").fill("周明");
       await click(page, "[data-start-quick-detective]");
       await assertVisibleText(page, "今晚先接哪一通", "快案入口必须先进入案件选择页");
-      if (await page.locator(".quick-case-card").count() !== 2) throw new Error("快案选择页必须从 manifest 加载两宗案件");
+      if (await page.locator(".quick-case-card").count() !== storyManifest.quickCases.length) throw new Error("快案选择页必须加载 manifest 中的全部案件");
 
       await playStatementQuickCase(page, viewport, {
         caseId: "01-no-conditions",
@@ -238,6 +238,37 @@ async function runQuickDetective() {
       });
       await click(page, "[data-quick-select]");
       if (await page.locator(".quick-case-card.is-complete").count() !== 2) throw new Error("两宗快案通关后都必须保留完成对勾");
+
+      // Check the partial ending for spoilers, then reload to confirm that it
+      // preserves the existing completion-marker behavior.
+      await playEarlyQuickCase(page, "03-three-quarters", "四百万先分一半给我", {
+        expectedFinal: "这段录音不能替代对报告和财产的核实",
+        forbidden: ["骗子", "四月", "初恋", "奶粉", "弟弟"]
+      });
+      await click(page, "[data-quick-select]");
+      await page.reload();
+      if (await page.locator('.quick-case-card.is-complete[data-quick-case-id="03-three-quarters"]').count() !== 1) {
+        throw new Error("第三案提前结尾读完后应沿用现有规则保存完成标记");
+      }
+      await playStatementQuickCase(page, viewport, {
+        caseId: "03-three-quarters",
+        rounds: [
+          ["四百万先分一半给我", "采的是小张和孩子的样本"],
+          ["跟孩子到底是谁的没关系", "字可一个没改"],
+          ["我也是他去世以后才知道孩子是他的", "截图是他自己裁的"]
+        ],
+        decoyAnchor: "白天请个钟点工搭把手",
+        expectedListen: ["我想问问遗产", "四百万先分一半给我"],
+        expectedVerdict: ["为了钱不择手段的骗子", "不能因为你撒谎就抹掉", "不是因为报告出得早"],
+        resumeRoundIndex: 1
+      });
+      await click(page, "[data-quick-select]");
+      await page.reload();
+      for (const caseId of ["01-no-conditions", "02-one-missed-message", "03-three-quarters"]) {
+        if (await page.locator(`.quick-case-card.is-complete[data-quick-case-id="${caseId}"]`).count() !== 1) {
+          throw new Error(`${caseId} 完成记录必须在刷新后保留`);
+        }
+      }
     } finally {
       await context.close();
     }
@@ -245,7 +276,7 @@ async function runQuickDetective() {
   }
 }
 
-async function playEarlyQuickCase(page, caseId, anchor) {
+async function playEarlyQuickCase(page, caseId, anchor, { expectedFinal = "拒绝背书，不替她编故事", forbidden = [] } = {}) {
   await click(page, `[data-quick-case-id="${caseId}"]`);
   await click(page, "[data-quick-begin]");
   await advanceQuickLine(page, "[data-quick-next-turn]");
@@ -254,13 +285,19 @@ async function playEarlyQuickCase(page, caseId, anchor) {
   await page.locator("[data-quick-end-early]").waitFor({ state: "visible" });
   await click(page, "[data-quick-end-early]");
   await assertVisibleText(page, "按现有信息收住", "快案抓到一个关键矛盾后必须允许谨慎提前收案");
+  let earlyText = "";
   while (!await page.locator(".quick-ending-actions").count()) {
+    earlyText += ` ${await page.locator("[data-quick-dialogue-box]").getAttribute("data-quick-line-text") ?? ""}`;
     await advanceQuickLine(page, "[data-quick-next-verdict]");
   }
-  await assertVisibleText(page, "拒绝背书，不替她编故事", "提前收案必须落到独立的事实边界结论");
+  earlyText += ` ${await page.locator("[data-quick-dialogue-box]").getAttribute("data-quick-line-text") ?? ""}`;
+  for (const text of forbidden) {
+    if (earlyText.includes(text)) throw new Error(`${caseId} 提前收案泄露了未取得的事实：${text}`);
+  }
+  await assertVisibleText(page, expectedFinal, "提前收案必须落到独立的事实边界结论");
 }
 
-async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, expectedListen, expectedVerdict }) {
+async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnchor, expectedListen, expectedVerdict, resumeRoundIndex }) {
   await click(page, `[data-quick-case-id="${caseId}"]`);
   await assertVisibleText(page, "周明", "快案必须显示玩家保存的主播姓名");
   await assertNoPageText(page, "这次怎么玩", "快案入口不得解释内部机制");
@@ -268,6 +305,7 @@ async function playStatementQuickCase(page, viewport, { caseId, rounds, decoyAnc
 
   let verdictText = "";
   for (const [roundIndex, anchors] of rounds.entries()) {
+    if (roundIndex === resumeRoundIndex) await page.reload();
     await assertQuickLayout(page, viewport, `${caseId} round ${roundIndex + 1} listen`, "caller");
     if (roundIndex === 0) {
       for (const text of expectedListen) await assertVisibleText(page, text, `${caseId} 首次听麦必须保留整段陈述内容`);
